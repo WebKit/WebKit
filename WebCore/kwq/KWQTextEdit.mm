@@ -179,7 +179,7 @@ void QTextEdit::setDisabled(bool flag)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-long QTextEdit::selectionStart()
+int QTextEdit::selectionStart()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     
@@ -193,7 +193,7 @@ long QTextEdit::selectionStart()
     return 0;
 }
 
-long QTextEdit::selectionEnd()
+int QTextEdit::selectionEnd()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     
@@ -207,7 +207,7 @@ long QTextEdit::selectionEnd()
     return 0;
 }
 
-void QTextEdit::setSelectionStart(long start)
+void QTextEdit::setSelectionStart(int start)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     
@@ -219,8 +219,8 @@ void QTextEdit::setSelectionStart(long start)
     }
     
     // coerce start to a valid value
-    long maxLength = [[textView text] length];
-    long newStart = start;
+    int maxLength = [[textView text] length];
+    int newStart = start;
     if (newStart < 0)
         newStart = 0;
     if (newStart > maxLength)
@@ -240,7 +240,7 @@ void QTextEdit::setSelectionStart(long start)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QTextEdit::setSelectionEnd(long end)
+void QTextEdit::setSelectionEnd(int end)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     
@@ -252,8 +252,8 @@ void QTextEdit::setSelectionEnd(long end)
     }
     
     // coerce end to a valid value
-    long maxLength = [[textView text] length];
-    long newEnd = end;
+    int maxLength = [[textView text] length];
+    int newEnd = end;
     if (newEnd < 0)
         newEnd = 0;
     if (newEnd > maxLength)
@@ -292,13 +292,13 @@ void QTextEdit::selectAll()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QTextEdit::setSelectionRange(long start, long length)
+void QTextEdit::setSelectionRange(int start, int length)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    long newStart = start;
-    long newLength = length;
+    int newStart = start;
+    int newLength = length;
     if (newStart < 0) {
         // truncate the length by the negative start
         newLength = length + newStart;

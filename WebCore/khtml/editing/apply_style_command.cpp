@@ -933,7 +933,7 @@ bool ApplyStyleCommand::nodeFullyUnselected(NodeImpl *node, const Position &star
 bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Position &end)
 {
     if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
-        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+        int endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNode(text, start.offset());
         setEndingSelection(Selection(Position(start.node(), 0), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
@@ -961,7 +961,7 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
 bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, const Position &end)
 {
     if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
-        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+        int endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNodeContainingElement(text, start.offset());
 
@@ -1025,7 +1025,7 @@ static bool areIdenticalElements(NodeImpl *first, NodeImpl *second)
 bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start, const Position &end)
 {
     NodeImpl *startNode = start.node();
-    long startOffset = start.offset();
+    int startOffset = start.offset();
 
     if (start.node()->isAtomicNode()) {
         if (start.offset() != 0)
@@ -1053,8 +1053,8 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
         ASSERT(startChild);
         mergeIdenticalElements(previousElement, element);
 
-        long startOffsetAdjustment = startChild->nodeIndex();
-        long endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
+        int startOffsetAdjustment = startChild->nodeIndex();
+        int endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
 
         setEndingSelection(Selection(Position(startNode, startOffsetAdjustment), SEL_DEFAULT_AFFINITY,
                                      Position(end.node(), end.offset() + endOffsetAdjustment), SEL_DEFAULT_AFFINITY)); 

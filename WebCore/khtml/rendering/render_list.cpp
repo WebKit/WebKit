@@ -569,7 +569,7 @@ void RenderListMarker::calcMinMaxWidth()
     case DECIMAL_LEADING_ZERO:
         // ### unsupported, we use decimal instead
     case LDECIMAL:
-        m_item.sprintf( "%ld", m_value );
+        m_item.sprintf( "%d", m_value );
         break;
     case LOWER_ROMAN:
         m_item = toRoman( m_value, false );

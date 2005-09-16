@@ -74,7 +74,7 @@ public:
         m_getValue = getValue;
     }
 
-    void setCustomIndex(ObjectImp *slotBase, unsigned long index, GetValueFunc getValue)
+    void setCustomIndex(ObjectImp *slotBase, unsigned index, GetValueFunc getValue)
     {
         assert(getValue);
         m_slotBase = slotBase;
@@ -91,7 +91,7 @@ public:
     ObjectImp *slotBase() const { return m_slotBase; }
 
     const HashEntry *staticEntry() const { return m_data.staticEntry; }
-    unsigned long index() const { return m_data.index; }
+    unsigned index() const { return m_data.index; }
 
 private:
     static ValueImp *undefinedGetter(ExecState *, const Identifier&, const PropertySlot&);
@@ -102,7 +102,7 @@ private:
     union {
         ValueImp **valueSlot;
         const HashEntry *staticEntry;
-        unsigned long index;
+        unsigned index;
     } m_data;
 };
 

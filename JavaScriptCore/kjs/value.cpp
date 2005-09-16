@@ -201,6 +201,16 @@ ValueImp *jsNumber(unsigned long i)
     return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
 }
 
+ValueImp *jsNumber(long long i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
+ValueImp *jsNumber(unsigned long long i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
 ValueImp *jsNumber(double d)
 {
     return SimpleNumber::fits(d)

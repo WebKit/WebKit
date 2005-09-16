@@ -38,12 +38,12 @@ using DOM::TextImpl;
 
 namespace khtml {
 
-DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(DocumentImpl *document, TextImpl *node, long offset, long count)
+DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(DocumentImpl *document, TextImpl *node, int offset, int count)
     : EditCommand(document), m_node(node), m_offset(offset), m_count(count)
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);
-    ASSERT(m_offset < (long)m_node->length());
+    ASSERT(m_offset < (int)m_node->length());
     ASSERT(m_count >= 0);
     
     m_node->ref();

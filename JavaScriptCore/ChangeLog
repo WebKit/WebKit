@@ -1,3 +1,72 @@
+2005-09-16  Adele Peterson  <adele@apple.com>
+
+        Change by Darin, reviewed by me and Maciej.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        use int instead of long for 32-bit (to prepare for LP64 compiling)
+
+        * bindings/c/c_class.h:
+        (KJS::Bindings::CClass::constructorAt):
+        (KJS::Bindings::CClass::numConstructors):
+        * bindings/c/c_runtime.h:
+        (KJS::Bindings::CMethod::numParameters):
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        * bindings/jni/jni_class.h:
+        (KJS::Bindings::JavaClass::constructorAt):
+        (KJS::Bindings::JavaClass::numConstructors):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::convertJObjectToValue):
+        (JSObject::listFromJArray):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaConstructor::_commonCopy):
+        (KJS::Bindings::JavaConstructor::parameterAt):
+        (KJS::Bindings::JavaConstructor::numParameters):
+        (KJS::Bindings::JavaMethod::_commonCopy):
+        (KJS::Bindings::JavaMethod::parameterAt):
+        (KJS::Bindings::JavaMethod::numParameters):
+        * bindings/npapi.h:
+        * bindings/objc/WebScriptObject.mm:
+        (listFromNSArray):
+        * bindings/objc/objc_class.h:
+        (KJS::Bindings::ObjcClass::constructorAt):
+        (KJS::Bindings::ObjcClass::numConstructors):
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcMethod::numParameters):
+        * bindings/runtime.h:
+        * kjs/identifier.h:
+        * kjs/internal.h:
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::setCustomIndex):
+        (KJS::PropertySlot::index):
+        (KJS::PropertySlot::):
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::backrefGetter):
+        (RegExpObjectImp::getOwnPropertySlot):
+        * kjs/simple_number.h:
+        (KJS::SimpleNumber::):
+        (KJS::SimpleNumber::value):
+        (KJS::SimpleNumber::fits):
+        (KJS::SimpleNumber::integerFits):
+        (KJS::SimpleNumber::make):
+        * kjs/string_object.cpp:
+        (substituteBackreferences):
+        * kjs/ustring.cpp:
+        (KJS::UString::from):
+        (KJS::UString::toUInt32):
+        (KJS::UString::find):
+        (KJS::UString::rfind):
+        * kjs/ustring.h:
+        * kjs/value.cpp:
+        (KJS::jsNumber):
+        * kjs/value.h:
+
 2005-09-11  Eric Seidel  <eseidel@apple.com>
 
         No review requested, build fix affects only SVG.

@@ -76,13 +76,13 @@ class QTextEdit : public QScrollView
 
     void setWritingDirection(QPainter::TextDirection);
 
-    long selectionStart();
-    long selectionEnd();
-    void setSelectionStart(long);
-    void setSelectionEnd(long);
+    int selectionStart();
+    int selectionEnd();
+    void setSelectionStart(int);
+    void setSelectionEnd(int);
     
     void selectAll();
-    void setSelectionRange(long, long);
+    void setSelectionRange(int, int);
 
     QSize sizeWithColumnsAndRows(int numColumns, int numRows) const;
 

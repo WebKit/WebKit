@@ -305,7 +305,7 @@ VisiblePosition startOfLine(const VisiblePosition &c)
     if (!startNode)
         return VisiblePosition();
 
-    long startOffset = 0;
+    int startOffset = 0;
     if (startBox->isInlineTextBox()) {
         InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
         startOffset = startTextBox->m_start;
@@ -335,7 +335,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLin
     if (!endNode)
         return VisiblePosition();
 
-    long endOffset = 1;
+    int endOffset = 1;
     if (endNode->hasTagName(brTag)) {
         endOffset = 0;
     } else if (endBox->isInlineTextBox()) {
@@ -552,7 +552,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
 
     NodeImpl *node = startNode;
-    long offset = p.offset();
+    int offset = p.offset();
 
     for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
         RenderObject *r = n->renderer();
@@ -566,10 +566,10 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         if (r->isText()) {
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
-                long i = static_cast<RenderText *>(r)->length();
-                long o = offset;
+                int i = static_cast<RenderText *>(r)->length();
+                int o = offset;
                 if (n == startNode && o < i)
-                    i = kMax(0L, o);
+                    i = kMax(0, o);
                 while (--i >= 0)
                     if (text[i] == '\n')
                         return VisiblePosition(n, i + 1, DOWNSTREAM);
@@ -597,7 +597,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
     NodeImpl *stayInsideBlock = includeLineBreak ? 0 : startBlock;
     
     NodeImpl *node = startNode;
-    long offset = p.offset();
+    int offset = p.offset();
 
     for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
         if (n->isContentEditable() != startNode->isContentEditable())
@@ -623,13 +623,13 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
             if (includeLineBreak && !n->isAncestor(startBlock))
                 return VisiblePosition(n, 0, DOWNSTREAM);
-            long length = static_cast<RenderText *>(r)->length();
+            int length = static_cast<RenderText *>(r)->length();
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
-                long o = 0;
+                int o = 0;
                 if (n == startNode && offset < length)
                     o = offset;
-                for (long i = o; i < length; ++i)
+                for (int i = o; i < length; ++i)
                     if (text[i] == '\n')
                         return VisiblePosition(n, i + includeLineBreak, DOWNSTREAM);
             }

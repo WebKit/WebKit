@@ -83,8 +83,8 @@ public:
     void deleteTFoot (  );
     HTMLElementImpl *createCaption (  );
     void deleteCaption (  );
-    HTMLElementImpl *insertRow ( long index, int &exceptioncode );
-    void deleteRow ( long index, int &exceptioncode );
+    HTMLElementImpl *insertRow ( int index, int &exceptioncode );
+    void deleteRow ( int index, int &exceptioncode );
 
     khtml::SharedPtr<HTMLCollectionImpl> rows();
     khtml::SharedPtr<HTMLCollectionImpl> tBodies();
@@ -171,8 +171,8 @@ public:
 
     virtual NodeImpl *addChild(NodeImpl *child);
     
-    HTMLElementImpl *insertRow ( long index, int& exceptioncode );
-    void deleteRow ( long index, int& exceptioncode );
+    HTMLElementImpl *insertRow ( int index, int& exceptioncode );
+    void deleteRow ( int index, int& exceptioncode );
 
     int numRows() const;
 
@@ -205,15 +205,15 @@ public:
 	
     virtual NodeImpl *addChild(NodeImpl *child);
     
-    long rowIndex() const;
-    long sectionRowIndex() const;
+    int rowIndex() const;
+    int sectionRowIndex() const;
 
-    HTMLElementImpl *insertCell ( long index, int &exceptioncode );
-    void deleteCell ( long index, int &exceptioncode );
+    HTMLElementImpl *insertCell ( int index, int &exceptioncode );
+    void deleteCell ( int index, int &exceptioncode );
 
-    void setRowIndex( long  );
+    void setRowIndex( int  );
 
-    void setSectionRowIndex( long  );
+    void setSectionRowIndex( int  );
 
     khtml::SharedPtr<HTMLCollectionImpl> cells();
     void setCells(HTMLCollectionImpl *, int &exception);
@@ -248,7 +248,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 6; }
 
-    long cellIndex() const;
+    int cellIndex() const;
 
     int col() const { return _col; }
     void setCol(int col) { _col = col; }
@@ -266,7 +266,7 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
-    void setCellIndex( long  );
+    void setCellIndex( int  );
 
     DOMString abbr() const;
     void setAbbr( const DOMString & );
@@ -286,7 +286,7 @@ public:
     DOMString chOff() const;
     void setChOff( const DOMString & );
 
-    void setColSpan( long  );
+    void setColSpan( int  );
 
     DOMString headers() const;
     void setHeaders( const DOMString & );
@@ -297,7 +297,7 @@ public:
     bool noWrap() const;
     void setNoWrap( bool );
 
-    void setRowSpan( long );
+    void setRowSpan( int );
 
     DOMString scope() const;
     void setScope( const DOMString & );
@@ -333,7 +333,7 @@ public:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-    long span() const { return _span; }
+    int span() const { return _span; }
 
     DOMString align() const;
     void setAlign( const DOMString & );
@@ -344,7 +344,7 @@ public:
     DOMString chOff() const;
     void setChOff( const DOMString & );
 
-    void setSpan( long  );
+    void setSpan( int  );
 
     DOMString vAlign() const;
     void setVAlign( const DOMString & );

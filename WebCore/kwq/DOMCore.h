@@ -121,16 +121,16 @@ enum {
 @end
 
 @interface DOMNodeList : DOMObject
-- (DOMNode *)item:(unsigned long)index;
-- (unsigned long)length;
+- (DOMNode *)item:(unsigned)index;
+- (unsigned)length;
 @end
 
 @interface DOMNamedNodeMap : DOMObject
 - (DOMNode *)getNamedItem:(NSString *)name;
 - (DOMNode *)setNamedItem:(DOMNode *)arg;
 - (DOMNode *)removeNamedItem:(NSString *)name;
-- (DOMNode *)item:(unsigned long)index;
-- (unsigned long)length;
+- (DOMNode *)item:(unsigned)index;
+- (unsigned)length;
 - (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
 - (DOMNode *)setNamedItemNS:(DOMNode *)arg;
 - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
@@ -139,12 +139,12 @@ enum {
 @interface DOMCharacterData : DOMNode
 - (NSString *)data;
 - (void)setData:(NSString *)data;
-- (unsigned long)length;
-- (NSString *)substringData:(unsigned long)offset :(unsigned long)count;
+- (unsigned)length;
+- (NSString *)substringData:(unsigned)offset :(unsigned)count;
 - (void)appendData:(NSString *)arg;
-- (void)insertData:(unsigned long)offset :(NSString *)arg;
-- (void)deleteData:(unsigned long)offset :(unsigned long) count;
-- (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg;
+- (void)insertData:(unsigned)offset :(NSString *)arg;
+- (void)deleteData:(unsigned)offset :(unsigned) count;
+- (void)replaceData:(unsigned)offset :(unsigned)count :(NSString *)arg;
 @end
 
 @interface DOMAttr : DOMNode
@@ -175,7 +175,7 @@ enum {
 @end
 
 @interface DOMText : DOMCharacterData
-- (DOMText *)splitText:(unsigned long)offset;
+- (DOMText *)splitText:(unsigned)offset;
 @end
 
 @interface DOMComment : DOMCharacterData

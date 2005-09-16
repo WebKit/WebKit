@@ -223,9 +223,9 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
 }
 
 
-unsigned long HTMLCollectionImpl::calcLength() const
+unsigned HTMLCollectionImpl::calcLength() const
 {
-    unsigned long len = 0;
+    unsigned len = 0;
 
     for (NodeImpl *current = traverseNextItem(m_base.get()); current; current = traverseNextItem(current)) {
         len++;
@@ -236,7 +236,7 @@ unsigned long HTMLCollectionImpl::calcLength() const
 
 // since the collections are to be "live", we have to do the
 // calculation every time if anything has changed
-unsigned long HTMLCollectionImpl::length() const
+unsigned HTMLCollectionImpl::length() const
 {
     resetCollectionInfo();
     if (!info->haslength) {
@@ -246,7 +246,7 @@ unsigned long HTMLCollectionImpl::length() const
     return info->length;
 }
 
-NodeImpl *HTMLCollectionImpl::item( unsigned long index ) const
+NodeImpl *HTMLCollectionImpl::item( unsigned index ) const
 {
      resetCollectionInfo();
      if (info->current && info->position == index) {
@@ -524,7 +524,7 @@ HTMLFormCollectionImpl::~HTMLFormCollectionImpl()
 {
 }
 
-unsigned long HTMLFormCollectionImpl::calcLength() const
+unsigned HTMLFormCollectionImpl::calcLength() const
 {
     QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
 
@@ -536,7 +536,7 @@ unsigned long HTMLFormCollectionImpl::calcLength() const
     return len;
 }
 
-NodeImpl *HTMLFormCollectionImpl::item(unsigned long index) const
+NodeImpl *HTMLFormCollectionImpl::item(unsigned index) const
 {
     resetCollectionInfo();
 

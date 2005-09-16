@@ -54,9 +54,9 @@ public:
     void setIntrinsicWidth(int w) {  m_intrinsicWidth = w; }
     void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
 
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
     virtual bool canBeSelectionLeaf() const { return true; }

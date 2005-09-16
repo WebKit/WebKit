@@ -145,22 +145,22 @@ ALLOW_DOM_CAST(EventImpl)
     return static_cast<MouseEventImpl *>(DOM_cast<EventImpl *>(_internal));
 }
 
-- (long)screenX
+- (int)screenX
 {
     return [self _mouseEventImpl]->screenX();
 }
 
-- (long)screenY
+- (int)screenY
 {
     return [self _mouseEventImpl]->screenY();
 }
 
-- (long)clientX
+- (int)clientX
 {
     return [self _mouseEventImpl]->clientX();
 }
 
-- (long)clientY
+- (int)clientY
 {
     return [self _mouseEventImpl]->clientY();
 }
@@ -195,7 +195,7 @@ ALLOW_DOM_CAST(EventImpl)
     return [DOMNode _nodeWithImpl:[self _mouseEventImpl]->relatedTarget()];
 }
 
-- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
+- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
     DOMNode *relatedTarget = relatedTargetArg;
     [self _mouseEventImpl]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
@@ -258,12 +258,12 @@ ALLOW_DOM_CAST(EventImpl)
     return [DOMAbstractView _abstractViewWithImpl:[self _UIEventImpl]->view()];
 }
 
-- (long)detail
+- (int)detail
 {
     return [self _UIEventImpl]->detail();
 }
 
-- (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg
+- (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg
 {
     [self _UIEventImpl]->initUIEvent(typeArg, canBubbleArg, cancelableArg, [viewArg _abstractViewImpl], detailArg);
 }

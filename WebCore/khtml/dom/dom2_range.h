@@ -106,7 +106,7 @@ public:
     Range();
     Range(const Document rootContainer);
     Range(const Range &other);
-    Range(const Node startContainer, const long startOffset, const Node endContainer, const long endOffset);
+    Range(const Node startContainer, const int startOffset, const Node endContainer, const int endOffset);
 
     Range & operator = (const Range &other);
 
@@ -122,7 +122,7 @@ public:
      * Offset within the starting node of the range.
      *
      */
-    long startOffset() const;
+    int startOffset() const;
 
     /**
      * Node within which the range ends
@@ -134,7 +134,7 @@ public:
      * Offset within the ending node of the range.
      *
      */
-    long endOffset() const;
+    int endOffset() const;
 
     /**
      * TRUE if the range is collapsed
@@ -172,7 +172,7 @@ public:
      * should an exception be raised.
      *
      */
-    void setStart ( const Node &refNode, long offset );
+    void setStart ( const Node &refNode, int offset );
 
     /**
      * Sets the attributes describing the end of a range.
@@ -193,7 +193,7 @@ public:
      * Notation, or DocumentType node.
      *
      */
-    void setEnd ( const Node &refNode, long offset );
+    void setEnd ( const Node &refNode, int offset );
 
     /**
      * Sets the start position to be before a node

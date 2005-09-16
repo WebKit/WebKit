@@ -759,7 +759,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
 
   // array index ?
   bool ok;
-  long unsigned int idx = propertyName.toULong(&ok);
+  unsigned idx = propertyName.toUInt32(&ok);
   if (ok && idx < list.length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
@@ -779,7 +779,7 @@ ValueImp *DOMNodeList::callAsFunction(ExecState *exec, ObjectImp *, const List &
   // Do not use thisObj here. See HTMLCollection.
   UString s = args[0]->toString(exec);
   bool ok;
-  unsigned int u = s.toULong(&ok);
+  unsigned int u = s.toUInt32(&ok);
   if (ok)
     return getDOMNode(exec, m_impl->item(u));
 
@@ -1441,7 +1441,7 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
   // array index ?
   bool ok;
-  long unsigned int idx = propertyName.toULong(&ok);
+  unsigned idx = propertyName.toUInt32(&ok);
   if (ok && idx < map.length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
@@ -1908,7 +1908,7 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
 
   // array index ?
   bool ok;
-  long unsigned int idx = propertyName.toULong(&ok);
+  unsigned idx = propertyName.toUInt32(&ok);
   if (ok && idx < m_nodes.count()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;

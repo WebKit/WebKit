@@ -1860,10 +1860,10 @@ void HTMLTokenizer::processToken()
         kdDebug( 6036 ) << "Token is FLAT!" << endl;
     if(!text.isNull())
         kdDebug( 6036 ) << "text: \"" << text << "\"" << endl;
-    unsigned long l = currToken.attrs ? currToken.attrs->length() : 0;
+    unsigned l = currToken.attrs ? currToken.attrs->length() : 0;
     if(l) {
         kdDebug( 6036 ) << "Attributes: " << l << endl;
-        for (unsigned long i = 0; i < l; ++i) {
+        for (unsigned i = 0; i < l; ++i) {
             AttributeImpl* c = currToken.attrs->attributeItem(i);
             kdDebug( 6036 ) << "    " << c->name().qstring()
                             << "=\"" << c->value().qstring() << "\"" << endl;

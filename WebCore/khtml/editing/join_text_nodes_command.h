@@ -49,7 +49,7 @@ public:
 private:
     DOM::TextImpl *m_text1;
     DOM::TextImpl *m_text2;
-    unsigned long m_offset;
+    unsigned m_offset;
 };
 
 } // namespace khtml

@@ -47,13 +47,13 @@ enum {
 
 @interface DOMRange : DOMObject
 - (DOMNode *)startContainer;
-- (long)startOffset;
+- (int)startOffset;
 - (DOMNode *)endContainer;
-- (long)endOffset;
+- (int)endOffset;
 - (BOOL)collapsed;
 - (DOMNode *)commonAncestorContainer;
-- (void)setStart:(DOMNode *)refNode :(long)offset;
-- (void)setEnd:(DOMNode *)refNode :(long)offset;
+- (void)setStart:(DOMNode *)refNode :(int)offset;
+- (void)setEnd:(DOMNode *)refNode :(int)offset;
 - (void)setStartBefore:(DOMNode *)refNode;
 - (void)setStartAfter:(DOMNode *)refNode;
 - (void)setEndBefore:(DOMNode *)refNode;

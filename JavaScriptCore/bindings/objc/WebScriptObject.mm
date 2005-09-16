@@ -169,7 +169,7 @@ static void _didExecute(WebScriptObject *obj)
 
 static List listFromNSArray(ExecState *exec, NSArray *array)
 {
-    long i, numObjects = array ? [array count] : 0;
+    int i, numObjects = array ? [array count] : 0;
     List aList;
     
     for (i = 0; i < numObjects; i++) {

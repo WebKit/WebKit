@@ -360,7 +360,7 @@ public:
   /**
    * Returns whether images contained in the document are loaded automatically
    * or not.
-   * @note that the returned information is unrelieable as long as no begin()
+   * @note that the returned information is unreliable as long as no begin()
    * was called.
    */
   bool autoloadImages() const;
@@ -1361,7 +1361,7 @@ private:
 #if APPLE_CHANGES
  private:
 #endif
-  long cacheId() const;
+  int cacheId() const;
 
   void checkEmitLoadEvent();
   void emitLoadEvent();

@@ -48,8 +48,8 @@ private:
     DOM::DOMString m_beforeString;
     DOM::DOMString m_afterString;
     DOM::Position m_position;
-    long m_upstreamOffset;
-    long m_downstreamOffset;
+    int m_upstreamOffset;
+    int m_downstreamOffset;
 };
 
 } // namespace khtml

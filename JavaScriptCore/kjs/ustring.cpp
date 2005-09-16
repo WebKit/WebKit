@@ -488,13 +488,38 @@ const UString &UString::null()
 
 UString UString::from(int i)
 {
-  return from((long)i);
+  UChar buf[1 + sizeof(i) * 3];
+  UChar *end = buf + sizeof(buf) / sizeof(UChar);
+  UChar *p = end;
+  
+  if (i == 0) {
+    *--p = '0';
+  } else if (i == INT_MIN) {
+    char minBuf[1 + sizeof(i) * 3];
+    sprintf(minBuf, "%d", INT_MIN);
+    return UString(minBuf);
+  } else {
+    bool negative = false;
+    if (i < 0) {
+      negative = true;
+      i = -i;
+    }
+    while (i) {
+      *--p = (unsigned short)((i % 10) + '0');
+      i /= 10;
+    }
+    if (negative) {
+      *--p = '-';
+    }
+  }
+  
+  return UString(p, end - p);
 }
 
 UString UString::from(unsigned int u)
 {
-  UChar buf[20];
-  UChar *end = buf + 20;
+  UChar buf[sizeof(u) * 3];
+  UChar *end = buf + sizeof(buf) / sizeof(UChar);
   UChar *p = end;
   
   if (u == 0) {
@@ -511,14 +536,14 @@ UString UString::from(unsigned int u)
 
 UString UString::from(long l)
 {
-  UChar buf[20];
-  UChar *end = buf + 20;
+  UChar buf[1 + sizeof(l) * 3];
+  UChar *end = buf + sizeof(buf) / sizeof(UChar);
   UChar *p = end;
   
   if (l == 0) {
     *--p = '0';
   } else if (l == LONG_MIN) {
-    char minBuf[20];
+    char minBuf[1 + sizeof(l) * 3];
     sprintf(minBuf, "%ld", LONG_MIN);
     return UString(minBuf);
   } else {
@@ -938,12 +963,12 @@ double UString::toDouble() const
   return toDouble(false, true);
 }
 
-unsigned long UString::toULong(bool *ok, bool tolerateEmptyString) const
+uint32_t UString::toUInt32(bool *ok) const
 {
-  double d = toDouble(false, tolerateEmptyString);
+  double d = toDouble();
   bool b = true;
 
-  if (isNaN(d) || d != static_cast<unsigned long>(d)) {
+  if (isNaN(d) || d != static_cast<uint32_t>(d)) {
     b = false;
     d = 0;
   }
@@ -951,17 +976,12 @@ unsigned long UString::toULong(bool *ok, bool tolerateEmptyString) const
   if (ok)
     *ok = b;
 
-  return static_cast<unsigned long>(d);
+  return static_cast<uint32_t>(d);
 }
 
-unsigned long UString::toULong(bool *ok) const
+uint32_t UString::toUInt32(bool *ok, bool tolerateEmptyString) const
 {
-  return toULong(ok, true);
-}
-
-uint32_t UString::toUInt32(bool *ok) const
-{
-  double d = toDouble();
+  double d = toDouble(false, tolerateEmptyString);
   bool b = true;
 
   if (isNaN(d) || d != static_cast<uint32_t>(d)) {
@@ -1046,7 +1066,7 @@ int UString::find(const UString &f, int pos) const
   if (fsz == 0)
     return pos;
   const UChar *end = data() + sz - fsz;
-  long fsizeminusone = (fsz - 1) * sizeof(UChar);
+  int fsizeminusone = (fsz - 1) * sizeof(UChar);
   const UChar *fdata = f.data();
   unsigned short fchar = fdata->uc;
   ++fdata;
@@ -1081,7 +1101,7 @@ int UString::rfind(const UString &f, int pos) const
     pos = sz - fsz;
   if (fsz == 0)
     return pos;
-  long fsizeminusone = (fsz - 1) * sizeof(UChar);
+  int fsizeminusone = (fsz - 1) * sizeof(UChar);
   const UChar *fdata = f.data();
   for (const UChar *c = data() + pos; c >= data(); c--) {
     if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))

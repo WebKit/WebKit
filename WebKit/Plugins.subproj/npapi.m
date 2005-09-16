@@ -35,7 +35,7 @@ WebBaseNetscapePluginView *pluginViewForInstance(NPP instance);
 
 // general plug-in to browser functions
 
-void* NPN_MemAlloc(UInt32 size)
+void* NPN_MemAlloc(uint32 size)
 {
     //LOG(Plugins, "NPN_MemAlloc");
     return malloc(size);
@@ -47,7 +47,7 @@ void NPN_MemFree(void* ptr)
     free(ptr);
 }
 
-UInt32 NPN_MemFlush(UInt32 size)
+uint32 NPN_MemFlush(uint32 size)
 {
     LOG(Plugins, "NPN_MemFlush");
     return size;
@@ -88,12 +88,12 @@ NPError NPN_GetURL(NPP instance, const char* URL, const char* target)
     return [pluginViewForInstance(instance) getURL:URL target:target];
 }
 
-NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
+NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData)
 {
     return [pluginViewForInstance(instance) postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
-NPError NPN_PostURL(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file)
+NPError NPN_PostURL(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file)
 {
     return [pluginViewForInstance(instance) postURL:URL target:target len:len buf:buf file:file];
 }
@@ -103,7 +103,7 @@ NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStrea
     return [pluginViewForInstance(instance) newStream:type target:target stream:stream];
 }
 
-SInt32	NPN_Write(NPP instance, NPStream* stream, SInt32 len, void* buffer)
+int32	NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
 {
     return [pluginViewForInstance(instance) write:stream len:len buffer:buffer];
 }

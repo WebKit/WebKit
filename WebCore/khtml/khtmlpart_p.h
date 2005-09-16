@@ -146,7 +146,9 @@ public:
 #ifndef Q_WS_QWS
     m_javaContext = 0;
 #endif
+#if !APPLE_CHANGES
     m_cacheId = 0;
+#endif
     m_frameNameId = 1;
 
     m_restored = false;
@@ -239,7 +241,9 @@ public:
   khtml::Decoder *m_decoder;
   QString m_encoding;
   QString m_sheetUsed;
+#if !APPLE_CANGES
   long m_cacheId;
+#endif
   QString scheduledScript;
   khtml::SharedPtr<DOM::NodeImpl> scheduledScriptNode;
 
@@ -399,8 +403,8 @@ public:
   QCursor m_linkCursor;
   QTimer m_scrollTimer;
 
-  unsigned long m_loadedObjects;
-  unsigned long m_totalObjectCount;
+  unsigned m_loadedObjects;
+  unsigned m_totalObjectCount;
   unsigned int m_jobPercent;
 
   KHTMLFind *m_findDialog;

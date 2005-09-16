@@ -81,8 +81,8 @@ public:
     TagNodeListImpl(NodeImpl *n, const AtomicString& namespaceURI, const AtomicString& localName);
 
     // DOM methods overridden from  parent classes
-    virtual unsigned long length() const;
-    virtual NodeImpl *item (unsigned long index) const;
+    virtual unsigned length() const;
+    virtual NodeImpl *item (unsigned index) const;
 
     // Other methods (not part of DOM)
 
@@ -260,9 +260,9 @@ void NodeImpl::normalize ()
         NamedAttrMapImpl *attrMap = element->attributes();
         
         if (attrMap) {
-            unsigned long numAttrs = attrMap->length();
+            unsigned numAttrs = attrMap->length();
             
-            for (unsigned long i = 0; i < numAttrs; i++) {
+            for (unsigned i = 0; i < numAttrs; i++) {
                 AttributeImpl *attribute = attrMap->attributeItem(i);
                 AttrImpl *attr = attribute->attrImpl();
                 
@@ -387,10 +387,10 @@ bool NodeImpl::isMouseFocusable() const
     return isFocusable();
 }
 
-unsigned long NodeImpl::nodeIndex() const
+unsigned NodeImpl::nodeIndex() const
 {
     NodeImpl *_tempNode = previousSibling();
-    unsigned long count=0;
+    unsigned count=0;
     for( count=0; _tempNode; count++ )
         _tempNode = _tempNode->previousSibling();
     return count;
@@ -973,12 +973,12 @@ void NodeImpl::defaultEventHandler(EventImpl *evt)
 {
 }
 
-unsigned long NodeImpl::childNodeCount() const
+unsigned NodeImpl::childNodeCount() const
 {
     return 0;
 }
 
-NodeImpl *NodeImpl::childNode(unsigned long /*index*/)
+NodeImpl *NodeImpl::childNode(unsigned /*index*/)
 {
     return 0;
 }
@@ -1448,7 +1448,7 @@ RenderObject *NodeImpl::createRenderer(RenderArena *arena, RenderStyle *style)
     return 0;
 }
 
-long NodeImpl::maxOffset() const
+int NodeImpl::maxOffset() const
 {
     return 1;
 }
@@ -1456,7 +1456,7 @@ long NodeImpl::maxOffset() const
 // FIXME: Shouldn't these functions be in the editing code?  Code that asks questions about HTML in the core DOM class
 // is obviously misplaced.
 // method for editing madness, which allows BR,1 as a position, though that is incorrect
-long NodeImpl::maxDeepOffset() const
+int NodeImpl::maxDeepOffset() const
 {
     if (isTextNode())
         return static_cast<const TextImpl*>(this)->length();
@@ -1467,27 +1467,27 @@ long NodeImpl::maxDeepOffset() const
     return childNodeCount();
 }
 
-long NodeImpl::caretMinOffset() const
+int NodeImpl::caretMinOffset() const
 {
     return renderer() ? renderer()->caretMinOffset() : 0;
 }
 
-long NodeImpl::caretMaxOffset() const
+int NodeImpl::caretMaxOffset() const
 {
     return renderer() ? renderer()->caretMaxOffset() : 1;
 }
 
-unsigned long NodeImpl::caretMaxRenderedOffset() const
+unsigned NodeImpl::caretMaxRenderedOffset() const
 {
     return renderer() ? renderer()->caretMaxRenderedOffset() : 1;
 }
 
-long NodeImpl::previousOffset (long current) const
+int NodeImpl::previousOffset (int current) const
 {
     return renderer() ? renderer()->previousOffset(current) : current - 1;
 }
 
-long NodeImpl::nextOffset (long current) const
+int NodeImpl::nextOffset (int current) const
 {
     return renderer() ? renderer()->nextOffset(current) : current + 1;
 }
@@ -2399,18 +2399,18 @@ void ContainerNodeImpl::setHovered(bool over)
     }
 }
 
-unsigned long ContainerNodeImpl::childNodeCount() const
+unsigned ContainerNodeImpl::childNodeCount() const
 {
-    unsigned long count = 0;
+    unsigned count = 0;
     NodeImpl *n;
     for (n = firstChild(); n; n = n->nextSibling())
         count++;
     return count;
 }
 
-NodeImpl *ContainerNodeImpl::childNode(unsigned long index)
+NodeImpl *ContainerNodeImpl::childNode(unsigned index)
 {
-    unsigned long i;
+    unsigned i;
     NodeImpl *n = firstChild();
     for (i = 0; n != 0 && i < index; i++)
         n = n->nextSibling();
@@ -2489,7 +2489,7 @@ NodeListImpl::~NodeListImpl()
     rootNode->deref();
 }
 
-unsigned long NodeListImpl::recursiveLength( NodeImpl *start ) const
+unsigned NodeListImpl::recursiveLength( NodeImpl *start ) const
 {
     if (!start)
 	start = rootNode;
@@ -2498,7 +2498,7 @@ unsigned long NodeListImpl::recursiveLength( NodeImpl *start ) const
         return cachedLength;
     }
 
-    unsigned long len = 0;
+    unsigned len = 0;
 
     for(NodeImpl *n = start->firstChild(); n != 0; n = n->nextSibling()) {
         if ( n->nodeType() == Node::ELEMENT_NODE ) {
@@ -2516,7 +2516,7 @@ unsigned long NodeListImpl::recursiveLength( NodeImpl *start ) const
     return len;
 }
 
-NodeImpl *NodeListImpl::recursiveItem ( unsigned long offset, NodeImpl *start) const
+NodeImpl *NodeListImpl::recursiveItem ( unsigned offset, NodeImpl *start) const
 {
     int remainingOffset = offset;
     if (!start) {
@@ -2568,9 +2568,9 @@ NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
         return 0;
     }
 
-    unsigned long l = length();
+    unsigned l = length();
 
-    for ( unsigned long i = 0; i < l; i++ ) {
+    for ( unsigned i = 0; i < l; i++ ) {
         NodeImpl *node = item(i);
         
         if ( static_cast<ElementImpl *>(node)->getIDAttribute() == elementId ) {
@@ -2593,9 +2593,9 @@ ChildNodeListImpl::ChildNodeListImpl( NodeImpl *n )
 {
 }
 
-unsigned long ChildNodeListImpl::length() const
+unsigned ChildNodeListImpl::length() const
 {
-    unsigned long len = 0;
+    unsigned len = 0;
     NodeImpl *n;
     for(n = rootNode->firstChild(); n != 0; n = n->nextSibling())
         len++;
@@ -2603,7 +2603,7 @@ unsigned long ChildNodeListImpl::length() const
     return len;
 }
 
-NodeImpl *ChildNodeListImpl::item ( unsigned long index ) const
+NodeImpl *ChildNodeListImpl::item ( unsigned index ) const
 {
     unsigned int pos = 0;
     NodeImpl *n = rootNode->firstChild();
@@ -2629,12 +2629,12 @@ TagNodeListImpl::TagNodeListImpl(NodeImpl *n, const AtomicString& namespaceURI, 
 {
 }
 
-unsigned long TagNodeListImpl::length() const
+unsigned TagNodeListImpl::length() const
 {
     return recursiveLength();
 }
 
-NodeImpl *TagNodeListImpl::item(unsigned long index) const
+NodeImpl *TagNodeListImpl::item(unsigned index) const
 {
     return recursiveItem(index);
 }
@@ -2655,12 +2655,12 @@ NameNodeListImpl::NameNodeListImpl(NodeImpl *n, const DOMString &t )
 {
 }
 
-unsigned long NameNodeListImpl::length() const
+unsigned NameNodeListImpl::length() const
 {
     return recursiveLength();
 }
 
-NodeImpl *NameNodeListImpl::item ( unsigned long index ) const
+NodeImpl *NameNodeListImpl::item ( unsigned index ) const
 {
     return recursiveItem( index );
 }

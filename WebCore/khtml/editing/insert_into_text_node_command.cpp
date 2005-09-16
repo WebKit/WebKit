@@ -39,7 +39,7 @@ using DOM::DOMString;
 
 namespace khtml {
 
-InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
+InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(DocumentImpl *document, TextImpl *node, int offset, const DOMString &text)
     : EditCommand(document), m_node(node), m_offset(offset)
 {
     ASSERT(m_node);

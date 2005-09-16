@@ -68,22 +68,22 @@ enum {
 
 @interface DOMUIEvent : DOMEvent
 - (DOMAbstractView *)view;
-- (long)detail;
-- (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg;
+- (int)detail;
+- (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg;
 @end
 
 @interface DOMMouseEvent : DOMUIEvent
-- (long)screenX;
-- (long)screenY;
-- (long)clientX;
-- (long)clientY;
+- (int)screenX;
+- (int)screenY;
+- (int)clientX;
+- (int)clientY;
 - (BOOL)ctrlKey;
 - (BOOL)shiftKey;
 - (BOOL)altKey;
 - (BOOL)metaKey;
 - (unsigned short)button;
 - (id <DOMEventTarget>)relatedTarget;
-- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg;
+- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg;
 @end
 
 enum {

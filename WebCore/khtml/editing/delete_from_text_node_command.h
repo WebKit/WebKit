@@ -39,20 +39,20 @@ namespace khtml {
 class DeleteFromTextNodeCommand : public EditCommand
 {
 public:
-    DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
+    DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, int offset, int count);
     virtual ~DeleteFromTextNodeCommand();
 	
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
-    long count() const { return m_count; }
+    int offset() const { return m_offset; }
+    int count() const { return m_count; }
 
 private:
     DOM::TextImpl *m_node;
-    long m_offset;
-    long m_count;
+    int m_offset;
+    int m_count;
     DOM::DOMString m_text;
 };
 

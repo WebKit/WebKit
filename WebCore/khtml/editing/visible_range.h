@@ -38,7 +38,7 @@ public:
     typedef DOM::RangeImpl RangeImpl;
 
     VisibleRange() { }
-    VisibleRange(NodeImpl *startContainer, long startOffset, NodeImpl *endContainer, long endOffset);
+    VisibleRange(NodeImpl *startContainer, int startOffset, NodeImpl *endContainer, int endOffset);
     VisibleRange(const VisiblePosition &);
     VisibleRange(const VisiblePosition &, const VisiblePosition &);
     VisibleRange(const RangeImpl *);

@@ -267,7 +267,7 @@ ValueImp *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodL
         break;
         
         case long_type: {
-            resultValue = Number((long int)result.j);
+            resultValue = jsNumber(result.j);
         }
         break;
         

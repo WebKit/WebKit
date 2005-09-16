@@ -31,15 +31,15 @@
 @class DOMHTMLTableSectionElement;
 
 @interface DOMHTMLCollection : DOMObject
-- (unsigned long)length;
-- (DOMNode *)item:(unsigned long)index;
+- (unsigned)length;
+- (DOMNode *)item:(unsigned)index;
 - (DOMNode *)namedItem:(NSString *)name;
 @end
 
 @interface DOMHTMLOptionsCollection : DOMObject
-- (unsigned long)length;
-- (void)setLength:(unsigned long)length;
-- (DOMNode *)item:(unsigned long)index;
+- (unsigned)length;
+- (void)setLength:(unsigned)length;
+- (DOMNode *)item:(unsigned)index;
 - (DOMNode *)namedItem:(NSString *)name;
 @end
 
@@ -165,7 +165,7 @@
 
 @interface DOMHTMLFormElement : DOMHTMLElement
 - (DOMHTMLCollection *)elements;
-- (long)length;
+- (int)length;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)acceptCharset;
@@ -184,11 +184,11 @@
 
 @interface DOMHTMLSelectElement : DOMHTMLElement
 - (NSString *)type;
-- (long)selectedIndex;
-- (void)setSelectedIndex:(long)selectedIndex;
+- (int)selectedIndex;
+- (void)setSelectedIndex:(int)selectedIndex;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
-- (long)length;
+- (int)length;
 - (DOMHTMLFormElement *)form;
 - (DOMHTMLOptionsCollection *)options;
 - (BOOL)disabled;
@@ -197,12 +197,12 @@
 - (void)setMultiple:(BOOL)multiple;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
-- (long)size;
-- (void)setSize:(long)size;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)size;
+- (void)setSize:(int)size;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
-- (void)remove:(long)index;
+- (void)remove:(int)index;
 - (void)blur;
 - (void)focus;
 @end
@@ -219,7 +219,7 @@
 - (BOOL)defaultSelected;
 - (void)setDefaultSelected:(BOOL)defaultSelected;
 - (NSString *)text;
-- (long)index;
+- (int)index;
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)label;
@@ -248,18 +248,18 @@
 - (void)setChecked:(BOOL)checked;
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
-- (long)maxLength;
-- (void)setMaxLength:(long)maxLength;
+- (int)maxLength;
+- (void)setMaxLength:(int)maxLength;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (BOOL)readOnly;
 - (void)setReadOnly:(BOOL)readOnly;
-- (unsigned long)size;
-- (void)setSize:(unsigned long)size;
+- (unsigned)size;
+- (void)setSize:(unsigned)size;
 - (NSString *)src;
 - (void)setSrc:(NSString *)src;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)type;
 - (void)setType:(NSString *)type;
 - (NSString *)useMap;
@@ -278,18 +278,18 @@
 - (DOMHTMLFormElement *)form;
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
-- (long)cols;
-- (void)setCols:(long)cols;
+- (int)cols;
+- (void)setCols:(int)cols;
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (BOOL)readOnly;
 - (void)setReadOnly:(BOOL)readOnly;
-- (long)rows;
-- (void)setRows:(long)rows;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)rows;
+- (void)setRows:(int)rows;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)type;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
@@ -306,8 +306,8 @@
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)type;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
@@ -343,8 +343,8 @@
 @interface DOMHTMLOListElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
-- (long)start;
-- (void)setStart:(long)start;
+- (int)start;
+- (void)setStart:(int)start;
 - (NSString *)type;
 - (void)setType:(NSString *)type;
 @end
@@ -367,8 +367,8 @@
 @interface DOMHTMLLIElement : DOMHTMLElement
 - (NSString *)type;
 - (void)setType:(NSString *)type;
-- (long)value;
-- (void)setValue:(long)value;
+- (int)value;
+- (void)setValue:(int)value;
 @end
 
 @interface DOMHTMLDivElement : DOMHTMLElement
@@ -392,8 +392,8 @@
 @end
 
 @interface DOMHTMLPreElement : DOMHTMLElement
-- (long)width;
-- (void)setWidth:(long)width;
+- (int)width;
+- (void)setWidth:(int)width;
 @end
 
 @interface DOMHTMLBRElement : DOMHTMLElement
@@ -456,8 +456,8 @@
 - (void)setRev:(NSString *)rev;
 - (NSString *)shape;
 - (void)setShape:(NSString *)shape;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)target;
 - (void)setTarget:(NSString *)target;
 - (NSString *)type;
@@ -475,10 +475,10 @@
 - (void)setAlt:(NSString *)alt;
 - (NSString *)border;
 - (void)setBorder:(NSString *)border;
-- (long)height;
-- (void)setHeight:(long)height;
-- (long)hspace;
-- (void)setHspace:(long)hspace;
+- (int)height;
+- (void)setHeight:(int)height;
+- (int)hspace;
+- (void)setHspace:(int)hspace;
 - (BOOL)isMap;
 - (void)setIsMap:(BOOL)isMap;
 - (NSString *)longDesc;
@@ -487,10 +487,10 @@
 - (void)setSrc:(NSString *)src;
 - (NSString *)useMap;
 - (void)setUseMap:(NSString *)useMap;
-- (long)vspace;
-- (void)setVspace:(long)vspace;
-- (long)width;
-- (void)setWidth:(long)width;
+- (int)vspace;
+- (void)setVspace:(int)vspace;
+- (int)width;
+- (void)setWidth:(int)width;
 @end
 
 @interface DOMHTMLObjectElement : DOMHTMLElement
@@ -513,20 +513,20 @@
 - (void)setDeclare:(BOOL)declare;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
-- (long)hspace;
-- (void)setHspace:(long)hspace;
+- (int)hspace;
+- (void)setHspace:(int)hspace;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)standby;
 - (void)setStandby:(NSString *)standby;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)type;
 - (void)setType:(NSString *)type;
 - (NSString *)useMap;
 - (void)setUseMap:(NSString *)useMap;
-- (long)vspace;
-- (void)setVspace:(long)vspace;
+- (int)vspace;
+- (void)setVspace:(int)vspace;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
 - (DOMDocument *)contentDocument;
@@ -556,14 +556,14 @@
 - (void)setCodeBase:(NSString *)codeBase;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
-- (long)hspace;
-- (void)setHspace:(long)hspace;
+- (int)hspace;
+- (void)setHspace:(int)hspace;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)object;
 - (void)setObject:(NSString *)object;
-- (long)vspace;
-- (void)setVspace:(long)vspace;
+- (int)vspace;
+- (void)setVspace:(int)vspace;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
 @end
@@ -587,8 +587,8 @@
 - (void)setNoHref:(BOOL)noHref;
 - (NSString *)shape;
 - (void)setShape:(NSString *)shape;
-- (long)tabIndex;
-- (void)setTabIndex:(long)tabIndex;
+- (int)tabIndex;
+- (void)setTabIndex:(int)tabIndex;
 - (NSString *)target;
 - (void)setTarget:(NSString *)target;
 @end
@@ -644,8 +644,8 @@
 - (void)deleteTFoot;
 - (DOMHTMLElement *)createCaption;
 - (void)deleteCaption;
-- (DOMHTMLElement *)insertRow:(long)index;
-- (void)deleteRow:(long)index;
+- (DOMHTMLElement *)insertRow:(int)index;
+- (void)deleteRow:(int)index;
 @end
 
 @interface DOMHTMLTableCaptionElement : DOMHTMLElement
@@ -660,8 +660,8 @@
 - (void)setCh:(NSString *)ch;
 - (NSString *)chOff;
 - (void)setChOff:(NSString *)chOff;
-- (long)span;
-- (void)setSpan:(long)span;
+- (int)span;
+- (void)setSpan:(int)span;
 - (NSString *)vAlign;
 - (void)setVAlign:(NSString *)vAlign;
 - (NSString *)width;
@@ -678,13 +678,13 @@
 - (NSString *)vAlign;
 - (void)setVAlign:(NSString *)vAlign;
 - (DOMHTMLCollection *)rows;
-- (DOMHTMLElement *)insertRow:(long)index;
-- (void)deleteRow:(long)index;
+- (DOMHTMLElement *)insertRow:(int)index;
+- (void)deleteRow:(int)index;
 @end
 
 @interface DOMHTMLTableRowElement : DOMHTMLElement
-- (long)rowIndex;
-- (long)sectionRowIndex;
+- (int)rowIndex;
+- (int)sectionRowIndex;
 - (DOMHTMLCollection *)cells;
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
@@ -696,12 +696,12 @@
 - (void)setChOff:(NSString *)chOff;
 - (NSString *)vAlign;
 - (void)setVAlign:(NSString *)vAlign;
-- (DOMHTMLElement *)insertCell:(long)index;
-- (void)deleteCell:(long)index;
+- (DOMHTMLElement *)insertCell:(int)index;
+- (void)deleteCell:(int)index;
 @end
 
 @interface DOMHTMLTableCellElement : DOMHTMLElement
-- (long)cellIndex;
+- (int)cellIndex;
 - (NSString *)abbr;
 - (void)setAbbr:(NSString *)abbr;
 - (NSString *)align;
@@ -714,16 +714,16 @@
 - (void)setCh:(NSString *)ch;
 - (NSString *)chOff;
 - (void)setChOff:(NSString *)chOff;
-- (long)colSpan;
-- (void)setColSpan:(long)colSpan;
+- (int)colSpan;
+- (void)setColSpan:(int)colSpan;
 - (NSString *)headers;
 - (void)setHeaders:(NSString *)headers;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
 - (BOOL)noWrap;
 - (void)setNoWrap:(BOOL)noWrap;
-- (long)rowSpan;
-- (void)setRowSpan:(long)rowSpan;
+- (int)rowSpan;
+- (void)setRowSpan:(int)rowSpan;
 - (NSString *)scope;
 - (void)setScope:(NSString *)scope;
 - (NSString *)vAlign;

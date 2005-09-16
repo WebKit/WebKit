@@ -51,7 +51,7 @@ const char *ObjcMethod::name() const
     return (const char *)_selector;
 }
 
-long ObjcMethod::numParameters() const
+int ObjcMethod::numParameters() const
 {
     return [getMethodSignature() numberOfArguments] - 2;
 }

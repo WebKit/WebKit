@@ -976,12 +976,12 @@ void HTMLObjectElementImpl::setStandby(const DOMString &value)
     setAttribute(standbyAttr, value);
 }
 
-long HTMLObjectElementImpl::tabIndex() const
+int HTMLObjectElementImpl::tabIndex() const
 {
     return getAttribute(tabindexAttr).toInt();
 }
 
-void HTMLObjectElementImpl::setTabIndex(long tabIndex)
+void HTMLObjectElementImpl::setTabIndex(int tabIndex)
 {
     setAttribute(tabindexAttr, QString::number(tabIndex));
 }

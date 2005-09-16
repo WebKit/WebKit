@@ -241,7 +241,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
         TextImpl *textNode = static_cast<TextImpl *>(startNode);
-        bool atEnd = (unsigned long)pos.offset() >= textNode->length();
+        bool atEnd = (unsigned)pos.offset() >= textNode->length();
         if (pos.offset() > 0 && !atEnd) {
             splitTextNode(textNode, pos.offset());
             pos = Position(startNode, 0);

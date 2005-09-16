@@ -616,7 +616,7 @@ void RenderLineEdit::slotTextChanged(const QString &string)
     element()->setValueFromRenderer(newText);
 }
 
-long RenderLineEdit::selectionStart()
+int RenderLineEdit::selectionStart()
 {
     KLineEdit *lineEdit = static_cast<KLineEdit *>(m_widget);
     int start = lineEdit->selectionStart();
@@ -625,7 +625,7 @@ long RenderLineEdit::selectionStart()
     return start;
 }
 
-long RenderLineEdit::selectionEnd()
+int RenderLineEdit::selectionEnd()
 {
     KLineEdit *lineEdit = static_cast<KLineEdit *>(m_widget);
     int start = lineEdit->selectionStart();
@@ -634,17 +634,17 @@ long RenderLineEdit::selectionEnd()
     return start + (int)lineEdit->selectedText().length();
 }
 
-void RenderLineEdit::setSelectionStart(long start)
+void RenderLineEdit::setSelectionStart(int start)
 {
-    int realStart = kMax(start, 0L);
-    int length = kMax(selectionEnd() - realStart, 0L);
+    int realStart = kMax(start, 0);
+    int length = kMax(selectionEnd() - realStart, 0);
     static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
-void RenderLineEdit::setSelectionEnd(long end)
+void RenderLineEdit::setSelectionEnd(int end)
 {
     int start = selectionStart();
-    int realEnd = kMax(end, 0L);
+    int realEnd = kMax(end, 0);
     int length = realEnd - start;
     if (length < 0) {
         start = realEnd;
@@ -658,10 +658,10 @@ void RenderLineEdit::select()
     static_cast<KLineEdit*>(m_widget)->selectAll();
 }
 
-void RenderLineEdit::setSelectionRange(long start, long end)
+void RenderLineEdit::setSelectionRange(int start, int end)
 {
-    int realStart = kMax(start, 0L);
-    int length = kMax(end - realStart, 0L);
+    int realStart = kMax(start, 0);
+    int length = kMax(end - realStart, 0);
     static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
@@ -1472,7 +1472,7 @@ void RenderTextArea::calcMinMaxWidth()
 
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
 #if APPLE_CHANGES
-    QSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1L), kMax(element()->rows(), 1L)));
+    QSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1), kMax(element()->rows(), 1)));
 #else
     const QFontMetrics &m = style()->fontMetrics();
     w->setTabStopWidth(8 * m.width(" "));
@@ -1596,7 +1596,7 @@ void RenderTextArea::slotTextChanged()
     m_dirty = true;
 }
 
-long RenderTextArea::selectionStart()
+int RenderTextArea::selectionStart()
 {
     QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
 #if APPLE_CHANGES
@@ -1608,7 +1608,7 @@ long RenderTextArea::selectionStart()
 #endif
 }
 
-long RenderTextArea::selectionEnd()
+int RenderTextArea::selectionEnd()
 {
     QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
 #if APPLE_CHANGES
@@ -1620,7 +1620,7 @@ long RenderTextArea::selectionEnd()
 #endif
 }
 
-void RenderTextArea::setSelectionStart(long start)
+void RenderTextArea::setSelectionStart(int start)
 {
     QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
 #if APPLE_CHANGES
@@ -1632,7 +1632,7 @@ void RenderTextArea::setSelectionStart(long start)
 #endif
 }
 
-void RenderTextArea::setSelectionEnd(long end)
+void RenderTextArea::setSelectionEnd(int end)
 {
     QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
 #if APPLE_CHANGES
@@ -1649,7 +1649,7 @@ void RenderTextArea::select()
     static_cast<QTextEdit *>(m_widget)->selectAll();
 }
 
-void RenderTextArea::setSelectionRange(long start, long end)
+void RenderTextArea::setSelectionRange(int start, int end)
 {
     QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
 #if APPLE_CHANGES

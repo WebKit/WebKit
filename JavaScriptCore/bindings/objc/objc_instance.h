@@ -76,7 +76,7 @@ private:
     ObjectStructPtr _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;
-    long _beginCount;
+    int _beginCount;
 };
 
 } // namespace Bindings

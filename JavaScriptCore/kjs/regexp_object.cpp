@@ -214,7 +214,7 @@ ObjectImp *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &resul
 ValueImp *RegExpObjectImp::backrefGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   RegExpObjectImp *thisObj = static_cast<RegExpObjectImp *>(slot.slotBase());
-  unsigned long i = slot.index();
+  unsigned i = slot.index();
 
   if (i < thisObj->lastNrSubPatterns + 1) {
     int *lastOvector = thisObj->lastOvector;
@@ -231,9 +231,8 @@ bool RegExpObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& prop
   if (s[0] == '$' && lastOvector)
   {
     bool ok;
-    unsigned long i = s.substr(1).toULong(&ok);
-    if (ok)
-    {
+    unsigned i = s.substr(1).toUInt32(&ok);
+    if (ok) {
       slot.setCustomIndex(this, i, backrefGetter);
       return true;
     }

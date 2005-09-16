@@ -52,7 +52,7 @@ MouseEvent::~MouseEvent()
   delete d;
 }
 
-long MouseEvent::offset() const
+int MouseEvent::offset() const
 {
     Position pos;
     if (NodeImpl *inner = m_innerNode.get()) {

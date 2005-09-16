@@ -260,7 +260,7 @@ public:
     virtual void recalcStyle( StyleChange = NoChange ) {}
     StyleChange diff( khtml::RenderStyle *s1, khtml::RenderStyle *s2 ) const;
 
-    unsigned long nodeIndex() const;
+    unsigned nodeIndex() const;
     // Returns the document that this node is associated with. This is guaranteed to always be non-null, as opposed to
     // DOM's ownerDocument() which is null for Document nodes (and sometimes DocumentType nodes).
     DocumentImpl* getDocument() const { return document->document(); }
@@ -306,8 +306,8 @@ public:
 
     virtual bool isReadOnly();
     virtual bool childTypeAllowed( unsigned short /*type*/ ) { return false; }
-    virtual unsigned long childNodeCount() const;
-    virtual NodeImpl *childNode(unsigned long index);
+    virtual unsigned childNodeCount() const;
+    virtual NodeImpl *childNode(unsigned index);
 
     /**
      * Does a pre-order traversal of the tree to find the node next node after this one. This uses the same order that
@@ -355,14 +355,14 @@ public:
 	void checkAddChild(NodeImpl *newChild, int &exceptioncode);    // Error-checking when adding via the DOM API
 	virtual bool childAllowed(NodeImpl *newChild);				   // Error-checking during parsing that checks the DTD
 	
-    virtual long maxOffset() const;
-    long maxDeepOffset() const;
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int maxOffset() const;
+    int maxDeepOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual long previousOffset (long current) const;
-    virtual long nextOffset (long current) const;
+    virtual int previousOffset (int current) const;
+    virtual int nextOffset (int current) const;
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
@@ -537,8 +537,8 @@ public:
     virtual void setFocus(bool=true);
     virtual void setActive(bool active = true, bool pause = false);
     virtual void setHovered(bool=true);
-    virtual unsigned long childNodeCount() const;
-    virtual NodeImpl *childNode(unsigned long index);
+    virtual unsigned childNodeCount() const;
+    virtual NodeImpl *childNode(unsigned index);
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -576,8 +576,8 @@ public:
     MAIN_THREAD_ALLOCATED;
 
     // DOM methods & attributes for NodeList
-    virtual unsigned long length() const = 0;
-    virtual NodeImpl *item ( unsigned long index ) const = 0;
+    virtual unsigned length() const = 0;
+    virtual NodeImpl *item ( unsigned index ) const = 0;
     virtual NodeImpl *itemById ( const DOMString & elementId ) const;
 
     // Other methods (not part of DOM)
@@ -587,14 +587,14 @@ public:
 
 protected:
     // helper functions for searching all ElementImpls in a tree
-    unsigned long recursiveLength(NodeImpl *start = 0) const;
-    NodeImpl *recursiveItem ( unsigned long offset, NodeImpl *start = 0 ) const;
+    unsigned recursiveLength(NodeImpl *start = 0) const;
+    NodeImpl *recursiveItem ( unsigned offset, NodeImpl *start = 0 ) const;
     virtual bool nodeMatches( NodeImpl *testNode ) const = 0;
 
     NodeImpl *rootNode;
     mutable int cachedLength;
     mutable NodeImpl *lastItem;
-    mutable unsigned long lastItemOffset;
+    mutable unsigned lastItemOffset;
     mutable bool isLengthCacheValid : 1;
     mutable bool isItemCacheValid : 1;
 };
@@ -606,8 +606,8 @@ public:
 
     // DOM methods overridden from  parent classes
 
-    virtual unsigned long length() const;
-    virtual NodeImpl *item ( unsigned long index ) const;
+    virtual unsigned length() const;
+    virtual NodeImpl *item ( unsigned index ) const;
 
 protected:
     virtual bool nodeMatches( NodeImpl *testNode ) const;
@@ -623,8 +623,8 @@ public:
 
     // DOM methods overridden from  parent classes
 
-    virtual unsigned long length() const;
-    virtual NodeImpl *item ( unsigned long index ) const;
+    virtual unsigned length() const;
+    virtual NodeImpl *item ( unsigned index ) const;
 
     // Other methods (not part of DOM)
     virtual void rootNodeChildrenChanged() {};
@@ -660,8 +660,8 @@ public:
     virtual SharedPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
     virtual SharedPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
 
-    virtual NodeImpl *item ( unsigned long index ) const = 0;
-    virtual unsigned long length(  ) const = 0;
+    virtual NodeImpl *item ( unsigned index ) const = 0;
+    virtual unsigned length(  ) const = 0;
 
     // Other methods (not part of DOM)
     virtual bool isReadOnly() { return false; }

@@ -42,15 +42,15 @@ extern NSString * const DOMEventException;
 @end
 
 @interface DOMStyleSheetList : DOMObject
-- (unsigned long)length;
-- (DOMStyleSheet *)item:(unsigned long)index;
+- (unsigned)length;
+- (DOMStyleSheet *)item:(unsigned)index;
 @end
 
 @interface DOMMediaList : DOMObject
 - (NSString *)mediaText;
 - (void)setMediaText:(NSString *)mediaText;
-- (unsigned long)length;
-- (NSString *)item:(unsigned long)index;
+- (unsigned)length;
+- (NSString *)item:(unsigned)index;
 - (void)deleteMedium:(NSString *)oldMedium;
 - (void)appendMedium:(NSString *)newMedium;
 @end

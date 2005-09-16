@@ -40,19 +40,19 @@ namespace khtml {
 class InsertIntoTextNodeCommand : public EditCommand
 {
 public:
-    InsertIntoTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
+    InsertIntoTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *, int, const DOM::DOMString &);
     virtual ~InsertIntoTextNodeCommand();
 	
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
+    int offset() const { return m_offset; }
     DOM::DOMString text() const { return m_text; }
 
 private:
     DOM::TextImpl *m_node;
-    long m_offset;
+    int m_offset;
     DOM::DOMString m_text;
 };
 

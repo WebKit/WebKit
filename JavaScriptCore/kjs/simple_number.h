@@ -36,6 +36,8 @@ using std::isnan;
 using std::signbit;
 #endif
 
+#define KJS_MIN_MACRO(a, b) ((a) < (b) ? (a) : (b))
+
 namespace KJS {
 
     class ValueImp;
@@ -51,18 +53,29 @@ namespace KJS {
     
     class SimpleNumber {
     public:
-	enum { tag = 1, shift = 2, mask = (1 << shift) - 1, sign = 1L << (sizeof(long) * 8 - 1 ), max = (1L << ((sizeof(long) * 8 - 1) - shift)) - 1, min = -max - 1, imax = (1L << ((sizeof(int) * 8 - 1) - shift)) - 1, imin = -imax - 1 };
-
+	enum {
+            tag = 1,
+            shift = 2,
+            mask = (1 << shift) - 1,
+            bits = KJS_MIN_MACRO(sizeof(ValueImp *) * 8 - shift, sizeof(long) * 8),
+            sign = 1UL << (bits + shift - 1),
+            umax = sign >> 1,
+            smax = static_cast<long>(umax),
+            smin = static_cast<long>(-umax - 1)
+        };
+        
 	static inline bool is(const ValueImp *imp) { return ((long)imp & mask) == tag; }
-	static inline long value(const ValueImp *imp) { return ((long)imp >> shift) | (((long)imp & sign) ? ~max : 0); }
+        static inline long value(const ValueImp *imp) { return ((long)imp >> shift) | (((long)imp & sign) ? ~umax : 0); }
 
-	static inline bool fits(int i) { return i <= imax && i >= imin; }
-	static inline bool fits(unsigned i) { return i <= (unsigned)max; }
-	static inline bool fits(long i) { return i <= max && i >= min; }
-	static inline bool fits(unsigned long i) { return i <= (unsigned)max; }
-	static inline bool integerFits(double d) { return !(d < min || d > max); }
-	static inline bool fits(double d) { return d >= min && d <= max && d == (double)(long)d && !isNegativeZero(d); }
-	static inline ValueImp *make(long i) { return (ValueImp *)((i << shift) | tag); }
+        static inline bool fits(int i) { return i <= smax && i >= smin; }
+	static inline bool fits(unsigned i) { return i <= umax; }
+	static inline bool fits(long i) { return i <= smax && i >= smin; }
+	static inline bool fits(unsigned long i) { return i <= umax; }
+	static inline bool fits(long long i) { return i <= smax && i >= smin; }
+	static inline bool fits(unsigned long long i) { return i <= umax; }
+	static inline bool integerFits(double d) { return !(d < smin || d > smax); }
+	static inline bool fits(double d) { return d >= smin && d <= smax && d == (double)(long)d && !isNegativeZero(d); }
+	static inline ValueImp *make(long i) { return reinterpret_cast<ValueImp *>(static_cast<uintptr_t>((i << shift) | tag)); }
     };
 
 }

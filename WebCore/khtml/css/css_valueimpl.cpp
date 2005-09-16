@@ -508,12 +508,12 @@ void CSSMutableStyleDeclarationImpl::setLengthProperty(int id, const DOM::DOMStr
     multiLength = false;
 }
 
-unsigned long CSSMutableStyleDeclarationImpl::length() const
+unsigned CSSMutableStyleDeclarationImpl::length() const
 {
     return m_values.count();
 }
 
-DOMString CSSMutableStyleDeclarationImpl::item(unsigned long i) const
+DOMString CSSMutableStyleDeclarationImpl::item(unsigned i) const
 {
     if (i >= m_values.count())
        return DOMString();

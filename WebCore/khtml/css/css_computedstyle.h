@@ -44,8 +44,8 @@ public:
 
     virtual DOMString cssText() const;
 
-    virtual unsigned long length() const;
-    virtual DOMString item(unsigned long index) const;
+    virtual unsigned length() const;
+    virtual DOMString item(unsigned index) const;
 
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
     virtual DOMString getPropertyValue(int propertyID) const;

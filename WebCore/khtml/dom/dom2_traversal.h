@@ -196,7 +196,7 @@ public:
     * children may still be considered. Note that this skip takes precedence
     * over the filter, if any.
     */
-    unsigned long whatToShow() const;
+    unsigned whatToShow() const;
 
     /**
      * The NodeFilter used to screen nodes.
@@ -318,7 +318,7 @@ public:
      * children may still be considered. Note that this skip takes precedence
      * over the filter, if any.
      */
-    unsigned long whatToShow() const;
+    unsigned whatToShow() const;
 
     /**
      * The filter used to screen nodes.
@@ -536,7 +536,7 @@ public:
      * @return The newly created NodeIterator .
      *
      *
-    NodeIterator createNodeIterator ( const Node &root, long whatToShow,
+    NodeIterator createNodeIterator ( const Node &root, int whatToShow,
 				      const NodeFilter &filter, bool expandEntityReferences );
 
      **
@@ -569,7 +569,7 @@ public:
      * node is null.
      *
      *
-    TreeWalker createTreeWalker ( const Node &root, long whatToShow,
+    TreeWalker createTreeWalker ( const Node &root, int whatToShow,
 				  const NodeFilter &filter, bool expandEntityReferences );
 };
 */

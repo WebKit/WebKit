@@ -89,8 +89,8 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
-    long width(bool ignorePendingStylesheets = false) const;
-    long height(bool ignorePendingStylesheets = false) const;
+    int width(bool ignorePendingStylesheets = false) const;
+    int height(bool ignorePendingStylesheets = false) const;
 
     bool isServerMap() const { return ( ismap && !usemap.length() );  }
     QImage currentImage() const;
@@ -114,13 +114,13 @@ public:
     DOMString alt() const;
     void setAlt( const DOMString & );
 
-    long border() const;
-    void setBorder( long );
+    int border() const;
+    void setBorder( int );
 
-    void setHeight( long );
+    void setHeight( int );
 
-    long hspace() const;
-    void setHspace( long );
+    int hspace() const;
+    void setHspace( int );
 
     bool isMap() const;
     void setIsMap( bool );
@@ -134,13 +134,13 @@ public:
     DOMString useMap() const;
     void setUseMap( const DOMString & );
 
-    long vspace() const;
-    void setVspace( long );
+    int vspace() const;
+    void setVspace( int );
 
-    void setWidth( long );
+    void setWidth( int );
 
-    long x() const;
-    long y() const;
+    int x() const;
+    int y() const;
 
 protected:
     HTMLImageLoader m_imageLoader;
@@ -193,8 +193,8 @@ public:
     DOMString shape() const;
     void setShape( const DOMString & );
 
-    long tabIndex() const;
-    void setTabIndex( long );
+    int tabIndex() const;
+    void setTabIndex( int );
 
     DOMString target() const;
     void setTarget( const DOMString & );

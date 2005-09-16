@@ -37,19 +37,19 @@ namespace khtml {
 class SplitTextNodeCommand : public EditCommand
 {
 public:
-    SplitTextNodeCommand(DOM::DocumentImpl *, DOM::TextImpl *, long);
+    SplitTextNodeCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
     virtual ~SplitTextNodeCommand();
 	
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_text2; }
-    long offset() const { return m_offset; }
+    int offset() const { return m_offset; }
 
 private:
     DOM::TextImpl *m_text1;
     DOM::TextImpl *m_text2;
-    unsigned long m_offset;
+    unsigned m_offset;
 };
 
 } // namespace khtml

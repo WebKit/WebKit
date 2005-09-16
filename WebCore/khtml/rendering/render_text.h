@@ -127,9 +127,9 @@ public:
     void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font, int startPos, int endPos);
     void paintMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker);
     void paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, KWQKHTMLPart::MarkedTextUnderline underline);
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
     
     int textPos() const;
     int offsetForPosition(int _x, bool includePartialGlyphs = true) const;
@@ -257,7 +257,7 @@ public:
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
     
-    virtual InlineBox *inlineBox(long offset, EAffinity affinity = UPSTREAM);
+    virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
 
 #if APPLE_CHANGES
     int widthFromCache(const Font *, int start, int len, int tabWidth, int xpos) const;
@@ -266,12 +266,12 @@ public:
     bool allAscii() const;
 #endif
 
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual long previousOffset (long current) const;
-    virtual long nextOffset (long current) const;
+    virtual int previousOffset (int current) const;
+    virtual int nextOffset (int current) const;
     
     bool containsReversedText() { return m_containsReversedText; }
     

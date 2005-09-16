@@ -242,7 +242,7 @@ static inline UString substituteBackreferences(const UString &replacement, const
       continue;
     }
     // Assume number part is one char exactly
-    unsigned long backrefIndex = substitutedReplacement.substr(i+1,1).toULong(&converted, false /* tolerate empty string */);
+    unsigned backrefIndex = substitutedReplacement.substr(i+1,1).toUInt32(&converted, false /* tolerate empty string */);
     if (converted && backrefIndex <= (unsigned)reg->subPatterns()) {
       int backrefStart = (*ovector)[2*backrefIndex];
       int backrefLength = (*ovector)[2*backrefIndex+1] - backrefStart;

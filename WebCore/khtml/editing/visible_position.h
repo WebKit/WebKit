@@ -61,7 +61,7 @@ public:
     // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
     // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
-    VisiblePosition(NodeImpl *, long offset, EAffinity);
+    VisiblePosition(NodeImpl *, int offset, EAffinity);
     VisiblePosition(const Position &, EAffinity);
     VisiblePosition(const VisiblePosition &);
 
@@ -106,7 +106,7 @@ private:
     static Position deepEquivalent(const Position &);
     static Position rangeCompliantEquivalent(const Position &);
 
-    static long maxOffset(const NodeImpl *);
+    static int maxOffset(const NodeImpl *);
     static bool isAtomicNode(const NodeImpl *);
     
     static Position previousVisiblePosition(const Position &);

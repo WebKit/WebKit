@@ -115,7 +115,7 @@ namespace DOM {
         };
         
         enum MarkerType type;
-        ulong startOffset, endOffset;
+        unsigned startOffset, endOffset;
         
         bool operator == (const DocumentMarker &o) const {
             return type == o.type && startOffset == o.startOffset && endOffset == o.endOffset;
@@ -274,10 +274,10 @@ public:
 
     RangeImpl *createRange();
 
-    NodeIteratorImpl *createNodeIterator(NodeImpl *root, unsigned long whatToShow,
+    NodeIteratorImpl *createNodeIterator(NodeImpl *root, unsigned whatToShow,
         NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode);
 
-    TreeWalkerImpl *createTreeWalker(NodeImpl *root, unsigned long whatToShow, 
+    TreeWalkerImpl *createTreeWalker(NodeImpl *root, unsigned whatToShow, 
         NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode);
 
     // Special support for editing
@@ -536,12 +536,12 @@ public:
     
     void addMarker(RangeImpl *range, DocumentMarker::MarkerType type);
     void addMarker(NodeImpl *node, DocumentMarker marker);
-    void copyMarkers(NodeImpl *srcNode, ulong startOffset, long length, NodeImpl *dstNode, long delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
+    void copyMarkers(NodeImpl *srcNode, unsigned startOffset, int length, NodeImpl *dstNode, int delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
     void removeMarkers(RangeImpl *range, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
-    void removeMarkers(NodeImpl *node, ulong startOffset, long length, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
+    void removeMarkers(NodeImpl *node, unsigned startOffset, int length, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
     void removeMarkers(DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
     void removeMarkers(NodeImpl *node);
-    void shiftMarkers(NodeImpl *node, ulong startOffset, long delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
+    void shiftMarkers(NodeImpl *node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
 
     QValueList<DocumentMarker> markersForNode(NodeImpl *node);
     

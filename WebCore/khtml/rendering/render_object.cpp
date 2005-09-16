@@ -2540,34 +2540,34 @@ int RenderObject::maximalOutlineSize(PaintAction p) const
     return static_cast<RenderCanvas*>(document()->renderer())->maximalOutlineSize();
 }
 
-long RenderObject::caretMinOffset() const
+int RenderObject::caretMinOffset() const
 {
     return 0;
 }
 
-long RenderObject::caretMaxOffset() const
+int RenderObject::caretMaxOffset() const
 {
     return 0;
 }
 
-unsigned long RenderObject::caretMaxRenderedOffset() const
+unsigned RenderObject::caretMaxRenderedOffset() const
 {
     return 0;
 }
 
-long RenderObject::previousOffset (long current) const
+int RenderObject::previousOffset (int current) const
 {
-    long previousOffset = current - 1;
+    int previousOffset = current - 1;
     return previousOffset;
 }
 
-long RenderObject::nextOffset (long current) const
+int RenderObject::nextOffset (int current) const
 {
-    long nextOffset = current + 1;
+    int nextOffset = current + 1;
     return nextOffset;
 }
 
-InlineBox *RenderObject::inlineBox(long offset, EAffinity affinity)
+InlineBox *RenderObject::inlineBox(int offset, EAffinity affinity)
 {
     return inlineBoxWrapper();
 }

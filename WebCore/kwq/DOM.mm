@@ -645,12 +645,12 @@ using khtml::SharedPtr;
     return result;
 }
 
-- (DOMNode *)item:(unsigned long)index
+- (DOMNode *)item:(unsigned)index
 {
     return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->item(index)];
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _namedNodeMapImpl]->length();
 }
@@ -741,12 +741,12 @@ using khtml::SharedPtr;
     return DOM_cast<NodeListImpl *>(_internal);
 }
 
-- (DOMNode *)item:(unsigned long)index
+- (DOMNode *)item:(unsigned)index
 {
     return [DOMNode _nodeWithImpl:[self _nodeListImpl]->item(index)];
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _nodeListImpl]->length();
 }
@@ -1132,12 +1132,12 @@ using khtml::SharedPtr;
     raiseOnDOMError(exceptionCode);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _characterDataImpl]->length();
 }
 
-- (NSString *)substringData:(unsigned long)offset :(unsigned long)count
+- (NSString *)substringData:(unsigned)offset :(unsigned)count
 {
     int exceptionCode = 0;
     NSString *result = [self _characterDataImpl]->substringData(offset, count, exceptionCode);
@@ -1154,7 +1154,7 @@ using khtml::SharedPtr;
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)insertData:(unsigned long)offset :(NSString *)arg
+- (void)insertData:(unsigned)offset :(NSString *)arg
 {
     ASSERT(arg);
     
@@ -1163,14 +1163,14 @@ using khtml::SharedPtr;
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)deleteData:(unsigned long)offset :(unsigned long) count
+- (void)deleteData:(unsigned)offset :(unsigned) count
 {
     int exceptionCode = 0;
     [self _characterDataImpl]->deleteData(offset, count, exceptionCode);
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg
+- (void)replaceData:(unsigned)offset :(unsigned)count :(NSString *)arg
 {
     ASSERT(arg);
 
@@ -1431,7 +1431,7 @@ using khtml::SharedPtr;
     return static_cast<TextImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
-- (DOMText *)splitText:(unsigned long)offset
+- (DOMText *)splitText:(unsigned)offset
 {
     int exceptionCode = 0;
     DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, exceptionCode)];
@@ -1613,7 +1613,7 @@ using khtml::SharedPtr;
 {
     if (!_internal)
         return @"<DOMRange: null>";
-    return [NSString stringWithFormat:@"<DOMRange: %@ %ld %@ %ld>",
+    return [NSString stringWithFormat:@"<DOMRange: %@ %d %@ %d>",
         [self startContainer], [self startOffset],
         [self endContainer], [self endOffset]];
 }
@@ -1626,10 +1626,10 @@ using khtml::SharedPtr;
     return result;
 }
 
-- (long)startOffset
+- (int)startOffset
 {
     int exceptionCode = 0;
-    long result = [self _rangeImpl]->startOffset(exceptionCode);
+    int result = [self _rangeImpl]->startOffset(exceptionCode);
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1642,10 +1642,10 @@ using khtml::SharedPtr;
     return result;
 }
 
-- (long)endOffset
+- (int)endOffset
 {
     int exceptionCode = 0;
-    long result = [self _rangeImpl]->endOffset(exceptionCode);
+    int result = [self _rangeImpl]->endOffset(exceptionCode);
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1666,14 +1666,14 @@ using khtml::SharedPtr;
     return result;
 }
 
-- (void)setStart:(DOMNode *)refNode :(long)offset
+- (void)setStart:(DOMNode *)refNode :(int)offset
 {
     int exceptionCode = 0;
     [self _rangeImpl]->setStart([refNode _nodeImpl], offset, exceptionCode);
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)setEnd:(DOMNode *)refNode :(long)offset
+- (void)setEnd:(DOMNode *)refNode :(int)offset
 {
     int exceptionCode = 0;
     [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, exceptionCode);
@@ -1941,7 +1941,7 @@ using khtml::SharedPtr;
     return [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->root()];
 }
 
-- (unsigned long)whatToShow
+- (unsigned)whatToShow
 {
     return [self _nodeIteratorImpl]->whatToShow();
 }
@@ -2045,7 +2045,7 @@ using khtml::SharedPtr;
     return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->root()];
 }
 
-- (unsigned long)whatToShow
+- (unsigned)whatToShow
 {
     return [self _treeWalkerImpl]->whatToShow();
 }
@@ -2171,7 +2171,7 @@ short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
 
 @implementation DOMDocument (DOMDocumentTraversal)
 
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
     NodeFilterImpl *cppFilter = 0;
     if (filter) {
@@ -2187,7 +2187,7 @@ short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
     return [DOMNodeIterator _nodeIteratorWithImpl:impl filter:filter];
 }
 
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
     NodeFilterImpl *cppFilter = 0;
     if (filter) {

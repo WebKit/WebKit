@@ -1,3 +1,17 @@
+2005-09-16  Adele Peterson  <adele@apple.com>
+
+        Change by Darin, reviewed by me and Maciej.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        use int instead of long for 32-bit (to prepare for LP64 compiling)
+
+        * Plugins.subproj/npapi.m: changed types to match those defined in npapi.h
+        (NPN_MemAlloc):
+        (NPN_MemFlush):
+        (NPN_PostURLNotify):
+        (NPN_PostURL):
+        (NPN_Write):
+
 2005-09-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

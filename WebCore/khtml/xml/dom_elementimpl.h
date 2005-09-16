@@ -294,11 +294,11 @@ public:
     virtual SharedPtr<NodeImpl> removeNamedItem(const QualifiedName& name, int &exceptioncode);
     virtual SharedPtr<NodeImpl> setNamedItem(NodeImpl* arg, int &exceptioncode);
 
-    virtual AttrImpl *item ( unsigned long index ) const;
-    unsigned long length() const { return len; }
+    virtual AttrImpl *item ( unsigned index ) const;
+    unsigned length() const { return len; }
 
     // Other methods (not part of DOM)
-    AttributeImpl* attributeItem(unsigned long index) const { return attrs ? attrs[index] : 0; }
+    AttributeImpl* attributeItem(unsigned index) const { return attrs ? attrs[index] : 0; }
     AttributeImpl* getAttributeItem(const QualifiedName& name) const;
     virtual bool isReadOnly() { return element ? element->isReadOnly() : false; }
 
@@ -409,7 +409,7 @@ public:
     bool mapsEquivalent(const NamedMappedAttrMapImpl* otherMap) const;
     int declCount() const;
 
-    MappedAttributeImpl* attributeItem(unsigned long index) const
+    MappedAttributeImpl* attributeItem(unsigned index) const
     { return attrs ? static_cast<MappedAttributeImpl*>(attrs[index]) : 0; }
     
 private:

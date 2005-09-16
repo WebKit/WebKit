@@ -1001,12 +1001,12 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
     NodeImpl *searchEndAfterWrapNode = it.range()->endContainer(exception);
-    long searchEndAfterWrapOffset = it.range()->endOffset(exception);
+    int searchEndAfterWrapOffset = it.range()->endOffset(exception);
 
     while (1) {
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
             const QChar *chars = it.characters();
-            long len = it.length();
+            int len = it.length();
             if (len > 1 || !chars[0].isSpace()) {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
                 NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
@@ -1591,7 +1591,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     // copy to m_workingURL after fixing m_url above
     d->m_workingURL = m_url;
         
-    emit started( 0L );
+    emit started(NULL);
     
     // -----------begin-----------
     clear();
@@ -1599,7 +1599,6 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     doc->setInPageCache(NO);
 
     d->m_bCleared = false;
-    d->m_cacheId = 0;
     d->m_bComplete = false;
     d->m_bLoadEventEmitted = false;
     d->m_referrer = m_url.url();
@@ -4036,7 +4035,7 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
     
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
         const QChar *chars = it.characters();
-        long len = it.length();
+        int len = it.length();
         if (len > 1 || !chars[0].isSpace()) {
             NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
             int startIndex = 0;

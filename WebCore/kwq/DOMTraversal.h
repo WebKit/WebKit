@@ -60,7 +60,7 @@ enum {
     id <DOMNodeFilter> m_filter;
 }
 - (DOMNode *)root;
-- (unsigned long)whatToShow;
+- (unsigned)whatToShow;
 - (id <DOMNodeFilter>)filter;
 - (BOOL)expandEntityReferences;
 - (DOMNode *)nextNode;
@@ -73,7 +73,7 @@ enum {
     id <DOMNodeFilter> m_filter;
 }
 - (DOMNode *)root;
-- (unsigned long)whatToShow;
+- (unsigned)whatToShow;
 - (id <DOMNodeFilter>)filter;
 - (BOOL)expandEntityReferences;
 - (DOMNode *)currentNode;
@@ -88,6 +88,6 @@ enum {
 @end
 
 @interface DOMDocument (DOMDocumentTraversal)
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
 @end

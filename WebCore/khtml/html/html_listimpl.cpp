@@ -136,7 +136,7 @@ void HTMLOListElementImpl::setCompact(bool b)
     setAttribute(compactAttr, b ? "" : 0);
 }
 
-void HTMLOListElementImpl::setStart(long start)
+void HTMLOListElementImpl::setStart(int start)
 {
     setAttribute(startAttr, QString::number(start));
 }
@@ -237,12 +237,12 @@ void HTMLLIElementImpl::setType(const DOMString &value)
     setAttribute(typeAttr, value);
 }
 
-long HTMLLIElementImpl::value() const
+int HTMLLIElementImpl::value() const
 {
     return getAttribute(valueAttr).toInt();
 }
 
-void HTMLLIElementImpl::setValue(long value)
+void HTMLLIElementImpl::setValue(int value)
 {
     setAttribute(valueAttr, QString::number(value));
 }

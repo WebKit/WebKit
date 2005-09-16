@@ -48,11 +48,11 @@ public:
     
     virtual Field *fieldNamed(const char *name, Instance *instance) const;
     
-    virtual Constructor *constructorAt(long i) const {
+    virtual Constructor *constructorAt(int i) const {
         return &_constructors[i]; 
     };
     
-    virtual long numConstructors() const { return _numConstructors; };
+    virtual int numConstructors() const { return _numConstructors; };
     
     bool isNumberClass() const;
     bool isBooleanClass() const;
@@ -67,7 +67,7 @@ private:
     CFDictionaryRef _fields;
     CFDictionaryRef _methods;
     JavaConstructor *_constructors;
-    long _numConstructors;
+    int _numConstructors;
 };
 
 } // namespace Bindings

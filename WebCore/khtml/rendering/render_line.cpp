@@ -113,17 +113,17 @@ void InlineBox::showTree() const
 }
 #endif
 
-long InlineBox::caretMinOffset() const 
+int InlineBox::caretMinOffset() const 
 { 
     return 0; 
 }
 
-long InlineBox::caretMaxOffset() const 
+int InlineBox::caretMaxOffset() const 
 { 
     return 1; 
 }
 
-unsigned long InlineBox::caretMaxRenderedOffset() const 
+unsigned InlineBox::caretMaxRenderedOffset() const 
 { 
     return 1; 
 }

@@ -70,8 +70,8 @@ public:
 
     virtual ValueImp *fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
     
-    virtual Constructor *constructorAt(long i) const { return 0; }
-    virtual long numConstructors() const { return 0; }
+    virtual Constructor *constructorAt(int i) const { return 0; }
+    virtual int numConstructors() const { return 0; }
     
     ClassStructPtr isa() { return _isa; }
     

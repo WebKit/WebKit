@@ -55,13 +55,13 @@ private:
 class TraversalImpl : public khtml::Shared<TraversalImpl>
 {
 public:
-    TraversalImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    TraversalImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~TraversalImpl();
 
     MAIN_THREAD_ALLOCATED;
     
     NodeImpl *root() const { return m_root; }
-    unsigned long whatToShow() const { return m_whatToShow; }
+    unsigned whatToShow() const { return m_whatToShow; }
     NodeFilterImpl *filter() const { return m_filter; }
     bool expandEntityReferences() const { return m_expandEntityReferences; }
 
@@ -72,7 +72,7 @@ private:
     TraversalImpl &operator=(const TraversalImpl &);
     
     NodeImpl *m_root;
-    long m_whatToShow;
+    int m_whatToShow;
     NodeFilterImpl *m_filter;
     bool m_expandEntityReferences;
 };
@@ -80,7 +80,7 @@ private:
 class NodeIteratorImpl : public TraversalImpl
 {
 public:
-    NodeIteratorImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    NodeIteratorImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~NodeIteratorImpl();
 
     NodeImpl *nextNode(int &exceptioncode);
@@ -119,7 +119,7 @@ private:
 class TreeWalkerImpl : public TraversalImpl
 {
 public:
-    TreeWalkerImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    TreeWalkerImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~TreeWalkerImpl();
 
     NodeImpl *currentNode() const { return m_current; }

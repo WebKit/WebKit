@@ -297,7 +297,7 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
     _methodID = 0;
     
     jclass modifierClass = env->FindClass("java/lang/reflect/Modifier");
-    long modifiers = callJNIIntMethod (aMethod, "getModifiers", "()I");
+    int modifiers = callJNIIntMethod (aMethod, "getModifiers", "()I");
     _isStatic = (bool)callJNIStaticBooleanMethod (modifierClass, "isStatic", "(I)Z", modifiers);
 }
 

@@ -1,3 +1,619 @@
+2005-09-16  Adele Peterson  <adele@apple.com>
+
+        Change by Darin, reviewed by me and Maciej.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        use int instead of long for 32-bit (to prepare for LP64 compiling)
+
+        Changed longs (which IDL files use as 32-bit) to ints
+
+        * ForwardingHeaders/khtml_pagecache.h:
+        * khtml/css/css_base.h:
+        (DOM::StyleListImpl::length):
+        (DOM::StyleListImpl::item):
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::length):
+        (DOM::CSSComputedStyleDeclarationImpl::item):
+        * khtml/css/css_computedstyle.h:
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSMediaRuleImpl::append):
+        (CSSMediaRuleImpl::insertRule):
+        (CSSMediaRuleImpl::cssText):
+        (CSSRuleListImpl::CSSRuleListImpl):
+        (CSSRuleListImpl::deleteRule):
+        (CSSRuleListImpl::insertRule):
+        * khtml/css/css_ruleimpl.h:
+        (DOM::CSSRuleListImpl::length):
+        (DOM::CSSRuleListImpl::item):
+        (DOM::CSSMediaRuleImpl::deleteRule):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::insertRule):
+        (CSSStyleSheetImpl::addRule):
+        (CSSStyleSheetImpl::deleteRule):
+        (StyleSheetListImpl::length):
+        (StyleSheetListImpl::item):
+        * khtml/css/css_stylesheetimpl.h:
+        (DOM::MediaListImpl::length):
+        (DOM::MediaListImpl::item):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::length):
+        (DOM::CSSMutableStyleDeclarationImpl::item):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSValueListImpl::length):
+        (DOM::CSSValueListImpl::item):
+        * khtml/dom/css_rule.h:
+        * khtml/dom/css_stylesheet.h:
+        * khtml/dom/css_value.h:
+        * khtml/dom/dom2_events.cpp:
+        (DOM::UIEvent::detail):
+        (DOM::UIEvent::initUIEvent):
+        (DOM::MouseEvent::screenX):
+        (DOM::MouseEvent::screenY):
+        (DOM::MouseEvent::clientX):
+        (DOM::MouseEvent::clientY):
+        (DOM::MouseEvent::initMouseEvent):
+        (DOM::KeyboardEvent::keyLocation):
+        (DOM::KeyboardEvent::initKeyboardEvent):
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_range.h:
+        * khtml/dom/dom2_traversal.cpp:
+        (DOM::NodeIterator::whatToShow):
+        (DOM::TreeWalker::whatToShow):
+        * khtml/dom/dom2_traversal.h:
+        * khtml/dom/dom_node.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::getOwnPropertySlot):
+        (KJS::DOMStyleSheetList::getOwnPropertySlot):
+        (KJS::DOMMediaList::getOwnPropertySlot):
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        (KJS::DOMCSSRuleList::getOwnPropertySlot):
+        (KJS::DOMCSSValueList::getOwnPropertySlot):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        (KJS::DOMNodeList::callAsFunction):
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMEvent::getValueProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::HTMLCollection::getOwnPropertySlot):
+        (KJS::KJS::HTMLCollection::callAsFunction):
+        (KJS::KJS::HTMLSelectCollection::put):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugins::getOwnPropertySlot):
+        (KJS::MimeTypes::getOwnPropertySlot):
+        (KJS::Plugin::getOwnPropertySlot):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        * khtml/editing/break_blockquote_command.cpp:
+        (khtml::BreakBlockquoteCommand::doApply):
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::insertNodeAt):
+        (khtml::CompositeEditCommand::splitTextNode):
+        (khtml::CompositeEditCommand::splitTextNodeContainingElement):
+        (khtml::CompositeEditCommand::insertTextIntoNode):
+        (khtml::CompositeEditCommand::deleteTextFromNode):
+        (khtml::CompositeEditCommand::replaceTextInNode):
+        (khtml::CompositeEditCommand::deleteInsignificantText):
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/delete_from_text_node_command.cpp:
+        (khtml::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand):
+        * khtml/editing/delete_from_text_node_command.h:
+        (khtml::DeleteFromTextNodeCommand::offset):
+        (khtml::DeleteFromTextNodeCommand::count):
+        * khtml/editing/insert_into_text_node_command.cpp:
+        (khtml::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        * khtml/editing/insert_into_text_node_command.h:
+        (khtml::InsertIntoTextNodeCommand::offset):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::input):
+        (khtml::InsertTextCommand::insertSpace):
+        * khtml/editing/insert_text_command.h:
+        (khtml::InsertTextCommand::charactersAdded):
+        * khtml/editing/join_text_nodes_command.h:
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        (khtml::completeURLs):
+        * khtml/editing/move_selection_command.cpp:
+        (khtml::MoveSelectionCommand::doApply):
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        (khtml::RebalanceWhitespaceCommand::doApply):
+        * khtml/editing/rebalance_whitespace_command.h:
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted):
+        * khtml/editing/replace_selection_command.h:
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::debugPosition):
+        * khtml/editing/split_text_node_command.cpp:
+        (khtml::SplitTextNodeCommand::SplitTextNodeCommand):
+        * khtml/editing/split_text_node_command.h:
+        (khtml::SplitTextNodeCommand::offset):
+        * khtml/editing/split_text_node_containing_element.cpp:
+        (khtml::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand):
+        * khtml/editing/split_text_node_containing_element_command.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::VisiblePosition):
+        (khtml::VisiblePosition::deepEquivalent):
+        (khtml::VisiblePosition::rangeCompliantEquivalent):
+        (khtml::VisiblePosition::maxOffset):
+        (khtml::VisiblePosition::character):
+        (khtml::VisiblePosition::debugPosition):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_range.h:
+        * khtml/editing/visible_text.cpp:
+        (khtml::CircularSearchBuffer::length):
+        (khtml::TextIterator::TextIterator):
+        (khtml::TextIterator::handleTextNode):
+        (khtml::TextIterator::handleTextBox):
+        (khtml::TextIterator::emitCharacter):
+        (khtml::TextIterator::range):
+        (khtml::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (khtml::SimplifiedBackwardsTextIterator::handleReplacedElement):
+        (khtml::SimplifiedBackwardsTextIterator::emitCharacter):
+        (khtml::SimplifiedBackwardsTextIterator::emitNewlineForBROrText):
+        (khtml::CharacterIterator::range):
+        (khtml::CharacterIterator::advance):
+        (khtml::CharacterIterator::string):
+        (khtml::WordAwareIterator::length):
+        (khtml::CircularSearchBuffer::append):
+        (khtml::CircularSearchBuffer::neededCharacters):
+        (khtml::CircularSearchBuffer::isMatch):
+        (khtml::TextIterator::rangeLength):
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        (khtml::plainText):
+        (khtml::findPlainText):
+        * khtml/editing/visible_text.h:
+        (khtml::TextIterator::length):
+        (khtml::SimplifiedBackwardsTextIterator::length):
+        (khtml::CharacterIterator::length):
+        (khtml::CharacterIterator::characterOffset):
+        * khtml/editing/visible_units.cpp:
+        (khtml::startOfLine):
+        (khtml::endOfLine):
+        (khtml::startOfParagraph):
+        (khtml::endOfParagraph):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLPreElementImpl::width):
+        (HTMLPreElementImpl::setWidth):
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::length):
+        (DOM::HTMLGenericFormElementImpl::tabIndex):
+        (DOM::HTMLGenericFormElementImpl::setTabIndex):
+        (DOM::HTMLInputElementImpl::selectionStart):
+        (DOM::HTMLInputElementImpl::selectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionStart):
+        (DOM::HTMLInputElementImpl::setSelectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionRange):
+        (DOM::HTMLInputElementImpl::setMaxLength):
+        (DOM::HTMLInputElementImpl::setSize):
+        (DOM::HTMLSelectElementImpl::selectedIndex):
+        (DOM::HTMLSelectElementImpl::setSelectedIndex):
+        (DOM::HTMLSelectElementImpl::length):
+        (DOM::HTMLSelectElementImpl::remove):
+        (DOM::HTMLSelectElementImpl::setSize):
+        (DOM::HTMLOptionElementImpl::index):
+        (DOM::HTMLOptionElementImpl::setIndex):
+        (DOM::HTMLTextAreaElementImpl::selectionStart):
+        (DOM::HTMLTextAreaElementImpl::selectionEnd):
+        (DOM::HTMLTextAreaElementImpl::setSelectionStart):
+        (DOM::HTMLTextAreaElementImpl::setSelectionEnd):
+        (DOM::HTMLTextAreaElementImpl::setSelectionRange):
+        (DOM::HTMLTextAreaElementImpl::setCols):
+        (DOM::HTMLTextAreaElementImpl::setRows):
+        (DOM::HTMLOptionsCollectionImpl::length):
+        (DOM::HTMLOptionsCollectionImpl::setLength):
+        (DOM::HTMLOptionsCollectionImpl::item):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::maxLength):
+        (DOM::HTMLInputElementImpl::maxResults):
+        (DOM::HTMLSelectElementImpl::minWidth):
+        (DOM::HTMLSelectElementImpl::size):
+        (DOM::HTMLTextAreaElementImpl::cols):
+        (DOM::HTMLTextAreaElementImpl::rows):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::width):
+        (HTMLImageElementImpl::height):
+        (HTMLImageElementImpl::border):
+        (HTMLImageElementImpl::setBorder):
+        (HTMLImageElementImpl::setHeight):
+        (HTMLImageElementImpl::hspace):
+        (HTMLImageElementImpl::setHspace):
+        (HTMLImageElementImpl::vspace):
+        (HTMLImageElementImpl::setVspace):
+        (HTMLImageElementImpl::setWidth):
+        (HTMLImageElementImpl::x):
+        (HTMLImageElementImpl::y):
+        (HTMLAreaElementImpl::tabIndex):
+        (HTMLAreaElementImpl::setTabIndex):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::tabIndex):
+        (DOM::HTMLAnchorElementImpl::setTabIndex):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLOListElementImpl::setStart):
+        (DOM::HTMLLIElementImpl::value):
+        (DOM::HTMLLIElementImpl::setValue):
+        * khtml/html/html_listimpl.h:
+        (DOM::HTMLUListElementImpl::start):
+        (DOM::HTMLOListElementImpl::start):
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::calcLength):
+        (DOM::HTMLCollectionImpl::length):
+        (DOM::HTMLCollectionImpl::item):
+        (DOM::HTMLFormCollectionImpl::calcLength):
+        (DOM::HTMLFormCollectionImpl::item):
+        * khtml/html/html_miscimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::tabIndex):
+        (DOM::HTMLObjectElementImpl::setTabIndex):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::insertRow):
+        (DOM::HTMLTableElementImpl::deleteRow):
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        (DOM::HTMLTableSectionElementImpl::deleteRow):
+        (DOM::HTMLTableRowElementImpl::rowIndex):
+        (DOM::HTMLTableRowElementImpl::sectionRowIndex):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableRowElementImpl::deleteCell):
+        (DOM::HTMLTableCellElementImpl::cellIndex):
+        (DOM::HTMLTableCellElementImpl::setColSpan):
+        (DOM::HTMLTableCellElementImpl::setRowSpan):
+        (DOM::HTMLTableColElementImpl::setSpan):
+        * khtml/html/html_tableimpl.h:
+        (DOM::HTMLTableColElementImpl::span):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleError):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::processToken):
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset):
+        * khtml/khtml_events.h:
+        (khtml::MouseReleaseEvent::MouseReleaseEvent):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::restoreURL):
+        (KHTMLPart::stopLoading):
+        (KHTMLPart::receivedFirstData):
+        (KHTMLPart::slotFinished):
+        (KHTMLPart::begin):
+        (KHTMLPart::slotViewFrameSource):
+        (KHTMLPart::selectFrameElementInParentIfFullySelected):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        * khtml/misc/loader.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForRenderer):
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::caretMinOffset):
+        (RenderBR::caretMaxOffset):
+        (RenderBR::caretMaxRenderedOffset):
+        (RenderBR::inlineBox):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::selectionStart):
+        (RenderLineEdit::selectionEnd):
+        (RenderLineEdit::setSelectionStart):
+        (RenderLineEdit::setSelectionEnd):
+        (RenderLineEdit::setSelectionRange):
+        (RenderTextArea::calcMinMaxWidth):
+        (RenderTextArea::selectionStart):
+        (RenderTextArea::selectionEnd):
+        (RenderTextArea::setSelectionStart):
+        (RenderTextArea::setSelectionEnd):
+        (RenderTextArea::setSelectionRange):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::caretMinOffset):
+        (khtml::InlineBox::caretMaxOffset):
+        (khtml::InlineBox::caretMaxRenderedOffset):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::calcMinMaxWidth):
+        * khtml/rendering/render_list.h:
+        (khtml::RenderListItem::value):
+        (khtml::RenderListItem::setValue):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretMinOffset):
+        (RenderObject::caretMaxOffset):
+        (RenderObject::caretMaxRenderedOffset):
+        (RenderObject::previousOffset):
+        (RenderObject::nextOffset):
+        (RenderObject::inlineBox):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::caretMinOffset):
+        (RenderReplaced::caretMaxOffset):
+        (RenderReplaced::caretMaxRenderedOffset):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTableCell::cellIndex):
+        (khtml::RenderTableCell::setCellIndex):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarker):
+        (InlineTextBox::paintMarkedTextUnderline):
+        (InlineTextBox::caretMinOffset):
+        (InlineTextBox::caretMaxOffset):
+        (InlineTextBox::caretMaxRenderedOffset):
+        (RenderText::previousOffset):
+        (RenderText::nextOffset):
+        (InlineTextBox::positionForOffset):
+        (RenderText::caretMinOffset):
+        (RenderText::caretMaxOffset):
+        (RenderText::caretMaxRenderedOffset):
+        (RenderText::inlineBox):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::EventImpl::timeStamp):
+        (DOM::UIEventImpl::UIEventImpl):
+        (DOM::UIEventImpl::initUIEvent):
+        (DOM::UIEventImpl::layerX):
+        (DOM::UIEventImpl::layerY):
+        (DOM::UIEventImpl::pageX):
+        (DOM::UIEventImpl::pageY):
+        (DOM::UIEventImpl::which):
+        (DOM::MouseRelatedEventImpl::MouseRelatedEventImpl):
+        (DOM::MouseRelatedEventImpl::pageX):
+        (DOM::MouseRelatedEventImpl::pageY):
+        (DOM::MouseEventImpl::MouseEventImpl):
+        (DOM::MouseEventImpl::initMouseEvent):
+        (DOM::MouseEventImpl::which):
+        (DOM::KeyboardEventImpl::KeyboardEventImpl):
+        (DOM::KeyboardEventImpl::initKeyboardEvent):
+        (DOM::KeyboardEventImpl::which):
+        (DOM::WheelEventImpl::WheelEventImpl):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::UIEventImpl::detail):
+        (DOM::UIEventWithKeyStateImpl::UIEventWithKeyStateImpl):
+        (DOM::MouseRelatedEventImpl::screenX):
+        (DOM::MouseRelatedEventImpl::screenY):
+        (DOM::MouseRelatedEventImpl::clientX):
+        (DOM::MouseRelatedEventImpl::clientY):
+        (DOM::MouseRelatedEventImpl::layerX):
+        (DOM::MouseRelatedEventImpl::layerY):
+        (DOM::KeyboardEventImpl::keyLocation):
+        (DOM::WheelEventImpl::wheelDelta):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::RangeImpl):
+        (DOM::RangeImpl::startOffset):
+        (DOM::RangeImpl::endOffset):
+        (DOM::RangeImpl::setStart):
+        (DOM::RangeImpl::setEnd):
+        (DOM::RangeImpl::compareBoundaryPoints):
+        (DOM::RangeImpl::processContents):
+        (DOM::RangeImpl::checkNodeWOffset):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::TraversalImpl::TraversalImpl):
+        (DOM::TreeWalkerImpl::TreeWalkerImpl):
+        * khtml/xml/dom2_traversalimpl.h:
+        (DOM::TraversalImpl::whatToShow):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createNodeIterator):
+        (DocumentImpl::createTreeWalker):
+        (DocumentImpl::processHttpEquiv):
+        (DocumentImpl::removeMarkers):
+        (DocumentImpl::copyMarkers):
+        (DocumentImpl::markersForNode):
+        (DocumentImpl::shiftMarkers):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::openTagStartToString):
+        (NamedAttrMapImpl::item):
+        (NamedAttrMapImpl::getAttributeItem):
+        (NamedAttrMapImpl::removeAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::NamedAttrMapImpl::length):
+        (DOM::NamedAttrMapImpl::attributeItem):
+        (DOM::NamedMappedAttrMapImpl::attributeItem):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::normalize):
+        (DOM::NodeImpl::nodeIndex):
+        (DOM::NodeImpl::childNodeCount):
+        (DOM::NodeImpl::childNode):
+        (DOM::NodeImpl::maxOffset):
+        (DOM::NodeImpl::maxDeepOffset):
+        (DOM::NodeImpl::caretMinOffset):
+        (DOM::NodeImpl::caretMaxOffset):
+        (DOM::NodeImpl::caretMaxRenderedOffset):
+        (DOM::NodeImpl::previousOffset):
+        (DOM::NodeImpl::nextOffset):
+        (DOM::ContainerNodeImpl::childNodeCount):
+        (DOM::ContainerNodeImpl::childNode):
+        (DOM::NodeListImpl::recursiveLength):
+        (DOM::NodeListImpl::recursiveItem):
+        (DOM::NodeListImpl::itemById):
+        (DOM::ChildNodeListImpl::length):
+        (DOM::ChildNodeListImpl::item):
+        (DOM::TagNodeListImpl::length):
+        (DOM::TagNodeListImpl::item):
+        (DOM::NameNodeListImpl::length):
+        (DOM::NameNodeListImpl::item):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::Position):
+        (DOM::Position::previous):
+        (DOM::Position::next):
+        (DOM::Position::renderedOffset):
+        (DOM::Position::equivalentRangeCompliantPosition):
+        (DOM::Position::rendersInDifferentPosition):
+        (DOM::Position::trailingWhitespacePosition):
+        (DOM::Position::debugPosition):
+        * khtml/xml/dom_position.h:
+        (DOM::Position::offset):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::length):
+        (CharacterDataImpl::substringData):
+        (CharacterDataImpl::insertData):
+        (CharacterDataImpl::deleteData):
+        (CharacterDataImpl::replaceData):
+        (CharacterDataImpl::checkCharDataOperation):
+        (CharacterDataImpl::maxOffset):
+        (CharacterDataImpl::caretMinOffset):
+        (CharacterDataImpl::caretMaxOffset):
+        (CharacterDataImpl::caretMaxRenderedOffset):
+        (TextImpl::splitText):
+        * khtml/xml/dom_textimpl.h:
+        * kwq/DOM-CSS.mm:
+        (-[DOMStyleSheetList length]):
+        (-[DOMStyleSheetList item:]):
+        (-[DOMCSSStyleSheet insertRule::]):
+        (-[DOMCSSStyleSheet deleteRule:]):
+        (-[DOMMediaList length]):
+        (-[DOMMediaList item:]):
+        (-[DOMCSSRuleList length]):
+        (-[DOMCSSRuleList item:]):
+        (-[DOMCSSMediaRule insertRule::]):
+        (-[DOMCSSMediaRule deleteRule:]):
+        (-[DOMCSSStyleDeclaration length]):
+        (-[DOMCSSStyleDeclaration item:]):
+        (-[DOMCSSValueList length]):
+        (-[DOMCSSValueList item:]):
+        * kwq/DOM.mm:
+        (-[DOMNamedNodeMap item:]):
+        (-[DOMNamedNodeMap length]):
+        (-[DOMNodeList item:]):
+        (-[DOMNodeList length]):
+        (-[DOMCharacterData length]):
+        (-[DOMCharacterData substringData::]):
+        (-[DOMCharacterData insertData::]):
+        (-[DOMCharacterData deleteData::]):
+        (-[DOMCharacterData replaceData:::]):
+        (-[DOMText splitText:]):
+        (-[DOMRange description]):
+        (-[DOMRange startOffset]):
+        (-[DOMRange endOffset]):
+        (-[DOMRange setStart::]):
+        (-[DOMRange setEnd::]):
+        (-[DOMNodeIterator whatToShow]):
+        (-[DOMTreeWalker whatToShow]):
+        (-[DOMDocument createNodeIterator::::]):
+        (-[DOMDocument createTreeWalker::::]):
+        * kwq/DOMCSS.h:
+        * kwq/DOMCore.h:
+        * kwq/DOMEvents.h:
+        (-[DOMMouseEvent initMouseEvent:::::::::::::::]):
+        * kwq/DOMEvents.mm:
+        (-[DOMMouseEvent screenX]):
+        (-[DOMMouseEvent screenY]):
+        (-[DOMMouseEvent clientX]):
+        (-[DOMMouseEvent clientY]):
+        (-[DOMMouseEvent initMouseEvent:::::::::::::::]):
+        (-[DOMUIEvent detail]):
+        (-[DOMUIEvent initUIEvent:::::]):
+        * kwq/DOMExtensions.h:
+        * kwq/DOMHTML.h:
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLCollection length]):
+        (-[DOMHTMLCollection item:]):
+        (-[DOMHTMLOptionsCollection length]):
+        (-[DOMHTMLOptionsCollection setLength:]):
+        (-[DOMHTMLOptionsCollection item:]):
+        (-[DOMHTMLFormElement length]):
+        (-[DOMHTMLSelectElement selectedIndex]):
+        (-[DOMHTMLSelectElement setSelectedIndex:]):
+        (-[DOMHTMLSelectElement length]):
+        (-[DOMHTMLSelectElement setLength:]):
+        (-[DOMHTMLSelectElement size]):
+        (-[DOMHTMLSelectElement setSize:]):
+        (-[DOMHTMLSelectElement tabIndex]):
+        (-[DOMHTMLSelectElement setTabIndex:]):
+        (-[DOMHTMLSelectElement remove:]):
+        (-[DOMHTMLOptionElement index]):
+        (-[DOMHTMLInputElement maxLength]):
+        (-[DOMHTMLInputElement setMaxLength:]):
+        (-[DOMHTMLInputElement size]):
+        (-[DOMHTMLInputElement setSize:]):
+        (-[DOMHTMLInputElement tabIndex]):
+        (-[DOMHTMLInputElement setTabIndex:]):
+        (-[DOMHTMLTextAreaElement cols]):
+        (-[DOMHTMLTextAreaElement setCols:]):
+        (-[DOMHTMLTextAreaElement rows]):
+        (-[DOMHTMLTextAreaElement setRows:]):
+        (-[DOMHTMLTextAreaElement tabIndex]):
+        (-[DOMHTMLTextAreaElement setTabIndex:]):
+        (-[DOMHTMLButtonElement tabIndex]):
+        (-[DOMHTMLButtonElement setTabIndex:]):
+        (-[DOMHTMLOListElement start]):
+        (-[DOMHTMLOListElement setStart:]):
+        (-[DOMHTMLLIElement value]):
+        (-[DOMHTMLLIElement setValue:]):
+        (-[DOMHTMLPreElement width]):
+        (-[DOMHTMLPreElement setWidth:]):
+        (-[DOMHTMLAnchorElement tabIndex]):
+        (-[DOMHTMLAnchorElement setTabIndex:]):
+        (-[DOMHTMLImageElement height]):
+        (-[DOMHTMLImageElement setHeight:]):
+        (-[DOMHTMLImageElement hspace]):
+        (-[DOMHTMLImageElement setHspace:]):
+        (-[DOMHTMLImageElement vspace]):
+        (-[DOMHTMLImageElement setVspace:]):
+        (-[DOMHTMLImageElement width]):
+        (-[DOMHTMLImageElement setWidth:]):
+        (-[DOMHTMLObjectElement hspace]):
+        (-[DOMHTMLObjectElement setHspace:]):
+        (-[DOMHTMLObjectElement tabIndex]):
+        (-[DOMHTMLObjectElement setTabIndex:]):
+        (-[DOMHTMLObjectElement vspace]):
+        (-[DOMHTMLObjectElement setVspace:]):
+        (-[DOMHTMLAppletElement hspace]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement vspace]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAreaElement tabIndex]):
+        (-[DOMHTMLAreaElement setTabIndex:]):
+        (-[DOMHTMLTableSectionElement insertRow:]):
+        (-[DOMHTMLTableSectionElement deleteRow:]):
+        (-[DOMHTMLTableElement insertRow:]):
+        (-[DOMHTMLTableElement deleteRow:]):
+        (-[DOMHTMLTableColElement span]):
+        (-[DOMHTMLTableColElement setSpan:]):
+        (-[DOMHTMLTableRowElement rowIndex]):
+        (-[DOMHTMLTableRowElement sectionRowIndex]):
+        (-[DOMHTMLTableRowElement insertCell:]):
+        (-[DOMHTMLTableRowElement deleteCell:]):
+        (-[DOMHTMLTableCellElement cellIndex]):
+        (-[DOMHTMLTableCellElement colSpan]):
+        (-[DOMHTMLTableCellElement setColSpan:]):
+        (-[DOMHTMLTableCellElement rowSpan]):
+        (-[DOMHTMLTableCellElement setRowSpan:]):
+        (-[DOMHTMLEmbedElement height]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement width]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        * kwq/DOMRange.h:
+        * kwq/DOMStylesheets.h:
+        * kwq/DOMTraversal.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::markMisspellings):
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (QString::toShort):
+        (QString::toUShort):
+        (QString::toInt):
+        (QString::toUInt):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::selectionStart):
+        (QTextEdit::selectionEnd):
+        (QTextEdit::setSelectionStart):
+        (QTextEdit::setSelectionEnd):
+        (QTextEdit::setSelectionRange):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge convertToNSRange:DOM::]):
+
 2005-09-16  Tim Omernick  <tomernick@apple.com>
 
         Reviewed by Dave Hyatt.  Test case reviewed by Vicki Murley.

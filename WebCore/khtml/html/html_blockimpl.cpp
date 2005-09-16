@@ -293,12 +293,12 @@ HTMLPreElementImpl::HTMLPreElementImpl(const QualifiedName& tagName, DocumentPtr
 {
 }
 
-long HTMLPreElementImpl::width() const
+int HTMLPreElementImpl::width() const
 {
     return getAttribute(widthAttr).toInt();
 }
 
-void HTMLPreElementImpl::setWidth(long width)
+void HTMLPreElementImpl::setWidth(int width)
 {
     setAttribute(widthAttr, QString::number(width));
 }

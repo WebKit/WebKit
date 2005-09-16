@@ -144,7 +144,7 @@ Node NodeIterator::root() const
     return 0;
 }
 
-unsigned long NodeIterator::whatToShow() const
+unsigned NodeIterator::whatToShow() const
 {
     if (impl) 
         return impl->whatToShow();
@@ -265,7 +265,7 @@ Node TreeWalker::root() const
     return 0;
 }
 
-unsigned long TreeWalker::whatToShow() const
+unsigned TreeWalker::whatToShow() const
 {
     if (impl) 
         return impl->whatToShow();

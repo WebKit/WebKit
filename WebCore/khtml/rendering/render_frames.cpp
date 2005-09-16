@@ -756,7 +756,7 @@ void RenderPartObject::updateWidget()
       // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.
       NamedAttrMapImpl* attributes = embedOrObject->attributes();
       if (attributes) {
-          for (unsigned long i = 0; i < attributes->length(); ++i) {
+          for (unsigned i = 0; i < attributes->length(); ++i) {
               AttributeImpl* it = attributes->attributeItem(i);
               QString name = it->name().localName().qstring();
               if (embed || uniqueParamNames.find(name) == 0) {
@@ -837,7 +837,7 @@ void RenderPartObject::updateWidget()
       // add all attributes set on the embed object
       NamedAttrMapImpl* a = o->attributes();
       if (a) {
-          for (unsigned long i = 0; i < a->length(); ++i) {
+          for (unsigned i = 0; i < a->length(); ++i) {
               AttributeImpl* it = a->attributeItem(i);
               paramNames.append(it->name().localName().qstring());
               paramValues.append(it->value().qstring());

@@ -290,13 +290,13 @@ void HTMLImageElementImpl::removedFromDocument()
     HTMLElementImpl::removedFromDocument();
 }
 
-long HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
+int HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
 	DOM::DOMString attrWidth = getAttribute(widthAttr);
 	bool ok;
-	long width = attrWidth.qstring().toLong(&ok);
+	int width = attrWidth.qstring().toInt(&ok);
 	if (ok) {
 	  return width;
 	}
@@ -317,13 +317,13 @@ long HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
     return m_render->contentWidth();
 }
 
-long HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
+int HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
 	DOM::DOMString attrHeight = getAttribute(heightAttr);
 	bool ok;
-	long height = attrHeight.qstring().toLong(&ok);
+	int height = attrHeight.qstring().toInt(&ok);
 	if (ok) {
 	  return height;
 	}
@@ -387,29 +387,29 @@ void HTMLImageElementImpl::setAlt(const DOMString &value)
     setAttribute(altAttr, value);
 }
 
-long HTMLImageElementImpl::border() const
+int HTMLImageElementImpl::border() const
 {
     // ### return value in pixels
     return getAttribute(borderAttr).toInt();
 }
 
-void HTMLImageElementImpl::setBorder(long value)
+void HTMLImageElementImpl::setBorder(int value)
 {
     setAttribute(borderAttr, QString::number(value));
 }
 
-void HTMLImageElementImpl::setHeight(long value)
+void HTMLImageElementImpl::setHeight(int value)
 {
     setAttribute(heightAttr, QString::number(value));
 }
 
-long HTMLImageElementImpl::hspace() const
+int HTMLImageElementImpl::hspace() const
 {
     // ### return actual value
     return getAttribute(hspaceAttr).toInt();
 }
 
-void HTMLImageElementImpl::setHspace(long value)
+void HTMLImageElementImpl::setHspace(int value)
 {
     setAttribute(hspaceAttr, QString::number(value));
 }
@@ -454,23 +454,23 @@ void HTMLImageElementImpl::setUseMap(const DOMString &value)
     setAttribute(usemapAttr, value);
 }
 
-long HTMLImageElementImpl::vspace() const
+int HTMLImageElementImpl::vspace() const
 {
     // ### return actual vspace
     return getAttribute(vspaceAttr).toInt();
 }
 
-void HTMLImageElementImpl::setVspace(long value)
+void HTMLImageElementImpl::setVspace(int value)
 {
     setAttribute(vspaceAttr, QString::number(value));
 }
 
-void HTMLImageElementImpl::setWidth(long value)
+void HTMLImageElementImpl::setWidth(int value)
 {
     setAttribute(widthAttr, QString::number(value));
 }
 
-long HTMLImageElementImpl::x() const
+int HTMLImageElementImpl::x() const
 {
     RenderObject *r = renderer();
     if (!r)
@@ -480,7 +480,7 @@ long HTMLImageElementImpl::x() const
     return x;
 }
 
-long HTMLImageElementImpl::y() const
+int HTMLImageElementImpl::y() const
 {
     RenderObject *r = renderer();
     if (!r)
@@ -746,12 +746,12 @@ void HTMLAreaElementImpl::setShape(const DOMString &value)
     setAttribute(shapeAttr, value);
 }
 
-long HTMLAreaElementImpl::tabIndex() const
+int HTMLAreaElementImpl::tabIndex() const
 {
     return getAttribute(tabindexAttr).toInt();
 }
 
-void HTMLAreaElementImpl::setTabIndex(long tabIndex)
+void HTMLAreaElementImpl::setTabIndex(int tabIndex)
 {
     setAttribute(tabindexAttr, QString::number(tabIndex));
 }

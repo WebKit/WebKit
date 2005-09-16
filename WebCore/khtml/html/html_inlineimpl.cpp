@@ -337,12 +337,12 @@ void HTMLAnchorElementImpl::setShape(const DOMString &value)
     setAttribute(shapeAttr, value);
 }
 
-long HTMLAnchorElementImpl::tabIndex() const
+int HTMLAnchorElementImpl::tabIndex() const
 {
     return getAttribute(tabindexAttr).toInt();
 }
 
-void HTMLAnchorElementImpl::setTabIndex(long tabIndex)
+void HTMLAnchorElementImpl::setTabIndex(int tabIndex)
 {
     setAttribute(tabindexAttr, QString::number(tabIndex));
 }

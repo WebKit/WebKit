@@ -175,12 +175,12 @@ using DOM::NodeImpl;
     return DOM_cast<HTMLCollectionImpl *>(_internal);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _collectionImpl]->length();
 }
 
-- (DOMNode *)item:(unsigned long)index
+- (DOMNode *)item:(unsigned)index
 {
     return [DOMNode _nodeWithImpl:[self _collectionImpl]->item(index)];
 }
@@ -267,17 +267,17 @@ using DOM::NodeImpl;
     return DOM_cast<HTMLOptionsCollectionImpl *>(_internal);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _optionsCollectionImpl]->length();
 }
 
-- (void)setLength:(unsigned long)length
+- (void)setLength:(unsigned)length
 {
     [self _optionsCollectionImpl]->setLength(length);
 }
 
-- (DOMNode *)item:(unsigned long)index
+- (DOMNode *)item:(unsigned)index
 {
     return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
 }
@@ -917,7 +917,7 @@ using DOM::NodeImpl;
     return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (long)length
+- (int)length
 {
     return [self _formElementImpl]->length();
 }
@@ -1039,12 +1039,12 @@ using DOM::NodeImpl;
     return [self _selectElementImpl]->type();
 }
 
-- (long)selectedIndex
+- (int)selectedIndex
 {
     return [self _selectElementImpl]->selectedIndex();
 }
 
-- (void)setSelectedIndex:(long)selectedIndex
+- (void)setSelectedIndex:(int)selectedIndex
 {
     [self _selectElementImpl]->setSelectedIndex(selectedIndex);
 }
@@ -1060,12 +1060,12 @@ using DOM::NodeImpl;
     [self _selectElementImpl]->setValue(s.impl());
 }
 
-- (long)length
+- (int)length
 {
     return [self _selectElementImpl]->length();
 }
 
-- (void)setLength:(long)length
+- (void)setLength:(int)length
 {
     // FIXME: Not yet clear what to do about this one.
     // There's some JavaScript-specific hackery in the JavaScript bindings for this.
@@ -1112,22 +1112,22 @@ using DOM::NodeImpl;
     [self _selectElementImpl]->setName(name);
 }
 
-- (long)size
+- (int)size
 {
     return [self _selectElementImpl]->size();
 }
 
-- (void)setSize:(long)size
+- (void)setSize:(int)size
 {
     [self _selectElementImpl]->setSize(size);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _selectElementImpl]->tabIndex();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     [self _selectElementImpl]->setTabIndex(tabIndex);
 }
@@ -1139,7 +1139,7 @@ using DOM::NodeImpl;
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)remove:(long)index
+- (void)remove:(int)index
 {
     [self _selectElementImpl]->remove(index);
 }
@@ -1212,7 +1212,7 @@ using DOM::NodeImpl;
     return [self _optionElementImpl]->text();
 }
 
-- (long)index
+- (int)index
 {
     return [self _optionElementImpl]->index();
 }
@@ -1352,12 +1352,12 @@ using DOM::NodeImpl;
     [self _inputElementImpl]->setDisabled(disabled);
 }
 
-- (long)maxLength
+- (int)maxLength
 {
     return [self _inputElementImpl]->maxLength();
 }
 
-- (void)setMaxLength:(long)maxLength
+- (void)setMaxLength:(int)maxLength
 {
     [self _inputElementImpl]->setMaxLength(maxLength);
 }
@@ -1382,12 +1382,12 @@ using DOM::NodeImpl;
     [self _inputElementImpl]->setReadOnly(readOnly);
 }
 
-- (unsigned long)size
+- (unsigned)size
 {
     return [self _inputElementImpl]->size();
 }
 
-- (void)setSize:(unsigned long)size
+- (void)setSize:(unsigned)size
 {
     [self _inputElementImpl]->setSize(size);
 }
@@ -1402,12 +1402,12 @@ using DOM::NodeImpl;
     [self _inputElementImpl]->setSrc(src);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _inputElementImpl]->tabIndex();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     [self _inputElementImpl]->setTabIndex(tabIndex);
 }
@@ -1496,12 +1496,12 @@ using DOM::NodeImpl;
     [self _textAreaElementImpl]->setAttribute(accesskeyAttr, accessKey);
 }
 
-- (long)cols
+- (int)cols
 {
     return [self _textAreaElementImpl]->getAttribute(colsAttr).toInt();
 }
 
-- (void)setCols:(long)cols
+- (void)setCols:(int)cols
 {
     DOMString value(QString::number(cols));
     [self _textAreaElementImpl]->setAttribute(colsAttr, value);
@@ -1537,23 +1537,23 @@ using DOM::NodeImpl;
     [self _textAreaElementImpl]->setAttribute(readonlyAttr, readOnly ? "" : 0);
 }
 
-- (long)rows
+- (int)rows
 {
     return [self _textAreaElementImpl]->getAttribute(rowsAttr).toInt();
 }
 
-- (void)setRows:(long)rows
+- (void)setRows:(int)rows
 {
 	DOMString value(QString::number(rows));
     [self _textAreaElementImpl]->setAttribute(rowsAttr, value);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _textAreaElementImpl]->tabIndex();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     [self _textAreaElementImpl]->setTabIndex(tabIndex);
 }
@@ -1637,12 +1637,12 @@ using DOM::NodeImpl;
     [self _buttonElementImpl]->setName(name);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _buttonElementImpl]->tabIndex();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     [self _buttonElementImpl]->setTabIndex(tabIndex);
 }
@@ -1795,12 +1795,12 @@ using DOM::NodeImpl;
     [self _oListElementImpl]->setCompact(compact);
 }
 
-- (long)start
+- (int)start
 {
     return [self _oListElementImpl]->getAttribute(startAttr).toInt();
 }
 
-- (void)setStart:(long)start
+- (void)setStart:(int)start
 {
 	DOMString value(QString::number(start));
     [self _oListElementImpl]->setAttribute(startAttr, value);
@@ -1892,12 +1892,12 @@ using DOM::NodeImpl;
     [self _liElementImpl]->setType(type);
 }
 
-- (long)value
+- (int)value
 {
     return [self _liElementImpl]->value();
 }
 
-- (void)setValue:(long)value
+- (void)setValue:(int)value
 {
     [self _liElementImpl]->setValue(value);
 }
@@ -1987,12 +1987,12 @@ using DOM::NodeImpl;
     return static_cast<HTMLPreElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
-- (long)width
+- (int)width
 {
     return [self _preElementImpl]->getAttribute(widthAttr).toInt();
 }
 
-- (void)setWidth:(long)width
+- (void)setWidth:(int)width
 {
     DOMString string(QString::number(width));
     [self _preElementImpl]->setAttribute(widthAttr, string);
@@ -2272,12 +2272,12 @@ using DOM::NodeImpl;
     [self _anchorElementImpl]->setShape(shape);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _anchorElementImpl]->tabIndex();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     [self _anchorElementImpl]->setTabIndex(tabIndex);
 }
@@ -2364,23 +2364,23 @@ using DOM::NodeImpl;
     [self _imageElementImpl]->setAttribute(borderAttr, border);
 }
 
-- (long)height
+- (int)height
 {
     return [self _imageElementImpl]->getAttribute(heightAttr).toInt();
 }
 
-- (void)setHeight:(long)height
+- (void)setHeight:(int)height
 {
     DOMString string(QString::number(height));
     [self _imageElementImpl]->setAttribute(heightAttr, string);
 }
 
-- (long)hspace
+- (int)hspace
 {
     return [self _imageElementImpl]->getAttribute(hspaceAttr).toInt();
 }
 
-- (void)setHspace:(long)hspace
+- (void)setHspace:(int)hspace
 {
     DOMString string(QString::number(hspace));
     [self _imageElementImpl]->setAttribute(hspaceAttr, string);
@@ -2426,23 +2426,23 @@ using DOM::NodeImpl;
     [self _imageElementImpl]->setAttribute(usemapAttr, useMap);
 }
 
-- (long)vspace
+- (int)vspace
 {
     return [self _imageElementImpl]->getAttribute(vspaceAttr).toInt();
 }
 
-- (void)setVspace:(long)vspace
+- (void)setVspace:(int)vspace
 {
     DOMString string(QString::number(vspace));
     [self _imageElementImpl]->setAttribute(vspaceAttr, string);
 }
 
-- (long)width
+- (int)width
 {
     return [self _imageElementImpl]->getAttribute(widthAttr).toInt();
 }
 
-- (void)setWidth:(long)width
+- (void)setWidth:(int)width
 {
     DOMString string(QString::number(width));
     [self _imageElementImpl]->setAttribute(widthAttr, string);
@@ -2552,12 +2552,12 @@ using DOM::NodeImpl;
     [self _objectElementImpl]->setAttribute(heightAttr, height);
 }
 
-- (long)hspace
+- (int)hspace
 {
     return [self _objectElementImpl]->getAttribute(hspaceAttr).toInt();
 }
 
-- (void)setHspace:(long)hspace
+- (void)setHspace:(int)hspace
 {
     DOMString string(QString::number(hspace));
     [self _objectElementImpl]->setAttribute(hspaceAttr, string);
@@ -2583,12 +2583,12 @@ using DOM::NodeImpl;
     [self _objectElementImpl]->setAttribute(standbyAttr, standby);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _objectElementImpl]->getAttribute(tabindexAttr).toInt();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     DOMString string(QString::number(tabIndex));
     [self _objectElementImpl]->setAttribute(tabindexAttr, string);
@@ -2614,12 +2614,12 @@ using DOM::NodeImpl;
     [self _objectElementImpl]->setAttribute(usemapAttr, useMap);
 }
 
-- (long)vspace
+- (int)vspace
 {
     return [self _objectElementImpl]->getAttribute(vspaceAttr).toInt();
 }
 
-- (void)setVspace:(long)vspace
+- (void)setVspace:(int)vspace
 {
     DOMString string(QString::number(vspace));
     [self _objectElementImpl]->setAttribute(vspaceAttr, string);
@@ -2758,12 +2758,12 @@ using DOM::NodeImpl;
     [self _appletElementImpl]->setAttribute(heightAttr, height);
 }
 
-- (long)hspace
+- (int)hspace
 {
     return [self _appletElementImpl]->getAttribute(hspaceAttr).toInt();
 }
 
-- (void)setHspace:(long)hspace
+- (void)setHspace:(int)hspace
 {
     DOMString string(QString::number(hspace));
     [self _appletElementImpl]->setAttribute(hspaceAttr, string);
@@ -2789,12 +2789,12 @@ using DOM::NodeImpl;
     [self _appletElementImpl]->setAttribute(objectAttr, object);
 }
 
-- (long)vspace
+- (int)vspace
 {
     return [self _appletElementImpl]->getAttribute(vspaceAttr).toInt();
 }
 
-- (void)setVspace:(long)vspace
+- (void)setVspace:(int)vspace
 {
     DOMString string(QString::number(vspace));
     [self _appletElementImpl]->setAttribute(vspaceAttr, string);
@@ -2904,12 +2904,12 @@ using DOM::NodeImpl;
     [self _areaElementImpl]->setAttribute(shapeAttr, shape);
 }
 
-- (long)tabIndex
+- (int)tabIndex
 {
     return [self _areaElementImpl]->getAttribute(tabindexAttr).toInt();
 }
 
-- (void)setTabIndex:(long)tabIndex
+- (void)setTabIndex:(int)tabIndex
 {
     DOMString string(QString::number(tabIndex));
     [self _areaElementImpl]->setAttribute(tabindexAttr, string);
@@ -3084,7 +3084,7 @@ using DOM::NodeImpl;
     return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (DOMHTMLElement *)insertRow:(long)index
+- (DOMHTMLElement *)insertRow:(int)index
 {
     int exceptioncode = 0;
     HTMLElementImpl *impl = [self _tableSectionElementImpl]->insertRow(index, exceptioncode);
@@ -3092,7 +3092,7 @@ using DOM::NodeImpl;
     return [DOMHTMLElement _elementWithImpl:impl];
 }
 
-- (void)deleteRow:(long)index
+- (void)deleteRow:(int)index
 {
     int exceptioncode = 0;
     [self _tableSectionElementImpl]->deleteRow(index, exceptioncode);
@@ -3282,7 +3282,7 @@ using DOM::NodeImpl;
     [self _tableElementImpl]->deleteCaption();
 }
 
-- (DOMHTMLElement *)insertRow:(long)index
+- (DOMHTMLElement *)insertRow:(int)index
 {
     int exceptioncode = 0;
     HTMLTableElementImpl *impl = static_cast<HTMLTableElementImpl *>([self _tableElementImpl]->insertRow(index, exceptioncode));
@@ -3290,7 +3290,7 @@ using DOM::NodeImpl;
     return [DOMHTMLTableElement _tableElementWithImpl:impl];
 }
 
-- (void)deleteRow:(long)index
+- (void)deleteRow:(int)index
 {
     int exceptioncode = 0;
     [self _tableElementImpl]->deleteRow(index, exceptioncode);
@@ -3350,12 +3350,12 @@ using DOM::NodeImpl;
     [self _tableColElementImpl]->setAttribute(charoffAttr, chOff);
 }
 
-- (long)span
+- (int)span
 {
     return [self _tableColElementImpl]->getAttribute(spanAttr).toInt();
 }
 
-- (void)setSpan:(long)span
+- (void)setSpan:(int)span
 {
     DOMString string(QString::number(span));
     [self _tableColElementImpl]->setAttribute(spanAttr, string);
@@ -3390,12 +3390,12 @@ using DOM::NodeImpl;
     return static_cast<HTMLTableRowElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
-- (long)rowIndex
+- (int)rowIndex
 {
     return [self _tableRowElementImpl]->rowIndex();
 }
 
-- (long)sectionRowIndex
+- (int)sectionRowIndex
 {
     return [self _tableRowElementImpl]->sectionRowIndex();
 }
@@ -3456,7 +3456,7 @@ using DOM::NodeImpl;
     [self _tableRowElementImpl]->setAttribute(valignAttr, vAlign);
 }
 
-- (DOMHTMLElement *)insertCell:(long)index
+- (DOMHTMLElement *)insertCell:(int)index
 {
     int exceptioncode = 0;
     HTMLTableCellElementImpl *impl = static_cast<HTMLTableCellElementImpl *>([self _tableRowElementImpl]->insertCell(index, exceptioncode));
@@ -3464,7 +3464,7 @@ using DOM::NodeImpl;
     return [DOMHTMLTableCellElement _tableCellElementWithImpl:impl];
 }
 
-- (void)deleteCell:(long)index
+- (void)deleteCell:(int)index
 {
     int exceptioncode = 0;
     [self _tableRowElementImpl]->deleteCell(index, exceptioncode);
@@ -3475,7 +3475,7 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLTableCellElement
 
-- (long)cellIndex
+- (int)cellIndex
 {
     return [self _tableCellElementImpl]->cellIndex();
 }
@@ -3540,12 +3540,12 @@ using DOM::NodeImpl;
     [self _tableCellElementImpl]->setAttribute(charoffAttr, chOff);
 }
 
-- (long)colSpan
+- (int)colSpan
 {
     return [self _tableCellElementImpl]->getAttribute(colspanAttr).toInt();
 }
 
-- (void)setColSpan:(long)colSpan
+- (void)setColSpan:(int)colSpan
 {
     DOMString string(QString::number(colSpan));
     [self _tableCellElementImpl]->setAttribute(colspanAttr, string);
@@ -3581,12 +3581,12 @@ using DOM::NodeImpl;
     [self _tableCellElementImpl]->setAttribute(nowrapAttr, noWrap ? "" : 0);
 }
 
-- (long)rowSpan
+- (int)rowSpan
 {
     return [self _tableCellElementImpl]->getAttribute(rowspanAttr).toInt();
 }
 
-- (void)setRowSpan:(long)rowSpan
+- (void)setRowSpan:(int)rowSpan
 {
     DOMString string(QString::number(rowSpan));
     [self _tableCellElementImpl]->setAttribute(rowspanAttr, string);
@@ -3904,12 +3904,12 @@ using DOM::NodeImpl;
     [self _embedElementImpl]->setAttribute(alignAttr, align);
 }
 
-- (long)height
+- (int)height
 {
     return [self _embedElementImpl]->getAttribute(heightAttr).toInt();
 }
 
-- (void)setHeight:(long)height
+- (void)setHeight:(int)height
 {
     DOMString string(QString::number(height));
     [self _embedElementImpl]->setAttribute(heightAttr, string);
@@ -3945,12 +3945,12 @@ using DOM::NodeImpl;
     [self _embedElementImpl]->setAttribute(typeAttr, type);
 }
 
-- (long)width
+- (int)width
 {
     return [self _embedElementImpl]->getAttribute(widthAttr).toInt();
 }
 
-- (void)setWidth:(long)width
+- (void)setWidth:(int)width
 {
     DOMString string(QString::number(width));
     [self _embedElementImpl]->setAttribute(widthAttr, string);

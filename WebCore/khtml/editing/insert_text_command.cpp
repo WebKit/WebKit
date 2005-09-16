@@ -154,7 +154,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         startPosition = prepareForTextInsertion(startPosition);
         removeBlockPlaceholder(startPosition.node()->enclosingBlockFlowElement());
         TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
-        long offset = startPosition.offset();
+        int offset = startPosition.offset();
 
         if (text == " ") {
             insertSpace(textNode, offset);
@@ -257,7 +257,7 @@ DOM::Position InsertTextCommand::insertTab(Position pos)
     return Position(spanNode->lastChild(), spanNode->lastChild()->caretMaxOffset());
 }
 
-void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
+void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned offset)
 {
     ASSERT(textNode);
 
@@ -278,7 +278,7 @@ void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
         // check if there is a rendered WS at the caret
         Position pos(textNode, offset);
         Position downstream = pos.downstream();
-        if (downstream.offset() < (long)text.length() && isCollapsibleWhitespace(text[downstream.offset()]))
+        if (downstream.offset() < (int)text.length() && isCollapsibleWhitespace(text[downstream.offset()]))
             count--; // leave this WS in
         if (count > 0)
             deleteTextFromNode(textNode, offset, count);

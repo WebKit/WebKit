@@ -1616,10 +1616,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     int exception = 0;
 
     fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);
-    long startPosition = TextIterator::rangeLength(fromStartRange.get());
+    int startPosition = TextIterator::rangeLength(fromStartRange.get());
 
     fromStartRange->setEnd(range->endContainer(exception), range->endOffset(exception), exception);
-    long endPosition = TextIterator::rangeLength(fromStartRange.get());
+    int endPosition = TextIterator::rangeLength(fromStartRange.get());
 
     return NSMakeRange(startPosition, endPosition - startPosition);
 }

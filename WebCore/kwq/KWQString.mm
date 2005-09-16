@@ -1628,43 +1628,36 @@ void QString::copyLatin1(char *buffer, uint position, uint maxLength) const
         *buffer++ = *uc++;
 }
 
-
 short QString::toShort(bool *ok, int base) const
 {
-    long v = toLong( ok, base );
-    if ( ok && *ok && (v < -32768 || v > 32767) ) {
-	*ok = FALSE;
-	v = 0;
+    int v = toInt(ok, base);
+    short sv = v;
+    if (sv != v) {
+        if (ok)
+            *ok = FALSE;
+        return 0;
     }
-    return (short)v;
+    return sv;
 }
 
 ushort QString::toUShort(bool *ok, int base) const
 {
-    ulong v = toULong( ok, base );
-    if ( ok && *ok && (v > 65535) ) {
-	*ok = FALSE;
-	v = 0;
+    uint v = toUInt(ok, base);
+    ushort sv = v;
+    if (sv != v) {
+        if (ok)
+            *ok = FALSE;
+        return 0;
     }
-    return (ushort)v;
+    return sv;
 }
 
 int QString::toInt(bool *ok, int base) const
 {
-    return (int)toLong( ok, base );
-}
-
-uint QString::toUInt(bool *ok, int base) const
-{
-    return (uint)toULong( ok, base );
-}
-
-long QString::toLong(bool *ok, int base) const
-{
     const QChar *p = unicode();
-    long val=0;
+    int val=0;
     int l = dataHandle[0]->_length;
-    const long max_mult = LONG_MAX / base;
+    const int max_mult = INT_MAX / base;
     bool is_ok = FALSE;
     int neg = 0;
     if ( !p )
@@ -1680,7 +1673,7 @@ long QString::toLong(bool *ok, int base) const
 	p++;
     }
 
-    // NOTE: toULong() code is similar
+    // NOTE: toUInt() code is similar
     if ( !l || !ok_in_base(*p,base) )
 	goto bye;
     while ( l && ok_in_base(*p,base) ) {
@@ -1695,7 +1688,7 @@ long QString::toLong(bool *ok, int base) const
 	    else
 		dv = c - 'A' + 10;
 	}
-	if ( val > max_mult || (val == max_mult && dv > (LONG_MAX % base)+neg) )
+	if ( val > max_mult || (val == max_mult && dv > (INT_MAX % base)+neg) )
 	    goto bye;
 	val = base*val + dv;
 	p++;
@@ -1712,12 +1705,12 @@ bye:
     return is_ok ? val : 0;
 }
 
-ulong QString::toULong(bool *ok, int base) const
+uint QString::toUInt(bool *ok, int base) const
 {
     const QChar *p = unicode();
-    ulong val=0;
+    uint val=0;
     int l = dataHandle[0]->_length;
-    const ulong max_mult = ULONG_MAX / base;
+    const uint max_mult = UINT_MAX / base;
     bool is_ok = FALSE;
     if ( !p )
 	goto bye;
@@ -1726,7 +1719,7 @@ ulong QString::toULong(bool *ok, int base) const
     if ( *p == '+' )
 	l--,p++;
 
-    // NOTE: toLong() code is similar
+    // NOTE: toInt() code is similar
     if ( !l || !ok_in_base(*p,base) )
 	goto bye;
     while ( l && ok_in_base(*p,base) ) {
@@ -1741,7 +1734,7 @@ ulong QString::toULong(bool *ok, int base) const
 	    else
 		dv = c - 'A' + 10;
 	}
-	if ( val > max_mult || (val == max_mult && dv > (ULONG_MAX % base)) )
+	if ( val > max_mult || (val == max_mult && dv > (UINT_MAX % base)) )
 	    goto bye;
 	val = base*val + dv;
 	p++;

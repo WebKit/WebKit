@@ -86,17 +86,17 @@ void RenderBR::setStyle(RenderStyle* _style)
     m_lineHeight = -1;
 }
 
-long RenderBR::caretMinOffset() const 
+int RenderBR::caretMinOffset() const 
 { 
     return 0; 
 }
 
-long RenderBR::caretMaxOffset() const 
+int RenderBR::caretMaxOffset() const 
 { 
     return 1; 
 }
 
-unsigned long RenderBR::caretMaxRenderedOffset() const
+unsigned RenderBR::caretMaxRenderedOffset() const
 {
     return 1;
 }
@@ -122,7 +122,7 @@ QRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOf
     return QRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));
 }
 
-InlineBox *RenderBR::inlineBox(long offset, EAffinity affinity)
+InlineBox *RenderBR::inlineBox(int offset, EAffinity affinity)
 {
     return firstTextBox();
 }

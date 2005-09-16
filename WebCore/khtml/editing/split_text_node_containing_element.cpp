@@ -42,7 +42,7 @@ using DOM::ElementImpl;
 
 namespace khtml {
 
-SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(DocumentImpl *document, TextImpl *text, long offset)
+SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(DocumentImpl *document, TextImpl *text, int offset)
     : CompositeEditCommand(document), m_text(text), m_offset(offset)
 {
     ASSERT(m_text);

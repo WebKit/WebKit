@@ -302,9 +302,9 @@ namespace KJS {
      */
     static UString from(unsigned int u);
     /**
-     * Constructs a string from a long.
+     * Constructs a string from a long int.
      */
-    static UString from(long l);
+    static UString from(long u);
     /**
      * Constructs a string from a double.
      */
@@ -419,15 +419,14 @@ namespace KJS {
     double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
     double toDouble(bool tolerateTrailingJunk) const;
     double toDouble() const;
-    /**
-     * Attempts an conversion to an unsigned long integer. ok will be set
-     * according to the success.
-     * @param tolerateEmptyString if false, toULong will return false for *ok for an empty string.
-     */
-    unsigned long toULong(bool *ok, bool tolerateEmptyString) const;
-    unsigned long toULong(bool *ok = 0) const;
 
+    /**
+     * Attempts an conversion to a 32-bit integer. ok will be set
+     * according to the success.
+     * @param tolerateEmptyString if false, toUInt32 will return false for *ok for an empty string.
+     */
     uint32_t toUInt32(bool *ok = 0) const;
+    uint32_t toUInt32(bool *ok, bool tolerateEmptyString) const;
     uint32_t toStrictUInt32(bool *ok = 0) const;
 
     /**

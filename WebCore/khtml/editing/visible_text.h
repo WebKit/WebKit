@@ -68,13 +68,13 @@ public:
     bool atEnd() const { return !m_positionNode; }
     void advance();
     
-    long length() const { return m_textLength; }
+    int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
     SharedPtr<DOM::RangeImpl> range() const;
      
-    static long TextIterator::rangeLength(const DOM::RangeImpl *r);
-    static DOM::RangeImpl *TextIterator::rangeFromLocationAndLength(DOM::DocumentImpl *doc, long rangeLocation, long rangeLength);
+    static int TextIterator::rangeLength(const DOM::RangeImpl *r);
+    static DOM::RangeImpl *TextIterator::rangeFromLocationAndLength(DOM::DocumentImpl *doc, int rangeLocation, int rangeLength);
     
 private:
     void exitNode();
@@ -82,27 +82,27 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void handleTextBox();
-    void emitCharacter(QChar, DOM::NodeImpl *textNode, DOM::NodeImpl *offsetBaseNode, long textStartOffset, long textEndOffset);
+    void emitCharacter(QChar, DOM::NodeImpl *textNode, DOM::NodeImpl *offsetBaseNode, int textStartOffset, int textEndOffset);
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
     DOM::NodeImpl *m_node;
-    long m_offset;
+    int m_offset;
     bool m_handledNode;
     bool m_handledChildren;
     
     // End of the range.
     DOM::NodeImpl *m_endContainer;
-    long m_endOffset;
+    int m_endOffset;
     DOM::NodeImpl *m_pastEndNode;
     
     // The current text and its position, in the form to be returned from the iterator.
     DOM::NodeImpl *m_positionNode;
     mutable DOM::NodeImpl *m_positionOffsetBaseNode;
-    mutable long m_positionStartOffset;
-    mutable long m_positionEndOffset;
+    mutable int m_positionStartOffset;
+    mutable int m_positionEndOffset;
     const QChar *m_textCharacters;
-    long m_textLength;
+    int m_textLength;
     
     // Used when there is still some pending text from the current node; when these
     // are false and 0, we go back to normal iterating.
@@ -133,7 +133,7 @@ public:
     bool atEnd() const { return !m_positionNode; }
     void advance();
     
-    long length() const { return m_textLength; }
+    int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
     SharedPtr<DOM::RangeImpl> range() const;
@@ -143,26 +143,26 @@ private:
     bool handleTextNode();
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void emitCharacter(QChar, DOM::NodeImpl *Node, long startOffset, long endOffset);
+    void emitCharacter(QChar, DOM::NodeImpl *Node, int startOffset, int endOffset);
     void emitNewlineForBROrText();
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
     DOM::NodeImpl *m_node;
-    long m_offset;
+    int m_offset;
     bool m_handledNode;
     bool m_handledChildren;
     
     // End of the range.
     DOM::NodeImpl *m_startNode;
-    long m_startOffset;
+    int m_startOffset;
     
     // The current text and its position, in the form to be returned from the iterator.
     DOM::NodeImpl *m_positionNode;
-    long m_positionStartOffset;
-    long m_positionEndOffset;
+    int m_positionStartOffset;
+    int m_positionEndOffset;
     const QChar *m_textCharacters;
-    long m_textLength;
+    int m_textLength;
 
     // Used to do the whitespace logic.
     DOM::NodeImpl *m_lastTextNode;    
@@ -179,21 +179,21 @@ public:
     CharacterIterator();
     explicit CharacterIterator(const DOM::RangeImpl *r);
     
-    void advance(long numCharacters);
+    void advance(int numCharacters);
     
     bool atBreak() const { return m_atBreak; }
     bool atEnd() const { return m_textIterator.atEnd(); }
     
-    long length() const { return m_textIterator.length() - m_runOffset; }
+    int length() const { return m_textIterator.length() - m_runOffset; }
     const QChar *characters() const { return m_textIterator.characters() + m_runOffset; }
-    QString string(long numChars);
+    QString string(int numChars);
     
-    long characterOffset() const { return m_offset; }
+    int characterOffset() const { return m_offset; }
     SharedPtr<DOM::RangeImpl> range() const;
         
 private:
-    long m_offset;
-    long m_runOffset;
+    int m_offset;
+    int m_runOffset;
     bool m_atBreak;
     
     TextIterator m_textIterator;
@@ -209,7 +209,7 @@ public:
     bool atEnd() const { return !m_didLookAhead && m_textIterator.atEnd(); }
     void advance();
     
-    long length() const;
+    int length() const;
     const QChar *characters() const;
     
     // Range of the text we're currently returning
@@ -218,7 +218,7 @@ public:
 private:
     // text from the previous chunk from the textIterator
     const QChar *m_previousText;
-    long m_previousLength;
+    int m_previousLength;
 
     // many chunks from textIterator concatenated
     QString m_buffer;

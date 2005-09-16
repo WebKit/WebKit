@@ -888,7 +888,7 @@ RangeImpl *DocumentImpl::createRange()
     return new RangeImpl( docPtr() );
 }
 
-NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned long whatToShow, 
+NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned whatToShow, 
     NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode)
 {
     if (!root) {
@@ -898,7 +898,7 @@ NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned long
     return new NodeIteratorImpl(root, whatToShow, filter, expandEntityReferences);
 }
 
-TreeWalkerImpl *DocumentImpl::createTreeWalker(NodeImpl *root, unsigned long whatToShow, 
+TreeWalkerImpl *DocumentImpl::createTreeWalker(NodeImpl *root, unsigned whatToShow, 
     NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode)
 {
     if (!root) {
@@ -1810,7 +1810,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     else if(strcasecmp(equiv, "expires") == 0)
     {
         QString str = content.qstring().stripWhiteSpace();
-        time_t expire_date = str.toLong();
+        time_t expire_date = str.toInt();
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);
     }
@@ -2782,8 +2782,8 @@ void DocumentImpl::removeMarkers(RangeImpl *range, DocumentMarker::MarkerType ma
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         SharedPtr<RangeImpl> textPiece = markedText.range();
         int exception = 0;
-        long startOffset = textPiece->startOffset(exception);
-        long length = textPiece->endOffset(exception) - startOffset + 1;
+        unsigned startOffset = textPiece->startOffset(exception);
+        unsigned length = textPiece->endOffset(exception) - startOffset + 1;
         removeMarkers(textPiece->startContainer(exception), startOffset, length, markerType);
     }
 }
@@ -2837,7 +2837,7 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
 
 // copies markers from srcNode to dstNode, applying the specified shift delta to the copies.  The shift is
 // useful if, e.g., the caller has created the dstNode from a non-prefix substring of the srcNode.
-void DocumentImpl::copyMarkers(NodeImpl *srcNode, ulong startOffset, long length, NodeImpl *dstNode, long delta, DocumentMarker::MarkerType markerType)
+void DocumentImpl::copyMarkers(NodeImpl *srcNode, unsigned startOffset, int length, NodeImpl *dstNode, int delta, DocumentMarker::MarkerType markerType)
 {
     if (length <= 0)
         return;
@@ -2847,7 +2847,7 @@ void DocumentImpl::copyMarkers(NodeImpl *srcNode, ulong startOffset, long length
         return;
 
     bool docDirty = false;
-    ulong endOffset = startOffset + length - 1;
+    unsigned endOffset = startOffset + length - 1;
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ++it) {
         DocumentMarker marker = *it;
@@ -2877,7 +2877,7 @@ void DocumentImpl::copyMarkers(NodeImpl *srcNode, ulong startOffset, long length
         dstNode->renderer()->repaint();
 }
 
-void DocumentImpl::removeMarkers(NodeImpl *node, ulong startOffset, long length, DocumentMarker::MarkerType markerType)
+void DocumentImpl::removeMarkers(NodeImpl *node, unsigned startOffset, int length, DocumentMarker::MarkerType markerType)
 {
     if (length <= 0)
         return;
@@ -2887,7 +2887,7 @@ void DocumentImpl::removeMarkers(NodeImpl *node, ulong startOffset, long length,
         return;
     
     bool docDirty = false;
-    ulong endOffset = startOffset + length - 1;
+    unsigned endOffset = startOffset + length - 1;
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ) {
         DocumentMarker marker = *it;
@@ -2937,7 +2937,6 @@ QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (markers)
         return *markers;
-
     return QValueList <DocumentMarker> ();
 }
 
@@ -2985,7 +2984,7 @@ void DocumentImpl::removeMarkers(DocumentMarker::MarkerType markerType)
     }
 }
 
-void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta, DocumentMarker::MarkerType markerType)
+void DocumentImpl::shiftMarkers(NodeImpl *node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
 {
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (!markers)

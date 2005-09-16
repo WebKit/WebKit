@@ -45,26 +45,26 @@ class RangeImpl : public khtml::Shared<RangeImpl>
 public:
     RangeImpl(DocumentPtr *_ownerDocument);
     RangeImpl(DocumentPtr *_ownerDocument,
-              NodeImpl *_startContainer, long _startOffset,
-              NodeImpl *_endContainer, long _endOffset);
+              NodeImpl *_startContainer, int _startOffset,
+              NodeImpl *_endContainer, int _endOffset);
 
     ~RangeImpl();
 
     MAIN_THREAD_ALLOCATED;
     
     NodeImpl *startContainer(int &exceptioncode) const;
-    long startOffset(int &exceptioncode) const;
+    int startOffset(int &exceptioncode) const;
     NodeImpl *endContainer(int &exceptioncode) const;
-    long endOffset(int &exceptioncode) const;
+    int endOffset(int &exceptioncode) const;
     bool collapsed(int &exceptioncode) const;
 
     NodeImpl *commonAncestorContainer(int &exceptioncode) const;
     static NodeImpl *commonAncestorContainer(NodeImpl *containerA, NodeImpl *containerB);
-    void setStart ( NodeImpl *refNode, long offset, int &exceptioncode );
-    void setEnd ( NodeImpl *refNode, long offset, int &exceptioncode );
+    void setStart ( NodeImpl *refNode, int offset, int &exceptioncode );
+    void setEnd ( NodeImpl *refNode, int offset, int &exceptioncode );
     void collapse ( bool toStart, int &exceptioncode );
     short compareBoundaryPoints ( Range::CompareHow how, const RangeImpl *sourceRange, int &exceptioncode ) const;
-    static short compareBoundaryPoints ( NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB );
+    static short compareBoundaryPoints ( NodeImpl *containerA, int offsetA, NodeImpl *containerB, int offsetB );
     static short compareBoundaryPoints ( const Position &a, const Position &b );
     bool boundaryPointsValid (  ) const;
     void deleteContents ( int &exceptioncode );
@@ -111,9 +111,9 @@ public:
 protected:
     DocumentPtr *m_ownerDocument;
     NodeImpl *m_startContainer;
-    unsigned long m_startOffset;
+    unsigned m_startOffset;
     NodeImpl *m_endContainer;
-    unsigned long m_endOffset;
+    unsigned m_endOffset;
     bool m_detached;
 
 private:

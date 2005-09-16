@@ -43,12 +43,12 @@ JavaClass::JavaClass (jobject anInstance)
     _name = strdup (classNameC);
     releaseCharactersForJString(className, classNameC);
 
-    long i;
+    int i;
     JNIEnv *env = getJNIEnv();
     
     // Get the fields
     jarray fields = (jarray)callJNIObjectMethod (aClass, "getFields", "()[Ljava/lang/reflect/Field;");
-    long numFields = env->GetArrayLength (fields);    
+    int numFields = env->GetArrayLength (fields);    
     _fields = CFDictionaryCreateMutable(NULL, numFields, &kCFTypeDictionaryKeyCallBacks, NULL);
     for (i = 0; i < numFields; i++) {
         jobject aJField = env->GetObjectArrayElement ((jobjectArray)fields, i);
@@ -61,7 +61,7 @@ JavaClass::JavaClass (jobject anInstance)
     
     // Get the methods
     jarray methods = (jarray)callJNIObjectMethod (aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
-    long numMethods = env->GetArrayLength (methods);    
+    int numMethods = env->GetArrayLength (methods);    
     _methods = CFDictionaryCreateMutable(NULL, numMethods, &kCFTypeDictionaryKeyCallBacks, NULL);
     for (i = 0; i < numMethods; i++) {
         jobject aJMethod = env->GetObjectArrayElement ((jobjectArray)methods, i);

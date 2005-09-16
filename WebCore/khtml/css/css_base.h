@@ -260,8 +260,8 @@ namespace DOM {
 
 	virtual ~StyleListImpl();
 
-	unsigned long length() { return m_lstChildren->count(); }
-	StyleBaseImpl *item(unsigned long num) { return m_lstChildren->at(num); }
+	unsigned length() { return m_lstChildren->count(); }
+	StyleBaseImpl *item(unsigned num) { return m_lstChildren->at(num); }
 
 	void append(StyleBaseImpl *item) { m_lstChildren->append(item); }
 

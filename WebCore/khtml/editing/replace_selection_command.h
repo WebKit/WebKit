@@ -124,7 +124,7 @@ private:
     void completeHTMLReplacement(const DOM::Position &lastPositionToSelect);
 
     void insertNodeAfterAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    void insertNodeAtAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
+    void insertNodeAtAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, int offset);
     void insertNodeBeforeAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
 
     void updateNodesInserted(DOM::NodeImpl *);

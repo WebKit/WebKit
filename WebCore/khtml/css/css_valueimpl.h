@@ -57,8 +57,8 @@ public:
     virtual DOMString cssText() const = 0;
     virtual void setCssText(const DOMString &, int &exceptionCode) = 0;
 
-    virtual unsigned long length() const = 0;
-    virtual DOMString item(unsigned long index) const = 0;
+    virtual unsigned length() const = 0;
+    virtual DOMString item(unsigned index) const = 0;
 
     CSSValueImpl *getPropertyCSSValue(const DOMString &propertyName);
     DOMString getPropertyValue(const DOMString &propertyName);
@@ -120,8 +120,8 @@ public:
 
     virtual ~CSSValueListImpl();
 
-    unsigned long length() const { return m_values.count(); }
-    CSSValueImpl *item ( unsigned long index ) { return m_values.at(index); }
+    unsigned length() const { return m_values.count(); }
+    CSSValueImpl *item ( unsigned index ) { return m_values.at(index); }
 
     virtual bool isValueList() { return true; }
 
@@ -491,8 +491,8 @@ public:
     virtual DOMString cssText() const;
     virtual void setCssText(const DOMString &, int &exceptionCode);
 
-    virtual unsigned long length() const;
-    virtual DOMString item(unsigned long index) const;
+    virtual unsigned length() const;
+    virtual DOMString item(unsigned index) const;
 
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
     virtual DOMString getPropertyValue(int propertyID) const;

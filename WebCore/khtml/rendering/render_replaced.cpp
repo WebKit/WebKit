@@ -119,7 +119,7 @@ short RenderReplaced::baselinePosition( bool, bool ) const
     return height()+marginTop()+marginBottom();
 }
 
-long RenderReplaced::caretMinOffset() const 
+int RenderReplaced::caretMinOffset() const 
 { 
     return 0; 
 }
@@ -128,12 +128,12 @@ long RenderReplaced::caretMinOffset() const
 // at its beginning (0), or at its end (1).
 // NOTE: Yet, "select" elements can have any number of "option" elements
 // as children, so this "0 or 1" idea does not really hold up.
-long RenderReplaced::caretMaxOffset() const 
+int RenderReplaced::caretMaxOffset() const 
 { 
     return 1; 
 }
 
-unsigned long RenderReplaced::caretMaxRenderedOffset() const
+unsigned RenderReplaced::caretMaxRenderedOffset() const
 {
     return 1; 
 }

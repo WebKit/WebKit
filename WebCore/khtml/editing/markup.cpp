@@ -227,7 +227,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                     style->deref();
                 }
                 NamedAttrMapImpl *attrs = el->attributes();
-                unsigned long length = attrs->length();
+                unsigned length = attrs->length();
                 if (length == 0 && additionalStyle.length() > 0) {
                     // FIXME: Handle case where additionalStyle has illegal characters in it, like "
                     markup += " " +  styleAttr.localName().qstring() + "=\"" + additionalStyle.qstring() + "\"";
@@ -301,8 +301,8 @@ static void completeURLs(NodeImpl *node, const QString &baseURL)
         if (n->nodeType() == Node::ELEMENT_NODE) {
             ElementImpl *e = static_cast<ElementImpl *>(n);
             NamedAttrMapImpl *attrs = e->attributes();
-            unsigned long length = attrs->length();
-            for (unsigned long i = 0; i < length; i++) {
+            unsigned length = attrs->length();
+            for (unsigned i = 0; i < length; i++) {
                 AttributeImpl *attr = attrs->attributeItem(i);
                 if (e->isURLAttribute(attr))
                     e->setAttribute(attr->name(), KURL(baseURL, attr->value().qstring()).url());

@@ -40,7 +40,7 @@ using DOM::NodeImpl;
 
 namespace khtml {
 
-SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *text, long offset)
+SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *text, int offset)
     : EditCommand(document), m_text1(0), m_text2(text), m_offset(offset)
 {
     ASSERT(m_text2);

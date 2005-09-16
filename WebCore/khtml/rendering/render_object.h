@@ -377,7 +377,7 @@ public:
     virtual void setInlineBoxWrapper(InlineBox* b);
     void deleteLineBoxWrapper();
 
-    virtual InlineBox *inlineBox(long offset=0, EAffinity affinity = UPSTREAM);
+    virtual InlineBox *inlineBox(int offset=0, EAffinity affinity = UPSTREAM);
     
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
@@ -838,12 +838,12 @@ public:
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
 
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual long previousOffset (long current) const;
-    virtual long nextOffset (long current) const;
+    virtual int previousOffset (int current) const;
+    virtual int nextOffset (int current) const;
 
     virtual void setPixmap(const QPixmap&, const QRect&, CachedImage *);
 

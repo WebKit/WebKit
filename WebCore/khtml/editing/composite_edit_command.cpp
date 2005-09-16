@@ -146,11 +146,11 @@ void CompositeEditCommand::insertNodeAfter(NodeImpl *insertChild, NodeImpl *refC
     }
 }
 
-void CompositeEditCommand::insertNodeAt(NodeImpl *insertChild, NodeImpl *refChild, long offset)
+void CompositeEditCommand::insertNodeAt(NodeImpl *insertChild, NodeImpl *refChild, int offset)
 {
     if (refChild->hasChildNodes() || (refChild->renderer() && refChild->renderer()->isBlockFlow())) {
         NodeImpl *child = refChild->firstChild();
-        for (long i = 0; child && i < offset; i++)
+        for (int i = 0; child && i < offset; i++)
             child = child->nextSibling();
         if (child)
             insertNodeBefore(insertChild, child);
@@ -215,7 +215,7 @@ void CompositeEditCommand::removeNodePreservingChildren(NodeImpl *removeChild)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::splitTextNode(TextImpl *text, long offset)
+void CompositeEditCommand::splitTextNode(TextImpl *text, int offset)
 {
     EditCommandPtr cmd(new SplitTextNodeCommand(document(), text, offset));
     applyCommandToComposite(cmd);
@@ -239,7 +239,7 @@ void CompositeEditCommand::wrapContentsInDummySpan(DOM::ElementImpl *element)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::splitTextNodeContainingElement(DOM::TextImpl *text, long offset)
+void CompositeEditCommand::splitTextNodeContainingElement(DOM::TextImpl *text, int offset)
 {
     EditCommandPtr cmd(new SplitTextNodeContainingElementCommand(document(), text, offset));
     applyCommandToComposite(cmd);
@@ -259,19 +259,19 @@ void CompositeEditCommand::inputText(const DOMString &text, bool selectInsertedT
     impl->input(text, selectInsertedText);
 }
 
-void CompositeEditCommand::insertTextIntoNode(TextImpl *node, long offset, const DOMString &text)
+void CompositeEditCommand::insertTextIntoNode(TextImpl *node, int offset, const DOMString &text)
 {
     EditCommandPtr cmd(new InsertIntoTextNodeCommand(document(), node, offset, text));
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::deleteTextFromNode(TextImpl *node, long offset, long count)
+void CompositeEditCommand::deleteTextFromNode(TextImpl *node, int offset, int count)
 {
     EditCommandPtr cmd(new DeleteFromTextNodeCommand(document(), node, offset, count));
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::replaceTextInNode(TextImpl *node, long offset, long count, const DOMString &replacementText)
+void CompositeEditCommand::replaceTextInNode(TextImpl *node, int offset, int count, const DOMString &replacementText)
 {
     EditCommandPtr deleteCommand(new DeleteFromTextNodeCommand(document(), node, offset, count));
     applyCommandToComposite(deleteCommand);
@@ -342,7 +342,7 @@ void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start
         return;    
     }
     
-    long length = textNode->length();
+    int length = textNode->length();
     if (start >= length || end > length)
         return;
 
@@ -387,7 +387,7 @@ void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start
             // Assert that we are not going to delete all of the text in the node.
             // If we were, that should have been done above with the call to 
             // removeNode and return.
-            ASSERT(start > 0 || (unsigned long)end - start < textNode->length());
+            ASSERT(start > 0 || (unsigned)end - start < textNode->length());
             deleteTextFromNode(textNode, start, end - start);
         }
         str->deref();

@@ -68,7 +68,7 @@ public:
     
     virtual const char *name() const { return _NPN_UTF8FromIdentifier(_methodIdentifier); };
 
-    virtual long numParameters() const { return 0; };
+    virtual int numParameters() const { return 0; };
 
 private:
     NPIdentifier _methodIdentifier;

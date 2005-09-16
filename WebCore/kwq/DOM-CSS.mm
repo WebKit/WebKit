@@ -219,12 +219,12 @@ using DOM::StyleSheetListImpl;
     return DOM_cast<StyleSheetListImpl *>(_internal);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _styleSheetListImpl]->length();
 }
 
-- (DOMStyleSheet *)item:(unsigned long)index
+- (DOMStyleSheet *)item:(unsigned)index
 {
     return [DOMStyleSheet _DOMStyleSheetWithImpl:[self _styleSheetListImpl]->item(index)];
 }
@@ -293,15 +293,15 @@ using DOM::StyleSheetListImpl;
     return [DOMCSSRuleList _ruleListWithImpl:[self _CSSStyleSheetImpl]->cssRules()];
 }
 
-- (unsigned long)insertRule:(NSString *)rule :(unsigned long)index
+- (unsigned)insertRule:(NSString *)rule :(unsigned)index
 {
     int exceptionCode;
-    unsigned long result = [self _CSSStyleSheetImpl]->insertRule(rule, index, exceptionCode);
+    unsigned result = [self _CSSStyleSheetImpl]->insertRule(rule, index, exceptionCode);
     raiseOnDOMError(exceptionCode);
     return result;
 }
 
-- (void)deleteRule:(unsigned long)index
+- (void)deleteRule:(unsigned)index
 {
     int exceptionCode;
     [self _CSSStyleSheetImpl]->deleteRule(index, exceptionCode);
@@ -372,12 +372,12 @@ using DOM::StyleSheetListImpl;
     [self _mediaListImpl]->setMediaText(mediaText);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _mediaListImpl]->length();
 }
 
-- (NSString *)item:(unsigned long)index
+- (NSString *)item:(unsigned)index
 {
     return [self _mediaListImpl]->item(index);
 }
@@ -446,12 +446,12 @@ using DOM::StyleSheetListImpl;
     return DOM_cast<CSSRuleListImpl *>(_internal);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _ruleListImpl]->length();
 }
 
-- (DOMCSSRule *)item:(unsigned long)index
+- (DOMCSSRule *)item:(unsigned)index
 {
     return [DOMCSSRule _ruleWithImpl:[self _ruleListImpl]->item(index)];
 }
@@ -634,12 +634,12 @@ using DOM::StyleSheetListImpl;
     return [DOMCSSRuleList _ruleListWithImpl:[self _mediaRuleImpl]->cssRules()];
 }
 
-- (unsigned long)insertRule:(NSString *)rule :(unsigned long)index
+- (unsigned)insertRule:(NSString *)rule :(unsigned)index
 {
     return [self _mediaRuleImpl]->insertRule(rule, index);
 }
 
-- (void)deleteRule:(unsigned long)index
+- (void)deleteRule:(unsigned)index
 {
     [self _mediaRuleImpl]->deleteRule(index);
 }
@@ -809,12 +809,12 @@ using DOM::StyleSheetListImpl;
     raiseOnDOMError(exceptionCode);
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _styleDeclarationImpl]->length();
 }
 
-- (NSString *)item:(unsigned long)index
+- (NSString *)item:(unsigned)index
 {
     return [self _styleDeclarationImpl]->item(index);
 }
@@ -1013,12 +1013,12 @@ using DOM::StyleSheetListImpl;
     return static_cast<CSSValueListImpl *>(DOM_cast<CSSValueImpl *>(_internal));
 }
 
-- (unsigned long)length
+- (unsigned)length
 {
     return [self _valueListImpl]->length();
 }
 
-- (DOMCSSValue *)item:(unsigned long)index
+- (DOMCSSValue *)item:(unsigned)index
 {
     return [DOMCSSValue _valueWithImpl:[self _valueListImpl]->item(index)];
 }

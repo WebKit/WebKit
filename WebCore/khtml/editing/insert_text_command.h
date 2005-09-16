@@ -40,16 +40,16 @@ public:
     void deleteCharacter();
     void input(const DOM::DOMString &text, bool selectInsertedText = false);
     
-    unsigned long charactersAdded() const { return m_charactersAdded; }
+    unsigned charactersAdded() const { return m_charactersAdded; }
     
 private:
     virtual bool isInsertTextCommand() const;
 
     DOM::Position prepareForTextInsertion(const DOM::Position& pos);
-    void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
+    void insertSpace(DOM::TextImpl *textNode, unsigned offset);
     DOM::Position insertTab(DOM::Position pos);
 
-    unsigned long m_charactersAdded;
+    unsigned m_charactersAdded;
 };
 
 } // namespace khtml

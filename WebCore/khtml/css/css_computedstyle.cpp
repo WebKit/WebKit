@@ -1270,12 +1270,12 @@ void CSSComputedStyleDeclarationImpl::setProperty(int, const DOMString &, bool, 
     exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 }
 
-unsigned long CSSComputedStyleDeclarationImpl::length() const
+unsigned CSSComputedStyleDeclarationImpl::length() const
 {
     return numComputedProperties;
 }
 
-DOMString CSSComputedStyleDeclarationImpl::item(unsigned long i) const
+DOMString CSSComputedStyleDeclarationImpl::item(unsigned i) const
 {
     if (i >= numComputedProperties)
         return DOMString();

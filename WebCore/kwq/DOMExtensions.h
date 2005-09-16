@@ -50,16 +50,16 @@
 @interface DOMHTMLEmbedElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
-- (long)height;
-- (void)setHeight:(long)height;
+- (int)height;
+- (void)setHeight:(int)height;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)src;
 - (void)setSrc:(NSString *)src;
 - (NSString *)type;
 - (void)setType:(NSString *)type;
-- (long)width;
-- (void)setWidth:(long)width;
+- (int)width;
+- (void)setWidth:(int)width;
 @end
 
 @interface DOMRGBColor (DOMRGBColorExtensions)

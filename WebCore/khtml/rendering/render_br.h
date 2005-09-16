@@ -59,14 +59,14 @@ public:
 
     virtual bool isBR() const { return true; }
 
-    virtual long caretMinOffset() const;
-    virtual long caretMaxOffset() const;
-    virtual unsigned long caretMaxRenderedOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
+    virtual unsigned caretMaxRenderedOffset() const;
     
     virtual VisiblePosition positionForCoordinates(int x, int y);
     virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
-    virtual InlineBox *inlineBox(long offset, EAffinity affinity = UPSTREAM);
+    virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
     
 private:
     mutable short m_lineHeight;

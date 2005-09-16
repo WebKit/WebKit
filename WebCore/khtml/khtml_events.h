@@ -49,7 +49,7 @@ public:
   DOM::NodeImpl *innerNode() const { return m_innerNode.get(); }
 
   // return the offset of innerNode
-  long offset() const;
+  int offset() const;
 
 private:
   QMouseEvent *m_qmouseEvent;
@@ -116,7 +116,7 @@ class MouseReleaseEvent : public MouseEvent
 public:
   MouseReleaseEvent( QMouseEvent *mouseEvent, int x, int y,
                      const DOM::DOMString &url, const DOM::DOMString& target,
-		     DOM::NodeImpl *innerNode, long = 0 )
+		     DOM::NodeImpl *innerNode, int = 0 )
   : MouseEvent( s_strMouseReleaseEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 

@@ -478,7 +478,7 @@ ValueImp *DOMEvent::getValueProperty(ExecState *exec, int token) const
   case Cancelable:
     return Boolean(event.cancelable());
   case TimeStamp:
-    return Number((long unsigned int)event.timeStamp()); // ### long long ?
+    return Number(event.timeStamp());
   case ClipboardData:
   {
     if (event.isClipboardEvent()) {

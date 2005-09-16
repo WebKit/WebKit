@@ -624,8 +624,8 @@ DOMString ElementImpl::openTagStartToString() const
     NamedAttrMapImpl *attrMap = attributes(true);
 
     if (attrMap) {
-	unsigned long numAttrs = attrMap->length();
-	for (unsigned long i = 0; i < numAttrs; i++) {
+	unsigned numAttrs = attrMap->length();
+	for (unsigned i = 0; i < numAttrs; i++) {
 	    result += " ";
 
 	    AttributeImpl *attribute = attrMap->attributeItem(i);
@@ -936,7 +936,7 @@ SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem(const QualifiedName& name,
     return r;
 }
 
-AttrImpl *NamedAttrMapImpl::item ( unsigned long index ) const
+AttrImpl *NamedAttrMapImpl::item ( unsigned index ) const
 {
     if (index >= len)
         return 0;
@@ -949,7 +949,7 @@ AttrImpl *NamedAttrMapImpl::item ( unsigned long index ) const
 
 AttributeImpl* NamedAttrMapImpl::getAttributeItem(const QualifiedName& name) const
 {
-    for (unsigned long i = 0; i < len; ++i) {
+    for (unsigned i = 0; i < len; ++i) {
         if (attrs[i]->name().matches(name))
             return attrs[i];
     }
@@ -1043,8 +1043,8 @@ void NamedAttrMapImpl::addAttribute(AttributeImpl *attr)
 
 void NamedAttrMapImpl::removeAttribute(const QualifiedName& name)
 {
-    unsigned long index = len+1;
-    for (unsigned long i = 0; i < len; ++i)
+    unsigned index = len+1;
+    for (unsigned i = 0; i < len; ++i)
         if (attrs[i]->name().matches(name)) {
             index = i;
             break;

@@ -369,7 +369,7 @@ public:
      * of event.
      *
      */
-    long detail() const;
+    int detail() const;
 
     /**
      * Non-standard extension to support IE-style keyCode event property.
@@ -427,7 +427,7 @@ public:
                                  bool canBubbleArg,
                                  bool cancelableArg,
                                  const AbstractView &viewArg,
-                                 long detailArg);
+                                 int detailArg);
 
     UIEvent(UIEventImpl *impl);
 };
@@ -467,28 +467,28 @@ public:
      * origin of the screen coordinate system.
      *
      */
-    long screenX() const;
+    int screenX() const;
 
     /**
      * The vertical coordinate at which the event occurred relative to the
      * origin of the screen coordinate system.
      *
      */
-    long screenY() const;
+    int screenY() const;
 
     /**
      * The horizontal coordinate at which the event occurred relative to the
      * DOM implementation's client area.
      *
      */
-    long clientX() const;
+    int clientX() const;
 
     /**
      * The vertical coordinate at which the event occurred relative to the DOM
      * implementation's client area.
      *
      */
-    long clientY() const;
+    int clientY() const;
 
     /**
      * Used to indicate whether the 'ctrl' key was depressed during the firing
@@ -583,11 +583,11 @@ public:
                                     bool canBubbleArg,
                                     bool cancelableArg,
                                     const AbstractView &viewArg,
-                                    long detailArg,
-                                    long screenXArg,
-                                    long screenYArg,
-                                    long clientXArg,
-                                    long clientYArg,
+                                    int detailArg,
+                                    int screenXArg,
+                                    int screenYArg,
+                                    int clientXArg,
+                                    int clientYArg,
                                     bool ctrlKeyArg,
                                     bool altKeyArg,
                                     bool shiftKeyArg,
@@ -755,11 +755,11 @@ public:
 #endif
 
     // KeyLocationCode
-    static const unsigned long DOM_KEY_LOCATION_STANDARD      = 0x00;
-    static const unsigned long DOM_KEY_LOCATION_LEFT          = 0x01;
-    static const unsigned long DOM_KEY_LOCATION_RIGHT         = 0x02;
-    static const unsigned long DOM_KEY_LOCATION_NUMPAD        = 0x03;
-    static const unsigned long DOM_KEY_LOCATION_UNKNOWN       = 0x04;
+    static const unsigned DOM_KEY_LOCATION_STANDARD      = 0x00;
+    static const unsigned DOM_KEY_LOCATION_LEFT          = 0x01;
+    static const unsigned DOM_KEY_LOCATION_RIGHT         = 0x02;
+    static const unsigned DOM_KEY_LOCATION_NUMPAD        = 0x03;
+    static const unsigned DOM_KEY_LOCATION_UNKNOWN       = 0x04;
     
 #if !KHTML_NO_CPLUSPLUS_DOM
 
@@ -773,7 +773,7 @@ public:
      * Contains an indication of the location of they key on the device.
      *
      */
-    unsigned long keyLocation() const;
+    unsigned keyLocation() const;
 
     /**
      * Used to indicate whether the 'ctrl' key was depressed during the firing
@@ -817,7 +817,7 @@ public:
                                 bool cancelableArg,
                                 const AbstractView &viewArg, 
                                 const DOMString &keyIdentifierArg, 
-                                unsigned long keyLocationArg, 
+                                unsigned keyLocationArg, 
                                 bool ctrlKeyArg, 
                                 bool shiftKeyArg, 
                                 bool altKeyArg, 

@@ -225,7 +225,7 @@ void HTMLTableElementImpl::deleteCaption(  )
     tCaption = 0;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::insertRow( long index, int &exceptioncode )
+HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode )
 {
     // The DOM requires that we create a tbody if the table is empty
     // (cf DOM2TS HTMLTableElement31 test)
@@ -284,7 +284,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( long index, int &exceptioncode
     }
 }
 
-void HTMLTableElementImpl::deleteRow( long index, int &exceptioncode )
+void HTMLTableElementImpl::deleteRow( int index, int &exceptioncode )
 {
     HTMLTableSectionElementImpl* section = 0L;
     NodeImpl *node = firstChild();
@@ -810,7 +810,7 @@ NodeImpl *HTMLTableSectionElementImpl::addChild(NodeImpl *child)
 
 // these functions are rather slow, since we need to get the row at
 // the index... but they aren't used during usual HTML parsing anyway
-HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( long index, int& exceptioncode )
+HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, int& exceptioncode )
 {
     HTMLTableRowElementImpl *r = 0L;
     SharedPtr<NodeListImpl> children = childNodes();
@@ -836,7 +836,7 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( long index, int& except
     return r;
 }
 
-void HTMLTableSectionElementImpl::deleteRow( long index, int &exceptioncode )
+void HTMLTableSectionElementImpl::deleteRow( int index, int &exceptioncode )
 {
     SharedPtr<NodeListImpl> children = childNodes();
     int numRows = children.notNull() ? (int)children->length() : 0;
@@ -932,7 +932,7 @@ NodeImpl *HTMLTableRowElementImpl::addChild(NodeImpl *child)
     return HTMLTablePartElementImpl::addChild(child);
 }
 
-long HTMLTableRowElementImpl::rowIndex() const
+int HTMLTableRowElementImpl::rowIndex() const
 {
     int rIndex = 0;
 
@@ -969,7 +969,7 @@ long HTMLTableRowElementImpl::rowIndex() const
     return -1;
 }
 
-long HTMLTableRowElementImpl::sectionRowIndex() const
+int HTMLTableRowElementImpl::sectionRowIndex() const
 {
     int rIndex = 0;
     const NodeImpl *n = this;
@@ -983,7 +983,7 @@ long HTMLTableRowElementImpl::sectionRowIndex() const
     return rIndex;
 }
 
-HTMLElementImpl *HTMLTableRowElementImpl::insertCell( long index, int &exceptioncode )
+HTMLElementImpl *HTMLTableRowElementImpl::insertCell( int index, int &exceptioncode )
 {
     HTMLTableCellElementImpl *c = 0L;
     SharedPtr<NodeListImpl> children = childNodes();
@@ -1007,7 +1007,7 @@ HTMLElementImpl *HTMLTableRowElementImpl::insertCell( long index, int &exception
     return c;
 }
 
-void HTMLTableRowElementImpl::deleteCell( long index, int &exceptioncode )
+void HTMLTableRowElementImpl::deleteCell( int index, int &exceptioncode )
 {
     SharedPtr<NodeListImpl> children = childNodes();
     int numCells = children.notNull() ? children->length() : 0;
@@ -1097,7 +1097,7 @@ HTMLTableCellElementImpl::~HTMLTableCellElementImpl()
 {
 }
 
-long HTMLTableCellElementImpl::cellIndex() const
+int HTMLTableCellElementImpl::cellIndex() const
 {
     int index = 0;
     for (const NodeImpl * node = previousSibling(); node; node = node->previousSibling()) {
@@ -1235,7 +1235,7 @@ void HTMLTableCellElementImpl::setChOff(const DOMString &value)
     setAttribute(charoffAttr, value);
 }
 
-void HTMLTableCellElementImpl::setColSpan(long n)
+void HTMLTableCellElementImpl::setColSpan(int n)
 {
     setAttribute(colspanAttr, QString::number(n));
 }
@@ -1270,7 +1270,7 @@ void HTMLTableCellElementImpl::setNoWrap(bool b)
     setAttribute(nowrapAttr, b ? "" : 0);
 }
 
-void HTMLTableCellElementImpl::setRowSpan(long n)
+void HTMLTableCellElementImpl::setRowSpan(int n)
 {
     setAttribute(rowspanAttr, QString::number(n));
 }
@@ -1366,7 +1366,7 @@ void HTMLTableColElementImpl::setChOff(const DOMString &value)
     setAttribute(charoffAttr, value);
 }
 
-void HTMLTableColElementImpl::setSpan(long n)
+void HTMLTableColElementImpl::setSpan(int n)
 {
     setAttribute(spanAttr, QString::number(n));
 }

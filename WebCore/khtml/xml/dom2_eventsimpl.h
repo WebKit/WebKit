@@ -111,31 +111,31 @@ public:
 		bool canBubbleArg,
 		bool cancelableArg,
 		AbstractViewImpl *viewArg,
-		long detailArg);
+		int detailArg);
     virtual ~UIEventImpl();
     AbstractViewImpl *view() const { return m_view; }
-    long detail() const { return m_detail; }
+    int detail() const { return m_detail; }
     void initUIEvent(const AtomicString &typeArg,
 		     bool canBubbleArg,
 		     bool cancelableArg,
 		     AbstractViewImpl *viewArg,
-		     long detailArg);
+		     int detailArg);
     virtual bool isUIEvent() const;
 
     virtual int keyCode() const;
     virtual int charCode() const;
 
-    virtual long layerX() const;
-    virtual long layerY() const;
+    virtual int layerX() const;
+    virtual int layerY() const;
 
-    virtual long pageX() const;
-    virtual long pageY() const;
+    virtual int pageX() const;
+    virtual int pageY() const;
 
-    virtual long which() const;
+    virtual int which() const;
 
 protected:
     AbstractViewImpl *m_view;
-    long m_detail;
+    int m_detail;
 
 };
 
@@ -143,7 +143,7 @@ class UIEventWithKeyStateImpl : public UIEventImpl {
 public:
     UIEventWithKeyStateImpl() : m_ctrlKey(false), m_altKey(false), m_shiftKey(false), m_metaKey(false) { }
     UIEventWithKeyStateImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg,
-        long detailArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg)
+        int detailArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg)
         : UIEventImpl(type, canBubbleArg, cancelableArg, viewArg, detailArg)
         , m_ctrlKey(ctrlKeyArg), m_altKey(altKeyArg), m_shiftKey(shiftKeyArg), m_metaKey(metaKeyArg) { }
 
@@ -167,32 +167,32 @@ public:
                           bool canBubbleArg,
                           bool cancelableArg,
                           AbstractViewImpl *viewArg,
-                          long detailArg,
-                          long screenXArg,
-                          long screenYArg,
-                          long clientXArg,
-                          long clientYArg,
+                          int detailArg,
+                          int screenXArg,
+                          int screenYArg,
+                          int clientXArg,
+                          int clientYArg,
                           bool ctrlKeyArg,
                           bool altKeyArg,
                           bool shiftKeyArg,
                           bool metaKeyArg);
-    long screenX() const { return m_screenX; }
-    long screenY() const { return m_screenY; }
-    long clientX() const { return m_clientX; }
-    long clientY() const { return m_clientY; }
-    long layerX() const { return m_layerX; }
-    long layerY() const { return m_layerY; }
-    virtual long pageX() const;
-    virtual long pageY() const;
+    int screenX() const { return m_screenX; }
+    int screenY() const { return m_screenY; }
+    int clientX() const { return m_clientX; }
+    int clientY() const { return m_clientY; }
+    int layerX() const { return m_layerX; }
+    int layerY() const { return m_layerY; }
+    virtual int pageX() const;
+    virtual int pageY() const;
 protected: // expose these so MouseEventImpl::initMouseEvent can set them
-    long m_screenX;
-    long m_screenY;
-    long m_clientX;
-    long m_clientY;
+    int m_screenX;
+    int m_screenY;
+    int m_clientX;
+    int m_clientY;
     void computeLayerPos();
 private:
-    long m_layerX;
-    long m_layerY;
+    int m_layerX;
+    int m_layerY;
 };
 
 // Introduced in DOM Level 2
@@ -203,11 +203,11 @@ public:
 		   bool canBubbleArg,
 		   bool cancelableArg,
 		   AbstractViewImpl *viewArg,
-		   long detailArg,
-		   long screenXArg,
-		   long screenYArg,
-		   long clientXArg,
-		   long clientYArg,
+		   int detailArg,
+		   int screenXArg,
+		   int screenYArg,
+		   int clientXArg,
+		   int clientYArg,
 		   bool ctrlKeyArg,
 		   bool altKeyArg,
 		   bool shiftKeyArg,
@@ -223,11 +223,11 @@ public:
 			bool canBubbleArg,
 			bool cancelableArg,
 			AbstractViewImpl *viewArg,
-			long detailArg,
-			long screenXArg,
-			long screenYArg,
-			long clientXArg,
-			long clientYArg,
+			int detailArg,
+			int screenXArg,
+			int screenYArg,
+			int clientXArg,
+			int clientYArg,
 			bool ctrlKeyArg,
 			bool altKeyArg,
 			bool shiftKeyArg,
@@ -236,7 +236,7 @@ public:
 			NodeImpl *relatedTargetArg);
     virtual bool isMouseEvent() const;
     virtual bool isDragEvent() const;
-    virtual long which() const;
+    virtual int which() const;
 private:
     unsigned short m_button;
     NodeImpl *m_relatedTarget;
@@ -254,7 +254,7 @@ public:
                 bool cancelableArg,
                 AbstractViewImpl *viewArg,
                 const DOMString &keyIdentifierArg,
-                unsigned long keyLocationArg,
+                unsigned keyLocationArg,
                 bool ctrlKeyArg,
                 bool altKeyArg,
                 bool shiftKeyArg,
@@ -267,7 +267,7 @@ public:
                 bool cancelableArg,
                 AbstractViewImpl *viewArg,
                 const DOMString &keyIdentifierArg,
-                unsigned long keyLocationArg,
+                unsigned keyLocationArg,
                 bool ctrlKeyArg,
                 bool altKeyArg,
                 bool shiftKeyArg,
@@ -275,7 +275,7 @@ public:
                 bool altGraphKeyArg);
     
     DOMString keyIdentifier() const { return m_keyIdentifier; }
-    unsigned long keyLocation() const { return m_keyLocation; }
+    unsigned keyLocation() const { return m_keyLocation; }
     
     bool altGraphKey() const { return m_altGraphKey; }
     
@@ -285,12 +285,12 @@ public:
     int charCode() const;
     
     virtual bool isKeyboardEvent() const;
-    virtual long which() const;
+    virtual int which() const;
 
 private:
     QKeyEvent *m_keyEvent;
     DOMStringImpl *m_keyIdentifier;
-    unsigned long m_keyLocation;
+    unsigned m_keyLocation;
     bool m_altGraphKey : 1;
 };
 
@@ -347,18 +347,18 @@ class WheelEventImpl : public MouseRelatedEventImpl
 {
 public:
     WheelEventImpl();
-    WheelEventImpl(bool horizontal, long wheelDelta, AbstractViewImpl *,
-                   long screenXArg, long screenYArg,
-                   long clientXArg, long clientYArg,
+    WheelEventImpl(bool horizontal, int wheelDelta, AbstractViewImpl *,
+                   int screenXArg, int screenYArg,
+                   int clientXArg, int clientYArg,
                    bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg);
     bool isHorizontal() const { return m_horizontal; }
-    long wheelDelta() const { return m_wheelDelta; }
+    int wheelDelta() const { return m_wheelDelta; }
 
 private:
     virtual bool isWheelEvent() const;
 
     bool m_horizontal;
-    long m_wheelDelta;
+    int m_wheelDelta;
 };
 
 class RegisteredEventListener {

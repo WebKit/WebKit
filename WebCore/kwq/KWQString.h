@@ -473,19 +473,11 @@ public:
 
     bool endsWith(const QString &) const;
 
-    // NOTE: toXXXXX integer functions only support base 10 and base 16
-    // NOTE: toShort, toUShort, toULong, and toDouble are NOT used but are kept
-    // for completeness
-    short toShort(bool *ok=NULL, int base=10) const;
-    // NOTE: ok and base NOT used for toUShort
-    ushort toUShort(bool *ok=NULL, int base=10) const;
-    int toInt(bool *ok=NULL, int base=10) const;
-    // NOTE: base NOT used for toUInt
-    uint toUInt(bool *ok=NULL, int base=10) const;
-    long toLong(bool *ok=NULL, int base=10) const;
-    ulong toULong(bool *ok=NULL, int base=10) const;
-    float toFloat(bool *ok=NULL) const;
-    double toDouble(bool *ok=NULL) const;
+    short toShort(bool *ok = NULL, int base = 10) const;
+    ushort toUShort(bool *ok = NULL, int base = 10) const;
+    int toInt(bool *ok = NULL, int base = 10) const;
+    uint toUInt(bool *ok = NULL, int base = 10) const;
+    double toDouble(bool *ok = NULL) const;
 
     static QString number(int);
     static QString number(uint);
@@ -651,11 +643,6 @@ inline QString QString::fromLatin1(const char *chs, int length)
 inline const char *QString::ascii() const
 {
     return latin1();
-}
-
-inline float QString::toFloat(bool *ok) const
-{
-    return toDouble(ok);
 }
 
 inline bool QString::operator!() const

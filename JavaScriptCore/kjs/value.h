@@ -189,6 +189,8 @@ ValueImp *jsNumber(int);
 ValueImp *jsNumber(unsigned);
 ValueImp *jsNumber(long);
 ValueImp *jsNumber(unsigned long);
+ValueImp *jsNumber(long long);
+ValueImp *jsNumber(unsigned long long);
 
 AllocatedValueImp *jsString(const UString &); // returns empty string if passed null string
 AllocatedValueImp *jsString(const char * = ""); // returns empty string if passed 0
