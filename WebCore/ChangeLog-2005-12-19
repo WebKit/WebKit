@@ -1,3 +1,17 @@
+2005-09-16  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by Dave Hyatt.  Test case reviewed by Vicki Murley.
+
+	<rdar://problem/3572507> Flash in div with display:none style will not redraw when style changed to display:block (3479)
+
+        Test cases added:
+        * manual-tests/show-hide-object.html: Added.
+        * manual-tests/resources/spinbox.swf: Added.
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::detach):
+	Set needWidgetUpdate to true so that the widget is updated on the next attach().
+
 2005-09-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
