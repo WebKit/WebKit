@@ -1,3 +1,16 @@
+2005-09-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick
+        
+        - fixed <rdar://problem/4256557> CrashTracer: 238 crashes in Safari at 
+        com.apple.AppKit: -[NSPasteboard setData:forType:] + 188
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView copy:]):
+        declare types to pasteboard before starting to set their data
+        (-[WebImageView writeSelectionToPasteboard:types:]):
+        ditto
+
 2005-09-16  Adele Peterson  <adele@apple.com>
 
         Rolling out the fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
