@@ -225,8 +225,9 @@
 - (void)copy:(id)sender
 {
     NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:([rep archive] != nil)];
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard declareTypes:types owner:nil];
-    [self writeImageToPasteboard:[NSPasteboard generalPasteboard] types:types];
+    [self writeImageToPasteboard:pasteboard types:types];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types

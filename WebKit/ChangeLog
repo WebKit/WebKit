@@ -1,5 +1,11 @@
 2005-09-16  John Sullivan  <sullivan@apple.com>
 
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView copy:]):
+        fixed build-breaking silly error in previous checkin
+
+2005-09-16  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim Omernick
         
         - fixed <rdar://problem/4256557> CrashTracer: 238 crashes in Safari at 
