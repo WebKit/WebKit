@@ -44,7 +44,7 @@ void SVGNumberListImpl::parse(const QString &value, const SVGStyledElementImpl *
     for(unsigned int i = 0;i < numbers.count();i++)
     {
         SVGNumberImpl *number = new SVGNumberImpl(context);
-        number->setValue(numbers[i].toFloat());
+        number->setValue(numbers[i].toDouble());
         appendItem(number);
     }
 }

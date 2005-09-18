@@ -92,7 +92,7 @@ void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
     QString s = m_valueAsString.string();
 
     bool bOK;
-    m_valueInSpecifiedUnits = s.toFloat(&bOK);
+    m_valueInSpecifiedUnits = s.toDouble(&bOK);
     m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
 
     if(!bOK)

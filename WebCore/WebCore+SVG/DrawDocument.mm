@@ -257,7 +257,7 @@ using namespace KSVG;
 - (DrawView *)primaryView
 {
     if (_private->primaryView)
-        return _private->primaryView->view();
+        return (DrawView *)_private->primaryView->view();
     return nil;
 }
 

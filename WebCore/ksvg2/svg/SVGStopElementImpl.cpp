@@ -61,9 +61,9 @@ void SVGStopElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
         case ATTR_OFFSET:
         {
             if(value.string().endsWith(QString::fromLatin1("%")))
-                offset()->setBaseVal(value.string().left(value.length() - 1).toFloat() / 100.);
+                offset()->setBaseVal(value.string().left(value.length() - 1).toDouble() / 100.);
             else
-                offset()->setBaseVal(value.string().toFloat());
+                offset()->setBaseVal(value.string().toDouble());
             break;
         }
         default:

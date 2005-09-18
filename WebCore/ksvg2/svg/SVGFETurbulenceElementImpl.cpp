@@ -129,17 +129,17 @@ void SVGFETurbulenceElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
         case ATTR_BASEFREQUENCY:
         {
             QStringList numbers = QStringList::split(' ', value.string());
-            baseFrequencyX()->setBaseVal(numbers[0].toFloat());
+            baseFrequencyX()->setBaseVal(numbers[0].toDouble());
             if(numbers.count() == 1)
-                baseFrequencyY()->setBaseVal(numbers[0].toFloat());
+                baseFrequencyY()->setBaseVal(numbers[0].toDouble());
             else
-                baseFrequencyY()->setBaseVal(numbers[1].toFloat());
+                baseFrequencyY()->setBaseVal(numbers[1].toDouble());
 
             break;
         }
         case ATTR_SEED:
         {
-            seed()->setBaseVal(value.string().toFloat());
+            seed()->setBaseVal(value.string().toDouble());
             break;
         }
         case ATTR_NUMOCTAVES:

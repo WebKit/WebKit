@@ -135,27 +135,27 @@ void SVGComponentTransferFunctionElementImpl::parseAttribute(KDOM::AttributeImpl
         }
         case ATTR_SLOPE:
         {
-            slope()->setBaseVal(value.string().toFloat());
+            slope()->setBaseVal(value.string().toDouble());
             break;
         }
         case ATTR_INTERCEPT:
         {
-            intercept()->setBaseVal(value.string().toFloat());
+            intercept()->setBaseVal(value.string().toDouble());
             break;
         }
         case ATTR_AMPLITUDE:
         {
-            amplitude()->setBaseVal(value.string().toFloat());
+            amplitude()->setBaseVal(value.string().toDouble());
             break;
         }
         case ATTR_EXPONENT:
         {
-            exponent()->setBaseVal(value.string().toFloat());
+            exponent()->setBaseVal(value.string().toDouble());
             break;
         }
         case ATTR_OFFSET:
         {
-            offset()->setBaseVal(value.string().toFloat());
+            offset()->setBaseVal(value.string().toDouble());
             break;
         }
         default:

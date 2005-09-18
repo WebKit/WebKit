@@ -80,10 +80,10 @@ void SVGFitToViewBoxImpl::parseViewBox(KDOM::DOMStringImpl *str)
     QStringList points = QStringList::split(' ', viewbox.replace(',', ' ').simplifyWhiteSpace());
 
     if (points.count() == 4) {
-        viewBox()->baseVal()->setX(points[0].toFloat());
-        viewBox()->baseVal()->setY(points[1].toFloat());
-        viewBox()->baseVal()->setWidth(points[2].toFloat());
-        viewBox()->baseVal()->setHeight(points[3].toFloat());
+        viewBox()->baseVal()->setX(points[0].toDouble());
+        viewBox()->baseVal()->setY(points[1].toDouble());
+        viewBox()->baseVal()->setWidth(points[2].toDouble());
+        viewBox()->baseVal()->setHeight(points[3].toDouble());
     } else {
         fprintf(stderr, "WARNING: Malformed viewbox string: %s (l: %i)", viewbox.ascii(), viewbox.length());
     }

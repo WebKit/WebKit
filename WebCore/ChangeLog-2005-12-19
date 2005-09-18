@@ -1,3 +1,28 @@
+2005-09-18  Eric Seidel  <eseidel@apple.com>
+
+        No review needed, SVG build fix only.
+
+        * WebCore+SVG/DrawDocument.mm:
+        (-[DrawView primaryView]): cast to DrawView * (newer gcc fix)
+        * kdom/cache/KDOMLoader.cpp:
+        (Loader::slotFinished): toLong -> toInt
+        * ksvg2/svg/SVGAngleImpl.cpp:
+        (SVGAngleImpl::setValueAsString): toFloat -> toDouble
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        (SVGComponentTransferFunctionElementImpl::parseAttribute): ditto
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::parseAttribute): ditto
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::parseAttribute): ditto
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::parseAttribute): ditto
+        * ksvg2/svg/SVGFitToViewBoxImpl.cpp:
+        (SVGFitToViewBoxImpl::parseViewBox): ditto
+        * ksvg2/svg/SVGNumberListImpl.cpp:
+        (SVGNumberListImpl::parse): ditto
+        * ksvg2/svg/SVGStopElementImpl.cpp:
+        (SVGStopElementImpl::parseAttribute): ditto
+
 2005-09-16  Adele Peterson  <adele@apple.com>
 
         Rolling out the fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4924

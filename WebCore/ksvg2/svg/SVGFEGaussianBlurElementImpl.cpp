@@ -91,11 +91,11 @@ void SVGFEGaussianBlurElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
         case ATTR_STDDEVIATION:
         {
             QStringList numbers = QStringList::split(' ', value.string());
-            stdDeviationX()->setBaseVal(numbers[0].toFloat());
+            stdDeviationX()->setBaseVal(numbers[0].toDouble());
             if(numbers.count() == 1)
-                stdDeviationY()->setBaseVal(numbers[0].toFloat());
+                stdDeviationY()->setBaseVal(numbers[0].toDouble());
             else
-                stdDeviationY()->setBaseVal(numbers[1].toFloat());
+                stdDeviationY()->setBaseVal(numbers[1].toDouble());
 
             break;
         }
