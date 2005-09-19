@@ -28,7 +28,7 @@
 #include "ustring.h"
 #include "value.h"
 #include "object.h"
-#include "protected_object.h"
+#include "protect.h"
 #include "types.h"
 #include "interpreter.h"
 #include "scope_chain.h"
@@ -215,39 +215,39 @@ namespace KJS {
   class SavedBuiltinsInternal {
     friend class InterpreterImp;
   private:
-    ProtectedObject b_Object;
-    ProtectedObject b_Function;
-    ProtectedObject b_Array;
-    ProtectedObject b_Boolean;
-    ProtectedObject b_String;
-    ProtectedObject b_Number;
-    ProtectedObject b_Date;
-    ProtectedObject b_RegExp;
-    ProtectedObject b_Error;
+    ProtectedPtr<ObjectImp> b_Object;
+    ProtectedPtr<ObjectImp> b_Function;
+    ProtectedPtr<ObjectImp> b_Array;
+    ProtectedPtr<ObjectImp> b_Boolean;
+    ProtectedPtr<ObjectImp> b_String;
+    ProtectedPtr<ObjectImp> b_Number;
+    ProtectedPtr<ObjectImp> b_Date;
+    ProtectedPtr<ObjectImp> b_RegExp;
+    ProtectedPtr<ObjectImp> b_Error;
 
-    ProtectedObject b_ObjectPrototype;
-    ProtectedObject b_FunctionPrototype;
-    ProtectedObject b_ArrayPrototype;
-    ProtectedObject b_BooleanPrototype;
-    ProtectedObject b_StringPrototype;
-    ProtectedObject b_NumberPrototype;
-    ProtectedObject b_DatePrototype;
-    ProtectedObject b_RegExpPrototype;
-    ProtectedObject b_ErrorPrototype;
+    ProtectedPtr<ObjectImp> b_ObjectPrototype;
+    ProtectedPtr<ObjectImp> b_FunctionPrototype;
+    ProtectedPtr<ObjectImp> b_ArrayPrototype;
+    ProtectedPtr<ObjectImp> b_BooleanPrototype;
+    ProtectedPtr<ObjectImp> b_StringPrototype;
+    ProtectedPtr<ObjectImp> b_NumberPrototype;
+    ProtectedPtr<ObjectImp> b_DatePrototype;
+    ProtectedPtr<ObjectImp> b_RegExpPrototype;
+    ProtectedPtr<ObjectImp> b_ErrorPrototype;
 
-    ProtectedObject b_evalError;
-    ProtectedObject b_rangeError;
-    ProtectedObject b_referenceError;
-    ProtectedObject b_syntaxError;
-    ProtectedObject b_typeError;
-    ProtectedObject b_uriError;
+    ProtectedPtr<ObjectImp> b_evalError;
+    ProtectedPtr<ObjectImp> b_rangeError;
+    ProtectedPtr<ObjectImp> b_referenceError;
+    ProtectedPtr<ObjectImp> b_syntaxError;
+    ProtectedPtr<ObjectImp> b_typeError;
+    ProtectedPtr<ObjectImp> b_uriError;
 
-    ProtectedObject b_evalErrorPrototype;
-    ProtectedObject b_rangeErrorPrototype;
-    ProtectedObject b_referenceErrorPrototype;
-    ProtectedObject b_syntaxErrorPrototype;
-    ProtectedObject b_typeErrorPrototype;
-    ProtectedObject b_uriErrorPrototype;
+    ProtectedPtr<ObjectImp> b_evalErrorPrototype;
+    ProtectedPtr<ObjectImp> b_rangeErrorPrototype;
+    ProtectedPtr<ObjectImp> b_referenceErrorPrototype;
+    ProtectedPtr<ObjectImp> b_syntaxErrorPrototype;
+    ProtectedPtr<ObjectImp> b_typeErrorPrototype;
+    ProtectedPtr<ObjectImp> b_uriErrorPrototype;
   };
 
   class InterpreterImp {
@@ -259,8 +259,8 @@ namespace KJS {
     InterpreterImp(Interpreter *interp, ObjectImp *glob);
     ~InterpreterImp();
 
-    ProtectedObject &globalObject() const { return const_cast<ProtectedObject &>(global); }
-    Interpreter* interpreter() const { return m_interpreter; }
+    ObjectImp *globalObject() { return global; }
+    Interpreter *interpreter() const { return m_interpreter; }
 
     void initGlobalObject();
     static void lock();
@@ -328,46 +328,46 @@ namespace KJS {
   private:
     void clear();
     Interpreter *m_interpreter;
-    ProtectedObject global;
+    ObjectImp *global;
     Debugger *dbg;
 
     // Built-in properties of the object prototype. These are accessible
     // from here even if they are replaced by js code (e.g. assigning to
     // Array.prototype)
 
-    ProtectedObject b_Object;
-    ProtectedObject b_Function;
-    ProtectedObject b_Array;
-    ProtectedObject b_Boolean;
-    ProtectedObject b_String;
-    ProtectedObject b_Number;
-    ProtectedObject b_Date;
-    ProtectedObject b_RegExp;
-    ProtectedObject b_Error;
+    ProtectedPtr<ObjectImp> b_Object;
+    ProtectedPtr<ObjectImp> b_Function;
+    ProtectedPtr<ObjectImp> b_Array;
+    ProtectedPtr<ObjectImp> b_Boolean;
+    ProtectedPtr<ObjectImp> b_String;
+    ProtectedPtr<ObjectImp> b_Number;
+    ProtectedPtr<ObjectImp> b_Date;
+    ProtectedPtr<ObjectImp> b_RegExp;
+    ProtectedPtr<ObjectImp> b_Error;
 
-    ProtectedObject b_ObjectPrototype;
-    ProtectedObject b_FunctionPrototype;
-    ProtectedObject b_ArrayPrototype;
-    ProtectedObject b_BooleanPrototype;
-    ProtectedObject b_StringPrototype;
-    ProtectedObject b_NumberPrototype;
-    ProtectedObject b_DatePrototype;
-    ProtectedObject b_RegExpPrototype;
-    ProtectedObject b_ErrorPrototype;
+    ProtectedPtr<ObjectImp> b_ObjectPrototype;
+    ProtectedPtr<ObjectImp> b_FunctionPrototype;
+    ProtectedPtr<ObjectImp> b_ArrayPrototype;
+    ProtectedPtr<ObjectImp> b_BooleanPrototype;
+    ProtectedPtr<ObjectImp> b_StringPrototype;
+    ProtectedPtr<ObjectImp> b_NumberPrototype;
+    ProtectedPtr<ObjectImp> b_DatePrototype;
+    ProtectedPtr<ObjectImp> b_RegExpPrototype;
+    ProtectedPtr<ObjectImp> b_ErrorPrototype;
 
-    ProtectedObject b_evalError;
-    ProtectedObject b_rangeError;
-    ProtectedObject b_referenceError;
-    ProtectedObject b_syntaxError;
-    ProtectedObject b_typeError;
-    ProtectedObject b_uriError;
+    ProtectedPtr<ObjectImp> b_evalError;
+    ProtectedPtr<ObjectImp> b_rangeError;
+    ProtectedPtr<ObjectImp> b_referenceError;
+    ProtectedPtr<ObjectImp> b_syntaxError;
+    ProtectedPtr<ObjectImp> b_typeError;
+    ProtectedPtr<ObjectImp> b_uriError;
 
-    ProtectedObject b_evalErrorPrototype;
-    ProtectedObject b_rangeErrorPrototype;
-    ProtectedObject b_referenceErrorPrototype;
-    ProtectedObject b_syntaxErrorPrototype;
-    ProtectedObject b_typeErrorPrototype;
-    ProtectedObject b_uriErrorPrototype;
+    ProtectedPtr<ObjectImp> b_evalErrorPrototype;
+    ProtectedPtr<ObjectImp> b_rangeErrorPrototype;
+    ProtectedPtr<ObjectImp> b_referenceErrorPrototype;
+    ProtectedPtr<ObjectImp> b_syntaxErrorPrototype;
+    ProtectedPtr<ObjectImp> b_typeErrorPrototype;
+    ProtectedPtr<ObjectImp> b_uriErrorPrototype;
 
     ExecState globExec;
     Interpreter::CompatMode m_compatMode;

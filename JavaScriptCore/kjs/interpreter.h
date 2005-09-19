@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
@@ -482,6 +481,16 @@ namespace KJS {
     ContextImp *_context;
     ValueImp *_exception;
   };
+
+    class InterpreterLock
+    {
+    public:
+        InterpreterLock() { Interpreter::lock(); }
+        ~InterpreterLock() { Interpreter::unlock(); }
+    private:
+        InterpreterLock(const InterpreterLock &);
+        InterpreterLock &operator =(const InterpreterLock &);
+    };
 
 } // namespace
 

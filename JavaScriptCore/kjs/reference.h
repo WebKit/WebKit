@@ -33,7 +33,6 @@ namespace KJS {
   class Reference {
     friend class ReferenceList;
     friend class ReferenceListIterator;
-    friend class ProtectedReference;
   public:
     Reference(ObjectImp *b, const Identifier& p);
     Reference(ObjectImp *b, unsigned p);
@@ -70,10 +69,12 @@ namespace KJS {
 
     ValueImp *baseIfMutable() const { return baseIsValue ? 0 : base; }
 
+  protected:
+    ValueImp *base;
+
   private:
     Reference() { }
 
-    ValueImp *base;
     unsigned propertyNameAsNumber;
     bool baseIsValue;
     bool propertyNameIsNumber;

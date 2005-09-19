@@ -236,6 +236,8 @@
 #define MORECORE_CANNOT_TRIM 1
 #endif
 
+#include "internal.h"
+
 namespace KJS {
 
 #ifndef NDEBUG
@@ -244,21 +246,25 @@ namespace KJS {
 
 void *kjs_fast_malloc(size_t n)
 {
+    assert(InterpreterImp::lockCount() > 0);
     return malloc(n);
 }
 
 void *kjs_fast_calloc(size_t n_elements, size_t element_size)
 {
+    assert(InterpreterImp::lockCount() > 0);
     return calloc(n_elements, element_size);
 }
 
 void kjs_fast_free(void* p)
 {
+    assert(InterpreterImp::lockCount() > 0);
     free(p);
 }
 
 void *kjs_fast_realloc(void* p, size_t n)
 {
+    assert(InterpreterImp::lockCount() > 0);
     return realloc(p, n);
 }
 
@@ -5457,7 +5463,7 @@ static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
 
 #endif /* WIN32 */
 
-#endif
+#endif // NDEBUG
 
 }  /* end of namespace KJS */
 

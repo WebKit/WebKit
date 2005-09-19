@@ -190,24 +190,22 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     // Lookup the function object.
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
-    Interpreter::lock();
+    InterpreterLock lock;
     
     ValueImp *v = convertObjcValueToValue(exec, &name, ObjcObjectType);
     Identifier identifier(v->toString(exec));
     ValueImp *func = [self _imp]->get (exec, identifier);
-    Interpreter::unlock();
+
     if (!func || func->isUndefined()) {
         // Maybe throw an exception here?
         return 0;
     }
 
     // Call the function object.    
-    Interpreter::lock();
     ObjectImp *funcImp = static_cast<ObjectImp*>(func);
     ObjectImp *thisObj = const_cast<ObjectImp*>([self _imp]);
     List argList = listFromNSArray(exec, args);
     ValueImp *result = funcImp->call (exec, thisObj, argList);
-    Interpreter::unlock();
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -226,15 +224,14 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 {
     if (![self _executionContext])
         return nil;
-
+    
     if (![self _isSafeScript])
 	return nil;
-
+    
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
-
     ValueImp *result;
     
-    Interpreter::lock();
+    InterpreterLock lock;
     
     ValueImp *v = convertObjcValueToValue(exec, &script, ObjcObjectType);
     Completion completion = [self _executionContext]->interpreter()->evaluate(UString(), 0, v->toString(exec));
@@ -242,22 +239,18 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     
     if (type == Normal) {
         result = completion.value();
-        if (!result) {
+        if (!result)
             result = Undefined();
-        }
-    }
-    else
+    } else
         result = Undefined();
-
-    Interpreter::unlock();
     
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
         result = Undefined();
     }
-
+    
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
-
+    
     _didExecute(self);
     
     return resultObj;
@@ -273,10 +266,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
-    Interpreter::lock();
+    InterpreterLock lock;
     ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->put (exec, Identifier (v->toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
-    Interpreter::unlock();
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -295,10 +287,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
-    Interpreter::lock();
+    InterpreterLock lock;
     ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     ValueImp *result = [self _imp]->get (exec, Identifier (v->toString(exec)));
-    Interpreter::unlock();
     
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -322,10 +313,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
-    Interpreter::lock();
+    InterpreterLock lock;
     ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->deleteProperty (exec, Identifier (v->toString(exec)));
-    Interpreter::unlock();
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -340,14 +330,12 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         // This is a workaround for a gcc 3.3 internal compiler error.
 	return @"Undefined";
 
-    Interpreter::lock();
+    InterpreterLock lock;
     ObjectImp *thisObj = const_cast<ObjectImp*>([self _imp]);
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     
     id result = convertValueToObjcValue(exec, thisObj, ObjcObjectType).objectValue;
 
-    Interpreter::unlock();
-    
     id resultObj = [result description];
 
     _didExecute(self);
@@ -364,9 +352,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return nil;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
-    Interpreter::lock();
+    InterpreterLock lock;
     ValueImp *result = [self _imp]->get (exec, (unsigned)index);
-    Interpreter::unlock();
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -389,9 +376,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
-    Interpreter::lock();
+    InterpreterLock lock;
     [self _imp]->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
-    Interpreter::unlock();
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -408,62 +394,46 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 + (id)_convertValueToObjcValue:(ValueImp *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
-    id result = 0;
-
     // First see if we have a ObjC instance.
     if (value->isObject()) {
         ObjectImp *objectImp = static_cast<ObjectImp*>(value);
 	Interpreter *intepreter = executionContext->interpreter();
 	ExecState *exec = intepreter->globalExec();
-        Interpreter::lock();
+        InterpreterLock lock;
 	
         if (objectImp->classInfo() != &RuntimeObjectImp::info) {
 	    ValueImp *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
 	    if (runtimeObject && runtimeObject->isObject())
 		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject);
 	}
-        
-        Interpreter::unlock();
 
         if (objectImp->classInfo() == &RuntimeObjectImp::info) {
             RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(objectImp);
             ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
             if (instance)
-                result = instance->getObject();
-        }
-        // Convert to a WebScriptObject
-        else {
-	    result = (id)intepreter->createLanguageInstanceForValue (exec, Instance::ObjectiveCLanguage, value->toObject(exec), originExecutionContext, executionContext);
-        }
-    }
-    
-    // Convert JavaScript String value to NSString?
-    else if (value->isString()) {
+                return instance->getObject();
+        } else
+            // JS Object --> WebScriptObject
+	    return (id)intepreter->createLanguageInstanceForValue (exec, Instance::ObjectiveCLanguage, value->toObject(exec), originExecutionContext, executionContext);
+    } else if (value->isString()) {
+        // JS String --> NSString
         StringImp *s = static_cast<StringImp*>(value);
         UString u = s->value();
         
         NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
-        result = string;
-    }
-    
-    // Convert JavaScript Number value to NSNumber?
-    else if (value->isNumber()) {
-        result = [NSNumber numberWithDouble:value->getNumber()];
-    }
-    
-    else if (value->isBoolean()) {
-        BooleanImp *b = static_cast<BooleanImp*>(value);
-        result = [NSNumber numberWithBool:b->value()];
-    }
-    
-    // Convert JavaScript Undefined types to WebUndefined
-    else if (value->isUndefined()) {
-        result = [WebUndefined undefined];
-    }
+        return string;
+    } else if (value->isNumber())
+        // JS Number --> NSNumber
+        return [NSNumber numberWithDouble:value->getNumber()];
+    else if (value->isBoolean())
+        // JS Boolean --> NSNumber
+        return [NSNumber numberWithBool:static_cast<BooleanImp*>(value)->value()];
+    else if (value->isUndefined())
+        // JS Undefined --> WebUndefined
+        return [WebUndefined undefined];
     
     // Other types (UnspecifiedType and NullType) converted to 0.
-    
-    return result;
+    return 0;
 }
 
 @end

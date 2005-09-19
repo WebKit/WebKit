@@ -25,8 +25,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		65305EAF08A58DDE00F31E73 /* protected_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 65305EAE08A58DDE00F31E73 /* protected_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65305EB008A58E0900F31E73 /* protected_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 65305EAE08A58DDE00F31E73 /* protected_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		652C107F08DA7B1E0020887D /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
 		65621E6D089E859700760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
@@ -479,7 +478,7 @@
 		651BDC78080F10CC00F10856 /* fast_malloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fast_malloc.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
-		65305EAE08A58DDE00F31E73 /* protected_object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_object.h; sourceTree = "<group>"; };
+		652C107E08DA7B1E0020887D /* protected_reference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_reference.h; sourceTree = "<group>"; };
 		6541720E039E08B90058BFEB /* dftables.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dftables.c; path = pcre/dftables.c; sourceTree = "<group>"; };
 		6541720F039E08B90058BFEB /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = pcre/pcre.h; sourceTree = "<group>"; };
 		65417217039E0B280058BFEB /* pcre-config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pcre-config.h"; path = "pcre/pcre-config.h"; sourceTree = "<group>"; };
@@ -677,12 +676,12 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				65305EAE08A58DDE00F31E73 /* protected_object.h */,
 				65EF2DF408BECC80000894BB /* shared_ptr.h */,
 				65621E6B089E859700760F35 /* property_slot.cpp */,
 				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
 				650B68D80639033F009D42DE /* protected_values.cpp */,
+				652C107E08DA7B1E0020887D /* protected_reference.h */,
 				650B68D90639033F009D42DE /* protected_values.h */,
 				65AB004806261CBA0076DE63 /* interpreter_map.cpp */,
 				65AB004906261CBA0076DE63 /* interpreter_map.h */,
@@ -888,7 +887,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65305EAF08A58DDE00F31E73 /* protected_object.h in Headers */,
 				932F5B400822A1C700736975 /* array_object.h in Headers */,
 				932F5B420822A1C700736975 /* collector.h in Headers */,
 				932F5B430822A1C700736975 /* date_object.h in Headers */,
@@ -967,6 +965,7 @@
 				93E26C1308B1523D00F85226 /* ucptable.c in Headers */,
 				93E26CCF08B2921900F85226 /* softlinking.h in Headers */,
 				65EF2DF508BECC80000894BB /* shared_ptr.h in Headers */,
+				652C107F08DA7B1E0020887D /* protected_reference.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,7 +973,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65305EB008A58E0900F31E73 /* protected_object.h in Headers */,
 				A85D81F8087B2822006A9172 /* array_object.h in Headers */,
 				A85D81F9087B2822006A9172 /* collector.h in Headers */,
 				A85D81FA087B2822006A9172 /* date_object.h in Headers */,

@@ -1,3 +1,95 @@
+2005-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	- fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
+
+	Make sure to lock using the InterpreterLock class in all places that need it
+	(including anything that uses the collector, the parser, the protect count hash table,
+	and anything that allocates via fast_malloc).
+
+	Also added assertions to ensure that the locking rules are followed for the relevant
+	resources.
+
+        * Makefile.am:
+        * bindings/NP_jsobject.cpp:
+        (identifierFromNPIdentifier):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::call):
+        (JSObject::eval):
+        (JSObject::getMember):
+        (JSObject::setMember):
+        (JSObject::removeMember):
+        (JSObject::getSlot):
+        (JSObject::setSlot):
+        (JSObject::toString):
+        (JSObject::convertJObjectToValue):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        * bindings/runtime.cpp:
+        (Instance::createRuntimeObject):
+        * bindings/runtime_root.h:
+        * bindings/testbindings.cpp:
+        (main):
+        * bindings/testbindings.mm:
+        (main):
+        * kjs/fast_malloc.cpp:
+        (KJS::kjs_fast_malloc):
+        (KJS::kjs_fast_calloc):
+        (KJS::kjs_fast_free):
+        (KJS::kjs_fast_realloc):
+        * kjs/fast_malloc.h:
+        * kjs/identifier.h:
+        * kjs/internal.cpp:
+        (InterpreterImp::InterpreterImp):
+        (InterpreterImp::clear):
+        (InterpreterImp::mark):
+        (InterpreterImp::checkSyntax):
+        (InterpreterImp::evaluate):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::globalObject):
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate):
+        * kjs/interpreter.h:
+        (KJS::InterpreterLock::InterpreterLock):
+        (KJS::InterpreterLock::~InterpreterLock):
+        * kjs/nodes.h:
+        * kjs/protect.h:
+        (KJS::ProtectedValue::ProtectedValue):
+        (KJS::ProtectedValue::~ProtectedValue):
+        (KJS::ProtectedValue::operator=):
+        (KJS::ProtectedObject::ProtectedObject):
+        (KJS::ProtectedObject::~ProtectedObject):
+        (KJS::ProtectedObject::operator=):
+        (KJS::ProtectedReference::ProtectedReference):
+        (KJS::ProtectedReference::~ProtectedReference):
+        (KJS::ProtectedReference::operator=):
+        * kjs/protected_object.h:
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::getProtectCount):
+        (KJS::ProtectedValues::increaseProtectCount):
+        (KJS::ProtectedValues::decreaseProtectCount):
+        * kjs/string_object.cpp:
+        (StringObjectImp::StringObjectImp):
+        * kjs/testkjs.cpp:
+        (main):
+
 2005-09-16  Adele Peterson  <adele@apple.com>
 
         Change by Darin, reviewed by me and Maciej.

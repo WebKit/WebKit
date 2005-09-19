@@ -38,12 +38,13 @@
 
 namespace KJS {
 
+  class ProgramNode;
+  class PropertyNode;
+  class PropertyValueNode;
+  class Reference;
   class RegExp;
   class SourceElementsNode;
-  class ProgramNode;
   class SourceStream;
-  class PropertyValueNode;
-  class PropertyNode;
 
   enum Operator { OpEqual,
 		  OpEqEq,

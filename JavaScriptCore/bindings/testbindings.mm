@@ -239,7 +239,7 @@ int main(int argc, char **argv)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
-        Interpreter::lock();
+        InterpreterLock lock;
         
         // create interpreter w/ global object
         Object global(new GlobalImp());
@@ -280,8 +280,6 @@ int main(int argc, char **argv)
         }
         
         [myInterface release];
-        
-        Interpreter::unlock();
         
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
         [pool release];

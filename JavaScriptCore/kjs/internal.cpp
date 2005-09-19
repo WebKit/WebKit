@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
@@ -451,7 +450,8 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
 {
   // add this interpreter to the global chain
   // as a root set for garbage collection
-  lockInterpreter();
+  InterpreterLock lock;
+
   m_interpreter = interp;
   if (s_hook) {
     prev = s_hook;
@@ -474,7 +474,6 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
   initGlobalObject();
 
   recursion = 0;
-  unlockInterpreter();
 }
 
 void InterpreterImp::lock()
@@ -622,9 +621,8 @@ void InterpreterImp::clear()
 {
   //fprintf(stderr,"InterpreterImp::clear\n");
   // remove from global chain (see init())
-#if APPLE_CHANGES
-  lockInterpreter();
-#endif
+  InterpreterLock lock;
+
   next->prev = prev;
   prev->next = next;
   s_hook = next;
@@ -635,10 +633,6 @@ void InterpreterImp::clear()
     globalClear();
   }
   InterpreterMap::removeInterpreterForGlobalObject(global);
-
-#if APPLE_CHANGES
-  unlockInterpreter();
-#endif
 }
 
 void InterpreterImp::mark()
@@ -648,10 +642,16 @@ void InterpreterImp::mark()
     m_interpreter->mark();
   if (_context)
     _context->mark();
+  if (global)
+      global->mark();
+  if (globExec._exception)
+      globExec._exception->mark();
 }
 
 bool InterpreterImp::checkSyntax(const UString &code)
 {
+  InterpreterLock lock;
+
   // Parser::parse() returns 0 in a syntax error occurs, so we just check for that
   SharedPtr<ProgramNode> progNode = Parser::parse(UString(), 0, code.data(),code.size(),0,0,0);
   return progNode;
@@ -659,20 +659,18 @@ bool InterpreterImp::checkSyntax(const UString &code)
 
 Completion InterpreterImp::evaluate(const UString &code, ValueImp *thisV, const UString &sourceURL, int startingLineNumber)
 {
-#if APPLE_CHANGES
-  lockInterpreter();
-#endif
+  InterpreterLock lock;
+
   // prevent against infinite recursion
   if (recursion >= 20) {
 #if APPLE_CHANGES
     Completion result = Completion(Throw, Error::create(&globExec, GeneralError, "Recursion too deep"));
-    unlockInterpreter();
     return result;
 #else
     return Completion(Throw,Error::create(&globExec, GeneralError, "Recursion too deep"));
 #endif
   }
-  
+
   // parse the source code
   int sid;
   int errLine;
@@ -683,22 +681,12 @@ Completion InterpreterImp::evaluate(const UString &code, ValueImp *thisV, const 
   if (dbg) {
     bool cont = dbg->sourceParsed(&globExec, sid, sourceURL, code, errLine);
     if (!cont)
-#if APPLE_CHANGES
-      {
-	unlockInterpreter();
-	return Completion(Break);
-      }
-#else
       return Completion(Break);
-#endif
   }
   
   // no program node means a syntax error occurred
   if (!progNode) {
     ObjectImp *err = Error::create(&globExec, SyntaxError, errMsg, errLine, sid, &sourceURL);
-#if APPLE_CHANGES
-    unlockInterpreter();
-#endif
     return Completion(Throw,err);
   }
 
@@ -727,16 +715,13 @@ Completion InterpreterImp::evaluate(const UString &code, ValueImp *thisV, const 
   else {
     // execute the code
     ContextImp ctx(globalObj, this, thisObj);
-    ExecState newExec(m_interpreter,&ctx);
+    ExecState newExec(m_interpreter, &ctx);
     progNode->processVarDecls(&newExec);
     res = progNode->execute(&newExec);
   }
 
   recursion--;
 
-#if APPLE_CHANGES
-  unlockInterpreter();
-#endif
   return res;
 }
 

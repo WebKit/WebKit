@@ -21,8 +21,7 @@
  */
 
 #include "reference_list.h"
-
-#include "protected_object.h"
+#include "protected_reference.h"
 
 namespace KJS {
   class ReferenceListNode {

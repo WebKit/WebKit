@@ -24,6 +24,7 @@
 
 #include "pointer_hash.h"
 #include "simple_number.h"
+#include "internal.h"
 #include <stdint.h>
 #include "value.h"
 
@@ -38,6 +39,9 @@ int ProtectedValues::_keyCount;
 
 int ProtectedValues::getProtectCount(ValueImp *k)
 {
+    assert(k);
+    assert(InterpreterImp::lockCount() > 0);
+
     if (!_table)
 	return 0;
 
@@ -65,6 +69,7 @@ int ProtectedValues::getProtectCount(ValueImp *k)
 void ProtectedValues::increaseProtectCount(ValueImp *k)
 {
     assert(k);
+    assert(InterpreterImp::lockCount() > 0);
 
     if (SimpleNumber::is(k))
       return;
@@ -114,6 +119,7 @@ inline void ProtectedValues::insert(AllocatedValueImp *k, int v)
 void ProtectedValues::decreaseProtectCount(ValueImp *k)
 {
     assert(k);
+    assert(InterpreterImp::lockCount() > 0);
 
     if (SimpleNumber::is(k))
       return;
