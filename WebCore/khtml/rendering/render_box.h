@@ -152,9 +152,6 @@ protected:
     void paintBackground(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void outlineBox(QPainter *p, int _tx, int _ty, const char *color = "red");
 
-    virtual int borderTopExtra() const { return 0; }
-    virtual int borderBottomExtra() const { return 0; }
-
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
     void calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* cb, int cw, int pab, int static_distance,

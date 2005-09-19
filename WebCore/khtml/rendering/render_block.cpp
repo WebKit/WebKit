@@ -2428,9 +2428,9 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
 
     if (m_layer->verticalScrollbarWidth()) {
         QRect vertRect(_tx + width() - borderRight() - m_layer->verticalScrollbarWidth(),
-                       _ty + borderTop(),
+                       _ty + borderTop() - borderTopExtra(),
                        m_layer->verticalScrollbarWidth(),
-                       height()-borderTop()-borderBottom());
+                       height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
         if (vertRect.contains(_x, _y)) {
             RenderLayer::gScrollBar = m_layer->verticalScrollbar();
             return true;
@@ -2439,8 +2439,8 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
 
     if (m_layer->horizontalScrollbarHeight()) {
         QRect horizRect(_tx + borderLeft(),
-                        _ty + height() - borderBottom() - m_layer->horizontalScrollbarHeight(),
-                        width()-borderLeft()-borderRight(),
+                        _ty + height() + borderTop() + borderBottomExtra() - m_layer->horizontalScrollbarHeight() - borderBottom(),
+                        width() - borderLeft() - borderRight(),
                         m_layer->horizontalScrollbarHeight());
         if (horizRect.contains(_x, _y)) {
             RenderLayer::gScrollBar = m_layer->horizontalScrollbar();
@@ -2475,7 +2475,6 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
         }
     }
 
-    // See if we're inside the scrollbar (if we're overflow:scroll/auto).
     if (isPointInScrollbar(_x, _y, tx, ty)) {
         if (hitTestAction == HitTestBlockBackground) {
             setInnerNode(info);

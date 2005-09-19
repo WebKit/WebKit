@@ -661,6 +661,8 @@ public:
     
     virtual int borderTop() const { return style()->borderTopWidth(); }
     virtual int borderBottom() const { return style()->borderBottomWidth(); }
+    virtual int borderTopExtra() const { return 0; }
+    virtual int borderBottomExtra() const { return 0; }
     virtual int borderLeft() const { return style()->borderLeftWidth(); }
     virtual int borderRight() const { return style()->borderRightWidth(); }
 

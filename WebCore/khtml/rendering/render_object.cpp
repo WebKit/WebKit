@@ -528,7 +528,7 @@ RenderLayer* RenderObject::enclosingLayer()
 bool RenderObject::requiresLayer()
 {
     return isRoot() || isPositioned() || isRelPositioned() || style()->opacity() < 1.0f ||
-           m_hasOverflowClip;
+           hasOverflowClip();
 }
 
 RenderBlock* RenderObject::firstLineBlock() const

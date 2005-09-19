@@ -98,17 +98,17 @@ void RenderBox::setStyle(RenderStyle *_style)
             setRelPositioned(true);
     }
 
-    // FIXME: Note that we restrict overflow to blocks for now.  One day table bodies and cells 
+    // FIXME: Note that we restrict overflow to blocks for now.  One day table bodies 
     // will need to support overflow.
     // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (_style->overflow() != OVISIBLE && isBlockFlow() && !isTableCell() && !isRoot() && (!isBody() || !document()->isHTMLDocument()))
+    if (_style->overflow() != OVISIBLE && isBlockFlow() && !isRoot() && (!isBody() || !document()->isHTMLDocument()))
         setHasOverflowClip();
 
     if (requiresLayer()) {
         if (!m_layer) {
             m_layer = new (renderArena()) RenderLayer(this);
             m_layer->insertOnlyThisLayer();
-            if (containingBlock())
+            if (parent() && containingBlock())
                 m_layer->updateLayerPositions();
         }
     }
@@ -587,10 +587,10 @@ QRect RenderBox::getOverflowClipRect(int tx, int ty)
     // XXX When overflow-clip (CSS3) is implemented, we'll obtain the property
     // here.
     int bl=borderLeft(),bt=borderTop(),bb=borderBottom(),br=borderRight();
-    int clipx = tx+bl;
-    int clipy = ty+bt;
-    int clipw = m_width-bl-br;
-    int cliph = m_height-bt-bb;
+    int clipx = tx + bl;
+    int clipy = ty + bt;
+    int clipw = m_width - bl - br;
+    int cliph = m_height - bt - bb + borderTopExtra() + borderBottomExtra();
 
     // Subtract out scrollbars if we have them.
     if (m_layer) {

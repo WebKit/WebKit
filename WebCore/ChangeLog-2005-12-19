@@ -1,3 +1,39 @@
+2005-09-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Test cases added: fast/table/overflowHidden.html
+
+	-Fixed <rdar://problem/3885711> (4047) CSS: Content displays incorrectly in tables with TD style set overflow:hidden
+	Table cells render correctly with overflow:hidden, :auto, and :scroll specified. Cells now have a layer when overflow is specified.
+
+        * khtml/css/cssstyleselector.cpp: Make sure table cells do not honor position:relative
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/rendering/render_block.cpp: Add borderTopExtra() and borderBottomExtra() to various calculations of table cell height so that scroll bars render properly.
+        (khtml::RenderBlock::isPointInScrollbar):
+        (khtml::RenderBlock::nodeAtPoint):
+        * khtml/rendering/render_box.cpp: Allow table cells to have overflow, and add borderTopExtra() and borderBottomExtra() to calculation of the clip rect.
+        (RenderBox::setStyle):
+        (RenderBox::getOverflowClipRect):
+        * khtml/rendering/render_box.h: Removed definitions of borderTopExtra() and borderBottomExtra() so that they occur at the RenderObject level now.
+        * khtml/rendering/render_layer.cpp: Layers must also take borderTopExtra() and borderBottomExtra() into account.
+        (khtml::RenderLayer::updateLayerPosition):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::RenderLayer::hitTestLayer):
+        * khtml/rendering/render_object.cpp: Use m_overflowClip instead of hasOverflowClip() for consistency.
+        (RenderObject::requiresLayer):
+        * khtml/rendering/render_object.h: Add definitions of borderTopExtra() and borderBottomExtra() to RenderObject level.
+        (khtml::RenderObject::borderTopExtra):
+        (khtml::RenderObject::borderBottomExtra):
+        * khtml/rendering/render_table.cpp: Allow table cells to have a layer if overflow is specified.
+        (RenderTableSection::paint):
+        (RenderTableCell::requiresLayer):
+        (RenderTableCell::paint):
+        (RenderTableCell::paintBoxDecorations):
+        * layout-tests/fast/table/029-expected.txt: This layout test now paints a layer because it specifies overflow:hidden
+        * layout-tests/fast/table/overflowHidden-expected.txt: Added.
+        * layout-tests/fast/table/overflowHidden.html: Added.
+
 2005-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

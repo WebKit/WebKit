@@ -1391,7 +1391,7 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
 		c--;
 	    for ( ; c < endcol; c++ ) {
 		RenderTableCell *cell = cellAt(r, c);
-		if (!cell || cell == (RenderTableCell *)-1 )
+		if (!cell || cell == (RenderTableCell *)-1 || (cell->layer() && i.phase != PaintActionCollapsedTableBorders)) 
 		    continue;
                 
                 // Cells must always paint in the order in which they appear taking into account
@@ -1702,9 +1702,7 @@ void RenderTableCell::setStyle( RenderStyle *style )
 }
 
 bool RenderTableCell::requiresLayer() {
-    // FIXME: This is only here until we figure out how to position
-    // table cells properly when they have layers.
-    return false;
+    return isPositioned() || style()->opacity() < 1.0f || hasOverflowClip();
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
@@ -2039,7 +2037,7 @@ void RenderTableCell::paint(PaintInfo& i, int _tx, int _ty)
     int os = 2*maximalOutlineSize(i.phase);
     if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os))
         return;
-    
+
     if (i.phase == PaintActionCollapsedTableBorders && style()->visibility() == VISIBLE) {
         int w = width();
         int h = height() + borderTopExtra() + borderBottomExtra();
@@ -2253,8 +2251,19 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     int end = kMin(i.r.y() + i.r.height(), _ty + h);
     int mh = end - my;
 
-    if (bgLayer->hasImage() || c.isValid())
-	paintBackground(i.p, c, bgLayer, my, mh, _tx, _ty, w, h);
+    if (bgLayer->hasImage() || c.isValid()) {
+	// We have to clip here because the backround would paint
+        // on top of the borders otherwise.
+        if (m_layer && tableElt->collapseBorders()) {
+            QRect clipRect(_tx + borderLeft(), _ty + borderTop(), w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
+            clipRect = i.p->xForm(clipRect);
+            i.p->save();
+            i.p->addClip(clipRect);
+        }
+        paintBackground(i.p, c, bgLayer, my, mh, _tx, _ty, w, h);
+        if (m_layer && tableElt->collapseBorders())
+            i.p->restore();
+    }
 
     if (style()->hasBorder() && !tableElt->collapseBorders())
         paintBorder(i.p, _tx, _ty, w, h, style());
