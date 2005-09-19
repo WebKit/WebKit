@@ -1,3 +1,20 @@
+2005-09-19  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5028
+          9 layout tests fail following the change from long to int
+          
+        - Rolled out changes to simple_number.h, and added fits(long long) 
+          and SimpleNumber::fits(unsigned long long) to the old system.
+        
+        Reviewed by mjs.
+
+        * kjs/simple_number.h:
+        (KJS::SimpleNumber::):
+        (KJS::SimpleNumber::value):
+        (KJS::SimpleNumber::fits):
+        (KJS::SimpleNumber::integerFits):
+        (KJS::SimpleNumber::make):
+
 2005-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
