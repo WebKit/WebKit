@@ -239,21 +239,26 @@ namespace khtml {
 
 void *main_thread_malloc(size_t n)
 {
+    assert(pthread_main_np());
     return malloc(n);
 }
 
 void *main_thread_calloc(size_t n_elements, size_t element_size)
 {
+    assert(pthread_main_np());
     return calloc(n_elements, element_size);
 }
 
 void main_thread_free(void* p)
 {
+    // it's ok to main_thread_free on a non-main thread - the actual
+    // free will be scheduled on the main thread in that case.
     free(p);
 }
 
 void *main_thread_realloc(void* p, size_t n)
 {
+    assert(pthread_main_np());
     return realloc(p, n);
 }
 
@@ -1606,7 +1611,58 @@ Void_t* public_mALLOc(size_t bytes) {
   return m;
 }
 
+
+static pthread_once_t free_mutex_once = PTHREAD_ONCE_INIT;
+static pthread_mutex_t free_mutex;
+static int scheduled_free_size;
+static int scheduled_free_capacity;
+static int scheduled_free_list;
+bool free_is_scheduled;
+
+static void initialize_scheduled_free_list()
+{
+    pthread_mutex_init(&free_mutex, NULL);
+}
+
+static void drain_scheduled_free_list()
+{
+    pthread_mutex_lock(&free_mutex);
+    if (free_is_scheduled) {
+        for(int i = 0; i < scheduled_free_size; i++) {
+            main_thread_free(scheduled_free_list[i]);
+        }
+        free(scheduled_free_list);
+        scheduled_free_list = NULL;
+        scheduled_free_size = 0;
+        scheduled_free_capacity = 0;
+        free_is_scheduled = false;
+    }
+    pthread_mutex_unlock(&free_mutex);
+}
+
+static void schedule_free_on_main_thread(Void_t* m)
+{
+    pthread_once(&free_mutex_once, initialize_scheduled_free_list);
+
+    pthread_mutex_lock(&free_mutex);
+    if (scheduled_free_size == scheduled_free_capacity) {
+        scheduled_free_capacity = scheduled_free_capacity == 0 ? 16 : scheduled_free_capacity * 1.2;
+        scheduled_free_list = (Void_t**)realloc(scheduled_free_list, sizeof(Void_t*) * scheduled_free_capacity);
+    }
+    scheduled_free_list[scheduled_free_size++] = m;
+    if (!free_is_scheduled) {
+        QTimer::immediateSingleShotOnMainThread(0, drain_scheduled_free_list);
+        free_is_scheduled = true;
+    }
+    pthread_mutex_unlock(&free_mutex);
+}
+
 void public_fREe(Void_t* m) {
+  if (!pthread_main_np()) {
+      schedule_free_on_main_thread(m);
+      return;
+  }
+
   if (MALLOC_PREACTION != 0) {
     return;
   }
@@ -5452,7 +5508,7 @@ static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
 
 #endif /* WIN32 */
 
-#endif
+#endif // NDEBUG
 
 }  /* end of namespace KJS */
 

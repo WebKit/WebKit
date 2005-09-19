@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
@@ -29,6 +28,8 @@
 #include <kjs/collector.h>
 
 using namespace KJS;
+
+using DOM::EventListener;
 
 extern "C" {
   KJSProxy *kjs_html_init(KHTMLPart *khtmlpart);
@@ -75,20 +76,22 @@ KJSProxyImpl::KJSProxyImpl(KHTMLPart *part)
 
 KJSProxyImpl::~KJSProxyImpl()
 {
-  //kdDebug() << "KJSProxyImpl::~KJSProxyImpl deleting interpreter " << m_script << endl;
+  InterpreterLock lock;
   delete m_script;
+
 #ifndef NDEBUG
   s_count--;
   // If it was the last interpreter, we should have nothing left
 #ifdef KJS_DEBUG_MEM
-  if ( s_count == 0 )
+  if (s_count == 0)
     Interpreter::finalCheck();
 #endif
 #endif
 }
 
 QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
-                                const QString&str, DOM::NodeImpl *n) {
+                                const QString&str, DOM::NodeImpl *n) 
+{
   // evaluate code. Returns the JS return value or an invalid QVariant
   // if there was none, an error occured or the type couldn't be converted.
 
@@ -98,42 +101,32 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
   // expected value in all cases.
   // See smart window.open policy for where this is used.
   bool inlineCode = filename.isNull();
-  //kdDebug(6070) << "KJSProxyImpl::evaluate inlineCode=" << inlineCode << endl;
 
 #ifdef KJS_DEBUGGER
-  // ###    KJSDebugWin::instance()->attach(m_script);
   if (inlineCode)
     filename = "(unknown file)";
   if (KJSDebugWin::instance())
     KJSDebugWin::instance()->setNextSourceInfo(filename,baseLine);
-  //    KJSDebugWin::instance()->setMode(KJS::Debugger::Step);
-#else
-  Q_UNUSED(baseLine);
 #endif
 
   m_script->setInlineCode(inlineCode);
+
+  InterpreterLock lock;
+
   KJS::ValueImp *thisNode = n ? Window::retrieve(m_part) : getDOMNode(m_script->globalExec(), n);
-
-  KJS::Interpreter::lock();
-  UString code( str );
-  KJS::Interpreter::unlock();
-
+  UString code(str);
   Completion comp = m_script->evaluate(filename, baseLine, code, thisNode);
+
   bool success = ( comp.complType() == Normal ) || ( comp.complType() == ReturnValue );  
-#ifdef KJS_DEBUGGER
-    //    KJSDebugWin::instance()->setCode(QString::null);
-#endif
 
   // let's try to convert the return value
   if (success && comp.value())
     return ValueToVariant(m_script->globalExec(), comp.value());
 
   if ( comp.complType() == Throw ) {
-    KJS::Interpreter::lock();
     UString errorMessage = comp.value()->toString(m_script->globalExec());
     int lineNumber =  comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
     UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
-    KJS::Interpreter::unlock();
 
 #if APPLE_CHANGES
     KWQ(m_part)->addMessageToConsole(errorMessage.qstring(), lineNumber, sourceURL.qstring());
@@ -153,7 +146,6 @@ void KJSProxyImpl::clear() {
     KJSDebugWin *debugWin = KJSDebugWin::instance();
     if (debugWin && debugWin->currentScript() == m_script) {
         debugWin->setMode(KJSDebugWin::Stop);
-//        debugWin->leaveSession();
     }
 #endif
     Window *win = Window::retrieveWindow(m_part);
@@ -172,6 +164,7 @@ DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QStr
 #endif
 
   initScript();
+  InterpreterLock lock;
   return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code,node,m_handlerLineno);
 }
 
@@ -265,9 +258,8 @@ void KJSProxyImpl::initScript()
     return;
 
   // Build the global object - which is a Window instance
-  KJS::Interpreter::lock();
+  KJS::InterpreterLock lock;
   ObjectImp *globalObject( new Window(m_part) );
-  KJS::Interpreter::unlock();
 
   // Create a KJS interpreter for this part
   m_script = new KJS::ScriptInterpreter(globalObject, m_part);
@@ -276,9 +268,7 @@ void KJSProxyImpl::initScript()
   m_script->setDebuggingEnabled(m_debugEnabled);
 #endif
   //m_script->enableDebug();
-  KJS::Interpreter::lock();
   globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
-  KJS::Interpreter::unlock();
 
 #if APPLE_CHANGES
   QString userAgent = KWQ(m_part)->userAgent();

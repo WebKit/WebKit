@@ -77,6 +77,7 @@
 
 #import <JavaScriptCore/identifier.h>
 #import <JavaScriptCore/property_map.h>
+#import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
@@ -158,6 +159,7 @@ using khtml::WordAwareIterator;
 using KIO::Job;
 
 using KJS::Interpreter;
+using KJS::InterpreterLock;
 using KJS::Location;
 using KJS::SavedBuiltins;
 using KJS::SavedProperties;
@@ -1420,6 +1422,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::executionContextForDOM()
 KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 {
     if (!_bindingRoot) {
+        InterpreterLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
@@ -1432,6 +1435,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
+        KJS::InterpreterLock lock;
         KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
@@ -1505,9 +1509,8 @@ void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
     Window *window = Window::retrieveWindow(this);
     if (window) {
-        Interpreter::lock();
+        InterpreterLock lock;
         Location *location = window->location();
-        Interpreter::unlock();
         location->saveProperties(*locationProperties);
     }
 }
@@ -1523,9 +1526,8 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
 {
     Window *window = Window::retrieveWindow(this);
     if (window) {
-        Interpreter::lock();
+        InterpreterLock lock;
         Location *location = window->location();
-        Interpreter::unlock();
         location->restoreProperties(*locationProperties);
     }
 }
@@ -1622,10 +1624,13 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     doc->setParseMode ([state parseMode]);
     
     updatePolicyBaseURL();
-        
-    restoreWindowProperties (windowProperties);
-    restoreLocationProperties (locationProperties);
-    restoreInterpreterBuiltins (*interpreterBuiltins);
+
+    { // scope the lock
+        InterpreterLock lock;
+        restoreWindowProperties (windowProperties);
+        restoreLocationProperties (locationProperties);
+        restoreInterpreterBuiltins (*interpreterBuiltins);
+    }
 
     if (actions)
         resumeActions (actions, state);
@@ -3911,6 +3916,8 @@ void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)
 
 void KWQKHTMLPart::cleanupPluginRootObjects()
 {
+    InterpreterLock lock;
+
     KJS::Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {
         root->removeAllNativeReferences ();

@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2004 Apple Computer, Inc.
@@ -370,7 +369,10 @@ void XMLHttpRequest::send(const QString& _body)
   }
 #endif
 
-  gcProtect (this);
+  {
+    InterpreterLock lock;
+    gcProtect(this);
+  }
   
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
@@ -408,8 +410,10 @@ void XMLHttpRequest::abort()
   }
   aborted = true;
 
-  if (hadJob)
+  if (hadJob) {
+    InterpreterLock lock;
     gcUnprotect(this);
+  }
 }
 
 void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
@@ -554,7 +558,8 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
     decoder = 0;
   }
 
-  gcUnprotect (this);
+  InterpreterLock lock;
+  gcUnprotect(this);
 }
 
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)

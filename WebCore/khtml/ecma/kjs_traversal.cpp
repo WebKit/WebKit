@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -20,12 +19,14 @@
 
 #include "kjs_traversal.h"
 #include "kjs_traversal.lut.h"
+
 #include "kjs_proxy.h"
 #include <dom/dom_node.h>
 #include <xml/dom_nodeimpl.h>
 #include <xml/dom_docimpl.h>
 #include <khtmlview.h>
 #include <kdebug.h>
+#include <kjs/protect.h>
 
 using DOM::FilterNode;
 using DOM::NodeFilterImpl;
@@ -322,6 +323,7 @@ short JSNodeFilterCondition::acceptNode(FilterNode filterNode) const
     KHTMLPart *part = node->getDocument()->part();
     KJSProxy *proxy = KJSProxy::proxy(part);
     if (proxy && filter->implementsCall()) {
+        InterpreterLock lock;
         ExecState *exec = proxy->interpreter()->globalExec();
         List args;
         args.append(getDOMNode(exec, node));

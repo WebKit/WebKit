@@ -25,6 +25,7 @@
 
 #import "KWQPageState.h"
 
+#import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/property_map.h>
 
 #import "dom_docimpl.h"
@@ -39,6 +40,8 @@ using DOM::DocumentImpl;
 
 using khtml::RenderObject;
 
+using KJS::Interpreter;
+using KJS::InterpreterLock;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 
@@ -96,12 +99,16 @@ using KJS::SavedBuiltins;
 
     delete URL;
     URL = 0;
+
+    InterpreterLock lock;
+
     delete windowProperties;
     windowProperties = 0;
     delete locationProperties;
     locationProperties = 0;
     delete interpreterBuiltins;
     interpreterBuiltins = 0;
+
     [self _cleanupPausedActions];
 }
 

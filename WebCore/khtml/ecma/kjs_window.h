@@ -27,7 +27,7 @@
 #include <qptrdict.h>
 
 #include "kjs_binding.h"
-#include <kjs/protected_object.h>
+#include <kjs/protect.h>
 
 class QTimer;
 class KHTMLView;
@@ -191,7 +191,7 @@ namespace KJS {
     ScheduledAction(const QString &_code, bool _singleShot);
     void execute(Window *window);
 
-    ProtectedObject func;
+    ProtectedPtr<ObjectImp> func;
     List args;
     QString code;
     bool isFunction;

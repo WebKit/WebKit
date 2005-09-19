@@ -161,3 +161,33 @@ void QTimer::singleShot(int msec, QObject *receiver, const char *member)
                                     repeats:NO];
 }
 
+@interface KWQMainThreadPerformTarget : NSObject
+{
+    void (*_func)();
+}
+
+- (id)initWithFunction:(void (*)())func;
+- (void)callFunction:(id)ignore;
+@end
+
+@implementation KWQMainThreadPerformTarget
+- (id)initWithFunction:(void (*)())func
+{
+    if ((self = [super init])) {
+        _func = func;
+    }
+    return self;
+}
+
+- (void)callFunction:(id)ignore
+{
+    _func();
+}
+
+@end
+
+void QTimer::immediateSingleShotOnMainThread(void (*func)())
+{
+    [[[KWQMainThreadPerformTarget alloc] initWithFunction:func] performSelectorOnMainThread:@selector(callFunction) withObject:nil waitUntilDone:NO];
+}
+

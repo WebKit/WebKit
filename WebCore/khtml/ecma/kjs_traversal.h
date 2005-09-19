@@ -23,7 +23,7 @@
 
 #include "kjs_dom.h"
 #include "dom/dom2_traversal.h"
-#include <kjs/protected_object.h>
+#include "kjs/protect.h"
 
 namespace DOM {
     class NodeFilterImpl;
@@ -103,9 +103,9 @@ namespace KJS {
     virtual ~JSNodeFilterCondition() {}
     virtual short acceptNode(DOM::FilterNode) const;
   protected:
-    ProtectedObject filter;
+    ProtectedPtr<ObjectImp> filter;
   };
 
-}; // namespace
+} // namespace
 
 #endif

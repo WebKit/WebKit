@@ -1,3 +1,84 @@
+2005-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	- fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
+
+	Make sure to lock using the InterpreterLock class in all places that need it
+	(including anything that uses the collector, the parser, the protect count hash table,
+	and anything that allocates via fast_malloc).
+
+	Added assertions to ensure that main_thread_malloc and friends are
+	only called on the main thread.
+
+	Also changed main_thread_free to schedule a free on the main
+	thread if called from a background thread. This contingency is
+	rare, but unavoidable in the case that JavaScript runs on
+	background threads, since then objects can be garbage collected on
+	any thread.
+	
+        Test cases added: Node, this is impossible to reproduce in Safari without the use of
+	PAC files.
+
+        * Makefile.am:
+        * khtml/dom/dom_misc.h:
+        * khtml/ecma/kjs_events.cpp:
+        (JSAbstractEventListener::handleEvent):
+        (JSLazyEventListener::parseCode):
+        (KJS::getDOMEvent):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::~KJSProxyImpl):
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::clear):
+        (KJSProxyImpl::createHTMLEventHandler):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_traversal.cpp:
+        (JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::clear):
+        (ScheduledAction::execute):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequest::slotFinished):
+        * khtml/misc/main_thread_malloc.cpp:
+        (khtml::main_thread_malloc):
+        (khtml::main_thread_calloc):
+        (khtml::main_thread_free):
+        (khtml::main_thread_realloc):
+        (khtml::initialize_scheduled_free_list):
+        (khtml::drain_scheduled_free_list):
+        (khtml::schedule_free_on_main_thread):
+        (khtml::public_fREe):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bindingRootObject):
+        (KWQKHTMLPart::windowScriptObject):
+        (KWQKHTMLPart::saveLocationProperties):
+        (KWQKHTMLPart::restoreLocationProperties):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::cleanupPluginRootObjects):
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState clear]):
+        * kwq/KWQTimer.h:
+        * kwq/KWQTimer.mm:
+        (-[KWQMainThreadPerformTarget initWithFunction:]):
+        (-[KWQMainThreadPerformTarget callFunction:]):
+        (QTimer::immediateSingleShotOnMainThread):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]):
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript rootObjectClasses]):
+        (+[WebCoreJavaScript garbageCollect]):
+        * kwq/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
+2005-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+=== WebCore-417 ===
+
 2005-09-18  Eric Seidel  <eseidel@apple.com>
 
         No review needed, SVG build fix only.

@@ -30,6 +30,7 @@
 
 using KJS::Collector;
 using KJS::Interpreter;
+using KJS::InterpreterLock;
 
 @implementation WebCoreJavaScript
 
@@ -55,17 +56,14 @@ using KJS::Interpreter;
 
 + (NSSet *)rootObjectClasses
 {
-    Interpreter::lock();
-    NSSet *classes = (NSSet *)Collector::rootObjectClasses();
-    Interpreter::unlock();
-    return [classes autorelease];
+    InterpreterLock lock;
+    return [(NSSet *)Collector::rootObjectClasses() autorelease];
 }
 
 + (void)garbageCollect
 {
-    Interpreter::lock();
+    InterpreterLock lock;
     while (Collector::collect()) { }
-    Interpreter::unlock();
 }
 
 + (BOOL)shouldPrintExceptions
