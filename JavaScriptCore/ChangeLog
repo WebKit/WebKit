@@ -1,3 +1,19 @@
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+
+        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
+          Need to restore int/long changes to simple_number.h
+
+        Test cases added:
+
+        * layout-tests/fast/js/date-big-constructor-expected.txt: Added.
+        * layout-tests/fast/js/date-big-constructor.html: Added.
+
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (KJS::fillStructuresUsingDateArgs):
+        (KJS::makeTime):
+
 2005-09-19  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5028

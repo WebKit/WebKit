@@ -465,12 +465,7 @@ static void fillStructuresUsingDateArgs(ExecState *exec, const List &args, int m
   
   // months
   if (maxArgs >= 2 && idx < numArgs) {
-    int months = args[idx++]->toInt32(exec);
-
-    // t->tm_year must hold the bulk of the data to avoid overflow when converting
-    // to a CFGregorianDate. (CFGregorianDate.month is an SInt8; CFGregorianDate.year is an SInt32.)
-    t->tm_year += months / 12;
-    t->tm_mon = months % 12;
+    t->tm_mon = args[idx++]->toInt32(exec);
   }
   
   // days
@@ -1014,7 +1009,7 @@ double makeTime(struct tm *t, double ms, bool utc)
 {
     int utcOffset;
     if (utc) {
-	time_t zero = 0;
+        time_t zero = 0;
 #if defined BSD || defined(__linux__) || defined(__APPLE__)
         struct tm t3;
         localtime_r(&zero, &t3);
@@ -1030,9 +1025,15 @@ double makeTime(struct tm *t, double ms, bool utc)
         t->tm_isdst = 0;
 #endif
     } else {
-	utcOffset = 0;
-	t->tm_isdst = -1;
+        utcOffset = 0;
+        t->tm_isdst = -1;
     }
+    
+    // t->tm_year must hold the bulk of the data to avoid overflow when converting
+    // to a CFGregorianDate. (CFGregorianDate.month is an SInt8; CFGregorianDate.year is an SInt32.)
+    t->tm_year += t->tm_mon / 12;
+    t->tm_mon %= 12;
+    
 
     double yearOffset = 0.0;
     if (t->tm_year < (1970 - 1900) || t->tm_year > (2038 - 1900)) {
