@@ -34,13 +34,13 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameInternal.h>
-
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebTextRepresentation.h>
 
@@ -345,11 +345,19 @@
     return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]] defaultItems:nil];
 }
 
-// This approach could be relaxed when dealing with 3228554
+- (BOOL)becomeFirstResponder
+{
+    BOOL result = [super becomeFirstResponder];
+    if (result) {
+        [[self _web_parentWebView] _selectedFrameDidChange];
+    }
+    return result;
+}
+
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign) {
+    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection]) {
         [self deselectAll];
     }
     return resign;

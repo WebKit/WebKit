@@ -127,3 +127,8 @@
 - (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range;
 - (BOOL)_canPaste;
 @end
+
+@interface WebView (WebDocumentSelectionExtras)
+// WebDocumentSelection protocol implementors should call this in becomeFirstResponder
+- (void)_selectedFrameDidChange;
+@end

@@ -1,3 +1,51 @@
+2005-09-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - fixed <rdar://problem/3228554> We should enforce one selection per WebView instead of per window
+        
+        Note that this checkin does not mean that we will always maintain a selection in a WebView when
+        the focus is elsewhere. Instead it means that there should never be more than one frame containing
+        a selection in a WebView, and that it's possible to maintain a selection in a WebView when the focus 
+        is elsewhere.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        removed unnecessary and somewhat confusing comment
+        (-[WebView selectedFrame]):
+        now calls the extracted method -_focusedFrame
+        (-[WebView _focusedFrame]):
+        new method, extracted from -selectedFrame; returns frame containing first responder, if any
+        (-[WebView _findSelectedFrameStartingFromFrame:skippingFrame:]):
+        added skippingFrame parameter, which is never returned
+        (-[WebView _findSelectedFrameSkippingFrame:]):
+        new method, starts from main frame and passes a frame to skip
+        (-[WebView _findSelectedFrame]):
+        now calls _findSelectedFrameSkippingFrame:nil
+        (-[WebView _selectedFrameDidChange]):
+        new method, called by WebDocumentText protocol implementors; calls -deselectAll on frame that
+        formerly displayed a selection, if any
+
+        * WebView.subproj/WebViewInternal.h:
+        added category WebDocumentSelectionExtras, with the one method _selectedFrameDidChange
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView becomeFirstResponder]):
+        call -[WebView _selectedFrameDidChange]
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView becomeFirstResponder]):
+        call -[WebView _selectedFrameDidChange]
+        (-[WebPDFView resignFirstResponder]):
+        deselect all unless webview says not to; note that this doesn't work in all cases due to:
+        <rdar://problem/4265966> PDFs continue to show a (secondary) selection when the focus moves elsewhere        
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView becomeFirstResponder]):
+        call -[WebView _selectedFrameDidChange]
+        (-[WebTextView resignFirstResponder]):
+        deselect all unless webview says not to
+
 2005-09-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

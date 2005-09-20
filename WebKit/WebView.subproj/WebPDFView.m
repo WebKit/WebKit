@@ -40,6 +40,7 @@
 #import <WebKit/WebPDFView.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPDFRepresentation.h>
@@ -722,6 +723,24 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     if ([types containsObject:NSStringPboardType]) {
         [pasteboard setString:[self selectedString] forType:NSStringPboardType];
     }
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL result = [super becomeFirstResponder];
+    if (result) {
+        [[self _webView] _selectedFrameDidChange];
+    }
+    return result;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection]) {
+        [self deselectAll];
+    }
+    return resign;
 }
 
 @end

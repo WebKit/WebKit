@@ -2947,14 +2947,13 @@ static WebHTMLView *lastHitView = nil;
     if (view) {
         [[self window] makeFirstResponder:view];
     }
+    [[self _webView] _selectedFrameDidChange];
     [self updateFocusState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
     return YES;
 }
 
-// This approach could be relaxed when dealing with 3228554.
-// Some alteration to the selection behavior was done to deal with 3672088.
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
