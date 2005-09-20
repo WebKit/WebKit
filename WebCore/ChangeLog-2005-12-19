@@ -1,3 +1,35 @@
+2005-09-20  David Hyatt  <hyatt@apple.com>
+
+	Meant to land this ages ago.  Make radio buttons work dynamically
+	when name and type change (make them pick up the correct new
+	group).
+
+	Also fix a bug in the tokenizer where trailing spaces/newlines at
+	the end of a document were getting lost.  Messed up .innerHTML
+	on DHTML sites.
+	
+        Reviewed by darin
+
+        * khtml/css/html4.css:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::radioButtonChecked):
+        (DOM::HTMLGenericFormElementImpl::name):
+        (DOM::HTMLInputElementImpl::name):
+        (DOM::HTMLInputElementImpl::setInputType):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::attach):
+        (DOM::HTMLInputElementImpl::preDispatchEventHandler):
+        (DOM::HTMLInputElementImpl::postDispatchEventHandler):
+        (DOM::HTMLIsIndexElementImpl::HTMLIsIndexElementImpl):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::finish):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchGenericEvent):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::preDispatchEventHandler):
+        (DOM::NodeImpl::postDispatchEventHandler):
+
 2005-09-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

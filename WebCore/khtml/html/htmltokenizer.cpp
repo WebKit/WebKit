@@ -1817,6 +1817,8 @@ void HTMLTokenizer::finish()
     // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
+    if (pending) // Flush any remaining whitespace.
+        addPending();
     if (!inWrite && !loadingExtScript && !m_executingScript && !onHold && !timerId)
         end(); // this actually causes us to be deleted
 }

@@ -684,6 +684,10 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 void HTMLFormElementImpl::radioButtonChecked(HTMLInputElementImpl *caller)
 {
+    // Without a name, there is no group.
+    if (caller->name().isEmpty())
+        return;
+
     // Uncheck the currently selected item
     if (!m_selectedRadioButtons)
         m_selectedRadioButtons = new HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> >;
@@ -985,9 +989,6 @@ HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
 
 DOMString HTMLGenericFormElementImpl::name() const
 {
-    if (!m_overrideName.isNull())
-        return m_overrideName;
-
     DOMString n = getAttribute(nameAttr);
     return n.isNull() ? "" : n;
 }
@@ -995,11 +996,6 @@ DOMString HTMLGenericFormElementImpl::name() const
 void HTMLGenericFormElementImpl::setName(const DOMString &value)
 {
     setAttribute(nameAttr, value);
-}
-
-void HTMLGenericFormElementImpl::setOverrideName(const DOMString& value)
-{
-    m_overrideName = value;
 }
 
 void HTMLGenericFormElementImpl::onSelect()
@@ -1393,6 +1389,11 @@ HTMLInputElementImpl::~HTMLInputElementImpl()
     delete m_imageLoader;
 }
 
+DOMString HTMLInputElementImpl::name() const
+{
+    return m_name.isNull() ? "" : m_name;
+}
+
 bool HTMLInputElementImpl::isKeyboardFocusable() const
 {
     // If the base class says we can't be focused, then we can stop now.
@@ -1492,6 +1493,11 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
             }
             if (wasAttached)
                 attach();
+                
+            // If our type morphs into a radio button and we are checked, then go ahead
+            // and signal this to the form.
+            if (m_type == RADIO && checked() && m_form)
+                m_form->radioButtonChecked(this);
         }
     }
     m_haveType = true;
@@ -1786,7 +1792,20 @@ bool HTMLInputElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 
 void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == autocompleteAttr) {
+    if (attr->name() == nameAttr) {
+        if (m_type == RADIO && checked() && m_form) {
+            // Remove the radio from its old group.
+            if (m_form && m_type == RADIO && !m_name.isEmpty())
+                m_form->removeRadioButtonGroup(m_name.impl());
+        }
+        
+        // Update our cached reference to the name.
+        m_name = attr->value();
+        
+        // Add it to its new group.
+        if (m_type == RADIO && checked() && m_form)
+            m_form->radioButtonChecked(this);
+    } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
     } else if (attr->name() ==  typeAttr) {
         setInputType(attr->value());
@@ -1936,8 +1955,6 @@ void HTMLInputElementImpl::attach()
                 setAttribute(valueAttr, nvalue);
         }
 
-        m_defaultChecked = (!getAttribute(checkedAttr).isNull());
-        
         m_inited = true;
     }
 
@@ -2277,12 +2294,68 @@ void HTMLInputElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
-void HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
+void* HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent() && evt->type() == clickEvent && static_cast<MouseEventImpl*>(evt)->button() == 0) {
-        if (m_type == CHECKBOX || m_type == RADIO)
+    // preventDefault or "return false" are used to reverse the automatic checking/selection we do here.
+    // This result gives us enough info to perform the "undo" in postDispatch of the action we take here.
+    void* result = 0; 
+    if ((m_type == CHECKBOX || m_type == RADIO) && evt->isMouseEvent() && evt->type() == clickEvent && 
+        static_cast<MouseEventImpl*>(evt)->button() == 0) {
+        if (m_type == CHECKBOX) {
+            // As a way to store the boolean, we return our node pointer if we were checked and 0 if we were unchecked.
+            if (checked()) {
+                ref();
+                result = this;
+            }
             setChecked(!checked());
+        } else {
+            // For radio buttons, store the current selected radio object.
+            if (name().isEmpty() || checked() || !form())
+                return 0; // Unnamed radio buttons dont get checked. Checked buttons just stay checked.
+                          // FIXME: Need to learn to work without a form.
+
+            // We really want radio groups to end up in sane states, i.e., to have something checked.
+            // Therefore if nothing is currently selected, we won't allow this action to be "undone", since
+            // we want some object in the radio group to actually get selected.
+            HTMLInputElementImpl* currRadio = form()->checkedRadioButtonForGroup(name().impl());
+            if (currRadio) {
+                // We have a radio button selected that is not us.  Cache it in our result field and ref it so
+                // that it can't be destroyed.
+                currRadio->ref();
+                result = currRadio;
+            }
+            setChecked(true);
+        }
     }
+    return result;
+}
+
+void HTMLInputElementImpl::postDispatchEventHandler(EventImpl *evt, void* data)
+{
+    HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(data);
+
+    if ((m_type == CHECKBOX || m_type == RADIO) && evt->isMouseEvent() && evt->type() == clickEvent && 
+        static_cast<MouseEventImpl*>(evt)->button() == 0) {
+        if (m_type == CHECKBOX) {
+            // Reverse the checking we did in preDispatch.
+            if (evt->propagationStopped() || evt->defaultPrevented() || evt->defaultHandled())
+                setChecked(input);
+        } else if (input) {
+            if (evt->propagationStopped() || evt->defaultPrevented() || evt->defaultHandled()) {
+                // Restore the original selected radio button if possible.
+                // Make sure it is still a radio button and only do the restoration if it still
+                // belongs to our group.
+                if (input->form() == form() && input->inputType() == RADIO && input->name() == name()) {
+                    // Ok, the old radio button is still in our form and in our group and is still a 
+                    // radio button, so it's safe to restore selection to it.
+                    input->setChecked(true);
+                }
+            }
+        }
+    }
+    
+    if (input)
+        input->deref();
 }
 
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
@@ -3747,7 +3820,7 @@ HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElement
     : HTMLInputElementImpl(isindexTag, doc, f)
 {
     m_type = TEXT;
-    setOverrideName("isindex");
+    m_name = "isindex";
 }
 
 void HTMLIsIndexElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)

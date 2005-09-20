@@ -290,8 +290,10 @@ public:
 
     void handleLocalEvents(EventImpl *evt, bool useCapture);
 
-    // A handler to do actions before an event is dispatched.
-    virtual void preDispatchEventHandler(EventImpl *evt) {};
+    // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
+    // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
+    virtual void* preDispatchEventHandler(EventImpl *evt) { return 0; }
+    virtual void postDispatchEventHandler(EventImpl *evt, void* data) {}
 
     /**
      * Perform the default action for an event e.g. submitting a form
