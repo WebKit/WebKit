@@ -64,6 +64,11 @@
 
 @implementation WebHTMLRepresentation
 
++ (NSArray *)supportedMIMETypes
+{
+    return [WebCoreBridge supportedMIMETypes];
+}
+
 - init
 {
     self = [super init];

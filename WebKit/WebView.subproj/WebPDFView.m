@@ -42,6 +42,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebPDFRepresentation.h>
 
 #import <WebKitSystemInterface.h>
 #import <PDFKit/PDFKit.h>
@@ -92,6 +93,11 @@ NSString *_NSPathForSystemFramework(NSString *framework);
         }
     }
     return PDFViewClass;
+}
+
++ (NSArray *)supportedMIMETypes
+{
+    return [WebPDFRepresentation supportedMIMETypes];
 }
 
 - (id)initWithFrame:(NSRect)frame

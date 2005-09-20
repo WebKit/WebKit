@@ -38,6 +38,14 @@
 
 @implementation WebTextRepresentation
 
++ (NSArray *)supportedMIMETypes
+{
+    return [NSArray arrayWithObjects:
+            @"text/",
+            @"application/x-javascript",
+            nil];
+}
+
 - (void)dealloc
 {
     [RTFSource release];

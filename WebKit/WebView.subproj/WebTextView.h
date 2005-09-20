@@ -36,6 +36,7 @@
     float _textSizeMultiplier;
 }
 
++ (NSArray *)supportedMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;
 - (void)setFixedWidthFont;
 

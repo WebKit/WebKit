@@ -1,3 +1,48 @@
+2005-09-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+	Moved MIME type support from a hard coded list
+        (in two places) to single lists in the corresponding
+        *Representation classes.  Also moved the list of types
+        supported by WebCore (WebHTMLRepresentation) into WebCore.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5037
+
+        * WebView.subproj/WebDataSource.m:
+        (addTypesFromClass): new inline function
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebFrameView.m:
+        (addTypesFromClass): new inline function
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView supportedMIMETypes]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (+[WebImageRepresentation supportedMIMETypes]):
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (+[WebImageView supportedMIMETypes]):
+        * WebView.subproj/WebPDFRepresentation.h:
+        * WebView.subproj/WebPDFRepresentation.m:
+        (+[WebPDFRepresentation supportedMIMETypes]):
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (+[WebPDFView supportedMIMETypes]):
+        * WebView.subproj/WebTextRepresentation.h:
+        * WebView.subproj/WebTextRepresentation.m:
+        (+[WebTextRepresentation supportedMIMETypes]):
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (+[WebTextView supportedMIMETypes]):
+        * WebView.subproj/WebView.m:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        (+[WebView MIMETypesShownAsHTML]): updated to match style
+        (+[WebView setMIMETypesShownAsHTML:]): ditto
+
 2005-09-16  John Sullivan  <sullivan@apple.com>
 
         * WebView.subproj/WebImageView.m:

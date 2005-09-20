@@ -39,6 +39,7 @@
 @interface WebHTMLView (WebPrivate)
 
 - (void)_reset;
++ (NSArray *)supportedMIMETypes;
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;

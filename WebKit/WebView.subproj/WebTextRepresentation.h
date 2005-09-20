@@ -35,4 +35,5 @@
     NSString *RTFSource;
     BOOL hasRTFSource;
 }
++ (NSArray *)supportedMIMETypes;
 @end

@@ -38,6 +38,14 @@
 
 @implementation WebPDFRepresentation
 
++ (NSArray *)supportedMIMETypes
+{
+    return [NSArray arrayWithObjects:
+            @"text/pdf",
+            @"application/pdf",
+            nil];
+}
+
 + (Class)PDFDocumentClass
 {
     static Class PDFDocumentClass = nil;

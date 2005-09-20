@@ -651,43 +651,36 @@
     _private->mainDocumentError = nil;
 }
 
+static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
+{
+    NSEnumerator *enumerator = [supportTypes objectEnumerator];
+    ASSERT(enumerator != nil);
+    NSString *mime = nil;
+    while ((mime = [enumerator nextObject]) != nil) {
+        // Don't clobber previously-registered classes.
+        if ([allTypes objectForKey:mime] == nil)
+            [allTypes setObject:class forKey:mime];
+    }
+}
+
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
     static NSMutableDictionary *repTypes = nil;
-    static BOOL addedImageTypes;
+    static BOOL addedImageTypes = NO;
     
     if (!repTypes) {
-        repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            [WebHTMLRepresentation class], @"text/html",
-	    [WebHTMLRepresentation class], @"text/xml",
-	    [WebHTMLRepresentation class], @"text/xsl",
-	    [WebHTMLRepresentation class], @"application/xml",
-	    [WebHTMLRepresentation class], @"application/xhtml+xml",
-            [WebHTMLRepresentation class], @"application/rss+xml",
-            [WebHTMLRepresentation class], @"application/atom+xml",
-            [WebHTMLRepresentation class], @"application/x-webarchive",
-            [WebHTMLRepresentation class], @"multipart/x-mixed-replace",
-            [WebTextRepresentation class], @"text/",
-            [WebTextRepresentation class], @"application/x-javascript",
-            nil];
+        repTypes = [[NSMutableDictionary alloc] init];
+        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMIMETypes]);
+        addTypesFromClass(repTypes, [WebTextRepresentation class], [WebTextRepresentation supportedMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
-        BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];  
-        if (!omitPDFSupport) {
-            [repTypes setObject:[WebPDFRepresentation class] forKey:@"text/pdf"];
-            [repTypes setObject:[WebPDFRepresentation class] forKey:@"application/pdf"];
-        }
+        BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
+        if (!omitPDFSupport)
+            addTypesFromClass(repTypes, [WebPDFRepresentation class], [WebPDFRepresentation supportedMIMETypes]);
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {
-        NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
-        NSString *mime;
-        while ((mime = [enumerator nextObject]) != nil) {
-            // Don't clobber previously-registered rep classes.
-            if ([repTypes objectForKey:mime] == nil) {
-                [repTypes setObject:[WebImageRepresentation class] forKey:mime];
-            }
-        }
+        addTypesFromClass(repTypes, [WebImageRepresentation class], [WebImageRepresentation supportedMIMETypes]);
         addedImageTypes = YES;
     }
     

@@ -38,5 +38,5 @@
     NSEvent *mouseDownEvent;
     unsigned int dragSourceActionMask;
 }
-+ (NSArray *)supportedImageMIMETypes;
++ (NSArray *)supportedMIMETypes;
 @end

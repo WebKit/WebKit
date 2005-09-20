@@ -42,6 +42,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebTextRepresentation.h>
 
 #import <Foundation/NSURLResponse.h>
 
@@ -57,6 +58,11 @@
 @end
 
 @implementation WebTextView
+
++ (NSArray *)supportedMIMETypes
+{
+    return [WebTextRepresentation supportedMIMETypes];
+}
 
 + (NSArray *)unsupportedTextMIMETypes
 {

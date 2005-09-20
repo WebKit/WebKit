@@ -40,6 +40,7 @@
     WebImageRenderer *image;
     BOOL doneLoading;
 }
++ (NSArray *)supportedMIMETypes;
 - (WebImageRenderer *)image;
 - (NSString *)filename;
 - (WebArchive *)archive;

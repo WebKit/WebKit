@@ -644,6 +644,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [WebImageRenderer stopAnimationsInView:self];
 }
 
++ (NSArray *)supportedMIMETypes
+{
+    return [WebHTMLRepresentation supportedMIMETypes];
+}
+
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved

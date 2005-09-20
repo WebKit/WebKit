@@ -238,45 +238,36 @@ enum {
     return (height < overlap) ? height / 2 : height - overlap;
 }
 
-static NSMutableDictionary *viewTypes;
+static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
+{
+    NSEnumerator *enumerator = [supportTypes objectEnumerator];
+    ASSERT(enumerator != nil);
+    NSString *mime = nil;
+    while ((mime = [enumerator nextObject]) != nil) {
+        // Don't clobber previously-registered classes.
+        if ([allTypes objectForKey:mime] == nil)
+            [allTypes setObject:class forKey:mime];
+    }
+}
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static BOOL addedImageTypes;
-
+    static NSMutableDictionary *viewTypes = nil;
+    static BOOL addedImageTypes = NO;
+    
     if (!viewTypes) {
-        viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            [WebHTMLView class], @"text/html",
-	    [WebHTMLView class], @"text/xml",
-	    [WebHTMLView class], @"text/xsl",
-	    [WebHTMLView class], @"application/xml",
-	    [WebHTMLView class], @"application/xhtml+xml",
-            [WebHTMLView class], @"application/rss+xml",
-            [WebHTMLView class], @"application/atom+xml",
-            [WebHTMLView class], @"application/x-webarchive",
-            [WebHTMLView class], @"multipart/x-mixed-replace",
-            [WebTextView class], @"text/",
-            [WebTextView class], @"application/x-javascript",
-            nil];
+        viewTypes = [[NSMutableDictionary alloc] init];
+        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedMIMETypes]);
+        addTypesFromClass(viewTypes, [WebTextView class], [WebTextView supportedMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
-        BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];  
-        if (!omitPDFSupport) {
-            [viewTypes setObject:[WebPDFView class] forKey:@"text/pdf"];
-            [viewTypes setObject:[WebPDFView class] forKey:@"application/pdf"];
-        }
+        BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
+        if (!omitPDFSupport)
+            addTypesFromClass(viewTypes, [WebPDFView class], [WebPDFView supportedMIMETypes]);
     }
-
+    
     if (!addedImageTypes && !allowImageTypeOmission) {
-        NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
-        ASSERT(enumerator != nil);
-        NSString *mime;
-        while ((mime = [enumerator nextObject]) != nil) {
-            // Don't clobber previously-registered view classes.
-            if ([viewTypes objectForKey:mime] == nil) {
-                [viewTypes setObject:[WebImageView class] forKey:mime];
-            }
-        }
+        addTypesFromClass(viewTypes, [WebImageView class], [WebImageView supportedMIMETypes]);
         addedImageTypes = YES;
     }
     

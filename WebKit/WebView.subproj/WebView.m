@@ -369,30 +369,19 @@ static bool debugWidget = true;
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 {
     MIMEType = [MIMEType lowercaseString];
-    Class viewClass;
-    Class repClass;
+    Class viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
+    Class repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
     
-    // Simple optimization that avoids loading the plug-in DB and image types for the HTML case.
-    if ([self canShowMIMETypeAsHTML:MIMEType]) {
-        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
-        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
-        if (viewClass && repClass) {
-            if (vClass) {
-                *vClass = viewClass;
-            }
-            if (rClass) {
-                *rClass = repClass;
-            }
-            return YES;
-        }
+    if (!viewClass || !repClass) {
+        // Our optimization to avoid loading the plug-in DB and image types for the HTML case failed.
+        // Load the plug-in DB allowing plug-ins to install types.
+        [WebPluginDatabase installedPlugins];
+            
+        // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
+        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
+        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
     }
     
-    // Load the plug-in DB allowing plug-ins to install types.
-    [WebPluginDatabase installedPlugins];
-        
-    // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
-    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
-    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
     if (viewClass && repClass) {
         // Special-case WebTextView for text types that shouldn't be shown.
         if (viewClass == [WebTextView class] &&
@@ -400,12 +389,10 @@ static bool debugWidget = true;
             [[WebTextView unsupportedTextMIMETypes] containsObject:MIMEType]) {
             return NO;
         }
-        if (vClass) {
+        if (vClass)
             *vClass = viewClass;
-        }
-        if (rClass) {
+        if (rClass)
             *rClass = repClass;
-        }
         return YES;
     }
     
@@ -1488,9 +1475,8 @@ NSMutableDictionary *countInvocations;
     NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
     
     while ((key = [enumerator nextObject])) {
-        if ([viewTypes objectForKey:key] == [WebHTMLView class]) {
+        if ([viewTypes objectForKey:key] == [WebHTMLView class])
             [array addObject:key];
-        }
     }
     
     return array;
@@ -1498,15 +1484,12 @@ NSMutableDictionary *countInvocations;
 
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes
 {
-    NSEnumerator *enumerator;
-    id key;
-    
     NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
-    enumerator = [viewTypes keyEnumerator];
+    NSEnumerator *enumerator = [viewTypes keyEnumerator];
+    id key;
     while ((key = [enumerator nextObject])) {
-        if ([viewTypes objectForKey:key] == [WebHTMLView class]) {
+        if ([viewTypes objectForKey:key] == [WebHTMLView class])
             [WebView _unregisterViewClassAndRepresentationClassForMIMEType:key];
-        }
     }
     
     int i, count = [MIMETypes count];

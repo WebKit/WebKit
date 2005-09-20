@@ -51,15 +51,9 @@
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObject:NSTIFFPboardType] returnTypes:nil];
 }
 
-+ (NSArray *)supportedImageMIMETypes
++ (NSArray *)supportedMIMETypes
 {
-    static NSMutableArray *imageMIMETypes = nil;
-    if (imageMIMETypes == nil) {
-        imageMIMETypes = [[[WebImageRendererFactory sharedFactory] supportedMIMETypes] mutableCopy];
-        [imageMIMETypes removeObject:@"application/pdf"];
-        [imageMIMETypes removeObject:@"application/postscript"];
-    }
-    return imageMIMETypes;
+    return [WebImageRepresentation supportedMIMETypes];
 }
 
 - (id)initWithFrame:(NSRect)frame
