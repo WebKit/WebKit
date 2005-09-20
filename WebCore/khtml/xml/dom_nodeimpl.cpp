@@ -1138,10 +1138,12 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
         return;
     }
 
-    // only do this once we know there won't be an exception
+    // change the document pointer of newChild and all of its children to be the new document
     if (shouldAdoptChild) {
-	KJS::ScriptInterpreter::updateDOMNodeDocument(newChild, newChild->getDocument(), getDocument());
-	newChild->setDocument(getDocument()->docPtr());
+        for (NodeImpl* node = newChild; node; node = node->traverseNextNode()) {
+            KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->getDocument(), getDocument());
+            node->setDocument(getDocument()->docPtr());
+        }
     }
 }
 

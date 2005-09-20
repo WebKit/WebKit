@@ -1,3 +1,21 @@
+2005-09-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Test cases added: /fast/dom/replaceChild.html
+
+	This is a fix for <rdar://problem/4039660> crash replacing iframe 
+	node with another node; test page posted on homepage.mac.com - nil 
+	RenderArena. Basically the problem was that whenever a node was 
+	passed to a new document, that node's document pointer was updated
+	to the new document, but the document pointers of its children were not.
+
+        * khtml/xml/dom_nodeimpl.cpp: Simple loop that recurses through children
+					changing their document pointers too.
+        (DOM::NodeImpl::checkAddChild):
+        * layout-tests/fast/dom/replaceChild.html: Added. New layout test.
+        * layout-tests/fast/dom/replaceChildHelper.html: Added. Helps new layout test. 
+
 2005-09-20  David Hyatt  <hyatt@apple.com>
 
 	Meant to land this ages ago.  Make radio buttons work dynamically
