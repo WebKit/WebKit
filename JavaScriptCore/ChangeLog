@@ -1,7 +1,7 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
-        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
-          Need to restore int/long changes to simple_number.h
+        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4892
+          Date constructor has problems with months larger than 11
 
         Test cases added:
 
