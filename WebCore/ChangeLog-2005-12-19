@@ -1,4 +1,13 @@
 2005-09-20  Eric Seidel  <eseidel@apple.com>
+        Fix by Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by eseidel.
+
+        * kdom/ecma/Ecma.cpp: ProtectedValue -> ProtectedPtr<ValueImp>
+        build fix after mjs' recent ProtectedValue removal.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5058
+
+2005-09-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
 

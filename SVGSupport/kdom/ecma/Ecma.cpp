@@ -265,7 +265,7 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
             return current;
     }
     
-    static KJS::ProtectedValue eventString = KJS::String("event");
+    static KJS::ProtectedPtr<KJS::ValueImp> eventString = KJS::String("event");
 
     KJS::ObjectImp *constr = d->interpreter->builtinFunction();
     KJS::ExecState *exec = d->interpreter->globalExec();
