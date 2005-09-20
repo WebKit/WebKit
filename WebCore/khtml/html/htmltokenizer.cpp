@@ -583,7 +583,7 @@ void HTMLTokenizer::parseComment(TokenizerString &src)
         scriptCode[ scriptCodeSize++ ] = *src;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
         qDebug("comment is now: *%s*",
-               QConstString((QChar*)src.current(), kMin(16, src.length())).string().latin1());
+               QConstString((QChar*)src.operator->(), kMin(16U, src.length())).qstring().latin1());
 #endif
 
         if (strict) {
@@ -880,10 +880,10 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
         checkBuffer();
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
         uint l = 0;
-        while(l < src.length() && (*(src.current()+l)).latin1() != '>')
+        while(l < src.length() && (*(src.operator->()+l)).latin1() != '>')
             l++;
         qDebug("src is now: *%s*, tquote: %d",
-               QConstString((QChar*)src.current(), l).qstring().latin1(), tquote);
+               QConstString((QChar*)src.operator->(), l).qstring().latin1(), tquote);
 #endif
         switch(tag) {
         case NoTag:
@@ -1225,7 +1225,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
             AtomicString tagName = currToken.tagName;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
-            kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
+            kdDebug( 6036 ) << "appending Tag: " << tagName.qstring() << endl;
 #endif
 
             // Handle <script src="foo"/> like Mozilla/Opera. We have to do this now for Dashboard
@@ -1399,7 +1399,7 @@ void HTMLTokenizer::addPending()
 void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
 {
 #ifdef TOKEN_DEBUG
-    kdDebug( 6036 ) << this << " Tokenizer::write(\"" << str << "\"," << appendData << ")" << endl;
+    kdDebug( 6036 ) << this << " Tokenizer::write(\"" << str.toString() << "\"," << appendData << ")" << endl;
 #endif
 
     if (!buffer)
@@ -1829,8 +1829,8 @@ void HTMLTokenizer::processToken()
     if ( dest > buffer )
     {
 #ifdef TOKEN_DEBUG
-        if(currToken.id) {
-            qDebug( "unexpected token id: %d, str: *%s*", currToken.id,QConstString( buffer,dest-buffer ).qstring().latin1() );
+        if(currToken.tagName.length()) {
+            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.qstring().latin1(),QConstString( buffer,dest-buffer ).qstring().latin1() );
             assert(0);
         }
 
@@ -1850,12 +1850,12 @@ void HTMLTokenizer::processToken()
     dest = buffer;
 
 #ifdef TOKEN_DEBUG
-    QString name = getTagName(currToken.id).qstring();
+    QString name = currToken.tagName.qstring();
     QString text;
     if(currToken.text)
         text = QConstString(currToken.text->s, currToken.text->l).qstring();
 
-    kdDebug( 6036 ) << "Token --> " << name << "   id = " << currToken.id << endl;
+    kdDebug( 6036 ) << "Token --> " << name << endl;
     if (currToken.flat)
         kdDebug( 6036 ) << "Token is FLAT!" << endl;
     if(!text.isNull())
@@ -1865,7 +1865,7 @@ void HTMLTokenizer::processToken()
         kdDebug( 6036 ) << "Attributes: " << l << endl;
         for (unsigned i = 0; i < l; ++i) {
             AttributeImpl* c = currToken.attrs->attributeItem(i);
-            kdDebug( 6036 ) << "    " << c->name().qstring()
+            kdDebug( 6036 ) << "    " << c->localName().qstring()
                             << "=\"" << c->value().qstring() << "\"" << endl;
         }
     }
