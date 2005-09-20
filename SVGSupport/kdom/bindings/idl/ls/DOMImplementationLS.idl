@@ -1,0 +1,14 @@
+module ls
+{
+	interface [nodptr] DOMImplementationLS {
+
+		// DOMImplementationLSMode
+		const unsigned short      MODE_SYNCHRONOUS               = 1;
+		const unsigned short      MODE_ASYNCHRONOUS              = 2;
+
+		ls::LSParser           createLSParser(in unsigned short mode, in core::DOMString schemaType) [raises(core::DOMException)];
+		ls::LSSerializer       createLSSerializer();
+		ls::LSInput            createLSInput();
+		ls::LSOutput           createLSOutput();
+	};
+};

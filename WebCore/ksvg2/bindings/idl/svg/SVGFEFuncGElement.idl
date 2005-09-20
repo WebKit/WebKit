@@ -1,0 +1,4 @@
+module svg
+{
+  interface SVGFEFuncGElement : SVGComponentTransferFunctionElement {};
+};

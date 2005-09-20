@@ -1,0 +1,16 @@
+module svg
+{
+  interface SVGPathSegMovetoAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+  };
+  
+  interface SVGPathSegMovetoRel : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+  };
+};

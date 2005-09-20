@@ -14,6 +14,6 @@ module core
 {
 	interface ProcessingInstruction : Node {
 		readonly attribute DOMString target;
-		attribute DOMString data;
+		attribute DOMString data [raises(DOMException)];
 	};
 };

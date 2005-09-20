@@ -1,0 +1,13 @@
+module svg
+{
+  interface SVGStyleElement : SVGElement { 
+             attribute core::DOMString xmlspace;
+                         // raises DOMException on setting
+             attribute core::DOMString type;
+                         // raises DOMException on setting
+             attribute core::DOMString media;
+                         // raises DOMException on setting
+             attribute core::DOMString title;
+                         // raises DOMException on setting
+  };
+};

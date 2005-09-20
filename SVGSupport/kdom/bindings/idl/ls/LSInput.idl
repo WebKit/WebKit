@@ -1,0 +1,15 @@
+module ls
+{
+  interface LSInput {
+    // Depending on the language binding in use,
+    // this attribute may not be available.
+    //         attribute LSReader        characterStream;
+    //         attribute LSInputStream   byteStream;
+             attribute DOMString       stringData;
+             attribute DOMString       systemId;
+             attribute DOMString       publicId;
+             attribute DOMString       baseURI;
+             attribute DOMString       encoding;
+             attribute boolean         certifiedText;
+  };
+};

@@ -20,8 +20,10 @@ module css
 		readonly attribute CSSRuleList cssRules;
 
 		unsigned long insertRule(in core::DOMString rule,
-								 in unsigned long index) raises(core::DOMException);
+								 in unsigned long index)
+								 [raises(core::DOMException)];
 
-		void deleteRule(in unsigned long index) raises(core::DOMException);
+		void deleteRule(in unsigned long index)
+						[raises(core::DOMException)];
 	};
 };

@@ -22,7 +22,7 @@ module css
 		const unsigned short CSS_VALUE_LIST			= 2;
 		const unsigned short CSS_CUSTOM				= 3;
 
-		attribute core::DOMString cssText;
+		attribute core::DOMString cssText [raises(core::DOMException)];
 		readonly attribute unsigned short cssValueType;
 	};
 };

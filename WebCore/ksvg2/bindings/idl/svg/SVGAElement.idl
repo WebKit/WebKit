@@ -1,0 +1,13 @@
+module svg
+{
+  interface SVGAElement : 
+                SVGElement,
+                SVGURIReference,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable {
+    readonly attribute SVGAnimatedString target;
+  };
+};

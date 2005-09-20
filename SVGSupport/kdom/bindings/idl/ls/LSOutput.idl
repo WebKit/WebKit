@@ -1,0 +1,11 @@
+module ls
+{
+  interface LSOutput {
+    // Depending on the language binding in use,
+    // this attribute may not be available.
+    //         attribute LSWriter        characterStream;
+    //         attribute LSOutputStream  byteStream;
+             attribute DOMString       systemId;
+             attribute DOMString       encoding;
+  };
+};

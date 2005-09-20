@@ -1,0 +1,13 @@
+module svg
+{
+  interface SVGClipPathElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable {
+             //   SVGUnitTypes { 
+    readonly attribute SVGAnimatedEnumeration clipPathUnits;
+  };
+};

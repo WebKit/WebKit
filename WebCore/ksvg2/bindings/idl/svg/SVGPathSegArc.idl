@@ -1,0 +1,36 @@
+module svg
+{
+  interface SVGPathSegArcAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   r1;
+                         // raises DOMException on setting
+             attribute float   r2;
+                         // raises DOMException on setting
+             attribute float   angle;
+                         // raises DOMException on setting
+             attribute boolean largeArcFlag;
+                         // raises DOMException on setting
+             attribute boolean sweepFlag;
+                         // raises DOMException on setting
+  };
+  
+  interface SVGPathSegArcRel : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   r1;
+                         // raises DOMException on setting
+             attribute float   r2;
+                         // raises DOMException on setting
+             attribute float   angle;
+                         // raises DOMException on setting
+             attribute boolean largeArcFlag;
+                         // raises DOMException on setting
+             attribute boolean sweepFlag;
+                         // raises DOMException on setting
+  };
+};

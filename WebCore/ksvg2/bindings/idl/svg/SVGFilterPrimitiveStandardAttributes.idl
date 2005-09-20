@@ -1,0 +1,10 @@
+module svg
+{
+  interface SVGFilterPrimitiveStandardAttributes : SVGStylable { 
+    readonly attribute SVGAnimatedLength x;
+    readonly attribute SVGAnimatedLength y;
+    readonly attribute SVGAnimatedLength width;
+    readonly attribute SVGAnimatedLength height;
+    readonly attribute SVGAnimatedString result;
+  };
+};

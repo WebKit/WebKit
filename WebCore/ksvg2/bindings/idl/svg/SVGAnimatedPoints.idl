@@ -1,0 +1,7 @@
+module svg
+{
+  interface [nodptr] SVGAnimatedPoints { 
+    readonly attribute SVGPointList   points;
+    readonly attribute SVGPointList   animatedPoints;
+  };
+};

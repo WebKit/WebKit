@@ -1,0 +1,22 @@
+module svg
+{
+  interface SVGTransform { 
+    // Transform Types
+    const unsigned short SVG_TRANSFORM_UNKNOWN   = 0;
+    const unsigned short SVG_TRANSFORM_MATRIX    = 1;
+    const unsigned short SVG_TRANSFORM_TRANSLATE = 2;
+    const unsigned short SVG_TRANSFORM_SCALE     = 3;
+    const unsigned short SVG_TRANSFORM_ROTATE    = 4;
+    const unsigned short SVG_TRANSFORM_SKEWX     = 5;
+    const unsigned short SVG_TRANSFORM_SKEWY     = 6;
+    readonly attribute unsigned short type;
+    readonly attribute SVGMatrix matrix;
+    readonly attribute float angle;
+    void setMatrix ( in SVGMatrix matrix );
+    void setTranslate ( in float tx, in float ty );
+    void setScale ( in float sx, in float sy );
+    void setRotate ( in float angle, in float cx, in float cy );
+    void setSkewX ( in float angle );
+    void setSkewY ( in float angle );
+  };
+};

@@ -1,0 +1,9 @@
+module svg
+{
+  interface SVGFEImageElement : 
+                SVGElement,
+                SVGURIReference,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGFilterPrimitiveStandardAttributes {};
+};

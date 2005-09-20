@@ -21,13 +21,13 @@
 */
 
 #include <kdebug.h>
-#include <qvariant.h>
 #include <q3ptrdict.h>
 
 #include "kdom.h"
 #include "Ecma.h"
 #include "CDFInterface.h"
 #include "GlobalObject.h"
+#include "kdom/ecma/EcmaInterface.h"
 #include "ScriptInterpreter.h"
 #include "EventListenerImpl.h"
 
@@ -103,13 +103,14 @@ using namespace KDOM;
 class Ecma::Private
 {
 public:
-    Private(DocumentImpl *doc) : document(doc), globalObject(0), interpreter(0) { init = false; }
+    Private(DocumentImpl *doc) : document(doc), globalObject(0), ecmaInterface(0), interpreter(0) { init = false; }
     virtual ~Private() { delete globalObject; }
 
     bool init;
 
     DocumentImpl *document;
     GlobalObject *globalObject;
+    EcmaInterface *ecmaInterface;
     ScriptInterpreter *interpreter;
 
     Q3PtrDict<EventListenerImpl> eventListeners;
@@ -148,6 +149,7 @@ void Ecma::setup(CDFInterface *interface)
 
     // Create handler for js calls
     d->globalObject = interface->globalObject(d->document);
+    d->ecmaInterface = interface->ecmaInterface();
 
     // Create code interpreter
     KJS::ObjectImp *kjsGlobalObject(d->globalObject);
@@ -164,11 +166,13 @@ void Ecma::setupDocument(DocumentImpl *document)
 {
     // Create base bridge for document
     DocumentWrapper *wrapper = new DocumentWrapper(document);
-    
+ 
     KJS::ObjectImp *kjsObj = wrapper->bridge(d->interpreter->globalExec());
 #ifndef APPLE_CHANGES
     kjsObj->ref();
 #endif
+
+    delete wrapper;
 
     d->interpreter->putDOMObject(document, kjsObj);
 }
@@ -190,6 +194,11 @@ KJS::ObjectImp *Ecma::globalObject() const
 KJS::ExecState *Ecma::globalExec() const
 {
     return d->interpreter->globalExec();
+}
+
+EcmaInterface *Ecma::interface() const
+{
+    return d->ecmaInterface;
 }
 
 ScriptInterpreter *Ecma::interpreter() const
@@ -250,18 +259,22 @@ EventListenerImpl *Ecma::createEventListener(KJS::ExecState *exec, KJS::ValueImp
     return i;
 }
 
-EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMString &jsCode)
+EventListenerImpl *Ecma::createEventListener(DOMStringImpl *type, DOMStringImpl *jsCode)
 {    
+    if(!type || !jsCode)
+        return 0;
+
     KJS::Interpreter::lock();
 
     // We probably deal with sth. like onload="alert('hi');' ...
-    DOMString internalType = DOMString("[KDOM] - ") + jsCode;
-    
+    DOMStringImpl *internalType = new DOMStringImpl("[KDOM] - ");
+    internalType->append(jsCode);
+
     Q3PtrDictIterator<EventListenerImpl> it(d->eventListeners);
     for( ; it.current(); ++it)
     {
         EventListenerImpl *current = it.current();
-        if(DOMString(current->internalType()) == internalType)
+        if((current->internalType() ? current->internalType()->string() : QString::null) == internalType->string())
             return current;
     }
     
@@ -272,7 +285,7 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
     
     KJS::List args;
     args.append(eventString);
-    args.append(KJS::String(jsCode.string()));
+    args.append(KJS::String(jsCode->string()));
 
     KJS::ObjectImp *obj = constr->construct(exec, args);
     if(exec->hadException())
@@ -288,13 +301,13 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
     if(obj)
     {
         i = new EventListenerImpl();
-        i->initListener(d->document, true, obj, obj, internalType.handle());
+        i->initListener(d->document, true, obj, obj, internalType);
         addEventListener(i, obj);
     }
     else
-        kdError() << "Unable to create event listener object for event type \"" << type << "\"" << endl;
+        kdError() << "Unable to create event listener object for event type \"" << type->string() << "\"" << endl;
 
-    KJS::Interpreter::unlock();    
+    KJS::Interpreter::unlock();
     return i;
 }
 
@@ -361,21 +374,19 @@ KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, NodeImpl *n)
 
     // Reuse existing bridge, if possible
     KJS::ObjectImp *request = interpreter->getDOMObject(n);
+    if(request)
+        return request;
 
     // Try hard to ask any DOM/SVG/HTML/whatever implementation
     // which may reside on top of KDOM, how to convert the current
     // Node into an EcmaScript suitable object, use standard way as fallback
-    KJS::ObjectImp *topRequest = engine->inheritedGetDOMNode(exec, n);
+    request = engine->inheritedGetDOMNode(exec, n);
     if(request)
     {
-        if(topRequest && topRequest != request)
-            return topRequest;
-        
+        interpreter->putDOMObject(n, request);
         return request;
     }
-    else if(topRequest)
-        return topRequest;
-    
+
     switch(n->nodeType())
     {
         case ELEMENT_NODE:
@@ -477,6 +488,7 @@ KJS::ValueImp *KDOM::getDOMEvent(KJS::ExecState *exec, EventImpl *e)
     }
 
     KJS::Interpreter::lock();
+
     EventImplType identifier = e->identifier();
 
     if(identifier == TypeUIEvent)

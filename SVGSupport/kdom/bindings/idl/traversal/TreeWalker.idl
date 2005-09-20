@@ -17,7 +17,7 @@ module traversal
 		readonly attribute long whatToShow;
 		readonly attribute NodeFilter filter;
 		readonly attribute boolean expandEntityReferences;
-		attribute core::Node currentNode;
+		attribute core::Node currentNode [raises(core::DOMException)];
 
 		core::Node parentNode();
 

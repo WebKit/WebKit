@@ -26,7 +26,7 @@ module css
 		const unsigned short PAGE_RULE		= 6;
 
 		readonly attribute unsigned short type;
-		attribute core::DOMString cssText;
+		attribute core::DOMString cssText [raises(core::DOMException)];
 		readonly attribute CSSStyleSheet parentStyleSheet;
 		readonly attribute CSSRule parentRule;
 	};

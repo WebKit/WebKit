@@ -15,10 +15,10 @@ module core
 	interface NamedNodeMap {
 		Node getNamedItem(in DOMString name);
 		Node setNamedItem(in Node arg)
-						  raises(DOMException);
+						  [raises(DOMException)];
 
 		Node removeNamedItem(in DOMString name)
-							 raises(DOMException);
+							 [raises(DOMException)];
 
 		Node item(in unsigned long index);
 
@@ -27,15 +27,15 @@ module core
 		// Introduced in DOM Level 2:
 		Node getNamedItemNS(in DOMString namespaceURI,
 							in DOMString localName)
-							raises(DOMException);
+							[raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		Node setNamedItemNS(in Node arg)
-							raises(DOMException);
+							[raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		Node removeNamedItemNS(in DOMString namespaceURI,
 							   in DOMString localName)
-							   raises(DOMException);
+							   [raises(DOMException)];
 	};
 };

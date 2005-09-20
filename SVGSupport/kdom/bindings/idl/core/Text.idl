@@ -14,7 +14,7 @@ module core
 {
 	interface Text : CharacterData {
 		Text splitText(in unsigned long offset)
-					   raises(DOMException);
+					   [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
 		readonly attribute boolean isElementContentWhitespace;
@@ -24,6 +24,6 @@ module core
 
 		// Introduced in DOM Level 3:
 		Text replaceWholeText(in DOMString content)
-							  raises(DOMException);
+							  [raises(DOMException)];
 	};
 };

@@ -1,0 +1,23 @@
+module svg
+{
+	interface [nodptr] SVGDOMImplementation : core::DOMImplementation {
+		boolean hasFeature(in core::DOMString feature,
+						   in core::DOMString version);
+
+		// Introduced in DOM Level 2:
+		core::DocumentType createDocumentType(in core::DOMString qualifiedName,
+										in core::DOMString publicId,
+										in core::DOMString systemId)
+										raises(core::DOMException);
+
+		// Introduced in DOM Level 2:
+		core::Document createDocument(in core::DOMString namespaceURI,
+								in core::DOMString qualifiedName,
+								in core::DocumentType doctype)
+								raises(core::DOMException);
+
+		// Introduced in DOM Level 2: [specified in seperated DOMImplementationCSS]
+		css::CSSStyleSheet createCSSStyleSheet(in core::DOMString title,
+										  in core::DOMString media) raises(core::DOMException);
+	};
+};

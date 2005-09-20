@@ -28,6 +28,32 @@
 #endif
 
 #include <qstylesheet.h>
+#include <qevent.h>
+#include <qtextstream.h>
+
+#include <kdom/bindings/js/core/NodeWrapper.h>
+#include <kdom/bindings/js/core/TypeInfoWrapper.h>
+#include <kdom/bindings/js/core/DOMErrorWrapper.h>
+#include <kdom/bindings/js/core/DOMExceptionWrapper.h>
+
+#include <kdom/bindings/js/events/EventWrapper.h>
+#include <kdom/bindings/js/events/MutationEventWrapper.h>
+#include <kdom/bindings/js/events/EventExceptionWrapper.h>
+
+#include <kdom/bindings/js/css/CSSRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSValueWrapper.h>
+#include <kdom/bindings/js/css/CSSPrimitiveValueWrapper.h>
+
+#include <kdom/bindings/js/range/RangeWrapper.h>
+#include <kdom/bindings/js/range/RangeExceptionWrapper.h>
+
+#include <kdom/bindings/js/traversal/NodeFilterWrapper.h>
+
+#include <kdom/bindings/js/xpath/XPathResultWrapper.h>
+#include <kdom/bindings/js/xpath/XPathExceptionWrapper.h>
+#include <kdom/bindings/js/xpath/XPathNamespaceWrapper.h>
+
+#include <kdom/bindings/js/xpointer/XPointerResultWrapper.h>
 
 #include "Ecma.h"
 #include "DOMLookup.h"
@@ -42,34 +68,41 @@ using namespace KDOM;
 
 /*
 @begin GlobalObject::s_hashTable 15
- closed            GlobalObject::Closed        DontDelete|ReadOnly
- window            GlobalObject::Window        DontDelete|ReadOnly
- evt            GlobalObject::Evt            DontDelete|ReadOnly
- document        GlobalObject::Document        DontDelete|ReadOnly
+ # Attributes
+ closed                GlobalObject::Closed            DontDelete|ReadOnly
+ window                GlobalObject::Window            DontDelete|ReadOnly
+ evt                GlobalObject::Evt                DontDelete|ReadOnly
+ document            GlobalObject::Document            DontDelete|ReadOnly
 
-# Functions
- setTimeout        GlobalObject::SetTimeout    DontDelete|Function 2
- clearTimeout    GlobalObject::ClearTimeout    DontDelete|Function 1
- setInterval    GlobalObject::SetInterval    DontDelete|Function 2
- clearInterval    GlobalObject::ClearInterval    DontDelete|Function 1
- printNode        GlobalObject::PrintNode        DontDelete|Function 1
- alert            GlobalObject::Alert            DontDelete|Function 1
- prompt            GlobalObject::Prompt        DontDelete|Function 2
- confirm        GlobalObject::Confirm        DontDelete|Function 1
- debug            GlobalObject::Debug            DontDelete|Function 1
-@end
-*/
+ # Functions
+ setTimeout            GlobalObject::SetTimeout        DontDelete|Function 2
+ clearTimeout        GlobalObject::ClearTimeout        DontDelete|Function 1
+ setInterval        GlobalObject::SetInterval        DontDelete|Function 2
+ clearInterval        GlobalObject::ClearInterval        DontDelete|Function 1
+ printNode            GlobalObject::PrintNode            DontDelete|Function 1
+ alert                GlobalObject::Alert                DontDelete|Function 1
+ prompt                GlobalObject::Prompt            DontDelete|Function 2
+ confirm            GlobalObject::Confirm            DontDelete|Function 1
+ debug                GlobalObject::Debug                DontDelete|Function 1
 
-/*
-# Constructors - TODO IN THE NEW ECMA CONCEPT! FIX IT!
- Node                GlobalObject::Node                    DontDelete|Function 1
- DOMException        GlobalObject::DOMException            DontDelete|Function 1
- CSSRule            GlobalObject::CSSRule                DontDelete|Function 1
- CSSValue            GlobalObject::CSSValue                DontDelete|Function 1
- CSSPrimitiveValue    GlobalObject::CSSPrimitiveValue    DontDelete|Function 1
+ # Constants
  Event                GlobalObject::Event                DontDelete|Function 1
- EventException        GlobalObject::EventException        DontDelete|Function 1
  MutationEvent        GlobalObject::MutationEvent        DontDelete|Function 1
+ EventException        GlobalObject::EventException    DontDelete|Function 1
+ CSSRule            GlobalObject::CSSRule            DontDelete|Function 1
+ CSSValue            GlobalObject::CSSValue            DontDelete|Function 1
+ CSSPrimitiveValue    GlobalObject::CSSPrimitiveValue    DontDelete|Function 1
+ Node                GlobalObject::Node                DontDelete|Function 1
+ TypeInfo            GlobalObject::TypeInfo            DontDelete|Function 1
+ DOMError            GlobalObject::DOMError            DontDelete|Function 1
+ DOMException        GlobalObject::DOMException        DontDelete|Function 1
+ Range                GlobalObject::Range                DontDelete|Function 1
+ RangeException        GlobalObject::RangeException    DontDelete|Function 1
+ NodeFilter            GlobalObject::NodeFilter        DontDelete|Function 1
+ XPathResult        GlobalObject::XPathResult        DontDelete|Function 1
+ XPathException        GlobalObject::XPathException    DontDelete|Function 1
+ XPathNamespace        GlobalObject::XPathNamespace    DontDelete|Function 1
+ XPointerResult        GlobalObject::XPointerResult    DontDelete|Function 1
 @end
 */
 
@@ -149,8 +182,8 @@ KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p)
         {
             case GlobalObject::Window:
                 return const_cast<GlobalObject *>(this);
-/*            case GlobalObject::Evt:
-                return getDOMEvent(exec, Event(interpreter->currentEvent()));*/
+            case GlobalObject::Evt:
+                return getDOMEvent(exec, interpreter->currentEvent());
             case GlobalObject::Document:
                 // special case, Ecma::setup created it, so we don't need to do it
                 return interpreter->getDOMObject(d->document);
@@ -171,6 +204,40 @@ KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p)
 #endif
                     return KJS::Undefined();
             }
+            case GlobalObject::Event:
+                return getEventConstructor(exec);
+            case GlobalObject::MutationEvent:
+                return getMutationEventConstructor(exec);
+            case GlobalObject::EventException:
+                return getEventExceptionConstructor(exec);
+            case GlobalObject::CSSRule:
+                return getCSSRuleConstructor(exec);
+            case GlobalObject::CSSValue:
+                return getCSSValueConstructor(exec);
+            case GlobalObject::CSSPrimitiveValue:
+                return getCSSPrimitiveValueConstructor(exec);
+            case GlobalObject::Node:
+                return getNodeConstructor(exec);
+            case GlobalObject::TypeInfo:
+                return getTypeInfoConstructor(exec);
+            case GlobalObject::DOMError:
+                return getDOMErrorConstructor(exec);
+            case GlobalObject::DOMException:
+                return getDOMExceptionConstructor(exec);
+            case GlobalObject::Range:
+                return getRangeConstructor(exec);
+            case GlobalObject::RangeException:
+                return getRangeExceptionConstructor(exec);
+            case GlobalObject::NodeFilter:
+                return getNodeFilterConstructor(exec);
+            case GlobalObject::XPathResult:
+                return KDOM::XPath::getXPathResultConstructor(exec);
+            case GlobalObject::XPathException:
+                return KDOM::XPath::getXPathExceptionConstructor(exec);
+            case GlobalObject::XPathNamespace:
+                return KDOM::XPath::getXPathNamespaceConstructor(exec);
+            case GlobalObject::XPointerResult:
+                return KDOM::XPointer::getXPointerResultConstructor(exec);
         }
     }
 
@@ -274,7 +341,7 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
             //KWQ(part)->runJavaScriptAlert(str);
             fprintf(stderr, "Ignoring JavaScriptAlert: %s (l: %i)\n", str.ascii(), str.length());
 #else
-            KMessageBox::error(0, QStyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"));
+            KMessageBox::error(0, Q3StyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"));
 #endif
             return KJS::Undefined();
         case GlobalObject::Confirm:
@@ -283,7 +350,7 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
             fprintf(stderr, "Ignoring JavaScriptConfirm: %s (l: %i)\n", str.ascii(), str.length());
             return KJS::Boolean(false);
 #else
-            return KJS::Boolean(KMessageBox::warningYesNo(0, QStyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"), i18n("&OK"), i18n("&Cancel")) == KMessageBox::Yes);
+            return KJS::Boolean(KMessageBox::warningYesNo(0, Q3StyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"), i18n("&OK"), i18n("&Cancel")) == KMessageBox::Yes);
 #endif
         case GlobalObject::Debug:
             kdDebug() << "[Debug] " << str << endl;
@@ -296,9 +363,7 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
         {
             QString result;
             QTextOStream out(&result);
-/* FIXME
-            Helper::PrintNode(out, ecma_cast<Node>(exec, args[0], &toNode));
-*/
+            Helper::PrintNode(out, ecma_cast<NodeImpl>(exec, args[0], &toNode));
             return KJS::String(result);
         }
         case GlobalObject::Prompt:
@@ -311,9 +376,9 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
             fprintf(stderr, "Ignoring JavaScriptPrompt: %s (l: %i)\n", str.ascii(), str.length());
 #else
             if(args.size() >= 2)
-                ret = KInputDialog::getText(i18n("Prompt"), QStyleSheet::convertFromPlainText(str), args[1].toString(exec).qstring(), &ok);
+                ret = KInputDialog::getText(i18n("Prompt"), Q3StyleSheet::convertFromPlainText(str), args[1].toString(exec).qstring(), &ok);
             else
-                ret = KInputDialog::getText(i18n("Prompt"), QStyleSheet::convertFromPlainText(str), QString::null, &ok);
+                ret = KInputDialog::getText(i18n("Prompt"), Q3StyleSheet::convertFromPlainText(str), QString::null, &ok);
 #endif
             if(ok)
                 return KJS::String(ret);
@@ -402,22 +467,19 @@ void ScheduledAction::execute(GlobalObject *global)
 
     Q_ASSERT(global->doc() != 0);
 
-/* FIXME
     ScriptInterpreter *interpreter = global->doc()->ecmaEngine()->interpreter();
     if(m_isFunction)
     {
-        if(m_func.implementsCall())
+        if(m_func->implementsCall())
         {
             KJS::ExecState *exec = interpreter->globalExec();
-            Q_ASSERT(global == interpreter->globalObject().imp());
+            Q_ASSERT(global == interpreter->globalObject());
             
-            KJS::Object obj(global);
-            m_func.call(exec, obj, m_args); // note that call() creates its own execution state for the func call
+            m_func->callAsFunction(exec, global, m_args); // note that call() creates its own execution state for the func call
         }
     }
     else
         interpreter->evaluate(m_code);
-*/
 }
 
 ////////////////////// GlobalQObject ////////////////////////
@@ -434,7 +496,7 @@ void GlobalQObject::parentDestroyed()
 {
     killTimers();
     
-    QMapIterator<int, ScheduledAction *> it;
+    QMap<int, ScheduledAction *>::Iterator it;
     for(it = scheduledActions.begin(); it != scheduledActions.end(); ++it)
     {
         ScheduledAction *action = *it;
@@ -468,7 +530,7 @@ void GlobalQObject::clearTimeout(int timerId, bool delAction)
     
     if(delAction)
     {
-        QMapIterator<int, ScheduledAction *> it = scheduledActions.find(timerId);
+        QMap<int, ScheduledAction *>::Iterator it = scheduledActions.find(timerId);
         if(it != scheduledActions.end())
         {
             ScheduledAction *action = *it;
@@ -480,7 +542,7 @@ void GlobalQObject::clearTimeout(int timerId, bool delAction)
 
 void GlobalQObject::timerEvent(QTimerEvent *e)
 {
-    QMapIterator<int, ScheduledAction *> it = scheduledActions.find(e->timerId());
+    QMap<int, ScheduledAction *>::Iterator it = scheduledActions.find(e->timerId());
     if(it != scheduledActions.end())
     {
         ScheduledAction *action = *it;

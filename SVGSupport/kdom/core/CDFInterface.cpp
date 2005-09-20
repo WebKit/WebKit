@@ -23,6 +23,7 @@
 #include "RenderStyle.h"
 #include <kdom/ecma/GlobalObject.h>
 #include "CDFInterface.h"
+#include <kdom/ecma/EcmaInterface.h>
 
 // The auto-generated parts
 #include "domattrs.h"
@@ -104,6 +105,11 @@ int CDFInterface::getTagID(const char *, int) const
 int CDFInterface::getAttrID(const char *attrStr, int len) const
 {
     return KDOM::getAttrID(attrStr, len);
+}
+
+EcmaInterface *CDFInterface::ecmaInterface() const
+{
+    return new EcmaInterface();
 }
 
 GlobalObject *CDFInterface::globalObject(DocumentImpl *doc) const

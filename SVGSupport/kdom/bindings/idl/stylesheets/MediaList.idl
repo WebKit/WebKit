@@ -16,12 +16,15 @@ module stylesheets
 {
 	// Introduced in DOM Level 2:
 	interface MediaList {
-		attribute core::DOMString mediaText;
+		attribute core::DOMString mediaText [raises(core::DOMException)];
 		readonly attribute unsigned long length;
 
 		core::DOMString item(in unsigned long index);
 
-		void deleteMedium(in core::DOMString oldMedium) raises(core::DOMException);
-		void appendMedium(in core::DOMString newMedium) raises(core::DOMException);
+		void deleteMedium(in core::DOMString oldMedium)
+						  [raises(core::DOMException)];
+
+		void appendMedium(in core::DOMString newMedium)
+						  [raises(core::DOMException)];
 	};
 };

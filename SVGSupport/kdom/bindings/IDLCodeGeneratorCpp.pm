@@ -153,7 +153,7 @@ sub GenerateHeader
 		push(@headerContent, "#define $printNS\_" . $extractedType{'type'} . "_H\n");
 
 		# - Add default includes & parent header includes
-		push(@headerContent, "\n#include <kdom/kdom.h>\n");
+		push(@headerContent, "\n#include \"kdom/kdom.h\"\n");
 		push(@headerContent, "\n") if($parentsMax > 0);
 
 		foreach(@{$dataNode->parents}) {
@@ -177,11 +177,14 @@ sub GenerateHeader
 	}
 
 	# - Add OurClassImpl forward
-	push(@headerContent, "\tclass " . $extractedType{'type'} . "Impl;\n\n");
+	push(@headerContent, "    class " . $extractedType{'type'} . "Impl;\n\n");
 
 	# - Construct documentation extractor
 	my $docExtracter = DocParser->new($useDocumentation, $dataNode);
-	push(@headerContent, "\t/**\n\t *\n " . $dataNode->documentation . "\t */\n\n\t");
+	if (!defined($dataNode->documentation)) {
+		$dataNode->documentation("");
+	}
+	push(@headerContent, "    /**\n     *\n " . $dataNode->documentation . "     */\n\n    ");
 
 	# - Add class definition (with correct inheritance order)
 	my $parentString = "class " . $extractedType{'type'};
@@ -200,57 +203,42 @@ sub GenerateHeader
 			$parentString .= "public " . $ret{'type'};
 		}
 
-		$parentString .= ",\n\t\t\t\t" if($h++ < $parentsMax - 1);
+		$parentString .= ",\n                " if($h++ < $parentsMax - 1);
 	}
 
-	$parentString .= "\n\t{\n\tpublic:\n";
+	$parentString .= "\n    {\n    public:\n";
 	push(@headerContent, $parentString);
 
 	# - Add default ctor / impl ctor / copy ctor & destructor
-	push(@headerContent, "\t\t" . $extractedType{'type'} . "();\n");
-	push(@headerContent, "\t\texplicit " . $extractedType{'type'} . "(" . $extractedType{'type'} . "Impl *i);\n");
-	push(@headerContent, "\t\t" . $extractedType{'type'} . "(const " . $extractedType{'type'} . " &other);\n");
+	push(@headerContent, "        " . $extractedType{'type'} . "();\n");
+	push(@headerContent, "        explicit " . $extractedType{'type'} . "(" . $extractedType{'type'} . "Impl *i);\n");
+	push(@headerContent, "        " . $extractedType{'type'} . "(const " . $extractedType{'type'} . " &other);\n");
 
 	if(($parentsMax > 0) and ($topBaseClass ne "")) {
 		# Eventually add ctor taking a 'const MyTopMostParent &' object
-		push(@headerContent, "\t\t" . $extractedType{'type'} . "(const $topBaseClass &other);\n");
+		push(@headerContent, "        " . $extractedType{'type'} . "(const $topBaseClass &other);\n");
 	}
 
-	push(@headerContent, "\t\tvirtual ~" . $extractedType{'type'} . "();\n\n");
+	push(@headerContent, "        virtual ~" . $extractedType{'type'} . "();\n\n");
 
 	# - Add assignment operator
-	push(@headerContent, "\t\t" . $extractedType{'type'} . " &operator=(const " . $extractedType{'type'} . " &other);\n");
+	push(@headerContent, "        " . $extractedType{'type'} . " &operator=(const " . $extractedType{'type'} . " &other);\n");
 
 	if(($parentsMax > 0) and ($topBaseClass ne "")) {
 		# Eventually add assignment operator taking a 'const MyTopMostParent &' object
-		push(@headerContent, "\t\t" . $extractedType{'type'} . " &operator=(const $topBaseClass &other);\n");
+		push(@headerContent, "        " . $extractedType{'type'} . " &operator=(const $topBaseClass &other);\n");
 	}
 
 	# - Add impl assignment operator, if needed
 	if($dataNode->noDPtrFlag) {
-		push(@headerContent, "\t\t" . $extractedType{'type'} . " &operator=(" . $extractedType{'type'} . "Impl *other);\n");
+		push(@headerContent, "        " . $extractedType{'type'} . " &operator=(" . $extractedType{'type'} . "Impl *other);\n");
 	}
 
 	# - Add special operators if there are no parents
 	if(($parentsMax eq 0) and (!$dataNode->noDPtrFlag)) {
-		push(@headerContent, "\t\tbool operator==(const " . $extractedType{'type'} . " &other) const;\n");
-		push(@headerContent, "\t\tbool operator!=(const " . $extractedType{'type'} . " &other) const;\n");
+		push(@headerContent, "        bool operator==(const " . $extractedType{'type'} . " &other) const;\n");
+		push(@headerContent, "        bool operator!=(const " . $extractedType{'type'} . " &other) const;\n");
 	}
-
-	# - Add all constants
-	my $i = 0;
-	my $constantMax = @{$dataNode->constants};
-
-	# Not needed for cpp dom wrappers, since we have include files for this (kdom.h, ksvg.h etc.)
-	#foreach(@{$dataNode->constants}) {
-	#	my $constant = $_;
-	#
-	#	my $constantString = "\n\t\tstatic const " . $object->MapDataType($constant->type) .
-	#						  " " . $constant->name . " = " . $constant->value . ";";
-	#
-	#	$constantString .= "\n" if($i++ eq $constantMax - 1);
-	#	push(@headerContent, $constantString);
-	#}
 
 	# - Add all attributes
 	foreach(@{$dataNode->attributes}) {
@@ -258,28 +246,28 @@ sub GenerateHeader
 		my $type = $attribute->signature->type;
 
 		# print documentation lines
-		my $attributeString = "\n\t\t/**\n";
+		my $attributeString = "\n        /**\n";
 		foreach (@{$attribute->documentation}) {
-			$attributeString .= "\t\t * " . trim($_) . "\n";
+			$attributeString .= "         * " . trim($_) . "\n";
 		}
 
 		# at the end come exception lines
 		if (defined($attribute->exceptionName)) {
-			$attributeString .= "\t\t *\n\t\t * \@exception " . $attribute->exceptionName . "\n";
+			$attributeString .= "         *\n         * \@exception " . $attribute->exceptionName . "\n";
 			foreach (@{$attribute->exceptionDocumentation}) {
-				$attributeString .= "\t\t * " . trim($_) . "\n";
+				$attributeString .= "         * " . trim($_) . "\n";
 			}
 		}
 
-		$attributeString .= "\t\t */\n" .
-							  "\t\t" . $object->ProcessType($type, $attribute->signature->hasPtrFlag, 1) .
+		$attributeString .= "         */\n" .
+							  "        " . $object->ProcessType($type, $attribute->signature->hasPtrFlag, 1) .
 							  $attribute->signature->name . "() const;\n";
 
 		$object->CollectDataType($type, $extractedType{'type'});
 
 		if($attribute->type eq "attribute") { # Read-write accessors!
 			my $name = $attribute->signature->name; $name = ucfirst($name);
-			$attributeString .= "\t\tvoid set$name(" .
+			$attributeString .= "        void set$name(" .
 								$object->ProcessType($type, $attribute->signature->hasPtrFlag) .
 								$attribute->signature->name . ");\n";
 		}
@@ -293,9 +281,12 @@ sub GenerateHeader
 	foreach(@{$dataNode->functions}) {
 		my $function = $_;
 		my $type = $function->signature->type;
+		if (!defined($function->documentation)) {
+			$function->documentation("");
+		}
 
-		my $functionString = "\n\t\t/*\n\t\t * " . $function->documentation . "\n\t\t */\n" .
-							 "\t\t" . $object->ProcessType($type, $function->signature->hasPtrFlag, 1) .
+		my $functionString = "\n        /*\n         * " . $function->documentation . "\n         */\n" .
+							 "        " . $object->ProcessType($type, $function->signature->hasPtrFlag, 1) .
 							 $function->signature->name . "(";
 
 		$object->CollectDataType($type, $extractedType{'type'});
@@ -312,21 +303,21 @@ sub GenerateHeader
 			$object->CollectDataType($type, $extractedType{'type'});
 		}
 
-		$functionString .= ");\n";
+		$functionString .= ") const;\n";
 		push(@headerContent, $functionString);
 	}
 
 	# - Add internal section
-	push(@headerContent, "\n\t\t// Internal\n");
-	push(@headerContent, "\t\tstatic " . $extractedType{'type'} . " null;\n");
-	push(@headerContent, "\t\ttypedef " . $extractedType{'type'} . "Impl Private;\n");
+	push(@headerContent, "\n        // Internal\n");
+	push(@headerContent, "        static " . $extractedType{'type'} . " null;\n");
+	push(@headerContent, "        typedef " . $extractedType{'type'} . "Impl Private;\n");
 
 	# - Add d-ptr accessor handle()
-	push(@headerContent, "\n\t\t" . $extractedType{'type'} . "Impl *handle() const;\n");
+	push(@headerContent, "\n        " . $extractedType{'type'} . "Impl *handle() const;\n");
 
 	# - Add d-ptr if there are no parents
 	if($parentsMax eq 0) {
-		push(@headerContent, "\n\tprotected:\n\t\t" . $extractedType{'type'} . "Impl *d;\n");
+		push(@headerContent, "\n    protected:\n        " . $extractedType{'type'} . "Impl *d;\n");
 	}
 
 	# Prepare class forwards...
@@ -340,7 +331,7 @@ sub GenerateHeader
 		my $namespace = $ret{'namespace'};
 		$namespace = $useModuleNS if($namespace eq "");
 
-		my $forward = "\tclass " . $ret{'type'} . ";";
+		my $forward = "    class " . $ret{'type'} . ";";
 		$forward = "\n$forward" if($first ne 1);
 
 		if(exists($fixupStrings{$namespace})) {
@@ -380,7 +371,7 @@ sub GenerateHeader
 	$tempData =~ s/#FIXUP_[a-zA-Z0-9:]*#//g;
 
 	@headerContent = split("@", $tempData);
-	push(@headerContent, "\t};");
+	push(@headerContent, "    };");
 
 	# End header...
 	my @namespaces = @{$codeGenerator->SplitNamespaces($useModuleNS)};
@@ -478,7 +469,7 @@ sub GenerateImplementation
 			$type = $ret{'namespace'} . "::$type";
 		}
 
-		$assString .= "\t${type}::operator=(other);";
+		$assString .= "    ${type}::operator=(other);";
 		$assString .= "\n" if($h < $parentsMax);
 
 		$ctorString .= "$type()";
@@ -496,13 +487,13 @@ sub GenerateImplementation
 		$ctorImplString = " : d(i)";
 
 		if($dataNode->noDPtrFlag) {
-			$assString = "\tif(d != other.d)\n\t\td = other.d;\n\n";
+			$assString = "    if(d != other.d)\n        d = other.d;\n\n";
 			$ctorImplString .= "\n{\n}\n";
-			$assImplString = "\tif(d != other)\n\t\td = other;\n\n";
+			$assImplString = "    if(d != other)\n        d = other;\n\n";
 		} else { # Common case
-			$assString = "\tKDOM_SAFE_SET(d, other.d);\n";
-			$ctorImplString .= "\n{\n\tif(d)\n\t\td->ref();\n}\n";
-			$dtorString = "\tif(d)\n\t\td->deref();\n";
+			$assString = "    KDOM_SAFE_SET(d, other.d);\n";
+			$ctorImplString .= "\n{\n    if(d)\n        d->ref();\n}\n";
+			$dtorString = "    if(d)\n        d->deref();\n";
 		}
 	}
 
@@ -511,9 +502,9 @@ sub GenerateImplementation
 		$dptrAccessor = $topBaseClass . "::d";
 	}
 
-	my $dptrCheck = "\tif(!d)\n\t";
+	my $dptrCheck = "    if(!d)\n    ";
 	if($dptrAccessor ne "d") {
-		$dptrCheck = "\tif(!impl)\n\t";
+		$dptrCheck = "    if(!impl)\n    ";
 	}
 
 	my $notFoundException = "throw new ";
@@ -534,19 +525,19 @@ sub GenerateImplementation
 					   $extractedType{'type'} . "Impl *i)$ctorImplString\n");
 
 	push(@implContent, $extractedType{'type'} . "::" . $extractedType{'type'} . "(const " .
-					   $extractedType{'type'} . " &other)$ctorString\n{\n\t(*this) = other;\n}\n\n");
+					   $extractedType{'type'} . " &other)$ctorString\n{\n    (*this) = other;\n}\n\n");
 
 	if(($parentsMax > 0) and ($topBaseClass ne "")) {
 		# Eventually add ctor taking a 'const MyTopMostParent &' object
 		push(@implContent, $extractedType{'type'} . "::" . $extractedType{'type'} . "(const " .
-						   $topBaseClass . " &other)$ctorString\n{\n\t(*this) = other;\n}\n\n");
+						   $topBaseClass . " &other)$ctorString\n{\n    (*this) = other;\n}\n\n");
 	}
 
 	push(@implContent, $extractedType{'type'} . "::~" . $extractedType{'type'} . "()\n{\n$dtorString}\n\n");
 
 	# - Add assignment operator
 	push(@implContent, $extractedType{'type'} . " &" . $extractedType{'type'} . "::operator=(const " .
-					   $extractedType{'type'} . " &other)\n{\n$assString\treturn (\*this);\n}\n");
+					   $extractedType{'type'} . " &other)\n{\n$assString    return (\*this);\n}\n");
 
 	if(($parentsMax > 0) and ($topBaseClass ne "")) {
 		my @parents = @{$dataNode->parents};
@@ -558,29 +549,29 @@ sub GenerateImplementation
 			$type = $ret{'namespace'} . "::$type";
 		}
 
-		my $assTwoString = "\t\t\t" . $type . "::operator=(other);\n";
+		my $assTwoString = "            " . $type . "::operator=(other);\n";
 
 		# Eventually add assigment operator taking a 'const MyTopMostParent &' object
 		push(@implContent, "\n" . $extractedType{'type'} . " &" . $extractedType{'type'} . "::operator=(const " .
-						   $topBaseClass . " &other)\n{\n\t" . $topBaseClass . "Impl *ohandle = static_cast<" .
-						   $topBaseClass . "Impl *>(other.handle());\n\n\tif(impl != ohandle)\n\t{\n\t\tif(!" .
-						   "ohandle || 0 /* TODO */)\n\t\t{\n\t\t\tif(impl)\n\t\t\t\timpl->deref();\n\n\t\t\t" .
-						   "$dptrAccessor = 0;\n\t\t}\n\t\telse\n$assTwoString\t}\n\n\treturn (\*this);\n}\n");
+						   $topBaseClass . " &other)\n{\n    " . $topBaseClass . "Impl *ohandle = static_cast<" .
+						   $topBaseClass . "Impl *>(other.handle());\n\n    if(impl != ohandle)\n    {\n        if(!" .
+						   "ohandle || 0 /* TODO */)\n        {\n            if(impl)\n                impl->deref();\n\n            " .
+						   "$dptrAccessor = 0;\n        }\n        else\n$assTwoString    }\n\n    return (\*this);\n}\n");
 	}
 
 	# - Add impl assignment operator, if needed
 	if($dataNode->noDPtrFlag) {
 		push(@implContent, "\n" . $extractedType{'type'} . " &" . $extractedType{'type'} . "::operator=(" .
-						   $extractedType{'type'} . "Impl *other)\n{\n$assImplString\treturn (\*this);\n}\n");
+						   $extractedType{'type'} . "Impl *other)\n{\n$assImplString    return (\*this);\n}\n");
 	}
 
 	# - Add special operators if there are no parents
 	if(($parentsMax eq 0) and (!$dataNode->noDPtrFlag)) {
 		push(@implContent, "\nbool " . $extractedType{'type'} . "::operator==(const " .
-						   $extractedType{'type'} . " &other) const\n{\n\treturn d == other.d;\n}\n");
+						   $extractedType{'type'} . " &other) const\n{\n    return d == other.d;\n}\n");
 
 		push(@implContent, "\nbool " . $extractedType{'type'} . "::operator!=(const " .
-						   $extractedType{'type'} . " &other) const\n{\n\treturn !operator==(other);\n}\n");
+						   $extractedType{'type'} . " &other) const\n{\n    return !operator==(other);\n}\n");
 	}
 
 	# - Add all attributes
@@ -594,7 +585,7 @@ sub GenerateImplementation
 		my $retName = $object->ReturnStringForType($attribute->signature->type, "impl->" .
 					  $attribute->signature->name . "()");
 
-		$attributeString .= "$dptrCheck\t$notFoundException\n\n\treturn $retName\n}\n";
+		$attributeString .= "$dptrCheck    $notFoundException\n\n    return $retName\n}\n";
 
 		if($attribute->type eq "attribute") { # Read-write accessors!
 			my $name = $attribute->signature->name; $name = ucfirst($name);
@@ -608,8 +599,8 @@ sub GenerateImplementation
 			my $nameString = $attribute->signature->name;
 			$nameString .= ".handle()" if($type =~ /const/);
 
-			$attributeString .= "$dptrCheck\t$notFoundException\n\n" .
-								"\timpl->set$name($nameString);\n}\n";
+			$attributeString .= "$dptrCheck    $notFoundException\n\n" .
+								"    impl->set$name($nameString);\n}\n";
 		}
 
 		push(@implContent, $attributeString);
@@ -646,7 +637,7 @@ sub GenerateImplementation
 		my $name = $object->ReturnStringForType($function->signature->type, "impl->" .
 												$function->signature->name . "($valueString)");
 
-		$functionString .= ")\n{\n$dptrCheck\t$notFoundException\n\n\treturn $name\n}";
+		$functionString .= ") const\n{\n$dptrCheck    $notFoundException\n\n    return $name\n}";
 
 		$functionString .= "\n" if($j++ < $functionMax - 1);
 		push(@implContent, $functionString);
@@ -658,7 +649,7 @@ sub GenerateImplementation
 
 	# - Add d-ptr accessor handle()
 	push(@implContent, "\n" . $extractedType{'type'} . "Impl *" . $extractedType{'type'} .
-					   "::handle() const\n{\n\treturn impl;\n}");
+					   "::handle() const\n{\n    return impl;\n}");
 
 	# End implementation...
 	push(@implContent, "\n");

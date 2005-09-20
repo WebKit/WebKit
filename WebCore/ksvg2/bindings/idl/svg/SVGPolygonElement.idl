@@ -1,0 +1,11 @@
+module svg
+{
+  interface SVGPolygonElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable,
+                SVGAnimatedPoints {};
+};

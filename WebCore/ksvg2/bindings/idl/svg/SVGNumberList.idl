@@ -1,0 +1,20 @@
+module svg
+{
+  interface SVGNumberList { 
+    readonly attribute unsigned long numberOfItems;
+    void   clear (  )
+                    raises( DOMException );
+    SVGNumber initialize ( in SVGNumber newItem )
+                    raises( DOMException, SVGException );
+    SVGNumber getItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGNumber insertItemBefore ( in SVGNumber newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGNumber replaceItem ( in SVGNumber newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGNumber removeItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGNumber appendItem ( in SVGNumber newItem )
+                    raises( DOMException, SVGException );
+  };
+};

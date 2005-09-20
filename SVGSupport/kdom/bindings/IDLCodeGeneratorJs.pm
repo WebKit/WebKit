@@ -8,6 +8,7 @@ package IDLCodeGeneratorJs;
 my $useModule = "";
 my $useModuleNS = "";
 my $useOutputDir = "";
+my $useLayerOnTop = 0;
 
 my $codeGenerator;
 
@@ -50,6 +51,8 @@ sub new
 
 	$codeGenerator = shift;
 	$useOutputDir = shift;
+	my $useDocumentation = shift; # not used here.
+	$useLayerOnTop = shift;
 
 	bless($reference, $object);
 	return $reference;
@@ -151,7 +154,7 @@ sub GenerateHeader
 
 		# - Add default includes & parent header includes
 		push(@headerContent, "\n#include <kdebug.h>\n");
-		push(@headerContent, "\n#include <kjs/object.h>\n\n");
+		push(@headerContent, "\n#include <kdom/ecma/DOMLookup.h>\n\n");
 
 		foreach(@{$dataNode->parents}) {
 			my $includeFile = $codeGenerator->GenerateInclude($_);
@@ -180,11 +183,22 @@ sub GenerateHeader
 		}
 	}
 
+	# - Determines wheter any of our parents has any readwrite props...
+	my $hasParentReadWriteProperties = 0;
+	foreach(@{$dataNode->parents}) {
+		my %ret = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+
+		# Skip classes which don't define any writable attributes...
+		if($codeGenerator->ClassHasWriteableAttributes($ret{'type'}) eq 1) {
+			$hasParentReadWriteProperties = 1;
+		}
+	}
+
 	my $implClass = $extractedType{'type'};
 	$implClass =~ s/Wrapper$/Impl/;
 
 	# - Add class definition (with correct inheritance order)
-	my $parentString = "\tclass $implClass;\n\tclass " . $extractedType{'type'};
+	my $parentString = "    class $implClass;\n    class " . $extractedType{'type'};
 	$parentString .= " : " if($parentsMax ne 0);
 
 	my $h = 0;
@@ -197,53 +211,60 @@ sub GenerateHeader
 			$parentString .= "public " . $ret{'type'} . "Wrapper";
 		}
 
-		$parentString .= ",\n\t\t\t\t" if($h++ < $parentsMax - 1);
+		$parentString .= ",\n                " if($h++ < $parentsMax - 1);
 	}
 
-	$parentString .= "\n\t{\n\tpublic:\n";
+	$parentString .= "\n    {\n    public:\n";
 	push(@headerContent, $parentString);
 
 	# - Add default constructor & destructor
-	push(@headerContent, "\t\t" . $extractedType{'type'} . "($implClass *impl);\n");
-	push(@headerContent, "\t\tvirtual ~" . $extractedType{'type'} . "();\n\n");
+	push(@headerContent, "        " . $extractedType{'type'} . "($implClass *impl);\n");
+	push(@headerContent, "        virtual ~" . $extractedType{'type'} . "();\n\n");
 
 	# - Add standard ecma functions
-	push(@headerContent, "\t\tvirtual const KJS::ClassInfo *classInfo() const;\n");
-	push(@headerContent, "\t\tvirtual KJS::UString toString(KJS::ExecState *exec) const;\n\n");
+	push(@headerContent, "        virtual const KJS::ClassInfo *classInfo() const;\n");
+	push(@headerContent, "        virtual KJS::UString toString(KJS::ExecState *exec) const;\n\n");
 
-	push(@headerContent, "\t\tvirtual bool hasProperty(KJS::ExecState *exec, " .
+	push(@headerContent, "        virtual bool hasProperty(KJS::ExecState *exec, " .
 						 "const KJS::Identifier &propertyName) const;\n\n");
 
-	push(@headerContent, "\t\tvirtual KJS::ValueImp *get(KJS::ExecState *exec, " .
+	push(@headerContent, "        virtual KJS::ValueImp *get(KJS::ExecState *exec, " .
 						 "const KJS::Identifier &propertyName, const KJS::ObjectImp *bridge) const;\n");
 	
-	push(@headerContent, "\t\tKJS::ValueImp *getInParents(KJS::ExecState *exec, " .
+	push(@headerContent, "        KJS::ValueImp *getInParents(KJS::ExecState *exec, " .
 						 "const KJS::Identifier &propertyName, const KJS::ObjectImp *bridge) const;\n\n");
 
 	if($hasReadWriteProperties eq 1) {
-		push(@headerContent, "\t\tvirtual bool put(KJS::ExecState *exec, " .
+		push(@headerContent, "        virtual bool put(KJS::ExecState *exec, " .
 							 "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr);\n");
-
-		push(@headerContent, "\t\tbool putInParents(KJS::ExecState *exec, " .
-							 "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr);\n\n");
 	}
 
-	push(@headerContent, "\t\tKJS::ObjectImp *prototype(KJS::ExecState *exec) const;\n\n");
-	push(@headerContent, "\t\tKJS::ObjectImp *bridge(KJS::ExecState *exec) const;\n");
+	if(($hasReadWriteProperties eq 1) or ($hasParentReadWriteProperties eq 1)) {
+		if($hasReadWriteProperties eq 0) {
+			push(@headerContent, "        virtual bool put(KJS::ExecState *exec, " .
+								 "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr);\n\n");
+		} else {
+			push(@headerContent, "        bool putInParents(KJS::ExecState *exec, " .
+								 "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr);\n\n");
+		};
+	}
+
+	push(@headerContent, "        KJS::ObjectImp *prototype(KJS::ExecState *exec) const;\n\n");
+	push(@headerContent, "        KJS::ObjectImp *bridge(KJS::ExecState *exec) const;\n");
 
 	my $cacheVirtual = ""; # 'cache' must be virtual for baseclasses...
 	$cacheVirtual = "virtual " if($parentsMax eq 0);
 
-	push(@headerContent, "\t\t${cacheVirtual}KJS::ValueImp *cache(KJS::ExecState *exec) const;\n\n");
+	push(@headerContent, "        ${cacheVirtual}KJS::ValueImp *cache(KJS::ExecState *exec) const;\n\n");
 
-	push(@headerContent, "\t\tstatic const KJS::ClassInfo s_classInfo;\n");
-	push(@headerContent, "\t\tstatic const struct KJS::HashTable s_hashTable;\n\n");
+	push(@headerContent, "        static const KJS::ClassInfo s_classInfo;\n");
+	push(@headerContent, "        static const struct KJS::HashTable s_hashTable;\n\n");
 
 	# - Add all attributes
 	my $attributesMax = @{$dataNode->attributes};
 	my $functionsMax = @{$dataNode->functions};
 
-	push(@headerContent, "\t\tenum\n\t\t{\n\t\t\t// Attributes\n\t\t\t");
+	push(@headerContent, "        enum\n        {\n            // Attributes\n            ");
 
 	if($attributesMax eq 0) {
 		push(@headerContent, "Dummy");
@@ -256,7 +277,7 @@ sub GenerateHeader
 
 		$i++;
 		if((($i % 2) eq 0) and ($i ne 0)) {
-			push(@headerContent, "\n\t\t\t");
+			push(@headerContent, "\n            ");
 		}
 
 		my $value = ucfirst($attribute->signature->name);
@@ -267,7 +288,7 @@ sub GenerateHeader
 
 	# - Add all functions
 	if($functionsMax > 0) {
-		push(@headerContent, "\n\n\t\t\t// Functions\n\t\t\t");
+		push(@headerContent, "\n\n            // Functions\n            ");
 	}
 
 	$i = -1;
@@ -276,7 +297,7 @@ sub GenerateHeader
 
 		$i++;
 		if((($i % 2) eq 0) and ($i ne 0)) {
-			push(@headerContent, "\n\t\t\t");
+			push(@headerContent, "\n            ");
 		}
 
 		my $value = ucfirst($function->signature->name);
@@ -284,19 +305,22 @@ sub GenerateHeader
 		push(@headerContent, $value);
 	}
 
-	push(@headerContent, "\n\t\t};\n");
+	push(@headerContent, "\n        };\n");
 
 	# - Add getValueProperty function
-	push(@headerContent, "\n\t\tKJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;\n");
+	push(@headerContent, "\n        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;\n");
 
 	# - Add putValueProperty function, if we have any writable attributes...
 	if($hasReadWriteProperties eq 1) {
-		push(@headerContent, "\t\tvoid putValueProperty(KJS::ExecState *exec, int token, " .
+		push(@headerContent, "        void putValueProperty(KJS::ExecState *exec, int token, " .
 							 "KJS::ValueImp *value, int attr);\n");
 	}
 
+	# - Add 'impl' accessor
+	push(@headerContent, "\n        $implClass *impl() const { return m_impl; }\n");
+
 	# - Add 'private' section to store impl ptr...
-	push(@headerContent, "\n\tprivate:\n\t\t$implClass *m_impl;\n\t};");
+	push(@headerContent, "\n    private:\n        $implClass *m_impl;\n    };");
 
 	# End header...
 	my @namespaces = @{$codeGenerator->SplitNamespaces($useModuleNS)};
@@ -309,8 +333,15 @@ sub GenerateHeader
 			$toId =~ s/Wrapper$//;
 
 			$addedTo = 1;
-			push(@headerContent, "\n\n\t$implClass *$toId(KJS::ExecState *exec, " .
-								 "const KJS::ObjectImp *bridge);")
+			push(@headerContent, "\n\n    $implClass *$toId(KJS::ExecState *exec, " .
+								 "const KJS::ObjectImp *bridge);");
+
+			# - Add 'constructor' macro if necessary...
+			my $constantsMax = @{$dataNode->constants};
+			if($constantsMax > 0) {
+				my $type = $extractedType{'type'}; $type =~ s/Wrapper$/Constructor/;
+				push(@headerContent, "\n\n    ECMA_DEFINE_CONSTRUCTOR($type)");
+			}
 		}
 
 		push(@headerContent, "\n};\n");
@@ -340,12 +371,43 @@ sub GenerateImplementation
 
 		# - Add absolutely needed includes
 		push(@implContent, "\n#include \"" . $extractedType{'type'} . ".h\"");
-		push(@implContent, "\n#include \"$implClass.h\"\n");
+
+		my $useClass = $implClass;
+		if($useClass =~ /^.*AbsImpl$/) { # Special cases for SVG generation!
+			$useClass =~ s/AbsImpl/Impl/; # it's 'SVGPathSegArcImpl' not 'SVGPathSegArcAbsImpl'
+		} elsif($useClass =~ /^.*RelImpl$/) {
+			$useClass =~ s/RelImpl/Impl/; # it's 'SVGPathSegArcImpl' not 'SVGPathSegArcRelImpl'
+		}
+
+		push(@implContent, "\n#include \"$useClass.h\"\n");
+
+		my $constantsMax = @{$dataNode->constants};
+		if($constantsMax > 0) {
+			my $useType = lcfirst($useModule);
+			if($useModuleNS =~ /KDOM/) {
+				if($useModule ne "core") {
+					push(@implContent, "\n#include \"kdom/$useModule/kdom$useType.h\"");
+				} else {
+					push(@implContent, "\n#include \"kdom.h\"");
+				}
+			} else {
+				$useType = $useModuleNS; $useType =~ tr/A-Z/a-z/;
+				push(@implContent, "\n#include \"$useType.h\"");
+			}
+		}
 
 		push(@implContent, "\n#include <kdom/ecma/Ecma.h>");
-		push(@implContent, "\n#include <kdom/ecma/DOMBridge.h>");
-		push(@implContent, "\n#include <kdom/ecma/DOMLookup.h>\n");
-		push(@implContent, "\n#include \"DOMExceptionImpl.h\"\n\n");
+
+		if($useLayerOnTop eq 0) {
+			push(@implContent, "\n#include <kdom/ecma/EcmaInterface.h>");
+		} elsif($useModule eq "svg") { # Special case for ksvg...
+			push(@implContent, "\n#include <ksvg2/ecma/EcmaInterface.h>");
+		}
+
+		push(@implContent, "\n#include <kdom/ecma/DOMBridge.h>\n\n");
+
+		# - Add placeholder to be replaced with needed exception includes, later.
+		push(@implContent, "#FIXUP_EXCEPTIONS#");
 
 		# - Add placeholder to be replaced with needed includes, later.
 		push(@implContent, "#FIXUP_INCLUDES#");
@@ -378,6 +440,17 @@ sub GenerateImplementation
 		}
 	}
 
+	# - Determines wheter any of our parents has any readwrite props...
+	my $hasParentReadWriteProperties = 0;
+	foreach(@{$dataNode->parents}) {
+		my %ret = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+
+		# Skip classes which don't define any writable attributes...
+		if($codeGenerator->ClassHasWriteableAttributes($ret{'type'}) eq 1) {
+			$hasParentReadWriteProperties = 1;
+		}
+	}
+
 	# - Add default ctor / impl ctor / copy ctor & destructor
 	my $ctorString = " : m_impl(impl)";
 
@@ -398,6 +471,12 @@ sub GenerateImplementation
 					   "($implClass *impl)$ctorString\n{\n}\n\n");
 
 	push(@implContent, $extractedType{'type'} . "::~" . $extractedType{'type'} . "()\n{\n}\n\n");
+
+	my $inheritedType = $extractedType{'type'};
+	$inheritedType =~ s/Wrapper$//;
+
+	my $showTypeNS = $useModuleNS;
+	$showTypeNS =~ s/([A-Z]*)[A-Za-z:]*/$1/g;
 
 	# - Add all attributes in a hashtable definition
 	my $attributesMax = @{$dataNode->attributes};
@@ -478,34 +557,66 @@ sub GenerateImplementation
 								   \@hashSpecials, \@hashParameters);
 	}
 
+	# - Add all constants in a hashtable definition, if we have any.
+	my $constantsMax = @{$dataNode->constants};
+	if($constantsMax ne 0) {
+		$hashSize = $constantsMax;
+		$hashName = $dataNode->name . "Constructor::s_hashTable";
+
+		@hashKeys = ();
+		@hashValues = ();
+		@hashSpecials = ();
+		@hashParameters = ();
+
+		foreach(@{$dataNode->constants}) {
+			my $constant = $_;
+
+			my $name = $constant->name;
+			push(@hashKeys, $name);
+		
+			my $value = $useModuleNS . "::" . $name;
+			push(@hashValues, $value);
+
+			my $special = "KJS::DontDelete|KJS::ReadOnly";
+			push(@hashSpecials, $special);
+
+			my $parameters = "0";
+			push(@hashParameters, $parameters);
+		}
+
+		$object->GenerateHashTable($hashName, $hashSize,
+								   \@hashKeys, \@hashValues,
+								   \@hashSpecials, \@hashParameters);
+	}
+
 	# - Add 'classInfo' function (always needed!)
 	push(@implContent, "/* Standard ecma functions */\n" .
 					   "const KJS::ClassInfo *" . $extractedType{'type'} . "::" .
-					   "classInfo() const\n{\n\treturn &s_classInfo;\n}\n\n");
+					   "classInfo() const\n{\n    return &s_classInfo;\n}\n\n");
 
 	# - Add 'toString' function (always needed!)
 	push(@implContent, "KJS::UString " . $extractedType{'type'} . "::" .
-					   "toString(KJS::ExecState *) const\n{\n\treturn " .
-					   "KJS::UString(\"[object \" + QString::fromLatin1(" .
+					   "toString(KJS::ExecState *) const\n{\n    return " .
+					   "KJS::UString(QString::fromLatin1(\"[object \") + QString::fromLatin1(" .
 					   $extractedType{'type'} . "::s_classInfo.className) " .
-					   "+ \"]\");\n}\n\n");
+					   "+ QString::fromLatin1(\"]\"));\n}\n\n");
 
 	# - Add 'hasProperty' function (always needed!)
 	push(@implContent, "bool " . $extractedType{'type'} . "::hasProperty(" .
 					   "KJS::ExecState *exec, const KJS::Identifier &propertyName) const\n{\n" .
-					   "\tconst KJS::HashEntry *e = KJS::Lookup::findEntry(&" . $extractedType{'type'} .
-					   "::s_hashTable, propertyName);\n\tif(e)\n\t\treturn true;\n");
+					   "    const KJS::HashEntry *e = KJS::Lookup::findEntry(&" . $extractedType{'type'} .
+					   "::s_hashTable, propertyName);\n    if(e)\n        return true;\n");
 
 	if(($parentsMax eq 0) and ($functionsMax eq 0)) {
-		push(@implContent, "\n\tQ_UNUSED(exec);\n");
+		push(@implContent, "\n    Q_UNUSED(exec);\n");
 	} else {
 		if($functionsMax ne 0) {
 			my $classIdentifier = $extractedType{'type'};
 			$classIdentifier =~ s/Wrapper$//;
 
-			push(@implContent, "\n\tKJS::ObjectImp *proto = ${classIdentifier}WrapperProto::self(" .
-							   "exec);\n\tif(proto->hasProperty(exec, propertyName))\n" .
-							   "\t\treturn true;\n");
+			push(@implContent, "\n    KJS::ObjectImp *proto = ${classIdentifier}WrapperProto::self(" .
+							   "exec);\n    if(proto->hasProperty(exec, propertyName))\n" .
+							   "        return true;\n");
 		}
 
 		if($parentsMax ne 0) {
@@ -519,25 +630,58 @@ sub GenerateImplementation
 					$parentIdentifier = $ret{'type'} . "Wrapper";
 				}
 
-    			push(@implContent, "\n\tif(${parentIdentifier}::hasProperty(exec, " .
-								   "propertyName))\n\t\treturn true;\n");
+    			push(@implContent, "\n    if(${parentIdentifier}::hasProperty(exec, " .
+								   "propertyName))\n        return true;\n");
 			}
 
 			push(@implContent, "\n");
 		}
 	}
 
-	push(@implContent, "\treturn false;\n}\n\n");
+	# These are special cases to support [] indexing on them (no way to determine from IDL :/)
+	my $itemType = "";
+	my $isIndexable = $object->IsIndexableClass($extractedType{'type'}, \$itemType);
+	
+	if($isIndexable eq 1) {
+		push(@implContent, "\n    bool ok;");
+		push(@implContent, "\n    unsigned int i = propertyName.toArrayIndex(&ok);");
+		push(@implContent, "\n    if(ok && i < m_impl->length())\n        return true;\n\n");
+	}
+
+	push(@implContent, "    return false;\n}\n\n");
 
 	# - Add 'get' function (always needed!)
 	push(@implContent, "KJS::ValueImp *" . $extractedType{'type'} . "::get(KJS::ExecState *exec, " .
-					   "const KJS::Identifier &propertyName, const KJS::ObjectImp *bridge) const\n");
+					   "const KJS::Identifier &propertyName, const KJS::ObjectImp *bridge) const\n{");
 
+	# These are special cases to support [] indexing on them (no way to determine from IDL :/)
+	if($isIndexable eq 1) {
+		push(@implContent, "\n    bool ok;");
+		push(@implContent, "\n    unsigned int i = propertyName.toArrayIndex(&ok);");
+
+		push(@implContent, "\n    if(ok && i < m_impl->length())\n        return ");
+
+		if(($extractedType{"type"} eq "CSSStyleDeclarationWrapper") or ($extractedType{"type"} eq "MediaListWrapper")) {
+			push(@implContent, "getDOMString(m_impl->item(i));\n");
+		} else {
+			if(($extractedType{"type"} eq "NodeListWrapper") or ($extractedType{"type"} eq "NamedNodeMapWrapper")) {
+				push(@implContent, "getDOMNode(exec, m_impl->item(i));\n");
+			} else {
+				push(@implContent, "safe_cache\<${itemType}Impl, ${itemType}Wrapper\>(exec, m_impl->item(i));\n");
+			}
+		}
+	}
+
+	my $showNS = "";
+	if($useModuleNS !~ /KDOM/) {
+		$showNS = "KDOM::";
+	}
+	
 	if($functionsMax eq 0) {
-		push(@implContent, "{\n\treturn lookupGetValue<" . $extractedType{'type'} . ">(exec, " .
+		push(@implContent, "\n    return ${showNS}lookupGetValue<" . $extractedType{'type'} . ">(exec, " .
 						   "propertyName, &s_hashTable, this, bridge);\n}\n\n");
 	} else {
-		push(@implContent, "{\n\treturn lookupGet<" . $extractedType{'type'} . "ProtoFunc, " .
+		push(@implContent, "\n    return ${showNS}lookupGet<" . $extractedType{'type'} . "ProtoFunc, " .
 						   $extractedType{'type'} . ">(exec, propertyName, &s_hashTable, this, bridge);\n}\n\n");
 	}
 
@@ -548,8 +692,8 @@ sub GenerateImplementation
 	my $paramsUsed = 0;
 
 	if($functionsMax ne 0) {
-		push(@implContent, "\tKJS::ObjectImp *proto = " . $extractedType{'type'} . "Proto::self(exec);\n" .
-						   "\tif(proto->hasProperty(exec, propertyName))\n\t\t" .
+		push(@implContent, "    KJS::ObjectImp *proto = " . $extractedType{'type'} . "Proto::self(exec);\n" .
+						   "    if(proto->hasProperty(exec, propertyName))\n        " .
 						   "return proto->get(exec, propertyName);\n\n");
 
 		$paramsUsed = 1;
@@ -566,7 +710,7 @@ sub GenerateImplementation
 				$parentIdentifier = $ret{'type'} . "Wrapper";
 			}
 
-			push(@implContent, "\tif(${parentIdentifier}::hasProperty(exec, propertyName))\n\t\t" .
+			push(@implContent, "    if(${parentIdentifier}::hasProperty(exec, propertyName))\n        " .
 							   "return ${parentIdentifier}::get(exec, propertyName, bridge);\n\n");
 		}
 
@@ -574,21 +718,27 @@ sub GenerateImplementation
 	}
 
 	if($paramsUsed eq 0) {
-		push(@implContent, "\tQ_UNUSED(exec); Q_UNUSED(propertyName); Q_UNUSED(bridge);\n");
+		push(@implContent, "    Q_UNUSED(exec); Q_UNUSED(propertyName); Q_UNUSED(bridge);\n");
 	} elsif($paramsUsed eq 1) {
-		push(@implContent, "\tQ_UNUSED(bridge);\n");
+		push(@implContent, "    Q_UNUSED(bridge);\n");
 	}
 
-	push(@implContent, "\treturn KJS::Undefined();\n}\n");
+	push(@implContent, "    return KJS::Undefined();\n}\n");
 
-	# - Add 'put'/'putInParents' functions, if we have writeable properties...
+	# - Add 'put' functions, if we have writeable properties...
 	if($hasReadWriteProperties eq 1) {
 		push(@implContent, "\nbool " . $extractedType{'type'} . "::put(KJS::ExecState *exec, " .
 						   "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)\n" .
-						   "{\n\treturn lookupPut<" . $extractedType{'type'} .">(exec, propertyName, " .
-						   "value, attr, &s_hashTable, this);\n}\n\n");
+						   "{\n    return ${showNS}lookupPut<" . $extractedType{'type'} .">(exec, propertyName, " .
+						   "value, attr, &s_hashTable, this);\n}\n");
+	}
 
-		push(@implContent, "bool " . $extractedType{'type'} . "::putInParents(KJS::ExecState *exec, " .
+	# - Add 'putInParents' functions, if we have our any of our parents has writeable properties...
+	if(($hasReadWriteProperties eq 1) or ($hasParentReadWriteProperties eq 1)) {
+		my $functionName = "putInParents";
+		$functionName = "put" if($hasReadWriteProperties eq 0);
+
+		push(@implContent, "\nbool " . $extractedType{'type'} . "::${functionName}(KJS::ExecState *exec, " .
 						   "const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)\n{");
 
 		my $generatedAnything = 0;
@@ -609,135 +759,312 @@ sub GenerateImplementation
 				$parentIdentifier = $ret{'type'} . "Wrapper";
 			}
 
-			push(@implContent, "\n\tif(${parentIdentifier}::hasProperty(exec, " .
-							   "propertyName))\n\t{\n\t\t${parentIdentifier}::put(exec, " .
-							   "propertyName, value, attr);\n\t\treturn true;\n\t}\n");
+			push(@implContent, "\n    if(${parentIdentifier}::hasProperty(exec, " .
+							   "propertyName))\n    {\n        ${parentIdentifier}::put(exec, " .
+							   "propertyName, value, attr);\n        return true;\n    }\n");
 
 			$generatedAnything = 1;
 		}
 
 		if(($parentsMax eq 0) or ($generatedAnything eq 0)) {
-			push(@implContent, "\n\tQ_UNUSED(exec);\n\tQ_UNUSED(propertyName);\n" .
-							   "\tQ_UNUSED(value);\n\tQ_UNUSED(attr);\n");
+			push(@implContent, "\n    Q_UNUSED(exec);\n    Q_UNUSED(propertyName);\n" .
+							   "    Q_UNUSED(value);\n    Q_UNUSED(attr);\n");
 		}
 
 		push(@implContent, "\n") if($generatedAnything eq 1);
-		push(@implContent, "\treturn false;\n}\n");
+		push(@implContent, "    return false;\n}\n");
 	}
 
 	# - Add 'cast' function for JSWrapperProtoFunc classes, if we have functions...
-	my $toId = "to" . ucfirst($extractedType{'type'});
-	$toId =~ s/Wrapper$//;
+	my $toId = "to" . ucfirst($extractedType{'type'}); $toId =~ s/Wrapper$//;
+	my $useType = $extractedType{'type'}; $useType =~ s/Wrapper$//;
 
 	if($functionsMax ne 0) {
     	push(@implContent, "\n$implClass *" . $extractedType{'type'} . "ProtoFunc::cast(" .
-						   "KJS::ExecState *exec, const KJS::ObjectImp *bridge) const\n{\n\t" .
-						   "return $useModuleNS" . "::$toId(exec, bridge);\n}\n");
+						   "KJS::ExecState *exec, const KJS::ObjectImp *bridge) const\n{" .
+						   "\n    return $useModuleNS" . "::$toId(exec, bridge);\n}\n");
 	}
 
 	# - Add 'prototype' function (always needed!)
 	push(@implContent, "\nKJS::ObjectImp *" . $extractedType{'type'} . "::prototype(KJS::ExecState *exec) const");
 
 	if($functionsMax eq 0) {
-		push(@implContent, "\n{\n\tif(exec)\n\t\treturn exec->interpreter()->builtinObjectPrototype();");
+		push(@implContent, "\n{\n    if(exec)\n        return exec->interpreter()->builtinObjectPrototype();");
 	} else {
-		push(@implContent, "\n{\n\tif(exec)\n\t\treturn " . $extractedType{'type'} . "Proto::self(exec);");
+		push(@implContent, "\n{\n    if(exec)\n        return " . $extractedType{'type'} . "Proto::self(exec);");
 	}
 			
 	push(@implContent, "\n\n\treturn NULL;\n}\n");
 
 	# - Add 'bridge' function (always needed!)
-	my $useBridge = "DOMBridge";
-	$useBridge = "DOMRWBridge" if($hasReadWriteProperties eq 1);
+	my $useBridge = "${showNS}DOMBridge";
+	$useBridge = "${showNS}DOMRWBridge" if(($hasReadWriteProperties eq 1) or($hasParentReadWriteProperties eq 1));
 
 	push(@implContent, "\nKJS::ObjectImp *" . $extractedType{'type'} . "::bridge(" .
-					   "KJS::ExecState *exec) const\n{\n\treturn new " .
+					   "KJS::ExecState *exec) const\n{\n    return new " .
 					   "$useBridge<" . $extractedType{'type'} . ", $implClass>(" .
 					   "exec, m_impl);\n}\n");
 
 	# - Add 'cache' function (always needed!)
-	push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "::cache(KJS::ExecState *exec) const\n{\n\t" .
-					   "return cacheDOMObject<" . $extractedType{'type'} . ", $implClass>(exec, this);\n}\n");
+	push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "::cache(KJS::ExecState *exec) const\n{\n    " .
+					   "return ${showNS}cacheDOMObject<" . $extractedType{'type'} . ", $implClass>(exec, this);\n}\n");
 
 	# - Add 'to...' function (always needed!)
-	# TODO: implement stub!
 	push(@implContent, "\n$implClass *" . $useModuleNS . "::$toId(KJS::ExecState *" .
-					   "exec, const KJS::ObjectImp *bridge)\n{\n\t");
+					   "exec, const KJS::ObjectImp *bridge)\n{");
 
-	push(@implContent, "\n\treturn 0;\n}\n");
+	my $useClass = $extractedType{'type'}; $useClass =~ s/Wrapper$//;
+
+	my @classList = @{$codeGenerator->AllClassesWhichInheritFrom($useClass)};
+	push(@classList, $useClass);
+
+	my %hash = %{$codeGenerator->ModuleNamespaceHash()};
+
+	foreach(@classList) {
+		my %classType = $codeGenerator->ExtractNamespace($_, 0, $useModuleNS);
+
+		my $type = $classType{'type'};
+		my $module = $classType{'namespace'};
+		my $moduleNS = $hash{$module};
+
+		if("${type}Wrapper" ne $extractedType{'type'}) { # Don't include ourselves twice...
+			push(@neededIncludes, "${type}Impl");
+
+			if(($module ne "") and ($module ne $useModule)) {
+				push(@neededIncludes, "$module/${type}Wrapper");
+				$type = $moduleNS . "::$type"; # Fix namespace.
+			} else {
+				push(@neededIncludes, "${type}Wrapper");
+			}
+		}
+
+		my $bridge = "const ${showNS}DOMBridge<${type}Wrapper, ${type}Impl>";
+		push(@implContent, "\n    { $bridge *test = dynamic_cast<$bridge *>(bridge);" .
+						   "\n      if(test) return test->wrapper()->impl(); }");
+	}
+
+	if($useLayerOnTop eq 0) {
+		push(@implContent, "\n\n    ${showNS}ScriptInterpreter *interpreter = " .
+						   "static_cast<${showNS}ScriptInterpreter *>(exec" .
+						   "->interpreter());\n    ${showNS}DocumentImpl *document = " .
+						   "(interpreter ? interpreter->document() : 0);\n    ${showNS}Ecma" .
+						   " *engine = (document ? document->ecmaEngine() : 0);\n    " .
+						   "${showNS}EcmaInterface *interface = (engine ? engine->interface() : 0);" .
+						   "\n\n    if(!interface)\n        return 0;\n\n    return " .
+						   "interface->inherited${useType}Cast(bridge);\n}\n");
+	} else {
+		push(@implContent, "\n\n    Q_UNUSED(exec);\n    return 0;\n}\n");
+	}
+
+	my @exceptions;			# Exceptions used in get (/ put) / call.
+	my $exceptionsMax = 0;
 
 	# - Add 'getValueProperty' function (always needed!)
-	# TODO: catch exceptions!
-	push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "::getValueProperty(KJS::ExecState *exec" .
-					   ", int token) const\n{\n\tswitch(token)\n\t{");
+	push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "::getValueProperty(" .
+					   "KJS::ExecState *exec, int token) const\n{");
 
 	my $execUsed = 0;
+	my $attributeString = "";
 	foreach(@{$dataNode->attributes}) {
 		my $attribute = $_;
 
+		my $exceptionsCount = @{$attribute->raisesExceptions};
+		if($exceptionsCount > $exceptionsMax) {
+			$exceptionsMax = $exceptionsCount;
+		}
+
+		foreach(@{$attribute->raisesExceptions}) {
+			my @array = grep { /${_}$/ } @exceptions;
+			my $arraySize = @array;
+			push(@exceptions, $_) if($arraySize eq 0);
+		}
+
 		my %paramType = $codeGenerator->ExtractNamespace($attribute->signature->type, 0, $useModuleNS);
+		$paramType{'paramName'} = "m_impl->" . $attribute->signature->name . "()";
 
 		my $name = $attribute->signature->name;
 		my $value = $extractedType{'type'} . "::" . ucfirst($name);
 
 		my $returnValue = $object->TypeToEcma($name, \%paramType, 0);
 		$execUsed = 1 if($returnValue =~ /exec/);
-		push(@implContent, "\n\t\tcase $value:\n\t\t\t$returnValue");
+
+		$attributeString .= "\n        case $value:\n            $returnValue";
 	}
 
-	push(@implContent, "\n\t\tdefault:\n\t\t\tkdWarning() << \"Unhandled token in" .
-					   " \" << k_funcinfo << \" : \" << token << endl;\n\t}\n");
+	push(@implContent, "\n    KDOM_ENTER_SAFE\n") if($exceptionsMax ne 0);
+	push(@implContent, "\n    switch(token)\n    {$attributeString");
+	push(@implContent, "\n        default:\n            kdWarning() << \"Unhandled token in" .
+					   " \" << k_funcinfo << \" : \" << token << endl;\n    }\n");
 
-	push(@implContent, "\n\tQ_UNUSED(exec);") if($execUsed eq 0);
-	push(@implContent, "\n\treturn KJS::Undefined();\n}\n");
+	my $count = 0;
+	foreach(@exceptions) {
+		my %exceptionType = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+
+		my $flag = ""; $flag = "_NEXT" if($count ne 0);
+		my $type = $exceptionType{'namespace'} . "::" . $exceptionType{'type'};
+		push(@implContent, "\n    KDOM_LEAVE_SAFE$flag($type);");
+
+		$count++;
+	}
+
+	push(@implContent, "\n    Q_UNUSED(exec);") if(($execUsed eq 0) and ($count eq 0));
+	push(@implContent, "\n    return KJS::Undefined();\n}\n");
 
 	# - Add 'putValueProperty' function, if we have writeable attributes...
-	# TODO: catch exceptions!
 	if($hasReadWriteProperties eq 1) {
 		push(@implContent, "\nvoid " . $extractedType{'type'} . "::putValueProperty(KJS::ExecState *exec" .
-						   ", int token, KJS::ValueImp *value, int)\n{\n\tswitch(token)\n\t{");
+						   ", int token, KJS::ValueImp *value, int)\n{");
 
+		my $attributeString = "";
 		foreach(@{$dataNode->attributes}) {
 			my $attribute = $_;
 
 			if($attribute->type !~ /^readonly\ attribute$/) {
 				my %paramType = $codeGenerator->ExtractNamespace($attribute->signature->type, 0, $useModuleNS);
-
+				$paramType{'paramName'} = "value";
+	
 				my $name = $attribute->signature->name;
 				my $value = $extractedType{'type'} . "::" . ucfirst($name);
 
 				my $returnValue = $object->TypeToEcma("set" . ucfirst($name), \%paramType, 1);
-				push(@implContent, "\n\t\tcase $value:\n\t\t{\n\t\t\t$returnValue\n\t\t}");
+				$attributeString .= "\n        case $value:\n        {\n            $returnValue\n        }";
 			}
 		}
 
-		push(@implContent, "\n\t\tdefault:\n\t\t\tkdWarning() << \"Unhandled token in" .
-						   " \" << k_funcinfo << \" : \" << token << endl;\n\t}\n}\n");
+		push(@implContent, "\n    KDOM_ENTER_SAFE\n") if($exceptionsMax ne 0);
+		push(@implContent, "\n    switch(token)\n    {$attributeString");
+		push(@implContent, "\n        default:\n            kdWarning() << \"Unhandled token in" .
+						   " \" << k_funcinfo << \" : \" << token << endl;\n    }\n");
+
+		my $count = 0;
+		foreach(@exceptions) {
+			my %exceptionType = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+
+			my $flag = ""; $flag = "_NEXT" if($count ne 0);
+			my $type = $exceptionType{'namespace'} . "::" . $exceptionType{'type'};
+			push(@implContent, "\n    KDOM_LEAVE_SAFE$flag($type);");
+
+			$count++;
+		}
+
+		push(@implContent, "\n") if($count ne 0);
+		push(@implContent, "}\n");
 	}
 
 	# - Add 'call' function, if we have have functions...
-	# TODO: implement the stub! (KDOM_CHECK_THIS, KDOM_ENTER/LEAVE_SAFE, switch(id) content)
 	if($functionsMax ne 0) {
-		push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "ProtoFunc::callAsFunction(KJS::ExecState * /* exec */" .
-						   ", KJS::ObjectImp * /* thisObj */, const KJS::List & /* args */)\n{\n\t" .
-						   "switch(id)\n\t{\n\t\t");
+		push(@implContent, "\nKJS::ValueImp *" . $extractedType{'type'} . "ProtoFunc::callAsFunction(KJS::ExecState *exec" .
+						   ", KJS::ObjectImp *thisObj, const KJS::List &args)\n{\n    KDOM_CHECK_THIS(" .
+						   "$implClass, " . $extractedType{'type'} . ")\n");
 
-		push(@implContent, "default:\n\t\t\tkdWarning() << \"Unhandled function id in \" " .
-						   "<< k_funcinfo << \" : \" << id << endl;\n\t\t\tbreak;\n\t}\n\n\t" .
-						   "return KJS::Undefined();\n}\n");
+		my $argsUsed = 0;
+
+		my $functionString = "";
+		foreach(@{$dataNode->functions}) {
+			my $function = $_;
+
+			my $exceptionsCount = @{$function->raisesExceptions};
+			if($exceptionsCount > $exceptionsMax) {
+				$exceptionsMax = $exceptionsCount;
+			}
+
+			foreach(@{$function->raisesExceptions}) {
+				my @array = grep { /${_}$/ } @exceptions;
+				my $arraySize = @array;
+				push(@exceptions, $_) if($arraySize eq 0);
+			}
+
+			my $parametersMax = @{$function->parameters};
+			my $parameterString = "";
+
+			$functionString .= "\n        case " . $extractedType{'type'} . "::" .
+							   ucfirst($function->signature->name) . ":\n        {";
+
+			my $i = 0;
+			foreach(@{$function->parameters}) {
+				my $parameter = $_;
+
+				my %paramType = $codeGenerator->ExtractNamespace($parameter->type, 0, $useModuleNS);
+				$paramType{'paramName'} = "args[$i]"; $i++;
+
+				my $returnValue = $object->TypeToEcma($parameter->name, \%paramType, 2);
+				$functionString .= "\n            $returnValue";
+
+				$parameterString .= $parameter->name;
+				$parameterString .= ", " if($i < $parametersMax);
+			}
+
+			$argsUsed = 1 if($i ne 0);
+			$functionString .= "\n" if($parametersMax > 1);
+
+			my %functionType = $codeGenerator->ExtractNamespace($function->signature->type, 0, $useModuleNS);
+			$functionType{'paramName'} = "obj->" . $function->signature->name . "($parameterString)";
+
+			my $returnValue = $object->TypeToEcma($function->signature->name, \%functionType, 0);
+			$functionString .= "\n            $returnValue\n        }";
+		}
+
+		push(@implContent, "    KDOM_ENTER_SAFE\n") if($exceptionsMax ne 0);
+		push(@implContent, "\n    switch(id)\n    {$functionString");
+		push(@implContent, "\n        default:\n            kdWarning() << \"Unhandled function id in \" " .
+						   "<< k_funcinfo << \" : \" << id << endl;\n    }\n");
+
+		my $count = 0;
+		foreach(@exceptions) {
+			my %exceptionType = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+
+			my $flag = ""; $flag = "_NEXT" if($count ne 0);
+			my $type = $exceptionType{'namespace'} . "::" . $exceptionType{'type'};
+			push(@implContent, "\n    KDOM_LEAVE_CALL_SAFE$flag($type);");
+
+			$count++;
+		}
+
+		push(@implContent, "\n    Q_UNUSED(args);") if($argsUsed eq 0);
+		push(@implContent, "\n    return KJS::Undefined();\n}\n");
 	}
+
+	# Prepare exception fixup string...
+	my $fixupExceptionString = "";
+	foreach(@exceptions) {
+		my %exceptionTypeUnprocessed = $codeGenerator->ExtractNamespace($_, 0, $useModuleNS);
+		my $namespace = $exceptionTypeUnprocessed{'namespace'};
+		$namespace = $useModule if($namespace eq "");
+
+		my %exceptionType = $codeGenerator->ExtractNamespace($_, 1, $useModuleNS);
+		$fixupExceptionString .= "#include \"" . $exceptionType{'type'} . "Impl.h\"\n";
+
+		my $cmpType = $exceptionType{'type'} . "Wrapper";
+		if($extractedType{'type'} ne $cmpType) {
+			$fixupExceptionString .= "\n#include <kdom/bindings/js/$namespace/${cmpType}.h>\n";
+		}
+	}
+
+	$fixupExceptionString .= "\n" if($fixupExceptionString ne "");
 
 	# ... and apply fixups!
 	my $tempData = join("@", @implContent);
 
 	my $fixupString = "";
+
+	@neededIncludes = sort { length $a <=> length $b } @neededIncludes;
 	foreach(@neededIncludes) {
-		$fixupString .= "#include \"${_}.h\"\n";
+		my $useClass = $_;
+
+		if($useClass =~ /^.*AbsImpl$/) { # Special cases for SVG generation!
+			$useClass =~ s/AbsImpl/Impl/; # it's 'SVGPathSegArcImpl' not 'SVGPathSegArcAbsImpl'
+		} elsif($useClass =~ /^.*RelImpl$/) {
+			$useClass =~ s/RelImpl/Impl/; # it's 'SVGPathSegArcImpl' not 'SVGPathSegArcRelImpl'
+		}
+
+		$fixupString .= "#include \"${useClass}.h\"\n";
 	}
 
 	$fixupString .= "\n" if($fixupString ne "");
 
 	$tempData =~ s/#FIXUP_INCLUDES#/$fixupString/;
+	$tempData =~ s/#FIXUP_EXCEPTIONS#/$fixupExceptionString/;
+
 	@implContent = split("@", $tempData);
 }
 
@@ -799,21 +1126,33 @@ sub GenerateHashTable
 
 	# first, build the string table
 	my %soffset = ();
-	if($name =~ /Proto\:\:/) { # Define prototype first...
-		my $type = $name; $type =~ s/Proto\:\:.*//;
-		my $implClass = $type; $implClass =~ s/Wrapper$/Impl/;
+	if(($name =~ /Proto\:\:/) or ($name =~ /Constructor\:\:/)) {
+		my $type = $name;
+		my $implClass;
 
-		push(@implContent, "/* Hash table for prototype */");
-
+		if($name =~ /Proto\:\:/) {
+			$type =~ s/Proto\:\:.*//;
+			$implClass = $type; $implClass =~ s/Wrapper$//;
+			push(@implContent, "/* Hash table for prototype */");
+		} else {
+			$type =~ s/\:\:.*//;
+			$implClass = $type; $implClass =~ s/Constructor$//;
+			push(@implContent, "/* Hash table for constructor */");
+		}
+			
 		my @namespaces = @{$codeGenerator->SplitNamespaces($useModuleNS)};
 
 		foreach(@namespaces) {
 			push(@implContent, "\nnamespace $_\n{\n");
 		}
 
-		push(@implContent, "\tECMA_DEFINE_PROTOTYPE(${type}Proto)\n");
-		push(@implContent, "\tECMA_IMPLEMENT_PROTOFUNC(${type}ProtoFunc, $type, $implClass)\n");
-		push(@implContent, "\tECMA_IMPLEMENT_PROTOTYPE(\"$type\", ${type}Proto, ${type}ProtoFunc)");
+		if($name =~ /Proto\:\:/) {
+			push(@implContent, "    ECMA_DEFINE_PROTOTYPE(${type}Proto)\n");
+			push(@implContent, "    ECMA_IMPLEMENT_PROTOFUNC(${type}ProtoFunc, $type, ${implClass}Impl)\n");
+			push(@implContent, "    ECMA_IMPLEMENT_PROTOTYPE(\"$type\", ${type}Proto, ${type}ProtoFunc)");
+		} else {
+			push(@implContent, "    ECMA_IMPLEMENT_CONSTRUCTOR($type, \"${implClass}\")");
+		}
 
 		foreach(@namespaces) {
 			push(@implContent, "\n};\n");
@@ -877,7 +1216,8 @@ sub GenerateHashTable
 
 	push(@implContent, "};\n\n");
 	push(@implContent, "const struct KJS::HashTable $name =\n");
-	push(@implContent, "{\n\t2, $size, $nameEntries, $savedSize, $nameStringTable\n};\n\n");
+#	push(@implContent, "{\n    2, $size, $nameEntries, $savedSize, $nameStringTable\n};\n\n");
+	push(@implContent, "{\n    2, $size, $nameEntries, $savedSize\n};\n\n");
 }
 
 # Internal helper
@@ -903,9 +1243,10 @@ sub TypeToEcma
 
 	my $dataName = shift;
 	my %dataType = %{$ref = shift};
-	my $inPutMode = shift;
+	my $processMode = shift;
 
 	my $type = $dataType{'type'};
+	my $value = $dataType{'paramName'};
 	my $module = $dataType{'namespace'};
 
 	# Quick'n'dirty replace table.
@@ -917,45 +1258,95 @@ sub TypeToEcma
 		$type = "QChar";
 	}
 
+	my $showNS = "";
+	if($useModuleNS !~ /KDOM/) {
+		$showNS = "KDOM::";
+	}
+
+	my %hash = %{$codeGenerator->ModuleNamespaceHash()};
+	my $useNS = ($module ne "") ? ($hash{$module} . "::") : "";
+	$useNS = "" if($useNS eq $useModuleNS);
+
 	my $includeFile = 0;
 
 	my $returnValue;
-	if($inPutMode eq 0) {
+	if($processMode eq 0) { # 'get' mode...
 		if($type eq "DOMTimeStamp") { # Known typedef.
-			$returnValue = "KJS::Number((long unsigned int) ";
+			$returnValue = "return KJS::Number((long unsigned int) $value);";
 		} elsif($type eq "DOMString") {
-			$returnValue = "getDOMString(";
+			$returnValue = "return ${showNS}getDOMString($value);";
 		} elsif($codeGenerator->IsPrimitiveType($type)) {
 			if($type eq "bool") {
-				$returnValue = "KJS::Boolean(";
+				$returnValue = "return KJS::Boolean($value);";
+			} elsif($type eq "void") {
+				$returnValue = "$value;\n\n            return KJS::Undefined();";
 			} else {
-				$returnValue = "KJS::Number(";
-			}
-		} else { # TODO: - use getDOMNode/getDOMEvent etc...
-			$returnValue = "safe_cache\<${type}Impl, ${type}Wrapper\>(exec, ";
-			$includeFile = 1;
-		}
-	
-		$returnValue = "return ${returnValue}m_impl->$dataName());"
-	} else {
-		if($type eq "DOMString") {
-			$returnValue ="toDOMString(exec, value)";
-		} elsif($codeGenerator->IsPrimitiveType($type)) {
-			if($type eq "bool") {
-				$returnValue = "value->toBoolean(exec)";
-			} else { # TODO: - toNumber always correct?
-				$returnValue = "value->toUInt32(exec)";
+				$returnValue = "return KJS::Number($value);";
 			}
 		} else {
-			$returnValue = "ecma_cast\<${type}Impl\>(exec, value, &to${type})";
+			if(($type eq "Node") or ($type eq "Element")) {
+				push(@neededIncludes, "ElementImpl") if($type eq "Element");
+				$returnValue = "return ${showNS}getDOMNode(exec, $value);";
+			} elsif($type eq "EventTarget") {
+				push(@neededIncludes, "EventTargetImpl");
+				$returnValue = "return ${showNS}getDOMNode(exec, dynamic_cast<NodeImpl *>($value));";
+			} elsif($type eq "Event") {
+				$returnValue = "return ${showNS}getDOMEvent(exec, $value);";
+			} elsif($type eq "CSSRule") {
+				$returnValue = "return ${showNS}getDOMCSSRule(exec, $value);";
+			} elsif($type eq "CSSValue") {
+				$returnValue = "return ${showNS}getDOMCSSValue(exec, $value);";
+			} else {
+				$returnValue = "return ${showNS}safe_cache\<${useNS}${type}Impl, ${useNS}${type}Wrapper\>(exec, $value);";
+			}
+
+			$includeFile = 1;
+		}
+	} elsif(($processMode eq 1) or($processMode eq 2)) { # 'put' or 'call' mode...
+		if($type eq "DOMString") {
+			$returnValue ="${showNS}toDOMString(exec, $value)";
+		} elsif($codeGenerator->IsPrimitiveType($type)) {
+			if($type eq "bool") {
+				$returnValue = "$value->toBoolean(exec)";
+			} elsif($type eq "int") {
+				$returnValue = "$value->toInt32(exec)";
+			} elsif($type eq "unsigned int") {
+				$returnValue = "$value->toUInt32(exec)";
+			} elsif($type eq "short") {
+				$returnValue = "$value->toInt32(exec)";
+			} elsif($type eq "unsigned short") {
+				$returnValue = "$value->toUInt16(exec)";
+			} elsif($type eq "long") {
+				$returnValue = "$value->toInt32(exec)";
+			} elsif($type eq "unsigned long") {
+				$returnValue = "$value->toUInt32(exec)";
+			} elsif($type eq "float") {
+				$returnValue = "(float) $value->toNumber(exec)";
+			} elsif($type eq "double") {
+				$returnValue = "$value->toNumber(exec)";
+			}
+		} else {
+			$returnValue = "${showNS}ecma_cast\<${useNS}${type}Impl\>(exec, $value, &${useNS}to${type})";
 			$includeFile = 1;
 		}
 
-		$returnValue = "m_impl->$dataName($returnValue);\n\t\t\tbreak;"
+		if($processMode eq 1) { # 'put' mode
+			$returnValue = "m_impl->$dataName($returnValue);\n            break;"
+		} else { # 'call' mode
+			if($codeGenerator->IsPrimitiveType($type)) {
+				$returnValue = "${useNS}${type} ${dataName} = $returnValue;";
+			} else {
+				$returnValue = "${useNS}${type}Impl *${dataName} = $returnValue;";
+			}
+		}
 	}
 
-	if($includeFile eq 1) {
-		if(($module ne "") and ($module ne $useModuleNS)) {
+	# Only add include, if not yet added...
+	my @array = grep { /${type}Wrapper$/ } @neededIncludes;
+	my $arraySize = @array;
+
+	if(($includeFile eq 1) and ($arraySize eq 0)) {
+		if(($module ne "") and ($module ne $useModule)) {
 			push(@neededIncludes, "$module/${type}Wrapper");
 		} else {
 			push(@neededIncludes, "${type}Wrapper");
@@ -970,12 +1361,37 @@ sub TypeToEcma
 }
 
 # Internal helper
+sub IsIndexableClass
+{
+	my $object = shift;
+
+	my $interface = shift;
+	my $itemType = shift;
+
+	# These are special cases to support [] indexing on them (no way to determine from IDL :/)
+	if(($interface eq "NodeListWrapper") or ($interface eq "NamedNodeMapWrapper")) {
+		$$itemType = "Node";
+	} elsif(($interface eq "MediaListWrapper") or ($interface eq "CSSStyleDeclarationWrapper")) {
+		$$itemType = "DOMString";
+	} elsif($interface eq "StyleSheetListWrapper") {
+		$$itemType = "StyleSheet";
+	} elsif($interface eq "CSSRuleListWrapper") {
+		$$itemType = "CSSRule";
+	} elsif($interface eq "CSSValueListWrapper") {
+		$$itemType = "CSSValue";
+	}
+
+	return ($$itemType ne "");
+}
+
+# Internal helper
 sub WriteData
 {
 	if(defined($IMPL)) {
 		# Write content to file.
 		print $IMPL @implContent;
 		close($IMPL);
+		undef($IMPL);
 
 		@implContent = "";
 	}
@@ -984,6 +1400,7 @@ sub WriteData
 		# Write content to file.
 		print $HEADER @headerContent;
 		close($HEADER);
+		undef($HEADER);
 
 		@headerContent = "";
 	}

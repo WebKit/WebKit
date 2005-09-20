@@ -1,0 +1,7 @@
+module svg
+{
+  interface SVGAnimatedTransformList { 
+    readonly attribute SVGTransformList baseVal;
+    readonly attribute SVGTransformList animVal;
+  };
+};

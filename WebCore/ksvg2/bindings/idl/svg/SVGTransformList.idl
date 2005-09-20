@@ -1,0 +1,22 @@
+module svg
+{
+  interface SVGTransformList { 
+    readonly attribute unsigned long numberOfItems;
+    void   clear (  )
+                    raises( DOMException );
+    SVGTransform initialize ( in SVGTransform newItem )
+                    raises( DOMException, SVGException );
+    SVGTransform getItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGTransform insertItemBefore ( in SVGTransform newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGTransform replaceItem ( in SVGTransform newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGTransform removeItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGTransform appendItem ( in SVGTransform newItem )
+                    raises( DOMException, SVGException );
+    SVGTransform createSVGTransformFromMatrix ( in SVGMatrix matrix );
+    SVGTransform consolidate (  );
+  };
+};

@@ -23,8 +23,11 @@
 #ifndef KDOM_Ecma_H
 #define KDOM_Ecma_H
 
-#include <kjs/interpreter.h>
 #include <qvariant.h>
+
+#include <kjs/interpreter.h>
+
+class QVariant;
 
 namespace KJS
 {
@@ -42,10 +45,10 @@ namespace KDOM
     class CSSValueImpl;
 
     class EventImpl;
-    class DOMString;
     class CDFInterface;
     class DocumentImpl;
     class DOMStringImpl;
+    class EcmaInterface;
     class EventListenerImpl;
     class ScriptInterpreter;
 
@@ -61,13 +64,14 @@ namespace KDOM
 
         KJS::ObjectImp *globalObject() const;
         KJS::ExecState *globalExec() const;
-        
+
+        EcmaInterface *interface() const;
         ScriptInterpreter *interpreter() const;
 
         // Internal, used to handle event listeners
         KJS::ObjectImp *ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *listener);
 
-        EventListenerImpl *createEventListener(const DOMString &type, const DOMString &jsCode);
+        EventListenerImpl *createEventListener(DOMStringImpl *type, DOMStringImpl *jsCode);
         EventListenerImpl *createEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
         EventListenerImpl *findEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
 

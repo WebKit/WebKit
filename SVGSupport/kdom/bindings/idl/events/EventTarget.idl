@@ -24,6 +24,6 @@ module events
 								 in EventListener listener,
 								 in boolean useCapture);
 
-		boolean dispatchEvent(in Event evt) raises(EventException);
+		boolean dispatchEvent(in Event evt) [raises(EventException)];
 	};
 };

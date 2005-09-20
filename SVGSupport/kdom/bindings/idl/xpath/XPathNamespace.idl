@@ -12,12 +12,10 @@
 
 module xpath
 {
- interface XPathNamespace : core::Node {
+	interface XPathNamespace : core::Node {
+		// XPathNodeType
+		const unsigned short XPATH_NAMESPACE_NODE = 13;
 
-    // XPathNodeType
-    const unsigned short      XPATH_NAMESPACE_NODE           = 13;
-
-    readonly attribute core::Element         ownerElement;
-  };
+		readonly attribute core::Element ownerElement;
+	};
 };
-

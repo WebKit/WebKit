@@ -15,10 +15,10 @@
 module events
 {
 	// Introduced in DOM Level 2:
-	exception EventException {
-		unsigned short code;
-	};
+	interface EventException {
+		readonly attribute unsigned short code;
 
-	// EventExceptionCode
-	const unsigned short UNSPECIFIED_EVENT_TYPE_ERR	= 0;
+		// EventExceptionCode
+		const unsigned short UNSPECIFIED_EVENT_TYPE_ERR	= 0;
+	};
 };

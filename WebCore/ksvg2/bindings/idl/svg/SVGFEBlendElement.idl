@@ -1,0 +1,17 @@
+module svg
+{
+  interface SVGFEBlendElement : 
+                SVGElement,
+                SVGFilterPrimitiveStandardAttributes { 
+    // Blend Mode Types
+    const unsigned short SVG_FEBLEND_MODE_UNKNOWN  = 0;
+    const unsigned short SVG_FEBLEND_MODE_NORMAL   = 1;
+    const unsigned short SVG_FEBLEND_MODE_MULTIPLY = 2;
+    const unsigned short SVG_FEBLEND_MODE_SCREEN   = 3;
+    const unsigned short SVG_FEBLEND_MODE_DARKEN   = 4;
+    const unsigned short SVG_FEBLEND_MODE_LIGHTEN  = 5;
+    readonly attribute SVGAnimatedString      in1;
+    readonly attribute SVGAnimatedString      in2;
+    readonly attribute SVGAnimatedEnumeration mode;
+  };
+};

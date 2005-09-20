@@ -16,19 +16,21 @@ module css
 {
 	// Introduced in DOM Level 2:
 	interface CSSStyleDeclaration {
-		attribute core::DOMString cssText;
+		attribute core::DOMString cssText [raises(core::DOMException)];
 		
 		core::DOMString getPropertyValue(in core::DOMString propertyName);
 
 		CSSValue getPropertyCSSValue(in core::DOMString propertyName);
 
-		core::DOMString removeProperty(in core::DOMString propertyName) raises(core::DOMException);
+		core::DOMString removeProperty(in core::DOMString propertyName)
+									   [raises(core::DOMException)];
 
 		core::DOMString getPropertyPriority(in core::DOMString propertyName);
 
 		void setProperty(in core::DOMString propertyName,
 						 in core::DOMString value,
-						 in core::DOMString priority) raises(core::DOMException);
+						 in core::DOMString priority)
+						 [raises(core::DOMException)];
 
 		readonly attribute unsigned long length;
 

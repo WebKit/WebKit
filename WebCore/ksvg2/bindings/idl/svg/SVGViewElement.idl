@@ -1,0 +1,10 @@
+module svg
+{
+  interface SVGViewElement : 
+                SVGElement,
+                SVGExternalResourcesRequired,
+                SVGFitToViewBox,
+                SVGZoomAndPan { 
+    readonly attribute SVGStringList viewTarget;
+  };
+};

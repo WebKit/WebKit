@@ -1,0 +1,17 @@
+module ls
+{
+  interface LSSerializer {
+    readonly attribute core::DOMConfiguration domConfig;
+             attribute DOMString       newLine;
+             attribute LSSerializerFilter filter;
+    boolean            write(in core::Node nodeArg, 
+                             in LSOutput destination)
+                                        raises(LSException);
+    boolean            writeToURI(in core::Node nodeArg, 
+                                  in DOMString uri)
+                                        raises(LSException);
+    DOMString          writeToString(in core::Node nodeArg)
+                                        raises(dom::DOMException, 
+                                               LSException);
+  };
+};

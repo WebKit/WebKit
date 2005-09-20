@@ -18,8 +18,8 @@ module traversal
 		readonly attribute NodeFilter filter;
 		readonly attribute boolean expandEntityReferences;
 
-		core::Node nextNode() raises(core::DOMException);
-		core::Node previousNode() raises(core::DOMException);
+		core::Node nextNode() [raises(core::DOMException)];
+		core::Node previousNode() [raises(core::DOMException)];
 
 		void detach();
 	};

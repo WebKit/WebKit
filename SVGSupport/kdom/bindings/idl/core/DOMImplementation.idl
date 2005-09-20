@@ -12,7 +12,7 @@
 
 module core
 {
-	interface [nodptr] DOMImplementation {
+	interface [nodptr] DOMImplementation : ls::DOMImplementationLS {
 		boolean hasFeature(in DOMString feature,
 						   in DOMString version);
 
@@ -20,13 +20,13 @@ module core
 		DocumentType createDocumentType(in DOMString qualifiedName,
 										in DOMString publicId,
 										in DOMString systemId)
-										raises(DOMException);
+										[raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		Document createDocument(in DOMString namespaceURI,
 								in DOMString qualifiedName,
 								in DocumentType doctype)
-								raises(DOMException);
+								[raises(DOMException)];
 
 		// Introduced in DOM Level 3:
 		DOMObject getFeature(in DOMString feature,
@@ -34,6 +34,6 @@ module core
 
 		// Introduced in DOM Level 2: [specified in seperated DOMImplementationCSS]
 		css::CSSStyleSheet createCSSStyleSheet(in DOMString title,
-											   in DOMString media) raises(DOMException);
+											   in DOMString media) [raises(DOMException)];
 	};
 };

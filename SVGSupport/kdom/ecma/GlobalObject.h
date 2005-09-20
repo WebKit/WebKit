@@ -72,7 +72,15 @@ namespace KDOM
             // Functions
             SetTimeout, ClearTimeout, SetInterval,
             ClearInterval, PrintNode, Alert, Prompt,
-            Confirm, Debug
+            Confirm, Debug,
+
+            // Constants
+            Event, MutationEvent, EventException,
+            CSSRule, CSSValue, CSSPrimitiveValue,
+            Node, TypeInfo, DOMError, DOMException,
+            Range, RangeException, NodeFilter, XPathResult,
+            XPathException, XPathNamespace, XPointerResult
+
         };
 
     private:

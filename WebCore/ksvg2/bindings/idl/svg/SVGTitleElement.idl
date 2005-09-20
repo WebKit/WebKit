@@ -1,0 +1,7 @@
+module svg
+{
+  interface SVGTitleElement : 
+                SVGElement,
+                SVGLangSpace,
+                SVGStylable {};
+};

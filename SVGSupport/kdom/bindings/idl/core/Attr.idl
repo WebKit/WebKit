@@ -15,7 +15,7 @@ module core
 	interface Attr : Node {
 		readonly attribute DOMString name;
 		readonly attribute boolean specified;
-		attribute DOMString value;
+		attribute DOMString value [raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		readonly attribute Element ownerElement;

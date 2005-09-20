@@ -1,0 +1,24 @@
+module svg
+{
+  interface SVGPathSegCurvetoQuadraticAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   x1;
+                         // raises DOMException on setting
+             attribute float   y1;
+                         // raises DOMException on setting
+  };
+  
+  interface SVGPathSegCurvetoQuadraticRel : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   x1;
+                         // raises DOMException on setting
+             attribute float   y1;
+                         // raises DOMException on setting
+  };
+};

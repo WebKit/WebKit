@@ -1,0 +1,12 @@
+module svg
+{
+  interface [nodptr] SVGLocatable { 
+    readonly attribute SVGElement              nearestViewportElement;
+    readonly attribute SVGElement              farthestViewportElement;
+    SVGRect   getBBox (  );
+    SVGMatrix getCTM (  );
+    SVGMatrix getScreenCTM (  );
+    SVGMatrix getTransformToElement ( in SVGElement element )
+                    raises( SVGException );
+  };
+};

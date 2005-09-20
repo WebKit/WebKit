@@ -28,7 +28,7 @@ module core
 		const unsigned short NOTATION_NODE					= 12;
 
 		readonly attribute DOMString nodeName;
-		attribute DOMString nodeValue;
+		attribute DOMString nodeValue [raises(DOMException)];
 
 		readonly attribute unsigned short nodeType;
 		readonly attribute Node parentNode;
@@ -45,20 +45,20 @@ module core
 		// Modified in DOM Level 3:
 		Node insertBefore(in Node newChild,
 						  in Node refChild)
-						  raises(DOMException);
+						  [raises(DOMException)];
 
 		// Modified in DOM Level 3:
 		Node replaceChild(in Node newChild,
 						  in Node oldChild)
-						  raises(DOMException);
+						  [raises(DOMException)];
 
 		// Modified in DOM Level 3:
 		Node removeChild(in Node oldChild)
-						 raises(DOMException);
+						 [raises(DOMException)];
 
 		// Modified in DOM Level 3:
 		Node appendChild(in Node newChild)
-						 raises(DOMException);
+						 [raises(DOMException)];
 
 		boolean hasChildNodes();
 
@@ -75,7 +75,7 @@ module core
 		readonly attribute DOMString namespaceURI;
 
 		// Introduced in DOM Level 2:
-		attribute DOMString prefix;
+		attribute DOMString prefix [raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		readonly attribute DOMString localName;
@@ -96,10 +96,10 @@ module core
 
 		// Introduced in DOM Level 3:
 		unsigned short compareDocumentPosition(in Node other)
-											   raises(DOMException);
+											   [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
-		attribute DOMString textContent;
+		attribute DOMString textContent [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
 		boolean isSameNode(in Node other);

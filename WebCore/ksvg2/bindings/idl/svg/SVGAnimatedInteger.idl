@@ -1,0 +1,8 @@
+module svg
+{
+  interface SVGAnimatedInteger { 
+             attribute long baseVal;
+                         // raises DOMException on setting
+    readonly attribute long animVal;
+  };
+};

@@ -1,0 +1,14 @@
+module svg
+{
+  interface SVGCircleElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable {
+    readonly attribute SVGAnimatedLength cx;
+    readonly attribute SVGAnimatedLength cy;
+    readonly attribute SVGAnimatedLength r;
+  };
+};

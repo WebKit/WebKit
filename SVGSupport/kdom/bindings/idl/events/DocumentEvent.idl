@@ -16,6 +16,6 @@ module events
 {
 	// Introduced in DOM Level 2:
 	interface [nodptr] DocumentEvent {
-		events::Event createEvent(in core::DOMString eventType) raises(core::DOMException);
+		events::Event createEvent(in core::DOMString eventType) [raises(core::DOMException)];
 	};
 };

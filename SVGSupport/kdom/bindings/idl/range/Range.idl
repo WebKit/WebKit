@@ -14,32 +14,41 @@ module range
 {
 	// Introduced in DOM Level 2:
 	interface Range {
-		readonly attribute core::Node startContainer;
-		readonly attribute long startOffset;
-		readonly attribute core::Node endContainer;
-		readonly attribute long endOffset;
-		readonly attribute boolean isCollapsed;
-		readonly attribute core::Node commonAncestorContainer;
+		readonly attribute core::Node startContainer [raises(core::DOMException)];
+		readonly attribute long startOffset [raises(core::DOMException)];
+		readonly attribute core::Node endContainer [raises(core::DOMException)];
+		readonly attribute long endOffset [raises(core::DOMException)];
+		readonly attribute boolean isCollapsed [raises(core::DOMException)];
+		readonly attribute core::Node commonAncestorContainer [raises(core::DOMException)];
 
 		void setStart(in core::Node refNode,
-					  in long offset) raises(RangeException, core::DOMException);
+					  in long offset)
+					  [raises(RangeException, core::DOMException)];
 
 		void setEnd(in core::Node refNode,
-					in long offset) raises(RangeException, core::DOMException);
+					in long offset)
+					[raises(RangeException, core::DOMException)];
 
-		void setStartBefore(in core::Node refNode) raises(RangeException, core::DOMException);
+		void setStartBefore(in core::Node refNode)
+							[raises(RangeException, core::DOMException)];
 
-		void setStartAfter(in core::Node refNode) raises(RangeException, core::DOMException);
+		void setStartAfter(in core::Node refNode)
+						   [raises(RangeException, core::DOMException)];
 
-		void setEndBefore(in core::Node refNode) raises(RangeException, core::DOMException);
+		void setEndBefore(in core::Node refNode)
+						  [raises(RangeException, core::DOMException)];
 
-		void setEndAfter(in core::Node refNode) raises(RangeException, core::DOMException);
+		void setEndAfter(in core::Node refNode)
+						 [raises(RangeException, core::DOMException)];
 
-		void collapse(in boolean toStart) raises(core::DOMException);
+		void collapse(in boolean toStart)
+					  [raises(core::DOMException)];
 
-		void selectNode(in core::Node refNode) raises(RangeException, core::DOMException);
+		void selectNode(in core::Node refNode)
+						[raises(RangeException, core::DOMException)];
 
-		void selectNodeContents(in core::Node refNode) raises(RangeException, core::DOMException);
+		void selectNodeContents(in core::Node refNode)
+								[raises(RangeException, core::DOMException)];
 
 		// Compare types
 		const unsigned short START_TO_START	= 1;
@@ -48,22 +57,25 @@ module range
 		const unsigned short END_TO_START	= 4;
 
 		short compareBoundaryPoints(in unsigned short how,
-									in Range sourceRange) raises(core::DOMException);
+									in Range sourceRange)
+									[raises(core::DOMException)];
 
-		void deleteContents() raises(core::DOMException);
+		void deleteContents() [raises(core::DOMException)];
 
-		core::DocumentFragment extractContents() raises(core::DOMException);
+		core::DocumentFragment extractContents() [raises(core::DOMException)];
 
-		core::DocumentFragment cloneContents() raises(core::DOMException);
+		core::DocumentFragment cloneContents() [raises(core::DOMException)];
 
-		void insertNode(in core::Node newNode) raises(core::DOMException, RangeException);
+		void insertNode(in core::Node newNode)
+						[raises(core::DOMException, RangeException)];
 
-		void surroundContents(in core::Node newParent) raises(core::DOMException, RangeException);
+		void surroundContents(in core::Node newParent)
+							  [raises(core::DOMException, RangeException)];
 
-		Range cloneRange() raises(core::DOMException);
+		Range cloneRange() [raises(core::DOMException)];
 
-		core::DOMString toString() raises(core::DOMException);
+		core::DOMString toString() [raises(core::DOMException)];
 
-		void detach() raises(core::DOMException);
+		void detach() [raises(core::DOMException)];
 	};
 };

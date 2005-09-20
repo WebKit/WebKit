@@ -1,0 +1,8 @@
+module svg
+{
+  interface SVGAnimatedBoolean { 
+             attribute boolean baseVal;
+                         // raises DOMException on setting
+    readonly attribute boolean animVal;
+  };
+};

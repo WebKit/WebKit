@@ -1,0 +1,19 @@
+module svg
+{
+  interface SVGUseElement : 
+                SVGElement,
+                SVGURIReference,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable { 
+    readonly attribute SVGAnimatedLength   x;
+    readonly attribute SVGAnimatedLength   y;
+    readonly attribute SVGAnimatedLength   width;
+    readonly attribute SVGAnimatedLength   height;
+	
+// TODO    readonly attribute SVGElementInstance instanceRoot;
+// TODO    readonly attribute SVGElementInstance animatedInstanceRoot;
+  };
+};

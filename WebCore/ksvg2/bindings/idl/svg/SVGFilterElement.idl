@@ -1,0 +1,20 @@
+module svg
+{
+  interface SVGFilterElement : 
+                SVGElement,
+                SVGURIReference,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable {
+            //    SVGUnitTypes { 
+    readonly attribute SVGAnimatedEnumeration filterUnits;
+    readonly attribute SVGAnimatedEnumeration primitiveUnits;
+    readonly attribute SVGAnimatedLength      x;
+    readonly attribute SVGAnimatedLength      y;
+    readonly attribute SVGAnimatedLength      width;
+    readonly attribute SVGAnimatedLength      height;
+    readonly attribute SVGAnimatedInteger    filterResX;
+    readonly attribute SVGAnimatedInteger    filterResY;
+    void setFilterRes ( in unsigned long filterResX, in unsigned long filterResY );
+  };
+};

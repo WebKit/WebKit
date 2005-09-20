@@ -23,10 +23,10 @@
 #include <assert.h>
 
 #include <kdebug.h>
-#include <kjs/object.h>
 
 #include <q3ptrdict.h>
 #include <q3ptrlist.h>
+#include <kjs/object.h>
 
 #include "EventImpl.h"
 #include "DocumentImpl.h"

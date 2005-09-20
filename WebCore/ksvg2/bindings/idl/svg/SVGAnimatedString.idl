@@ -1,0 +1,8 @@
+module svg
+{
+  interface SVGAnimatedString { 
+             attribute core::DOMString baseVal;
+                         // raises DOMException on setting
+    readonly attribute core::DOMString animVal;
+  };
+};

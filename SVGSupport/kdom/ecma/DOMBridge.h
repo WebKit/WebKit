@@ -25,6 +25,7 @@
 
 #include <kdebug.h>
 
+#include <kjs/interpreter.h>
 #include <kjs/object.h>
 
 namespace KJS
@@ -111,17 +112,16 @@ namespace KDOM
 
         virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)
         {
-/*
 #if DEBUG_BRIDGE > 0
             kdDebug(26004) << "DOMRWBridge::put(), " << propertyName.qstring()
-                           << " Name: " << classInfo()->className
-                           << " Wrapper object: " << m_wrapper << endl;
+                           << " Name: " << this->classInfo()->className
+                           << " Wrapper object: " << this->m_wrapper << endl;
 #endif
 
             // Try to see if we know this property (and need to take special action)
-            if(m_wrapper->put(exec, propertyName, value, attr))
+            if(this->m_wrapper->put(exec, propertyName, value, attr))
                 return;
-*/
+
             // We don't -> set property in ObjectImp.
             KJS::ObjectImp::put(exec, propertyName, value, attr);
         }

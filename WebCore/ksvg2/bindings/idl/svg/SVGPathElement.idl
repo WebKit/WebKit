@@ -1,0 +1,35 @@
+module svg
+{
+  interface SVGPathElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable,
+                SVGAnimatedPathData { 
+    readonly attribute SVGAnimatedNumber pathLength;
+    float         getTotalLength (  );
+    SVGPoint      getPointAtLength ( in float distance );
+    unsigned long getPathSegAtLength ( in float distance );
+    SVGPathSegClosePath    createSVGPathSegClosePath (  );
+    SVGPathSegMovetoAbs    createSVGPathSegMovetoAbs ( in float x, in float y );
+    SVGPathSegMovetoRel    createSVGPathSegMovetoRel ( in float x, in float y );
+    SVGPathSegLinetoAbs    createSVGPathSegLinetoAbs ( in float x, in float y );
+    SVGPathSegLinetoRel    createSVGPathSegLinetoRel ( in float x, in float y );
+    SVGPathSegCurvetoCubicAbs    createSVGPathSegCurvetoCubicAbs ( in float x, in float y, in float x1, in float y1, in float x2, in float y2 );
+    SVGPathSegCurvetoCubicRel    createSVGPathSegCurvetoCubicRel ( in float x, in float y, in float x1, in float y1, in float x2, in float y2 );
+    SVGPathSegCurvetoQuadraticAbs    createSVGPathSegCurvetoQuadraticAbs ( in float x, in float y, in float x1, in float y1 );
+    SVGPathSegCurvetoQuadraticRel    createSVGPathSegCurvetoQuadraticRel ( in float x, in float y, in float x1, in float y1 );
+    SVGPathSegArcAbs    createSVGPathSegArcAbs ( in float x, in float y, in float r1, in float r2, in float angle, in boolean largeArcFlag, in boolean sweepFlag );
+    SVGPathSegArcRel    createSVGPathSegArcRel ( in float x, in float y, in float r1, in float r2, in float angle, in boolean largeArcFlag, in boolean sweepFlag );
+    SVGPathSegLinetoHorizontalAbs    createSVGPathSegLinetoHorizontalAbs ( in float x );
+    SVGPathSegLinetoHorizontalRel    createSVGPathSegLinetoHorizontalRel ( in float x );
+    SVGPathSegLinetoVerticalAbs    createSVGPathSegLinetoVerticalAbs ( in float y );
+    SVGPathSegLinetoVerticalRel    createSVGPathSegLinetoVerticalRel ( in float y );
+    SVGPathSegCurvetoCubicSmoothAbs    createSVGPathSegCurvetoCubicSmoothAbs ( in float x, in float y, in float x2, in float y2 );
+    SVGPathSegCurvetoCubicSmoothRel    createSVGPathSegCurvetoCubicSmoothRel ( in float x, in float y, in float x2, in float y2 );
+    SVGPathSegCurvetoQuadraticSmoothAbs    createSVGPathSegCurvetoQuadraticSmoothAbs ( in float x, in float y );
+    SVGPathSegCurvetoQuadraticSmoothRel    createSVGPathSegCurvetoQuadraticSmoothRel ( in float x, in float y );
+  };
+};

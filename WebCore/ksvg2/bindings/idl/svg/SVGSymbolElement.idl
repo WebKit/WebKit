@@ -1,0 +1,9 @@
+module svg
+{
+  interface SVGSymbolElement : 
+                SVGElement,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGFitToViewBox {};
+};

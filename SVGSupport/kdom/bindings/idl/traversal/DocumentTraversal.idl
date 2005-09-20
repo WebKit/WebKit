@@ -17,11 +17,13 @@ module traversal
 		NodeIterator createNodeIterator(in core::Node root,
 										in long whatToShow,
 										in NodeFilter filter,
-										in boolean entityReferenceExpansion);
+										in boolean entityReferenceExpansion)
+										[raises(core::DOMException)];
 
 		TreeWalker createTreeWalker(in core::Node root,
 									in long whatToShow,
 									in NodeFilter filter,
-									in boolean entityReferenceExpansion) raises(core::DOMException);
+									in boolean entityReferenceExpansion)
+									[raises(core::DOMException)];
 	};
 };

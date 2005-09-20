@@ -1,6 +1,6 @@
 module xpointer
 {
-	exception XPointerException {
-		unsigned short code;
+	interface XPointerException {
+		readonly attribute unsigned short code;
 	};
 };

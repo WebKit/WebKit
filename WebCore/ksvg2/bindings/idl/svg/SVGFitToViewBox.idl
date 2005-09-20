@@ -1,0 +1,7 @@
+module svg
+{
+  interface [nodptr] SVGFitToViewBox { 
+    readonly attribute SVGAnimatedRect                viewBox;
+    readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
+  };
+};

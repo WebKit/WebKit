@@ -1,0 +1,9 @@
+module svg
+{
+  interface [nodptr] SVGLangSpace { 
+             attribute core::DOMString xmllang;
+                         // raises DOMException on setting
+             attribute core::DOMString xmlspace;
+                         // raises DOMException on setting
+  };
+};

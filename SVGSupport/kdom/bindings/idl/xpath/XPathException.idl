@@ -12,11 +12,11 @@
 
 module xpath
 {
-  exception XPathException {
-    unsigned short   code;
-  };
-  // XPathExceptionCode
-  const unsigned short      INVALID_EXPRESSION_ERR         = 51;
-  const unsigned short      TYPE_ERR                       = 52;
-};
+	interface XPathException {
+		readonly attribute unsigned short code;
 
+		// XPathExceptionCode
+		const unsigned short INVALID_EXPRESSION_ERR	= 51;
+		const unsigned short TYPE_ERR				= 52;
+	};
+};

@@ -1,0 +1,59 @@
+module svg
+{
+  // TODO: no css::ViewCSS available in kdom!
+  // TODO: Fix SVGSVGElementImpl inheritance (css::DocumentCSS)! 
+  interface SVGSVGElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGLocatable,
+                SVGFitToViewBox,
+                SVGZoomAndPan,
+                events::DocumentEvent {
+    readonly attribute SVGAnimatedLength x;
+    readonly attribute SVGAnimatedLength y;
+    readonly attribute SVGAnimatedLength width;
+    readonly attribute SVGAnimatedLength height;
+             attribute core::DOMString         contentScriptType;
+                         // raises DOMException on setting
+             attribute core::DOMString         contentStyleType;
+                         // raises DOMException on setting
+    readonly attribute SVGRect           viewport;
+    readonly attribute float pixelUnitToMillimeterX;
+    readonly attribute float pixelUnitToMillimeterY;
+    readonly attribute float screenPixelToMillimeterX;
+    readonly attribute float screenPixelToMillimeterY;
+             attribute boolean useCurrentView;
+                         // raises DOMException on setting
+// TODO    readonly attribute SVGViewSpec currentView;
+             attribute float currentScale;
+                         // raises DOMException on setting
+    readonly attribute SVGPoint currentTranslate;
+    unsigned long suspendRedraw ( in unsigned long max_wait_milliseconds );
+    void          unsuspendRedraw ( in unsigned long suspend_handle_id )
+                    raises( DOMException );
+    void          unsuspendRedrawAll (  );
+    void          forceRedraw (  );
+    void          pauseAnimations (  );
+    void          unpauseAnimations (  );
+    boolean       animationsPaused (  );
+    float         getCurrentTime (  );
+    void          setCurrentTime ( in float seconds );
+    core::NodeList      getIntersectionList ( in SVGRect rect, in SVGElement referenceElement );
+    core::NodeList      getEnclosureList ( in SVGRect rect, in SVGElement referenceElement );
+    boolean       checkIntersection ( in SVGElement element, in SVGRect rect );
+    boolean       checkEnclosure ( in SVGElement element, in SVGRect rect );
+    void          deselectAll (  );
+    SVGNumber              createSVGNumber (  );
+    SVGLength              createSVGLength (  );
+    SVGAngle               createSVGAngle (  );
+    SVGPoint               createSVGPoint (  );
+    SVGMatrix              createSVGMatrix (  );
+    SVGRect                createSVGRect (  );
+    SVGTransform           createSVGTransform (  );
+    SVGTransform     createSVGTransformFromMatrix ( in SVGMatrix matrix );
+// TODO    core::Element         getElementById ( in core::DOMString elementId );
+  };
+};

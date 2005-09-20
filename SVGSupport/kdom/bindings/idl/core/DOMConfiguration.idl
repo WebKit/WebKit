@@ -16,10 +16,10 @@ module core
 	interface DOMConfiguration {
 		void setParameter(in DOMString name,
 						  in DOMUserData value)
-						  raises(DOMException);
+						  [raises(DOMException)];
 
 		DOMUserData getParameter(in DOMString name)
-								 raises(DOMException);
+								 [raises(DOMException)];
 
 		boolean canSetParameter(in DOMString name,
 								in DOMUserData value);

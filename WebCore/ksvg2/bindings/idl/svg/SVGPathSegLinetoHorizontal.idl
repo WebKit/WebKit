@@ -1,0 +1,12 @@
+module svg
+{
+  interface SVGPathSegLinetoHorizontalAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+  };
+  
+  interface SVGPathSegLinetoHorizontalRel : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+  };
+};

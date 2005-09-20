@@ -1,0 +1,13 @@
+module svg
+{
+  interface SVGElementInstance : events::EventTarget { 
+    readonly attribute SVGElement correspondingElement;
+    readonly attribute SVGUseElement correspondingUseElement;
+    readonly attribute SVGElementInstance parentNode;
+    readonly attribute SVGElementInstanceList childNodes;
+    readonly attribute SVGElementInstance firstChild;
+    readonly attribute SVGElementInstance lastChild;
+    readonly attribute SVGElementInstance previousSibling;
+    readonly attribute SVGElementInstance nextSibling;
+  };
+};

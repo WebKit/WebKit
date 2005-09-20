@@ -1,0 +1,7 @@
+module svg
+{
+  interface SVGAnimatedLengthList { 
+    readonly attribute SVGLengthList baseVal;
+    readonly attribute SVGLengthList animVal;
+  };
+};

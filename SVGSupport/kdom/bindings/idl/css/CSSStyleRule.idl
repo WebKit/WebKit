@@ -16,7 +16,7 @@ module css
 {
 	// Introduced in DOM Level 2:
 	interface CSSStyleRule : CSSRule {
-		attribute core::DOMString selectorText;
+		attribute core::DOMString selectorText [raises(core::DOMException)];
 
 		readonly attribute CSSStyleDeclaration style;
 	};

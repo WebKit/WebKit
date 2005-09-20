@@ -1,0 +1,20 @@
+module svg
+{
+  interface SVGPointList { 
+    readonly attribute unsigned long numberOfItems;
+    void   clear (  )
+                    raises( DOMException );
+    SVGPoint initialize ( in SVGPoint newItem )
+                    raises( DOMException, SVGException );
+    SVGPoint getItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGPoint insertItemBefore ( in SVGPoint newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGPoint replaceItem ( in SVGPoint newItem, in unsigned long index )
+                    raises( DOMException, SVGException );
+    SVGPoint removeItem ( in unsigned long index )
+                    raises( DOMException );
+    SVGPoint appendItem ( in SVGPoint newItem )
+                    raises( DOMException, SVGException );
+  };
+};

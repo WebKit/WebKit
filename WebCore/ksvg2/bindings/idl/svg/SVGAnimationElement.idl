@@ -1,0 +1,13 @@
+module svg
+{
+  interface SVGAnimationElement : 
+                SVGElement,
+                SVGTests,
+                SVGExternalResourcesRequired {
+    readonly attribute SVGElement targetElement;
+    float getStartTime (  );
+    float getCurrentTime (  );
+    float getSimpleDuration (  )
+                    raises( DOMException );
+  };
+};

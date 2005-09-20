@@ -34,11 +34,12 @@ namespace KDOM
      *
      * - CSS values/properties access / render-style
      * - XML attribute/tag names access
-     * - EcmaScript global object
+     * - EcmaScript global object / EcmaInterface object
      *
      **/
     class RenderStyle;
     class GlobalObject;
+    class EcmaInterface;
     class CDFInterface
     {
     public:
@@ -63,6 +64,7 @@ namespace KDOM
         virtual int getAttrID(const char *attrStr, int len) const;
 
         // EcmaScript interface
+        virtual EcmaInterface *ecmaInterface() const;
         virtual GlobalObject *globalObject(DocumentImpl *doc) const;
     };
 };

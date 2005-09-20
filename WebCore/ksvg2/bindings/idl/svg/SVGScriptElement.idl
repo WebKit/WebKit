@@ -1,0 +1,10 @@
+module svg
+{
+  interface SVGScriptElement : 
+                SVGElement,
+                SVGURIReference,
+                SVGExternalResourcesRequired { 
+             attribute core::DOMString type;
+                         // raises DOMException on setting
+  };
+};

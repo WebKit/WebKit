@@ -1,4 +1,224 @@
 2005-09-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Pickup latest Ecma changes from KDE, including
+        adding in the SVG ecma bindings and DOM 3 LS bindings.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4946
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kdom/bindings/IDLCodeGenerator.pm:
+        * kdom/bindings/IDLCodeGeneratorCpp.pm:
+        * kdom/bindings/IDLCodeGeneratorEcmaInterface.pm: Added.
+        * kdom/bindings/IDLCodeGeneratorJs.pm:
+        * kdom/bindings/idl/core/Attr.idl:
+        * kdom/bindings/idl/core/CharacterData.idl:
+        * kdom/bindings/idl/core/DOMConfiguration.idl:
+        * kdom/bindings/idl/core/DOMException.idl:
+        * kdom/bindings/idl/core/DOMImplementation.idl:
+        * kdom/bindings/idl/core/DOMImplementationList.idl: Removed.
+        * kdom/bindings/idl/core/DOMImplementationSource.idl: Removed.
+        * kdom/bindings/idl/core/DOMString.idl: Removed.
+        * kdom/bindings/idl/core/Document.idl:
+        * kdom/bindings/idl/core/Element.idl:
+        * kdom/bindings/idl/core/NameList.idl: Removed.
+        * kdom/bindings/idl/core/NamedNodeMap.idl:
+        * kdom/bindings/idl/core/Node.idl:
+        * kdom/bindings/idl/core/ProcessingInstruction.idl:
+        * kdom/bindings/idl/core/Text.idl:
+        * kdom/bindings/idl/core/UserDataHandler.idl: Removed.
+        * kdom/bindings/idl/css/CSSCharsetRule.idl:
+        * kdom/bindings/idl/css/CSSMediaRule.idl:
+        * kdom/bindings/idl/css/CSSPageRule.idl:
+        * kdom/bindings/idl/css/CSSPrimitiveValue.idl:
+        * kdom/bindings/idl/css/CSSRule.idl:
+        * kdom/bindings/idl/css/CSSStyleDeclaration.idl:
+        * kdom/bindings/idl/css/CSSStyleRule.idl:
+        * kdom/bindings/idl/css/CSSStyleSheet.idl:
+        * kdom/bindings/idl/css/CSSValue.idl:
+        * kdom/bindings/idl/css/ViewCSS.idl: Removed.
+        * kdom/bindings/idl/events/DocumentEvent.idl:
+        * kdom/bindings/idl/events/EventException.idl:
+        * kdom/bindings/idl/events/EventTarget.idl:
+        * kdom/bindings/idl/ls/DOMImplementationLS.idl: Added.
+        * kdom/bindings/idl/ls/LSException.idl: Added.
+        * kdom/bindings/idl/ls/LSInput.idl: Added.
+        * kdom/bindings/idl/ls/LSOutput.idl: Added.
+        * kdom/bindings/idl/ls/LSParser.idl: Added.
+        * kdom/bindings/idl/ls/LSParserFilter.idl: Added.
+        * kdom/bindings/idl/ls/LSResourceResolver.idl: Added.
+        * kdom/bindings/idl/ls/LSSerializer.idl: Added.
+        * kdom/bindings/idl/ls/LSSerializerFilter.idl: Added.
+        * kdom/bindings/idl/ls/kdomdefs.idl: Added.
+        * kdom/bindings/idl/range/Range.idl:
+        * kdom/bindings/idl/range/RangeException.idl:
+        * kdom/bindings/idl/stylesheets/LinkStyle.idl:
+        * kdom/bindings/idl/stylesheets/MediaList.idl:
+        * kdom/bindings/idl/traversal/DocumentTraversal.idl:
+        * kdom/bindings/idl/traversal/NodeIterator.idl:
+        * kdom/bindings/idl/traversal/TreeWalker.idl:
+        * kdom/bindings/idl/xpath/XPathEvaluator.idl:
+        * kdom/bindings/idl/xpath/XPathException.idl:
+        * kdom/bindings/idl/xpath/XPathExpression.idl:
+        * kdom/bindings/idl/xpath/XPathNSResolver.idl:
+        * kdom/bindings/idl/xpath/XPathNamespace.idl:
+        * kdom/bindings/idl/xpath/XPathResult.idl:
+        * kdom/bindings/idl/xpointer/XPointerException.idl:
+        * kdom/bindings/kdombinder.sh:
+        * kdom/bindings/kdomidl.pl:
+        * kdom/core/CDFInterface.cpp:
+        (CDFInterface::ecmaInterface):
+        * kdom/core/CDFInterface.h:
+        * kdom/ecma/DOMBridge.h:
+        (KDOM::DOMRWBridge::put):
+        * kdom/ecma/DOMLookup.h:
+        * kdom/ecma/Ecma.cpp:
+        (Ecma::Private::Private):
+        (Ecma::setup):
+        (Ecma::setupDocument):
+        (Ecma::interface):
+        (Ecma::createEventListener):
+        (KDOM::getDOMNode):
+        (KDOM::getDOMEvent):
+        * kdom/ecma/Ecma.h:
+        * kdom/ecma/EcmaInterface.h: Removed.
+        * kdom/ecma/GlobalObject.cpp:
+        (GlobalObject::get):
+        (GlobalObjectFunc::callAsFunction):
+        (ScheduledAction::execute):
+        (GlobalQObject::parentDestroyed):
+        (GlobalQObject::clearTimeout):
+        (GlobalQObject::timerEvent):
+        * kdom/ecma/GlobalObject.h:
+        (KDOM::GlobalObject::):
+        * kdom/ecma/ScriptInterpreter.cpp:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createKDOMDocument):
+        * khtml/xml/dom_docimpl.h:
+        * ksvg2/bindings/idl/svg/GetSVGDocument.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAngle.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimateColorElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimateElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimateTransformElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedAngle.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedBoolean.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedEnumeration.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedInteger.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedLength.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedLengthList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedNumber.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedNumberList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedPathData.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedPoints.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedPreserveAspectRatio.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedRect.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedString.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimatedTransformList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGAnimationElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGCircleElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGClipPathElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGColor.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGComponentTransferFunctionElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGCursorElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGDOMImplementation.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGDefsElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGDescElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGDocument.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGElementInstance.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGElementInstanceList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGEllipseElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGEvent.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGException.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGExternalResourcesRequired.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEBlendElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEColorMatrixElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEComponentTransferElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFECompositeElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEFloodElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEFuncAElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEFuncBElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEFuncGElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEFuncRElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEGaussianBlurElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEImageElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEMergeElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEMergeNodeElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFEOffsetElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFETileElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFETurbulenceElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFilterElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFilterPrimitiveStandardAttributes.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGFitToViewBox.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGGElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGGradientElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGICCColor.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGImageElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLangSpace.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLength.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLengthList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLineElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLinearGradientElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGLocatable.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGMarkerElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGMatrix.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGNumber.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGNumberList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPaint.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSeg.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegArc.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegClosePath.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubic.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubicSmooth.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadratic.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadraticSmooth.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegLineto.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoHorizontal.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoVertical.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPathSegMoveto.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPatternElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPoint.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPointList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPolygonElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPolylineElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGPreserveAspectRatio.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGRadialGradientElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGRect.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGRectElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGRenderingIntent.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGSVGElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGScriptElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGSetElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGStopElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGStringList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGStylable.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGStyleElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGSwitchElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGSymbolElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTSpanElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTests.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTextContentElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTextElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTextPositioningElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTitleElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTransform.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTransformList.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGTransformable.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGURIReference.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGUnitTypes.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGUseElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGViewElement.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGZoomAndPan.idl: Added.
+        * ksvg2/bindings/idl/svg/SVGZoomEvent.idl: Added.
+        * ksvg2/bindings/idl/svg/kdomdefs.idl: Added.
+        * ksvg2/ecma/EcmaInterface.h: Removed.
+
+2005-09-20  Eric Seidel  <eseidel@apple.com>
         Fix by Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by eseidel.

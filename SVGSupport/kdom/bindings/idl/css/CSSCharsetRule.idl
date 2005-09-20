@@ -16,6 +16,6 @@ module css
 {
 	// Introduced in DOM Level 2:
 	interface CSSCharsetRule : CSSRule {
-		attribute core::DOMString encoding;
+		attribute core::DOMString encoding [raises(core::DOMException)];
 	};
 };

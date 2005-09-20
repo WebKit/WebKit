@@ -1,0 +1,30 @@
+module svg
+{
+  interface SVGMatrix { 
+             attribute float a;
+                         // raises DOMException on setting
+             attribute float b;
+                         // raises DOMException on setting
+             attribute float c;
+                         // raises DOMException on setting
+ //            attribute float d;
+                         // raises DOMException on setting
+             attribute float e;
+                         // raises DOMException on setting
+             attribute float f;
+                         // raises DOMException on setting
+    SVGMatrix multiply ( in SVGMatrix secondMatrix );
+    SVGMatrix inverse (  )
+                    raises( SVGException );
+    SVGMatrix translate ( in float x, in float y );
+    SVGMatrix scale ( in float scaleFactor );
+    SVGMatrix scaleNonUniform ( in float scaleFactorX, in float scaleFactorY );
+    SVGMatrix rotate ( in float angle );
+    SVGMatrix rotateFromVector ( in float x, in float y )
+                    raises( SVGException );
+    SVGMatrix flipX (  );
+    SVGMatrix flipY (  );
+    SVGMatrix skewX ( in float angle );
+    SVGMatrix skewY ( in float angle );
+  };
+};

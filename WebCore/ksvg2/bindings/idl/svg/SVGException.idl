@@ -1,0 +1,11 @@
+module svg
+{
+	interface SVGException {
+		readonly attribute unsigned short code;
+
+		// SVGExceptionCode
+		const unsigned short SVG_WRONG_TYPE_ERR			= 0;
+		const unsigned short SVG_INVALID_VALUE_ERR		= 1;
+		const unsigned short SVG_MATRIX_NOT_INVERTABLE	= 2;
+	};
+};

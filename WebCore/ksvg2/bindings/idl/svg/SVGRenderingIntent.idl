@@ -1,0 +1,12 @@
+module svg
+{
+  interface SVGRenderingIntent { 
+    // Rendering Intent Types
+    const unsigned short RENDERING_INTENT_UNKNOWN               = 0;
+    const unsigned short RENDERING_INTENT_AUTO                  = 1;
+    const unsigned short RENDERING_INTENT_PERCEPTUAL            = 2;
+    const unsigned short RENDERING_INTENT_RELATIVE_COLORIMETRIC = 3;
+    const unsigned short RENDERING_INTENT_SATURATION            = 4;
+    const unsigned short RENDERING_INTENT_ABSOLUTE_COLORIMETRIC = 5;
+  };
+};

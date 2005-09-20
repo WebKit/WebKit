@@ -1,0 +1,10 @@
+module svg
+{
+  interface SVGSwitchElement : 
+                SVGElement,
+                SVGTests,
+                SVGLangSpace,
+                SVGExternalResourcesRequired,
+                SVGStylable,
+                SVGTransformable {};
+};

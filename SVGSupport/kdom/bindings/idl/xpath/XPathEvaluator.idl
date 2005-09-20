@@ -12,19 +12,18 @@
 
 module xpath
 {
-  interface [nodptr] XPathEvaluator {
-    XPathExpression    createExpression(in core::DOMString expression, 
-                                        in XPathNSResolver resolver)
-                                        raises(XPathException, 
-                                               core::DOMException);
-    XPathNSResolver    createNSResolver(in core::Node nodeResolver);
-    XPathResult          evaluate(in core::DOMString expression, 
-                                in core::Node contextNode, 
-                                in XPathNSResolver resolver, 
-                                in unsigned short type, 
-                                in XPathResult result)
-                                        raises(XPathException, 
-                                               core::DOMException);
-  };
-};
+	interface [nodptr] XPathEvaluator {
+		XPathExpression createExpression(in core::DOMString expression,
+										 in XPathNSResolver resolver)
+										 [raises(XPathException, core::DOMException)];
 
+		XPathNSResolver createNSResolver(in core::Node nodeResolver);
+
+		XPathResult evaluate(in core::DOMString expression,
+							 in core::Node contextNode,
+							 in XPathNSResolver resolver,
+							 in unsigned short type,
+							 in XPathResult result)
+							 [raises(XPathException, core::DOMException)];
+	};
+};

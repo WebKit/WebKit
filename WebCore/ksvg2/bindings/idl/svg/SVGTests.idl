@@ -1,0 +1,9 @@
+module svg
+{
+  interface [nodptr] SVGTests { 
+    readonly attribute SVGStringList requiredFeatures;
+    readonly attribute SVGStringList requiredExtensions;
+    readonly attribute SVGStringList systemLanguage;
+    boolean hasExtension ( in core::DOMString extension );
+  };
+};

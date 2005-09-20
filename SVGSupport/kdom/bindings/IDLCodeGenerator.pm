@@ -10,6 +10,7 @@ my $useGenerator = "";
 my $useOutputDir = "";
 my $useDirectories = "";
 my $useDocumentation = "";
+my $useLayerOnTop = 0;
 
 my $codeGenerator = 0;
 
@@ -31,6 +32,7 @@ sub new
 	$useGenerator = shift;
 	$useOutputDir = shift;
 	$useDocumentation = shift;
+	$useLayerOnTop = shift;
 
 	bless($reference, $object);
 	return $reference;
@@ -47,7 +49,7 @@ sub ProcessDocument
 
 	# Dynamically load external code generation perl module...
 	require $ifaceName . ".pm";
-	$codeGenerator = $ifaceName->new($object, $useOutputDir, $useDocumentation);
+	$codeGenerator = $ifaceName->new($object, $useOutputDir, $useDocumentation, $useLayerOnTop);
  
 	print " | *** Starting to generate code using \"$ifaceName\"...\n |\n";
 
@@ -76,8 +78,8 @@ sub FindTopBaseClass
 	#
 	# It gets trickier for ie. the 'MouseEvent' interface, whose parent is
 	# the 'UIEvent' interface, whose parent is the 'Event' interface. Return it.
-
 	my $object = shift;
+
 	my $interface = shift;
 	$interface =~ s/[a-zA-Z0-9]*:://; # Strip module.
 
@@ -135,6 +137,7 @@ sub ClassHasWriteableAttributes
 {
 	# Determine wheter a given interface has any writeable attributes...
 	my $object = shift;
+
 	my $interface = shift;
 	$interface =~ s/[a-zA-Z0-9]*:://; # Strip module.
 
@@ -167,6 +170,148 @@ sub ClassHasWriteableAttributes
 	}
 
 	return $hasWriteableAttributes;
+}
+
+# Helper for all IDLCodeGenerator***.pm modules
+sub AllClassesWhichInheritFrom
+{
+	# Determine which interfaces inherit from the passed one...
+	my $object = shift;
+
+	my $interface = shift;
+	$interface =~ s/([a-zA-Z0-9]*::)*//; # Strip namespace(s).
+
+	# Step #1: Loop through all included directories to scan for all IDL files...
+	my @allIDLFiles = ();
+	foreach(@{$useDirectories}) {
+		$endCondition = 0;
+		@foundFilenames = ();
+
+		$object->ScanDirectory("allidls", $_, $_, 1);
+		foreach(@foundFilenames) {
+			push(@allIDLFiles, $_);
+		}
+	}
+
+	# Step #2: Loop through all found IDL files...
+	my %classDataCache;
+	foreach(@allIDLFiles) {
+		# Step #3: Parse the found IDL file (in quiet mode).
+		my $parser = IDLParser->new(1);
+		my $document = $parser->Parse($_);
+
+		# Step #4: Cache the parsed IDL datastructures.
+		my $cacheHandle = $_; $cacheHandle =~ s/.*\/(.*)\.idl//;
+		$classDataCache{$1} = $document;
+	}
+
+	my %classDataCacheCopy = %classDataCache; # Protect!
+
+	# Step #5: Loop through all cached IDL documents...
+	my @classList = ();
+	while(my($name, $document) = each %classDataCache) {
+		$endCondition = 0;
+
+		# Step #6: Check wheter the parsed IDL file has parents...
+		$object->RecursiveInheritanceHelper($document, $interface, \@classList, \%classDataCacheCopy);
+	}
+
+	# Step #7: Return list of all classes which inherit from me!
+	return \@classList;
+}
+
+# Helper for all IDLCodeGenerator***.pm modules
+sub AllClasses
+{
+	# Determines all interfaces within a project...
+	my $object = shift;
+
+	# Step #1: Loop through all included directories to scan for all IDL files...
+	my @allIDLFiles = ();
+	foreach(@{$useDirectories}) {
+		$endCondition = 0;
+		@foundFilenames = ();
+
+		$object->ScanDirectory("allidls", $_, $_, 1);
+		foreach(@foundFilenames) {
+			push(@allIDLFiles, $_);
+		}
+	}
+
+	# Step #2: Loop through all found IDL files...
+	my @classList = ();
+	foreach(@allIDLFiles) {
+		# Step #3: Parse the found IDL file (in quiet mode).
+		my $parser = IDLParser->new(1);
+		my $document = $parser->Parse($_);
+
+		# Step #4: Check if class is a baseclass...
+		foreach(@{$document->classes}) {
+			my $class = $_;
+
+			my $identifier = $class->name;
+			my $namespace = $moduleNamespaceHash{$document->module};
+			$identifier = $namespace . "::" . $identifier if($namespace ne "");
+
+			my @array = grep { /^$identifier$/ } @$classList;
+
+			my $arraySize = @array;
+			if($arraySize eq 0) {
+				push(@classList, $identifier);
+			}
+		}
+	}
+
+	# Step #7: Return list of all base classes!
+	return \@classList;
+}
+
+# Internal helper for 'AllClassesWhichInheritFrom'
+sub RecursiveInheritanceHelper
+{
+	my $object = shift;
+
+	my $document = shift;
+	my $interface = shift;
+	my $classList = shift;
+	my $classDataCache = shift;
+
+	if($endCondition eq 1) {
+		return 1;
+	}
+
+	foreach(@{$document->classes}) {
+		my $class = $_;
+
+		foreach(@{$class->parents}) {
+			my $cacheHandle = $_;
+			$cacheHandle =~ s/[a-zA-Z0-9]*:://; # Strip module.
+
+			if($cacheHandle eq $interface) {
+				my $identifier = $document->module . "::" . $class->name;
+				my @array = grep { /^$identifier$/ } @$classList; my $arraySize = @array;
+				push(@$classList, $identifier) if($arraySize eq 0);
+
+				$endCondition = 1;
+				return $endCondition;
+			} else { 
+				my %cache = %{$classDataCache};
+
+				my $checkDocument = $cache{$cacheHandle};
+				$endCondition = $object->RecursiveInheritanceHelper($checkDocument, $interface,
+																	$classList, $classDataCache);
+				if($endCondition eq 1) {
+					my $identifier = $document->module . "::" . $class->name;
+					my @array = grep { /^$identifier$/ } @$classList; my $arraySize = @array;
+					push(@$classList, $identifier) if($arraySize eq 0);
+
+					return $endCondition;
+				}
+			}
+		}
+	}
+
+	return $endCondition;
 }
 
 # Helper for all IDLCodeGenerator***.pm modules
@@ -212,6 +357,7 @@ sub GenerateInclude
 	my %ret = $object->ExtractNamespace($_, 0, "");
 
 	my $includeFile = $ret{'namespace'};
+	$includeFile = "kdom/bindings/js/" . $includeFile if($includeFile ne "");
 	$includeFile .= "/" if($includeFile ne "");
 	$includeFile .= $ret{'type'};
 
@@ -284,6 +430,7 @@ sub IsPrimitiveType
 sub ScanDirectory
 {
 	my $object = shift;
+
 	my $interface = shift;
 	my $directory = shift;
 	my $useDirectory = shift;
@@ -314,9 +461,16 @@ sub ScanDirectory
 			next;
 		}
 
-		# Check wheter it contains the desired file...
-		if($name eq $interface) {
-			$foundFilename = "$useDirectory/$directory/$interface";
+		# Check wheter we found the desired file...
+		my $condition = ($name eq $interface);
+		if(($interface eq "allidls") and
+		   ($name !~ /kdomdefs/) and
+		   ($name =~ /\.idl$/)) {
+			$condition = 1;
+		}
+
+		if($condition) {
+			$foundFilename = "$useDirectory/$directory/$name";
 
 			if($reportAllFiles eq 0) {
 				$endCondition = 1;

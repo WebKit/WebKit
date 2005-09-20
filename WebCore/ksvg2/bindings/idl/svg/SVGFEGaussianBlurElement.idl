@@ -1,0 +1,11 @@
+module svg
+{
+  interface SVGFEGaussianBlurElement : 
+                SVGElement,
+                SVGFilterPrimitiveStandardAttributes { 
+    readonly attribute SVGAnimatedString in1;
+    readonly attribute SVGAnimatedNumber stdDeviationX;
+    readonly attribute SVGAnimatedNumber stdDeviationY;
+    void setStdDeviation ( in float stdDeviationX, in float stdDeviationY );
+  };
+};

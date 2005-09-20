@@ -1,0 +1,10 @@
+module svg
+{
+  interface SVGPoint { 
+             attribute float x;
+                         // raises DOMException on setting
+             attribute float y;
+                         // raises DOMException on setting
+    SVGPoint matrixTransform ( in SVGMatrix matrix );
+  };
+};

@@ -1,0 +1,6 @@
+module ls
+{
+  interface LSException {
+    readonly attribute unsigned short   code;
+  };
+};

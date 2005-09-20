@@ -27,7 +27,7 @@ module core
 		readonly attribute Element documentElement;
 		
 		Element createElement(in DOMString tagName)
-				raises(DOMException);
+				[raises(DOMException)];
 
 		DocumentFragment createDocumentFragment();
 
@@ -36,34 +36,34 @@ module core
 		Comment createComment(in DOMString data);
 
 		CDATASection createCDATASection(in DOMString data)
-										raises(DOMException);
+										[raises(DOMException)];
 
 		ProcessingInstruction createProcessingInstruction(in DOMString target,
 														  in DOMString data)
-														  raises(DOMException);
+														  [raises(DOMException)];
 
 		Attr createAttribute(in DOMString name)
-							 raises(DOMException);
+							 [raises(DOMException)];
 
 		EntityReference createEntityReference(in DOMString name)
-											  raises(DOMException);
+											  [raises(DOMException)];
 
 		NodeList getElementsByTagName(in DOMString tagname);
 
 		// Introduced in DOM Level 2:
 		Node importNode(in Node importedNode,
 						in boolean deep)
-						raises(DOMException);
+						[raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		Element createElementNS(in DOMString namespaceURI,
 								in DOMString qualifiedName)
-								raises(DOMException);
+								[raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		Attr createAttributeNS(in DOMString namespaceURI,
 							   in DOMString qualifiedName)
-							   raises(DOMException);
+							   [raises(DOMException)];
 
 		// Introduced in DOM Level 2:
 		NodeList getElementsByTagNameNS(in DOMString namespaceURI,
@@ -79,10 +79,10 @@ module core
 		readonly attribute DOMString xmlEncoding;
 
 		// Introduced in DOM Level 3:
-		attribute boolean xmlStandalone;
+		attribute boolean xmlStandalone [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
-		attribute DOMString xmlVersion;
+		attribute DOMString xmlVersion [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
 		attribute boolean strictErrorChecking;
@@ -92,7 +92,7 @@ module core
 
 		// Introduced in DOM Level 3:
 		Node adoptNode(in Node source)
-					   raises(DOMException);
+					   [raises(DOMException)];
 
 		// Introduced in DOM Level 3:
 		readonly attribute DOMConfiguration domConfig;
@@ -104,6 +104,6 @@ module core
 		Node renameNode(in Node n,
 						in DOMString namespaceURI,
 						in DOMString qualifiedName)
-						raises(DOMException);
+						[raises(DOMException)];
 	};
 };

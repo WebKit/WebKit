@@ -12,12 +12,10 @@
 
 module xpath
 {
-  interface XPathExpression {
-    XPathResult          evaluate(in core::Node contextNode, 
-                                in unsigned short type, 
-                                in XPathResult result)
-                                        raises(XPathException, 
-                                               core::DOMException);
-  };
+	interface XPathExpression {
+		XPathResult evaluate(in core::Node contextNode,
+							 in unsigned short type,
+							 in XPathResult result)
+							 [raises(XPathException, core::DOMException)];
+	};
 };
-

@@ -47,19 +47,19 @@ module css
 		readonly attribute unsigned short  primitiveType;
 
 		void setFloatValue(in unsigned short unitType,
-						   in float floatValue) raises(core::DOMException);
+						   in float floatValue)
+						   [raises(core::DOMException)];
 
-		float getFloatValue(in unsigned short unitType) raises(core::DOMException);
+		float getFloatValue(in unsigned short unitType)
+							[raises(core::DOMException)];
 
 		void setStringValue(in unsigned short stringType,
-							in core::DOMString stringValue) raises(core::DOMException);
+							in core::DOMString stringValue)
+							[raises(core::DOMException)];
 
-		core::DOMString getDOMStringValue() raises(core::DOMException);
-
-		Counter getCounterValue() raises(core::DOMException);
-
-		Rect getRectValue() raises(core::DOMException);
-
-		RGBColor getRGBColorValue() raises(core::DOMException);
+		core::DOMString getDOMStringValue() [raises(core::DOMException)];
+		Counter getCounterValue() [raises(core::DOMException)];
+		Rect getRectValue() [raises(core::DOMException)];
+		RGBColor getRGBColorValue() [raises(core::DOMException)];
 	};
 };

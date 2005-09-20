@@ -1,0 +1,28 @@
+module svg
+{
+  interface SVGPathSeg { 
+    // Path Segment Types
+    const unsigned short PATHSEG_UNKNOWN                      = 0;
+    const unsigned short PATHSEG_CLOSEPATH                    = 1;
+    const unsigned short PATHSEG_MOVETO_ABS                   = 2;
+    const unsigned short PATHSEG_MOVETO_REL                   = 3;
+    const unsigned short PATHSEG_LINETO_ABS                   = 4;
+    const unsigned short PATHSEG_LINETO_REL                   = 5;
+    const unsigned short PATHSEG_CURVETO_CUBIC_ABS            = 6;
+    const unsigned short PATHSEG_CURVETO_CUBIC_REL            = 7;
+    const unsigned short PATHSEG_CURVETO_QUADRATIC_ABS        = 8;
+    const unsigned short PATHSEG_CURVETO_QUADRATIC_REL        = 9;
+    const unsigned short PATHSEG_ARC_ABS                      = 10;
+    const unsigned short PATHSEG_ARC_REL                      = 11;
+    const unsigned short PATHSEG_LINETO_HORIZONTAL_ABS        = 12;
+    const unsigned short PATHSEG_LINETO_HORIZONTAL_REL        = 13;
+    const unsigned short PATHSEG_LINETO_VERTICAL_ABS          = 14;
+    const unsigned short PATHSEG_LINETO_VERTICAL_REL          = 15;
+    const unsigned short PATHSEG_CURVETO_CUBIC_SMOOTH_ABS     = 16;
+    const unsigned short PATHSEG_CURVETO_CUBIC_SMOOTH_REL     = 17;
+    const unsigned short PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = 18;
+    const unsigned short PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = 19;
+    readonly attribute unsigned short pathSegType;
+    readonly attribute core::DOMString      pathSegTypeAsLetter;
+  };
+};

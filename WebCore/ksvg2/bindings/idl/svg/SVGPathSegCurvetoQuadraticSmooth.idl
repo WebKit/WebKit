@@ -1,0 +1,16 @@
+module svg
+{
+  interface SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+  };
+  
+  interface SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+  };
+};
