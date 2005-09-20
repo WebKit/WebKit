@@ -1,3 +1,10 @@
+2005-09-19  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/run-webkit-tests: added --guard-malloc option
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4613
+
 2005-09-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by geoff
