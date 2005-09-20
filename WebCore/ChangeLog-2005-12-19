@@ -1,4 +1,14 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+
+        - Added test case for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=4892
+          Date constructor has problems with months larger than 11
+
+        Test cases added: 
+
+        * layout-tests/fast/js/date-big-constructor-expected.txt: Added.
+        * layout-tests/fast/js/date-big-constructor.html: Added.
+
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
         - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4247
           addEventListener in Obj-C does not work
 
