@@ -1283,3 +1283,4 @@ layer at (0,0) size 2006x2393
             text run at (0,324) width 45: "too)"
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

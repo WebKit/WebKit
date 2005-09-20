@@ -8,3 +8,4 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (0,0) size 292x18
           text run at (0,0) width 292: "This text should be *below* the select widget."
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

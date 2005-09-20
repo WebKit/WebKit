@@ -11,3 +11,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 777: "There should be two elements in the first form and one in the second. The count in form one is 2, and the count in form two"
           text run at (0,18) width 26: "is 1."
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

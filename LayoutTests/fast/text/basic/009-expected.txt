@@ -11,3 +11,4 @@ layer at (0,0) size 800x600
             text run at (177,0) width 154: "As is this."
       RenderText {TEXT} at (331,0) size 344x28
         text run at (331,0) width 344: " All of this text should be 24px tall."
+      RenderText {TEXT} at (0,0) size 0x0

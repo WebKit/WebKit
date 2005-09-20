@@ -35,3 +35,4 @@ layer at (0,0) size 800x102
             text run at (385,0) width 24: " def"
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

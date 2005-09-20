@@ -5,3 +5,4 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FFFFFF] [bgcolor=#008000]
       RenderText {TEXT} at (0,0) size 312x18
         text run at (0,0) width 312: "This should be white text on a green background."
+      RenderText {TEXT} at (0,0) size 0x0

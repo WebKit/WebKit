@@ -15,6 +15,7 @@ layer at (0,0) size 800x172
             text run at (0,1) width 528: "Ahem_font_required_for_this_test."
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
 layer at (8,80) size 80x16
   RenderBlock (positioned) {DIV} at (0,0) size 80x16 [color=#008000]
     RenderText {TEXT} at (0,0) size 80x16

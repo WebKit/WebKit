@@ -9,6 +9,7 @@ layer at (0,0) size 800x52
         text run at (541,0) width 212: "This test is checking to make sure"
         text run at (0,18) width 148: "overflow is done using "
         text run at (148,18) width 167: "a containing block model. "
+      RenderText {TEXT} at (0,0) size 0x0
 layer at (8,44) size 100x100 scrollWidth 200 scrollHeight 400
   RenderBlock (positioned) {DIV} at (8,44) size 100x100 [bgcolor=#008000]
     RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]

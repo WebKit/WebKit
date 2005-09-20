@@ -4,3 +4,4 @@ layer at (0,0) size 800x316
   RenderBlock {HTML} at (0,0) size 800x316
     RenderBody {BODY} at (8,8) size 784x300
       RenderImage {IMG} at (0,0) size 300x300 [bgcolor=#008000]
+      RenderText {TEXT} at (0,0) size 0x0

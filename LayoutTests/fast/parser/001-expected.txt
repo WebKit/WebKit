@@ -36,3 +36,4 @@ layer at (0,0) size 800x600
         RenderInline {NOBR} at (0,0) size 234x18 [bgcolor=#CCCCCC]
           RenderText {TEXT} at (0,0) size 234x18
             text run at (0,0) width 234: "Now we're back to nonbreaking text."
+        RenderText {TEXT} at (0,0) size 0x0

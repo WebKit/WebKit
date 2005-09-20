@@ -39,3 +39,4 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,296) size 784x18
         RenderText {TEXT} at (0,0) size 207x18
           text run at (0,0) width 207: "Should read: \"Chapter: TEST 4\""
+        RenderText {TEXT} at (0,0) size 0x0

@@ -10,6 +10,7 @@ layer at (0,0) size 800x70
         text run at (0,18) width 293: "checking to make sure overflow is done using "
         text run at (293,18) width 478: "a containing block model, and that a fixed positioned element inside another"
         text run at (0,36) width 333: "fixed positioned element is not considered overflow. "
+      RenderText {TEXT} at (0,0) size 0x0
 layer at (8,62) size 100x100 scrollWidth 200 scrollHeight 200
   RenderBlock (positioned) {DIV} at (8,62) size 100x100
     RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]

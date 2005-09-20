@@ -27,3 +27,4 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 60x18
           RenderText {TEXT} at (0,0) size 60x18
             text run at (0,0) width 60: "Line Five"
+        RenderText {TEXT} at (0,0) size 0x0

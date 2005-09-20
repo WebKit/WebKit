@@ -32,3 +32,4 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (16,14) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

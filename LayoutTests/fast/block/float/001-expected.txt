@@ -9,3 +9,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "Test"
       RenderText {TEXT} at (100,0) size 35x18
         text run at (100,0) width 35: "Hello"
+      RenderText {TEXT} at (0,0) size 0x0
