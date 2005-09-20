@@ -1,4 +1,21 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4247
+          addEventListener in Obj-C does not work
+
+        No layout test because we don't have test machinery for the Obj-C bindings yet.
+
+        Reviewed by eric.
+
+        * kwq/DOM.mm:
+        (-[DOMNode addEventListener:::]):
+        (-[DOMNode removeEventListener:::]):
+        (ObjCEventListener::find):
+        (ObjCEventListener::create):
+        (ObjCEventListener::ObjCEventListener):
+        (ObjCEventListener::~ObjCEventListener):
+        (ObjCEventListener::handleEvent):
+
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
         - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4849
           htmltokenizer.cpp won't compile with TOKEN_DEBUG defined

@@ -30,6 +30,7 @@
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
 #import "csshelper.h"
+#import "dom2_events.h"
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_traversal.h"
@@ -44,6 +45,7 @@
 #import "dom_textimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_elementimpl.h"
+#import "hashmap.h"
 
 #import "khtml_part.h"
 
@@ -71,6 +73,8 @@ using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
+using DOM::EventImpl;
+using DOM::EventListener;
 using DOM::FilterNode;
 using DOM::HTMLElementImpl;
 using DOM::NamedNodeMapImpl;
@@ -89,6 +93,8 @@ using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
+using khtml::HashMap;
+using khtml::PointerHash;
 using khtml::RenderObject;
 using khtml::SharedPtr;
 
@@ -109,6 +115,24 @@ using khtml::SharedPtr;
 @interface DOMNamedNodeMap (WebCoreInternal)
 + (DOMNamedNodeMap *)_namedNodeMapWithImpl:(NamedNodeMapImpl *)impl;
 @end
+
+class ObjCEventListener : public EventListener {
+public:
+    static ObjCEventListener *find(id <DOMEventListener>);
+    static ObjCEventListener *create(id <DOMEventListener>);
+
+private:
+    ObjCEventListener(id <DOMEventListener>);
+    virtual ~ObjCEventListener();
+
+    virtual void handleEvent(EventImpl *, bool isWindowEvent);
+
+    id <DOMEventListener> m_listener;
+};
+
+typedef HashMap< id, ObjCEventListener *, PointerHash<id> > ListenerMap;
+
+static ListenerMap *listenerMap;
 
 //------------------------------------------------------------------------------------------
 // DOMObject
@@ -356,12 +380,15 @@ using khtml::SharedPtr;
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
-    ERROR("unimplemented");
+    EventListener *wrapper = ObjCEventListener::create(listener);
+    [self _nodeImpl]->addEventListener(type, wrapper, useCapture);
+    wrapper->deref();
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
-    ERROR("unimplemented");
+    if (EventListener *wrapper = ObjCEventListener::find(listener))
+        [self _nodeImpl]->removeEventListener(type, wrapper, useCapture);
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
@@ -2205,3 +2232,40 @@ short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
 
 @end
 
+ObjCEventListener *ObjCEventListener::find(id <DOMEventListener> listener)
+{
+    if (ListenerMap *map = listenerMap)
+        return map->get(listener);
+    return NULL;
+}
+
+ObjCEventListener *ObjCEventListener::create(id <DOMEventListener> listener)
+{
+    ObjCEventListener *wrapper = find(listener);
+    if (!wrapper)
+        wrapper = new ObjCEventListener(listener);
+    wrapper->ref();
+    return wrapper;
+}
+
+ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
+    : m_listener([listener retain])
+{
+    ListenerMap *map = listenerMap;
+    if (!map) {
+        map = new ListenerMap;
+        listenerMap = map;
+    }
+    map->insert(listener, this);
+}
+
+ObjCEventListener::~ObjCEventListener()
+{
+    listenerMap->remove(m_listener);
+    [m_listener release];
+}
+
+void ObjCEventListener::handleEvent(EventImpl *event, bool)
+{
+    [m_listener handleEvent:[DOMEvent _eventWithImpl:event]];
+}
