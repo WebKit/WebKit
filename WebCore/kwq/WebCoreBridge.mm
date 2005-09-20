@@ -223,6 +223,24 @@ static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
 static bool initializedObjectCacheSize = FALSE;
 static bool initializedKJS = FALSE;
 
++ (NSArray *)supportedMIMETypes
+{
+    return [NSArray arrayWithObjects:
+        @"text/html",
+        @"text/xml",
+        @"text/xsl",
+        @"application/xml",
+        @"application/xhtml+xml",
+        @"application/rss+xml",
+        @"application/atom+xml",
+        @"application/x-webarchive",
+        @"multipart/x-mixed-replace",
+#if SVG_SUPPORT
+        @"image/svg+xml",
+#endif
+        nil];
+}
+
 + (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document
 {
     return ((KWQKHTMLPart *)[document _documentImpl]->part())->bridge();
