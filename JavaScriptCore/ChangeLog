@@ -1,5 +1,23 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
+        - More changes needed to fix <rdar://problem/4214783> 8F29 REGRESSION(Denver/Chardonnay):
+          kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in
+          the installer)
+          
+        Added InterpreterLocks in some places in the bindings we missed before.
+        
+        Reviewed by john.
+
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::addNativeReference):
+        (KJS::Bindings::removeNativeReference):
+        (RootObject::removeAllNativeReferences):
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::~RootObject):
+        (KJS::Bindings::RootObject::setRootObjectImp):
+
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+
         - Fixed <rdar://problem/4263434> <rdar://problem/4263434> Denver 8F29 Regression:
           KJS::InterpreterImp::mark() crash
           
