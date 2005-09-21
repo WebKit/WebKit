@@ -97,6 +97,13 @@ namespace KJS {
     void deref() { --m_refcount; if (!m_refcount) delete this; }
     unsigned int refcount() { return m_refcount; }
 
+    virtual bool isGroupNode() const { return false; }
+
+    virtual bool isLocation() const { return false; }
+    virtual bool isResolveNode() const { return false; }
+    virtual bool isBracketAccessorNode() const { return false; }
+    virtual bool isDotAccessorNode() const { return false; }
+
   protected:
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg);
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *, Node *);
@@ -194,6 +201,11 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
+
+    virtual bool isLocation() const { return true; }
+    virtual bool isResolveNode() const { return true; }
+    const Identifier& identifier() const { return ident; }
+
   private:
     Identifier ident;
   };
@@ -204,6 +216,17 @@ namespace KJS {
     virtual ValueImp *evaluate(ExecState *exec);
     virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
+
+    virtual bool isGroupNode() const { return true; }
+    Node *nodeInsideAllParens()
+    { 
+        Node *n = group.get();
+        while (n->isGroupNode()) {
+            n = static_cast<GroupNode *>(n)->group.get();
+        }
+        return n;
+    }
+        
   private:
     KXMLCore::SharedPtr<Node> group;
   };
@@ -281,6 +304,12 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
+
+    virtual bool isLocation() const { return true; }
+    virtual bool isBracketAccessorNode() const { return true; }
+    Node *base() { return expr1.get(); }
+    Node *subscript() { return expr2.get(); }
+
   private:
     KXMLCore::SharedPtr<Node> expr1;
     KXMLCore::SharedPtr<Node> expr2;
@@ -292,6 +321,12 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
+
+    virtual bool isLocation() const { return true; }
+    virtual bool isDotAccessorNode() const { return true; }
+    Node *base() const { return expr.get(); }
+    const Identifier& identifier() const { return ident; }
+
   private:
     KXMLCore::SharedPtr<Node> expr;
     Identifier ident;
@@ -953,6 +988,23 @@ namespace KJS {
     void processFuncDecl(ExecState *exec);
   };
 
+  class FuncExprNode : public Node {
+  public:
+    FuncExprNode(const Identifier &i, FunctionBodyNode *b)
+      : ident(i), param(0), body(b) { }
+    FuncExprNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
+      : ident(i), param(p->next), body(b) { p->next = 0; }
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+
+  private:
+    friend class FuncDeclNode;
+
+    Identifier ident;
+    KXMLCore::SharedPtr<ParameterNode> param;
+    KXMLCore::SharedPtr<FunctionBodyNode> body;
+  };
+
   class FuncDeclNode : public StatementNode {
   public:
     FuncDeclNode(const Identifier &i, FunctionBodyNode *b)
@@ -962,20 +1014,6 @@ namespace KJS {
     Completion execute(ExecState */*exec*/)
       { /* empty */ return Completion(); }
     void processFuncDecl(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
-  private:
-    Identifier ident;
-    KXMLCore::SharedPtr<ParameterNode> param;
-    KXMLCore::SharedPtr<FunctionBodyNode> body;
-  };
-
-  class FuncExprNode : public Node {
-  public:
-    FuncExprNode(const Identifier &i, FunctionBodyNode *b)
-      : ident(i), param(0), body(b) { }
-    FuncExprNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
-      : ident(i), param(p->next), body(b) { p->next = 0; }
-    ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
     Identifier ident;

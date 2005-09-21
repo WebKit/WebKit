@@ -39,7 +39,6 @@
 #include "identifier.h"
 #include "lookup.h"
 #include "internal.h"
-#include "grammar_types.h"
 
 // we can't specify the namespace in yacc's C output, so do it here
 using namespace KJS;

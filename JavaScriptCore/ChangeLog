@@ -1,3 +1,40 @@
+2005-09-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and partly by Darin.
+
+	- fixed http://bugzilla.opendarwin.org/post_bug.cgi
+	(Reduce conflicts in JavaScriptCore grammar)
+
+	This change gets us down from over 200 shift/reduce and 45 reduce/reduce to
+	9 shift/reduce and 45 reduce/reduce.
+
+        * kjs/grammar.y:
+        * kjs/grammar_types.h: Removed.
+        * kjs/lexer.cpp:
+        * kjs/nodes.h:
+        (KJS::Node::isGroupNode):
+        (KJS::Node::isLocation):
+        (KJS::Node::isResolveNode):
+        (KJS::Node::isBracketAccessorNode):
+        (KJS::Node::isDotAccessorNode):
+        (KJS::ResolveNode::isLocation):
+        (KJS::ResolveNode::isResolveNode):
+        (KJS::ResolveNode::identifier):
+        (KJS::GroupNode::isGroupNode):
+        (KJS::GroupNode::leafNode):
+        (KJS::BracketAccessorNode::isLocation):
+        (KJS::BracketAccessorNode::isBracketAccessorNode):
+        (KJS::BracketAccessorNode::base):
+        (KJS::BracketAccessorNode::subscript):
+        (KJS::DotAccessorNode::isLocation):
+        (KJS::DotAccessorNode::isDotAccessorNode):
+        (KJS::DotAccessorNode::base):
+        (KJS::DotAccessorNode::identifier):
+        (KJS::FuncExprNode::FuncExprNode):
+        (KJS::FuncExprNode::identifier):
+        (KJS::FuncDeclNode::FuncDeclNode):
+        (KJS::FuncDeclNode::execute):
+
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
         - Oops. The 4263434 change was only appropriate on the branch. Rolling out.

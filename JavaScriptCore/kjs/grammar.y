@@ -32,7 +32,6 @@
 #include "nodes.h"
 #include "lexer.h"
 #include "internal.h"
-#include "grammar_types.h"
 
 // Not sure why, but yacc doesn't add this define along with the others.
 #define yylloc kjsyylloc
@@ -50,6 +49,8 @@ static bool automatic();
 
 using namespace KJS;
 
+static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
+
 %}
 
 %union {
@@ -62,6 +63,7 @@ using namespace KJS;
   ParameterNode       *param;
   FunctionBodyNode    *body;
   FuncDeclNode        *func;
+  FuncExprNode        *funcExpr;
   ProgramNode         *prog;
   AssignExprNode      *init;
   SourceElementsNode  *srcs;
@@ -79,8 +81,6 @@ using namespace KJS;
   PropertyNode        *pnode;
   CatchNode           *cnode;
   FinallyNode         *fnode;
-  NodePair            np;
-  NodeWithIdent       ni;
 }
 
 %start Program
@@ -124,7 +124,7 @@ using namespace KJS;
 %token AUTOPLUSPLUS AUTOMINUSMINUS
 
 /* non-terminal types */
-%type <node>  Literal PrimaryExpr Expr MemberExpr FunctionExpr NewExpr CallExpr
+%type <node>  Literal PrimaryExpr Expr MemberExpr NewExpr CallExpr
 %type <node>  ArrayLiteral
 %type <node>  LeftHandSideExpr PostfixExpr UnaryExpr
 %type <node>  MultiplicativeExpr AdditiveExpr
@@ -148,6 +148,7 @@ using namespace KJS;
 %type <slist> StatementList
 %type <init>  Initializer
 %type <func>  FunctionDeclaration
+%type <funcExpr>  FunctionExpr
 %type <body>  FunctionBody
 %type <srcs>  SourceElements
 %type <param> FormalParameterList
@@ -164,10 +165,7 @@ using namespace KJS;
 %type <elm>   ElementList
 %type <plist> PropertyNameAndValueList
 %type <pnode> PropertyName
-
 %type <ident> ParenthesizedIdent
-%type <np>    MemberBracketExpr CallBracketExpr ParenthesizedBracketExpr
-%type <ni>    MemberDotExpr CallDotExpr ParenthesizedDotExpr
 
 %%
 
@@ -196,8 +194,6 @@ PrimaryExpr:
   | Literal
   | ArrayLiteral
   | ParenthesizedIdent             { $$ = new ResolveNode(*$1); }
-  | ParenthesizedBracketExpr       { $$ = new GroupNode(new BracketAccessorNode($1.first, $1.second)); }
-  | ParenthesizedDotExpr           { $$ = new GroupNode(new DotAccessorNode($1.node, *$1.ident)); }
   | '(' Expr ')'                   { $$ = new GroupNode($2); }
   | '{' '}'                        { $$ = new ObjectLiteralNode(); }
   | '{' PropertyNameAndValueList '}'   { $$ = new ObjectLiteralNode($2); }
@@ -237,39 +233,11 @@ PropertyName:
   | NUMBER                         { $$ = new PropertyNode($1); }
 ;
 
-CallBracketExpr:
-  CallExpr '[' Expr ']' { $$ = makeNodePair($1, $3); }
-;
-
-MemberBracketExpr:
-  MemberExpr '[' Expr ']' { $$ = makeNodePair($1, $3); }
-;
-
-ParenthesizedBracketExpr:
-    '(' MemberBracketExpr ')' { $$ = $2; }
-  | '(' CallBracketExpr ')' { $$ = $2; }
-  | '(' ParenthesizedBracketExpr ')' { $$ = $2; }
-;
-
-CallDotExpr:
-  CallExpr '.' IDENT { $$ = makeNodeWithIdent($1, $3); }
-;
-
-MemberDotExpr:
-  MemberExpr '.' IDENT { $$ = makeNodeWithIdent($1, $3); }
-;
-
-ParenthesizedDotExpr:
-    '(' MemberDotExpr ')' { $$ = $2; }
-  | '(' CallDotExpr ')' { $$ = $2; }
-  | '(' ParenthesizedDotExpr ')' { $$ = $2; }
-;
-
 MemberExpr:
     PrimaryExpr
-  | FunctionExpr
-  | MemberBracketExpr              { $$ = new BracketAccessorNode($1.first, $1.second); }
-  | MemberDotExpr                  { $$ = new DotAccessorNode($1.node, *$1.ident); }
+  | FunctionExpr                   { $$ = $1; }
+  | MemberExpr '[' Expr ']'        { $$ = new BracketAccessorNode($1, $3); }
+  | MemberExpr '.' IDENT           { $$ = new DotAccessorNode($1, *$3); }
   | NEW MemberExpr Arguments       { $$ = new NewExprNode($2, $3); }
 ;
 
@@ -279,17 +247,10 @@ NewExpr:
 ;
 
 CallExpr:
-    ParenthesizedIdent Arguments       { $$ = new FunctionCallResolveNode(*$1, $2); }
-  | MemberBracketExpr Arguments        { $$ = new FunctionCallBracketNode($1.first, $1.second, $2); }
-  | CallBracketExpr Arguments          { $$ = new FunctionCallBracketNode($1.first, $1.second, $2); }
-  | ParenthesizedBracketExpr Arguments { $$ = new FunctionCallParenBracketNode($1.first, $1.second, $2); }
-  | MemberDotExpr Arguments        { $$ = new FunctionCallDotNode($1.node, *$1.ident, $2); }
-  | CallDotExpr Arguments          { $$ = new FunctionCallDotNode($1.node, *$1.ident, $2); }
-  | ParenthesizedDotExpr Arguments { $$ = new FunctionCallParenDotNode($1.node, *$1.ident, $2); }
-  | MemberExpr Arguments           { $$ = new FunctionCallValueNode($1, $2); }
-  | CallExpr Arguments             { $$ = new FunctionCallValueNode($1, $2); }
-  | CallBracketExpr                { $$ = new BracketAccessorNode($1.first, $1.second); }
-  | CallDotExpr                    { $$ = new DotAccessorNode($1.node, *$1.ident); }
+    MemberExpr Arguments { $$ = makeFunctionCallNode($1, $2); }
+  | CallExpr Arguments   { $$ = makeFunctionCallNode($1, $2); }
+  | CallExpr '[' Expr ']'  { $$ = new BracketAccessorNode($1, $3); }
+  | CallExpr '.' IDENT     { $$ = new DotAccessorNode($1, *$3); }
 ;
 
 Arguments:
@@ -407,20 +368,27 @@ ConditionalExpr:
 
 AssignmentExpr:
     ConditionalExpr
-  | ParenthesizedIdent AssignmentOperator AssignmentExpr
-                           { $$ = new AssignResolveNode(*$1, $2, $3); }
-  | MemberBracketExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
-  | CallBracketExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
-  | ParenthesizedBracketExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
-  | MemberDotExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
-  | CallDotExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
-  | ParenthesizedDotExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
+  | LeftHandSideExpr AssignmentOperator AssignmentExpr
+                           { 
+                               Node *n = $1;
+                               bool paren = n->isGroupNode();
+                               if (paren)
+                                   n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+
+                               if (!n->isLocation())
+                                   YYABORT; 
+                               else if (n->isResolveNode()) {
+                                   ResolveNode *resolve = static_cast<ResolveNode *>(n);
+                                   $$ = new AssignResolveNode(resolve->identifier(), $2, $3);
+                               } else if (n->isBracketAccessorNode()) {
+                                   BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+                                   $$ = new AssignBracketNode(bracket->base(), bracket->subscript(), $2, $3);
+                               } else {
+                                   assert(n->isDotAccessorNode());
+                                   DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+                                   $$ = new AssignDotNode(dot->base(), dot->identifier(), $2, $3);
+                               }
+                           }
 ;
 
 AssignmentOperator:
@@ -716,6 +684,34 @@ SourceElement:
 ;
 
 %%
+
+static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args)
+{
+    Node *n = func;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+    
+    if (!n->isLocation())
+        return new FunctionCallValueNode(func, args);
+    else if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        return new FunctionCallResolveNode(resolve->identifier(), args);
+    } else if (n->isBracketAccessorNode()) {
+        BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+        if (paren)
+            return new FunctionCallParenBracketNode(bracket->base(), bracket->subscript(), args);
+        else
+            return new FunctionCallBracketNode(bracket->base(), bracket->subscript(), args);
+    } else {
+        assert(n->isDotAccessorNode());
+        DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+        if (paren)
+            return new FunctionCallParenDotNode(dot->base(), dot->identifier(), args);
+        else
+            return new FunctionCallDotNode(dot->base(), dot->identifier(), args);
+    }
+}
 
 int yyerror (const char * /* s */)  /* Called by yyparse on error */
 {
