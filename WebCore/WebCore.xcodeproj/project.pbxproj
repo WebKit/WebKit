@@ -2287,6 +2287,8 @@
 		A8C0FFFD089701FC00BA5114 /* KRenderingPaintServerQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */; };
 		A8C0FFFE089701FC00BA5114 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
 		A8C0FFFF089701FC00BA5114 /* QuartzSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.mm */; };
+		A8DC63E908E0DD0A004507F7 /* EcmaInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DC63E808E0DD0A004507F7 /* EcmaInterface.cpp */; };
+		A8DC63EC08E0DD2A004507F7 /* EcmaInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */; };
 		A8EA429508E0BA41004BC396 /* CDFInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA429408E0BA41004BC396 /* CDFInterface.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.mm in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
@@ -3818,6 +3820,8 @@
 		A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTypes.h; sourceTree = "<group>"; };
 		A8C0FB8D089701F800BA5114 /* KCanvasView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasView.cpp; sourceTree = "<group>"; };
 		A8C0FB8E089701F800BA5114 /* KCanvasView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasView.h; sourceTree = "<group>"; };
+		A8DC63E808E0DD0A004507F7 /* EcmaInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EcmaInterface.cpp; path = "../../../../build/WebCore.build/Development/WebCore+SVG.build/DerivedSources/kdom/ecma/EcmaInterface.cpp"; sourceTree = "<group>"; };
+		A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EcmaInterface.cpp; path = "../../../../build/WebCore.build/Development/WebCore+SVG.build/DerivedSources/ksvg2/ecma/EcmaInterface.cpp"; sourceTree = "<group>"; };
 		A8EA429408E0BA41004BC396 /* CDFInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDFInterface.cpp; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; };
 		BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = xsl_stylesheetimpl.h; path = xsl/xsl_stylesheetimpl.h; sourceTree = "<group>"; };
@@ -5364,6 +5368,7 @@
 			children = (
 				A8C0F7E9089701F300BA5114 /* Constructors.cpp */,
 				A8C0F7EA089701F300BA5114 /* Constructors.h */,
+				A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */,
 				A8C0F7EB089701F300BA5114 /* Ecma.cpp */,
 				A8C0F7EC089701F300BA5114 /* Ecma.h */,
 				A8C0F7EE089701F300BA5114 /* GlobalObject.cpp */,
@@ -5792,6 +5797,7 @@
 			children = (
 				A8C0F9BD089701F500BA5114 /* DOMBridge.h */,
 				A8C0F9BE089701F500BA5114 /* DOMLookup.h */,
+				A8DC63E808E0DD0A004507F7 /* EcmaInterface.cpp */,
 				A8C0F9BF089701F500BA5114 /* Ecma.cpp */,
 				A8C0F9C0089701F500BA5114 /* Ecma.h */,
 				A8C0F9C2089701F500BA5114 /* GlobalObject.cpp */,
@@ -9261,7 +9267,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/kdom/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--input kdom/bindings/idl/core/Node.idl \\\n\t--documentation empty ;";
+			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/kdom/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--input kdom/bindings/idl/core/Node.idl \\\n\t--documentation empty ;\n\nln -s \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" kdom/ecma/EcmaInterface.cpp";
 		};
 		A8BC0B0108D1954500379918 /* KSVG EcmaScript.cpp/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9278,7 +9284,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/ksvg2/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--includedir ksvg2/bindings/idl \\\n\t--input ksvg2/bindings/idl/svg/SVGElement.idl \\\n\t--documentation empty \\\n\t--ontop ;";
+			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/ksvg2/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--includedir ksvg2/bindings/idl \\\n\t--input ksvg2/bindings/idl/svg/SVGElement.idl \\\n\t--documentation empty \\\n\t--ontop ;\n\nln -s \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" ksvg2/ecma/EcmaInterface.cpp";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -10333,6 +10339,8 @@
 				A8122F6E08D564B500844FA3 /* SVGZoomEventWrapper.cpp in Sources */,
 				A8700A4808DD734300CC5A86 /* CDFInterface.cpp in Sources */,
 				A8EA429508E0BA41004BC396 /* CDFInterface.cpp in Sources */,
+				A8DC63E908E0DD0A004507F7 /* EcmaInterface.cpp in Sources */,
+				A8DC63EC08E0DD2A004507F7 /* EcmaInterface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

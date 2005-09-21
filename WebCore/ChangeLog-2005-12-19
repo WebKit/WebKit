@@ -1,3 +1,13 @@
+2005-09-20  Eric Seidel  <eseidel@apple.com>
+
+        No review, SVG build fix only.
+
+        Fix the SVG build buy linking EcmaInterface.cpp
+        from derived sources into the source root and
+        adding to the compiled sources.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2005-09-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin
