@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x54
+      RenderText {TEXT} at (0,0) size 264x18
+        text run at (0,0) width 264: "CHARACTERS IN XSLT: \x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9} "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (0,18) size 0x18
+      RenderText {TEXT} at (0,36) size 316x18
+        text run at (0,36) width 316: "SOURCE XML: \x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}\x{E9}"
+      RenderText {TEXT} at (0,0) size 0x0

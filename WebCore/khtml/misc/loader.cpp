@@ -52,6 +52,7 @@
 #include <kdebug.h>
 #include "khtml_factory.h"
 #include "khtml_part.h"
+#include "decoder.h"
 
 #include "html/html_documentimpl.h"
 #include "css/css_stylesheetimpl.h"
@@ -1098,7 +1099,7 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const DOMString &url, KI
     // load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
-    m_codec = QTextCodec::codecForName("iso8859-1");
+    m_decoder = new Decoder;
 }
 
 void CachedXSLStyleSheet::ref(CachedObjectClient *c)
@@ -1122,7 +1123,7 @@ void CachedXSLStyleSheet::data(QBuffer &buffer, bool eof)
     if(!eof) return;
     buffer.close();
     setSize(buffer.buffer().size());
-    QString data = m_codec->toUnicode( buffer.buffer().data(), size() );
+    QString data = m_decoder->decode( buffer.buffer().data(), size() );
     m_sheet = DOMString(data);
     m_loading = false;
     

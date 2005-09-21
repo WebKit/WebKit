@@ -1,5 +1,47 @@
 2005-09-21  Vicki Murley  <vicki@apple.com>
 
+        Changes by Romain Brestac, reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3418
+        (unicode characters not preserved after a xslt transformation)
+
+        * khtml/misc/loader.cpp:
+        (CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (CachedXSLStyleSheet::data):
+        * khtml/misc/loader.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::addToResult):
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+
+	Test cases added:
+
+        * layout-tests/fast/xsl/resources/unicode.xsl: Added.
+        * layout-tests/fast/xsl/resources/xslt-enc-cyr.xsl: Added.
+        * layout-tests/fast/xsl/resources/xslt-enc.xsl: Added.
+        * layout-tests/fast/xsl/resources/xslt-enc16.xsl: Added.
+        * layout-tests/fast/xsl/xslt-enc-cyr-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt-enc-cyr-expected.png: Added.
+        * layout-tests/fast/xsl/xslt-enc-cyr-expected.txt: Added.
+        * layout-tests/fast/xsl/xslt-enc-cyr.xml: Added.
+        * layout-tests/fast/xsl/xslt-enc-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt-enc-expected.png: Added.
+        * layout-tests/fast/xsl/xslt-enc-expected.txt: Added.
+        * layout-tests/fast/xsl/xslt-enc.xml: Added.
+        * layout-tests/fast/xsl/xslt-enc16-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt-enc16-expected.png: Added.
+        * layout-tests/fast/xsl/xslt-enc16-expected.txt: Added.
+        * layout-tests/fast/xsl/xslt-enc16.xml: Added.
+        * layout-tests/fast/xsl/xslt-enc16to16-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt-enc16to16-expected.png: Added.
+        * layout-tests/fast/xsl/xslt-enc16to16-expected.txt: Added.
+        * layout-tests/fast/xsl/xslt-enc16to16.xml: Added.
+        * layout-tests/fast/xsl/xslt_unicode-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt_unicode-expected.png: Added.
+        * layout-tests/fast/xsl/xslt_unicode-expected.txt: Added.
+        * layout-tests/fast/xsl/xslt_unicode.xml: Added.
+
+2005-09-21  Vicki Murley  <vicki@apple.com>
+
         Reviewed by Darin.
  
 	- fix these bugs

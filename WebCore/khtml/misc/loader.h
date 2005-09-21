@@ -86,6 +86,7 @@ namespace khtml
     class CachedObject;
     class Request;
     class DocLoader;
+    class Decoder;
 
  #define MAX_LRU_LISTS 20
     
@@ -431,7 +432,7 @@ public:
         
 protected:
         DOM::DOMString m_sheet;
-        QTextCodec* m_codec;
+        Decoder* m_decoder;
     };
 #endif
     
