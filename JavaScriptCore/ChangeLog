@@ -1,5 +1,17 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
+        - Fixed <rdar://problem/4263434> <rdar://problem/4263434> Denver 8F29 Regression:
+          KJS::InterpreterImp::mark() crash
+          
+        Fix by mjs, review by me.
+
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::mark): Added a null check on globExec in case a
+        garbage collection occurs inside InterpreterImp::globalInit (called
+        from InterpreterImp::InterpreterImp), at which point globExec has not yet been initialized.
+
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+
         - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4892
           Date constructor has problems with months larger than 11
 

@@ -644,7 +644,7 @@ void InterpreterImp::mark()
     _context->mark();
   if (global)
       global->mark();
-  if (globExec._exception)
+  if (globExec && globExec._exception)
       globExec._exception->mark();
 }
 
