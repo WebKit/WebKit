@@ -1,5 +1,14 @@
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
+        - Oops. The 4263434 change was only appropriate on the branch. Rolling out.
+        
+        Reviewed by eric.
+        
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::mark):
+
+2005-09-20  Geoffrey Garen  <ggaren@apple.com>
+
         - More changes needed to fix <rdar://problem/4214783> 8F29 REGRESSION(Denver/Chardonnay):
           kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in
           the installer)
