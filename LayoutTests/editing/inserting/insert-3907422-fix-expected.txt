@@ -40,4 +40,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 22: "baz"
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
 caret: position 3 of child 3 {TEXT} of child 1 {BODY} of child 0 {HTML} of document
