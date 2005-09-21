@@ -246,8 +246,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
     {
 	// there could be 2 tfoot elements in the table. Only the first one is the "foot", that's why we have the more
 	// complicated if statement below.
-        if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || 
-            node->hasTagName(tbodyTag)))
+        if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag)))
         {
             section = static_cast<HTMLTableSectionElementImpl *>(node);
             lastSection = section;
@@ -255,7 +254,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
             if ( !append )
             {
                 int rows = section->numRows();
-                if ( rows > index ) {
+                if (rows >= index) {
 		    found = true;
                     break;
                 } else

@@ -1,3 +1,35 @@
+2005-09-21  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Darin.
+ 
+	- fix these bugs
+	<rdar://problem/3579812> HTMLTableElement.insertRow(n) inserts row at the beginning of the table (4043)
+	<rdar://problem/3711188> HTMLTableElement.insertRow() doesn't respect passed index
+
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::insertRow): 
+	if the index is the same as the number of rows in the section, we should append
+        
+	Update test results for /fast/dynamic/013.html. In the old version the the rows 
+	and cells were children of the first table section, a tfoot.  They are now children 
+	of the second table section, a tbody.  Our rendering now matches Gecko and Win IE 
+	(according to yusufg on #webkit, comparing with 013-expected.png) for this case.
+
+        * layout-tests/fast/dynamic/013-expected.checksum:
+        * layout-tests/fast/dynamic/013-expected.png:
+        * layout-tests/fast/dynamic/013-expected.txt:
+
+        Test cases added: 
+
+        * layout-tests/fast/dynamic/014-expected.checksum: Added.
+        * layout-tests/fast/dynamic/014-expected.png: Added.
+        * layout-tests/fast/dynamic/014-expected.txt: Added.
+        * layout-tests/fast/dynamic/014.html: Added.
+        * layout-tests/fast/dynamic/015-expected.checksum: Added.
+        * layout-tests/fast/dynamic/015-expected.png: Added.
+        * layout-tests/fast/dynamic/015-expected.txt: Added.
+        * layout-tests/fast/dynamic/015.html: Added.
+
 2005-09-20  Eric Seidel  <eseidel@apple.com>
 
         No review, SVG build fix only.
