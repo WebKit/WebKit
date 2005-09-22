@@ -1,3 +1,19 @@
+2005-09-22  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
+        Need to restore int/long changes to simple_number.h
+        
+        Reviewed by darin and mjs.
+
+        * kjs/simple_number.h: changed enums to indenpendent constants to clarify types
+        (KJS::isNegativeZero): changed to static function - no reason to export
+        (KJS::SimpleNumber::rightShiftSignExtended): new function for clarity
+        (KJS::SimpleNumber::make): specified cast as reinterpret_cast
+        (KJS::SimpleNumber::is): changed to use uintptr_t for portability
+        (KJS::SimpleNumber::value): changed to use uintptr_t and rightShiftSignExtended
+        (KJS::SimpleNumber::fits): inverted tests - probably only a performance win for double
+        (KJS::SimpleNumber::integerFits): ditto
+
 2005-09-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and partly by Darin.

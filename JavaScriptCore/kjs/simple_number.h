@@ -36,11 +36,13 @@ using std::isnan;
 using std::signbit;
 #endif
 
+#define KJS_MIN_MACRO(a, b) ((a) < (b) ? (a) : (b))
+
 namespace KJS {
 
     class ValueImp;
 
-    inline bool isNegativeZero(double num)
+    static inline bool isNegativeZero(double num)
     {
 #if WIN32
         return _fpclass(num) == _FPCLASS_NZ;
@@ -51,20 +53,34 @@ namespace KJS {
     
     class SimpleNumber {
     public:
-	enum { tag = 1, shift = 2, mask = (1 << shift) - 1, sign = 1L << (sizeof(long) * 8 - 1 ), max = (1L << ((sizeof(long) * 8 - 1) - shift)) - 1, min = -max - 1, imax = (1L << ((sizeof(int) * 8 - 1) - shift)) - 1, imin = -imax - 1 };
+        static const int           tagBits   = 2;   // Pointer alignment guarantees that we have the low two bits to play with for type tagging
+        static const unsigned long tag       = 1UL; // 01 is the full tag
+        static const unsigned long tagMask   = (1UL << tagBits) - 1;
+        static const int           valueBits = KJS_MIN_MACRO(sizeof(ValueImp *) * 8 - tagBits, sizeof(long) * 8);
+        static const unsigned long signMask  = 1UL << sizeof(long) * 8 - 1;
+        static const long          maxValue  = (signMask >> tagBits) - 1;
+        static const unsigned long umaxValue = maxValue;
+        static const long          minValue  = -(maxValue + 1);
 
-	static inline bool is(const ValueImp *imp) { return ((long)imp & mask) == tag; }
-	static inline long value(const ValueImp *imp) { return ((long)imp >> shift) | (((long)imp & sign) ? ~max : 0); }
+        static unsigned long rightShiftSignExtended(uintptr_t l, int n)
+        {
+            return (l >> n) | ((l & signMask) ? (~0UL << valueBits) : 0);
+        }
+        
+        static  ValueImp *make(long i)          { return reinterpret_cast<ValueImp *>((i << tagBits) | tag); }
+        static  bool is(const ValueImp *imp)    { return (reinterpret_cast<uintptr_t>(imp) & tagMask) == tag; }
+        static  long value(const ValueImp *imp) { return rightShiftSignExtended(reinterpret_cast<uintptr_t>(imp), tagBits); }
 
-	static inline bool fits(int i) { return i <= imax && i >= imin; }
-	static inline bool fits(unsigned i) { return i <= (unsigned)max; }
-	static inline bool fits(long i) { return i <= max && i >= min; }
-	static inline bool fits(unsigned long i) { return i <= (unsigned)max; }
-        static inline bool fits(long long i) { return i <= max && i >= min; }
-        static inline bool fits(unsigned long long i) { return i <= (unsigned)max; }
-	static inline bool integerFits(double d) { return !(d < min || d > max); }
-	static inline bool fits(double d) { return d >= min && d <= max && d == (double)(long)d && !isNegativeZero(d); }
-	static inline ValueImp *make(long i) { return (ValueImp *)((i << shift) | tag); }
+        static  bool fits(int i)                { return !(i > maxValue || i < minValue); }
+        static  bool fits(long i)               { return !(i > maxValue || i < minValue); }
+        static  bool fits(long long i)          { return !(i > maxValue || i < minValue); }
+        static  bool integerFits(double i)      { return !(i > maxValue || i < minValue); }
+
+        static  bool fits(double d)             { return !(d > maxValue || d < minValue) && d == (double)(long)d && !isNegativeZero(d); }
+
+        static  bool fits(unsigned i)           { return !(i > umaxValue); }
+        static  bool fits(unsigned long i)      { return !(i > umaxValue); }
+        static  bool fits(unsigned long long i) { return !(i > umaxValue); }
     };
 
 }
