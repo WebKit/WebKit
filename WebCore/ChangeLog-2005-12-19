@@ -1,3 +1,13 @@
+2005-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::getDOMDocumentNode): Don't use a static (global)
+        identifier for the string "document" -- instead just create one each time.
+        This eliminates the kjs_fast_malloc assertion on quit and does not create a
+        significant performance regression because this is done at most once per JavaScript
+        window object.
+
 2005-09-21  Vicki Murley  <vicki@apple.com>
 
         Changes by Romain Brestac, reviewed by Darin.
