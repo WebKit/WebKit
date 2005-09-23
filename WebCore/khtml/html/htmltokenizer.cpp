@@ -241,7 +241,6 @@ void HTMLTokenizer::begin()
     buffer = KHTML_ALLOC_QCHAR_VEC( 255 );
     dest = buffer;
     tag = NoTag;
-    pending = NonePending;
     discard = NoneDiscard;
     plaintext = false;
     xmp = false;
@@ -281,63 +280,33 @@ void HTMLTokenizer::processListing(TokenizerString list)
 {
     // This function adds the listing 'list' as
     // preformatted text-tokens to the token-collection
-    while ( !list.isEmpty() )
-    {
+    while (!list.isEmpty()) {
         checkBuffer();
 
-        if (skipLF && ( *list != '\n' ))
-        {
+        if (skipLF && *list != '\n')
             skipLF = false;
-        }
 
-        if (skipLF)
-        {
+        if (skipLF) {
             skipLF = false;
             ++list;
-        }
-        else if (( *list == '\n' ) || ( *list == '\r' ))
-        {
+        } else if (*list == '\n' || *list == '\r') {
             if (discard == LFDiscard)
-            {
                 // Ignore this LF
                 discard = NoneDiscard; // We have discarded 1 LF
-            }
             else
-            {
-                // Process this LF
-                if (pending)
-                    addPending();
-                pending = LFPending;
-            }
+                *dest++ = '\n';
+
             /* Check for MS-DOS CRLF sequence */
             if (*list == '\r')
-            {
                 skipLF = true;
-            }
-            ++list;
-        }
-        else if ( *list == ' ' )
-        {
-            if (pending)
-                addPending();
-            pending = SpacePending;
 
             ++list;
-        }
-        else
-        {
+        } else {
             discard = NoneDiscard;
-            if (pending)
-                addPending();
-
             *dest++ = *list;
             ++list;
         }
-
     }
-
-    if (pending)
-        addPending();
 }
 
 void HTMLTokenizer::parseSpecial(TokenizerString &src)
@@ -674,7 +643,7 @@ void HTMLTokenizer::parseProcessingInstruction(TokenizerString &src)
             // We got a '?>' sequence
             processingInstruction = false;
             ++src;
-            discard=LFDiscard;
+            discard = LFDiscard;
             return; // Finished parsing comment!
         }
         ++src;
@@ -1358,44 +1327,6 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
     return;
 }
 
-void HTMLTokenizer::addPending()
-{
-    if ( select && !script )
-    {
-        *dest++ = ' ';
-    }
-    else if ( textarea || script )
-    {
-        switch(pending) {
-        case LFPending:  *dest++ = '\n'; break;
-        case SpacePending: *dest++ = ' '; break;
-        case NonePending:
-            assert(0);
-        }
-    }
-    else
-    {
-        switch (pending)
-        {
-        case SpacePending:
-            // Insert a breaking space
-            *dest++ = QChar(' ');
-            break;
-
-        case LFPending:
-            *dest = '\n';
-            dest++;
-            break;
-
-        case NonePending:
-            assert(0);
-            break;
-        }
-    }
-    
-    pending = NonePending;
-}
-
 void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
 {
 #ifdef TOKEN_DEBUG
@@ -1530,8 +1461,6 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
                 {
                     // Invalid tag
                     // Add as is
-                    if (pending)
-                        addPending();
                     *dest = '<';
                     dest++;
                     continue;
@@ -1539,17 +1468,6 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             }
             }; // end case
 
-            if ( pending ) {
-                if ( script || (!parser->selectMode() && (!parser->noSpaces() || dest > buffer )))
-                    addPending();
-                // just forget it
-                else
-                    pending = NonePending;
-            }
-
-            if (cc == '/' && discard == AllDiscard)
-                discard = NoneDiscard; // A close tag. No need to discard LF.
-                    
             processToken();
 
             cBufferPos = 0;
@@ -1559,8 +1477,6 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
         else if ( cc == '&' && !src.escaped())
         {
             ++src;
-            if ( pending )
-                addPending();
             parseEntity(src, dest, true);
         }
         else if ( cc == '<' && !src.escaped())
@@ -1569,74 +1485,19 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             ++src;
             startTag = true;
         }
-        else if (( cc == '\n' ) || ( cc == '\r' ))
-        {
-	    if (select && !script)
-            {
-                if (discard == LFDiscard)
-                {
-                    // Ignore this LF
-                    discard = NoneDiscard; // We have discarded 1 LF
-                }
-                else if(discard == AllDiscard)
-                {
-                }
-                else
-                 {
-                     // Process this LF
-                    if (pending == NonePending)
-                         pending = LFPending;
-                }
-            }
-            else {
-                if (discard == LFDiscard || discard == AllDiscard)
-                {
-                    // Ignore this LF
-                    discard = NoneDiscard; // We have discarded 1 LF
-                }
-                else
-                {
-                    // Process this LF
-                    if (pending)
-                        addPending();
-                    pending = LFPending;
-                }
-            }
+        else if (cc == '\n' || cc == '\r') {
+            if (discard == LFDiscard)
+                // Ignore this LF
+                discard = NoneDiscard; // We have discarded 1 LF
+            else
+                // Process this LF
+                *dest++ = '\n';
             
             /* Check for MS-DOS CRLF sequence */
             if (cc == '\r')
-            {
                 skipLF = true;
-            }
             ++src;
-        }
-        else if (cc == ' ')
-        {
-	    if (select && !script) {
-                if(discard == SpaceDiscard)
-                    discard = NoneDiscard;
-                 else if(discard == AllDiscard)
-                 { }
-                 else
-                     pending = SpacePending;
-            
-            }
-            else {
-                if (discard == AllDiscard)
-                    discard = NoneDiscard;
-            
-                if (pending)
-                    addPending();
-                pending = SpacePending;
-            }
-            
-            ++src;
-        }
-        else
-        {
-            if (pending)
-                addPending();
-
+        } else {
             discard = NoneDiscard;
 #if QT_VERSION < 300
             unsigned char row = src->row();
@@ -1817,8 +1678,6 @@ void HTMLTokenizer::finish()
     // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
-    if (pending) // Flush any remaining whitespace.
-        addPending();
     if (!inWrite && !loadingExtScript && !m_executingScript && !onHold && !timerId)
         end(); // this actually causes us to be deleted
 }

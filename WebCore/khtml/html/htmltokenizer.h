@@ -132,7 +132,6 @@ protected:
     void end();
 
     void reset();
-    void addPending();
     void processToken();
     void processListing(TokenizerString list);
 
@@ -193,21 +192,11 @@ protected:
         DoubleQuote
     } tquote;
 
-    enum
-    {
-        NonePending = 0,
-        SpacePending,
-        LFPending,
-    } pending;
-
-    // Discard line breaks immediately after start-tags
-    // Discard spaces after '=' within tags
+    // Discard line breaks immediately after <pre> tags
     enum
     {
         NoneDiscard = 0,
-        SpaceDiscard,
-        LFDiscard,
-        AllDiscard  // discard all spaces, LF's etc until next non white char
+        LFDiscard
     } discard;
 
     // Discard the LF part of CRLF sequence

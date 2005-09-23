@@ -1,3 +1,33 @@
+2005-09-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Maciej.
+        Tested, landed, and tweaked a tiny bit by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5092
+          Random crashes when running the layout tests
+        
+        Fix was to remove the "pending" concept from the tokenizer, which streamlined the
+        code and also fixed one minor bug seen in one of the layout tests where we discarded
+        too much after the <pre>.
+
+        * khtml/html/htmltokenizer.h: Removed the addPending function and the pending
+        field. Also removed SpaceDiscard and AllDiscard since we don't use them any more.
+        We still use LFDiscard to discard the first LF after a <pre>.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::begin): Don't initialize pending.
+        (khtml::HTMLTokenizer::processListing): Tweaked formatting to match guidelines.
+        Removed calls to addPending. Write "\n" right away instead of using LFPending.
+        Write " " right away instead of using SpacePending by removing separate code for space.
+        (khtml::HTMLTokenizer::write): Ditto.
+        (khtml::HTMLTokenizer::finish): Remove the call to addPending we just added a few
+        days ago. This is what was causing the crash.
+
+        * layout-tests/fast/text/whitespace/013-expected.txt: Updated results. Old results
+        incorrectly expected spaces *and* a newline to be discarded after a <pre> tag, which
+        was happening by accident. I tested Firefox and it matches what we do now -- only
+        discards a newline just after a <pre>, not a run of spaces and a subsequent newline.
+
 2005-09-22  Eric Seidel  <eseidel@apple.com>
         Fix by Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>
 
