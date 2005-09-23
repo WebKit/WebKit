@@ -1542,6 +1542,7 @@
 		A85D7A300879EBA9006A9172 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A85D7A8E0879EC64006A9172 /* KWQWMatrix.mm in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */; };
 		A85D7A8F0879EC64006A9172 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
+		A863312F08E3AB25009CFEF4 /* CDFInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A863312E08E3AB24009CFEF4 /* CDFInterface.cpp */; };
 		A8700A4808DD734300CC5A86 /* CDFInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F9FE089701F500BA5114 /* CDFInterface.cpp */; };
 		A898F147088121E90075EFB2 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		A898F148088121ED0075EFB2 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
@@ -2289,7 +2290,14 @@
 		A8C0FFFF089701FC00BA5114 /* QuartzSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.mm */; };
 		A8DC63E908E0DD0A004507F7 /* EcmaInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DC63E808E0DD0A004507F7 /* EcmaInterface.cpp */; };
 		A8DC63EC08E0DD2A004507F7 /* EcmaInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */; };
-		A8EA429508E0BA41004BC396 /* CDFInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA429408E0BA41004BC396 /* CDFInterface.cpp */; };
+		A8EA434508E14EAC004BC396 /* xml_kdomtokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA433D08E14EAB004BC396 /* xml_kdomtokenizer.h */; };
+		A8EA434608E14EAC004BC396 /* xml_kdomtokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA433E08E14EAC004BC396 /* xml_kdomtokenizer.cpp */; };
+		A8EA434708E14EAC004BC396 /* render_kcanvaswrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA433F08E14EAC004BC396 /* render_kcanvaswrapper.h */; };
+		A8EA434808E14EAC004BC396 /* render_kcanvaswrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA434008E14EAC004BC396 /* render_kcanvaswrapper.cpp */; };
+		A8EA434908E14EAC004BC396 /* dom_kdomnodetreewrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA434108E14EAC004BC396 /* dom_kdomnodetreewrapper.h */; };
+		A8EA434A08E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA434208E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp */; };
+		A8EA434B08E14EAC004BC396 /* dom_kdomdocumentwrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA434308E14EAC004BC396 /* dom_kdomdocumentwrapper.h */; };
+		A8EA434C08E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA434408E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.mm in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
 		BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC17988F088D975F006068A5 /* render_theme_mac.mm */; };
@@ -3020,7 +3028,7 @@
 		A81D5A7F08ADF70400136AC1 /* tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tokenizer.h; sourceTree = "<group>"; };
 		A81D5A8108ADF70400136AC1 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		A81D5A8208ADF70400136AC1 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
-		A8212D0708794A2300677359 /* WebCore+SVG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8212D0708794A2300677359 /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A82FC27308C9292E00EFEE23 /* DOMImplementationLSImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationLSImpl.h; sourceTree = "<group>"; };
 		A82FC27408C9292E00EFEE23 /* DOMImplementationLSImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationLSImpl.cpp; sourceTree = "<group>"; };
 		A82FC2F008C9AAE400EFEE23 /* LinkStyleImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkStyleImpl.h; sourceTree = "<group>"; };
@@ -3033,6 +3041,7 @@
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQWMatrix.mm; sourceTree = "<group>"; };
 		A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQWMatrix.h; sourceTree = "<group>"; };
+		A863312E08E3AB24009CFEF4 /* CDFInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDFInterface.cpp; sourceTree = "<group>"; };
 		A8BC0BE608D19F1900379918 /* AttrWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttrWrapper.cpp; sourceTree = "<group>"; };
 		A8BC0BE708D19F1900379918 /* AttrWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttrWrapper.h; sourceTree = "<group>"; };
 		A8BC0BE808D19F1900379918 /* CDATASectionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDATASectionWrapper.cpp; sourceTree = "<group>"; };
@@ -3822,7 +3831,14 @@
 		A8C0FB8E089701F800BA5114 /* KCanvasView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasView.h; sourceTree = "<group>"; };
 		A8DC63E808E0DD0A004507F7 /* EcmaInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EcmaInterface.cpp; path = "../../../../build/WebCore.build/Development/WebCore+SVG.build/DerivedSources/kdom/ecma/EcmaInterface.cpp"; sourceTree = "<group>"; };
 		A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EcmaInterface.cpp; path = "../../../../build/WebCore.build/Development/WebCore+SVG.build/DerivedSources/ksvg2/ecma/EcmaInterface.cpp"; sourceTree = "<group>"; };
-		A8EA429408E0BA41004BC396 /* CDFInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDFInterface.cpp; sourceTree = "<group>"; };
+		A8EA433D08E14EAB004BC396 /* xml_kdomtokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xml_kdomtokenizer.h; sourceTree = "<group>"; };
+		A8EA433E08E14EAC004BC396 /* xml_kdomtokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xml_kdomtokenizer.cpp; sourceTree = "<group>"; };
+		A8EA433F08E14EAC004BC396 /* render_kcanvaswrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = render_kcanvaswrapper.h; sourceTree = "<group>"; };
+		A8EA434008E14EAC004BC396 /* render_kcanvaswrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_kcanvaswrapper.cpp; sourceTree = "<group>"; };
+		A8EA434108E14EAC004BC396 /* dom_kdomnodetreewrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dom_kdomnodetreewrapper.h; sourceTree = "<group>"; };
+		A8EA434208E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_kdomnodetreewrapper.cpp; sourceTree = "<group>"; };
+		A8EA434308E14EAC004BC396 /* dom_kdomdocumentwrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dom_kdomdocumentwrapper.h; sourceTree = "<group>"; };
+		A8EA434408E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_kdomdocumentwrapper.cpp; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; };
 		BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = xsl_stylesheetimpl.h; path = xsl/xsl_stylesheetimpl.h; sourceTree = "<group>"; };
 		BC06F24B06D18A7E004A6FA3 /* xslt_processorimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xslt_processorimpl.cpp; path = xsl/xslt_processorimpl.cpp; sourceTree = "<group>"; };
@@ -4331,7 +4347,7 @@
 			isa = PBXGroup;
 			children = (
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
-				A8212D0708794A2300677359 /* WebCore+SVG.framework */,
+				A8212D0708794A2300677359 /* WebCore.framework */,
 			);
 			name = Products;
 			sourceTree = SOURCE_ROOT;
@@ -5300,6 +5316,14 @@
 				A8C0F6E6089701F100BA5114 /* DrawViewPrivate.h */,
 				A8C0F6E7089701F100BA5114 /* NSSVGImageRep.h */,
 				A8C0F6E8089701F100BA5114 /* NSSVGImageRep.m */,
+				A8EA433D08E14EAB004BC396 /* xml_kdomtokenizer.h */,
+				A8EA433E08E14EAC004BC396 /* xml_kdomtokenizer.cpp */,
+				A8EA433F08E14EAC004BC396 /* render_kcanvaswrapper.h */,
+				A8EA434008E14EAC004BC396 /* render_kcanvaswrapper.cpp */,
+				A8EA434108E14EAC004BC396 /* dom_kdomnodetreewrapper.h */,
+				A8EA434208E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp */,
+				A8EA434308E14EAC004BC396 /* dom_kdomdocumentwrapper.h */,
+				A8EA434408E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp */,
 			);
 			name = "WebCore+SVG";
 			path = "../SVGSupport/WebCore+SVG";
@@ -5393,8 +5417,8 @@
 		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
-				A8EA429408E0BA41004BC396 /* CDFInterface.cpp */,
 				A8C0F7FE089701F300BA5114 /* CDFInterface.h */,
+				A863312E08E3AB24009CFEF4 /* CDFInterface.cpp */,
 				A8C0F7FF089701F300BA5114 /* SVGAElementImpl.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElementImpl.h */,
 				A8C0F801089701F300BA5114 /* SVGAngleImpl.cpp */,
@@ -8142,6 +8166,10 @@
 				A8122F6B08D564B500844FA3 /* SVGViewElementWrapper.h in Headers */,
 				A8122F6D08D564B500844FA3 /* SVGZoomAndPanWrapper.h in Headers */,
 				A8122F6F08D564B500844FA3 /* SVGZoomEventWrapper.h in Headers */,
+				A8EA434508E14EAC004BC396 /* xml_kdomtokenizer.h in Headers */,
+				A8EA434708E14EAC004BC396 /* render_kcanvaswrapper.h in Headers */,
+				A8EA434908E14EAC004BC396 /* dom_kdomnodetreewrapper.h in Headers */,
+				A8EA434B08E14EAC004BC396 /* dom_kdomdocumentwrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8351,7 +8379,7 @@
 			name = "WebCore+SVG";
 			productInstallPath = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 			productName = WebKit;
-			productReference = A8212D0708794A2300677359 /* WebCore+SVG.framework */;
+			productReference = A8212D0708794A2300677359 /* WebCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -9262,12 +9290,12 @@
 			);
 			name = "KDOM EcmaScript.cpp/h";
 			outputPaths = (
-				$DERIVED_FILE_DIR/kdom/ecma/EcmaInterface.cpp,
+				kdom/ecma/EcmaInterface.cpp,
 				$DERIVED_FILE_DIR/kdom/ecma/EcmaInterface.h,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/kdom/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--input kdom/bindings/idl/core/Node.idl \\\n\t--documentation empty ;\n\nln -s \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" kdom/ecma/EcmaInterface.cpp";
+			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/kdom/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--input kdom/bindings/idl/core/Node.idl \\\n\t--documentation empty ;\n\n# Hack until <rdar://problem/4251784> \"DerivedSources (build intermediates) relative filepaths should be possible\" is fixed.\nln -sf \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" kdom/ecma/EcmaInterface.cpp";
 		};
 		A8BC0B0108D1954500379918 /* KSVG EcmaScript.cpp/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9279,12 +9307,12 @@
 			);
 			name = "KSVG EcmaScript.cpp/h";
 			outputPaths = (
-				$DERIVED_FILE_DIR/ksvg2/ecma/EcmaInterface.cpp,
+				ksvg2/ecma/EcmaInterface.cpp,
 				$DERIVED_FILE_DIR/ksvg2/ecma/EcmaInterface.h,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/ksvg2/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--includedir ksvg2/bindings/idl \\\n\t--input ksvg2/bindings/idl/svg/SVGElement.idl \\\n\t--documentation empty \\\n\t--ontop ;\n\nln -s \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" ksvg2/ecma/EcmaInterface.cpp";
+			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/ksvg2/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--includedir ksvg2/bindings/idl \\\n\t--input ksvg2/bindings/idl/svg/SVGElement.idl \\\n\t--documentation empty \\\n\t--ontop ;\n\n# Hack until <rdar://problem/4251784> \"DerivedSources (build intermediates) relative filepaths should be possible\" is fixed.\nln -sf \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" ksvg2/ecma/EcmaInterface.cpp";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -10338,9 +10366,13 @@
 				A8122F6C08D564B500844FA3 /* SVGZoomAndPanWrapper.cpp in Sources */,
 				A8122F6E08D564B500844FA3 /* SVGZoomEventWrapper.cpp in Sources */,
 				A8700A4808DD734300CC5A86 /* CDFInterface.cpp in Sources */,
-				A8EA429508E0BA41004BC396 /* CDFInterface.cpp in Sources */,
 				A8DC63E908E0DD0A004507F7 /* EcmaInterface.cpp in Sources */,
 				A8DC63EC08E0DD2A004507F7 /* EcmaInterface.cpp in Sources */,
+				A8EA434608E14EAC004BC396 /* xml_kdomtokenizer.cpp in Sources */,
+				A8EA434808E14EAC004BC396 /* render_kcanvaswrapper.cpp in Sources */,
+				A8EA434A08E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp in Sources */,
+				A8EA434C08E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp in Sources */,
+				A863312F08E3AB25009CFEF4 /* CDFInterface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10626,7 +10658,7 @@
 					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "WebCore+SVG";
+				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -10687,7 +10719,7 @@
 					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "WebCore+SVG";
+				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -10748,7 +10780,7 @@
 					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "WebCore+SVG";
+				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
 				WARNING_CFLAGS = (
@@ -10808,7 +10840,7 @@
 					"-lxml2-WebCore",
 					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
-				PRODUCT_NAME = "WebCore+SVG";
+				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,

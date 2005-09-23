@@ -92,6 +92,10 @@ using XBL::XBLBindingManager;
 #include "KWQLogging.h"
 #endif
 
+#if SVG_SUPPORT
+#include "dom_kdomdocumentwrapper.h"
+#endif
+
 using namespace DOM;
 using namespace DOM::EventNames;
 using namespace HTMLNames;
@@ -255,6 +259,13 @@ HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument( KHTMLView *v )
 {
     return new HTMLDocumentImpl(this, v);
 }
+
+#if SVG_SUPPORT
+DocumentImpl *DOMImplementationImpl::createKDOMDocument( KHTMLView *v )
+{
+    return new KDOMDocumentWrapperImpl(this, v);
+}
+#endif
 
 DOMImplementationImpl *DOMImplementationImpl::instance()
 {

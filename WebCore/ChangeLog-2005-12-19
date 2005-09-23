@@ -1,3 +1,59 @@
+2005-09-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Added KDOM and KCanvas wrapper objects for the WebCore DOM
+        and WebCore render tree.  This allows using SVG in any
+        WebKit app, including Safari.
+        Also added extensions to QPainter to return a
+        KRenderingDeviceContext object to be passed into KCanvas.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5003
+
+        * WebCore+SVG/dom_kdomdocumentwrapper.cpp: Added.
+        (KDOMDocumentWrapperImpl::renderingDevice):
+        (KDOMDocumentWrapperImpl::KDOMDocumentWrapperImpl):
+        (KDOMDocumentWrapperImpl::~KDOMDocumentWrapperImpl):
+        (DOM::KDOMDocumentWrapperImpl::createTokenizer):
+        (KDOMDocumentWrapperImpl::svgView):
+        * WebCore+SVG/dom_kdomdocumentwrapper.h: Added.
+        * WebCore+SVG/dom_kdomnodetreewrapper.cpp: Added.
+        (DOM::KDOMNodeTreeWrapperImpl::KDOMNodeTreeWrapperImpl):
+        (KDOMNodeTreeWrapperImpl::~KDOMNodeTreeWrapperImpl):
+        (KDOMNodeTreeWrapperImpl::attach):
+        (KDOMNodeTreeWrapperImpl::createRenderer):
+        * WebCore+SVG/dom_kdomnodetreewrapper.h: Added.
+        * WebCore+SVG/render_kcanvaswrapper.cpp: Added.
+        (RenderKCanvasWrapper::RenderKCanvasWrapper):
+        (RenderKCanvasWrapper::~RenderKCanvasWrapper):
+        (RenderKCanvasWrapper::layout):
+        (RenderKCanvasWrapper::paint):
+        (RenderKCanvasWrapper::intrinsicWidth):
+        (RenderKCanvasWrapper::intrinsicHeight):
+        * WebCore+SVG/render_kcanvaswrapper.h: Added.
+        (khtml::RenderKCanvasWrapper::renderName):
+        (khtml::RenderKCanvasWrapper::setCanvas):
+        * WebCore+SVG/xml_kdomtokenizer.cpp: Added.
+        (KDOMTokenizer::KDOMTokenizer):
+        (KDOMTokenizer::~KDOMTokenizer):
+        (KDOMTokenizer::documentWrapper):
+        (KDOMTokenizer::write):
+        (KDOMTokenizer::setOnHold):
+        (KDOMTokenizer::finish):
+        (KDOMTokenizer::isWaitingForScripts):
+        (khtml::newKDOMTokenizer):
+        * WebCore+SVG/xml_kdomtokenizer.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createKDOMDocument):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainterPrivate::QPainterPrivate):
+        (QPainterPrivate::~QPainterPrivate):
+        (QPainter::renderingDeviceContext):
+
 2005-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -41,6 +41,10 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
+#if SVG_SUPPORT
+#import "kcanvas/device/quartz/KRenderingDeviceQuartz.h"
+#endif
+
 // NSColor, NSBezierPath, NSGraphicsContext and WebCoreTextRenderer
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
@@ -55,9 +59,8 @@ struct QPState {
 };
 
 struct QPainterPrivate {
-    QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
-                        hasFocusRingColor(false) { }
-    ~QPainterPrivate() { KWQRelease(textRenderer); KWQRelease(focusRingPath); }
+    QPainterPrivate();
+    ~QPainterPrivate();
     QPState state;
     QPtrStack<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
@@ -67,7 +70,28 @@ struct QPainterPrivate {
     int focusRingOffset;
     bool hasFocusRingColor;
     QColor focusRingColor;
+#if SVG_SUPPORT
+    KRenderingDeviceContextQuartz *renderingDeviceContext;
+#endif
 };
+
+QPainterPrivate::QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
+                        hasFocusRingColor(false)
+#if SVG_SUPPORT
+                        , renderingDeviceContext(0)
+#endif
+{
+
+}
+
+QPainterPrivate::~QPainterPrivate()
+{
+    KWQRelease(textRenderer);
+    KWQRelease(focusRingPath);
+#if SVG_SUPPORT
+    delete renderingDeviceContext;
+#endif
+}
 
 static inline void _fillRectXX(float x, float y, float w, float h, const QColor& col);
 QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _updatingControlTints(false)
@@ -855,6 +879,17 @@ CGContextRef QPainter::currentContext()
     ASSERT(!data->state.paintingDisabled);
     return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 }
+
+#if SVG_SUPPORT
+KRenderingDeviceContext *QPainter::renderingDeviceContext()
+{
+    if (!data->renderingDeviceContext) {
+        data->renderingDeviceContext = new KRenderingDeviceContextQuartz();
+    }
+    data->renderingDeviceContext->setCGContext(currentContext());
+    return data->renderingDeviceContext;
+}
+#endif
 
 void QPainter::beginTransparencyLayer(float opacity)
 {
