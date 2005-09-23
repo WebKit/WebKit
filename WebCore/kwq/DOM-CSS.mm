@@ -169,7 +169,7 @@ using DOM::StyleSheetListImpl;
 
 @implementation DOMStyleSheet (WebCoreInternal)
 
-- (id)_initWithDOMStyleSheetImpl:(StyleSheetImpl *)impl
+- (id)_initWithStyleSheetImpl:(StyleSheetImpl *)impl
 {
     [super _init];
     _internal = DOM_cast<DOMObjectInternal *>(impl);
@@ -188,7 +188,12 @@ using DOM::StyleSheetListImpl;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithDOMStyleSheetImpl:impl] autorelease];
+    Class wrapperClass;
+    if (impl->isCSSStyleSheet())
+        wrapperClass = [DOMCSSStyleSheet class];
+    else
+        wrapperClass = [DOMStyleSheet class];
+    return [[[wrapperClass alloc] _initWithStyleSheetImpl:impl] autorelease];
 }
 
 @end
@@ -262,22 +267,6 @@ using DOM::StyleSheetListImpl;
 
 @implementation DOMCSSStyleSheet
 
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<CSSStyleSheetImpl *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<CSSStyleSheetImpl *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
 - (CSSStyleSheetImpl *)_CSSStyleSheetImpl
 {
     return DOM_cast<CSSStyleSheetImpl *>(_internal);
@@ -312,26 +301,9 @@ using DOM::StyleSheetListImpl;
 
 @implementation DOMCSSStyleSheet (WebCoreInternal)
 
-- (id)_initWithCSSStyleSheetImpl:(CSSStyleSheetImpl *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
 + (DOMCSSStyleSheet *)_CSSStyleSheetWithImpl:(CSSStyleSheetImpl *)impl
 {
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithCSSStyleSheetImpl:impl] autorelease];
+    return (DOMCSSStyleSheet *)[DOMStyleSheet _DOMStyleSheetWithImpl:impl];
 }
 
 @end

@@ -1,3 +1,19 @@
+2005-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4309
+          CSSStyleSheet objects don't get Obj-C DOMCSSStyleSheet wrappers
+
+        * kwq/DOM-CSS.mm:
+        (-[DOMStyleSheet _initWithStyleSheetImpl:]): Changed the name of this method to be consistent
+        with other method names in the DOM wrappers. The old name had an extraneous "DOM" in it.
+        (+[DOMStyleSheet _DOMStyleSheetWithImpl:]): Create a wrapper of an appropriate class
+        that matches the actual style sheet. This is analogous to what +[DOMNode _nodeWithImpl:] does.
+        (+[DOMCSSStyleSheet _CSSStyleSheetWithImpl:]): Call through to the base class. The only difference
+        here is the static type of the parameter, which ensures a compile-time error if you pass the
+        wrong type of pointer.
+
 2005-09-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Maciej.
