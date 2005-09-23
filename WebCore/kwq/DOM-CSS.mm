@@ -33,10 +33,12 @@
 #import "css_valueimpl.h"
 #import "css_value.h"
 #import "dom_string.h"
+#import "dom_xmlimpl.h"
 #import "KWQColor.h"
 #import "shared.h"
 #import "dom_stringimpl.h"
 #import "dom2_viewsimpl.h"
+#import "html_headimpl.h"
 
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
@@ -58,7 +60,10 @@ using DOM::CSSStyleSheetImpl;
 using DOM::CSSValueImpl;
 using DOM::CSSValueListImpl;
 using DOM::DOMString;
+using DOM::HTMLLinkElementImpl;
+using DOM::HTMLStyleElementImpl;
 using DOM::MediaListImpl;
+using DOM::ProcessingInstructionImpl;
 using DOM::RectImpl;
 using DOM::StyleSheetImpl;
 using DOM::StyleSheetListImpl;
@@ -2504,13 +2509,22 @@ void removeWrapperForRGB(QRgb value)
 
 //------------------------------------------------------------------------------------------
 
-
 @implementation DOMObject (DOMLinkStyle)
 
 - (DOMStyleSheet *)sheet
 {
-    ERROR("unimplemented");
-    return nil;
+    StyleSheetImpl *sheet;
+
+    if ([self isKindOfClass:[DOMProcessingInstruction class]])
+        sheet = static_cast<ProcessingInstructionImpl *>([(DOMProcessingInstruction *)self _nodeImpl])->sheet();
+    else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
+        sheet = static_cast<HTMLLinkElementImpl *>([(DOMHTMLLinkElement *)self _nodeImpl])->sheet();
+    else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
+        sheet = static_cast<HTMLStyleElementImpl *>([(DOMHTMLStyleElement *)self _nodeImpl])->sheet();
+    else
+        return nil;
+
+    return [DOMStyleSheet _DOMStyleSheetWithImpl:sheet];
 }
 
 @end
