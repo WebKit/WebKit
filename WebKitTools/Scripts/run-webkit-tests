@@ -91,11 +91,8 @@ my $imageDiffTool = "$productDir/ImageDiff";
 die "can't find executable $dumpToolName (looked in $productDir)\n" if !-x $tool;
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
-if ($testSVGs) {
-    checkSVGFrameworks();
-} else {
-    checkFrameworks();
-}
+checkFrameworks();
+checkWebCoreSVGSupport() if $testSVGs;
 
 my $layoutTestsName = "layout-tests";
 if ($testSVGs) {

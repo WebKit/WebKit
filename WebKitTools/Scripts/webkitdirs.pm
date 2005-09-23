@@ -95,6 +95,7 @@ sub determineConfiguration
 
 sub determineConfigurationProductDir
 {
+    return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
     $configurationProductDir = "$baseProductDir/$configuration";
@@ -179,23 +180,48 @@ sub safariPath
     return $safariPath;
 }
 
+sub builtDylibPathForName
+{
+    my $framework = shift;
+    determineConfigurationProductDir();
+    return "$configurationProductDir/$framework.framework/Versions/A/$framework";
+}
+
 # Check to see that all the frameworks are built.
 sub checkFrameworks
 {
-    determineConfigurationProductDir();
     for my $framework ("JavaScriptCore", "WebCore", "WebKit") {
-        my $path = "$configurationProductDir/$framework.framework/Versions/A/$framework";
+        my $path = builtDylibPathForName($framework);
         die "Can't find built framework at \"$path\".\n" unless -x $path;
     }
 }
 
-sub checkSVGFrameworks
+sub isRTTIEnabled
 {
-    determineConfigurationProductDir();
-    for my $framework ("JavaScriptCore", "WebCore+SVG") {
-        my $path = "$configurationProductDir/$framework.framework/Versions/A/$framework";
-        die "Can't find built framework at \"$path\".\n" unless -x $path;
-    }
+    my $path = shift;
+    my $frameworkSymbols = `nm $path`;
+    my $isRTTIEnabled = ($frameworkSymbols =~ /__ZTI/);
+    return $isRTTIEnabled;
+}
+
+sub removeLibraryDependingOnRTTI
+{
+    my $frameworkName = shift;
+    my $shouldHaveRTTI = shift;
+    
+    my $path = builtDylibPathForName($frameworkName);
+    return unless -x $path;
+    
+    my $hasRTTI = isRTTIEnabled($path);
+    system "rm -f $path" if ($shouldHaveRTTI xor $hasRTTI);
+}
+
+sub checkWebCoreSVGSupport
+{
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $hasSVGSupport = isRTTIEnabled($path);
+    die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n" unless $hasSVGSupport;
 }
 
 sub checkRequiredSystemConfig

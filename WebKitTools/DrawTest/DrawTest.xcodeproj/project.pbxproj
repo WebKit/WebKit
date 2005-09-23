@@ -23,7 +23,7 @@
 		A8C006F3089865E900BA5114 /* DrawTestDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006ED089865E900BA5114 /* DrawTestDocument.nib */; };
 		A8C006F4089865E900BA5114 /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006EF089865E900BA5114 /* Inspector.nib */; };
 		A8C006F5089865E900BA5114 /* TestViewer.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006F1089865E900BA5114 /* TestViewer.nib */; };
-		A8C006FA0898665200BA5114 /* WebCore+SVG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C006F90898665200BA5114 /* WebCore+SVG.framework */; };
+		A8C006FA0898665200BA5114 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C006F90898665200BA5114 /* WebCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -85,7 +85,7 @@
 		A8C006EE089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/DrawTestDocument.nib; sourceTree = "<group>"; };
 		A8C006F0089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		A8C006F2089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TestViewer.nib; sourceTree = "<group>"; };
-		A8C006F90898665200BA5114 /* WebCore+SVG.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8C006F90898665200BA5114 /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +94,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				A8C006FA0898665200BA5114 /* WebCore+SVG.framework in Frameworks */,
+				A8C006FA0898665200BA5114 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A8C006F90898665200BA5114 /* WebCore+SVG.framework */,
+				A8C006F90898665200BA5114 /* WebCore.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -348,7 +348,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../build/Development\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -371,7 +370,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../build/Development\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -391,7 +389,6 @@
 		A8C006770898624E00BA5114 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../build/Development\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = DrawTest_Prefix.pch;

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		8DD76F9A0486AA7600D96B5E /* DumpKCanvasTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpKCanvasTree.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
-		A810E4BC08A4462800333D98 /* WebCore+SVG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A810E4BB08A4462800333D98 /* WebCore+SVG.framework */; };
+		A810E4BC08A4462800333D98 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A810E4BB08A4462800333D98 /* WebCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -52,7 +52,7 @@
 		08FB7796FE84155DC02AAC07 /* DumpKCanvasTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpKCanvasTree.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8DD76FA10486AA7600D96B5E /* DumpKCanvasTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpKCanvasTree; sourceTree = BUILT_PRODUCTS_DIR; };
-		A810E4BB08A4462800333D98 /* WebCore+SVG.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A810E4BB08A4462800333D98 /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				A810E4BC08A4462800333D98 /* WebCore+SVG.framework in Frameworks */,
+				A810E4BC08A4462800333D98 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,7 +89,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				A810E4BB08A4462800333D98 /* WebCore+SVG.framework */,
+				A810E4BB08A4462800333D98 /* WebCore.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";

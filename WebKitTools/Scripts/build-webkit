@@ -30,8 +30,12 @@
 
 use strict;
 use FindBin;
+use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
+
+my $svgSupport = 0;
+GetOptions('svg' => \$svgSupport);
 
 checkRequiredSystemConfig();
 setConfiguration();
@@ -42,11 +46,17 @@ my @options = XcodeOptions();
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
 my @otherDirs = ("WebKitLibraries");
+my $checkoutScript = "WebKitTools/checkout";
+if ($svgSupport) {
+    $checkoutScript .= " --svg";
+    push(@otherDirs, "SVGSupport");
+}
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
-        die "No $dir directory found. Can't build\n";
+        die "Error: No $dir directory found. Please run \"$checkoutScript\" first.\n";
     }
 }
+
 
 # Copy library and header from WebKitLibraries to a findable place in the product directory.
 my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
@@ -64,22 +74,36 @@ if (!-e $header || -M $header > -M $srcHeader) {
     system "ditto", $srcHeader, $header;
 }
 
+# Force re-link of existing libraries if different than expected
+removeLibraryDependingOnRTTI("JavaScriptCore", $svgSupport);
+removeLibraryDependingOnRTTI("WebCore", $svgSupport);
+
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
     my $result;
-    if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", @options, "-target", "All";
+    if ($svgSupport && ($dir eq "JavaScriptCore" || $dir eq "WebCore")) {
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "$dir+SVG";
     } else {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options;
     }
     exit $result if $result;
+    if ($dir eq "JavaScriptCore") {
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "testkjs";
+        exit $result if $result;
+    }
     chdir ".." or die;
 }
 
 # Write out congratulations message.
 print "\n";
 print "===========================================================\n";
-print " Web Kit is now built. To run Safari with this newly-built\n";
-print " code, use the run-safari script.\n";
+print " WebKit is now built. To run Safari with this newly-built\n";
+print " code, use the \"run-safari\" script.\n";
+if ($svgSupport) {
+    print "\n NOTE: WebKit has been built with SVG support enabled.\n";
+    print " Safari will have basic SVG viewing capatibilies.\n";
+    print " Additional SVG testing is possible using DrawTest:\n";
+    print " run \"build-drawtest\" followed by \"run-drawtest\"\n";
+}
 print "===========================================================\n";

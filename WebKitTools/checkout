@@ -29,6 +29,10 @@
 # First time check-out script for Web Kit Open Source Project.
 
 use strict;
+use Getopt::Long;
+
+my $includeSVG = 0;
+GetOptions('svg' => \$includeSVG);
 
 # Check that we're in the right directory.
 if (! -d "WebKitTools") {
@@ -48,12 +52,29 @@ close ROOT;
 
 # Check out all the sources.
 print "CVS root is $root\n";
-print "Checking out WebKitTools (again), JavaScriptCore, WebCore, WebKitLibraries, and WebKit\n";
-open CVS, "cvs -d '$root' co -P WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit |" or die;
+print "Checking out WebKitTools (again), JavaScriptCore, WebCore, WebKitLibraries";
+if ($includeSVG) {
+    print ", WebKit and SVGSupport\n";
+} else {
+    print " and WebKit\n";
+}
+my $directories = "WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit";
+$directories .= " SVGSupport" if $includeSVG;
+open CVS, "cvs -d '$root' co -P $directories |" or die;
 while (<CVS>) {
     print;
 }
 close CVS;
+
+if ($includeSVG) {
+    # Make the necessary symlinks
+    print "\nCreating symlinks (kdom, kcanvas, ksvg2, WebCore+SVG, svg-tests) from WebCore into SVGSupport\n";
+    symlink("../SVGSupport/kdom", "WebCore/kdom");
+    symlink("../SVGSupport/kcanvas", "WebCore/kcanvas");
+    symlink("../SVGSupport/ksvg2", "WebCore/ksvg2");
+    symlink("../SVGSupport/WebCore+SVG", "WebCore/WebCore+SVG");
+    symlink("../SVGSupport/layout-tests", "WebCore/svg-tests");
+}
 
 # Ready to build.
 print "\n";

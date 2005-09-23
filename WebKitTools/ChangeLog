@@ -1,3 +1,24 @@
+2005-09-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Update tools for WebCore+SVG -> WebCore rename.
+        Also fold several SVG specific tools into their original
+        WebCore counterparts.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5003
+
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj:
+        * DumpKCanvasTree/DumpKCanvasTree.xcodeproj/project.pbxproj:
+        * Scripts/build-drawtest:
+        * Scripts/build-dumpkcanvastree:
+        * Scripts/build-webcore-svg: Removed.
+        * Scripts/build-webkit: added --svg option
+        * Scripts/run-drawtest:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm: various additions.
+        * checkout: added --svg option
+        * checkout-svg: Removed.
+
 2005-09-19  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

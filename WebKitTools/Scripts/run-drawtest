@@ -36,11 +36,12 @@ use webkitdirs;
 setConfiguration();
 my $productDir = productDir();
 
-# Check to see that all the frameworks are built.
-checkSVGFrameworks();
+# Check to see that all the frameworks are built (w/ SVG support).
+checkFrameworks();
+checkWebCoreSVGSupport();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
-print "Start DrawTest with DYLD_FRAMEWORK_PATH set to point to built WebCore+SVG in $productDir.\n";
+print "Start DrawTest with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 my $drawtestPath = "$productDir/DrawTest.app/Contents/MacOS/DrawTest";
 exec $drawtestPath or die;
