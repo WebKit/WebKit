@@ -277,8 +277,8 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 #define FE_QUARTZ_SETUP_INPUT(name) \
     CIImage *inputImage = quartzFilter->inputImage(this); \
     FE_QUARTZ_CHECK_INPUT(inputImage) \
-	CIFilter *filter = [CIFilter filterWithName:name]; \
 	KWQ_BLOCK_EXCEPTIONS \
+	CIFilter *filter = [CIFilter filterWithName:name]; \
 	[filter setDefaults]; \
 	[filter setValue:inputImage forKey:@"inputImage"];
 
@@ -290,8 +290,9 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 
 #define FE_QUARTZ_OUTPUT_RETURN \
 	quartzFilter->setOutputImage(this, [filter valueForKey:@"outputImage"]); \
+	return filter; \
 	KWQ_UNBLOCK_EXCEPTIONS \
-	return filter;
+	return nil;
 
 #define FE_QUARTZ_CROP_TO_RECT(rect) \
 { \

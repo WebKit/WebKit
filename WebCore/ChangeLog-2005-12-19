@@ -1,4 +1,12 @@
 2005-09-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        Deployment build fix.
+
+2005-09-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.
 
