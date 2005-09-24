@@ -1,5 +1,15 @@
 2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5100
+          -[WebTextRenderer _ATSU_drawRun:...] does not check view flippedness
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):
+        Set up a the CGContext with a matrix that flips the text if the view is not flipped.
+
+2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed, tweaked a tiny bit, and landed by Darin.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4940
