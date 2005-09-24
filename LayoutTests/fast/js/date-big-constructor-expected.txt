@@ -1,20 +1,4 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x72
-        RenderText {TEXT} at (0,0) size 766x72
-          text run at (0,0) width 724: "This test case checks that months greater than 11 are handled correctly when passed to the Date constructor and the"
-          text run at (0,18) width 131: "Date.UTC function. "
-          text run at (131,18) width 622: "The ECMA 262 specification says that months > 11 should be treated as month % 12 and the year "
-          text run at (753,18) width 13: "as"
-          text run at (0,36) width 160: "year + floor(month / 12). "
-          text run at (160,36) width 338: "The expected output on success is \"Success!\" below. "
-          text run at (498,36) width 191: "On failure a list of differences "
-          text run at (689,36) width 53: "between"
-          text run at (0,54) width 265: "expected and actual output will be shown."
-      RenderBlock {DIV} at (0,88) size 784x18
-        RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {TEXT} at (0,0) size 55x18
-            text run at (0,0) width 55: "Success!"
+This test case checks that months greater than 11 are handled correctly when passed to the Date constructor and the Date.UTC function. The ECMA 262 specification says that months > 11 should be treated as month % 12 and the year as year + floor(month / 12). The expected output on success is "Success!" below. On failure a list of differences between expected and actual output will be shown.
+
+Success!
+

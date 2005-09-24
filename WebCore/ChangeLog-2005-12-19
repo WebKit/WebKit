@@ -1,3 +1,32 @@
+2005-09-24  Darin Adler  <darin@apple.com>
+
+        - fixed a few layout test results
+
+        * layout-tests/fast/js/date-big-constructor.html: Added code to make this test dump as text.
+        * layout-tests/fast/js/date-big-constructor-expected.txt: Updated.
+
+        * layout-tests/fast/parser/script-tag-with-trailing-slash.html: Fixed code that said
+        window.dumpAsText() instead of layoutTestController.dumpAsText() so this test would dump as text.
+        * layout-tests/fast/parser/script-tag-with-trailing-slash-expected.txt: Updated.
+
+        * layout-tests/fast/dom/replaceChild-expected.checksum: Added.
+        * layout-tests/fast/dom/replaceChild-expected.png: Added.
+        * layout-tests/fast/encoding/utf-16-no-bom-expected.checksum: Added.
+        * layout-tests/fast/encoding/utf-16-no-bom-expected.png: Added.
+        * layout-tests/fast/table/overflowHidden-expected.checksum: Added.
+        * layout-tests/fast/table/overflowHidden-expected.png: Added.
+
+2005-09-24  Darin Adler  <darin@apple.com>
+
+        - updated pixel test results for a few tests with results that recently changed
+
+        * layout-tests/fast/forms/006-expected.checksum:
+        * layout-tests/fast/forms/006-expected.png:
+        * layout-tests/fast/forms/007-expected.checksum:
+        * layout-tests/fast/forms/007-expected.png:
+        * layout-tests/fast/text/whitespace/013-expected.checksum:
+        * layout-tests/fast/text/whitespace/013-expected.png:
+
 2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Dave.
@@ -34,15 +63,6 @@
         * kwq/KWQPainter.mm:
         (QPainter::drawText): Ditto.
         (QPainter::drawHighlightForText): Ditto.
-
-        - updated pixel test results for unrelated tests with results that recently changed
-
-        * layout-tests/fast/forms/006-expected.checksum:
-        * layout-tests/fast/forms/006-expected.png:
-        * layout-tests/fast/forms/007-expected.checksum:
-        * layout-tests/fast/forms/007-expected.png:
-        * layout-tests/fast/text/whitespace/013-expected.checksum:
-        * layout-tests/fast/text/whitespace/013-expected.png:
 
 2005-09-24  Justin Garcia  <justin.garcia@apple.com>
 
