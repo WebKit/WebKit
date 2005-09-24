@@ -1,0 +1,45 @@
+<body>
+<p>
+This test checks whether various forms of typeof expression are
+allowed. It should printf number 12 times and unknown 6 times on
+separate lines, and nothing else (besides this paragraph). In
+particular it should not say FAIL.
+</p>
+<hr>
+<pre id="console">
+</pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(s)
+{
+    document.getElementById('console').innerHTML += s + '<br>';
+}
+
+var x = 0;
+var y = 0;
+
+try { eval ('log(typeof x);'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof window.x);'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof window["x"]);'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (x));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (window.x));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (window["x"]));'); } catch (e) { log("FAIL"); }
+try { eval ('log((y, typeof x));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof ((x)));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof ((window.x)));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof ((window["x"])));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (y, x));'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (true ? x : y));'); } catch (e) { log("FAIL"); }
+
+try { eval ('log(typeof nonexistent)'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof window.nonexistent)'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof window["nonexistent"])'); } catch (e) { log("FAIL");}
+try { eval ('log(typeof (nonexistent))'); } catch (e) { log("FAIL");}
+try { eval ('log(typeof (window.nonexistent))'); } catch (e) { log("FAIL"); }
+try { eval ('log(typeof (window["nonexistent"]))'); } catch (e) { log("FAIL"); }
+
+</script>
+
+</body>

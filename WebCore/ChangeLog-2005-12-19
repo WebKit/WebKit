@@ -1,3 +1,16 @@
+2005-09-24  Maciej Stachowiak  <mjs@apple.com>
+
+        - some JavaScript syntax test cases
+
+        * layout-tests/fast/js/delete-syntax-expected.txt: Added.
+        * layout-tests/fast/js/delete-syntax.html: Added.
+        * layout-tests/fast/js/postfix-syntax-expected.txt: Added.
+        * layout-tests/fast/js/postfix-syntax.html: Added.
+        * layout-tests/fast/js/prefix-syntax-expected.txt: Added.
+        * layout-tests/fast/js/prefix-syntax.html: Added.
+        * layout-tests/fast/js/typeof-syntax-expected.txt: Added.
+        * layout-tests/fast/js/typeof-syntax.html: Added.
+
 2005-09-24  Duncan Wilcox  <duncan@mclink.it>
 
         - patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4963>

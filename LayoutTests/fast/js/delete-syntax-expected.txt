@@ -1,0 +1,24 @@
+This test checks whether various forms of delete expression are allowed. It should print the numbers 1-10 on separate lines, and nothing else (besides this paragraph).
+
+
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+

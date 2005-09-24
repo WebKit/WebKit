@@ -1,0 +1,21 @@
+This test checks whether various forms of typeof expression are allowed. It should printf number 12 times and unknown 6 times on separate lines, and nothing else (besides this paragraph). In particular it should not say FAIL.
+
+number
+number
+number
+number
+number
+number
+number
+number
+number
+number
+number
+number
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+
