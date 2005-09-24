@@ -1,3 +1,12 @@
+2005-09-23  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed and landed by Darin.
+
+        - a Windows-specific file
+
+        * os-win32/stdint.h: Added. We plan to remove dependency on the <stdint.h> types,
+        and if we do so, we will remove this file.
+
 2005-09-22  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
