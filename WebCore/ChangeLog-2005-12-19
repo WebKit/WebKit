@@ -1,5 +1,11 @@
 2005-09-24  Darin Adler  <darin@apple.com>
 
+        - added Mitz's test for flipped text rendering (using dragged links)
+
+        * manual-tests/flipped-text-rendering.html: Added.
+
+2005-09-24  Darin Adler  <darin@apple.com>
+
         - added tests and updated results for WebKit ATSU text measurement change
 
         * layout-tests/fast/text/cg-vs-atsui.html: Added.
