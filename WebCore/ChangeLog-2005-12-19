@@ -1,3 +1,17 @@
+2005-09-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5027
+          Decoder doesn't auto-detect XML encoded as UTF-16 if BOM is not present
+
+        Test cases added:
+        * layout-tests/fast/encoding/utf-16-no-bom.xml: Added.
+        * layout-tests/fast/encoding/utf-16-no-bom-expected.txt: Added.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Auto-detect an XML header with 16-bit characters
+        (big or little endian) and decide encoding based on that.
+
 2005-09-23  Eric Seidel  <eseidel@apple.com>
 
         No review, build fix only.

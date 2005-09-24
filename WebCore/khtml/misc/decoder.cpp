@@ -526,6 +526,14 @@ QString Decoder::decode(const char *data, int len)
                         }
                         setEncoding("UTF-8", EncodingFromXMLHeader);
                         goto found;
+                    } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
+                        // UTF-16 without BOM
+#if APPLE_CHANGES
+                        setEncoding(((ptr - buffer.latin1()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
+#else
+                        setEncoding(((ptr - buffer.data()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
+#endif
+                        goto found;
                     }
 
                     if(*ptr == '/') ptr++, end=true;
