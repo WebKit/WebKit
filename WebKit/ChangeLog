@@ -1,3 +1,17 @@
+2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Dave.
+        Landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4862
+          Incorrect layout of bidi overrides
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (addDirectionalOverride): Renamed, and made it work in both directions.
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:geometry:]): Updated to call addDirectionalOverride.
+        (-[WebTextRenderer _ATSU_drawRun:style:geometry:]): More of the same.
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]): Ditto.
+
 2005-09-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Tweaked, reviewed, and landed by Darin.

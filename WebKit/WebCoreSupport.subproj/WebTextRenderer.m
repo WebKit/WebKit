@@ -54,6 +54,7 @@
 #define ZERO_WIDTH_SPACE 0x200B
 #define POP_DIRECTIONAL_FORMATTING 0x202C
 #define LEFT_TO_RIGHT_OVERRIDE 0x202D
+#define RIGHT_TO_LEFT_OVERRIDE 0x202E
 
 // MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
 // use to represent a single Unicode code point.
@@ -1546,7 +1547,7 @@ static const char *joiningNames[] = {
 }
 
 // Be sure to free the run.characters allocated by this function.
-static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
+static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, BOOL rtl)
 {
     WebCoreTextRun swappedRun;
     
@@ -1555,7 +1556,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     swappedRun.from = (run->from == -1 ? 0 : run->from) + 1;
     swappedRun.to = (run->to == -1 ? (int)run->length - 1 : run->to + 1);
     swappedRun.length = run->length+2;
-    swappedCharacters[swappedRun.from - 1] = LEFT_TO_RIGHT_OVERRIDE;
+    swappedCharacters[swappedRun.from - 1] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
     swappedCharacters[swappedRun.to] = POP_DIRECTIONAL_FORMATTING;
     swappedRun.characters = swappedCharacters;
 
@@ -1596,8 +1597,8 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     if (style->backgroundColor == nil)
         return;
     
-    if (style->visuallyOrdered) {
-        swappedRun = reverseCharactersInRun(run);
+    if (style->directionalOverride) {
+        swappedRun = addDirectionalOverride(run, style->rtl);
         aRun = &swappedRun;
     } else if (style->rtl && !ATSUMirrors) {
         swappedRun = applyMirroringToRun(run);
@@ -1641,7 +1642,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
 
     float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
-    if (style->rtl || style->visuallyOrdered){
+    if (style->rtl || style->directionalOverride){
         WebCoreTextRun completeRun = *aRun;
         completeRun.from = 0;
         completeRun.to = aRun->length;
@@ -1654,7 +1655,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
 
-    if (style->visuallyOrdered || (style->rtl && !ATSUMirrors))
+    if (style->directionalOverride || (style->rtl && !ATSUMirrors))
         free ((void *)swappedRun.characters);
 }
 
@@ -1671,8 +1672,8 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
-    if (style->visuallyOrdered) {
-        swappedRun = reverseCharactersInRun(run);
+    if (style->directionalOverride) {
+        swappedRun = addDirectionalOverride(run, style->rtl);
         aRun = &swappedRun;
     } else if (style->rtl && !ATSUMirrors) {
         swappedRun = applyMirroringToRun(run);
@@ -1710,7 +1711,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
     
-    if (style->visuallyOrdered || (style->rtl && !ATSUMirrors))
+    if (style->directionalOverride || (style->rtl && !ATSUMirrors))
         free ((void *)swappedRun.characters);
 }
 
@@ -1728,9 +1729,9 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
-    // Enclose in LRO-PDF to force ATSU to render visually.
-    if (style->visuallyOrdered) {
-        swappedRun = reverseCharactersInRun(run);
+    // Enclose in LRO/RLO - PDF to force ATSU to render visually.
+    if (style->directionalOverride) {
+        swappedRun = addDirectionalOverride(run, style->rtl);
         aRun = &swappedRun;
     } else if (style->rtl && !ATSUMirrors) {
         swappedRun = applyMirroringToRun(run);
@@ -1753,7 +1754,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
        
     ATSUDisposeTextLayout(layout);
     
-    if (style->visuallyOrdered || (style->rtl && !ATSUMirrors)) {
+    if (style->directionalOverride || (style->rtl && !ATSUMirrors)) {
         free ((void *)swappedRun.characters);
     }
 
