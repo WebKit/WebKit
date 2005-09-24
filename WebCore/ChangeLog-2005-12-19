@@ -1,3 +1,12 @@
+2005-09-23  Eric Seidel  <eseidel@apple.com>
+        Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
+
+        Reviewed by mjs.
+
+        * WebCore.xcodeproj/project.pbxproj:
+	Build fix:  EcmaInterface.cpp paths.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5111
+
 2005-09-23  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and landed by Darin.
