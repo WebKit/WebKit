@@ -49,7 +49,12 @@ static bool automatic();
 
 using namespace KJS;
 
+static bool makeAssignNode(Node*& result, Node *loc, Operator op, Node *expr);
+static bool makePrefixNode(Node*& result, Node *expr, Operator op);
+static bool makePostfixNode(Node*& result, Node *expr, Operator op);
 static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
+static Node *makeTypeOfNode(Node *expr);
+static Node *makeDeleteNode(Node *expr);
 
 %}
 
@@ -165,7 +170,6 @@ static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
 %type <elm>   ElementList
 %type <plist> PropertyNameAndValueList
 %type <pnode> PropertyName
-%type <ident> ParenthesizedIdent
 
 %%
 
@@ -184,17 +188,12 @@ Literal:
                                      $$ = new RegExpNode(UString('=')+l->pattern,l->flags);}
 ;
 
-ParenthesizedIdent:
-    IDENT
-  | '(' ParenthesizedIdent ')' { $$ = $2; }
-;
-
 PrimaryExpr:
     THIS                           { $$ = new ThisNode(); }
   | Literal
   | ArrayLiteral
-  | ParenthesizedIdent             { $$ = new ResolveNode(*$1); }
-  | '(' Expr ')'                   { $$ = new GroupNode($2); }
+  | IDENT                          { $$ = new ResolveNode(*$1); }
+  | '(' Expr ')'                   { if ($2->isResolveNode()) $$ = $2; else $$ = new GroupNode($2); }
   | '{' '}'                        { $$ = new ObjectLiteralNode(); }
   | '{' PropertyNameAndValueList '}'   { $$ = new ObjectLiteralNode($2); }
 ;
@@ -270,19 +269,19 @@ LeftHandSideExpr:
 
 PostfixExpr:    /* TODO: no line terminator here */
     LeftHandSideExpr
-  | LeftHandSideExpr PLUSPLUS      { $$ = new PostfixNode($1, OpPlusPlus); }
-  | LeftHandSideExpr MINUSMINUS    { $$ = new PostfixNode($1, OpMinusMinus); }
+  | LeftHandSideExpr PLUSPLUS      { if (!makePostfixNode($$, $1, OpPlusPlus)) YYABORT; }
+  | LeftHandSideExpr MINUSMINUS    { if (!makePostfixNode($$, $1, OpMinusMinus)) YYABORT; }
 ;
 
 UnaryExpr:
     PostfixExpr
-  | DELETE UnaryExpr               { $$ = new DeleteNode($2); }
+  | DELETE UnaryExpr               { $$ = makeDeleteNode($2); }
   | VOID UnaryExpr                 { $$ = new VoidNode($2); }
-  | TYPEOF UnaryExpr               { $$ = new TypeOfNode($2); }
-  | PLUSPLUS UnaryExpr             { $$ = new PrefixNode(OpPlusPlus, $2); }
-  | AUTOPLUSPLUS UnaryExpr         { $$ = new PrefixNode(OpPlusPlus, $2); }
-  | MINUSMINUS UnaryExpr           { $$ = new PrefixNode(OpMinusMinus, $2); }
-  | AUTOMINUSMINUS UnaryExpr       { $$ = new PrefixNode(OpMinusMinus, $2); }
+  | TYPEOF UnaryExpr               { $$ = makeTypeOfNode($2); }
+  | PLUSPLUS UnaryExpr             { if (!makePrefixNode($$, $2, OpPlusPlus)) YYABORT; }
+  | AUTOPLUSPLUS UnaryExpr         { if (!makePrefixNode($$, $2, OpPlusPlus)) YYABORT; }
+  | MINUSMINUS UnaryExpr           { if (!makePrefixNode($$, $2, OpMinusMinus)) YYABORT; }
+  | AUTOMINUSMINUS UnaryExpr       { if (!makePrefixNode($$, $2, OpMinusMinus)) YYABORT; }
   | '+' UnaryExpr                  { $$ = new UnaryPlusNode($2); }
   | '-' UnaryExpr                  { $$ = new NegateNode($2); }
   | '~' UnaryExpr                  { $$ = new BitwiseNotNode($2); }
@@ -369,26 +368,7 @@ ConditionalExpr:
 AssignmentExpr:
     ConditionalExpr
   | LeftHandSideExpr AssignmentOperator AssignmentExpr
-                           { 
-                               Node *n = $1;
-                               bool paren = n->isGroupNode();
-                               if (paren)
-                                   n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
-
-                               if (!n->isLocation())
-                                   YYABORT; 
-                               else if (n->isResolveNode()) {
-                                   ResolveNode *resolve = static_cast<ResolveNode *>(n);
-                                   $$ = new AssignResolveNode(resolve->identifier(), $2, $3);
-                               } else if (n->isBracketAccessorNode()) {
-                                   BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
-                                   $$ = new AssignBracketNode(bracket->base(), bracket->subscript(), $2, $3);
-                               } else {
-                                   assert(n->isDotAccessorNode());
-                                   DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
-                                   $$ = new AssignDotNode(dot->base(), dot->identifier(), $2, $3);
-                               }
-                           }
+                           { if (!makeAssignNode($$, $1, $2, $3)) YYABORT; }
 ;
 
 AssignmentOperator:
@@ -519,8 +499,18 @@ IterationStatement:
             Statement              { $$ = new ForNode($4,$6,$8,$10);
 	                             DBG($$,@1,@9); }
   | FOR '(' LeftHandSideExpr IN Expr ')'
-            Statement              { $$ = new ForInNode($3, $5, $7);
-	                             DBG($$,@1,@6); }
+            Statement              { 
+                                     Node *n = $3;
+                                     bool paren = n->isGroupNode();
+                                     if (paren)
+                                         n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+                                     
+                                     if (!n->isLocation())
+                                         YYABORT;
+
+                                     $$ = new ForInNode(n, $5, $7);
+	                             DBG($$,@1,@6); 
+                                   }
   | FOR '(' VAR IDENT IN Expr ')'
             Statement              { $$ = new ForInNode(*$4,0,$6,$8);
 	                             DBG($$,@1,@7); }
@@ -685,6 +675,81 @@ SourceElement:
 
 %%
 
+static bool makeAssignNode(Node*& result, Node *loc, Operator op, Node *expr)
+{ 
+    Node *n = loc;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+
+    if (!n->isLocation())
+        return false;
+
+    if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        result = new AssignResolveNode(resolve->identifier(), op, expr);
+    } else if (n->isBracketAccessorNode()) {
+        BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+        result = new AssignBracketNode(bracket->base(), bracket->subscript(), op, expr);
+    } else {
+        assert(n->isDotAccessorNode());
+        DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+        result = new AssignDotNode(dot->base(), dot->identifier(), op, expr);
+    }
+
+    return true;
+}
+
+static bool makePrefixNode(Node*& result, Node *expr, Operator op)
+{ 
+    Node *n = expr;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+
+    if (!n->isLocation())
+        return false;
+    
+    if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        result = new PrefixResolveNode(resolve->identifier(), op);
+    } else if (n->isBracketAccessorNode()) {
+        BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+        result = new PrefixBracketNode(bracket->base(), bracket->subscript(), op);
+    } else {
+        assert(n->isDotAccessorNode());
+        DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+        result = new PrefixDotNode(dot->base(), dot->identifier(), op);
+    }
+
+    return true;
+}
+
+static bool makePostfixNode(Node*& result, Node *expr, Operator op)
+{ 
+    Node *n = expr;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+
+    if (!n->isLocation())
+        return false;
+    
+    if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        result = new PostfixResolveNode(resolve->identifier(), op);
+    } else if (n->isBracketAccessorNode()) {
+        BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+        result = new PostfixBracketNode(bracket->base(), bracket->subscript(), op);
+    } else {
+        assert(n->isDotAccessorNode());
+        DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+        result = new PostfixDotNode(dot->base(), dot->identifier(), op);
+    }
+
+    return true;
+}
+
 static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args)
 {
     Node *n = func;
@@ -710,6 +775,42 @@ static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args)
             return new FunctionCallParenDotNode(dot->base(), dot->identifier(), args);
         else
             return new FunctionCallDotNode(dot->base(), dot->identifier(), args);
+    }
+}
+
+static Node *makeTypeOfNode(Node *expr)
+{
+    Node *n = expr;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+
+    if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        return new TypeOfResolveNode(resolve->identifier());
+    } else
+        return new TypeOfValueNode(n);
+}
+
+static Node *makeDeleteNode(Node *expr)
+{
+    Node *n = expr;
+    bool paren = n->isGroupNode();
+    if (paren)
+        n = static_cast<GroupNode *>(n)->nodeInsideAllParens();
+    
+    if (!n->isLocation())
+        return new DeleteValueNode(expr);
+    else if (n->isResolveNode()) {
+        ResolveNode *resolve = static_cast<ResolveNode *>(n);
+        return new DeleteResolveNode(resolve->identifier());
+    } else if (n->isBracketAccessorNode()) {
+        BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
+        return new DeleteBracketNode(bracket->base(), bracket->subscript());
+    } else {
+        assert(n->isDotAccessorNode());
+        DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
+        return new DeleteDotNode(dot->base(), dot->identifier());
     }
 }
 

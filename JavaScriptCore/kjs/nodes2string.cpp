@@ -228,18 +228,51 @@ void FunctionCallParenDotNode::streamTo(SourceStream &s) const
   s << "(" << base << "." << ident << ")" << args;
 }
 
-void PostfixNode::streamTo(SourceStream &s) const
+void PostfixResolveNode::streamTo(SourceStream &s) const
 {
-  s << expr;
-  if (oper == OpPlusPlus)
+  s << m_ident;
+  if (m_oper == OpPlusPlus)
     s << "++";
   else
     s << "--";
 }
 
-void DeleteNode::streamTo(SourceStream &s) const
+void PostfixBracketNode::streamTo(SourceStream &s) const
 {
-  s << "delete " << expr;
+  s << m_base << "[" << m_subscript << "]";
+  if (m_oper == OpPlusPlus)
+    s << "++";
+  else
+    s << "--";
+}
+
+void PostfixDotNode::streamTo(SourceStream &s) const
+{
+  s << m_base << "." << m_ident;
+  if (m_oper == OpPlusPlus)
+    s << "++";
+  else
+    s << "--";
+}
+
+void DeleteResolveNode::streamTo(SourceStream &s) const
+{
+  s << "delete " << m_ident;
+}
+
+void DeleteBracketNode::streamTo(SourceStream &s) const
+{
+  s << "delete " << m_base << "[" << m_subscript << "]";
+}
+
+void DeleteDotNode::streamTo(SourceStream &s) const
+{
+  s << "delete " << m_base << "." << m_ident;
+}
+
+void DeleteValueNode::streamTo(SourceStream &s) const
+{
+  s << "delete " << m_expr;
 }
 
 void VoidNode::streamTo(SourceStream &s) const
@@ -247,14 +280,41 @@ void VoidNode::streamTo(SourceStream &s) const
   s << "void " << expr;
 }
 
-void TypeOfNode::streamTo(SourceStream &s) const
+void TypeOfValueNode::streamTo(SourceStream &s) const
 {
-  s << "typeof " << expr;
+  s << "typeof " << m_expr;
 }
 
-void PrefixNode::streamTo(SourceStream &s) const
+void TypeOfResolveNode::streamTo(SourceStream &s) const
 {
-  s << expr << (oper == OpPlusPlus ? "++" : "--");
+  s << "typeof " << m_ident;
+}
+
+void PrefixResolveNode::streamTo(SourceStream &s) const
+{
+  if (m_oper == OpPlusPlus)
+    s << "++";
+  else
+    s << "--";
+  s << m_ident;
+}
+
+void PrefixBracketNode::streamTo(SourceStream &s) const
+{
+  if (m_oper == OpPlusPlus)
+    s << "++";
+  else
+    s << "--";
+  s << m_base << "[" << m_subscript << "]";
+}
+
+void PrefixDotNode::streamTo(SourceStream &s) const
+{
+  if (m_oper == OpPlusPlus)
+    s << "++";
+  else
+    s << "--";
+  s << m_base << "." << m_ident;
 }
 
 void UnaryPlusNode::streamTo(SourceStream &s) const

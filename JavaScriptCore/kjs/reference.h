@@ -36,18 +36,7 @@ namespace KJS {
   public:
     Reference(ObjectImp *b, const Identifier& p);
     Reference(ObjectImp *b, unsigned p);
-    Reference(const Identifier& p);
-    Reference(unsigned p);
-    static Reference makeValueReference(ValueImp *);
     
-    /**
-     * Performs the GetBase type conversion operation on this value (ECMA 8.7)
-     *
-     * Since references are supposed to have an Object or null as their base,
-     * this method is guaranteed to return either Null() or an Object value.
-     */
-    ValueImp *getBase(ExecState *exec) const;
-
     /**
      * Performs the GetPropertyName type conversion operation on this value
      * (ECMA 8.7)
@@ -64,10 +53,7 @@ namespace KJS {
      * Performs the PutValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    void putValue(ExecState *exec, ValueImp *);
     bool deleteValue(ExecState *exec);
-
-    ValueImp *baseIfMutable() const { return baseIsValue ? 0 : base; }
 
   protected:
     ValueImp *base;
@@ -76,7 +62,6 @@ namespace KJS {
     Reference() { }
 
     unsigned propertyNameAsNumber;
-    bool baseIsValue;
     bool propertyNameIsNumber;
     mutable Identifier prop;
   };

@@ -1,3 +1,67 @@
+2005-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4260479> Finish deploying PropertySlot in the interpreter
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5112
+	
+	Convert postfix, prefix, delete, prefix, and for..in expressions to use
+	PropertySlot-based lookup instead of evaluateReference.
+
+	3% speedup on JS iBench.
+
+	Fixed two of the JS tests:
+        * tests/mozilla/expected.html:
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (PostfixResolveNode::evaluate):
+        (PostfixBracketNode::evaluate):
+        (PostfixDotNode::evaluate):
+        (DeleteResolveNode::evaluate):
+        (DeleteBracketNode::evaluate):
+        (DeleteDotNode::evaluate):
+        (DeleteValueNode::evaluate):
+        (typeStringForValue):
+        (TypeOfResolveNode::evaluate):
+        (TypeOfValueNode::evaluate):
+        (PrefixResolveNode::evaluate):
+        (PrefixBracketNode::evaluate):
+        (PrefixDotNode::evaluate):
+        (ForInNode::execute):
+        * kjs/nodes.h:
+        (KJS::PostfixResolveNode::PostfixResolveNode):
+        (KJS::PostfixBracketNode::PostfixBracketNode):
+        (KJS::PostfixDotNode::PostfixDotNode):
+        (KJS::DeleteResolveNode::DeleteResolveNode):
+        (KJS::DeleteBracketNode::DeleteBracketNode):
+        (KJS::DeleteDotNode::DeleteDotNode):
+        (KJS::DeleteValueNode::DeleteValueNode):
+        (KJS::TypeOfResolveNode::TypeOfResolveNode):
+        (KJS::TypeOfValueNode::TypeOfValueNode):
+        (KJS::PrefixResolveNode::PrefixResolveNode):
+        (KJS::PrefixBracketNode::PrefixBracketNode):
+        (KJS::PrefixDotNode::PrefixDotNode):
+        * kjs/nodes2string.cpp:
+        (PostfixResolveNode::streamTo):
+        (PostfixBracketNode::streamTo):
+        (PostfixDotNode::streamTo):
+        (DeleteResolveNode::streamTo):
+        (DeleteBracketNode::streamTo):
+        (DeleteDotNode::streamTo):
+        (DeleteValueNode::streamTo):
+        (TypeOfValueNode::streamTo):
+        (TypeOfResolveNode::streamTo):
+        (PrefixResolveNode::streamTo):
+        (PrefixBracketNode::streamTo):
+        (PrefixDotNode::streamTo):
+        * kjs/reference.cpp:
+        (KJS::Reference::Reference):
+        (KJS::Reference::getPropertyName):
+        (KJS::Reference::getValue):
+        (KJS::Reference::deleteValue):
+        * kjs/reference.h:
+
 2005-09-23  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed and landed by Darin.
