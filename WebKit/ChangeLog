@@ -1,5 +1,24 @@
 2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed, tweaked a tiny bit, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4940
+          CG and ATSUI give different width to the same text
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation): Added. ATSU callback to do the rounding.
+        (-[WebTextRenderer _trapezoidForRun:style:atPoint:]): Use the new createATSULayoutParameters
+        function instead of calling _createATSUTextLayoutForRun.
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:geometry:]): Use createATSULayoutParameters,
+        and also compute the width in a way that works for any direction combination.
+        (-[WebTextRenderer _ATSU_drawRun:style:geometry:]): Use createATSULayoutParameters.
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        Use createATSULayoutParameters. Also put in code that seems to work around an ATSU bug.
+        (createATSULayoutParameters): Added.
+        (disposeATSULayoutParameters): Added.
+
+2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Dave.
         Landed by Darin.
 

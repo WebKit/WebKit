@@ -9,28 +9,28 @@ layer at (0,0) size 800x494
           text run at (0,18) width 748: "bracket should be a left bracket and the parenthesis should be a right parenthesis. In each line,"
           text run at (0,36) width 600: "Roman characters and digits should be in increasing order from left to right."
       RenderBlock {P} at (0,70) size 784x18
-        RenderText {TEXT} at (0,0) size 61x18
-          text run at (0,0) width 26: "\x{5D0}\x{5D1}\x{5D2}"
-          text run at (26,0) width 30: " def"
-          text run at (56,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 37x18
-          RenderText {TEXT} at (61,0) size 37x18
-            text run at (61,0) width 6: "]"
-            text run at (67,0) width 31: "(\x{5D6}\x{5D7}\x{5D8}"
+        RenderText {TEXT} at (0,0) size 62x18
+          text run at (0,0) width 27: "\x{5D0}\x{5D1}\x{5D2}"
+          text run at (27,0) width 30: " def"
+          text run at (57,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 39x18
+          RenderText {TEXT} at (62,0) size 39x18
+            text run at (62,0) width 6: "]"
+            text run at (68,0) width 33: "(\x{5D6}\x{5D7}\x{5D8}"
+        RenderText {TEXT} at (101,0) size 24x18
+          text run at (101,0) width 24: " jkl"
+      RenderBlock {P} at (0,104) size 784x18
+        RenderText {TEXT} at (0,0) size 62x18
+          text run at (0,0) width 27: "\x{5D0}\x{5D1}\x{5D2}"
+          text run at (27,0) width 30: " def"
+          text run at (57,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 36x18
+          RenderText {TEXT} at (62,0) size 36x18
+            text run at (62,0) width 6: "]"
+            text run at (68,0) width 25: "ghi"
+            text run at (93,0) width 5: "("
         RenderText {TEXT} at (98,0) size 24x18
           text run at (98,0) width 24: " jkl"
-      RenderBlock {P} at (0,104) size 784x18
-        RenderText {TEXT} at (0,0) size 61x18
-          text run at (0,0) width 26: "\x{5D0}\x{5D1}\x{5D2}"
-          text run at (26,0) width 30: " def"
-          text run at (56,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 36x18
-          RenderText {TEXT} at (61,0) size 36x18
-            text run at (61,0) width 6: "]"
-            text run at (67,0) width 25: "ghi"
-            text run at (92,0) width 5: "("
-        RenderText {TEXT} at (97,0) size 24x18
-          text run at (97,0) width 24: " jkl"
       RenderBlock {P} at (0,138) size 784x18
         RenderText {TEXT} at (0,0) size 33x18
           text run at (0,0) width 28: "abc"
@@ -110,19 +110,19 @@ layer at (0,0) size 800x494
           text run at (54,0) width 6: "\x{202B}("
           text run at (60,0) width 0: "\x{202C}"
       RenderBlock {P} at (0,410) size 784x18
-        RenderInline {SPAN} at (0,0) size 100x18
-          RenderText {TEXT} at (0,0) size 100x18
+        RenderInline {SPAN} at (0,0) size 101x18
+          RenderText {TEXT} at (0,0) size 101x18
             text run at (0,0) width 6: "]"
             text run at (6,0) width 28: "abc"
-            text run at (34,0) width 36: " \x{5D0}\x{5D1}\x{5D2} "
-            text run at (70,0) width 25: "def"
-            text run at (95,0) width 5: "("
+            text run at (34,0) width 37: " \x{5D0}\x{5D1}\x{5D2} "
+            text run at (71,0) width 25: "def"
+            text run at (96,0) width 5: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,444) size 784x18
-        RenderText {TEXT} at (0,0) size 100x18
+        RenderText {TEXT} at (0,0) size 101x18
           text run at (0,0) width 5: "]"
           text run at (5,0) width 28: "abc"
-          text run at (33,0) width 36: " \x{5D0}\x{5D1}\x{5D2} "
-          text run at (69,0) width 25: "def"
-          text run at (94,0) width 6: "\x{202B}("
-          text run at (100,0) width 0: "\x{202C}"
+          text run at (33,0) width 37: " \x{5D0}\x{5D1}\x{5D2} "
+          text run at (70,0) width 25: "def"
+          text run at (95,0) width 6: "\x{202B}("
+          text run at (101,0) width 0: "\x{202C}"

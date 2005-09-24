@@ -133,6 +133,14 @@ struct CharacterWidthIterator
     float padPerSpace;
 };
 
+typedef struct
+{
+    WebTextRenderer *renderer;
+    const WebCoreTextRun *run;
+    const WebCoreTextStyle *style;
+    ATSUTextLayout layout;
+} ATSULayoutParameters;
+
 // Internal API
 @interface WebTextRenderer (WebInternal)
 
@@ -162,6 +170,8 @@ struct CharacterWidthIterator
 - (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 - (BOOL)_setupFont;
+
+- (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 // Small caps
 - (void)_setIsSmallCapsRenderer:(BOOL)flag;
@@ -258,6 +268,66 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRe
     return widthFromMap (renderer, map, glyph, font);
 }
 
+static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, UInt32 iRefCon, void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
+{
+    ATSULayoutParameters *params = (ATSULayoutParameters *)iRefCon;
+    OSStatus status;
+    ItemCount count;
+    ATSLayoutRecord *layoutRecords;
+    const WebCoreTextStyle *style = params->style;
+
+    if (style->applyWordRounding) {
+        status = ATSUDirectGetLayoutDataArrayPtrFromLineRef(iLineRef, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, true, (void **)&layoutRecords, &count);
+        if (status != noErr) {
+            *oCallbackStatus = kATSULayoutOperationCallbackStatusContinue;
+            return status;
+        }
+        
+        // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
+        // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
+        // does in any of its device-metrics modes.
+        Boolean roundEachGlyph = [params->renderer->font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
+        Fixed lastNativePos = 0;
+        float lastAdjustedPos = 0;
+        const WebCoreTextRun *run = params->run;
+        const UniChar *characters = run->characters;
+        WebTextRenderer *renderer = params->renderer;
+        UniChar ch, nextCh;
+        nextCh = *(UniChar *)(((char *)characters)+layoutRecords[0].originalOffset);
+        // In the CoreGraphics code path, the rounding hack is applied in logical order.
+        // Here it is applied in visual left-to-right order, which may be better.
+        ItemCount i;
+        for (i = 1; i < count; i++) {
+            BOOL isLastChar = i == count - 1;
+            ch = nextCh;
+
+            // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
+            // We won't actually round unless the other conditions are satisfied.
+            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+layoutRecords[i].originalOffset);
+
+            float width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
+            lastNativePos = layoutRecords[i].realPos;
+            if (roundEachGlyph)
+                width = roundf(width);
+            if (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
+                width = renderer->adjustedSpaceWidth;
+            if (isRoundingHackCharacter(ch))
+                width = ceilf(width);
+            lastAdjustedPos = lastAdjustedPos + width;
+            if (isRoundingHackCharacter(nextCh))
+                if (!isLastChar
+                        || (style->applyRunRounding && (run->length == 1 || run->to - run->from > 1))
+                        || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to])))
+                    lastAdjustedPos = ceilf(lastAdjustedPos);
+            layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
+        }
+        
+        status = ATSUDirectReleaseLayoutDataArrayPtr(iLineRef, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, (void **)&layoutRecords);
+    }
+    *oCallbackStatus = kATSULayoutOperationCallbackStatusHandled;
+    return noErr;
+}
+
 // Iterator functions
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
 static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
@@ -267,6 +337,8 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
 static BOOL shouldUseATSU(const WebCoreTextRun *run);
 static NSString *pathFromFont(NSFont *font);
+static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
+static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
 
 // Globals
@@ -1093,42 +1165,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
 }
 
-#ifdef DEBUG_COMBINING
-static const char *directionNames[] = {
-        "DirectionL", 	// Left Letter 
-        "DirectionR",	// Right Letter
-        "DirectionEN",	// European Number
-        "DirectionES",	// European Separator
-        "DirectionET",	// European Terminator (post/prefix e.g. $ and %)
-        "DirectionAN",	// Arabic Number
-        "DirectionCS",	// Common Separator 
-        "DirectionB", 	// Paragraph Separator (aka as PS)
-        "DirectionS", 	// Segment Separator (TAB)
-        "DirectionWS", 	// White space
-        "DirectionON",	// Other Neutral
-
-	// types for explicit controls
-        "DirectionLRE", 
-        "DirectionLRO", 
-
-        "DirectionAL", 	// Arabic Letter (Right-to-left)
-
-        "DirectionRLE", 
-        "DirectionRLO", 
-        "DirectionPDF", 
-
-        "DirectionNSM", 	// Non-spacing Mark
-        "DirectionBN"	// Boundary neutral (type of RLE etc after explicit levels)
-};
-
-static const char *joiningNames[] = {
-        "JoiningOther",
-        "JoiningDual",
-        "JoiningRight",
-        "JoiningCausing"
-};
-#endif
-
 - (float)_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer fonts:(NSFont **)fontBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
 {
     if (shouldUseATSU(run))
@@ -1450,6 +1486,7 @@ static const char *joiningNames[] = {
     UniCharArrayOffset substituteOffset;
     UniCharCount substituteLength;
     OSStatus status;
+    ATSULayoutOperationOverrideSpecifier overrideSpecifier;
     
     [self _initializeATSUStyle];
     
@@ -1471,14 +1508,15 @@ static const char *joiningNames[] = {
         FATAL_ALWAYS ("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    ATSLineLayoutOptions lineLayoutOptions = (kATSLineFractDisable | kATSLineDisableAutoAdjustDisplayPos | kATSLineUseDeviceMetrics |
-                                              kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers);
+    ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;
     Boolean rtl = style->rtl;
-    ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag, kATSULineDirectionTag };
-    ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions), sizeof(Boolean)  };
-    ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions, &rtl };
+    overrideSpecifier.operationSelector = kATSULayoutOperationPostLayoutAdjustment;
+    overrideSpecifier.overrideUPP = overrideLayoutOperation;
+    ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag, kATSULineDirectionTag, kATSULayoutOperationOverrideTag };
+    ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions), sizeof(Boolean), sizeof(ATSULayoutOperationOverrideSpecifier) };
+    ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions, &rtl, &overrideSpecifier };
     
-    status = ATSUSetLayoutControls(layout, 3, tags, sizes, values);
+    status = ATSUSetLayoutControls(layout, (style->applyWordRounding ? 4 : 3), tags, sizes, values);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUSetLayoutControls failed(%d)", status);
 
@@ -1516,18 +1554,19 @@ static const char *joiningNames[] = {
         return nilTrapezoid;
     }
         
-    ATSUTextLayout layout = [self _createATSUTextLayoutForRun:run style:style];
+    ATSULayoutParameters params;
+    createATSULayoutParameters(&params, self, run, style);
 
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
-    status = ATSUGetGlyphBounds (layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseDeviceOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
+    status = ATSUGetGlyphBounds (params.layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
     if(status != noErr)
         FATAL_ALWAYS ("ATSUGetGlyphBounds() failed(%d)", status);
     
     if (actualNumBounds != 1)
         FATAL_ALWAYS ("unexpected result from ATSUGetGlyphBounds():  actualNumBounds(%d) != 1", actualNumBounds);
 
-    ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+    disposeATSULayoutParameters(&params);
             
     return firstGlyphBounds;
 }
@@ -1588,7 +1627,6 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     // plus the self calls to _createATSUTextLayoutForRun: and
     // _trapezoidForRun:. These are all exception-safe.
 
-    ATSUTextLayout layout;
     int from, to;
     float selectedLeftX;
     const WebCoreTextRun *aRun = run;
@@ -1617,43 +1655,40 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         return;
     }
 
-    layout = [self _createATSUTextLayoutForRun:aRun style:style];
-
-    WebCoreTextRun leadingRun = *aRun;
-    leadingRun.from = 0;
-    leadingRun.to = run->from;
+    WebCoreTextRun completeRun = *aRun;
+    completeRun.from = 0;
+    completeRun.to = aRun->length;
+    ATSULayoutParameters params;
+    createATSULayoutParameters(&params, self, &completeRun, style);
+    ItemCount count;
+    ATSLayoutRecord *layoutRecords;
+    OSStatus status = ATSUDirectGetLayoutDataArrayPtrFromTextLayout(params.layout, 0, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, (void **)&layoutRecords, &count);
+    if (status != noErr)
+        FATAL_ALWAYS ("ATSUDirectGetLayoutDataArrayPtrFromTextLayout failed(%d)", status);
+    ItemCount i = 0;
+    if (!style->rtl)
+        while (i < count && layoutRecords[i].originalOffset < sizeof(UniChar) * aRun->from)
+            i++;
+    else while (i < count && layoutRecords[i].originalOffset >= sizeof(UniChar) * aRun->to)
+            i++;
+    ItemCount j = i;
+    if (!style->rtl)
+        while (j < count - 1 && layoutRecords[j].originalOffset < sizeof(UniChar) * aRun->to)
+            j++;
+    else while (j < count - 1 && layoutRecords[j].originalOffset >= sizeof(UniChar) * aRun->from)
+            j++;
     
-    // ATSU provides the bounds of the glyphs for the run with an origin of
-    // (0,0), so we need to find the width of the glyphs immediately before
-    // the actually selected glyphs.
-    ATSTrapezoid leadingTrapezoid = [self _trapezoidForRun:&leadingRun style:style atPoint:geometry->point];
-    ATSTrapezoid selectedTrapezoid = [self _trapezoidForRun:run style:style atPoint:geometry->point];
+    float backgroundWidth = FixedToFloat(layoutRecords[j].realPos - layoutRecords[i].realPos);
 
-    float backgroundWidth = 
-            MAX(FixedToFloat(selectedTrapezoid.upperRight.x), FixedToFloat(selectedTrapezoid.lowerRight.x)) - 
-            MIN(FixedToFloat(selectedTrapezoid.upperLeft.x), FixedToFloat(selectedTrapezoid.lowerLeft.x));
-
-    if (run->from == 0)
-        selectedLeftX = geometry->point.x;
-    else
-        selectedLeftX = MIN(FixedToFloat(leadingTrapezoid.upperRight.x), FixedToFloat(leadingTrapezoid.lowerRight.x));
+    selectedLeftX = geometry->point.x + FixedToFloat(layoutRecords[i].realPos);
     
     [style->backgroundColor set];
 
     float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
-    if (style->rtl || style->directionalOverride){
-        WebCoreTextRun completeRun = *aRun;
-        completeRun.from = 0;
-        completeRun.to = aRun->length;
-        float completeRunWidth = [self floatWidthForRun:&completeRun style:style widths:0];
-        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - (selectedLeftX-geometry->point.x) - backgroundWidth, yPos, backgroundWidth, height)];
-    }
-    else {
-        [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
-    }
+    [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
 
-    ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+    disposeATSULayoutParameters(&params);
 
     if (style->directionalOverride || (style->rtl && !ATSUMirrors))
         free ((void *)swappedRun.characters);
@@ -1666,7 +1701,6 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     // calls to _createATSUTextLayoutForRun: and
     // _ATSU_drawHighlightForRun:. These are all exception-safe.
 
-    ATSUTextLayout layout;
     OSStatus status;
     int from, to;
     const WebCoreTextRun *aRun = run;
@@ -1691,7 +1725,11 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     if (runLength <= 0)
         return;
 
-    layout = [self _createATSUTextLayoutForRun:aRun style:style];
+    WebCoreTextRun completeRun = *aRun;
+    completeRun.from = 0;
+    completeRun.to = aRun->length;
+    ATSULayoutParameters params;
+    createATSULayoutParameters(&params, self, &completeRun, style);
 
     if (style->backgroundColor != nil)
         [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
@@ -1701,7 +1739,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextTranslateCTM(context, geometry->point.x, geometry->point.y);
-    status = ATSUDrawText(layout, aRun->from, runLength, 0, 0);
+    status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
     CGContextTranslateCTM(context, -geometry->point.x, -geometry->point.y);
 
     if (status != noErr){
@@ -1709,7 +1747,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         ERROR ("ATSUDrawText() failed(%d)", status);
     }
 
-    ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+    disposeATSULayoutParameters(&params);
     
     if (style->directionalOverride || (style->rtl && !ATSUMirrors))
         free ((void *)swappedRun.characters);
@@ -1721,7 +1759,6 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     // _createATSUTextLayoutForRun:. This is exception-safe.
 
     unsigned offset = 0;
-    ATSUTextLayout layout;
     UniCharArrayOffset primaryOffset = 0;
     UniCharArrayOffset secondaryOffset = 0;
     OSStatus status;
@@ -1729,22 +1766,32 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
+    if (style->rtl && !style->directionalOverride) {
+        // Work around ATSUPositionToOffset problem with e.g. Lucida Grande 14
+        swappedRun = *run;
+        swappedRun.characters += run->from;
+        swappedRun.from = 0;
+        swappedRun.to -= run->from;
+        swappedRun.length -= run->from;
+        aRun = &swappedRun;
+    }
     // Enclose in LRO/RLO - PDF to force ATSU to render visually.
     if (style->directionalOverride) {
-        swappedRun = addDirectionalOverride(run, style->rtl);
+        swappedRun = addDirectionalOverride(aRun, style->rtl);
         aRun = &swappedRun;
     } else if (style->rtl && !ATSUMirrors) {
-        swappedRun = applyMirroringToRun(run);
+        swappedRun = applyMirroringToRun(aRun);
         aRun = &swappedRun;
     }
 
-    layout = [self _createATSUTextLayoutForRun:aRun style:style];
+    ATSULayoutParameters params;
+    createATSULayoutParameters(&params, self, aRun, style);
 
     primaryOffset = aRun->from;
     
     // FIXME: No idea how to avoid including partial glyphs.   Not even sure if that's the behavior
     // this yields now.
-    status = ATSUPositionToOffset(layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
+    status = ATSUPositionToOffset(params.layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
     if (status == noErr){
         offset = (unsigned)primaryOffset;
     }
@@ -1752,7 +1799,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         // Failed to find offset!  Return 0 offset.
     }
        
-    ATSUDisposeTextLayout(layout);
+    disposeATSULayoutParameters(&params);
     
     if (style->directionalOverride || (style->rtl && !ATSUMirrors)) {
         free ((void *)swappedRun.characters);
@@ -1960,6 +2007,20 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
     }
     else
         iterator->widthToStart = 0;
+}
+
+static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
+{
+    params->renderer = renderer;
+    params->run = run;
+    params->style = style;
+    params->layout = [renderer _createATSUTextLayoutForRun:run style:style];
+    ATSUSetTextLayoutRefCon(params->layout, (UInt32)params);
+}
+
+static void disposeATSULayoutParameters(ATSULayoutParameters *params)
+{
+    ATSUDisposeTextLayout(params->layout);
 }
 
 static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)

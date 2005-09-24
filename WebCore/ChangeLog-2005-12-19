@@ -1,5 +1,35 @@
 2005-09-24  Darin Adler  <darin@apple.com>
 
+        - added tests and updated results for WebKit ATSU text measurement change
+
+        * layout-tests/fast/text/cg-vs-atsui.html: Added.
+        * layout-tests/fast/text/cg-vs-atsui-expected.checksum: Added.
+        * layout-tests/fast/text/cg-vs-atsui-expected.png: Added.
+        * layout-tests/fast/text/cg-vs-atsui-expected.txt: Added.
+
+        * layout-tests/css1/text_properties/text-transCapitalize-expected.checksum: Updated.
+        * layout-tests/css1/text_properties/text-transCapitalize-expected.png: Updated.
+        * layout-tests/css1/text_properties/text-transCapitalize-expected.txt: Updated.
+        * layout-tests/fast/text/international/bidi-CS-after-AN-expected.checksum: Updated.
+        * layout-tests/fast/text/international/bidi-CS-after-AN-expected.png: Updated.
+        * layout-tests/fast/text/international/bidi-CS-after-AN-expected.txt: Updated.
+        * layout-tests/fast/text/international/bidi-explicit-embedding-expected.checksum: Updated.
+        * layout-tests/fast/text/international/bidi-explicit-embedding-expected.png: Updated.
+        * layout-tests/fast/text/international/bidi-explicit-embedding-expected.txt: Updated.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.checksum: Updated.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.png: Updated.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.txt: Updated.
+        * layout-tests/fast/text/international/bidi-override-expected.checksum: Updated.
+        * layout-tests/fast/text/international/bidi-override-expected.png: Updated.
+        * layout-tests/fast/text/international/bidi-override-expected.txt: Updated.
+
+        - added pixel results for this test
+
+        * layout-tests/editing/pasteboard/3976872-expected.checksum: Added.
+        * layout-tests/editing/pasteboard/3976872-expected.png: Added.
+
+2005-09-24  Darin Adler  <darin@apple.com>
+
         - fixed a few layout test results
 
         * layout-tests/fast/js/date-big-constructor.html: Added code to make this test dump as text.

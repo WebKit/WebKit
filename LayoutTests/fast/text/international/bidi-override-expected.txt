@@ -36,26 +36,26 @@ layer at (0,0) size 800x336
             RenderTableCell {TD} at (97,27) size 238x27 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderText {TEXT} at (5,5) size 22x18
                 text run at (5,5) width 22: "abc"
-              RenderInline {SPAN} at (0,0) size 65x18
-                RenderText {TEXT} at (27,5) size 65x18
-                  text run at (27,5) width 65: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-              RenderText {TEXT} at (92,5) size 141x18
-                text run at (92,5) width 20: "jkl "
-                text run at (207,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
+              RenderInline {SPAN} at (0,0) size 66x18
+                RenderText {TEXT} at (27,5) size 66x18
+                  text run at (27,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+              RenderText {TEXT} at (93,5) size 141x18
+                text run at (93,5) width 20: "jkl "
+                text run at (208,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
               RenderInline {SPAN} at (0,0) size 72x18
-                RenderText {TEXT} at (135,5) size 72x18
-                  text run at (135,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
-              RenderText {TEXT} at (112,5) size 23x18
-                text run at (112,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
+                RenderText {TEXT} at (136,5) size 72x18
+                  text run at (136,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+              RenderText {TEXT} at (113,5) size 23x18
+                text run at (113,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
             RenderTableCell {TD} at (335,27) size 238x27 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (130,5) size 22x18
                 text run at (130,5) width 22: "abc"
-              RenderInline {SPAN} at (0,0) size 65x18
-                RenderText {TEXT} at (152,5) size 65x18
-                  text run at (152,5) width 65: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-              RenderText {TEXT} at (100,5) size 133x18
+              RenderInline {SPAN} at (0,0) size 66x18
+                RenderText {TEXT} at (152,5) size 66x18
+                  text run at (152,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+              RenderText {TEXT} at (100,5) size 134x18
                 text run at (100,5) width 30: " \x{5D0}\x{5D1}\x{5D2}"
-                text run at (217,5) width 16: "jkl"
+                text run at (218,5) width 16: "jkl"
               RenderInline {SPAN} at (0,0) size 72x18
                 RenderText {TEXT} at (28,5) size 72x18
                   text run at (28,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
@@ -66,33 +66,33 @@ layer at (0,0) size 800x336
               RenderText {TEXT} at (5,5) size 88x18
                 text run at (5,5) width 88: "CSS, children"
             RenderTableCell {TD} at (97,54) size 238x27 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 103x18
+              RenderInline {SPAN} at (0,0) size 104x18
                 RenderText {TEXT} at (5,5) size 22x18
                   text run at (5,5) width 22: "abc"
-                RenderInline {SPAN} at (0,0) size 65x18
-                  RenderText {TEXT} at (27,5) size 65x18
-                    text run at (27,5) width 65: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                RenderText {TEXT} at (92,5) size 16x18
-                  text run at (92,5) width 16: "jkl"
-              RenderText {TEXT} at (108,5) size 4x18
-                text run at (108,5) width 4: " "
+                RenderInline {SPAN} at (0,0) size 66x18
+                  RenderText {TEXT} at (27,5) size 66x18
+                    text run at (27,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                RenderText {TEXT} at (93,5) size 16x18
+                  text run at (93,5) width 16: "jkl"
+              RenderText {TEXT} at (109,5) size 4x18
+                text run at (109,5) width 4: " "
               RenderInline {SPAN} at (0,0) size 121x18
-                RenderText {TEXT} at (207,5) size 26x18
-                  text run at (207,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
+                RenderText {TEXT} at (208,5) size 26x18
+                  text run at (208,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
                 RenderInline {SPAN} at (0,0) size 72x18
-                  RenderText {TEXT} at (135,5) size 72x18
-                    text run at (135,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
-                RenderText {TEXT} at (112,5) size 23x18
-                  text run at (112,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
+                  RenderText {TEXT} at (136,5) size 72x18
+                    text run at (136,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                RenderText {TEXT} at (113,5) size 23x18
+                  text run at (113,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
             RenderTableCell {TD} at (335,54) size 238x27 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 103x18
+              RenderInline {SPAN} at (0,0) size 104x18
                 RenderText {TEXT} at (130,5) size 22x18
                   text run at (130,5) width 22: "abc"
-                RenderInline {SPAN} at (0,0) size 65x18
-                  RenderText {TEXT} at (152,5) size 65x18
-                    text run at (152,5) width 65: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                RenderText {TEXT} at (217,5) size 16x18
-                  text run at (217,5) width 16: "jkl"
+                RenderInline {SPAN} at (0,0) size 66x18
+                  RenderText {TEXT} at (152,5) size 66x18
+                    text run at (152,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                RenderText {TEXT} at (218,5) size 16x18
+                  text run at (218,5) width 16: "jkl"
               RenderText {TEXT} at (126,5) size 4x18
                 text run at (126,5) width 4: " "
               RenderInline {SPAN} at (0,0) size 121x18
@@ -108,22 +108,22 @@ layer at (0,0) size 800x336
               RenderText {TEXT} at (39,5) size 54x18
                 text run at (39,5) width 54: "Unicode"
             RenderTableCell {TD} at (97,81) size 238x27 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (5,5) size 228x18
+              RenderText {TEXT} at (5,5) size 229x18
                 text run at (5,5) width 22: "abc"
-                text run at (27,5) width 65: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (92,5) width 20: "\x{202C}jkl "
-                text run at (112,5) width 23: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
-                text run at (135,5) width 72: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
-                text run at (207,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
+                text run at (27,5) width 66: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (93,5) width 20: "\x{202C}jkl "
+                text run at (113,5) width 23: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (136,5) width 72: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (208,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
             RenderTableCell {TD} at (335,81) size 238x27 [border: (1px solid #008000)] [r=3 c=2 rs=1 cs=1]
-              RenderText {TEXT} at (5,5) size 228x18
+              RenderText {TEXT} at (5,5) size 229x18
                 text run at (5,5) width 23: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
                 text run at (28,5) width 72: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (100,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
                 text run at (126,5) width 4: " "
                 text run at (130,5) width 22: "abc"
-                text run at (152,5) width 65: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (217,5) width 16: "\x{202C}jkl"
+                text run at (152,5) width 66: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (218,5) width 16: "\x{202C}jkl"
       RenderBlock {P} at (0,158) size 784x18
         RenderText {TEXT} at (0,0) size 387x18
           text run at (0,0) width 387: "The CSS column should be identical to the reference column."
