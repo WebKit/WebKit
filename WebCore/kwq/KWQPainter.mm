@@ -543,21 +543,27 @@ void QPainter::drawFloatPixmap( float x, float y, float w, float h, const QPixma
 {
     if (data->state.paintingDisabled)
         return;
-        
-    if (sw == -1)
-        sw = pixmap.width();
-    if (sh == -1)
-        sh = pixmap.height();
-
-    if (w == -1)
-        w = pixmap.width();
-    if (h == -1)
-        h = pixmap.height();
-
-    NSRect inRect = NSMakeRect(x, y, w, h);
-    NSRect fromRect = NSMakeRect(sx, sy, sw, sh);
-    
+		
     KWQ_BLOCK_EXCEPTIONS;
+
+    float tsw = sw;
+    float tsh = sh;
+    float tw = w;
+    float th = h;
+        
+    if (tsw == -1)
+        tsw = pixmap.width();
+    if (tsh == -1)
+        tsh = pixmap.height();
+
+    if (tw == -1)
+        tw = pixmap.width();
+    if (th == -1)
+        th = pixmap.height();
+
+    NSRect inRect = NSMakeRect(x, y, tw, th);
+    NSRect fromRect = NSMakeRect(sx, sy, tsw, tsh);
+    
     [pixmap.imageRenderer drawImageInRect:inRect
                                       fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
     KWQ_UNBLOCK_EXCEPTIONS;

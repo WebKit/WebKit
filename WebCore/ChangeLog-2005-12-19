@@ -1,3 +1,21 @@
+2005-09-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+        Landed by Darin (after taking tabs out).
+
+        - worked around problems compiling with various versions of gcc 4
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5071
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5086
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setCursorPosition): Don't use NSMakeRange.
+        (QLineEdit::setSelection): Ditto.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawFloatPixmap): Rearrange things so we don't get a warning.
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::selectionEnd): Don't use NSMaxRange.
+        (QTextEdit::setSelectionRange): Don't use NSMakeRange.
+
 2005-09-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed and landed by Darin.

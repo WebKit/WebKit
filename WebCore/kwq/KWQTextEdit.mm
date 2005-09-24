@@ -201,7 +201,7 @@ int QTextEdit::selectionEnd()
     NSRange range = [textView selectedRange];
     if (range.location == NSNotFound)
         return 0;
-    return NSMaxRange(range);
+    return range.location + range.length; // Use NSMaxRange when 4213314 is fixed
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return 0;
@@ -314,7 +314,8 @@ void QTextEdit::setSelectionRange(int start, int length)
     if (newStart + newLength > maxlen) {
         newLength = maxlen - newStart;
     }
-    [textView setSelectedRange:NSMakeRange(newStart, newLength)];
+    NSRange tempRange = {newStart, newLength}; // 4213314
+    [textView setSelectedRange:tempRange];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

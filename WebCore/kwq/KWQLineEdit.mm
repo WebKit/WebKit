@@ -80,7 +80,8 @@ QLineEdit::~QLineEdit()
 void QLineEdit::setCursorPosition(int pos)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [m_controller setSelectedRange:NSMakeRange(pos, 0)];
+    NSRange tempRange = {pos, 0}; // 4213314
+    [m_controller setSelectedRange:tempRange];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -215,7 +216,8 @@ QString QLineEdit::selectedText() const
 void QLineEdit::setSelection(int start, int length)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [m_controller setSelectedRange:NSMakeRange(start, length)];
+    NSRange tempRange = {start, length}; // 4213314
+    [m_controller setSelectedRange:tempRange];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -376,7 +378,7 @@ void QLineEdit::setMaxResults(int maxResults)
         if (!buttonCell)
             [searchCell resetSearchButtonCell];
         if (cellMenu && !maxResults)
-	    [searchCell setSearchMenuTemplate:nil];
+            [searchCell setSearchMenuTemplate:nil];
         else if (!cellMenu && maxResults)
             [searchCell setSearchMenuTemplate:[[WebCoreViewFactory sharedFactory] cellMenuForSearchField]];
     }
