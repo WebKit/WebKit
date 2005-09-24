@@ -2809,7 +2809,7 @@ static WebHTMLView *lastHitView = nil;
                 if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
                     [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                     if ([self _isMoveDrag]) {
-                        BOOL smartMove = [[self _bridge] selectionGranularity] == WebSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
+                        BOOL smartMove = [[self _bridge] selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
                         [bridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                     } else {
                         [bridge setSelectionToDragCaret];
@@ -3308,7 +3308,7 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] centerSelectionInVisibleArea];
 }
 
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
     WebBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
@@ -3330,172 +3330,172 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveBackward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByLine];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByLine];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveForward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveLeft:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveRight:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToDocumentBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToDocumentBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToParagraphBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToParagraphBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToDocumentBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToDocumentBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToParagraphBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToParagraphBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByParagraph];
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByParagraph];
 }
 
 - (void)moveUp:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByLine];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByLine];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveWordBackward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordForward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByWord];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
 }
 
 - (void)pageUp:(id)sender
@@ -3530,7 +3530,7 @@ static WebHTMLView *lastHitView = nil;
     [self _alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
-- (void)_expandSelectionToGranularity:(WebSelectionGranularity)granularity
+- (void)_expandSelectionToGranularity:(WebBridgeSelectionGranularity)granularity
 {
     WebBridge *bridge = [self _bridge];
     DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
@@ -3544,17 +3544,17 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)selectParagraph:(id)sender
 {
-    [self _expandSelectionToGranularity:WebSelectByParagraph];
+    [self _expandSelectionToGranularity:WebBridgeSelectByParagraph];
 }
 
 - (void)selectLine:(id)sender
 {
-    [self _expandSelectionToGranularity:WebSelectByLine];
+    [self _expandSelectionToGranularity:WebBridgeSelectByLine];
 }
 
 - (void)selectWord:(id)sender
 {
-    [self _expandSelectionToGranularity:WebSelectByWord];
+    [self _expandSelectionToGranularity:WebBridgeSelectByWord];
 }
 
 - (void)copy:(id)sender
@@ -4240,7 +4240,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
-- (BOOL)_deleteWithDirection:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity killRing:(BOOL)killRing isTypingAction:(BOOL)isTypingAction
+- (BOOL)_deleteWithDirection:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity killRing:(BOOL)killRing isTypingAction:(BOOL)isTypingAction
 {
     // Delete the selection, if there is one.
     // If not, make a selection using the passed-in direction and granularity.
@@ -4259,12 +4259,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         range = [[self _bridge] rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
         if (isTypingAction)
             switch (direction) {
-                case WebSelectForward:
-                case WebSelectRight:
+                case WebBridgeSelectForward:
+                case WebBridgeSelectRight:
                     deletionAction = forwardDeleteKeyAction;
                     break;
-                case WebSelectBackward:
-                case WebSelectLeft:
+                case WebBridgeSelectBackward:
+                case WebBridgeSelectLeft:
                     deletionAction = deleteKeyAction;
                     break;
             }
@@ -4280,14 +4280,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:NO isTypingAction:YES];
+    [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:NO isTypingAction:YES];
 }
 
 - (void)deleteBackward:(id)sender
 {
     if (![self _isEditable])
         return;
-    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectByCharacter killRing:NO isTypingAction:YES];
+    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter killRing:NO isTypingAction:YES];
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
@@ -4298,38 +4298,38 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteWordForward:(id)sender
 {
-    [self _deleteWithDirection:WebSelectForward granularity:WebSelectByWord killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByWord killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectByWord killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectByWord killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectToLineBoundary killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
     // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
-    if(![self _deleteWithDirection:WebSelectForward granularity:WebSelectToLineBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:YES isTypingAction:NO];
+    if(![self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary killRing:YES isTypingAction:NO])
+        [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectToParagraphBoundary killRing:YES isTypingAction:NO];
+    [self _deleteWithDirection:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
     // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
     // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
-    if (![self _deleteWithDirection:WebSelectForward granularity:WebSelectToParagraphBoundary killRing:YES isTypingAction:NO])
-        [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:YES isTypingAction:NO];
+    if (![self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary killRing:YES isTypingAction:NO])
+        [self _deleteWithDirection:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter killRing:YES isTypingAction:NO];
 }
 
 - (void)complete:(id)sender
@@ -4847,7 +4847,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (BOOL)_canSmartCopyOrDelete
 {
-    return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebSelectByWord;
+    return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebBridgeSelectByWord;
 }
 
 - (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
@@ -5298,7 +5298,7 @@ static NSArray *validAttributes = nil;
         // Get preceeding word stem
         WebBridge *bridge = [_view _bridge];
         DOMRange *selection = [bridge selectedDOMRange];
-        DOMRange *wholeWord = [bridge rangeByExpandingSelectionWithGranularity:WebSelectByWord];
+        DOMRange *wholeWord = [bridge rangeByExpandingSelectionWithGranularity:WebBridgeSelectByWord];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] :[selection startOffset]];
 

@@ -243,7 +243,7 @@ public:
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
     void markMisspellingsInAdjacentWords(const khtml::VisiblePosition &);
-    void markMisspellings(const khtml::Selection &);
+    void markMisspellings(const khtml::SelectionController &);
 
     NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
     NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);
@@ -342,10 +342,10 @@ public:
     void issuePasteCommand();
     void issuePasteAndMatchStyleCommand();
     void issueTransposeCommand();
-    void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
+    void respondToChangedSelection(const khtml::SelectionController &oldSelection, bool closeTyping);
     void respondToChangedContents();
     virtual bool isContentEditable() const;
-    virtual bool shouldChangeSelection(const khtml::Selection &oldSelection, const khtml::Selection &newSelection, khtml::EAffinity affinity, bool stillSelecting) const;
+    virtual bool shouldChangeSelection(const khtml::SelectionController &oldSelection, const khtml::SelectionController &newSelection, khtml::EAffinity affinity, bool stillSelecting) const;
     virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;
     virtual bool shouldEndEditing(const DOM::RangeImpl *) const;
 

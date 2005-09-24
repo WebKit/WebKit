@@ -56,7 +56,7 @@ MoveSelectionCommand::~MoveSelectionCommand()
 
 void MoveSelectionCommand::doApply()
 {
-    Selection selection = endingSelection();
+    SelectionController selection = endingSelection();
     ASSERT(selection.isRange());
 
     Position pos = m_position;

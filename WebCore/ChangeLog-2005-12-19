@@ -1,3 +1,55 @@
+2005-09-23  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and landed by Darin.
+
+        - name changes to prepare for fixing bugzilla bug 4582
+
+        Renamed khtml::Selection to khtml::SelectionController since it's far more
+        than just the selection position itself. Also renamed WebSelectionDirection
+        WebSelectionGranularity and their constants to have a WebBridge prefix so they
+        don't collide with possible public enums with a similar purpose.
+
+        * ForwardingHeaders/editing/SelectionController.h: Added.
+        * ForwardingHeaders/editing/selection.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Added new files, removed old files.
+
+        * khtml/editing/SelectionController.cpp: New name for selection.cpp, contents renamed.
+        * khtml/editing/SelectionController.h: New name for selection.h, contents renamed.
+
+        * khtml/editing/selection.cpp: Removed.
+        * khtml/editing/selection.h: Removed.
+
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/delete_selection_command.h:
+        * khtml/editing/edit_command.cpp:
+        * khtml/editing/edit_command.h:
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/insert_text_command.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/move_selection_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/typing_command.cpp:
+        * khtml/khtml_part.cpp:
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        Renaming.
+
 2005-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

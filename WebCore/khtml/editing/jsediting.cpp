@@ -30,7 +30,7 @@
 
 #include "htmlediting.h"
 #include "khtml_part.h"
-#include "selection.h"
+#include "SelectionController.h"
 #include "misc/hashmap.h"
 
 #if APPLE_CHANGES

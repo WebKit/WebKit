@@ -50,7 +50,7 @@
 #import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
-#import "selection.h"
+#import "SelectionController.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
@@ -123,7 +123,7 @@ using khtml::RenderPart;
 using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
-using khtml::Selection;
+using khtml::SelectionController;
 using khtml::SharedPtr;
 using khtml::Tokenizer;
 using khtml::TextIterator;
@@ -560,11 +560,11 @@ static bool initializedKJS = FALSE;
 - (WebSelectionState)selectionState
 {
     switch (_part->selection().state()) {
-        case Selection::NONE:
+        case SelectionController::NONE:
             return WebSelectionStateNone;
-        case Selection::CARET:
+        case SelectionController::CARET:
             return WebSelectionStateCaret;
-        case Selection::RANGE:
+        case SelectionController::RANGE:
             return WebSelectionStateRange;
     }
     
@@ -1493,53 +1493,53 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [arg command]->reapply();
 }
 
-- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity
+- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!partHasSelection(self))
         return nil;
         
-    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
-    Selection selection(_part->selection());
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    SelectionController selection(_part->selection());
     selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!partHasSelection(self))
         return nil;
         
-    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
-    Selection selection(_part->selection());
-    selection.modify(static_cast<Selection::EAlter>(alteration), 
-                     static_cast<Selection::EDirection>(direction), 
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    SelectionController selection(_part->selection());
+    selection.modify(static_cast<SelectionController::EAlter>(alteration), 
+                     static_cast<SelectionController::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!partHasSelection(self))
         return;
         
-    // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
-    Selection selection(_part->selection());
-    selection.modify(static_cast<Selection::EAlter>(alteration), 
-                     static_cast<Selection::EDirection>(direction), 
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    SelectionController selection(_part->selection());
+    selection.modify(static_cast<SelectionController::EAlter>(alteration), 
+                     static_cast<SelectionController::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
 
     // save vertical navigation x position if necessary; many types of motion blow it away
     int xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
     switch (granularity) {
-        case WebSelectByLine:
-        case WebSelectByParagraph:
+        case WebBridgeSelectByLine:
+        case WebBridgeSelectByParagraph:
             xPos = _part->xPosForVerticalArrowNavigation();
             break;
-        case WebSelectByCharacter:
-        case WebSelectByWord:
-        case WebSelectToLineBoundary:
-        case WebSelectToParagraphBoundary:
-        case WebSelectToDocumentBoundary:
+        case WebBridgeSelectByCharacter:
+        case WebBridgeSelectByWord:
+        case WebBridgeSelectToLineBoundary:
+        case WebBridgeSelectToParagraphBoundary:
+        case WebBridgeSelectToDocumentBoundary:
             break;
     }
 
@@ -1552,8 +1552,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // to preserve smart delete behavior when extending by word.  e.g. double-click,
     // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
     if (!((alteration == WebSelectByExtending) &&
-          (granularity == WebSelectByWord) && (_part->selectionGranularity() == khtml::WORD)))
-        _part->setSelectionGranularity(static_cast<ETextGranularity>(WebSelectByCharacter));
+          (granularity == WebBridgeSelectByWord) && (_part->selectionGranularity() == khtml::WORD)))
+        _part->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
     
     // restore vertical navigation x position if necessary
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
@@ -1569,8 +1569,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!partHasSelection(self))
         return nil;
         
-    Selection selection(_part->selection());
-    selection.modify(static_cast<Selection::EAlter>(alteration), static_cast<int>(verticalDistance));
+    SelectionController selection(_part->selection());
+    selection.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
     return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
@@ -1579,13 +1579,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!partHasSelection(self))
         return;
         
-    Selection selection(_part->selection());
-    selection.modify(static_cast<Selection::EAlter>(alteration), static_cast<int>(verticalDistance));
+    SelectionController selection(_part->selection());
+    selection.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
 
     // setting the selection always clears saved vertical navigation x position, so preserve it
     int xPos = _part->xPosForVerticalArrowNavigation();
     _part->setSelection(selection);
-    _part->setSelectionGranularity(static_cast<ETextGranularity>(WebSelectByCharacter));
+    _part->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
     _part->setXPosForVerticalArrowNavigation(xPos);
 
     _part->selectFrameElementInParentIfFullySelected();
@@ -1593,10 +1593,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureSelectionVisible];
 }
 
-- (WebSelectionGranularity)selectionGranularity
+- (WebBridgeSelectionGranularity)selectionGranularity
 {
-    // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
-    return static_cast<WebSelectionGranularity>(_part->selectionGranularity());
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    return static_cast<WebBridgeSelectionGranularity>(_part->selectionGranularity());
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity closeTyping:(BOOL)closeTyping
@@ -1620,7 +1620,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(startContainer, [range startOffset], affinity);
     VisiblePosition visibleEnd(endContainer, [range endOffset], khtml::SEL_DEFAULT_AFFINITY);
-    Selection selection(visibleStart, visibleEnd);
+    SelectionController selection(visibleStart, visibleEnd);
     _part->setSelection(selection, closeTyping);
 }
 
@@ -1659,7 +1659,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    _part->setSelection(Selection([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+    _part->setSelection(SelectionController([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
@@ -1674,7 +1674,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    _part->setMark(Selection([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+    _part->setMark(SelectionController([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange
@@ -1937,13 +1937,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {   
-    Selection dragCaret([self _visiblePositionForPoint:point]);
+    SelectionController dragCaret([self _visiblePositionForPoint:point]);
     _part->setDragCaret(dragCaret);
 }
 
 - (void)removeDragCaret
 {
-    _part->setDragCaret(Selection());
+    _part->setDragCaret(SelectionController());
 }
 
 - (DOMRange *)dragCaretDOMRange
@@ -1954,7 +1954,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().get()];
+    return position.isNull() ? nil : [DOMRange _rangeWithImpl:SelectionController(position).toRange().get()];
 }
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete
@@ -2256,7 +2256,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part)
         return nil;
         
-    Selection selection(_part->selection());
+    SelectionController selection(_part->selection());
     if (!selection.isCaret())
         return nil;
 

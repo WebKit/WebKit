@@ -62,7 +62,7 @@ BreakBlockquoteCommand::~BreakBlockquoteCommand()
 
 void BreakBlockquoteCommand::doApply()
 {
-    Selection selection = endingSelection();
+    SelectionController selection = endingSelection();
     if (selection.isNone())
         return;
     

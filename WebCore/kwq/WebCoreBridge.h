@@ -102,21 +102,21 @@ typedef enum {
 } WebSelectionAlteration;
 
 typedef enum {
-    WebSelectForward,
-    WebSelectBackward,
-    WebSelectRight,
-    WebSelectLeft
-} WebSelectionDirection;
+    WebBridgeSelectForward,
+    WebBridgeSelectBackward,
+    WebBridgeSelectRight,
+    WebBridgeSelectLeft
+} WebBridgeSelectionDirection;
 
 typedef enum {
-    WebSelectByCharacter,
-    WebSelectByWord,
-    WebSelectByLine,
-    WebSelectByParagraph,
-    WebSelectToLineBoundary,
-    WebSelectToParagraphBoundary,
-    WebSelectToDocumentBoundary
-} WebSelectionGranularity;
+    WebBridgeSelectByCharacter,
+    WebBridgeSelectByWord,
+    WebBridgeSelectByLine,
+    WebBridgeSelectByParagraph,
+    WebBridgeSelectToLineBoundary,
+    WebBridgeSelectToParagraphBoundary,
+    WebBridgeSelectToDocumentBoundary
+} WebBridgeSelectionGranularity;
 
 typedef enum {
     WebScrollUp,
@@ -381,13 +381,13 @@ typedef enum
 - (void)undoEditing:(id)arg;
 - (void)redoEditing:(id)arg;
 
-- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity;
+- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebBridgeSelectionGranularity)granularity;
 - (DOMRange *)rangeOfCharactersAroundCaret;
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
-- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
+- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
-- (WebSelectionGranularity)selectionGranularity;
+- (WebBridgeSelectionGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 - (BOOL)canDeleteRange:(DOMRange *)range;

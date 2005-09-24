@@ -34,7 +34,7 @@ class DeleteSelectionCommand : public CompositeEditCommand
 { 
 public:
     DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    DeleteSelectionCommand(DOM::DocumentImpl *document, const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, const SelectionController &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
 	
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -61,7 +61,7 @@ private:
     bool m_trailingWhitespaceValid;
 
     // This data is transient and should be cleared at the end of the doApply function.
-    Selection m_selectionToDelete;
+    SelectionController m_selectionToDelete;
     DOM::Position m_upstreamStart;
     DOM::Position m_downstreamStart;
     DOM::Position m_upstreamEnd;

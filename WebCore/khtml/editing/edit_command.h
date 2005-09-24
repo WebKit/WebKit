@@ -28,7 +28,7 @@
 
 #include "misc/shared.h"
 #include "edit_actions.h"
-#include "selection.h"
+#include "SelectionController.h"
 
 namespace DOM {
     class CSSMutableStyleDeclarationImpl;
@@ -64,18 +64,18 @@ public:
 
     virtual DOM::DocumentImpl * const document() const { return m_document; }
 
-    Selection startingSelection() const { return m_startingSelection; }
-    Selection endingSelection() const { return m_endingSelection; }
+    SelectionController startingSelection() const { return m_startingSelection; }
+    SelectionController endingSelection() const { return m_endingSelection; }
 
     void setEndingSelectionNeedsLayout(bool flag=true) { m_endingSelection.setNeedsLayout(flag); }
         
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
 
-    void setStartingSelection(const Selection &s);
+    void setStartingSelection(const SelectionController &s);
     void setStartingSelection(const VisiblePosition &p);
     void setStartingSelection(const DOM::Position &p, EAffinity affinity);
-    void setEndingSelection(const Selection &s);
+    void setEndingSelection(const SelectionController &s);
     void setEndingSelection(const VisiblePosition &p);
     void setEndingSelection(const DOM::Position &p, EAffinity affinity);
 
@@ -94,8 +94,8 @@ private:
 
     DOM::DocumentImpl *m_document;
     ECommandState m_state;
-    Selection m_startingSelection;
-    Selection m_endingSelection;
+    SelectionController m_startingSelection;
+    SelectionController m_endingSelection;
     DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
     EditCommand *m_parent;
 };
@@ -120,13 +120,13 @@ public:
 
     DOM::DocumentImpl * const document() const;
 
-    Selection startingSelection() const;
-    Selection endingSelection() const;
+    SelectionController startingSelection() const;
+    SelectionController endingSelection() const;
 
-    void setStartingSelection(const Selection &s) const;
+    void setStartingSelection(const SelectionController &s) const;
     void setStartingSelection(const VisiblePosition &p) const;
     void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
-    void setEndingSelection(const Selection &s) const;
+    void setEndingSelection(const SelectionController &s) const;
     void setEndingSelection(const VisiblePosition &p) const;
     void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
 

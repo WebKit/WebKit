@@ -1227,7 +1227,7 @@ void DocumentImpl::updateSelection()
         return;
     
     RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
-    Selection s = part()->selection();
+    SelectionController s = part()->selection();
     if (!s.isRange()) {
         canvas->clearSelection();
     }

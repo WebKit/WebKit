@@ -36,7 +36,7 @@
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 #include "editing/html_interchange.h"
-#include "editing/selection.h"
+#include "editing/SelectionController.h"
 
 #include <kglobal.h>
 #include <kdebug.h>
@@ -2344,7 +2344,7 @@ void ContainerNodeImpl::setFocus(bool received)
 
     // FIXME: Move to ElementImpl
     if (received && isEditableBlock() && !hasChildNodes()) {
-        getDocument()->part()->setSelection(Selection(Position(this, 0), DOWNSTREAM));
+        getDocument()->part()->setSelection(SelectionController(Position(this, 0), DOWNSTREAM));
     }
 
     // note that we need to recalc the style

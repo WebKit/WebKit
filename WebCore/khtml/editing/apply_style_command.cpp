@@ -398,7 +398,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
         return;
     
     // Adjust to the positions we want to use for applying style.
-    Selection selection = endingSelection();
+    SelectionController selection = endingSelection();
     Position start(selection.start().downstream());
     Position end(selection.end().upstream());
     if (RangeImpl::compareBoundaryPoints(end, start) < 0) {
@@ -904,7 +904,7 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
     
     ASSERT(s.node()->inDocument());
     ASSERT(e.node()->inDocument());
-    setEndingSelection(Selection(s, VP_DEFAULT_AFFINITY, e, VP_DEFAULT_AFFINITY));
+    setEndingSelection(SelectionController(s, VP_DEFAULT_AFFINITY, e, VP_DEFAULT_AFFINITY));
 }
 
 bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start, const Position &end) const
@@ -936,7 +936,7 @@ bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Po
         int endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNode(text, start.offset());
-        setEndingSelection(Selection(Position(start.node(), 0), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
+        setEndingSelection(SelectionController(Position(start.node(), 0), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -952,7 +952,7 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
         ASSERT(prevNode);
         NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode, prevNode->caretMaxOffset()), SEL_DEFAULT_AFFINITY));
+        setEndingSelection(SelectionController(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode, prevNode->caretMaxOffset()), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -965,7 +965,7 @@ bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, c
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNodeContainingElement(text, start.offset());
 
-        setEndingSelection(Selection(Position(start.node()->parentNode(), start.node()->nodeIndex()), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
+        setEndingSelection(SelectionController(Position(start.node()->parentNode(), start.node()->nodeIndex()), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -981,7 +981,7 @@ bool ApplyStyleCommand::splitTextElementAtEndIfNeeded(const Position &start, con
         ASSERT(prevNode);
         NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode->parent(), prevNode->nodeIndex() + 1), SEL_DEFAULT_AFFINITY));
+        setEndingSelection(SelectionController(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode->parent(), prevNode->nodeIndex() + 1), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -1056,7 +1056,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
         int startOffsetAdjustment = startChild->nodeIndex();
         int endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
 
-        setEndingSelection(Selection(Position(startNode, startOffsetAdjustment), SEL_DEFAULT_AFFINITY,
+        setEndingSelection(SelectionController(Position(startNode, startOffsetAdjustment), SEL_DEFAULT_AFFINITY,
                                      Position(end.node(), end.offset() + endOffsetAdjustment), SEL_DEFAULT_AFFINITY)); 
 
         return true;
@@ -1099,7 +1099,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
 
         int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodes()->length();
 
-        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, 
+        setEndingSelection(SelectionController(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, 
                                      Position(nextElement, endOffset), SEL_DEFAULT_AFFINITY));
         return true;
     }
@@ -1288,7 +1288,7 @@ void ApplyStyleCommand::joinChildTextNodes(NodeImpl *node, const Position &start
         }
     }
 
-    setEndingSelection(Selection(newStart, SEL_DEFAULT_AFFINITY, newEnd, SEL_DEFAULT_AFFINITY));
+    setEndingSelection(SelectionController(newStart, SEL_DEFAULT_AFFINITY, newEnd, SEL_DEFAULT_AFFINITY));
 }
 
 } // namespace khtml

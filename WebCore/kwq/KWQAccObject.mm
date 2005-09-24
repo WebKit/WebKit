@@ -56,7 +56,7 @@
 #import "render_style.h"
 #import "render_text.h"
 #import "render_theme.h"
-#import "selection.h"
+#import "SelectionController.h"
 #import "kjs_html.h"
 #import "text_granularity.h"
 #import "visible_position.h"
@@ -96,7 +96,7 @@ using khtml::RenderObject;
 using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
-using khtml::Selection;
+using khtml::SelectionController;
 using khtml::TextIterator;
 using khtml::VisiblePosition;
 
@@ -914,7 +914,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
         // (there is a web archive of this page attached to <rdar://problem/3888973>)
         // Trouble is we need to know which document view to ask.
-        Selection   sel = [self topView]->part()->selection();
+        SelectionController   sel = [self topView]->part()->selection();
         if (sel.isNone()) {
             sel = m_renderer->document()->renderer()->canvas()->view()->part()->selection();
             if (sel.isNone())
@@ -1042,8 +1042,8 @@ static QRect boundingBoxRect(RenderObject* obj)
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at visiblePos. 
-    Selection sel = Selection(visiblePos, visiblePos);
-    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
+    SelectionController sel = SelectionController(visiblePos, visiblePos);
+    (void)sel.modify(SelectionController::EXTEND, SelectionController::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker range for the selection start to end
     VisiblePosition startPosition = VisiblePosition(sel.start(), sel.startAffinity());
@@ -1129,9 +1129,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (endVisiblePosition.isNull())
         return nil;
     
-    // use the Selection class to help calculate the corresponding rectangle
-    QRect rect1 = Selection(startVisiblePosition, startVisiblePosition).caretRect();
-    QRect rect2 = Selection(endVisiblePosition, endVisiblePosition).caretRect();
+    // use the SelectionController class to help calculate the corresponding rectangle
+    QRect rect1 = SelectionController(startVisiblePosition, startVisiblePosition).caretRect();
+    QRect rect2 = SelectionController(endVisiblePosition, endVisiblePosition).caretRect();
     QRect ourrect = rect1.unite(rect2);
 
     // try to use the document view from the selection, so that nested WebAreas work,
@@ -1426,11 +1426,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (visiblePos1.isNull() || visiblePos2.isNull())
         return nil;
     
-    // use the Selection class to do the ordering
-    // NOTE: Perhaps we could add a Selection method to indicate direction, based on m_baseIsStart
+    // use the SelectionController class to do the ordering
+    // NOTE: Perhaps we could add a SelectionController method to indicate direction, based on m_baseIsStart
     WebCoreTextMarker *startTextMarker;
     WebCoreTextMarker *endTextMarker;
-    Selection   sel(visiblePos1, visiblePos2);
+    SelectionController   sel(visiblePos1, visiblePos2);
     if (sel.base() == sel.start()) {
         startTextMarker = textMarker1;
         endTextMarker = textMarker2;
@@ -1439,7 +1439,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         endTextMarker = textMarker1;
     }
     
-    // return a range based on the Selection verdict
+    // return a range based on the SelectionController verdict
     return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
@@ -1898,7 +1898,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     
     // make selection and tell the document to use it
     // NOTE: BUG support nested WebAreas
-    Selection sel = Selection(startVisiblePosition, endVisiblePosition);
+    SelectionController sel = SelectionController(startVisiblePosition, endVisiblePosition);
     [self topDocument]->part()->setSelection(sel);
 }
 

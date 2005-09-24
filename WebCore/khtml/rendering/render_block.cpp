@@ -36,7 +36,7 @@
 #include "xml/dom_position.h"
 #include "html/html_formimpl.h"
 #include "render_block.h"
-#include "editing/selection.h"
+#include "editing/SelectionController.h"
 #include "render_theme.h"
 
 #include "khtmlview.h"
@@ -1270,7 +1270,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 
 void RenderBlock::paintCaret(PaintInfo& i, CaretType type)
 {
-    const Selection &s = type == CursorCaret ? document()->part()->selection() : document()->part()->dragCaret();
+    const SelectionController &s = type == CursorCaret ? document()->part()->selection() : document()->part()->dragCaret();
     NodeImpl *caretNode = s.start().node();
     RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
     if (renderer && (renderer == this || renderer->containingBlock() == this) && caretNode && caretNode->isContentEditable()) {

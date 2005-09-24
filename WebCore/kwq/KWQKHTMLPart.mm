@@ -70,7 +70,7 @@
 #import "render_table.h"
 #import "render_text.h"
 #import "render_theme.h"
-#import "selection.h"
+#import "SelectionController.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
@@ -140,7 +140,7 @@ using khtml::RenderText;
 using khtml::theme;
 using khtml::RenderWidget;
 using khtml::RightWordIfOnBoundary;
-using khtml::Selection;
+using khtml::SelectionController;
 using khtml::SELECT_IGNORE;
 using khtml::setEnd;
 using khtml::setStart;
@@ -656,7 +656,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
         return false;
     }
 
-    setSelection(Selection(resultRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
+    setSelection(SelectionController(resultRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
     jumpToSelection();
     return true;
 }
@@ -1023,7 +1023,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                     QString result = chars.string(misspelling.length);
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
-                    setSelection(Selection(misspellingRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
+                    setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
                     jumpToSelection();
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
@@ -3375,15 +3375,15 @@ NSRect KWQKHTMLPart::visibleSelectionRect() const
 void KWQKHTMLPart::centerSelectionInVisibleArea() const
 {
     switch (selection().state()) {
-        case Selection::NONE:
+        case SelectionController::NONE:
             break;
-        case Selection::CARET: {
+        case SelectionController::CARET: {
             if (view())
                 // passing true forces centering even if selection is already exposed
                 view()->ensureRectVisibleCentered(selection().caretRect(), true);
             break;
         }
-        case Selection::RANGE:
+        case SelectionController::RANGE:
             if (view())
                 // passing true forces centering even if selection is already exposed
                 view()->ensureRectVisibleCentered(selectionRect(), true);
@@ -3713,7 +3713,7 @@ void KWQKHTMLPart::setSelectionFromNone()
             node = node->traverseNextNode();
         }
         if (node)
-            setSelection(Selection(Position(node, 0), DOWNSTREAM));
+            setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
     }
 }
 
@@ -4012,10 +4012,10 @@ void KWQKHTMLPart::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
     if (![_bridge isContinuousSpellCheckingEnabled])
         return;
-    markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
+    markMisspellings(SelectionController(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
 }
 
-void KWQKHTMLPart::markMisspellings(const Selection &selection)
+void KWQKHTMLPart::markMisspellings(const SelectionController &selection)
 {
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
@@ -4073,15 +4073,15 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
     }
 }
 
-void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
+void KWQKHTMLPart::respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping)
 {
     if (xmlDocImpl()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             VisiblePosition oldStart(oldSelection.start(), oldSelection.startAffinity());
-            Selection oldAdjacentWords(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
+            SelectionController oldAdjacentWords(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
 
             VisiblePosition newStart(selection().start(), selection().startAffinity());
-            Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+            SelectionController newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 
             if (oldAdjacentWords != newAdjacentWords) {
                 // Mark misspellings in the portion that was previously unmarked because of
@@ -4109,7 +4109,7 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
     [_bridge respondToChangedSelection];
 }
 
-bool KWQKHTMLPart::shouldChangeSelection(const Selection &oldSelection, const Selection &newSelection, khtml::EAffinity affinity, bool stillSelecting) const
+bool KWQKHTMLPart::shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, khtml::EAffinity affinity, bool stillSelecting) const
 {
     return [_bridge shouldChangeSelectedDOMRange:[DOMRange _rangeWithImpl:oldSelection.toRange().get()]
                                       toDOMRange:[DOMRange _rangeWithImpl:newSelection.toRange().get()]

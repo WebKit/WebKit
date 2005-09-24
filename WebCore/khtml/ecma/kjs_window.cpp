@@ -59,7 +59,7 @@
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
 #include "editing/htmlediting.h"
-#include "editing/selection.h"
+#include "editing/SelectionController.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_docimpl.h"
@@ -2574,11 +2574,11 @@ ValueImp *Selection::getValueProperty(ExecState *exec, int token) const
       return Boolean(!m_part->selection().isRange());
   case _Type: {
       switch (m_part->selection().state()) {
-      case khtml::Selection::NONE:
+      case khtml::SelectionController::NONE:
           return String("None");
-      case khtml::Selection::CARET:
+      case khtml::SelectionController::CARET:
           return String("Caret");
-      case khtml::Selection::RANGE:
+      case khtml::SelectionController::RANGE:
           return String("Range");
       }
   }
@@ -2620,15 +2620,15 @@ ValueImp *SelectionFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
         switch (id) {
             case Selection::Collapse:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
+                part->setSelection(khtml::SelectionController(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
                 break;
             case Selection::CollapseToEnd:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(part->selection().end(), part->selection().endAffinity()));
+                part->setSelection(khtml::SelectionController(part->selection().end(), part->selection().endAffinity()));
                 break;
             case Selection::CollapseToStart:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(part->selection().start(), part->selection().startAffinity()));
+                part->setSelection(khtml::SelectionController(part->selection().start(), part->selection().startAffinity()));
                 break;
             case Selection::Empty:
                 TypingCommand::closeTyping(part->lastEditCommand());
@@ -2638,27 +2638,27 @@ ValueImp *SelectionFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
                 TypingCommand::closeTyping(part->lastEditCommand());
                 Position base(toNode(args[0]), args[1]->toInt32(exec));
                 Position extent(toNode(args[2]), args[3]->toInt32(exec));
-                part->setSelection(khtml::Selection(base, khtml::SEL_DEFAULT_AFFINITY, extent, khtml::SEL_DEFAULT_AFFINITY));
+                part->setSelection(khtml::SelectionController(base, khtml::SEL_DEFAULT_AFFINITY, extent, khtml::SEL_DEFAULT_AFFINITY));
                 break;
             }
             case Selection::SetPosition:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
+                part->setSelection(khtml::SelectionController(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
                 break;
             case Selection::Modify: {
                 TypingCommand::closeTyping(part->lastEditCommand());
-                khtml::Selection s(part->selection());
-                khtml::Selection::EAlter alter = khtml::Selection::MOVE;
+                khtml::SelectionController s(part->selection());
+                khtml::SelectionController::EAlter alter = khtml::SelectionController::MOVE;
                 if (args[0]->toString(exec).domString().lower() == "extend")
-                    alter = khtml::Selection::EXTEND;
+                    alter = khtml::SelectionController::EXTEND;
                 DOMString directionString = args[1]->toString(exec).domString().lower();
-                khtml::Selection::EDirection direction = khtml::Selection::FORWARD;
+                khtml::SelectionController::EDirection direction = khtml::SelectionController::FORWARD;
                 if (directionString == "backward")
-                    direction = khtml::Selection::BACKWARD;
+                    direction = khtml::SelectionController::BACKWARD;
                 else if (directionString == "left")
-                    direction = khtml::Selection::LEFT;
+                    direction = khtml::SelectionController::LEFT;
                 if (directionString == "right")
-                    direction = khtml::Selection::RIGHT;
+                    direction = khtml::SelectionController::RIGHT;
                 khtml::ETextGranularity granularity = khtml::CHARACTER;
                 DOMString granularityString = args[2]->toString(exec).domString().lower();
                 if (granularityString == "word")

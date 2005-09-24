@@ -363,7 +363,7 @@
 		93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B641F206E28C5C0055F610 /* KWQFormData.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199F208245E59001E9ABC /* selection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE067070285F600BD91F9 /* selection.h */; };
+		93F199F208245E59001E9ABC /* SelectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE067070285F600BD91F9 /* SelectionController.h */; settings = {ATTRIBUTES = (); }; };
 		93F199F308245E59001E9ABC /* visible_position.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE069070285F600BD91F9 /* visible_position.h */; };
 		93F199F408245E59001E9ABC /* visible_text.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE06B070285F600BD91F9 /* visible_text.h */; };
 		93F199F508245E59001E9ABC /* visible_units.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE06D070285F600BD91F9 /* visible_units.h */; };
@@ -608,7 +608,7 @@
 		93F19B0608245E59001E9ABC /* KWQFormData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B641F106E28C5C0055F610 /* KWQFormData.mm */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
-		93F19B0908245E59001E9ABC /* selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE066070285F600BD91F9 /* selection.cpp */; };
+		93F19B0908245E59001E9ABC /* SelectionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE066070285F600BD91F9 /* SelectionController.cpp */; };
 		93F19B0A08245E59001E9ABC /* visible_position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE068070285F600BD91F9 /* visible_position.cpp */; };
 		93F19B0B08245E59001E9ABC /* visible_text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE06A070285F600BD91F9 /* visible_text.cpp */; };
 		93F19B0C08245E59001E9ABC /* visible_units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE06C070285F600BD91F9 /* visible_units.cpp */; };
@@ -1173,7 +1173,7 @@
 		A8212BB508794A2300677359 /* KWQFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B641F206E28C5C0055F610 /* KWQFormData.h */; };
 		A8212BB608794A2300677359 /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8212BB708794A2300677359 /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8212BB808794A2300677359 /* selection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE067070285F600BD91F9 /* selection.h */; };
+		A8212BB808794A2300677359 /* SelectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE067070285F600BD91F9 /* SelectionController.h */; };
 		A8212BB908794A2300677359 /* visible_position.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE069070285F600BD91F9 /* visible_position.h */; };
 		A8212BBA08794A2300677359 /* visible_text.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE06B070285F600BD91F9 /* visible_text.h */; };
 		A8212BBB08794A2300677359 /* visible_units.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABE06D070285F600BD91F9 /* visible_units.h */; };
@@ -1452,7 +1452,7 @@
 		A8212CD408794A2300677359 /* KWQFormData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B641F106E28C5C0055F610 /* KWQFormData.mm */; };
 		A8212CD508794A2300677359 /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		A8212CD608794A2300677359 /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
-		A8212CD708794A2300677359 /* selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE066070285F600BD91F9 /* selection.cpp */; };
+		A8212CD708794A2300677359 /* SelectionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE066070285F600BD91F9 /* SelectionController.cpp */; };
 		A8212CD808794A2300677359 /* visible_position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE068070285F600BD91F9 /* visible_position.cpp */; };
 		A8212CD908794A2300677359 /* visible_text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE06A070285F600BD91F9 /* visible_text.cpp */; };
 		A8212CDA08794A2300677359 /* visible_units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABE06C070285F600BD91F9 /* visible_units.cpp */; };
@@ -2525,8 +2525,8 @@
 		939FF8ED0702B1B100979E5E /* visible_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = visible_range.h; path = editing/visible_range.h; sourceTree = "<group>"; };
 		93ABCE5D06E1A42E0085925B /* formdata.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = formdata.cpp; sourceTree = "<group>"; };
 		93ABCE5E06E1A42E0085925B /* formdata.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = formdata.h; sourceTree = "<group>"; };
-		93ABE066070285F600BD91F9 /* selection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = selection.cpp; path = editing/selection.cpp; sourceTree = "<group>"; };
-		93ABE067070285F600BD91F9 /* selection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = selection.h; path = editing/selection.h; sourceTree = "<group>"; };
+		93ABE066070285F600BD91F9 /* SelectionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionController.cpp; path = editing/SelectionController.cpp; sourceTree = "<group>"; };
+		93ABE067070285F600BD91F9 /* SelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionController.h; path = editing/SelectionController.h; sourceTree = "<group>"; };
 		93ABE068070285F600BD91F9 /* visible_position.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = visible_position.cpp; path = editing/visible_position.cpp; sourceTree = "<group>"; };
 		93ABE069070285F600BD91F9 /* visible_position.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = visible_position.h; path = editing/visible_position.h; sourceTree = "<group>"; };
 		93ABE06A070285F600BD91F9 /* visible_text.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = visible_text.cpp; path = editing/visible_text.cpp; sourceTree = "<group>"; };
@@ -6251,8 +6251,8 @@
 				BE02D4E7066F908A0076809F /* jsediting.cpp */,
 				9378D9FA07640A46004B97BF /* markup.h */,
 				9378D9F907640A46004B97BF /* markup.cpp */,
-				93ABE067070285F600BD91F9 /* selection.h */,
-				93ABE066070285F600BD91F9 /* selection.cpp */,
+				93ABE067070285F600BD91F9 /* SelectionController.h */,
+				93ABE066070285F600BD91F9 /* SelectionController.cpp */,
 				BECE67BD07087B250007C14B /* text_affinity.h */,
 				932B9834070297DC0032804F /* text_granularity.h */,
 				93ABE069070285F600BD91F9 /* visible_position.h */,
@@ -7233,7 +7233,7 @@
 				93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
-				93F199F208245E59001E9ABC /* selection.h in Headers */,
+				93F199F208245E59001E9ABC /* SelectionController.h in Headers */,
 				93F199F308245E59001E9ABC /* visible_position.h in Headers */,
 				93F199F408245E59001E9ABC /* visible_text.h in Headers */,
 				93F199F508245E59001E9ABC /* visible_units.h in Headers */,
@@ -7581,7 +7581,7 @@
 				A8212BB508794A2300677359 /* KWQFormData.h in Headers */,
 				A8212BB608794A2300677359 /* WebCoreView.h in Headers */,
 				A8212BB708794A2300677359 /* WebDashboardRegion.h in Headers */,
-				A8212BB808794A2300677359 /* selection.h in Headers */,
+				A8212BB808794A2300677359 /* SelectionController.h in Headers */,
 				A8212BB908794A2300677359 /* visible_position.h in Headers */,
 				A8212BBA08794A2300677359 /* visible_text.h in Headers */,
 				A8212BBB08794A2300677359 /* visible_units.h in Headers */,
@@ -9542,7 +9542,7 @@
 				93F19B0608245E59001E9ABC /* KWQFormData.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
-				93F19B0908245E59001E9ABC /* selection.cpp in Sources */,
+				93F19B0908245E59001E9ABC /* SelectionController.cpp in Sources */,
 				93F19B0A08245E59001E9ABC /* visible_position.cpp in Sources */,
 				93F19B0B08245E59001E9ABC /* visible_text.cpp in Sources */,
 				93F19B0C08245E59001E9ABC /* visible_units.cpp in Sources */,
@@ -9816,7 +9816,7 @@
 				A8212CD408794A2300677359 /* KWQFormData.mm in Sources */,
 				A8212CD508794A2300677359 /* WebCoreView.m in Sources */,
 				A8212CD608794A2300677359 /* WebDashboardRegion.m in Sources */,
-				A8212CD708794A2300677359 /* selection.cpp in Sources */,
+				A8212CD708794A2300677359 /* SelectionController.cpp in Sources */,
 				A8212CD808794A2300677359 /* visible_position.cpp in Sources */,
 				A8212CD908794A2300677359 /* visible_text.cpp in Sources */,
 				A8212CDA08794A2300677359 /* visible_units.cpp in Sources */,

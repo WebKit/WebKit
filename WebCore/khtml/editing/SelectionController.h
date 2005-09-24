@@ -39,7 +39,7 @@ namespace khtml {
 class RenderObject;
 class VisiblePosition;
 
-class Selection
+class SelectionController
 {
 public:
     enum EState { NONE, CARET, RANGE };
@@ -50,23 +50,23 @@ public:
     typedef DOM::Position Position;
     typedef DOM::RangeImpl RangeImpl;
 
-    Selection();
-    Selection(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
-    Selection(const VisiblePosition &);
-    Selection(const VisiblePosition &, const VisiblePosition &);
-    Selection(const Position &, EAffinity affinity);
-    Selection(const Position &, EAffinity, const Position &, EAffinity);
-    Selection(const Selection &);
+    SelectionController();
+    SelectionController(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
+    SelectionController(const VisiblePosition &);
+    SelectionController(const VisiblePosition &, const VisiblePosition &);
+    SelectionController(const Position &, EAffinity affinity);
+    SelectionController(const Position &, EAffinity, const Position &, EAffinity);
+    SelectionController(const SelectionController &);
 
-    Selection &operator=(const Selection &o);
-    Selection &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
+    SelectionController &operator=(const SelectionController &o);
+    SelectionController &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
 
     void moveTo(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
     void moveTo(const VisiblePosition &);
     void moveTo(const VisiblePosition &, const VisiblePosition &);
     void moveTo(const Position &, EAffinity);
     void moveTo(const Position &, EAffinity, const Position &, EAffinity);
-    void moveTo(const Selection &);
+    void moveTo(const SelectionController &);
 
     EState state() const { return m_state; }
     
@@ -153,12 +153,12 @@ private:
                                   // modified with EAlter::EXTEND
 };
 
-inline bool operator==(const Selection &a, const Selection &b)
+inline bool operator==(const SelectionController &a, const SelectionController &b)
 {
     return a.start() == b.start() && a.end() == b.end() && a.startAffinity() == b.startAffinity();
 }
 
-inline bool operator!=(const Selection &a, const Selection &b)
+inline bool operator!=(const SelectionController &a, const SelectionController &b)
 {
     return !(a == b);
 }

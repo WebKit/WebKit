@@ -55,7 +55,7 @@ protected:
     void applyStyle(DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes);
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    void deleteSelection(const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    void deleteSelection(const SelectionController &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteTextFromNode(DOM::TextImpl *node, int offset, int count);
     void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);

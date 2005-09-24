@@ -34,7 +34,7 @@
 #include "render_table.h"
 #include "render_text.h"
 #include "render_br.h"
-#include "selection.h"
+#include "SelectionController.h"
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
@@ -54,7 +54,7 @@ using khtml::RenderWidget;
 using khtml::RenderText;
 using khtml::RenderCanvas;
 using khtml::RenderBR;
-using khtml::Selection;
+using khtml::SelectionController;
 using khtml::transparentColor;
 using khtml::UPSTREAM;
 
@@ -391,7 +391,7 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     if (!part)
         return;
 
-    Selection selection = part->selection();
+    SelectionController selection = part->selection();
     if (selection.isCaret()) {
         ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node());
         if (selection.startAffinity() == UPSTREAM)

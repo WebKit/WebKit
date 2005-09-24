@@ -1,3 +1,11 @@
+2005-09-23  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and landed by Darin.
+
+        - name changes to prepare for fixing bugzilla bug 4582
+
+        * WebView.subproj/WebHTMLView.m: Changed names to match WebCore changes.
+
 2005-09-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

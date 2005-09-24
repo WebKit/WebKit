@@ -46,7 +46,7 @@
 #include "ecma/kjs_proxy.h"
 #include "css/css_valueimpl.h"
 #include "editing/edit_command.h"
-#include "editing/selection.h"
+#include "editing/SelectionController.h"
 
 namespace KIO
 {
@@ -372,9 +372,9 @@ public:
   QString m_overURLTarget;
 #endif
 
-  khtml::Selection m_selection;
-  khtml::Selection m_dragCaret;
-  khtml::Selection m_mark;
+  khtml::SelectionController m_selection;
+  khtml::SelectionController m_dragCaret;
+  khtml::SelectionController m_mark;
   int m_caretBlinkTimer;
 
   bool m_caretVisible:1;
