@@ -1,3 +1,24 @@
+2005-09-22  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed by Maciej.
+        Landed by Darin.
+
+        - patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4963>
+        "Would like to simulate human interaction with webview"
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]):
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController init]):
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        Add eventSender javascript object, that sends fake mouse events to the webview.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        link with Carbon.framework
+
 2005-09-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -502,7 +502,7 @@ if ($counts{match} && $counts{match} == $count) {
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
-            if ($pixelTests) {
+            if ($pixelTests && -f "$testDirectory/$base-expected.png") {
                 print HTML "<td><a href=\"$testDirectory/$base-expected.png\">image</a></td>\n";
             }
             print HTML "</tr>\n";

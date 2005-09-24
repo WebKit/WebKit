@@ -1,3 +1,12 @@
+2005-09-24  Duncan Wilcox  <duncan@mclink.it>
+
+        - patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4963>
+          "Would like to simulate human interaction with webview"
+
+        Test cases added:
+        * layout-tests/editing/selection/fake-drag.html: Added.
+        * layout-tests/editing/selection/fake-doubleclick: Added.
+
 2005-09-24  Darin Adler  <darin@apple.com>
 
         - added Mitz's test for flipped text rendering (using dragged links)

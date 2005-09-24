@@ -40,6 +40,8 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 
+#import <Carbon/Carbon.h> // for GetCurrentEventTime()
+
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
 #import <getopt.h>
@@ -51,6 +53,16 @@
 @end
 
 @interface LayoutTestController : NSObject
+@end
+
+@interface EventSendingController : NSObject
+{
+    NSPoint last;
+    BOOL down;
+    int clickCount;
+    NSTimeInterval lastClick;
+}
+
 @end
 
 static void dumpRenderTree(const char *filename);
@@ -263,6 +275,9 @@ static void dump(void)
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
     [(id)obj setValue:ltc forKey:@"layoutTestController"];
     [ltc release];
+    EventSendingController *esc = [[EventSendingController alloc] init];
+    [(id)obj setValue:esc forKey:@"eventSender"];
+    [esc release];
 
 }
 
@@ -439,6 +454,76 @@ static void dump(void)
 - (void)dumpTitleChanges
 {
     dumpTitleChanges = YES;
+}
+
+@end
+
+@implementation EventSendingController
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
+{
+    if (aSelector == @selector(mouseDown)
+            || aSelector == @selector(mouseUp)
+            || aSelector == @selector(mouseMoveToX:Y:))
+        return NO;
+    return YES;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    if(aSelector == @selector(mouseMoveToX:Y:))
+        return @"mouseMoveTo";
+    return nil;
+}
+
+- (id)init
+{
+    last = NSMakePoint(0, 0);
+    down = NO;
+    clickCount = 0;
+    lastClick = 0;
+    return self;
+}
+
+- (void)mouseDown
+{
+    if(GetCurrentEventTime() - lastClick >= 1)
+        clickCount = 1;
+    else
+        clickCount++;
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
+
+    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    if (subView) {
+        [subView mouseDown:event];
+        down = YES;
+    }
+}
+
+- (void)mouseUp
+{
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
+
+    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    if (subView) {
+        [subView mouseUp:event];
+        down = NO;
+        lastClick = [event timestamp];
+    }
+}
+
+- (void)mouseMoveToX:(int)x Y:(int)y
+{
+    last = NSMakePoint(x, [[frame webView] frame].size.height - y);
+    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:(down ? clickCount : 0) pressure:nil];
+
+    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    if (subView) {
+        if (down)
+            [subView mouseDragged:event];
+        else
+            [subView mouseMoved:event];
+    }
 }
 
 @end
