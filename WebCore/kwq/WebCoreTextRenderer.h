@@ -41,7 +41,7 @@ struct WebCoreTextStyle
     NSString **families;
     unsigned smallCaps : 1;
     unsigned rtl : 1;
-    unsigned visuallyOrdered : 1;
+    unsigned directionalOverride : 1;
     unsigned applyRunRounding : 1;
     unsigned applyWordRounding : 1;
     unsigned attemptFontSubstitution : 1;

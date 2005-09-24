@@ -1,3 +1,49 @@
+2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Dave.
+        Landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4862
+          Incorrect layout of bidi overrides
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-override.html: Added.
+        * layout-tests/fast/text/international/bidi-override-expected.checksum: Added.
+        * layout-tests/fast/text/international/bidi-override-expected.png: Added.
+        * layout-tests/fast/text/international/bidi-override-expected.txt: Added.
+
+        * khtml/rendering/bidi.h: Include an "override direction" flag in BidiRun.
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::computeVerticalPositionsForLine): Pass in "override direction" parameter.
+        (khtml::RenderBlock::bidiReorderLine): Set direction based on override.
+        (khtml::RenderBlock::layoutInlineChildren): Pass in "override direction" parameter.
+
+        * khtml/rendering/render_object.h: Update position function to take an "override direction" parameter.
+        * khtml/rendering/render_box.h: Ditto.
+        * khtml/rendering/render_box.cpp: (RenderBox::position): Ditto.
+
+        * khtml/rendering/render_text.h: Add an m_dirOverride field to InlineTextBox.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint): Pass true for override to drawText if m_dirOverride is set.
+        (InlineTextBox::paintSelection): Ditto.
+        (InlineTextBox::paintMarkedTextBackground): Ditto.
+        (RenderText::position): Set up m_dirOverride in the InlineTextBox based on the override parameter.
+
+        * kwq/WebCoreTextRenderer.h: Replace visuallyOrdered flag with a directionalOverride flag.
+        * kwq/WebCoreTextRendererFactory.mm: (WebCoreInitializeEmptyTextStyle): Ditto.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText): Ditto.
+        (QPainter::drawHighlightForText): Ditto.
+
+        - updated pixel test results for unrelated tests with results that recently changed
+
+        * layout-tests/fast/forms/006-expected.checksum:
+        * layout-tests/fast/forms/006-expected.png:
+        * layout-tests/fast/forms/007-expected.checksum:
+        * layout-tests/fast/forms/007-expected.png:
+        * layout-tests/fast/text/whitespace/013-expected.checksum:
+        * layout-tests/fast/text/whitespace/013-expected.png:
+
 2005-09-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.

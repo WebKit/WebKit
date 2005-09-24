@@ -667,7 +667,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
     style.textColor = nsColor(data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL ? true : false;
-    style.visuallyOrdered = visuallyOrdered;
+    style.directionalOverride = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
@@ -706,7 +706,7 @@ void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
     style.textColor = nsColor(data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL ? true : false;
-    style.visuallyOrdered = visuallyOrdered;
+    style.directionalOverride = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;

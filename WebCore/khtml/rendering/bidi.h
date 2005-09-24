@@ -54,7 +54,7 @@ namespace khtml {
 
     struct BidiRun {
 	BidiRun(int _start, int _stop, RenderObject *_obj, BidiContext *context, QChar::Direction dir)
-	    :  start( _start ), stop( _stop ), obj( _obj ), box(0), nextRun(0)
+	    :  start( _start ), stop( _stop ), obj( _obj ), box(0), override(context->override), nextRun(0)
 	{
 	    if(dir == QChar::DirON) dir = context->dir;
 
@@ -93,6 +93,7 @@ public:
         
 	// explicit + implicit levels here
 	uchar level;
+        bool override : 1;
 
         bool compact : 1;
         
