@@ -3200,8 +3200,8 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
                     [self setTextSizeMultiplier:newScaleFactor];
                 }
             } else {
-                // Incarnation to perform a selector returning a BOOL from objc/objc-runtime.h
-                isSuitable = (*(BOOL(*)(id, SEL, ...))objc_msgSend)(sizingDocView, testSel);
+                // Incantation to perform a selector returning a BOOL.
+                isSuitable = ((BOOL(*)(id, SEL))objc_msgSend)(sizingDocView, testSel);
             }
             
             if (isSuitable) {

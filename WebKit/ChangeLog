@@ -1,3 +1,24 @@
+2005-09-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Tweaked, reviewed, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4394
+          Mouse clicks ignored in inline input areas
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray mouseDown:]): Removed misleading comment and added code to send mouse event to input manager.
+        (-[NSArray mouseDragged:]): Added code to send mouse event to input manager.
+        (-[NSArray mouseUp:]): Ditto.
+        (-[WebHTMLView _discardMarkedText]): Umnmark text before calling markedTextAbandoned: to match behavior
+        of NSTextView (not sure why we did things in the opposite order before).
+        (-[WebHTMLView _updateSelectionForInputManager]): Ditto.
+
+        - unrelated tweak
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _performTextSizingSelector:withObject:onTrackingDocs:selForNonTrackingDocs:newScaleFactor:]):
+        Fix typecast that used ... for no good reason.
+
 2005-09-23  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and landed by Darin.

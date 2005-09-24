@@ -1448,7 +1448,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // Guarantee that the autoscroll timer is invalidated, even if we don't receive
     // a mouse up event.
-	BOOL isStillDown = WKMouseIsDown();   
+    BOOL isStillDown = WKMouseIsDown();   
     if (!isStillDown){
         [self _stopAutoscrollTimer];
         return;
@@ -2213,7 +2213,7 @@ static WebHTMLView *lastHitView = nil;
     
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
-	WKSetNSWindowShouldPostEventNotifications([self window], YES);
+    WKSetNSWindowShouldPostEventNotifications([self window], YES);
 
     if (!_private->needsLayout) {
         return;
@@ -2580,11 +2580,9 @@ static WebHTMLView *lastHitView = nil;
     // Record the mouse down position so we can determine drag hysteresis.
     [self _setMouseDownEvent:event];
 
-    // TEXTINPUT: if there is marked text and the current input
-    // manager wants to handle mouse events, we need to make sure to
-    // pass it to them. If not, then we need to notify the input
-    // manager when the marked text is abandoned (user clicks outside
-    // the marked area)
+    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
+    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
+        goto done;
 
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
@@ -2601,6 +2599,7 @@ static WebHTMLView *lastHitView = nil;
         [[self _bridge] mouseDown:event];
     }
 
+done:
     [_private->firstResponderAtMouseDownTime release];
     _private->firstResponderAtMouseDownTime = nil;
 
@@ -2630,16 +2629,15 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    [self retain];
-    
-    // TEXTINPUT: if there is marked text and the current input
-    // manager wants to handle mouse events, we need to make sure to
-    // pass it to them.
+    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
+    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
+        return;
 
-    if (!_private->ignoringMouseDraggedEvents) {
+    [self retain];
+
+    if (!_private->ignoringMouseDraggedEvents)
         [[self _bridge] mouseDragged:event];
-    }
-    
+
     [self release];
 }
 
@@ -2858,12 +2856,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseUp:(NSEvent *)event
 {
-    // TEXTINPUT: if there is marked text and the current input
-    // manager wants to handle mouse events, we need to make sure to
-    // pass it to them.
+    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
+    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
+        return;
 
     [self retain];
-    
+
     [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];
@@ -4999,19 +4997,19 @@ static NSArray *validAttributes = nil;
 
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
 {
-        int length = [[string string] length];
-        int i = 0;
-        NSMutableArray *attributes = [NSMutableArray array];
-        NSMutableArray *ranges = [NSMutableArray array];
-        while (i < length) {
-            NSRange effectiveRange;
-            NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
-            [attributes addObject:attrs];
-            [ranges addObject:[NSValue valueWithRange:effectiveRange]];
-            i = effectiveRange.location + effectiveRange.length;
-	}
-        *a = attributes;
-        *r = ranges;
+    int length = [[string string] length];
+    int i = 0;
+    NSMutableArray *attributes = [NSMutableArray array];
+    NSMutableArray *ranges = [NSMutableArray array];
+    while (i < length) {
+        NSRange effectiveRange;
+        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
+        [attributes addObject:attrs];
+        [ranges addObject:[NSValue valueWithRange:effectiveRange]];
+        i = effectiveRange.location + effectiveRange.length;
+    }
+    *a = attributes;
+    *r = ranges;
 }
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
@@ -5070,13 +5068,13 @@ static NSArray *validAttributes = nil;
 - (void)_discardMarkedText
 {
     if (![self hasMarkedText])
-	return;
+        return;
 
     _private->ignoreMarkedTextSelectionChange = YES;
 
     [self _selectMarkedText];
-    [[NSInputManager currentInputManager] markedTextAbandoned:self];
     [self unmarkText];
+    [[NSInputManager currentInputManager] markedTextAbandoned:self];
     // FIXME: Should we be calling the delegate here?
     [[self _bridge] deleteSelectionWithSmartDelete:NO];
 
@@ -5090,8 +5088,8 @@ static NSArray *validAttributes = nil;
     }
 
     if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
-	[self _discardMarkedText];
-	return;
+        [self _discardMarkedText];
+        return;
     }
 
     _private->ignoreMarkedTextSelectionChange = YES;
@@ -5111,11 +5109,11 @@ static NSArray *validAttributes = nil;
 {
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]]) {
-	text = [string string];
+        text = [string string];
         // we don't yet support inserting an attributed string but input methods
         // don't appear to require this.
     } else {
-	text = string;
+        text = string;
     }
 
     [self _insertText:text selectInsertedText:NO];
@@ -5130,16 +5128,16 @@ static NSArray *validAttributes = nil;
     ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
 
     if ([selection startContainer] != [markedTextRange startContainer]) 
-	return NO;
+        return NO;
 
     if ([selection endContainer] != [markedTextRange startContainer])
-	return NO;
+        return NO;
 
     if ([selection startOffset] < [markedTextRange startOffset])
-	return NO;
+        return NO;
 
     if ([selection endOffset] > [markedTextRange endOffset])
-	return NO;
+        return NO;
 
     return YES;
 }
@@ -5147,20 +5145,20 @@ static NSArray *validAttributes = nil;
 - (void)_updateSelectionForInputManager
 {
     if (![self hasMarkedText] || _private->ignoreMarkedTextSelectionChange)
-	return;
+        return;
 
     if ([self _selectionIsInsideMarkedText]) {
-	DOMRange *selection = [self _selectedRange];
-	DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
+        DOMRange *selection = [self _selectedRange];
+        DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
 
-	unsigned markedSelectionStart = [selection startOffset] - [markedTextDOMRange startOffset];
-	unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
-	NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
-	
-	[[NSInputManager currentInputManager] markedTextSelectionChanged:newSelectionRange client:self];
+        unsigned markedSelectionStart = [selection startOffset] - [markedTextDOMRange startOffset];
+        unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
+        NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
+
+        [[NSInputManager currentInputManager] markedTextSelectionChanged:newSelectionRange client:self];
     } else {
-	[[NSInputManager currentInputManager] markedTextAbandoned:self];
-	[self unmarkText];
+        [self unmarkText];
+        [[NSInputManager currentInputManager] markedTextAbandoned:self];
     }
 }
 
