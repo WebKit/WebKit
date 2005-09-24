@@ -2,6 +2,24 @@
 
         Reviewed and landed by Darin.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5039
+          XSLT text output doesn't work
+
+        Test cases added:
+        * layout-tests/fast/xsl/xslt-text.xml: Added.
+        * layout-tests/fast/xsl/xslt-text.xsl: Added.
+        * layout-tests/fast/xsl/xslt-text-expected.checksum: Added.
+        * layout-tests/fast/xsl/xslt-text-expected.png: Added.
+        * layout-tests/fast/xsl/xslt-text-expected.txt: Added.
+
+        * khtml/xsl/xslt_processorimpl.cpp: (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+        Use text rather than CDATA, using entities for & and < so that we can parse no matter what
+        characters are in the text. Also add a head and a title element so the document is well formed.
+
+2005-09-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5027
           Decoder doesn't auto-detect XML encoded as UTF-16 if BOM is not present
 
