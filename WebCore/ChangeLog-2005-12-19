@@ -1,4 +1,12 @@
 2005-09-23  Eric Seidel  <eseidel@apple.com>
+
+        No review, build fix only.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::debugPosition):
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5113
+
+2005-09-23  Eric Seidel  <eseidel@apple.com>
         Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
 
         Reviewed by mjs.

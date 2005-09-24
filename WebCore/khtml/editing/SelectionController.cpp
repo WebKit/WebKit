@@ -1019,14 +1019,14 @@ void SelectionController::debugPosition() const
 
     if (m_start == m_end) {
         Position pos = m_start;
-        fprintf(stderr, "pos:        %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
     }
     else {
         Position pos = m_start;
-        fprintf(stderr, "start:      %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
         pos = m_end;
-        fprintf(stderr, "end:        %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
     }
           
