@@ -1,3 +1,13 @@
+2005-09-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump): updated error message
+        * Scripts/check-dom-results: now includes xhtml
+        Tool updates for xhtml.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4907
+
 2005-09-22  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed by Maciej.

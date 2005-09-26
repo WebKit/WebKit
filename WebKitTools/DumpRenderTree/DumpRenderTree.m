@@ -199,7 +199,7 @@ static void dump(void)
             result = [frame renderTreeAsExternalRepresentation];
         
         if (!result)
-            puts("error");
+            printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
         else
             fputs([result UTF8String], stdout);
         
