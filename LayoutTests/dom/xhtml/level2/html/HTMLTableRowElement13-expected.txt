@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLTableRowElement13
+Status	failure
+Message	cellsLink2: assertEquals failed, actual 6, expected 5.
+

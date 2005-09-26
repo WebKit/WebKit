@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLTableRowElement12
+Status	failure
+Message	value2Link: assertNull failed, actual [object Text]
+

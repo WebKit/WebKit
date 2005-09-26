@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLTableRowElement01
+Status	failure
+Message	rowIndexLink: assertEquals failed, actual 4, expected 1.
+

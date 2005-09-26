@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLCollection07
+Status	failure
+Message	rowIndexLink: assertEquals failed, actual 6, expected 3.
+
