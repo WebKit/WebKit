@@ -1,3 +1,21 @@
+2005-09-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - fixed <rdar://problem/4118126> Drag-and-drop text with text containing a colon causes a crash
+        
+        There were two problems here. One is that dragging and dropping text within the same WebTextView
+        should have done nothing rather than try to navigate. The other is that navigating while processing
+        the end of the drag would dealloc the drag-initiating WebTextView, leading to a crash. Fixing the
+        former doesn't fix all cases of the latter, since dropping onto (e.g.) Safari's location field
+        could cause a navigation during the drag. So these two issues needed to be fixed separately.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dragSelectionWithEvent:offset:slideBack:]):
+        Before drag, retain self, and tell WebView that the drag is self-initiated. After drag, do the
+        opposite. This is the same approach as WebImageView, but it can all be contained in one method
+        here due to NSTextView's dragging API, which wraps up some of the drag-machinery guts.
+
 2005-09-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

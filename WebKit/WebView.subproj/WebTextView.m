@@ -338,6 +338,25 @@
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
 }
 
+- (BOOL)dragSelectionWithEvent:(NSEvent *)event offset:(NSSize)mouseOffset slideBack:(BOOL)slideBack
+{
+    // Mark webview as initiating the drag so dropping the text back on this webview never tries to navigate.
+    WebView *webView = [self _web_parentWebView];
+    [webView _setInitiatedDrag:YES];
+    
+    // The last reference can be lost during the drag if it causes a navigation (e.g. dropping in Safari location
+    // field). This can mess up the dragging machinery (radar 4118126), so retain here and release at end of drag.
+    [self retain];
+
+    BOOL result = [super dragSelectionWithEvent:event offset:mouseOffset slideBack:slideBack];
+    
+    // When the call to super finishes, the drag is either aborted or completed. We must clean up in either case.
+    [webView _setInitiatedDrag:NO];
+    [self release];
+    
+    return result;
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {    
     WebView *webView = [self _web_parentWebView];
