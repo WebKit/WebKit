@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodelookupnamespaceuri11
+Status	error
+Message	TypeError: Value undefined (result of expression importedNode.lookupNamespaceURI) is not object.

@@ -1,0 +1,5 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodecomparedocumentposition07
+Status	error
+Message	TypeError: Value undefined (result of expression doc.compareDocumentPosition) is not object.
+
+

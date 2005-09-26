@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeappendchild01
+Status	failure
+Message	throw_HIERARCHY_REQUEST_OR_NOT_SUPPORTED: fail
+

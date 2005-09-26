@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent07
+Status	failure
+Message	nodegettextcontent07: assertEquals failed, actual null, expected en-US.

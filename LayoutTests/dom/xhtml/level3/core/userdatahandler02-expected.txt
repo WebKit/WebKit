@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/userdatahandler02
+Status	error
+Message	TypeError: Value undefined (result of expression node.setUserData) is not object.
+

@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/elementsetidattributenode01
+Status	error
+Message	TypeError: Value undefined (result of expression employeeElem.setIdAttributeNode) is not object.

@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeisequalnode01
+Status	error
+Message	TypeError: Value undefined (result of expression doc1.isEqualNode) is not object.

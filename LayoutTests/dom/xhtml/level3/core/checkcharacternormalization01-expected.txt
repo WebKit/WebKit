@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/checkcharacternormalization01
+Status	error
+Message	TypeError: Undefined value
+

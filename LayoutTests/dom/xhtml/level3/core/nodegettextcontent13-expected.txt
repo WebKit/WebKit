@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent13
+Status	failure
+Message	nodegettextcontent13: assertEquals failed, actual null, expected Martha Raynolds This is a CDATASection with EntityReference number 2 &ent2; This is an adjacent CDATASection with a reference to a tab &tab;.

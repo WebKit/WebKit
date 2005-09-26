@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeisdefaultnamespace16
+Status	error
+Message	TypeError: Value undefined (result of expression attr.isDefaultNamespace) is not object.
+

@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/domimplementationregistry06
+Status	error
+Message	ReferenceError: Can't find variable: DOMImplementationRegistry
+

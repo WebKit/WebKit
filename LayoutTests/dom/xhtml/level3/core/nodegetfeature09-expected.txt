@@ -1,0 +1,4 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegetfeature09
+Status	error
+Message	TypeError: Value undefined (result of expression node.getFeature) is not object.
+
