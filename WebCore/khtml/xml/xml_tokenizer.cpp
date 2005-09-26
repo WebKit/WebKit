@@ -29,6 +29,7 @@
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"
 #include "misc/loader.h"
+#include "misc/hashmap.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -48,6 +49,7 @@ using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentPtr;
 using DOM::DOMString;
+using DOM::DOMStringImpl;
 using DOM::ElementImpl;
 using DOM::HTMLScriptElementImpl;
 using DOM::HTMLTableSectionElementImpl;
@@ -57,87 +59,19 @@ using DOM::nullAtom;
 using DOM::ProcessingInstructionImpl;
 using DOM::QualifiedName;
 using DOM::TextImpl;
+using DOM::AtomicString;
 
 namespace khtml {
 
 const int maxErrors = 25;
 
-// FIXME: Move to the newer libxml API that handles namespaces and dump XMLNamespace, XMLAttributes, and XMLNamespaceStack.
-
-struct XMLNamespace {
-    QString m_prefix;
-    QString m_uri;
-    XMLNamespace* m_parent;
-    
-    int m_ref;
-    
-    XMLNamespace() :m_parent(0), m_ref(0) {}
-    
-    XMLNamespace(const QString& p, const QString& u, XMLNamespace* parent) 
-        :m_prefix(p),
-         m_uri(u),
-         m_parent(parent), 
-         m_ref(0) 
-    { 
-        if (m_parent) m_parent->ref();
-    }
-    
-    QString uriForPrefix(const QString& prefix) {
-        if (prefix == m_prefix)
-            return m_uri;
-        if (m_parent)
-            return m_parent->uriForPrefix(prefix);
-        return "";
-    }
-    
-    void ref() { m_ref++; }
-    void deref() { if (--m_ref == 0) { if (m_parent) m_parent->deref(); delete this; } }
-};
-
-class XMLAttributes {
-public:
-    XMLAttributes() : _ref(0), _length(0), _names(0), _values(0), _uris(0) { }
-    XMLAttributes(const char **expatStyleAttributes);
-    ~XMLAttributes();
-    
-    XMLAttributes(const XMLAttributes &);
-    XMLAttributes &operator=(const XMLAttributes &);
-    
-    int length() const { return _length; }
-    QString qName(int index) const { return _names[index]; }
-    QString localName(int index) const;
-    QString uri(int index) const { if (!_uris) return QString::null; return _uris[index]; }
-    QString value(int index) const { return _values[index]; }
-
-    QString value(const QString &) const;
-
-    void split(XMLNamespace* ns);
-    
-private:
-    mutable int *_ref;
-    int _length;
-    QString *_names;
-    QString *_values;
-    QString *_uris;
-};
-
-class XMLNamespaceStack
-{
-public:
-    ~XMLNamespaceStack();
-    XMLNamespace *pushNamespaces(XMLAttributes& attributes);
-    XMLNamespace *pushNamespaces(ElementImpl& element);
-
-    void popNamespaces();
-private:
-    QPtrStack<XMLNamespace> m_namespaceStack;
-};
+typedef HashMap<DOMStringImpl *, DOMStringImpl *> PrefixForNamespaceMap;
 
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
     XMLTokenizer(DocumentPtr *, KHTMLView * = 0);
-    XMLTokenizer(DocumentFragmentImpl *);
+    XMLTokenizer(DocumentFragmentImpl *, ElementImpl *);
     ~XMLTokenizer();
 
     enum ErrorType { warning, nonFatal, fatal };
@@ -157,14 +91,12 @@ public:
 
     // callbacks from parser SAX
     void error(ErrorType, const char *message, va_list args);
-    void startElement(const xmlChar *name, const xmlChar **libxmlAttributes);
-    void endElement();
+    void startElementNs(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes);
+    void endElementNs();
     void characters(const xmlChar *s, int len);
     void processingInstruction(const xmlChar *target, const xmlChar *data);
     void cdataBlock(const xmlChar *s, int len);
     void comment(const xmlChar *s);
-
-    XMLNamespace *pushNamespaces(ElementImpl& element) { return m_namespaceStack.pushNamespaces(element); }
 
 private:
     void end();
@@ -178,9 +110,6 @@ private:
     void executeScripts();
     void addScripts(NodeImpl *n);
 
-    XMLNamespace *pushNamespaces(XMLAttributes& attributes) { return m_namespaceStack.pushNamespaces(attributes); }
-    void popNamespaces() { m_namespaceStack.popNamespaces(); }
-
     bool enterText();
     void exitText();
 
@@ -191,7 +120,6 @@ private:
 
     xmlParserCtxtPtr m_context;
     DOM::NodeImpl *m_currentNode;
-    XMLNamespaceStack m_namespaceStack;
 
     bool m_sawError;
     bool m_parserStopped;
@@ -205,6 +133,10 @@ private:
     QPtrList<HTMLScriptElementImpl> m_scripts;
     QPtrListIterator<HTMLScriptElementImpl> *m_scriptsIt;
     CachedScript *m_cachedScript;
+    
+    bool m_parsingFragment;
+    DOMString m_defaultNamespaceURI;
+    PrefixForNamespaceMap m_prefixToNamespaceMap;
 };
 
 // --------------------------------
@@ -242,16 +174,18 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
         didInit = true;
     }
 
-    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, userData, NULL, 0, NULL);
+    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, NULL, NULL, 0, NULL);
+    parser->_private = userData;
+    parser->replaceEntities = true;
     const QChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
     xmlSwitchEncoding(parser, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
     return parser;
 }
 
-static void parseQString(xmlParserCtxtPtr parser, const QString &string)
+static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 {
-    xmlParseChunk(parser,
+    return xmlParseChunk(parser,
         reinterpret_cast<const char *>(string.unicode()),
         string.length() * sizeof(QChar), 1);
 }
@@ -262,7 +196,7 @@ XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
     : m_doc(_doc), m_view(_view),
       m_context(NULL), m_currentNode(m_doc->document()),
       m_sawError(false), m_parserStopped(false), m_errorCount(0),
-      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0)
+      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(false)
 {
     if (m_doc)
         m_doc->ref();
@@ -272,14 +206,36 @@ XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
     loadStopped = false;
 }
 
-XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment)
+XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentElement)
     : m_doc(fragment->docPtr()), m_view(0),
       m_context(0), m_currentNode(fragment),
       m_sawError(false), m_parserStopped(false), m_errorCount(0),
-      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0)
+      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(true)
 {
     if (m_doc)
         m_doc->ref();
+    
+    // Add namespaces based on the parent node
+    QPtrStack<ElementImpl> elemStack;
+    while (parentElement) {
+        elemStack.push(parentElement);
+        
+        NodeImpl *n = parentElement->parentNode();
+        if (!n || !n->isElementNode())
+            break;
+        parentElement = static_cast<ElementImpl *>(n);
+    }
+    while (ElementImpl *element = elemStack.pop()) {
+        if (NamedAttrMapImpl *attrs = element->attributes()) {
+            for (unsigned i = 0; i < attrs->length(); i++) {
+                AttributeImpl *attr = attrs->attributeItem(i);
+                if (attr->localName() == "xmlns")
+                    m_defaultNamespaceURI = attr->value();
+                else if (attr->prefix() == "xmlns")
+                    m_prefixToNamespaceMap.set(attr->localName().impl(), attr->value().impl());
+            }
+        }
+    }
           
     //FIXME: XMLTokenizer should use this in a fashion similiar to how
     //HTMLTokenizer uses loadStopped, in the future.
@@ -305,42 +261,94 @@ void XMLTokenizer::setOnHold(bool onHold)
     // Will we need to implement this when we do incremental XML parsing?
 }
 
-void XMLTokenizer::startElement(const xmlChar *name, const xmlChar **libxmlAttributes)
+inline QString toQString(const xmlChar *str, unsigned int len)
+{
+    return QString::fromUtf8(reinterpret_cast<const char *>(str), len);
+}
+
+inline QString toQString(const xmlChar *str)
+{
+    return QString::fromUtf8(str ? reinterpret_cast<const char *>(str) : "");
+}
+
+struct _xmlSAX2Namespace {
+    const xmlChar *prefix;
+    const xmlChar *uri;
+};
+typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
+
+static inline void handleElementNamespaces(ElementImpl *newElement, const xmlChar **libxmlNamespaces, int nb_namespaces, int &exceptioncode)
+{
+    xmlSAX2Namespace *namespaces = reinterpret_cast<xmlSAX2Namespace *>(libxmlNamespaces);
+    for(int i = 0; i < nb_namespaces; i++) {
+        DOMString namespaceQName("xmlns");
+        DOMString namespaceURI = toQString(namespaces[i].uri);
+        if(namespaces[i].prefix)
+            namespaceQName = namespaceQName + QString::fromLatin1(":") + toQString(namespaces[i].prefix);
+        newElement->setAttributeNS(DOMString("http://www.w3.org/2000/xmlns/"), namespaceQName, namespaceURI, exceptioncode);
+        if (exceptioncode) // exception setting attributes
+            return;
+    }
+}
+
+struct _xmlSAX2Attributes {
+    const xmlChar *localname;
+    const xmlChar *prefix;
+    const xmlChar *uri;
+    const xmlChar *value;
+    const xmlChar *end;
+};
+typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
+
+static inline void handleElementAttributes(ElementImpl *newElement, const xmlChar **libxmlAttributes, int nb_attributes, int &exceptioncode)
+{
+    xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
+    for(int i = 0; i < nb_attributes; i++) {
+        DOMString attrLocalName = toQString(attributes[i].localname);
+        int valueLength = (int) (attributes[i].end - attributes[i].value);
+        DOMString attrValue = toQString(attributes[i].value, valueLength);
+        DOMString attrPrefix = toQString(attributes[i].prefix);
+        DOMString attrURI = attrPrefix.isEmpty() ? DOMString() : toQString(attributes[i].uri);
+        DOMString attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + DOMString(":") + attrLocalName;
+        
+        newElement->setAttributeNS(attrURI, attrQName, attrValue, exceptioncode);
+        if (exceptioncode) // exception setting attributes
+            return;
+    }
+}
+
+void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **libxmlNamespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
 {
     if (m_parserStopped)
         return;
-
-    XMLAttributes atts(reinterpret_cast<const char **>(libxmlAttributes));
-    XMLNamespace *ns = pushNamespaces(atts);
-    atts.split(ns);
-    
-    QString qName = QString::fromUtf8(reinterpret_cast<const char *>(name));
-    QString uri;
-    QString prefix;
-    int colonPos = qName.find(':');
-    if (colonPos != -1) {
-        prefix = qName.left(colonPos);
-    }
-    uri = ns->uriForPrefix(prefix);
     
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
+    
+    DOMString localName = toQString(xmlLocalName);
+    DOMString uri = toQString(xmlURI);
+    DOMString prefix = toQString(xmlPrefix);
+    DOMString qName = prefix.isEmpty() ? localName : prefix + QString::fromLatin1(":") + localName;
+    
+    if (m_parsingFragment && uri.isEmpty()) {
+        if (!prefix.isEmpty())
+            uri = DOMString(m_prefixToNamespaceMap.get(prefix.impl()));
+        else
+            uri = m_defaultNamespaceURI;
+    }
 
     int exceptioncode = 0;
     ElementImpl *newElement = m_doc->document()->createElementNS(uri, qName, exceptioncode);
     if (!newElement)
         return;
-
-    int i;
-    for (i = 0; i < atts.length(); i++) {
-        DOMString uri(atts.uri(i));
-        DOMString qn(atts.qName(i));
-        DOMString val(atts.value(i));
-        
-        newElement->setAttributeNS(uri.impl(), qn.impl(), val.impl(), exceptioncode);
-        if (exceptioncode) // exception setting attributes
-            return;
-    }
+    
+    handleElementNamespaces(newElement, libxmlNamespaces, nb_namespaces, exceptioncode);
+    if (exceptioncode)
+        return;
+    
+    handleElementAttributes(newElement, libxmlAttributes, nb_attributes, exceptioncode);
+    if (exceptioncode)
+        return;
 
     // FIXME: This hack ensures implicit table bodies get constructed in XHTML and XML files.
     // We want to consolidate this with the HTML parser and HTML DOM code at some point.
@@ -359,23 +367,19 @@ void XMLTokenizer::startElement(const xmlChar *name, const xmlChar **libxmlAttri
     if (newElement->hasTagName(scriptTag))
         static_cast<HTMLScriptElementImpl *>(newElement)->setCreatedByParser(true);
 
-    if (m_currentNode->addChild(newElement)) {
-        if (m_view && !newElement->attached())
-            newElement->attach();
-        m_currentNode = newElement;
-        return;
-    }
-    else {
+    if (!m_currentNode->addChild(newElement)) {
         delete newElement;
         return;
     }
+    
+    if (m_view && !newElement->attached())
+            newElement->attach();
+    m_currentNode = newElement;
 }
 
-void XMLTokenizer::endElement()
+void XMLTokenizer::endElementNs()
 {
     if (m_parserStopped) return;
-    
-    popNamespaces();
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
@@ -396,8 +400,7 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
         enterText()) {
 
         int exceptioncode = 0;
-        static_cast<TextImpl*>(m_currentNode)->appendData(QString::fromUtf8(reinterpret_cast<const char *>(s), len),
-            exceptioncode);
+        static_cast<TextImpl*>(m_currentNode)->appendData(toQString(s, len), exceptioncode);
     }
 }
 
@@ -485,8 +488,8 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     // ### handle exceptions
     int exception = 0;
     ProcessingInstructionImpl *pi = m_doc->document()->createProcessingInstruction(
-        QString::fromUtf8(reinterpret_cast<const char *>(target)),
-        QString::fromUtf8(reinterpret_cast<const char *>(data)),
+        toQString(target),
+        toQString(data),
         exception);
     if (exception)
         return;
@@ -535,61 +538,83 @@ void XMLTokenizer::comment(const xmlChar *s)
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     // ### handle exceptions
-    m_currentNode->addChild(m_doc->document()->createComment(QString::fromUtf8(reinterpret_cast<const char *>(s))));
+    m_currentNode->addChild(m_doc->document()->createComment(toQString(s)));
 }
 
-static void startElementHandler(void *userData, const xmlChar *name, const xmlChar **libxmlAttributes)
+inline XMLTokenizer *getTokenizer(void *closure)
 {
-    static_cast<XMLTokenizer *>(userData)->startElement(name, libxmlAttributes);
+    xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
+    return static_cast<XMLTokenizer *>(ctxt->_private);
 }
 
-static void endElementHandler(void *userData, const xmlChar *name)
+static void startElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
 {
-    static_cast<XMLTokenizer *>(userData)->endElement();
+    getTokenizer(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
 }
 
-static void charactersHandler(void *userData, const xmlChar *s, int len)
+static void endElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri)
 {
-    static_cast<XMLTokenizer *>(userData)->characters(s, len);
+    getTokenizer(closure)->endElementNs();
 }
 
-static void processingInstructionHandler(void *userData, const xmlChar *target, const xmlChar *data)
+static void charactersHandler(void *closure, const xmlChar *s, int len)
 {
-    static_cast<XMLTokenizer *>(userData)->processingInstruction(target, data);
+    getTokenizer(closure)->characters(s, len);
 }
 
-static void cdataBlockHandler(void *userData, const xmlChar *s, int len)
+static void processingInstructionHandler(void *closure, const xmlChar *target, const xmlChar *data)
 {
-    static_cast<XMLTokenizer *>(userData)->cdataBlock(s, len);
+    getTokenizer(closure)->processingInstruction(target, data);
 }
 
-static void commentHandler(void *userData, const xmlChar *comment)
+static void cdataBlockHandler(void *closure, const xmlChar *s, int len)
 {
-    static_cast<XMLTokenizer *>(userData)->comment(comment);
+    getTokenizer(closure)->cdataBlock(s, len);
 }
 
-static void warningHandler(void *userData, const char *message, ...)
+static void commentHandler(void *closure, const xmlChar *comment)
 {
-    va_list args;
-    va_start(args, message);
-    static_cast<XMLTokenizer *>(userData)->error(XMLTokenizer::warning, message, args);
-    va_end(args);
+    getTokenizer(closure)->comment(comment);
 }
 
-static void fatalErrorHandler(void *userData, const char *message, ...)
+static void warningHandler(void *closure, const char *message, ...)
 {
     va_list args;
     va_start(args, message);
-    static_cast<XMLTokenizer *>(userData)->error(XMLTokenizer::fatal, message, args);
+    getTokenizer(closure)->error(XMLTokenizer::warning, message, args);
     va_end(args);
 }
 
-static void normalErrorHandler(void *userData, const char *message, ...)
+static void fatalErrorHandler(void *closure, const char *message, ...)
 {
     va_list args;
     va_start(args, message);
-    static_cast<XMLTokenizer *>(userData)->error(XMLTokenizer::nonFatal, message, args);
+    getTokenizer(closure)->error(XMLTokenizer::fatal, message, args);
     va_end(args);
+}
+
+static void normalErrorHandler(void *closure, const char *message, ...)
+{
+    va_list args;
+    va_start(args, message);
+    getTokenizer(closure)->error(XMLTokenizer::nonFatal, message, args);
+    va_end(args);
+}
+
+static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
+{
+    xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
+    xmlEntityPtr ent = xmlGetPredefinedEntity(name);
+    if(ent)
+        return ent;
+
+    // Workaround a libxml SAX2 bug whereby charactersHandler is called twice
+    bool inAttr = ctxt->instate == XML_PARSER_ATTRIBUTE_VALUE;
+    ent = xmlGetDocEntity(ctxt->myDoc, name);
+    if(ent)
+        ctxt->replaceEntities = inAttr || (ent->etype != XML_INTERNAL_GENERAL_ENTITY);
+    
+    return ent;
 }
 
 void XMLTokenizer::finish()
@@ -599,17 +624,25 @@ void XMLTokenizer::finish()
     sax.error = normalErrorHandler;
     sax.fatalError = fatalErrorHandler;
     sax.characters = charactersHandler;
-    sax.endElement = endElementHandler;
     sax.processingInstruction = processingInstructionHandler;
-    sax.startElement = startElementHandler;
     sax.cdataBlock = cdataBlockHandler;
     sax.comment = commentHandler;
     sax.warning = warningHandler;
+    sax.startElementNs = startElementNsHandler;
+    sax.endElementNs = endElementNsHandler;
+    sax.getEntity = getEntityHandler;
+    sax.startDocument = xmlSAX2StartDocument;
+    sax.internalSubset = xmlSAX2InternalSubset;
+    sax.entityDecl = xmlSAX2EntityDecl;
+    sax.initialized = XML_SAX2_MAGIC;
+    
     m_parserStopped = false;
     m_sawError = false;
     m_sawXSLTransform = false;
     m_context = createQStringParser(&sax, this);
     parseQString(m_context, m_xmlCode);
+    if (m_context->myDoc)
+        xmlFreeDoc(m_context->myDoc);
     xmlFreeParserCtxt(m_context);
     m_context = NULL;
 
@@ -788,136 +821,25 @@ void XMLTokenizer::stopParsing()
 
 bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fragment, ElementImpl *parent)
 {
-    XMLTokenizer tokenizer(fragment);
+    XMLTokenizer tokenizer(fragment, parent);
     
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
     sax.characters = charactersHandler;
-    sax.endElement = endElementHandler;
     sax.processingInstruction = processingInstructionHandler;
-    sax.startElement = startElementHandler;
+    sax.startElementNs = startElementNsHandler;
+    sax.endElementNs = endElementNsHandler;
     sax.cdataBlock = cdataBlockHandler;
     sax.comment = commentHandler;
     sax.warning = warningHandler;
+    sax.initialized = XML_SAX2_MAGIC;
     
-    // Add namespaces based on the parent node
-    QPtrStack<DOM::ElementImpl> elemStack;
-    while (parent) {
-        elemStack.push(parent);
-        
-        NodeImpl *n = parent->parentNode();
-        if (!n || !n->isElementNode())
-            break;
-        parent = static_cast<ElementImpl *>(n);
-    }
-    while (!elemStack.isEmpty()) {
-        tokenizer.pushNamespaces(*elemStack.pop());
-    }
-    
-    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, 
-                                             (const xmlChar*)(const char*)(string.qstring().utf8()), 0);
+    xmlParserCtxtPtr parser = createQStringParser(&sax, &tokenizer);
+    int result = parseQString(parser, string.qstring());
+    if (parser->myDoc)
+        xmlFreeDoc(parser->myDoc);
 
     return result == 0;
-}
-
-#if 0
-
-bool XMLHandler::attributeDecl(const QString &/*eName*/, const QString &/*aName*/, const QString &/*type*/,
-                               const QString &/*valueDefault*/, const QString &/*value*/)
-{
-    // qt's xml parser (as of 2.2.3) does not currently give us values for type, valueDefault and
-    // value. When it does, we can store these somewhere and have default attributes on elements
-    return true;
-}
-
-bool XMLHandler::externalEntityDecl(const QString &/*name*/, const QString &/*publicId*/, const QString &/*systemId*/)
-{
-    // ### insert these too - is there anything special we have to do here?
-    return true;
-}
-
-bool XMLHandler::internalEntityDecl(const QString &name, const QString &value)
-{
-    EntityImpl *e = new EntityImpl(m_doc,name);
-    // ### further parse entities inside the value and add them as separate nodes (or entityreferences)?
-    e->addChild(m_doc->document()->createTextNode(value));
-// ### FIXME
-//     if (m_doc->document()->doctype())
-//         static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->entities())->addNode(e);
-    return true;
-}
-
-bool XMLHandler::notationDecl(const QString &name, const QString &publicId, const QString &systemId)
-{
-// ### FIXME
-//     if (m_doc->document()->doctype()) {
-//         NotationImpl *n = new NotationImpl(m_doc,name,publicId,systemId);
-//         static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->notations())->addNode(n);
-//     }
-    return true;
-}
-
-#endif
-
-// --------------------------------
-
-XMLNamespaceStack::~XMLNamespaceStack()
-{
-    while (XMLNamespace *ns = m_namespaceStack.pop())
-        ns->deref();
-}
-
-void XMLNamespaceStack::popNamespaces()
-{
-    XMLNamespace *ns = m_namespaceStack.pop();
-    if (ns)
-        ns->deref();
-}
-
-XMLNamespace *XMLNamespaceStack::pushNamespaces(ElementImpl& element)
-{
-    XMLNamespace *ns = m_namespaceStack.current();
-    NamedAttrMapImpl *attrs = element.attributes();
-    
-    if (!ns)
-        ns = new XMLNamespace;
-
-    if (!attrs)
-        return ns;
-    
-    // Search for any xmlns attributes
-    for (unsigned i = 0; i < attrs->length(); i++) {
-        AttributeImpl *attr = attrs->attributeItem(i);
-        
-        if (attr->localName() == "xmlns")
-            ns = new XMLNamespace(QString::null, attr->value().qstring(), ns);
-        else if (attr->prefix() == "xmlns")
-            ns = new XMLNamespace(attr->localName().qstring(), attr->value().qstring(), ns);
-    }
-    
-    m_namespaceStack.push(ns);
-    ns->ref();
-    return ns;
-}
-
-XMLNamespace *XMLNamespaceStack::pushNamespaces(XMLAttributes& attrs)
-{
-    XMLNamespace *ns = m_namespaceStack.current();
-    if (!ns)
-        ns = new XMLNamespace;
-
-    // Search for any xmlns attributes.
-    for (int i = 0; i < attrs.length(); i++) {
-        QString qName = attrs.qName(i);
-        if (qName == "xmlns")
-            ns = new XMLNamespace(QString::null, attrs.value(i), ns);
-        else if (qName.startsWith("xmlns:"))
-            ns = new XMLNamespace(qName.right(qName.length()-6), attrs.value(i), ns);
-    }
-
-    m_namespaceStack.push(ns);
-    ns->ref();
-    return ns;
 }
 
 // --------------------------------
@@ -927,22 +849,26 @@ struct AttributeParseState {
     bool gotAttributes;
 };
 
-static void attributesStartElementHandler(void *userData, const xmlChar *name, const xmlChar **libxmlAttributes)
+
+static void attributesStartElementNsHandler(void *closure, const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
 {
-    if (strcmp(reinterpret_cast<const char *>(name), "attrs") != 0) {
+    if (strcmp(reinterpret_cast<const char *>(xmlLocalName), "attrs") != 0)
         return;
-    }
-        
-    AttributeParseState *state = static_cast<AttributeParseState *>(userData);
+    
+    xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
+    AttributeParseState *state = static_cast<AttributeParseState *>(ctxt->_private);
     
     state->gotAttributes = true;
     
-    XMLAttributes attributes(reinterpret_cast<const char **>(libxmlAttributes));
-    XMLNamespaceStack stack;
-    attributes.split(stack.pushNamespaces(attributes));
-    int length = attributes.length();
-    for (int i = 0; i != length; ++i) {
-        state->attributes.insert(attributes.qName(i), attributes.value(i));
+    xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
+    for(int i = 0; i < nb_attributes; i++) {
+        QString attrLocalName = toQString(attributes[i].localname);
+        int valueLength = (int) (attributes[i].end - attributes[i].value);
+        QString attrValue = toQString(attributes[i].value, valueLength);
+        QString attrPrefix = toQString(attributes[i].prefix);
+        QString attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + QString::fromLatin1(":") + attrLocalName;
+        
+        state->attributes.insert(attrQName, attrValue);
     }
 }
 
@@ -953,142 +879,16 @@ QMap<QString, QString> parseAttributes(const DOMString &string, bool &attrsOK)
 
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
-    sax.startElement = attributesStartElementHandler;
+    sax.startElementNs = attributesStartElementNsHandler;
+    sax.initialized = XML_SAX2_MAGIC;
     xmlParserCtxtPtr parser = createQStringParser(&sax, &state);
     parseQString(parser, "<?xml version=\"1.0\"?><attrs " + string.qstring() + " />");
+    if (parser->myDoc)
+        xmlFreeDoc(parser->myDoc);
     xmlFreeParserCtxt(parser);
 
     attrsOK = state.gotAttributes;
     return state.attributes;
-}
-
-// --------------------------------
-
-XMLAttributes::XMLAttributes(const char **saxStyleAttributes)
-    : _ref(0), _uris(0)
-{
-    int length = 0;
-    if (saxStyleAttributes) {
-        for (const char **p = saxStyleAttributes; *p; p += 2) {
-            ++length;
-        }
-    }
-
-    _length = length;
-    if (!length) {
-        _names = 0;
-        _values = 0;
-        _uris = 0;
-    } else {
-        _names = new QString [length];
-        _values = new QString [length];
-    }
-
-    if (saxStyleAttributes) {
-        int i = 0;
-        for (const char **p = saxStyleAttributes; *p; p += 2) {
-            _names[i] = QString::fromUtf8(p[0]);
-            _values[i] = QString::fromUtf8(p[1]);
-            ++i;
-        }
-    }
-}
-
-XMLAttributes::~XMLAttributes()
-{
-    if (_ref && !--*_ref) {
-        delete _ref;
-        _ref = 0;
-    }
-    if (!_ref) {
-        delete [] _names;
-        delete [] _values;
-        delete [] _uris;
-    }
-}
-
-XMLAttributes::XMLAttributes(const XMLAttributes &other)
-    : _ref(other._ref)
-    , _length(other._length)
-    , _names(other._names)
-    , _values(other._values)
-    , _uris(other._uris)
-{
-    if (!_ref) {
-        _ref = new int (2);
-        other._ref = _ref;
-    } else {
-        ++*_ref;
-    }
-}
-
-XMLAttributes &XMLAttributes::operator=(const XMLAttributes &other)
-{
-    if (_ref && !--*_ref) {
-        delete _ref;
-        _ref = 0;
-    }
-    if (!_ref) {
-        delete [] _names;
-        delete [] _values;
-        delete [] _uris;
-    }
-
-    _ref = other._ref;
-    _length = other._length;
-    _names = other._names;
-    _values = other._values;
-    _uris = other._uris;
-
-    if (!_ref) {
-        _ref = new int (2);
-        other._ref = _ref;
-    } else {
-        ++*_ref;
-    }
-    
-    return *this;
-}
-
-QString XMLAttributes::localName(int index) const
-{
-    int colonPos = _names[index].find(':');
-    if (colonPos != -1)
-        // Peel off the prefix to return the localName.
-        return _names[index].right(_names[index].length() - colonPos - 1);
-    return _names[index];
-}
-
-QString XMLAttributes::value(const QString &name) const
-{
-    for (int i = 0; i != _length; ++i) {
-        if (name == _names[i]) {
-            return _values[i];
-        }
-    }
-    return QString::null;
-}
-
-void XMLAttributes::split(XMLNamespace* ns)
-{
-    for (int i = 0; i < _length; ++i) {
-        int colonPos = _names[i].find(':');
-        if (colonPos != -1) {
-            QString prefix = _names[i].left(colonPos);
-            QString uri;
-            if (prefix == "xmlns") {
-                // FIXME: The URI is the xmlns namespace? I seem to recall DOM lvl 3 saying something about this.
-            }
-            else
-                uri = ns->uriForPrefix(prefix);
-            
-            if (!uri.isEmpty()) {
-                if (!_uris)
-                    _uris = new QString[_length];
-                _uris[i] = uri;
-            }
-        }
-    }
 }
 
 }
