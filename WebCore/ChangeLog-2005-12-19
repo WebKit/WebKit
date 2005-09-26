@@ -1,3 +1,13 @@
+2005-09-26  Geoffrey Garen  <ggaren@apple.com>
+
+        - Added layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
+        Need to restore int/long changes to simple_number.h
+
+        Test cases added:
+
+        * layout-tests/fast/js/integer-extremes-expected.txt: Added.
+        * layout-tests/fast/js/integer-extremes.html: Added.
+
 2005-09-24  Maciej Stachowiak  <mjs@apple.com>
 
         - some JavaScript syntax test cases
