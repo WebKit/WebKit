@@ -17,7 +17,7 @@ function runTests() {
     if (e.firstChild.namespaceURI == 'http://www.w3.org/1999/xhtml') 
         debug('namespace is correct')
     else
-        debug('namespace is incorrect');
+        debug('namespace is incorrect (' + e.firstChild.namespaceURI + ')');
 }	
 ]]> 
 </script>
