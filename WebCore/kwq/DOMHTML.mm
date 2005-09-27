@@ -45,7 +45,7 @@
 #import "DOMExtensions.h"
 #import "DOMInternal.h"
 #import "DOMHTMLInternal.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 
 using namespace DOM::HTMLNames;

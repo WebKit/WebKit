@@ -25,7 +25,7 @@
 
 #import "KWQTextEdit.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "KWQLineEdit.h"
 #import "KWQPalette.h"

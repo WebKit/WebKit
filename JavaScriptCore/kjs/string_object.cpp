@@ -765,7 +765,7 @@ ValueImp *StringObjectFuncImp::callAsFunction(ExecState *exec, ObjectImp */*this
 {
   UString s;
   if (args.size()) {
-    UChar *buf = static_cast<UChar *>(kjs_fast_malloc(args.size() * sizeof(UChar)));
+    UChar *buf = static_cast<UChar *>(fastMalloc(args.size() * sizeof(UChar)));
     UChar *p = buf;
     ListIterator it = args.begin();
     while (it != args.end()) {

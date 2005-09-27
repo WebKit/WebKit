@@ -29,7 +29,7 @@
 
 #include "dom/dom2_range.h"
 #include "misc/shared.h"
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 
 namespace DOM {
 
@@ -39,7 +39,7 @@ class DOMString;
 class NodeImpl;
 class Position;
 
-class RangeImpl : public khtml::Shared<RangeImpl>
+class RangeImpl : public khtml::Shared<RangeImpl>, public FastAllocated
 {
     friend class DocumentImpl;
 public:
@@ -50,8 +50,6 @@ public:
 
     ~RangeImpl();
 
-    MAIN_THREAD_ALLOCATED;
-    
     NodeImpl *startContainer(int &exceptioncode) const;
     int startOffset(int &exceptioncode) const;
     NodeImpl *endContainer(int &exceptioncode) const;
@@ -125,7 +123,7 @@ private:
     bool containedByReadOnly() const;
 };
 
-khtml::SharedPtr<RangeImpl> rangeOfContents(NodeImpl *node);
+SharedPtr<RangeImpl> rangeOfContents(NodeImpl *node);
 
 bool operator==(const RangeImpl &, const RangeImpl &);
 inline bool operator!=(const RangeImpl &a, const RangeImpl &b) { return !(a == b); }

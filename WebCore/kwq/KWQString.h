@@ -28,7 +28,7 @@
 
 #include <unicode/uchar.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include "misc/main_thread_malloc.h"
+#include "kxmlcore/FastMalloc.h"
 #include "KWQCString.h"
 
 // Make htmltokenizer.cpp happy
@@ -340,7 +340,11 @@ inline bool operator<(char ch, QChar qc)
 #define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
 #define QS_INTERNAL_BUFFER_UCHARS QS_INTERNAL_BUFFER_SIZE/2
 
-struct KWQStringData {
+struct KWQStringData 
+#ifndef QSTRING_DEBUG_ALLOCATIONS
+    : public FastAllocated 
+#endif
+{
     // Uses shared null data.
     KWQStringData();
     void initialize();
@@ -365,8 +369,6 @@ struct KWQStringData {
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     void* operator new(size_t s);
     void operator delete(void*p);
-#else
-    MAIN_THREAD_ALLOCATED;
 #endif
 
     inline void ref() { refCount++; }

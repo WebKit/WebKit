@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreImageRendererFactory.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQRenderTreeDebug.h"
 
 @implementation WebCoreImageRendererFactory

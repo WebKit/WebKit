@@ -35,7 +35,6 @@
 #include <strings.h>
 #endif
 
-#include "fast_malloc.h"
 #include "ustring.h"
 #include "operations.h"
 #include "identifier.h"
@@ -179,7 +178,7 @@ UChar& UCharReference::ref() const
 UString::Rep *UString::Rep::createCopying(const UChar *d, int l)
 {
   int sizeInBytes = l * sizeof(UChar);
-  UChar *copyD = static_cast<UChar *>(kjs_fast_malloc(sizeInBytes));
+  UChar *copyD = static_cast<UChar *>(fastMalloc(sizeInBytes));
   memcpy(copyD, d, sizeInBytes);
 
   return create(copyD, l);
@@ -238,7 +237,7 @@ void UString::Rep::destroy()
   if (baseString) {
     baseString->deref();
   } else {
-    kjs_fast_free(buf);
+    fastFree(buf);
   }
   delete this;
 }
@@ -360,7 +359,7 @@ void UString::expandCapacity(int requiredLength)
 
   if (requiredLength > r->capacity) {
     int newCapacity = expandedSize(requiredLength, r->preCapacity);
-    r->buf = static_cast<UChar *>(kjs_fast_realloc(r->buf, newCapacity * sizeof(UChar)));
+    r->buf = static_cast<UChar *>(fastRealloc(r->buf, newCapacity * sizeof(UChar)));
     r->capacity = newCapacity - r->preCapacity;
   }
   if (requiredLength > r->usedCapacity) {
@@ -376,9 +375,9 @@ void UString::expandPreCapacity(int requiredPreCap)
     int newCapacity = expandedSize(requiredPreCap, r->capacity);
     int delta = newCapacity - r->capacity - r->preCapacity;
 
-    UChar *newBuf = static_cast<UChar *>(kjs_fast_malloc(newCapacity * sizeof(UChar)));
+    UChar *newBuf = static_cast<UChar *>(fastMalloc(newCapacity * sizeof(UChar)));
     memcpy(newBuf + delta, r->buf, (r->capacity + r->preCapacity) * sizeof(UChar));
-    kjs_fast_free(r->buf);
+    fastFree(r->buf);
     r->buf = newBuf;
 
     r->preCapacity = newCapacity - r->capacity;
@@ -391,7 +390,7 @@ void UString::expandPreCapacity(int requiredPreCap)
 
 UString::UString(char c)
 {
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar)));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar)));
     d[0] = c;
     rep = Rep::create(d, 1);
 }
@@ -407,7 +406,7 @@ UString::UString(const char *c)
     attach(&Rep::empty);
     return;
   }
-  UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * length));
+  UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
   for (int i = 0; i < length; i++)
     d[i].uc = c[i];
   rep = Rep::create(d, length);
@@ -472,7 +471,7 @@ UString::UString(const UString &a, const UString &b)
   } else {
     // a does not qualify for append, and b does not qualify for prepend, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * newCapacity));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, a.data(), aSize * sizeof(UChar));
     memcpy(d + aSize, b.data(), bSize * sizeof(UChar));
     rep = Rep::create(d, length);
@@ -643,7 +642,7 @@ UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, in
     totalLength += separators[i].size();
   }
 
-  UChar *buffer = static_cast<UChar *>(kjs_fast_malloc(totalLength * sizeof(UChar)));
+  UChar *buffer = static_cast<UChar *>(fastMalloc(totalLength * sizeof(UChar)));
 
   int maxCount = max(rangeCount, separatorCount);
   int bufferPos = 0;
@@ -696,7 +695,7 @@ UString &UString::append(const UString &t)
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * newCapacity));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), thisSize * sizeof(UChar));
     memcpy(const_cast<UChar *>(d + thisSize), t.data(), tSize * sizeof(UChar));
     release();
@@ -740,7 +739,7 @@ UString &UString::append(const char *t)
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * newCapacity));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), thisSize * sizeof(UChar));
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
@@ -761,7 +760,7 @@ UString &UString::append(unsigned short c)
   if (length == 0) {
     // this is empty - must make a new rep because we don't want to pollute the shared empty one 
     int newCapacity = expandedSize(1, 0);
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * newCapacity));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     d[0] = c;
     release();
     rep = Rep::create(d, 1);
@@ -784,7 +783,7 @@ UString &UString::append(unsigned short c)
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize((length + 1), 0);
-    UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * newCapacity));
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), length * sizeof(UChar));
     d[length] = c;
     release();
@@ -846,7 +845,7 @@ UString &UString::operator=(const char *c)
     rep->_hash = 0;
   } else {
     release();
-    d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * l));
+    d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * l));
     rep = Rep::create(d, l);
   }
   for (int i = 0; i < l; i++)
@@ -1152,7 +1151,7 @@ void UString::detach()
 {
   if (rep->rc > 1 || rep->baseString) {
     int l = size();
-    UChar *n = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar) * l));
+    UChar *n = static_cast<UChar *>(fastMalloc(sizeof(UChar) * l));
     memcpy(n, data(), l * sizeof(UChar));
     release();
     rep = Rep::create(n, l);

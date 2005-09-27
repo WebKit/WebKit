@@ -19,6 +19,10 @@
 #define HAVE_ICU 1
 #define HAVE_PCREPOSIX 1
 #define HAVE_STRING_H 1
+#define HAVE_STDINT_H 1
+
+#define HAVE_MMAP 1
+#define HAVE_SBRK 1
 
 #ifdef __ppc__
 #define WORDS_BIGENDIAN 1
@@ -26,3 +30,5 @@
 
 /* define to debug garbage collection */
 #undef DEBUG_COLLECTOR
+
+#define KXC_CHANGES 1

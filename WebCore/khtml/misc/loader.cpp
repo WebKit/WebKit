@@ -62,7 +62,7 @@
 #endif
 
 #if APPLE_CHANGES
-#include "KWQAssertions.h"
+#include <kxmlcore/Assertions.h>
 #include "KWQLoader.h"
 #endif
 

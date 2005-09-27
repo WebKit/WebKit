@@ -25,7 +25,7 @@
 
 #import "KWQFileButton.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"

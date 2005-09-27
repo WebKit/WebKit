@@ -32,7 +32,6 @@ using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
 
-using khtml::SharedPtr;
 
 #include "kjs_views.lut.h"
 

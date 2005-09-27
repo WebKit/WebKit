@@ -84,7 +84,7 @@ using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
 #if APPLE_CHANGES
-#include "KWQAssertions.h"
+#include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
 #include "KWQKHTMLPart.h"
 #else

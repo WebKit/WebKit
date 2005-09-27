@@ -55,7 +55,7 @@
 #import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
@@ -96,7 +96,6 @@ using DOM::TreeWalkerImpl;
 using khtml::HashMap;
 using khtml::PointerHash;
 using khtml::RenderObject;
-using khtml::SharedPtr;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;

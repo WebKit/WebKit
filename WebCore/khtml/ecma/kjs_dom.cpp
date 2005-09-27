@@ -80,7 +80,6 @@ using DOM::ProcessingInstructionImpl;
 using DOM::TextImpl;
 
 using khtml::RenderObject;
-using khtml::SharedPtr;
 
 #include "kjs_dom.lut.h"
 

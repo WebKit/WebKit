@@ -25,7 +25,7 @@
 
 #import "KWQComboBox.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQButton.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"

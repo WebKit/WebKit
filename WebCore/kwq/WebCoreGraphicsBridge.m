@@ -25,7 +25,7 @@
 
 #import "WebCoreGraphicsBridge.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 @implementation WebCoreGraphicsBridge
 

@@ -41,7 +41,7 @@
 #import "html_headimpl.h"
 
 #import "DOMInternal.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 
 using DOM::AbstractViewImpl;

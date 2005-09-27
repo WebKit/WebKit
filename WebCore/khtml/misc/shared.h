@@ -1,7 +1,7 @@
 #ifndef SHARED_H
 #define SHARED_H
 
-#include <kjs/shared_ptr.h>
+#include <kxmlcore/SharedPtr.h>
 
 namespace khtml {
 
@@ -61,10 +61,6 @@ private:
     TreeShared(const TreeShared &);
     TreeShared &operator=(const TreeShared &);
 };
-
-using KXMLCore::SharedPtr;
-using KXMLCore::static_pointer_cast;
-using KXMLCore::const_pointer_cast;
 
 }
 

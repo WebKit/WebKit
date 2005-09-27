@@ -63,7 +63,7 @@
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime_root.h>
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQCharsets.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
@@ -124,7 +124,6 @@ using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::SelectionController;
-using khtml::SharedPtr;
 using khtml::Tokenizer;
 using khtml::TextIterator;
 using khtml::TypingCommand;

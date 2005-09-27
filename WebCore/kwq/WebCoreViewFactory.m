@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #import "WebCoreViewFactory.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 @implementation WebCoreViewFactory
 

@@ -29,15 +29,12 @@
 #include <new>
 
 #include "KWQRefPtr.h"
-#include "main_thread_malloc.h"
+#include "kxmlcore/FastMalloc.h"
 
 class KWQMapImpl;
 
-class KWQMapNodeImpl
+class KWQMapNodeImpl : public FastAllocated
 {
-public:
-    MAIN_THREAD_ALLOCATED;
-
 protected:
     typedef enum { Red = 0, Black = 1 } KWQMapNodeColor;
 
@@ -67,10 +64,7 @@ protected:
 #endif
 };
 
-class KWQMapIteratorImpl {
-public:
-    MAIN_THREAD_ALLOCATED;
-
+class KWQMapIteratorImpl : public FastAllocated {
 protected:
     KWQMapNodeImpl *node;
 

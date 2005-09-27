@@ -25,7 +25,7 @@
 
 #import "KWQSlot.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 #import "dom_docimpl.h"
 #import "khtml_part.h"

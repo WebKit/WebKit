@@ -115,7 +115,7 @@ void KWQMapIteratorImpl::incrementInternal()
 
 // KWQMapImplPrivate
 
-class KWQMapImpl::KWQMapPrivate
+class KWQMapImpl::KWQMapPrivate : public FastAllocated
 {
 public:
     KWQMapPrivate(KWQMapNodeImpl *node,
@@ -123,8 +123,6 @@ public:
 		  void (*deleteFunc)(KWQMapNodeImpl *));
 
     ~KWQMapPrivate();
-
-    MAIN_THREAD_ALLOCATED;
 
     KWQMapNodeImpl *guard;
     uint numNodes;

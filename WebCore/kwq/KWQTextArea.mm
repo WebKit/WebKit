@@ -28,7 +28,7 @@
 #import "DOMCSS.h"
 #import "DOMHTML.h"
 #import "EventNames.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "KWQTextEdit.h"

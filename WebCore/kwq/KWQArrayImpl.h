@@ -29,7 +29,7 @@
 #include "KWQRefPtr.h"
 #include "KWQDef.h"
 #include <stddef.h>
-#include "main_thread_malloc.h"
+#include "kxmlcore/FastMalloc.h"
 
 class KWQArrayImpl
 {
@@ -52,13 +52,11 @@ class KWQArrayImpl
     bool operator==(const KWQArrayImpl &) const;
 
  private:
-    class KWQArrayPrivate
+    class KWQArrayPrivate : public FastAllocated
     {
     public:	
 	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
 	~KWQArrayPrivate();
-
-        MAIN_THREAD_ALLOCATED;
 
 	size_t numItems;
 	size_t itemSize;

@@ -27,7 +27,7 @@
 
 #import "KWQNamespace.h"
 #import "KWQString.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQPainter.h"
 
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file

@@ -25,7 +25,7 @@
 
 #import "KWQTextCodec.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQCharsets.h"
 #import "KWQLogging.h"
 

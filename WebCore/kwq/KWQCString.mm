@@ -25,7 +25,7 @@
 
 #import "KWQCString.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import <ctype.h>
 
 using std::ostream;

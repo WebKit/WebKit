@@ -58,7 +58,7 @@ class AttrImpl;
 // the actual Attr (AttrImpl) with its value as textchild
 // is only allocated on demand by the DOM bindings.
 // Any use of AttrImpl inside khtml should be avoided.
-class AttributeImpl : public khtml::Shared<AttributeImpl>
+ class AttributeImpl : public khtml::Shared<AttributeImpl>, public FastAllocated
 {
     friend class NamedAttrMapImpl;
     friend class ElementImpl;
@@ -76,8 +76,6 @@ public:
 
     virtual ~AttributeImpl() {}
     
-    MAIN_THREAD_ALLOCATED;
-
     const AtomicString& value() const { return m_value; }
     const AtomicString& prefix() const { return m_name.prefix(); }
     const AtomicString& localName() const { return m_name.localName(); }

@@ -25,7 +25,7 @@
 
 #import "KWQTimer.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQLogging.h"
 #import "KWQFoundationExtras.h"
 

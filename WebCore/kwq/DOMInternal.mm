@@ -35,7 +35,7 @@
 #import "kjs_dom.h"
 #import "kjs_proxy.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 
 #import <JavaScriptCore/interpreter.h>

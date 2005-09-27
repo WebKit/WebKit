@@ -26,7 +26,7 @@
 #import "KWQSignal.h"
 
 #import "KWQObject.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 using KIO::Job;
 

@@ -28,7 +28,7 @@
 
 #include "KWQRefPtr.h"
 #include "KWQDef.h"
-#include "main_thread_malloc.h"
+#include "kxmlcore/FastMalloc.h"
 
 class KWQValueListNodeImpl;
 
@@ -107,11 +107,8 @@ private:
     friend class KWQValueListNodeImpl;
 };
 
-class KWQValueListNodeImpl
+class KWQValueListNodeImpl : public FastAllocated
 {
-public:
-    MAIN_THREAD_ALLOCATED;
-
 protected:
     KWQValueListNodeImpl();
 

@@ -28,15 +28,13 @@
 #import <cstddef>
 #import <algorithm>
 #import <CoreFoundation/CFArray.h>
-#import "KWQAssertions.h"
-#import "misc/main_thread_malloc.h"
+#import <kxmlcore/Assertions.h>
+#import "kxmlcore/FastMalloc.h"
 
-class KWQListNode
+class KWQListNode : public FastAllocated
 {
 public:
     KWQListNode(void *d) : data(d), next(NULL), prev(NULL) { }
-
-    MAIN_THREAD_ALLOCATED;
 
     void *data;
     KWQListNode *next;

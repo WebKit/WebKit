@@ -28,20 +28,18 @@
 
 #include "dom/dom2_traversal.h"
 #include "misc/shared.h"
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 
 namespace DOM {
 
 class NodeImpl;
 class DocumentImpl;
 
-class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>
+class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>, public FastAllocated
 {
 public:
     NodeFilterImpl(NodeFilterCondition *);
     ~NodeFilterImpl();
-    
-    MAIN_THREAD_ALLOCATED;
     
     short acceptNode(NodeImpl *) const;
     
@@ -52,14 +50,12 @@ private:
     NodeFilterCondition *m_condition;
 };
 
-class TraversalImpl : public khtml::Shared<TraversalImpl>
+class TraversalImpl : public khtml::Shared<TraversalImpl>, public FastAllocated
 {
 public:
     TraversalImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~TraversalImpl();
 
-    MAIN_THREAD_ALLOCATED;
-    
     NodeImpl *root() const { return m_root; }
     unsigned whatToShow() const { return m_whatToShow; }
     NodeFilterImpl *filter() const { return m_filter; }

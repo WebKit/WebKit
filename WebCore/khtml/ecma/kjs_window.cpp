@@ -90,7 +90,6 @@ using DOM::HTMLElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 
-using khtml::SharedPtr;
 using khtml::TypingCommand;
 
 using KParts::ReadOnlyPart;

@@ -23,17 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX KWQLog
 #endif
 
-extern KWQLogChannel KWQLogNotYetImplemented;
+extern KXCLogChannel KWQLogNotYetImplemented;
 
-extern KWQLogChannel KWQLogFrames;
-extern KWQLogChannel KWQLogLoading;
-extern KWQLogChannel KWQLogPopupBlocking;
-extern KWQLogChannel KWQLogEvents;
-extern KWQLogChannel KWQLogEditing;
-extern KWQLogChannel KWQLogTextConversion;
+extern KXCLogChannel KWQLogFrames;
+extern KXCLogChannel KWQLogLoading;
+extern KXCLogChannel KWQLogPopupBlocking;
+extern KXCLogChannel KWQLogEvents;
+extern KXCLogChannel KWQLogEditing;
+extern KXCLogChannel KWQLogTextConversion;

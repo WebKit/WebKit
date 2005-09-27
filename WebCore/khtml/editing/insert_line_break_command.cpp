@@ -37,7 +37,7 @@
 #include "khtml_part.h"
 
 #if APPLE_CHANGES
-#include "KWQAssertions.h"
+#include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
 #else
 #define ASSERT(assertion) assert(assertion)

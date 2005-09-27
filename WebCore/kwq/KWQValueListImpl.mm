@@ -27,15 +27,13 @@
 
 #import <stdlib.h>
 
-class KWQValueListImpl::KWQValueListPrivate
+class KWQValueListImpl::KWQValueListPrivate : public FastAllocated
 {
 public:
     KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *));
     KWQValueListPrivate(const KWQValueListPrivate &other);
 
     ~KWQValueListPrivate();
-
-    MAIN_THREAD_ALLOCATED;
 
     void copyList(KWQValueListNodeImpl *l, KWQValueListNodeImpl *&head, KWQValueListNodeImpl *&tail) const;
     void deleteList(KWQValueListNodeImpl *l);

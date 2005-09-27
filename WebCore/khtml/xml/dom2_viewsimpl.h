@@ -25,7 +25,7 @@
 
 #include "css/css_valueimpl.h"
 #include "misc/shared.h"
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 
 namespace DOM {
 
@@ -35,14 +35,12 @@ class ElementImpl;
 class DOMStringImpl;
 
 // Introduced in DOM Level 2:
-class AbstractViewImpl : public khtml::Shared<AbstractViewImpl>
+class AbstractViewImpl : public khtml::Shared<AbstractViewImpl>, public FastAllocated
 {
 public:
     AbstractViewImpl(DocumentImpl *_document);
     ~AbstractViewImpl();
 
-    MAIN_THREAD_ALLOCATED;
-    
     DocumentImpl *document() const { return m_document; }
     CSSStyleDeclarationImpl *getComputedStyle(ElementImpl *elt, DOMStringImpl *pseudoElt);
 protected:

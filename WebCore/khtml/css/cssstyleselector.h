@@ -29,7 +29,7 @@
 #include "rendering/render_style.h"
 #include "dom/dom_string.h"
 #include "css/css_ruleimpl.h"
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 
 class KHTMLSettings;
 class KHTMLView;
@@ -62,7 +62,7 @@ namespace khtml
      * for specific implementations of the Selector. At the moment only CSSStyleSelector
      * exists, but someone may wish to implement XSL...
      */
-    class StyleSelector
+    class StyleSelector : public FastAllocated
     {
     public:
 	StyleSelector() {};
@@ -72,8 +72,6 @@ namespace khtml
 	*/
 // 	virtual ~StyleSelector() {};
 // 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e) = 0;
-
-        MAIN_THREAD_ALLOCATED;
 
 	enum State {
 	    None = 0x00,
@@ -226,13 +224,11 @@ public:
 	void applyProperty(int id, DOM::CSSValueImpl *value);
     };
 
-    class CSSRuleData {
+    class CSSRuleData : public FastAllocated {
     public:
         CSSRuleData(uint pos, DOM::CSSStyleRuleImpl* r, DOM::CSSSelector* sel, CSSRuleData* prev = 0)
         :m_position(pos), m_rule(r), m_selector(sel), m_next(0) { if (prev) prev->m_next = this; }
         ~CSSRuleData() { delete m_next; }
-
-        MAIN_THREAD_ALLOCATED;
 
         uint position() { return m_position; }
         DOM::CSSStyleRuleImpl* rule() { return m_rule; }
@@ -246,13 +242,11 @@ public:
         CSSRuleData* m_next;
     };
 
-    class CSSRuleDataList {
+    class CSSRuleDataList : public FastAllocated {
     public:
         CSSRuleDataList(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel)
         { m_first = m_last = new CSSRuleData(pos, rule, sel); }
         ~CSSRuleDataList() { delete m_first; }
-
-        MAIN_THREAD_ALLOCATED;
 
         CSSRuleData* first() { return m_first; }
         CSSRuleData* last() { return m_last; }
@@ -266,13 +260,11 @@ public:
         CSSRuleData* m_last;
     };
     
-    class CSSRuleSet
+    class CSSRuleSet : public FastAllocated
     {
     public:
         CSSRuleSet();
         ~CSSRuleSet();
-
-        MAIN_THREAD_ALLOCATED;
 
         typedef HashMap<DOM::DOMStringImpl *, CSSRuleDataList *, PointerHash<DOM::DOMStringImpl *> > AtomRuleMap;
 

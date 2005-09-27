@@ -27,7 +27,7 @@
 
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 #include "misc/helper.h"
 #include "misc/shared.h"
 #include "dom_atomicstring.h"
@@ -50,8 +50,6 @@ namespace khtml {
 };
 
 namespace DOM {
-
-using khtml::SharedPtr;
 
 class AtomicString;
 class DocumentImpl;
@@ -78,14 +76,12 @@ private:
 };
 
 // this class implements nodes, which can have a parent but no children:
-class NodeImpl : public khtml::TreeShared<NodeImpl>
+class NodeImpl : public khtml::TreeShared<NodeImpl>, public FastAllocated
 {
     friend class DocumentImpl;
 public:
     NodeImpl(DocumentPtr *doc);
     virtual ~NodeImpl();
-
-    MAIN_THREAD_ALLOCATED;
 
     // DOM methods & attributes for Node
     virtual bool hasTagName(const QualifiedName& tagName) const { return false; }
@@ -569,13 +565,11 @@ public:
 class Node;
 class NodeImpl;
 
-class NodeListImpl : public khtml::Shared<NodeListImpl>
+class NodeListImpl : public khtml::Shared<NodeListImpl>, public FastAllocated
 {
 public:
     NodeListImpl( NodeImpl *_rootNode );
     virtual ~NodeListImpl();
-
-    MAIN_THREAD_ALLOCATED;
 
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;
@@ -642,13 +636,11 @@ protected:
 // Generic NamedNodeMap interface
 // Other classes implement this for more specific situations e.g. attributes
 // of an element
-class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>
+class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>, public FastAllocated
 {
 public:
     NamedNodeMapImpl() {}
     virtual ~NamedNodeMapImpl() {}
-
-    MAIN_THREAD_ALLOCATED;
 
     NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
     SharedPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }

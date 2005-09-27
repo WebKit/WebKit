@@ -41,7 +41,7 @@
 #include <qpalette.h>
 #include <qapplication.h>
 
-#include "misc/main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 #include "misc/khtmllayout.h"
 #include "misc/shared.h"
 #include "rendering/font.h"
@@ -363,14 +363,12 @@ public:
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
 
-class StyleSurroundData : public Shared<StyleSurroundData>
+class StyleSurroundData : public Shared<StyleSurroundData>, public FastAllocated
 {
 public:
     StyleSurroundData();
     StyleSurroundData(const StyleSurroundData& o);
     
-    MAIN_THREAD_ALLOCATED;
-
     bool operator==(const StyleSurroundData& o) const;
     bool operator!=(const StyleSurroundData& o) const {
         return !(*this == o);
@@ -386,13 +384,11 @@ public:
 //------------------------------------------------
 // Box attributes. Not inherited.
 
-class StyleBoxData : public Shared<StyleBoxData>
+class StyleBoxData : public Shared<StyleBoxData>, public FastAllocated
 {
 public:
     StyleBoxData();
     StyleBoxData(const StyleBoxData& o);
-
-    MAIN_THREAD_ALLOCATED;
 
     // copy and assignment
 //    StyleBoxData(const StyleBoxData &other);
@@ -465,14 +461,12 @@ enum EUnicodeBidi {
     UBNormal, Embed, Override
 };
 
-class StyleVisualData : public Shared<StyleVisualData>
+class StyleVisualData : public Shared<StyleVisualData>, public FastAllocated
 {
 public:
     StyleVisualData();
     ~StyleVisualData();
     StyleVisualData(const StyleVisualData& o );
-
-    MAIN_THREAD_ALLOCATED;
 
     bool operator==( const StyleVisualData &o ) const {
 	return ( clip == o.clip &&
@@ -512,12 +506,10 @@ enum EBackgroundRepeat {
     REPEAT, REPEAT_X, REPEAT_Y, NO_REPEAT
 };
 
-struct BackgroundLayer {
+struct BackgroundLayer : public FastAllocated {
 public:
     BackgroundLayer();
     ~BackgroundLayer();
-
-    MAIN_THREAD_ALLOCATED;
 
     CachedImage* backgroundImage() const { return m_image; }
     Length backgroundXPosition() const { return m_xPosition; }
@@ -601,14 +593,12 @@ public:
     BackgroundLayer* m_next;
 };
 
-class StyleBackgroundData : public Shared<StyleBackgroundData>
+class StyleBackgroundData : public Shared<StyleBackgroundData>, public FastAllocated
 {
 public:
     StyleBackgroundData();
     ~StyleBackgroundData() {}
     StyleBackgroundData(const StyleBackgroundData& o );
-
-    MAIN_THREAD_ALLOCATED;
 
     bool operator==(const StyleBackgroundData& o) const;
     bool operator!=(const StyleBackgroundData &o) const {
@@ -626,14 +616,12 @@ public:
 enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE, MUNFURL };
 enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
 
-class StyleMarqueeData : public Shared<StyleMarqueeData>
+class StyleMarqueeData : public Shared<StyleMarqueeData>, public FastAllocated
 {
 public:
     StyleMarqueeData();
     StyleMarqueeData(const StyleMarqueeData& o);
     
-    MAIN_THREAD_ALLOCATED;
-
     bool operator==(const StyleMarqueeData& o) const;
     bool operator!=(const StyleMarqueeData& o) const {
         return !(*this == o);
@@ -656,13 +644,11 @@ enum EBoxOrient { HORIZONTAL, VERTICAL };
 enum EBoxLines { SINGLE, MULTIPLE };
 enum EBoxDirection { BNORMAL, BREVERSE };
 
-class StyleFlexibleBoxData : public Shared<StyleFlexibleBoxData>
+class StyleFlexibleBoxData : public Shared<StyleFlexibleBoxData>, public FastAllocated
 {
 public:
     StyleFlexibleBoxData();
     StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
-
-    MAIN_THREAD_ALLOCATED;
 
     bool operator==(const StyleFlexibleBoxData& o) const;
     bool operator!=(const StyleFlexibleBoxData &o) const {
@@ -680,14 +666,12 @@ public:
 };
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
-struct ShadowData {
+struct ShadowData : public FastAllocated {
     ShadowData(int _x, int _y, int _blur, const QColor& _color)
     :x(_x), y(_y), blur(_blur), color(_color), next(0) {}
     ShadowData(const ShadowData& o);
     
     ~ShadowData() { delete next; }
-
-    MAIN_THREAD_ALLOCATED;
 
     bool operator==(const ShadowData& o) const;
     bool operator!=(const ShadowData &o) const {
@@ -777,14 +761,12 @@ enum EAppearance {
 // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
 // we save space, and only allocate this object when someone actually uses
 // a non-inherited CSS3 property.
-class StyleCSS3NonInheritedData : public Shared<StyleCSS3NonInheritedData>
+class StyleCSS3NonInheritedData : public Shared<StyleCSS3NonInheritedData>, public FastAllocated
 {
 public:
     StyleCSS3NonInheritedData();
     ~StyleCSS3NonInheritedData();
     StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o);
-
-    MAIN_THREAD_ALLOCATED;
 
 #ifndef KHTML_NO_XBL
     bool bindingsEquivalent(const StyleCSS3NonInheritedData& o) const;
@@ -819,14 +801,12 @@ public:
 // This struct is for rarely used inherited CSS3 properties.  By grouping them together,
 // we save space, and only allocate this object when someone actually uses
 // an inherited CSS3 property.
-class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>
+class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>, public FastAllocated
 {
 public:
     StyleCSS3InheritedData();
     ~StyleCSS3InheritedData();
     StyleCSS3InheritedData(const StyleCSS3InheritedData& o);
-
-    MAIN_THREAD_ALLOCATED;
 
     bool operator==(const StyleCSS3InheritedData& o) const;
     bool operator!=(const StyleCSS3InheritedData &o) const {
@@ -882,8 +862,6 @@ public:
     ~StyleInheritedData();
     StyleInheritedData(const StyleInheritedData& o );
 
-    MAIN_THREAD_ALLOCATED;
-    
     bool operator==(const StyleInheritedData& o) const;
     bool operator != ( const StyleInheritedData &o ) const {
 	return !(*this == o);

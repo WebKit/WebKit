@@ -24,7 +24,7 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#include "fast_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 
 #if APPLE_CHANGES
 #include <sys/types.h>
@@ -193,7 +193,7 @@ namespace KJS {
   /**
    * @short Unicode string class
    */
-  class UString {
+  class UString : public FastAllocated {
     friend bool operator==(const UString&, const UString&);
     friend class UCharReference;
     friend class Identifier;
@@ -204,6 +204,9 @@ namespace KJS {
      * @internal
      */
     struct Rep {
+
+      FAST_ALLOCATED_POD;
+
       static Rep *create(UChar *d, int l);
       static Rep *createCopying(const UChar *d, int l);
       static Rep *create(Rep *base, int offset, int length);
@@ -215,8 +218,6 @@ namespace KJS {
       unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
       static unsigned computeHash(const UChar *, int length);
       static unsigned computeHash(const char *);
-
-      KJS_FAST_ALLOCATED;
 
       void ref() { ++rc; }
       void deref() { if (--rc == 0) destroy(); }
@@ -290,8 +291,6 @@ namespace KJS {
      * string the data will be freed.
      */
     ~UString() { release(); }
-
-    KJS_FAST_ALLOCATED;
 
     /**
      * Constructs a string from an int.

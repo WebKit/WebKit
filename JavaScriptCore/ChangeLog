@@ -1,3 +1,193 @@
+2005-09-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- replace dlmalloc with tcmalloc
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
+
+	I also moved SharedPtr and the assertion code from WebCore into a
+	new kxmlcore directory.
+	
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+        * kjs/config.h:
+        * kjs/fast_malloc.cpp: Removed.
+        * kjs/fast_malloc.h: Removed.
+        * kjs/function.cpp:
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add):
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::~PropertyMap):
+        (KJS::PropertyMap::rehash):
+        * kjs/scope_chain.h:
+        * kjs/shared_ptr.h: Removed.
+        * kjs/string_object.cpp:
+        (StringObjectFuncImp::callAsFunction):
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::createCopying):
+        (KJS::UString::Rep::destroy):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::expandPreCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::spliceSubstringsWithSeparators):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        (KJS::UString::detach):
+        * kjs/ustring.h:
+        * kxmlcore/Assertions.h: Added.
+        * kxmlcore/Assertions.mm: Added.
+        * kxmlcore/FastMalloc.cpp: Added.
+        (KXMLCore::LgFloor):
+        (KXMLCore::SizeClass):
+        (KXMLCore::ByteSizeForClass):
+        (KXMLCore::InitSizeClasses):
+        (KXMLCore::MetaDataAlloc):
+        (KXMLCore::PageHeapAllocator::Init):
+        (KXMLCore::PageHeapAllocator::New):
+        (KXMLCore::PageHeapAllocator::Delete):
+        (KXMLCore::PageHeapAllocator::inuse):
+        (KXMLCore::pages):
+        (KXMLCore::AllocationSize):
+        (KXMLCore::Event):
+        (KXMLCore::NewSpan):
+        (KXMLCore::DeleteSpan):
+        (KXMLCore::DLL_Init):
+        (KXMLCore::DLL_Remove):
+        (KXMLCore::DLL_IsEmpty):
+        (KXMLCore::DLL_Length):
+        (KXMLCore::DLL_Print):
+        (KXMLCore::DLL_Prepend):
+        (KXMLCore::DLL_InsertOrdered):
+        (KXMLCore::):
+        (KXMLCore::TCMalloc_PageHeap::GetDescriptor):
+        (KXMLCore::TCMalloc_PageHeap::SystemBytes):
+        (KXMLCore::TCMalloc_PageHeap::FreeBytes):
+        (KXMLCore::TCMalloc_PageHeap::RecordSpan):
+        (KXMLCore::TCMalloc_PageHeap::TCMalloc_PageHeap):
+        (KXMLCore::TCMalloc_PageHeap::New):
+        (KXMLCore::TCMalloc_PageHeap::Split):
+        (KXMLCore::TCMalloc_PageHeap::Carve):
+        (KXMLCore::TCMalloc_PageHeap::Delete):
+        (KXMLCore::TCMalloc_PageHeap::RegisterSizeClass):
+        (KXMLCore::TCMalloc_PageHeap::Dump):
+        (KXMLCore::TCMalloc_PageHeap::GrowHeap):
+        (KXMLCore::TCMalloc_PageHeap::Check):
+        (KXMLCore::TCMalloc_PageHeap::CheckList):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::Init):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::length):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::empty):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::lowwatermark):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::clear_lowwatermark):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::Push):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::Pop):
+        (KXMLCore::TCMalloc_ThreadCache::freelist_length):
+        (KXMLCore::TCMalloc_ThreadCache::Size):
+        (KXMLCore::TCMalloc_Central_FreeList::length):
+        (KXMLCore::TCMalloc_Central_FreeList::Init):
+        (KXMLCore::TCMalloc_Central_FreeList::Insert):
+        (KXMLCore::TCMalloc_Central_FreeList::Remove):
+        (KXMLCore::TCMalloc_Central_FreeList::Populate):
+        (KXMLCore::TCMalloc_ThreadCache::SampleAllocation):
+        (KXMLCore::TCMalloc_ThreadCache::Init):
+        (KXMLCore::TCMalloc_ThreadCache::Cleanup):
+        (KXMLCore::TCMalloc_ThreadCache::Allocate):
+        (KXMLCore::TCMalloc_ThreadCache::Deallocate):
+        (KXMLCore::TCMalloc_ThreadCache::FetchFromCentralCache):
+        (KXMLCore::TCMalloc_ThreadCache::ReleaseToCentralCache):
+        (KXMLCore::TCMalloc_ThreadCache::Scavenge):
+        (KXMLCore::TCMalloc_ThreadCache::GetCache):
+        (KXMLCore::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (KXMLCore::TCMalloc_ThreadCache::PickNextSample):
+        (KXMLCore::TCMalloc_ThreadCache::InitModule):
+        (KXMLCore::TCMalloc_ThreadCache::InitTSD):
+        (KXMLCore::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (KXMLCore::TCMalloc_ThreadCache::DeleteCache):
+        (KXMLCore::TCMalloc_ThreadCache::RecomputeThreadCacheSize):
+        (KXMLCore::TCMalloc_ThreadCache::Print):
+        (KXMLCore::ExtractStats):
+        (KXMLCore::DumpStats):
+        (KXMLCore::PrintStats):
+        (KXMLCore::DumpStackTraces):
+        (KXMLCore::TCMallocImplementation::GetStats):
+        (KXMLCore::TCMallocImplementation::ReadStackTraces):
+        (KXMLCore::TCMallocImplementation::GetNumericProperty):
+        (KXMLCore::TCMallocImplementation::SetNumericProperty):
+        (KXMLCore::DoSampledAllocation):
+        (KXMLCore::do_malloc):
+        (KXMLCore::do_free):
+        (KXMLCore::do_memalign):
+        (KXMLCore::TCMallocGuard::TCMallocGuard):
+        (KXMLCore::TCMallocGuard::~TCMallocGuard):
+        (KXMLCore::malloc):
+        (KXMLCore::free):
+        (KXMLCore::calloc):
+        (KXMLCore::cfree):
+        (KXMLCore::realloc):
+        (KXMLCore::memalign):
+        (KXMLCore::posix_memalign):
+        (KXMLCore::valloc):
+        (KXMLCore::pvalloc):
+        (KXMLCore::malloc_stats):
+        (KXMLCore::mallopt):
+        (KXMLCore::mallinfo):
+        * kxmlcore/FastMalloc.h: Added.
+        (KXMLCore::FastAllocated::operator new):
+        (KXMLCore::FastAllocated::operator delete):
+        (KXMLCore::FastAllocated::operator new[]):
+        (KXMLCore::FastAllocated::operator delete[]):
+        * kxmlcore/SharedPtr.h: Added.
+        (KXMLCore::SharedPtr::SharedPtr):
+        (KXMLCore::SharedPtr::~SharedPtr):
+        (KXMLCore::SharedPtr::isNull):
+        (KXMLCore::SharedPtr::notNull):
+        (KXMLCore::SharedPtr::reset):
+        (KXMLCore::SharedPtr::get):
+        (KXMLCore::SharedPtr::operator*):
+        (KXMLCore::SharedPtr::operator->):
+        (KXMLCore::SharedPtr::operator!):
+        (KXMLCore::SharedPtr::operator bool):
+        (KXMLCore::::operator):
+        (KXMLCore::operator==):
+        (KXMLCore::operator!=):
+        (KXMLCore::static_pointer_cast):
+        (KXMLCore::const_pointer_cast):
+        * kxmlcore/TCPageMap.h: Added.
+        (TCMalloc_PageMap1::TCMalloc_PageMap1):
+        (TCMalloc_PageMap1::Ensure):
+        (TCMalloc_PageMap1::get):
+        (TCMalloc_PageMap1::set):
+        (TCMalloc_PageMap2::TCMalloc_PageMap2):
+        (TCMalloc_PageMap2::get):
+        (TCMalloc_PageMap2::set):
+        (TCMalloc_PageMap2::Ensure):
+        (TCMalloc_PageMap3::NewNode):
+        (TCMalloc_PageMap3::TCMalloc_PageMap3):
+        (TCMalloc_PageMap3::get):
+        (TCMalloc_PageMap3::set):
+        (TCMalloc_PageMap3::Ensure):
+        * kxmlcore/TCSpinLock.h: Added.
+        (TCMalloc_SpinLock::Init):
+        (TCMalloc_SpinLock::Finalize):
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        (TCMalloc_SpinLockHolder::TCMalloc_SpinLockHolder):
+        (TCMalloc_SpinLockHolder::~TCMalloc_SpinLockHolder):
+        * kxmlcore/TCSystemAlloc.cpp: Added.
+        (TrySbrk):
+        (TryMmap):
+        (TryDevMem):
+        (TCMalloc_SystemAlloc):
+        * kxmlcore/TCSystemAlloc.h: Added.
+
 2005-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

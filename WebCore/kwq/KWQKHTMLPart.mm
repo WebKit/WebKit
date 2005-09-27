@@ -145,7 +145,6 @@ using khtml::SELECT_IGNORE;
 using khtml::setEnd;
 using khtml::setStart;
 using khtml::ShadowData;
-using khtml::SharedPtr;
 using khtml::startOfWord;
 using khtml::startVisiblePosition;
 using khtml::StyleDashboardRegion;

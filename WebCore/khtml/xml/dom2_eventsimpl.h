@@ -44,14 +44,12 @@ class EventListener;
 class NodeImpl;
 class ClipboardImpl;
 
-class EventImpl : public khtml::Shared<EventImpl>
+class EventImpl : public khtml::Shared<EventImpl>, public FastAllocated
 {
 public:
     EventImpl();
     EventImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg);
     virtual ~EventImpl();
-
-    MAIN_THREAD_ALLOCATED;
 
     const AtomicString &type() const { return m_type; }
     NodeImpl *target() const { return m_target; }
@@ -361,13 +359,11 @@ private:
     int m_wheelDelta;
 };
 
-class RegisteredEventListener {
+class RegisteredEventListener : public FastAllocated {
 public:
     RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     ~RegisteredEventListener();
 
-    MAIN_THREAD_ALLOCATED;
-    
     const AtomicString &eventType() const { return m_eventType; }
     EventListener *listener() const { return m_listener; }
     bool useCapture() const { return m_useCapture; }
@@ -385,13 +381,11 @@ bool operator==(const RegisteredEventListener &, const RegisteredEventListener &
 inline bool operator!=(const RegisteredEventListener &a, const RegisteredEventListener &b) { return !(a == b); }
 
 // State available during IE's events for drag and drop and copy/paste
-class ClipboardImpl : public khtml::Shared<ClipboardImpl> {
+class ClipboardImpl : public khtml::Shared<ClipboardImpl>, public FastAllocated {
 public:
     ClipboardImpl() { }
     virtual ~ClipboardImpl();
 
-    MAIN_THREAD_ALLOCATED;
-    
     // Is this operation a drag-drop or a copy-paste?
     virtual bool isForDragging() const = 0;
 

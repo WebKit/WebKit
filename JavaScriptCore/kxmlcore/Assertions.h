@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
@@ -23,6 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef KXMLCORE_ASSERTIONS_H
+#define KXMLCORE_ASSERTIONS_H
+
+// no namespaces because this file has to be includable from C and Objective-C
+
 // Note, this file uses many GCC extensions, but it should be compatible with
 // C, Objective C, C++, and Objective C++.
 
@@ -30,29 +36,29 @@
 // Defining any of the symbols explicitly prevents this from having any effect.
 
 #ifdef NDEBUG
-#define KWQ_ASSERTIONS_DISABLED_DEFAULT 1
+#define ASSERTIONS_DISABLED_DEFAULT 1
 #else
-#define KWQ_ASSERTIONS_DISABLED_DEFAULT 0
+#define ASSERTIONS_DISABLED_DEFAULT 0
 #endif
 
 #ifndef ASSERT_DISABLED
-#define ASSERT_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
+#define ASSERT_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef ASSERT_ARG_DISABLED
-#define ASSERT_ARG_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
+#define ASSERT_ARG_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef FATAL_DISABLED
-#define FATAL_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
+#define FATAL_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef ERROR_DISABLED
-#define ERROR_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
+#define ERROR_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef LOG_DISABLED
-#define LOG_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
+#define LOG_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 // These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled.
@@ -61,18 +67,20 @@
 extern "C" {
 #endif
 
+typedef enum { KXCLogChannelUninitialized, KXCLogChannelOff, KXCLogChannelOn } KXCLogChannelState;
+
 typedef struct {
     unsigned mask;
     const char *defaultName;
-    enum { KWQLogChannelUninitialized, KWQLogChannelOff, KWQLogChannelOn } state;
-} KWQLogChannel;
-
-void KWQReportAssertionFailure(const char *file, int line, const char *function, const char *assertion);
-void KWQReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...);
-void KWQReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion);
-void KWQReportFatalError(const char *file, int line, const char *function, const char *format, ...) ;
-void KWQReportError(const char *file, int line, const char *function, const char *format, ...);
-void KWQLog(const char *file, int line, const char *function, KWQLogChannel *channel, const char *format, ...);
+    KXCLogChannelState state;
+} KXCLogChannel;
+    
+void KXCReportAssertionFailure(const char *file, int line, const char *function, const char *assertion);
+void KXCReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...);
+void KXCReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion);
+void KXCReportFatalError(const char *file, int line, const char *function, const char *format, ...) ;
+void KXCReportError(const char *file, int line, const char *function, const char *format, ...);
+void KXCLog(const char *file, int line, const char *function, KXCLogChannel *channel, const char *format, ...);
 
 #ifdef __cplusplus
 }
@@ -94,18 +102,18 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
 
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
-        KWQReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion); \
+        KXCReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) do \
     if (!(assertion)) { \
-        KWQReportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion, formatAndArgs); \
+        KXCReportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion, formatAndArgs); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_NOT_REACHED() do { \
-    KWQReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, 0); \
+    KXCReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, 0); \
     CRASH(); \
 } while (0)
 
@@ -121,7 +129,7 @@ while (0)
 
 #define ASSERT_ARG(argName, assertion) do \
     if (!(assertion)) { \
-        KWQReportArgumentAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #argName, #assertion); \
+        KXCReportArgumentAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #argName, #assertion); \
         CRASH(); \
     } \
 while (0)
@@ -134,7 +142,7 @@ while (0)
 #define FATAL(formatAndArgs...) ((void)0)
 #else
 #define FATAL(formatAndArgs...) do { \
-    KWQReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs); \
+    KXCReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs); \
     CRASH(); \
 } while (0)
 #endif
@@ -144,7 +152,7 @@ while (0)
 #if ERROR_DISABLED
 #define ERROR(formatAndArgs...) ((void)0)
 #else
-#define ERROR(formatAndArgs...) KWQReportError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs)
+#define ERROR(formatAndArgs...) KXCReportError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs)
 #endif
 
 // LOG
@@ -152,7 +160,9 @@ while (0)
 #if LOG_DISABLED
 #define LOG(channel, formatAndArgs...) ((void)0)
 #else
-#define LOG(channel, formatAndArgs...) KWQLog(__FILE__, __LINE__, __PRETTY_FUNCTION__, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), formatAndArgs)
+#define LOG(channel, formatAndArgs...) KXCLog(__FILE__, __LINE__, __PRETTY_FUNCTION__, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), formatAndArgs)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
 #endif
+
+#endif // KXMLCORE_ASSERTIONS_H

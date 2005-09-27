@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
@@ -23,29 +24,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+#include "Assertions.h"
+
+#define SUPPORT_OBJC_LOGGING 1
+
+#if SUPPORT_OBJC_LOGGING
+#include <CoreFoundation/CFString.h>
+#endif
+
+#include <Foundation/NSString.h>
+#include <Foundation/NSUserDefaults.h>
+#include <Foundation/NSScanner.h>
+
+extern "C" {
 
 static int (* vfprintf_no_warning)(FILE *, const char *, va_list) = vfprintf;
 
 static void vprintf_stderr_objc(const char *format, va_list args)
 {
+#if SUPPORT_OBJC_LOGGING
     if (!strstr(format, "%@")) {
+        CFStringRef cfFormat = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
+        CFStringRef str = CFStringCreateWithFormatAndArguments(NULL, NULL, cfFormat, args);
+        
+        int length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8);
+        char *buffer = (char *)malloc(length + 1);
+
+        CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
+
+        fputs(buffer, stderr);
+
+        free(buffer);
+        CFRelease(str);
+        CFRelease(cfFormat);
+    } else
+#endif
         vfprintf_no_warning(stderr, format, args);
-    } else {
-        fputs([[[[NSString alloc] initWithFormat:[NSString stringWithCString:format] arguments:args] autorelease] UTF8String], stderr);
-    }
 }
 
-void KWQReportAssertionFailure(const char *file, int line, const char *function, const char *assertion)
+void KXCReportAssertionFailure(const char *file, int line, const char *function, const char *assertion)
 {
-    if (assertion) {
+    if (assertion)
         fprintf(stderr, "=================\nASSERTION FAILED: %s (%s:%d %s)\n=================\n", assertion, file, line, function);
-    } else {
+    else
         fprintf(stderr, "=================\nSHOULD NEVER BE REACHED (%s:%d %s)\n=================\n", file, line, function);
-    }
 }
 
-void KWQReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...)
+void KXCReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...)
 {
     fprintf(stderr, "=================\nASSERTION FAILED: ");
     va_list args;
@@ -55,12 +80,12 @@ void KWQReportAssertionFailureWithMessage(const char *file, int line, const char
     fprintf(stderr, "\n%s (%s:%d %s)\n=================\n", assertion, file, line, function);
 }
 
-void KWQReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion)
+void KXCReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion)
 {
     fprintf(stderr, "=================\nARGUMENT BAD: %s, %s (%s:%d %s)\n=================\n", argName, assertion, file, line, function);
 }
 
-void KWQReportFatalError(const char *file, int line, const char *function, const char *format, ...)
+void KXCReportFatalError(const char *file, int line, const char *function, const char *format, ...)
 {
     fprintf(stderr, "=================\nFATAL ERROR: ");
     va_list args;
@@ -70,7 +95,7 @@ void KWQReportFatalError(const char *file, int line, const char *function, const
     fprintf(stderr, "\n(%s:%d %s)\n=================\n", file, line, function);
 }
 
-void KWQReportError(const char *file, int line, const char *function, const char *format, ...)
+void KXCReportError(const char *file, int line, const char *function, const char *format, ...)
 {
     fprintf(stderr, "=================\nERROR: ");
     va_list args;
@@ -80,28 +105,34 @@ void KWQReportError(const char *file, int line, const char *function, const char
     fprintf(stderr, "\n(%s:%d %s)\n=================\n", file, line, function);
 }
 
-void KWQLog(const char *file, int line, const char *function, KWQLogChannel *channel, const char *format, ...)
+static void fprintf_objc(const char *format, ...)
 {
-    if (channel->state == KWQLogChannelUninitialized) {
-        channel->state = KWQLogChannelOff;
+    va_list args;
+    va_start(args, format);
+    vprintf_stderr_objc(format, args);
+    va_end(args);
+}
+
+
+void KXCLog(const char *file, int line, const char *function, KXCLogChannel *channel, const char *format, ...)
+{
+    if (channel->state == KXCLogChannelUninitialized) {
+        channel->state = KXCLogChannelOff;
         NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithCString:channel->defaultName]];
         if (logLevelString) {
             unsigned logLevel;
             if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel]) {
-                NSLog(@"unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);
+                fprintf_objc("unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);
             }
             if ((logLevel & channel->mask) == channel->mask) {
-                channel->state = KWQLogChannelOn;
+                channel->state = KXCLogChannelOn;
             }
         }
     }
     
-    if (channel->state != KWQLogChannelOn) {
+    if (channel->state != KXCLogChannelOn)
         return;
-    }
     
-    if (channel->mask != 0x100) // kocienda does not want this output when logging editing
-        fprintf(stderr, "- %s:%d %s - ", file, line, function);
     va_list args;
     va_start(args, format);
     vprintf_stderr_objc(format, args);
@@ -109,3 +140,5 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
     if (format[strlen(format) - 1] != '\n')
         putc('\n', stderr);
 }
+
+} // extern "C"

@@ -31,21 +31,18 @@
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 
 using std::nothrow;
-using khtml::main_thread_malloc;
-using khtml::main_thread_free;
-using khtml::main_thread_realloc;
 
 KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
-    data(pNumItems > 0 ? static_cast<char *>(main_thread_malloc(itemSize * numItems)) : NULL), 
+    data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL), 
     refCount(0)
 {
 }
 
 KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate()
 {
-    main_thread_free(data);
+    fastFree(data);
 }
 
 
@@ -80,13 +77,13 @@ bool KWQArrayImpl::resize(size_t newSize)
         char *newData;
         
 	if (newSize != 0) {
-	    newData = static_cast<char *>(main_thread_realloc(d->data, newSize * d->itemSize));
+	    newData = static_cast<char *>(fastRealloc(d->data, newSize * d->itemSize));
 	    if (newData == NULL) {
 	        return false;
 	    }
 	} else {
 	    newData = NULL;
-            main_thread_free(d->data);
+            fastFree(d->data);
 	}
 
 	d->data = newData;

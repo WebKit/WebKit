@@ -134,7 +134,6 @@ using DOM::NodeListImpl;
 using DOM::TextImpl;
 
 using khtml::RenderCanvasImage;
-using khtml::SharedPtr;
 
 #include "kjs_html.lut.h"
 

@@ -25,7 +25,7 @@
 
 #import "KWQKPartsBrowserInterface.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"

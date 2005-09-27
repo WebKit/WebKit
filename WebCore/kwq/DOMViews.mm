@@ -27,7 +27,7 @@
 
 #import "DOMInternal.h"
 #import "DOMViewsInternal.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 #import "dom_docimpl.h"
 #import "dom2_viewsimpl.h"

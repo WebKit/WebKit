@@ -26,7 +26,7 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 #import "KWQListBox.h"
 #import "WebCoreBridge.h"

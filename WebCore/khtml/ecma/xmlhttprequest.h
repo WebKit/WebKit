@@ -58,7 +58,7 @@ namespace KJS {
     virtual bool implementsConstruct() const;
     virtual ObjectImp *construct(ExecState *exec, const List &args);
   private:
-    khtml::SharedPtr<DOM::DocumentImpl> doc;
+    SharedPtr<DOM::DocumentImpl> doc;
   };
 
   class XMLHttpRequest : public DOMObject {
@@ -125,8 +125,8 @@ namespace KJS {
     KIO::TransferJob * job;
 
     XMLHttpRequestState state;
-    khtml::SharedPtr<JSUnprotectedEventListener> onReadyStateChangeListener;
-    khtml::SharedPtr<JSUnprotectedEventListener> onLoadListener;
+    SharedPtr<JSUnprotectedEventListener> onReadyStateChangeListener;
+    SharedPtr<JSUnprotectedEventListener> onLoadListener;
 
     khtml::Decoder *decoder;
     QString encoding;
@@ -136,7 +136,7 @@ namespace KJS {
     QString response;
     mutable bool createdDocument;
     mutable bool typeIsXML;
-    mutable khtml::SharedPtr<DOM::DocumentImpl> responseXML;
+    mutable SharedPtr<DOM::DocumentImpl> responseXML;
 
     bool aborted;
   };

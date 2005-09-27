@@ -25,7 +25,7 @@
 
 #import "KWQTextField.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 #import "KWQLineEdit.h"
 #import "KWQNSViewExtras.h"

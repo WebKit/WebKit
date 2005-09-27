@@ -1,3 +1,165 @@
+2005-09-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- replace dlmalloc with tcmalloc
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
+
+	I also moved SharedPtr and the assertion code from WebCore into a
+	new kxmlcore directory.
+	
+        * ForwardingHeaders/kjs/shared_ptr.h: Removed.
+        * ForwardingHeaders/kxmlcore/Assertions.h: Added.
+        * ForwardingHeaders/kxmlcore/FastMalloc.h: Added.
+        * ForwardingHeaders/kxmlcore/SharedPtr.h: Added.
+        * ForwardingHeaders/misc/main_thread_malloc.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/css_base.h:
+        * khtml/css/css_computedstyle.cpp:
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/domparser.h:
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/append_node_command.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_from_text_node_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/edit_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_into_text_node_command.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_node_before_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/insert_text_command.cpp:
+        * khtml/editing/join_text_nodes_command.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/merge_identical_elements_command.cpp:
+        * khtml/editing/move_selection_command.cpp:
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/remove_css_property_command.cpp:
+        * khtml/editing/remove_node_attribute_command.cpp:
+        * khtml/editing/remove_node_command.cpp:
+        * khtml/editing/remove_node_preserving_children_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/set_node_attribute_command.cpp:
+        * khtml/editing/split_element_command.cpp:
+        * khtml/editing/split_text_node_command.cpp:
+        * khtml/editing/split_text_node_containing_element.cpp:
+        * khtml/editing/typing_command.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/visible_position.h:
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp:
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlparser.cpp:
+        * khtml/khtmlpart_p.h:
+        * khtml/misc/arena.cpp:
+        (ArenaAllocate):
+        (FreeArenaList):
+        (ArenaFinish):
+        * khtml/misc/hashtable.h:
+        (khtml::HashTable::~HashTable):
+        (khtml::::allocateTable):
+        (khtml::::rehash):
+        (khtml::::clear):
+        (khtml::::HashTable):
+        * khtml/misc/loader.cpp:
+        * khtml/misc/main_thread_malloc.cpp: Removed.
+        * khtml/misc/main_thread_malloc.h: Removed.
+        * khtml/misc/shared.h:
+        * khtml/rendering/render_style.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_traversalimpl.h:
+        * khtml/xml/dom2_viewsimpl.h:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::clearAttributes):
+        (NamedAttrMapImpl::operator=):
+        (NamedAttrMapImpl::addAttribute):
+        (NamedAttrMapImpl::removeAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        * khtml/xml/dom_stringimpl.h:
+        * kwq/DOM-CSS.mm:
+        * kwq/DOM.mm:
+        * kwq/DOMEvents.mm:
+        * kwq/DOMHTML.mm:
+        * kwq/DOMInternal.mm:
+        * kwq/DOMViews.mm:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQArrayImpl.h:
+        * kwq/KWQArrayImpl.mm:
+        (KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate):
+        (KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate):
+        (KWQArrayImpl::resize):
+        * kwq/KWQAssertions.h: Removed.
+        * kwq/KWQAssertions.m: Removed.
+        * kwq/KWQButton.mm:
+        * kwq/KWQCString.mm:
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        * kwq/KWQColor.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQEditCommand.mm:
+        * kwq/KWQExceptions.h:
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQFontFamily.h:
+        * kwq/KWQFormData.mm:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQKPartsBrowserInterface.mm:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQListImpl.mm:
+        * kwq/KWQLogging.h:
+        * kwq/KWQLogging.m:
+        * kwq/KWQMapImpl.h:
+        * kwq/KWQMapImpl.mm:
+        * kwq/KWQObject.mm:
+        * kwq/KWQPageState.mm:
+        * kwq/KWQPainter.mm:
+        * kwq/KWQResourceLoader.mm:
+        * kwq/KWQSignal.mm:
+        * kwq/KWQSlot.mm:
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (ALLOC_QCHAR):
+        (QString::setBufferFromCFString):
+        (allocatePageNode):
+        * kwq/KWQTextArea.mm:
+        * kwq/KWQTextCodec.mm:
+        * kwq/KWQTextEdit.mm:
+        * kwq/KWQTextField.mm:
+        * kwq/KWQTimer.mm:
+        * kwq/KWQValueListImpl.h:
+        * kwq/KWQValueListImpl.mm:
+        * kwq/WebCoreBridge.mm:
+        * kwq/WebCoreCookieAdapter.m:
+        * kwq/WebCoreGraphicsBridge.m:
+        * kwq/WebCoreImageRendererFactory.m:
+        * kwq/WebCoreKeyGenerator.m:
+        * kwq/WebCoreTextRendererFactory.mm:
+        * kwq/WebCoreViewFactory.m:
+
 2005-09-26  Eric Seidel  <eseidel@apple.com>
 
         No review needed, svg build fix only.

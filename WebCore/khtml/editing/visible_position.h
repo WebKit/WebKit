@@ -128,7 +128,7 @@ inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
     return !(a == b);
 }
 
-khtml::SharedPtr<DOM::RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end);
+SharedPtr<DOM::RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end);
 bool setStart(DOM::RangeImpl *, const VisiblePosition &start);
 bool setEnd(DOM::RangeImpl *, const VisiblePosition &start);
 VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);

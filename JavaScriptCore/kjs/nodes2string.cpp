@@ -23,8 +23,6 @@
 
 #include "nodes.h"
 
-using KXMLCore::SharedPtr;
-
 namespace KJS {
   /**
    * A simple text streaming class that helps with code indentation.

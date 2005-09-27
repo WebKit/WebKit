@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/NSException.h>
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 class KWQNSHandler
 {

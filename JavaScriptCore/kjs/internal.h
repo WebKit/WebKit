@@ -32,7 +32,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "scope_chain.h"
-#include "shared_ptr.h"
+#include <kxmlcore/SharedPtr.h>
 
 #if !WIN32
 #define KJS_MULTIPLE_THREADS 1
@@ -202,9 +202,9 @@ namespace KJS {
    */
   class Parser {
   public:
-    static KXMLCore::SharedPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
-                                                  const UChar *code, unsigned int length, int *sourceId = 0,
-                                                  int *errLine = 0, UString *errMsg = 0);
+    static SharedPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
+                                        const UChar *code, unsigned int length, int *sourceId = 0,
+                                        int *errLine = 0, UString *errMsg = 0);
     static void accept(ProgramNode *prog);
 
     static void saveNewNode(Node *node);

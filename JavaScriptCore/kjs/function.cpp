@@ -31,7 +31,6 @@
 #include "operations.h"
 #include "debugger.h"
 #include "context.h"
-#include "shared_ptr.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -41,8 +40,6 @@
 #include <ctype.h>
 
 #include <unicode/uchar.h>
-
-using namespace KXMLCore;
 
 namespace KJS {
 

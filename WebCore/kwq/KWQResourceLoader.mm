@@ -25,7 +25,7 @@
 
 #import "KWQResourceLoader.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQKJobClasses.h"
 #import "loader.h"
 

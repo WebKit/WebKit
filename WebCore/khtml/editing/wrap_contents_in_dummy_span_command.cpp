@@ -29,7 +29,7 @@
 #include "xml/dom_elementimpl.h"
 
 #if APPLE_CHANGES
-#include "KWQAssertions.h"
+#include <kxmlcore/Assertions.h>
 #else
 #define ASSERT(assertion) assert(assertion)
 #endif

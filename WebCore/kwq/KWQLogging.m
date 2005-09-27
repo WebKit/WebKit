@@ -25,13 +25,13 @@
 
 #import "KWQLogging.h"
 
-KWQLogChannel KWQLogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KWQLogChannelUninitialized };
+KXCLogChannel KWQLogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KXCLogChannelUninitialized };
 
-KWQLogChannel KWQLogFrames =            { 0x00000010, "WebCoreLogLevel", KWQLogChannelUninitialized };
-KWQLogChannel KWQLogLoading =           { 0x00000020, "WebCoreLogLevel", KWQLogChannelUninitialized };
+KXCLogChannel KWQLogFrames =            { 0x00000010, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel KWQLogLoading =           { 0x00000020, "WebCoreLogLevel", KXCLogChannelUninitialized };
 
-KWQLogChannel KWQLogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KWQLogChannelUninitialized };
+KXCLogChannel KWQLogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KXCLogChannelUninitialized };
 
-KWQLogChannel KWQLogEvents =            { 0x00000080, "WebCoreLogLevel", KWQLogChannelUninitialized };
-KWQLogChannel KWQLogEditing =           { 0x00000100, "WebCoreLogLevel", KWQLogChannelUninitialized };
-KWQLogChannel KWQLogTextConversion =    { 0x00000200, "WebCoreLogLevel", KWQLogChannelUninitialized };
+KXCLogChannel KWQLogEvents =            { 0x00000080, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel KWQLogEditing =           { 0x00000100, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel KWQLogTextConversion =    { 0x00000200, "WebCoreLogLevel", KXCLogChannelUninitialized };

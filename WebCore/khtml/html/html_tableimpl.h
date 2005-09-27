@@ -86,8 +86,8 @@ public:
     HTMLElementImpl *insertRow ( int index, int &exceptioncode );
     void deleteRow ( int index, int &exceptioncode );
 
-    khtml::SharedPtr<HTMLCollectionImpl> rows();
-    khtml::SharedPtr<HTMLCollectionImpl> tBodies();
+    SharedPtr<HTMLCollectionImpl> rows();
+    SharedPtr<HTMLCollectionImpl> tBodies();
 
     DOMString align() const;
     void setAlign( const DOMString & );
@@ -188,7 +188,7 @@ public:
     DOMString vAlign() const;
     void setVAlign( const DOMString & );
 
-    khtml::SharedPtr<HTMLCollectionImpl> rows();
+    SharedPtr<HTMLCollectionImpl> rows();
 };
 
 // -------------------------------------------------------------------------
@@ -215,7 +215,7 @@ public:
 
     void setSectionRowIndex( int  );
 
-    khtml::SharedPtr<HTMLCollectionImpl> cells();
+    SharedPtr<HTMLCollectionImpl> cells();
     void setCells(HTMLCollectionImpl *, int &exception);
 
     DOMString align() const;

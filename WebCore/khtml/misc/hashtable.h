@@ -23,7 +23,7 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-#include "main_thread_malloc.h"
+#include <kxmlcore/FastMalloc.h>
 #include <utility>
 
 namespace khtml {
@@ -179,7 +179,7 @@ class HashTable {
     typedef Value ValueType;
 
     HashTable() : m_table(0), m_tableSize(0), m_tableSizeMask(0), m_keyCount(0), m_deletedCount(0) {}
-    ~HashTable() { main_thread_free(m_table); }
+    ~HashTable() { fastFree(m_table); }
 
     HashTable(const HashTable& other);
     void swap(const HashTable& other);
@@ -430,9 +430,9 @@ inline Value *HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::allocate
     // would use a template member function with explicit specializations here, but
     // gcc doesn't appear to support that
     if (Traits::emptyValueIsZero)
-        return reinterpret_cast<ValueType *>(main_thread_calloc(size, sizeof(ValueType))); 
+        return reinterpret_cast<ValueType *>(fastCalloc(size, sizeof(ValueType))); 
     else {
-        ValueType *result = reinterpret_cast<ValueType *>(main_thread_malloc(size * sizeof(ValueType))); 
+        ValueType *result = reinterpret_cast<ValueType *>(fastMalloc(size * sizeof(ValueType))); 
         for (int i = 0; i < size; i++) {
             clearBucket(result[i]);
         }
@@ -479,7 +479,7 @@ void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::rehash(int newTab
 
     m_deletedCount = 0;
     
-    main_thread_free(oldTable);
+    fastFree(oldTable);
 
     checkTableConsistency();
 }
@@ -487,7 +487,7 @@ void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::rehash(int newTab
 template<typename Key, typename Value, Key ExtractKey(const Value &), typename HashFunctions, typename Traits>
 inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::clear()
 {
-    main_thread_free(m_table);
+    fastFree(m_table);
     m_table = 0;
     m_tableSize = 0;
     m_tableSizeMask = 0;
@@ -503,7 +503,7 @@ HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::HashTable(const HashTa
     , m_deletedCount(other.m_deletedCount)
 {
     if (m_tableSize != 0) {
-        m_table = main_thread_malloc(m_tableSize);
+        m_table = fastMalloc(m_tableSize);
         memcpy(other.m_table, m_table, m_tableSize * sizeof(ValueType));
     }
 }

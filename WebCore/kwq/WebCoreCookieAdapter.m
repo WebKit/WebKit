@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreCookieAdapter.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 @implementation WebCoreCookieAdapter
 

@@ -25,7 +25,7 @@
 
 #import "KWQPainter.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQBrush.h"
 #import "KWQExceptions.h"
 #import "KWQFoundationExtras.h"

@@ -25,7 +25,7 @@
 
 #import "KWQFormData.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "formdata.h"
 
 using khtml::FormData;

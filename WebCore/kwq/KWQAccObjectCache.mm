@@ -26,7 +26,7 @@
 #import "KWQAccObjectCache.h"
 
 #import "KWQAccObject.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 #import "KWQString.h"
 #import "render_object.h"

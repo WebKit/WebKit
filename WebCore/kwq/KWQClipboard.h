@@ -95,7 +95,7 @@ private:
     DOM::DOMString m_effectAllowed;
     QPoint m_dragLoc;
     QPixmap m_dragImage;
-    khtml::SharedPtr<DOM::NodeImpl> m_dragImageElement;
+    SharedPtr<DOM::NodeImpl> m_dragImageElement;
     AccessPolicy m_policy;
     int m_changeCount;
     bool m_dragStarted;

@@ -26,7 +26,7 @@
 #import "KWQObject.h"
 
 #import "KWQVariant.h"
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 // The Foundation-level Cocoa calls here (NSTimer, NSDate, NSArray,
 // NSDictionary) should be exception-free, so no need to block

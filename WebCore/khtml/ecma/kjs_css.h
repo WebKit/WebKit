@@ -63,7 +63,7 @@ namespace KJS {
     static ValueImp *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
     static ValueImp *cssPropertyGetter(ExecState *, const Identifier&, const PropertySlot&);
 
-    khtml::SharedPtr<DOM::CSSStyleDeclarationImpl> m_impl;
+    SharedPtr<DOM::CSSStyleDeclarationImpl> m_impl;
   };
 
   ValueImp *getDOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclarationImpl *d);
@@ -84,7 +84,7 @@ namespace KJS {
     // Constructor for derived classes; doesn't set up a prototype.
     DOMStyleSheet(DOM::StyleSheetImpl *ss) : m_impl(ss) { }
   private:
-    khtml::SharedPtr<DOM::StyleSheetImpl> m_impl;
+    SharedPtr<DOM::StyleSheetImpl> m_impl;
   };
 
   ValueImp *getDOMStyleSheet(ExecState *exec, DOM::StyleSheetImpl *ss);
@@ -106,8 +106,8 @@ namespace KJS {
     static ValueImp *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
     static ValueImp *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
 
-    khtml::SharedPtr<DOM::StyleSheetListImpl> m_impl;
-    khtml::SharedPtr<DOM::DocumentImpl> m_doc;
+    SharedPtr<DOM::StyleSheetListImpl> m_impl;
+    SharedPtr<DOM::DocumentImpl> m_doc;
   };
 
   // The document is only used for get-stylesheet-by-name (make optional if necessary)
@@ -128,7 +128,7 @@ namespace KJS {
     DOM::MediaListImpl *impl() const { return m_impl.get(); }
   private:
     static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    khtml::SharedPtr<DOM::MediaListImpl> m_impl;
+    SharedPtr<DOM::MediaListImpl> m_impl;
   };
 
   ValueImp *getDOMMediaList(ExecState *exec, DOM::MediaListImpl *ml);
@@ -159,7 +159,7 @@ namespace KJS {
   private:
     static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
-    khtml::SharedPtr<DOM::CSSRuleListImpl> m_impl;
+    SharedPtr<DOM::CSSRuleListImpl> m_impl;
   };
 
   ValueImp *getDOMCSSRuleList(ExecState *exec, DOM::CSSRuleListImpl *rl);
@@ -181,7 +181,7 @@ namespace KJS {
            Import_Href, Import_Media, Import_StyleSheet, Charset_Encoding };
     DOM::CSSRuleImpl *impl() const { return m_impl.get(); }
   private:
-    khtml::SharedPtr<DOM::CSSRuleImpl> m_impl;
+    SharedPtr<DOM::CSSRuleImpl> m_impl;
   };
 
   ValueImp *getDOMCSSRule(ExecState *exec, DOM::CSSRuleImpl *r);
@@ -215,7 +215,7 @@ namespace KJS {
     // Constructor for derived classes; doesn't set up a prototype.
     DOMCSSValue(DOM::CSSValueImpl *v) : m_impl(v) { }
   private:
-    khtml::SharedPtr<DOM::CSSValueImpl> m_impl;
+    SharedPtr<DOM::CSSValueImpl> m_impl;
   };
 
   ValueImp *getDOMCSSValue(ExecState *exec, DOM::CSSValueImpl *v);
@@ -299,7 +299,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { Top, Right, Bottom, Left };
   private:
-    khtml::SharedPtr<DOM::RectImpl> m_rect;
+    SharedPtr<DOM::RectImpl> m_rect;
   };
 
   ValueImp *getDOMRect(ExecState *exec, DOM::RectImpl *r);
@@ -315,7 +315,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { identifier, listStyle, separator };
   protected:
-    khtml::SharedPtr<DOM::CounterImpl> m_counter;
+    SharedPtr<DOM::CounterImpl> m_counter;
   };
 
   ValueImp *getDOMCounter(ExecState *exec, DOM::CounterImpl *c);

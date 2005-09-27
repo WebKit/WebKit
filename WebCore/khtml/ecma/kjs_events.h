@@ -127,7 +127,7 @@ namespace KJS {
 	   SrcElement, ReturnValue, CancelBubble, ClipboardData, DataTransfer };
     DOM::EventImpl *impl() const { return m_impl.get(); }
   protected:
-    khtml::SharedPtr<DOM::EventImpl> m_impl;
+    SharedPtr<DOM::EventImpl> m_impl;
     mutable Clipboard *clipboard;
   };
 

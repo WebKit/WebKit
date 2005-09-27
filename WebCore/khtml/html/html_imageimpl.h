@@ -228,7 +228,7 @@ public:
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
                        khtml::RenderObject::NodeInfo& info);
 
-    khtml::SharedPtr<HTMLCollectionImpl> areas();
+    SharedPtr<HTMLCollectionImpl> areas();
 
     DOMString name() const;
     void setName( const DOMString & );

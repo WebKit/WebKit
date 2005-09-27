@@ -32,7 +32,7 @@
 #import "khtmlview.h"
 #import "kjs_window.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 

@@ -33,11 +33,7 @@
 #import "KWQString.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
-#import "misc/main_thread_malloc.h"
-
-using khtml::main_thread_malloc;
-using khtml::main_thread_realloc;
-using khtml::main_thread_free;
+#import "kxmlcore/FastMalloc.h"
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
@@ -127,7 +123,7 @@ static void DELETE_CHAR(void *p)
 static QChar *ALLOC_QCHAR(int n)
 {
     size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)main_thread_malloc(size);
+    QChar *ptr = (QChar *)fast_malloc(size);
 
     CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
     if (size >= ALLOCATION_HISTOGRAM_SIZE)
@@ -207,13 +203,13 @@ void _printQStringAllocationStatistics()
 
 #else
 
-#define ALLOC_CHAR( N ) (char*) main_thread_malloc(N)
-#define REALLOC_CHAR( P, N ) (char *) main_thread_realloc(P,N)
-#define DELETE_CHAR( P ) main_thread_free(P)
+#define ALLOC_CHAR(N) (char*) fastMalloc(N)
+#define REALLOC_CHAR(P, N) (char *) fastRealloc(P, N)
+#define DELETE_CHAR(P) fastFree(P)
 
-#define ALLOC_QCHAR( N ) (QChar*) main_thread_malloc(sizeof(QChar)*( N ))
-#define REALLOC_QCHAR( P, N ) (QChar *) main_thread_realloc(P,sizeof(QChar)*( N ))
-#define DELETE_QCHAR( P ) main_thread_free( P )
+#define ALLOC_QCHAR(N) (QChar*)fastMalloc(sizeof(QChar)*(N))
+#define REALLOC_QCHAR(P, N) (QChar *)fastRealloc(P, sizeof(QChar)*(N))
+#define DELETE_QCHAR(P) fastFree(P)
 
 #endif // QSTRING_DEBUG_ALLOCATIONS
 
@@ -758,14 +754,14 @@ void QString::setBufferFromCFString(CFStringRef cfs)
     UniChar fixedSizeBuffer[1024];
     UniChar *buffer;
     if (size > (CFIndex)(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-        buffer = (UniChar *)main_thread_malloc(size * sizeof(UniChar));
+        buffer = (UniChar *)fastMalloc(size * sizeof(UniChar));
     } else {
         buffer = fixedSizeBuffer;
     }
     CFStringGetCharacters(cfs, CFRangeMake (0, size), buffer);
     setUnicode((const QChar *)buffer, (uint)size);
     if (buffer != fixedSizeBuffer) {
-        main_thread_free(buffer);
+        fastFree(buffer);
     }
 }
 
@@ -2902,7 +2898,7 @@ static HandleNode *initializeHandleNodeBlock(HandlePageNode *pageNode)
 
 static HandlePageNode *allocatePageNode()
 {
-    HandlePageNode *node = (HandlePageNode *)main_thread_malloc(sizeof(HandlePageNode));
+    HandlePageNode *node = (HandlePageNode *)fastMalloc(sizeof(HandlePageNode));
     node->next = node->previous = 0;
     node->nodes = initializeHandleNodeBlock(node);
     return node;

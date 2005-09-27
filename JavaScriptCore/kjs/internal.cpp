@@ -52,8 +52,6 @@
 
 extern int kjsyyparse();
 
-using namespace KXMLCore;
-
 namespace KJS {
 
 #if !APPLE_CHANGES

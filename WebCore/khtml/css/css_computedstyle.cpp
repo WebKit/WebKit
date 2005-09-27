@@ -34,7 +34,7 @@
 #include "rendering/render_object.h"
 
 #if APPLE_CHANGES
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 #import "KWQFontFamily.h"
 #import "KWQLogging.h"
 #endif
