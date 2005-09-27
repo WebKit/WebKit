@@ -1,3 +1,14 @@
+2005-09-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test cases for JSC fix:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3537
+
+        Test cases added:
+        * layout-tests/fast/js/object-prototype-constructor-expected.txt: Added.
+        * layout-tests/fast/js/object-prototype-constructor.html: Added.
+
 2005-09-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

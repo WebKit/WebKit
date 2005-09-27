@@ -1,0 +1,11 @@
+This is a test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=3537. Below you should see 3 tests, each of which should evaluate true. 
+
+f.constructor == Foo.Bar : true
+f.constructor: function () { }
+
+f2.constructor == Foo2.Bar : true
+f2.constructor: function F() { }
+
+f3.constructor == Foo3.Bar : true
+f3.constructor: function () { ; }
+
