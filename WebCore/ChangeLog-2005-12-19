@@ -1,5 +1,17 @@
 2005-09-26  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, svg build fix only.
+        
+        Fixes code to match WebCore+SVG -> WebCore rename.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5141
+
+        * WebCore+SVG/DrawCanvasItemPrivate.h:
+        * WebCore+SVG/DrawDocumentPrivate.h:
+        * WebCore+SVG/DrawViewPrivate.h:
+        * WebCore+SVG/NSSVGImageRep.m:
+
+2005-09-26  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Landing the W3C XHTML DOM test suites.

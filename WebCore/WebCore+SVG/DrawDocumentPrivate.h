@@ -30,7 +30,7 @@
 */
 
 
-#import <WebCore+SVG/DrawDocument.h>
+#import <WebCore/DrawDocument.h>
 
 @class DrawView;
 @class DrawCanvasItem;

@@ -29,7 +29,7 @@
  Do NOT depend on these SPIs or files as they will soon be gone.
 */
 
-#include <WebCore+SVG/DrawView.h>
+#include <WebCore/DrawView.h>
 
 extern NSArray *DrawViewDragTypes;
 

@@ -25,8 +25,8 @@
 
 #import "NSSVGImageRep.h"
 
-#import <WebCore+SVG/DrawDocumentPrivate.h>
-#import <WebCore+SVG/DrawView.h>
+#import "DrawDocumentPrivate.h"
+#import "DrawView.h"
 
 static NSString *SVGDataPasteboardType = @"SVGDataPasteboardType";
 
