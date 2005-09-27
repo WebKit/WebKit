@@ -27,8 +27,8 @@
  */
 
 #import <getopt.h>
-#import <WebCore+SVG/DrawDocumentPrivate.h>
-#import <WebCore+SVG/DrawView.h>
+#import <WebCore/DrawDocumentPrivate.h>
+#import <WebCore/DrawView.h>
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
