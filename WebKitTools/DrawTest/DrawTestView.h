@@ -25,7 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebCore+SVG/DrawView.h>
+#import <WebCore/DrawView.h>
 
 
 @interface DrawTestView : DrawView

@@ -25,8 +25,8 @@
 
 #import "SVGTest.h"
 
-#import <WebCore+SVG/DrawView.h>
-#import <WebCore+SVG/DrawDocument.h>
+#import <WebCore/DrawView.h>
+#import <WebCore/DrawDocument.h>
 
 @implementation SVGTest
 

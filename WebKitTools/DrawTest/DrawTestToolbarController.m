@@ -25,7 +25,7 @@
 
 #import "DrawTestToolbarController.h"
 
-#import <WebCore+SVG/DrawViewPrivate.h>
+#import <WebCore/DrawViewPrivate.h>
 
 enum
 {

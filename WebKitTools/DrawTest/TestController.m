@@ -28,7 +28,7 @@
 #import "TestViewerSplitView.h"
 #import "ScalingImageView.h"
 
-#import <WebCore+SVG/DrawView.h>
+#import <WebCore/DrawView.h>
 
 @interface NSArray (TestControllerAdditions)
 - (id)firstObject;

@@ -1,5 +1,18 @@
 2005-09-26  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, SVG build fix only.
+
+        * DrawTest/DrawTestDocument.m:
+        * DrawTest/DrawTestToolbarController.m:
+        * DrawTest/DrawTestView.h:
+        * DrawTest/DrawTestView.m:
+        * DrawTest/SVGTest.m:
+        * DrawTest/TestController.m:
+        Updated for WebCore+SVG -> WebCore rename.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5141
+
+2005-09-26  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         * DumpRenderTree/DumpRenderTree.m:

@@ -25,8 +25,8 @@
 
 #import "DrawTestView.h"
 
-#import <WebCore+SVG/DrawViewPrivate.h>
-#import <WebCore+SVG/DrawDocumentPrivate.h>
+#import <WebCore/DrawViewPrivate.h>
+#import <WebCore/DrawDocumentPrivate.h>
 
 @implementation DrawTestView
 

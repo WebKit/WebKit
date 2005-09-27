@@ -27,7 +27,7 @@
 #import "DrawTestView.h"
 #import "DrawTestToolbarController.h"
 
-#import <WebCore+SVG/DrawDocumentPrivate.h>
+#import <WebCore/DrawDocumentPrivate.h>
 
 @implementation DrawTestDocument
 
