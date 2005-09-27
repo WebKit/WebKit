@@ -1,3 +1,12 @@
+2005-09-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kjs/nodes.cpp:
+        (FuncExprNode::evaluate): Now sets .constructor properly.
+        Test cases added to WebCore/layout-tests.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3537
+
 2005-09-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -2345,7 +2345,8 @@ ValueImp *FuncExprNode::evaluate(ExecState *exec)
 
   FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
   ValueImp *ret(fimp);
-  ValueImp *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
+  ObjectImp *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
+  proto->put(exec, constructorPropertyName, ret, ReadOnly|DontDelete|DontEnum);
   fimp->put(exec, prototypePropertyName, proto, Internal|DontDelete);
 
   int plen = 0;
