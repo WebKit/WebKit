@@ -24,6 +24,7 @@
 
 #include <float.h>
 #include <math.h>
+#include <stdint.h>
 #include <string.h>
 
 // Workaround for a bug in GCC library headers.

@@ -1,3 +1,12 @@
+2005-09-28  Maciej Stachowiak  <mjs@apple.com>
+
+	Patch from George Staikos, reviewed by me.
+
+	- fixed some compile issues on Linux
+	
+        * kjs/property_slot.h:
+        * kjs/simple_number.h:
+
 2005-09-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
