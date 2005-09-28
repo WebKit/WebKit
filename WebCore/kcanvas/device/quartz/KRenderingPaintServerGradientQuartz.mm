@@ -35,7 +35,7 @@
 #import "KCanvasMatrix.h"
 #import "KRenderingDeviceQuartz.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 
 // Maybe this should be in a base class instead...

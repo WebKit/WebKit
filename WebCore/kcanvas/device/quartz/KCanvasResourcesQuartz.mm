@@ -34,7 +34,7 @@
 
 #import "QuartzSupport.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 CGPathRef CGPathFromKCPathDataList(KCPathDataList pathData)
 {

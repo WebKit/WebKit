@@ -1,5 +1,16 @@
 2005-09-27  Eric Seidel  <eseidel@apple.com>
 
+        No review necessary, SVG build fix only.
+
+        * WebCore+SVG/DrawView.mm:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        Updated from KWQAssertions.h to kxmlcore/Assertions.h
+
+2005-09-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Test cases for JSC fix:

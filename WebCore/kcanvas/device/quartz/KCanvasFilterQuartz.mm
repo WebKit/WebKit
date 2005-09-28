@@ -35,7 +35,7 @@
 
 #import <qrect.h>
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 static QString KCPreviousFilterOutputName = QString::fromLatin1("__previousOutput__");
 

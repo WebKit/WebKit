@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 #import "DrawViewPrivate.h"
 #import "DrawCanvasItem.h"

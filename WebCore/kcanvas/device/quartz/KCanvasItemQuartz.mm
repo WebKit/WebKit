@@ -26,7 +26,7 @@
 
 #import "KCanvasItemQuartz.h"
 
-#import "KWQAssertions.h"
+#import <kxmlcore/Assertions.h>
 
 #import "KRenderingStyle.h"
 #import "KCanvas.h"
