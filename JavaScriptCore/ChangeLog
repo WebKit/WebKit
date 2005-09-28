@@ -1,3 +1,45 @@
+2005-09-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - update grammar to fix conflicts; fixes one of our test cases
+          because it resolves the relationship between function expressions
+          and declarations in the way required by the ECMA specification
+
+        * kjs/grammar.y: Added lots of new grammar rules so we have no conflicts.
+        A new set of rules for "no bracket or function at start of expression" and
+        another set of rules for "no in anywhere in expression". Also simplified the
+        handling of try to use only a single node and used operator precedence to
+        get rid of the conflict in handling of if and else. Also used a macro to
+        streamline the handling of automatic semicolons and changed parenthesis
+        handling to use a virtual function.
+
+        * kjs/nodes.h: Added nodeInsideAllParens, removed unused abortStatement.
+        (KJS::TryNode::TryNode): Updated to hold catch and finally blocks directly instead
+        of using a special node for each.
+        * kjs/nodes.cpp:
+        (Node::createErrorCompletion): Added. Used instead of throwError when creating errors
+        that should not be in a completion rather than an ExecState.
+        (Node::throwUndefinedVariableError): Added. Sets source location unlike the call it
+        replaces.
+        (Node::nodeInsideAllParens): Added.
+        (GroupNode::nodeInsideAllParens): Added.
+        (StatListNode::execute): Removed code to move exceptions into completion objects;
+        that's now done solely by the KJS_CHECKEXCEPTION macro.
+        (TryNode::execute): Include execution of catch and finally here rather than using
+        separate nodes.
+        (FuncDeclNode::execute): Moved here, no longer inline.
+        * kjs/nodes2string.cpp:
+        (TryNode::streamTo): Updated for change.
+        (FuncDeclNode::streamTo): Ditto.
+        (FuncExprNode::streamTo): Ditto.
+
+        * kjs/kjs-test: Removed. Was part of "make check".
+        * kjs/kjs-test.chk: Ditto.
+        * kjs/test.js: Ditto.
+
+        * tests/mozilla/expected.html: Updated because one more test succeeds.
+
 2005-09-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

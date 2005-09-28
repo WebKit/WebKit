@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002 Harri Porten (porten@kde.org)
@@ -664,21 +663,13 @@ void ThrowNode::streamTo(SourceStream &s) const
   s << SourceStream::Endl << "throw " << expr << ";";
 }
 
-void CatchNode::streamTo(SourceStream &s) const
-{
-  s << SourceStream::Endl << "catch (" << ident << ")" << block;
-}
-
-void FinallyNode::streamTo(SourceStream &s) const
-{
-  s << SourceStream::Endl << "finally " << block;
-}
-
 void TryNode::streamTo(SourceStream &s) const
 {
-  s << "try " << block
-    << _catch
-    << _final;
+  s << "try " << tryBlock;
+  if (catchBlock)
+    s << SourceStream::Endl << "catch (" << exceptionIdent << ")" << catchBlock;
+  if (finallyBlock)
+    s << SourceStream::Endl << "finally " << finallyBlock;
 }
 
 void ParameterNode::streamTo(SourceStream &s) const
@@ -688,18 +679,14 @@ void ParameterNode::streamTo(SourceStream &s) const
     s << ", " << n->id;
 }
 
-void FuncDeclNode::streamTo(SourceStream &s) const {
-  s << "function " << ident << "(";
-  if (param)
-    s << param;
-  s << ")" << body;
+void FuncDeclNode::streamTo(SourceStream &s) const
+{
+  s << "function " << ident << "(" << param << ")" << body;
 }
 
 void FuncExprNode::streamTo(SourceStream &s) const
 {
-  s << "function " << "("
-    << param
-    << ")" << body;
+  s << "function " << ident << "(" << param << ")" << body;
 }
 
 void SourceElementsNode::streamTo(SourceStream &s) const
@@ -707,4 +694,3 @@ void SourceElementsNode::streamTo(SourceStream &s) const
   for (const SourceElementsNode *n = this; n; n = n->elements.get())
     s << n->element;
 }
-
