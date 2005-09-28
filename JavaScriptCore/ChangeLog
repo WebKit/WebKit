@@ -1,3 +1,134 @@
+2005-09-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- move HashMap/HashSet code down to JavaScriptCore
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
+	
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/internal.cpp:
+        (KJS::interpreterMap): Function that fetches the interpreter map on demand. 
+        (KJS::InterpreterImp::InterpreterImp): Replace use of InterpreterMap
+	class with an appropriate HashMap.
+        (KJS::InterpreterImp::clear): ditto
+        (KJS::InterpreterImp::interpreterWithGlobalObject): ditto
+        * kjs/interpreter_map.cpp: Removed.
+        * kjs/interpreter_map.h: Removed.
+
+	The HashMap/HashSet code (copied and slightly tweaked from WebCore)
+        
+	* kxmlcore/HashFunctions.h: Added.
+        (KXMLCore::4):
+        (KXMLCore::8):
+        (KXMLCore::):
+        (KXMLCore::PointerHash::hash):
+        (KXMLCore::PointerHash::equal):
+        * kxmlcore/HashMap.h: Added.
+        (KXMLCore::extractFirst):
+        (KXMLCore::HashMap::HashMap):
+        (KXMLCore::::size):
+        (KXMLCore::::capacity):
+        (KXMLCore::::isEmpty):
+        (KXMLCore::::begin):
+        (KXMLCore::::end):
+        (KXMLCore::::find):
+        (KXMLCore::::contains):
+        (KXMLCore::::set):
+        (KXMLCore::::get):
+        (KXMLCore::::remove):
+        (KXMLCore::::clear):
+        (KXMLCore::deleteAllValues):
+        * kxmlcore/HashMapPtrSpec.h: Added.
+        (KXMLCore::PointerHashIteratorAdapter::PointerHashIteratorAdapter):
+        (KXMLCore::PointerHashIteratorAdapter::operator*):
+        (KXMLCore::PointerHashIteratorAdapter::operator->):
+        (KXMLCore::PointerHashIteratorAdapter::operator++):
+        (KXMLCore::PointerHashIteratorAdapter::operator==):
+        (KXMLCore::PointerHashIteratorAdapter::operator!=):
+        (KXMLCore::PointerHashConstIteratorAdapter::PointerHashConstIteratorAdapter):
+        (KXMLCore::PointerHashConstIteratorAdapter::operator*):
+        (KXMLCore::PointerHashConstIteratorAdapter::operator->):
+        (KXMLCore::PointerHashConstIteratorAdapter::operator++):
+        (KXMLCore::PointerHashConstIteratorAdapter::operator==):
+        (KXMLCore::PointerHashConstIteratorAdapter::operator!=):
+        (KXMLCore::):
+        * kxmlcore/HashSet.h: Added.
+        (KXMLCore::identityExtract):
+        (KXMLCore::convertAdapter):
+        (KXMLCore::HashSet::HashSet):
+        (KXMLCore::::size):
+        (KXMLCore::::capacity):
+        (KXMLCore::::isEmpty):
+        (KXMLCore::::begin):
+        (KXMLCore::::end):
+        (KXMLCore::::find):
+        (KXMLCore::::contains):
+        (KXMLCore::::insert):
+        (KXMLCore::::remove):
+        (KXMLCore::::clear):
+        * kxmlcore/HashTable.cpp: Added.
+        (KXMLCore::HashTableStats::~HashTableStats):
+        (KXMLCore::HashTableStats::recordCollisionAtCount):
+        * kxmlcore/HashTable.h: Added.
+        (KXMLCore::HashTableIterator::skipEmptyBuckets):
+        (KXMLCore::HashTableIterator::HashTableIterator):
+        (KXMLCore::HashTableIterator::operator*):
+        (KXMLCore::HashTableIterator::operator->):
+        (KXMLCore::HashTableIterator::operator++):
+        (KXMLCore::HashTableIterator::operator==):
+        (KXMLCore::HashTableIterator::operator!=):
+        (KXMLCore::HashTableConstIterator::HashTableConstIterator):
+        (KXMLCore::HashTableConstIterator::operator*):
+        (KXMLCore::HashTableConstIterator::operator->):
+        (KXMLCore::HashTableConstIterator::skipEmptyBuckets):
+        (KXMLCore::HashTableConstIterator::operator++):
+        (KXMLCore::HashTableConstIterator::operator==):
+        (KXMLCore::HashTableConstIterator::operator!=):
+        (KXMLCore::HashTable::HashTable):
+        (KXMLCore::HashTable::~HashTable):
+        (KXMLCore::HashTable::begin):
+        (KXMLCore::HashTable::end):
+        (KXMLCore::HashTable::size):
+        (KXMLCore::HashTable::capacity):
+        (KXMLCore::HashTable::insert):
+        (KXMLCore::HashTable::isEmptyBucket):
+        (KXMLCore::HashTable::isDeletedBucket):
+        (KXMLCore::HashTable::isEmptyOrDeletedBucket):
+        (KXMLCore::HashTable::hash):
+        (KXMLCore::HashTable::equal):
+        (KXMLCore::HashTable::identityConvert):
+        (KXMLCore::HashTable::extractKey):
+        (KXMLCore::HashTable::lookup):
+        (KXMLCore::HashTable::shouldExpand):
+        (KXMLCore::HashTable::mustRehashInPlace):
+        (KXMLCore::HashTable::shouldShrink):
+        (KXMLCore::HashTable::shrink):
+        (KXMLCore::HashTable::clearBucket):
+        (KXMLCore::HashTable::deleteBucket):
+        (KXMLCore::HashTable::makeLookupResult):
+        (KXMLCore::HashTable::makeIterator):
+        (KXMLCore::HashTable::makeConstIterator):
+        (KXMLCore::::lookup):
+        (KXMLCore::::insert):
+        (KXMLCore::::reinsert):
+        (KXMLCore::::find):
+        (KXMLCore::::contains):
+        (KXMLCore::::remove):
+        (KXMLCore::::allocateTable):
+        (KXMLCore::::expand):
+        (KXMLCore::::rehash):
+        (KXMLCore::::clear):
+        (KXMLCore::::HashTable):
+        (KXMLCore::::swap):
+        (KXMLCore::::operator):
+        (KXMLCore::::checkTableConsistency):
+        (KXMLCore::::checkTableConsistencyExceptSize):
+        * kxmlcore/HashTraits.h: Added.
+        (KXMLCore::HashTraits::emptyValue):
+        (KXMLCore::):
+        (KXMLCore::PairHashTraits::emptyValue):
+        (KXMLCore::PairHashTraits::deletedValue):
+
 2005-09-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,46 @@
+2005-09-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- move HashMap/HashSet code down to JavaScriptCore; adapt usage to the new header location
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
+
+        * ForwardingHeaders/kxmlcore/HashMap.h: Added.
+        * ForwardingHeaders/kxmlcore/HashSet.h: Added.
+        * ForwardingHeaders/misc/hashmap.h: Removed.
+        * ForwardingHeaders/misc/hashset.h: Removed.
+        * ForwardingHeaders/misc/pointerhash.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSRuleSet::getIDRules):
+        (khtml::CSSRuleSet::getClassRules):
+        (khtml::CSSRuleSet::getTagRules):
+        (khtml::CSSRuleSet::getUniversalRules):
+        (khtml::CSSRuleSet::addToRuleSet):
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::addItemToMap):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::radioButtonChecked):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/htmlfactory.cpp:
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::getNode):
+        * khtml/xml/dom_atomicstring.cpp:
+        * khtml/xml/dom_qname.cpp:
+        * khtml/xml/dom_stringimpl.h:
+        (KXMLCore::):
+        (KXMLCore::CaseInsensitiveHash::hash):
+        (KXMLCore::CaseInsensitiveHash::equal):
+        * khtml/xml/xml_tokenizer.cpp:
+        * kwq/DOM.mm:
+        (ObjCEventListener::ObjCEventListener):
+
 2005-09-26  Darin Adler  <darin@apple.com>
 
         * layout-tests/fast/js/array-every.html: Fixed test case; one of the tests was using

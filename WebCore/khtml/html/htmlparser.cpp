@@ -48,7 +48,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include <kxmlcore/FastMalloc.h>
-#include "misc/hashset.h"
+#include <kxmlcore/HashSet.h>
 #include "html/htmltokenizer.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -57,7 +57,7 @@
 
 #include "rendering/render_object.h"
 
-#include "misc/pointerhash.h"
+#include <kxmlcore/HashMap.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -768,39 +768,39 @@ NodeImpl *HTMLParser::getNode(Token* t)
     // Init our error handling table.
     static FunctionMap gFunctionMap;
     if (gFunctionMap.isEmpty()) {
-        gFunctionMap.insert(textAtom.impl(), &HTMLParser::textCreateErrorCheck);
-        gFunctionMap.insert(commentAtom.impl(), &HTMLParser::commentCreateErrorCheck);
-        gFunctionMap.insert(headTag.localName().impl(), &HTMLParser::headCreateErrorCheck);
-        gFunctionMap.insert(bodyTag.localName().impl(), &HTMLParser::bodyCreateErrorCheck);
-        gFunctionMap.insert(framesetTag.localName().impl(), &HTMLParser::framesetCreateErrorCheck);
-        gFunctionMap.insert(iframeTag.localName().impl(), &HTMLParser::iframeCreateErrorCheck);
-        gFunctionMap.insert(formTag.localName().impl(), &HTMLParser::formCreateErrorCheck);
-        gFunctionMap.insert(isindexTag.localName().impl(), &HTMLParser::isindexCreateErrorCheck);
-        gFunctionMap.insert(selectTag.localName().impl(), &HTMLParser::selectCreateErrorCheck);
-        gFunctionMap.insert(ddTag.localName().impl(), &HTMLParser::ddCreateErrorCheck);
-        gFunctionMap.insert(dtTag.localName().impl(), &HTMLParser::dtCreateErrorCheck);
-        gFunctionMap.insert(liTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.insert(aTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.insert(nobrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.insert(wbrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.insert(trTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
-        gFunctionMap.insert(tdTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
-        gFunctionMap.insert(thTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
-        gFunctionMap.insert(tbodyTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.insert(theadTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.insert(tfootTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
-        gFunctionMap.insert(ttTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(uTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(bTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(iTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(sTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(strikeTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(bigTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(smallTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.insert(noembedTag.localName().impl(), &HTMLParser::noembedCreateErrorCheck);
-        gFunctionMap.insert(noframesTag.localName().impl(), &HTMLParser::noframesCreateErrorCheck);
-        gFunctionMap.insert(noscriptTag.localName().impl(), &HTMLParser::noscriptCreateErrorCheck);
-        gFunctionMap.insert(mapTag.localName().impl(), &HTMLParser::mapCreateErrorCheck);
+        gFunctionMap.set(textAtom.impl(), &HTMLParser::textCreateErrorCheck);
+        gFunctionMap.set(commentAtom.impl(), &HTMLParser::commentCreateErrorCheck);
+        gFunctionMap.set(headTag.localName().impl(), &HTMLParser::headCreateErrorCheck);
+        gFunctionMap.set(bodyTag.localName().impl(), &HTMLParser::bodyCreateErrorCheck);
+        gFunctionMap.set(framesetTag.localName().impl(), &HTMLParser::framesetCreateErrorCheck);
+        gFunctionMap.set(iframeTag.localName().impl(), &HTMLParser::iframeCreateErrorCheck);
+        gFunctionMap.set(formTag.localName().impl(), &HTMLParser::formCreateErrorCheck);
+        gFunctionMap.set(isindexTag.localName().impl(), &HTMLParser::isindexCreateErrorCheck);
+        gFunctionMap.set(selectTag.localName().impl(), &HTMLParser::selectCreateErrorCheck);
+        gFunctionMap.set(ddTag.localName().impl(), &HTMLParser::ddCreateErrorCheck);
+        gFunctionMap.set(dtTag.localName().impl(), &HTMLParser::dtCreateErrorCheck);
+        gFunctionMap.set(liTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
+        gFunctionMap.set(aTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
+        gFunctionMap.set(nobrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
+        gFunctionMap.set(wbrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
+        gFunctionMap.set(trTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
+        gFunctionMap.set(tdTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
+        gFunctionMap.set(thTag.localName().impl(), &HTMLParser::tableCellCreateErrorCheck);
+        gFunctionMap.set(tbodyTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
+        gFunctionMap.set(theadTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
+        gFunctionMap.set(tfootTag.localName().impl(), &HTMLParser::tableSectionCreateErrorCheck);
+        gFunctionMap.set(ttTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(uTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(bTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(iTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(sTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(strikeTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(bigTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(smallTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(noembedTag.localName().impl(), &HTMLParser::noembedCreateErrorCheck);
+        gFunctionMap.set(noframesTag.localName().impl(), &HTMLParser::noframesCreateErrorCheck);
+        gFunctionMap.set(noscriptTag.localName().impl(), &HTMLParser::noscriptCreateErrorCheck);
+        gFunctionMap.set(mapTag.localName().impl(), &HTMLParser::mapCreateErrorCheck);
     }
 
     bool proceed = true;

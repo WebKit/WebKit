@@ -31,15 +31,13 @@
 #include "htmlediting.h"
 #include "khtml_part.h"
 #include "SelectionController.h"
-#include "misc/hashmap.h"
+#include <kxmlcore/HashMap.h>
 
 #if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
 #endif
 
 using khtml::TypingCommand;
-using khtml::HashMap;
-using khtml::CaseInsensitiveHash;
 
 namespace DOM {
 
@@ -599,7 +597,7 @@ CommandMap *createCommandDictionary()
     for (int i = 0; i < numCommands; ++i) {
         DOMStringImpl *name = new DOMStringImpl(commands[i].name);
         name->ref();
-        commandMap->insert(name, &commands[i].imp);
+        commandMap->set(name, &commands[i].imp);
     }
 #ifndef NDEBUG
     supportsPasteCommand = true;

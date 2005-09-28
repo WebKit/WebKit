@@ -32,10 +32,17 @@
 		6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
 		6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
 		6541BD7508E80A17002CBEE7 /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
+		6557E8F808EA5D4D0049CDFC /* HashMapPtrSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6D089E859700760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E70089E85D300760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65DFC93108EA173A00F7300B /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92B08EA173A00F7300B /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65DFC93208EA173A00F7300B /* HashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92C08EA173A00F7300B /* HashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
+		65DFC93408EA173A00F7300B /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92E08EA173A00F7300B /* HashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65DFC93508EA173A00F7300B /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E217BD08E7EECC0023E5F6 /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217B708E7EECC0023E5F6 /* Assertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E217BE08E7EECC0023E5F6 /* Assertions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.mm */; };
 		65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
@@ -111,7 +118,6 @@
 		932F5B830822A1C700736975 /* c_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182A53B06012C3000CBD2F2 /* c_class.h */; };
 		932F5B840822A1C700736975 /* NP_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 517BE7F40610E39600221947 /* NP_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B850822A1C700736975 /* npruntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 5199B1BE061B65BC0070C006 /* npruntime.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B870822A1C700736975 /* interpreter_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AB004906261CBA0076DE63 /* interpreter_map.h */; };
 		932F5B880822A1C700736975 /* protect.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C02FBB0637462A003E7EE6 /* protect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B890822A1C700736975 /* protected_values.h in Headers */ = {isa = PBXBuildFile; fileRef = 650B68D90639033F009D42DE /* protected_values.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B8A0822A1C700736975 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51863F6F065420E800E9E8DD /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -172,7 +178,6 @@
 		932F5BC90822A1C700736975 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A4FB06010F8200CBD2F2 /* c_utility.cpp */; };
 		932F5BCA0822A1C700736975 /* c_class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A53A06012C3000CBD2F2 /* c_class.cpp */; };
 		932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5199B1BD061B65BC0070C006 /* npruntime.cpp */; };
-		932F5BCC0822A1C700736975 /* interpreter_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AB004806261CBA0076DE63 /* interpreter_map.cpp */; };
 		932F5BCD0822A1C700736975 /* protected_values.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 650B68D80639033F009D42DE /* protected_values.cpp */; };
 		932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51863FC406542D3100E9E8DD /* WebScriptObject.mm */; };
 		932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517EF37306D695930007C1BA /* jni_objc.mm */; };
@@ -269,7 +274,6 @@
 		A85D8233087B2822006A9172 /* c_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182A53B06012C3000CBD2F2 /* c_class.h */; };
 		A85D8234087B2822006A9172 /* NP_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 517BE7F40610E39600221947 /* NP_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8235087B2822006A9172 /* npruntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 5199B1BE061B65BC0070C006 /* npruntime.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A85D8236087B2822006A9172 /* interpreter_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AB004906261CBA0076DE63 /* interpreter_map.h */; };
 		A85D8237087B2822006A9172 /* protect.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C02FBB0637462A003E7EE6 /* protect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8238087B2822006A9172 /* protected_values.h in Headers */ = {isa = PBXBuildFile; fileRef = 650B68D90639033F009D42DE /* protected_values.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8239087B2822006A9172 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51863F6F065420E800E9E8DD /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -332,7 +336,6 @@
 		A85D8278087B2822006A9172 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A4FB06010F8200CBD2F2 /* c_utility.cpp */; };
 		A85D8279087B2822006A9172 /* c_class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A53A06012C3000CBD2F2 /* c_class.cpp */; };
 		A85D827A087B2822006A9172 /* npruntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5199B1BD061B65BC0070C006 /* npruntime.cpp */; };
-		A85D827B087B2822006A9172 /* interpreter_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AB004806261CBA0076DE63 /* interpreter_map.cpp */; };
 		A85D827C087B2822006A9172 /* protected_values.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 650B68D80639033F009D42DE /* protected_values.cpp */; };
 		A85D827D087B2822006A9172 /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51863FC406542D3100E9E8DD /* WebScriptObject.mm */; };
 		A85D827E087B2822006A9172 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517EF37306D695930007C1BA /* jni_objc.mm */; };
@@ -499,13 +502,18 @@
 		6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TCSpinLock.h; sourceTree = "<group>"; };
 		6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TCSystemAlloc.cpp; sourceTree = "<group>"; };
 		6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TCSystemAlloc.h; sourceTree = "<group>"; };
+		6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashMapPtrSpec.h; sourceTree = "<group>"; };
 		6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		6560A63D04B3B69F008AE952 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		65621E6B089E859700760F35 /* property_slot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = property_slot.cpp; sourceTree = "<group>"; };
 		65621E6C089E859700760F35 /* property_slot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = property_slot.h; sourceTree = "<group>"; };
-		65AB004806261CBA0076DE63 /* interpreter_map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = interpreter_map.cpp; sourceTree = "<group>"; };
-		65AB004906261CBA0076DE63 /* interpreter_map.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = interpreter_map.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
+		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
+		65DFC92B08EA173A00F7300B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; };
+		65DFC92C08EA173A00F7300B /* HashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashSet.h; sourceTree = "<group>"; };
+		65DFC92D08EA173A00F7300B /* HashTable.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HashTable.cpp; sourceTree = "<group>"; };
+		65DFC92E08EA173A00F7300B /* HashTable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashTable.h; sourceTree = "<group>"; };
+		65DFC92F08EA173A00F7300B /* HashTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashTraits.h; sourceTree = "<group>"; };
 		65E217B708E7EECC0023E5F6 /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Assertions.h; sourceTree = "<group>"; };
 		65E217B808E7EECC0023E5F6 /* Assertions.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = Assertions.mm; sourceTree = "<group>"; };
 		65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; };
@@ -703,8 +711,6 @@
 				650B68D80639033F009D42DE /* protected_values.cpp */,
 				652C107E08DA7B1E0020887D /* protected_reference.h */,
 				650B68D90639033F009D42DE /* protected_values.h */,
-				65AB004806261CBA0076DE63 /* interpreter_map.cpp */,
-				65AB004906261CBA0076DE63 /* interpreter_map.h */,
 				F692A84E0255597D01FF60F7 /* array_object.h */,
 				F692A84D0255597D01FF60F7 /* array_object.cpp */,
 				F692A8500255597D01FF60F7 /* bool_object.cpp */,
@@ -834,6 +840,13 @@
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
 			children = (
+				6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */,
+				65DFC92A08EA173A00F7300B /* HashFunctions.h */,
+				65DFC92B08EA173A00F7300B /* HashMap.h */,
+				65DFC92C08EA173A00F7300B /* HashSet.h */,
+				65DFC92D08EA173A00F7300B /* HashTable.cpp */,
+				65DFC92E08EA173A00F7300B /* HashTable.h */,
+				65DFC92F08EA173A00F7300B /* HashTraits.h */,
 				6541BD6E08E80A17002CBEE7 /* TCPageMap.h */,
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
@@ -982,7 +995,6 @@
 				932F5B830822A1C700736975 /* c_class.h in Headers */,
 				932F5B840822A1C700736975 /* NP_jsobject.h in Headers */,
 				932F5B850822A1C700736975 /* npruntime.h in Headers */,
-				932F5B870822A1C700736975 /* interpreter_map.h in Headers */,
 				932F5B880822A1C700736975 /* protect.h in Headers */,
 				932F5B890822A1C700736975 /* protected_values.h in Headers */,
 				932F5B8A0822A1C700736975 /* WebScriptObject.h in Headers */,
@@ -1004,6 +1016,12 @@
 				6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */,
 				6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */,
 				6541BD7508E80A17002CBEE7 /* TCSystemAlloc.h in Headers */,
+				65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */,
+				65DFC93108EA173A00F7300B /* HashMap.h in Headers */,
+				65DFC93208EA173A00F7300B /* HashSet.h in Headers */,
+				65DFC93408EA173A00F7300B /* HashTable.h in Headers */,
+				65DFC93508EA173A00F7300B /* HashTraits.h in Headers */,
+				6557E8F808EA5D4D0049CDFC /* HashMapPtrSpec.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1073,7 +1091,6 @@
 				A85D8233087B2822006A9172 /* c_class.h in Headers */,
 				A85D8234087B2822006A9172 /* NP_jsobject.h in Headers */,
 				A85D8235087B2822006A9172 /* npruntime.h in Headers */,
-				A85D8236087B2822006A9172 /* interpreter_map.h in Headers */,
 				A85D8237087B2822006A9172 /* protect.h in Headers */,
 				A85D8238087B2822006A9172 /* protected_values.h in Headers */,
 				A85D8239087B2822006A9172 /* WebScriptObject.h in Headers */,
@@ -1635,7 +1652,6 @@
 				932F5BC90822A1C700736975 /* c_utility.cpp in Sources */,
 				932F5BCA0822A1C700736975 /* c_class.cpp in Sources */,
 				932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */,
-				932F5BCC0822A1C700736975 /* interpreter_map.cpp in Sources */,
 				932F5BCD0822A1C700736975 /* protected_values.cpp in Sources */,
 				932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */,
 				932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */,
@@ -1655,6 +1671,7 @@
 				65E217BE08E7EECC0023E5F6 /* Assertions.mm in Sources */,
 				65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */,
 				6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */,
+				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1732,7 +1749,6 @@
 				A85D8278087B2822006A9172 /* c_utility.cpp in Sources */,
 				A85D8279087B2822006A9172 /* c_class.cpp in Sources */,
 				A85D827A087B2822006A9172 /* npruntime.cpp in Sources */,
-				A85D827B087B2822006A9172 /* interpreter_map.cpp in Sources */,
 				A85D827C087B2822006A9172 /* protected_values.cpp in Sources */,
 				A85D827D087B2822006A9172 /* WebScriptObject.mm in Sources */,
 				A85D827E087B2822006A9172 /* jni_objc.mm in Sources */,

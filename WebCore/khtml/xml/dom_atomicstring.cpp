@@ -30,9 +30,7 @@
 
 #include "dom_atomicstring.h"
 #include "xml/dom_stringimpl.h"
-#include "misc/hashset.h"
-
-using khtml::HashSet;
+#include <kxmlcore/HashSet.h>
 
 namespace DOM {
    

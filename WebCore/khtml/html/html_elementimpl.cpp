@@ -33,7 +33,7 @@
 #include "html/htmltokenizer.h"
 #include "htmlfactory.h"
 
-#include "misc/hashset.h"
+#include <kxmlcore/HashSet.h>
 #include "editing/visible_text.h"
 
 #include "khtmlview.h"

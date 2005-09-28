@@ -29,7 +29,7 @@
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"
 #include "misc/loader.h"
-#include "misc/hashmap.h"
+#include <kxmlcore/HashMap.h>
 
 #include "khtmlview.h"
 #include "khtml_part.h"

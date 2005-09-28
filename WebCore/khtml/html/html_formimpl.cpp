@@ -690,16 +690,13 @@ void HTMLFormElementImpl::radioButtonChecked(HTMLInputElementImpl *caller)
 
     // Uncheck the currently selected item
     if (!m_selectedRadioButtons)
-        m_selectedRadioButtons = new HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> >;
+        m_selectedRadioButtons = new NameToInputMap;
 
     HTMLInputElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(caller->name().impl());
     if (currentCheckedRadio && currentCheckedRadio != caller)
         currentCheckedRadio->setChecked(false);
         
-    // Now insert ourselves into the hash. There should really be a replace method
-    // in HashMap...
-    m_selectedRadioButtons->remove(caller->name().impl());
-    m_selectedRadioButtons->insert(caller->name().impl(), caller);
+    m_selectedRadioButtons->set(caller->name().impl(), caller);
 }
 
 HTMLInputElementImpl* HTMLFormElementImpl::checkedRadioButtonForGroup(DOMStringImpl* name)

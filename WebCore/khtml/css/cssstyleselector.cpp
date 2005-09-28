@@ -65,6 +65,8 @@
 #include <qintcache.h>
 #include <stdlib.h>
 
+#include <kxmlcore/HashMap.h>
+
 using namespace DOM;
 using namespace HTMLNames;
 
@@ -177,6 +179,34 @@ if (id == propID) \
 }
 
 namespace khtml {
+
+class CSSRuleSet : public FastAllocated
+{
+public:
+    CSSRuleSet();
+    ~CSSRuleSet();
+    
+    typedef HashMap<DOM::DOMStringImpl *, CSSRuleDataList *, PointerHash<DOM::DOMStringImpl *> > AtomRuleMap;
+    
+    void addRulesFromSheet(DOM::CSSStyleSheetImpl* sheet, const DOM::DOMString &medium = "screen");
+    
+    void addRule(DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
+    void addToRuleSet(DOM::DOMStringImpl* key, AtomRuleMap& map,
+                      DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
+    
+    CSSRuleDataList* getIDRules(DOM::DOMStringImpl* key) { return m_idRules.get(key); }
+    CSSRuleDataList* getClassRules(DOM::DOMStringImpl* key) { return m_classRules.get(key); }
+    CSSRuleDataList* getTagRules(DOM::DOMStringImpl* key) { return m_tagRules.get(key); }
+    CSSRuleDataList* getUniversalRules() { return m_universalRules; }
+    
+public:
+    AtomRuleMap m_idRules;
+    AtomRuleMap m_classRules;
+    AtomRuleMap m_tagRules;
+    CSSRuleDataList* m_universalRules;
+    
+    uint m_ruleCount;
+};
 
 CSSRuleSet *CSSStyleSelector::defaultStyle = 0;
 CSSRuleSet *CSSStyleSelector::defaultQuirksStyle = 0;
@@ -1428,7 +1458,7 @@ void CSSRuleSet::addToRuleSet(DOMStringImpl* key, AtomRuleMap& map,
     CSSRuleDataList* rules = map.get(key);
     if (!rules) {
         rules = new CSSRuleDataList(m_ruleCount++, rule, sel);
-        map.insert(key, rules);
+        map.set(key, rules);
     } else
         rules->append(m_ruleCount++, rule, sel);
 }

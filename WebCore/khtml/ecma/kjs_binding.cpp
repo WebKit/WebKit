@@ -28,11 +28,16 @@
 #include "dom/dom_exception.h"
 #include "dom/dom2_events.h"
 #include "dom/dom2_range.h"
-#include "misc/hashmap.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "dom/css_stylesheet.h"
+
+// gcc 3.x can't handle including the HashMap pointer specialization in this file
+#ifndef __GLIBCXX__ // less than gcc 3.4
+#define HASH_MAP_PTR_SPEC_WORKAROUND 1
+#endif
+#include <kxmlcore/HashMap.h>
 
 #include <kdebug.h>
 
@@ -45,9 +50,6 @@ using DOM::DocumentImpl;
 using DOM::EventException;
 using DOM::NodeImpl;
 using DOM::RangeException;
-
-using khtml::HashMap;
-using khtml::PointerHash;
 
 namespace KJS {
 

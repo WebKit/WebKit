@@ -45,7 +45,7 @@
 #import "dom_textimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_elementimpl.h"
-#import "hashmap.h"
+#import <kxmlcore/HashMap.h>
 
 #import "khtml_part.h"
 
@@ -93,8 +93,6 @@ using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
-using khtml::HashMap;
-using khtml::PointerHash;
 using khtml::RenderObject;
 
 @interface DOMAttr (WebCoreInternal)
@@ -2255,7 +2253,7 @@ ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
         map = new ListenerMap;
         listenerMap = map;
     }
-    map->insert(listener, this);
+    map->set(listener, this);
 }
 
 ObjCEventListener::~ObjCEventListener()

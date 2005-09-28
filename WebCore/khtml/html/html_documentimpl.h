@@ -28,7 +28,7 @@
 #include "xml/dom_docimpl.h"
 #include "misc/loader_client.h"
 #include "html/html_miscimpl.h"
-#include "misc/hashmap.h"
+#include <kxmlcore/HashMap.h>
 
 class KHTMLView;
 class QString;
@@ -79,7 +79,7 @@ public:
 
     virtual DocumentTypeImpl *doctype() const;
 
-    typedef khtml::HashMap<DOMStringImpl *, int> NameCountMap;
+    typedef HashMap<DOMStringImpl *, int> NameCountMap;
 
 protected:
     HTMLElementImpl *bodyElement;

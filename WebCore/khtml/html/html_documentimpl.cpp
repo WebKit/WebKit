@@ -273,7 +273,7 @@ static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& n
  
     HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.impl()); 
     if (it == map.end())
-        map.insert(name.impl(), 1);
+        map.set(name.impl(), 1);
     else
         ++(it->second);
 }

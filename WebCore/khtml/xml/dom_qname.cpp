@@ -22,9 +22,7 @@
 #define KHTML_QNAME_HIDE_GLOBALS 1
 
 #include "dom_qname.h"
-#include "misc/hashset.h"
-
-using khtml::HashSet;
+#include <kxmlcore/HashSet.h>
 
 namespace DOM {
 

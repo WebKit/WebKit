@@ -35,10 +35,7 @@
 #include "html/html_tableimpl.h"
 #include "html/html_objectimpl.h"
 
-#include "misc/pointerhash.h"
-
-using khtml::PointerHash;
-using khtml::HashMap;
+#include <kxmlcore/HashMap.h>
 
 namespace DOM
 {
@@ -342,74 +339,74 @@ HTMLElementImpl* HTMLElementFactory::createHTMLElement(const AtomicString& tagNa
         gFunctionMap = new FunctionMap;
         
         // Populate it with constructor functions.
-        gFunctionMap->insert(htmlTag.localName().impl(), (void*)&htmlConstructor);
-        gFunctionMap->insert(headTag.localName().impl(), (void*)&headConstructor);
-        gFunctionMap->insert(bodyTag.localName().impl(), (void*)&bodyConstructor);
-        gFunctionMap->insert(baseTag.localName().impl(), (void*)&baseConstructor);
-        gFunctionMap->insert(linkTag.localName().impl(), (void*)&linkConstructor);
-        gFunctionMap->insert(metaTag.localName().impl(), (void*)&metaConstructor);
-        gFunctionMap->insert(styleTag.localName().impl(), (void*)&styleConstructor);
-        gFunctionMap->insert(titleTag.localName().impl(), (void*)&titleConstructor);
-        gFunctionMap->insert(frameTag.localName().impl(), (void*)&frameConstructor);
-        gFunctionMap->insert(framesetTag.localName().impl(), (void*)&framesetConstructor);
-        gFunctionMap->insert(iframeTag.localName().impl(), (void*)&iframeConstructor);
-        gFunctionMap->insert(formTag.localName().impl(), (void*)&formConstructor);
-        gFunctionMap->insert(buttonTag.localName().impl(), (void*)&buttonConstructor);
-        gFunctionMap->insert(inputTag.localName().impl(), (void*)&inputConstructor);
-        gFunctionMap->insert(isindexTag.localName().impl(), (void*)&isindexConstructor);
-        gFunctionMap->insert(fieldsetTag.localName().impl(), (void*)&fieldsetConstructor);
-        gFunctionMap->insert(labelTag.localName().impl(), (void*)&labelConstructor);
-        gFunctionMap->insert(legendTag.localName().impl(), (void*)&legendConstructor);
-        gFunctionMap->insert(optgroupTag.localName().impl(), (void*)&optgroupConstructor);
-        gFunctionMap->insert(optionTag.localName().impl(), (void*)&optionConstructor);
-        gFunctionMap->insert(selectTag.localName().impl(), (void*)&selectConstructor);
-        gFunctionMap->insert(textareaTag.localName().impl(), (void*)&textareaConstructor);
-        gFunctionMap->insert(dlTag.localName().impl(), (void*)&dlConstructor);
-        gFunctionMap->insert(olTag.localName().impl(), (void*)&olConstructor);
-        gFunctionMap->insert(ulTag.localName().impl(), (void*)&ulConstructor);
-        gFunctionMap->insert(dirTag.localName().impl(), (void*)&dirConstructor);
-        gFunctionMap->insert(menuTag.localName().impl(), (void*)&menuConstructor);
-        gFunctionMap->insert(liTag.localName().impl(), (void*)&liConstructor);
-        gFunctionMap->insert(blockquoteTag.localName().impl(), (void*)&blockquoteConstructor);
-        gFunctionMap->insert(divTag.localName().impl(), (void*)&divConstructor);
-        gFunctionMap->insert(h1Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(h2Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(h3Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(h4Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(h5Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(h6Tag.localName().impl(), (void*)&headingConstructor);
-        gFunctionMap->insert(hrTag.localName().impl(), (void*)&hrConstructor);
-        gFunctionMap->insert(pTag.localName().impl(), (void*)&paragraphConstructor);
-        gFunctionMap->insert(preTag.localName().impl(), (void*)&preConstructor);
-        gFunctionMap->insert(xmpTag.localName().impl(), (void*)&preConstructor);
-        gFunctionMap->insert(basefontTag.localName().impl(), (void*)&basefontConstructor);
-        gFunctionMap->insert(fontTag.localName().impl(), (void*)&fontConstructor);
-        gFunctionMap->insert(delTag.localName().impl(), (void*)&modConstructor);
-        gFunctionMap->insert(insTag.localName().impl(), (void*)&modConstructor);
-        gFunctionMap->insert(aTag.localName().impl(), (void*)&anchorConstructor);
-        gFunctionMap->insert(imageTag.localName().impl(), (void*)&imageConstructor);
-        gFunctionMap->insert(imgTag.localName().impl(), (void*)&imageConstructor);
-        gFunctionMap->insert(mapTag.localName().impl(), (void*)&mapConstructor);
-        gFunctionMap->insert(areaTag.localName().impl(), (void*)&areaConstructor);
-        gFunctionMap->insert(canvasTag.localName().impl(), (void*)&canvasConstructor);
-        gFunctionMap->insert(appletTag.localName().impl(), (void*)&appletConstructor);
-        gFunctionMap->insert(embedTag.localName().impl(), (void*)&embedConstructor);
-        gFunctionMap->insert(objectTag.localName().impl(), (void*)&objectConstructor);
-        gFunctionMap->insert(paramTag.localName().impl(), (void*)&paramConstructor);
-        gFunctionMap->insert(scriptTag.localName().impl(), (void*)&scriptConstructor);
-        gFunctionMap->insert(tableTag.localName().impl(), (void*)&tableConstructor);
-        gFunctionMap->insert(captionTag.localName().impl(), (void*)&tableCaptionConstructor);
-        gFunctionMap->insert(colgroupTag.localName().impl(), (void*)&tableColConstructor);
-        gFunctionMap->insert(colTag.localName().impl(), (void*)&tableColConstructor);
-        gFunctionMap->insert(trTag.localName().impl(), (void*)&tableRowConstructor);
-        gFunctionMap->insert(tdTag.localName().impl(), (void*)&tableCellConstructor);
-        gFunctionMap->insert(thTag.localName().impl(), (void*)&tableCellConstructor);
-        gFunctionMap->insert(theadTag.localName().impl(), (void*)&tableSectionConstructor);
-        gFunctionMap->insert(tbodyTag.localName().impl(), (void*)&tableSectionConstructor);
-        gFunctionMap->insert(tfootTag.localName().impl(), (void*)&tableSectionConstructor);
-        gFunctionMap->insert(brTag.localName().impl(), (void*)&brConstructor);
-        gFunctionMap->insert(qTag.localName().impl(), (void*)&quoteConstructor);
-        gFunctionMap->insert(marqueeTag.localName().impl(), (void*)&marqueeConstructor);
+        gFunctionMap->set(htmlTag.localName().impl(), (void*)&htmlConstructor);
+        gFunctionMap->set(headTag.localName().impl(), (void*)&headConstructor);
+        gFunctionMap->set(bodyTag.localName().impl(), (void*)&bodyConstructor);
+        gFunctionMap->set(baseTag.localName().impl(), (void*)&baseConstructor);
+        gFunctionMap->set(linkTag.localName().impl(), (void*)&linkConstructor);
+        gFunctionMap->set(metaTag.localName().impl(), (void*)&metaConstructor);
+        gFunctionMap->set(styleTag.localName().impl(), (void*)&styleConstructor);
+        gFunctionMap->set(titleTag.localName().impl(), (void*)&titleConstructor);
+        gFunctionMap->set(frameTag.localName().impl(), (void*)&frameConstructor);
+        gFunctionMap->set(framesetTag.localName().impl(), (void*)&framesetConstructor);
+        gFunctionMap->set(iframeTag.localName().impl(), (void*)&iframeConstructor);
+        gFunctionMap->set(formTag.localName().impl(), (void*)&formConstructor);
+        gFunctionMap->set(buttonTag.localName().impl(), (void*)&buttonConstructor);
+        gFunctionMap->set(inputTag.localName().impl(), (void*)&inputConstructor);
+        gFunctionMap->set(isindexTag.localName().impl(), (void*)&isindexConstructor);
+        gFunctionMap->set(fieldsetTag.localName().impl(), (void*)&fieldsetConstructor);
+        gFunctionMap->set(labelTag.localName().impl(), (void*)&labelConstructor);
+        gFunctionMap->set(legendTag.localName().impl(), (void*)&legendConstructor);
+        gFunctionMap->set(optgroupTag.localName().impl(), (void*)&optgroupConstructor);
+        gFunctionMap->set(optionTag.localName().impl(), (void*)&optionConstructor);
+        gFunctionMap->set(selectTag.localName().impl(), (void*)&selectConstructor);
+        gFunctionMap->set(textareaTag.localName().impl(), (void*)&textareaConstructor);
+        gFunctionMap->set(dlTag.localName().impl(), (void*)&dlConstructor);
+        gFunctionMap->set(olTag.localName().impl(), (void*)&olConstructor);
+        gFunctionMap->set(ulTag.localName().impl(), (void*)&ulConstructor);
+        gFunctionMap->set(dirTag.localName().impl(), (void*)&dirConstructor);
+        gFunctionMap->set(menuTag.localName().impl(), (void*)&menuConstructor);
+        gFunctionMap->set(liTag.localName().impl(), (void*)&liConstructor);
+        gFunctionMap->set(blockquoteTag.localName().impl(), (void*)&blockquoteConstructor);
+        gFunctionMap->set(divTag.localName().impl(), (void*)&divConstructor);
+        gFunctionMap->set(h1Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(h2Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(h3Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(h4Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(h5Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(h6Tag.localName().impl(), (void*)&headingConstructor);
+        gFunctionMap->set(hrTag.localName().impl(), (void*)&hrConstructor);
+        gFunctionMap->set(pTag.localName().impl(), (void*)&paragraphConstructor);
+        gFunctionMap->set(preTag.localName().impl(), (void*)&preConstructor);
+        gFunctionMap->set(xmpTag.localName().impl(), (void*)&preConstructor);
+        gFunctionMap->set(basefontTag.localName().impl(), (void*)&basefontConstructor);
+        gFunctionMap->set(fontTag.localName().impl(), (void*)&fontConstructor);
+        gFunctionMap->set(delTag.localName().impl(), (void*)&modConstructor);
+        gFunctionMap->set(insTag.localName().impl(), (void*)&modConstructor);
+        gFunctionMap->set(aTag.localName().impl(), (void*)&anchorConstructor);
+        gFunctionMap->set(imageTag.localName().impl(), (void*)&imageConstructor);
+        gFunctionMap->set(imgTag.localName().impl(), (void*)&imageConstructor);
+        gFunctionMap->set(mapTag.localName().impl(), (void*)&mapConstructor);
+        gFunctionMap->set(areaTag.localName().impl(), (void*)&areaConstructor);
+        gFunctionMap->set(canvasTag.localName().impl(), (void*)&canvasConstructor);
+        gFunctionMap->set(appletTag.localName().impl(), (void*)&appletConstructor);
+        gFunctionMap->set(embedTag.localName().impl(), (void*)&embedConstructor);
+        gFunctionMap->set(objectTag.localName().impl(), (void*)&objectConstructor);
+        gFunctionMap->set(paramTag.localName().impl(), (void*)&paramConstructor);
+        gFunctionMap->set(scriptTag.localName().impl(), (void*)&scriptConstructor);
+        gFunctionMap->set(tableTag.localName().impl(), (void*)&tableConstructor);
+        gFunctionMap->set(captionTag.localName().impl(), (void*)&tableCaptionConstructor);
+        gFunctionMap->set(colgroupTag.localName().impl(), (void*)&tableColConstructor);
+        gFunctionMap->set(colTag.localName().impl(), (void*)&tableColConstructor);
+        gFunctionMap->set(trTag.localName().impl(), (void*)&tableRowConstructor);
+        gFunctionMap->set(tdTag.localName().impl(), (void*)&tableCellConstructor);
+        gFunctionMap->set(thTag.localName().impl(), (void*)&tableCellConstructor);
+        gFunctionMap->set(theadTag.localName().impl(), (void*)&tableSectionConstructor);
+        gFunctionMap->set(tbodyTag.localName().impl(), (void*)&tableSectionConstructor);
+        gFunctionMap->set(tfootTag.localName().impl(), (void*)&tableSectionConstructor);
+        gFunctionMap->set(brTag.localName().impl(), (void*)&brConstructor);
+        gFunctionMap->set(qTag.localName().impl(), (void*)&quoteConstructor);
+        gFunctionMap->set(marqueeTag.localName().impl(), (void*)&marqueeConstructor);
     }
     
     void* result = gFunctionMap->get(tagName.impl());
