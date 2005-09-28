@@ -547,6 +547,18 @@ static BOOL NSURLConnectionSupportsBufferedData;
     resourceData = [data mutableCopy];
 }
 
+- (void)signalFinish
+{
+    signalledFinish = YES;
+
+    [webView _completeProgressForConnectionDelegate:self];    
+    
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+        [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
+}
+
 - (void)didFinishLoading
 {
     // If load has been cancelled after finishing (which could happen with a 
@@ -559,12 +571,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
     [self saveResource];
     
-    [webView _completeProgressForConnectionDelegate:self];
-
-    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
+    if (!signalledFinish)
+        [self signalFinish];
 
     [self releaseResources];
 }

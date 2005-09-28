@@ -1,3 +1,26 @@
+2005-09-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        Fixed <rdar://problem/4276596> multipart/x-mixed-replace: saved inline images appear only partially loaded
+        Fixed <rdar://problem/4265439> progress bar should look complete even if there is some more multipart content being loaded
+
+        * WebCoreSupport.subproj/WebSubresourceLoader.h:
+        * WebCoreSupport.subproj/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader didReceiveResponse:]):
+        Now calls signalFinish and saveResource.
+        
+        (-[WebSubresourceLoader signalFinish]): 
+        Added.  Does the part of didFinishLoading that signals to the WebDataSource and load delegates that the load is finished.
+        
+        (-[WebSubresourceLoader didFinishLoading]):
+        * WebView.subproj/WebLoader.h:
+        * WebView.subproj/WebLoader.m:
+        (-[NSURLProtocol signalFinish]):
+        Similar to above
+        
+        (-[NSURLProtocol didFinishLoading]):
+
 2005-09-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.
