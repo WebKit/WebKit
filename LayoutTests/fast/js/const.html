@@ -1,5 +1,5 @@
 <div>
-This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT.
+This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT twice.
 </div>
 <br>
 <div>
@@ -12,6 +12,17 @@ try {
     const x = "RIGHT";
     x = "WRONG";
     document.write(x);
+} catch (exc) {
+   document.write("EXCEPTION");
+}
+</script>
+</div>
+<div>
+<script>
+try {
+    const x = "RIGHT", y = "RIGHT";
+    y = "WRONG";
+    document.write(y);
 } catch (exc) {
    document.write("EXCEPTION");
 }

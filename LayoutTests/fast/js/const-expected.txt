@@ -1,3 +1,4 @@
-This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT.
+This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT twice.
 
+RIGHT
 RIGHT

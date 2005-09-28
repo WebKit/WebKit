@@ -80,15 +80,18 @@ print([12, 54, 18, 130, 44].every(isBigEnoughAndChange));
 </script>
 <br/>
 4.0 Exception Test<br/>
-This test uses a function that throws an exception, and thus halts the execution of every.  There should thus be no output.<br/><br/>
+This test uses a function that throws an exception, and thus halts the execution of every.  There should be an exception string printed twice.<br/><br/>
 <script>
-function isBigEnough(element, index, array) {
-    if(index==1) throw exception();
+function isBigEnoughAndException(element, index, array) {
+    if(index==1) throw "exception from function";
     return (element >= 10);
 }
 
-print([12, 5, 8, 130, 44].every(isBigEnoughAndException));
-print([12, 54, 18, 130, 44].every(isBigEnoughAndException));
+try { [12, 5, 8, 130, 44].every(isBigEnoughAndException); }
+catch (e) { print(e); }
+
+try { [12, 54, 18, 130, 44].every(isBigEnoughAndException); }
+catch (e) { print(e); }
 
 </script>
 <br/>
@@ -119,14 +122,14 @@ catch (e) { print(e); }
 6.0 Early Abortion ("Short Circuiting")
 This test is nearly identical to 1.0, except that it prints upon every call to the designated callback function.  Since every aborts as soon as it finds one element that does not qualify, the first array should print only twice, and the second all 5 times.<br/><br/>
 <script>
-function isBigEnough(element, index, array) {
+function isBigEnoughShortCircuit(element, index, array) {
     print("Testing element "+element+"...");
     return (element >= 10);
 }
 
-[12, 5, 8, 130, 44].every(isBigEnough);
+[12, 5, 8, 130, 44].every(isBigEnoughShortCircuit);
 print("Done with first array.");
-[12, 54, 18, 130, 44].every(isBigEnough);
+[12, 54, 18, 130, 44].every(isBigEnoughShortCircuit);
 print("Done with second array.");
 </script>
 </body>

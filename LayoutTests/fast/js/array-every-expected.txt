@@ -32,8 +32,10 @@ false
 false
 
 4.0 Exception Test
-This test uses a function that throws an exception, and thus halts the execution of every. There should thus be no output.
+This test uses a function that throws an exception, and thus halts the execution of every. There should be an exception string printed twice.
 
+exception from function
+exception from function
 
 5.0 Wrong Type for Callback Test This test sends in incorrect types for the callback parameter of every. An exception should be thrown in each case. There should be 6 type errors (and no crashes!):
 

@@ -1,3 +1,15 @@
+2005-09-26  Darin Adler  <darin@apple.com>
+
+        * layout-tests/fast/js/array-every.html: Fixed test case; one of the tests was using
+        the wrong function, so it wasn't testing what it claimed it was.
+        * layout-tests/fast/js/array-every-expected.txt: Updated test result; one section now
+        has a different result.
+
+        * layout-tests/fast/js/const.html: Added a test case that checks that variables after
+        the first in a const declaration are also const; this was broken until my recent change
+        to the JavaScript grammar.
+        * layout-tests/fast/js/const-expected.txt: Updated test results.
+
 2005-09-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
