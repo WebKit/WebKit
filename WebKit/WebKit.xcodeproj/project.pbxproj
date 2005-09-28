@@ -284,6 +284,7 @@
 		9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */; };
 		9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D623DD051E791F002F47DD /* libicucore.dylib */; };
 		9398112F0824BF01008DF038 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830E81E005853AC000AD0891 /* Security.framework */; };
+		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */; };
 /* End PBXBuildFile section */
@@ -500,6 +501,7 @@
 		9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebImageRendererFactory.h; sourceTree = "<group>"; };
 		9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageRendererFactory.m; sourceTree = "<group>"; };
 		9CF0E249021361B00ECA16EA /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePrivate.h; sourceTree = "<group>"; };
+		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WebDownloadInternal.h; path = Misc.subproj/WebDownloadInternal.h; sourceTree = "<group>"; };
 		BE07CEA7047538F000CA289C /* WebDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDatabase.h; sourceTree = "<group>"; };
 		BE07CEA8047538F000CA289C /* WebDatabase.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebDatabase.m; sourceTree = "<group>"; };
 		BE07CEA9047538F000CA289C /* WebFileDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFileDatabase.h; sourceTree = "<group>"; };
@@ -656,6 +658,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
@@ -1261,6 +1264,7 @@
 				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
 				7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
+				ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

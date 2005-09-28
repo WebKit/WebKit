@@ -38,6 +38,7 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
+#import <WebKit/WebDownloadInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>

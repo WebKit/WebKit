@@ -1,3 +1,15 @@
+2005-09-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Moved _downloadWithLoadingConnection and _downloadWithRequestfrom WebDownload.h to WebDownloadInternal.h
+
+        * Misc.subproj/WebDownload.h:
+        * Misc.subproj/WebDownloadInternal.h: Added.
+        * WebKit.xcodeproj/project.pbxproj: Added WebDownloadInternal.h
+        * WebView.subproj/WebMainResourceLoader.m: Added import of WebDownloadInternal.h
+        * WebView.subproj/WebView.m: ditto.
+
 2005-09-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

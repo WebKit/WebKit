@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,19 @@
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-#import <Foundation/NSURLDownload.h>
-
-@class WebDownloadInternal;
-
-/*!
-    @class WebDownload
-    @discussion A WebDownload works just like an NSURLDownload, with
-    one extra feature: if you do not implement the
-    authentication-related delegate methods, it will automatically
-    prompt for authentication using the standard WebKit authentication
-    panel, as either a sheet or window. It provides no extra methods,
-    but does have one additional delegate method.
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+ 
+#import <WebKit/WebDownload.h>
+ 
+@interface WebDownload (WebDownloadCreation)
++(id)_downloadWithLoadingConnection:(NSURLConnection *)connection
+							request:(NSURLRequest *)request
+							response:(NSURLResponse *)r
+							delegate:(id)delegate
+							   proxy:(id)proxy;
 
-
-@interface WebDownload : NSURLDownload
-{
-@private
-    WebDownloadInternal *_webInternal;
-}
-
-@end
-
-/*!
-    @protocol WebDownloadDelegate
-    @discussion The WebDownloadDelegate delegate has one extra method used to choose
-    the right window when automatically prompting with a sheet.
-*/
-@interface NSObject (WebDownloadDelegate)
-
-/*!
-    @method downloadWindowForAuthenticationSheet:
-    @abstract
-    @param
-    @result
-*/
-- (NSWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;
-
++(id)_downloadWithRequest:(NSURLRequest *)request
+                 delegate:(id)delegate
+				directory:(NSString *)directory;
 @end

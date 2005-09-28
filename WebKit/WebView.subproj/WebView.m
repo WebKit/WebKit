@@ -49,6 +49,7 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebDownload.h>
+#import <WebKit/WebDownloadInternal.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFrameInternal.h>
