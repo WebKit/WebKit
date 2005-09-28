@@ -53,7 +53,7 @@ namespace KJS {
      * on each object and freeing the used memory.
      */
     static bool collect();
-    static int size();
+    static size_t size();
     static bool outOfMemory() { return memoryFull; }
 
 #ifdef KJS_DEBUG_MEM
@@ -63,9 +63,9 @@ namespace KJS {
     static void finalCheck();
 #endif
 
-    static int numInterpreters();
-    static int numGCNotAllowedObjects();
-    static int numReferencedObjects();
+    static size_t numInterpreters();
+    static size_t numGCNotAllowedObjects();
+    static size_t numReferencedObjects();
 #if APPLE_CHANGES
     static const void *rootObjectClasses(); // actually returns CFSetRef
 #endif

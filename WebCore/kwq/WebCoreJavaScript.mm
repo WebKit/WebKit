@@ -34,22 +34,22 @@ using KJS::InterpreterLock;
 
 @implementation WebCoreJavaScript
 
-+ (int)objectCount
++ (size_t)objectCount
 {
     return Collector::size();
 }
 
-+ (int)interpreterCount
++ (size_t)interpreterCount
 {
     return Collector::numInterpreters();
 }
 
-+ (int)noGCAllowedObjectCount
++ (size_t)noGCAllowedObjectCount
 {
     return Collector::numGCNotAllowedObjects();
 }
 
-+ (int)referencedObjectCount
++ (size_t)referencedObjectCount
 {
     return Collector::numReferencedObjects();
 }

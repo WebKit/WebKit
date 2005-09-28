@@ -38,10 +38,10 @@
 + (void)emptyCache;
 + (void)setCacheDisabled:(BOOL)disabled;
 
-+ (int)javaScriptObjectsCount;
-+ (int)javaScriptInterpretersCount;
-+ (int)javaScriptNoGCAllowedObjectsCount;
-+ (int)javaScriptReferencedObjectsCount;
++ (size_t)javaScriptObjectsCount;
++ (size_t)javaScriptInterpretersCount;
++ (size_t)javaScriptNoGCAllowedObjectsCount;
++ (size_t)javaScriptReferencedObjectsCount;
 + (NSSet *)javaScriptRootObjectClasses;
 + (void)garbageCollectJavaScriptObjects;
 

@@ -54,8 +54,8 @@
 - (void)setPDFScaleFactor:(float)scale;
 
 // Other private methods
-- (int)_pageCacheSize;
-- (int)_objectCacheSize;
+- (size_t)_pageCacheSize;
+- (size_t)_objectCacheSize;
 - (void)_postPreferencesChangesNotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;
 + (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)identifier;

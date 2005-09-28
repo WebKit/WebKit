@@ -51,22 +51,22 @@
     [WebCoreCache setDisabled:disabled];
 }
 
-+ (int)javaScriptObjectsCount
++ (size_t)javaScriptObjectsCount
 {
     return [WebCoreJavaScript objectCount];
 }
 
-+ (int)javaScriptInterpretersCount
++ (size_t)javaScriptInterpretersCount
 {
     return [WebCoreJavaScript interpreterCount];
 }
 
-+ (int)javaScriptNoGCAllowedObjectsCount
++ (size_t)javaScriptNoGCAllowedObjectsCount
 {
     return [WebCoreJavaScript noGCAllowedObjectCount];
 }
 
-+ (int)javaScriptReferencedObjectsCount
++ (size_t)javaScriptReferencedObjectsCount
 {
     return [WebCoreJavaScript referencedObjectCount];
 }

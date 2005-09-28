@@ -1,3 +1,20 @@
+2005-09-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Changed ints to size_t where appropriate.
+
+        * Misc.subproj/WebCoreStatistics.h:
+        * Misc.subproj/WebCoreStatistics.m:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptInterpretersCount]):
+        (+[WebCoreStatistics javaScriptNoGCAllowedObjectsCount]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _pageCacheSize]):
+        (-[WebPreferences _objectCacheSize]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2005-09-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

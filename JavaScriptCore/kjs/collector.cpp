@@ -48,18 +48,18 @@ using std::max;
 namespace KJS {
 
 // tunable parameters
-const int MINIMUM_CELL_SIZE = 56;
-const int BLOCK_SIZE = (8 * 4096);
-const int SPARE_EMPTY_BLOCKS = 2;
-const int MIN_ARRAY_SIZE = 14;
-const int GROWTH_FACTOR = 2;
-const int LOW_WATER_FACTOR = 4;
-const int ALLOCATIONS_PER_COLLECTION = 1000;
+const size_t MINIMUM_CELL_SIZE = 56;
+const size_t BLOCK_SIZE = (8 * 4096);
+const size_t SPARE_EMPTY_BLOCKS = 2;
+const size_t MIN_ARRAY_SIZE = 14;
+const size_t GROWTH_FACTOR = 2;
+const size_t LOW_WATER_FACTOR = 4;
+const size_t ALLOCATIONS_PER_COLLECTION = 1000;
 
 // derived constants
-const int CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
-const int CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
-const int CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - sizeof(int32_t) * 8 - sizeof(void *) * 8) / (CELL_SIZE * 8));
+const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
+const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
+const size_t CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8) / (CELL_SIZE * 8));
 
 
 
@@ -76,22 +76,22 @@ struct CollectorCell {
 
 struct CollectorBlock {
   CollectorCell cells[CELLS_PER_BLOCK];
-  int32_t usedCells;
+  uint32_t usedCells;
   CollectorCell *freeList;
 };
 
 struct CollectorHeap {
   CollectorBlock **blocks;
-  int numBlocks;
-  int usedBlocks;
-  int firstBlockWithPossibleSpace;
+  size_t numBlocks;
+  size_t usedBlocks;
+  size_t firstBlockWithPossibleSpace;
   
   CollectorCell **oversizeCells;
-  int numOversizeCells;
-  int usedOversizeCells;
+  size_t numOversizeCells;
+  size_t usedOversizeCells;
 
-  int numLiveObjects;
-  int numLiveObjectsAtLastCollect;
+  size_t numLiveObjects;
+  size_t numLiveObjectsAtLastCollect;
 };
 
 static CollectorHeap heap = {NULL, 0, 0, 0, NULL, 0, 0, 0, 0};
@@ -103,17 +103,17 @@ void* Collector::allocate(size_t s)
   assert(Interpreter::lockCount() > 0);
 
   // collect if needed
-  int numLiveObjects = heap.numLiveObjects;
+  size_t numLiveObjects = heap.numLiveObjects;
   if (numLiveObjects - heap.numLiveObjectsAtLastCollect >= ALLOCATIONS_PER_COLLECTION) {
     collect();
     numLiveObjects = heap.numLiveObjects;
   }
   
-  if (s > static_cast<size_t>(CELL_SIZE)) {
+  if (s > CELL_SIZE) {
     // oversize allocator
 
-    int usedOversizeCells = heap.usedOversizeCells;
-    int numOversizeCells = heap.numOversizeCells;
+    size_t usedOversizeCells = heap.usedOversizeCells;
+    size_t numOversizeCells = heap.numOversizeCells;
 
     if (usedOversizeCells == numOversizeCells) {
       numOversizeCells = max(MIN_ARRAY_SIZE, numOversizeCells * GROWTH_FACTOR);
@@ -131,11 +131,11 @@ void* Collector::allocate(size_t s)
   
   // slab allocator
   
-  int usedBlocks = heap.usedBlocks;
+  size_t usedBlocks = heap.usedBlocks;
 
-  int i = heap.firstBlockWithPossibleSpace;
+  size_t i = heap.firstBlockWithPossibleSpace;
   CollectorBlock *targetBlock;
-  int targetBlockUsedCells;
+  size_t targetBlockUsedCells;
   if (i != usedBlocks) {
     targetBlock = heap.blocks[i];
     targetBlockUsedCells = targetBlock->usedCells;
@@ -152,7 +152,7 @@ void* Collector::allocate(size_t s)
 allocateNewBlock:
     // didn't find one, need to allocate a new block
 
-    int numBlocks = heap.numBlocks;
+    size_t numBlocks = heap.numBlocks;
     if (usedBlocks == numBlocks) {
       numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
       heap.numBlocks = numBlocks;
@@ -233,10 +233,10 @@ void Collector::registerThread()
 
 #endif
 
-#define IS_POINTER_ALIGNED(p) (((int)(p) & (sizeof(char *) - 1)) == 0)
+#define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char *) - 1)) == 0)
 
 // cells are 8-byte aligned
-#define IS_CELL_ALIGNED(p) (((int)(p) & 7) == 0)
+#define IS_CELL_ALIGNED(p) (((intptr_t)(p) & 7) == 0)
 
 void Collector::markStackObjectsConservatively(void *start, void *end)
 {
@@ -253,9 +253,9 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   char **p = (char **)start;
   char **e = (char **)end;
   
-  int usedBlocks = heap.usedBlocks;
+  size_t usedBlocks = heap.usedBlocks;
   CollectorBlock **blocks = heap.blocks;
-  int usedOversizeCells = heap.usedOversizeCells;
+  size_t usedOversizeCells = heap.usedOversizeCells;
   CollectorCell **oversizeCells = heap.oversizeCells;
 
   const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
@@ -263,12 +263,12 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   while (p != e) {
     char *x = *p++;
     if (IS_CELL_ALIGNED(x) && x) {
-      for (int block = 0; block < usedBlocks; block++) {
+      for (size_t block = 0; block < usedBlocks; block++) {
         size_t offset = x - reinterpret_cast<char *>(blocks[block]);
         if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0)
           goto gotGoodPointer;
       }
-      for (int i = 0; i != usedOversizeCells; i++)
+      for (size_t i = 0; i != usedOversizeCells; i++)
         if (x == reinterpret_cast<char *>(oversizeCells[i]))
           goto gotGoodPointer;
       continue;
@@ -396,18 +396,18 @@ bool Collector::collect()
 
   // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
   
-  int emptyBlocks = 0;
-  int numLiveObjects = heap.numLiveObjects;
+  size_t emptyBlocks = 0;
+  size_t numLiveObjects = heap.numLiveObjects;
 
-  for (int block = 0; block < heap.usedBlocks; block++) {
+  for (size_t block = 0; block < heap.usedBlocks; block++) {
     CollectorBlock *curBlock = heap.blocks[block];
 
-    int usedCells = curBlock->usedCells;
+    size_t usedCells = curBlock->usedCells;
     CollectorCell *freeList = curBlock->freeList;
 
     if (usedCells == CELLS_PER_BLOCK) {
       // special case with a block where all cells are used -- testing indicates this happens often
-      for (int i = 0; i < CELLS_PER_BLOCK; i++) {
+      for (size_t i = 0; i < CELLS_PER_BLOCK; i++) {
         CollectorCell *cell = curBlock->cells + i;
         AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
         if (imp->m_marked) {
@@ -424,8 +424,8 @@ bool Collector::collect()
         }
       }
     } else {
-      int minimumCellsToProcess = usedCells;
-      for (int i = 0; i < minimumCellsToProcess; i++) {
+      size_t minimumCellsToProcess = usedCells;
+      for (size_t i = 0; i < minimumCellsToProcess; i++) {
         CollectorCell *cell = curBlock->cells + i;
         if (cell->u.freeCell.zeroIfFree == 0) {
           ++minimumCellsToProcess;
@@ -472,7 +472,7 @@ bool Collector::collect()
   if (heap.numLiveObjects != numLiveObjects)
     heap.firstBlockWithPossibleSpace = 0;
   
-  int cell = 0;
+  size_t cell = 0;
   while (cell < heap.usedOversizeCells) {
     AllocatedValueImp *imp = (AllocatedValueImp *)heap.oversizeCells[cell];
     
@@ -510,7 +510,7 @@ bool Collector::collect()
   return deleted;
 }
 
-int Collector::size() 
+size_t Collector::size() 
 {
   return heap.numLiveObjects; 
 }
@@ -521,9 +521,9 @@ void Collector::finalCheck()
 }
 #endif
 
-int Collector::numInterpreters()
+size_t Collector::numInterpreters()
 {
-  int count = 0;
+  size_t count = 0;
   if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;
     do {
@@ -534,18 +534,18 @@ int Collector::numInterpreters()
   return count;
 }
 
-int Collector::numGCNotAllowedObjects()
+size_t Collector::numGCNotAllowedObjects()
 {
   return 0;
 }
 
-int Collector::numReferencedObjects()
+size_t Collector::numReferencedObjects()
 {
-  int count = 0;
+  size_t count = 0;
 
-  int size = ProtectedValues::_tableSize;
+  size_t size = ProtectedValues::_tableSize;
   ProtectedValues::KeyValue *table = ProtectedValues::_table;
-  for (int i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; i++) {
     AllocatedValueImp *val = table[i].key;
     if (val) {
       ++count;

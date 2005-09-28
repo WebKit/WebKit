@@ -29,11 +29,11 @@
 {
 }
 
-+ (int)interpreterCount;
++ (size_t)interpreterCount;
 
-+ (int)objectCount;
-+ (int)noGCAllowedObjectCount;
-+ (int)referencedObjectCount;
++ (size_t)objectCount;
++ (size_t)noGCAllowedObjectCount;
++ (size_t)referencedObjectCount;
 + (NSSet *)rootObjectClasses;
 
 + (void)garbageCollect;

@@ -618,12 +618,12 @@ NS_ENDHANDLER
     [self _setBoolValue: flag forKey: WebKitTextAreasAreResizablePreferenceKey];
 }
 
-- (int)_pageCacheSize
+- (size_t)_pageCacheSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
 }
 
-- (int)_objectCacheSize
+- (size_t)_objectCacheSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitObjectCacheSizePreferenceKey];
 }
