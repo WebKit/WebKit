@@ -1,3 +1,10 @@
+2005-09-28  Darin Adler  <darin@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5144
+          pixel test should run even if render trees differ
+
+        * Scripts/run-webkit-tests: Don't check if the text dump matches.
+
 2005-09-27  Eric Seidel  <eseidel@apple.com>
 
         No review needed, SVG build fix only.

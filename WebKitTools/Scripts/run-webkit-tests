@@ -246,7 +246,7 @@ for my $test (@tests) {
             $diffResult = "passed";
         }
 
-        if (!$hashMatches && -f "$testDirectory/$base-expected.png" && $textDumpMatches) {
+        if (!$hashMatches && -f "$testDirectory/$base-expected.png") {
             $expectedPNGSize = -s "$testDirectory/$base-expected.png";
             open EXPECTEDPNG, "$testDirectory/$base-expected.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
