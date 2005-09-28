@@ -39,9 +39,9 @@ namespace KDOM
         EventTargetImpl();
         virtual ~EventTargetImpl();
 
-        void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
-        void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
-        bool dispatchEvent(EventImpl *evt);
+        virtual void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture) = 0;
+        virtual void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture) = 0;
+        virtual bool dispatchEvent(EventImpl *evt) = 0;
 
         void handleLocalEvents(EventImpl *evt, bool useCapture);
 
@@ -55,10 +55,11 @@ namespace KDOM
          */
         virtual void defaultEventHandler(EventImpl *) {}
 
+    protected:
+        Q3PtrList<RegisteredEventListener> *m_eventListeners;
+
     private:
         int m_listenerTypes;
-
-        Q3PtrList<RegisteredEventListener> *m_eventListeners;
     };
 };
 

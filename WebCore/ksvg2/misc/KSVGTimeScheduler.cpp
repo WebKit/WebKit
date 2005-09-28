@@ -296,10 +296,10 @@ void SVGTimer::notifyAll()
         // Handle <animateTransform>...
         if(targetTransforms)
         {
-            SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(tit.key());
-            SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(tit.key());
+            SVGElementImpl *key = tit.key();
+            SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(key);
 
-            if(styled && transform)
+            if(key && key->isStyled() && transform)
             {
                 transform->transform()->setAnimVal(targetTransforms);
 
@@ -307,6 +307,7 @@ void SVGTimer::notifyAll()
                 transform->updateLocalTransform(transform->transform()->animVal());
 
                 // ... update element & child elements ...
+                SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(key);
                 transform->updateSubtreeMatrices(styled);
 
                 // ... and switch back to baseVal (and do not update!)
@@ -331,9 +332,9 @@ void SVGTimer::notifyAll()
     // Optimized update logic (to avoid 4 updates, on the same element)
     for(tit = targetMap.begin(); tit != tend; ++tit)
     {
-        SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(tit.key());
-        if(styled)
-            styled->setChanged(true);
+        SVGElementImpl *key = tit.key();
+        if(key && key->isStyled())
+            static_cast<SVGStyledElementImpl *>(key)->setChanged(true);
     }
 }
 

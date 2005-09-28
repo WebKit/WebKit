@@ -44,7 +44,9 @@ namespace KSVG
     public:
         SVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
         virtual ~SVGElementImpl();
-
+#if APPLE_CHANGES
+        virtual bool isSVGElement() { return true; }
+#endif
         virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
 
         // 'SVGElement' functions
@@ -70,6 +72,9 @@ namespace KSVG
         virtual QString adjustViewportClipping() const { return QString::null; }
 
         SVGDocumentImpl *getDocument() const;
+        
+        virtual bool isStyled() const { return false; }
+        virtual bool isSVG() const { return false; }
 
     private:
 #if 0
@@ -91,6 +96,29 @@ bool T::operator==(const T &other) const { \
 bool T::operator!=(const T &other) const { \
     return !operator==(other); \
 } \
+
+
+// Helper for DOMNode -> SVGElement conversion
+#include <kdom/kdom.h>
+#include <kdom/Namespace.h>
+#include <kdom/DOMString.h>
+
+namespace KSVG {
+    static inline SVGElementImpl *svg_dynamic_cast(KDOM::NodeImpl *node) {
+        SVGElementImpl *svgElement = NULL;
+#if APPLE_CHANGES
+        if (node && node->isSVGElement())
+            svgElement = static_cast<SVGElementImpl *>(node);
+#else
+        if (node && (node->nodeType() == KDOM::ELEMENT_NODE)) {
+            KDOM::ElementImpl *element = static_cast<KDOM::ElementImpl *>(node);
+            if (element && (KDOM::DOMString(element->namespaceURI()) == KDOM::NS_SVG))
+                svgElement = static_cast<SVGElementImpl *>(element);
+        }
+#endif
+        return svgElement;
+    }
+};
 
 #endif
 

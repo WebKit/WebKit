@@ -124,9 +124,10 @@ void SVGUseElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 void SVGUseElementImpl::close()
 {
     QString ref = KDOM::DOMString(href()->baseVal()).string();
-    QString targetId = SVGURIReferenceImpl::getTarget(ref);
-    SVGElementImpl *target = dynamic_cast<SVGElementImpl *>(ownerDocument()->getElementById(KDOM::DOMString(targetId).handle()));
-    if(!target)
+    KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(ref);
+    KDOM::ElementImpl *targetElement = ownerDocument()->getElementById(targetId.handle());
+    SVGElementImpl *target = svg_dynamic_cast(targetElement);
+    if (!target)
         return;
 
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();

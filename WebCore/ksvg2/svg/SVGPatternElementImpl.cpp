@@ -228,7 +228,7 @@ void SVGPatternElementImpl::notifyAttributeChange() const
     // Find first pattern def that has children
     const KDOM::ElementImpl *target = this;
 
-    const KDOM::NodeImpl *test = static_cast<const KDOM::NodeImpl *>(target);
+    const KDOM::NodeImpl *test = this;
     while(test && !test->hasChildNodes())
     {
         QString ref = KDOM::DOMString(href()->baseVal()).string();

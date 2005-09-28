@@ -88,9 +88,9 @@ SVGElementImpl *SVGAnimationElementImpl::targetElement() const
     {
         if(!m_href.isEmpty())
         {
-            KDOM::ElementImpl *element = ownerDocument()->getElementById(KDOM::DOMString(SVGURIReferenceImpl::getTarget(m_href)).handle());
-            if(element)
-                m_targetElement = dynamic_cast<SVGElementImpl *>(element);
+            KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(m_href);
+            KDOM::ElementImpl *element = ownerDocument()->getElementById(targetId.handle());
+            m_targetElement = svg_dynamic_cast(element);
         }
         else if(parentNode())
         {
@@ -498,7 +498,10 @@ KDOM::DOMStringImpl *SVGAnimationElementImpl::targetAttribute() const
     if(!targetElement())
         return 0;
     
-    SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(targetElement());
+    SVGElementImpl *target = targetElement();
+    SVGStyledElementImpl *styled = NULL;
+    if (target && target->isStyled())
+        styled = static_cast<SVGStyledElementImpl *>(target);
     KDOM::CDFInterface *interface = (styled ? styled->ownerDocument()->implementation()->cdfInterface() : 0);
     
     KDOM::DOMStringImpl *ret = 0;
@@ -545,7 +548,9 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::D
     if(!target || !name || !value)
         return;
     
-    SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(target);
+    SVGStyledElementImpl *styled = NULL;
+    if (target && target->isStyled())
+        styled = static_cast<SVGStyledElementImpl *>(target);
     KDOM::CDFInterface *interface = (styled ? styled->ownerDocument()->implementation()->cdfInterface() : 0);
 
     EAttributeType attributeType = type;

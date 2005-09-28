@@ -31,6 +31,8 @@
 #include "NodeImpl.h"
 #include "TextImpl.h"
 #include "kdomevents.h"
+#include "RegisteredEventListener.h"
+#include "EventExceptionImpl.h"
 #include "RenderStyle.h"
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
@@ -1180,6 +1182,150 @@ void NodeImpl::dispatchEventToSubTree(NodeImpl *node, EventImpl *event)
 
         child = child->nextSibling();
     }
+}
+
+void NodeImpl::addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture)
+{
+    if(!listener)
+        return;
+
+    if(type)
+        type->ref();
+
+    // If the requested listener is builtin (ie. DOMNODEREMOVED_EVENT)
+    // we'll cache the specific enumeration value to save space
+    // but in case of a custom event (ie. as used in the dom2 events test suite)
+    // for example 'foo' just don't cache it; kdom internally won't fire any
+    // 'foo' events, which means it doesn't need to know anything about it...
+
+    if(!m_eventListeners)
+    {
+        m_eventListeners = new Q3PtrList<RegisteredEventListener>();
+        m_eventListeners->setAutoDelete(true);
+    }
+    else
+    {
+        // If there is an existing listener forget this call...
+        RegisteredEventListener compare(type, listener, useCapture); 
+
+        Q3PtrListIterator<RegisteredEventListener> it(*m_eventListeners);
+        for(; it.current(); ++it)
+        {
+            if(*(it.current()) == compare)
+                return;
+        }
+    }
+
+    DocumentImpl *doc = (nodeType() == DOCUMENT_NODE) ? static_cast<DocumentImpl *>(this) : ownerDocument();
+    addListenerType(doc->addListenerType(type));
+    m_eventListeners->append(new RegisteredEventListener(type, listener, useCapture));
+
+    if(type)
+        type->deref();
+}
+
+void NodeImpl::removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture)
+{
+    if(!m_eventListeners || !listener)
+        return;
+
+    DocumentImpl *doc = (nodeType() == DOCUMENT_NODE) ? static_cast<DocumentImpl *>(this) : ownerDocument();
+    if(!doc)
+    {
+        kdError() << "Couldn't remove listener type! No document available!" << endl;
+        return;
+    }
+
+    RegisteredEventListener compare(type, listener, useCapture);
+
+    Q3PtrListIterator<RegisteredEventListener> it(*m_eventListeners);
+    for(; it.current(); ++it)
+    {
+        if((*it.current()) == compare)
+        {
+            m_eventListeners->removeRef(it.current());
+            removeListenerType(doc->removeListenerType(type));
+            return;
+        }
+    }
+}
+
+bool NodeImpl::dispatchEvent(EventImpl *evt)
+{
+    if(!evt || (evt->id() == UNKNOWN_EVENT && (!evt->type() || evt->type()->isEmpty())))
+        throw new EventExceptionImpl(UNSPECIFIED_EVENT_TYPE_ERR);
+
+    evt->setTarget(this);
+
+    // Find out, where to send to -> collect parent nodes,
+    // cast them to EventTargets and add them to list
+    Q3PtrList<EventTargetImpl> targetChain;
+    for(NodeImpl *n = this; n != 0; n = n->parentNode())
+        targetChain.prepend(n);
+
+    // Trigger any capturing event handlers on our way down
+    evt->setEventPhase(CAPTURING_PHASE);
+
+    Q3PtrListIterator<EventTargetImpl> it(targetChain);
+    for(; it.current() && it.current() != this && !evt->propagationStopped(); ++it)
+    {
+        EventTargetImpl *i = it.current();
+        evt->setCurrentTarget(i);
+
+        if(i)
+            i->handleLocalEvents(evt, true);
+    }
+
+    // Dispatch to the actual target node
+    it.toLast();
+    if(!evt->propagationStopped())
+    {
+        EventTargetImpl *i = it.current();
+
+        evt->setCurrentTarget(i);
+        evt->setEventPhase(AT_TARGET);
+
+        if(i)
+            i->handleLocalEvents(evt, false);
+    }
+
+    --it;
+
+    // Bubble up again
+    if(evt->bubbles())
+    {
+        evt->setEventPhase(BUBBLING_PHASE);
+        for(; it.current() && !evt->propagationStopped(); --it)
+        {
+            EventTargetImpl *i = it.current();
+            evt->setCurrentTarget(i);
+
+            if(i)
+                i->handleLocalEvents(evt, false);
+        }
+    }
+
+    evt->setCurrentTarget(0);
+    evt->setEventPhase(0);        // I guess this is correct, the spec does not seem to say
+                                // anything about the default event handler phase.
+    if(evt->bubbles())
+    {
+        // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
+        it.toLast();
+        for(; it.current() && !evt->propagationStopped() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
+            it.current()->defaultEventHandler(evt);
+    }
+
+    DocumentImpl *doc = (nodeType() == DOCUMENT_NODE) ? static_cast<DocumentImpl *>(this) : ownerDocument();
+    doc->updateRendering(); // any changes during event handling need to be rendered
+
+/* FIXME
+    Ecma *ecmaEngine = doc->ecmaEngine();
+    if(ecmaEngine)
+        ecmaEngine->finishedWithEvent(evt);
+*/
+    bool retVal = !evt->defaultPrevented(); // What if defaultPrevented was called before dispatchEvent?
+    return retVal;
 }
 
 NodeImpl *NodeImpl::traverseNextNode(NodeImpl *stayWithin) const

@@ -32,7 +32,6 @@ namespace KDOM
     class Length;
     class AttrImpl;
     class NodeImpl;
-    class DOMString;
     class ElementImpl;
     class DocumentImpl;
     class DOMStringImpl;
@@ -180,10 +179,10 @@ namespace KDOM
          * \code
          * Element element = document.getElementByID "foobar");
          * 
-         * DOMString href = element.getAttribute("href");
-         * DOMString documentBase = element.baseURI();
+         * DOMStringImpl href = element.getAttribute("href");
+         * DOMStringImpl documentBase = element.baseURI();
          *
-         * DOMString theCompleteURL(Helper::BuildURI(documentBase.handle(), href.handle());
+         * DOMStringImpl theCompleteURL(Helper::BuildURI(documentBase.handle(), href.handle());
          * \endcode
          *
          * @param base the base URI to resolve against

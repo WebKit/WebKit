@@ -147,6 +147,11 @@ namespace KDOM
         void dispatchChildRemovalEvents(NodeImpl *child);
         void dispatchChildInsertedEvents(NodeImpl *child);
         void dispatchEventToSubTree(NodeImpl *node, EventImpl *event);
+        
+        // EventTarget abstract methods
+        virtual void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+        virtual void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+        virtual bool dispatchEvent(EventImpl *evt);
 
         // Internal
         virtual bool isReadOnly() const;
@@ -268,7 +273,9 @@ namespace KDOM
 
         bool inDocument() const { return m_inDocument; }
         void setInDocument(bool b = true) { m_inDocument = b; }
-
+#if APPLE_CHANGES
+        virtual bool isSVGElement() { return false; }
+#endif
     protected:
         // Helper methods (They will eventually throw exceptions!)
         bool isAncestor(NodeImpl *current, NodeImpl *other);

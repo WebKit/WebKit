@@ -59,24 +59,21 @@ SVGFilterPrimitiveStandardAttributesImpl::~SVGFilterPrimitiveStandardAttributesI
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::x() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "0%" were specified.
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-    return lazy_create<SVGAnimatedLengthImpl>(m_x, context, LM_WIDTH);
+    return lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH);
 }
 
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::y() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "0%" were specified.
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-    return lazy_create<SVGAnimatedLengthImpl>(m_y, context, LM_HEIGHT);
+    return lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT);
 }
 
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::width() const
 {
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
     // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
     if(!m_width)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_width, context, LM_WIDTH);
+        lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH);
         m_width->baseVal()->setValueAsString(KDOM::DOMString("100%").handle());
         return m_width;
     }
@@ -86,11 +83,10 @@ SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::width() const
 
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::height() const
 {
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
     // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
     if(!m_height)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_height, context, LM_HEIGHT);
+        lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT);
         m_height->baseVal()->setValueAsString(KDOM::DOMString("100%").handle());
         return m_height;
     }
@@ -100,8 +96,7 @@ SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::height() const
 
 SVGAnimatedStringImpl *SVGFilterPrimitiveStandardAttributesImpl::result() const
 {
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-    return lazy_create<SVGAnimatedStringImpl>(m_result, context);
+    return lazy_create<SVGAnimatedStringImpl>(m_result, this);
 }
 
 void SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(KDOM::AttributeImpl *attr)

@@ -1,3 +1,59 @@
+2005-09-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Removed 19 uses of dynamic_cast.
+        Part of this came by making EventTarget abstract, and moving
+        the necessary implementations up into NodeImpl.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3914
+
+        * kdom/Helper.h: comment cleanup
+        * kdom/bindings/IDLCodeGeneratorJs.pm: tabs -> spaces
+        * kdom/core/NodeImpl.cpp: Moved EventTarget methods
+        (NodeImpl::addEventListener):
+        (NodeImpl::removeEventListener):
+        (NodeImpl::dispatchEvent):
+        * kdom/core/NodeImpl.h:
+        (KDOM::NodeImpl::isSVGElement):
+        * kdom/events/EventTargetImpl.cpp: Moved methods to NodeImpl
+        * kdom/events/EventTargetImpl.h:
+        * kdom/ls/DOMImplementationLSImpl.cpp: disabled LSParserImpl
+        (DOMImplementationLSImpl::createLSParser):
+        * ksvg2/ecma/Ecma.cpp:
+        (Ecma::setupDocument):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (SVGTimer::notifyAll):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::targetElement):
+        (SVGAnimationElementImpl::targetAttribute):
+        (SVGAnimationElementImpl::setTargetAttribute):
+        * ksvg2/svg/SVGElementImpl.h:
+        (KSVG::SVGElementImpl::isSVGElement):
+        (KSVG::SVGElementImpl::isStyled):
+        (KSVG::SVGElementImpl::isSVG):
+        (KSVG::svg_dynamic_cast):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::x):
+        (SVGFilterPrimitiveStandardAttributesImpl::y):
+        (SVGFilterPrimitiveStandardAttributesImpl::width):
+        (SVGFilterPrimitiveStandardAttributesImpl::height):
+        (SVGFilterPrimitiveStandardAttributesImpl::result):
+        * ksvg2/svg/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::getCTM):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::notifyAttributeChange):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        (KSVG::SVGSVGElementImpl::isSVG):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::attach):
+        (SVGStyledElementImpl::detach):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        (KSVG::SVGStyledElementImpl::isStyled):
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::close):
+
 2005-09-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

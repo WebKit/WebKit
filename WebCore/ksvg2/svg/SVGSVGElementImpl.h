@@ -64,6 +64,8 @@ namespace KSVG
     public:
         SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
         virtual ~SVGSVGElementImpl();
+        
+        virtual bool isSVG() const { return true; }
 
         // 'SVGSVGElement' functions
         SVGAnimatedLengthImpl *x() const;

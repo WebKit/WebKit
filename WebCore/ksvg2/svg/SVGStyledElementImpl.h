@@ -46,6 +46,8 @@ namespace KSVG
     public:
         SVGStyledElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
         virtual ~SVGStyledElementImpl();
+        
+        virtual bool isStyled() const { return true; }
 
         // 'SVGStylable' functions
         virtual SVGAnimatedStringImpl *className() const;

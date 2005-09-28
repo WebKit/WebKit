@@ -794,7 +794,7 @@ sub GenerateImplementation
 		push(@implContent, "\n{\n    if(exec)\n        return " . $extractedType{'type'} . "Proto::self(exec);");
 	}
 			
-	push(@implContent, "\n\n\treturn NULL;\n}\n");
+	push(@implContent, "\n\n    return NULL;\n}\n");
 
 	# - Add 'bridge' function (always needed!)
 	my $useBridge = "${showNS}DOMBridge";
@@ -1166,14 +1166,14 @@ sub GenerateHashTable
 #	push(@implContent, "static const char $nameStringTable\[\] =\n\{\n");
 #
 #	my $s = "\0";
-#	push(@implContent, "\t\"\\0\"\n");
+#	push(@implContent, "    \"\\0\"\n");
 #
 #	for my $k (sort { length($b) <=> length($a) || $a cmp $b } @$keys) {
 #		if ($s =~ /^(.*)\Q$k\E\0/) {
 #			$soffset{$k} = length($1);
 #		} else {
 #			$soffset{$k} = length($s);
-#			push(@implContent, "\t\"$k\\0\"\n");
+#			push(@implContent, "    \"$k\\0\"\n");
 #
 #			$s .= $k;
 #			$s .= "\0";
@@ -1190,8 +1190,8 @@ sub GenerateHashTable
 		if(defined($entry)) {
 			my $key = @$keys[$entry];
 
-#			push(@implContent, "\t\{ " . $soffset{$key});
-			push(@implContent, "\t\{ \"" . $key . "\"");
+#			push(@implContent, "    \{ " . $soffset{$key});
+			push(@implContent, "    \{ \"" . $key . "\"");
 			push(@implContent, ", " . @$values[$entry]);
 			push(@implContent, ", " . @$specials[$entry]);
 			push(@implContent, ", " . @$parameters[$entry]);
@@ -1205,7 +1205,7 @@ sub GenerateHashTable
 #				push(@implContent, "-1 \}");
 			}
 		} else {
-			push(@implContent, "\t\{ 0, 0, 0, 0, 0 \}");
+			push(@implContent, "    \{ 0, 0, 0, 0, 0 \}");
 		}
 
 		push(@implContent, ",") unless($i eq $size - 1);
