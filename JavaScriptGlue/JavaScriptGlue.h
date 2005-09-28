@@ -23,7 +23,7 @@ typedef enum {
 typedef struct OpaqueJSTypeRef* JSTypeRef;
 typedef JSTypeRef JSObjectRef;
 typedef JSTypeRef JSRunRef;
-typedef UInt32 JSTypeID;
+typedef CFTypeID JSTypeID;
 
 typedef void (*JSObjectDisposeProcPtr)(void* data);
 typedef CFArrayRef (*JSObjectCopyPropertyNamesProcPtr)(void* data);

@@ -1,3 +1,11 @@
+2005-09-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4223297> JavaScriptGlue: Submit 64-bit compatible versions of your API and SPIs by September 15
+
+        * JavaScriptGlue.h: Changed UInt32 to CFTypeID for JSTypeID
+
 2005-09-06  Geoffrey Garen  <ggaren@apple.com>
 
         -upgraded project files to XCode 2.1
