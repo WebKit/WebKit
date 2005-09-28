@@ -40,7 +40,6 @@
 		65E217BE08E7EECC0023E5F6 /* Assertions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.mm */; };
 		65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65EF2DF808BECC8A000894BB /* shared_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EF2DF408BECC80000894BB /* shared_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C008B0F68000AB3056 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.c */; };
 		930754C108B0F68000AB3056 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.c */; };
 		930754CF08B0F74600AB3056 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.c */; };
@@ -343,6 +342,16 @@
 		A85D8284087B2822006A9172 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		A85D8285087B2822006A9172 /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */; };
 		A85D8286087B2822006A9172 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9322A00306C341D3009067BB /* libicucore.dylib */; };
+		A883C7EE08EA12860051473E /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217B708E7EECC0023E5F6 /* Assertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A883C7EF08EA12860051473E /* Assertions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.mm */; };
+		A883C7F008EA12860051473E /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
+		A883C7F108EA12860051473E /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A883C7F208EA12860051473E /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65162EEA08E6A1FE007556CD /* SharedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A883C7F308EA12860051473E /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
+		A883C7F408EA12860051473E /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
+		A883C7F508EA12860051473E /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
+		A883C7F608EA12860051473E /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
+		A883C7F708EA12A20051473E /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
 		A8BC0DFC08D43D6D00379918 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 /* End PBXBuildFile section */
 
@@ -497,12 +506,10 @@
 		65AB004806261CBA0076DE63 /* interpreter_map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = interpreter_map.cpp; sourceTree = "<group>"; };
 		65AB004906261CBA0076DE63 /* interpreter_map.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = interpreter_map.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
-		65DE646F08E8C88A005D002A /* fast_malloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fast_malloc.h; sourceTree = "<group>"; };
 		65E217B708E7EECC0023E5F6 /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Assertions.h; sourceTree = "<group>"; };
 		65E217B808E7EECC0023E5F6 /* Assertions.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = Assertions.mm; sourceTree = "<group>"; };
 		65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; };
 		65E217BA08E7EECC0023E5F6 /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; };
-		65EF2DF408BECC80000894BB /* shared_ptr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = shared_ptr.h; sourceTree = "<group>"; };
 		700DA117065984CE00747C0B /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WebScriptObjectPrivate.h; path = bindings/objc/WebScriptObjectPrivate.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* bool_object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = bool_object.h; sourceTree = "<group>"; };
 		704FD44505698F17003DBED9 /* runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = runtime.cpp; path = bindings/runtime.cpp; sourceTree = "<group>"; };
@@ -690,7 +697,6 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				65EF2DF408BECC80000894BB /* shared_ptr.h */,
 				65621E6B089E859700760F35 /* property_slot.cpp */,
 				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
@@ -898,7 +904,6 @@
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				93F1981A08245AAE001E9ABC /* keywords.table */,
 				933A3499038AE7C6008635CE /* grammar.y */,
-				65DE646F08E8C88A005D002A /* fast_malloc.h */,
 				F692A8650255597D01FF60F7 /* lexer.cpp */,
 				F692A8660255597D01FF60F7 /* lexer.h */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
@@ -1082,8 +1087,14 @@
 				93E26BFF08B151D400F85226 /* ucp.h in Headers */,
 				93E26C0008B151D400F85226 /* ucpinternal.h in Headers */,
 				93E26CD008B2921900F85226 /* softlinking.h in Headers */,
-				65EF2DF808BECC8A000894BB /* shared_ptr.h in Headers */,
 				A8BC0DFC08D43D6D00379918 /* ucptable.c in Headers */,
+				A883C7EE08EA12860051473E /* Assertions.h in Headers */,
+				A883C7F108EA12860051473E /* FastMalloc.h in Headers */,
+				A883C7F208EA12860051473E /* SharedPtr.h in Headers */,
+				A883C7F308EA12860051473E /* TCPageMap.h in Headers */,
+				A883C7F408EA12860051473E /* TCSpinLock.h in Headers */,
+				A883C7F608EA12860051473E /* TCSystemAlloc.h in Headers */,
+				A883C7F708EA12A20051473E /* protected_reference.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1738,6 +1749,9 @@
 				93E26BD508B1514100F85226 /* pcre_xclass.c in Sources */,
 				93E26CF808B29A1C00F85226 /* pcre_get.c in Sources */,
 				93E26DDD08B2A4F400F85226 /* pcre_printint.c in Sources */,
+				A883C7EF08EA12860051473E /* Assertions.mm in Sources */,
+				A883C7F008EA12860051473E /* FastMalloc.cpp in Sources */,
+				A883C7F508EA12860051473E /* TCSystemAlloc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2060,7 +2074,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = icu;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
@@ -2111,7 +2128,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = icu;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
@@ -2162,7 +2182,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = icu;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
@@ -2213,7 +2236,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = icu;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				OTHER_LDFLAGS = (

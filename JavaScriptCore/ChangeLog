@@ -1,5 +1,11 @@
 2005-09-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by kevin.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: fix after malloc changes.
+
+2005-09-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         * kjs/nodes.cpp:
