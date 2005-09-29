@@ -1,3 +1,14 @@
+2005-09-28  Geoffrey Garen  <ggaren@apple.com>
+
+	- Fixed <rdar://problem/4275206> Denver Regression: Seed: Past Editions of Opinions display 
+	  "NAN/Undefined" for www.washingtonpost.com
+	  
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (KJS::KRFCDate_parseDate): If the timezone isn't specified, rather than returning
+        invalidDate, substitute the local timezone. This matches the behavior of FF/IE.
+
 2005-09-28  Maciej Stachowiak  <mjs@apple.com>
 
 	Patch from George Staikos, reviewed by me.
