@@ -1,6 +1,17 @@
 2005-09-29  Eric Seidel  <eseidel@apple.com>
         Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
 
+        Reviewed by darin.
+
+        Fix JSC memory smasher in TOT.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5176
+
+        * pcre/pcre_exec.c:
+        (match):
+
+2005-09-29  Eric Seidel  <eseidel@apple.com>
+        Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
+
         Reviewed by mjs.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

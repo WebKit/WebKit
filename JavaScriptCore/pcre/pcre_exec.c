@@ -1809,7 +1809,18 @@ for (;;)
 #if PCRE_UTF16
       int dc;
       ecode += length;
-      GETCHARINC(dc, eptr);
+      switch (md->end_subject - eptr)
+      {
+        case 0:
+          RRETURN(MATCH_NOMATCH);
+        case 1:
+          dc = *eptr++;
+          if (IS_LEADING_SURROGATE(dc))
+            RRETURN(MATCH_NOMATCH);
+          break;
+        default:
+          GETCHARINC(dc, eptr);
+      }
       if (fc != dc) RRETURN(MATCH_NOMATCH);
 #else
       if (length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
@@ -1837,7 +1848,9 @@ for (;;)
       ecode++;
       GETUTF8CHARLEN(fc, ecode, length);
 
-#if !PCRE_UTF16
+#if PCRE_UTF16
+      if (md->end_subject - eptr == 0) RRETURN(MATCH_NOMATCH);
+#else
       if (length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
 #endif
 
@@ -1861,7 +1874,14 @@ for (;;)
       else
         {
         int dc;
-        GETCHARINC(dc, eptr);
+#if PCRE_UTF16
+        if (md->end_subject - eptr == 1) {
+          dc = *eptr++;
+          if (IS_LEADING_SURROGATE(dc))
+            RRETURN(MATCH_NOMATCH);
+        } else
+#endif
+          GETCHARINC(dc, eptr);
         ecode += length;
 
         /* If we have Unicode property support, we can use it to test the other
