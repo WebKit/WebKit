@@ -1,3 +1,12 @@
+2005-09-29  Eric Seidel  <eseidel@apple.com>
+        Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
+
+        Reviewed by mjs.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Build fix for JSC+SVG after 5161.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5179
+
 2005-09-28  Geoffrey Garen  <ggaren@apple.com>
 
 	- Fixed <rdar://problem/4275206> Denver Regression: Seed: Past Editions of Opinions display 

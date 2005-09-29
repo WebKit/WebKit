@@ -25,6 +25,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		37B800EB08EBB6520035B474 /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B800EC08EBB6540035B474 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92B08EA173A00F7300B /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B800ED08EBB6540035B474 /* HashMapPtrSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B800EE08EBB65A0035B474 /* HashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92C08EA173A00F7300B /* HashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B800EF08EBB65B0035B474 /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
+		37B800F008EBB65B0035B474 /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92E08EA173A00F7300B /* HashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B800F108EBB65C0035B474 /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65162EEB08E6A1FE007556CD /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65162EEA08E6A1FE007556CD /* SharedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65162F0208E6A2D0007556CD /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65162EEA08E6A1FE007556CD /* SharedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		652C107F08DA7B1E0020887D /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
@@ -1112,6 +1119,12 @@
 				A883C7F408EA12860051473E /* TCSpinLock.h in Headers */,
 				A883C7F608EA12860051473E /* TCSystemAlloc.h in Headers */,
 				A883C7F708EA12A20051473E /* protected_reference.h in Headers */,
+				37B800EB08EBB6520035B474 /* HashFunctions.h in Headers */,
+				37B800EC08EBB6540035B474 /* HashMap.h in Headers */,
+				37B800ED08EBB6540035B474 /* HashMapPtrSpec.h in Headers */,
+				37B800EE08EBB65A0035B474 /* HashSet.h in Headers */,
+				37B800F008EBB65B0035B474 /* HashTable.h in Headers */,
+				37B800F108EBB65C0035B474 /* HashTraits.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1768,6 +1781,7 @@
 				A883C7EF08EA12860051473E /* Assertions.mm in Sources */,
 				A883C7F008EA12860051473E /* FastMalloc.cpp in Sources */,
 				A883C7F508EA12860051473E /* TCSystemAlloc.cpp in Sources */,
+				37B800EF08EBB65B0035B474 /* HashTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
