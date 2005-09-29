@@ -529,6 +529,7 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
                 tabText = "";
             }
             NodeImpl *textNode = document->createTextNode(s);
+            rebalanceWhitespaceInTextNode(textNode, 0, s.length());
             paragraph->appendChild(textNode, exceptionCode);
             ASSERT(exceptionCode == 0);
         }
@@ -560,33 +561,6 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
     
     if (!text.isEmpty()) {
         QString string = text;
-
-        // FIXME: Wrap the NBSP's in a span that says "converted space".
-        int offset = 0;
-        int stringLength = string.length();
-        while (1) {
-            // FIXME: This only converts plain old spaces, and does not
-            // deal with more exotic whitespace. Note that we want to 
-            // leave newlines and returns alone at this point anyway, 
-            // since those are handled specially later.
-            int spacesPos = string.find("  ", offset);
-            if (spacesPos < 0)
-                break;
-
-            // Found two adjoining spaces.
-            // Now, lookahead to see if these two spaces are followed by:
-            //   1. another space and then a non-space
-            //   2. another space and then the end of the string
-            // If either 1 or 2 is true, replace the three spaces found with nbsp+nbsp+space, 
-            // otherwise, replace the first two spaces with nbsp+space.
-            if ((spacesPos + 3 < stringLength && string[spacesPos + 2] == ' ' && string[spacesPos + 3] != ' ')
-                    || (spacesPos + 3 == stringLength && string[spacesPos + 2] == ' ')) {
-                string.replace(spacesPos, 3, "\xA0\xA0 ");
-            } else {
-                string.replace(spacesPos, 2, "\xA0 ");
-            }
-            offset = spacesPos + 2;
-        }
 
         // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
         string.replace(QString("\r\n"), "\n");

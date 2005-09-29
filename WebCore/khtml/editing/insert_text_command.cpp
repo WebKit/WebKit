@@ -156,42 +156,16 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
         int offset = startPosition.offset();
 
-        if (text == " ") {
-            insertSpace(textNode, offset);
-            endPosition = Position(textNode, offset + 1);
+        insertTextIntoNode(textNode, offset, text);
+        endPosition = Position(textNode, offset + text.length());
 
-            m_charactersAdded++;
-            rebalanceWhitespace();
-        }
-        else {
-            const DOMString &existingText = textNode->data();
-            if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isCollapsibleWhitespace(existingText[offset - 2])) {
-                // DOM looks like this:
-                // character nbsp caret
-                // As we are about to insert a non-whitespace character at the caret
-                // convert the nbsp to a regular space.
-                // EDIT FIXME: This needs to be improved some day to convert back only
-                // those nbsp's added by the editor to make rendering come out right.
-                replaceTextInNode(textNode, offset - 1, 1, " ");
-            }
-            unsigned int len = text.length();
+        // The insertion may require adjusting adjacent whitespace, if it is present.
+        rebalanceWhitespaceAt(endPosition);
+        // Rebalancing on both sides isn't necessary if we've inserted a space.
+        if (text != " ") 
+            rebalanceWhitespaceAt(startPosition);
             
-#if APPLE_CHANGES
-            // When the user hits space to finish marked sequence, the string that
-            // we receive ends with a normal space, not a non breaking space.  This code
-            // ensures that the right kind of space is produced.
-            if (KWQ(document()->part())->markedTextRange() && text[len-1] == ' ') {
-                DOMString textWithoutTrailingSpace(text.unicode(), len-1);
-                insertTextIntoNode(textNode, offset, textWithoutTrailingSpace);
-                insertSpace(textNode, offset + len-1);
-            } else
-                insertTextIntoNode(textNode, offset, text);
-#else
-            insertTextIntoNode(textNode, offset, text);
-#endif
-            m_charactersAdded += len;
-            endPosition = Position(textNode, offset + len);
-        }
+        m_charactersAdded += text.length();
     }
 
     setEndingSelection(SelectionController(startPosition, DOWNSTREAM, endPosition, SEL_DEFAULT_AFFINITY));
@@ -255,51 +229,6 @@ DOM::Position InsertTextCommand::insertTab(Position pos)
     
     // return the position following the new tab
     return Position(spanNode->lastChild(), spanNode->lastChild()->caretMaxOffset());
-}
-
-void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned offset)
-{
-    ASSERT(textNode);
-
-    DOMString text(textNode->data());
-
-    // count up all spaces and newlines in front of the caret
-    // delete all collapsed ones
-    // this will work out OK since the offset we have been passed has been upstream-ized 
-    int count = 0;
-    for (unsigned int i = offset; i < text.length(); i++) {
-        if (isCollapsibleWhitespace(text[i]))
-            count++;
-        else 
-            break;
-    }
-    if (count > 0) {
-        // By checking the character at the downstream position, we can
-        // check if there is a rendered WS at the caret
-        Position pos(textNode, offset);
-        Position downstream = pos.downstream();
-        if (downstream.offset() < (int)text.length() && isCollapsibleWhitespace(text[downstream.offset()]))
-            count--; // leave this WS in
-        if (count > 0)
-            deleteTextFromNode(textNode, offset, count);
-    }
-
-    if (offset > 0 && offset <= text.length() - 1 && !isCollapsibleWhitespace(text[offset]) && !isCollapsibleWhitespace(text[offset - 1])) {
-        // insert a "regular" space
-        insertTextIntoNode(textNode, offset, " ");
-        return;
-    }
-
-    if (text.length() >= 2 && offset >= 2 && isNBSP(text[offset - 2]) && isNBSP(text[offset - 1])) {
-        // DOM looks like this:
-        // nbsp nbsp caret
-        // insert a space between the two nbsps
-        insertTextIntoNode(textNode, offset - 1, " ");
-        return;
-    }
-
-    // insert an nbsp
-    insertTextIntoNode(textNode, offset, nonBreakingSpaceString());
 }
 
 bool InsertTextCommand::isInsertTextCommand() const

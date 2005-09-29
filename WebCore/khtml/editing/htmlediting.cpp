@@ -87,6 +87,7 @@ using DOM::TreeWalkerImpl;
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
 #include "KWQKHTMLPart.h"
+#include "KWQRegExp.h"
 #else
 #define ASSERT(assertion) ((void)0)
 #define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
@@ -97,6 +98,44 @@ using DOM::TreeWalkerImpl;
 #endif
 
 namespace khtml {
+
+void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned int length)
+{
+    static QRegExp nonRegularWhitespace("[\xa0\n]");
+    static QString twoSpaces("  ");
+    static QString nbsp("\xa0");
+    static QString space(" ");
+     
+    ASSERT(node->isTextNode());
+    TextImpl *textNode = static_cast<TextImpl *>(node);
+    DOMString text = textNode->data();
+    ASSERT(length <= text.length() && start + length <= text.length());
+    
+    QString substring = text.substring(start, length).qstring();
+
+    substring.replace(nonRegularWhitespace, space);
+    
+    // The sequence should alternate between spaces and nbsps, always ending in a regular space.
+    // Note: This pattern doesn't mimic TextEdit editing behavior on other clients that don't
+    // support our -khtml-nbsp-mode: space, but it comes close.
+    static QString pattern("\xa0 ");
+    int end = length - 1; 
+    int i = substring.findRev(twoSpaces, end);
+    while (i >= 0) {
+        substring.replace(i , 2, pattern);
+        i = substring.findRev(twoSpaces, i);
+    }
+    
+    // Rendering will collapse any regular whitespace at the start or end of a line.  To prevent this, we use
+    // a nbsp at the start and end of a text node.  This is sometimes unnecessary,  E.G. <a>link</a> text
+    if (start == 0 && substring[0] == ' ')
+        substring.replace(0, 1, nbsp);
+    if (start + length == text.length() && substring[end] == ' ')
+        substring.replace(end, 1, nbsp);
+    
+    text.remove(start, length);
+    text.insert(DOMString(substring), start);
+}
 
 bool isTableStructureNode(const NodeImpl *node)
 {

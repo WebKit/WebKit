@@ -44,7 +44,7 @@ using DOM::TextImpl;
 namespace khtml {
 
 RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(DocumentImpl *document, const Position &pos)
-    : EditCommand(document), m_position(pos), m_upstreamOffset(InvalidOffset), m_downstreamOffset(InvalidOffset)
+    : EditCommand(document), m_position(pos), m_upstreamOffset(InvalidOffset)
 {
 }
 
@@ -52,15 +52,13 @@ RebalanceWhitespaceCommand::~RebalanceWhitespaceCommand()
 {
 }
 
-static inline bool isNBSP(const QChar &c)
+static inline bool isWhitespace(const QChar &c)
 {
-    return c.unicode() == 0xa0;
+    return c.unicode() == 0xa0 || isCollapsibleWhitespace(c);
 }
 
 void RebalanceWhitespaceCommand::doApply()
 {
-    static DOMString space(" ");
-
     if (m_position.isNull() || !m_position.node()->isTextNode())
         return;
         
@@ -69,70 +67,35 @@ void RebalanceWhitespaceCommand::doApply()
     if (text.length() == 0)
         return;
     
-    // find upstream offset
-    int upstream = m_position.offset();
-    while (upstream > 0 && isCollapsibleWhitespace(text[upstream - 1]) || isNBSP(text[upstream - 1])) {
+    int offset = m_position.offset();
+    // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
+    if (!isWhitespace(text[offset])) {
+        offset--;
+        if (offset < 0 || !isWhitespace(text[offset]))
+            return;
+    }
+    
+    // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
+    int upstream = offset;
+    while (upstream > 0 && isWhitespace(text[upstream - 1]))
         upstream--;
-        m_upstreamOffset = upstream;
-    }
-
-    // find downstream offset
-    int downstream = m_position.offset();
-    while ((unsigned)downstream < text.length() && isCollapsibleWhitespace(text[downstream]) || isNBSP(text[downstream])) {
+    m_upstreamOffset = upstream; // Save m_upstreamOffset, it will be used during an Undo
+    
+    int downstream = offset;
+    while ((unsigned)downstream + 1 < text.length() && isWhitespace(text[downstream + 1]))
         downstream++;
-        m_downstreamOffset = downstream;
-    }
-
-    if (m_upstreamOffset == InvalidOffset && m_downstreamOffset == InvalidOffset)
-        return;
-        
-    m_upstreamOffset = upstream;
-    m_downstreamOffset = downstream;
-    int length = m_downstreamOffset - m_upstreamOffset;
     
-    m_beforeString = text.substring(m_upstreamOffset, length);
+    int length = downstream - upstream + 1;
+    ASSERT(length > 0);
     
-    // The following loop figures out a "rebalanced" whitespace string for any length
-    // string, and takes into account the special cases that need to handled for the
-    // start and end of strings (i.e. first and last character must be an nbsp.
-    int i = m_upstreamOffset;
-    while (i < m_downstreamOffset) {
-        int add = (m_downstreamOffset - i) % 3;
-        switch (add) {
-            case 0:
-                m_afterString += nonBreakingSpaceString();
-                m_afterString += space;
-                m_afterString += nonBreakingSpaceString();
-                add = 3;
-                break;
-            case 1:
-                if (i == 0 || (unsigned)i + 1 == text.length()) // at start or end of string
-                    m_afterString += nonBreakingSpaceString();
-                else
-                    m_afterString += space;
-                break;
-            case 2:
-                if ((unsigned)i + 2 == text.length()) {
-                     // at end of string
-                    m_afterString += nonBreakingSpaceString();
-                    m_afterString += nonBreakingSpaceString();
-                }
-                else {
-                    m_afterString += nonBreakingSpaceString();
-                    m_afterString += space;
-                }
-                break;
-        }
-        i += add;
-    }
-    
-    text.remove(m_upstreamOffset, length);
-    text.insert(m_afterString, m_upstreamOffset);
+    m_beforeString = text.substring(upstream, length);
+    rebalanceWhitespaceInTextNode(textNode, upstream, length);
+    m_afterString = text.substring(upstream, length);
 }
 
 void RebalanceWhitespaceCommand::doUnapply()
 {
-    if (m_upstreamOffset == InvalidOffset && m_downstreamOffset == InvalidOffset)
+    if (m_upstreamOffset == InvalidOffset)
         return;
     
     ASSERT(m_position.node()->isTextNode());

@@ -1,0 +1,45 @@
+<html> 
+<head>
+
+<link rel=stylesheet href="../editingStyle.css" type="text/css">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for(i = 1; i <= 10; i++) {
+        typeCharacterCommand('x');
+        for(j = 1; j <= i; j++)
+            typeCharacterCommand(' ');
+        typeCharacterCommand('x');
+        for(k = 1; k <= i; k++)
+            extendSelectionBackwardByCharacterCommand();
+        extendSelectionBackwardByCharacterCommand();
+        extendSelectionBackwardByCharacterCommand();
+        copyCommand();
+        deleteCommand();
+        pasteAndMatchStyleCommand();
+        typeCharacterCommand('\n');
+    }
+}
+
+</script>
+
+<title>Pasting plain text with varying amounts of whitespace</title> 
+</head> 
+<body>
+
+<p>This tests to see if spaces are lost during a copy/paste</p>
+
+<hr>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing"></div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

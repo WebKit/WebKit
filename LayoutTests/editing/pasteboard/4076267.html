@@ -1,0 +1,37 @@
+<html> 
+<head>
+
+<link rel=stylesheet href="../editingStyle.css" type="text/css">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByCharacterCommand();
+    extendSelectionForwardByLineCommand();
+    copyCommand();
+    deleteCommand();
+    deleteCommand();
+    pasteAndMatchStyleCommand();
+}
+
+</script>
+
+<title>Pasting plain text loses leading/trailing whitespace</title> 
+</head> 
+<body>
+
+<p>This tests to see if leading spaces are lost during a copy/paste</p>
+
+<hr>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">. this text should have a single leading space before it</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

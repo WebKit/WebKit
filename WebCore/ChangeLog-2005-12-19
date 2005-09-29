@@ -1,3 +1,48 @@
+2005-09-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4278698> Adding a space inside whitespace:pre text collapses space
+        <rdar://problem/4076267> Mail behaves oddly when pasting in text with leading/trailing whitespace
+        <rdar://problem/4063751> Redo Typing can add extra space characters
+        <rdar://problem/4120558> Mail/WebKit: Repeated capitalizeWord command deletes spaces and does not capitalize
+
+        Reblance whitespace was finding the extent of surrounding whitespace incorrectly.  
+        createFragmentFromMarkup was not dealing with the special cases for spaces at the start/end 
+        of a line.  InsertTextCommand was removing collapsable whitespace without regard for the 
+        whitespace mode.  createFragmentFromMarkup and RebalanceWhitespace command now use one method 
+        to produce rebalanced sequences.  Removed special case whitespace handling from 
+        InsertTextCommand, that's RebalanceWhiteSpaceCommand's job.
+
+        Test cases added:
+        * layout-tests/editing/inserting/4278698.html: Added.
+        * layout-tests/editing/pasteboard/4076267-2.html: Added.
+        * layout-tests/editing/pasteboard/4076267-3.html: Added.
+        * layout-tests/editing/pasteboard/4076267.html: Added.
+        * layout-tests/editing/undo/4063751.html: Added.
+
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::rebalanceWhitespaceAt):
+        Added.  The old convenience method, rebalanceWhitespace, can probably
+        be removed, because there is never a non-caret selection after an editing command.
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::rebalanceWhitespaceInTextNode):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::input):
+        * khtml/editing/insert_text_command.h:
+        * khtml/editing/markup.cpp:
+        (khtml::createParagraphContentsFromString):
+        (khtml::createFragmentFromText):
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        (khtml::RebalanceWhitespaceCommand::RebalanceWhitespaceCommand):
+        (khtml::isWhitespace): Changed from isNBSP to include all forms of whitespace, to aid readability.
+        (khtml::RebalanceWhitespaceCommand::doApply):
+        (khtml::RebalanceWhitespaceCommand::doUnapply): Removed the unused m_downstreamOffset
+        * layout-tests/editing/editingStyle.css: Added.
+
+
 2005-09-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
