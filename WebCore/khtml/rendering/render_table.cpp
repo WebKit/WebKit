@@ -94,7 +94,7 @@ void RenderTable::setStyle(RenderStyle *_style)
 
         // According to the CSS2 spec, you only use fixed table layout if an
         // explicit width is specified on the table.  Auto width implies auto table layout.
-	if (style()->tableLayout() == TFIXED && !style()->width().isVariable()) {
+	if (style()->tableLayout() == TFIXED && !style()->width().isAuto()) {
 	    tableLayout = new FixedTableLayout(this);
 #ifdef DEBUG_LAYOUT
 	    kdDebug( 6040 ) << "using fixed table layout" << endl;
@@ -197,9 +197,9 @@ void RenderTable::calcWidth()
         
         // Subtract out any fixed margins from our available width for auto width tables.
         int marginTotal = 0;
-        if (style()->marginLeft().type != Variable)
+        if (style()->marginLeft().type != Auto)
             marginTotal += style()->marginLeft().width(availableWidth);
-        if (style()->marginRight().type != Variable)
+        if (style()->marginRight().type != Auto)
             marginTotal += style()->marginRight().width(availableWidth);
             
         // Subtract out our margins to get the available content width.
@@ -978,7 +978,7 @@ void RenderTableSection::addCell( RenderTableCell *cell )
 	    case Relative:
 #if 0
 		// we treat this as variable. This is correct according to HTML4, as it only specifies length for the height.
-		if ( cRowHeight.type == Variable ||
+		if ( cRowHeight.type == Auto ||
 		     ( cRowHeight.type == Relative && cRowHeight.value < height.value ) )
 		     grid[cRow].height = height;
 		     break;
@@ -1165,10 +1165,10 @@ int RenderTableSection::layoutRows( int toAdd )
 
         int dh = toAdd;
 	int totalPercent = 0;
-	int numVariable = 0;
+	int numAuto = 0;
 	for ( int r = 0; r < totalRows; r++ ) {
-	    if ( grid[r].height.type == Variable )
-		numVariable++;
+	    if ( grid[r].height.type == Auto )
+		numAuto++;
 	    else if ( grid[r].height.type == Percent )
 		totalPercent += grid[r].height.value;
 	}
@@ -1195,16 +1195,16 @@ int RenderTableSection::layoutRows( int toAdd )
                 rowPos[r+1] += add;
 	    }
 	}
-	if ( numVariable ) {
+	if ( numAuto ) {
 	    // distribute over variable cols
-// 	    qDebug("distributing %d over variable rows numVariable=%d", dh,  numVariable );
+// 	    qDebug("distributing %d over variable rows numAuto=%d", dh,  numAuto );
 	    int add = 0;
 	    for ( int r = 0; r < totalRows; r++ ) {
-		if ( numVariable > 0 && grid[r].height.type == Variable ) {
-		    int toAdd = dh/numVariable;
+		if ( numAuto > 0 && grid[r].height.type == Auto ) {
+		    int toAdd = dh/numAuto;
 		    add += toAdd;
 		    dh -= toAdd;
-                    numVariable--;
+                    numAuto--;
 		}
                 rowPos[r+1] += add;
 	    }
@@ -1258,7 +1258,7 @@ int RenderTableSection::layoutRows( int toAdd )
             // bugs. :)
             bool cellChildrenFlex = false;
             bool flexAllChildren = cell->style()->height().isFixed() || 
-                (!table()->style()->height().isVariable() && rHeight != cell->height());
+                (!table()->style()->height().isAuto() && rHeight != cell->height());
             RenderObject* o = cell->firstChild();
             while (o) {
                 if (!o->isText() && o->style()->height().isPercent() && (o->isReplaced() || o->scrollsOverflow() || flexAllChildren)) {

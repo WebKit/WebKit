@@ -635,7 +635,7 @@ bool RenderObject::scroll(KWQScrollDirection direction, KWQScrollGranularity gra
 bool
 RenderObject::hasStaticX() const
 {
-    return (style()->left().isVariable() && style()->right().isVariable()) ||
+    return (style()->left().isAuto() && style()->right().isAuto()) ||
             style()->left().isStatic() ||
             style()->right().isStatic();
 }
@@ -643,7 +643,7 @@ RenderObject::hasStaticX() const
 bool
 RenderObject::hasStaticY() const
 {
-    return (style()->top().isVariable() && style()->bottom().isVariable()) || style()->top().isStatic();
+    return (style()->top().isAuto() && style()->bottom().isAuto()) || style()->top().isStatic();
 }
 
 void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
@@ -748,32 +748,6 @@ int RenderObject::containingBlockHeight() const
 {
     // ###
     return containingBlock()->contentHeight();
-}
-
-bool RenderObject::sizesToMaxWidth() const
-{
-    // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
-    // but they allow text to sit on the same line as the marquee.
-    if (isFloating() || (isCompact() && isInline()) || 
-        (isInlineBlockOrInlineTable() && !isHTMLMarquee()) ||
-        (element() && (element()->hasTagName(buttonTag) || element()->hasTagName(legendTag))))
-        return true;
-    
-    // Children of a horizontal marquee do not fill the container by default.
-    // FIXME: Need to deal with MAUTO value properly.  It could be vertical.
-    if (parent()->style()->overflow() == OMARQUEE) {
-        EMarqueeDirection dir = parent()->style()->marqueeDirection();
-        if (dir == MAUTO || dir == MFORWARD || dir == MBACKWARD || dir == MLEFT || dir == MRIGHT)
-            return true;
-    }
-    
-    // Flexible horizontal boxes lay out children at their maxwidths.  Also vertical boxes
-    // that don't stretch their kids lay out their children at their maxwidths.
-    if (parent()->isFlexibleBox() &&
-        (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
-        return true;
-
-    return false;
 }
 
 void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
@@ -1899,7 +1873,7 @@ int RenderObject::paddingTop() const
     if (padding.isPercent())
         w = containingBlock()->contentWidth();
     w = padding.minWidth(w);
-    if ( isTableCell() && padding.isVariable() )
+    if ( isTableCell() && padding.isAuto() )
 	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
     return w;
 }
@@ -1911,7 +1885,7 @@ int RenderObject::paddingBottom() const
     if (padding.isPercent())
         w = containingBlock()->contentWidth();
     w = padding.minWidth(w);
-    if ( isTableCell() && padding.isVariable() )
+    if ( isTableCell() && padding.isAuto() )
 	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
     return w;
 }
@@ -1923,7 +1897,7 @@ int RenderObject::paddingLeft() const
     if (padding.isPercent())
         w = containingBlock()->contentWidth();
     w = padding.minWidth(w);
-    if ( isTableCell() && padding.isVariable() )
+    if ( isTableCell() && padding.isAuto() )
 	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
     return w;
 }
@@ -1935,7 +1909,7 @@ int RenderObject::paddingRight() const
     if (padding.isPercent())
         w = containingBlock()->contentWidth();
     w = padding.minWidth(w);
-    if ( isTableCell() && padding.isVariable() )
+    if ( isTableCell() && padding.isAuto() )
 	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
     return w;
 }
@@ -2494,7 +2468,7 @@ bool RenderObject::usesLineWidth() const
     // (a) tables use contentWidth
     // (b) <hr>s use lineWidth
     // (c) all other objects use lineWidth in quirks mode and contentWidth in strict mode.
-    return (avoidsFloats() && (style()->width().isVariable() || isHR() || (style()->htmlHacks() && !isTable())));
+    return (avoidsFloats() && (style()->width().isAuto() || isHR() || (style()->htmlHacks() && !isTable())));
 }
 
 QChar RenderObject::backslashAsCurrencySymbol() const

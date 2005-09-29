@@ -973,6 +973,14 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
     if (style->opacity() < 1.0f && style->hasAutoZIndex())
         style->setZIndex(0);
     
+    // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
+    // This will be important when we use block flows for all form controls.
+    if (e && (e->hasTagName(legendTag) || e->hasTagName(buttonTag) || e->hasTagName(inputTag) ||
+              e->hasTagName(selectTag) || e->hasTagName(textareaTag))) {
+        if (style->width().isAuto())
+            style->setWidth(Length(Intrinsic));
+    }
+
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
     // tables, inline blocks, inline tables, or run-ins.
     if (style->display() == TABLE || style->display() == INLINE_TABLE || style->display() == RUN_IN

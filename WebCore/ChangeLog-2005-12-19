@@ -1,3 +1,95 @@
+2005-09-28  David Hyatt  <hyatt@apple.com>
+
+	Make all form controls treat width: auto as width:intrinsic and
+	add support for intrinsic widths when computing sizes of 
+	block-level flows.
+
+	Rename the term Variable to Auto, since this more accurately
+	matches the term in the CSS spec.
+
+        Reviewed by darin
+
+        Test cases added: (None needed, <button> and <legend> test this)
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/misc/khtmllayout.h:
+        (khtml::):
+        (khtml::Length::width):
+        (khtml::Length::minWidth):
+        (khtml::Length::isAuto):
+        (khtml::Length::isIntrinsicOrAuto):
+        * khtml/rendering/bidi.cpp:
+        (khtml::getBPMWidth):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::MarginInfo::MarginInfo):
+        (khtml::RenderBlock::isSelfCollapsingBlock):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::determineHorizontalPosition):
+        (khtml::getBPMWidth):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+        (khtml::shouldCheckLines):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getClipRect):
+        (RenderBox::relativePositionOffset):
+        (RenderBox::calcWidth):
+        (RenderBox::calcWidthUsing):
+        (RenderBox::sizesToIntrinsicWidth):
+        (RenderBox::calcHorizontalMargins):
+        (RenderBox::calcHeight):
+        (RenderBox::calcHeightUsing):
+        (RenderBox::calcPercentageHeight):
+        (RenderBox::availableHeightUsing):
+        (RenderBox::calcAbsoluteHorizontal):
+        (RenderBox::calcAbsoluteHorizontalValues):
+        (RenderBox::calcAbsoluteVertical):
+        (RenderBox::calcAbsoluteVerticalValues):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcHorizontalMinMaxWidth):
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::addIntrinsicMarginsIfAllowed):
+        (RenderSlider::calcMinMaxWidth):
+        * khtml/rendering/render_layer.cpp:
+        (khtml::Marquee::updateMarqueeStyle):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::marginLeft):
+        (khtml::InlineFlowBox::marginRight):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::hasStaticX):
+        (RenderObject::hasStaticY):
+        (RenderObject::paddingTop):
+        (RenderObject::paddingBottom):
+        (RenderObject::paddingLeft):
+        (RenderObject::paddingRight):
+        (RenderObject::usesLineWidth):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+        * khtml/rendering/render_style.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::resetPadding):
+        (khtml::RenderStyle::initialPadding):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::setStyle):
+        (RenderTable::calcWidth):
+        (RenderTableSection::addCell):
+        (RenderTableSection::layoutRows):
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::setSizeFromFont):
+        (khtml::RenderThemeMac::setCheckboxSize):
+        (khtml::RenderThemeMac::setRadioSize):
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcWidthArray):
+        (FixedTableLayout::layout):
+        (AutoTableLayout::recalcColumn):
+        (AutoTableLayout::fullRecalc):
+        (shouldScaleColumns):
+        (AutoTableLayout::calcEffectiveWidth):
+        (AutoTableLayout::layout):
+
 2005-09-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -41,7 +133,6 @@
         (khtml::RebalanceWhitespaceCommand::doApply):
         (khtml::RebalanceWhitespaceCommand::doUnapply): Removed the unused m_downstreamOffset
         * layout-tests/editing/editingStyle.css: Added.
-
 
 2005-09-27  Maciej Stachowiak  <mjs@apple.com>
 

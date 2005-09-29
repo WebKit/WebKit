@@ -1683,7 +1683,7 @@ void Marquee::updateMarqueeStyle()
     if (isHorizontal()) {
         if (s->height().isFixed() && (s->height().value < s->fontSize())) 
             s->setHeight(Length(s->fontSize(),Fixed));
-    } else if (s->height().isVariable())  //vertical marquee with no specified height
+    } else if (s->height().isAuto())  //vertical marquee with no specified height
         s->setHeight(Length(200,Fixed)); 
    
     if (speed() != marqueeSpeed()) {

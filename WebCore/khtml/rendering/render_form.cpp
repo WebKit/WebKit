@@ -224,15 +224,16 @@ void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
     if (_style->font().pixelSize() < 11)
         return;
     
+    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     int m = intrinsicMargin();
-    if (_style->width().isVariable()) {
+    if (_style->width().isIntrinsicOrAuto()) {
         if (_style->marginLeft().quirk)
             _style->setMarginLeft(Length(m, Fixed));
         if (_style->marginRight().quirk)
             _style->setMarginRight(Length(m, Fixed));
     }
 
-    if (_style->height().isVariable()) {
+    if (_style->height().isAuto()) {
         if (_style->marginTop().quirk)
             _style->setMarginTop(Length(m, Fixed));
         if (_style->marginBottom().quirk)
@@ -1690,8 +1691,8 @@ void RenderSlider::calcMinMaxWidth()
     
     // Let the widget tell us how big it wants to be.
     QSize s(widget()->sizeHint());
-    bool widthSet = !style()->width().isVariable();
-    bool heightSet = !style()->height().isVariable();
+    bool widthSet = !style()->width().isAuto();
+    bool heightSet = !style()->height().isAuto();
     if (heightSet && !widthSet) {
         // Flip the intrinsic dimensions.
         int barLength = s.width();

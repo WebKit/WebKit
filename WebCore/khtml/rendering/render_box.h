@@ -114,6 +114,10 @@ public:
     virtual void calcWidth();
     virtual void calcHeight();
 
+    // Whether or not the element shrinks to its intrinsic width (rather than filling the width
+    // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
+    bool sizesToIntrinsicWidth(WidthType widthType) const;
+
     int calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType);
     int calcHeightUsing(const Length& height);
     int calcReplacedWidthUsing(WidthType widthType) const;

@@ -164,10 +164,11 @@ QSize RenderThemeMac::sizeForFont(RenderStyle* style, const QSize* sizes) const
 
 void RenderThemeMac::setSizeFromFont(RenderStyle* style, const QSize* sizes) const
 {
+    // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     QSize size = sizeForFont(style, sizes);
-    if (style->width().isVariable())
+    if (style->width().isIntrinsicOrAuto())
         style->setWidth(Length(size.width(), Fixed));
-    if (style->height().isVariable())
+    if (style->height().isAuto())
         style->setHeight(Length(size.height(), Fixed));
 }
 
@@ -222,7 +223,7 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
 void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isVariable() && !style->height().isVariable())
+    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
     
     // Use the font size to determine the intrinsic width of the control.
@@ -280,7 +281,7 @@ void RenderThemeMac::setRadioCellState(const RenderObject* o, const QRect& r)
 void RenderThemeMac::setRadioSize(RenderStyle* style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isVariable() && !style->height().isVariable())
+    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
     
     // Use the font size to determine the intrinsic width of the control.

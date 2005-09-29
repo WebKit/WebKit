@@ -35,7 +35,7 @@ using DOM::DOMStringImpl;
 using DOM::DOMString;
 
 StyleSurroundData::StyleSurroundData()
-    : margin( Fixed ), padding( Variable )
+    : margin( Fixed ), padding( Auto )
 {
 }
 
