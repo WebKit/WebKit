@@ -94,14 +94,13 @@ die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTe
 checkFrameworks();
 checkWebCoreSVGSupport() if $testSVGs;
 
-my $layoutTestsName = "layout-tests";
+my $layoutTestsName = "LayoutTests";
 if ($testSVGs) {
-    $layoutTestsName = "svg-tests";
+    $layoutTestsName = "SVGSupport/layout-tests";
 }
 
 my $workingDir = getcwd();
-my $WebCoreDirectory = "$workingDir/WebCore";
-my $testDirectory = "$WebCoreDirectory/$layoutTestsName";
+my $testDirectory = "$workingDir/$layoutTestsName";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 

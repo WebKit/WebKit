@@ -1,3 +1,16 @@
+2005-09-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by xenon.
+
+        Updated all the scripts for the move:
+        WebCore/layout-tests -> LayoutTests
+
+        * Scripts/check-dom-results:
+        * Scripts/prepare-ChangeLog: 
+        * Scripts/run-webkit-tests:
+        * Scripts/update-webkit: added --no-tests
+        * checkout: added --no-tests
+
 2005-09-28  Darin Adler  <darin@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5144

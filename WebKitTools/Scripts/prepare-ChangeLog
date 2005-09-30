@@ -252,7 +252,10 @@ foreach my $prefix (sort keys %files)
     print CHANGE_LOG "$date  $name  <$email_address>\n\n";
     print CHANGE_LOG "        Reviewed by NOBODY (OOPS!).\n\n";
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-        print CHANGE_LOG "        Test cases added: (NONE)\n\n";
+        my $testsDir = "../LayoutTests";
+        $testsDir = "$prefix/$testsDir" if length($prefix);
+        my $haveNewTests = (system("find \"$testsDir/../LayoutTests\" -path \"*/CVS/Entries\" | xargs grep -q \"/0/dummy timestamp//\"") == 0);
+        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED\n\n" unless $haveNewTests;
     }
 
     foreach my $file (sort @{$files{$prefix}})

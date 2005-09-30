@@ -39,8 +39,7 @@ chdirWebKit();
 my $verbose = $ARGV[0] && $ARGV[0] eq "-v";
 
 my $workingDir = getcwd();
-my $WebCoreDirectory = "$workingDir/WebCore";
-my $testDirectory = "$WebCoreDirectory/layout-tests";
+my $testDirectory = "$workingDir/LayoutTests";
 
 my @suites = ( {"name" => "DOM Level 1 Core   (html)", "directory" => "dom/html/level1/core"},
                {"name" => "DOM Level 2 Core   (html)", "directory" => "dom/html/level2/core"},
