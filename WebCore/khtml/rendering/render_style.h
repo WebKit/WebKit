@@ -384,6 +384,8 @@ public:
 //------------------------------------------------
 // Box attributes. Not inherited.
 
+enum EBoxSizing { CONTENT_BOX, BORDER_BOX };
+
 class StyleBoxData : public Shared<StyleBoxData>, public FastAllocated
 {
 public:
@@ -412,6 +414,7 @@ public:
 
     int z_index;
     bool z_auto : 1;
+    EBoxSizing boxSizing : 1;
 };
 
 //------------------------------------------------
@@ -1342,6 +1345,7 @@ public:
     unsigned int boxOrdinalGroup() const { return css3NonInheritedData->flexibleBox->ordinal_group; }
     EBoxOrient boxOrient() const { return css3NonInheritedData->flexibleBox->orient; }
     EBoxAlignment boxPack() const { return css3NonInheritedData->flexibleBox->pack; }
+    EBoxSizing boxSizing() const { return box->boxSizing; }
     Length marqueeIncrement() const { return css3NonInheritedData->marquee->increment; }
     int marqueeSpeed() const { return css3NonInheritedData->marquee->speed; }
     int marqueeLoopCount() const { return css3NonInheritedData->marquee->loops; }
@@ -1564,6 +1568,7 @@ public:
     void setBoxOrdinalGroup(unsigned int og) { SET_VAR(css3NonInheritedData.access()->flexibleBox, ordinal_group, og); }
     void setBoxOrient(EBoxOrient o) { SET_VAR(css3NonInheritedData.access()->flexibleBox, orient, o); }
     void setBoxPack(EBoxAlignment p) { SET_VAR(css3NonInheritedData.access()->flexibleBox, pack, p); }
+    void setBoxSizing(EBoxSizing s) { SET_VAR(box, boxSizing, s); }
     void setMarqueeIncrement(const Length& f) { SET_VAR(css3NonInheritedData.access()->marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(css3NonInheritedData.access()->marquee, speed, f); }
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(css3NonInheritedData.access()->marquee, direction, d); }
@@ -1688,6 +1693,7 @@ public:
     static float initialBoxFlex() { return 0.0f; }
     static int initialBoxFlexGroup() { return 1; }
     static int initialBoxOrdinalGroup() { return 1; }
+    static EBoxSizing initialBoxSizing() { return CONTENT_BOX; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }

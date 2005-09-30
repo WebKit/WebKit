@@ -3754,6 +3754,14 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             return; // Error case.
         style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)));
         return;
+    case CSS_PROP_BOX_SIZING:
+        HANDLE_INHERIT_AND_INITIAL(boxSizing, BoxSizing)
+        if (!primitiveValue) return;
+        if (primitiveValue->getIdent() == CSS_VAL_CONTENT_BOX)
+            style->setBoxSizing(CONTENT_BOX);
+        else
+            style->setBoxSizing(BORDER_BOX);
+        break;
     case CSS_PROP__KHTML_MARQUEE:
         if (value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());

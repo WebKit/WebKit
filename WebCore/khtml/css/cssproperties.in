@@ -49,6 +49,7 @@ bottom
 -khtml-box-ordinal-group
 -khtml-box-orient
 -khtml-box-pack
+box-sizing
 caption-side
 clear
 clip

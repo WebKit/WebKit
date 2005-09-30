@@ -481,3 +481,9 @@ round
 border
 content
 padding
+
+#
+# CSS_PROP_BOX_SIZING
+#
+border-box
+content-box

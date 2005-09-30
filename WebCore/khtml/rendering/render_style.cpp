@@ -53,7 +53,7 @@ bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 }
 
 StyleBoxData::StyleBoxData()
-    : z_index( 0 ), z_auto(true)
+    : z_index( 0 ), z_auto(true), boxSizing(CONTENT_BOX)
 {
     // Initialize our min/max widths/heights.
     min_width = min_height = RenderStyle::initialMinSize();
@@ -65,21 +65,21 @@ StyleBoxData::StyleBoxData(const StyleBoxData& o )
       width( o.width ), height( o.height ),
       min_width( o.min_width ), max_width( o.max_width ),
       min_height ( o.min_height ), max_height( o.max_height ),
-      z_index( o.z_index ), z_auto( o.z_auto )
+      z_index( o.z_index ), z_auto( o.z_auto ), boxSizing(o.boxSizing)
 {
 }
 
 bool StyleBoxData::operator==(const StyleBoxData& o) const
 {
-    return
-	    width == o.width &&
-	    height == o.height &&
-	    min_width == o.min_width &&
-	    max_width == o.max_width &&
-	    min_height == o.min_height &&
-	    max_height == o.max_height &&
-	    z_index == o.z_index &&
-        z_auto == o.z_auto;
+    return width == o.width &&
+           height == o.height &&
+           min_width == o.min_width &&
+           max_width == o.max_width &&
+           min_height == o.min_height &&
+           max_height == o.max_height &&
+           z_index == o.z_index &&
+           z_auto == o.z_auto &&
+           boxSizing == o.boxSizing;
 }
 
 
@@ -715,6 +715,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          box->min_height != other->box->min_height ||
          box->max_height != other->box->max_height ||
          box->vertical_align != other->box->vertical_align ||
+         box->boxSizing != other->box->boxSizing ||
          !(surround->margin == other->surround->margin) ||
          !(surround->padding == other->surround->padding) ||
          css3NonInheritedData->m_appearance != other->css3NonInheritedData->m_appearance ||

@@ -1,3 +1,29 @@
+2005-09-29  David Hyatt  <hyatt@apple.com>
+
+	Add support for parsing of the CSS3 box-sizing property.  This
+	property will have to be fully implemented for form controls that
+	respect border and padding (buttons, textfields, list boxes, etc.).
+	
+        Reviewed by john
+
+        Test cases added: (NONE, property just being parsed, not supported)
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/render_style.cpp:
+        (StyleBoxData::StyleBoxData):
+        (StyleBoxData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::boxSizing):
+        (khtml::RenderStyle::setBoxSizing):
+        (khtml::RenderStyle::initialBoxSizing):
+
 2005-09-28  David Hyatt  <hyatt@apple.com>
 
 	Make all form controls treat width: auto as width:intrinsic and

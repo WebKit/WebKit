@@ -1061,6 +1061,14 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
+    case CSS_PROP_BOX_SIZING: {
+        // We don't preface this with -khtml, since MacIE defined this property without the prefix.
+        // Thus the damage has been done, and it's known that this property's definition isn't going
+        // to fluctuate.
+        if (id == CSS_VAL_BORDER_BOX || id == CSS_VAL_CONTENT_BOX)
+            valid_primitive = true;
+        break;
+    }
     case CSS_PROP__KHTML_MARQUEE: {
         const int properties[5] = { CSS_PROP__KHTML_MARQUEE_DIRECTION, CSS_PROP__KHTML_MARQUEE_INCREMENT,
                                     CSS_PROP__KHTML_MARQUEE_REPETITION,
