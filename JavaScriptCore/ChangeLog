@@ -1,3 +1,18 @@
+2005-09-30  Geoffrey Garen  <ggaren@apple.com>
+
+        - Second cut at fixing <rdar://problem/4275206> Denver Regression: Seed: 
+          Past Editions of Opinions display "NAN/Undefined" for www.washingtonpost.com
+		
+        Reviewed by john.
+
+        * kjs/date_object.cpp:
+        (KJS::KRFCDate_parseDate): Intead of creating a timezone when one isn't specified,
+        just rely on the fallback logic, which will do it for you. Also, return invalidDate
+        if the date includes trailing garbage. (Somewhat accidentally, the timezone logic
+        used to catch trailing garbage.)
+
+        Added test case to fast/js/date-parse-test.html.
+
 2005-09-29  Eric Seidel  <eseidel@apple.com>
         Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
 
