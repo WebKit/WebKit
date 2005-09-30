@@ -50,9 +50,11 @@ QRect::QRect(const QPoint &topLeft, const QPoint &bottomRight)
     h = bottomRight.y() - topLeft.y() + 1;
 }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QRect::QRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
 {
 }
+#endif
 
 QRect::QRect(const CGRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
 {
@@ -184,10 +186,12 @@ void QRect::inflate(int s)
     h += 2*s;
 }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QRect::operator NSRect() const
 {
     return NSMakeRect(xp, yp, w, h);
 }
+#endif
 
 QRect::operator CGRect() const
 {

@@ -34,7 +34,11 @@
 
 #include "KWQMemArray.h"
 
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGPoint NSPoint;
+#else
 typedef struct _NSPoint NSPoint;
+#endif
 typedef struct CGPoint CGPoint;
 
 class QRect;
@@ -43,8 +47,11 @@ class QPoint {
 public:
     QPoint();
     QPoint(int, int);
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QPoint(const NSPoint &); // don't do this implicitly since it's lossy
-    
+#endif
+    explicit QPoint(const CGPoint &); // don't do this implicitly since it's lossy
+
     int x() const { return xCoord; }
     int y() const { return yCoord; }
     
@@ -58,7 +65,9 @@ public:
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
     
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSPoint() const;
+#endif
     operator CGPoint() const;
     
 private:

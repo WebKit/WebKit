@@ -32,14 +32,21 @@
 #include <iosfwd>
 #endif
 
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGSize NSSize;
+#else
 typedef struct _NSSize NSSize;
+#endif
 typedef struct CGSize CGSize;
 
 class QSize {
 public:
     QSize();
     QSize(int,int);
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QSize(const NSSize &);
+#endif
+    explicit QSize(const CGSize &);
 
     bool isValid() const;
     int width() const { return w; }
@@ -48,7 +55,9 @@ public:
     void setHeight(int height) { h = height; }
     QSize expandedTo(const QSize &) const;
     
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSSize() const;
+#endif
     operator CGSize() const;
 
     friend QSize operator+(const QSize &, const QSize &);

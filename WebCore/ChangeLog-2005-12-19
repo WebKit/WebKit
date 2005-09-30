@@ -1,3 +1,18 @@
+2005-09-29  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes build failures on a future release train.
+
+        Reviewed by Maciej.
+
+        Test cases added: (None needed.)
+
+        * kwq/KWQPointArray.h: check if NSPoint is the same as CGPoint
+        * kwq/KWQPoint.mm: ditto
+        * kwq/KWQRect.h: check if NSRect is the same as CGRect
+        * kwq/KWQRect.mm: ditto
+        * kwq/KWQSize.h: check if NSSize is the same as CGSize
+        * kwq/KWQSize.mm: ditto
+
 2005-09-29  David Hyatt  <hyatt@apple.com>
 
 	Add support for parsing of the CSS3 box-sizing property.  This

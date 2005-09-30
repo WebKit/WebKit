@@ -29,7 +29,11 @@
 #include "KWQSize.h"
 #include "KWQPointArray.h"
 
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGRect NSRect;
+#else
 typedef struct _NSRect NSRect;
+#endif
 typedef struct CGRect CGRect;
 
 class QRect {
@@ -38,7 +42,9 @@ public:
     QRect(QPoint p, QSize s);
     QRect(int, int, int, int);
     QRect(const QPoint &, const QPoint &);
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QRect(const NSRect &); // don't do this implicitly since it's lossy
+#endif
     explicit QRect(const CGRect &); // don't do this implicitly since it's lossy
 
     bool isNull() const;
@@ -84,7 +90,9 @@ public:
 
     inline QRect operator&(const QRect &r) const { return intersect(r); }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSRect() const;
+#endif
     operator CGRect() const;
 
 #ifdef _KWQ_IOSTREAM_

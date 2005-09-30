@@ -33,14 +33,22 @@ QPoint::QPoint(int xIn, int yIn) : xCoord(xIn), yCoord(yIn)
 {
 }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QPoint::QPoint(const NSPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
 {
 }
+#endif
 
+QPoint::QPoint(const CGPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
+{
+}
+
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QPoint::operator NSPoint() const
 {
     return NSMakePoint(xCoord, yCoord);
 }
+#endif
 
 QPoint::operator CGPoint() const
 {

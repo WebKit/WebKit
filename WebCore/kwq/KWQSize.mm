@@ -33,7 +33,13 @@ QSize::QSize(int width, int height) : w(width), h(height)
 {
 }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QSize::QSize(const NSSize &s) : w((int)s.width), h((int)s.height)
+{
+}
+#endif
+
+QSize::QSize(const CGSize &s) : w((int)s.width), h((int)s.height)
 {
 }
 
@@ -47,10 +53,12 @@ QSize QSize::expandedTo(const QSize &o) const
     return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
 }
 
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 QSize::operator NSSize() const
 {
     return NSMakeSize(w, h);
 }
+#endif
 
 QSize::operator CGSize() const
 {
