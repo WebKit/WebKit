@@ -1,0 +1,6 @@
+2005-09-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by xenon.
+        
+        Moved WebCore/layout-tests to LayoutTests
+
