@@ -1,3 +1,11 @@
+2005-09-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch reviewed by john.
+        
+        * layout-tests/fast/js/date-parse-test.html: Added a test case for 
+        <rdar://problem/4275206> Denver Regression: Seed: Past Editions of 
+        Opinions display "NAN/Undefined" for www.washingtonpost.com
+
 2005-09-29  Timothy Hatcher  <timothy@apple.com>
 
         Fixes build failures on a future release train.

@@ -69,6 +69,7 @@ testDateParse("Dec 25 1995 1:30 AM ", 819855000000 + o);
 
 testDateParse("Dec 25 1995 13:30 GMT", 819898200000);
 testDateParse("Dec 25 1995 13:30", 819898200000 + o);
+testDateParse('Dec 25 13:30 1995', 819898200000 + o);
 testDateParse("Dec 25 1995 13:30 ", 819898200000 + o);
 testDateParse("Dec 25 1995 1:30 PM GMT", 819898200000);
 testDateParse("Dec 25 1995 1:30 PM", 819898200000 + o);
