@@ -1,3 +1,11 @@
+2005-10-02  Eric Seidel  <eseidel@apple.com>
+
+        Removing unused SVG source files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/ecma/Constructors.cpp: Removed.
+        * ksvg2/ecma/Constructors.h: Removed.
+
 2005-10-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.

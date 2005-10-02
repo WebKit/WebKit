@@ -3228,8 +3228,6 @@
 		A8C0F700089701F100BA5114 /* SVGRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyle.h; sourceTree = "<group>"; };
 		A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyleDefs.cpp; sourceTree = "<group>"; };
 		A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyleDefs.h; sourceTree = "<group>"; };
-		A8C0F7E9089701F300BA5114 /* Constructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constructors.cpp; sourceTree = "<group>"; };
-		A8C0F7EA089701F300BA5114 /* Constructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constructors.h; sourceTree = "<group>"; };
 		A8C0F7EB089701F300BA5114 /* Ecma.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ecma.cpp; sourceTree = "<group>"; };
 		A8C0F7EC089701F300BA5114 /* Ecma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ecma.h; sourceTree = "<group>"; };
 		A8C0F7EE089701F300BA5114 /* GlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalObject.cpp; sourceTree = "<group>"; };
@@ -5365,8 +5363,6 @@
 		A8C0F7E8089701F300BA5114 /* ecma */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F7E9089701F300BA5114 /* Constructors.cpp */,
-				A8C0F7EA089701F300BA5114 /* Constructors.h */,
 				A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */,
 				A8C0F7EB089701F300BA5114 /* Ecma.cpp */,
 				A8C0F7EC089701F300BA5114 /* Ecma.h */,
