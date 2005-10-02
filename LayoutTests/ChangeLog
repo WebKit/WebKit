@@ -1,3 +1,10 @@
+2005-10-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        * fast/dom/attribute-namespaces-expected.txt: Added.
+        * fast/dom/attribute-namespaces.xhtml: Added.
+
 2005-09-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by xenon.
