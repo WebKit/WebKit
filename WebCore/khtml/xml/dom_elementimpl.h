@@ -133,6 +133,8 @@ public:
     // DOM methods overridden from  parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
+    virtual const AtomicString& localName() const;
+    virtual const AtomicString& namespaceURI() const;
     virtual const AtomicString& prefix() const;
     virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode);
 

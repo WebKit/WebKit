@@ -1,3 +1,15 @@
+2005-10-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=5231>
+	
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::localName):
+        (AttrImpl::namespaceURI):
+        * khtml/xml/dom_elementimpl.h:
+	Implement localName and namespaceURI for attributes.
+	
 2005-09-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by xenon.

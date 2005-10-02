@@ -96,6 +96,16 @@ unsigned short AttrImpl::nodeType() const
     return Node::ATTRIBUTE_NODE;
 }
 
+const AtomicString& AttrImpl::localName() const
+{
+    return m_attribute->localName();
+}
+
+const AtomicString& AttrImpl::namespaceURI() const
+{
+    return m_attribute->namespaceURI();
+}
+
 const AtomicString& AttrImpl::prefix() const
 {
     return m_attribute->prefix();
