@@ -67,3 +67,8 @@
 #import <Cocoa/Cocoa.h>
 
 #endif
+
+#ifdef __cplusplus
+#define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#endif

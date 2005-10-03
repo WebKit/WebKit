@@ -21,6 +21,7 @@
 
 #ifdef KHTML_XSLT
 
+#include "config.h"
 #include "dom/dom_string.h"
 #include "dom/dom_exception.h"
 

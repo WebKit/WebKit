@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "dom_misc.h"
 
 namespace DOM {

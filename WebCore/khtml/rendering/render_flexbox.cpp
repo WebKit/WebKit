@@ -22,6 +22,7 @@
  *
  */
 
+#include "config.h"
 #include "render_flexbox.h"
 
 using namespace DOM;

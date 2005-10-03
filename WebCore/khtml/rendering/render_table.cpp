@@ -28,6 +28,7 @@
 //#define TABLE_PRINT
 //#define DEBUG_LAYOUT
 //#define BOX_DEBUG
+#include "config.h"
 #include "rendering/render_table.h"
 #include "rendering/table_layout.h"
 #include "html/html_tableimpl.h"

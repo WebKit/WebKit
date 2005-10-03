@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQKStandardDirs.h"
 
 // The NSBundle calls in this file can't throw, so no need to block

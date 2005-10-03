@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "array_object.h"
 
 #include "error_object.h"
@@ -49,7 +50,7 @@ ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, unsigned initialLength)
   , length(initialLength)
   , storageLength(initialLength < sparseArrayCutoff ? initialLength : 0)
   , capacity(storageLength)
-  , storage(capacity ? (ValueImp **)calloc(capacity, sizeof(ValueImp *)) : 0)
+  , storage(capacity ? (ValueImp **)fastCalloc(capacity, sizeof(ValueImp *)) : 0)
 {
 }
 
@@ -58,7 +59,7 @@ ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, const List &list)
   , length(list.size())
   , storageLength(length)
   , capacity(storageLength)
-  , storage(capacity ? (ValueImp **)malloc(sizeof(ValueImp *) * capacity) : 0)
+  , storage(capacity ? (ValueImp **)fastMalloc(sizeof(ValueImp *) * capacity) : 0)
 {
   ListIterator it = list.begin();
   unsigned l = length;
@@ -69,7 +70,7 @@ ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, const List &list)
 
 ArrayInstanceImp::~ArrayInstanceImp()
 {
-  free(storage);
+  fastFree(storage);
 }
 
 ValueImp *ArrayInstanceImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -215,7 +216,7 @@ void ArrayInstanceImp::resizeStorage(unsigned newLength)
           newCapacity = sparseArrayCutoff;
         }
       }
-      storage = (ValueImp **)realloc(storage, newCapacity * sizeof (ValueImp *));
+      storage = (ValueImp **)fastRealloc(storage, newCapacity * sizeof (ValueImp *));
       memset(storage + capacity, 0, sizeof(ValueImp *) * (newCapacity - capacity));
       capacity = newCapacity;
     }

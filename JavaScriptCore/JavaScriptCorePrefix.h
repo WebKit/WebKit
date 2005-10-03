@@ -4,8 +4,6 @@
 #define NULL ((void *)0)
 #endif
 
-#include <config.h>
-
 #include <assert.h>
 #include <ctype.h>
 #include <float.h>
@@ -42,4 +40,8 @@
 #include <list>
 #include <typeinfo>
 
+#ifdef __cplusplus
+#define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#endif
 #endif

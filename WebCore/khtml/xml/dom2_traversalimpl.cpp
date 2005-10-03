@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "xml/dom2_traversalimpl.h"
 #include "dom/dom_exception.h"
 #include "xml/dom_docimpl.h"

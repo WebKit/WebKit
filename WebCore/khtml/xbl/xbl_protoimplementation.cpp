@@ -1,5 +1,6 @@
 #ifndef KHTML_NO_XBL
 
+#include "config.h"
 #include "xbl_protoimplementation.h"
 #include "xbl_protobinding.h"
 

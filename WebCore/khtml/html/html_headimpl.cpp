@@ -23,6 +23,7 @@
  */
 // -------------------------------------------------------------------------
 
+#include "config.h"
 #include "html/html_headimpl.h"
 #include "html/html_documentimpl.h"
 #include "xml/dom_textimpl.h"

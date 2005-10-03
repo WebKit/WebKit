@@ -26,6 +26,7 @@
 #undef FORMS_DEBUG
 //#define FORMS_DEBUG
 
+#include "config.h"
 #include "html/html_formimpl.h"
 
 #include "khtmlview.h"

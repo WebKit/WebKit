@@ -28,6 +28,7 @@
 
 #define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
 
+#include "config.h"
 #include "dom_atomicstring.h"
 #include "xml/dom_stringimpl.h"
 #include <kxmlcore/HashSet.h>

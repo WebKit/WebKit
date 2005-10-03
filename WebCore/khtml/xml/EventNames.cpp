@@ -22,6 +22,7 @@
 
 #define DOM_EVENT_NAMES_HIDE_GLOBALS 1
 
+#include "config.h"
 #include "EventNames.h"
 
 using DOM::AtomicString;

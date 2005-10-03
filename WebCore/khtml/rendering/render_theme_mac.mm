@@ -19,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #import "render_theme_mac.h"
 
 #import "render_style.h"

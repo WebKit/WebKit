@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQWMatrix.h"
 
 static const double deg2rad = 0.017453292519943295769; // pi/180

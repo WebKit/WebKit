@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "htmlfactory.h"
 #include "dom_docimpl.h"
 

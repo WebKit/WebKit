@@ -32,27 +32,23 @@ namespace KXMLCore {
     void fastFree(void* p);
     void *fastRealloc(void* p, size_t n);
     
-    struct FastAllocated {
-        void* operator new(size_t s) { return fastMalloc(s); }
-        void operator delete(void* p) { fastFree(p); }
-        void* operator new[](size_t s) { return fastMalloc(s); }
-        void operator delete[](void* p) { fastFree(p); }
-    };
-    
-    // POD types can't have a base class, so they have to use a macro to
-    // add the appropriate operators
-    #define FAST_ALLOCATED_POD \
-        void* operator new(size_t s) { return fastMalloc(s); } \
-        void operator delete(void* p) { fastFree(p); } \
-        void* operator new[](size_t s) { return fastMalloc(s); } \
-        void operator delete[](void* p) { fastFree(p); } \
-
 } // namespace KXMLCore
 
 using KXMLCore::fastMalloc;
 using KXMLCore::fastCalloc;
 using KXMLCore::fastRealloc;
 using KXMLCore::fastFree;
-using KXMLCore::FastAllocated;
+
+#if __GNUC__
+#define KXMLCORE_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
+#else
+#define KXMLCORE_PRIVATE_INLINE inline
+#endif
+
+KXMLCORE_PRIVATE_INLINE void* operator new(size_t s) { return fastMalloc(s); }
+KXMLCORE_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
+KXMLCORE_PRIVATE_INLINE void* operator new[](size_t s) { return fastMalloc(s); }
+KXMLCORE_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
+
 
 #endif /* KXMLCORE_FAST_MALLOC_H */

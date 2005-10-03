@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQFile.h"
 
 // This NSString call can't throw so no need to block exceptions

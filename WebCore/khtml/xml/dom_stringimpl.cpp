@@ -23,6 +23,7 @@
  *
  */
 
+#include "config.h"
 #include "dom_stringimpl.h"
 
 #include <kdebug.h>

@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include "dom/dom2_events.h"
 
 #include "xml/dom2_eventsimpl.h"

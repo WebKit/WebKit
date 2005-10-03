@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "list.h"
 
 #include "internal.h"

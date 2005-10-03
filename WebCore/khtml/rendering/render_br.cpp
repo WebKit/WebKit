@@ -19,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+#include "config.h"
 #include "render_br.h"
 
 #include "dom_position.h"

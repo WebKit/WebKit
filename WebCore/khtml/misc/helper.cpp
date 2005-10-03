@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include "helper.h"
 
 #if APPLE_CHANGES

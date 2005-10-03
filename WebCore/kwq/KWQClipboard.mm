@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQClipboard.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"

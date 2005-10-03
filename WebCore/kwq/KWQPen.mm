@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQPen.h"
 
 QPen::QPen(const QColor &color, uint width, PenStyle style) : penStyle(style), penWidth(width), penColor(color)

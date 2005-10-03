@@ -1,5 +1,6 @@
 #ifndef KHTML_NO_XBL
 
+#include "config.h"
 #include "qptrdict.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"

@@ -22,6 +22,7 @@
 
 #define DOM_HTMLNAMES_HIDE_GLOBALS 1
 
+#include "config.h"
 #include "htmlnames.h"
 
 namespace DOM { namespace HTMLNames {

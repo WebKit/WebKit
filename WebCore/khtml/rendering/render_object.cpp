@@ -23,6 +23,7 @@
  *
  */
 
+#include "config.h"
 #include "rendering/render_object.h"
 #include "rendering/render_table.h"
 #include "rendering/render_text.h"

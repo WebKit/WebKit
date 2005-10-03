@@ -20,13 +20,13 @@
  *
  */
 
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 
 #include "lookup.h"
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
 #endif
 
 using namespace KJS;

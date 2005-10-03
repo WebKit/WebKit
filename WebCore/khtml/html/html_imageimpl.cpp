@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "html/html_imageimpl.h"
 #include "html/html_formimpl.h"
 #include "html/html_documentimpl.h"

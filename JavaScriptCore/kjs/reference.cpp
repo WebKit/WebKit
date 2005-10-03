@@ -20,7 +20,9 @@
  *
  */
 
+#include "config.h"
 #include "reference.h"
+
 #include "internal.h"
 
 namespace KJS {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "value.h"
 #include "object.h"
 #include "types.h"
@@ -96,17 +97,17 @@ static UString integer_part_noexp(double d)
         char *buf;
         
         if (length <= decimalPoint) {
-            buf = (char*)malloc(decimalPoint+1);
+            buf = (char*)fastMalloc(decimalPoint+1);
             strcpy(buf,result);
             memset(buf+length,'0',decimalPoint-length);
         } else {
-            buf = (char*)malloc(decimalPoint+1);
+            buf = (char*)fastMalloc(decimalPoint+1);
             strncpy(buf,result,decimalPoint);
         }
         
         buf[decimalPoint] = '\0';
         str += UString(buf);
-        free(buf);
+        fastFree(buf);
     }
     
     kjs_freedtoa(result);
@@ -116,11 +117,11 @@ static UString integer_part_noexp(double d)
 
 static UString char_sequence(char c, int count)
 {
-    char *buf = (char*)malloc(count+1);
+    char *buf = (char*)fastMalloc(count+1);
     memset(buf,c,count);
     buf[count] = '\0';
     UString s(buf);
-    free(buf);
+    fastFree(buf);
     return s;
 }
 

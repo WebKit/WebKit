@@ -1,4 +1,4 @@
-// -*- c-basic-offset: 4 -*-
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2005 Apple Computer, Inc.
@@ -15,20 +15,18 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
+ *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ *  Boston, MA 02111-1307, USA.
  *
  */
 
+#ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
+#define KXMLCORE_FAST_MALLOC_INTERNAL_H
 
-#include "config.h"
-#include "property_slot.h"
+#include <pthread.h>
 
-namespace KJS {
-
-ValueImp *PropertySlot::undefinedGetter(ExecState *, const Identifier& propertyName, const PropertySlot& slot)
-{
-    return Undefined();
+namespace KXMLCore {
+    void fastMallocRegisterThread(pthread_t thread);
 }
 
-}
+#endif //  KXMLCORE_FAST_MALLOC_INTERNAL_H

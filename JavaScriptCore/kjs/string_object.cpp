@@ -20,6 +20,9 @@
  *
  */
 
+#include "config.h"
+#include "string_object.h"
+
 #include "value.h"
 #include "object.h"
 #include "types.h"
@@ -27,7 +30,6 @@
 #include "operations.h"
 #include "regexp.h"
 #include "regexp_object.h"
-#include "string_object.h"
 #include "error_object.h"
 #include <stdio.h>
 #include "string_object.lut.h"

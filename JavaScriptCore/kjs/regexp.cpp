@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "regexp.h"
 
 #include <assert.h>

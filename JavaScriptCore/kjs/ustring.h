@@ -193,7 +193,7 @@ namespace KJS {
   /**
    * @short Unicode string class
    */
-  class UString : public FastAllocated {
+  class UString {
     friend bool operator==(const UString&, const UString&);
     friend class UCharReference;
     friend class Identifier;
@@ -204,8 +204,6 @@ namespace KJS {
      * @internal
      */
     struct Rep {
-
-      FAST_ALLOCATED_POD;
 
       static Rep *create(UChar *d, int l);
       static Rep *createCopying(const UChar *d, int l);

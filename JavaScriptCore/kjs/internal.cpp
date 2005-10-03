@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
@@ -367,7 +368,7 @@ void Parser::saveNewNode(Node *node)
 {
   if (numNewNodes == newNodesCapacity) {
     newNodesCapacity = (newNodesCapacity == 0) ? initialCapacity : newNodesCapacity * growthFactor;
-    newNodes = (Node **)realloc(newNodes, sizeof(Node *) * newNodesCapacity);
+    newNodes = (Node **)fastRealloc(newNodes, sizeof(Node *) * newNodesCapacity);
   }
 
   newNodes[numNewNodes++] = node;
@@ -379,7 +380,7 @@ static void clearNewNodes()
     if (newNodes[i]->refcount() == 0)
       delete newNodes[i];
   }
-  delete newNodes;
+  fastFree(newNodes);
   newNodes = 0;
   numNewNodes = 0;
   newNodesCapacity = 0;

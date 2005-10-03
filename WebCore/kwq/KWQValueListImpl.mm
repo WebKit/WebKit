@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQValueListImpl.h"
 
 #import <stdlib.h>
 
-class KWQValueListImpl::KWQValueListPrivate : public FastAllocated
+class KWQValueListImpl::KWQValueListPrivate
 {
 public:
     KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *));

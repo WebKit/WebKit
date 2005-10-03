@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+#include "config.h"
 #include "render_replaced.h"
 
 #include "render_arena.h"

@@ -20,8 +20,10 @@
  *
  */
 
-#include <stdio.h>
+#include "config.h"
+#include "regexp_object.h"
 
+#include <stdio.h>
 #include "value.h"
 #include "object.h"
 #include "types.h"
@@ -29,7 +31,6 @@
 #include "operations.h"
 #include "internal.h"
 #include "regexp.h"
-#include "regexp_object.h"
 #include "error_object.h"
 
 using namespace KJS;

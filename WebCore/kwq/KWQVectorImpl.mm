@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQVectorImpl.h"
 
 KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
@@ -31,14 +32,14 @@ KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
 }
 
 KWQVectorImpl::KWQVectorImpl(uint size, void (*f)(void *))
-    : m_data((void **)malloc(size * sizeof(void *)))
+    : m_data((void **)fastMalloc(size * sizeof(void *)))
     , m_size(size), m_count(0), m_deleteItemFunction(f)
 {
     memset(m_data, 0, size * sizeof(void *));
 }
 
 KWQVectorImpl::KWQVectorImpl(const KWQVectorImpl &vi)
-    : m_data(vi.m_data ? (void **)malloc(vi.m_size * sizeof(void *)) : 0)
+    : m_data(vi.m_data ? (void **)fastMalloc(vi.m_size * sizeof(void *)) : 0)
     , m_size(vi.m_size), m_count(vi.m_count)
     , m_deleteItemFunction(vi.m_deleteItemFunction)
 {
@@ -47,7 +48,7 @@ KWQVectorImpl::KWQVectorImpl(const KWQVectorImpl &vi)
 
 KWQVectorImpl::~KWQVectorImpl()
 {
-    free(m_data);
+    fastFree(m_data);
 }
 
 void KWQVectorImpl::clear(bool delItems)
@@ -61,7 +62,7 @@ void KWQVectorImpl::clear(bool delItems)
 	}
     }
 
-    free(m_data);
+    fastFree(m_data);
     m_data = 0;
     m_size = 0;
     m_count = 0;
@@ -100,7 +101,7 @@ bool KWQVectorImpl::resize(uint size, bool delItems)
     }
 
     m_size = size;
-    m_data = (void **)realloc(m_data, size * sizeof(void *));
+    m_data = (void **)fastRealloc(m_data, size * sizeof(void *));
 
     if (size > oldSize) {
         memset(&m_data[oldSize], 0, (size - oldSize) * sizeof(void *));
@@ -147,7 +148,7 @@ KWQVectorImpl &KWQVectorImpl::assign(KWQVectorImpl &vi, bool delItems)
 {
     clear(delItems);
     
-    m_data = vi.m_data ? (void **)malloc(vi.m_size * sizeof(void *)) : 0;
+    m_data = vi.m_data ? (void **)fastMalloc(vi.m_size * sizeof(void *)) : 0;
     m_size = vi.m_size;
     m_count = vi.m_count;
     m_deleteItemFunction = vi.m_deleteItemFunction;

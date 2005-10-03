@@ -17,7 +17,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 
 // This file exists because JavaScriptCore needs to define the NaN and Inf globals in a way
 // that does not use a static initializer so we don't have a framework initialization routine.

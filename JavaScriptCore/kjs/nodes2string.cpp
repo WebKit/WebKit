@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "nodes.h"
 
 namespace KJS {

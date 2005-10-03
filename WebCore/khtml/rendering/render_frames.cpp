@@ -24,6 +24,7 @@
  */
 //#define DEBUG_LAYOUT
 
+#include "config.h"
 #include "rendering/render_frames.h"
 
 #include "css/cssproperties.h"

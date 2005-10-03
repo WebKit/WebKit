@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #import <WebCore/WebCoreScriptDebugger.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/debugger.h>

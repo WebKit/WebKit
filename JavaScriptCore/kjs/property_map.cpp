@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "property_map.h"
 
 #include <kxmlcore/FastMalloc.h>

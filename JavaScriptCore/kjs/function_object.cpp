@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "function_object.h"
 #include "internal.h"
 #include "function.h"

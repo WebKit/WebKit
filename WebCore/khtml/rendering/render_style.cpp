@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include "xml/dom_stringimpl.h"
 
 #include "render_style.h"

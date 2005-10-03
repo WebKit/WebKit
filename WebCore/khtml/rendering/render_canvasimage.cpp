@@ -25,6 +25,7 @@
 
 //#define DEBUG_LAYOUT
 
+#include "config.h"
 #include "render_canvasimage.h"
 #include "render_canvas.h"
 
@@ -65,7 +66,7 @@ RenderCanvasImage::~RenderCanvasImage()
         _drawingContext = 0;
     }
     
-    free (_drawingContextData);
+    fastFree(_drawingContextData);
     _drawingContextData = 0;
     
     if (_drawnImage) {
@@ -83,14 +84,14 @@ void RenderCanvasImage::createDrawingContext()
         CFRelease (_drawingContext);
         _drawingContext = 0;
     }
-    free (_drawingContextData);
+    fastFree(_drawingContextData);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
     int cWidth = contentWidth();
     int cHeight = contentHeight();
     size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
     size_t bytesPerRow = BYTES_PER_ROW(cWidth,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
-    _drawingContextData = calloc(height(), bytesPerRow);
+    _drawingContextData = fastCalloc(height(), bytesPerRow);
     _drawingContext = CGBitmapContextCreate(_drawingContextData, cWidth, cHeight, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     
 #ifdef DEBUG_CANVAS_BACKGROUND

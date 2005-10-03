@@ -23,6 +23,7 @@
  */
 // -------------------------------------------------------------------------
 
+#include "config.h"
 #include "html/html_inlineimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_documentimpl.h"

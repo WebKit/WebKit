@@ -28,6 +28,7 @@
 //#define EVENT_DEBUG
 //#define UNSUPPORTED_ATTR
 
+#include "config.h"
 #include "html/html_elementimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/htmltokenizer.h"

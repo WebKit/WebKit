@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQLoader.h"
 
 #import "KWQExceptions.h"
@@ -275,7 +276,7 @@ bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m
     // Nasty hack to directly compare strings buffers of NSString
     // and DOMString.  We do this for speed.
     if ([urlString length] > LOCAL_STRING_BUFFER_SIZE) {
-        urlStringCharacters = (unichar *)malloc (sizeof(unichar)*[urlString length]);
+        urlStringCharacters = (unichar *)fastMalloc(sizeof(unichar)*[urlString length]);
     }
     else {
         urlStringCharacters = _buffer;
@@ -287,7 +288,7 @@ bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m
 	ret = true;
     
     if (urlStringCharacters != _buffer)
-        free (urlStringCharacters);
+        fastFree(urlStringCharacters);
         
     return ret;
 }

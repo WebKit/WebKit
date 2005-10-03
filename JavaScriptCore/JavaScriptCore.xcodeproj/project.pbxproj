@@ -44,6 +44,7 @@
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E70089E85D300760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
 		65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93108EA173A00F7300B /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92B08EA173A00F7300B /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93208EA173A00F7300B /* HashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92C08EA173A00F7300B /* HashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -515,6 +516,7 @@
 		65621E6B089E859700760F35 /* property_slot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = property_slot.cpp; sourceTree = "<group>"; };
 		65621E6C089E859700760F35 /* property_slot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = property_slot.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
+		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
 		65DFC92B08EA173A00F7300B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; };
 		65DFC92C08EA173A00F7300B /* HashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashSet.h; sourceTree = "<group>"; };
@@ -847,6 +849,7 @@
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
 			children = (
+				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
 				6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */,
 				65DFC92A08EA173A00F7300B /* HashFunctions.h */,
 				65DFC92B08EA173A00F7300B /* HashMap.h */,
@@ -1029,6 +1032,7 @@
 				65DFC93408EA173A00F7300B /* HashTable.h in Headers */,
 				65DFC93508EA173A00F7300B /* HashTraits.h in Headers */,
 				6557E8F808EA5D4D0049CDFC /* HashMapPtrSpec.h in Headers */,
+				65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

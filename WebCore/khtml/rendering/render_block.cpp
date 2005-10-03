@@ -27,6 +27,7 @@
 //#define BOX_DEBUG
 //#define FLOAT_DEBUG
 
+#include "config.h"
 #include <kdebug.h>
 #include "rendering/render_text.h"
 #include "rendering/render_table.h"

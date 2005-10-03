@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "visible_text.h"
 
 #include "htmlnames.h"
@@ -55,7 +56,7 @@ const unsigned short nonBreakingSpace = 0xA0;
 class CircularSearchBuffer {
 public:
     CircularSearchBuffer(const QString &target, bool isCaseSensitive);
-    ~CircularSearchBuffer() { free(m_buffer); }
+    ~CircularSearchBuffer() { fastFree(m_buffer); }
 
     void clear() { m_cursor = m_buffer; m_bufferFull = false; }
     void append(int length, const QChar *characters);
@@ -908,7 +909,7 @@ CircularSearchBuffer::CircularSearchBuffer(const QString &s, bool isCaseSensitiv
     m_target.replace(nonBreakingSpace, ' ');
     m_isCaseSensitive = isCaseSensitive;
 
-    m_buffer = static_cast<QChar *>(malloc(s.length() * sizeof(QChar)));
+    m_buffer = static_cast<QChar *>(fastMalloc(s.length() * sizeof(QChar)));
     m_cursor = m_buffer;
     m_bufferFull = false;
 }

@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "scope_chain.h"
 
 #include "object.h"

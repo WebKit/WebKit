@@ -1,5 +1,6 @@
 #ifndef KHTML_NO_XBL
 
+#include "config.h"
 #include "dom/dom_node.h"
 #include "xml/dom_elementimpl.h"
 

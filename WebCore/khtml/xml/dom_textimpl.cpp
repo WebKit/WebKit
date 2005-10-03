@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "dom/dom_exception.h"
 #include "css/cssstyleselector.h"
 #include "xml/dom2_eventsimpl.h"

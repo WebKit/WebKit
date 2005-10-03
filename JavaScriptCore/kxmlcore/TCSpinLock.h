@@ -45,10 +45,7 @@
 #endif
 #include <stdlib.h>	/* for abort() */
 
-// FIXME: it would be nice to port the fast version to PowerPC but right now it is not
-// showing up on the profile
-#if defined __i386__ && defined __GNUC__
-
+#if (defined __i386__ || defined __ppc__) && defined __GNUC__
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);
 
 // The following is a struct so that it can be initialized at compile time
@@ -60,20 +57,42 @@ struct TCMalloc_SpinLock {
     
   inline void Lock() {
     int r;
+#if  __i386__
     __asm__ __volatile__
       ("xchgl %0, %1"
        : "=r"(r), "=m"(private_lockword_)
        : "0"(1), "m"(private_lockword_)
        : "memory");
+#else
+    volatile unsigned int *lockword_ptr = &private_lockword_;
+    __asm__ __volatile__
+        ("1: lwarx %0, 0, %1\n\t"
+         "stwcx. %2, 0, %1\n\t"
+         "bne- 1b\n\t"
+         "isync"
+         : "=&r" (r), "=r" (lockword_ptr)
+         : "r" (1), "1" (lockword_ptr)
+         : "memory");
+#endif
     if (r) TCMalloc_SlowLock(&private_lockword_);
   }
 
   inline void Unlock() {
+#if  __i386__
     __asm__ __volatile__
       ("movl $0, %0"
        : "=m"(private_lockword_)
        : "m" (private_lockword_)
        : "memory");
+#else
+    __asm__ __volatile__
+      ("isync\n\t"
+       "eieio\n\t"
+       "stw %1, %0"
+       : "=o" (private_lockword_) 
+       : "r" (0)
+       : "memory");
+#endif
   }
 };
 
@@ -83,11 +102,24 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
   sched_yield();        // Yield immediately since fast path failed
   while (true) {
     int r;
+#if __i386__
     __asm__ __volatile__
       ("xchgl %0, %1"
        : "=r"(r), "=m"(*lockword)
        : "0"(1), "m"(*lockword)
        : "memory");
+
+#else
+    int tmp = 1;
+    __asm__ __volatile__
+        ("1: lwarx %0, 0, %1\n\t"
+         "stwcx. %2, 0, %1\n\t"
+         "bne- 1b\n\t"
+         "isync"
+         : "=&r" (r), "=r" (lockword)
+         : "r" (tmp), "1" (lockword)
+         : "memory");
+#endif
     if (!r) {
       return;
     }

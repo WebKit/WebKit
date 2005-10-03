@@ -24,6 +24,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "khtml_part.h"
 
 #if APPLE_CHANGES

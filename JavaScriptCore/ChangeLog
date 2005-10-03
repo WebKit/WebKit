@@ -1,3 +1,132 @@
+2005-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4283967> REGRESSION: 3% regression on PLT from new FastMalloc
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5243
+	
+	A number of optimizations to the new threadsafe malloc that make it actually as fast
+	as dlmalloc (I measured wrong before) and as memory-efficient as the system malloc.
+
+	- use fastMalloc for everything - it now gets applied to all new/delete allocations
+	via a private inline operator new that is now included into every file via config.h.
+
+	- tweaked some of the numeric parameters for size classes and amount of wasted memory
+	allowed per allocation - this saves on memory use and consequently improves speed.
+
+	- so long as the allocator is not being used on background threads, get the per-thread
+	cache from a global variable instead of from pthread_getspecific, since the latter is slow.
+
+	- inline more functions, and force the ones GCC refuses to inline with 
+	attribute(always_inline), nearly all of these have one call site so inlining them has 
+	to be a win.
+
+	- use some tricks to calculate allocation size more efficiently and fewer times for small
+	allocations, to avoid hitting the huge size table array.
+
+	- avoid hitting the per-thread cache on code paths that don't need it.
+
+	- implement inline assembly version of spinlock for PowerPC (was already done for x86)
+
+        * bindings/NP_jsobject.cpp:
+        * bindings/c/c_class.cpp:
+        * bindings/c/c_instance.cpp:
+        * bindings/c/c_runtime.cpp:
+        * bindings/c/c_utility.cpp:
+        * bindings/jni/jni_class.cpp:
+        * bindings/jni/jni_instance.cpp:
+        * bindings/jni/jni_jsobject.cpp:
+        * bindings/jni/jni_objc.mm:
+        * bindings/jni/jni_runtime.cpp:
+        * bindings/jni/jni_utility.cpp:
+        * bindings/npruntime.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/objc/objc_class.mm:
+        * bindings/objc/objc_instance.mm:
+        * bindings/objc/objc_runtime.mm:
+        * bindings/objc/objc_utility.mm:
+        * bindings/runtime.cpp:
+        * bindings/runtime_array.cpp:
+        * bindings/runtime_method.cpp:
+        * bindings/runtime_object.cpp:
+        * bindings/runtime_root.cpp:
+        * bindings/testbindings.cpp:
+        * bindings/testbindings.mm:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp):
+        (ArrayInstanceImp::~ArrayInstanceImp):
+        (ArrayInstanceImp::resizeStorage):
+        * kjs/bool_object.cpp:
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread):
+        * kjs/config.h:
+        * kjs/debugger.cpp:
+        * kjs/error_object.cpp:
+        * kjs/function.cpp:
+        * kjs/function_object.cpp:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::rehash):
+        * kjs/internal.cpp:
+        (KJS::Parser::saveNewNode):
+        (KJS::clearNewNodes):
+        * kjs/interpreter.cpp:
+        * kjs/lexer.cpp:
+        (Lexer::doneParsing):
+        (Lexer::makeIdentifier):
+        (Lexer::makeUString):
+        * kjs/list.cpp:
+        * kjs/math_object.cpp:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        * kjs/number_object.cpp:
+        (integer_part_noexp):
+        (char_sequence):
+        * kjs/object.cpp:
+        * kjs/object_object.cpp:
+        * kjs/property_map.cpp:
+        * kjs/property_slot.cpp:
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::rehash):
+        * kjs/reference.cpp:
+        * kjs/reference_list.cpp:
+        * kjs/regexp.cpp:
+        * kjs/regexp_object.cpp:
+        * kjs/scope_chain.cpp:
+        * kjs/scope_chain.h:
+        * kjs/string_object.cpp:
+        * kjs/testkjs.cpp:
+        * kjs/ustring.h:
+        * kjs/value.cpp:
+        * kxmlcore/Assertions.mm:
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::InitSizeClasses):
+        (KXMLCore::DLL_IsEmpty):
+        (KXMLCore::DLL_Prepend):
+        (KXMLCore::TCMalloc_Central_FreeList::Insert):
+        (KXMLCore::TCMalloc_Central_FreeList::Remove):
+        (KXMLCore::TCMalloc_Central_FreeList::Populate):
+        (KXMLCore::TCMalloc_ThreadCache::Allocate):
+        (KXMLCore::TCMalloc_ThreadCache::FetchFromCentralCache):
+        (KXMLCore::fastMallocRegisterThread):
+        (KXMLCore::TCMalloc_ThreadCache::GetCache):
+        (KXMLCore::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (KXMLCore::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (KXMLCore::do_malloc):
+        (KXMLCore::do_free):
+        (KXMLCore::realloc):
+        * kxmlcore/FastMalloc.h:
+        (operator new):
+        (operator delete):
+        (operator new[]):
+        (operator delete[]):
+        * kxmlcore/HashTable.cpp:
+        * kxmlcore/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        * kxmlcore/TCSystemAlloc.cpp:
+
 2005-09-30  Geoffrey Garen  <ggaren@apple.com>
 
         - Second cut at fixing <rdar://problem/4275206> Denver Regression: Seed: 

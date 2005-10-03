@@ -340,10 +340,7 @@ inline bool operator<(char ch, QChar qc)
 #define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
 #define QS_INTERNAL_BUFFER_UCHARS QS_INTERNAL_BUFFER_SIZE/2
 
-struct KWQStringData 
-#ifndef QSTRING_DEBUG_ALLOCATIONS
-    : public FastAllocated 
-#endif
+struct KWQStringData  
 {
     // Uses shared null data.
     KWQStringData();

@@ -4,6 +4,7 @@ make && g++ can-convert.mm -framework Carbon && ./a.out && rm a.out
 
 */
 
+#include "config.h"
 #include <Carbon/Carbon.h>
 
 const int NoEncodingFlags = 0;

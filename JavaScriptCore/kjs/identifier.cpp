@@ -33,6 +33,7 @@
 #define KJS_IDENTIFIER_HIDE_GLOBALS 1
 #endif
 
+#include "config.h"
 #include "identifier.h"
 
 #include <kxmlcore/FastMalloc.h>
@@ -287,13 +288,13 @@ void Identifier::rehash(int newTableSize)
 
     _tableSize = newTableSize;
     _tableSizeMask = newTableSize - 1;
-    _table = (UString::Rep **)calloc(newTableSize, sizeof(UString::Rep *));
+    _table = (UString::Rep **)fastCalloc(newTableSize, sizeof(UString::Rep *));
 
     for (int i = 0; i != oldTableSize; ++i)
         if (UString::Rep *key = oldTable[i])
             insert(key);
 
-    free(oldTable);
+    fastFree(oldTable);
 }
 
 // Global constants for property name strings.

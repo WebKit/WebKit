@@ -125,7 +125,7 @@ namespace DOM {
         }
     };
     
-class DOMImplementationImpl : public khtml::Shared<DOMImplementationImpl>, public FastAllocated
+class DOMImplementationImpl : public khtml::Shared<DOMImplementationImpl>
 {
 public:
     DOMImplementationImpl();

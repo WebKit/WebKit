@@ -21,6 +21,7 @@
 
 #define KHTML_QNAME_HIDE_GLOBALS 1
 
+#include "config.h"
 #include "dom_qname.h"
 #include <kxmlcore/HashSet.h>
 

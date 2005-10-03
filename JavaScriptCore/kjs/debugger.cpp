@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "debugger.h"
 #include "value.h"
 #include "object.h"

@@ -65,6 +65,8 @@
 		65AC79A20831ED6D009385CE /* append_node_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A00831ED6D009385CE /* append_node_command.h */; };
 		65AC79A90831F006009385CE /* apply_style_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC79A70831F006009385CE /* apply_style_command.cpp */; };
 		65AC79AA0831F006009385CE /* apply_style_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A80831F006009385CE /* apply_style_command.h */; };
+		65C97AF308EA908800ACD273 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C97AF208EA908800ACD273 /* config.h */; };
+		65C97AF408EA908800ACD273 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C97AF208EA908800ACD273 /* config.h */; };
 		65DC16C40831DD6F0022744E /* composite_edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DC16C20831DD6F0022744E /* composite_edit_command.cpp */; };
 		65DC16C50831DD6F0022744E /* composite_edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DC16C30831DD6F0022744E /* composite_edit_command.h */; };
 		7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2439,6 +2441,7 @@
 		65AC79A00831ED6D009385CE /* append_node_command.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = append_node_command.h; path = editing/append_node_command.h; sourceTree = "<group>"; };
 		65AC79A70831F006009385CE /* apply_style_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = apply_style_command.cpp; path = editing/apply_style_command.cpp; sourceTree = "<group>"; };
 		65AC79A80831F006009385CE /* apply_style_command.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = apply_style_command.h; path = editing/apply_style_command.h; sourceTree = "<group>"; };
+		65C97AF208EA908800ACD273 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		65DC16C20831DD6F0022744E /* composite_edit_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = composite_edit_command.cpp; path = editing/composite_edit_command.cpp; sourceTree = "<group>"; };
 		65DC16C30831DD6F0022744E /* composite_edit_command.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = composite_edit_command.h; path = editing/composite_edit_command.h; sourceTree = "<group>"; };
 		65F80697054D9F86008BF776 /* KWQExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQExceptions.mm; sourceTree = "<group>"; };
@@ -6310,6 +6313,7 @@
 				BC41978B059293BE0016347F /* xbl */,
 				F523D32402DE4478018635CA /* xml */,
 				BC06F24406D18A35004A6FA3 /* xsl */,
+				65C97AF208EA908800ACD273 /* config.h */,
 				F523D15202DE42AD018635CA /* khtml_events.h */,
 				F523D15102DE42AD018635CA /* khtml_events.cpp */,
 				F523D15402DE42AD018635CA /* khtml_part.h */,
@@ -7240,6 +7244,7 @@
 				BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */,
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
+				65C97AF308EA908800ACD273 /* config.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8122,6 +8127,7 @@
 				A8EA434708E14EAC004BC396 /* render_kcanvaswrapper.h in Headers */,
 				A8EA434908E14EAC004BC396 /* dom_kdomnodetreewrapper.h in Headers */,
 				A8EA434B08E14EAC004BC396 /* dom_kdomdocumentwrapper.h in Headers */,
+				65C97AF408EA908800ACD273 /* config.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQMapImpl.h"
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
@@ -115,7 +116,7 @@ void KWQMapIteratorImpl::incrementInternal()
 
 // KWQMapImplPrivate
 
-class KWQMapImpl::KWQMapPrivate : public FastAllocated
+class KWQMapImpl::KWQMapPrivate
 {
 public:
     KWQMapPrivate(KWQMapNodeImpl *node,

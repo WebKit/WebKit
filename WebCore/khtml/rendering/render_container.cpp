@@ -25,6 +25,7 @@
 
 //#define DEBUG_LAYOUT
 
+#include "config.h"
 #include "render_container.h"
 #include "render_table.h"
 #include "render_text.h"

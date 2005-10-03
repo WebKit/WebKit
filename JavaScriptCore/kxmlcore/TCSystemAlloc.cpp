@@ -66,8 +66,8 @@ static size_t pagesize = 0;
 // For 2.2 kernels, it looks like the sbrk address space (500MBish) and
 // the mmap address space (1300MBish) are disjoint, so we need both allocators
 // to get as much virtual memory as possible.
-static bool use_devmem = true;
-static bool use_sbrk = true;
+static bool use_devmem = false;
+static bool use_sbrk = false;
 static bool use_mmap = true;
 
 // Flags to keep us from retrying allocators that failed.

@@ -20,6 +20,7 @@
  * 02111-1307  USA
  */
 
+#include "config.h"
 #include "css_computedstyle.h"
 
 #include "cssproperties.h"

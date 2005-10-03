@@ -27,6 +27,7 @@
 // KDE HTML Widget -- HTML Parser
 //#define PARSER_DEBUG
 
+#include "config.h"
 #include "html/htmlparser.h"
 
 #include "dom/dom_exception.h"
@@ -47,7 +48,6 @@
 #include "htmlfactory.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_nodeimpl.h"
-#include <kxmlcore/FastMalloc.h>
 #include <kxmlcore/HashSet.h>
 #include "html/htmltokenizer.h"
 #include "khtmlview.h"
@@ -71,7 +71,7 @@ using namespace khtml;
 /**
  * @internal
  */
-class HTMLStackElem : public FastAllocated
+class HTMLStackElem
 {
 public:
     HTMLStackElem(const AtomicString& _tagName,

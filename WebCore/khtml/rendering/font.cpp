@@ -23,6 +23,7 @@
  *
  */
 
+#include "config.h"
 #include "font.h"
 
 #include "khtml_factory.h"

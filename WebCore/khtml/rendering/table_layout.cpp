@@ -22,6 +22,7 @@
  *
  * $Id$
  */
+#include "config.h"
 #include "table_layout.h"
 #include "render_table.h"
 

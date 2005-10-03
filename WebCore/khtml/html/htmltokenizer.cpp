@@ -31,9 +31,7 @@
 //#define TOKEN_DEBUG 1
 //#define TOKEN_DEBUG 2
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 //#include <string.h>
 #include "html/htmltokenizer.h"
@@ -94,9 +92,9 @@ static const char styleEnd [] =  "</style";
 static const char textareaEnd [] = "</textarea";
 static const char titleEnd [] = "</title";
 
-#define KHTML_ALLOC_QCHAR_VEC( N ) (QChar*) malloc( sizeof(QChar)*( N ) )
-#define KHTML_REALLOC_QCHAR_VEC(P, N ) (QChar*) P = realloc(p, sizeof(QChar)*( N ))
-#define KHTML_DELETE_QCHAR_VEC( P ) free((char*)( P ))
+#define KHTML_ALLOC_QCHAR_VEC( N ) (QChar*) fastMalloc( sizeof(QChar)*( N ) )
+#define KHTML_REALLOC_QCHAR_VEC(P, N ) (QChar*) P = fastRealloc(p, sizeof(QChar)*( N ))
+#define KHTML_DELETE_QCHAR_VEC( P ) fastFree((char*)( P ))
 
 // Full support for MS Windows extensions to Latin-1.
 // Technically these extensions should only be activated for pages
@@ -1756,7 +1754,7 @@ void HTMLTokenizer::enlargeBuffer(int len)
     int newsize = kMax(size*2, size+len);
     int oldoffs = (dest - buffer);
 
-    buffer = (QChar*)realloc(buffer, newsize*sizeof(QChar));
+    buffer = (QChar*)fastRealloc(buffer, newsize*sizeof(QChar));
     dest = buffer + oldoffs;
     size = newsize;
 }
@@ -1764,7 +1762,7 @@ void HTMLTokenizer::enlargeBuffer(int len)
 void HTMLTokenizer::enlargeScriptBuffer(int len)
 {
     int newsize = kMax(scriptCodeMaxSize*2, scriptCodeMaxSize+len);
-    scriptCode = (QChar*)realloc(scriptCode, newsize*sizeof(QChar));
+    scriptCode = (QChar*)fastRealloc(scriptCode, newsize*sizeof(QChar));
     scriptCodeMaxSize = newsize;
 }
 

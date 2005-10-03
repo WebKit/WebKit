@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "remove_node_preserving_children_command.h"
 
 #include "xml/dom_nodeimpl.h"

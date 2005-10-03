@@ -25,6 +25,7 @@
 
 //#define CSS_DEBUG
 
+#include "config.h"
 #include "kdebug.h"
 
 #include "css_base.h"

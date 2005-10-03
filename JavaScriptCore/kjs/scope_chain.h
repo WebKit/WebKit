@@ -22,13 +22,11 @@
 #ifndef KJS_SCOPE_CHAIN_H
 #define KJS_SCOPE_CHAIN_H
 
-#include <kxmlcore/FastMalloc.h>
-
 namespace KJS {
 
     class ObjectImp;
     
-    class ScopeChainNode : public FastAllocated {
+    class ScopeChainNode {
     public:
         ScopeChainNode(ScopeChainNode *n, ObjectImp *o)
             : next(n), object(o), refCount(1) { }

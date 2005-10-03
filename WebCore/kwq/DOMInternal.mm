@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "DOMInternal.h"
 
 #import "css_stylesheet.h"
@@ -134,14 +135,14 @@ DOMString::DOMString(NSString *str)
         UniChar fixedSizeBuffer[1024];
         UniChar *buffer;
         if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-            buffer = static_cast<UniChar *>(malloc(size * sizeof(UniChar)));
+            buffer = static_cast<UniChar *>(fastMalloc(size * sizeof(UniChar)));
         } else {
             buffer = fixedSizeBuffer;
         }
         CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer);
         m_impl = new DOMStringImpl(reinterpret_cast<const QChar *>(buffer), (uint)size);
         if (buffer != fixedSizeBuffer) {
-            free(buffer);
+            fastFree(buffer);
         }
     }
     m_impl->ref();

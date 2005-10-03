@@ -24,6 +24,7 @@
 
 //#define CSS_STYLESHEET_DEBUG
 
+#include "config.h"
 #include "dom/dom_string.h"
 #include "dom/dom_exception.h"
 #include "dom/css_stylesheet.h"

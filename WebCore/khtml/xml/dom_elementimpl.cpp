@@ -24,6 +24,7 @@
  */
 
 //#define EVENT_DEBUG
+#include "config.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_node.h"
 #include "xml/dom_textimpl.h"

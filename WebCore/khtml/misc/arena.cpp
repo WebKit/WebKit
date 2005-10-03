@@ -42,6 +42,7 @@
  * David R. Hanson, Software -- Practice and Experience, Vol. 20(1).
  */
 
+#include "config.h"
 #include "arena.h"
 
 #include <algorithm>

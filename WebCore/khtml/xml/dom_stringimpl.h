@@ -26,14 +26,13 @@
 
 #include "misc/khtmllayout.h"
 #include "misc/shared.h"
-#include <kxmlcore/FastMalloc.h>
 
 #define QT_ALLOC_QCHAR_VEC(N) static_cast<QChar*>(fastMalloc(sizeof(QChar)*(N)))
 #define QT_DELETE_QCHAR_VEC(P) fastFree(P)
 
 namespace DOM {
 
-class DOMStringImpl : public khtml::Shared<DOMStringImpl>, public FastAllocated
+class DOMStringImpl : public khtml::Shared<DOMStringImpl>
 {
 private:
     struct WithOneRef { };

@@ -21,6 +21,7 @@
 
 #ifdef KHTML_XSLT
 
+#include "config.h"
 #include "xslt_processorimpl.h"
 #include "xsl_stylesheetimpl.h"
 #include "html_documentimpl.h"

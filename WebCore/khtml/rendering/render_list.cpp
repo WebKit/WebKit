@@ -22,6 +22,7 @@
  *
  */
 
+#include "config.h"
 #include "render_list.h"
 #include "rendering/render_canvas.h"
 

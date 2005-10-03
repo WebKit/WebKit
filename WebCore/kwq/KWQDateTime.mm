@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import <Foundation/Foundation.h>
 #import "KWQDateTime.h"
 #import <time.h>

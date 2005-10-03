@@ -24,6 +24,7 @@
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
 
+#include "config.h"
 #include "rendering/render_text.h"
 
 #include "rendering/render_canvas.h"

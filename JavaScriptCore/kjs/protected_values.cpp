@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "protected_values.h"
 
 #include "pointer_hash.h"
@@ -184,13 +185,13 @@ void ProtectedValues::rehash(int newTableSize)
 
     _tableSize = newTableSize;
     _tableSizeMask = newTableSize - 1;
-    _table = (KeyValue *)calloc(newTableSize, sizeof(KeyValue));
+    _table = (KeyValue *)fastCalloc(newTableSize, sizeof(KeyValue));
 
     for (int i = 0; i != oldTableSize; ++i)
         if (oldTable[i].key)
             insert(oldTable[i].key, oldTable[i].value);
 
-    free(oldTable);
+    fastFree(oldTable);
 }
 
 } // namespace

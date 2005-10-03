@@ -32,3 +32,9 @@
 #undef DEBUG_COLLECTOR
 
 #define KXC_CHANGES 1
+
+#ifdef __cplusplus
+#undef new
+#undef delete
+#include <kxmlcore/FastMalloc.h>
+#endif

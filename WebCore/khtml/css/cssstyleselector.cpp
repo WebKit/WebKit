@@ -20,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "css/cssstyleselector.h"
 #include "rendering/render_style.h"
 #include "css/css_stylesheetimpl.h"
@@ -180,7 +181,7 @@ if (id == propID) \
 
 namespace khtml {
 
-class CSSRuleSet : public FastAllocated
+class CSSRuleSet
 {
 public:
     CSSRuleSet();

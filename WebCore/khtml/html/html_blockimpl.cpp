@@ -23,6 +23,7 @@
  */
 // -------------------------------------------------------------------------
 //#define DEBUG
+#include "config.h"
 #include "html_blockimpl.h"
 #include "html_documentimpl.h"
 #include "css/cssstyleselector.h"

@@ -46,7 +46,7 @@ namespace DOM {
 
     class DocumentImpl;
 
-    struct CSSNamespace : public FastAllocated {
+    struct CSSNamespace {
         AtomicString m_prefix;
         AtomicString m_uri;
         CSSNamespace* m_parent;
@@ -68,7 +68,7 @@ namespace DOM {
     };
     
 // this class represents a selector for a StyleRule
-    class CSSSelector : public FastAllocated
+    class CSSSelector
     {
     public:
         CSSSelector()
@@ -194,7 +194,7 @@ namespace DOM {
     };
 
     // a style class which has a parent (almost all have)
-    class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>, public FastAllocated
+    class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
     {
     public:
 	StyleBaseImpl()  { m_parent = 0; strictParsing = true; multiLength = false; }

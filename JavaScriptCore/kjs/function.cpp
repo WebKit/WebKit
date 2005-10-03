@@ -22,6 +22,7 @@
  *
  */
 
+#include "config.h"
 #include "function.h"
 
 #include "internal.h"

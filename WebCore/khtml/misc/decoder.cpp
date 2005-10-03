@@ -25,6 +25,7 @@
 
 //#define DECODE_DEBUG
 
+#include "config.h"
 #include "decoder.h"
 using namespace khtml;
 

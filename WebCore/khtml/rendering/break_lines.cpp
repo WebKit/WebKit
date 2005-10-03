@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "break_lines.h"
 
 #include <qstring.h>

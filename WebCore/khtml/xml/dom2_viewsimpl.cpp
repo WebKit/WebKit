@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include "dom2_viewsimpl.h"
 
 #include "css/css_computedstyle.h"

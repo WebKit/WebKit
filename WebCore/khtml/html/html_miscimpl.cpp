@@ -22,6 +22,7 @@
  *
  */
 // -------------------------------------------------------------------------
+#include "config.h"
 #include "html/html_miscimpl.h"
 #include "html/html_formimpl.h"
 #include "html/html_imageimpl.h"

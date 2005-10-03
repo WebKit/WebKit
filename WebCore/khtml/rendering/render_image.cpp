@@ -24,6 +24,7 @@
  */
 //#define DEBUG_LAYOUT
 
+#include "config.h"
 #include "render_image.h"
 #include "render_canvas.h"
 

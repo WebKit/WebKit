@@ -44,7 +44,7 @@ class EventListener;
 class NodeImpl;
 class ClipboardImpl;
 
-class EventImpl : public khtml::Shared<EventImpl>, public FastAllocated
+class EventImpl : public khtml::Shared<EventImpl>
 {
 public:
     EventImpl();
@@ -359,7 +359,7 @@ private:
     int m_wheelDelta;
 };
 
-class RegisteredEventListener : public FastAllocated {
+class RegisteredEventListener {
 public:
     RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     ~RegisteredEventListener();
@@ -381,7 +381,7 @@ bool operator==(const RegisteredEventListener &, const RegisteredEventListener &
 inline bool operator!=(const RegisteredEventListener &a, const RegisteredEventListener &b) { return !(a == b); }
 
 // State available during IE's events for drag and drop and copy/paste
-class ClipboardImpl : public khtml::Shared<ClipboardImpl>, public FastAllocated {
+class ClipboardImpl : public khtml::Shared<ClipboardImpl> {
 public:
     ClipboardImpl() { }
     virtual ~ClipboardImpl();

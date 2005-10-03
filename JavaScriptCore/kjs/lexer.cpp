@@ -834,7 +834,7 @@ void Lexer::doneParsing()
   for (unsigned i = 0; i < numIdentifiers; i++) {
     delete identifiers[i];
   }
-  free (identifiers);
+  fastFree(identifiers);
   identifiers = 0;
   numIdentifiers = 0;
   identifiersCapacity = 0;
@@ -842,7 +842,7 @@ void Lexer::doneParsing()
   for (unsigned i = 0; i < numStrings; i++) {
     delete strings[i];
   }
-  free (strings);
+  fastFree(strings);
   strings = 0;
   numStrings = 0;
   stringsCapacity = 0;
@@ -855,7 +855,7 @@ Identifier *Lexer::makeIdentifier(UChar *buffer, unsigned int pos)
 {
   if (numIdentifiers == identifiersCapacity) {
     identifiersCapacity = (identifiersCapacity == 0) ? initialCapacity : identifiersCapacity *growthFactor;
-    identifiers = (KJS::Identifier **)realloc(identifiers, sizeof(KJS::Identifier *) * identifiersCapacity);
+    identifiers = (KJS::Identifier **)fastRealloc(identifiers, sizeof(KJS::Identifier *) * identifiersCapacity);
   }
 
   KJS::Identifier *identifier = new KJS::Identifier(buffer16, pos16);
@@ -867,7 +867,7 @@ UString *Lexer::makeUString(UChar *buffer, unsigned int pos)
 {
   if (numStrings == stringsCapacity) {
     stringsCapacity = (stringsCapacity == 0) ? initialCapacity : stringsCapacity *growthFactor;
-    strings = (UString **)realloc(strings, sizeof(UString *) * stringsCapacity);
+    strings = (UString **)fastRealloc(strings, sizeof(UString *) * stringsCapacity);
   }
 
   UString *string = new UString(buffer16, pos16);

@@ -29,7 +29,6 @@
 
 #include "dom/dom2_range.h"
 #include "misc/shared.h"
-#include <kxmlcore/FastMalloc.h>
 
 namespace DOM {
 
@@ -39,7 +38,7 @@ class DOMString;
 class NodeImpl;
 class Position;
 
-class RangeImpl : public khtml::Shared<RangeImpl>, public FastAllocated
+class RangeImpl : public khtml::Shared<RangeImpl>
 {
     friend class DocumentImpl;
 public:

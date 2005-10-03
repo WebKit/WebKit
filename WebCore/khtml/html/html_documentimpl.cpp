@@ -52,6 +52,7 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
+#include "config.h"
 #include "html/html_documentimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_headimpl.h"

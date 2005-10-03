@@ -21,6 +21,7 @@
  *
  */
 
+#include "config.h"
 #include "nodes.h"
 
 #include <math.h>

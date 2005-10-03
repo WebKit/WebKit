@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "value.h"
 #include "object.h"
 #include "types.h"

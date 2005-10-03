@@ -24,6 +24,7 @@
  */
 // -------------------------------------------------------------------------
 
+#include "config.h"
 #include "html_baseimpl.h"
 
 #include "html/html_documentimpl.h"

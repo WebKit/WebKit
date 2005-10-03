@@ -62,6 +62,7 @@
 // * allocation of a reasonably complicated struct
 //   goes from about 1100 ns to about 300 ns.
 
+#include "config.h"
 #include "FastMalloc.h"
 
 #ifndef NDEBUG
@@ -98,7 +99,6 @@ void *fastRealloc(void* p, size_t n)
 
 #else
 
-#include "config.h"
 #include <new>
 #include <stdio.h>
 #include <stddef.h>
@@ -119,6 +119,12 @@ void *fastRealloc(void* p, size_t n)
 #include "TCSystemAlloc.h"
 
 #include "Assertions.h"
+
+#ifdef __GNUC__
+#define ALWAYS_INLINE inline __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE inline
+#endif
 
 #if KXC_CHANGES
 namespace KXMLCore {
@@ -154,6 +160,7 @@ static const size_t kMaxSize    = 8u * kPageSize;
 static const size_t kAlignShift = 3;
 static const size_t kAlignment  = 1 << kAlignShift;
 static const size_t kNumClasses = 170;
+static const size_t kMaxTinySize = 1 << 8;
 
 // Minimum number of pages to fetch from system at a time.  Must be
 // significantly bigger than kBlockSize to amortize system-call
@@ -285,11 +292,11 @@ static void InitSizeClasses() {
       // Increase alignment every so often.
       //
       // Since we double the alignment every time size doubles and
-      // size >= 128, this means that space wasted due to alignment is
-      // at most 16/128 i.e., 12.5%.  Plus we cap the alignment at 256
+      // size >= 256, this means that space wasted due to alignment is
+      // at most 16/256 i.e., 6.25%.  Plus we cap the alignment at 512
       // bytes, so the space wasted as a percentage starts falling for
-      // sizes > 2K.
-      if ((lg >= 7) && (alignshift < 8)) {
+      // sizes > 4K.
+      if ((lg >= 8) && (alignshift < 9)) {
         alignshift++;
       }
       size_base[lg] = next_class - ((size-1) >> alignshift);
@@ -309,11 +316,11 @@ static void InitSizeClasses() {
   // Initialize the number of pages we should allocate to split into
   // small objects for a given class.
   for (size_t cl = 1; cl < next_class; cl++) {
-    // Allocate enough pages so leftover is less than 1/8 of total.
-    // This bounds wasted space to at most 12.5%.
+    // Allocate enough pages so leftover is less than 1/16 of total.
+    // This bounds wasted space to at most 6.25%.
     size_t psize = kPageSize;
     const size_t s = class_to_size[cl];
-    while ((psize % s) > (psize >> 3)) {
+    while ((psize % s) > (psize >> 4)) {
       psize += kPageSize;
     }
     class_to_pages[cl] = psize >> kPageShift;
@@ -517,7 +524,7 @@ static inline void DLL_Remove(Span* span) {
   span->next = NULL;
 }
 
-static inline bool DLL_IsEmpty(const Span* list) {
+static ALWAYS_INLINE bool DLL_IsEmpty(const Span* list) {
   return list->next == list;
 }
 
@@ -541,7 +548,7 @@ static void DLL_Print(const char* label, const Span* list) {
 }
 #endif
 
-static void DLL_Prepend(Span* list, Span* span) {
+static inline void DLL_Prepend(Span* list, Span* span) {
   ASSERT(span->next == NULL);
   ASSERT(span->prev == NULL);
   span->next = list->next;
@@ -1017,7 +1024,7 @@ class TCMalloc_ThreadCache {
   void* Allocate(size_t size);
   void Deallocate(void* ptr, size_t size_class);
 
-  void FetchFromCentralCache(size_t cl);
+  void FetchFromCentralCache(size_t cl, size_t allocationSize);
   void ReleaseToCentralCache(size_t cl, int N);
   void Scavenge();
   void Print() const;
@@ -1135,7 +1142,7 @@ void TCMalloc_Central_FreeList::Init(size_t cl) {
   counter_ = 0;
 }
 
-inline void TCMalloc_Central_FreeList::Insert(void* object) {
+ALWAYS_INLINE void TCMalloc_Central_FreeList::Insert(void* object) {
   const PageID p = reinterpret_cast<uintptr_t>(object) >> kPageShift;
   Span* span = pageheap->GetDescriptor(p);
   ASSERT(span != NULL);
@@ -1180,7 +1187,7 @@ inline void TCMalloc_Central_FreeList::Insert(void* object) {
   }
 }
 
-inline void* TCMalloc_Central_FreeList::Remove() {
+ALWAYS_INLINE void* TCMalloc_Central_FreeList::Remove() {
   if (DLL_IsEmpty(&nonempty_)) return NULL;
   Span* span = nonempty_.next;
 
@@ -1199,7 +1206,7 @@ inline void* TCMalloc_Central_FreeList::Remove() {
 }
 
 // Fetch memory from the system and add to the central cache freelist.
-inline void TCMalloc_Central_FreeList::Populate() {
+ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
   // Release central list lock while operating on pageheap
   lock_.Unlock();
   const size_t npages = class_to_pages[size_class_];
@@ -1282,15 +1289,16 @@ void TCMalloc_ThreadCache::Cleanup() {
   }
 }
 
-inline void* TCMalloc_ThreadCache::Allocate(size_t size) {
+ALWAYS_INLINE void* TCMalloc_ThreadCache::Allocate(size_t size) {
   ASSERT(size <= kMaxSize);
   const size_t cl = SizeClass(size);
   FreeList* list = &list_[cl];
+  size_t allocationSize = (size <= kMaxTinySize) ? (size + 7) & ~0x7 : ByteSizeForClass(cl);
   if (list->empty()) {
-    FetchFromCentralCache(cl);
+    FetchFromCentralCache(cl, allocationSize);
     if (list->empty()) return NULL;
   }
-  size_ -= ByteSizeForClass(cl);
+  size_ -= allocationSize;
   return list->Pop();
 }
 
@@ -1306,7 +1314,7 @@ inline void TCMalloc_ThreadCache::Deallocate(void* ptr, size_t cl) {
 }
 
 // Remove some objects of class "cl" from central cache and add to thread heap
-inline void TCMalloc_ThreadCache::FetchFromCentralCache(size_t cl) {
+ALWAYS_INLINE void TCMalloc_ThreadCache::FetchFromCentralCache(size_t cl, size_t byteSize) {
   TCMalloc_Central_FreeList* src = &central_cache[cl];
   FreeList* dst = &list_[cl];
   SpinLockHolder h(&src->lock_);
@@ -1322,7 +1330,7 @@ inline void TCMalloc_ThreadCache::FetchFromCentralCache(size_t cl) {
       }
     }
     dst->Push(object);
-    size_ += ByteSizeForClass(cl);
+    size_ += byteSize;
   }
 }
 
@@ -1368,12 +1376,33 @@ inline void TCMalloc_ThreadCache::Scavenge() {
 #endif
 }
 
+bool isMultiThreaded;
+TCMalloc_ThreadCache *mainThreadCache;
+pthread_t mainThreadID;
+static SpinLock multiThreadedLock = SPINLOCK_INITIALIZER;
+
+void fastMallocRegisterThread(pthread_t thread) 
+{
+    if (thread != mainThreadID) {
+        // We lock when writing isMultiThreaded but not when reading it.
+        // It's ok if the main thread temporarily gets it wrong - the global
+        // variable cache is the same as the thread-specific cache for the main thread.
+        // And other threads can't get it wrong because they must have gone through 
+        // this function before allocating so they've synchronized.
+        SpinLockHolder lock(&multiThreadedLock);
+        isMultiThreaded = true;
+    }
+}
+
 inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
   void* ptr = NULL;
   if (!tsd_inited) {
     InitModule();
   } else {
-    ptr = pthread_getspecific(heap_key);
+      if (!isMultiThreaded)
+          ptr = mainThreadCache;
+      else
+          ptr = pthread_getspecific(heap_key);
   }
   if (ptr == NULL) ptr = CreateCacheIfNecessary();
   return reinterpret_cast<TCMalloc_ThreadCache*>(ptr);
@@ -1383,6 +1412,8 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
 // because we may be in the thread destruction code and may have
 // already cleaned up the cache for this thread.
 inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
+  if (!isMultiThreaded)
+      return mainThreadCache;
   if (!tsd_inited) return NULL;
   return reinterpret_cast<TCMalloc_ThreadCache*>
     (pthread_getspecific(heap_key));
@@ -1473,7 +1504,11 @@ void* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
       if (thread_heaps != NULL) thread_heaps->prev_ = heap;
       thread_heaps = heap;
       thread_heap_count++;
-      RecomputeThreadCacheSize();
+      RecomputeThreadCacheSize(); 
+      if (!isMultiThreaded) {
+          mainThreadCache = heap;
+          mainThreadID = pthread_self();
+      }
     }
   }
 
@@ -1801,41 +1836,49 @@ static Span* DoSampledAllocation(size_t size) {
 }
 #endif
 
-static inline void* do_malloc(size_t size) {
+static ALWAYS_INLINE void* do_malloc(size_t size) {
 
 #ifndef KXC_CHANGES
   if (TCMallocDebug::level >= TCMallocDebug::kVerbose) 
     MESSAGE("In tcmalloc do_malloc(%" PRIuS")\n", size);
 #endif
 
+#ifndef KXC_CHANGES
   // The following call forces module initialization
   TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCache();
-#ifndef KXC_CHANGES
   if (heap->SampleAllocation(size)) {
     Span* span = DoSampledAllocation(size);
     if (span == NULL) return NULL;
     return reinterpret_cast<void*>(span->start << kPageShift);
   } else
 #endif
-      if (size > kMaxSize) {
+  if (size > kMaxSize) {
     // Use page-level allocator
+    if (!tsd_inited && !phinited)
+      TCMalloc_ThreadCache::InitModule();
+
     SpinLockHolder h(&pageheap_lock);
+
+
     Span* span = pageheap->New(pages(size));
     if (span == NULL) return NULL;
     return reinterpret_cast<void*>(span->start << kPageShift);
   } else {
-    return heap->Allocate(size);
+#ifdef KXC_CHANGES
+      TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCache();
+#endif
+      return heap->Allocate(size);
   }
 }
 
-static inline void do_free(void* ptr) {
+static ALWAYS_INLINE void do_free(void* ptr) {
 #ifndef KXC_CHANGES
   if (TCMallocDebug::level >= TCMallocDebug::kVerbose) 
     MESSAGE("In tcmalloc do_free(%p)\n", ptr);
 #endif
 #if KXC_CHANGES
-  if (ptr == NULL) return; 
-#else
+  if (ptr == NULL) return;
+#else KXC_CHANGES
   if (ptr == NULL || tcmalloc_is_destroyed) return;
 #endif
 
@@ -2071,7 +2114,7 @@ void* realloc(void* old_ptr, size_t new_size) {
 #ifndef KXC_CHANGES
     MallocHook::InvokeDeleteHook(old_ptr);
 #endif
-    do_free(old_ptr);
+    free(old_ptr);
     return NULL;
   }
 
@@ -2100,7 +2143,7 @@ void* realloc(void* old_ptr, size_t new_size) {
 #ifndef KXC_CHANGES
     MallocHook::InvokeDeleteHook(old_ptr);
 #endif
-    do_free(old_ptr);
+    free(old_ptr);
     return new_ptr;
   } else {
     return old_ptr;

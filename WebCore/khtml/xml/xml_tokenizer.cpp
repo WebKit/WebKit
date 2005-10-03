@@ -20,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "xml_tokenizer.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"

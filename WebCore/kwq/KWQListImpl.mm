@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQListImpl.h"
 
 #import <cstddef>
@@ -31,7 +32,7 @@
 #import <kxmlcore/Assertions.h>
 #import "kxmlcore/FastMalloc.h"
 
-class KWQListNode : public FastAllocated
+class KWQListNode
 {
 public:
     KWQListNode(void *d) : data(d), next(NULL), prev(NULL) { }

@@ -52,7 +52,7 @@ class KWQArrayImpl
     bool operator==(const KWQArrayImpl &) const;
 
  private:
-    class KWQArrayPrivate : public FastAllocated
+    class KWQArrayPrivate
     {
     public:	
 	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);

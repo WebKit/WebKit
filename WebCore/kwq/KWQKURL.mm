@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import "KWQKURL.h"
 
 #import <kxmlcore/Assertions.h>
@@ -242,7 +243,7 @@ KURL::KURL(const char *url)
         size_t urlLength = strlen(url) + 1;
         size_t bufferLength = urlLength + 5; // 5 for "file:"
         if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)malloc(bufferLength);
+            buffer = (char *)fastMalloc(bufferLength);
         } else {
             buffer = staticBuffer;
         }
@@ -254,7 +255,7 @@ KURL::KURL(const char *url)
         memcpy(&buffer[5], url, urlLength);
 	parse(buffer, NULL);
         if (buffer != staticBuffer) {
-            free(buffer);
+            fastFree(buffer);
         }
     } else {
 	parse(url, NULL);
@@ -268,7 +269,7 @@ KURL::KURL(const QString &url)
         char *buffer;
         size_t bufferLength = url.length() + 6; // 5 for "file:", 1 for terminator
         if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)malloc(bufferLength);
+            buffer = (char *)fastMalloc(bufferLength);
         } else {
             buffer = staticBuffer;
         }
@@ -280,7 +281,7 @@ KURL::KURL(const QString &url)
         url.copyLatin1(&buffer[5]);
 	parse(buffer, NULL);
         if (buffer != staticBuffer) {
-            free(buffer);
+            fastFree(buffer);
         }
     } else {
 	parse(url.ascii(), &url);
@@ -295,7 +296,7 @@ KURL::KURL(NSURL *url)
         char staticBuffer[2048];
         char *buffer;
         if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)malloc(bufferLength);
+            buffer = (char *)fastMalloc(bufferLength);
         } else {
             buffer = staticBuffer;
         }
@@ -313,7 +314,7 @@ KURL::KURL(NSURL *url)
             parse(bytes, NULL);
         }
         if (buffer != staticBuffer) {
-            free(buffer);
+            fastFree(buffer);
         }
     }
     else {
@@ -367,10 +368,10 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         charsToChopOffEnd++;
     }
     if (charsToChopOffEnd > 0) {
-        char *newStrBuffer = (char *)malloc((len + 1) - charsToChopOffEnd);
+        char *newStrBuffer = (char *)fastMalloc((len + 1) - charsToChopOffEnd);
         strncpy(newStrBuffer, str, len - charsToChopOffEnd);
         newStrBuffer[len - charsToChopOffEnd] = '\0';
-        free(strBuffer);
+        fastFree(strBuffer);
         strBuffer = newStrBuffer;
         str = strBuffer;
     }
@@ -403,7 +404,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 	    QString newURL = base.urlString + str;
 	    parse(newURL.ascii(), &newURL);
             if (strBuffer) {
-                free(strBuffer);
+                fastFree(strBuffer);
             }
             return;
 	}
@@ -455,7 +456,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 		size_t bufferLength = base.pathEndPos + 1 + strlen(str) + 1;
 
 		if (bufferLength > sizeof(staticBuffer)) {
-		    buffer = (char *)malloc(bufferLength);
+		    buffer = (char *)fastMalloc(bufferLength);
 		} else {
 		    buffer = staticBuffer;
 		}
@@ -533,7 +534,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
                 ASSERT(strlen(buffer) + 1 <= bufferLength);
 		
 		if (buffer != staticBuffer) {
-		    free(buffer);
+		    fastFree(buffer);
 		}
 		
 		break;
@@ -542,7 +543,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
     }
     
     if (strBuffer) {
-        free(strBuffer);
+        fastFree(strBuffer);
     }
 }
 
@@ -927,9 +928,9 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
         int encodedRunLength = encodedRunEnd - encodedRunPosition;
         if (encodedRunLength + 1 > bufferLength) {
             if (buffer != staticBuffer)
-                free(buffer);
+                fastFree(buffer);
             bufferLength = malloc_good_size(encodedRunLength + 1);
-            buffer = static_cast<char *>(malloc(bufferLength));
+            buffer = static_cast<char *>(fastMalloc(bufferLength));
         }
         urlString.copyLatin1(buffer, encodedRunPosition, encodedRunLength);
 
@@ -956,7 +957,7 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
     result.append(urlString.mid(decodedPosition, length - decodedPosition));
 
     if (buffer != staticBuffer)
-        free(buffer);
+        fastFree(buffer);
 
     return result;
 }
@@ -1251,7 +1252,7 @@ void KURL::parse(const char *url, const QString *originalString)
     if (bufferLength <= sizeof(staticBuffer)) {
 	buffer = staticBuffer;
     } else {
-	buffer = (char *)malloc(bufferLength);
+	buffer = (char *)fastMalloc(bufferLength);
     }
 
     char *p = buffer;
@@ -1377,12 +1378,12 @@ void KURL::parse(const char *url, const QString *originalString)
         if (pathBufferLength <= sizeof(static_path_buffer)) {
             path_buffer = static_path_buffer;
         } else {
-            path_buffer = (char *)malloc(pathBufferLength);
+            path_buffer = (char *)fastMalloc(pathBufferLength);
         }
         copyPathRemovingDots(path_buffer, url, pathStart, pathEnd);
         appendEscapingBadChars(p, path_buffer, strlen(path_buffer));
         if (path_buffer != static_path_buffer) {
-            free(path_buffer);
+            fastFree(path_buffer);
         }
     }
     else {
@@ -1414,7 +1415,7 @@ void KURL::parse(const char *url, const QString *originalString)
     ASSERT(p - buffer <= (int)bufferLength);
 		
     if (buffer != staticBuffer) {
-	free(buffer);
+	fastFree(buffer);
     }
 }
 
@@ -1445,7 +1446,7 @@ QString KURL::encode_string(const QString& notEncodedString)
     if (bufferLength <= sizeof(staticBuffer)) {
 	buffer = staticBuffer;
     } else {
-	buffer = (char *)malloc(bufferLength);
+	buffer = (char *)fastMalloc(bufferLength);
     }
     
     char *p = buffer;
@@ -1468,7 +1469,7 @@ QString KURL::encode_string(const QString& notEncodedString)
     ASSERT(p - buffer <= (int)bufferLength);
 		
     if (buffer != staticBuffer) {
-	free(buffer);
+	fastFree(buffer);
     }
 
     return result;
@@ -1718,7 +1719,7 @@ static char *encodeRelativeString(const KURL &base, const QString &rel, const QT
         QCString otherDecoded = otherCodec->fromUnicode(s.mid(pathEnd));
         int pathDecodedLength = pathDecoded.length();
         int otherDecodedLength = otherDecoded.length();
-        strBuffer = static_cast<char *>(malloc(pathDecodedLength + otherDecodedLength + 1));
+        strBuffer = static_cast<char *>(fastMalloc(pathDecodedLength + otherDecodedLength + 1));
         memcpy(strBuffer, pathDecoded, pathDecodedLength);
         memcpy(strBuffer + pathDecodedLength, otherDecoded, otherDecodedLength);
         strBuffer[pathDecodedLength + otherDecodedLength] = 0;

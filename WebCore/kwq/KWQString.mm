@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #import <Foundation/Foundation.h>
 
 #import <stdio.h>
@@ -90,7 +91,7 @@ static CFMutableDictionaryRef allocatedBuffers()
 
 static char *ALLOC_CHAR(int n)
 {
-    char *ptr = (char *)main_thread_malloc(n);
+    char *ptr = (char *)fastMalloc(n);
 
     CFDictionarySetValue (allocatedBuffers(), ptr, (void *)n);
     
@@ -103,7 +104,7 @@ static char *ALLOC_CHAR(int n)
 
 static char *REALLOC_CHAR(void *p, int n)
 {
-    char *ptr = (char *)realloc(p, n);
+    char *ptr = (char *)fastRealloc(p, n);
 
     CFDictionaryRemoveValue (allocatedBuffers(), p);
     CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)(n));
@@ -117,13 +118,13 @@ static char *REALLOC_CHAR(void *p, int n)
 static void DELETE_CHAR(void *p)
 {
     CFDictionaryRemoveValue (allocatedBuffers(), p);
-    free (p);
+    fastFree(p);
 }
 
 static QChar *ALLOC_QCHAR(int n)
 {
     size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)fast_malloc(size);
+    QChar *ptr = (QChar *)fastMalloc(size);
 
     CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
     if (size >= ALLOCATION_HISTOGRAM_SIZE)
@@ -136,7 +137,7 @@ static QChar *ALLOC_QCHAR(int n)
 static QChar *REALLOC_QCHAR(void *p, int n)
 {
     size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)realloc(p, size);
+    QChar *ptr = (QChar *)fastRealloc(p, size);
 
     CFDictionaryRemoveValue (allocatedBuffers(), p);
     CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
@@ -151,7 +152,7 @@ static QChar *REALLOC_QCHAR(void *p, int n)
 static void DELETE_QCHAR(void *p)
 {
     CFDictionaryRemoveValue (allocatedBuffers(), p);
-    free (p);
+    fatFree(p);
 }
 
 void _printQStringAllocationStatistics()
@@ -162,9 +163,9 @@ void _printQStringAllocationStatistics()
     int totalSize = 0;
     int totalAllocations = 0;
     
-    count = (int)CFDictionaryGetCount (allocatedBuffers());
-    values = (const void **)malloc (count*sizeof(void *));
-    keys = (const void **)malloc (count*sizeof(void *));
+    count = (int)CFDictionaryGetCount(allocatedBuffers());
+    values = (const void **)fastMalloc(count*sizeof(void *));
+    keys = (const void **)fastMalloc(count*sizeof(void *));
 
     CFDictionaryGetKeysAndValues (allocatedBuffers(), keys, values);
     printf ("Leaked strings:\n");
@@ -197,14 +198,14 @@ void _printQStringAllocationStatistics()
     printf ("KWQStringData detachments (copies) %d\n", stringDataDetachments);
     printf ("KWQStringData handles %d\n", handleInstances);
     
-    free(keys);
-    free(values);
+    fastFree(keys);
+    fastFree(values);
 }
 
 #else
 
-#define ALLOC_CHAR(N) (char*) fastMalloc(N)
-#define REALLOC_CHAR(P, N) (char *) fastRealloc(P, N)
+#define ALLOC_CHAR(N) (char*)fastMalloc(N)
+#define REALLOC_CHAR(P, N) (char *)fastRealloc(P, N)
 #define DELETE_CHAR(P) fastFree(P)
 
 #define ALLOC_QCHAR(N) (QChar*)fastMalloc(sizeof(QChar)*(N))
@@ -234,7 +235,7 @@ static inline void initializeHandleNodes()
 static inline KWQStringData **allocateHandle()
 {
 #if CHECK_FOR_HANDLE_LEAKS
-    return static_cast<KWQStringData **>(malloc(sizeof(KWQStringData *)));
+    return static_cast<KWQStringData **>(fastMalloc(sizeof(KWQStringData *)));
 #endif
 
     initializeHandleNodes();
@@ -420,11 +421,11 @@ KWQStringData::KWQStringData(const QChar *u, uint l)
 void* KWQStringData::operator new(size_t s)
 {
     stringDataHeapInstances++;
-    return malloc(s);
+    return fastMalloc(s);
 }
 void KWQStringData::operator delete(void*p)
 {
-    return free(p);
+    return fastFree(p);
 }
 #endif
 
@@ -2949,7 +2950,7 @@ static HandleNode *allocateNode(HandlePageNode *pageNode)
 void freeHandle(KWQStringData **_free)
 {
 #if CHECK_FOR_HANDLE_LEAKS
-    free(_free);
+    fastFree(_free);
     return;
 #endif
 

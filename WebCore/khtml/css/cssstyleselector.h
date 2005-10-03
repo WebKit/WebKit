@@ -29,7 +29,6 @@
 #include "dom/dom_string.h"
 #include "xml/dom_stringimpl.h"
 #include "css/css_ruleimpl.h"
-#include <kxmlcore/FastMalloc.h>
 
 class KHTMLSettings;
 class KHTMLView;
@@ -62,7 +61,7 @@ namespace khtml
      * for specific implementations of the Selector. At the moment only CSSStyleSelector
      * exists, but someone may wish to implement XSL...
      */
-    class StyleSelector : public FastAllocated
+    class StyleSelector
     {
     public:
 	StyleSelector() {};
@@ -224,7 +223,7 @@ public:
 	void applyProperty(int id, DOM::CSSValueImpl *value);
     };
 
-    class CSSRuleData : public FastAllocated {
+    class CSSRuleData {
     public:
         CSSRuleData(uint pos, DOM::CSSStyleRuleImpl* r, DOM::CSSSelector* sel, CSSRuleData* prev = 0)
         :m_position(pos), m_rule(r), m_selector(sel), m_next(0) { if (prev) prev->m_next = this; }
@@ -242,7 +241,7 @@ public:
         CSSRuleData* m_next;
     };
 
-    class CSSRuleDataList : public FastAllocated {
+    class CSSRuleDataList {
     public:
         CSSRuleDataList(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel)
         { m_first = m_last = new CSSRuleData(pos, rule, sel); }

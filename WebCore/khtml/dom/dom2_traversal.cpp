@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "dom/dom2_traversal.h"
 
 #if !KHTML_NO_CPLUSPLUS_DOM

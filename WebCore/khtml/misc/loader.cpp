@@ -27,6 +27,7 @@
 
 #undef CACHE_DEBUG
 //#define CACHE_DEBUG
+#include "config.h"
 #include <assert.h>
 
 #include "loader.h"
