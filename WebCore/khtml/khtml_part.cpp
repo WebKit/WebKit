@@ -6024,7 +6024,7 @@ void KHTMLPart::handleFallbackContent()
     khtml::RenderPart *renderPart = childFrame->m_frame;
     if (!renderPart)
         return;
-    DOM::NodeImpl* node = renderPart->element();
+    NodeImpl *node = renderPart->element();
     if (!node || !node->hasTagName(objectTag))
         return;
     static_cast<HTMLObjectElementImpl *>(node)->renderFallbackContent();
