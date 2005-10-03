@@ -620,7 +620,7 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 	// now we call all default event handlers (this is not part of DOM - it is internal to khtml)
 
 	it.toLast();
-	for (; it.current() && !evt->propagationStopped() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
+	for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
 	    it.current()->defaultEventHandler(evt);
     }
     

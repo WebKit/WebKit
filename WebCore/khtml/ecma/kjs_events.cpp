@@ -528,6 +528,7 @@ ValueImp *DOMEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp * thisObj
   switch (id) {
     case DOMEvent::StopPropagation:
       event.stopPropagation();
+      return Undefined();
     case DOMEvent::PreventDefault:
       event.preventDefault();
       return Undefined();

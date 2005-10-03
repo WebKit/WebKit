@@ -1,3 +1,22 @@
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
+	event.stopPropagation() prevents the default action - it shouldn't
+
+	Amusingly this bug existed in 3 different places.
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMEventProtoFunc::callAsFunction): Don't let stopPropagation fall through
+	to preventDefault.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::postDispatchEventHandler): Only consider preventDefault
+	for purposes of reverting checkbox/radiobutton state change, not stopPropagation.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchGenericEvent): Don't let stopPropagation prevent calling
+	default event handlers; only preventDefault does that.
+
 2005-09-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

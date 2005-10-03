@@ -2336,10 +2336,10 @@ void HTMLInputElementImpl::postDispatchEventHandler(EventImpl *evt, void* data)
         static_cast<MouseEventImpl*>(evt)->button() == 0) {
         if (m_type == CHECKBOX) {
             // Reverse the checking we did in preDispatch.
-            if (evt->propagationStopped() || evt->defaultPrevented() || evt->defaultHandled())
+            if (evt->defaultPrevented() || evt->defaultHandled())
                 setChecked(input);
         } else if (input) {
-            if (evt->propagationStopped() || evt->defaultPrevented() || evt->defaultHandled()) {
+            if (evt->defaultPrevented() || evt->defaultHandled()) {
                 // Restore the original selected radio button if possible.
                 // Make sure it is still a radio button and only do the restoration if it still
                 // belongs to our group.
