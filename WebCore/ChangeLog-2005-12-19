@@ -1,3 +1,17 @@
+2005-10-03  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.
+
+        Fixes hang, caused by path parser spinning forever.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5239
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (SVGPathParser::parseSVG):
+        * svg-tests/custom/path-bad-data-expected.checksum: Added.
+        * svg-tests/custom/path-bad-data-expected.png: Added.
+        * svg-tests/custom/path-bad-data-expected.txt: Added.
+        * svg-tests/custom/path-bad-data.svg: Added.
+
 2005-10-02  Eric Seidel  <eseidel@apple.com>
 
        Reviewed by darin.
