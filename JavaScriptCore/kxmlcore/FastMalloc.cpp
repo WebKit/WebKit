@@ -95,6 +95,10 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
+void fastMallocRegisterThread(pthread_t thread) 
+{
+}
+
 } // namespace KJS
 
 #else

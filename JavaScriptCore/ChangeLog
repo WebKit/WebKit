@@ -1,3 +1,10 @@
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix Development build after last checkin
+
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::fastMallocRegisterThread):
+
 2005-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
