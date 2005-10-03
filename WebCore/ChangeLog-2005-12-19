@@ -1,3 +1,11 @@
+2005-10-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff, darin
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleFallbackContent):
+        Don't handle fallback content for <embed> tags.
+
 2005-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         - add missing config.h
