@@ -1,5 +1,11 @@
 2005-10-03  Maciej Stachowiak  <mjs@apple.com>
 
+        - add missing config.h
+
+        * khtml/config.h: Added.
+
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
