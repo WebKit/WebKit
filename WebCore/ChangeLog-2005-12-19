@@ -1,5 +1,15 @@
 2005-10-02  Eric Seidel  <eseidel@apple.com>
 
+       Reviewed by darin.
+
+       Closes large memory leak in KSVG.
+       http://bugzilla.opendarwin.org/show_bug.cgi?id=5209
+
+       * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::attach): delete orphans unless PatternImpl
+
+2005-10-02  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fixes SVG animation support in Safari/WebKit.

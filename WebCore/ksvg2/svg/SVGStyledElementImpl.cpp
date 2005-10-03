@@ -231,9 +231,11 @@ void SVGStyledElementImpl::attach()
                     styledParent = static_cast<SVGStyledElementImpl *>(parentElement);
             if(styledParent && styledParent->canvasItem() && styledParent->allowAttachChildren(this))
                 styledParent->canvasItem()->appendItem(m_canvasItem);
-            else if (styledParent) {
-                // FIXME: This exists until we can find a better way to create the root node. -- ecs 8/7/05
-                fprintf(stderr, "FAILED CANVAS INSERTION: <%s>, leaking %p\n", KDOM::DOMString(nodeName()).string().ascii(), this);
+            else if (styledParent && (styledParent->id() != ID_PATTERN)) {
+                // FIXME: This exists until we can find a better way to create root && pattern nodes. -- ecs 8/7/05
+                delete m_canvasItem;
+                m_canvasItem = NULL;
+                //fprintf(stderr, "FAILED CANVAS INSERTION: <%s>\n", KDOM::DOMString(nodeName()).string().ascii())
             }
 
 #ifndef APPLE_COMPILE_HACK
