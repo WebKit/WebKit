@@ -25,13 +25,26 @@
 
 #import "KCanvasView.h"
 
+#ifdef __OBJC__
+@class DrawView;
+#else
+class DrawView;
+#endif
+
+namespace khtml {
+    class RenderKCanvasWrapper;
+}
+
 class KCanvasViewQuartz : public KCanvasView {
 public:
     KCanvasViewQuartz();
     ~KCanvasViewQuartz();
     
-    NSView *view();
-    void setView(NSView *view);
+    DrawView *view();
+    void setView(DrawView *view);
+
+    khtml::RenderKCanvasWrapper *renderObject();
+    void setRenderObject(khtml::RenderKCanvasWrapper *renderObject);
 
     virtual void invalidateCanvasRect(const QRect &rect) const;
 
@@ -41,7 +54,8 @@ protected:
     virtual int viewWidth() const;
     
 private:
-    NSView *m_view;
+    DrawView *m_view;
+    khtml::RenderKCanvasWrapper *m_renderObject;
     
     virtual void canvasSizeChanged(int width, int height);
 };

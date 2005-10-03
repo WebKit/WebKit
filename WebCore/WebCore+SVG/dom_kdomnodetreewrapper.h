@@ -50,6 +50,7 @@ public:
     virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
     
     virtual void attach();
+    virtual void detach();
 
 private:
     KDOM::DocumentImpl *m_wrappedDoc;

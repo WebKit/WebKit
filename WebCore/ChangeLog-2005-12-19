@@ -1,3 +1,28 @@
+2005-10-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fixes SVG animation support in Safari/WebKit.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5132
+
+        * WebCore+SVG/dom_kdomnodetreewrapper.cpp:
+        (KDOMNodeTreeWrapperImpl::attach): setup kcanvasviewquartz
+        (KDOMNodeTreeWrapperImpl::detach): tear down kcanvasviewquartz
+        * WebCore+SVG/dom_kdomnodetreewrapper.h:
+        * kcanvas/device/quartz/KCanvasViewQuartz.h:
+        * kcanvas/device/quartz/KCanvasViewQuartz.mm: fix spaces
+        (KCanvasViewQuartz::KCanvasViewQuartz):
+        (KCanvasViewQuartz::~KCanvasViewQuartz):
+        (KCanvasViewQuartz::view):
+        (KCanvasViewQuartz::setView):
+        (KCanvasViewQuartz::renderObject): alternative to view
+        (KCanvasViewQuartz::setRenderObject):
+        (KCanvasViewQuartz::invalidateCanvasRect):
+        (KCanvasViewQuartz::viewToCanvasMatrix):
+        (KCanvasViewQuartz::canvasSizeChanged):
+        (KCanvasViewQuartz::viewHeight):
+        (KCanvasViewQuartz::viewWidth):
+
 2005-10-02  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by eseidel.

@@ -27,70 +27,77 @@
 #import "KCanvasViewQuartz.h"
 #import "KCanvasMatrix.h"
 
+#import "render_kcanvaswrapper.h"
+#import "DrawViewPrivate.h"
 
-KCanvasViewQuartz::KCanvasViewQuartz()
-{
-	m_view = nil;
+KCanvasViewQuartz::KCanvasViewQuartz() : m_view(0), m_renderObject(0)
+{     
 }
 
 KCanvasViewQuartz::~KCanvasViewQuartz()
 {
-	[m_view release];
+    [m_view release];
 }
 
-NSView *KCanvasViewQuartz::view()
+DrawView *KCanvasViewQuartz::view()
 {
-	return m_view;
+    return m_view;
 }
 
-void KCanvasViewQuartz::setView(NSView *view)
+void KCanvasViewQuartz::setView(DrawView *view)
 {
-	id oldView = m_view;
-	m_view = [view retain];
-	[oldView release];
+    id oldView = m_view;
+    m_view = [view retain];
+    [oldView release];
+}
+
+khtml::RenderKCanvasWrapper *KCanvasViewQuartz::renderObject()
+{
+    return m_renderObject;
+}
+
+void KCanvasViewQuartz::setRenderObject(khtml::RenderKCanvasWrapper *renderObject)
+{
+    m_renderObject = renderObject;
 }
 
 void KCanvasViewQuartz::invalidateCanvasRect(const QRect &dirtyRect) const
 {
-#ifndef APPLE_COMPILE_HACK
-    // FIXME: I have a library inversion here
-    // which will need to cut-out for the initial WebCore bringup
-    if (dirtyRect.isValid()) {
-        NSRect dirtyCanvasRect = NSRect(dirtyRect);
-        dirtyCanvasRect.size.width += 1.0f; // FIXME: rounding? qrect error?
-        dirtyCanvasRect.size.height += 1.0f;
-        NSRect viewDirtyRect = [m_view mapCanvasRectToView:dirtyCanvasRect];
-        viewDirtyRect.size.width += 1.0f; // FIXME: rounding? qrect error?
-        viewDirtyRect.size.height += 1.0f;
-        [m_view setNeedsDisplayInRect:viewDirtyRect];
-    } else
-#endif
-        [m_view setNeedsDisplay:YES];
+    if (m_renderObject)
+        m_renderObject->repaint();
+    else {
+        // transform logic should be in this class.
+        if (dirtyRect.isValid()) {
+            NSRect dirtyCanvasRect = NSRect(dirtyRect);
+            dirtyCanvasRect.size.width += 1.0f; // FIXME: rounding? qrect error?
+            dirtyCanvasRect.size.height += 1.0f;
+            NSRect viewDirtyRect = [m_view mapCanvasRectToView:dirtyCanvasRect];
+            viewDirtyRect.size.width += 1.0f; // FIXME: rounding? qrect error?
+            viewDirtyRect.size.height += 1.0f;
+            [m_view setNeedsDisplayInRect:viewDirtyRect];
+        } else
+            [m_view setNeedsDisplay:YES];
+    }
 }
 
 KCanvasMatrix KCanvasViewQuartz::viewToCanvasMatrix() const
 {
-#ifndef APPLE_COMPILE_HACK
-    // FIXME: Another library inversion.
     return KCanvasMatrix([m_view transformFromViewToCanvas]);
-#else
-    return KCanvasMatrix();
-#endif
 }
 
 void KCanvasViewQuartz::canvasSizeChanged(int width, int height) {
-	//NSLog(@"canvas changed size: %f, %f", width, height);
+    //NSLog(@"canvas changed size: %f, %f", width, height);
 }
 
 int KCanvasViewQuartz::viewHeight() const
 {
-	NSLog(@"viewHeight not sure yet.");
-	return 100;
+    NSLog(@"viewHeight not sure yet.");
+    return 100;
 }
 
 int KCanvasViewQuartz::viewWidth() const
 {
-	NSLog(@"viewWidth not sure yet.");
-	return 100;
+    NSLog(@"viewWidth not sure yet.");
+    return 100;
 }
 
