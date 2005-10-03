@@ -49,6 +49,7 @@ class QTextEdit : public QScrollView
     virtual void setPalette(const QPalette &);
 
     void setAlignment(AlignmentFlags);
+    void setLineHeight(int lineHeight);
 
     void setCursorPosition(int, int);
     void getCursorPosition(int *, int *) const;

@@ -34,6 +34,7 @@ class QTextEdit;
     KWQTextAreaTextView *textView;
     QTextEdit *widget;
     NSFont *_font;
+    float _lineHeight;
     BOOL wrap;
     BOOL inNextValidKeyView;
     BOOL inDrawingMachinery;
@@ -46,6 +47,7 @@ class QTextEdit;
 - (void)detachQTextEdit;
 
 - (void)setAlignment:(NSTextAlignment)alignment;
+- (void)setLineHeight:(float)lineHeight;
 - (void)setBaseWritingDirection:(NSWritingDirection)direction;
 
 - (void)setEditable:(BOOL)flag;

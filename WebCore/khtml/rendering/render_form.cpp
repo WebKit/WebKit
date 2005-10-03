@@ -1497,6 +1497,8 @@ void RenderTextArea::setStyle(RenderStyle *s)
 
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
     w->setAlignment(textAlignment());
+    w->setLineHeight(RenderObject::lineHeight(true));
+
 #if APPLE_CHANGES
     w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
 #endif

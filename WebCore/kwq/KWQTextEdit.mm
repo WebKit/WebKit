@@ -344,6 +344,16 @@ void QTextEdit::setAlignment(AlignmentFlags alignment)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+void QTextEdit::setLineHeight(int lineHeight)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    [textArea setLineHeight:lineHeight];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 void QTextEdit::setWritingDirection(QPainter::TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;

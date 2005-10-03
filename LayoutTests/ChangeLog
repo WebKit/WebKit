@@ -1,3 +1,13 @@
+2005-10-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+	The new layout test for <rdar://problem/4235722> line-height 
+	style settings not reflected in textarea.
+
+        * fast/forms/textAreaLineHeight-expected.txt: Added.
+        * fast/forms/textAreaLineHeight.html: Added.
+
 2005-10-02  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by eseidel.

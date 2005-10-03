@@ -67,6 +67,7 @@ using khtml::RenderWidget;
 @interface NSTextView (KWQTextArea)
 - (NSParagraphStyle *)_KWQ_typingParagraphStyle;
 - (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style;
+- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight fontHeight:(float)fontHeight;
 @end
 
 @interface NSTextStorage (KWQTextArea)
@@ -541,6 +542,60 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [_font release];
     _font = font;
     [textView setFont:font];
+    
+    NSParagraphStyle *style = [textView _KWQ_typingParagraphStyle];
+    if (_lineHeight) {
+        ASSERT(style);
+        [textView _KWQ_updateTypingAttributes:style forLineHeight:_lineHeight fontHeight:([_font ascender] - [_font descender])];
+    }
+}
+
+- (void)setLineHeight:(float)lineHeight
+{
+    NSRange range = [textView rangeForUserParagraphAttributeChange];
+    if (range.location == NSNotFound)
+        return;
+    
+    _lineHeight = lineHeight;
+    NSTextStorage *storage = [textView textStorage];
+    NSParagraphStyle *paraStyle = nil;
+    
+    if (storage && range.length > 0) {
+        unsigned loc = range.location;
+        unsigned end = NSMaxRange(range);
+        
+        [storage beginEditing];
+        while (loc < end) {
+            NSRange effectiveRange;
+            paraStyle = [storage attribute:NSParagraphStyleAttributeName atIndex:loc longestEffectiveRange:&effectiveRange inRange:range];
+            if (!paraStyle)
+                paraStyle = [textView defaultParagraphStyle];
+            if (!paraStyle) 
+                paraStyle = [NSParagraphStyle defaultParagraphStyle];
+            if ([paraStyle minimumLineHeight] != lineHeight) {
+                NSMutableParagraphStyle *newStyle = [paraStyle mutableCopy];
+                [newStyle setMinimumLineHeight:lineHeight];
+                [storage addAttribute:NSParagraphStyleAttributeName value:newStyle range:effectiveRange];
+                [newStyle release];
+            }
+            loc = NSMaxRange(effectiveRange);
+        }
+        [storage endEditing];
+        [textView didChangeText];
+        paraStyle = [storage attribute:NSParagraphStyleAttributeName atIndex:range.location effectiveRange:NULL];
+    }
+    
+    if (!paraStyle) {
+        paraStyle = [[textView typingAttributes] objectForKey:NSParagraphStyleAttributeName];
+        if (!paraStyle) 
+            paraStyle = [textView defaultParagraphStyle];
+        if (!paraStyle) 
+            paraStyle = [NSParagraphStyle defaultParagraphStyle];
+    }
+    NSMutableParagraphStyle *newStyle = [paraStyle mutableCopy];
+    [newStyle setMinimumLineHeight:lineHeight];
+    [textView _KWQ_updateTypingAttributes:newStyle forLineHeight:lineHeight fontHeight:([_font ascender] - [_font descender])];
+    [newStyle release];
 }
 
 - (void)setTextColor:(NSColor *)color
@@ -1224,6 +1279,24 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [immutableStyle release];
     [self setTypingAttributes:attributes];
     [attributes release];
+}
+
+- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight fontHeight:(float)fontHeight
+{
+    NSDictionary *typingAttrs = [self typingAttributes];
+    NSMutableDictionary *dict;
+    float h = (lineHeight / 2.0f) - (fontHeight / 2.0f);
+    
+    if (typingAttrs)
+        dict = [typingAttrs mutableCopy];
+    else
+        dict = [[NSMutableDictionary alloc] init];
+            
+    [dict setObject:style forKey:NSParagraphStyleAttributeName];
+    [dict setObject:[NSNumber numberWithFloat:h] forKey:NSBaselineOffsetAttributeName];
+    
+    [self setTypingAttributes:dict];
+    [dict release];
 }
 
 @end
