@@ -1,3 +1,13 @@
+2005-10-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by eseidel.
+
+        Fix XSLT to preserve document.URL.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5219
+
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+
 2005-10-02  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

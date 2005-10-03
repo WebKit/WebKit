@@ -176,8 +176,6 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         else
             result = m_sourceDocument->impl()->createDocument(view);
         result->attach();
-        result->setURL(m_sourceDocument->URL());
-        result->setBaseURL(m_sourceDocument->baseURL());
         result->docLoader()->setShowAnimations(m_sourceDocument->docLoader()->showAnimations());
         result->setTransformSourceDocument(m_sourceDocument);
 
@@ -203,6 +201,8 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         }
         
         result->open();
+        result->setURL(m_sourceDocument->URL());
+        result->setBaseURL(m_sourceDocument->baseURL());
         result->determineParseMode(m_resultOutput); // Make sure we parse in the correct mode.
         result->write(m_resultOutput);
         result->finishParsing();
