@@ -651,7 +651,7 @@ void SVGDocumentImpl::recalcStyleSelector()
                 // Processing instruction (XML documents only)
                 KDOM::ProcessingInstructionImpl *pi = static_cast<KDOM::ProcessingInstructionImpl *>(n);
                 sheet = pi->sheet();
-                if(!sheet && !pi->localHref()->isEmpty())
+                if(!sheet && pi->localHref() && !pi->localHref()->isEmpty())
                 {
                     // Processing instruction with reference to an element in this document
                     // - e.g. <?xml-stylesheet href="#mystyle">, with the element
