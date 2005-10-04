@@ -1,0 +1,9 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 129 of #text > P > BODY > HTML > #document to 129 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Test for toString on event.view. This test simulates a click when run via DumpRenderTree. Otherwise, click below and you should see "Success":
+
+event.view :
+document: [object HTMLDocument]
+proto: [object DOMAbstractView]
+Success getting [object AbstractView]
+

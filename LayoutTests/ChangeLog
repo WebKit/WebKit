@@ -1,3 +1,13 @@
+2005-10-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test case for event.view.toString()
+        <rdar://problem/4233558> toString on event.view Object fails with "No Default Value" in console
+
+        * fast/events/event-view-toString-expected.txt: Added.
+        * fast/events/event-view-toString.html: Added.
+
 2005-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
