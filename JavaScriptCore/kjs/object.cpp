@@ -277,55 +277,47 @@ bool ObjectImp::deleteProperty(ExecState *exec, unsigned propertyName)
   return deleteProperty(exec, Identifier::from(propertyName));
 }
 
+static inline
+#ifdef __GNUC__
+__attribute__((always_inline))
+#endif
+ValueImp *tryGetAndCallProperty(ExecState *exec, const ObjectImp *object, const Identifier &propertyName) {
+  ValueImp *v = object->get(exec, propertyName);
+  if (v->isObject()) {
+    ObjectImp *o = static_cast<ObjectImp*>(v);
+    if (o->implementsCall()) { // spec says "not primitive type" but ...
+      ObjectImp *thisObj = const_cast<ObjectImp*>(object);
+      ValueImp *def = o->call(exec, thisObj, List::empty());
+      Type defType = def->type();
+      if (defType == UnspecifiedType || defType == UndefinedType ||
+          defType == NullType || defType == BooleanType ||
+          defType == StringType || defType == NumberType) {
+        return def;
+      }
+    }
+  }
+  return NULL;
+}
+
 // ECMA 8.6.2.6
 ValueImp *ObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
-  if (hint != StringType && hint != NumberType) {
-    /* Prefer String for Date objects */
-    if (_proto == exec->lexicalInterpreter()->builtinDatePrototype())
-      hint = StringType;
-    else
-      hint = NumberType;
+  Identifier firstPropertyName;
+  Identifier secondPropertyName;
+  /* Prefer String for Date objects */
+  if ((hint == StringType) || (hint != StringType) && (hint != NumberType) && (_proto == exec->lexicalInterpreter()->builtinDatePrototype())) {
+    firstPropertyName = toStringPropertyName;
+    secondPropertyName = valueOfPropertyName;
+  } else {
+    firstPropertyName = valueOfPropertyName;
+    secondPropertyName = toStringPropertyName;
   }
 
   ValueImp *v;
-  if (hint == StringType)
-    v = get(exec,toStringPropertyName);
-  else
-    v = get(exec,valueOfPropertyName);
-
-  if (v->isObject()) {
-    ObjectImp *o = static_cast<ObjectImp*>(v);
-    if (o->implementsCall()) { // spec says "not primitive type" but ...
-      ObjectImp *thisObj = const_cast<ObjectImp*>(this);
-      ValueImp *def = o->call(exec,thisObj,List::empty());
-      Type defType = def->type();
-      if (defType == UnspecifiedType || defType == UndefinedType ||
-          defType == NullType || defType == BooleanType ||
-          defType == StringType || defType == NumberType) {
-        return def;
-      }
-    }
-  }
-
-  if (hint == StringType)
-    v = get(exec,valueOfPropertyName);
-  else
-    v = get(exec,toStringPropertyName);
-
-  if (v->isObject()) {
-    ObjectImp *o = static_cast<ObjectImp*>(v);
-    if (o->implementsCall()) { // spec says "not primitive type" but ...
-      ObjectImp *thisObj = const_cast<ObjectImp*>(this);
-      ValueImp *def = o->call(exec,thisObj,List::empty());
-      Type defType = def->type();
-      if (defType == UnspecifiedType || defType == UndefinedType ||
-          defType == NullType || defType == BooleanType ||
-          defType == StringType || defType == NumberType) {
-        return def;
-      }
-    }
-  }
+  if ((v = tryGetAndCallProperty(exec, this, firstPropertyName)))
+    return v;
+  if ((v = tryGetAndCallProperty(exec, this, secondPropertyName)))
+    return v;
 
   if (exec->hadException())
     return exec->exception();

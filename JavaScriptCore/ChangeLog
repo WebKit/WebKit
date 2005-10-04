@@ -1,3 +1,13 @@
+2005-10-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Code cleanup, which resulted in a small win on iBench.
+
+        * kjs/object.cpp:
+        (KJS::tryGetAndCallProperty): new static inline
+        (KJS::ObjectImp::defaultValue): code cleanup
+
 2005-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
