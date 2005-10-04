@@ -1,3 +1,16 @@
+2005-10-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fixed AbstractView toString(), by giving it a prototype.
+        <rdar://problem/4233558> toString on event.view Object fails with "No Default Value" in console
+
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::DOMAbstractView): sets prototype
+        (KJS::DOMAbstractView::getOwnPropertySlot): now getStaticValue
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction): renamed
+        * khtml/ecma/kjs_views.h:
+
 2005-10-03  David Hyatt  <hyatt@apple.com>
 
 	Fix regression caused by variable->auto change.  Accidentally removed a line of code from calcWidthUsing.

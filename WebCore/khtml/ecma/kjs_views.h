@@ -31,7 +31,7 @@ namespace KJS {
 
   class DOMAbstractView : public DOMObject {
   public:
-    DOMAbstractView(ExecState *, DOM::AbstractViewImpl *av) : m_impl(av) { }
+    DOMAbstractView(ExecState *, DOM::AbstractViewImpl *av);
     ~DOMAbstractView();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     ValueImp *getValueProperty(ExecState *exec, int token);
