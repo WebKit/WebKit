@@ -2,6 +2,17 @@
 
         Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
 
+	- more Linux build fixes
+	
+        * kjs/operations.cpp:
+        * kxmlcore/FastMalloc.h:
+        * kxmlcore/TCSystemAlloc.cpp:
+        (TCMalloc_SystemAlloc):
+
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
+
 	http://bugzilla.opendarwin.org/show_bug.cgi?id=5174
 	Add support for compiling on Linux (likely to help for other POSIX systems too)
 

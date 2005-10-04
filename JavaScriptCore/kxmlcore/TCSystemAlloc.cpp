@@ -66,7 +66,9 @@ static size_t pagesize = 0;
 // For 2.2 kernels, it looks like the sbrk address space (500MBish) and
 // the mmap address space (1300MBish) are disjoint, so we need both allocators
 // to get as much virtual memory as possible.
+#ifndef KXC_CHANGES
 static bool use_devmem = false;
+#endif
 static bool use_sbrk = false;
 static bool use_mmap = true;
 
@@ -168,6 +170,7 @@ static void* TryMmap(size_t size, size_t alignment) {
 
 #endif /* HAVE_MMAP */
 
+#ifndef KXC_CHANGES
 static void* TryDevMem(size_t size, size_t alignment) {
   static bool initialized = false;
   static off_t physmem_base;  // next physical memory address to allocate
@@ -238,6 +241,7 @@ static void* TryDevMem(size_t size, size_t alignment) {
   
   return reinterpret_cast<void*>(ptr);
 }
+#endif
 
 void* TCMalloc_SystemAlloc(size_t size, size_t alignment) {
 #ifndef KXC_CHANGES
@@ -254,10 +258,13 @@ void* TCMalloc_SystemAlloc(size_t size, size_t alignment) {
   // Try twice, once avoiding allocators that failed before, and once
   // more trying all allocators even if they failed before.
   for (int i = 0; i < 2; i++) {
+
+#ifndef KXC_CHANGES
     if (use_devmem && !devmem_failure) {
       void* result = TryDevMem(size, alignment);
       if (result != NULL) return result;
     }
+#endif
     
 #ifdef HAVE_SBRK
     if (use_sbrk && !sbrk_failure) {

@@ -24,6 +24,7 @@
 #define KXMLCORE_FAST_MALLOC_H
 
 #include <stdlib.h>
+#include <new>
 
 namespace KXMLCore {
 
@@ -40,7 +41,13 @@ using KXMLCore::fastRealloc;
 using KXMLCore::fastFree;
 
 #if __GNUC__
+
+#if __APPLE__
 #define KXMLCORE_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
+#else
+#define KXMLCORE_PRIVATE_INLINE inline __attribute__((always_inline))
+#endif
+
 #else
 #define KXMLCORE_PRIVATE_INLINE inline
 #endif
