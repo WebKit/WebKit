@@ -74,15 +74,7 @@ namespace KJS {
  
 #endif // APPLE_CHANGES
 
-#if !KJS_MULTIPLE_THREADS
-
-static inline void initializeInterpreterLock() { }
-static inline void lockInterpreter() { }
-static inline void unlockInterpreter() { }
-
-const int interpreterLockCount = 1;
-
-#else
+#if defined(KJS_MULTIPLE_THREADS) && KJS_MULTIPLE_THREADS
 
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
@@ -112,26 +104,34 @@ static inline void unlockInterpreter()
   pthread_mutex_unlock(&interpreterLock);
 }
 
+#else
+
+static inline void initializeInterpreterLock() { }
+static inline void lockInterpreter() { }
+static inline void unlockInterpreter() { }
+
+const int interpreterLockCount = 1;
+
 #endif
 
 // ------------------------------ UndefinedImp ---------------------------------
 
-ValueImp *UndefinedImp::toPrimitive(ExecState */*exec*/, Type) const
+ValueImp *UndefinedImp::toPrimitive(ExecState *, Type) const
 {
   return const_cast<UndefinedImp *>(this);
 }
 
-bool UndefinedImp::toBoolean(ExecState */*exec*/) const
+bool UndefinedImp::toBoolean(ExecState *) const
 {
   return false;
 }
 
-double UndefinedImp::toNumber(ExecState */*exec*/) const
+double UndefinedImp::toNumber(ExecState *) const
 {
   return NaN;
 }
 
-UString UndefinedImp::toString(ExecState */*exec*/) const
+UString UndefinedImp::toString(ExecState *) const
 {
   return "undefined";
 }
@@ -143,22 +143,22 @@ ObjectImp *UndefinedImp::toObject(ExecState *exec) const
 
 // ------------------------------ NullImp --------------------------------------
 
-ValueImp *NullImp::toPrimitive(ExecState */*exec*/, Type) const
+ValueImp *NullImp::toPrimitive(ExecState *, Type) const
 {
   return const_cast<NullImp *>(this);
 }
 
-bool NullImp::toBoolean(ExecState */*exec*/) const
+bool NullImp::toBoolean(ExecState *) const
 {
   return false;
 }
 
-double NullImp::toNumber(ExecState */*exec*/) const
+double NullImp::toNumber(ExecState *) const
 {
   return 0.0;
 }
 
-UString NullImp::toString(ExecState */*exec*/) const
+UString NullImp::toString(ExecState *) const
 {
   return "null";
 }
@@ -170,22 +170,22 @@ ObjectImp *NullImp::toObject(ExecState *exec) const
 
 // ------------------------------ BooleanImp -----------------------------------
 
-ValueImp *BooleanImp::toPrimitive(ExecState */*exec*/, Type) const
+ValueImp *BooleanImp::toPrimitive(ExecState *, Type) const
 {
   return const_cast<BooleanImp *>(this);
 }
 
-bool BooleanImp::toBoolean(ExecState */*exec*/) const
+bool BooleanImp::toBoolean(ExecState *) const
 {
   return val;
 }
 
-double BooleanImp::toNumber(ExecState */*exec*/) const
+double BooleanImp::toNumber(ExecState *) const
 {
   return val ? 1.0 : 0.0;
 }
 
-UString BooleanImp::toString(ExecState */*exec*/) const
+UString BooleanImp::toString(ExecState *) const
 {
   return val ? "true" : "false";
 }
@@ -199,22 +199,22 @@ ObjectImp *BooleanImp::toObject(ExecState *exec) const
 
 // ------------------------------ StringImp ------------------------------------
 
-ValueImp *StringImp::toPrimitive(ExecState */*exec*/, Type) const
+ValueImp *StringImp::toPrimitive(ExecState *, Type) const
 {
   return const_cast<StringImp *>(this);
 }
 
-bool StringImp::toBoolean(ExecState */*exec*/) const
+bool StringImp::toBoolean(ExecState *) const
 {
   return (val.size() > 0);
 }
 
-double StringImp::toNumber(ExecState */*exec*/) const
+double StringImp::toNumber(ExecState *) const
 {
   return val.toDouble();
 }
 
-UString StringImp::toString(ExecState */*exec*/) const
+UString StringImp::toString(ExecState *) const
 {
   return val;
 }

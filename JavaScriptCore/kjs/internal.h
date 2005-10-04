@@ -34,7 +34,7 @@
 #include "scope_chain.h"
 #include <kxmlcore/SharedPtr.h>
 
-#if !WIN32
+#if __APPLE__
 #define KJS_MULTIPLE_THREADS 1
 #endif
 

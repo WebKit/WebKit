@@ -1,5 +1,49 @@
 2005-10-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
+
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5174
+	Add support for compiling on Linux (likely to help for other POSIX systems too)
+
+        * kjs/collector.cpp:
+        (KJS::Collector::markCurrentThreadConservatively):
+        (KJS::Collector::markOtherThreadConservatively):
+        * kjs/config.h:
+        * kjs/date_object.cpp:
+        (KJS::formatDate):
+        (KJS::formatDateUTCVariant):
+        (KJS::formatTime):
+        (KJS::timeZoneOffset):
+        (KJS::DateProtoFuncImp::callAsFunction):
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectImp::callAsFunction):
+        (KJS::makeTime):
+        * kjs/identifier.cpp:
+        * kjs/internal.cpp:
+        (KJS::initializeInterpreterLock):
+        (KJS::lockInterpreter):
+        (KJS::unlockInterpreter):
+        (KJS::UndefinedImp::toPrimitive):
+        (KJS::UndefinedImp::toBoolean):
+        (KJS::UndefinedImp::toNumber):
+        (KJS::UndefinedImp::toString):
+        (KJS::NullImp::toPrimitive):
+        (KJS::NullImp::toBoolean):
+        (KJS::NullImp::toNumber):
+        (KJS::NullImp::toString):
+        (KJS::BooleanImp::toPrimitive):
+        (KJS::BooleanImp::toBoolean):
+        (KJS::BooleanImp::toNumber):
+        (KJS::BooleanImp::toString):
+        (KJS::StringImp::toPrimitive):
+        (KJS::StringImp::toBoolean):
+        (KJS::StringImp::toNumber):
+        (KJS::StringImp::toString):
+        * kjs/internal.h:
+        * kjs/protected_values.cpp:
+
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
         - fix Development build after last checkin
 
         * kxmlcore/FastMalloc.cpp:

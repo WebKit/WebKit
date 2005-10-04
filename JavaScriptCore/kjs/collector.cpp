@@ -31,7 +31,7 @@
 #include <setjmp.h>
 #include <algorithm>
 
-#if !WIN32
+#if __APPLE__
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <pthread.h>
@@ -39,9 +39,13 @@
 #include <mach/task.h>
 #include <mach/thread_act.h>
 
-#else
+#elif WIN32
 
 #include <windows.h>
+
+#else
+
+#include <pthread.h>
 
 #endif
 
@@ -291,16 +295,25 @@ void Collector::markCurrentThreadConservatively()
     jmp_buf registers;
     setjmp(registers);
 
-#if !WIN32
+#if __APPLE__
     pthread_t thread = pthread_self();
     void *stackBase = pthread_get_stackaddr_np(thread);
-#else
+#elif WIN32
     NT_TIB *pTib;
     __asm {
         MOV EAX, FS:[18h]
         MOV pTib, EAX
     }
     void *stackBase = (void *)pTib->StackBase;
+#else
+    void *stackBase = 0;
+    pthread_attr_t sattr;
+    // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+    pthread_getattr_np(pthread_self(), &sattr);
+    // Should work but fails on Linux (?)
+    //  pthread_attr_getstack(&sattr, &stackBase, &stackSize);
+    pthread_attr_getstackaddr(&sattr, &stackBase);
+    assert(stackBase);
 #endif
 
     int dummy;
@@ -317,15 +330,15 @@ void Collector::markOtherThreadConservatively(Thread *thread)
 {
   thread_suspend(thread->machThread);
 
-#if defined(__i386__)
+#if __i386__
   i386_thread_state_t regs;
   unsigned user_count = sizeof(regs)/sizeof(int);
   thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif defined(__ppc__)
+#elif __ppc__
   ppc_thread_state_t  regs;
   unsigned user_count = PPC_THREAD_STATE_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif defined(__ppc64__)
+#elif __ppc64__
   ppc_thread_state64_t  regs;
   unsigned user_count = PPC_THREAD_STATE64_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE64;
@@ -339,7 +352,7 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
   
   // scan the stack
-#if defined(__i386__)
+#if __i386__
   markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
 #elif defined(__ppc__) || defined(__ppc64__)
   markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));

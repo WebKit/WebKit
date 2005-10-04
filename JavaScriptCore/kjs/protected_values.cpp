@@ -27,6 +27,7 @@
 #include "simple_number.h"
 #include "internal.h"
 #include <stdint.h>
+#include <stdlib.h>
 #include "value.h"
 
 namespace KJS {
