@@ -487,6 +487,7 @@ static void dump(void)
 
 - (void)mouseDown
 {
+    [[[frame frameView] documentView] layout];
     if(GetCurrentEventTime() - lastClick >= 1)
         clickCount = 1;
     else
@@ -502,6 +503,7 @@ static void dump(void)
 
 - (void)mouseUp
 {
+    [[[frame frameView] documentView] layout];
     NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];

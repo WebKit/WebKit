@@ -1,3 +1,14 @@
+2005-10-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Make mouseDown and mouseUp force layout before acting.
+        This is used by a new test case for 4233558.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[EventSendingController mouseDown]): force layout
+        (-[EventSendingController mouseUp]): force layout
+
 2005-09-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by xenon.
