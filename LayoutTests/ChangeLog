@@ -1,3 +1,16 @@
+2005-10-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+	Test case for setting opacity on tiled images. Specifically for fix to:
+	<rdar://problem/4285538> TOT fix for Denver Regression: Drawing glitch in 
+	the transparent dialog's cancel/ok button in the widget manager. The fix 
+	is in WebKit and WebKitSystemInterface.
+
+        * fast/css/button_center.png: Added.
+        * fast/css/imageTileOpacity-expected.txt: Added.
+        * fast/css/imageTileOpacity.html: Added.
+
 2005-10-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -1,3 +1,15 @@
+2005-10-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin
+
+	Fix for <rdar://problem/4285538> TOT fix for Denver Regression: Drawing glitch in the transparent dialog's cancel/ok 
+	button in the widget manager. 
+
+        * WebCoreSupport.subproj/WebImageData.m: Calls WKSetPatternPhaseInUserSpace() which is a new function that lies in 
+						WebKitSystemInterface that and takes care of pattern-setting. Prevents 
+						regression that occurred with image tiling in transparency layers. 
+        (-[WebImageData tileInRect:fromPoint:context:]):
+
 2005-10-03  Tim Omernick  <tomernick@apple.com>
 
         Reviewed by John Sullivan.
