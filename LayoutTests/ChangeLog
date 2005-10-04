@@ -1,3 +1,17 @@
+2005-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Test cases for:
+	
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
+	event.stopPropagation() prevents the default action - it shouldn't
+
+        * fast/events/stopPropagation-checkbox-expected.txt: Added.
+        * fast/events/stopPropagation-checkbox.html: Added.
+        * fast/events/stopPropagation-submit-expected.txt: Added.
+        * fast/events/stopPropagation-submit.html: Added.
+
 2005-10-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
