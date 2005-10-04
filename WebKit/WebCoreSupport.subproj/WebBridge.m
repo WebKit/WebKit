@@ -1118,9 +1118,15 @@ static BOOL loggedObjectCacheSize = NO;
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
                 
     Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
-    if (!viewClass)
-        // Nothing is registered at all.
-        return ObjectElementNone;
+    if (!viewClass) {
+        // No view class is registered to handle this MIME type.  Check to see if there is a plugin which can handle this MIME type.
+        // This check is required because the Java plugin does not register an NSView class, so that Java files are downloaded when 
+        // not embedded.
+        if ([[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType])
+            return ObjectElementPlugin;
+        else
+            return ObjectElementNone;
+    }
     
     if ([viewClass isSubclassOfClass:[WebImageView class]])
         return ObjectElementImage;

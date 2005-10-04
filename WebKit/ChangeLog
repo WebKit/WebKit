@@ -1,3 +1,21 @@
+2005-10-03  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by John Sullivan.
+
+	<rdar://problem/4281095> Denver regression: Seed: Safari HTML 4.01 <object ...> tag problem
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge determineObjectFromMIMEType:URL:]):
+	If no view class is registered to handle the MIME type, check to see if there is a plugin registered which can handle it.
+	This check is required because the Java plugin does not register an NSView class, so that Java files are downloaded when
+	not embedded.
+
+	Prior to this fix, -determineObjectFromMIMEType:URL: would always return ObjectElementNone for Java applets (MIME type
+	"application/x-java-applet"), which would cause Java applets embedded in <OBJECT> elements to not be loaded.
+
+	This broke on 05-03-2005, when we changed how we handle fallback content for <OBJECT> elements so that we could pass the
+	Acid2 test.
+
 2005-09-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by geoff
