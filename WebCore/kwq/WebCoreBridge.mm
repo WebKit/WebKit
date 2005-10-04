@@ -243,7 +243,8 @@ static bool initializedKJS = FALSE;
 
 + (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document
 {
-    return ((KWQKHTMLPart *)[document _documentImpl]->part())->bridge();
+    KHTMLPart *part = [document _documentImpl]->part();
+    return part ? KWQ(part)->bridge() : nil;
 }
 
 - init
