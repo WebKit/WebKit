@@ -935,6 +935,8 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthTyp
     else
         w = style()->maxWidth();
 
+    lengthType = w.type;
+
     if (w.isIntrinsicOrAuto()) {
         int marginLeft = style()->marginLeft().minWidth(cw);
         int marginRight = style()->marginRight().minWidth(cw);
