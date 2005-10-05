@@ -47,6 +47,7 @@ namespace KJS {
   class HashTable;
   class HashEntry;
   class ListImp;
+  class IdentifierSequencedSet;
 
   // ECMA 262-3 8.6.1
   // Property attributes
@@ -422,12 +423,9 @@ namespace KJS {
      * having extra properties other than those set specifically with put().
      *
      * @param exec The current execution state
-     * @param recursive Whether or not properties in the object's prototype
-     * chain should be
-     * included in the list.
-     * @return A List of References to properties of the object.
+     * @param propertyNames A list of property names to be filled in by this call
      **/
-    virtual ReferenceList propList(ExecState *exec, bool recursive = true);
+    virtual void getPropertyNames(ExecState *exec, IdentifierSequencedSet& propertyNames);
 
     /**
      * Returns the internal value of the object. This is used for objects such

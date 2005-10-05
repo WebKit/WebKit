@@ -1,0 +1,34 @@
+<body>
+<p>
+This test checks whether for..in iteration properly skips duplicate
+entries, and whether it lists the properties of objects before those
+of their prototypes. It should print the following one per line in
+this order: "obj", "overloaded", "proto", "protoProto".
+<p>
+<hr>
+<pre id="console">
+</pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(s)
+{
+    document.getElementById('console').innerHTML += s + '<br>';
+}
+
+var protoProto = {protoProto: "protoProto", overloaded: "overloaded"};
+
+var proto = {proto: "proto", overloaded: "overloaded"};
+proto.__proto__ = protoProto;
+
+var obj = {obj: "obj", overloaded: "overloaded"};
+obj.__proto__ = proto;
+
+for (var prop in obj) {
+ log(prop);
+}
+
+
+</script>
+</body>

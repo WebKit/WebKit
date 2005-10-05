@@ -28,7 +28,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "lookup.h"
-#include "reference_list.h"
+#include "IdentifierSequencedSet.h"
 
 #include <assert.h>
 #include <math.h>
@@ -374,13 +374,9 @@ bool ObjectImp::hasInstance(ExecState */*exec*/, ValueImp */*value*/)
   return false;
 }
 
-ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
+void ObjectImp::getPropertyNames(ExecState *exec, IdentifierSequencedSet &propertyNames)
 {
-  ReferenceList list;
-  if (_proto->isObject() && recursive)
-    list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
-
-  _prop.addEnumerablesToReferenceList(list, this);
+  _prop.getEnumerablePropertyNames(propertyNames);
 
   // Add properties from the static hashtable of properties
   const ClassInfo *info = classInfo();
@@ -389,14 +385,15 @@ ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
       int size = info->propHashTable->size;
       const HashEntry *e = info->propHashTable->entries;
       for (int i = 0; i < size; ++i, ++e) {
-        if ( e->s && !(e->attr & DontEnum) )
-          list.append(Reference(this, e->s)); /// ######### check for duplicates with the propertymap
+        if (e->s && !(e->attr & DontEnum))
+          propertyNames.insert(e->s);
       }
     }
     info = info->parentClass;
   }
 
-  return list;
+  if (_proto->isObject())
+    static_cast<ObjectImp*>(_proto)->getPropertyNames(exec, propertyNames);
 }
 
 ValueImp *ObjectImp::toPrimitive(ExecState *exec, Type preferredType) const

@@ -43,7 +43,7 @@
 #include "lexer.h"
 #include "operations.h"
 #include "ustring.h"
-#include "reference_list.h"
+#include "IdentifierSequencedSet.h"
 
 using namespace KJS;
 
@@ -1780,7 +1780,7 @@ Completion ForInNode::execute(ExecState *exec)
   ValueImp *retval = 0;
   ObjectImp *v;
   Completion c;
-  ReferenceList propList;
+  IdentifierSequencedSet propertyNames;
 
   if (varDecl) {
     varDecl->evaluate(exec);
@@ -1799,16 +1799,13 @@ Completion ForInNode::execute(ExecState *exec)
 
   KJS_CHECKEXCEPTION
   v = e->toObject(exec);
-  propList = v->propList(exec);
+  v->getPropertyNames(exec, propertyNames);
 
-  ReferenceListIterator propIt = propList.begin();
-
-  while (propIt != propList.end()) {
-    Identifier name = propIt->getPropertyName(exec);
-    if (!v->hasProperty(exec, name)) {
-      propIt++;
+  IdentifierSequencedSetIterator end = propertyNames.end();
+  for (IdentifierSequencedSetIterator it = propertyNames.begin(); it != end; ++it) {
+    const Identifier &name = *it;
+    if (!v->hasProperty(exec, name))
       continue;
-    }
 
     ValueImp *str = jsString(name.ustring());
 
@@ -1870,8 +1867,6 @@ Completion ForInNode::execute(ExecState *exec)
         return c;
       }
     }
-
-    propIt++;
   }
 
   // bail out on error

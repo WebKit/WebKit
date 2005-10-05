@@ -1,3 +1,14 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - test case for some fixes I made to for..in enumeration. object
+	properties now come before prototype properties and duplicates
+	between object and prototype are listed only once.
+
+        * fast/js/for-in-expected.txt: Added.
+        * fast/js/for-in.html: Added.
+
 2005-10-05  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

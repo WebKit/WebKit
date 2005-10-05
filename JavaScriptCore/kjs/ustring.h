@@ -240,6 +240,8 @@ namespace KJS {
     };
 
   public:
+    typedef Rep Impl;
+
     /**
      * Constructs a null string.
      */
@@ -461,6 +463,8 @@ namespace KJS {
      */
     static void globalClear();
 #endif
+
+    Impl *impl() const { return rep; }
   private:
     UString(Rep *r) { attach(r); }
     void attach(Rep *r) { rep = r; r->ref(); }

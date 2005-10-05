@@ -1,3 +1,54 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fixed <rdar://problem/4260481> Remove Reference type from JavaScriptCore
+
+	Also fixed some bugs with for..in enumeration while I was at it. object
+	properties now come before prototype properties and duplicates
+	between object and prototype are listed only once.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/IdentifierSequencedSet.cpp: Added.
+        (KJS::IdentifierSequencedSet::IdentifierSequencedSet):
+        (KJS::IdentifierSequencedSet::deallocateVector):
+        (KJS::IdentifierSequencedSet::~IdentifierSequencedSet):
+        (KJS::IdentifierSequencedSet::insert):
+        * kjs/IdentifierSequencedSet.h: Added.
+        (KJS::IdentifierSequencedSetIterator::IdentifierSequencedSetIterator):
+        (KJS::IdentifierSequencedSetIterator::operator*):
+        (KJS::IdentifierSequencedSetIterator::operator->):
+        (KJS::IdentifierSequencedSetIterator::operator++):
+        (KJS::IdentifierSequencedSetIterator::operator==):
+        (KJS::IdentifierSequencedSetIterator::operator!=):
+        (KJS::IdentifierSequencedSet::begin):
+        (KJS::IdentifierSequencedSet::end):
+        (KJS::IdentifierSequencedSet::size):
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::getPropertyNames):
+        (ArrayInstanceImp::setLength):
+        (ArrayInstanceImp::pushUndefinedObjectsToEnd):
+        * kjs/nodes.cpp:
+        (ForInNode::execute):
+        * kjs/nodes.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::getPropertyNames):
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::getEnumerablePropertyNames):
+        (KJS::PropertyMap::getSparseArrayPropertyNames):
+        * kjs/property_map.h:
+        * kjs/protect.h:
+        * kjs/protected_reference.h: Removed.
+        * kjs/reference.cpp: Removed.
+        * kjs/reference.h: Removed.
+        * kjs/reference_list.cpp: Removed.
+        * kjs/reference_list.h: Removed.
+        * kjs/ustring.h:
+        (KJS::UString::impl):
+        * kxmlcore/HashSet.h:
+
 2005-10-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

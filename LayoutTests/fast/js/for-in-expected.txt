@@ -1,0 +1,8 @@
+This test checks whether for..in iteration properly skips duplicate entries, and whether it lists the properties of objects before those of their prototypes. It should print the following one per line in this order: "obj", "overloaded", "proto", "protoProto".
+
+
+obj
+overloaded
+proto
+protoProto
+

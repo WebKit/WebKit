@@ -32,9 +32,10 @@
 		37B800EF08EBB65B0035B474 /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
 		37B800F008EBB65B0035B474 /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92E08EA173A00F7300B /* HashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37B800F108EBB65C0035B474 /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6512E62B08F3BA8B004A15B6 /* IdentifierSequencedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D61C08F2676800958B28 /* IdentifierSequencedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6512E63608F3BADE004A15B6 /* IdentifierSequencedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65D6D61B08F2676800958B28 /* IdentifierSequencedSet.cpp */; };
 		65162EEB08E6A1FE007556CD /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65162EEA08E6A1FE007556CD /* SharedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65162F0208E6A2D0007556CD /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65162EEA08E6A1FE007556CD /* SharedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		652C107F08DA7B1E0020887D /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
 		6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
 		6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
 		6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
@@ -44,6 +45,8 @@
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E70089E85D300760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65D6D61D08F2676800958B28 /* IdentifierSequencedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65D6D61B08F2676800958B28 /* IdentifierSequencedSet.cpp */; };
+		65D6D61E08F2676800958B28 /* IdentifierSequencedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D61C08F2676800958B28 /* IdentifierSequencedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
 		65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93108EA173A00F7300B /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92B08EA173A00F7300B /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -92,8 +95,6 @@
 		932F5B600822A1C700736975 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F68EBB8C0255D4C601FF60F7 /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B610822A1C700736975 /* JavaScriptCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */; };
 		932F5B620822A1C700736975 /* simple_number.h in Headers */ = {isa = PBXBuildFile; fileRef = F50888B6030BB74C012A967E /* simple_number.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B630822A1C700736975 /* reference_list.h in Headers */ = {isa = PBXBuildFile; fileRef = F54F0800030CD22001B5C2EB /* reference_list.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B640822A1C700736975 /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = F5341391030CEEB1018BE7F3 /* reference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B650822A1C700736975 /* completion.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB2BC5030F772101FCFE1D /* completion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B660822A1C700736975 /* identifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A349A038AE7C6008635CE /* identifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B670822A1C700736975 /* array_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 938772E5038BFE19008635CE /* array_instance.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -158,8 +159,6 @@
 		932F5BA80822A1C700736975 /* ustring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* ustring.cpp */; };
 		932F5BA90822A1C700736975 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8870255597D01FF60F7 /* value.cpp */; };
 		932F5BAB0822A1C700736975 /* nodes2string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FFE656026B47A6018635CA /* nodes2string.cpp */; };
-		932F5BAC0822A1C700736975 /* reference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5341390030CEEB1018BE7F3 /* reference.cpp */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5BAD0822A1C700736975 /* reference_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5341394030CF5F8018BE7F3 /* reference_list.cpp */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5BAE0822A1C700736975 /* identifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A349D038AE80F008635CE /* identifier.cpp */; };
 		932F5BAF0822A1C700736975 /* scope_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9374D3A8038D9D74008635CE /* scope_chain.cpp */; };
 		932F5BB00822A1C700736975 /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931C6CF0038EE8DE008635CE /* list.cpp */; };
@@ -248,8 +247,6 @@
 		A85D8210087B2822006A9172 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F68EBB8C0255D4C601FF60F7 /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8211087B2822006A9172 /* JavaScriptCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */; };
 		A85D8212087B2822006A9172 /* simple_number.h in Headers */ = {isa = PBXBuildFile; fileRef = F50888B6030BB74C012A967E /* simple_number.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A85D8213087B2822006A9172 /* reference_list.h in Headers */ = {isa = PBXBuildFile; fileRef = F54F0800030CD22001B5C2EB /* reference_list.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A85D8214087B2822006A9172 /* reference.h in Headers */ = {isa = PBXBuildFile; fileRef = F5341391030CEEB1018BE7F3 /* reference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8215087B2822006A9172 /* completion.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB2BC5030F772101FCFE1D /* completion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8216087B2822006A9172 /* identifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A349A038AE7C6008635CE /* identifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D8217087B2822006A9172 /* array_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 938772E5038BFE19008635CE /* array_instance.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -316,8 +313,6 @@
 		A85D8258087B2822006A9172 /* ustring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* ustring.cpp */; };
 		A85D8259087B2822006A9172 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8870255597D01FF60F7 /* value.cpp */; };
 		A85D825A087B2822006A9172 /* nodes2string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FFE656026B47A6018635CA /* nodes2string.cpp */; };
-		A85D825B087B2822006A9172 /* reference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5341390030CEEB1018BE7F3 /* reference.cpp */; settings = {ATTRIBUTES = (Private, ); }; };
-		A85D825C087B2822006A9172 /* reference_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5341394030CF5F8018BE7F3 /* reference_list.cpp */; settings = {ATTRIBUTES = (Private, ); }; };
 		A85D825D087B2822006A9172 /* identifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A349D038AE80F008635CE /* identifier.cpp */; };
 		A85D825E087B2822006A9172 /* scope_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9374D3A8038D9D74008635CE /* scope_chain.cpp */; };
 		A85D825F087B2822006A9172 /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931C6CF0038EE8DE008635CE /* list.cpp */; };
@@ -362,7 +357,6 @@
 		A883C7F408EA12860051473E /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
 		A883C7F508EA12860051473E /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
 		A883C7F608EA12860051473E /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
-		A883C7F708EA12A20051473E /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
 		A8BC0DFC08D43D6D00379918 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 /* End PBXBuildFile section */
 
@@ -502,7 +496,6 @@
 		65162EEA08E6A1FE007556CD /* SharedPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SharedPtr.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
-		652C107E08DA7B1E0020887D /* protected_reference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_reference.h; sourceTree = "<group>"; };
 		6541720E039E08B90058BFEB /* dftables.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dftables.c; path = pcre/dftables.c; sourceTree = "<group>"; };
 		6541720F039E08B90058BFEB /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = pcre/pcre.h; sourceTree = "<group>"; };
 		65417217039E0B280058BFEB /* pcre-config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pcre-config.h"; path = "pcre/pcre-config.h"; sourceTree = "<group>"; };
@@ -516,6 +509,8 @@
 		65621E6B089E859700760F35 /* property_slot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = property_slot.cpp; sourceTree = "<group>"; };
 		65621E6C089E859700760F35 /* property_slot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = property_slot.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
+		65D6D61B08F2676800958B28 /* IdentifierSequencedSet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IdentifierSequencedSet.cpp; sourceTree = "<group>"; };
+		65D6D61C08F2676800958B28 /* IdentifierSequencedSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IdentifierSequencedSet.h; sourceTree = "<group>"; };
 		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
 		65DFC92B08EA173A00F7300B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; };
@@ -572,10 +567,6 @@
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; };
 		A85D8288087B2822006A9172 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F50888B6030BB74C012A967E /* simple_number.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_number.h; sourceTree = "<group>"; };
-		F5341390030CEEB1018BE7F3 /* reference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = reference.cpp; sourceTree = "<group>"; };
-		F5341391030CEEB1018BE7F3 /* reference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = reference.h; sourceTree = "<group>"; };
-		F5341394030CF5F8018BE7F3 /* reference_list.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = reference_list.cpp; sourceTree = "<group>"; };
-		F54F0800030CD22001B5C2EB /* reference_list.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = reference_list.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* completion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = completion.h; sourceTree = "<group>"; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JavaScriptCorePrefix.h; path = ../JavaScriptCorePrefix.h; sourceTree = "<group>"; };
 		F5FFE656026B47A6018635CA /* nodes2string.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = nodes2string.cpp; sourceTree = "<group>"; };
@@ -714,11 +705,12 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				65D6D61B08F2676800958B28 /* IdentifierSequencedSet.cpp */,
+				65D6D61C08F2676800958B28 /* IdentifierSequencedSet.h */,
 				65621E6B089E859700760F35 /* property_slot.cpp */,
 				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
 				650B68D80639033F009D42DE /* protected_values.cpp */,
-				652C107E08DA7B1E0020887D /* protected_reference.h */,
 				650B68D90639033F009D42DE /* protected_values.h */,
 				F692A84E0255597D01FF60F7 /* array_object.h */,
 				F692A84D0255597D01FF60F7 /* array_object.cpp */,
@@ -765,10 +757,6 @@
 				F692A87A0255597D01FF60F7 /* property_map.h */,
 				F692A8790255597D01FF60F7 /* property_map.cpp */,
 				65C02FBB0637462A003E7EE6 /* protect.h */,
-				F5341390030CEEB1018BE7F3 /* reference.cpp */,
-				F5341391030CEEB1018BE7F3 /* reference.h */,
-				F54F0800030CD22001B5C2EB /* reference_list.h */,
-				F5341394030CF5F8018BE7F3 /* reference_list.cpp */,
 				F692A87B0255597D01FF60F7 /* regexp_object.cpp */,
 				F692A87C0255597D01FF60F7 /* regexp_object.h */,
 				F692A87D0255597D01FF60F7 /* regexp.cpp */,
@@ -971,8 +959,6 @@
 				932F5B600822A1C700736975 /* config.h in Headers */,
 				932F5B610822A1C700736975 /* JavaScriptCorePrefix.h in Headers */,
 				932F5B620822A1C700736975 /* simple_number.h in Headers */,
-				932F5B630822A1C700736975 /* reference_list.h in Headers */,
-				932F5B640822A1C700736975 /* reference.h in Headers */,
 				932F5B650822A1C700736975 /* completion.h in Headers */,
 				932F5B660822A1C700736975 /* identifier.h in Headers */,
 				932F5B670822A1C700736975 /* array_instance.h in Headers */,
@@ -1019,7 +1005,6 @@
 				93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */,
 				93E26C1308B1523D00F85226 /* ucptable.c in Headers */,
 				93E26CCF08B2921900F85226 /* softlinking.h in Headers */,
-				652C107F08DA7B1E0020887D /* protected_reference.h in Headers */,
 				65162EEB08E6A1FE007556CD /* SharedPtr.h in Headers */,
 				65E217BD08E7EECC0023E5F6 /* Assertions.h in Headers */,
 				65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */,
@@ -1033,6 +1018,7 @@
 				65DFC93508EA173A00F7300B /* HashTraits.h in Headers */,
 				6557E8F808EA5D4D0049CDFC /* HashMapPtrSpec.h in Headers */,
 				65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */,
+				65D6D61E08F2676800958B28 /* IdentifierSequencedSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1068,8 +1054,6 @@
 				A85D8210087B2822006A9172 /* config.h in Headers */,
 				A85D8211087B2822006A9172 /* JavaScriptCorePrefix.h in Headers */,
 				A85D8212087B2822006A9172 /* simple_number.h in Headers */,
-				A85D8213087B2822006A9172 /* reference_list.h in Headers */,
-				A85D8214087B2822006A9172 /* reference.h in Headers */,
 				A85D8215087B2822006A9172 /* completion.h in Headers */,
 				A85D8216087B2822006A9172 /* identifier.h in Headers */,
 				A85D8217087B2822006A9172 /* array_instance.h in Headers */,
@@ -1122,13 +1106,13 @@
 				A883C7F308EA12860051473E /* TCPageMap.h in Headers */,
 				A883C7F408EA12860051473E /* TCSpinLock.h in Headers */,
 				A883C7F608EA12860051473E /* TCSystemAlloc.h in Headers */,
-				A883C7F708EA12A20051473E /* protected_reference.h in Headers */,
 				37B800EB08EBB6520035B474 /* HashFunctions.h in Headers */,
 				37B800EC08EBB6540035B474 /* HashMap.h in Headers */,
 				37B800ED08EBB6540035B474 /* HashMapPtrSpec.h in Headers */,
 				37B800EE08EBB65A0035B474 /* HashSet.h in Headers */,
 				37B800F008EBB65B0035B474 /* HashTable.h in Headers */,
 				37B800F108EBB65C0035B474 /* HashTraits.h in Headers */,
+				6512E62B08F3BA8B004A15B6 /* IdentifierSequencedSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1641,8 +1625,6 @@
 				932F5BA80822A1C700736975 /* ustring.cpp in Sources */,
 				932F5BA90822A1C700736975 /* value.cpp in Sources */,
 				932F5BAB0822A1C700736975 /* nodes2string.cpp in Sources */,
-				932F5BAC0822A1C700736975 /* reference.cpp in Sources */,
-				932F5BAD0822A1C700736975 /* reference_list.cpp in Sources */,
 				932F5BAE0822A1C700736975 /* identifier.cpp in Sources */,
 				932F5BAF0822A1C700736975 /* scope_chain.cpp in Sources */,
 				932F5BB00822A1C700736975 /* list.cpp in Sources */,
@@ -1689,6 +1671,7 @@
 				65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */,
 				6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
+				65D6D61D08F2676800958B28 /* IdentifierSequencedSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1738,8 +1721,6 @@
 				A85D8258087B2822006A9172 /* ustring.cpp in Sources */,
 				A85D8259087B2822006A9172 /* value.cpp in Sources */,
 				A85D825A087B2822006A9172 /* nodes2string.cpp in Sources */,
-				A85D825B087B2822006A9172 /* reference.cpp in Sources */,
-				A85D825C087B2822006A9172 /* reference_list.cpp in Sources */,
 				A85D825D087B2822006A9172 /* identifier.cpp in Sources */,
 				A85D825E087B2822006A9172 /* scope_chain.cpp in Sources */,
 				A85D825F087B2822006A9172 /* list.cpp in Sources */,
@@ -1786,6 +1767,7 @@
 				A883C7F008EA12860051473E /* FastMalloc.cpp in Sources */,
 				A883C7F508EA12860051473E /* TCSystemAlloc.cpp in Sources */,
 				37B800EF08EBB65B0035B474 /* HashTable.cpp in Sources */,
+				6512E63608F3BADE004A15B6 /* IdentifierSequencedSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
