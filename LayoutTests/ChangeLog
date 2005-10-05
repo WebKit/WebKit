@@ -1,3 +1,25 @@
+2005-10-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by beth
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5245>
+        Adding missing pixel results for test cases checked in recently.
+
+        * editing/inserting/4278698-expected.checksum: Added.
+        * editing/inserting/4278698-expected.png: Added.
+        * editing/pasteboard/4076267-2-expected.checksum: Added.
+        * editing/pasteboard/4076267-2-expected.png: Added.
+        * editing/pasteboard/4076267-3-expected.checksum: Added.
+        * editing/pasteboard/4076267-3-expected.png: Added.
+        * editing/pasteboard/4076267-expected.checksum: Added.
+        * editing/pasteboard/4076267-expected.png: Added.
+        * editing/undo/4063751-expected.checksum: Added.
+        * editing/undo/4063751-expected.png: Added.
+        * fast/css/imageTileOpacity-expected.checksum: Added.
+        * fast/css/imageTileOpacity-expected.png: Added.
+        * fast/forms/textAreaLineHeight-expected.checksum: Added.
+        * fast/forms/textAreaLineHeight-expected.png: Added.
+
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
