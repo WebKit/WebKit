@@ -156,11 +156,10 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
         if (ret.type() == QVariant::Bool && ret.toBool() == false)
             evt->preventDefault();
       }
+  
+      DOM::DocumentImpl::updateDocumentsRendering();
+      deref();
   }
-  
-  DOM::DocumentImpl::updateDocumentsRendering();
-  
-  deref();
 }
 
 DOM::DOMString JSAbstractEventListener::eventListenerType()

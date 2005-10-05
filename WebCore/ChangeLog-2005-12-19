@@ -1,3 +1,15 @@
+2005-10-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	<rdar://problem/4285236> Denver Regression: crash repeatedly reloading www.supermanhomepage.com
+	
+	I couldn't figure out how to make a reproducible test case for this. The failure is
+	random memory trashing.
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+
 2005-10-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
