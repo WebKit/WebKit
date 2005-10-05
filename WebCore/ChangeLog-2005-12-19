@@ -1,3 +1,13 @@
+2005-10-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Makes <object> tags not use image mode for svg content:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5175
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::isImageType):
+
 2005-10-05  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
