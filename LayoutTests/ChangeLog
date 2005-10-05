@@ -1,4 +1,17 @@
-up2005-10-04  Eric Seidel  <eseidel@apple.com>
+2005-10-05  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * dom/xhtml/level3/core/nodeissamenode01-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode02-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode03-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode04-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode05-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode06-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode10-expected.txt:
+	These tests pass now.
+
+2005-10-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
 
