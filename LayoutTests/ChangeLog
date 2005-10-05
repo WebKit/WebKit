@@ -1,3 +1,13 @@
+up2005-10-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test direct name lookup in DOMNamedNodeMap, like FireFox/IE.
+        <rdar://problem/4285884> Gap.com throws exception "Undefined value" because of Safari doesn't support indexing into a named node map by name
+
+        * fast/dom/namednodemap-namelookup-expected.txt: Added.
+        * fast/dom/namednodemap-namelookup.html: Added.
+
 2005-10-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
