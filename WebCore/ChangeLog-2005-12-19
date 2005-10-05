@@ -1,3 +1,21 @@
+2005-10-05  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+	Add JS binding for isSameNode.
+	
+        (KJS::DOMNode::):
+        * khtml/xml/dom_nodeimpl.h:
+	Implement isSameNode.
+	
+        (DOM::NodeImpl::isSameNode):
+        * kwq/DOM.mm:
+        (-[DOMNode isSameNode:]):
+	Add ObjC binding for isSameNode.
+	
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

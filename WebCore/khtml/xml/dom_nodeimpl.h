@@ -111,6 +111,8 @@ public:
     void normalize ();
     static bool isSupported(const DOMString &feature, const DOMString &version);
 
+    bool isSameNode(NodeImpl *other) { return this == other; }
+    
     NodeImpl *lastDescendant() const;
 
     // Other methods (not part of DOM)
