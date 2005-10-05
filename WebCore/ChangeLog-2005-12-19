@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        Improves dependency checking so that SVG JavaScript wrapper files
+        regenerate when the perl scripts change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2005-10-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Makes <object> tags not use image mode for svg content:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5175
 

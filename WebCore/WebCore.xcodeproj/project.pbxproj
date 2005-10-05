@@ -8261,9 +8261,9 @@
 				A837AEEE08B698FC00EBFFDC /* kdomcssvalues.c/h */,
 				A837AEF108B6991100EBFFDC /* ksvgcssproperties.c/h */,
 				A837AEF308B6992C00EBFFDC /* ksvgcssvalues.c/h */,
-				A8BC0A9E08D18E8500379918 /* KDOM EcmaScript.cpp/h */,
+				A8BC0A9E08D18E8500379918 /* KDOM EcmaInterface.cpp/h */,
 				A8122C7008D55F2A00844FA3 /* Generate KDOM JS Bindings */,
-				A8BC0B0108D1954500379918 /* KSVG EcmaScript.cpp/h */,
+				A8BC0B0108D1954500379918 /* KSVG EcmaInterface.cpp/h */,
 				A8122C7208D55F3C00844FA3 /* Generate KSVG JS Bindings */,
 				A8212A8608794A2300677359 /* Headers */,
 				A8212BE308794A2300677359 /* Resources */,
@@ -8768,6 +8768,7 @@
 			);
 			inputPaths = (
 				kdom/bindings/kdomidl.pl,
+				kdom/bindings/IDLCodeGeneratorJs.pm,
 			);
 			name = "Generate KDOM JS Bindings";
 			outputPaths = (
@@ -8784,6 +8785,7 @@
 			);
 			inputPaths = (
 				kdom/bindings/kdomidl.pl,
+				kdom/bindings/IDLCodeGeneratorJs.pm,
 			);
 			name = "Generate KSVG JS Bindings";
 			outputPaths = (
@@ -9238,15 +9240,17 @@
 			shellPath = /bin/sh;
 			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nelse\n    cat WebCore.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nfi";
 		};
-		A8BC0A9E08D18E8500379918 /* KDOM EcmaScript.cpp/h */ = {
+		A8BC0A9E08D18E8500379918 /* KDOM EcmaInterface.cpp/h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				kdom/bindings/idl/core/Node.idl,
+				kdom/bindings/IDLCodeGeneratorEcmaInterface.pm,
+				kdom/bindings/kdomidl.pl,
 			);
-			name = "KDOM EcmaScript.cpp/h";
+			name = "KDOM EcmaInterface.cpp/h";
 			outputPaths = (
 				kdom/ecma/EcmaInterface.cpp,
 				$DERIVED_FILE_DIR/kdom/ecma/EcmaInterface.h,
@@ -9255,15 +9259,17 @@
 			shellPath = /bin/sh;
 			shellScript = "ECMA_OUTPUT_DIR=\"${DERIVED_FILE_DIR}/kdom/ecma\"\nmkdir -p \"${ECMA_OUTPUT_DIR}\"\n\n/usr/bin/perl -Ikdom/bindings kdom/bindings/kdomidl.pl \\\n\t--generator ecmaInterface \\\n\t--outputdir \"${ECMA_OUTPUT_DIR}\" \\\n\t--includedir kdom/bindings/idl \\\n\t--input kdom/bindings/idl/core/Node.idl \\\n\t--documentation empty ;\n\n# Hack until <rdar://problem/4251784> \"DerivedSources (build intermediates) relative filepaths should be possible\" is fixed.\nln -sf \"$ECMA_OUTPUT_DIR/EcmaInterface.cpp\" kdom/ecma/EcmaInterface.cpp";
 		};
-		A8BC0B0108D1954500379918 /* KSVG EcmaScript.cpp/h */ = {
+		A8BC0B0108D1954500379918 /* KSVG EcmaInterface.cpp/h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
 				ksvg2/bindings/idl/svg/SVGElement.idl,
+				kdom/bindings/IDLCodeGeneratorEcmaInterface.pm,
+				kdom/bindings/kdomidl.pl,
 			);
-			name = "KSVG EcmaScript.cpp/h";
+			name = "KSVG EcmaInterface.cpp/h";
 			outputPaths = (
 				ksvg2/ecma/EcmaInterface.cpp,
 				$DERIVED_FILE_DIR/ksvg2/ecma/EcmaInterface.h,
