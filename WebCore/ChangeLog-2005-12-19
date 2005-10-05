@@ -22,6 +22,8 @@
 
 	- fixed a random crasher that happens because the HTMLParser accidentally was refing
 	the document.
+
+	<rdar://problem/4065748> Repro crash at http://www.vanaqua.org using menu system (KHTMLParser::setCurrent(DOM::NodeImpl*))
 	
 	I couldn't figure out how to make a reproducible test case for this. The failure is
 	random memory trashing.
