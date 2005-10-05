@@ -22,6 +22,7 @@
 
 #define DEBUG_SETTINGS 0
 
+#include "config.h"
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>

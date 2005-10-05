@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include "SVGPathSegCurvetoQuadraticSmoothImpl.h"
 #include "SVGStyledElementImpl.h"
 

@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include <qglobal.h>
 
 #include <kdebug.h>

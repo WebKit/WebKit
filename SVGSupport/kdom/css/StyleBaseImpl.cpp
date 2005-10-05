@@ -30,6 +30,7 @@
 
 // #define CSS_DEBUG - Prepare for heavy debug output :)
 
+#include "config.h"
 #include <kurl.h>
 #include <kdebug.h>
 

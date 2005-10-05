@@ -21,6 +21,7 @@
 */
 
 //#include "SVGDocument.h"
+#include "config.h"
 #include "SVGTSpanElementImpl.h"
 
 using namespace KSVG;

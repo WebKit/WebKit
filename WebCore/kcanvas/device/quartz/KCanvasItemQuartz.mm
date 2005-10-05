@@ -24,6 +24,7 @@
  */
 
 
+#include "config.h"
 #import "KCanvasItemQuartz.h"
 
 #import <kxmlcore/Assertions.h>

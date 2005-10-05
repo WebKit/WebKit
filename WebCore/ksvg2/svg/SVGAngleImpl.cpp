@@ -21,6 +21,7 @@
 */
 
 //#include "SVGAngle.h"
+#include "config.h"
 #include <math.h>
 
 #include <ksvg2/ksvg.h>

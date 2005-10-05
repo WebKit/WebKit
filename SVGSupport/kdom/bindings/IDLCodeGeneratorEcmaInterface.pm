@@ -232,6 +232,7 @@ sub GenerateImplementation
 		@implContent = split("\r", $headerTemplate);
 
 		# - Add absolutely needed includes
+		push(@implContent, "\n#include \"config.h\"\n\n");
 		if($useLayerOnTop eq 0) {
 			push(@implContent, "\n#include <kdom/ecma/EcmaInterface.h>\n\n");
 		} elsif($useModule eq "svg") { # Special case for ksvg...

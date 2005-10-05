@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <kdom/kdom.h>
 #include <kdom/DOMString.h>
 #include <ksvg2/css/SVGCSSStyleSheetImpl.h>

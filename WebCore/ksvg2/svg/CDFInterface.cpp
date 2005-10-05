@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <ksvg2/ecma/GlobalObject.h>
 #include "CDFInterface.h"
 #include <ksvg2/ecma/EcmaInterface.h>

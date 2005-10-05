@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include <qstring.h>
 #include <qstringlist.h>
 

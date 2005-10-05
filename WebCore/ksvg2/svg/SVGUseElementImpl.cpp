@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <kdom/Namespace.h>
 #include <kdom/core/AttrImpl.h>
 

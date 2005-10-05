@@ -24,6 +24,7 @@
  */
 
 
+#include "config.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KCanvasFilterQuartz.h"

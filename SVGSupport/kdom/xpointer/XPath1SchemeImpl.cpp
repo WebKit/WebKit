@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "NodeImpl.h"
 #include "DocumentImpl.h"
 // #include "XPathResultImpl.h"

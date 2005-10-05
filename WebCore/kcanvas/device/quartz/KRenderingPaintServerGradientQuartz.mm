@@ -24,6 +24,7 @@
  */
 
 
+#include "config.h"
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 

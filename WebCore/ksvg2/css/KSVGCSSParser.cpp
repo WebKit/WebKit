@@ -21,6 +21,7 @@
 */
 
 
+#include "config.h"
 #include <kdebug.h>
 #include <kglobal.h>
 

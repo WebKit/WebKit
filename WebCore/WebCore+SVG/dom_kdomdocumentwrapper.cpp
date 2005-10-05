@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
+#include "config.h"
 #include "dom_kdomdocumentwrapper.h"
 #include "xml_kdomtokenizer.h"
 

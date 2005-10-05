@@ -27,6 +27,7 @@
 #define DEBUG_CSS 0
 #define DEBUG_TOKEN 0
 
+#include "config.h"
 #include <kurl.h>
 #include <kdebug.h>
 #include <kglobal.h>

@@ -29,6 +29,7 @@
     // http://www.is.kyusan-u.ac.jp/~chengk/pub/papers/compsac00_A07-07.pdf
 */
 
+#include "config.h"
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>

@@ -25,6 +25,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <kdebug.h>
 #ifndef APPLE_CHANGES
 #include <kio/scheduler.h>

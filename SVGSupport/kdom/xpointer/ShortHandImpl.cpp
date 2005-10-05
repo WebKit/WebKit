@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include <kdebug.h>
 
 #include <kdom/kdom.h>

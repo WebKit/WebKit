@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "XPointerExceptionImpl.h"
 
 using namespace KDOM;

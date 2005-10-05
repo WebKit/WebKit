@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include "KCanvas.h"
 #include "KRenderingStyle.h"
 #include "KRenderingDevice.h"

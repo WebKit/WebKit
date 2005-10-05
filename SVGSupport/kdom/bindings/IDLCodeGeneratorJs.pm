@@ -370,6 +370,7 @@ sub GenerateImplementation
 		@implContent = split("\r", $headerTemplate);
 
 		# - Add absolutely needed includes
+		push(@implContent, "\n#include \"config.h\"\n\n");
 		push(@implContent, "\n#include \"" . $extractedType{'type'} . ".h\"");
 
 		my $useClass = $implClass;

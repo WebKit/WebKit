@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include <q3valuelist.h>
 
 #include "kdom/Shared.h"

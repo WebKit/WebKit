@@ -21,6 +21,7 @@
 */
 
 
+#include "config.h"
 #include "SVGPathSegListImpl.h"
 
 using namespace KSVG;

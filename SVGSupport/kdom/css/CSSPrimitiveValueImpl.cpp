@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <qregexp.h>
 #include <qfontmetrics.h>
 #include <q3paintdevicemetrics.h>

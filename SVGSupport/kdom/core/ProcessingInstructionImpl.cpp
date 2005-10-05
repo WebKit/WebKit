@@ -26,6 +26,7 @@
 // qxml can't be included otherwhise :/
 #undef QT_NO_CAST_ASCII
 
+#include "config.h"
 #ifndef APPLE_CHANGES
 #include <qxml.h>
 #endif

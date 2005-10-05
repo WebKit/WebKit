@@ -24,6 +24,7 @@
  */
 
 
+#include "config.h"
 #import "KCanvasViewQuartz.h"
 #import "KCanvasMatrix.h"
 

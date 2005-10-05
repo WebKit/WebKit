@@ -24,6 +24,7 @@
  */
 
 
+#include "config.h"
 #import "QuartzSupport.h"
 
 #import "KCanvas.h"

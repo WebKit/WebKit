@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include "KDOMCSSParser.h"
 #include "MediaListImpl.h"
 #include "CSSRuleListImpl.h"

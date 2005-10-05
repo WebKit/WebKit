@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include <klocale.h>
 
 #include <kdom/core/AttrImpl.h>

@@ -23,6 +23,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #include "kdom.h"
 #include "EntityImpl.h"
 #include "DocumentImpl.h"

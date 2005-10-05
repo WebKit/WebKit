@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "Namespace.h"
 #include "DOMStringImpl.h"
 
