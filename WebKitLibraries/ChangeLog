@@ -1,3 +1,10 @@
+2005-10-04  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2005-09-08  Justin Garcia  <justin.garcia@apple.com>
 
         * WebKitSystemInterface.h: Update to latest

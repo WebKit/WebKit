@@ -105,6 +105,8 @@ ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
 void WKReleaseStyleGroup(void *group);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
+void WKSetPatternPhaseInUserSpace(CGContextRef, CGPoint);
+
 #define WKGlyphVectorSize (50 * 32)
 
 typedef void *WKGlyphVectorRef;
