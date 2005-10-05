@@ -1,3 +1,14 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fixed <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
+        
+	* khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::URL): if the URL is empty, return "about:blank", the JS DOM
+	at least counts on this, so we may as well do it for other languages too.
+        (DOM::DocumentImpl::baseURL): base it on URL(), not m_url
+
 2005-10-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
