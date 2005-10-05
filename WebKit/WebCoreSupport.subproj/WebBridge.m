@@ -511,6 +511,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [request setTimeoutInterval:10];
 
     if (postData) {
         [request setHTTPMethod:@"POST"];

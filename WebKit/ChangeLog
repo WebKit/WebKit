@@ -1,3 +1,14 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	<rdar://problem/4158439> Safari appears to hang when sending synchronous XMLHttpRequest that gets no server response
+
+	No testcase - not testable w/o network.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]): Set a timeout of 10.
+
 2005-10-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin
