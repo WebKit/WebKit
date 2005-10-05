@@ -84,13 +84,24 @@ public:
         level(_level),
         strayTableContent(false),
         node(_node),
+        holdingRef(!_node->isDocumentNode()),
         next(_next)
-        { }
+    {
+        if (holdingRef)
+            _node->ref();
+    }
+
+    ~HTMLStackElem()
+    {
+        if (holdingRef)
+            node->deref();
+    }
 
     AtomicString tagName;
     int level;
     bool strayTableContent;
-    SharedPtr<NodeImpl> node;
+    NodeImpl *node;
+    bool holdingRef;
     HTMLStackElem* next;
 };
 
@@ -882,7 +893,7 @@ void HTMLParser::popNestedHeaderTag()
         }
         if (currNode && !isInline(currNode))
             return;
-        currNode = curr->node.get();
+        currNode = curr->node;
     }
 }
 
@@ -990,9 +1001,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
     if (!curr || !maxElem || !isAffectedByResidualStyle(maxElem->tagName)) return;
 
-    NodeImpl* residualElem = prev->node.get();
-    NodeImpl* blockElem = prevMaxElem ? prevMaxElem->node.get() : current;
-    NodeImpl* parentElem = elem->node.get();
+    NodeImpl* residualElem = prev->node;
+    NodeImpl* blockElem = prevMaxElem ? prevMaxElem->node : current;
+    NodeImpl* parentElem = elem->node;
 
     // Check to see if the reparenting that is going to occur is allowed according to the DOM.
     // FIXME: We should either always allow it or perform an additional fixup instead of
@@ -1274,7 +1285,7 @@ void HTMLParser::popOneBlock(bool delBlock)
     }
 
     blockStack = Elem->next;
-    setCurrent(Elem->node.get());
+    setCurrent(Elem->node);
 
     if (Elem->strayTableContent)
         inStrayTableContent--;

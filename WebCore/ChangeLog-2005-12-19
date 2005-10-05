@@ -1,3 +1,20 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fixed a random crasher that happens because the HTMLParser accidentally was refing
+	the document.
+	
+	I couldn't figure out how to make a reproducible test case for this. The failure is
+	random memory trashing.
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLStackElem::HTMLStackElem):
+        (HTMLStackElem::~HTMLStackElem):
+        (HTMLParser::popNestedHeaderTag):
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (HTMLParser::popOneBlock):
+
 2005-10-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
@@ -8,7 +25,7 @@
 	random memory trashing.
 
         * khtml/ecma/kjs_events.cpp:
-        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSAbstractEventListener::handleEvent): Move an unpaired deref to where it is paired.
 
 2005-10-04  Eric Seidel  <eseidel@apple.com>
 
