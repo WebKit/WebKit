@@ -218,6 +218,7 @@ namespace KJS {
   private:
     static ValueImp *lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
     static ValueImp *indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
+    static ValueImp *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
     SharedPtr<DOM::NamedNodeMapImpl> m_impl;
   };

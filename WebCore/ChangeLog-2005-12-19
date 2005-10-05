@@ -1,5 +1,19 @@
 2005-10-04  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Support direct named attribute lookkup, like FireFox,IE.
+        This was causing a JavaScript exception for gap.com
+        <rdar://problem/4285884> Gap.com throws exception "Undefined value" because of Safari doesn't support indexing into a named node map by name
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::getOwnPropertySlot): if cleanup
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        * khtml/ecma/kjs_dom.h: added nameGetter
+
+2005-10-04  Eric Seidel  <eseidel@apple.com>
+
         No review, build fix only.
 
         Fix to include "config.h" in every file.

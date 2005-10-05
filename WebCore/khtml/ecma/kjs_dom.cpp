@@ -86,15 +86,6 @@ using khtml::RenderObject;
 
 namespace KJS {
 
-class DOMNodeListFunc : public DOMFunction {
-    friend class DOMNodeList;
-public:
-    DOMNodeListFunc(ExecState *exec, int id, int len);
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &);
-private:
-    int id;
-};
-
 // -------------------------------------------------------------------------
 /* Source for DOMNodeProtoTable. Use "make hashtables" to regenerate.
 @begin DOMNodeProtoTable 13
@@ -710,6 +701,8 @@ NodeImpl *toNode(ValueImp *val)
 @end
 */
 
+IMPLEMENT_PROTOFUNC(DOMNodeListFunc)
+
 const ClassInfo DOMNodeList::info = { "NodeList", 0, &DOMNodeListTable, 0 };
 
 DOMNodeList::~DOMNodeList()
@@ -763,11 +756,9 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
   if (ok && idx < list.length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
-  } else {
-    if (list.itemById(propertyName.domString())) {
-      slot.setCustom(this, nameGetter);
-      return true;
-    }
+  } else if (list.itemById(propertyName.domString())) {
+    slot.setCustom(this, nameGetter);
+    return true;
   }
 
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
@@ -784,12 +775,6 @@ ValueImp *DOMNodeList::callAsFunction(ExecState *exec, ObjectImp *, const List &
     return getDOMNode(exec, m_impl->item(u));
 
   return Undefined();
-}
-
-DOMNodeListFunc::DOMNodeListFunc(ExecState *exec, int i, int len)
-  : id(i)
-{
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 // Not a prototype class currently, but should probably be converted to one
@@ -1431,20 +1416,35 @@ ValueImp *DOMNamedNodeMap::indexGetter(ExecState* exec, const Identifier& proper
   return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
+ValueImp *DOMNamedNodeMap::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
+  return getDOMNode(exec, thisObj->m_impl->getNamedItem(propertyName.domString()));
+}
+
 bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  NamedNodeMapImpl &map = *m_impl;
   if (propertyName == lengthPropertyName) {
-    slot.setCustom(this, lengthGetter);
-    return true;
-  }
+      slot.setCustom(this, lengthGetter);
+      return true;
+  } else {
+    // Look in the prototype (for functions) before assuming it's an item's name
+    ValueImp *proto = prototype();
+    if (proto->isObject() && static_cast<ObjectImp *>(proto)->hasProperty(exec, propertyName))
+      return false;
 
-  // array index ?
-  bool ok;
-  unsigned idx = propertyName.toUInt32(&ok);
-  if (ok && idx < map.length()) {
-    slot.setCustomIndex(this, idx, indexGetter);
-    return true;
+    // name or index ?
+    bool ok;
+    unsigned idx = propertyName.toUInt32(&ok);
+    if (ok && idx < m_impl->length()) {
+      slot.setCustomIndex(this, idx, indexGetter);
+      return true;
+    }
+
+    if (m_impl->getNamedItem(propertyName.domString())) {
+      slot.setCustom(this, nameGetter);
+      return true;
+    }
   }
 
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
