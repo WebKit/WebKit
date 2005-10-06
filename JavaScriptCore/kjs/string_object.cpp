@@ -620,9 +620,9 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
   case Substring: {
     double start = a0->toNumber(exec);
     double end = a1->toNumber(exec);
-    if (KJS::isNaN(start))
+    if (isNaN(start))
       start = 0;
-    if (KJS::isNaN(end))
+    if (isNaN(end))
       end = 0;
     if (start < 0)
       start = 0;

@@ -44,7 +44,6 @@ AllocatedValueImp *ConstantValues::undefined = NULL;
 AllocatedValueImp *ConstantValues::null = NULL;
 AllocatedValueImp *ConstantValues::jsTrue = NULL;
 AllocatedValueImp *ConstantValues::jsFalse = NULL;
-AllocatedValueImp *ConstantValues::NaN = NULL;
 
 static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
@@ -182,48 +181,10 @@ AllocatedValueImp *jsString(const UString &s)
     return s.isNull() ? new StringImp("") : new StringImp(s);
 }
 
-ValueImp *jsNumber(int i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
-ValueImp *jsNumber(unsigned i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
-ValueImp *jsNumber(long i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
-ValueImp *jsNumber(unsigned long i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
-ValueImp *jsNumber(long long i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
-ValueImp *jsNumber(unsigned long long i)
-{
-    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
-}
-
 ValueImp *jsNumber(double d)
 {
-    return SimpleNumber::fits(d)
-        ? SimpleNumber::make(static_cast<long>(d))
-        : (isNaN(d) ? jsNaN() : new NumberImp(d));
-}
-
-ValueImp *jsNumber(double d, bool knownToBeInteger)
-{
-    return (knownToBeInteger ? SimpleNumber::integerFits(d) : SimpleNumber::fits(d))
-        ? SimpleNumber::make(static_cast<long>(d))
-        : ((!knownToBeInteger && isNaN(d)) ? jsNaN() : new NumberImp(d));
+  ValueImp *v = SimpleNumber::make(d);
+  return v ? v : new NumberImp(d);
 }
 
 void ConstantValues::init()
@@ -232,7 +193,6 @@ void ConstantValues::init()
     null = new NullImp();
     jsTrue = new BooleanImp(true);
     jsFalse = new BooleanImp(false);
-    NaN = new NumberImp(::KJS::NaN);
 }
 
 void ConstantValues::clear()
@@ -241,7 +201,6 @@ void ConstantValues::clear()
     null = NULL;
     jsTrue = NULL;
     jsFalse = NULL;
-    NaN = NULL;
 }
 
 void ConstantValues::mark()
@@ -256,9 +215,6 @@ void ConstantValues::mark()
         if (!v->marked())
             v->mark();
     if (AllocatedValueImp *v = jsFalse)
-        if (!v->marked())
-            v->mark();
-    if (AllocatedValueImp *v = NaN)
         if (!v->marked())
             v->mark();
 }

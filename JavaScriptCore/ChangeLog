@@ -1,3 +1,54 @@
+2005-10-05  Geoffrey Garen  <ggaren@apple.com>
+ 
+        - Darin and I rewrote our implementation of the SimpleNumber class
+          to store number bit patterns in their floating point formats.
+ 
+        My tweaks reviewed by Darin.
+        
+        ~1% speedup on JS iBench.
+        
+        * kjs/internal.h: removed obsolete jsNumber declarations.
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction): changed KJS::isNaN to isNaN
+        * kjs/nodes.cpp:
+        (PostfixResolveNode::evaluate): removed obsolete knownToBeInteger
+        (PostfixBracketNode::evaluate): ditto
+        (PostfixDotNode::evaluate): ditto
+        (PrefixResolveNode::evaluate): ditto
+        (PrefixBracketNode::evaluate): ditto
+        (PrefixDotNode::evaluate): ditto
+        (NegateNode::evaluate): ditto
+        (valueForReadModifyAssignment): ditto
+        * kjs/number_object.cpp: removed obsolete comment
+        * kjs/operations.cpp:
+        (KJS::equal): removed unnecessary isNaN checks
+        (KJS::strictEqual): ditto
+        (KJS::add): removed obsolete knownToBeInteger
+        (KJS::mult): ditto
+        * kjs/operations.h: removed include of "value.h" to prevent circular reference
+        * kjs/simple_number.h: removed unnecessary #includes
+        (KJS::SimpleNumber::make): see above
+        (KJS::SimpleNumber::is): ditto
+        (KJS::SimpleNumber::value): ditto
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::callAsFunction): changed KJS::isNaN to isNaN
+        * kjs/ustring.cpp: removed unnecessary isNaN check
+        (KJS::UString::toUInt32): ditto
+        * kjs/value.cpp:
+        (KJS::jsNumber): removed obsolete jsNumber definitions
+        (KJS::ConstantValues::init): NaN is no longer a ConstantValue
+        (KJS::ConstantValues::clear): ditto
+        (KJS::ConstantValues::mark): ditto
+        * kjs/value.h: removed obsolete knownToBeInteger
+        (KJS::jsNaN): now returns a SimpleNumber
+        (KJS::ValueImp::getUInt32): changed to account for NaN being a SimpleNumber
+        (KJS::ValueImp::toBoolean): ditto
+        (KJS::ValueImp::toString): changed to account for +/- 0.0
+        (KJS::jsZero): changed to reflect that SimpleNumber::make takes a double
+        (KJS::jsOne): ditto
+        (KJS::jsTwo): ditto
+        (KJS::Number): removed obsolete non-double constructor declarations
+
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

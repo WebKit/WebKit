@@ -662,13 +662,12 @@ ValueImp *PostfixResolveNode::evaluate(ExecState *exec)
     if (base->getPropertySlot(exec, m_ident, slot)) {
         ValueImp *v = slot.getValue(exec, m_ident);
 
-        bool knownToBeInteger;
-        double n = v->toNumber(exec, knownToBeInteger);
+        double n = v->toNumber(exec);
         
         double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-        base->put(exec, m_ident, jsNumber(newValue, knownToBeInteger));
+        base->put(exec, m_ident, jsNumber(newValue));
         
-        return jsNumber(n, knownToBeInteger);
+        return jsNumber(n);
     }
 
     ++iter;
@@ -694,13 +693,12 @@ ValueImp *PostfixBracketNode::evaluate(ExecState *exec)
     ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    bool knownToBeInteger;
-    double n = v->toNumber(exec, knownToBeInteger);
+    double n = v->toNumber(exec);
 
     double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-    base->put(exec, propertyIndex, jsNumber(newValue, knownToBeInteger));
+    base->put(exec, propertyIndex, jsNumber(newValue));
         
-    return jsNumber(n, knownToBeInteger);
+    return jsNumber(n);
   }
 
   Identifier propertyName(subscript->toString(exec));
@@ -708,13 +706,12 @@ ValueImp *PostfixBracketNode::evaluate(ExecState *exec)
   ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  bool knownToBeInteger;
-  double n = v->toNumber(exec, knownToBeInteger);
+  double n = v->toNumber(exec);
   
   double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-  base->put(exec, propertyName, jsNumber(newValue, knownToBeInteger));
+  base->put(exec, propertyName, jsNumber(newValue));
         
-  return jsNumber(n, knownToBeInteger);
+  return jsNumber(n);
 }
 
 // ------------------------------ PostfixDotNode ----------------------------------
@@ -729,13 +726,12 @@ ValueImp *PostfixDotNode::evaluate(ExecState *exec)
   ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  bool knownToBeInteger;
-  double n = v->toNumber(exec, knownToBeInteger);
+  double n = v->toNumber(exec);
   
   double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-  base->put(exec, m_ident, jsNumber(newValue, knownToBeInteger));
+  base->put(exec, m_ident, jsNumber(newValue));
         
-  return jsNumber(n, knownToBeInteger);
+  return jsNumber(n);
 }
 
 // ECMA 11.4.1
@@ -892,11 +888,10 @@ ValueImp *PrefixResolveNode::evaluate(ExecState *exec)
     if (base->getPropertySlot(exec, m_ident, slot)) {
         ValueImp *v = slot.getValue(exec, m_ident);
 
-        bool knownToBeInteger;
-        double n = v->toNumber(exec, knownToBeInteger);
+        double n = v->toNumber(exec);
         
         double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-        ValueImp *n2 = jsNumber(newValue, knownToBeInteger);
+        ValueImp *n2 = jsNumber(newValue);
         base->put(exec, m_ident, n2);
 
         return n2;
@@ -925,11 +920,10 @@ ValueImp *PrefixBracketNode::evaluate(ExecState *exec)
     ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    bool knownToBeInteger;
-    double n = v->toNumber(exec, knownToBeInteger);
+    double n = v->toNumber(exec);
 
     double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-    ValueImp *n2 = jsNumber(newValue, knownToBeInteger);
+    ValueImp *n2 = jsNumber(newValue);
     base->put(exec, propertyIndex, n2);
 
     return n2;
@@ -940,11 +934,10 @@ ValueImp *PrefixBracketNode::evaluate(ExecState *exec)
   ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  bool knownToBeInteger;
-  double n = v->toNumber(exec, knownToBeInteger);
+  double n = v->toNumber(exec);
   
   double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-  ValueImp *n2 = jsNumber(newValue, knownToBeInteger);
+  ValueImp *n2 = jsNumber(newValue);
   base->put(exec, propertyName, n2);
 
   return n2;
@@ -962,11 +955,10 @@ ValueImp *PrefixDotNode::evaluate(ExecState *exec)
   ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  bool knownToBeInteger;
-  double n = v->toNumber(exec, knownToBeInteger);
+  double n = v->toNumber(exec);
   
   double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-  ValueImp *n2 = jsNumber(newValue, knownToBeInteger);
+  ValueImp *n2 = jsNumber(newValue);
   base->put(exec, m_ident, n2);
 
   return n2;
@@ -991,9 +983,8 @@ ValueImp *NegateNode::evaluate(ExecState *exec)
   ValueImp *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  bool knownToBeInteger;
-  double n = v->toNumber(exec, knownToBeInteger);
-  return jsNumber(-n, knownToBeInteger && n != 0);
+  double n = v->toNumber(exec);
+  return jsNumber(-n);
 }
 
 // ------------------------------ BitwiseNotNode -------------------------------
@@ -1257,11 +1248,9 @@ static inline ValueImp *valueForReadModifyAssignment(ExecState * exec, ValueImp 
     v = jsNumber(i1 | i2);
     break;
   case OpModEq: {
-    bool d1KnownToBeInteger;
-    double d1 = v1->toNumber(exec, d1KnownToBeInteger);
-    bool d2KnownToBeInteger;
-    double d2 = v2->toNumber(exec, d2KnownToBeInteger);
-    v = jsNumber(fmod(d1, d2), d1KnownToBeInteger && d2KnownToBeInteger && d2 != 0);
+    double d1 = v1->toNumber(exec);
+    double d2 = v2->toNumber(exec);
+    v = jsNumber(fmod(d1, d2));
   }
     break;
   default:

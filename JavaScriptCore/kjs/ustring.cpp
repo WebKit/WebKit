@@ -967,7 +967,7 @@ uint32_t UString::toUInt32(bool *ok) const
   double d = toDouble();
   bool b = true;
 
-  if (isNaN(d) || d != static_cast<uint32_t>(d)) {
+  if (d != static_cast<uint32_t>(d)) {
     b = false;
     d = 0;
   }
@@ -983,7 +983,7 @@ uint32_t UString::toUInt32(bool *ok, bool tolerateEmptyString) const
   double d = toDouble(false, tolerateEmptyString);
   bool b = true;
 
-  if (isNaN(d) || d != static_cast<uint32_t>(d)) {
+  if (d != static_cast<uint32_t>(d)) {
     b = false;
     d = 0;
   }

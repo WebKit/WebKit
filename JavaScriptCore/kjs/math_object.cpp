@@ -232,13 +232,13 @@ ValueImp *MathFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, c
   }
   case MathObjectImp::Pow:
     // ECMA 15.8.2.1.13 (::pow takes care of most of the critera)
-    if (KJS::isNaN(arg2))
+    if (isNaN(arg2))
       result = NaN;
 #if !APPLE_CHANGES
     else if (arg2 == 0)
       result = 1;
 #endif
-    else if (KJS::isNaN(arg) && arg2 != 0)
+    else if (isNaN(arg) && arg2 != 0)
       result = NaN;
 #if !APPLE_CHANGES
     else if (::fabs(arg) > 1 && KJS::isPosInf(arg2))

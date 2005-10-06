@@ -23,11 +23,10 @@
 #ifndef _KJS_OPERATIONS_H_
 #define _KJS_OPERATIONS_H_
 
-#include "value.h"
-
 namespace KJS {
 
   class ExecState;
+  class ValueImp;
 
 #if APPLE_CHANGES
   inline bool isNaN(double d) { return isnan(d); }

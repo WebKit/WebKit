@@ -142,11 +142,7 @@ bool equal(ExecState *exec, ValueImp *v1, ValueImp *v2)
     if (t1 == NumberType) {
         double d1 = v1->toNumber(exec);
         double d2 = v2->toNumber(exec);
-        // FIXME: Isn't this already how NaN behaves?
-        // Why the extra line of code?
-        if (isNaN(d1) || isNaN(d2))
-            return false;
-        return d1 == d2; /* TODO: +0, -0 ? */
+        return d1 == d2;
     }
 
     if (t1 == StringType)
@@ -171,13 +167,8 @@ bool strictEqual(ExecState *exec, ValueImp *v1, ValueImp *v2)
   if (t1 == NumberType) {
     double n1 = v1->toNumber(exec);
     double n2 = v2->toNumber(exec);
-    // FIXME: Isn't this already how NaN behaves?
-    // Why the extra line of code?
-    if (isNaN(n1) || isNaN(n2))
-      return false;
     if (n1 == n2)
-      return true;
-    /* TODO: +0 and -0 */
+        return true;
     return false;
   } else if (t1 == StringType) {
     return v1->toString(exec) == v2->toString(exec);
@@ -230,42 +221,29 @@ ValueImp *add(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
     return jsString(p1->toString(exec) + p2->toString(exec));
   }
 
-  bool n1KnownToBeInteger;
-  double n1 = p1->toNumber(exec, n1KnownToBeInteger);
-  bool n2KnownToBeInteger;
-  double n2 = p2->toNumber(exec, n2KnownToBeInteger);
-
-  bool resultKnownToBeInteger = n1KnownToBeInteger && n2KnownToBeInteger;
-
   if (oper == '+')
-    return jsNumber(n1 + n2, resultKnownToBeInteger);
+    return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
   else
-    return jsNumber(n1 - n2, resultKnownToBeInteger);
+    return jsNumber(p1->toNumber(exec) - p2->toNumber(exec));
 }
 
 // ECMA 11.5
 ValueImp *mult(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 {
-  bool n1KnownToBeInteger;
-  double n1 = v1->toNumber(exec, n1KnownToBeInteger);
-  bool n2KnownToBeInteger;
-  double n2 = v2->toNumber(exec, n2KnownToBeInteger);
+  double n1 = v1->toNumber(exec);
+  double n2 = v2->toNumber(exec);
 
   double result;
-  bool resultKnownToBeInteger;
 
   if (oper == '*') {
     result = n1 * n2;
-    resultKnownToBeInteger = n1KnownToBeInteger && n2KnownToBeInteger;
   } else if (oper == '/') {
     result = n1 / n2;
-    resultKnownToBeInteger = false;
   } else {
     result = fmod(n1, n2);
-    resultKnownToBeInteger = n1KnownToBeInteger && n2KnownToBeInteger && n2 != 0;
   }
 
-  return jsNumber(result, resultKnownToBeInteger);
+  return jsNumber(result);
 }
 
 }
