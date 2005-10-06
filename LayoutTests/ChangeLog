@@ -1,3 +1,13 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+       	Test cases for <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
+
+        * ChangeLog:
+        * fast/dom/early-frame-url-expected.txt: Added.
+        * fast/dom/early-frame-url.html: Added.
+        * fast/dom/resources/a.html: Added.
+        * fast/dom/resources/b.html: Added.
+
 2005-10-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by beth
@@ -19,6 +29,18 @@
         * fast/css/imageTileOpacity-expected.png: Added.
         * fast/forms/textAreaLineHeight-expected.checksum: Added.
         * fast/forms/textAreaLineHeight-expected.png: Added.
+
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	Test case for:
+	<rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
+
+        * fast/dom/early-frame-url.html
+        * fast/dom/early-frame-url-expected.txt: Added.
+        * fast/dom/resources/a.html: Added.
+        * fast/dom/resources/b.html: Added.
 
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
