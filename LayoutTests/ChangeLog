@@ -1,3 +1,15 @@
+2005-10-05  Vicki Murley  <vicki@apple.com>
+
+	Test cases for <rdar://problem/4288829> repro crash on isIndex tag with no attributes
+
+	This test case will have to be updated once <rdar://problem/4288839> (isindex tag alone in 
+	document doesn't end up in the DOM) is fixed
+
+        * fast/dom/isindex-alone-expected.checksum: Added.
+        * fast/dom/isindex-alone-expected.png: Added.
+        * fast/dom/isindex-alone-expected.txt: Added.
+        * fast/dom/isindex-alone.html: Added.
+
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
        	Test cases for <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
