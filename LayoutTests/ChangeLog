@@ -1,3 +1,13 @@
+2005-10-06  Beth Dakin  <bdakin@apple.com>
+
+        Test cases for <rdar://problem/4145535> Crash in khtml::RenderBlock::addOverhangingFloats 
+	with simple HTML test file. The fix is in WebCore.
+
+        * fast/block/float/4145535Crash-expected.checksum: Added.
+        * fast/block/float/4145535Crash-expected.png: Added.
+        * fast/block/float/4145535Crash-expected.txt: Added.
+        * fast/block/float/4145535Crash.html: Added.
+
 2005-10-06  Darin Adler  <darin@apple.com>
 
         - updated test result for synthetic bold

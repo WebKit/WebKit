@@ -2268,7 +2268,7 @@ RenderBlock::clearFloats()
 void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
-    if (child->hasOverflowClip() || !child->hasOverhangingFloats() || child->isRoot())
+    if (child->hasOverflowClip() || !child->hasOverhangingFloats() || !child->m_floatingObjects || child->isRoot())
         return;
 
     QPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
