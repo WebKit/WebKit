@@ -1,3 +1,31 @@
+EW2005-10-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by nobody.
+
+        Rolling out the assertions I put in place earlier today
+	because they break the layout tests. 
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::destroy):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchEvent):
+        (DOM::NodeImpl::dispatchGenericEvent):
+        (DOM::NodeImpl::dispatchHTMLEvent):
+        (DOM::NodeImpl::dispatchWindowEvent):
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::dispatchSimulatedMouseEvent):
+        (DOM::NodeImpl::dispatchUIEvent):
+        (DOM::NodeImpl::dispatchKeyEvent):
+        (DOM::NodeImpl::dispatchWheelEvent):
+        (DOM::NodeImpl::detach):
+        (DOM::ContainerNodeImpl::insertBefore):
+        (DOM::ContainerNodeImpl::replaceChild):
+        (DOM::ContainerNodeImpl::removeChild):
+        (DOM::ContainerNodeImpl::removeChildren):
+        (DOM::ContainerNodeImpl::appendChild):
+        (DOM::ContainerNodeImpl::addChild):
+        (DOM::ContainerNodeImpl::dispatchChildInsertedEvents):
+
 2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Harrison
