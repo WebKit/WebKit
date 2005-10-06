@@ -77,7 +77,7 @@ QScrollBar* RenderLayer::gScrollBar = 0;
 #endif
 
 #ifndef NDEBUG
-static bool inRenderLayerDetach;
+static bool inRenderLayerDestroy;
 #endif
 
 void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
@@ -336,7 +336,7 @@ void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void RenderLayer::operator delete(void* ptr, size_t sz)
 {
-    assert(inRenderLayerDetach);
+    assert(inRenderLayerDestroy);
     
     // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
@@ -345,11 +345,11 @@ void RenderLayer::operator delete(void* ptr, size_t sz)
 void RenderLayer::destroy(RenderArena* renderArena)
 {
 #ifndef NDEBUG
-    inRenderLayerDetach = true;
+    inRenderLayerDestroy = true;
 #endif
     delete this;
 #ifndef NDEBUG
-    inRenderLayerDetach = false;
+    inRenderLayerDestroy = false;
 #endif
     
     // Recover the size left there for us by operator delete and free the memory.

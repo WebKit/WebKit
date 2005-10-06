@@ -1,3 +1,21 @@
+2005-10-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by hyatt.
+
+        No test cases added or changed because this patch does not address a bug.
+        
+        Fix two detach/destroy renames I missed yesterday.
+        
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiRun::destroy):
+        (khtml::BidiRun::operator delete):
+        Renamed inBidiRunDetach to inBidiRunDestroy.
+        
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::operator delete):
+        (khtml::RenderLayer::destroy):
+        Renamed inRenderLayerDetach to inRenderLayerDestroy.
+
 2005-10-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

@@ -144,17 +144,17 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
 }
 
 #ifndef NDEBUG
-static bool inBidiRunDetach;
+static bool inBidiRunDestroy;
 #endif
 
 void BidiRun::destroy(RenderArena* renderArena)
 {
 #ifndef NDEBUG
-    inBidiRunDetach = true;
+    inBidiRunDestroy = true;
 #endif
     delete this;
 #ifndef NDEBUG
-    inBidiRunDetach = false;
+    inBidiRunDestroy = false;
 #endif
 
     // Recover the size left there for us by operator delete and free the memory.
@@ -168,7 +168,7 @@ void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void BidiRun::operator delete(void* ptr, size_t sz)
 {
-    assert(inBidiRunDetach);
+    assert(inBidiRunDestroy);
 
     // Stash size where destroy() can find it.
     *(size_t*)ptr = sz;
