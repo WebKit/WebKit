@@ -1,3 +1,47 @@
+2005-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/3217793> Monaco bold comes out as Helvetica bold, very bad if you choose Monaco as your fixed-width font
+        - fixed <rdar://problem/3256269> CSS1: bold/italic font styles not programmatically created if font doesn't include them (3231)
+          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3231>
+
+        * kwq/WebCoreTextRendererFactory.h: Added WebCoreFont structure, and made this header work for
+        non-Objective-C compiles. Changed all the methods to take and return WebCoreFont instead of
+        NSFont *.
+        * kwq/WebCoreTextRendererFactory.mm:
+        (WebCoreInitializeFont): Added.
+        (-[WebCoreTextRendererFactory fontWithFamilies:traits:size:]): Updated to use ERROR so we notice
+        cases where the subclass does not override these methods.
+        (-[WebCoreTextRendererFactory isFontFixedPitch:]): Ditto.
+        (-[WebCoreTextRendererFactory rendererWithFont:]): Ditto.
+
+        * WebCore.exp: Added WebCoreInititalizeFont.
+
+        * kwq/KWQFont.h: Added WebCoreFont support.
+        * kwq/KWQFont.mm:
+        (QFont::QFont): Change to use WebCoreFont.
+        (QFont::~QFont): Ditto.
+        (QFont::operator=): Ditto.
+        (QFont::setFamily): Ditto.
+        (QFont::setFirstFamily): Ditto.
+        (QFont::setPixelSize): Ditto.
+        (QFont::setWeight): Ditto.
+        (QFont::setItalic): Ditto.
+        (QFont::determinePitch): Ditto.
+        (QFont::getWebCoreFont): Added.
+
+        * kwq/KWQComboBox.mm: (QComboBox::sizeHint): Pass in WebCoreFont when creating text renderer.
+        * kwq/KWQFontMetrics.mm: (QFontMetricsPrivate::getRenderer): Ditto.
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Ditto.
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer): Ditto.
+        (groupLabelTextRenderer): Ditto.
+        (QListBox::sizeForNumberOfLines): Changed non-system-font case to use QFont rather than NSFont
+        to add boldness, so that group label fonts are bolded even if it's synthesiized bold.
+        (-[KWQTableView drawRow:clipRect:]): Ditto.
+        * kwq/KWQPainter.mm: (QPainter::_updateRenderer): Pass in WebCoreFont when creating text renderer.
+
 2005-10-05  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.

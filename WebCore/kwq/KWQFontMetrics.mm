@@ -51,11 +51,8 @@ struct QFontMetricsPrivate
     }
     id <WebCoreTextRenderer> getRenderer()
     {
-        if (!_renderer) {
-            _renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:_font.getNSFont()
-                usingPrinterFont:_font.isPrinterFont()]);
-        }
+        if (!_renderer)
+            _renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:_font.getWebCoreFont()]);
         return _renderer;
     }
     

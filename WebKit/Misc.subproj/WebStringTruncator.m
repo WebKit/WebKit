@@ -113,7 +113,10 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
         currentFont = [font retain];
         [currentRenderer release];
         [WebTextRendererFactory createSharedFactory];
-        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO] retain];
+        WebCoreFont f;
+        WebCoreInitializeFont(&f);
+        f.font = font;
+        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:f] retain];
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }
@@ -219,7 +222,10 @@ static NSFont *defaultMenuFont(void)
     unsigned length = [string length];
     unichar *s = malloc(sizeof(unichar) * length);
     [string getCharacters:s];
-    float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO], s, length);
+    WebCoreFont f;
+    WebCoreInitializeFont(&f);
+    f.font = font;
+    float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:f], s, length);
     free(s);
     return width;
 }

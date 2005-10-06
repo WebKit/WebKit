@@ -1,3 +1,100 @@
+2005-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/3217793> Monaco bold comes out as Helvetica bold, very bad if you choose Monaco as your fixed-width font
+        - fixed <rdar://problem/3256269> CSS1: bold/italic font styles not programmatically created if font doesn't include them (3231)
+          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3231>
+
+        * WebCoreSupport.subproj/WebTextRenderer.h: Removed public declarations of private structures that are not
+        used in the header. Removed the separate 16-bit character map; the difference in code size is only a few
+        bytes per page and there's no measurable performance difference by always using the 32-bit character version.
+        Removed substitute font width maps altogether, since we now use the width map in the substitute font's renderer.
+        Also removed a few more now-unused fields and methods. Changed initWithFont to take WebCoreFont. Changed
+        the setAlwaysUseATSU: method to remove the underscore prefix.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth): Get font from WebCoreFont directly instead of taking a parameter, since we now use only
+        one NSFont per WebTextRenderer.
+        (widthFromMap): Removed NSFont parameter for same reason as above; simplified.
+        (widthForGlyph): Ditto.
+        (overrideLayoutOperation): Updated for change to WebCoreFont.
+        (-[WebTextRenderer initWithFont:]): Changed to use WebCoreFont. Removed code to deal with substitute font maps.
+        Changed lineGap computation to use floats instead of doubles. Added code to compute a synthetic bold offset.
+        Currently this is the font size divided by 24 and then rounded up to an integer.
+        (-[WebTextRenderer dealloc]): Updated for change to WebCoreFont and other related changes.
+        (-[WebTextRenderer finalize]): Ditto.
+        (-[WebTextRenderer xHeight]): Ditto.
+        (-[WebTextRenderer drawRun:style:geometry:]): Remove small caps case here; no longer needed. Also updated as above.
+        (-[WebTextRenderer floatWidthForRun:style:widths:]): Ditto.
+        (-[WebTextRenderer drawHighlightForRun:style:geometry:]): Ditto.
+        (-[WebTextRenderer pointToOffset:style:position:reversed:includePartialGlyphs:]): Ditto.
+        (+[WebTextRenderer setAlwaysUseATSU:]): Renamed to remove underscore prefix.
+        (-[WebTextRenderer smallCapsRenderer]): Ditto. Changed to create a renderer for the smaller sized font.
+        (-[WebTextRenderer _substituteFontForString:families:]): Reorganized this to be more readable and to call
+        the new rendererForAlternateFont method.
+        (-[WebTextRenderer rendererForAlternateFont:]): Added. Used to select an alternate font taking into account
+        bold and italic synthesis.
+        (-[WebTextRenderer substituteRendererForCharacters:length:families:]): Renamed to remove underscore prefix.
+        Updated to use rendererForAlternateFont.
+        (-[WebTextRenderer _computeWidthForSpace]): Updated for name changes and to remove unnecessary parameters.
+        (-[WebTextRenderer setUpFont]): Renamed to remove underscore prefix. Added code to get printer or screen
+        font as specified by WebCoreFont so calers don't need to do this.
+        (drawGlyphs): Renamed to remove underscore prefix. Added code for synthetic oblique (14 degree slant), and
+        synthetic bold (add offset and draw text a second time).
+        (-[WebTextRenderer _CG_drawRun:style:geometry:]): Keep an array of substitute renderers instead of fonts.
+        Changed around the loop to reverse the run to be a single loop instead of 3.
+        (-[WebTextRenderer floatWidthForRun:style:widths:substituteRenderers:glyphs:startPosition:numGlyphs:]):
+        Renamed to remove the underscore prefix.
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:substituteRenderers:glyphs:startPosition:numGlyphs:]):
+        Changed to use subsitute renderers rather than fonts.
+        (-[WebTextRenderer updateGlyphEntryForCharacter:glyphID:substituteRenderer:]): Renamed to remove underscore
+        prefix and changed to use a substitute renderer rather than a substitute NSFont.
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]): Updated to work with all characters, both ones
+        that fit into 16-bit and ones that don't.
+        (-[WebTextRenderer _extendGlyphToWidthMapToInclude:]): Removed NSFont parameter and simplified. This fixes
+        a bug where numberOfGlyphs was accidentally used from the main font instead of "subFont".
+        (glyphForCharacter): Changed to use subsitute renderers instead of substitute fonts.
+        (widthForNextCharacter): Ditto. Also removed small caps code no longer needed here and replaced it with
+        simpler small caps code that no longer assumes glyphs match.
+        (shouldUseATSU): Changed the code to check ranges in order to slightly reduce the number of cases and
+        to create earlier exit for lower character codes.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.h: Added caches for synthesized font and oblique
+        variants so we can still use the NSFont as the dictionary key. Removed coalesceTextDrawing methods.
+        Changed methods to use WebCoreFont as the parameters and results instead of NSFont.
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory clearCaches]): Clear all 8 caches.
+        (-[WebTextRendererFactory isFontFixedPitch:]): Changed code slightly so there's only one call to
+        the CFDictionarySetValue function.
+        (-[WebTextRendererFactory init]): Create all 8 caches.
+        (-[WebTextRendererFactory dealloc]): Release all 8 caches.
+        (-[WebTextRendererFactory rendererWithFont:]): Select the appropriate cache based on 3 booleans:
+        synthetic bold, synthetic oblique, and printer. Use WebCoreFont instead of NSFont.
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]): Set the synthetic bold and oblique flags
+        when returning a WebCoreFont based on requested traits that are not present in the NSFont.
+        (acceptableChoice): Ignore the synthesizable traits when deciding if a chosen font is acceptable.
+        (betterChoice): Rather than assuming that every font has all the desired traits, implement a rule
+        that says a font with an unwanted trait loses out over a font that does not have an unwanted trait.
+        This lets us chose a bold font over a non-bold font that could use synthesized bold but treat both
+        as candidates.
+
+        * WebCoreSupport.subproj/WebGlyphBuffer.h: Removed.
+        * WebCoreSupport.subproj/WebGlyphBuffer.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj: Removed WebGlyphBuffer source files.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Update to use WebCoreFont.
+        (-[NSString _web_widthWithFont:]): Ditto.
+        * Misc.subproj/WebStringTruncator.m:
+        (truncateString): Ditto.
+        (+[WebStringTruncator widthOfString:font:]): Ditto.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]): Removed text drawing coalesce method calls.
+        * WebView.subproj/WebTextView.m: (-[WebTextView setFixedWidthFont]): Updated to use cachedFontFromFamily
+        method, which we still have, rather than fontWithFamilies method which we don't (since it now uses WebCoreFont).
+        * WebView.subproj/WebView.m: (+[WebView _setAlwaysUseATSU:]): Updated for name change to underlying method.
+
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

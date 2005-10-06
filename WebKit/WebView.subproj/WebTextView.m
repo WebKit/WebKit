@@ -130,12 +130,8 @@
 - (void)setFixedWidthFont
 {
     WebPreferences *preferences = [self _preferences];
-    NSString *families[2];
-    families[0] = [preferences fixedFontFamily];
-    families[1] = nil;
-    NSFont *font = [[WebTextRendererFactory sharedFactory] fontWithFamilies:families 
-                                                                     traits:0 
-                                                                       size:[preferences defaultFixedFontSize]*_textSizeMultiplier];
+    NSFont *font = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily:[preferences fixedFontFamily]
+        traits:0 size:[preferences defaultFixedFontSize] * _textSizeMultiplier];
     if (font) {
         [self setFont:font];
     }

@@ -31,7 +31,6 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -46,9 +45,14 @@
 
 // FIXME: FATAL_ALWAYS seems like a bad idea; lets stop using it.
 
-// SPI from other frameworks.
+#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7f
 
-// Macros
+// Should be more than enough for normal usage.
+#define NUM_SUBSTITUTE_FONT_MAPS 10
+
+// According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
+#define HIRAGANA_KATAKANA_VOICING_MARKS 8
+
 #define SPACE 0x0020
 #define NO_BREAK_SPACE 0x00A0
 #define ZERO_WIDTH_SPACE 0x200B
@@ -70,10 +74,7 @@
 
 #define UNINITIALIZED_GLYPH_WIDTH 65535
 
-#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)WKGetNSFontATSUFontId(font)))
-
-#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7F
-#define INVALID_WIDTH -(__FLT_MAX__)
+#define INVALID_WIDTH (-FLT_MAX)
 
 #if !defined(ScaleEmToUnits)
 #define CONTEXT_DPI	(72.0)
@@ -81,48 +82,29 @@
 #define ScaleEmToUnits(X, U_PER_EM)	(X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
 #endif
 
-// Datatypes
 typedef float WebGlyphWidth;
 typedef UInt32 UnicodeChar;
-
-struct WidthEntry {
-    WebGlyphWidth width;
-};
 
 struct WidthMap {
     ATSGlyphRef startRange;
     ATSGlyphRef endRange;
     WidthMap *next;
-    WidthEntry *widths;
+    WebGlyphWidth *widths;
 };
 
-struct GlyphEntry
-{
+typedef struct GlyphEntry {
     ATSGlyphRef glyph;
-    NSFont *font;
-};
+    WebTextRenderer *substituteRenderer;
+} GlyphEntry;
 
 struct GlyphMap {
-    UniChar startRange;
-    UniChar endRange;
+    UnicodeChar startRange;
+    UnicodeChar endRange;
     GlyphMap *next;
     GlyphEntry *glyphs;
 };
 
-struct UnicodeGlyphMap {
-    UnicodeChar startRange;
-    UnicodeChar endRange;
-    UnicodeGlyphMap *next;
-    GlyphEntry *glyphs;
-};
-
-struct SubstituteFontWidthMap {
-    NSFont *font;
-    WidthMap *map;
-};
-
-struct CharacterWidthIterator
-{
+typedef struct CharacterWidthIterator {
     WebTextRenderer *renderer;
     const WebCoreTextRun *run;
     const WebCoreTextStyle *style;
@@ -131,9 +113,9 @@ struct CharacterWidthIterator
     float widthToStart;
     float padding;
     float padPerSpace;
-};
+} CharacterWidthIterator;
 
-typedef struct
+typedef struct ATSULayoutParameters
 {
     WebTextRenderer *renderer;
     const WebCoreTextRun *run;
@@ -141,20 +123,19 @@ typedef struct
     ATSUTextLayout layout;
 } ATSULayoutParameters;
 
-// Internal API
 @interface WebTextRenderer (WebInternal)
 
-- (NSFont *)_substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters families: (NSString **)families;
+- (WebTextRenderer *)substituteRendererForCharacters:(const unichar *)characters length:(int)numCharacters families:(NSString **)families;
+- (WebTextRenderer *)rendererForAlternateFont:(WebCoreFont)alternateNSFont;
 
-- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID font:(NSFont *)font;
-- (ATSGlyphRef)_extendCharacterToGlyphMapToInclude:(UniChar) c;
-- (ATSGlyphRef)_extendUnicodeCharacterToGlyphMapToInclude: (UnicodeChar)c;
-- (void)_updateGlyphEntryForCharacter: (UniChar)c glyphID: (ATSGlyphRef)glyphID font: (NSFont *)substituteFont;
+- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c;
+- (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer;
 
-- (float)_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer fonts:(NSFont **)fontBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs;
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs;
 
 // Measuring runs.
-- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs: (int *)_numGlyphs;
+- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs: (CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs: (int *)_numGlyphs;
 - (float)_ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 // Drawing runs.
@@ -169,18 +150,13 @@ typedef struct
 - (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 - (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
-- (BOOL)_setupFont;
+- (BOOL)setUpFont;
 
 - (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
-// Small caps
-- (void)_setIsSmallCapsRenderer:(BOOL)flag;
-- (BOOL)_isSmallCapsRenderer;
-- (WebTextRenderer *)_smallCapsRenderer;
-- (NSFont *)_smallCapsFont;
+- (WebTextRenderer *)smallCapsRenderer;
 
 @end
-
 
 // Character property functions.
 
@@ -208,18 +184,10 @@ static inline BOOL isRoundingHackCharacter(UniChar c)
 // Map utility functions
 static void freeWidthMap(WidthMap *map);
 static void freeGlyphMap(GlyphMap *map);
-static void freeUnicodeGlyphMap(UnicodeGlyphMap *map);
-static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c, NSFont **font);
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
-static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **font);
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
-static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font);
-static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font);
 
-static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
 {
-    if (font == NULL)
-        font = renderer->font;
+    NSFont *font = renderer->font.font;
 
     float pointSize = [font pointSize];
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
@@ -232,40 +200,28 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
     return advance.width;
 }
 
-static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+static inline WebGlyphWidth widthFromMap(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
 {
-    WebGlyphWidth width = UNINITIALIZED_GLYPH_WIDTH;
-    
-    while (1){
+    while (1) {
         if (map == 0)
-            map = [renderer _extendGlyphToWidthMapToInclude: glyph font:font];
+            map = [renderer _extendGlyphToWidthMapToInclude:glyph];
 
-        if (glyph >= map->startRange && glyph <= map->endRange){
-            width = map->widths[glyph - map->startRange].width;
-            if (width == UNINITIALIZED_GLYPH_WIDTH){
-                width = getUncachedWidth (renderer, map, glyph, font);
-                map->widths[glyph - map->startRange].width = width;
+        if (glyph >= map->startRange && glyph <= map->endRange) {
+            WebGlyphWidth width = map->widths[glyph - map->startRange];
+            if (width == UNINITIALIZED_GLYPH_WIDTH) {
+                width = getUncachedWidth(renderer, map, glyph);
+                map->widths[glyph - map->startRange] = width;
             }
+            return width;
         }
-        else {
-            map = map->next;
-            continue;
-        }
-        
-        return width;
+
+        map = map->next;
     }
 }    
 
-static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font)
+static inline WebGlyphWidth widthForGlyph(WebTextRenderer *renderer, ATSGlyphRef glyph)
 {
-    WidthMap *map;
-
-    if (font && font != renderer->font)
-        map = mapForSubstituteFont(renderer, font)->map;
-    else
-        map = renderer->glyphToWidthMap;
-
-    return widthFromMap (renderer, map, glyph, font);
+    return widthFromMap(renderer, renderer->glyphToWidthMap, glyph) + renderer->syntheticBoldOffset;
 }
 
 static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, UInt32 iRefCon, void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
@@ -286,7 +242,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
         // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
         // does in any of its device-metrics modes.
-        Boolean roundEachGlyph = [params->renderer->font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
+        Boolean roundEachGlyph = [params->renderer->font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
         const WebCoreTextRun *run = params->run;
@@ -329,23 +285,21 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
 }
 
 // Iterator functions
-static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
-static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
+static void initializeCharacterWidthIterator(CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
+static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, WebTextRenderer **rendererUsed);
 
-
-// Misc.
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
 static BOOL shouldUseATSU(const WebCoreTextRun *run);
+
+#if !ERROR_DISABLED
 static NSString *pathFromFont(NSFont *font);
+#endif
+
 static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
 static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
-
 // Globals
-static CFCharacterSetRef nonBaseChars = NULL;
-static BOOL bufferTextDrawing = NO;
 static BOOL alwaysUseATSU = NO;
-
 
 @implementation WebTextRenderer
 
@@ -357,171 +311,123 @@ static BOOL alwaysUseATSU = NO;
     return webFallbackFontFamily;
 }
 
-+ (BOOL)shouldBufferTextDrawing
-{
-    return bufferTextDrawing;
-}
-
-+ (void)initialize
-{
-    nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
-    bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
-}
-
-- initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
+- initWithFont:(WebCoreFont)f
 {
     [super init];
     
     // Quartz can only handle fonts with these glyph packings.  Other packings have
     // been deprecated.
-    if ([f glyphPacking] != NSNativeShortGlyphPacking &&
-        [f glyphPacking] != NSTwoByteGlyphPacking) {
-        // Apparantly there are many deprecated fonts out there with unsupported packing types.
+    if ([f.font glyphPacking] != NSNativeShortGlyphPacking && [f.font glyphPacking] != NSTwoByteGlyphPacking) {
+        // Apparently there are many deprecated fonts out there with unsupported packing types.
         // Log and use fallback font.
-        // This change fixes the many crashes reported in 3782533.  Most likely, the
-        // problem is encountered when people upgrade from OS 9, or have OS 9
-        // fonts installed on OS X.
-        NSLog (@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [f displayName], [f pointSize]);
-        f = [NSFont systemFontOfSize:[f pointSize]];
+        // This change fixes the many crashes reported in 3782533.
+        // Most likely, the problem is encountered when people upgrade from OS 9, or have OS 9 fonts installed on OS X.
+        NSLog(@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [f.font displayName], [f.font pointSize]);
+        f.font = [NSFont systemFontOfSize:[f.font pointSize]];
     }
-        
-    maxSubstituteFontWidthMaps = NUM_SUBSTITUTE_FONT_MAPS;
-    substituteFontWidthMaps = calloc (1, maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
-    font = [(p ? [f printerFont] : [f screenFont]) retain];
-    usingPrinterFont = p;
+
+    font = f;
+
+    syntheticBoldOffset = f.syntheticBold ? ceilf([f.font pointSize] / 24.0f) : 0.f;
     
     bool failedSetup = false;
-    if (![self _setupFont]){
-        // Ack!  Something very bad happened, like a corrupt font.  Try
-        // looking for an alternate 'base' font for this renderer.
+    if (![self setUpFont]) {
+        // Ack! Something very bad happened, like a corrupt font.
+        // Try looking for an alternate 'base' font for this renderer.
 
-        // Special case hack to use "Times New Roman" in place of "Times".  "Times RO" is a common font
-        // whose family name is "Times".  It overrides the normal "Times" family font.  It also
-        // appears to have a corrupt regular variant.
+        // Special case hack to use "Times New Roman" in place of "Times".
+        // "Times RO" is a common font whose family name is "Times".
+        // It overrides the normal "Times" family font.
+        // It also appears to have a corrupt regular variant.
         NSString *fallbackFontFamily;
-
-        if ([[font familyName] isEqual:@"Times"])
+        if ([[font.font familyName] isEqual:@"Times"])
             fallbackFontFamily = @"Times New Roman";
-        else {
+        else
             fallbackFontFamily = [WebTextRenderer webFallbackFontFamily];
-        }
         
-        // Try setting up the alternate font.  This is a last ditch effort to use a
-	// substitute font when something has gone wrong.
-        NSFont *initialFont = font;
-        [initialFont autorelease];
-        NSFont *af = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
-        font = [(p ? [af printerFont] : [af screenFont]) retain];
+        // Try setting up the alternate font.
+        // This is a last ditch effort to use a substitute font when something has gone wrong.
+        NSFont *initialFont = font.font;
+        font.font = [[NSFontManager sharedFontManager] convertFont:font.font toFamily:fallbackFontFamily];
+#if !ERROR_DISABLED
         NSString *filePath = pathFromFont(initialFont);
-        filePath = filePath ? filePath : (NSString *)@"not known";
-        if (![self _setupFont]){
+        if (!filePath)
+            filePath = @"not known";
+#endif
+        if (![self setUpFont]) {
 	    if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
 		// OK, couldn't setup Times New Roman as an alternate to Times, fallback
 		// on the system font.  If this fails we have no alternative left.
-		af = [[NSFontManager sharedFontManager] convertFont:font toFamily:[WebTextRenderer webFallbackFontFamily]];
-		font = [(p ? [af printerFont] : [af screenFont]) retain];
-		if (![self _setupFont]){
-		    // We tried, Times, Times New Roman, and the system font.  No joy.  We have to give up.
-		    ERROR ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		font.font = [[NSFontManager sharedFontManager] convertFont:font.font toFamily:[WebTextRenderer webFallbackFontFamily]];
+		if (![self setUpFont]) {
+		    // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
+		    ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
                     failedSetup = true;
 		}
-	    }
-	    else {
-		// We tried the requested font and the syste, font.  No joy.  We have to give up.
-		ERROR ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+	    } else {
+		// We tried the requested font and the system font. No joy. We have to give up.
+		ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
                 failedSetup = true;
 	    }
         }
 
         // Report the problem.
-        ERROR ("Corrupt font detected, using %@ in place of %@ located at \"%@\".", 
-                    [font familyName], 
-                    [initialFont familyName],
-                    filePath);
+        ERROR("Corrupt font detected, using %@ in place of %@ located at \"%@\".",
+            [font.font familyName], [initialFont familyName], filePath);
     }
 
-    // If all else fails try to setup using the system font.  This is probably because
-    // Times and Times New Roman are both unavailable.
+    // If all else fails, try to set up using the system font.
+    // This is probably because Times and Times New Roman are both unavailable.
     if (failedSetup) {
-        f = [NSFont systemFontOfSize:[f pointSize]];
-        ERROR ("%@ failed to setup font, using system font %s", self, f);
-        font = [(p ? [f printerFont] : [f screenFont]) retain];
-        [self _setupFont];
+        font.font = [NSFont systemFontOfSize:[font.font pointSize]];
+        ERROR("%@ failed to set up font, using system font %s", self, font.font);
+        [self setUpFont];
     }
     
     int iAscent;
     int iDescent;
     int iLineGap;
-	unsigned unitsPerEm;
-	WKGetFontMetrics(font, &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
-    float pointSize = [font pointSize];
-    float asc = (ScaleEmToUnits(iAscent, unitsPerEm)*pointSize);
-    float dsc = (-ScaleEmToUnits(iDescent, unitsPerEm)*pointSize);
-    float _lineGap = ScaleEmToUnits(iLineGap, unitsPerEm)*pointSize;
-    float adjustment;
+    unsigned unitsPerEm;
+    WKGetFontMetrics(font.font, &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
+    float pointSize = [font.font pointSize];
+    float asc = ScaleEmToUnits(iAscent, unitsPerEm) * pointSize;
+    float dsc = -ScaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float _lineGap = ScaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
     // web standard.  The AppKit adjustment of 20% is too big and is
     // incorrectly added to line spacing, so we use a 15% adjustment instead
     // and add it to the ascent.
-    if ([[font familyName] isEqualToString:@"Times"] ||
-        [[font familyName] isEqualToString:@"Helvetica"] ||
-        [[font familyName] isEqualToString:@"Courier"]) {
-        adjustment = floor(((asc + dsc) * 0.15) + 0.5);
-    } else {
-        adjustment = 0.0;
-    }
+    NSString *familyName = [font.font familyName];
+    if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
+        asc += floorf(((asc + dsc) * 0.15f) + 0.5f);
 
-    ascent = ROUND_TO_INT(asc + adjustment);
+    ascent = ROUND_TO_INT(asc);
     descent = ROUND_TO_INT(dsc);
 
-    _lineGap = (_lineGap > 0.0 ? floor(_lineGap + 0.5) : 0.0);
+    _lineGap = _lineGap > 0.0 ? floorf(_lineGap + 0.5f) : 0.0f;
     lineGap = (int)_lineGap;
-    lineSpacing =  ascent + descent + lineGap;
+    lineSpacing = ascent + descent + lineGap;
 
-#ifdef COMPARE_APPKIT_CG_METRICS
-    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f\n", [[font displayName] cString], [font pointSize], lineGap, adjustment);
-    if (ROUND_TO_INT([font ascender]) != ascent ||
-        ROUND_TO_INT(-[font descender]) != descent ||
-        ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
-        printf ("\nCG/Appkit mismatched metrics for font %s, %f (%s)\n", [[font displayName] cString], [font pointSize],
-                ([font screenFont] ? [[[font screenFont] displayName] cString] : "none"));
-        printf ("ascent(%s), descent(%s), lineSpacing(%s)\n",
-                (ROUND_TO_INT([font ascender]) != ascent) ? "different" : "same",
-                (ROUND_TO_INT(-[font descender]) != descent) ? "different" : "same",
-                (ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing) ? "different" : "same");
-        printf ("CG:  ascent %f, ", asc);
-        printf ("descent %f, ", dsc);
-        printf ("lineGap %f, ", lineGap);
-        printf ("lineSpacing %d\n", lineSpacing);
-        
-        printf ("NSFont:  ascent %f, ", [font ascender]);
-        printf ("descent %f, ", [font descender]);
-        printf ("lineSpacing %f\n", [font defaultLineHeightForFont]);
-    }
-#endif
-     
-    isSmallCapsRenderer = NO;
+    [font.font retain];
     
     return self;
 }
 
 - (void)dealloc
 {
-    [font release];
-    [smallCapsFont release];
+    [font.font release];
     [smallCapsRenderer release];
 
     if (styleGroup)
-		WKReleaseStyleGroup(styleGroup);
+        WKReleaseStyleGroup(styleGroup);
 
     freeWidthMap(glyphToWidthMap);
     freeGlyphMap(characterToGlyphMap);
-    freeUnicodeGlyphMap(unicodeCharacterToGlyphMap);
 
     if (ATSUStyleInitialized)
-        ATSUDisposeStyle(_ATSUSstyle);
+        ATSUDisposeStyle(_ATSUStyle);
     
     [super dealloc];
 }
@@ -533,10 +439,9 @@ static BOOL alwaysUseATSU = NO;
 
     freeWidthMap(glyphToWidthMap);
     freeGlyphMap(characterToGlyphMap);
-    freeUnicodeGlyphMap(unicodeCharacterToGlyphMap);
 
     if (ATSUStyleInitialized)
-        ATSUDisposeStyle(_ATSUSstyle);
+        ATSUDisposeStyle(_ATSUStyle);
     
     [super finalize];
 }
@@ -561,12 +466,11 @@ static BOOL alwaysUseATSU = NO;
 
 - (float)xHeight
 {
-    // Measure the actual character "x", because AppKit synthesizes X height rather
-    // than getting it from the font. Unfortunately, NSFont will round this for us
-    // so we don't quite get the right value.
-    NSGlyph xGlyph = [font glyphWithName:@"x"];
+    // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
+    // Unfortunately, NSFont will round this for us so we don't quite get the right value.
+    NSGlyph xGlyph = [font.font glyphWithName:@"x"];
     if (xGlyph) {
-        NSRect xBox = [font boundingRectForGlyph:xGlyph];
+        NSRect xBox = [font.font boundingRectForGlyph:xGlyph];
         // Use the maximum of either width or height because "x" is nearly square
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
@@ -574,28 +478,21 @@ static BOOL alwaysUseATSU = NO;
         return MAX(NSMaxX(xBox), NSMaxY(xBox));
     }
 
-    return [font xHeight];
+    return [font.font xHeight];
 }
 
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
-    if (style->smallCaps && !isSmallCapsRenderer) {
-        [[self _smallCapsRenderer] drawRun:run style:style geometry:geometry];
-    }
-    else {
-        if (shouldUseATSU(run))
-            [self _ATSU_drawRun:run style:style geometry:geometry];
-        else
-            [self _CG_drawRun:run style:style geometry:geometry];
-    }
+    if (shouldUseATSU(run))
+        [self _ATSU_drawRun:run style:style geometry:geometry];
+    else
+        [self _CG_drawRun:run style:style geometry:geometry];
 }
 
 - (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer
 {
-    if (style->smallCaps && !isSmallCapsRenderer) {
-        return [[self _smallCapsRenderer] _floatWidthForRun:run style:style widths:widthBuffer fonts:nil glyphs:nil startPosition:nil numGlyphs:nil];
-    }
-    return [self _floatWidthForRun:run style:style widths:widthBuffer fonts:nil glyphs:nil startPosition:nil numGlyphs:nil];
+    return [self floatWidthForRun:run style:style widths:widthBuffer
+        substituteRenderers:0 glyphs:0 startPosition:0 numGlyphs:0];
 }
 
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness
@@ -653,15 +550,10 @@ static BOOL alwaysUseATSU = NO;
 
 - (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
-    if (style->smallCaps && !isSmallCapsRenderer) {
-        [[self _smallCapsRenderer] drawHighlightForRun:run style:style geometry:geometry];
-    }
-    else {
-        if (shouldUseATSU(run))
-            [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
-        else
-            [self _CG_drawHighlightForRun:run style:style geometry:geometry];
-    }
+    if (shouldUseATSU(run))
+        [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
+    else
+        [self _CG_drawHighlightForRun:run style:style geometry:geometry];
 }
 
 - (int)misspellingLineThickness
@@ -729,10 +621,6 @@ static BOOL alwaysUseATSU = NO;
 
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
-    if (style->smallCaps && !isSmallCapsRenderer) {
-        return [[self _smallCapsRenderer] pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
-    }
-
     if (shouldUseATSU(run))
         return [self _ATSU_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
     return [self _CG_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
@@ -746,44 +634,25 @@ static BOOL alwaysUseATSU = NO;
 
 @implementation WebTextRenderer (WebInternal)
 
-+ (void)_setAlwaysUseATSU:(BOOL)f
++ (void)setAlwaysUseATSU:(BOOL)f
 {
     alwaysUseATSU = f;
 }
 
-- (void)_setIsSmallCapsRenderer:(BOOL)flag
-{
-    isSmallCapsRenderer = flag;
-}
-
-- (BOOL)_isSmallCapsRenderer
-{
-    return isSmallCapsRenderer;
-}
-
-- (WebTextRenderer *)_smallCapsRenderer
+- (WebTextRenderer *)smallCapsRenderer
 {
     if (!smallCapsRenderer) {
 	NS_DURING
-	    smallCapsRenderer = [[WebTextRenderer alloc] initWithFont:font usingPrinterFont:usingPrinterFont];
+            float size = [font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
+            WebCoreFont smallCapsFont;
+            WebCoreInitializeFont(&smallCapsFont);
+            smallCapsFont.font = [[NSFontManager sharedFontManager] convertFont:font.font toSize:size];
+	    smallCapsRenderer = [[self rendererForAlternateFont:smallCapsFont] retain];
 	NS_HANDLER
-	    if (ASSERT_DISABLED) {
-		NSLog(@"Uncaught exception - %@\n", localException);
-	    } else {
-		ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException);
-	    } 
+            NSLog(@"uncaught exception selecting font for small caps: %@", localException);
 	NS_ENDHANDLER
-
-        [smallCapsRenderer _setIsSmallCapsRenderer:YES];
     }
     return smallCapsRenderer;
-}
-
-- (NSFont *)_smallCapsFont
-{
-    if (!smallCapsFont)
-        smallCapsFont = [[[NSFontManager sharedFontManager] convertFont:font toSize:([font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER)] screenFont];
-    return usingPrinterFont ? [smallCapsFont printerFont] : smallCapsFont;
 }
 
 static inline BOOL fontContainsString(NSFont *font, NSString *string)
@@ -792,93 +661,84 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
 }
 
-- (NSFont *)_substituteFontForString: (NSString *)string families: (NSString **)families
+- (NSFont *)_substituteFontForString:(NSString *)string families:(NSString **)families
 {
     NSFont *substituteFont = nil;
 
-    // First search the CSS family fallback list.  Start at 1 (2nd font)
-    // because we've already failed on the first lookup.
+    // First search the CSS family fallback list.
+    // Start at 1 (2nd font) because we've already failed on the first lookup.
     NSString *family = nil;
     int i = 1;
-    while (families && families[i] != 0) {
+    while (families && families[i]) {
         family = families[i++];
-        substituteFont = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily: family traits:[[NSFontManager sharedFontManager] traitsOfFont:font] size:[font pointSize]];
-        if (substituteFont) {
-            if (fontContainsString(substituteFont, string))
-                break;
-            substituteFont = nil; 
+        NSFont *f = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily:family
+            traits:[[NSFontManager sharedFontManager] traitsOfFont:font.font] size:[font.font pointSize]];
+        if (f && fontContainsString(f, string)) {
+            substituteFont = f; 
+            break;
         }
     }
     
     // Now do string based lookup.
     if (substituteFont == nil)
-        substituteFont = WKGetFontInLanguageForRange(font, string, NSMakeRange (0,[string length]));
-		
+        substituteFont = WKGetFontInLanguageForRange(font.font, string, NSMakeRange(0, [string length]));
 
     // Now do character based lookup.
     if (substituteFont == nil && [string length] == 1)
-        substituteFont = WKGetFontInLanguageForCharacter(font, [string characterAtIndex: 0]);
+        substituteFont = WKGetFontInLanguageForCharacter(font.font, [string characterAtIndex:0]);
 
-    // Get the screen or printer variation of the font.
-    substituteFont = usingPrinterFont ? [substituteFont printerFont] : [substituteFont screenFont];
-
-    if ([substituteFont isEqual: font])
+    // Check to make sure this is a distinct font.
+    if (substituteFont && [[substituteFont screenFont] isEqual:[font.font screenFont]])
         substituteFont = nil;
 
-    // Now that we have a substitute font, attempt to match it to the best variation.  If we have
-    // a good match return that, otherwise return the font the AppKit has found.
-    NSFontManager *manager = [NSFontManager sharedFontManager];
-    NSFont *substituteFont2 = [manager fontWithFamily:(NSString *)[substituteFont familyName] traits:[manager traitsOfFont:font] weight:[manager weightOfFont:font] size:[font pointSize]];
-    if (substituteFont2)
-	substituteFont = substituteFont2;
-
-    // Now, finally, get the printer or screen variation.
-    substituteFont = usingPrinterFont ? [substituteFont printerFont] : [substituteFont screenFont];
+    // Now that we have a substitute font, attempt to match it to the best variation.
+    // If we have a good match return that, otherwise return the font the AppKit has found.
+    if (substituteFont) {
+        NSFontManager *manager = [NSFontManager sharedFontManager];
+        NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName] traits:[manager traitsOfFont:font.font]
+            weight:[manager weightOfFont:font.font] size:[font.font pointSize]];
+        if (bestVariation)
+            substituteFont = bestVariation;
+    }
 
     return substituteFont;
 }
 
-- (NSFont *)_substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters families: (NSString **)families
+- (WebTextRenderer *)rendererForAlternateFont:(WebCoreFont)alternateFont
 {
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-    NSFont *substituteFont = [self _substituteFontForString: string families: families];
-    [string release];
-    return substituteFont;
+    if (!alternateFont.font)
+        return nil;
+
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFontTraitMask fontTraits = [fontManager traitsOfFont:font.font];
+    if (font.syntheticBold)
+        fontTraits |= NSBoldFontMask;
+    if (font.syntheticOblique)
+        fontTraits |= NSItalicFontMask;
+    NSFontTraitMask alternateFontTraits = [fontManager traitsOfFont:alternateFont.font];
+
+    alternateFont.syntheticBold = (fontTraits & NSBoldFontMask) && !(alternateFontTraits & NSBoldFontMask);
+    alternateFont.syntheticOblique = (fontTraits & NSItalicFontMask) && !(alternateFontTraits & NSItalicFontMask);
+    alternateFont.forPrinter = font.forPrinter;
+
+    return [[WebTextRendererFactory sharedFactory] rendererWithFont:alternateFont];
 }
 
-- (void)_convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (WKGlyphVectorRef)glyphs
+- (WebTextRenderer *)substituteRendererForCharacters:(const unichar *)characters length:(int)numCharacters families:(NSString **)families
+{
+    WebCoreFont substituteFont;
+    WebCoreInitializeFont(&substituteFont);
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
+    substituteFont.font = [self _substituteFontForString:string families:families];
+    [string release];
+    return [self rendererForAlternateFont:substituteFont];
+}
+
+- (void)_convertCharacters:(const UniChar *)characters length:(unsigned)numCharacters toGlyphs:(WKGlyphVectorRef)glyphs
 {
     OSStatus status = WKConvertCharToGlyphs(styleGroup, characters, numCharacters, glyphs);
-    if (status != noErr){
-        FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
-    }
-}
-
-- (void)_convertUnicodeCharacters: (const UnicodeChar *)characters length: (unsigned)numCharacters toGlyphs: (WKGlyphVectorRef)glyphs
-{
-    UniChar localBuffer[LOCAL_BUFFER_SIZE];
-    UniChar *buffer = localBuffer;
-    unsigned i, bufPos = 0;
-    
-    if (numCharacters*2 > LOCAL_BUFFER_SIZE) {
-        buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters * 2);
-    }
-    
-    for (i = 0; i < numCharacters; i++) {
-        UnicodeChar c = characters[i];
-        ASSERT(U16_LENGTH(c) == 2);
-        buffer[bufPos++] = U16_LEAD(c);
-        buffer[bufPos++] = U16_TRAIL(c);
-    }
-        
-    OSStatus status = WKConvertCharToGlyphs(styleGroup, buffer, numCharacters*2, glyphs);
-    if (status != noErr){
-        FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
-    }
-    
-    if (buffer != localBuffer) {
-        free(buffer);
-    }
+    if (status != noErr)
+        FATAL_ALWAYS("unable to get glyphs for %@ %f error = (%d)", self, [font.font displayName], [font.font pointSize], status);
 }
 
 // Nasty hack to determine if we should round or ceil space widths.
@@ -886,12 +746,13 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 // every character and the space are the same width.  Otherwise we round.
 - (BOOL)_computeWidthForSpace
 {
-    spaceGlyph = [self _extendCharacterToGlyphMapToInclude:SPACE];
+    spaceGlyph = [self extendCharacterToGlyphMapToInclude:SPACE];
     if (spaceGlyph == 0) {
         return NO;
     }
 
-    float width = widthForGlyph(self, spaceGlyph, 0);
+    float width = widthForGlyph(self, spaceGlyph);
+
     spaceWidth = width;
 
     treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:font];
@@ -900,13 +761,15 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     return YES;
 }
 
-- (BOOL)_setupFont
+- (BOOL)setUpFont
 {
+    font.font = font.forPrinter ? [font.font printerFont] : [font.font screenFont];
+
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return NO;
 
-    if (!fillStyleWithAttributes(fontStyle, font)) {
+    if (!fillStyleWithAttributes(fontStyle, font.font)) {
         ATSUDisposeStyle(fontStyle);
         return NO;
     }
@@ -915,28 +778,28 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
         ATSUDisposeStyle(fontStyle);
         return NO;
     }
-    
+
     ATSUDisposeStyle(fontStyle);
 
     if (![self _computeWidthForSpace]) {
         freeGlyphMap(characterToGlyphMap);
-        characterToGlyphMap = NULL;
+        characterToGlyphMap = 0;
         WKReleaseStyleGroup(styleGroup);
-        styleGroup = NULL;
+        styleGroup = 0;
         return NO;
     }
     
     return YES;
 }
 
+#if !ERROR_DISABLED
+
 static NSString *pathFromFont (NSFont *font)
 {
     UInt8 _filePathBuffer[PATH_MAX];
     NSString *filePath = nil;
     FSSpec oFile;
-    OSStatus status = ATSFontGetFileSpecification(
-            ATSFontRefFromNSFont(font),
-            &oFile);
+    OSStatus status = ATSFontGetFileSpecification(FMGetATSFontRefFromFont((FMFont)WKGetNSFontATSUFontId(font)), &oFile);
     if (status == noErr){
         OSErr err;
         FSRef fileRef;
@@ -951,64 +814,56 @@ static NSString *pathFromFont (NSFont *font)
     return filePath;
 }
 
+#endif
+
 // Useful page for testing http://home.att.net/~jameskass
-static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs)
+static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs,
+    float syntheticBoldOffset, BOOL syntheticOblique)
 {
-    CGContextRef cgContext;
+    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
+    CGContextRef cgContext = (CGContextRef)[gContext graphicsPort];
 
-    if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
-        // Add buffered glyphs and advances
-        // FIXME:  If we ever use this again, need to add RTL.
-        WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: font andColor: color];
-        [gBuffer addGlyphs: glyphs advances: advances count: numGlyphs at: x : y];
+    bool originalShouldUseFontSmoothing = WKCGContextGetShouldSmoothFonts(cgContext);
+    CGContextSetShouldSmoothFonts(cgContext, [WebView _shouldUseFontSmoothing]);
+    
+    NSFont *drawFont;
+    if ([gContext isDrawingToScreen]) {
+        drawFont = [font screenFont];
+        if (drawFont != font)
+            // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
+            ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
+                [[[font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
+    } else {
+        drawFont = [font printerFont];
+        if (drawFont != font)
+            NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
+                [[[font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     }
-    else {
-        NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
-        cgContext = (CGContextRef)[gContext graphicsPort];
-        // Setup the color and font.
+    
+    CGContextSetFont(cgContext, WKGetCGFontFromNSFont(drawFont));
 
-	bool originalShouldUseFontSmoothing;
-	
-	originalShouldUseFontSmoothing = WKCGContextGetShouldSmoothFonts (cgContext);
-	CGContextSetShouldSmoothFonts (cgContext, [WebView _shouldUseFontSmoothing]);
-        
-        NSFont *drawFont;
-        
-        if ([gContext isDrawingToScreen]){
-            drawFont = [font screenFont];
-            if (drawFont != font){
-                // We are getting this in too many places (3406411); use ERROR so it only prints on
-                // debug versions for now. (We should debug this also, eventually).
-                ERROR ("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
-            }
-        }
-        else {
-            drawFont = [font printerFont];
-            if (drawFont != font){
-                NSLog (@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
-            }
-        }
-        
-	NSView *v = [NSView focusView];
+    CGAffineTransform matrix;
+    memcpy(&matrix, [drawFont matrix], sizeof(matrix));
+    matrix.b = -matrix.b;
+    matrix.d = -matrix.d;
+    if (syntheticOblique)
+        matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(14 * acosf(0) / 90), 1, 0, 0)); 
+    CGContextSetTextMatrix(cgContext, matrix);
 
-        CGContextSetFont(cgContext, WKGetCGFontFromNSFont(drawFont));
-        
-        // Deal with flipping flippyness.
-        const float *matrix = [drawFont matrix];
-        float flip = [v isFlipped] ? -1 : 1;
-        CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
-        WKSetCGFontRenderingMode(cgContext, drawFont);
-        CGContextSetFontSize(cgContext, 1.0F);
+    WKSetCGFontRenderingMode(cgContext, drawFont);
+    CGContextSetFontSize(cgContext, 1.0f);
 
-        [color set];
+    [color set];
 
-        CGContextSetTextPosition(cgContext, x, y);
+    CGContextSetTextPosition(cgContext, x, y);
+    CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
+    if (syntheticBoldOffset) {
+        CGContextSetTextPosition(cgContext, x + syntheticBoldOffset, y);
         CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
-
-	CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
     }
-}
 
+    CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
+}
 
 - (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
@@ -1043,15 +898,14 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
         float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] - (lineGap/2) : geometry->selectionY;
         float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
-        if (style->rtl){
+        if (style->rtl) {
             float completeRunWidth = startPosition + backgroundWidth;
             while (widthIterator.currentCharacter < run->length) {
                 completeRunWidth += widthForNextCharacter(&widthIterator, 0, 0);
             }
 
             [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, height)];
-        }
-        else {
+        } else {
             [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, height)];
         }
     }
@@ -1062,7 +916,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 {
     float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
     CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
-    NSFont **fontBuffer, *localFontBuffer[LOCAL_BUFFER_SIZE];
+    WebTextRenderer **rendererBuffer, *localRendererBuffer[LOCAL_BUFFER_SIZE];
     CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
     int numGlyphs = 0, i;
     float startX;
@@ -1075,18 +929,18 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         advances = (CGSize *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(CGSize));
         widthBuffer = (float *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(float));
         glyphBuffer = (CGGlyph *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(ATSGlyphRef));
-        fontBuffer = (NSFont **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(NSFont *));
+        rendererBuffer = (WebTextRenderer **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(WebTextRenderer *));
     } else {
         advances = localAdvanceBuffer;
         widthBuffer = localWidthBuffer;
         glyphBuffer = localGlyphBuffer;
-        fontBuffer = localFontBuffer;
+        rendererBuffer = localRendererBuffer;
     }
 
-    [self _floatWidthForRun:run
+    [self floatWidthForRun:run
         style:style
         widths:widthBuffer 
-        fonts:fontBuffer
+        substituteRenderers:rendererBuffer
         glyphs:glyphBuffer
         startPosition:&startX
         numGlyphs: &numGlyphs];
@@ -1108,77 +962,77 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (style->backgroundColor != nil)
         [self _CG_drawHighlightForRun:run style:style geometry:geometry];
     
+    // Swap the order of the glyphs if right-to-left.
+    if (style->rtl) {
+        int i;
+        int mid = numGlyphs / 2;
+        int end;
+        for (i = 0, end = numGlyphs - 1; i < mid; ++i, --end) {
+            CGGlyph gswap1 = glyphBuffer[i];
+            CGGlyph gswap2 = glyphBuffer[end];
+            glyphBuffer[i] = gswap2;
+            glyphBuffer[end] = gswap1;
+
+            CGSize aswap1 = advances[i];
+            CGSize aswap2 = advances[end];
+            advances[i] = aswap2;
+            advances[end] = aswap1;
+
+            WebTextRenderer *rswap1 = rendererBuffer[i];
+            WebTextRenderer *rswap2 = rendererBuffer[end];
+            rendererBuffer[i] = rswap2;
+            rendererBuffer[end] = rswap1;
+        }
+    }
+
     // Finally, draw the glyphs.
     int lastFrom = 0;
     int pos = 0;
 
-    // Swap the order of the glyphs if right-to-left.
-    if (style->rtl && numGlyphs > 1){
-        int i;
-        int end = numGlyphs;
-        CGGlyph gswap1, gswap2;
-        CGSize aswap1, aswap2;
-        NSFont *fswap1, *fswap2;
-        
-        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
-            gswap1 = glyphBuffer[i];
-            gswap2 = glyphBuffer[--end];
-            glyphBuffer[i] = gswap2;
-            glyphBuffer[end] = gswap1;
-        }
-        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
-            aswap1 = advances[i];
-            aswap2 = advances[--end];
-            advances[i] = aswap2;
-            advances[end] = aswap1;
-        }
-        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
-            fswap1 = fontBuffer[i];
-            fswap2 = fontBuffer[--end];
-            fontBuffer[i] = fswap2;
-            fontBuffer[end] = fswap1;
-        }
-    }
-
-    // Draw each contiguous run of glyphs that are included in the same font.
-    NSFont *currentFont = fontBuffer[pos];
+    // Draw each contiguous run of glyphs that use the same renderer.
+    WebTextRenderer *currentRenderer = rendererBuffer[pos];
     float nextX = startX;
     int nextGlyph = pos;
-
-    while (nextGlyph < numGlyphs){
-        if ((fontBuffer[nextGlyph] != 0 && fontBuffer[nextGlyph] != currentFont)){
-            _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, geometry->point.y, nextGlyph - lastFrom);
+    while (nextGlyph < numGlyphs) {
+        WebTextRenderer *nextRenderer = rendererBuffer[nextGlyph];
+        if (nextRenderer && nextRenderer != currentRenderer) {
+            drawGlyphs(currentRenderer->font.font, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom],
+                startX, geometry->point.y, nextGlyph - lastFrom,
+                currentRenderer->syntheticBoldOffset, currentRenderer->font.syntheticOblique);
             lastFrom = nextGlyph;
-            currentFont = fontBuffer[nextGlyph];
+            currentRenderer = nextRenderer;
             startX = nextX;
         }
         nextX += advances[nextGlyph].width;
         nextGlyph++;
     }
-    _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, geometry->point.y, nextGlyph - lastFrom);
+    drawGlyphs(currentRenderer->font.font, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom],
+        startX, geometry->point.y, nextGlyph - lastFrom,
+        currentRenderer->syntheticBoldOffset, currentRenderer->font.syntheticOblique);
 
     if (advances != localAdvanceBuffer) {
         free(advances);
         free(widthBuffer);
         free(glyphBuffer);
-        free(fontBuffer);
+        free(rendererBuffer);
     }
 }
 
-- (float)_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer fonts:(NSFont **)fontBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
+    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
 {
     if (shouldUseATSU(run))
         return [self _ATSU_floatWidthForRun:run style:style];
     
-    return [self _CG_floatWidthForRun:run style:style widths:widthBuffer fonts:fontBuffer glyphs:glyphBuffer startPosition:startPosition numGlyphs:_numGlyphs];
-
+    return [self _CG_floatWidthForRun:run style:style widths:widthBuffer substituteRenderers:rendererBuffer glyphs:glyphBuffer startPosition:startPosition numGlyphs:_numGlyphs];
 }
 
-- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs: (int *)_numGlyphs
+- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
+    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
 {
     float _nextWidth;
     CharacterWidthIterator widthIterator;
-    NSFont *fontUsed = 0;
+    WebTextRenderer *rendererUsed = nil;
     ATSGlyphRef glyphUsed;
     int numGlyphs = 0;
     
@@ -1186,11 +1040,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (startPosition)
         *startPosition = widthIterator.widthToStart;
     while (widthIterator.currentCharacter < (unsigned)widthIterator.run->to) {
-        _nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &fontUsed);
+        _nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &rendererUsed);
         if (_nextWidth == INVALID_WIDTH)
             break;
-        if (fontBuffer)
-            fontBuffer[numGlyphs] = fontUsed;
+        if (rendererBuffer)
+            rendererBuffer[numGlyphs] = rendererUsed;
         if (glyphBuffer)
             glyphBuffer[numGlyphs] = glyphUsed;
         if (widthBuffer)
@@ -1204,99 +1058,30 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     return widthIterator.runWidthSoFar;
 }
 
-- (ATSGlyphRef)_extendUnicodeCharacterToGlyphMapToInclude:(UnicodeChar)c
+- (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer
 {
-    UnicodeGlyphMap *map = (UnicodeGlyphMap *)calloc (1, sizeof(UnicodeGlyphMap));
-    ATSLayoutRecord *glyphRecord;
-	char glyphVector[WKGlyphVectorSize];
-    UnicodeChar end, start;
-    unsigned blockSize;
-    ATSGlyphRef glyphID;
-    
-    if (unicodeCharacterToGlyphMap == 0)
-        blockSize = INITIAL_BLOCK_SIZE;
-    else
-        blockSize = INCREMENTAL_BLOCK_SIZE;
-    start = (c / blockSize) * blockSize;
-    end = start + (blockSize - 1);
-        
-    LOG(FontCache, "%@ (0x%04x) adding glyphs for 0x%04x to 0x%04x", font, c, start, end);
-
-    map->startRange = start;
-    map->endRange = end;
-    
-    unsigned i, count = end - start + 1;
-    UnicodeChar buffer[INCREMENTAL_BLOCK_SIZE+2];
-    
-    for (i = 0; i < count; i++){
-        buffer[i] = i+start;
-    }
-
-    OSStatus status;
-    status = WKInitializeGlyphVector(count*2, &glyphVector);
-    if (status != noErr){
-        // This should never happen, indicates a bad font!  If it does the
-        // font substitution code will find an alternate font.
-        free(map);
-        return 0;
-    }
-    
-    [self _convertUnicodeCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
-    unsigned numGlyphs = WKGetGlyphVectorNumGlyphs(&glyphVector);
-    if (numGlyphs != count){
-        // This should never happen, indicates a bad font!  If it does the
-        // font substitution code will find an alternate font.
-        free(map);
-        return 0;
-    }
-            
-    map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
-    glyphRecord = WKGetGlyphVectorFirstRecord(&glyphVector);
-    for (i = 0; i < count; i++) {
-        map->glyphs[i].glyph = glyphRecord->glyphID;
-        map->glyphs[i].font = 0;
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + WKGetGlyphVectorRecordSize(&glyphVector));
-    }
-    WKClearGlyphVector(&glyphVector);
-    
-    if (unicodeCharacterToGlyphMap == 0)
-        unicodeCharacterToGlyphMap = map;
-    else {
-        UnicodeGlyphMap *lastMap = unicodeCharacterToGlyphMap;
-        while (lastMap->next != 0)
-            lastMap = lastMap->next;
-        lastMap->next = map;
-    }
-
-    glyphID = map->glyphs[c - start].glyph;
-    
-    return glyphID;
-}
-
-- (void)_updateGlyphEntryForCharacter:(UniChar)c glyphID:(ATSGlyphRef)glyphID font:(NSFont *)substituteFont
-{
-    GlyphMap *lastMap = characterToGlyphMap;
-    while (lastMap != 0){
-        if (c >= lastMap->startRange && c <= lastMap->endRange){
-            lastMap->glyphs[c - lastMap->startRange].glyph = glyphID;
-            // This font will leak.  No problem though, it has to stick around
-            // forever.  Max theoretical retain counts applied here will be
-            // num_fonts_on_system * num_glyphs_in_font.
-            lastMap->glyphs[c - lastMap->startRange].font = [substituteFont retain];
+    GlyphMap *map;
+    for (map = characterToGlyphMap; map; map = map->next) {
+        UnicodeChar start = map->startRange;
+        if (c >= start && c <= map->endRange) {
+            int i = c - start;
+            map->glyphs[i].glyph = glyphID;
+            // This renderer will leak.
+            // No problem though; we want it to stick around forever.
+            // Max theoretical retain counts applied here will be num_fonts_on_system * num_glyphs_in_font.
+            map->glyphs[i].substituteRenderer = [substituteRenderer retain];
             break;
         }
-        lastMap = lastMap->next;
     }
 }
 
-- (ATSGlyphRef)_extendCharacterToGlyphMapToInclude:(UniChar) c
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c
 {
-    GlyphMap *map = (GlyphMap *)calloc (1, sizeof(GlyphMap));
+    GlyphMap *map = (GlyphMap *)calloc(1, sizeof(GlyphMap));
     ATSLayoutRecord *glyphRecord;
-	char glyphVector[WKGlyphVectorSize];
-    UniChar end, start;
+    char glyphVector[WKGlyphVectorSize];
+    UnicodeChar end, start;
     unsigned blockSize;
-    ATSGlyphRef glyphID;
     
     if (characterToGlyphMap == 0)
         blockSize = INITIAL_BLOCK_SIZE;
@@ -1310,23 +1095,34 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     map->startRange = start;
     map->endRange = end;
     
-    unsigned i, count = end - start + 1;
-    short unsigned buffer[INCREMENTAL_BLOCK_SIZE+2];
-    
-    for (i = 0; i < count; i++) {
-        buffer[i] = i+start;
-    }
+    unsigned i;
+    unsigned count = end - start + 1;
+    unsigned short buffer[INCREMENTAL_BLOCK_SIZE * 2 + 2];
+    unsigned bufferLength;
 
-    if (start == 0) {
-        // Control characters must not render at all.
-        for (i = 0; i < 0x20; ++i)
-            buffer[i] = ZERO_WIDTH_SPACE;
-        buffer[0x7F] = ZERO_WIDTH_SPACE;
+    if (start < 0x10000) {
+        bufferLength = count;
+        for (i = 0; i < count; i++)
+            buffer[i] = i + start;
 
-        // But \n, \t, and nonbreaking space must render as a space.
-        buffer['\n'] = ' ';
-        buffer['\t'] = ' ';
-        buffer[NO_BREAK_SPACE] = ' ';
+        if (start == 0) {
+            // Control characters must not render at all.
+            for (i = 0; i < 0x20; ++i)
+                buffer[i] = ZERO_WIDTH_SPACE;
+            buffer[0x7F] = ZERO_WIDTH_SPACE;
+
+            // But \n, \t, and nonbreaking space must render as a space.
+            buffer['\n'] = ' ';
+            buffer['\t'] = ' ';
+            buffer[NO_BREAK_SPACE] = ' ';
+        }
+    } else {
+        bufferLength = count * 2;
+        for (i = 0; i < count; i++) {
+            int c = i + start;
+            buffer[i * 2] = U16_LEAD(c);
+            buffer[i * 2 + 1] = U16_TRAIL(c);
+        }
     }
 
     OSStatus status = WKInitializeGlyphVector(count, &glyphVector);
@@ -1337,20 +1133,19 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         return 0;
     }
 
-    [self _convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
+    [self _convertCharacters:&buffer[0] length:bufferLength toGlyphs:&glyphVector];
     unsigned numGlyphs = WKGetGlyphVectorNumGlyphs(&glyphVector);
-    if (numGlyphs != count){
-        // This should never happen, perhaps indicates a bad font!  If it does the
-        // font substitution code will find an alternate font.
+    if (numGlyphs != count) {
+        // This should never happen, perhaps indicates a bad font?
+        // If it does happen, the font substitution code will find an alternate font.
         free(map);
         return 0;
     }
-            
-    map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
+
+    map->glyphs = (GlyphEntry *)calloc(count, sizeof(GlyphEntry));
     glyphRecord = (ATSLayoutRecord *)WKGetGlyphVectorFirstRecord(glyphVector);
     for (i = 0; i < count; i++) {
         map->glyphs[i].glyph = glyphRecord->glyphID;
-        map->glyphs[i].font = 0;
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + WKGetGlyphVectorRecordSize(glyphVector));
     }
     WKClearGlyphVector(&glyphVector);
@@ -1364,40 +1159,34 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         lastMap->next = map;
     }
 
-    glyphID = map->glyphs[c - start].glyph;
-    
+    ATSGlyphRef glyphID = map->glyphs[c - start].glyph;
+
     // Special case for characters 007F-00A0.
-    if (glyphID == 0 && c >= 0x7F && c <= 0xA0){
-        glyphID = WKGetDefaultGlyphForChar(font, c);
+    if (glyphID == 0 && c >= 0x7F && c <= 0xA0) {
+        glyphID = WKGetDefaultGlyphForChar(font.font, c);
         map->glyphs[c - start].glyph = glyphID;
-        map->glyphs[c - start].font = 0;
     }
 
     return glyphID;
 }
 
-
-- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID font:(NSFont *)subFont
+- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID
 {
-    WidthMap *map = (WidthMap *)calloc (1, sizeof(WidthMap)), **rootMap;
+    WidthMap *map = (WidthMap *)calloc(1, sizeof(WidthMap));
     unsigned end;
     ATSGlyphRef start;
     unsigned blockSize;
     unsigned i, count;
     
-    if (subFont && subFont != font)
-        rootMap = &mapForSubstituteFont(self,subFont)->map;
-    else
-        rootMap = &glyphToWidthMap;
-        
-    if (*rootMap == 0){
-        if ([(subFont ? subFont : font) numberOfGlyphs] < INITIAL_BLOCK_SIZE)
-            blockSize = [font numberOfGlyphs];
+    NSFont *f = font.font;
+    if (glyphToWidthMap == 0) {
+        if ([f numberOfGlyphs] < INITIAL_BLOCK_SIZE)
+            blockSize = [f numberOfGlyphs];
          else
             blockSize = INITIAL_BLOCK_SIZE;
-    }
-    else
+    } else {
         blockSize = INCREMENTAL_BLOCK_SIZE;
+    }
     if (blockSize == 0) {
         start = 0;
     } else {
@@ -1413,27 +1202,21 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     map->endRange = end;
     count = end - start + 1;
 
-    map->widths = (WidthEntry *)malloc (count * sizeof(WidthEntry));
+    map->widths = (WebGlyphWidth *)malloc(count * sizeof(WebGlyphWidth));
+    for (i = 0; i < count; i++)
+        map->widths[i] = UNINITIALIZED_GLYPH_WIDTH;
 
-    for (i = 0; i < count; i++){
-        map->widths[i].width = UNINITIALIZED_GLYPH_WIDTH;
-    }
-
-    if (*rootMap == 0)
-        *rootMap = map;
+    if (glyphToWidthMap == 0)
+        glyphToWidthMap = map;
     else {
-        WidthMap *lastMap = *rootMap;
+        WidthMap *lastMap = glyphToWidthMap;
         while (lastMap->next != 0)
             lastMap = lastMap->next;
         lastMap->next = map;
     }
 
-#ifdef _TIMING
-    LOG(FontCache, "%@ total time to advances lookup %f seconds", font, totalCGGetAdvancesTime);
-#endif
     return map;
 }
-
 
 - (void)_initializeATSUStyle
 {
@@ -1444,23 +1227,23 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         OSStatus status;
         ByteCount propTableSize;
         
-        status = ATSUCreateStyle(&_ATSUSstyle);
+        status = ATSUCreateStyle(&_ATSUStyle);
         if(status != noErr)
-            FATAL_ALWAYS ("ATSUCreateStyle failed (%d)", status);
+            FATAL_ALWAYS("ATSUCreateStyle failed (%d)", status);
     
-        ATSUFontID fontID = WKGetNSFontATSUFontId(font);
-        if (fontID == 0){
-            ATSUDisposeStyle(_ATSUSstyle);
-            ERROR ("unable to get ATSUFontID for %@", font);
+        ATSUFontID fontID = WKGetNSFontATSUFontId(font.font);
+        if (fontID == 0) {
+            ATSUDisposeStyle(_ATSUStyle);
+            ERROR("unable to get ATSUFontID for %@", font.font);
             return;
         }
         
         CGAffineTransform transform = CGAffineTransformMakeScale (1,-1);
-        Fixed fontSize = FloatToFixed([font pointSize]);
+        Fixed fontSize = FloatToFixed([font.font pointSize]);
         ATSUAttributeTag styleTags[] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag};
         ByteCount styleSizes[] = {  sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform) };
         ATSUAttributeValuePtr styleValues[] = { &fontSize, &fontID, &transform  };
-        status = ATSUSetAttributes (_ATSUSstyle, 3, styleTags, styleSizes, styleValues);
+        status = ATSUSetAttributes (_ATSUStyle, 3, styleTags, styleSizes, styleValues);
         if(status != noErr)
             FATAL_ALWAYS ("ATSUSetAttributes failed (%d)", status);
         status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
@@ -1490,19 +1273,22 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     
     [self _initializeATSUStyle];
     
-    // FIXME: This is missing the following features that the CoreGraphics code path has:
-    // - Both \n and nonbreaking space render as a space.
-    // - All other control characters must not render at all (other code path uses zero-width spaces).
+    // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
+    // - \n, \t, and nonbreaking space render as a space.
+    // - Other control characters do not render (other code path uses zero-width spaces).
+    // - Small caps.
+    // - Synthesized bold.
+    // - Synthesized oblique.
 
     runLength = run->to - run->from;
     status = ATSUCreateTextLayoutWithTextPtr(
             run->characters,
-            run->from,           // offset
-            runLength,        // length
-            run->length,         // total length
+            run->from,      // offset
+            runLength,      // length
+            run->length,    // total length
             1,              // styleRunCount
-            &runLength,    // length of style run
-            &_ATSUSstyle, 
+            &runLength,     // length of style run
+            &_ATSUStyle, 
             &layout);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
@@ -1526,16 +1312,15 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
     substituteOffset = run->from;
     while ((status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength)) == kATSUFontsMatched || status == kATSUFontsNotMatched) {
-        NSFont *substituteFont = [self _substituteFontForCharacters:run->characters+substituteOffset length:substituteLength families:style->families];
-        if (substituteFont) {
-            WebTextRenderer *substituteRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:substituteFont usingPrinterFont:usingPrinterFont];
+        WebTextRenderer *substituteRenderer = [self substituteRendererForCharacters:run->characters+substituteOffset length:substituteLength families:style->families];
+        if (substituteRenderer) {
             [substituteRenderer _initializeATSUStyle];
-            if (substituteRenderer && substituteRenderer->_ATSUSstyle)
-                ATSUSetRunStyle(layout, substituteRenderer->_ATSUSstyle, substituteOffset, substituteLength);
+            if (substituteRenderer && substituteRenderer->_ATSUStyle)
+                ATSUSetRunStyle(layout, substituteRenderer->_ATSUStyle, substituteOffset, substituteLength);
             // ignoring errors
         }
         substituteOffset += substituteLength;
-    };
+    }
     // ignoring errors in font substitution
         
     return layout;
@@ -1764,7 +1549,6 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     // _createATSUTextLayoutForRun:. This is exception-safe.
 
     unsigned offset = 0;
-    UniCharArrayOffset primaryOffset = 0;
     UniCharArrayOffset secondaryOffset = 0;
     OSStatus status;
     Boolean isLeading;
@@ -1792,7 +1576,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     ATSULayoutParameters params;
     createATSULayoutParameters(&params, self, aRun, style);
 
-    primaryOffset = aRun->from;
+    UniCharArrayOffset primaryOffset = aRun->from;
     
     // FIXME: No idea how to avoid including partial glyphs.   Not even sure if that's the behavior
     // this yields now.
@@ -1806,9 +1590,8 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
        
     disposeATSULayoutParameters(&params);
     
-    if (style->directionalOverride || (style->rtl && !ATSUMirrors)) {
+    if (style->directionalOverride || (style->rtl && !ATSUMirrors))
         free ((void *)swappedRun.characters);
-    }
 
     return offset - aRun->from;
 }
@@ -1883,7 +1666,6 @@ static void freeWidthMap(WidthMap *map)
     }
 }
 
-
 static void freeGlyphMap(GlyphMap *map)
 {
     while (map) {
@@ -1894,78 +1676,26 @@ static void freeGlyphMap(GlyphMap *map)
     }
 }
 
-
-static void freeUnicodeGlyphMap(UnicodeGlyphMap *map)
-{
-    while (map) {
-        UnicodeGlyphMap *next = map->next;
-        free(map->glyphs);
-        free(map);
-        map = next;
-    }
-}
-
-
-static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **font)
+static inline ATSGlyphRef glyphForCharacter(GlyphMap *map, UnicodeChar c, WebTextRenderer **renderer)
 {
     if (map == 0)
         return nonGlyphID;
     
     // this loop is hot, so it is written to avoid LSU stalls
     while (map) {
-        UniChar start = map->startRange;
+        UnicodeChar start = map->startRange;
         GlyphMap *nextMap = map->next;
-        if (c >= start && c <= map->endRange){
-            GlyphEntry *ge = &map->glyphs[c-start];
-            *font = ge->font;
+        if (c >= start && c <= map->endRange) {
+            GlyphEntry *ge = &map->glyphs[c - start];
+            WebTextRenderer *substituteRenderer = ge->substituteRenderer;
+            if (substituteRenderer)
+                *renderer = substituteRenderer;
             return ge->glyph;
         }
         map = nextMap;
     }
-    return nonGlyphID;
-}
- 
- 
-static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c, NSFont **font)
-{
-    if (map == 0)
-        return nonGlyphID;
-        
-    while (map) {
-        if (c >= map->startRange && c <= map->endRange){
-            *font = map->glyphs[c-map->startRange].font;
-            return map->glyphs[c-map->startRange].glyph;
-        }
-        map = map->next;
-    }
-    return nonGlyphID;
-}
- 
 
-#ifdef _TIMING        
-static double totalCGGetAdvancesTime = 0;
-#endif
-
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font)
-{
-    int i;
-    
-    for (i = 0; i < renderer->numSubstituteFontWidthMaps; i++){
-        if (font == renderer->substituteFontWidthMaps[i].font)
-            return &renderer->substituteFontWidthMaps[i];
-    }
-    
-    if (renderer->numSubstituteFontWidthMaps == renderer->maxSubstituteFontWidthMaps){
-        renderer->maxSubstituteFontWidthMaps = renderer->maxSubstituteFontWidthMaps * 2;
-        renderer->substituteFontWidthMaps = realloc (renderer->substituteFontWidthMaps, renderer->maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
-        for (i = renderer->numSubstituteFontWidthMaps; i < renderer->maxSubstituteFontWidthMaps; i++){
-            renderer->substituteFontWidthMaps[i].font = 0;
-            renderer->substituteFontWidthMaps[i].map = 0;
-        }
-    }
-    
-    renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps].font = font;
-    return &renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps++];
+    return nonGlyphID;
 }
 
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
@@ -2005,9 +1735,8 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
         CharacterWidthIterator startPositionIterator;
         initializeCharacterWidthIterator (&startPositionIterator, renderer, &startPositionRun, style);
         
-        while (startPositionIterator.currentCharacter < (unsigned)startPositionRun.to){
+        while (startPositionIterator.currentCharacter < (unsigned)startPositionRun.to)
             widthForNextCharacter(&startPositionIterator, 0, 0);
-        }
         iterator->widthToStart = startPositionIterator.runWidthSoFar;
     }
     else
@@ -2036,19 +1765,15 @@ static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
     return delta;
 }
 
-// According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
-#define HIRAGANA_KATAKANA_VOICING_MARKS 8
-
 // Return INVALID_WIDTH if an error is encountered or we're at the end of the range in the run.
-static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
+static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, WebTextRenderer **rendererUsed)
 {
     WebTextRenderer *renderer = iterator->renderer;
     const WebCoreTextRun *run = iterator->run;
     const WebCoreTextStyle *style = iterator->style;
     unsigned currentCharacter = iterator->currentCharacter;
 
-    NSFont *_fontUsed = nil;
-    ATSGlyphRef _glyphUsed = nil;
+    ATSGlyphRef glyph = 0;
     
     // Check for end of run.
     if (currentCharacter >= (unsigned)run->to)
@@ -2066,46 +1791,27 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     unsigned clusterLength = 1;
     if (U16_IS_LEAD(c)) {
         // Make sure we have another character and it's a low surrogate.
-        UniChar low;
-        if (currentCharacter + 1 >= run->length || !U16_IS_TRAIL((low = cp[1]))) {
-            // Error!  The second component of the surrogate pair is missing.
+        if (currentCharacter + 1 >= run->length)
             return INVALID_WIDTH;
-        }
-
+        UniChar low = cp[1];
+        if (!U16_IS_TRAIL(low))
+            return INVALID_WIDTH;
         c = U16_GET_SUPPLEMENTARY(c, low);
         clusterLength = 2;
     }
 
-    // If small-caps convert lowercase to upper.
-    BOOL useSmallCapsFont = NO;
-    if (renderer->isSmallCapsRenderer) {
-        if (!u_isUUppercase(c)) {
-            // Only use small cap font if the the uppercase version of the character
-            // is different than the lowercase.
-            UnicodeChar newC = u_toupper(c);
-            if (newC != c) {
-                useSmallCapsFont = YES;
-                c = newC;
-            }
-        }
-    }
-    
-    // Deal with Hiragana and Katakana voiced and semi-voiced syllables.  Normalize into
-    // composed form, and then look for glyph with base + combined mark.
-    if (c >= 0x3041 && c <= 0x30FE) { // Early out to minimize performance impact.  Do we have a Hiragana/Katakana character?
+    // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
+    // Normalize into composed form, and then look for glyph with base + combined mark.
+    if (c >= 0x3041 && c <= 0x30FE) { // Early out to minimize performance impact. Do we have a Hiragana/Katakana character?
         if (currentCharacter < (unsigned)run->to) {
             UnicodeChar nextCharacter = run->characters[currentCharacter+1];
             if (u_getCombiningClass(nextCharacter) == HIRAGANA_KATAKANA_VOICING_MARKS) {
-                UChar normalizedCharacters[2] = { 0, 0 };
-                UErrorCode uStatus = 0;
-                int32_t resultLength;
-                
                 // Normalize into composed form using 3.2 rules.
-                resultLength = unorm_normalize(&run->characters[currentCharacter], 2,
-                                UNORM_NFC, UNORM_UNICODE_3_2,
-                                &normalizedCharacters[0], 2,
-                                &uStatus);
-                if (resultLength == 1 && uStatus == 0){
+                UChar normalizedCharacters[2] = { 0, 0 };
+                UErrorCode uStatus = 0;                
+                int32_t resultLength = unorm_normalize(&run->characters[currentCharacter], 2,
+                    UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
+                if (resultLength == 1 && uStatus == 0) {
                     c = normalizedCharacters[0];
                     clusterLength = 2;
                 }
@@ -2113,52 +1819,39 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    if (style->rtl) {
+    if (style->rtl)
         c = u_charMirror(c);
+    
+    // If small-caps, convert lowercase to upper.
+    if (style->smallCaps && !u_isUUppercase(c)) {
+        UnicodeChar newC = u_toupper(c);
+        if (newC != c) {
+            c = newC;
+            renderer = [renderer smallCapsRenderer];
+        }
     }
     
-    if (c <= 0xFFFF) {
-        _glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, &_fontUsed);
-        if (_glyphUsed == nonGlyphID) {
-            _glyphUsed = [renderer _extendCharacterToGlyphMapToInclude:c];
-        }
-    } else {
-        _glyphUsed = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, c, &_fontUsed);
-        if (_glyphUsed == nonGlyphID) {
-            _glyphUsed = [renderer _extendUnicodeCharacterToGlyphMapToInclude:c];
-        }
-    }
-
-    // Check to see if we're rendering in 'small-caps' mode.
-    // ASSUMPTION:  We assume the same font in a smaller size has
-    // the same glyphs as the large font.
-    if (useSmallCapsFont) {
-        if (_fontUsed == nil)
-            _fontUsed = [renderer _smallCapsFont];
-        else {
-            // Potential for optimization.  This path should only be taken if we're
-            // using a cached substituted font.
-            _fontUsed = [[NSFontManager sharedFontManager] convertFont:_fontUsed toSize:[_fontUsed pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER];
-        }
-    }
+    glyph = glyphForCharacter(renderer->characterToGlyphMap, c, &renderer);
+    if (glyph == nonGlyphID)
+        glyph = [renderer extendCharacterToGlyphMapToInclude:c];
 
     // Now that we have glyph and font, get its width.
     WebGlyphWidth width;
     if (style->tabWidth != 0.0F && c == '\t') {
         width = style->tabWidth - fmodf(style->xpos+iterator->runWidthSoFar, style->tabWidth);
     } else {
-        width = widthForGlyph(renderer, _glyphUsed, _fontUsed);
+        width = widthForGlyph(renderer, glyph);
         // We special case spaces in two ways when applying word rounding.
         // First, we round spaces to an adjusted width in all fonts.
         // Second, in fixed-pitch fonts we ensure that all characters that
         // match the width of the space character have the same width as the space character.
-        if (style->applyWordRounding && (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : _glyphUsed == renderer->spaceGlyph))
+        if (style->applyWordRounding && (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : glyph == renderer->spaceGlyph))
             width = renderer->adjustedSpaceWidth;
     }
     
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
-    if (_glyphUsed == 0 && style->attemptFontSubstitution) {
+    if (glyph == 0 && style->attemptFontSubstitution) {
         UniChar characterArray[2];
         unsigned characterArrayLength;
         
@@ -2171,12 +1864,9 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             characterArrayLength = 2;
         }
         
-        NSFont *substituteFont = [renderer _substituteFontForCharacters:characterArray length:characterArrayLength
-            families:style->families];
-        if (substituteFont) {
-            int cNumGlyphs = 0;
-            ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];
-            
+        WebTextRenderer *substituteRenderer = [renderer substituteRendererForCharacters:characterArray
+            length:characterArrayLength families:style->families];
+        if (substituteRenderer) {
             WebCoreTextRun clusterRun;
             WebCoreInitializeTextRun(&clusterRun, characterArray, characterArrayLength, 0, characterArrayLength);
             WebCoreTextStyle clusterStyle = *iterator->style;
@@ -2184,41 +1874,29 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             clusterStyle.applyRunRounding = false;
             clusterStyle.attemptFontSubstitution = false;
             
-            WebTextRenderer *substituteRenderer;
-            substituteRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:substituteFont usingPrinterFont:renderer->usingPrinterFont];
-            width = [substituteRenderer
-                            _floatWidthForRun:&clusterRun
-                            style:&clusterStyle 
-                            widths: nil
-                            fonts: nil
-                            glyphs: &localGlyphBuffer[0]
-                            startPosition:nil
-                            numGlyphs:&cNumGlyphs];
-            
-            _fontUsed = substituteFont;
-            _glyphUsed = localGlyphBuffer[0];
-            
-            if (c <= 0xFFFF && cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
-                [renderer _updateGlyphEntryForCharacter:c glyphID:localGlyphBuffer[0] font:substituteFont];
+            int cNumGlyphs;
+            ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];            
+            width = [substituteRenderer floatWidthForRun:&clusterRun style:&clusterStyle 
+                widths:0 substituteRenderers:0 glyphs:localGlyphBuffer startPosition:0 numGlyphs:&cNumGlyphs];
+            if (cNumGlyphs == 1) {
+                glyph = localGlyphBuffer[0];
+                [renderer updateGlyphEntryForCharacter:c glyphID:glyph substituteRenderer:substituteRenderer];
+                renderer = substituteRenderer;
             }
         }
     }
 
-    if (!_fontUsed)
-        _fontUsed = renderer->font;
-
     // Force characters that are used to determine word boundaries for the rounding hack
     // to be integer width, so following words will start on an integer boundary.
-    if (style->applyWordRounding && isRoundingHackCharacter(c)) {
+    if (style->applyWordRounding && isRoundingHackCharacter(c))
         width = ceilf(width);
-    }
     
     // Account for letter-spacing
     if (style->letterSpacing && width > 0)
         width += style->letterSpacing;
 
-    // Account for padding.  khtml uses space padding to justify text.  We
-    // distribute the specified padding over the available spaces in the run.
+    // Account for padding. WebCore uses space padding to justify text.
+    // We distribute the specified padding over the available spaces in the run.
     if (isSpace(c)) {
         if (iterator->padding > 0) {
             // Only use left over padding if note evenly divisible by 
@@ -2226,8 +1904,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             if (iterator->padding < iterator->padPerSpace){
                 width += iterator->padding;
                 iterator->padding = 0;
-            }
-            else {
+            } else {
                 width += iterator->padPerSpace;
                 iterator->padding -= iterator->padPerSpace;
             }
@@ -2263,15 +1940,14 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    if (fontUsed)
-        *fontUsed = _fontUsed;
+    if (rendererUsed)
+        *rendererUsed = renderer;
     
     if (glyphUsed)
-        *glyphUsed = _glyphUsed;
+        *glyphUsed = glyph;
 
     return width;
 }
-
 
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
@@ -2300,33 +1976,49 @@ static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 
 static BOOL shouldUseATSU(const WebCoreTextRun *run)
 {
-    UniChar c;
-    const UniChar *characters = run->characters;
-    int i, from = run->from, to = run->to;
-    
     if (alwaysUseATSU)
         return YES;
         
-    for (i = from; i < to; i++){
-        c = characters[i];
-        if (c < 0x300)                      // Early continue to avoid other checks for the common case.
+    const UniChar *characters = run->characters;
+    int to = run->to;
+    int i;
+    for (i = run->from; i < to; i++) {
+        UniChar c = characters[i];
+        if (c < 0x300)                      // U+0300 through U+036F Combining diacritical marks
             continue;
-            
-        if (c >= 0x300 && c <= 0x36F)       // U+0300 through U+036F Combining diacritical marks
+        if (c <= 0x36F)
             return YES;
-        if (c >= 0x20D0 && c <= 0x20FF)     // U+20D0 through U+20FF Combining marks for symbols
+
+        if (c < 0x0591)                     // U+0591 through U+1059 Arabic, Hebrew, Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+            continue;
+        if (c <= 0x1059)
             return YES;
-        if (c >= 0xFE20 && c <= 0xFE2f)     // U+FE20 through U+FE2F Combining half marks
+
+        if (c < 0x1100)                     // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
+            continue;
+        if (c <= 0x11FF)
             return YES;
-        if (c >= 0x591 && c <= 0x1059)      // U+0591 through U+1059 Arabic, Hebrew, Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+
+        if (c < 0x1780)                     // U+1780 through U+18AF Khmer, Mongolian
+            continue;
+        if (c <= 0x18AF)
             return YES;
-        if (c >= 0x1100 && c <= 0x11FF)     // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
+
+        if (c < 0x1900)                     // U+1900 through U+194F Limbu (Unicode 4.0)
+            continue;
+        if (c <= 0x194F)
             return YES;
-        if (c >= 0x1780 && c <= 0x18AF)     // U+1780 through U+18AF Khmer, Mongolian
+
+        if (c < 0x20D0)                     // U+20D0 through U+20FF Combining marks for symbols
+            continue;
+        if (c <= 0x20FF)
             return YES;
-        if (c >= 0x1900 && c <= 0x194F)     // U+1900 through U+194F Limbu (Unicode 4.0)
+
+        if (c < 0xFE20)                     // U+FE20 through U+FE2F Combining half marks
+            continue;
+        if (c <= 0xFE2F)
             return YES;
     }
-    
+
     return NO;
 }

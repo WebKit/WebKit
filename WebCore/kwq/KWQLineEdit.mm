@@ -255,12 +255,13 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSFont *font = [textField font];
+    WebCoreFont font;
+    WebCoreInitializeFont(&font);
+    font.font = [textField font];
+    font.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
+    id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font];
 
-    size.height += [font defaultLineHeightForFont];
-
-    id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFont:font usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+    size.height += [font.font defaultLineHeightForFont];
 
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);

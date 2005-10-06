@@ -27,33 +27,23 @@
  */
 
 #import <WebCore/WebCoreTextRendererFactory.h>
-#import <WebKit/WebGlyphBuffer.h>
 
 @class WebTextRenderer;
 
+#define WEB_TEXT_RENDERER_FACTORY_NUM_CACHES 8
+
 @interface WebTextRendererFactory : WebCoreTextRendererFactory
 {
-    NSMutableDictionary *cacheForScreen;
-    NSMutableDictionary *cacheForPrinter;
+    NSMutableDictionary *caches[WEB_TEXT_RENDERER_FACTORY_NUM_CACHES];
     NSMutableDictionary *viewBuffers;
     NSMutableArray *viewStack;
 }
 
 + (void)createSharedFactory;
 + (WebTextRendererFactory *)sharedFactory;
+
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
 
-- (WebTextRenderer *)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
-
-- (BOOL)coalesceTextDrawing;
-- (void)endCoalesceTextDrawing;
-- (void)startCoalesceTextDrawing;
-
-- (WebGlyphBuffer *)glyphBufferForFont:(NSFont *)font andColor:(NSColor *)color;
+- (WebTextRenderer *)rendererWithFont:(WebCoreFont)font;
 
 @end
-
-@interface NSFont (WebPrivateExtensions)
-- (BOOL)_web_isFakeFixedPitch;
-@end
-

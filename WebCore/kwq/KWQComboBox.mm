@@ -163,9 +163,11 @@ QSize QComboBox::sizeHint() const
         QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
         QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
-            id <WebCoreTextRenderer> itemRenderer = [[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:[button font]
-                usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+            WebCoreFont itemFont;
+            WebCoreInitializeFont(&itemFont);
+            itemFont.font = [button font];
+            itemFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
+            id <WebCoreTextRenderer> itemRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:itemFont];
             id <WebCoreTextRenderer> labelRenderer = nil;
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
@@ -183,9 +185,11 @@ QSize QComboBox::sizeHint() const
                 id <WebCoreTextRenderer> renderer;
                 if (isGroupLabel) {
                     if (labelRenderer == nil) {
-                        labelRenderer = [[WebCoreTextRendererFactory sharedFactory]
-                            rendererWithFont:labelFont()
-                            usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+                        WebCoreFont labelFont;
+                        WebCoreInitializeFont(&labelFont);
+                        labelFont.font = this->labelFont();
+                        labelFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
+                        labelRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:labelFont];
                     }
                     renderer = labelRenderer;
                 } else {

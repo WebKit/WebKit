@@ -70,7 +70,6 @@
 		9398103C0824BF01008DF038 /* WebBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AFB45E02B94DC8018635CA /* WebBridge.h */; };
 		9398103D0824BF01008DF038 /* WebCookieAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F5488CF402CB04EE01FF6274 /* WebCookieAdapter.h */; };
 		9398103E0824BF01008DF038 /* WebFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 9311022803667CF1008635CE /* WebFileButton.h */; };
-		9398103F0824BF01008DF038 /* WebGlyphBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E7B24503025CE801A80180 /* WebGlyphBuffer.h */; };
 		939810400824BF01008DF038 /* WebImageRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CE1F8A002A5C6F30ECA2ACD /* WebImageRenderer.h */; };
 		939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */; };
 		939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -210,7 +209,6 @@
 		939810DE0824BF01008DF038 /* WebBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AFB45F02B94DC8018635CA /* WebBridge.m */; };
 		939810DF0824BF01008DF038 /* WebCookieAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F5488CF502CB04EE01FF6274 /* WebCookieAdapter.m */; };
 		939810E00824BF01008DF038 /* WebFileButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 9311022903667CF1008635CE /* WebFileButton.m */; };
-		939810E10824BF01008DF038 /* WebGlyphBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E7B24603025CE801A80180 /* WebGlyphBuffer.m */; };
 		939810E20824BF01008DF038 /* WebImageRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A102A5C6F30ECA2ACD /* WebImageRenderer.m */; };
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
@@ -584,8 +582,6 @@
 		F5E0A76F02B8FEE401C1A525 /* WebURLsWithTitles.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebURLsWithTitles.m; sourceTree = "<group>"; };
 		F5E0E10802BC45F8018635CA /* WebSubresourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSubresourceLoader.h; sourceTree = "<group>"; };
 		F5E0E10902BC45F8018635CA /* WebSubresourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSubresourceLoader.m; sourceTree = "<group>"; };
-		F5E7B24503025CE801A80180 /* WebGlyphBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGlyphBuffer.h; sourceTree = "<group>"; };
-		F5E7B24603025CE801A80180 /* WebGlyphBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebGlyphBuffer.m; sourceTree = "<group>"; };
 		F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; };
 		F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebBaseNetscapePluginView.m; sourceTree = "<group>"; };
 		F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginPackage.h; sourceTree = "<group>"; };
@@ -999,8 +995,6 @@
 				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
 				9311022803667CF1008635CE /* WebFileButton.h */,
 				9311022903667CF1008635CE /* WebFileButton.m */,
-				F5E7B24503025CE801A80180 /* WebGlyphBuffer.h */,
-				F5E7B24603025CE801A80180 /* WebGlyphBuffer.m */,
 				BE26F18D05517E0800BFA0C3 /* WebGraphicsBridge.h */,
 				BE26F18E05517E0800BFA0C3 /* WebGraphicsBridge.m */,
 				514C4C2A075E7DE500B89CAD /* WebImageDecodeItem.h */,
@@ -1156,7 +1150,6 @@
 				9398103C0824BF01008DF038 /* WebBridge.h in Headers */,
 				9398103D0824BF01008DF038 /* WebCookieAdapter.h in Headers */,
 				9398103E0824BF01008DF038 /* WebFileButton.h in Headers */,
-				9398103F0824BF01008DF038 /* WebGlyphBuffer.h in Headers */,
 				939810400824BF01008DF038 /* WebImageRenderer.h in Headers */,
 				939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
@@ -1731,7 +1724,6 @@
 				939810DE0824BF01008DF038 /* WebBridge.m in Sources */,
 				939810DF0824BF01008DF038 /* WebCookieAdapter.m in Sources */,
 				939810E00824BF01008DF038 /* WebFileButton.m in Sources */,
-				939810E10824BF01008DF038 /* WebGlyphBuffer.m in Sources */,
 				939810E20824BF01008DF038 /* WebImageRenderer.m in Sources */,
 				939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,

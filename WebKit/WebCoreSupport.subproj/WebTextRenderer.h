@@ -27,17 +27,10 @@
  */
 
 #import <WebCore/WebCoreTextRenderer.h>
+#import <WebCore/WebCoreTextRendererFactory.h>
 
 typedef struct WidthMap WidthMap;
-typedef struct WidthEntry WidthEntry;
 typedef struct GlyphMap GlyphMap;
-typedef struct GlyphEntry GlyphEntry;
-typedef struct UnicodeGlyphMap UnicodeGlyphMap;
-typedef struct SubstituteFontWidthMap SubstituteFontWidthMap;
-typedef struct CharacterWidthIterator CharacterWidthIterator;
-
-/// Should be more than enough for normal usage.
-#define NUM_SUBSTITUTE_FONT_MAPS	10
 
 @interface WebTextRenderer : NSObject <WebCoreTextRenderer>
 {
@@ -49,40 +42,29 @@ typedef struct CharacterWidthIterator CharacterWidthIterator;
     void *styleGroup;
     
 @public
-    NSFont *font;
-    GlyphMap *characterToGlyphMap;			// Used for 16bit clean unicode characters.
-    UnicodeGlyphMap *unicodeCharacterToGlyphMap; 	// Used for surrogates.
+    WebCoreFont font;
+    GlyphMap *characterToGlyphMap;
     WidthMap *glyphToWidthMap;
 
     BOOL treatAsFixedPitch;
     ATSGlyphRef spaceGlyph;
     float spaceWidth;
     float adjustedSpaceWidth;
-
-    int numSubstituteFontWidthMaps;
-    int maxSubstituteFontWidthMaps;
-    SubstituteFontWidthMap *substituteFontWidthMaps;
-    BOOL usingPrinterFont;
-    BOOL isSmallCapsRenderer;
+    float syntheticBoldOffset;
     
 @private
     WebTextRenderer *smallCapsRenderer;
-    NSFont *smallCapsFont;
-    ATSUStyle _ATSUSstyle;
+    ATSUStyle _ATSUStyle;
     BOOL ATSUStyleInitialized;
     BOOL ATSUMirrors;
 }
 
-+ (BOOL)shouldBufferTextDrawing;
-
-- (id)initWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
+- (id)initWithFont:(WebCoreFont)font;
 
 @end
-
 
 @interface WebTextRenderer (WebPrivate)
 
-+ (void)_setAlwaysUseATSU:(BOOL)f;
++ (void)setAlwaysUseATSU:(BOOL)f;
 
 @end
-

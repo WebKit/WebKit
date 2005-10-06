@@ -15,24 +15,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x18
-        RenderInline {FONT} at (0,0) size 37x18
-          RenderInline {B} at (0,0) size 37x18
-            RenderText {TEXT} at (0,0) size 37x18
-              text run at (0,0) width 37: "hello"
-      RenderBlock {P} at (0,34) size 784x18
-        RenderInline {FONT} at (0,0) size 39x18
-          RenderInline {B} at (0,0) size 39x18
-            RenderText {TEXT} at (0,0) size 39x18
-              text run at (0,0) width 39: "there"
-      RenderBlock {P} at (0,68) size 784x18
-        RenderInline {FONT} at (0,0) size 37x18
-          RenderInline {B} at (0,0) size 37x18
-            RenderText {TEXT} at (0,0) size 37x18
-              text run at (0,0) width 37: "hello"
-      RenderBlock {P} at (0,102) size 784x18
-        RenderInline {FONT} at (0,0) size 39x18
-          RenderInline {B} at (0,0) size 39x18
-            RenderText {TEXT} at (0,0) size 39x18
-              text run at (0,0) width 39: "there"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {FONT} at (0,0) size 55x20
+          RenderInline {B} at (0,0) size 55x20
+            RenderText {TEXT} at (0,0) size 55x21
+              text run at (0,0) width 55: "hello"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline {FONT} at (0,0) size 55x20
+          RenderInline {B} at (0,0) size 55x20
+            RenderText {TEXT} at (0,0) size 55x21
+              text run at (0,0) width 55: "there"
+      RenderBlock {P} at (0,74) size 784x21
+        RenderInline {FONT} at (0,0) size 55x20
+          RenderInline {B} at (0,0) size 55x20
+            RenderText {TEXT} at (0,0) size 55x21
+              text run at (0,0) width 55: "hello"
+      RenderBlock {P} at (0,111) size 784x21
+        RenderInline {FONT} at (0,0) size 55x20
+          RenderInline {B} at (0,0) size 55x20
+            RenderText {TEXT} at (0,0) size 55x21
+              text run at (0,0) width 55: "there"
 caret: position 5 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 5 {P} of child 1 {BODY} of child 0 {HTML} of document

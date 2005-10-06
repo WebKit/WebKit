@@ -404,7 +404,7 @@ static bool debugWidget = true;
 
 + (void)_setAlwaysUseATSU:(BOOL)f
 {
-    [WebTextRenderer _setAlwaysUseATSU:f];
+    [WebTextRenderer setAlwaysUseATSU:f];
 }
 
 + (BOOL)canShowFile:(NSString *)path

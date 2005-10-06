@@ -81,24 +81,23 @@ static NSFont *itemFont()
     return font;
 }
 
-static NSFont *groupLabelFont()
-{
-    static NSFont *font = [[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]] retain];
-    return font;
-}
-
 static id <WebCoreTextRenderer> itemTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (itemScreenRenderer == nil) {
-            itemScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:itemFont() usingPrinterFont:NO] retain];
+            WebCoreFont font;
+            WebCoreInitializeFont(&font);
+            font.font = itemFont();
+            itemScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         }
         return itemScreenRenderer;
     } else {
         if (itemPrinterRenderer == nil) {
-            itemPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:itemFont() usingPrinterFont:YES] retain];
+            WebCoreFont font;
+            WebCoreInitializeFont(&font);
+            font.font = itemFont();
+            font.forPrinter = YES;
+            itemPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         }
         return itemPrinterRenderer;
     }
@@ -108,14 +107,19 @@ static id <WebCoreTextRenderer> groupLabelTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (groupLabelScreenRenderer == nil) {
-            groupLabelScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:groupLabelFont() usingPrinterFont:NO] retain];
+            WebCoreFont font;
+            WebCoreInitializeFont(&font);
+            font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
+            groupLabelScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         }
         return groupLabelScreenRenderer;
     } else {
         if (groupLabelPrinterRenderer == nil) {
-            groupLabelPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:groupLabelFont() usingPrinterFont:YES] retain];
+            WebCoreFont font;
+            WebCoreInitializeFont(&font);
+            font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
+            font.forPrinter = YES;
+            groupLabelPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         }
         return groupLabelPrinterRenderer;
     }
@@ -285,19 +289,11 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
             if (tableView->isSystemFont) {        
                 renderer = itemTextRenderer();
                 groupLabelRenderer = groupLabelTextRenderer();
-            }
-            else {
-                NSFont *f = font().getNSFont();
+            } else {
+                renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font().getWebCoreFont()];
                 QFont b = font();
-                b.setWeight(QFont::Bold);
-                NSFont *boldFont = b.getNSFont();
-            
-            
-                renderer = [[WebCoreTextRendererFactory sharedFactory]
-                    rendererWithFont:f usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
-
-                groupLabelRenderer = [[WebCoreTextRendererFactory sharedFactory]
-                    rendererWithFont:boldFont usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+                b.setWeight(QFont::Bold);            
+                groupLabelRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
             }
             
             do {
@@ -318,9 +314,8 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
         _widthGood = true;
     }
     
-    NSSize nssize = { _width, [tableView rowHeight] * MAX(minLines, lines) };
-    size = [NSScrollView frameSizeForContentSize:nssize
-        hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
+    NSSize contentSize = { _width, [tableView rowHeight] * MAX(minLines, lines) };
+    size = [NSScrollView frameSizeForContentSize:contentSize hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
     size.width += [NSScroller scrollerWidthForControlSize:NSSmallControlSize] - [NSScroller scrollerWidth] + leftMargin + rightMargin;
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -627,26 +622,21 @@ void QListBox::setFont(const QFont &font)
         color = [NSColor disabledControlTextColor];
     }
 
-    bool RTL = _direction == NSWritingDirectionRightToLeft;
+    bool rtl = _direction == NSWritingDirectionRightToLeft;
 
-    NSFont *font = _box->font().getNSFont();
-    
     id <WebCoreTextRenderer> renderer;
     if (isSystemFont) {
         renderer = (item.type == KWQListBoxGroupLabel) ? groupLabelTextRenderer() : itemTextRenderer();
     } else {
-        if (item.type == KWQListBoxGroupLabel) {
-            QFont boldFont = _box->font();
-            boldFont.setWeight(QFont::Bold);
-            font = boldFont.getNSFont();
-        }
-        renderer = [[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:font usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+        QFont itemFont = _box->font();
+        if (item.type == KWQListBoxGroupLabel)
+            itemFont.setWeight(QFont::Bold);
+        renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:itemFont.getWebCoreFont()];
     }
    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.rtl = RTL;
+    style.rtl = rtl;
     style.applyRunRounding = NO;
     style.applyWordRounding = NO;
     style.textColor = color;
@@ -657,12 +647,12 @@ void QListBox::setFont(const QFont &font)
 
     NSRect cellRect = [self frameOfCellAtColumn:0 row:row];
     NSPoint point;
-    if (!RTL) {
+    if (!rtl) {
         point.x = NSMinX(cellRect) + leftMargin;
     } else {
         point.x = NSMaxX(cellRect) - rightMargin - [renderer floatWidthForRun:&run style:&style widths:0];
     }
-    point.y = NSMaxY(cellRect) + [font descender] - bottomMargin;
+    point.y = NSMaxY(cellRect) - [renderer descent] - bottomMargin;
 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
@@ -703,8 +693,7 @@ void QListBox::setFont(const QFont &font)
 - (void)fontChanged
 {
     NSFont *font = _box->font().getNSFont();
-    isSystemFont = [[font fontName] isEqualToString:[itemFont() fontName]] && ([font pointSize] == [itemFont() pointSize]);
-    
+    isSystemFont = [[font fontName] isEqualToString:[itemFont() fontName]] && [font pointSize] == [itemFont() pointSize];
     [self setRowHeight:ceilf([font ascender] - [font descender] + bottomMargin)];
     [self setNeedsDisplay:YES];
 }

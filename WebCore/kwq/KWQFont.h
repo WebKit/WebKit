@@ -27,12 +27,7 @@
 #define QFONT_H_
 
 #include "KWQFontFamily.h"
-
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
+#include "WebCoreTextRendererFactory.h"
 
 class QFont {
 public:
@@ -75,7 +70,8 @@ public:
     int getNSTraits() const { return _trait; }
     float getNSSize() const { return _size; }
     
-    NSFont *getNSFont() const;
+    NSFont *getNSFont() const { return getWebCoreFont().font; }
+    const WebCoreFont &getWebCoreFont() const;
 
 private:
     KWQFontFamily _family;
@@ -83,7 +79,7 @@ private:
     float _size;
     bool _isPrinterFont : 1;
     mutable Pitch _pitch : 2;
-    mutable NSFont *_NSFont;
+    mutable WebCoreFont m_webCoreFont;
 };
 
 #endif

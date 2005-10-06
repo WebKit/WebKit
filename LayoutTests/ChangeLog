@@ -1,3 +1,15 @@
+2005-10-06  Darin Adler  <darin@apple.com>
+
+        - updated test result for synthetic bold
+
+        * editing/pasteboard/paste-text-011-expected.checksum: Regenerated.
+        * editing/pasteboard/paste-text-011-expected.png: Ditto.
+        * editing/pasteboard/paste-text-011-expected.txt: Ditto.
+
+        - updated test result that was incorrect
+
+        * fast/dom/namednodemap-namelookup-expected.txt: Added trailing newlines
+
 2005-10-05  Vicki Murley  <vicki@apple.com>
 
 	Test cases for <rdar://problem/4288829> repro crash on isIndex tag with no attributes

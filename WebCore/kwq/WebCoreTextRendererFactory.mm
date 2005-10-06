@@ -24,13 +24,21 @@
  */
 
 #include "config.h"
-#import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
 #import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 #import "KWQListBox.h"
 #import "WebCoreBridge.h"
+#import "WebCoreTextRenderer.h"
+
+void WebCoreInitializeFont(WebCoreFont *font)
+{
+    font->font = nil;
+    font->syntheticBold = NO;
+    font->syntheticOblique = NO;
+    font->forPrinter = NO;
+}
 
 void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
 {
@@ -42,28 +50,25 @@ void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, un
 
 void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
 {
-    style->padding = 0;
-//    style->tabWidth = 0.0F;
-//    style->xpos = 0.0F;
     style->textColor = nil;
     style->backgroundColor = nil;
-    style->rtl = false;
-    style->directionalOverride = false;
     style->letterSpacing = 0;
     style->wordSpacing = 0;
-    style->smallCaps = false;
-    style->applyRunRounding = true;
-    style->applyWordRounding = true;
-    style->attemptFontSubstitution = true;
+    style->padding = 0;
     style->families = nil;
+    style->smallCaps = NO;
+    style->rtl = NO;
+    style->directionalOverride = NO;
+    style->applyRunRounding = YES;
+    style->applyWordRounding = YES;
+    style->attemptFontSubstitution = YES;
 }
 
 void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
 {
-    geometry->point = NSMakePoint(0,0);
-    geometry->selectionY = 0;
-    geometry->selectionHeight = 0;
-    geometry->useFontMetricsForSelectionYAndHeight = true;
+    geometry->point.x = 0;
+    geometry->point.y = 0;
+    geometry->useFontMetricsForSelectionYAndHeight = YES;
 }
 
 @implementation WebCoreTextRendererFactory
@@ -85,18 +90,23 @@ static WebCoreTextRendererFactory *sharedFactory;
     return self;
 }
 
-- (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
+- (WebCoreFont)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
-    return nil;
+    ERROR("fontWithFamilies needs to be implemented in text renderer factory subclass");
+    WebCoreFont font;
+    WebCoreInitializeFont(&font);
+    return font;
 }
 
-- (BOOL)isFontFixedPitch:(NSFont *)font
+- (BOOL)isFontFixedPitch:(WebCoreFont)font
 {
+    ERROR("isFontFixedPitch needs to be implemented in text renderer factory subclass");
     return NO;
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont
+- (id <WebCoreTextRenderer>)rendererWithFont:(WebCoreFont)font
 {
+    ERROR("rendererForFont needs to be implemented in text renderer factory subclass");
     return nil;
 }
 

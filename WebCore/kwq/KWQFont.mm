@@ -36,13 +36,13 @@ QFont::QFont()
     , _size(12.0)
     , _isPrinterFont(false)
     , _pitch(Unknown)
-    , _NSFont(0)
 {
+    m_webCoreFont.font = nil;
 }
 
 QFont::~QFont()
 {
-    KWQRelease(_NSFont);
+    KWQRelease(m_webCoreFont.font);
 }
 
 QFont::QFont(const QFont &other)
@@ -51,8 +51,9 @@ QFont::QFont(const QFont &other)
     , _size(other._size)
     , _isPrinterFont(other._isPrinterFont)
     , _pitch(other._pitch)
-    , _NSFont(KWQRetain(other._NSFont))
+    , m_webCoreFont(other.m_webCoreFont)
 {
+    KWQRetain(m_webCoreFont.font);
 }
 
 QFont &QFont::operator=(const QFont &other)
@@ -62,9 +63,9 @@ QFont &QFont::operator=(const QFont &other)
     _size = other._size;
     _isPrinterFont = other._isPrinterFont;
     _pitch = other._pitch;
-    KWQRetain(other._NSFont);
-    KWQRelease(_NSFont);
-    _NSFont = other._NSFont;
+    KWQRetain(other.m_webCoreFont.font);
+    KWQRelease(m_webCoreFont.font);
+    m_webCoreFont = other.m_webCoreFont;
     return *this;
 }
 
@@ -76,24 +77,24 @@ QString QFont::family() const
 void QFont::setFamily(const QString &qfamilyName)
 {
     _family.setFamily(qfamilyName);
-    KWQRelease(_NSFont);
-    _NSFont = 0;
+    KWQRelease(m_webCoreFont.font);
+    m_webCoreFont.font = nil;
     _pitch = Unknown;
 }
 
 void QFont::setFirstFamily(const KWQFontFamily& family) 
 {
     _family = family;
-    KWQRelease(_NSFont);
-    _NSFont = 0;
+    KWQRelease(m_webCoreFont.font);
+    m_webCoreFont.font = nil;
     _pitch = Unknown;
 }
 
 void QFont::setPixelSize(float s)
 {
     if (_size != s) {
-        KWQRelease(_NSFont); 
-        _NSFont = 0;
+        KWQRelease(m_webCoreFont.font); 
+        m_webCoreFont.font = nil;
         _pitch = Unknown;
     }
     _size = s;
@@ -102,16 +103,16 @@ void QFont::setPixelSize(float s)
 void QFont::setWeight(int weight)
 {
     if (weight == Bold) {
-        if (!(_trait & NSBoldFontMask)){
-            KWQRelease(_NSFont);
-            _NSFont = 0;
+        if (!(_trait & NSBoldFontMask)) {
+            KWQRelease(m_webCoreFont.font);
+            m_webCoreFont.font = nil;
             _pitch = Unknown;
         }
         _trait |= NSBoldFontMask;
     } else if (weight == Normal) {
         if ((_trait & NSBoldFontMask)){
-            KWQRelease(_NSFont);
-            _NSFont = 0;
+            KWQRelease(m_webCoreFont.font);
+            m_webCoreFont.font = nil;
             _pitch = Unknown;
         }
         _trait &= ~NSBoldFontMask;
@@ -132,15 +133,15 @@ void QFont::setItalic(bool flag)
 {
     if (flag) {
         if (!(_trait & NSItalicFontMask)){
-            KWQRelease(_NSFont);
-            _NSFont = 0;
+            KWQRelease(m_webCoreFont.font);
+            m_webCoreFont.font = nil;
             _pitch = Unknown;
         }
         _trait |= NSItalicFontMask;
     } else {
         if ((_trait & NSItalicFontMask)){
-            KWQRelease(_NSFont);
-            _NSFont = 0;
+            KWQRelease(m_webCoreFont.font);
+            m_webCoreFont.font = nil;
             _pitch = Unknown;
         }
         _trait &= ~NSItalicFontMask;
@@ -160,7 +161,7 @@ bool QFont::bold() const
 void QFont::determinePitch() const
 {
     KWQ_BLOCK_EXCEPTIONS;
-    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getNSFont()])
+    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont()])
         _pitch = Fixed;
     else
         _pitch = Variable;
@@ -176,16 +177,16 @@ bool QFont::operator==(const QFont &compareFont) const
         && _pitch == compareFont._pitch;
 }
 
-NSFont *QFont::getNSFont() const
+const WebCoreFont &QFont::getWebCoreFont() const
 {
-    if (!_NSFont) {
+    if (!m_webCoreFont.font) {
         CREATE_FAMILY_ARRAY(*this, families);
 	KWQ_BLOCK_EXCEPTIONS;
-        _NSFont = KWQRetain([[WebCoreTextRendererFactory sharedFactory] 
-            fontWithFamilies:families
-                      traits:getNSTraits() 
-                        size:getNSSize()]);
+        m_webCoreFont = [[WebCoreTextRendererFactory sharedFactory] 
+            fontWithFamilies:families traits:getNSTraits() size:getNSSize()];
+        KWQRetain(m_webCoreFont.font);
+        m_webCoreFont.forPrinter = _isPrinterFont;
 	KWQ_UNBLOCK_EXCEPTIONS;
     }
-    return _NSFont;
+    return m_webCoreFont;
 }

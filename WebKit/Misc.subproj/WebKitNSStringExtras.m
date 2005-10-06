@@ -56,8 +56,11 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
     [self getCharacters:buffer];
     
-    if (canUseFastRenderer(buffer, length)){
-        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
+    if (canUseFastRenderer(buffer, length)) {
+        WebCoreFont f;
+        WebCoreInitializeFont(&f);
+        f.font = font;
+        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
 
         WebCoreTextRun run;
         WebCoreInitializeTextRun (&run, buffer, length, 0, length);
@@ -112,7 +115,10 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     [self getCharacters:buffer];
 
     if (canUseFastRenderer(buffer, length)){
-        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
+        WebCoreFont f;
+        WebCoreInitializeFont(&f);
+        f.font = font;
+        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
 
         WebCoreTextRun run;
         WebCoreInitializeTextRun (&run, buffer, length, 0, length);

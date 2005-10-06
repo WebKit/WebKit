@@ -606,8 +606,7 @@ void QPainter::_updateRenderer()
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
 	KWQ_BLOCK_EXCEPTIONS;
         data->textRenderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:data->textRendererFont.getNSFont()
-            usingPrinterFont:data->textRendererFont.isPrinterFont()]);
+            rendererWithFont:data->textRendererFont.getWebCoreFont()]);
         KWQRelease(oldRenderer);
 	KWQ_UNBLOCK_EXCEPTIONS;
     }
@@ -667,7 +666,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
-    style.rtl = d == RTL ? true : false;
+    style.rtl = d == RTL;
     style.directionalOverride = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
@@ -706,7 +705,7 @@ void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
-    style.rtl = d == RTL ? true : false;
+    style.rtl = d == RTL;
     style.directionalOverride = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;

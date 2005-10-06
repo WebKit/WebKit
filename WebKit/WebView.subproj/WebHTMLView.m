@@ -2406,24 +2406,12 @@ static WebHTMLView *lastHitView = nil;
     [(WebClipView *)[self superview] setAdditionalClip:rect];
 
     NS_DURING {
-        WebTextRendererFactory *textRendererFactoryIfCoalescing = nil;
-        if ([WebTextRenderer shouldBufferTextDrawing] && [NSView focusView]) {
-            textRendererFactoryIfCoalescing = [WebTextRendererFactory sharedFactory];
-            [textRendererFactoryIfCoalescing startCoalesceTextDrawing];
-        }
-
         if ([self _transparentBackground]) {
             [[NSColor clearColor] set];
             NSRectFill (rect);
         }
         
-        //double start = CFAbsoluteTimeGetCurrent();
         [[self _bridge] drawRect:rect];
-        //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
-
-        if (textRendererFactoryIfCoalescing != nil) {
-            [textRendererFactoryIfCoalescing endCoalesceTextDrawing];
-        }
 
         [(WebClipView *)[self superview] resetAdditionalClip];
 

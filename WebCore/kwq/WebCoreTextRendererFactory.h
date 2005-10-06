@@ -23,18 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
-
 @protocol WebCoreTextRenderer;
+#else
+class NSFont;
+#endif
+
+typedef struct WebCoreFont {
+    NSFont *font;
+    unsigned syntheticBold : 1;
+    unsigned syntheticOblique : 1;
+    unsigned forPrinter : 1;
+} WebCoreFont;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void WebCoreInitializeFont(WebCoreFont *font);
+
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __OBJC__
 
 @interface WebCoreTextRendererFactory : NSObject
 
 + (WebCoreTextRendererFactory *)sharedFactory;
 
-- (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size;
-- (BOOL)isFontFixedPitch:(NSFont *)font;
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
+- (WebCoreFont)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size;
+- (BOOL)isFontFixedPitch:(WebCoreFont)font;
+- (id <WebCoreTextRenderer>)rendererWithFont:(WebCoreFont)font;
 
 - (void)clearCaches;
 
 @end
+
+#endif
