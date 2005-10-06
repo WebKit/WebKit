@@ -844,8 +844,10 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 
     CGAffineTransform matrix;
     memcpy(&matrix, [drawFont matrix], sizeof(matrix));
-    matrix.b = -matrix.b;
-    matrix.d = -matrix.d;
+    if ([gContext isFlipped]) {
+        matrix.b = -matrix.b;
+        matrix.d = -matrix.d;
+    }
     if (syntheticOblique)
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(14 * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
@@ -1522,9 +1524,10 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     [style->textColor set];
 
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
+    CGContextRef context = (CGContextRef)[gContext graphicsPort];
     CGContextTranslateCTM(context, geometry->point.x, geometry->point.y);
-    BOOL flipped = [[NSView focusView] isFlipped];
+    BOOL flipped = [gContext isFlipped];
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
     status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);

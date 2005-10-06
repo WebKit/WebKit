@@ -1,5 +1,16 @@
 2005-10-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - fixed regression in drawing of text in non-flipped contexts from my last check-in
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (drawGlyphs): Only flip the matrix if the NSGraphicsContext is flipped.
+        (-[WebTextRenderer _ATSU_drawRun:style:geometry:]): Use -[NSGraphicsContext isFlipped]
+        instead of [[NSView focusView] isFlipped].
+
+2005-10-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fixed <rdar://problem/3217793> Monaco bold comes out as Helvetica bold, very bad if you choose Monaco as your fixed-width font
