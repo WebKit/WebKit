@@ -1,3 +1,18 @@
+2005-10-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        No test case added because you need to interact with a page to see this crash. 
+
+	Fix for <rdar://problem/3918278> CSS: :hover:before or :hover crashes in 
+	RenderObject::repaintObjectsBeforeLayout()
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild): Deleted call to removeChild() because destroy() takes
+						care of that, and we don't want to remove the
+						node before we destroy it anyway, or positioned
+						objects won't be appropriately deleted. 
+
 2005-10-06  David Harrison  <harrison@apple.com>
 
         Reviewed by hyatt.
