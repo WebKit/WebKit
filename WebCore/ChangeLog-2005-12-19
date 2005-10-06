@@ -1,3 +1,15 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	<rdar://problem/4150976> Safari crashes in HTMLImageLoader::dispatchLoadEvent() on particular page (archive attached)
+
+	I couldn't figure out how to make an automated test for this; even once I got DumpRenderTree
+	to mouse in and out it did not crash.
+	
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::dispatchLoadEvent): Check if CachedImage is null before using it.
+
 2005-10-05  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
