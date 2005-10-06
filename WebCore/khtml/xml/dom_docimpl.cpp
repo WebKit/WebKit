@@ -1135,7 +1135,7 @@ void DocumentImpl::detach()
     ContainerNodeImpl::detach();
 
     if ( render )
-        render->detach();
+        render->destroy();
 
     if (m_paintDevice == m_view)
         setPaintDevice(0);

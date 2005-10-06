@@ -72,7 +72,7 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 {
     assert(baseOfRenderObjectBeingDeleted == ptr);
     
-    // Stash size where detach can find it.
+    // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 
@@ -2030,11 +2030,11 @@ void RenderObject::remove()
         parent()->removeChild(this);
 }
 
-void RenderObject::detach()
+void RenderObject::destroy()
 {
-    // By default no ref-counting. RenderWidget::detach() doesn't call
+    // By default no ref-counting. RenderWidget::destroy() doesn't call
     // this function because it needs to do ref-counting. If anything
-    // in this function changes, be sure to fix RenderWidget::detach() as well. 
+    // in this function changes, be sure to fix RenderWidget::destroy() as well. 
 
     remove();
     

@@ -87,11 +87,11 @@ void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void ClipRects::operator delete(void* ptr, size_t sz)
 {
-    // Stash size where detach can find it.
+    // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 
-void ClipRects::detach(RenderArena* renderArena)
+void ClipRects::destroy(RenderArena* renderArena)
 {
     delete this;
     
@@ -338,11 +338,11 @@ void RenderLayer::operator delete(void* ptr, size_t sz)
 {
     assert(inRenderLayerDetach);
     
-    // Stash size where detach can find it.
+    // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 
-void RenderLayer::detach(RenderArena* renderArena)
+void RenderLayer::destroy(RenderArena* renderArena)
 {
 #ifndef NDEBUG
     inRenderLayerDetach = true;
@@ -432,7 +432,7 @@ void RenderLayer::removeOnlyThisLayer()
         current = next;
     }
     
-    detach(renderer()->renderArena());
+    destroy(renderer()->renderArena());
 }
 
 void RenderLayer::insertOnlyThisLayer()

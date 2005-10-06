@@ -52,7 +52,7 @@ public:
 
     virtual ~InlineBox() {};
 
-    virtual void detach(RenderArena* renderArena);
+    virtual void destroy(RenderArena* renderArena);
 
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
@@ -306,7 +306,7 @@ public:
       m_blockHeight(0), m_endsWithBreak(false), m_hasSelectedChildren(false), m_ellipsisBox(0)
     {}
     
-    virtual void detach(RenderArena* renderArena);
+    virtual void destroy(RenderArena* renderArena);
     void detachEllipsisBox(RenderArena* renderArena);
 
     RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }

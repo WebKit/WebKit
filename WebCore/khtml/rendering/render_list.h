@@ -95,7 +95,7 @@ public:
     RenderListItem(DOM::NodeImpl*);
     virtual ~RenderListItem();
     
-    virtual void detach();
+    virtual void destroy();
 
     virtual const char *renderName() const { return "RenderListItem"; }
 

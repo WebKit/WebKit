@@ -78,7 +78,7 @@ void InlineBox::remove()
         parent()->removeChild(this);
 }
 
-void InlineBox::detach(RenderArena* renderArena)
+void InlineBox::destroy(RenderArena* renderArena)
 {
 #ifndef NDEBUG
     inInlineBoxDetach = true;
@@ -102,7 +102,7 @@ void InlineBox::operator delete(void* ptr, size_t sz)
 {
     assert(inInlineBoxDetach);
 
-    // Stash size where detach can find it.
+    // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 
@@ -139,7 +139,7 @@ void InlineBox::dirtyLineBoxes()
 void InlineBox::deleteLine(RenderArena* arena)
 {
     m_object->setInlineBoxWrapper(0);
-    detach(arena);
+    destroy(arena);
 }
 
 void InlineBox::extractLine()
@@ -359,7 +359,7 @@ void InlineFlowBox::deleteLine(RenderArena* arena)
     }
     
     static_cast<RenderFlow*>(m_object)->removeLineBox(this);
-    detach(arena);
+    destroy(arena);
 }
 
 void InlineFlowBox::extractLine()
@@ -1122,16 +1122,16 @@ bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int _x, int _y, int 
     return false;
 }
 
-void RootInlineBox::detach(RenderArena* arena)
+void RootInlineBox::destroy(RenderArena* arena)
 {
     detachEllipsisBox(arena);
-    InlineFlowBox::detach(arena);
+    InlineFlowBox::destroy(arena);
 }
 
 void RootInlineBox::detachEllipsisBox(RenderArena* arena)
 {
     if (m_ellipsisBox) {
-        m_ellipsisBox->detach(arena);
+        m_ellipsisBox->destroy(arena);
         m_ellipsisBox = 0;
     }
 }

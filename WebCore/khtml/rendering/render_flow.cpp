@@ -173,7 +173,7 @@ void RenderFlow::deleteLineBoxes()
         InlineRunBox *curr=m_firstLineBox, *next=0;
         while (curr) {
             next = curr->nextLineBox();
-            curr->detach(arena);
+            curr->destroy(arena);
             curr = next;
         }
         m_firstLineBox = 0;
@@ -181,11 +181,11 @@ void RenderFlow::deleteLineBoxes()
     }
 }
 
-void RenderFlow::detach()
+void RenderFlow::destroy()
 {
     if (!documentBeingDestroyed()) {
         if (m_firstLineBox) {
-            // We can't wait for RenderContainer::detach to clear the selection,
+            // We can't wait for RenderContainer::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             if (isSelectionBorder())
                 canvas()->clearSelection();
@@ -217,7 +217,7 @@ void RenderFlow::detach()
 
     deleteLineBoxes();
 
-    RenderContainer::detach();
+    RenderContainer::destroy();
 }
 
 void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)

@@ -157,7 +157,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
             m_marker->setStyle(newStyle);
         newStyle->deref(renderArena());
     } else if (m_marker) {
-        m_marker->detach();
+        m_marker->destroy();
         m_marker = 0;
     }
 }
@@ -166,13 +166,13 @@ RenderListItem::~RenderListItem()
 {
 }
 
-void RenderListItem::detach()
+void RenderListItem::destroy()
 {    
     if (m_marker) {
-        m_marker->detach();
+        m_marker->destroy();
         m_marker = 0;
     }
-    RenderBlock::detach();
+    RenderBlock::destroy();
 }
 
 void RenderListItem::calcListValue()

@@ -87,9 +87,9 @@ public:
     const QRect& posClipRect() { return m_posClipRect; }
 
     void ref() { m_refCnt++; }
-    void deref(RenderArena* renderArena) { if (--m_refCnt == 0) detach(renderArena); }
+    void deref(RenderArena* renderArena) { if (--m_refCnt == 0) destroy(renderArena); }
     
-    void detach(RenderArena* renderArena);
+    void destroy(RenderArena* renderArena);
 
     // Overloaded new operator.
     void* operator new(size_t sz, RenderArena* renderArena) throw();    
@@ -290,7 +290,7 @@ public:
     
     QRect repaintRect() const { return m_repaintRect; }
 
-    void detach(RenderArena* renderArena);
+    void destroy(RenderArena* renderArena);
 
      // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.

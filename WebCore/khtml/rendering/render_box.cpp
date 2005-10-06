@@ -135,30 +135,30 @@ RenderBox::~RenderBox()
     //kdDebug( 6040 ) << "Element destructor: this=" << nodeName().qstring() << endl;
 }
 
-void RenderBox::detach()
+void RenderBox::destroy()
 {
     // A lot of the code in this funtion is just pasted into
-    // RenderWidget::detach. If anything in this function changes,
-    // be sure to fix RenderWidget::detach() as well. 
+    // RenderWidget::destroy. If anything in this function changes,
+    // be sure to fix RenderWidget::destroy() as well. 
 
     RenderLayer* layer = m_layer;
     RenderArena* arena = renderArena();
     
-    // This must be done before we detach the RenderObject.
+    // This must be done before we destroy the RenderObject.
     if (layer)
         layer->clearClipRect();
         
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
             m_inlineBoxWrapper->remove();
-        m_inlineBoxWrapper->detach(arena);
+        m_inlineBoxWrapper->destroy(arena);
         m_inlineBoxWrapper = 0;
     }
 
-    RenderObject::detach();
+    RenderObject::destroy();
     
     if (layer)
-        layer->detach(arena);
+        layer->destroy(arena);
 }
 
 int RenderBox::contentWidth() const
@@ -676,7 +676,7 @@ void RenderBox::dirtyLineBoxes(bool fullLayout, bool)
 {
     if (m_inlineBoxWrapper) {
         if (fullLayout) {
-            m_inlineBoxWrapper->detach(renderArena());
+            m_inlineBoxWrapper->destroy(renderArena());
             m_inlineBoxWrapper = 0;
         }
         else
@@ -704,7 +704,7 @@ void RenderBox::position(InlineBox* box, int from, int len, bool reverse, bool o
 
         // Nuke the box.
         box->remove();
-        box->detach(renderArena());
+        box->destroy(renderArena());
     }
     else if (isReplaced()) {
         m_x = box->xPos();
@@ -724,7 +724,7 @@ InlineBox* RenderBox::inlineBoxWrapper() const
 void RenderBox::deleteLineBoxWrapper()
 {
     if (m_inlineBoxWrapper)
-        m_inlineBoxWrapper->detach(renderArena());
+        m_inlineBoxWrapper->destroy(renderArena());
     m_inlineBoxWrapper = 0;
 }
 

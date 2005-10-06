@@ -234,12 +234,12 @@ RenderWidget::RenderWidget(DOM::NodeImpl* node)
     ref();
 }
 
-void RenderWidget::detach()
+void RenderWidget::destroy()
 {
-    // We can't call the base class's detach because we don't
+    // We can't call the base class's destroy because we don't
     // want to unconditionally delete ourselves (we're ref-counted).
     // So the code below includes copied and pasted contents of
-    // both RenderBox::detach() and RenderObject::detach().
+    // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
     
     remove();
@@ -261,7 +261,7 @@ void RenderWidget::detach()
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
             m_inlineBoxWrapper->remove();
-        m_inlineBoxWrapper->detach(arena);
+        m_inlineBoxWrapper->destroy(arena);
         m_inlineBoxWrapper = 0;
     }
     
@@ -269,7 +269,7 @@ void RenderWidget::detach()
     deref(arena);
     
     if (layer)
-        layer->detach(arena);
+        layer->destroy(arena);
 }
 
 RenderWidget::~RenderWidget()

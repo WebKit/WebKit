@@ -72,7 +72,7 @@ namespace khtml {
 	    }
 	}
 
-        void detach(RenderArena* renderArena);
+        void destroy(RenderArena* renderArena);
 
         // Overloaded new operator.
         void* operator new(size_t sz, RenderArena* renderArena) throw();

@@ -1453,10 +1453,10 @@ RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
     connect(edit,SIGNAL(selectionChanged()),this,SLOT(slotSelectionChanged()));
 }
 
-void RenderTextArea::detach()
+void RenderTextArea::destroy()
 {
     element()->updateValue();
-    RenderFormElement::detach();
+    RenderFormElement::destroy();
 }
 
 void RenderTextArea::handleFocusOut()

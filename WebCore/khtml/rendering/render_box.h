@@ -51,7 +51,7 @@ public:
     virtual void paint(PaintInfo& i, int _tx, int _ty);
     virtual bool nodeAtPoint(NodeInfo& i, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
 
-    virtual void detach();
+    virtual void destroy();
     
     virtual int minWidth() const { return m_minWidth; }
     virtual int maxWidth() const { return m_maxWidth; }

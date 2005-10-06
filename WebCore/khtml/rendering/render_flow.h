@@ -60,7 +60,7 @@ public:
     void attachLineBox(InlineFlowBox* lineBox);
     void removeLineBox(InlineFlowBox* lineBox);
     void deleteLineBoxes();
-    virtual void detach();
+    virtual void destroy();
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
     

@@ -500,7 +500,7 @@ void* RenderStyle::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void RenderStyle::operator delete(void* ptr, size_t sz)
 {
-    // Stash size where detach can find it.
+    // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 

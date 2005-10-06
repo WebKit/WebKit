@@ -1228,9 +1228,9 @@ void NodeImpl::detach()
 //    assert(m_attached);
 
     if (m_render)
-        m_render->detach();
-
+        m_render->destroy();
     m_render = 0;
+
     DocumentImpl *doc = getDocument();
     if (doc)
         doc->incDOMTreeVersion();

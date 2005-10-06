@@ -818,7 +818,7 @@ public:
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
     bool documentBeingDestroyed() const { return !document()->renderer(); }
 
-    virtual void detach();
+    virtual void destroy();
 
     const QFont &font(bool firstLine) const {
 	return style( firstLine )->font();
