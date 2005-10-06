@@ -347,7 +347,9 @@ static BOOL alwaysUseATSU = NO;
         
         // Try setting up the alternate font.
         // This is a last ditch effort to use a substitute font when something has gone wrong.
+#if !ERROR_DISABLED
         NSFont *initialFont = font.font;
+#endif
         font.font = [[NSFontManager sharedFontManager] convertFont:font.font toFamily:fallbackFontFamily];
 #if !ERROR_DISABLED
         NSString *filePath = pathFromFont(initialFont);

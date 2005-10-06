@@ -1,5 +1,12 @@
 2005-10-06  Darin Adler  <darin@apple.com>
 
+        - fixed compiling on Deployment
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer initWithFont:]):
+        Put initialFont inside !LOG_DISABLED.
+
+2005-10-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - tweaked formatting
