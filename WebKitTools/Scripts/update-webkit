@@ -55,11 +55,11 @@ push @sources, "LayoutTests" if $includeTests;
 push @sources, "SVGSupport" if -d "SVGSupport";
 
 # Check out all the sources.
-print "CVS root is $root\n";
+print "CVS root is $root\n" unless $quiet;
 
 my $directories = join ", ", @sources;
 $directories =~ s/, ([^,]+)$/, and $1/;
-print "Updating $directories\n";
+print "Updating $directories\n" unless $quiet;
 
 open CVS, "cvs $cvsoptions -d '$root' co -P @sources |" or die;
 while (<CVS>) {

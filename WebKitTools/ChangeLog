@@ -1,3 +1,9 @@
+2005-10-06  Darin Adler  <darin@apple.com>
+
+        * Scripts/cvs-apply: Fixed merge option to work better when not all directories
+        are controlled by cvs, or when changes cross multiple repositories.
+        * Scripts/update-webkit: Don't print messages if the "quiet" flag is set.
+
 2005-10-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
