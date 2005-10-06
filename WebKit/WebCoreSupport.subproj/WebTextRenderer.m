@@ -128,31 +128,31 @@ typedef struct ATSULayoutParameters
 - (WebTextRenderer *)substituteRendererForCharacters:(const unichar *)characters length:(int)numCharacters families:(NSString **)families;
 - (WebTextRenderer *)rendererForAlternateFont:(WebCoreFont)alternateNSFont;
 
-- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c;
 - (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer;
 
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs;
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs;
 
 // Measuring runs.
-- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs: (CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs: (int *)_numGlyphs;
-- (float)_ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
+- (float)CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs;
+- (float)ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 // Drawing runs.
-- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 // Selection point detection in runs.
-- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
-- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
+- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
+- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
 
 // Drawing highlight for runs.
-- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 - (BOOL)setUpFont;
 
-- (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
+- (ATSUTextLayout)createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 - (WebTextRenderer *)smallCapsRenderer;
 
@@ -204,7 +204,7 @@ static inline WebGlyphWidth widthFromMap(WebTextRenderer *renderer, WidthMap *ma
 {
     while (1) {
         if (map == 0)
-            map = [renderer _extendGlyphToWidthMapToInclude:glyph];
+            map = [renderer extendGlyphToWidthMapToInclude:glyph];
 
         if (glyph >= map->startRange && glyph <= map->endRange) {
             WebGlyphWidth width = map->widths[glyph - map->startRange];
@@ -415,11 +415,8 @@ static BOOL alwaysUseATSU = NO;
     return self;
 }
 
-- (void)dealloc
+- (void)free
 {
-    [font.font release];
-    [smallCapsRenderer release];
-
     if (styleGroup)
         WKReleaseStyleGroup(styleGroup);
 
@@ -428,21 +425,21 @@ static BOOL alwaysUseATSU = NO;
 
     if (ATSUStyleInitialized)
         ATSUDisposeStyle(_ATSUStyle);
+}
+
+- (void)dealloc
+{
+    [self free];
     
+    [font.font release];
+    [smallCapsRenderer release];
+
     [super dealloc];
 }
 
 - (void)finalize
 {
-    if (styleGroup)
-        WKReleaseStyleGroup(styleGroup);
-
-    freeWidthMap(glyphToWidthMap);
-    freeGlyphMap(characterToGlyphMap);
-
-    if (ATSUStyleInitialized)
-        ATSUDisposeStyle(_ATSUStyle);
-    
+    [self free];
     [super finalize];
 }
 
@@ -484,9 +481,9 @@ static BOOL alwaysUseATSU = NO;
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (shouldUseATSU(run))
-        [self _ATSU_drawRun:run style:style geometry:geometry];
+        [self ATSU_drawRun:run style:style geometry:geometry];
     else
-        [self _CG_drawRun:run style:style geometry:geometry];
+        [self CG_drawRun:run style:style geometry:geometry];
 }
 
 - (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer
@@ -533,8 +530,7 @@ static BOOL alwaysUseATSU = NO;
         CGContextSetLineWidth(cgContext, thickness);
     }
     
-
-    // Use CGContextStrokeLineSegments on Tiger.  J. Burkey says this will be a big performance win.
+    // Use CGContextStrokeLineSegments.
     // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
     // Tiger shipped with Q2DX disabled, tho, so we can use CGContextStrokeLineSegments.
     CGPoint linePoints[2];
@@ -542,7 +538,7 @@ static BOOL alwaysUseATSU = NO;
     linePoints[0].y = point.y + [self lineSpacing] + 1.5F - [self descent] + yOffset;
     linePoints[1].x = point.x + width - 1.0F;
     linePoints[1].y = linePoints[0].y;
-    CGContextStrokeLineSegments (cgContext, linePoints, 2);
+    CGContextStrokeLineSegments(cgContext, linePoints, 2);
 
     [graphicsContext setShouldAntialias: flag];
 }
@@ -551,9 +547,9 @@ static BOOL alwaysUseATSU = NO;
 - (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (shouldUseATSU(run))
-        [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
+        [self ATSU_drawHighlightForRun:run style:style geometry:geometry];
     else
-        [self _CG_drawHighlightForRun:run style:style geometry:geometry];
+        [self CG_drawHighlightForRun:run style:style geometry:geometry];
 }
 
 - (int)misspellingLineThickness
@@ -622,8 +618,8 @@ static BOOL alwaysUseATSU = NO;
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     if (shouldUseATSU(run))
-        return [self _ATSU_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
-    return [self _CG_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
+        return [self ATSU_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
+    return [self CG_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
 
 @end
@@ -661,7 +657,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
 }
 
-- (NSFont *)_substituteFontForString:(NSString *)string families:(NSString **)families
+- (NSFont *)substituteFontForString:(NSString *)string families:(NSString **)families
 {
     NSFont *substituteFont = nil;
 
@@ -729,12 +725,12 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     WebCoreFont substituteFont;
     WebCoreInitializeFont(&substituteFont);
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-    substituteFont.font = [self _substituteFontForString:string families:families];
+    substituteFont.font = [self substituteFontForString:string families:families];
     [string release];
     return [self rendererForAlternateFont:substituteFont];
 }
 
-- (void)_convertCharacters:(const UniChar *)characters length:(unsigned)numCharacters toGlyphs:(WKGlyphVectorRef)glyphs
+- (void)convertCharacters:(const UniChar *)characters length:(unsigned)numCharacters toGlyphs:(WKGlyphVectorRef)glyphs
 {
     OSStatus status = WKConvertCharToGlyphs(styleGroup, characters, numCharacters, glyphs);
     if (status != noErr)
@@ -744,7 +740,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 // Nasty hack to determine if we should round or ceil space widths.
 // If the font is monospace or fake monospace we ceil to ensure that 
 // every character and the space are the same width.  Otherwise we round.
-- (BOOL)_computeWidthForSpace
+- (BOOL)computeWidthForSpace
 {
     spaceGlyph = [self extendCharacterToGlyphMapToInclude:SPACE];
     if (spaceGlyph == 0) {
@@ -781,7 +777,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 
     ATSUDisposeStyle(fontStyle);
 
-    if (![self _computeWidthForSpace]) {
+    if (![self computeWidthForSpace]) {
         freeGlyphMap(characterToGlyphMap);
         characterToGlyphMap = 0;
         WKReleaseStyleGroup(styleGroup);
@@ -794,24 +790,22 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 
 #if !ERROR_DISABLED
 
-static NSString *pathFromFont (NSFont *font)
+static NSString *pathFromFont(NSFont *font)
 {
-    UInt8 _filePathBuffer[PATH_MAX];
-    NSString *filePath = nil;
     FSSpec oFile;
     OSStatus status = ATSFontGetFileSpecification(FMGetATSFontRefFromFont((FMFont)WKGetNSFontATSUFontId(font)), &oFile);
-    if (status == noErr){
+    if (status == noErr) {
         OSErr err;
         FSRef fileRef;
-        err = FSpMakeFSRef(&oFile,&fileRef);
-        if (err == noErr){
-            status = FSRefMakePath(&fileRef,_filePathBuffer, PATH_MAX);
-            if (status == noErr){
-                filePath = [NSString stringWithUTF8String:(const char *)&_filePathBuffer[0]];
-            }
+        err = FSpMakeFSRef(&oFile, &fileRef);
+        if (err == noErr) {
+            UInt8 filePathBuffer[PATH_MAX];
+            status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
+            if (status == noErr)
+                return [NSString stringWithUTF8String:(const char *)filePathBuffer];
         }
     }
-    return filePath;
+    return nil;
 }
 
 #endif
@@ -867,7 +861,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 }
 
-- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
+- (void)CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (run->length == 0)
         return;
@@ -892,7 +886,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
     }
 
-    if (style->backgroundColor != nil){
+    if (style->backgroundColor != nil) {
         // Calculate the width of the selection background by adding
         // up the advances of all the glyphs in the selection.
         
@@ -914,7 +908,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 }
 
 
-- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
+- (void)CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
     CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
@@ -952,7 +946,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         return;
         
     // Fill the advances array.
-    for (i = 0; i < numGlyphs; i++){
+    for (i = 0; i < numGlyphs; i++) {
         advances[i].width = widthBuffer[i];
         advances[i].height = 0;
     }
@@ -962,7 +956,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     startX += geometry->point.x;
 
     if (style->backgroundColor != nil)
-        [self _CG_drawHighlightForRun:run style:style geometry:geometry];
+        [self CG_drawHighlightForRun:run style:style geometry:geometry];
     
     // Swap the order of the glyphs if right-to-left.
     if (style->rtl) {
@@ -1021,16 +1015,16 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 }
 
 - (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
-    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
+    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs
 {
     if (shouldUseATSU(run))
-        return [self _ATSU_floatWidthForRun:run style:style];
+        return [self ATSU_floatWidthForRun:run style:style];
     
-    return [self _CG_floatWidthForRun:run style:style widths:widthBuffer substituteRenderers:rendererBuffer glyphs:glyphBuffer startPosition:startPosition numGlyphs:_numGlyphs];
+    return [self CG_floatWidthForRun:run style:style widths:widthBuffer substituteRenderers:rendererBuffer glyphs:glyphBuffer startPosition:startPosition numGlyphs:numGlyphs];
 }
 
-- (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
-    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)_numGlyphs
+- (float)CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
+    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphsResult
 {
     float _nextWidth;
     CharacterWidthIterator widthIterator;
@@ -1054,8 +1048,8 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         numGlyphs++;
     }
         
-    if (_numGlyphs)
-        *_numGlyphs = numGlyphs;
+    if (numGlyphsResult)
+        *numGlyphsResult = numGlyphs;
 
     return widthIterator.runWidthSoFar;
 }
@@ -1135,7 +1129,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         return 0;
     }
 
-    [self _convertCharacters:&buffer[0] length:bufferLength toGlyphs:&glyphVector];
+    [self convertCharacters:&buffer[0] length:bufferLength toGlyphs:&glyphVector];
     unsigned numGlyphs = WKGetGlyphVectorNumGlyphs(&glyphVector);
     if (numGlyphs != count) {
         // This should never happen, perhaps indicates a bad font?
@@ -1172,7 +1166,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     return glyphID;
 }
 
-- (WidthMap *)_extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID
 {
     WidthMap *map = (WidthMap *)calloc(1, sizeof(WidthMap));
     unsigned end;
@@ -1195,8 +1189,6 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         start = (glyphID / blockSize) * blockSize;
     }
     end = ((unsigned)start) + blockSize; 
-    if (end > 0xffff)
-        end = 0xffff;
 
     LOG(FontCache, "%@ (0x%04x) adding widths for range 0x%04x to 0x%04x", font, glyphID, start, end);
 
@@ -1220,17 +1212,17 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     return map;
 }
 
-- (void)_initializeATSUStyle
+- (void)initializeATSUStyle
 {
     // The two NSFont calls in this method (pointSize and _atsFontID)
     // are both exception-safe.
 
-    if (!ATSUStyleInitialized){
+    if (!ATSUStyleInitialized) {
         OSStatus status;
         ByteCount propTableSize;
         
         status = ATSUCreateStyle(&_ATSUStyle);
-        if(status != noErr)
+        if (status != noErr)
             FATAL_ALWAYS("ATSUCreateStyle failed (%d)", status);
     
         ATSUFontID fontID = WKGetNSFontATSUFontId(font.font);
@@ -1240,27 +1232,27 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
             return;
         }
         
-        CGAffineTransform transform = CGAffineTransformMakeScale (1,-1);
+        CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
         Fixed fontSize = FloatToFixed([font.font pointSize]);
         ATSUAttributeTag styleTags[] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag};
         ByteCount styleSizes[] = {  sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform) };
         ATSUAttributeValuePtr styleValues[] = { &fontSize, &fontID, &transform  };
-        status = ATSUSetAttributes (_ATSUStyle, 3, styleTags, styleSizes, styleValues);
-        if(status != noErr)
-            FATAL_ALWAYS ("ATSUSetAttributes failed (%d)", status);
+        status = ATSUSetAttributes(_ATSUStyle, 3, styleTags, styleSizes, styleValues);
+        if (status != noErr)
+            FATAL_ALWAYS("ATSUSetAttributes failed (%d)", status);
         status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
         if (status == noErr)    // naively assume that if a 'prop' table exists then it contains mirroring info
             ATSUMirrors = YES;
         else if (status == kATSInvalidFontTableAccess)
             ATSUMirrors = NO;
         else
-            FATAL_ALWAYS ("ATSFontGetTable failed (%d)", status);
+            FATAL_ALWAYS("ATSFontGetTable failed (%d)", status);
 
         ATSUStyleInitialized = YES;
     }
 }
 
-- (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
+- (ATSUTextLayout)createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
 {
     // The only Cocoa calls here are to NSGraphicsContext and the self
     // call to _initializeATSUStyle, which are all exception-safe.
@@ -1273,7 +1265,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     OSStatus status;
     ATSULayoutOperationOverrideSpecifier overrideSpecifier;
     
-    [self _initializeATSUStyle];
+    [self initializeATSUStyle];
     
     // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
     // - \n, \t, and nonbreaking space render as a space.
@@ -1292,8 +1284,8 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
             &runLength,     // length of style run
             &_ATSUStyle, 
             &layout);
-    if(status != noErr)
-        FATAL_ALWAYS ("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
+    if (status != noErr)
+        FATAL_ALWAYS("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;
@@ -1305,18 +1297,18 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions, &rtl, &overrideSpecifier };
     
     status = ATSUSetLayoutControls(layout, (style->applyWordRounding ? 4 : 3), tags, sizes, values);
-    if(status != noErr)
-        FATAL_ALWAYS ("ATSUSetLayoutControls failed(%d)", status);
+    if (status != noErr)
+        FATAL_ALWAYS("ATSUSetLayoutControls failed(%d)", status);
 
-    status = ATSUSetTransientFontMatching (layout, YES);
-    if(status != noErr)
-        FATAL_ALWAYS ("ATSUSetTransientFontMatching failed(%d)", status);
+    status = ATSUSetTransientFontMatching(layout, YES);
+    if (status != noErr)
+        FATAL_ALWAYS("ATSUSetTransientFontMatching failed(%d)", status);
 
     substituteOffset = run->from;
     while ((status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength)) == kATSUFontsMatched || status == kATSUFontsNotMatched) {
         WebTextRenderer *substituteRenderer = [self substituteRendererForCharacters:run->characters+substituteOffset length:substituteLength families:style->families];
         if (substituteRenderer) {
-            [substituteRenderer _initializeATSUStyle];
+            [substituteRenderer initializeATSUStyle];
             if (substituteRenderer && substituteRenderer->_ATSUStyle)
                 ATSUSetRunStyle(layout, substituteRenderer->_ATSUStyle, substituteOffset, substituteLength);
             // ignoring errors
@@ -1329,14 +1321,14 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 }
 
 
-- (ATSTrapezoid)_trapezoidForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint )p
+- (ATSTrapezoid)trapezoidForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint )p
 {
     // The only Cocoa call here is the self call to
     // _createATSUTextLayoutForRun:, which is exception-safe.
 
     OSStatus status;
     
-    if (run->to - run->from <= 0){
+    if (run->to - run->from <= 0) {
         ATSTrapezoid nilTrapezoid = { {0,0} , {0,0}, {0,0}, {0,0} };
         return nilTrapezoid;
     }
@@ -1346,12 +1338,11 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
-    status = ATSUGetGlyphBounds (params.layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
-    if(status != noErr)
-        FATAL_ALWAYS ("ATSUGetGlyphBounds() failed(%d)", status);
-    
+    status = ATSUGetGlyphBounds(params.layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
+    if (status != noErr)
+        FATAL_ALWAYS("ATSUGetGlyphBounds() failed(%d)", status);
     if (actualNumBounds != 1)
-        FATAL_ALWAYS ("unexpected result from ATSUGetGlyphBounds():  actualNumBounds(%d) != 1", actualNumBounds);
+        FATAL_ALWAYS("unexpected result from ATSUGetGlyphBounds(): actualNumBounds(%d) != 1", actualNumBounds);
 
     disposeATSULayoutParameters(&params);
             
@@ -1359,11 +1350,11 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 }
 
 
-- (float)_ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
+- (float)ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
 {
     ATSTrapezoid oGlyphBounds;
     
-    oGlyphBounds = [self _trapezoidForRun:run style:style atPoint:NSMakePoint (0,0)];
+    oGlyphBounds = [self trapezoidForRun:run style:style atPoint:NSMakePoint(0,0)];
     
     float width = 
         MAX(FixedToFloat(oGlyphBounds.upperRight.x), FixedToFloat(oGlyphBounds.lowerRight.x)) - 
@@ -1396,7 +1387,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     unsigned int i;
     
     UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*(run->length));
-    for (i=0; i < run->length; i++) {
+    for (i = 0; i < run->length; i++) {
         // will choke on surrogate pairs?
         swappedCharacters[i] = u_charMirror(run->characters[i]);
     }
@@ -1408,7 +1399,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     return swappedRun;
 }
 
-- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
+- (void)ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     // The only Cocoa calls made here are to NSColor and NSBezierPath,
     // plus the self calls to _createATSUTextLayoutForRun: and
@@ -1438,9 +1429,8 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         to = run->length;
    
     int runLength = to - from;
-    if (runLength <= 0){
+    if (runLength <= 0)
         return;
-    }
 
     WebCoreTextRun completeRun = *aRun;
     completeRun.from = 0;
@@ -1451,7 +1441,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     ATSLayoutRecord *layoutRecords;
     OSStatus status = ATSUDirectGetLayoutDataArrayPtrFromTextLayout(params.layout, 0, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, (void **)&layoutRecords, &count);
     if (status != noErr)
-        FATAL_ALWAYS ("ATSUDirectGetLayoutDataArrayPtrFromTextLayout failed(%d)", status);
+        FATAL_ALWAYS("ATSUDirectGetLayoutDataArrayPtrFromTextLayout failed(%d)", status);
     ItemCount i = 0;
     if (!style->rtl)
         while (i < count && layoutRecords[i].originalOffset < sizeof(UniChar) * aRun->from)
@@ -1478,15 +1468,15 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     disposeATSULayoutParameters(&params);
 
     if (style->directionalOverride || (style->rtl && !ATSUMirrors))
-        free ((void *)swappedRun.characters);
+        free((void *)swappedRun.characters);
 }
 
 
-- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
+- (void)ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     // The only Cocoa calls made here are to NSColor and NSGraphicsContext, plus the self
     // calls to _createATSUTextLayoutForRun: and
-    // _ATSU_drawHighlightForRun:. These are all exception-safe.
+    // ATSU_drawHighlightForRun:. These are all exception-safe.
 
     OSStatus status;
     int from, to;
@@ -1519,7 +1509,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     createATSULayoutParameters(&params, self, &completeRun, style);
 
     if (style->backgroundColor != nil)
-        [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
+        [self ATSU_drawHighlightForRun:run style:style geometry:geometry];
 
     [style->textColor set];
 
@@ -1535,26 +1525,22 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         CGContextScaleCTM(context, 1.0, -1.0);
     CGContextTranslateCTM(context, -geometry->point.x, -geometry->point.y);
 
-    if (status != noErr){
+    if (status != noErr) {
         // Nothing to do but report the error (dev build only).
-        ERROR ("ATSUDrawText() failed(%d)", status);
+        ERROR("ATSUDrawText() failed(%d)", status);
     }
 
     disposeATSULayoutParameters(&params);
     
     if (style->directionalOverride || (style->rtl && !ATSUMirrors))
-        free ((void *)swappedRun.characters);
+        free((void *)swappedRun.characters);
 }
 
-- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
+- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     // The only Cocoa calls made here is to the self call to
     // _createATSUTextLayoutForRun:. This is exception-safe.
 
-    unsigned offset = 0;
-    UniCharArrayOffset secondaryOffset = 0;
-    OSStatus status;
-    Boolean isLeading;
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
@@ -1583,33 +1569,35 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     
     // FIXME: No idea how to avoid including partial glyphs.   Not even sure if that's the behavior
     // this yields now.
-    status = ATSUPositionToOffset(params.layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
-    if (status == noErr){
+    Boolean isLeading;
+    UniCharArrayOffset secondaryOffset = 0;
+    OSStatus status = ATSUPositionToOffset(params.layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
+    unsigned offset;
+    if (status == noErr) {
         offset = (unsigned)primaryOffset;
-    }
-    else {
+    } else {
         // Failed to find offset!  Return 0 offset.
+        offset = 0;
     }
-       
+
     disposeATSULayoutParameters(&params);
     
     if (style->directionalOverride || (style->rtl && !ATSUMirrors))
-        free ((void *)swappedRun.characters);
+        free((void *)swappedRun.characters);
 
     return offset - aRun->from;
 }
 
-- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
+- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     float delta = (float)x;
-    float width;   ///  FIX: CHECK THIS
     unsigned offset = run->from;
     CharacterWidthIterator widthIterator;
     
     initializeCharacterWidthIterator(&widthIterator, self, run, style);
 
     if (reversed) {
-        width = [self floatWidthForRun:run style:style widths:nil];
+        float width = [self floatWidthForRun:run style:style widths:nil];
         delta -= width;
         while (offset < run->length) {
             float w = widthForNextCharacter(&widthIterator, 0, 0);
@@ -1622,7 +1610,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
                     if (includePartialGlyphs)
                        w -= w/2;
                     delta += w;
-                    if(delta >= 0)
+                    if (delta >= 0)
                         break;
                     if (includePartialGlyphs)
                         delta += w;
@@ -1642,7 +1630,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
                     if (includePartialGlyphs)
                         w -= w/2;
                     delta -= w;
-                    if(delta <= 0) 
+                    if (delta <= 0) 
                         break;
                     if (includePartialGlyphs)
                         delta -= w;
@@ -1701,7 +1689,7 @@ static inline ATSGlyphRef glyphForCharacter(GlyphMap *map, UnicodeChar c, WebTex
     return nonGlyphID;
 }
 
-static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
+static void initializeCharacterWidthIterator(CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
 {
     iterator->renderer = renderer;
     iterator->run = run;
@@ -1736,7 +1724,7 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
         startPositionRun.from = 0;
         startPositionRun.to = run->from;
         CharacterWidthIterator startPositionIterator;
-        initializeCharacterWidthIterator (&startPositionIterator, renderer, &startPositionRun, style);
+        initializeCharacterWidthIterator(&startPositionIterator, renderer, &startPositionRun, style);
         
         while (startPositionIterator.currentCharacter < (unsigned)startPositionRun.to)
             widthForNextCharacter(&startPositionIterator, 0, 0);
@@ -1751,7 +1739,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
     params->renderer = renderer;
     params->run = run;
     params->style = style;
-    params->layout = [renderer _createATSUTextLayoutForRun:run style:style];
+    params->layout = [renderer createATSUTextLayoutForRun:run style:style];
     ATSUSetTextLayoutRefCon(params->layout, (UInt32)params);
 }
 
@@ -1760,7 +1748,7 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     ATSUDisposeTextLayout(params->layout);
 }
 
-static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
+static inline float ceilCurrentWidth(CharacterWidthIterator *iterator)
 {
     float totalWidth = iterator->widthToStart + iterator->runWidthSoFar;
     float delta = ceilf(totalWidth) - totalWidth;
@@ -1954,27 +1942,21 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
-    if (theFont) {
-        ATSUFontID fontId = WKGetNSFontATSUFontId(theFont);
-        LOG (FontCache, "fillStyleWithAttributes:  font = %p,%@, _atsFontID = %x\n", theFont, theFont, (unsigned)fontId);
-        ATSUAttributeTag tag = kATSUFontTag;
-        ByteCount size = sizeof(ATSUFontID);
-        ATSUFontID *valueArray[1] = {&fontId};
-        OSStatus status;
-
-        if (fontId) {
-            status = ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray);
-            if (status != noErr){
-                LOG (FontCache, "fillStyleWithAttributes failed(%d):  font = %p,%@, _atsFontID = %x\n", (int)status, theFont, theFont, (unsigned)fontId);
-                return NO;
-            }
-        }
-        else {
-            return NO;
-        }
-        return YES;
+    if (!theFont)
+        return NO;
+    ATSUFontID fontId = WKGetNSFontATSUFontId(theFont);
+    LOG(FontCache, "fillStyleWithAttributes: font = %p,%@, _atsFontID = %x\n", theFont, theFont, (unsigned)fontId);
+    if (!fontId)
+        return NO;
+    ATSUAttributeTag tag = kATSUFontTag;
+    ByteCount size = sizeof(ATSUFontID);
+    ATSUFontID *valueArray[1] = {&fontId};
+    OSStatus status = ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray);
+    if (status != noErr) {
+        LOG(FontCache, "fillStyleWithAttributes failed(%d): font = %p,%@, _atsFontID = %x\n", (int)status, theFont, theFont, (unsigned)fontId);
+        return NO;
     }
-    return NO;
+    return YES;
 }
 
 static BOOL shouldUseATSU(const WebCoreTextRun *run)
@@ -1987,37 +1969,37 @@ static BOOL shouldUseATSU(const WebCoreTextRun *run)
     int i;
     for (i = run->from; i < to; i++) {
         UniChar c = characters[i];
-        if (c < 0x300)                      // U+0300 through U+036F Combining diacritical marks
+        if (c < 0x300)      // U+0300 through U+036F Combining diacritical marks
             continue;
         if (c <= 0x36F)
             return YES;
 
-        if (c < 0x0591)                     // U+0591 through U+1059 Arabic, Hebrew, Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+        if (c < 0x0591)     // U+0591 through U+1059 Arabic, Hebrew, Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
             continue;
         if (c <= 0x1059)
             return YES;
 
-        if (c < 0x1100)                     // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
+        if (c < 0x1100)     // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
             continue;
         if (c <= 0x11FF)
             return YES;
 
-        if (c < 0x1780)                     // U+1780 through U+18AF Khmer, Mongolian
+        if (c < 0x1780)     // U+1780 through U+18AF Khmer, Mongolian
             continue;
         if (c <= 0x18AF)
             return YES;
 
-        if (c < 0x1900)                     // U+1900 through U+194F Limbu (Unicode 4.0)
+        if (c < 0x1900)     // U+1900 through U+194F Limbu (Unicode 4.0)
             continue;
         if (c <= 0x194F)
             return YES;
 
-        if (c < 0x20D0)                     // U+20D0 through U+20FF Combining marks for symbols
+        if (c < 0x20D0)     // U+20D0 through U+20FF Combining marks for symbols
             continue;
         if (c <= 0x20FF)
             return YES;
 
-        if (c < 0xFE20)                     // U+FE20 through U+FE2F Combining half marks
+        if (c < 0xFE20)     // U+FE20 through U+FE2F Combining half marks
             continue;
         if (c <= 0xFE2F)
             return YES;

@@ -2,6 +2,15 @@
 
         Reviewed by Eric.
 
+        - tweaked formatting
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Changed function names to remove underscores;
+        fixed formatting to match our coding guidelines, other related tweaks.
+
+2005-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
         - fixed regression in drawing of text in non-flipped contexts from my last check-in
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
