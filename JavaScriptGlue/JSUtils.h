@@ -22,6 +22,7 @@
 #include <JavaScriptCore/object.h>
 #include <JavaScriptCore/types.h>
 #include <JavaScriptCore/interpreter.h>
+#include <JavaScriptCore/protect.h>
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/ustring.h>
 #endif

@@ -317,9 +317,8 @@ bool JSRunCheckSyntax(JSRunRef ref)
 void JSCollect(void)
 {
 #if JAG_PINK_OR_LATER
-	Interpreter::lock();
+    InterpreterLock lock;
 	Collector::collect();
-	Interpreter::unlock(); 
 #endif
 }
 

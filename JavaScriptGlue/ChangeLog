@@ -1,3 +1,27 @@
+2005-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	- fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
+
+	Make sure to lock using the InterpreterLock class in all places that need it
+	(including anything that uses the collector, the parser, the protect count hash table,
+	and anything that allocates via fast_malloc).
+
+        * JSUtils.cpp:
+        (CFStringToUString):
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectCopyCFValue):
+        * JavaScriptGlue.cpp:
+        (JSCollect):
+
 2005-09-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
