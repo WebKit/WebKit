@@ -1,3 +1,13 @@
+2005-10-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        No test cases added because this does not affect layout.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView setLineHeight:]):
+        Don't call [textView didChangeText] here, because the text itself did not change.
+
 EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by nobody.

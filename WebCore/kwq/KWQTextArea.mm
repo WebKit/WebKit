@@ -582,7 +582,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
             loc = NSMaxRange(effectiveRange);
         }
         [storage endEditing];
-        [textView didChangeText];
         paraStyle = [storage attribute:NSParagraphStyleAttributeName atIndex:range.location effectiveRange:NULL];
     }
     
