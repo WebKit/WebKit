@@ -1345,11 +1345,11 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
 #else
     DOMString text = i18n("This is a searchable index. Enter search keywords: ");
 #endif
-    if (attrs)
+    if (attrs) {
         if (AttributeImpl *a = attrs->getAttributeItem(promptAttr))
             text = a->value().domString() + " ";
-
-    attrs->deref();
+        attrs->deref();
+    }
 
     n->addChild(new HTMLHRElementImpl(document));
     n->addChild(new TextImpl(document, text));

@@ -1,3 +1,12 @@
+2005-10-05  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+ 
+	- fix <rdar://problem/4288829> repro crash on isIndex tag with no attributes
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleIsindex): only deref attributes if they exist
+
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
