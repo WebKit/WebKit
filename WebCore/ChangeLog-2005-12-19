@@ -1,5 +1,40 @@
 2005-10-06  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Dave Harrison
+
+        No test cases added because this does not affect layout.
+
+	Added assertions to catch WebCore whenever it tries to dispatch an event
+	while it is modifying the DOM tree. This does not fix any bugs but was 
+	inspired by 4134884 and 4132581. 
+
+        * khtml/rendering/render_container.cpp: Assert that m_first is anonymous
+        (RenderContainer::destroy):
+        * khtml/xml/dom_nodeimpl.cpp: Added static int eventDispatchForbidden, and
+					forbidEventDispatch() and allowEventDispatch()
+					to wrap code that modifies the tree.
+        (DOM::forbidEventDispatch):
+        (DOM::allowEventDispatch): 
+        (DOM::NodeImpl::dispatchEvent): Added assertion.
+        (DOM::NodeImpl::dispatchGenericEvent): Added assertion.
+        (DOM::NodeImpl::dispatchHTMLEvent): Added assertion.
+        (DOM::NodeImpl::dispatchWindowEvent): Added assertion.
+        (DOM::NodeImpl::dispatchMouseEvent): Added assertion.
+        (DOM::NodeImpl::dispatchSimulatedMouseEvent): Added assertion.
+        (DOM::NodeImpl::dispatchUIEvent): Added assertion.
+        (DOM::NodeImpl::dispatchKeyEvent): Added assertion.
+        (DOM::NodeImpl::dispatchWheelEvent): Added assertion.
+        (DOM::NodeImpl::detach): Added assertion.
+        (DOM::ContainerNodeImpl::insertBefore): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::replaceChild): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::removeChild): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::removeChildren): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::appendChild): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::addChild): Wrapped tree-modifying code.
+        (DOM::ContainerNodeImpl::dispatchChildInsertedEvents): Added. assertion. 
+
+2005-10-06  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Hyatt
 
         No test case added because you need to interact with a page to see this crash. 

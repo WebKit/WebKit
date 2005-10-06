@@ -63,6 +63,7 @@ void RenderContainer::destroy()
         continuation()->destroy();
     
     while (m_first) {
+        assert(m_first->isAnonymous());
         if (m_first->isListMarker())
             m_first->remove();
         else
