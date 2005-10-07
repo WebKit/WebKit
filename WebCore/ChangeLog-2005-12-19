@@ -7,8 +7,9 @@
         <rdar://problem/3690703> selection is allowed to span editable area and rest of document
 
         * khtml/editing/SelectionController.cpp:
-        (khtml::SelectionController::adjustExtentForEditableContent): 
-        Added, ensures that a selection cannot cross an editable/non-editable boundry.
+        (khtml::SelectionController::adjustExtentForEditableContent): Added.
+        Ensures that a selection based in an editable element cannot extend outside that element's root editable element.
+        Also ensures that a selection that's based outside of editable content cannot extend into an editable element.
         (khtml::SelectionController::validate):
         * khtml/editing/SelectionController.h:
         * khtml/editing/visible_position.h:
@@ -16,11 +17,11 @@
         (KHTMLPart::setSelection):
         (KHTMLPart::setFocusNodeIfNeeded):
         (KHTMLPart::selectAll):
-        Select only the contents of the rootEditableElement, if it exists.  Also now calls the shouldChangeSelection delegate method.
+        If the current selection is inside an editable element, only select the contents of the root editable element.
         * khtml/xml/dom_nodeimpl.cpp:
         (DOM::ContainerNodeImpl::setFocus): Clicking on an editable element used to change the selection twice.
         * kwq/KWQKHTMLPart.mm:
-        (KWQKHTMLPart::nextKeyViewInFrame): Select All when tabbing to an editable element, to match <textarea>s
+        (KWQKHTMLPart::nextKeyViewInFrame): Does a select all when tabbing into an editable element, to match <textarea>s.
 
 2005-10-06  Vicki Murley  <vicki@apple.com>
 
