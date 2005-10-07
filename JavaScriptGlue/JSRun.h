@@ -10,8 +10,8 @@
 
 class JSInterpreter : public Interpreter {
 	public:
-		JSInterpreter(const Object &global, JSFlags flags) : Interpreter(global), fJSFlags(flags) { }
-		JSInterpreter(const Object &global) : Interpreter(global), fJSFlags(kJSFlagNone) { }
+		JSInterpreter(ObjectImp *global, JSFlags flags) : Interpreter(global), fJSFlags(flags) { }
+		JSInterpreter(ObjectImp *global) : Interpreter(global), fJSFlags(kJSFlagNone) { }
 		JSInterpreter() : Interpreter(), fJSFlags(kJSFlagNone) { }
 		JSInterpreter::~JSInterpreter() { }
 		JSFlags Flags() const { return fJSFlags; }
@@ -25,14 +25,14 @@ class JSRun : public JSBase {
 		virtual ~JSRun();
 
 		UString GetSource() const;
-		Object GlobalObject() const;
+		ObjectImp *GlobalObject() const;
 		JSInterpreter* GetInterpreter();
 		Completion Evaluate();
 		bool CheckSyntax();
 		JSFlags Flags() const;
 	private:
 		UString fSource;		
-		ProtectedObject fGlobalObject;
+		ProtectedPtr<ObjectImp> fGlobalObject;
 		JSInterpreter fInterpreter;
 		JSFlags fFlags;
 };

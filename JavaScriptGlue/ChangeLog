@@ -1,3 +1,47 @@
+2005-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric and Darin.
+
+	<rdar://problem/4260506> Port JavaScriptGlue to TOT JavaScriptCore
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        (JSRun::GlobalObject):
+        * JSRun.h:
+        (JSInterpreter::JSInterpreter):
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (KJSValueToCFType):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSValueWrapper):
+        (JSValueWrapper::GetValue):
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectMark):
+        * JSValueWrapper.h:
+        * JavaScriptGlue.cpp:
+        (JSRunCopyGlobalObject):
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+        * Makefile.am: Added.
+        * UserObjectImp.cpp:
+        (UserObjectPrototypeImp::GlobalUserObjectPrototypeImp):
+        (UserObjectImp::UserObjectImp):
+        (UserObjectImp::callAsFunction):
+        (UserObjectImp::getPropertyNames):
+        (UserObjectImp::userObjectGetter):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::toPrimitive):
+        (UserObjectImp::mark):
+        * UserObjectImp.h:
+        * kxmlcore/FastMalloc.h: Added.
+        * kxmlcore/HashSet.h: Added.
+
 2005-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

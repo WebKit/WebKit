@@ -43,9 +43,9 @@ CFStringRef UStringToCFString(const UString& inUString);
 Identifier CFStringToIdentifier(CFStringRef inCFString);
 CFStringRef IdentifierToCFString(const Identifier& inIdentifier);
 #endif
-JSUserObject* KJSValueToJSObject(const Value& inValue, ExecState *exec);
-CFTypeRef KJSValueToCFType(const Value& inValue, ExecState *exec);
-Value JSObjectKJSValue(JSUserObject* ptr);
+JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec);
+CFTypeRef KJSValueToCFType(ValueImp *inValue, ExecState *exec);
+ValueImp *JSObjectKJSValue(JSUserObject* ptr);
 CFTypeRef GetCFNull(void);
 
 inline CFTypeRef RetainCFType(CFTypeRef x) { if (x) x = CFRetain(x); return x; }

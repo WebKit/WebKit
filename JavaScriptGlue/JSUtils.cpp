@@ -9,6 +9,7 @@
 #include "UserObjectImp.h"
 #include "JSValueWrapper.h"
 #include "JSObject.h"
+#include "JavaScriptCore/IdentifierSequencedSet.h"
 
 struct ObjectImpList {
 	ObjectImp* imp;
@@ -16,7 +17,7 @@ struct ObjectImpList {
 	CFTypeRef data;
 };
 
-static CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, ObjectImpList* inImps);
+static CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImpList* inImps);
 
 
 //--------------------------------------------------------------------------
@@ -77,44 +78,37 @@ CFStringRef IdentifierToCFString(const Identifier& inIdentifier)
 //--------------------------------------------------------------------------
 //	KJSValueToJSObject
 //--------------------------------------------------------------------------
-JSUserObject*		KJSValueToJSObject(const Value& inValue, ExecState *exec)
+JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec)
 {
-	JSUserObject* result = NULL;
-#if JAG_PINK_OR_LATER
-	UserObjectImp* userObjectImp;
-	if (inValue.type() == ObjectType && (userObjectImp = dynamic_cast<UserObjectImp*>(inValue.imp())))
-#else
-	if (UserObjectImp* userObjectImp = dynamic_cast<UserObjectImp*>(inValue.imp()))
-#endif
-	{
-		result =  userObjectImp->GetJSUserObject();
-		if (result) result->Retain();
-	}
-	else
-	{
-		JSValueWrapper* wrapperValue = new JSValueWrapper(inValue, exec);
-		if (wrapperValue)
-		{
-			JSObjectCallBacks callBacks;
-			JSValueWrapper::GetJSObectCallBacks(callBacks);
-			result = (JSUserObject*)JSObjectCreate(wrapperValue, &callBacks);
-			if (!result)
-			{
-				delete wrapperValue;
-			}
-		}
-	}
-	return result;
+    JSUserObject* result = NULL;
+    
+    if (inValue->isObject(&UserObjectImp::info)) {
+        UserObjectImp* userObjectImp = static_cast<UserObjectImp *>(inValue);
+        result = userObjectImp->GetJSUserObject();
+        if (result) 
+            result->Retain();
+    } else {
+        JSValueWrapper* wrapperValue = new JSValueWrapper(inValue, exec);
+        if (wrapperValue) {
+            JSObjectCallBacks callBacks;
+            JSValueWrapper::GetJSObectCallBacks(callBacks);
+            result = (JSUserObject*)JSObjectCreate(wrapperValue, &callBacks);
+            if (!result) {
+                delete wrapperValue;
+            }
+        }
+    }
+    return result;
 }
 
 //--------------------------------------------------------------------------
 //	JSObjectKJSValue
 //--------------------------------------------------------------------------
-Value JSObjectKJSValue(JSUserObject* ptr)
+ValueImp *JSObjectKJSValue(JSUserObject* ptr)
 {
     InterpreterLock lock;
 
-    Value result = Undefined();
+    ValueImp *result = Undefined();
     if (ptr)
     {
         bool handled = false;
@@ -183,7 +177,7 @@ Value JSObjectKJSValue(JSUserObject* ptr)
         }
         if (!handled)
         {
-            result = Object(new UserObjectImp(ptr));
+            result = new UserObjectImp(ptr);
         }
     }
     return result;
@@ -196,37 +190,35 @@ Value JSObjectKJSValue(JSUserObject* ptr)
 //	KJSValueToCFTypeInternal
 //--------------------------------------------------------------------------
 // Caller is responsible for releasing the returned CFTypeRef
-CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, ObjectImpList* inImps)
+CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImpList* inImps)
 {
-#if JAG_PINK_OR_LATER
-	if (inValue.isNull())
+	if (inValue)
 		return NULL;
-#endif
 		
 	CFTypeRef result = NULL;
 	
         InterpreterLock lock;
 
-	switch (inValue.type())
+	switch (inValue->type())
 	{
 		case BooleanType:
 			{
-				result = inValue.toBoolean(exec) ? kCFBooleanTrue : kCFBooleanFalse;
+				result = inValue->toBoolean(exec) ? kCFBooleanTrue : kCFBooleanFalse;
 				RetainCFType(result);
 			}
 			break;
 			
 		case StringType:
 			{
-				UString uString = inValue.toString(exec);
+				UString uString = inValue->toString(exec);
 				result = UStringToCFString(uString);
 			}
 			break;
 			
 		case NumberType:
 			{
-				double number1 = inValue.toNumber(exec);
-				double number2 = (double)inValue.toInteger(exec);
+				double number1 = inValue->toNumber(exec);
+				double number2 = (double)inValue->toInteger(exec);
 				if (number1 ==  number2)
 				{
 					int intValue = (int)number2;
@@ -241,8 +233,8 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 			
 		case ObjectType:
 			{
-				if (UserObjectImp* userObjectImp = dynamic_cast<UserObjectImp*>(inValue.imp()))
-				{
+                            if (inValue->isObject(&UserObjectImp::info)) {
+                                UserObjectImp* userObjectImp = static_cast<UserObjectImp *>(inValue);
 					JSUserObject* ptr = userObjectImp->GetJSUserObject();
 					if (ptr)
 					{
@@ -251,11 +243,11 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 				}
 				else
 				{
-					Object object = inValue.toObject(exec);
+					ObjectImp *object = inValue->toObject(exec);
 					UInt8 isArray = false;
 
 					// if two objects reference each
-					ObjectImp* imp = object.imp();
+					ObjectImp* imp = object;
 					ObjectImpList* temp = inImps;
 					while (temp) {
 						if (imp == temp->imp) {
@@ -271,21 +263,22 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 					
 //[...] HACK since we do not have access to the class info we use class name instead
 #if 0
-					if (object.inherits(&ArrayInstanceImp::info))
+					if (object->inherits(&ArrayInstanceImp::info))
 #else
-					if (object.className() == "Array")
+					if (object->className() == "Array")
 #endif
 					{
 						isArray = true;					
 #if JAG_PINK_OR_LATER
 						JSInterpreter* intrepreter = (JSInterpreter*)exec->dynamicInterpreter();
 						if (intrepreter && (intrepreter->Flags() & kJSFlagConvertAssociativeArray)) {
-							ReferenceList propList = object.propList(exec, false);
-							ReferenceListIterator iter = propList.begin();
-							ReferenceListIterator end = propList.end();
+							IdentifierSequencedSet propList;
+                                                        object->getPropertyNames(exec, propList);
+							IdentifierSequencedSetIterator iter = propList.begin();
+							IdentifierSequencedSetIterator end = propList.end();
 							while(iter != end && isArray)
 							{
-								Identifier propName = iter->getPropertyName(exec);
+								Identifier propName = *iter;
 								UString ustr = propName.ustring();
 								const UniChar* uniChars = (const UniChar*)ustr.data();
 								int size = ustr.size();
@@ -295,7 +288,7 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 										break;
 									}
 								}
-								iter++;
+								++iter;
 							}
 						}
 #endif
@@ -304,14 +297,14 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 					if (isArray)
 					{				
 						// This is an KJS array
-						unsigned int length = object.get(exec, "length").toUInt32(exec);
+						unsigned int length = object->get(exec, "length")->toUInt32(exec);
 						result = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
 						if (result)
 						{
 #if JAG_PINK_OR_LATER
 							for (unsigned i = 0; i < length; i++)
 							{
-								CFTypeRef cfValue = KJSValueToCFTypeInternal(object.get(exec, i), exec, &imps);
+								CFTypeRef cfValue = KJSValueToCFTypeInternal(object->get(exec, i), exec, &imps);
 								CFArrayAppendValue((CFMutableArrayRef)result, cfValue);
 								ReleaseCFType(cfValue);
 							}
@@ -330,7 +323,8 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 					{
 #if JAG_PINK_OR_LATER
 						// Not an arry, just treat it like a dictionary which contains (property name, property value) paiars
-						ReferenceList propList = object.propList(exec, false);
+						IdentifierSequencedSet propList;
+                                                object->getPropertyNames(exec, propList);
 						{
 							result = CFDictionaryCreateMutable(NULL, 
 															   0, 
@@ -338,15 +332,15 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 															   &kCFTypeDictionaryValueCallBacks);
 							if (result)
 							{
-								ReferenceListIterator iter = propList.begin();
-								ReferenceListIterator end = propList.end();
+								IdentifierSequencedSetIterator iter = propList.begin();
+								IdentifierSequencedSetIterator end = propList.end();
 								while(iter != end)
 								{
-									Identifier propName = iter->getPropertyName(exec);
-									if (object.hasProperty(exec, propName))
+									Identifier propName = *iter;
+									if (object->hasProperty(exec, propName))
 									{
 										CFStringRef cfKey = IdentifierToCFString(propName);
-										CFTypeRef cfValue = KJSValueToCFTypeInternal(object.get(exec, propName), exec, &imps);
+										CFTypeRef cfValue = KJSValueToCFTypeInternal(object->get(exec, propName), exec, &imps);
 										if (cfKey && cfValue)
 										{
 											CFDictionaryAddValue((CFMutableDictionaryRef)result, cfKey, cfValue);
@@ -354,7 +348,7 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 										ReleaseCFType(cfKey);
 										ReleaseCFType(cfValue);
 									}
-									iter++;
+									++iter;
 								}
 							}
 						}
@@ -397,7 +391,7 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 #if !JAG_PINK_OR_LATER
 		case ReferenceType:
 			{
-				Value value = inValue.getValue(exec);
+				ValueImp *value = inValue->getValue(exec);
 				result = KJSValueToCFTypeInternal(value, exec, NULL);
 			}
 			break;
@@ -445,7 +439,7 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 
 #if JAG_PINK_OR_LATER
 		default:
-			fprintf(stderr, "KJSValueToCFType: wrong value type %d\n", inValue.type());
+			fprintf(stderr, "KJSValueToCFType: wrong value type %d\n", inValue->type());
 			break;
 #endif
 	}
@@ -453,7 +447,7 @@ CFTypeRef KJSValueToCFTypeInternal(const Value& inValue, ExecState *exec, Object
 	return result;
 }
 
-CFTypeRef KJSValueToCFType(const Value& inValue, ExecState *exec)
+CFTypeRef KJSValueToCFType(ValueImp *inValue, ExecState *exec)
 {
 	return KJSValueToCFTypeInternal(inValue, exec, NULL);
 }

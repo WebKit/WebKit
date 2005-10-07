@@ -7,7 +7,7 @@
 JSRun::JSRun(CFStringRef source, JSFlags inFlags) 
 	:	JSBase(kJSRunTypeID), 
 		fSource(CFStringToUString(source)), 
-		fGlobalObject(Object(new ObjectImp())),
+		fGlobalObject(new ObjectImp()),
 		fInterpreter(fGlobalObject, inFlags),
 		fFlags(inFlags)
 {
@@ -27,7 +27,7 @@ UString JSRun::GetSource() const
 	return fSource;
 }
 
-Object JSRun::GlobalObject() const
+ObjectImp *JSRun::GlobalObject() const
 {
 	return fGlobalObject;
 }

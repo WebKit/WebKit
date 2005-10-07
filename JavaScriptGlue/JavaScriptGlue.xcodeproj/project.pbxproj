@@ -350,7 +350,8 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = "";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-O0";
@@ -362,11 +363,6 @@
 					__TEXT,
 					__text,
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
-				);
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -386,7 +382,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
@@ -397,11 +393,6 @@
 					__TEXT,
 					__text,
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
-				);
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
@@ -419,7 +410,7 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks",
 				);
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
@@ -431,11 +422,6 @@
 					__text,
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
 				);
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Default;
@@ -443,18 +429,63 @@
 		14AC662C08CE7791006915A8 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = .;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
 			name = Development;
 		};
 		14AC662D08CE7791006915A8 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = .;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
 			name = Deployment;
 		};
 		14AC662E08CE7791006915A8 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = .;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
 			name = Default;
 		};
