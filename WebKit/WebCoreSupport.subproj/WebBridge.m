@@ -372,26 +372,42 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
     WebView *wv = [_frame webView];
-    [[wv _UIDelegateForwarder] webView:wv runJavaScriptAlertPanelWithMessage:message];
+    id wd = [wv UIDelegate];
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:)])
+        [wd webView:wv runJavaScriptAlertPanelWithMessage:message initiatedByFrame:_frame];
+    else if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:)])
+        [wd webView:wv runJavaScriptAlertPanelWithMessage:message];
+    else
+        [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptAlertPanelWithMessage:message initiatedByFrame:_frame];
 }
 
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
     WebView *wv = [_frame webView];
     id wd = [wv UIDelegate];
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:)])
+        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
     if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:)])
-        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message];
+        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message];    
+    return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
     WebView *wv = [_frame webView];
     id wd = [wv UIDelegate];
-    if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:)])
+        *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
+    else if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
         *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     else
-        *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+        *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
     return *result != nil;
 }
 

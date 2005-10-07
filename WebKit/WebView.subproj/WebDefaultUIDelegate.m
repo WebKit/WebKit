@@ -158,18 +158,18 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return window == nil ? NSZeroRect : [NSWindow contentRectForFrameRect:[window frame] styleMask:[window styleMask]];
 }
 
-- (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message
+- (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     // FIXME: We want a default here, but that would add localized strings.
 }
 
-- (BOOL)webView: (WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message
+- (BOOL)webView: (WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     // FIXME: We want a default here, but that would add localized strings.
     return NO;
 }
 
-- (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
+- (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
     WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
     [panel showWindow:nil];

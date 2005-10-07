@@ -1,3 +1,33 @@
+2005-10-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        WebKit support for allowing clients to know which frame originated a particular JavaScript alert/dialog.
+
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        New optional delegate methods for the three JavaScript alert/dialogs. These are just like the existing
+        ones in WebUIDelegate.h except that each adds a parameter specifying the frame that the JavaScript was
+        running in. Eventually we'll deprecate the old three methods in favor of these in the public API.
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge runJavaScriptAlertPanelWithMessage:]):
+        Call version of the delegate method that has the frame parameter if the delegate supports it.
+        (-[WebBridge runJavaScriptConfirmPanelWithMessage:]):
+        ditto
+        (-[WebBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        ditto
+        
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        Now implements the new version of the delegate method that includes the frame parameter. (Still
+        doesn't do anything though.)
+        (-[WebDefaultUIDelegate webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:]):
+        Now implements the new version of the delegate method that includes the frame parameter. (Still
+        doesn't do anything though.)
+        (-[WebDefaultUIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]):
+        Now implements the new version of the delegate method that includes the frame parameter. Doesn't
+        actually use the frame parameter here yet though.
+        
 2005-10-06  Darin Adler  <darin@apple.com>
 
         - fixed compiling on Deployment
