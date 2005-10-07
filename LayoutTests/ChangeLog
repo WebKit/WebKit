@@ -1,3 +1,26 @@
+2005-10-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Test cases for:
+        
+        <rdar://problem/4073133> Tabbing between editable elements leads to loss of keyboard focus
+        <rdar://problem/3690719> "Select All" when in an editable area selects the whole containing document
+        <rdar://problem/3690703> selection is allowed to span editable area and rest of document
+
+        * editing/selection/3690703-2-expected.checksum: Added.
+        * editing/selection/3690703-2-expected.png: Added.
+        * editing/selection/3690703-2-expected.txt: Added.
+        * editing/selection/3690703-2.html: Added.
+        * editing/selection/3690703-expected.checksum: Added.
+        * editing/selection/3690703-expected.png: Added.
+        * editing/selection/3690703-expected.txt: Added.
+        * editing/selection/3690703.html: Added.
+        * editing/selection/3690719-expected.checksum: Added.
+        * editing/selection/3690719-expected.png: Added.
+        * editing/selection/3690719-expected.txt: Added.
+        * editing/selection/3690719.html: Added.
+
 2005-10-06  Vicki Murley  <vicki@apple.com>
 
 	- updated layout tests for <rdar://problem/4288307> <form> element is 

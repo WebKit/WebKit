@@ -1,0 +1,143 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,3) size 784x581 [bgcolor=#FFFFFF]
+      RenderBlock {CENTER} at (0,0) size 784x255
+        RenderTable {TABLE} at (0,0) size 784x16
+          RenderTableSection {TBODY} at (0,0) size 0x16
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 784x15 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 104x15
+                  RenderInline {A} at (0,0) size 104x15 [color=#0000CC]
+                    RenderText {TEXT} at (680,0) size 104x15
+                      text run at (680,0) width 104: "Personalized Home"
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,15) size 784x1 [r=1 c=0 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 1x1
+        RenderBlock (anonymous) at (0,16) size 784x36
+          RenderBR {BR} at (392,0) size 0x18
+          RenderBR {BR} at (392,18) size 0x18
+        RenderBlock {DIV} at (0,52) size 784x105 [border: (2px solid #AAAAFF)]
+          RenderTable {TABLE} at (215,2) size 353x23
+            RenderTableSection {TBODY} at (0,0) size 0x23
+              RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableCell {TD} at (0,0) size 353x23 [r=0 c=0 rs=1 cs=1]
+                  RenderInline {FONT} at (0,0) size 345x15
+                    RenderInline {B} at (0,0) size 26x15
+                      RenderText {TEXT} at (4,4) size 26x15
+                        text run at (4,4) width 26: "Web"
+                    RenderText {TEXT} at (30,4) size 12x15
+                      text run at (30,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 38x15 [color=#0000CC]
+                      RenderText {TEXT} at (42,4) size 38x15
+                        text run at (42,4) width 38: "Images"
+                    RenderText {TEXT} at (80,4) size 12x15
+                      text run at (80,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 39x15 [color=#0000CC]
+                      RenderText {TEXT} at (92,4) size 39x15
+                        text run at (92,4) width 39: "Groups"
+                    RenderText {TEXT} at (131,4) size 12x15
+                      text run at (131,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 29x15 [color=#0000CC]
+                      RenderText {TEXT} at (143,4) size 29x15
+                        text run at (143,4) width 29: "News"
+                    RenderText {TEXT} at (172,4) size 12x15
+                      text run at (172,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 42x15 [color=#0000CC]
+                      RenderText {TEXT} at (184,4) size 42x15
+                        text run at (184,4) width 42: "Froogle"
+                    RenderText {TEXT} at (226,4) size 12x15
+                      text run at (226,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 31x15 [color=#0000CC]
+                      RenderText {TEXT} at (238,4) size 31x15
+                        text run at (238,4) width 31: "Local"
+                      RenderInline {SUP} at (0,0) size 0x13
+                    RenderInline {A} at (0,0) size 28x15
+                      RenderInline {FONT} at (0,0) size 28x15 [color=#FF0000]
+                        RenderText {TEXT} at (269,4) size 28x15
+                          text run at (269,4) width 28: "New!"
+                    RenderText {TEXT} at (297,4) size 12x15
+                      text run at (297,4) width 12: "    "
+                    RenderInline {B} at (0,0) size 40x15
+                      RenderInline {A} at (0,0) size 40x15 [color=#0000CC]
+                        RenderText {TEXT} at (309,4) size 40x15
+                          text run at (309,4) width 40: "more \x{BB}"
+          RenderTable {TABLE} at (2,25) size 780x45
+            RenderTableSection {TBODY} at (0,0) size 0x45
+              RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableCell {TD} at (0,13) size 191x18 [r=0 c=0 rs=1 cs=1]
+                  RenderText {TEXT} at (0,0) size 4x18
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (191,0) size 395x45 [r=0 c=1 rs=1 cs=1]
+                  RenderLineEdit {INPUT} at (2,2) size 391x19
+                  RenderBR {BR} at (0,0) size 0x0
+                  RenderSubmitButton {INPUT} at (95,25) size 93x18
+                  RenderSubmitButton {INPUT} at (192,25) size 108x18
+                RenderTableCell {TD} at (586,0) size 194x39 [r=0 c=2 rs=1 cs=1]
+                  RenderInline {FONT} at (0,0) size 74x39
+                    RenderText {TEXT} at (0,0) size 6x13
+                      text run at (0,0) width 6: "  "
+                    RenderInline {A} at (0,0) size 68x13 [color=#0000CC]
+                      RenderText {TEXT} at (6,0) size 68x13
+                        text run at (6,0) width 68: "Advanced Search"
+                    RenderBR {BR} at (0,0) size 0x0
+                    RenderText {TEXT} at (0,13) size 6x13
+                      text run at (0,13) width 6: "  "
+                    RenderInline {A} at (0,0) size 44x13 [color=#0000CC]
+                      RenderText {TEXT} at (6,13) size 44x13
+                        text run at (6,13) width 44: "Preferences"
+                    RenderBR {BR} at (0,0) size 0x0
+                    RenderText {TEXT} at (0,26) size 6x13
+                      text run at (0,26) width 6: "  "
+                    RenderInline {A} at (0,0) size 64x13 [color=#0000CC]
+                      RenderText {TEXT} at (6,26) size 64x13
+                        text run at (6,26) width 64: "Language Tools"
+          RenderBlock (anonymous) at (2,70) size 780x33
+            RenderBR {BR} at (390,0) size 0x18
+            RenderInline {FONT} at (0,0) size 148x15
+              RenderInline {FONT} at (0,0) size 28x15 [color=#FF0000]
+                RenderText {TEXT} at (316,18) size 28x15
+                  text run at (316,18) width 28: "New!"
+              RenderText {TEXT} at (344,18) size 3x15
+                text run at (344,18) width 3: " "
+              RenderInline {A} at (0,0) size 114x15 [color=#0000CC]
+                RenderText {TEXT} at (347,18) size 114x15
+                  text run at (347,18) width 114: "Personalize this page"
+              RenderText {TEXT} at (461,18) size 3x15
+                text run at (461,18) width 3: "."
+            RenderText {TEXT} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,157) size 784x69
+          RenderBR {BR} at (392,0) size 0x18
+          RenderBR {BR} at (392,18) size 0x18
+          RenderBR {BR} at (392,36) size 0x18
+          RenderInline {FONT} at (0,0) size 317x15
+            RenderInline {A} at (0,0) size 117x15 [color=#0000CC]
+              RenderText {TEXT} at (233,54) size 117x15
+                text run at (233,54) width 117: "Advertising Programs"
+            RenderText {TEXT} at (350,54) size 10x15
+              text run at (350,54) width 10: " - "
+            RenderInline {A} at (0,0) size 103x15 [color=#0000CC]
+              RenderText {TEXT} at (360,54) size 103x15
+                text run at (360,54) width 103: "Business Solutions"
+            RenderText {TEXT} at (463,54) size 10x15
+              text run at (463,54) width 10: " - "
+            RenderInline {A} at (0,0) size 77x15 [color=#0000CC]
+              RenderText {TEXT} at (473,54) size 77x15
+                text run at (473,54) width 77: "About Google"
+        RenderBlock {P} at (0,242) size 784x13
+          RenderInline {FONT} at (0,0) size 60x13
+            RenderText {TEXT} at (362,0) size 60x13
+              text run at (362,0) width 60: "\x{A9}2005 Google"
+selection start: position 0 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 5 {TEXT} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
