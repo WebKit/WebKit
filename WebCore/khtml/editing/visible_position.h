@@ -62,7 +62,7 @@ public:
     // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
     VisiblePosition(NodeImpl *, int offset, EAffinity);
-    VisiblePosition(const Position &, EAffinity);
+    VisiblePosition(const Position &pos, EAffinity affinity = VP_DEFAULT_AFFINITY);
     VisiblePosition(const VisiblePosition &);
 
     void clear() { m_deepPosition.clear(); }

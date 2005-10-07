@@ -2343,11 +2343,6 @@ void ContainerNodeImpl::setFocus(bool received)
 
     NodeImpl::setFocus(received);
 
-    // FIXME: Move to ElementImpl
-    if (received && isEditableBlock() && !hasChildNodes()) {
-        getDocument()->part()->setSelection(SelectionController(Position(this, 0), DOWNSTREAM));
-    }
-
     // note that we need to recalc the style
     setChanged();
 }

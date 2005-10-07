@@ -123,6 +123,7 @@ private:
 
     void init(EAffinity affinity);
     void validate(ETextGranularity granularity = CHARACTER);
+    void adjustExtentForEditableContent();
 
     VisiblePosition modifyExtendingRightForward(ETextGranularity);
     VisiblePosition modifyMovingRightForward(ETextGranularity);

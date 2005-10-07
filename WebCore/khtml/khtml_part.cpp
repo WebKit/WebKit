@@ -2611,18 +2611,8 @@ void KHTMLPart::setFocusNodeIfNeeded()
     if (!xmlDocImpl() || d->m_selection.isNone() || !d->m_isFocused)
         return;
 
-    NodeImpl *n = d->m_selection.start().node();
-    NodeImpl *target = (n && n->isContentEditable()) ? n : 0;
-    if (!target) {
-        while (n && n != d->m_selection.end().node()) {
-            if (n->isContentEditable()) {
-                target = n;
-                break;
-            }
-            n = n->traverseNextNode();
-        }
-    }
-    assert(target == 0 || target->isContentEditable());
+    NodeImpl *startNode = d->m_selection.start().node();
+    NodeImpl *target = startNode ? startNode->rootEditableElement() : 0;
     
     if (target) {
         for ( ; target; target = target->parentNode()) {
@@ -5173,12 +5163,15 @@ void KHTMLPart::selectAll()
 {
     if (!d->m_doc)
         return;
-    NodeImpl *de = d->m_doc->documentElement();
-    int n = de ? de->childNodeCount() : 0;
-    SelectionController sel = SelectionController(VisiblePosition(de, 0, khtml::DOWNSTREAM), VisiblePosition(de, n, khtml::DOWNSTREAM));
-    if (shouldChangeSelection(sel)) {
+    
+    NodeImpl *startNode = d->m_selection.start().node();
+    NodeImpl *root = startNode && startNode->isContentEditable() ? startNode->rootEditableElement() : d->m_doc->documentElement();
+
+    SelectionController sel = SelectionController(Position(root, 0), khtml::DOWNSTREAM, Position(root, root->maxDeepOffset()), khtml::DOWNSTREAM);
+    
+    if (shouldChangeSelection(sel))
         setSelection(sel);
-    }
+        
     selectFrameElementInParentIfFullySelected();
 }
 

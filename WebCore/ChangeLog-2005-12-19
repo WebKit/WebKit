@@ -1,3 +1,27 @@
+2005-10-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4073133> Tabbing between editable elements leads to loss of keyboard focus
+        <rdar://problem/3690719> "Select All" when in an editable area selects the whole containing document
+        <rdar://problem/3690703> selection is allowed to span editable area and rest of document
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::adjustExtentForEditableContent): 
+        Added, ensures that a selection cannot cross an editable/non-editable boundry.
+        (khtml::SelectionController::validate):
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/visible_position.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection):
+        (KHTMLPart::setFocusNodeIfNeeded):
+        (KHTMLPart::selectAll):
+        Select only the contents of the rootEditableElement, if it exists.  Also now calls the shouldChangeSelection delegate method.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::setFocus): Clicking on an editable element used to change the selection twice.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Select All when tabbing to an editable element, to match <textarea>s
+
 2005-10-06  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Beth Dakin.

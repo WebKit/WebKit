@@ -787,8 +787,59 @@ void SelectionController::paintCaret(QPainter *p, const QRect &rect)
         p->fillRect(m_caretRect & rect, QBrush());
 }
 
+void SelectionController::adjustExtentForEditableContent()
+{
+    Position base = this->base();
+    Position extent = this->extent();
+    
+    if (!base.node() || !extent.node())
+        return;
+    
+    NodeImpl *baseRoot = base.node()->rootEditableElement();
+    NodeImpl *extentRoot = extent.node()->rootEditableElement();
+    
+    if (baseRoot == extentRoot)
+        return;
+    
+    bool baseIsStart = RangeImpl::compareBoundaryPoints(base, extent) <= 0;
+    
+    // base is in an editable region, but extent is not.
+    if (baseRoot) {
+        Position first(Position(baseRoot, 0));
+        Position last(Position(baseRoot, baseRoot->maxDeepOffset()));
+        
+        m_extent = baseIsStart ? last : first;
+    // extent is in an editable region, but base is not.
+    } else {
+        if (baseIsStart) {
+            VisiblePosition previous;
+            do {
+                previous = VisiblePosition(Position(extentRoot, 0)).previous();
+                extentRoot = previous.deepEquivalent().node()->rootEditableElement();
+            } while (extentRoot);
+            
+            // Since we know that base is before extent, and since we know that base is not in a content editable element,
+            // we know that we must have reached non editable content.
+            ASSERT(!previous.isNull());
+            m_extent = previous.deepEquivalent();
+        } else {
+            VisiblePosition next;
+            do {
+                next = VisiblePosition(Position(extentRoot, extentRoot->maxDeepOffset())).next();
+                extentRoot = next.deepEquivalent().node()->rootEditableElement();
+            } while (extentRoot);
+            
+            // Since we know that extent is before base, and since we know that extent is not in a content editable element,
+            // we know that we must have reached non editable content.
+            ASSERT(!next.isNull());
+            m_extent = next.deepEquivalent();
+        }
+    }
+}
+
 void SelectionController::validate(ETextGranularity granularity)
 {
+    adjustExtentForEditableContent();
     // Move the selection to rendered positions, if possible.
     Position originalBase(m_base);
     bool baseAndExtentEqual = m_base == m_extent;
