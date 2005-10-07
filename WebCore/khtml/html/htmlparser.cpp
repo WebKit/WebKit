@@ -1330,7 +1330,7 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
     NamedMappedAttrMapImpl *attrs = t->attrs;
     t->attrs = NULL;
 
-    HTMLIsIndexElementImpl *isIndex = new HTMLIsIndexElementImpl(document);
+    HTMLIsIndexElementImpl *isIndex = new HTMLIsIndexElementImpl(document, form);
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 

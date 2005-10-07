@@ -1,3 +1,13 @@
+2005-10-07  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Hyatt.
+ 
+	- pass the current form to the isindex constructor, so that isindex doesn't malfunction in the 
+	case of a misnested form
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleIsindex):
+
 2005-10-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
