@@ -1325,18 +1325,12 @@ void HTMLParser::createHead()
 
 NodeImpl *HTMLParser::handleIsindex( Token *t )
 {
-    NodeImpl *n;
-    HTMLFormElementImpl *myform = form;
-    if (!myform) {
-        myform = new HTMLFormElementImpl(document);
-        n = myform;
-    } else
-        n = new HTMLDivElementImpl(document);
+    NodeImpl *n = new HTMLDivElementImpl(document);
 
     NamedMappedAttrMapImpl *attrs = t->attrs;
     t->attrs = NULL;
 
-    HTMLIsIndexElementImpl *isIndex = new HTMLIsIndexElementImpl(document, myform);
+    HTMLIsIndexElementImpl *isIndex = new HTMLIsIndexElementImpl(document);
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 
