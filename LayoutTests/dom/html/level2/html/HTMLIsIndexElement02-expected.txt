@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLIsIndexElement02	
-Status:	failure
-Detail:	formNullLink: assertNull failed, actual [object FORM]
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLIsIndexElement02
+Status:	Success
