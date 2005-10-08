@@ -97,6 +97,8 @@ namespace KSVG
         virtual void recalcStyleSelector();
         virtual void recalcStyle(StyleChange = NoChange);
 
+        void addForwardReference(const SVGElementImpl *element);
+
     protected:
         virtual KDOM::CSSStyleSelector *createStyleSelector(const QString &);
 
@@ -118,6 +120,7 @@ namespace KSVG
         KDOM::CachedScript *m_cachedScript;
         Q3PtrList<SVGScriptElementImpl> m_scripts;
         Q3PtrListIterator<SVGScriptElementImpl> *m_scriptsIt;
+        Q3PtrList<SVGElementImpl> m_forwardReferences;
     };
 };
 

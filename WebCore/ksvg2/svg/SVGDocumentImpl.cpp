@@ -818,6 +818,15 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
     if(canvas() && needsStyleSelectorUpdate)
         updateStyleSelector();
 
+    // close any unclosed nodes
+    Q3PtrListIterator<SVGElementImpl> it(m_forwardReferences);
+    for(;it.current(); ++it)
+    {
+        if(!it.current()->closed())
+            it.current()->close();
+    }
+    m_forwardReferences.clear();
+
     // Start animations, as "load" scripts are executed.
     m_timeScheduler->startAnimations();
 }
@@ -1023,6 +1032,11 @@ void SVGDocumentImpl::dispatchMouseEvent(KDOM::EventTargetImpl *target, KDOM::DO
 
     event->deref();
     eventType->deref();
+}
+
+void SVGDocumentImpl::addForwardReference(const SVGElementImpl *element)
+{
+    m_forwardReferences.append(element);
 }
 
 // vim:ts=4:noet
