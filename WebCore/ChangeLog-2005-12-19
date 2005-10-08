@@ -1,3 +1,21 @@
+2005-10-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        "<rdar://problem/4064017> Safari crashes at -[WebCoreBridge firstRectForDOMRange:] + 92"
+
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        Do not insert placeholder if selection ends at a BR.
+        
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        No need to preserve starting BR because insertPlaceholderForAncestorBlockContent already did.
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        Fixed to return original position instead of invisible position when no suitable position found upstream.
+
 2005-10-07  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Hyatt.

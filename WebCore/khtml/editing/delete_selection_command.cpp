@@ -263,7 +263,7 @@ void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
         VisiblePosition afterEnd = visibleEnd.next();
         
         if ((!afterEnd.isNull() && !inSameBlock(afterEnd, visibleEnd) && !inSameBlock(afterEnd, visibleStart)) ||
-            (m_downstreamEnd == m_selectionToDelete.end() && isEndOfParagraph(visibleEnd))) {
+            (m_downstreamEnd == m_selectionToDelete.end() && isEndOfParagraph(visibleEnd) && !m_downstreamEnd.node()->hasTagName(brTag))) {
             NodeImpl *block = createDefaultParagraphElement(document());
             insertNodeBefore(block, m_upstreamStart.node());
             addBlockPlaceholderIfNeeded(block);
@@ -347,16 +347,11 @@ void DeleteSelectionCommand::handleGeneralDelete()
     // If the entire start block is selected, and the selection does not extend to the end of the 
     // end of a block other than the block containing the selection start, then do not delete the 
     // start block, otherwise delete the start block.
-    // A similar case is provided to cover selections starting in BR elements.
     if (startOffset == 1 && m_startNode && m_startNode->hasTagName(brTag)) {
         setStartNode(m_startNode->traverseNextNode());
         startOffset = 0;
     }
-    if (m_startBlock != m_endBlock && startOffset == 0 && m_startNode && m_startNode->hasTagName(brTag) && endAtEndOfBlock) {
-        // Don't delete the BR element
-        setStartNode(m_startNode->traverseNextNode());
-    }
-    else if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()))) {
+    if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()))) {
         if (!m_startBlock->isAncestor(m_endBlock) && !isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
             // Delete all the children of the block, but not the block itself.
             setStartNode(m_startBlock->firstChild());
