@@ -2,6 +2,18 @@
 
         Reviewed by eseidel.
 
+        Almost forgot the layout test for the last commit. ;)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
+
+        * svg-tests/custom/use-forward-refs-expected.checksum: Added.
+        * svg-tests/custom/use-forward-refs-expected.png: Added.
+        * svg-tests/custom/use-forward-refs-expected.txt: Added.
+        * svg-tests/custom/use-forward-refs.svg: Added.
+
+2005-10-08  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.
+
         Fix to handle forward referencing <use> elements.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
 
