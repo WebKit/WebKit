@@ -1,3 +1,17 @@
+2005-10-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+        
+        Adjusted expected results after fixing position code in
+        <rdar://problem/4064017> "Safari crashes at -[WebCoreBridge firstRectForDOMRange:] + 92"
+        
+        * editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-005-expected.txt:
+        * editing/selection/3690703-expected.txt:
+        * editing/selection/3690719-expected.txt:
+        * editing/selection/select-all-004-expected.txt:
+
 2005-10-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

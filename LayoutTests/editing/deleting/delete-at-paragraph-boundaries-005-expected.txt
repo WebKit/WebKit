@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -34,4 +34,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 17: "A"
           RenderBlock (anonymous) at (2,30) size 780x28
             RenderBR {BR} at (0,0) size 0x28
-caret: position 0 of child 2 {BR} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 3 {BR} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
