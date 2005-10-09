@@ -1,3 +1,18 @@
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed, rearranged and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4707
+          Need a way to automatically test for regressions in NSTextInput implementation
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]):
+        Create a text input controller and put it in a property of the window object.
+
+        * DumpRenderTree/TextInputController.h: Added.
+        * DumpRenderTree/TextInputController.m: Added.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added files.
+
 2005-10-06  Darin Adler  <darin@apple.com>
 
         * Scripts/cvs-apply: Fixed merge option to work better when not all directories

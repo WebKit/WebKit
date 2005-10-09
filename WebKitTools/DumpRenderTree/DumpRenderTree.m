@@ -46,6 +46,8 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <getopt.h>
 
+#import "TextInputController.h"
+
 @interface WaitUntilDoneDelegate : NSObject
 @end
 
@@ -273,12 +275,14 @@ static void dump(void)
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)obj 
 { 
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
-    [(id)obj setValue:ltc forKey:@"layoutTestController"];
+    [obj setValue:ltc forKey:@"layoutTestController"];
     [ltc release];
     EventSendingController *esc = [[EventSendingController alloc] init];
-    [(id)obj setValue:esc forKey:@"eventSender"];
+    [obj setValue:esc forKey:@"eventSender"];
     [esc release];
-
+    TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
+    [obj setValue:tic forKey:@"textInputController"];
+    [tic release];
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message

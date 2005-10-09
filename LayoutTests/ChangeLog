@@ -1,3 +1,13 @@
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4707
+          Need a way to automatically test for regressions in NSTextInput implementation
+
+        * editing/input/text-input-controller-expected.txt: Added.
+        * editing/input/text-input-controller.html: Added.
+
 2005-10-08  Darin Adler  <darin@apple.com>
 
         - Updated test results for fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3245

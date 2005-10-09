@@ -38,6 +38,8 @@
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */; settings = {ATTRIBUTES = (); }; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
+		93442CF608F8BA4900BFE8CA /* TextInputController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442CF408F8BA4900BFE8CA /* TextInputController.h */; };
+		93442CF708F8BA4900BFE8CA /* TextInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93442CF508F8BA4900BFE8CA /* TextInputController.m */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		A817090208B1643800CCB9FB /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
 		A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
@@ -87,6 +89,8 @@
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
+		93442CF508F8BA4900BFE8CA /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputController.m; sourceTree = "<group>"; };
 		A817090108B1643800CCB9FB /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -125,9 +129,11 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
-				B5A7525808AF4A3600138E45 /* ImageDiff.m */,
 				08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
+				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
+				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
+				B5A7525808AF4A3600138E45 /* ImageDiff.m */,
 				9335435F03D75502008635CE /* WebKit.framework */,
 				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
 				A817090108B1643800CCB9FB /* WebCore.framework */,
@@ -156,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
+				93442CF608F8BA4900BFE8CA /* TextInputController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */,
+				93442CF708F8BA4900BFE8CA /* TextInputController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
