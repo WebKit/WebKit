@@ -1,3 +1,21 @@
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4821
+          Text in submitted forms should be entity-encoded if the current encoding doesn't support it
+
+        Added one layout test.
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData): Pass true to the fromUnicode function to request entity encoding.
+        (DOM::FormDataList::appendString): Ditto.
+
+        * kwq/KWQTextCodec.h: Add boolean parameter to request entity-style encoding for characters that can't
+        be expressed in the desired encoding.
+        * kwq/KWQTextCodec.mm: (QTextCodec::fromUnicode): Added code to entity-encode characters that can't be
+        expressed in the desired encoding.
+
 2005-10-08  Rosyna  <rosyna@unsanity.com>
 
         Reviewed by Darin.

@@ -1,5 +1,13 @@
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
+        - Added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4821
+          Text in submitted forms should be entity-encoded if the current encoding doesn't support it
+
+        * fast/forms/form-data-encoding-expected.txt: Added.
+        * fast/forms/form-data-encoding.html: Added.
+
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Darin.
 
         - Added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4707

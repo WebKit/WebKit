@@ -416,7 +416,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        hstr += codec->fromUnicode(path.mid(path.findRev('/') + 1));
+                        hstr += codec->fromUnicode(path.mid(path.findRev('/') + 1), true);
                         hstr += "\"";
 
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())
@@ -3880,7 +3880,7 @@ void FormDataList::appendString(const QCString &s)
 
 void FormDataList::appendString(const QString &s)
 {
-    QCString cstr = fixLineBreaks(m_codec->fromUnicode(s));
+    QCString cstr = fixLineBreaks(m_codec->fromUnicode(s, true));
     cstr.truncate(cstr.length());
     m_list.append(cstr);
 }

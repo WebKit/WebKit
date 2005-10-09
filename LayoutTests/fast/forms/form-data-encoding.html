@@ -1,0 +1,39 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<title>Charsets and submitting forms</title>
+</head>
+<body>
+<form action="?" name=f>
+ <input type=hidden name=q value="&#1090;&#1077;&#1089;&#1090;"><br>
+</form>
+<script>
+if (window.layoutTestController) {
+	layoutTestController.dumpAsText();
+	layoutTestController.waitUntilDone();
+}
+
+if (document.URL.substring(0, 4) == "file") {
+
+	if (document.URL.indexOf('?') == -1) {
+
+		document.f.submit();
+
+	} else {
+		
+		if (unescape(document.URL.substring(document.URL.indexOf('?')+1, document.URL.length)) == unescape("q=%26%231090%3B%26%231077%3B%26%231089%3B%26%231090%3B"))
+			document.write("<p>Success</p>");
+		else
+			document.write("<p>Failure</p>");
+		
+		if (window.layoutTestController)
+			layoutTestController.notifyDone();
+	}
+
+} else {
+
+	document.write("<p>This test doesn't work directly from bugzilla, please save it to a local file first.</p>");
+}
+</script>
+</body>
+</html>

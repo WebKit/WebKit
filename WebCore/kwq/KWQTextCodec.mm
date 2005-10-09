@@ -145,7 +145,7 @@ inline CFStringEncoding effectiveEncoding(CFStringEncoding e)
     return e;
 }
 
-QCString QTextCodec::fromUnicode(const QString &qcs) const
+QCString QTextCodec::fromUnicode(const QString &qcs, bool allowEntities) const
 {
     // FIXME: We should really use the same API in both directions.
     // Currently we use ICU to decode and CFString to encode; it would be better to encode with ICU too.
@@ -157,13 +157,34 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     QString copy = qcs;
     copy.replace(QChar('\\'), backslashAsCurrencySymbol());
     CFStringRef cfs = copy.getCFString();
+    
+    CFIndex startPos = 0;
+    CFIndex charactersLeft = CFStringGetLength(cfs);
+    QCString result(1); // for trailng zero
 
-    CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
-    CFIndex bufferLength;
-    CFStringGetBytes(cfs, range, encoding, '?', FALSE, NULL, 0x7FFFFFFF, &bufferLength);
-    QCString result(bufferLength + 1);
-    CFStringGetBytes(cfs, range, encoding, '?', FALSE, reinterpret_cast<unsigned char *>(result.data()), bufferLength, &bufferLength);
-    result[bufferLength] = 0;
+    while (charactersLeft > 0) {
+        CFRange range = CFRangeMake(startPos, charactersLeft);
+        CFIndex bufferLength;
+        CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', FALSE, NULL, 0x7FFFFFFF, &bufferLength);
+        
+        QCString chunk(bufferLength + 1);
+        CFIndex charactersConverted = CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', FALSE, reinterpret_cast<unsigned char *>(chunk.data()), bufferLength, &bufferLength);
+        chunk[bufferLength] = 0;
+        result.append(chunk);
+        
+        if (charactersConverted != charactersLeft) {
+            // FIXME: support surrogate pairs
+            UniChar badChar = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+            char buf[16];
+            sprintf(buf, "&#%u;", badChar);
+            result.append(buf);
+            
+            ++charactersConverted;
+        }
+        
+        startPos += charactersConverted;
+        charactersLeft -= charactersConverted;
+    }
     return result;
 }
 
