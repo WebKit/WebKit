@@ -1,3 +1,19 @@
+2005-10-08  Justin Haygood  <justin@xiondigital.net>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5189
+          pcre_exec.c fails to compile using MSVC
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5190
+          KJS config.h adjustment for Win32
+        
+        * kjs/config.h: Make sure HAVE_MMAP and HAVE_SBRK are off for Win32.
+        Turn HAVE_ERRNO_H on for Mac OS X. Sort defines so they are easy to compare
+        with each other. Remove #undef of DEBUG_COLLECTOR.
+        * pcre/pcre_exec.c: (match): Work around strange MSVC complaint by splitting
+        the definition of a local variable into a separate declaration and
+        initialization.
+
 2005-10-05  Geoffrey Garen  <ggaren@apple.com>
  
         - Darin and I rewrote our implementation of the SimpleNumber class
