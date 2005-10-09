@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test of JavaScript date parsing (comments in parentheses)</title>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+// --------
+
+// Helper functions.
+
+function call(functionName, parameter)
+{
+    try {
+        result = eval(functionName + "(parameter)");
+    } catch (e) {
+        result = "exception";
+    }
+    return result;
+}
+
+// --------
+
+// Run tests.
+
+var failureCount = 0;
+
+function test(functionName, parameter, desiredResult)
+{
+    var result = call(functionName, parameter);
+    if (result != desiredResult && !(isNaN(result) && isNaN(desiredResult))) {
+        var s = "called " + functionName + " on " + parameter + " and got " + result + " instead of " + desiredResult;
+        document.writeln("<p>" + s + "</p>");
+        failureCount += 1;
+        return 0;
+    }
+    return 1;
+}
+
+function testDateParse(date, numericResult)
+{
+    if (test("Date.parse", date, numericResult)) {
+        test("Date.parse", date.toUpperCase(), numericResult);
+        test("Date.parse", date.toLowerCase(), numericResult);
+    }
+}
+
+var o = Date.parse(" Dec 25 1995 1:30 ") - Date.parse(" Dec 25 1995 1:30 GMT ");
+
+testDateParse("Dec ((27) 26 (24)) 25 1995 1:30 PM UTC", 819898200000);
+testDateParse("Dec 25 1995 1:30 PM UTC (", 819898200000);
+testDateParse("Dec 25 1995 1:30 (PM)) UTC", NaN);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) GMT (EST)", 819849600000);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996)", 819849600000 + o);
+
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) GMT (EST)", 819855000000);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40)", 819855000000 + o);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 ", 819855000000 + o);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM) GMT (EST)", 819855000000);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM)", 819855000000 + o);
+testDateParse("Dec 25 1995 1:30( )AM (PM)", NaN);
+testDateParse("Dec 25 1995 1:30 AM (PM)", 819855000000 + o);
+
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40) GMT (PST)", 819898200000);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40)", 819898200000 + o);
+testDateParse('(Nov) Dec (24) 25 (26) 13:30 (13:40) 1995 (1996)', 819898200000 + o);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40) ", 819898200000 + o);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM) GMT (PST)", 819898200000);
+testDateParse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM)", 819898200000 + o);
+testDateParse("Dec 25 1995 1:30(AM)PM", NaN);
+testDateParse("Dec 25 1995 1:30 (AM)PM ", 819898200000 + o);
+
+testDateParse("Dec 25 1995 (PDT)UTC(PST)", 819849600000);
+testDateParse("Dec 25 1995 (PDT)UT(PST)", 819849600000);
+testDateParse("Dec 25 1995 (UTC)PST(GMT)", 819878400000);
+testDateParse("Dec 25 1995 (UTC)PDT(GMT)", 819874800000);
+
+testDateParse("Dec 25 1995 1:30 (PDT)UTC(PST)", 819855000000);
+testDateParse("Dec 25 1995 1:30 (PDT)UT(PST)", 819855000000);
+testDateParse("Dec 25 1995 1:30 (UTC)PST(GMT)", 819883800000);
+testDateParse("Dec 25 1995 1:30 (UTC)PDT(GMT)", 819880200000);
+
+testDateParse("Dec 25 1995 1:30 (AM) PM (PST) UTC", 819898200000);
+testDateParse("Dec 25 1995 1:30 PM (AM) (PST) UT", 819898200000);
+testDateParse("Dec 25 1995 1:30 PM (AM) (UTC) PST", 819927000000);
+testDateParse("Dec 25 1995 1:30 (AM) PM PDT (UTC)", 819923400000);
+
+testDateParse("Dec 25 1995 XXX (GMT)", NaN);
+testDateParse("Dec 25 1995 1:30 XXX (GMT)", NaN);
+
+testDateParse("Dec 25 1995 1:30 U(TC)", NaN);
+testDateParse("Dec 25 1995 1:30 V(UTC)", NaN);
+testDateParse("Dec 25 1995 1:30 (UTC)W", NaN);
+testDateParse("Dec 25 1995 1:30 (GMT)X", NaN);
+
+testDateParse("Dec 25 1995 0:30 (PM) GMT", 819851400000);
+testDateParse("Dec 25 1995 (1)0:30 AM GMT", 819851400000);
+testDateParse("Dec 25 1995 (1)0:30 PM GMT", 819894600000);
+
+testDateParse("Anf(Dec) 25 1995 GMT", NaN);
+
+testDateParse("(Sat) Wed (Nov) Dec (Nov) 25 1995 1:30 GMT", 819855000000);
+testDateParse("Wed (comment 1) (comment 2) Dec 25 1995 1:30 GMT", 819855000000);
+testDateParse("Wed(comment 1) (comment 2) Dec 25 1995 1:30 GMT", 819855000000);
+testDateParse("We(comment 1) (comment 2) Dec 25 1995 1:30 GMT", 819855000000);
+
+// --------
+
+// Summarize.
+
+var failuresMessage;
+if (failureCount) {
+    failuresMessage = failureCount + " tests failed.";
+} else {
+    failuresMessage = "No failures.";
+}
+document.writeln("<p>Testing complete. " + failuresMessage + "</p>");
+
+// --------
+
+</script>
+
+</body>
+
+</html>

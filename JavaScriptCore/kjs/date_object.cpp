@@ -1031,6 +1031,23 @@ double makeTime(struct tm *t, double ms, bool utc)
     return (mktime(t) + utcOffset) * 1000.0 + ms + yearOffset;
 }
 
+inline static void skipSpacesAndComments(const char *&s)
+{
+    int nesting = 0;
+    char ch;
+    while ((ch = *s)) {
+        if (!isspace(ch)) {
+            if (ch == '(')
+                nesting++;
+            else if (ch == ')' && nesting > 0)
+                nesting--;
+            else if (nesting == 0)
+                break;
+        }
+        s++;
+    }
+}
+
 // returns 0-11 (Jan-Dec); -1 on failure
 static int findMonth(const char *monthStr)
 {
@@ -1083,19 +1100,16 @@ double KRFCDate_parseDate(const UString &_date)
      bool have_time = false;
      
      // Skip leading space
-     while(isspace(*dateString))
-     	dateString++;
+     skipSpacesAndComments(dateString);
 
      const char *wordStart = dateString;
      // Check contents of first words if not number
-     while(*dateString && !isdigit(*dateString))
-     {
-        if ( isspace(*dateString) && dateString - wordStart >= 3 )
-        {
-          month = findMonth(wordStart);
-          while(isspace(*dateString))
-             dateString++;
-          wordStart = dateString;
+     while (*dateString && !isdigit(*dateString)) {
+        if (isspace(*dateString) || *dateString == '(') {
+           if (dateString - wordStart >= 3)
+              month = findMonth(wordStart);
+           skipSpacesAndComments(dateString);
+           wordStart = dateString;
         }
         else
            dateString++;
@@ -1106,8 +1120,7 @@ double KRFCDate_parseDate(const UString &_date)
        // TODO: emit warning about dubious format found
      }
 
-     while(isspace(*dateString))
-     	dateString++;
+     skipSpacesAndComments(dateString);
 
      if (!*dateString)
      	return invalidDate;
@@ -1162,8 +1175,7 @@ double KRFCDate_parseDate(const UString &_date)
        if (*dateString == '-')
          dateString++;
 
-       while(isspace(*dateString))
-         dateString++;
+       skipSpacesAndComments(dateString);
 
        if (*dateString == ',')
          dateString++;
@@ -1174,7 +1186,7 @@ double KRFCDate_parseDate(const UString &_date)
          if (month == -1)
            return invalidDate;
 
-         while(*dateString && (*dateString != '-') && !isspace(*dateString))
+         while (*dateString && (*dateString != '-') && !isspace(*dateString))
            dateString++;
 
          if (!*dateString)
@@ -1206,8 +1218,11 @@ double KRFCDate_parseDate(const UString &_date)
                year = -1;
            else
                return invalidDate;
-        } else // in the normal case (we parsed the year), advance to the next number
+        } else {
+            // in the normal case (we parsed the year), advance to the next number
             dateString = ++newPosStr;
+            skipSpacesAndComments(dateString);
+        }
 
         hour = strtol(dateString, &newPosStr, 10);
 
@@ -1254,8 +1269,7 @@ double KRFCDate_parseDate(const UString &_date)
               return invalidDate;
           }
 
-          while(isspace(*dateString))
-            dateString++;
+          skipSpacesAndComments(dateString);
 
 	  if (strncasecmp(dateString, "AM", 2) == 0) {
 	    if (hour > 12)
@@ -1263,16 +1277,14 @@ double KRFCDate_parseDate(const UString &_date)
 	    if (hour == 12)
 	      hour = 0;
 	    dateString += 2;
-	    while (isspace(*dateString))
-	      dateString++;
+            skipSpacesAndComments(dateString);
 	  } else if (strncasecmp(dateString, "PM", 2) == 0) {
 	    if (hour > 12)
 	      return invalidDate;
 	    if (hour != 12)
 	      hour += 12;
 	    dateString += 2;
-	    while (isspace(*dateString))
-	      dateString++;
+            skipSpacesAndComments(dateString);
 	  }
         }
      } else {
@@ -1288,8 +1300,7 @@ double KRFCDate_parseDate(const UString &_date)
          have_tz = true;
        }
 
-       while (isspace(*dateString))
-         ++dateString;
+       skipSpacesAndComments(dateString);
 
        if (strncasecmp(dateString, "GMT", 3) == 0) {
          dateString += 3;
@@ -1327,8 +1338,7 @@ double KRFCDate_parseDate(const UString &_date)
        }
      }
 
-     while(isspace(*dateString))
-        dateString++;
+     skipSpacesAndComments(dateString);
 
      if ( *dateString && year == -1 ) {
        year = strtol(dateString, &newPosStr, 10);
@@ -1337,8 +1347,7 @@ double KRFCDate_parseDate(const UString &_date)
        dateString = newPosStr;
      }
      
-     while (isspace(*dateString))
-       dateString++;
+     skipSpacesAndComments(dateString);
      
      // Trailing garbage
      if (*dateString != '\0')

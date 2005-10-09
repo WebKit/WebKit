@@ -1,3 +1,17 @@
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Geoff.
+        Tweaked and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5266
+          Support parenthesized comments in Date.parse()
+
+        * kjs/date_object.cpp:
+        (KJS::skipSpacesAndComments): Take a pointer, and advance it past spaces,
+        and also past anything enclosed in parentheses.
+        (KJS::KRFCDate_parseDate): Use skipSpacesAndComments wherever we formerly had
+        code to skip spaces.
+
 2005-10-08  Justin Haygood  <justin@xiondigital.net>
 
         Reviewed, tweaked, and landed by Darin.

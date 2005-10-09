@@ -1,3 +1,11 @@
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        - added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5266
+          Support parenthesized comments in Date.parse()
+
+        * fast/js/date-parse-comments-test-expected.txt: Added.
+        * fast/js/date-parse-comments-test.html: Added.
+
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
         - added a test case for XSLT charset support
