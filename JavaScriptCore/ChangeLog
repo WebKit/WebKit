@@ -2,6 +2,7 @@
 
         Reviewed by Maciej; some changes done after review.
 
+        - fixed <rdar://problem/4092064> hanging loading page; rte.ie (works in IE and Firefox)
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5280
           Date.setMonth fails with negative values
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5154
