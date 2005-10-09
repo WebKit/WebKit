@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
 
+        - support for WebKit fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5187
+          UTF-8 in long text files breaks at some point
+
+        No layout test added: only affects plain text view and requires loading the
+        file in multiple chunks.
+
+        * WebCore.exp: Added WebCoreTextDecoder.
+        * kwq/WebCoreTextDecoder.h: Added.
+        * kwq/WebCoreTextDecoder.mm: Added.
+        * WebCore.xcodeproj/project.pbxproj: Added files, made header private (SPI).
+
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4821
           Text in submitted forms should be entity-encoded if the current encoding doesn't support it
 

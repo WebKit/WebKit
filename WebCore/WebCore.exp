@@ -114,6 +114,7 @@
 .objc_class_name_WebCoreScriptDebugger
 .objc_class_name_WebCoreScrollView
 .objc_class_name_WebCoreSettings
+.objc_class_name_WebCoreTextDecoder
 .objc_class_name_WebCoreTextRendererFactory
 .objc_class_name_WebCoreViewFactory
 .objc_class_name_WebDashboardRegion

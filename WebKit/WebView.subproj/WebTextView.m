@@ -44,6 +44,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebTextRepresentation.h>
 
+#import <WebCore/WebCoreTextDecoder.h>
+
 #import <Foundation/NSURLResponse.h>
 
 @interface NSTextView (AppKitSecret)
@@ -100,6 +102,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_decoder release];
     [super dealloc];
 }
 
@@ -197,7 +200,7 @@
 // of data received so far. This is a bad design in that it requires
 // WebTextRepresentation to know that it's view is a WebTextView, but this
 // bad design already existed.
-- (void)appendReceivedData:(NSData *)data fromDataSource:(WebDataSource *)dataSource;
+- (void)appendReceivedData:(NSData *)data fromDataSource:(WebDataSource *)dataSource
 {
     if ([self isRichText]) {
         // FIXME: We should try to progressively load RTF.
@@ -207,8 +210,27 @@
             [self _adjustRichTextFontSizeByRatio:_textSizeMultiplier];
         }
     } else {
+        if (!_decoder) {
+            NSString *textEncodingName = [dataSource textEncodingName];
+            if (textEncodingName == nil)
+                textEncodingName = [[self _preferences] defaultTextEncodingName];
+
+            _decoder = [[WebCoreTextDecoder alloc] initWithEncodingName:textEncodingName];
+        }
+        
         [self replaceCharactersInRange:NSMakeRange([[self string] length], 0)
-                            withString:[dataSource _stringWithData:data]];
+                            withString:[_decoder decodeData:data]];
+    }
+}
+
+- (void)flushReceivedData
+{
+    if ([self isRichText]) {
+        // FIXME: We should try to progressively load RTF.
+    } else {
+        if (_decoder)
+            [self replaceCharactersInRange:NSMakeRange([[self string] length], 0)
+                            withString:[_decoder flush]];
     }
 }
 

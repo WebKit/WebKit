@@ -30,10 +30,12 @@
 #import <WebKit/WebSearchableTextView.h>
 
 @class WebDataSource;
+@class WebCoreTextDecoder;
 
 @interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentElement>
 {
     float _textSizeMultiplier;
+    WebCoreTextDecoder *_decoder;
 }
 
 + (NSArray *)supportedMIMETypes;
@@ -41,5 +43,6 @@
 - (void)setFixedWidthFont;
 
 - (void)appendReceivedData:(NSData *)data fromDataSource:(WebDataSource *)dataSource;
+- (void)flushReceivedData;
 
 @end

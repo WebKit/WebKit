@@ -2292,6 +2292,10 @@
 		BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1798D9088DA4F8006068A5 /* render_theme_mac.h */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
+		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
+		E1EE773908F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE773A08F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
 /* End PBXBuildFile section */
 
@@ -3891,6 +3895,8 @@
 		BECE67BD07087B250007C14B /* text_affinity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = text_affinity.h; path = editing/text_affinity.h; sourceTree = "<group>"; };
 		BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQEditCommand.h; sourceTree = "<group>"; };
 		BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQEditCommand.mm; sourceTree = "<group>"; };
+		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; };
+		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = textAreaResizeCorner.tiff; path = Resources/textAreaResizeCorner.tiff; sourceTree = "<group>"; };
 		EDA4AC97076FB89100DD23EC /* edit_actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = edit_actions.h; path = editing/edit_actions.h; sourceTree = "<group>"; };
 		F5117BC902F9FFEF018635CE /* KWQSignal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = KWQSignal.h; path = kwq/KWQSignal.h; sourceTree = SOURCE_ROOT; };
@@ -6628,6 +6634,8 @@
 				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
 				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
 				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
+				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
+				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
 				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 				BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */,
@@ -7245,6 +7253,7 @@
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
+				E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8128,6 +8137,7 @@
 				A8EA434908E14EAC004BC396 /* dom_kdomnodetreewrapper.h in Headers */,
 				A8EA434B08E14EAC004BC396 /* dom_kdomdocumentwrapper.h in Headers */,
 				65C97AF408EA908800ACD273 /* config.h in Headers */,
+				E1EE773908F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9549,6 +9559,7 @@
 				BC179893088D975F006068A5 /* render_theme.cpp in Sources */,
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
+				E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10331,6 +10342,7 @@
 				A8EA434A08E14EAC004BC396 /* dom_kdomnodetreewrapper.cpp in Sources */,
 				A8EA434C08E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp in Sources */,
 				A863312F08E3AB25009CFEF4 /* CDFInterface.cpp in Sources */,
+				E1EE773A08F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

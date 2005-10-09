@@ -75,7 +75,9 @@
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-
+    WebTextView *view = (WebTextView *)[[[dataSource webFrame] frameView] documentView];
+    ASSERT([view isKindOfClass:[WebTextView class]]);
+    [view flushReceivedData];
 }
 
 - (BOOL)canProvideDocumentSource

@@ -1,3 +1,23 @@
+2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5187
+          UTF-8 in long text files breaks at some point
+
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation finishedLoadingWithDataSource:]):
+        Call flushReceivedData on the WebTextView so it can decode any final bytes.
+
+        * WebView.subproj/WebTextView.h: Added WebCoreTextDecoder field and flushReceivedData method.
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dealloc]): Release WebCoreTextDecoder.
+        (-[WebTextView appendReceivedData:fromDataSource:]): Create a WebCoreTextDecoder to decode
+        the text; use the textEncodingName from the data source. Use it to decode instead of the
+        data source's stringWithData.
+        (-[WebTextView flushReceivedData]): Call flush on the decoder and append any last bytes to
+        the text view.
+
 2005-10-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
