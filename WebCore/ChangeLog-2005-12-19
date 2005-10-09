@@ -1,3 +1,19 @@
+2005-10-08  Rosyna  <rosyna@unsanity.com>
+
+        Reviewed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3852
+          typeahead doesn't work in multiple row select boxes.
+
+        * kwq/KWQListBox.mm:
+        (KWQTableViewTypeSelectCallback): Added.
+        (-[KWQTableView finalize]): Deallocate the UCTypeSelect object.
+        (-[KWQTableView dealloc]): Ditto.
+        (-[KWQTableView keyUp:]): If character typed is a graphic character, pass it along to
+        the UCTypeSelect object and use it to type select, otherwise flush the object.
+
+        * manual-tests/select-element-type-select.html: Added.
+
 2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

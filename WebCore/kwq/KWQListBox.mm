@@ -60,6 +60,7 @@ const float rightMargin = 2;
     BOOL inNextValidKeyView;
     NSWritingDirection _direction;
     BOOL isSystemFont;
+    UCTypeSelectRef typeSelectSelector;
 }
 - (id)initWithListBox:(QListBox *)b;
 - (void)detach;
@@ -416,6 +417,26 @@ void QListBox::setFont(const QFont &font)
 
 @end
 
+static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, void *refcon, CFStringRef *outString, UCTypeSelectOptions *tsOptions)
+{
+    KWQTableView *self = static_cast<KWQTableView *>(refcon);   
+    QListBox *box = static_cast<QListBox *>([self widget]);
+    
+    if (!box)
+        return false;
+    
+    if (index > box->count())
+        return false;
+    
+    if (outString)
+        *outString = box->itemAtIndex(index).string.getCFString();
+    
+    if (tsOptions)
+        *tsOptions = kUCTSOptionsNoneMask;
+    
+    return true;
+}
+
 @implementation KWQTableView
 
 - (id)initWithListBox:(QListBox *)b
@@ -442,6 +463,22 @@ void QListBox::setFont(const QFont &font)
     return self;
 }
 
+- (void)finalize
+{
+    if (typeSelectSelector)
+        UCTypeSelectReleaseSelector(&typeSelectSelector);
+    
+    [super finalize];
+}
+
+- (void)dealloc
+{
+    if (typeSelectSelector)
+        UCTypeSelectReleaseSelector(&typeSelectSelector);
+    
+    [super dealloc];
+}
+
 - (void)detach
 {
     _box = 0;
@@ -465,9 +502,9 @@ void QListBox::setFont(const QFont &font)
     processingMouseEvent = NO;
 
     if (clickedDuringMouseEvent) {
-	clickedDuringMouseEvent = false;
+    clickedDuringMouseEvent = false;
     } else if (_box) {
-	_box->sendConsumedMouseUp();
+    _box->sendConsumedMouseUp();
     }
 }
 
@@ -478,7 +515,7 @@ void QListBox::setFont(const QFont &font)
     }
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
-	[super keyDown:event];
+    [super keyDown:event];
     }
 }
 
@@ -487,9 +524,49 @@ void QListBox::setFont(const QFont &font)
     if (!_box)  {
         return;
     }
+    
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
-	[super keyUp:event];
+        [super keyUp:event];
+        NSString *string = [event characters];
+       
+        if ([string length] == 0)
+           return;
+       
+        // type select should work with any graphic character as defined in D13a of the unicode standard.
+        const uint32_t graphicCharacterMask = U_GC_L_MASK | U_GC_M_MASK | U_GC_N_MASK | U_GC_P_MASK | U_GC_S_MASK | U_GC_ZS_MASK;
+        unichar pressedCharacter = [string characterAtIndex:0];
+        
+        if (!(U_GET_GC_MASK(pressedCharacter) & graphicCharacterMask)) {
+            if (typeSelectSelector)
+                UCTypeSelectFlushSelectorData(typeSelectSelector);
+            return;            
+        }
+        
+        OSStatus err = noErr;
+        if (!typeSelectSelector)
+            err = UCTypeSelectCreateSelector(0, 0, kUCCollateStandardOptions, &typeSelectSelector);
+        
+        if (err || !typeSelectSelector)
+            return;
+        
+        Boolean updateSelector = false;
+        // the timestamp and what the AddKey function want for time are the same thing.
+        err = UCTypeSelectAddKeyToSelector(typeSelectSelector, (CFStringRef)string, [event timestamp], &updateSelector);
+        
+        if (err || !updateSelector)
+            return;
+  
+        UInt32 closestItem = 0;
+        
+        err = UCTypeSelectFindItem(typeSelectSelector, [self numberOfRowsInTableView:self], 0, self, KWQTableViewTypeSelectCallback, &closestItem); 
+
+        if (err)
+            return;
+        
+        [self selectRowIndexes:[NSIndexSet indexSetWithIndex:closestItem] byExtendingSelection:NO];
+        [self scrollRowToVisible:closestItem];
+        
     }
 }
 
@@ -505,7 +582,7 @@ void QListBox::setFont(const QFont &font)
         if (_box && !KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
             [self _KWQ_scrollFrameToVisible];
         }        
-	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
+    [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
         if (_box) {
             QFocusEvent event(QEvent::FocusIn);
@@ -583,10 +660,10 @@ void QListBox::setFont(const QFont &font)
         _box->selectionChanged();
     }
     if (_box && !_box->changingSelection()) {
-	if (processingMouseEvent) {
-	    clickedDuringMouseEvent = true;
-	    _box->sendConsumedMouseUp();
-	}
+    if (processingMouseEvent) {
+        clickedDuringMouseEvent = true;
+        _box->sendConsumedMouseUp();
+    }
         if (_box) {
             _box->clicked();
         }
