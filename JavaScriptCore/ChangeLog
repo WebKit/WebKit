@@ -1,3 +1,40 @@
+2005-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej; some changes done after review.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5280
+          Date.setMonth fails with negative values
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5154
+          JSC should switch to _r variants of unix time/date functions
+        - fixed a few possible overflow cases
+
+        Retested all tests to be sure nothing broke; added layout test for bug 5280.
+
+        * kjs/config.h: Removed TIME_WITH_SYS_TIME define. Also set HAVE_SYS_TIMEB_H
+        for the __APPLE__ case (the latter is accurate but irrelevant).
+
+        * kjs/date_object.h: Reformatted. Removed unnecessary include of "function_object.h".
+        Moved declarations of helper classes and functions into the cpp file.
+
+        * kjs/date_object.cpp: Removed code at top to define macros to use CoreFoundation instead of
+        POSIX date functions.
+        (KJS::styleFromArgString): Tweaked to return early instead of using a variable.
+        (KJS::formatLocaleDate): Tweaked to check for undefined rather than checking argument count.
+        (KJS::formatDate): Made parameter const.
+        (KJS::formatDateUTCVariant): Ditto.
+        (KJS::formatTime): Ditto.
+        (KJS::DateProtoFuncImp::callAsFunction): Use gmtime_r and localtime_r instead of gmtime and
+        localtime.
+        (KJS::DateObjectImp::callAsFunction): Use localtime_r instead of localtime.
+        (KJS::ymdhmsToSeconds): Renamed from ymdhms_to_seconds. Changed computation to avoid possible
+        overflow if year is an extremely large or small number.
+        (KJS::makeTime): Removed code to move large month numbers from tm_mon to tm_year; this was
+        to accomodate CFGregorianDate, which is no longer used (and didn't handle negative values).
+        (KJS::parseDate): Renamed from KRFCDate_parseDate; changed to return a value in milliseconds
+        rather than in seconds. Reformatted the code. Changed to use UTF8String() instead of ascii(),
+        since ascii() is not thread safe. Changed some variables back from int to long to avoid
+        trouble if the result of strtol does not fit in an int (64-bit issue only).
+
 2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Geoff.

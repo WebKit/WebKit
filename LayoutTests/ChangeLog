@@ -1,3 +1,11 @@
+2005-10-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        - added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5280
+          Date.setMonth fails with negative values
+
+        * fast/js/date-negative-setmonth-expected.txt: Added.
+        * fast/js/date-negative-setmonth.html: Added.
+
 2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         - added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5266
