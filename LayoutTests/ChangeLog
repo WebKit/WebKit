@@ -1,3 +1,14 @@
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Geoff Garen.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5061
+          date-big-setmonth test is not timezone-independent
+
+        * fast/js/date-big-setmonth.html: Changed to compare expected result with a Date value rather
+        than with a constant. Also write out final result as a date rather than as a constant.
+        * fast/js/date-big-setmonth-expected.txt: Updated.
+
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
         - Added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4821

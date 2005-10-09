@@ -12,13 +12,13 @@ function test() {
         layoutTestController.dumpAsText();
     }
 
-    var d = new Date(0);
+    var d = new Date(1970, 0, 1);
     var status = "FAILED: ";
     d.setMonth(128);
-    if (d.valueOf() == 307666800000) {
+    if (d.valueOf() == new Date(1980, 8, 1).valueOf()) {
         status = "PASSED: ";
     }
-    print(status + "date value is " + d.valueOf());
+    print(status + "date is " + d.toDateString());
 }
 </script>
 </head>
