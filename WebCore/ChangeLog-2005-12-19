@@ -1,3 +1,19 @@
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4898
+          Failures in dbaron's bidi ordering tests
+
+        Added 3 dbaron bidi ordering tests to LayoutTests.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::deleteBidiRuns):
+        (khtml::Bidinext):
+        (khtml::appendRunsForObject):
+        (khtml::embed):
+        (khtml::RenderBlock::bidiReorderLine):
+
 2005-10-08  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.

@@ -35,8 +35,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {BDO} at (0,0) size 209x18
           RenderText {TEXT} at (0,36) size 209x18
-            text run at (0,36) width 205: "This sentence should be forward"
-            text run at (205,36) width 4: "."
+            text run at (0,36) width 209: "This sentence should be forward."
         RenderText {TEXT} at (209,36) size 4x18
           text run at (209,36) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -51,13 +50,11 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {BDO} at (0,0) size 290x18
           RenderText {TEXT} at (0,90) size 26x18
-            text run at (0,90) width 22: "My"
-            text run at (22,90) width 4: " "
+            text run at (0,90) width 26: "My "
           RenderInline {BDO} at (0,0) size 55x18
             RenderText {TEXT} at (26,90) size 55x18
               text run at (26,90) width 55: "umbrella"
           RenderText {TEXT} at (81,90) size 209x18
-            text run at (81,90) width 205: " sure would be useful in this rain"
-            text run at (286,90) width 4: "."
+            text run at (81,90) width 209: " sure would be useful in this rain."
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0

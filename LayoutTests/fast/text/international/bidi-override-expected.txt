@@ -110,20 +110,20 @@ layer at (0,0) size 800x336
             RenderTableCell {TD} at (97,81) size 238x27 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {TEXT} at (5,5) size 229x18
                 text run at (5,5) width 22: "abc"
-                text run at (27,5) width 66: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (93,5) width 20: "\x{202C}jkl "
-                text run at (113,5) width 23: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
-                text run at (136,5) width 72: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (27,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (93,5) width 20: "jkl "
+                text run at (113,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
+                text run at (136,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (208,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
             RenderTableCell {TD} at (335,81) size 238x27 [border: (1px solid #008000)] [r=3 c=2 rs=1 cs=1]
               RenderText {TEXT} at (5,5) size 229x18
-                text run at (5,5) width 23: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
-                text run at (28,5) width 72: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (5,5) width 23: "\x{5D9}\x{5DB}\x{5DC}"
+                text run at (28,5) width 72: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (100,5) width 26: "\x{5D0}\x{5D1}\x{5D2}"
                 text run at (126,5) width 4: " "
                 text run at (130,5) width 22: "abc"
-                text run at (152,5) width 66: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
-                text run at (218,5) width 16: "\x{202C}jkl"
+                text run at (152,5) width 66: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (218,5) width 16: "jkl"
       RenderBlock {P} at (0,158) size 784x18
         RenderText {TEXT} at (0,0) size 387x18
           text run at (0,0) width 387: "The CSS column should be identical to the reference column."

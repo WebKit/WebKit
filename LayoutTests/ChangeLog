@@ -1,3 +1,31 @@
+2005-10-08  Darin Adler  <darin@apple.com>
+
+        Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=4898
+        (Failures in dbaron's bidi ordering tests).
+
+        * fast/dom/HTMLElement/bdo-expected.txt: Updated for differently-breaking text runs.
+        * fast/text/international/bidi-override-expected.txt: Updated because override characters no
+        longer show up in the render tree.
+
+        * fast/text/international/bidi-LDB-2-CSS-expected.checksum: Added.
+        * fast/text/international/bidi-LDB-2-CSS-expected.png: Added.
+        * fast/text/international/bidi-LDB-2-CSS-expected.txt: Added.
+        * fast/text/international/bidi-LDB-2-CSS.html: Added.
+
+        * fast/text/international/bidi-LDB-2-HTML-expected.checksum: Added.
+        * fast/text/international/bidi-LDB-2-HTML-expected.png: Added.
+        * fast/text/international/bidi-LDB-2-HTML-expected.txt: Added.
+        * fast/text/international/bidi-LDB-2-HTML.html: Added.
+
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum: Added.
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Added.
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.txt: Added.
+        * fast/text/international/bidi-LDB-2-formatting-characters.html: Added.
+
+        * fast/text/international/bidi-explicit-embedding-expected.checksum: Updated to now-correct results.
+        * fast/text/international/bidi-explicit-embedding-expected.png: Ditto.
+        * fast/text/international/bidi-explicit-embedding-expected.txt: Ditto.
+
 2005-10-07  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
