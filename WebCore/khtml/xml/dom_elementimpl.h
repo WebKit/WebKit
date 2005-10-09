@@ -333,7 +333,7 @@ protected:
 
 // When adding new entries, make sure to keep eLastEntry at the end of the list.
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
-    eTable, eCell, eCaption, eLastEntry };
+    eTable, eCell, eCaption, eBDO, eLastEntry };
 
 class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {

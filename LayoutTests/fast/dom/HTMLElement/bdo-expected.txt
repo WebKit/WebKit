@@ -6,30 +6,20 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 111x18
           text run at (0,0) width 111: "Tests: the bdo tag"
-        RenderBR {BR} at (0,0) size 0x0
       RenderBlock {P} at (0,34) size 784x18
-        RenderInline {B} at (0,0) size 180x18
-          RenderText {TEXT} at (0,0) size 180x18
-            text run at (0,0) width 180: "This test is expected to fail."
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 328x18
+          text run at (0,0) width 328: "The bdo element overrides the default text direction."
       RenderBlock {P} at (0,68) size 784x36
-        RenderText {TEXT} at (0,0) size 73x18
-          text run at (0,0) width 73: "Conditions:"
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,18) size 328x18
-          text run at (0,18) width 328: "The bdo element overrides the default text direction."
-      RenderBlock {P} at (0,120) size 784x36
         RenderText {TEXT} at (0,0) size 762x36
           text run at (0,0) width 727: "If successful, the first sentence would be backward, and the second sentence regular. There should then be an extra "
           text run at (727,0) width 35: "blank"
           text run at (0,18) width 698: "line, followed by a line reading only \"A,\" and finally, a sentence where only the word \"umbrella\" is backward."
-      RenderBlock {HR} at (0,172) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,182) size 784x108
+      RenderBlock {HR} at (0,120) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,130) size 784x108
         RenderBR {BR} at (0,0) size 0x18
         RenderInline {BDO} at (0,0) size 221x18
           RenderText {TEXT} at (0,18) size 221x18
-            text run at (0,18) width 4: "."
-            text run at (4,18) width 217: "This sentence should be backward"
+            text run at (0,18) width 221: "This sentence should be backward."
         RenderText {TEXT} at (221,18) size 4x18
           text run at (221,18) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

@@ -1,5 +1,20 @@
 2005-10-08  Darin Adler  <darin@apple.com>
 
+        - Updated test results for fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3245
+          Support the 'bdo' element
+
+        * fast/dom/HTMLElement/bdo.html: Updated test, no longer says to expect failure.
+        * fast/dom/HTMLElement/bdo-expected.checksum: Correct results.
+        * fast/dom/HTMLElement/bdo-expected.png: Ditto.
+        * fast/dom/HTMLElement/bdo-expected.txt: Ditto.
+
+        * fast/text/international/bidi-LDB-2-HTML-expected.checksum: Updated to expect correct
+        results for the section done with <bdo>.
+        * fast/text/international/bidi-LDB-2-HTML-expected.png: Ditto.
+        * fast/text/international/bidi-LDB-2-HTML-expected.txt: Ditto.
+
+2005-10-08  Darin Adler  <darin@apple.com>
+
         Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=4898
         (Failures in dbaron's bidi ordering tests).
 

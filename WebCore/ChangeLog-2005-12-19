@@ -2,17 +2,40 @@
 
         Reviewed by Darin.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3245
+          Support the 'bdo' element
+
+        Fixes the results of some existing layout tests.
+
+        * khtml/xml/dom_elementimpl.h: Add eBDO to the list of entry types so there's a way to
+        keep <bdo> dir attribute mappings separate from those of other elements.
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::mapToEntry): Add special case to use eBDO for the dir attribute on
+        elements with the <bdo> tag.
+        (HTMLElementImpl::parseMappedAttribute): Use bidi-override for the unicode-bidi CSS property
+        when setting it based on the dir attribute on a <bdo> tag. Along with the change above this
+        obviates the need for an HTMLElementImpl subclass for <bdo>, but we could refactor it that
+        way later if we decide there's an advantage to doing it that way.
+
+        * khtml/css/html4.css: Remove the rules about <bdo>. They are insufficient, and now
+        they are also unnecessary with the changes above.
+
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4898
           Failures in dbaron's bidi ordering tests
 
-        Added 3 dbaron bidi ordering tests to LayoutTests.
+        Added 3 dbaron bidi ordering tests to layout tests.
 
         * khtml/rendering/bidi.cpp:
-        (khtml::deleteBidiRuns):
-        (khtml::Bidinext):
-        (khtml::appendRunsForObject):
-        (khtml::embed):
-        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::deleteBidiRuns): Set emptyRun back to true.
+        (khtml::Bidinext): Remove emptyRun checks here.
+        (khtml::appendRunsForObject): Add a check here to avoid adding an empty run.
+        (khtml::embed): Add handling for various cases that was missing before.
+        (khtml::RenderBlock::bidiReorderLine): Many different fixes.
 
 2005-10-08  Rob Buis  <rwlbuis@xs4all.nl>
 

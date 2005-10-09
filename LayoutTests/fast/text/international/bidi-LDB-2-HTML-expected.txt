@@ -286,8 +286,7 @@ layer at (0,0) size 800x501
               text run at (64,0) width 28: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {BDO} at (0,0) size 64x18
               RenderText {TEXT} at (0,0) size 64x18
-                text run at (0,0) width 30: " \x{5D0}\x{5D1}\x{5D2}"
-                text run at (30,0) width 34: "CBA"
+                text run at (0,0) width 64: "CBA \x{5D0}\x{5D1}\x{5D2}"
             RenderText {TEXT} at (92,0) size 65x18
               text run at (92,0) width 39: " DEF "
               text run at (131,0) width 26: "\x{5D6}\x{5D7}\x{5D8}"
@@ -297,8 +296,7 @@ layer at (0,0) size 800x501
               text run at (26,0) width 4: " "
             RenderInline {BDO} at (0,0) size 62x18
               RenderText {TEXT} at (30,0) size 62x18
-                text run at (30,0) width 38: "ABC "
-                text run at (68,0) width 24: "\x{5D5}\x{5D4}\x{5D3}"
+                text run at (30,0) width 62: "ABC \x{5D5}\x{5D4}\x{5D3}"
             RenderText {TEXT} at (92,0) size 65x18
               text run at (92,0) width 39: " DEF "
               text run at (131,0) width 26: "\x{5D6}\x{5D7}\x{5D8}"
@@ -307,8 +305,7 @@ layer at (0,0) size 800x501
               text run at (127,0) width 30: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {BDO} at (0,0) size 62x18
               RenderText {TEXT} at (30,0) size 62x18
-                text run at (30,0) width 38: "ABC "
-                text run at (68,0) width 24: "\x{5D5}\x{5D4}\x{5D3}"
+                text run at (30,0) width 62: "ABC \x{5D5}\x{5D4}\x{5D3}"
             RenderText {TEXT} at (0,0) size 127x18
               text run at (0,0) width 30: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (92,0) width 35: " DEF"
@@ -479,9 +476,7 @@ layer at (0,0) size 800x501
               text run at (97,0) width 30: "\x{5D0}\x{5D1}\x{5D2} "
             RenderInline {BDO} at (0,0) size 97x18
               RenderText {TEXT} at (0,0) size 97x18
-                text run at (0,0) width 31: "DEF"
-                text run at (31,0) width 32: " \x{5D3}\x{5D4}\x{5D5} "
-                text run at (63,0) width 34: "ABC"
+                text run at (0,0) width 97: "ABC \x{5D3}\x{5D4}\x{5D5} DEF"
             RenderText {TEXT} at (127,0) size 63x18
               text run at (127,0) width 37: " GHI "
               text run at (164,0) width 26: "\x{5D6}\x{5D7}\x{5D8}"
@@ -568,8 +563,7 @@ layer at (0,0) size 800x501
               text run at (26,0) width 42: " ABC "
             RenderInline {BDO} at (0,0) size 59x18
               RenderText {TEXT} at (68,0) size 59x18
-                text run at (68,0) width 31: "DEF"
-                text run at (99,0) width 28: "\x{5D3}\x{5D4}\x{5D5} "
+                text run at (68,0) width 59: "\x{5D3}\x{5D4}\x{5D5} DEF"
             RenderText {TEXT} at (127,0) size 63x18
               text run at (127,0) width 37: " GHI "
               text run at (164,0) width 26: "\x{5D6}\x{5D7}\x{5D8}"
