@@ -83,7 +83,7 @@
 
 - (NSObject <NSTextInput> *)textInput
 {
-    NSView <WebDocumentView> *view = [[[webView mainFrame] frameView] documentView];
+    NSView <NSTextInput> *view = [[[webView mainFrame] frameView] documentView];
     return [view conformsToProtocol:@protocol(NSTextInput)] ? view : nil;
 }
 
