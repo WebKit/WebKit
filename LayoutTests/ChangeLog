@@ -1,5 +1,17 @@
 2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5148
+          Rendering regressions in the Acid2 test cannot be detected
+
+        * fast/css/acid2-pixel-expected.checksum: Added.
+        * fast/css/acid2-pixel-expected.png: Added.
+        * fast/css/acid2-pixel-expected.txt: Added.
+        * fast/css/acid2-pixel.html: Added.
+
+2005-10-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Geoff Garen.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5061
