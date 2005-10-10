@@ -1,3 +1,7 @@
+2005-10-10  Darin Adler  <darin@apple.com>
+
+        * .cvsignore: Added. Ignore Makefile.in and Makefile.
+
 2005-10-07  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
