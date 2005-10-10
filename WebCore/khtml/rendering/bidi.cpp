@@ -2209,7 +2209,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 #ifdef DEBUG_LINEBREAKS
                     kdDebug(6041) << "found space at " << pos << " in string '" << QString( str, strlen ).latin1() << "' adding " << tmpW << " new width = " << w << endl;
 #endif
-                    if ( !isPre && w + tmpW > width && w == 0 ) {
+                    if (isNormal && w + tmpW > width && w == 0) {
                         int fb = nearestFloatBottom(m_height);
                         int newLineWidth = lineWidth(fb);
                         // See if |tmpW| will fit on the new line.  As long as it does not,
