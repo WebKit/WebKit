@@ -1,23 +1,12 @@
-#ifndef __JSUtils_h
-#define __JSUtils_h
+#ifndef JSUtils_h
+#define JSUtils_h
 
 /*
-	JSUtils.h
+    JSUtils.h
 */
-
-#ifndef __CORESERVICES__
-#include <CoreServices/CoreServices.h>
-#endif
 
 #include <JavaScriptGlue/JavaScriptGlue.h>
 
-#ifdef USE_JSHACK
-#include <JSHack/value.h>
-#include <JSHack/object.h>
-#include <JSHack/types.h>
-#include <JSHack/interpreter.h>
-#include <JSHack/ustring.h>
-#else
 #include <JavaScriptCore/value.h>
 #include <JavaScriptCore/object.h>
 #include <JavaScriptCore/types.h>
@@ -25,9 +14,6 @@
 #include <JavaScriptCore/protect.h>
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/ustring.h>
-#endif
-
-#define JAG_PINK_OR_LATER	1 /* %%% turn on for new JavaScriptCore */
 
 using namespace KJS;
 
@@ -39,11 +25,9 @@ class JSUserObjectImp;
 
 UString CFStringToUString(CFStringRef inCFString);
 CFStringRef UStringToCFString(const UString& inUString);
-#if JAG_PINK_OR_LATER
 Identifier CFStringToIdentifier(CFStringRef inCFString);
 CFStringRef IdentifierToCFString(const Identifier& inIdentifier);
-#endif
-JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec);
+JSUserObject *KJSValueToJSObject(ValueImp *inValue, ExecState *exec);
 CFTypeRef KJSValueToCFType(ValueImp *inValue, ExecState *exec);
 ValueImp *JSObjectKJSValue(JSUserObject* ptr);
 CFTypeRef GetCFNull(void);
@@ -52,9 +36,9 @@ inline CFTypeRef RetainCFType(CFTypeRef x) { if (x) x = CFRetain(x); return x; }
 inline void ReleaseCFType(CFTypeRef x) { if (x) CFRelease(x);  }
 
 enum {
-	kJSInvalidTypeID = 0,
-	kJSObjectTypeID,
-	kJSRunTypeID
+    kJSInvalidTypeID = 0,
+    kJSObjectTypeID,
+    kJSRunTypeID
 };
 
 enum {

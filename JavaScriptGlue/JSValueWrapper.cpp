@@ -4,170 +4,170 @@
 #include "JSValueWrapper.h"
 #include "JavaScriptCore/IdentifierSequencedSet.h"
 
-JSValueWrapper::JSValueWrapper(ValueImp *inValue, ExecState *inExec) 
-	: fValue(inValue), fExec(inExec) 
-{ 
+JSValueWrapper::JSValueWrapper(ValueImp *inValue, ExecState *inExec)
+    : fValue(inValue), fExec(inExec)
+{
 }
 
 JSValueWrapper::~JSValueWrapper()
-{ 
+{
 }
 
-ValueImp *JSValueWrapper::GetValue() 
-{ 
-	return fValue; 
-}
-ExecState* JSValueWrapper::GetExecState() const 
+ValueImp *JSValueWrapper::GetValue()
 {
-	return fExec; 
+    return fValue;
 }
-	
+ExecState* JSValueWrapper::GetExecState() const
+{
+    return fExec;
+}
+
 
 void JSValueWrapper::GetJSObectCallBacks(JSObjectCallBacks& callBacks)
 {
-	callBacks.dispose = (JSObjectDisposeProcPtr)JSValueWrapper::JSObjectDispose;
-	callBacks.equal = (JSObjectEqualProcPtr)NULL;
-	callBacks.copyPropertyNames = (JSObjectCopyPropertyNamesProcPtr)JSValueWrapper::JSObjectCopyPropertyNames;
-	callBacks.copyCFValue = (JSObjectCopyCFValueProcPtr)JSValueWrapper::JSObjectCopyCFValue;
-	callBacks.copyProperty = (JSObjectCopyPropertyProcPtr)JSValueWrapper::JSObjectCopyProperty;
-	callBacks.setProperty = (JSObjectSetPropertyProcPtr)JSValueWrapper::JSObjectSetProperty;
-	callBacks.callFunction = (JSObjectCallFunctionProcPtr)JSValueWrapper::JSObjectCallFunction;
+    callBacks.dispose = (JSObjectDisposeProcPtr)JSValueWrapper::JSObjectDispose;
+    callBacks.equal = (JSObjectEqualProcPtr)0;
+    callBacks.copyPropertyNames = (JSObjectCopyPropertyNamesProcPtr)JSValueWrapper::JSObjectCopyPropertyNames;
+    callBacks.copyCFValue = (JSObjectCopyCFValueProcPtr)JSValueWrapper::JSObjectCopyCFValue;
+    callBacks.copyProperty = (JSObjectCopyPropertyProcPtr)JSValueWrapper::JSObjectCopyProperty;
+    callBacks.setProperty = (JSObjectSetPropertyProcPtr)JSValueWrapper::JSObjectSetProperty;
+    callBacks.callFunction = (JSObjectCallFunctionProcPtr)JSValueWrapper::JSObjectCallFunction;
 }
-			
-void JSValueWrapper::JSObjectDispose(void* data)
-{
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	delete ptr;
-}
-	
 
-CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void* data)
+void JSValueWrapper::JSObjectDispose(void *data)
+{
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    delete ptr;
+}
+
+
+CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
 {
     InterpreterLock lock;
 
-	CFMutableArrayRef result = NULL;
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		ExecState* exec = ptr->GetExecState();
-		ObjectImp *object = ptr->GetValue()->toObject(exec);
-		IdentifierSequencedSet list;
+    CFMutableArrayRef result = 0;
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        ExecState* exec = ptr->GetExecState();
+        ObjectImp *object = ptr->GetValue()->toObject(exec);
+        IdentifierSequencedSet list;
                 object->getPropertyNames(exec, list);
-		IdentifierSequencedSetIterator iterator = list.begin();
+        IdentifierSequencedSetIterator iterator = list.begin();
 
-		while (iterator != list.end()) {
-			Identifier name = *iterator;
-			CFStringRef nameStr = IdentifierToCFString(name);
+        while (iterator != list.end()) {
+            Identifier name = *iterator;
+            CFStringRef nameStr = IdentifierToCFString(name);
 
-			if (!result)
-			{
-				result = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-			}
-			if (result && nameStr)
-			{
-				CFArrayAppendValue(result, nameStr);
-			}
-			ReleaseCFType(nameStr);
-			++iterator;
-		}
+            if (!result)
+            {
+                result = CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks);
+            }
+            if (result && nameStr)
+            {
+                CFArrayAppendValue(result, nameStr);
+            }
+            ReleaseCFType(nameStr);
+            ++iterator;
+        }
 
-	}
-	return result;
+    }
+    return result;
 }
 
 
-JSObjectRef JSValueWrapper::JSObjectCopyProperty(void* data, CFStringRef propertyName)
+JSObjectRef JSValueWrapper::JSObjectCopyProperty(void *data, CFStringRef propertyName)
 {
     InterpreterLock lock;
 
-	JSObjectRef result = NULL;
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		ExecState* exec = ptr->GetExecState();
-		ValueImp *propValue = ptr->GetValue()->toObject(exec)->get(exec, CFStringToIdentifier(propertyName));
-		JSValueWrapper* wrapperValue = new JSValueWrapper(propValue, exec);
+    JSObjectRef result = 0;
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        ExecState* exec = ptr->GetExecState();
+        ValueImp *propValue = ptr->GetValue()->toObject(exec)->get(exec, CFStringToIdentifier(propertyName));
+        JSValueWrapper* wrapperValue = new JSValueWrapper(propValue, exec);
 
-		JSObjectCallBacks callBacks;
-		GetJSObectCallBacks(callBacks);
-		result = JSObjectCreateInternal(wrapperValue, &callBacks, JSValueWrapper::JSObjectMark, kJSUserObjectDataTypeJSValueWrapper);
+        JSObjectCallBacks callBacks;
+        GetJSObectCallBacks(callBacks);
+        result = JSObjectCreateInternal(wrapperValue, &callBacks, JSValueWrapper::JSObjectMark, kJSUserObjectDataTypeJSValueWrapper);
 
-		if (!result)
-		{
-			delete wrapperValue;
-		}
-	}
-	return result;
+        if (!result)
+        {
+            delete wrapperValue;
+        }
+    }
+    return result;
 }
 
-void JSValueWrapper::JSObjectSetProperty(void* data, CFStringRef propertyName, JSObjectRef jsValue)
+void JSValueWrapper::JSObjectSetProperty(void *data, CFStringRef propertyName, JSObjectRef jsValue)
 {
     InterpreterLock lock;
 
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		ExecState* exec = ptr->GetExecState();	
-		ValueImp *value = JSObjectKJSValue((JSUserObject*)jsValue);
-		ObjectImp *objValue = ptr->GetValue()->toObject(exec);
-		objValue->put(exec, CFStringToIdentifier(propertyName), value);
-	}
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        ExecState* exec = ptr->GetExecState();
+        ValueImp *value = JSObjectKJSValue((JSUserObject*)jsValue);
+        ObjectImp *objValue = ptr->GetValue()->toObject(exec);
+        objValue->put(exec, CFStringToIdentifier(propertyName), value);
+    }
 }
 
-JSObjectRef JSValueWrapper::JSObjectCallFunction(void* data, JSObjectRef thisObj, CFArrayRef args)
+JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj, CFArrayRef args)
 {
     InterpreterLock lock;
 
-	JSObjectRef result = NULL;
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		ExecState* exec = ptr->GetExecState();	
-	
-		ValueImp *value = JSObjectKJSValue((JSUserObject*)thisObj);
-		ObjectImp *ksjThisObj = value->toObject(exec);
-		ObjectImp *objValue = ptr->GetValue()->toObject(exec);
+    JSObjectRef result = 0;
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        ExecState* exec = ptr->GetExecState();
 
-		List listArgs;
-		CFIndex argCount = args ? CFArrayGetCount(args) : 0;
-		for (CFIndex i = 0; i < argCount; i++)
-		{
-			JSObjectRef jsArg = (JSObjectRef)CFArrayGetValueAtIndex(args, i);
-			ValueImp *kgsArg = JSObjectKJSValue((JSUserObject*)jsArg);
-			listArgs.append(kgsArg);
-		}
+        ValueImp *value = JSObjectKJSValue((JSUserObject*)thisObj);
+        ObjectImp *ksjThisObj = value->toObject(exec);
+        ObjectImp *objValue = ptr->GetValue()->toObject(exec);
 
-		ValueImp *resultValue = objValue->call(exec, ksjThisObj, listArgs);
-		JSValueWrapper* wrapperValue = new JSValueWrapper(resultValue, ptr->GetExecState());
-		JSObjectCallBacks callBacks;
-		GetJSObectCallBacks(callBacks);
-		result = JSObjectCreate(wrapperValue, &callBacks);
-		if (!result)
-		{
-			delete wrapperValue;
-		}
-	}
-	return result;
+        List listArgs;
+        CFIndex argCount = args ? CFArrayGetCount(args) : 0;
+        for (CFIndex i = 0; i < argCount; i++)
+        {
+            JSObjectRef jsArg = (JSObjectRef)CFArrayGetValueAtIndex(args, i);
+            ValueImp *kgsArg = JSObjectKJSValue((JSUserObject*)jsArg);
+            listArgs.append(kgsArg);
+        }
+
+        ValueImp *resultValue = objValue->call(exec, ksjThisObj, listArgs);
+        JSValueWrapper* wrapperValue = new JSValueWrapper(resultValue, ptr->GetExecState());
+        JSObjectCallBacks callBacks;
+        GetJSObectCallBacks(callBacks);
+        result = JSObjectCreate(wrapperValue, &callBacks);
+        if (!result)
+        {
+            delete wrapperValue;
+        }
+    }
+    return result;
 }
 
-CFTypeRef JSValueWrapper::JSObjectCopyCFValue(void* data)
+CFTypeRef JSValueWrapper::JSObjectCopyCFValue(void *data)
 {
     InterpreterLock lock;
 
-	CFTypeRef result = NULL;
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		result = KJSValueToCFType(ptr->fValue, ptr->fExec);
-	}
-	return result;
+    CFTypeRef result = 0;
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        result = KJSValueToCFType(ptr->fValue, ptr->fExec);
+    }
+    return result;
 }
 
-void JSValueWrapper::JSObjectMark(void* data)
+void JSValueWrapper::JSObjectMark(void *data)
 {
-	JSValueWrapper* ptr = (JSValueWrapper*)data;
-	if (ptr)
-	{
-		ptr->fValue->mark();
-	}
+    JSValueWrapper* ptr = (JSValueWrapper*)data;
+    if (ptr)
+    {
+        ptr->fValue->mark();
+    }
 }

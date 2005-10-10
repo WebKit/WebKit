@@ -1,5 +1,28 @@
 2005-10-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - converted tabs to spaces, NULL to 0, added some (void), got rid of __ prefixes
+          in headers (reserved for compiler/library)
+
+        * Info.plist:
+        * JSBase.cpp:
+        * JSBase.h:
+        * JSObject.cpp:
+        * JSObject.h:
+        * JSRun.cpp:
+        * JSRun.h:
+        * JSUtils.cpp:
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        * JSValueWrapper.h:
+        * JavaScriptGlue.cpp:
+        * JavaScriptGlue.h:
+        * UserObjectImp.cpp:
+        * UserObjectImp.h:
+
+2005-10-10  Darin Adler  <darin@apple.com>
+
         * .cvsignore: Added. Ignore Makefile.in and Makefile.
 
 2005-10-07  Timothy Hatcher  <timothy@apple.com>
