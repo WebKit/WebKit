@@ -92,6 +92,7 @@ void _NSResetKillRingOperationFlag(void);
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
+- (void)_recursiveDisplayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
@@ -723,9 +724,8 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 // need to be redrawn (in case the layout causes some things to get dirtied).
 - (void)_propagateDirtyRectsToOpaqueAncestors
 {
-    if (![[self _webView] drawsBackground]) {
+    if (![[self _webView] drawsBackground])
         [self _web_layoutIfNeededRecursive];
-    }
     [super _propagateDirtyRectsToOpaqueAncestors];
 }
 
@@ -737,11 +737,10 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     BOOL wasInPrintingMode = _private->printing;
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (wasInPrintingMode != isPrinting) {
-        if (isPrinting) {
+        if (isPrinting)
             [self _web_setPrintingModeRecursive];
-        } else {
+        else
             [self _web_clearPrintingModeRecursive];
-        }
     }
 
     [self _web_layoutIfNeededRecursive: rect testDirtyRect:YES];
@@ -753,11 +752,10 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [self _restoreSubviews];
 
     if (wasInPrintingMode != isPrinting) {
-        if (wasInPrintingMode) {
+        if (wasInPrintingMode)
             [self _web_setPrintingModeRecursive];
-        } else {
+        else
             [self _web_clearPrintingModeRecursive];
-        }
     }
 }
 
@@ -773,11 +771,10 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         // This helps when we print as part of a larger print process.
         // If the WebHTMLView itself is what we're printing, then we will never have to do this.
         if (wasInPrintingMode != isPrinting) {
-            if (isPrinting) {
+            if (isPrinting)
                 [self _web_setPrintingModeRecursive];
-            } else {
+            else
                 [self _web_clearPrintingModeRecursive];
-            }
         }
 
         NSRect boundsBeforeLayout = [self bounds];
@@ -798,14 +795,41 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     
     if (needToSetAsideSubviews) {
         if (wasInPrintingMode != isPrinting) {
-            if (wasInPrintingMode) {
+            if (wasInPrintingMode)
                 [self _web_setPrintingModeRecursive];
-            } else {
+            else
                 [self _web_clearPrintingModeRecursive];
-            }
         }
 
         [self _restoreSubviews];
+    }
+}
+
+// Don't let AppKit even draw subviews. We take care of that.
+- (void)_recursiveDisplayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context topView:(BOOL)topView
+{
+    // This helps when we print as part of a larger print process.
+    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
+    BOOL wasInPrintingMode = _private->printing;
+    BOOL isPrinting = ![context isDrawingToScreen];
+    if (wasInPrintingMode != isPrinting) {
+        if (isPrinting)
+            [self _web_setPrintingModeRecursive];
+        else
+            [self _web_clearPrintingModeRecursive];
+    }
+
+    [self _web_layoutIfNeededRecursive:rect testDirtyRect:NO];
+
+    [self _setAsideSubviews];
+    [super _recursiveDisplayRectIgnoringOpacity:rect inContext:context topView:topView];
+    [self _restoreSubviews];
+
+    if (wasInPrintingMode != isPrinting) {
+        if (wasInPrintingMode)
+            [self _web_setPrintingModeRecursive];
+        else
+            [self _web_clearPrintingModeRecursive];
     }
 }
 

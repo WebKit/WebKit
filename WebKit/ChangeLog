@@ -1,3 +1,18 @@
+2005-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+          Would like API to flush rendering of pending DOM changes
+
+        This was actually a Tiger regression. When AppKit added a new code path for rendering
+        NSView, our special hack for doing layout when we draw didn't work any more. So we
+        were able to fix this without adding any API.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _recursiveDisplayRectIgnoringOpacity:inContext:topView:]): Added.
+        Does the same thing that other _recursiveDisplay methods do.
+
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
