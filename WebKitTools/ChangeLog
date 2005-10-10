@@ -1,3 +1,10 @@
+2005-10-09  Darin Adler  <darin@apple.com>
+
+        * Scripts/check-dom-results: Dump ".xhtml" for tests in the xhtml directory.
+        * Scripts/cvs-apply: Handle added/deleted files in the current directory.
+        * Scripts/cvs-unapply: Ditto.
+        * Scripts/run-webkit-tests: Add a few more false-positive leaks.
+
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed, rearranged and landed by Darin.

@@ -111,10 +111,12 @@ sub patch
         # Either a deletion or an addition.
 
         # Change directory down into the directory in question.
-        $patch =~ m|^Index: (([^/\n]*/)+)([^/\n]+)| or die;
+        $patch =~ m|^Index: (([^/\n]*/)*)([^/\n]+)| or die;
         my $prefix = $1;
         my $base = $3;
-        chdir $prefix if $prefix;
+        if ($prefix) {
+            chdir $prefix or die;
+        }
 
         if ($patch =~ /\n@@ .* \+0,0 @@/) {
             # Deletion.

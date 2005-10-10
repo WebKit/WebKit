@@ -113,8 +113,10 @@ foreach my $suite (@suites) {
 	    print "    Failed:\n";
 	    
 	    foreach my $failure (sort @failures) {
+                $directory =~ m|^dom/(\w+)|;
+                my $extension = $1;
 		$failure =~ s|.*/||;
-		$failure =~ s|-expected\.txt|.html|;
+		$failure =~ s|-expected\.txt|.${extension}|;
 		print "        ${directory}/${failure}";
 	    }
 	}

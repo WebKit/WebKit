@@ -83,12 +83,13 @@ sub patch
     } else {
         # Either a deletion or an addition.
 
-        $patch =~ m|^Index: (([^/\n]*/)+)([^/\n]+)| or die;
-        my $prefix = $1 || ".";
-        my $base = $3;
-
         # Change directory down into the directory in question.
-        chdir $prefix or die;
+        $patch =~ m|^Index: (([^/\n]*/)*)([^/\n]+)| or die;
+        my $prefix = $1;
+        my $base = $3;
+        if ($prefix) {
+            chdir $prefix or die;
+        }
 
         if ($patch =~ /\n@@ .* \+0,0 @@/) {
             # Reverse a deletion.

@@ -524,15 +524,22 @@ sub printLeaks
     $atLineStart = 1;
 
     # We are excluding the following reported leaks so they don't get in our way when looking for WebKit leaks:
-    #
-    #     pthread_create: false positive leak of 'THRD', Radar 3387783
-    #     _CFPreferencesDomainDeepCopyDictionary: leak apparently in CFPreferences, Radar 4220786
-    #
+
+    my @exclude = (
+        "pthread_create", # false positive leak of 'THRD', Radar 3387783
+        "_CFPreferencesDomainDeepCopyDictionary", # leak apparently in CFPreferences, Radar 4220786
+        "+[NSLanguage initialize]", # leak apparently in NSLanguage, Radar 3986177
+        "FOGetCoveredUnicodeChars", # leak apparently in ATS, Radar 3943604
+        "PCFragPrepareClosureFromFile" # leak in Code Fragment Manager, Radar 3426998
+    );
+
     # Note that this exclusion doesn't quite work right; sometimes a leak of 'THRD' with no stack trace will
     # still appear in the leaks output.
 
+    my $excludes = "-exclude '" . (join "' -exclude '", @exclude) . "'";
+
     print " ? checking for leaks in $toolName\n";
-    my $leaksOutput = `leaks -exclude pthread_create -exclude _CFPreferencesDomainDeepCopyDictionary $toolPID`;
+    my $leaksOutput = `leaks $excludes $toolPID`;
     my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
     my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;
 
@@ -575,7 +582,7 @@ sub pathcmp($$)
 }
 
 # Sort numeric parts of strings as numbers, other parts as strings.
-# Makes 1.33 come before 1.3, which is cool.
+# Makes 1.33 come after 1.3, which is cool.
 sub numericcmp($$)
 {
     my ($aa, $bb) = @_;
