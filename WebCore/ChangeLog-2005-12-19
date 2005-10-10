@@ -1,3 +1,13 @@
+2005-10-09  David Hyatt  <hyatt@apple.com>
+
+	Land fix for bugzilla bug 4974, make sure to only move below floats in line layout if white-space is normal.
+	One case was using !isPre and including nowrap incorrectly as a result.  Patch from koivisto.
+	
+        Reviewed by hyatt
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2005-10-08  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
