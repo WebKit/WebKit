@@ -42,20 +42,12 @@ using namespace DOM;
 namespace DOM {
     
 XSLTProcessorImpl::XSLTProcessorImpl(XSLStyleSheetImpl* sheet, DocumentImpl* source)
-:m_stylesheet(sheet), m_sourceDocument(source)
+    : m_stylesheet(sheet), m_sourceDocument(source)
 {
-    if (m_stylesheet)
-        m_stylesheet->ref();
-    if (m_sourceDocument)
-        m_sourceDocument->ref();
 }
 
 XSLTProcessorImpl::~XSLTProcessorImpl()
 {
-    if (m_stylesheet)
-        m_stylesheet->deref();
-    if (m_sourceDocument)
-        m_sourceDocument->deref();
 }
 
 static void parseErrorFunc(void *ctxt, const char *msg, ...)
@@ -71,7 +63,7 @@ static xmlDocPtr stylesheetLoadFunc(const xmlChar* uri,
                                     xsltLoadType type)
 {
     if (!globalProcessor)
-        return NULL;
+        return 0;
     
     switch (type) {
         case XSLT_LOAD_DOCUMENT: {
@@ -100,10 +92,10 @@ static xmlDocPtr stylesheetLoadFunc(const xmlChar* uri,
             break;
     }
     
-    return NULL;
+    return 0;
 }
 
-DocumentImpl* XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
+SharedPtr<DocumentImpl> XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
 {
     // FIXME: Right now we assume |doc| is unparsed, but if it has been parsed we will need to serialize it
     // and then feed that resulting source to libxslt.
@@ -126,13 +118,15 @@ DocumentImpl* XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
   
     // Get the parsed source document.
     xmlDocPtr sourceDoc = (xmlDocPtr)doc->transformSource();
-    xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, NULL);
+    xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, 0);
     
     globalProcessor = 0;
     xsltSetLoaderFunc(0);
 
-    DocumentImpl* result = documentFromXMLDocPtr(resultDoc, sheet);
+    SharedPtr<DocumentImpl> result = documentFromXMLDocPtr(resultDoc, sheet);
     xsltFreeStylesheet(sheet);
+    xmlFreeDoc(resultDoc);
+
     return result;
 }
 
@@ -147,13 +141,13 @@ void XSLTProcessorImpl::addToResult(const char* buffer, int len)
     m_resultOutput += QString::fromUtf8(buffer, len);
 }
 
-DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
+SharedPtr<DocumentImpl> XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
 {
     if (!resultDoc || !sheet)
         return 0;
 
-    DocumentImpl *result = 0;
-    xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(NULL);
+    SharedPtr<DocumentImpl> result;
+    xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(0);
     if (outputBuf) {
         outputBuf->context = this;
         outputBuf->writecallback = bufferWrite;
@@ -170,7 +164,7 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         KHTMLView *view = m_sourceDocument->view();
         const xmlChar *method;
         XSLT_GET_IMPORT_PTR(method, sheet, method);
-        if (method == NULL && resultDoc->type == XML_HTML_DOCUMENT_NODE)
+        if (method == 0 && resultDoc->type == XML_HTML_DOCUMENT_NODE)
             method = (const xmlChar *)"html";
         if (xmlStrEqual(method, (const xmlChar *)"html"))
             result = m_sourceDocument->impl()->createHTMLDocument(view);
@@ -178,7 +172,7 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
             result = m_sourceDocument->impl()->createDocument(view);
         result->attach();
         result->docLoader()->setShowAnimations(m_sourceDocument->docLoader()->showAnimations());
-        result->setTransformSourceDocument(m_sourceDocument);
+        result->setTransformSourceDocument(m_sourceDocument.get());
 
         if (xmlStrEqual(method, (const xmlChar *)"text")) {
             // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing the text.
@@ -198,7 +192,7 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         // in place. We have to do this only if we're rendering the result document.
         if (view) {
             view->clear();
-            view->part()->replaceDocImpl(result);
+            view->part()->replaceDocImpl(result.get());
         }
         
         result->open();

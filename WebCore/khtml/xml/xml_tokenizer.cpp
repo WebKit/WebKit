@@ -839,6 +839,7 @@ bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fra
     int result = parseQString(parser, string.qstring());
     if (parser->myDoc)
         xmlFreeDoc(parser->myDoc);
+    xmlFreeParserCtxt(parser);
 
     return result == 0;
 }

@@ -3020,23 +3020,23 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, unsigned startOffset, int delta,
 }
 
 #ifdef KHTML_XSLT
+
 void DocumentImpl::applyXSLTransform(ProcessingInstructionImpl* pi)
 {
-    // Ref ourselves to keep from being destroyed.
+    // FIXME: Be sure to change this next line to use a SharedPtr instead of a stack-allocated
+    // object once XSLTProcessorImpl gets a ref count.
     XSLTProcessorImpl processor(static_cast<XSLStyleSheetImpl*>(pi->sheet()), this);
     processor.transformDocument(this);
-
-    // FIXME: If the transform failed we should probably report an error (like Mozilla does) in this
-    // case.
+    // FIXME: If the transform failed we should probably report an error (like Mozilla does).
 }
 
 void DocumentImpl::setTransformSourceDocument(DocumentImpl* doc)
 { 
+    if (doc)
+        doc->ref();
     if (m_transformSourceDocument)
         m_transformSourceDocument->deref(); 
     m_transformSourceDocument = doc;
-    if (doc)
-        doc->ref();
 }
 
 #endif

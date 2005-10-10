@@ -30,6 +30,7 @@
 
 #include <libxslt/transform.h>
 
+#include <misc/shared.h>
 #include <qstring.h>
 
 namespace DOM {
@@ -45,23 +46,24 @@ public:
     ~XSLTProcessorImpl();
     
     // Method for transforming a source document into a result document.
-    DocumentImpl* transformDocument(DocumentImpl* sourceDoc);
+    SharedPtr<DocumentImpl> transformDocument(DocumentImpl* sourceDoc);
 
     // Convert a libxml doc ptr to a KHTML DOM Document
-    DocumentImpl* documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet);
+    SharedPtr<DocumentImpl> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet);
     
     // Helpers
     void addToResult(const char* buffer, int len);
     
-    XSLStyleSheetImpl *stylesheet() { return m_stylesheet; }
-    DocumentImpl *sourceDocument() { return m_sourceDocument; }
+    XSLStyleSheetImpl *stylesheet() { return m_stylesheet.get(); }
+    DocumentImpl *sourceDocument() { return m_sourceDocument.get(); }
     
-protected:
-    XSLStyleSheetImpl* m_stylesheet;
+private:
+    SharedPtr<XSLStyleSheetImpl> m_stylesheet;
     QString m_resultOutput;
-    DocumentImpl* m_sourceDocument;
+    SharedPtr<DocumentImpl> m_sourceDocument;
 };
 
 }
+
 #endif
 #endif
