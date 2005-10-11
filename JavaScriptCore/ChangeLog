@@ -1,5 +1,14 @@
 2005-10-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Added regexp_object.lut.h build phase from JavaScriptCore
+        to JavaScriptCore+SVG.
+
+        Reviewed by mitz.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2005-10-11  Geoffrey Garen  <ggaren@apple.com>
+
         Fixed build bustage from last checkin (stray characters
         in the project file).
 

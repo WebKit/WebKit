@@ -1262,6 +1262,7 @@
 				A85D81F3087B2822006A9172 /* lexer.lut.h */,
 				A85D81F4087B2822006A9172 /* math_object.lut.h */,
 				A85D81F5087B2822006A9172 /* number_object.lut.h */,
+				1489794708FC71AA0043FD68 /* regexp_object.lut.h */,
 				A85D81F6087B2822006A9172 /* string_object.lut.h */,
 				A85D81F7087B2822006A9172 /* Headers */,
 				A85D8240087B2822006A9172 /* Sources */,
@@ -1357,6 +1358,23 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1489794708FC71AA0043FD68 /* regexp_object.lut.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				kjs/create_hash_table,
+				kjs/regexp_object.cpp,
+			);
+			name = regexp_object.lut.h;
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/regexp_object.lut.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "kjs/create_hash_table kjs/regexp_object.cpp -i > \"$DERIVED_FILE_DIR/regexp_object.lut.h\"";
+		};
 		14F6037308FB039300E9E573 /* regexp_object.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
