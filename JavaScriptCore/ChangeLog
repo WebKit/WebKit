@@ -1,3 +1,9 @@
+2005-10-11  Geoffrey Garen  <ggaren@apple.com>
+
+        New JavaScriptCore test results to reflect the last change.
+
+        * tests/mozilla/expected.html:
+
 2005-10-10  Geoffrey Garen  <ggaren@apple.com>
 
         - Implemented caching of match state inside the global RegExp object
