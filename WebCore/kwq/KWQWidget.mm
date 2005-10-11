@@ -41,6 +41,15 @@
 #import "render_replaced.h"
 #import "render_style.h"
 
+@interface NSWindow (KWQWidgetAppKitSecrets)
+- (void)_lockViewHierarchyForModification;
+- (void)_unlockViewHierarchyForModification;
+@end
+
+@interface NSView (KWQWidgetAppKitSecrets)
+- (void)_recursiveDisplayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
+@end
+
 using khtml::RenderWidget;
 
 static bool deferFirstResponderChanges;
@@ -62,6 +71,7 @@ public:
     bool visible;
     bool mustStayInWindow;
     bool removeFromSuperviewSoon;
+    unsigned painting;
 };
 
 QWidget::QWidget() : data(new KWQWidgetPrivate)
@@ -72,6 +82,7 @@ QWidget::QWidget() : data(new KWQWidgetPrivate)
     data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
+    data->painting = 0;
 }
 
 QWidget::QWidget(NSView *view) : data(new KWQWidgetPrivate)
@@ -82,10 +93,13 @@ QWidget::QWidget(NSView *view) : data(new KWQWidgetPrivate)
     data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
+    data->painting = 0;
 }
 
 QWidget::~QWidget() 
 {
+    ASSERT(data->painting == 0);
+
     KWQ_BLOCK_EXCEPTIONS;
     KWQRelease(data->view);
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -528,11 +542,14 @@ void QWidget::paint(QPainter *p, const QRect &r)
         return;
     }
     NSView *view = getOuterView();
-    // KWQTextArea and KWQTextField both rely on the fact that we use this particular
-    // NSView display method. If you change this, be sure to update them as well.
+    ++data->painting;
     KWQ_BLOCK_EXCEPTIONS;
-    [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
+    NSWindow *window = [view window];
+    [window _lockViewHierarchyForModification];
+    [view _recursiveDisplayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:[NSGraphicsContext currentContext] topView:NO];
+    [window _unlockViewHierarchyForModification];
     KWQ_UNBLOCK_EXCEPTIONS;
+    --data->painting;
 }
 
 void QWidget::sendConsumedMouseUp()
@@ -613,4 +630,9 @@ void QWidget::setDeferFirstResponderChanges(bool defer)
             r->setFocus();
         }
     }
+}
+
+bool QWidget::isPainting() const
+{
+    return data->painting;
 }

@@ -1,5 +1,32 @@
 2005-10-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - finished fixing http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+          Would like API to flush rendering of pending DOM changes
+
+        The first half of the fix alone broke DumpRenderTree. Better now.
+
+        * kwq/KWQWidget.h: Made paint non-virtual (it had no reason to be virtual in KWQ) and
+        added an isPainting function.
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget): Added painting boolean (actually a count).
+        (QWidget::~QWidget): Check that painting is 0 when the widget is destroyed.
+        (QWidget::paint): Use SPI to draw in a way that works no matter what context we are in.
+        (QWidget::isPainting): Return true if inside the paint function.
+
+        * kwq/KWQTextArea.h: Remove inDrawingMachinery field since we can use isPainting now.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        Use isPainting() instead of inDrawingMachinery. inDrawingMachinery required that we
+        use displayRectIgnoringOpacity: to paint, which we no longer do.
+        * kwq/KWQTextField.h: More of the same.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        Ditto.
+
+2005-10-10  Darin Adler  <darin@apple.com>
+
         Reviewed by eseidel.
 
         Mem leak fixes in xslt code.
