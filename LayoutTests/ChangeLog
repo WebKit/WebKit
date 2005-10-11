@@ -1,3 +1,13 @@
+2005-10-10  Darin Adler  <darin@apple.com>
+
+        - updated expected results due to fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+
+        The old results were incorrectly clipped. This always worked fine in the
+        browser, but didn't draw correctly in DumpRenderTree until the bug was fixed.
+
+        * fast/clip/014-expected.checksum: Updated.
+        * fast/clip/014-expected.png: Updated.
+
 2005-10-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         - added a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5280
