@@ -232,7 +232,7 @@ static void pushReplacement(UString * & array, int& count, int& capacity, UStrin
   count++;
 }
 
-static inline UString substituteBackreferences(const UString &replacement, const UString &source, int **ovector, RegExp *reg)
+static inline UString substituteBackreferences(const UString &replacement, const UString &source, int *ovector, RegExp *reg)
 {
   UString substitutedReplacement = replacement;
 
@@ -246,8 +246,8 @@ static inline UString substituteBackreferences(const UString &replacement, const
     // Assume number part is one char exactly
     unsigned backrefIndex = substitutedReplacement.substr(i+1,1).toUInt32(&converted, false /* tolerate empty string */);
     if (converted && backrefIndex <= (unsigned)reg->subPatterns()) {
-      int backrefStart = (*ovector)[2*backrefIndex];
-      int backrefLength = (*ovector)[2*backrefIndex+1] - backrefStart;
+      int backrefStart = ovector[2*backrefIndex];
+      int backrefLength = ovector[2*backrefIndex+1] - backrefStart;
       substitutedReplacement = substitutedReplacement.substr(0,i)
         + source.substr(backrefStart, backrefLength)
         + substitutedReplacement.substr(i+2);
@@ -288,9 +288,8 @@ static ValueImp *replace(ExecState *exec, const UString &source, ValueImp *patte
 
     // This is either a loop (if global is set) or a one-way (if not).
     do {
-      int **ovector = regExpObj->registerRegexp( reg, source );
-      UString matchString = reg->match(source, startPosition, &matchIndex, ovector);
-      regExpObj->setSubPatterns(reg->subPatterns());
+      int *ovector;
+      UString matchString = regExpObj->performMatch(reg, source, startPosition, &matchIndex, &ovector);
       if (matchIndex == -1)
         break;
       int matchLen = matchString.size();
@@ -298,14 +297,14 @@ static ValueImp *replace(ExecState *exec, const UString &source, ValueImp *patte
       pushSourceRange(sourceRanges, sourceRangeCount, sourceRangeCapacity, UString::Range(lastIndex, matchIndex - lastIndex));
 
       if (replacementFunction) {
-          int completeMatchStart = (*ovector)[0];
+          int completeMatchStart = ovector[0];
           List args;
 
           args.append(jsString(matchString));
           
           for (unsigned i = 0; i < reg->subPatterns(); i++) {
-              int matchStart = (*ovector)[(i + 1) * 2];
-              int matchLen = (*ovector)[(i + 1) * 2 + 1] - matchStart;
+              int matchStart = ovector[(i + 1) * 2];
+              int matchLen = ovector[(i + 1) * 2 + 1] - matchStart;
               
               args.append(jsString(source.substr(matchStart, matchLen)));
           }
@@ -454,13 +453,11 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     u = s;
     RegExp *reg, *tmpReg = 0;
     RegExpImp *imp = 0;
-    if (a0->isObject() && a0->getObject()->inherits(&RegExpImp::info))
-    {
+    if (a0->isObject() && a0->getObject()->inherits(&RegExpImp::info)) {
       imp = static_cast<RegExpImp *>(a0);
       reg = imp->regExp();
-    }
-    else
-    { /*
+    } else { 
+      /*
        *  ECMA 15.5.4.12 String.prototype.search (regexp)
        *  If regexp is not an object whose [[Class]] property is "RegExp", it is
        *  replaced with the result of the expression new RegExp(regexp).
@@ -468,8 +465,7 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       reg = tmpReg = new RegExp(a0->toString(exec), RegExp::None);
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
-    int **ovector = regExpObj->registerRegexp(reg, u);
-    UString mstr = reg->match(u, -1, &pos, ovector);
+    UString mstr = regExpObj->performMatch(reg, u, 0, &pos);
     if (id == Search) {
       result = Number(pos);
     } else {
@@ -479,7 +475,6 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
 	if (mstr.isNull()) {
 	  result = Null();
 	} else {
-	  regExpObj->setSubPatterns(reg->subPatterns());
 	  result = regExpObj->arrayOfMatches(exec,mstr);
 	}
       } else {
@@ -493,8 +488,7 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
 	    list.append(String(mstr));
 	  lastIndex = pos;
 	  pos += mstr.isEmpty() ? 1 : mstr.size();
-	  delete [] *ovector;
-	  mstr = reg->match(u, pos, &pos, ovector);
+	  mstr = regExpObj->performMatch(reg, u, pos, &pos);
 	}
 	if (imp)
 	  imp->put(exec, "lastIndex", Number(lastIndex), DontDelete|DontEnum);
@@ -514,7 +508,7 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
   case Replace:
     result = replace(exec, s, a0, a1);
     break;
-  case Slice: // http://developer.netscape.com/docs/manuals/js/client/jsref/string.htm#1194366
+  case Slice:
     {
         // The arg processing is very much like ArrayProtoFunc::Slice
         double begin = args[0]->toInteger(exec);

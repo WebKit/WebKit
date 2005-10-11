@@ -64,7 +64,7 @@ while (<IN>) {
       @attrs = ();
       @params = ();
       $inside = 0;
-	} elsif (/^([-:\@\w\[\=\]]+)\s*([\w\:-]+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
+    } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
       my $key = $1;
       my $val = $2;
       my $att = $3;
@@ -76,7 +76,7 @@ while (<IN>) {
       push(@attrs, length($att) > 0 ? $att : "0");
       push(@params, length($param) > 0 ? $param : "0");
     } elsif ($inside) {
-      die "invalid data";
+      die "invalid data {" . $_ . "}";
     }
 }
 

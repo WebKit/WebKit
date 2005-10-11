@@ -1,3 +1,54 @@
+2005-10-10  Geoffrey Garen  <ggaren@apple.com>
+
+        - Implemented caching of match state inside the global RegExp object
+          (lastParen, leftContext, rightContext, lastMatch, input).
+
+          exec(), test(), match(), search(), and replace() now dipatch regular
+          expression matching through the RegExp object's performMatch function, 
+          to facilitate caching. This replaces registerRegexp and 
+          setSubPatterns.
+        
+        - Implemented the special '$' aliases (e.g. RegExp.input aliases to 
+          RegExp.$_).
+
+        - Moved support for backreferences into the new static hash table
+          used for other special RegExp properties. Truncated backreferences
+          at $9 to match IE, FF, and the "What's New in Netscape 1.2?" doc.
+          (String.replace still supports double-digit backreferences.)
+
+        - Tweaked RegExp.prototype.exec to handle ginormous values in lastIndex.
+
+        Fixes 11 -- count em, 11 -- JavaScriptCore tests.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added regexp_object.lut.h
+        * kjs/create_hash_table: Tweaked to allow for more exotic characters.
+                                 We now rely on the compiler to catch illegal
+                                 identifiers.
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFuncImp::callAsFunction):
+        (RegExpObjectImp::RegExpObjectImp):
+        (RegExpObjectImp::performMatch):
+        (RegExpObjectImp::arrayOfMatches):
+        (RegExpObjectImp::backrefGetter):
+        (RegExpObjectImp::getLastMatch):
+        (RegExpObjectImp::getLastParen):
+        (RegExpObjectImp::getLeftContext):
+        (RegExpObjectImp::getRightContext):
+        (RegExpObjectImp::getOwnPropertySlot):
+        (RegExpObjectImp::getValueProperty):
+        (RegExpObjectImp::put):
+        (RegExpObjectImp::putValueProperty):
+        * kjs/regexp_object.h:
+        (KJS::RegExpObjectImp::):
+        * kjs/string_object.cpp:
+        (substituteBackreferences):
+        (replace):
+        (StringProtoFuncImp::callAsFunction):
+
 2005-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej; some changes done after review.

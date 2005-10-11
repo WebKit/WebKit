@@ -65,6 +65,9 @@ namespace KJS {
 
   class RegExpObjectImp : public InternalFunctionImp {
   public:
+    enum { Dollar1, Dollar2, Dollar3, Dollar4, Dollar5, Dollar6, Dollar7, Dollar8, Dollar9, 
+           Input, Multiline, LastMatch, LastParen, LeftContext, RightContext };
+    
     RegExpObjectImp(ExecState *exec,
                     FunctionPrototypeImp *funcProto,
                     RegExpPrototypeImp *regProto);
@@ -74,16 +77,28 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
+    virtual void put(ExecState *, const Identifier &, ValueImp *, int attr = None);
+    void putValueProperty(ExecState *, int token, ValueImp *, int attr);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    int ** registerRegexp( const RegExp* re, const UString& s );
-    void setSubPatterns(int num) { lastNrSubPatterns = num; }
+    ValueImp *getValueProperty(ExecState *, int token) const;
+    UString performMatch(RegExp *, const UString&, int startOffset = 0, int *endOffset = 0, int **ovector = 0);
     ObjectImp *arrayOfMatches(ExecState *exec, const UString &result) const;
+    
+    virtual const ClassInfo *classInfo() const { return &info; }
   private:
-    static ValueImp *backrefGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-  
-    UString lastString;
+    ValueImp *getBackref(unsigned) const;
+    ValueImp *getLastMatch() const;
+    ValueImp *getLastParen() const;
+    ValueImp *getLeftContext() const;
+    ValueImp *getRightContext() const;
+
+    // Global search cache / settings
+    bool multiline;
+    UString lastInput;
     int *lastOvector;
-    unsigned lastNrSubPatterns;
+    unsigned lastNumSubPatterns;
+    
+    static const ClassInfo info;
   };
 
 } // namespace
