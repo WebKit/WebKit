@@ -1,3 +1,11 @@
+2005-10-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a layout test for the new special properties of the global RegExp object.
+        (See JavaSriptCore changelog.)
+
+        * fast/js/regexp-caching-expected.txt: Added.
+        * fast/js/regexp-caching.html: Added.
+
 2005-10-11  Adele Peterson <adele@apple.com>
 
         Rolling out Darin's previous change.
