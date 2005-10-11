@@ -90,6 +90,11 @@ typedef enum {
     KCanvasViewQuartz *canvasView;
     KRenderingDeviceContextQuartz *quartzContext;
 }
+
+- (DrawDocument *)document;
+- (void)setDocument:(DrawDocument *)doc;
+- (void)drawRect:(NSRect)dirtyViewRect;
+
 @end 
 
 @implementation DrawViewPrivate

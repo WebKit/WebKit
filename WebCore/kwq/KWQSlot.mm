@@ -35,7 +35,9 @@
 #import "render_layer.h"
 #import "xmlhttprequest.h"
 #ifdef SVG_SUPPORT
+#define id ID_HACK
 #import "ksvg2/misc/KSVGTimeScheduler.h"
+#undef id
 #endif
 
 using DOM::DocumentImpl;

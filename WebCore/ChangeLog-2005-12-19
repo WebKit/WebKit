@@ -1,3 +1,15 @@
+2005-10-11  Julien Palmas <julien.palmas@mac.com>>
+
+        Reviewed by eseidel.
+
+        Fixes WebCore+SVG build under gcc 3.3
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5301
+
+        * WebCore+SVG/DrawCanvasItem.mm:
+        * WebCore+SVG/DrawView.mm:
+        (-[DrawDocument drawRect:initWithDrawView:]):
+        * kwq/KWQSlot.mm:
+
 2005-10-10  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed <rdar://problem/4245682> Regression: CrashTracer: 923 crashes 

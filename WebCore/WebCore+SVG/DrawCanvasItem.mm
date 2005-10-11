@@ -29,6 +29,10 @@
 #import <kcanvas/KCanvas.h>
 #import <kcanvas/KCanvasItem.h>
 
+#import <qapplication.h>
+
+#define id ID_HACK
+
 #import <kdom/Namespace.h>
 #import <kdom/Helper.h>
 #import <kdom/DOMString.h>
@@ -37,6 +41,8 @@
 #import <ksvg2/svg/SVGEllipseElementImpl.h>
 #import <ksvg2/svg/SVGRectElementImpl.h>
 #import <ksvg2/svg/SVGPathElementImpl.h>
+
+#undef id
 
 #import "KWQTextStream.h"
 
