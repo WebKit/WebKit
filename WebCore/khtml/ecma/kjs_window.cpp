@@ -335,6 +335,7 @@ Window::Window(KHTMLPart *p)
   , m_statusbar(0)
   , m_toolbar(0)
   , m_evt(0)
+  , m_returnValueSlot(0)
 {
   winq = new WindowQObject(this);
   //kdDebug(6070) << "Window::Window this=" << this << " part=" << m_part << " " << m_part->name() << endl;

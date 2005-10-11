@@ -1,3 +1,16 @@
+2005-10-10  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed <rdar://problem/4245682> Regression: CrashTracer: 923 crashes 
+          in Safari at com.apple.WebCore: KJS::Window::clear + 132
+
+        Reviewed by mjs.
+
+        No test case because this crash isn't reliably reproducible.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::Window): Initialize m_returnValueSlot to 0, so that we
+        know not to write to it until it's explicitly set to a valid address.
+
 2005-10-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
