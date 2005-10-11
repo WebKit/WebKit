@@ -20,7 +20,10 @@
 
         Fixes 11 -- count em, 11 -- JavaScriptCore tests.
 
-        Reviewed by NOBODY (OOPS!).
+        * fast/js/regexp-caching-expected.txt: Added.
+        * fast/js/regexp-caching.html: Added.
+
+        Reviewed by mjs.
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Added regexp_object.lut.h
         * kjs/create_hash_table: Tweaked to allow for more exotic characters.
