@@ -1363,7 +1363,7 @@
 			files = (
 			);
 			inputPaths = (
-				"kjs/create_hash_table\nkjs/create_hash_table",
+				kjs/create_hash_table,
 				kjs/regexp_object.cpp,
 			);
 			name = regexp_object.lut.h;
