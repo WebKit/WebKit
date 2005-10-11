@@ -1,3 +1,13 @@
+2005-10-11  Rob Buis  <rwlbuis@xs4all.nl>>
+
+        Reviewed by eseidel.
+
+        Fix SVGSymbolElementImpl to not warn when inheriting viewbox.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5278
+
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::close):
+
 2005-10-11  Julien Palmas <julien.palmas@mac.com>>
 
         Reviewed by eseidel.

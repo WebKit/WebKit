@@ -144,11 +144,14 @@ void SVGUseElementImpl::close()
     if(target->id() == ID_SYMBOL)
     {
         SVGElementImpl *dummy = new SVGSVGElementImpl(docPtr(), ID_SVG, 0);
-        dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), KDOM::DOMString(w).handle());
-        dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), KDOM::DOMString(h).handle());
+        if(_w > 0)
+            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), KDOM::DOMString(w).handle());
+        if(_h > 0)
+            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), KDOM::DOMString(h).handle());
         
         SVGSymbolElementImpl *symbol = static_cast<SVGSymbolElementImpl *>(target);
-        dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle(), symbol->getAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle()));
+        if(symbol->hasAttribute(new KDOM::DOMStringImpl("viewBox")))
+            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle(), symbol->getAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle()));
         target->cloneChildNodes(dummy, docPtr());
 
         SVGElementImpl *dummy2 = new SVGDummyElementImpl(docPtr(), ID_G, 0);
