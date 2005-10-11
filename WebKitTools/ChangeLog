@@ -1,3 +1,11 @@
+2005-10-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Checks for leaks in ImageDiff too.
+
+        * Scripts/run-webkit-tests:
+
 2005-10-09  Darin Adler  <darin@apple.com>
 
         * Scripts/check-dom-results: Dump ".xhtml" for tests in the xhtml directory.

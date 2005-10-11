@@ -154,6 +154,8 @@ $| = 1;
 
 my $imageDiffToolPID;
 if ($pixelTests) {
+    local %ENV;
+    $ENV{MallocStackLogging} = 1 if $checkLeaks;
     $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
 }
 
