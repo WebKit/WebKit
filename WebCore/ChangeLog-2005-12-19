@@ -1,3 +1,33 @@
+2005-10-11  Adele Peterson  <adele@apple.com>
+
+        Rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+        since it caused:
+
+        REGRESSION text areas draw focus ring around each glyph, no caret in text fields
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5335
+
+        And updated expected results.
+        * fast/clip/014-expected.checksum: Updated.
+        * fast/clip/014-expected.png: Updated.
+
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView displayRectIgnoringOpacity:]):
+        (-[KWQTextAreaTextView textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        * kwq/KWQTextField.h:
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setInDrawingMachinery:]):
+        (-[KWQTextFieldController textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        (-[KWQTextField displayRectIgnoringOpacity:]):
+        (-[KWQSecureTextField displayRectIgnoringOpacity:]):
+        (-[KWQSearchField displayRectIgnoringOpacity:]):
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget):
+        (QWidget::~QWidget):
+        (QWidget::paint):
+        (QWidget::setDeferFirstResponderChanges):
+
 2005-10-11  Rob Buis  <rwlbuis@xs4all.nl>>
 
         Reviewed by eseidel.

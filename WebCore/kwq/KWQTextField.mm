@@ -72,6 +72,7 @@
 - (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w;
 - (QWidget *)widget;
 - (void)textChanged;
+- (void)setInDrawingMachinery:(BOOL)inDrawing;
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase;
 - (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event;
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event;
@@ -241,13 +242,18 @@
         widget->textChanged();
 }
 
+- (void)setInDrawingMachinery:(BOOL)inDrawing
+{
+    inDrawingMachinery = inDrawing;
+}
+
 // Use the "needs display" mechanism to do all insertion point drawing in the web view.
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
 {
     // We only need to take control of the cases where we are being asked to draw by something
     // outside the normal display machinery, and when we are being asked to draw the insertion
     // point, not erase it.
-    if ((widget && widget->isPainting()) || !drawInsteadOfErase)
+    if (inDrawingMachinery || !drawInsteadOfErase)
         return YES;
 
     // NSTextView's insertion-point drawing code sets the rect width to 1.
@@ -575,6 +581,17 @@
     [self setNeedsDisplay:YES];
 }
 
+// This is the only one of the display family of calls that we use, and the way we do
+// displaying in WebCore means this is called on this NSView explicitly, so this catches
+// all cases where we are inside the normal display machinery. (Used only by the insertion
+// point method below.)
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    [controller setInDrawingMachinery:YES];
+    [super displayRectIgnoringOpacity:rect];
+    [controller setInDrawingMachinery:NO];
+}
+
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
 {
     return [controller textView:view shouldDrawInsertionPointInRect:rect color:color turnedOn:drawInsteadOfErase];
@@ -728,6 +745,17 @@
     // This is a workaround for Radar 2753974.
     // Also, in the web page context, it's never OK to just display.
     [self setNeedsDisplay:YES];
+}
+
+// This is the only one of the display family of calls that we use, and the way we do
+// displaying in WebCore means this is called on this NSView explicitly, so this catches
+// all cases where we are inside the normal display machinery. (Used only by the insertion
+// point method below.)
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    [controller setInDrawingMachinery:YES];
+    [super displayRectIgnoringOpacity:rect];
+    [controller setInDrawingMachinery:NO];
 }
 
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
@@ -945,6 +973,17 @@
     // This is a workaround for Radar 2753974.
     // Also, in the web page context, it's never OK to just display.
     [self setNeedsDisplay:YES];
+}
+
+// This is the only one of the display family of calls that we use, and the way we do
+// displaying in WebCore means this is called on this NSView explicitly, so this catches
+// all cases where we are inside the normal display machinery. (Used only by the insertion
+// point method below.)
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    [controller setInDrawingMachinery:YES];
+    [super displayRectIgnoringOpacity:rect];
+    [controller setInDrawingMachinery:NO];
 }
 
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
