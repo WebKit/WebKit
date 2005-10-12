@@ -2324,16 +2324,17 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->hitTest(nodeInfo, _mouseDownX, _mouseDownY);
-            _dragSrc.reset(nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML));
-            if (_dragSrc.isNull()) {
+            NodeImpl *node = nodeInfo.innerNode();
+            _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML) : 0;
+            if (!_dragSrc) {
                 _mouseDownMayStartDrag = false;     // no element is draggable
             } else {
                 // remember some facts about this source, while we have a NodeInfo handy
-                NodeImpl *node = nodeInfo.URLElement();
-                _dragSrcIsLink = node ? node->isLink() : false;
+                node = nodeInfo.URLElement();
+                _dragSrcIsLink = node && node->isLink();
 
                 node = nodeInfo.innerNonSharedNode();
-                _dragSrcIsImage = (node && node->renderer() && node->renderer()->isImage());
+                _dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
 
                 _dragSrcInSelection = isPointInsideSelection(_mouseDownX, _mouseDownY);
             }                

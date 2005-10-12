@@ -1,3 +1,13 @@
+2005-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        Crash: Drag element with CSS ::Before absolute positioning applied to it
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4088
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+
 2005-10-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
