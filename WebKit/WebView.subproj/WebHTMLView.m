@@ -4940,10 +4940,18 @@ static NSArray *validAttributes = nil;
     return nil;
 }
 
+// test for 10.4 because of <rdar://problem/4243463>
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 - (long)conversationIdentifier
 {
     return (long)self;
 }
+#else
+- (NSInt)conversationIdentifier
+{
+    return (NSInt)self;
+}
+#endif
 
 - (BOOL)hasMarkedText
 {

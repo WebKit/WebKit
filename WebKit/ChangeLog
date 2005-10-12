@@ -1,3 +1,12 @@
+2005-10-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for 10.4 because of <rdar://problem/4243463>
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView conversationIdentifier]):
+
 2005-10-11  Adele Peterson  <adele@apple.com>
 
         Rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
