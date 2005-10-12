@@ -32,6 +32,11 @@
 #include <iosfwd>
 #endif
 
+// workaround for <rdar://problem/4294625>
+#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
+#undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#endif
+
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
