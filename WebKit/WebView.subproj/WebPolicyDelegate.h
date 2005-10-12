@@ -57,7 +57,7 @@ typedef enum {
 } WebNavigationType;
 
 
-extern NSString *WebActionNavigationTypeKey; // NSNumber (WebActionType)
+extern NSString *WebActionNavigationTypeKey; // NSNumber (WebNavigationType)
 extern NSString *WebActionElementKey; // NSDictionary of element info
 extern NSString *WebActionButtonKey;  // NSEventType
 extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
