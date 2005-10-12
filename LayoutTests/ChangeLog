@@ -1,3 +1,13 @@
+2005-10-12  Darin Adler  <darin@apple.com>
+
+        - removed some old results for tests that are no longer present
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=4850
+
+        * dom/html/level2/html/frame-expected.checksum: Removed.
+        * dom/html/level2/html/frame-expected.png: Removed.
+        * dom/html/level2/html/iframe-expected.checksum: Removed.
+        * dom/html/level2/html/iframe-expected.png: Removed.
+
 2005-10-11  Geoffrey Garen  <ggaren@apple.com>
 
         Added a layout test for the new special properties of the global RegExp object.
