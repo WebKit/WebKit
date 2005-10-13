@@ -852,14 +852,12 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         captureHitsOnSubviews = NO;
     } else {
         NSEvent *event = [[self window] currentEvent];
-        captureHitsOnSubviews = [event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) == 0;
+        captureHitsOnSubviews = !([event type] == NSRightMouseDown || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0));
     }
-    if (!captureHitsOnSubviews) {
+    if (!captureHitsOnSubviews)
         return [super hitTest:point];
-    }
-    if ([[self superview] mouse:point inRect:[self frame]]) {
+    if ([[self superview] mouse:point inRect:[self frame]])
         return self;
-    }
     return nil;
 }
 
@@ -980,19 +978,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
-    [self retain];
-    
     WebHTMLView *view = nil;
-    if ([event window] == [self window]) {
-        NSView *hitView = [self _hitViewForEvent:event];
-        while (hitView) {
-            if ([hitView isKindOfClass:[WebHTMLView class]]) {
-                view = (WebHTMLView *)hitView;
-                break;
-            }
-            hitView = [hitView superview];
-        }
-    }
+    NSView *hitView = [[[event window] contentView] hitTest:[event locationInWindow]];
+    if ([hitView isKindOfClass:[WebHTMLView class]]) 
+        view = (WebHTMLView *)hitView; 
+
+    if (view)
+        [view retain];
 
     if (lastHitView != view && lastHitView != nil) {
         // If we are moving out of a view (or frame), let's pretend the mouse moved
@@ -1006,47 +998,40 @@ static WebHTMLView *lastHitView = nil;
                          location:NSMakePoint(-1 - xScroll, -1 - yScroll )
                          modifierFlags:[[NSApp currentEvent] modifierFlags]
                          timestamp:[NSDate timeIntervalSinceReferenceDate]
-                         windowNumber:[[self window] windowNumber]
+                         windowNumber:[[view window] windowNumber]
                          context:[[NSApp currentEvent] context]
                          eventNumber:0 clickCount:0 pressure:0];
         [[lastHitView _bridge] mouseMoved:event];
     }
 
     lastHitView = view;
-    
-    NSDictionary *element;
-    if (view == nil) {
-        element = nil;
-    } else {
+
+    if (view) {
         [[view _bridge] mouseMoved:event];
 
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        element = [view elementAtPoint:point];
-    }
+        NSDictionary *element = [view elementAtPoint:point];
 
-    // Have the web view send a message to the delegate so it can do status bar display.
-    [[self _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
+        // Have the web view send a message to the delegate so it can do status bar display.
+        [[view _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
 
-    // Set a tool tip; it won't show up right away but will if the user pauses.
-    NSString *newToolTip = nil;
-    if (_private->showsURLsInToolTips) {
-        DOMHTMLElement *domElement = [element objectForKey:WebElementDOMNodeKey];
-        if ([domElement isKindOfClass:[DOMHTMLInputElement class]]) {
-
-            if ([[(DOMHTMLInputElement *) domElement type] isEqualToString:@"submit"]) {
-                newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
+        // Set a tool tip; it won't show up right away but will if the user pauses.
+        NSString *newToolTip = nil;
+        if (_private->showsURLsInToolTips) {
+            DOMHTMLElement *domElement = [element objectForKey:WebElementDOMNodeKey];
+            if ([domElement isKindOfClass:[DOMHTMLInputElement class]]) {
+                if ([[(DOMHTMLInputElement *)domElement type] isEqualToString:@"submit"])
+                    newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
             }
+            if (newToolTip == nil)
+                newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
         }
-        if (newToolTip == nil) {
-            newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
-        }
+        if (newToolTip == nil)
+            newToolTip = [element objectForKey:WebCoreElementTitleKey];
+        [view _setToolTip:newToolTip];
+
+        [view release];
     }
-    if (newToolTip == nil) {
-        newToolTip = [element objectForKey:WebCoreElementTitleKey];
-    }
-    [self _setToolTip:newToolTip];
-    
-    [self release];
 }
 
 + (NSArray *)_insertablePasteboardTypes

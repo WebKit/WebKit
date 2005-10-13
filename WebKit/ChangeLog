@@ -1,3 +1,14 @@
+2005-10-12  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Darin.
+
+	- fix <rdar://problem/4043643> iframe swallows events for overlapping elements (3449)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView hitTest:]): 
+        (-[WebHTMLView _updateMouseoverWithEvent:]): eliminate _hitViewForEvent hackery and self
+	dependency from this function
+
 2005-10-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
