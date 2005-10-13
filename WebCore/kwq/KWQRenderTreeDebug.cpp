@@ -298,7 +298,7 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
 }
 
 static void write(QTextStream &ts, RenderLayer &l,
-                  const QRect& layerBounds, const QRect& backgroundClipRect, const QRect& clipRect,
+                  const QRect& layerBounds, const QRect& backgroundClipRect, const QRect& clipRect, const QRect& outlineClipRect,
                   int layerType = 0, int indent = 0)
 {
     writeIndent(ts, indent);
@@ -310,6 +310,8 @@ static void write(QTextStream &ts, RenderLayer &l,
         ts << " backgroundClip " << backgroundClipRect;
     if (layerBounds != layerBounds.intersect(clipRect))
         ts << " clip " << clipRect;
+    if (layerBounds != layerBounds.intersect(outlineClipRect))
+        ts << " outlineClip " << outlineClipRect;
 
     if (l.renderer()->hasOverflowClip()) {
         if (l.scrollXOffset())
@@ -337,8 +339,8 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
                         const QRect& paintDirtyRect, int indent)
 {
     // Calculate the clip rects we should use.
-    QRect layerBounds, damageRect, clipRectToApply;
-    l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply);
+    QRect layerBounds, damageRect, clipRectToApply, outlineRect;
+    l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
     
     // Ensure our z-order lists are up-to-date.
     l->updateZOrderLists();
@@ -346,7 +348,7 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
     bool shouldPaint = l->intersectsDamageRect(layerBounds, damageRect);
     QPtrVector<RenderLayer>* negList = l->negZOrderList();
     if (shouldPaint && negList && negList->count() > 0)
-        write(ts, *l, layerBounds, damageRect, clipRectToApply, -1, indent);
+        write(ts, *l, layerBounds, damageRect, clipRectToApply, outlineRect, -1, indent);
 
     if (negList) {
         for (unsigned i = 0; i != negList->count(); ++i)
@@ -354,7 +356,7 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
     }
 
     if (shouldPaint)
-        write(ts, *l, layerBounds, damageRect, clipRectToApply, negList && negList->count() > 0, indent);
+        write(ts, *l, layerBounds, damageRect, clipRectToApply, outlineRect, negList && negList->count() > 0, indent);
 
     QPtrVector<RenderLayer>* posList = l->posZOrderList();
     if (posList) {

@@ -1,3 +1,33 @@
+2005-10-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+
+        <rdar://problem/3643259> contentEditable=true elements do not acquire the caret or focus halo when overflow:scroll
+
+        Test cases added:
+        * fast/clip/outline-overflowClip
+        Test cases changed (since I added the outline rect to the render tree dump)
+        * fast/clip/001
+        * fast/clip/009
+        * fast/clip/010
+        * fast/clip/011
+        * fast/clip/012
+        * fast/clip/013
+        * fast/clip/014
+        * fast/clip/016
+
+        * khtml/rendering/render_layer.cpp: 
+        Clip the outline by a new rect, which is equal to the foreground rect w/o clipping
+        by the overflow rect.
+        
+        (khtml::RenderLayer::paintLayer):
+        (khtml::RenderLayer::hitTestLayer):
+        (khtml::RenderLayer::calculateRects):
+        * khtml/rendering/render_layer.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        (writeLayers):
+
 2005-10-13  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Darin.

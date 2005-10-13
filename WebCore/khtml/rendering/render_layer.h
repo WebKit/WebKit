@@ -279,7 +279,7 @@ public:
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
     void calculateRects(const RenderLayer* rootLayer, const QRect& paintDirtyRect, QRect& layerBounds,
-                        QRect& backgroundRect, QRect& foregroundRect);
+                        QRect& backgroundRect, QRect& foregroundRect, QRect& outlineRect);
     void calculateClipRects(const RenderLayer* rootLayer);
     ClipRects* clipRects() const { return m_clipRects; }
 
