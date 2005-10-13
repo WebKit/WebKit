@@ -1,3 +1,11 @@
+2005-10-12  Vicki Murley  <vicki@apple.com>
+
+	- update expected results for <rdar://problem/4288266> createElement does not validate 
+	names when called in an HTML document (4566)
+
+        * dom/html/level1/core/hc_documentinvalidcharacterexceptioncreateelement-expected.txt:
+        * dom/html/level1/core/hc_documentinvalidcharacterexceptioncreateelement1-expected.txt:
+
 2005-10-12  Beth Dakin  <bdakin@apple.com>
 
         Added a layout test for <rdar://problem/4112378> CSS :hover:after crash 
