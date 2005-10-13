@@ -1,3 +1,27 @@
+2005-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed <rdar://problem/4259434> Safari crashes in HTMLTokenizer::~HTMLTokenizer() 
+          at http://www.timewarner.com/corp/careers/jobtools_us/index.html
+
+        I changed the test for whether to put a script in the "to be executed" queue to
+        match the test for whether to ref a script, so that scripts can't end up in the
+        queue without being refed.
+
+        I also renamed cachedScript to pendingScripts.
+
+        Reviewed by Darin.
+
+        No test case because the crash isn't deterministically reproducible.
+        However, I did add assertions that should catch the underlying bug
+        in the future.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::reset):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::notifyFinished):
+        * khtml/html/htmltokenizer.h:
+
 2005-10-13  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.
