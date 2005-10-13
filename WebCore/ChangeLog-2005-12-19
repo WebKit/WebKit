@@ -1,3 +1,15 @@
+2005-10-13  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Darin.
+
+        no need to calculate linewidth multiple times in findnextlinebreak()
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5319
+
+        No test case needed, this is a simple optimization.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2005-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed <rdar://problem/4259434> Safari crashes in HTMLTokenizer::~HTMLTokenizer() 

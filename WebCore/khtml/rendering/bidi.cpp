@@ -1941,7 +1941,8 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 
 BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi)
 {
-    int width = lineWidth(m_height);
+    // eliminate spaces at beginning of line
+    int width = skipWhitespace(start, bidi);
     int w = 0;
     int tmpW = 0;
 #ifdef DEBUG_LINEBREAKS
@@ -1949,8 +1950,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     kdDebug(6041) << "sol: " << start.obj << " " << start.pos << endl;
 #endif
 
-    // eliminate spaces at beginning of line
-    width = skipWhitespace(start, bidi);
     if (start.atEnd())
         return start;
 
