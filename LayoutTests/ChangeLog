@@ -1,3 +1,24 @@
+2005-10-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        <rdar://problem/3643259> contentEditable=true elements do not acquire the caret or focus halo when overflow:scroll
+        
+        Updated/added layout tests:
+
+        * fast/clip/001-expected.txt:
+        * fast/clip/009-expected.txt:
+        * fast/clip/010-expected.txt:
+        * fast/clip/011-expected.txt:
+        * fast/clip/012-expected.txt:
+        * fast/clip/013-expected.txt:
+        * fast/clip/014-expected.txt:
+        * fast/clip/016-expected.txt:
+        * fast/clip/outline-overflowClip-expected.checksum: Added.
+        * fast/clip/outline-overflowClip-expected.png: Added.
+        * fast/clip/outline-overflowClip-expected.txt: Added.
+        * fast/clip/outline-overflowClip.html: Added.
+
 2005-10-12  Vicki Murley  <vicki@apple.com>
 
 	- update expected results for <rdar://problem/4288266> createElement does not validate 
