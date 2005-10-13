@@ -1,3 +1,12 @@
+2005-10-12  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Hyatt.
+
+	- fix <rdar://problem/4288266> createElement does not validate names when called in an HTML document (4566)
+
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::createElement): 
+
 2005-10-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt

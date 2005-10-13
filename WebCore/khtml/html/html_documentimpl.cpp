@@ -253,8 +253,11 @@ bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 
 ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)
 {
-    // Do not check name validity.  Other browsers don't, and it takes time.
     DOMString lowerName(name.lower());
+    if (!isValidName(lowerName)) {
+        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
+    }
     return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
 }
 
