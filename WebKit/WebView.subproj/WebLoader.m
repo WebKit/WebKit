@@ -535,9 +535,9 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [webView _incrementProgressForConnectionDelegate:self data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:lengthReceived fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:dataSource];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:lengthReceived fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:dataSource];
     [self release];
 }
 

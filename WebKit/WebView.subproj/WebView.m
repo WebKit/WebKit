@@ -657,7 +657,7 @@ static bool debugWidget = true;
     return menu;
 }
 
-- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(unsigned)modifierFlags
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags
 {
     // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
     // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
@@ -2804,7 +2804,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->continuousSpellCheckingEnabled && [self _continuousCheckingAllowed];
 }
 
-- (int)spellCheckerDocumentTag
+- (WebNSInt)spellCheckerDocumentTag
 {
     if (!_private->hasSpellCheckerDocumentTag) {
         _private->spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];

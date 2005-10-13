@@ -1,3 +1,25 @@
+2005-10-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        Define WebNSInt and WebNSUInt to wrap around NSInt on Leopard and still build on Tiger
+        Once building on Tiger isn't needed we will drop WebNSInt and use NSInt
+
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveContentLength:fromDataSource:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        * WebView.subproj/WebLoader.m:
+        (-[NSURLProtocol didReceiveData:lengthReceived:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _mouseDidMoveOverElement:modifierFlags:]):
+        (-[WebView spellCheckerDocumentTag]):
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-10-12  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebPolicyDelegate.h: Fix a comment.

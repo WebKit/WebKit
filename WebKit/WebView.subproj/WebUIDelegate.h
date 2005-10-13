@@ -29,6 +29,12 @@
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSURLRequest.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSUInt unsigned int
+#else
+#define WebNSUInt NSUInt
+#endif
+
 /*!
     @enum WebMenuItemTag
     @discussion Each menu item in the default menu items array passed in
@@ -385,7 +391,7 @@ typedef enum {
     @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
-- (void)webView:(WebView *)sender mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)webView:(WebView *)sender mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(WebNSUInt)modifierFlags;
 
 /*!
     @method webView:contextMenuItemsForElement:defaultMenuItems:
@@ -468,3 +474,5 @@ typedef enum {
 - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
 
 @end
+
+#undef WebNSUInt

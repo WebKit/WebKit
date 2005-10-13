@@ -2685,9 +2685,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     if (length > 0) {
         if (implementations.delegateImplementsDidReceiveContentLength) {
-            [delegate webView:wv resource:identifier didReceiveContentLength:length fromDataSource:dataSource];
+            [delegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInt)length fromDataSource:dataSource];
         } else {
-            [sharedDelegate webView:wv resource:identifier didReceiveContentLength:length fromDataSource:dataSource];
+            [sharedDelegate webView:wv resource:identifier didReceiveContentLength:(WebNSUInt)length fromDataSource:dataSource];
         }
     }
     

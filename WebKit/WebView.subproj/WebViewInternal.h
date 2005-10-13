@@ -105,7 +105,7 @@
     WebBridge *dragCaretBridge;
     
     BOOL hasSpellCheckerDocumentTag;
-    int spellCheckerDocumentTag;
+    WebNSInt spellCheckerDocumentTag;
 
     BOOL continuousSpellCheckingEnabled;
     BOOL smartInsertDeleteEnabled;
