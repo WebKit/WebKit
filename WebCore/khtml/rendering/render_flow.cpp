@@ -183,6 +183,8 @@ void RenderFlow::deleteLineBoxes()
 
 void RenderFlow::destroy()
 {
+    RenderContainer::destroyChildren();
+    
     if (!documentBeingDestroyed()) {
         if (m_firstLineBox) {
             // We can't wait for RenderContainer::destroy to clear the selection,

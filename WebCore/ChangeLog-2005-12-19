@@ -1,3 +1,24 @@
+2005-10-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+	Fix for <rdar://problem/4112378> CSS :hover:after crash - khtml::inlineWidth
+	RenderFlows needed to destroy all of their children within RenderFlow. This
+	used to happen only in RenderFlow's parent class, RenderContainer. But for
+	some children to be completely destroyed, the parent flow still needs to be
+	around. Specifically in the case when there is generated content and a line
+	break, which maintained a stray reference to the destroyed RenderObject through 
+	the lineBreakObj() of a RootInlineBox. 
+
+        * khtml/rendering/render_container.cpp: 
+        (RenderContainer::destroy): Took the destruction of children out of destroy(),
+				moved to new function, and only call function when m_first
+				is still around.
+        (RenderContainer::destroyChildren): New function for destruction of children.
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::destroy): Call RenderContainer::destroyChildren() at the beginning.
+
 2005-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

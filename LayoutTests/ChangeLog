@@ -1,3 +1,13 @@
+2005-10-12  Beth Dakin  <bdakin@apple.com>
+
+        Added a layout test for <rdar://problem/4112378> CSS :hover:after crash 
+	- khtml::inlineWidth. The fix is in WebCore.
+
+        * fast/dynamic/genContentDestroyChildren-expected.checksum: Added.
+        * fast/dynamic/genContentDestroyChildren-expected.png: Added.
+        * fast/dynamic/genContentDestroyChildren-expected.txt: Added.
+        * fast/dynamic/genContentDestroyChildren.html: Added.
+
 2005-10-12  Darin Adler  <darin@apple.com>
 
         - removed some old results for tests that are no longer present
