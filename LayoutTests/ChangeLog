@@ -1,3 +1,13 @@
+2005-10-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Adding a small xmlhttprequest test.
+
+        * fast/js/resources/xmlhttprequest-get-data.xml: Added.
+        * fast/js/xmlhttprequest-get-expected.txt: Added.
+        * fast/js/xmlhttprequest-get.xhtml: Added.
+
 2005-10-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt
