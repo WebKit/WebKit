@@ -1,3 +1,26 @@
+2005-10-13  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.
+
+        Test cases updated:
+        * svg-tests/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg-tests/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg-tests/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+
+        Fixed <svg> to base %lengths off of the nearest viewbox.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5326
+
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        (SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::x):
+        (SVGSVGElementImpl::y):
+        (SVGSVGElementImpl::width):
+        (SVGSVGElementImpl::height):
+
 2005-10-12  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Hyatt.

@@ -37,7 +37,7 @@ SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl(const SVGStyledElementImp
 {
     m_context = context;
     m_meetOrSlice = SVG_MEETORSLICE_MEET;
-    m_align = SVG_PRESERVEASPECTRATIO_XMINYMID;
+    m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
 }
 
 SVGPreserveAspectRatioImpl::~SVGPreserveAspectRatioImpl()
