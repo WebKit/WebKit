@@ -1,5 +1,11 @@
 2005-10-13  Eric Seidel  <eseidel@apple.com>
 
+        Committed file w/ extra newline by mistake.
+
+        * fast/js/resources/xmlhttprequest-get-data.xml:
+
+2005-10-13  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Adding the mozilla xslt tests.
