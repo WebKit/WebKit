@@ -238,11 +238,13 @@ static NSArray *_writableTypesForImageWithArchive (void)
         if ([types containsObject:NSRTFDPboardType]) {
             // This image data is either the only subresource of an archive (HTML image case)
             // or the main resource (standalone image case).
+            NSArray *imageTypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
             NSArray *subresources = [archive subresources];
-            WebResource *resource = [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : [archive mainResource];
+            WebResource *mainResource = [archive mainResource];
+            WebResource *resource = ![imageTypes containsObject:[mainResource MIMEType]] && [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
             ASSERT(resource != nil);
             
-            ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);
+            ASSERT([imageTypes containsObject:[resource MIMEType]]);
             [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }
         if ([types containsObject:WebArchivePboardType]) {

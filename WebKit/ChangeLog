@@ -1,3 +1,13 @@
+2005-10-14  Vicki Murley  <vicki@apple.com>
+
+	Changes by Mitz Pettel, reviewed by Maciej.
+
+	Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5029 (Assertion failure in -[NSPasteboard(WebExtras) 
+	_web_writeImage:URL:title:archive:types:] when trying to drag an image from a site with no favicon)
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:URL:title:archive:types:]): Prefer the main resource if it is an image
+
 2005-10-12  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.
