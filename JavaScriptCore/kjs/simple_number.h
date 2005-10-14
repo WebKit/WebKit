@@ -58,41 +58,41 @@ namespace KJS {
         {
             if (sizeof(float) == sizeof(unsigned long) &&
                 sizeof(double) == sizeof(unsigned long long) &&
-                sizeof(ValueImp*) >= sizeof(unsigned long)) {
+                sizeof(ValueImp *) >= sizeof(unsigned long)) {
                 // 32-bit
                 union {
                     unsigned long asBits;
                     float         asFloat;
-                } floatunion;
-                floatunion.asFloat = d;
+                } floatUnion;
+                floatUnion.asFloat = d;
                 
-                if ((floatunion.asBits & tagMask) != 0)
+                if ((floatUnion.asBits & tagMask) != 0)
                   return 0;
                 
                 // Check for loss in conversion to float
                 union {
                     unsigned long long asBits;
                     double             asDouble;
-                } doubleunion1, doubleunion2;
-                doubleunion1.asDouble = floatunion.asFloat;
-                doubleunion2.asDouble = d;
-                if (doubleunion1.asBits != doubleunion2.asBits)
+                } doubleUnion1, doubleUnion2;
+                doubleUnion1.asDouble = floatUnion.asFloat;
+                doubleUnion2.asDouble = d;
+                if (doubleUnion1.asBits != doubleUnion2.asBits)
                     return 0;
                 
-                return reinterpret_cast<ValueImp *>(floatunion.asBits | tag);
+                return reinterpret_cast<ValueImp *>(floatUnion.asBits | tag);
             } else if (sizeof(double) == sizeof(unsigned long) &&
                        sizeof(ValueImp*) >= sizeof(unsigned long)) {
                 // 64-bit
                 union {
                     unsigned long asBits;
                     double        asDouble;
-                } doubleunion;
-                doubleunion.asDouble = d;
+                } doubleUnion;
+                doubleUnion.asDouble = d;
                 
-                if ((doubleunion.asBits & tagMask) != 0)
+                if ((doubleUnion.asBits & tagMask) != 0)
                     return 0;
 
-                return reinterpret_cast<ValueImp *>(doubleunion.asBits | tag);
+                return reinterpret_cast<ValueImp *>(doubleUnion.asBits | tag);
             } else {
                 // could just return 0 here, but nicer to be explicit about not supporting the platform well
                 abort();
@@ -114,17 +114,17 @@ namespace KJS {
                 union {
                     unsigned long asBits;
                     float         asFloat;
-                } floatunion;
-                floatunion.asBits = reinterpret_cast<unsigned long>(imp) & ~tagMask;
-                return floatunion.asFloat;
+                } floatUnion;
+                floatUnion.asBits = reinterpret_cast<unsigned long>(imp) & ~tagMask;
+                return floatUnion.asFloat;
             } else if (sizeof(double) == sizeof(unsigned long)) {
                 // 64-bit
                 union {
                     unsigned long asBits;
                     double        asDouble;
-                } doubleunion;
-                doubleunion.asBits = reinterpret_cast<unsigned long>(imp) & ~tagMask;
-                return doubleunion.asDouble;
+                } doubleUnion;
+                doubleUnion.asBits = reinterpret_cast<unsigned long>(imp) & ~tagMask;
+                return doubleUnion.asDouble;
             } else {
                 // could just return 0 here, but nicer to be explicit about not supporting the platform well
                 abort();

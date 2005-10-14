@@ -1,3 +1,13 @@
+2005-10-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Style changes recommended by Darin.
+        
+        Changed to camelCase, changed ValueImp* to ValueImp *.
+
+        * kjs/simple_number.h:
+        (KJS::SimpleNumber::make):
+        (KJS::SimpleNumber::value):
+
 2005-10-11  Geoffrey Garen  <ggaren@apple.com>
 
         Added regexp_object.lut.h build phase from JavaScriptCore
