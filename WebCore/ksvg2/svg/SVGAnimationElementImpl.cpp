@@ -103,8 +103,7 @@ SVGElementImpl *SVGAnimationElementImpl::targetElement() const
                 else
                     break;
             }
-            
-            m_targetElement = static_cast<SVGElementImpl *>(target);
+            m_targetElement = svg_dynamic_cast(target);
         }
     }
                         

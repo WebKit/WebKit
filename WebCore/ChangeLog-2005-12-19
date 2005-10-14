@@ -1,3 +1,13 @@
+2005-10-14  Julien Palmas <julien.palmas@mac.com>
+
+        Reviewed by eseidel.
+
+        Fixed crash when animating unsupported elements.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5336
+
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::targetElement):
+
 2005-10-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt
@@ -186,7 +196,7 @@
         * ksvg2/svg/SVGUseElementImpl.cpp:
         (SVGUseElementImpl::close):
 
-2005-10-11  Julien Palmas <julien.palmas@mac.com>>
+2005-10-11  Julien Palmas <julien.palmas@mac.com>
 
         Reviewed by eseidel.
 
