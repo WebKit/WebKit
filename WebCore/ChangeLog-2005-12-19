@@ -1,3 +1,10 @@
+2005-10-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Style change suggested by Darin.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptHandler): Added "Bugzilla" prefix to bug #.
+
 2005-10-14  Julien Palmas <julien.palmas@mac.com>
 
         Reviewed by eseidel.

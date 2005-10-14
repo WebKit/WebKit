@@ -385,7 +385,7 @@ void HTMLTokenizer::scriptHandler()
     // We are inside a <script>
     bool doScriptExec = false;
 
-    // (3837) Scripts following a frameset element should not execute or, 
+    // (Bugzilla 3837) Scripts following a frameset element should not execute or, 
     // in the case of extern scripts, even load.
     bool followingFrameset = (parser->doc()->body() && parser->doc()->body()->hasTagName(framesetTag));
   
