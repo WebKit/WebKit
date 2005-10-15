@@ -1,3 +1,7 @@
+2005-10-15  Darin Adler  <darin@apple.com>
+
+        * kxmlcore/HashTable.cpp: Fixed build failure (said hashtable.h instead of HashTable.h).
+
 2005-10-14  Geoffrey Garen  <ggaren@apple.com>
 
         Style changes recommended by Darin.

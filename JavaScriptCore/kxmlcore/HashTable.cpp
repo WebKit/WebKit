@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#include "hashtable.h"
+#include "HashTable.h"
 
 namespace KXMLCore {
 
