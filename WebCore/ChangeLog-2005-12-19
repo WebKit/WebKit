@@ -1,3 +1,29 @@
+2005-10-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Backed out the following changes, since they are in a range that
+	provably caused a performance regression:
+
+	<rdar://problem/4302874> Denver Regression: crash repeatedly reloading www.supermanhomepage.com
+	<rdar://problem/4302879> Re-land SVG object element fix
+	<rdar://problem/4302880> Re-land isSameNode change
+	<rdar://problem/4065748> Repro crash at http://www.vanaqua.org using menu system (KHTMLParser::setCurrent(DOM::NodeImpl*))
+	
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::isImageType):
+        * khtml/html/htmlparser.cpp:
+        (HTMLStackElem::HTMLStackElem):
+        (HTMLParser::popNestedHeaderTag):
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (HTMLParser::popOneBlock):
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/DOM.mm:
+
 2005-10-14  Geoffrey Garen  <ggaren@apple.com>
 
         Style change suggested by Darin.

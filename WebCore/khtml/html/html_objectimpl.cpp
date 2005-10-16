@@ -839,12 +839,6 @@ bool HTMLObjectElementImpl::isImageType()
                 serviceType = "text/plain"; // Data URLs with no MIME type are considered text/plain.
         }
     }
-    
-#if SVG_SUPPORT
-    // Even if the image system supports it, we don't want to render SVGs as images.
-    if (serviceType == "image/svg+xml")
-        return false;
-#endif
 
     return canRenderImageType(serviceType);
 }
