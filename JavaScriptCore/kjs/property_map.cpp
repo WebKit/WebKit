@@ -25,7 +25,7 @@
 #include <kxmlcore/FastMalloc.h>
 #include "object.h"
 #include "protect.h"
-#include "IdentifierSequencedSet.h"
+#include "reference_list.h"
 
 #include <algorithm>
 
@@ -74,7 +74,7 @@ PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 #endif
 
 // lastIndexUsed is an ever-increasing index used to identify the order items
-// were inserted into the property map. It's vital that getEnumerablePropertyNames
+// were inserted into the property map. It's vital that addEnumerablesToReferenceList
 // return the properties in the order they were added for compatibility with other
 // browsers' JavaScript implementations.
 struct PropertyMapHashTable
@@ -566,13 +566,13 @@ static int comparePropertyMapEntryIndices(const void *a, const void *b)
     return 0;
 }
 
-void PropertyMap::getEnumerablePropertyNames(IdentifierSequencedSet& propertyNames) const
+void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, ObjectImp *base) const
 {
     if (!_table) {
 #if USE_SINGLE_ENTRY
         UString::Rep *key = _singleEntry.key;
         if (key && !(_singleEntry.attributes & DontEnum))
-            propertyNames.insert(Identifier(key));
+            list.append(Reference(base, Identifier(key)));
 #endif
         return;
     }
@@ -598,19 +598,17 @@ void PropertyMap::getEnumerablePropertyNames(IdentifierSequencedSet& propertyNam
     // Sort the entries by index.
     qsort(sortedEnumerables, p - sortedEnumerables, sizeof(sortedEnumerables[0]), comparePropertyMapEntryIndices);
 
-    // Put the keys of the sorted entries into the list.
+    // Put the keys of the sorted entries into the reference list.
     Entry **q = sortedEnumerables;
-    while (q != p) {
-        propertyNames.insert(Identifier(q[0]->key));
-        ++q;
-    }
+    while (q != p)
+        list.append(Reference(base, Identifier((*q++)->key)));
 
     // Deallocate the buffer.
     if (sortedEnumerables != fixedSizeBuffer)
         delete [] sortedEnumerables;
 }
 
-void PropertyMap::getSparseArrayPropertyNames(IdentifierSequencedSet& propertyNames) const
+void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, ObjectImp *base) const
 {
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -620,7 +618,7 @@ void PropertyMap::getSparseArrayPropertyNames(IdentifierSequencedSet& propertyNa
             bool fitsInUInt32;
             k.toUInt32(&fitsInUInt32);
             if (fitsInUInt32)
-                propertyNames.insert(Identifier(key));
+                list.append(Reference(base, Identifier(key)));
         }
 #endif
         return;
@@ -635,7 +633,7 @@ void PropertyMap::getSparseArrayPropertyNames(IdentifierSequencedSet& propertyNa
             bool fitsInUInt32;
             k.toUInt32(&fitsInUInt32);
             if (fitsInUInt32)
-                propertyNames.insert(Identifier(key));
+                list.append(Reference(base, Identifier(key)));
         }
     }
 }

@@ -1,3 +1,10 @@
+2005-10-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Reverted fix for this bug, because it was part of a time range that caused a performance
+	regression:
+	
+	<rdar://problem/4260481> Remove Reference type from JavaScriptCore
+
 2005-10-15  Darin Adler  <darin@apple.com>
 
         * kxmlcore/HashTable.cpp: Fixed build failure (said hashtable.h instead of HashTable.h).

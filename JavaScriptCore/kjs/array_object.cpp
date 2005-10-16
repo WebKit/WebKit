@@ -28,9 +28,9 @@
 #include "interpreter.h"
 #include "object.h"
 #include "operations.h"
+#include "reference_list.h"
 #include "types.h"
 #include "value.h"
-#include "IdentifierSequencedSet.h"
 
 #include "array_object.lut.h"
 
@@ -185,18 +185,20 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, unsigned index)
   return ObjectImp::deleteProperty(exec, Identifier::from(index));
 }
 
-void ArrayInstanceImp::getPropertyNames(ExecState *exec, IdentifierSequencedSet& propertyNames)
+ReferenceList ArrayInstanceImp::propList(ExecState *exec, bool recursive)
 {
+  ReferenceList properties = ObjectImp::propList(exec,recursive);
+
   // avoid fetching this every time through the loop
   ValueImp *undefined = jsUndefined();
 
   for (unsigned i = 0; i < storageLength; ++i) {
     ValueImp *imp = storage[i];
-    if (imp && imp != undefined)
-      propertyNames.insert(Identifier::from(i));
+    if (imp && imp != undefined) {
+      properties.append(Reference(this, i));
+    }
   }
-
-  ObjectImp::getPropertyNames(exec, propertyNames);
+  return properties;
 }
 
 void ArrayInstanceImp::resizeStorage(unsigned newLength)
@@ -228,18 +230,18 @@ void ArrayInstanceImp::setLength(unsigned newLength, ExecState *exec)
   }
 
   if (newLength < length) {
-    IdentifierSequencedSet sparseProperties;
+    ReferenceList sparseProperties;
     
-    _prop.getSparseArrayPropertyNames(sparseProperties);
-
-    IdentifierSequencedSetIterator end = sparseProperties.end();
+    _prop.addSparseArrayPropertiesToReferenceList(sparseProperties, this);
     
-    for (IdentifierSequencedSetIterator it = sparseProperties.begin(); it != end; ++it) {
-      Identifier name = *it;
+    ReferenceListIterator it = sparseProperties.begin();
+    while (it != sparseProperties.end()) {
+      Reference ref = it++;
       bool ok;
-      unsigned index = name.toArrayIndex(&ok);
-      if (ok && index > newLength)
-        deleteProperty(exec, name);
+      unsigned index = ref.getPropertyName(exec).toArrayIndex(&ok);
+      if (ok && index > newLength) {
+	ref.deleteValue(exec);
+      }
     }
   }
   
@@ -346,18 +348,19 @@ unsigned ArrayInstanceImp::pushUndefinedObjectsToEnd(ExecState *exec)
         }
     }
     
-    IdentifierSequencedSet sparseProperties;
-    _prop.getSparseArrayPropertyNames(sparseProperties);
-    unsigned newLength = o + sparseProperties.size();
+    ReferenceList sparseProperties;
+    _prop.addSparseArrayPropertiesToReferenceList(sparseProperties, this);
+    unsigned newLength = o + sparseProperties.length();
 
-    if (newLength > storageLength)
+    if (newLength > storageLength) {
       resizeStorage(newLength);
+    } 
 
-    IdentifierSequencedSetIterator end = sparseProperties.end();
-    for (IdentifierSequencedSetIterator it = sparseProperties.begin(); it != end; ++it) {
-      Identifier name = *it;
-      storage[o] = get(exec, name);
-      ObjectImp::deleteProperty(exec, name);
+    ReferenceListIterator it = sparseProperties.begin();
+    while (it != sparseProperties.end()) {
+      Reference ref = it++;
+      storage[o] = ref.getValue(exec);
+      ObjectImp::deleteProperty(exec, ref.getPropertyName(exec));
       o++;
     }
     
