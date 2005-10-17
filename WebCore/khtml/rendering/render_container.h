@@ -49,7 +49,7 @@ public:
     virtual void removeChild(RenderObject *oldChild);
 
     virtual void destroy();
-    void destroyChildren();
+    void destroyLeftoverAnonymousChildren();
     
     virtual RenderObject* removeChildNode(RenderObject* child);
     virtual void appendChildNode(RenderObject* child);

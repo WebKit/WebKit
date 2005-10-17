@@ -183,7 +183,13 @@ void RenderFlow::deleteLineBoxes()
 
 void RenderFlow::destroy()
 {
-    RenderContainer::destroyChildren();
+    // Detach our continuation first.
+    if (m_continuation)
+        m_continuation->destroy();
+    
+    // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
+    // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
+    RenderContainer::destroyLeftoverAnonymousChildren();
     
     if (!documentBeingDestroyed()) {
         if (m_firstLineBox) {

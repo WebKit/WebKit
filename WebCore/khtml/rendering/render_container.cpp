@@ -59,20 +59,15 @@ RenderContainer::~RenderContainer()
 
 void RenderContainer::destroy()
 {
-    if (m_first)
-        destroyChildren();
-    
+    destroyLeftoverAnonymousChildren();
     RenderBox::destroy();
 }
 
-void RenderContainer::destroyChildren()
+void RenderContainer::destroyLeftoverAnonymousChildren()
 {
-    if (continuation())
-        continuation()->destroy();
-    
     while (m_first) {
         if (m_first->isListMarker())
-            m_first->remove();
+            m_first->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container.
         else
             m_first->destroy();
     }

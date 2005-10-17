@@ -1,3 +1,17 @@
+2005-10-16  David Hyatt  <hyatt@apple.com>
+
+	Clean up the deletion of anonymous boxes in the render tree.
+	Renamed methods to make it more clear and also added comments.
+	
+        Reviewed by bdakin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::destroy):
+        (RenderContainer::destroyLeftoverAnonymousChildren):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::destroy):
+
 2005-10-15  Maciej Stachowiak  <mjs@apple.com>
 
 	Backed out the following changes, since they are in a range that
