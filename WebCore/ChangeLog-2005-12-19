@@ -1,3 +1,21 @@
+2005-10-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for bugzilla bug 5283.  Make overflow layers lose to other kinds of
+	layers if z-index is equivalent.  Technically overflow isn't even supposed
+	to establish a stacking context, so the use of RenderLayer for overflow,
+	although elegant and simple, isn't correct.  This patch is essentially a hack
+	to make the common problem go away, but the deeper mistake remains.
+	
+        Reviewed by eseidel
+
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::isTransparent):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::isOverflowOnly):
+        (khtml::compare):
+        (khtml::sortByZOrder):
+        * khtml/rendering/render_layer.h:
+
 2005-10-16  David Hyatt  <hyatt@apple.com>
 
 	Clean up the deletion of anonymous boxes in the render tree.
