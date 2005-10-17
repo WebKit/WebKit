@@ -133,12 +133,12 @@ layer at (0,0) size 785x2414
               RenderBlock {DIV} at (1,1) size 100x100 [bgcolor=#800080]
 layer at (12,12) size 302x104 clip at (13,13) size 300x102
   RenderTableCell {TD} at (2,52) size 302x4 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (12,160) size 604x104 clip at (13,161) size 602x102
+  RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
 layer at (14,90) size 600x18
   RenderBlock (positioned) {DIV} at (14,90) size 600x18 [bgcolor=#00FFFF]
     RenderText {TEXT} at (0,0) size 209x18
       text run at (0,0) width 209: "With absolute positioning on div."
-layer at (12,160) size 604x104 clip at (13,161) size 602x102
-  RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
 layer at (14,203) size 600x18
   RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#00FFFF]
     RenderText {TEXT} at (0,0) size 129x18
@@ -174,10 +174,6 @@ layer at (318,858) size 304x104 clip at (319,859) size 302x102 scrollWidth 601
           text run at (0,0) width 51: "Reverse"
 layer at (12,1006) size 604x104 clip at (13,1007) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-layer at (14,1049) size 600x18
-  RenderBlock (relative positioned) {DIV} at (2,2) size 600x18 [bgcolor=#FFA500]
-    RenderText {TEXT} at (0,0) size 203x18
-      text run at (0,0) width 203: "With relative positioning on div."
 layer at (12,1154) size 604x104 clip at (13,1155) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#FFC0CB]
@@ -200,6 +196,10 @@ layer at (8,1582) size 300x100 scrollWidth 600
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#FFA500]
         RenderText {TEXT} at (0,0) size 278x18
           text run at (0,0) width 278: "With display:table-cell + relative positioning"
+layer at (14,1049) size 600x18
+  RenderBlock (relative positioned) {DIV} at (2,2) size 600x18 [bgcolor=#FFA500]
+    RenderText {TEXT} at (0,0) size 203x18
+      text run at (0,0) width 203: "With relative positioning on div."
 layer at (8,1718) size 605x107 clip at (11,1721) size 602x102
   RenderTableCell {TD} at (0,41) size 605x25 [bgcolor=#808080] [border: (3px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (4,4) size 600x18 [bgcolor=#FFFF00]
