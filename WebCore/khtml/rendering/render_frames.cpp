@@ -868,6 +868,11 @@ void RenderPartObject::layout( )
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
 
+    QRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = getAbsoluteRepaintRect();
+    
 #if !APPLE_CHANGES
     int m_oldwidth = m_width;
     int m_oldheight = m_height;
@@ -877,6 +882,9 @@ void RenderPartObject::layout( )
     calcHeight();
 
     RenderPart::layout();
+
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
 
     setNeedsLayout(false);
 }
@@ -918,35 +926,5 @@ void RenderPartObject::slotViewCleared()
         }
   }
 }
-
-#if APPLE_CHANGES
-// FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
-// layouts using WebCore when objects resize.
-void RenderPart::updateWidgetPositions()
-{
-    if (!m_widget)
-        return;
-    
-    int x, y, width, height;
-    absolutePosition(x,y);
-    x += borderLeft() + paddingLeft();
-    y += borderTop() + paddingTop();
-    width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    QRect newBounds(x,y,width,height);
-    if (newBounds != m_widget->frameGeometry()) {
-        // The widget changed positions.  Update the frame geometry.
-        RenderArena *arena = ref();
-        element()->ref();
-        m_widget->setFrameGeometry(newBounds);
-        element()->deref();
-        deref(arena);
-        
-        QScrollView *view = static_cast<QScrollView *>(m_widget);
-        if (view && view->inherits("KHTMLView"))
-            static_cast<KHTMLView*>(view)->layout();
-    }
-}
-#endif
 
 #include "render_frames.moc"

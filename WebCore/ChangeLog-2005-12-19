@@ -1,3 +1,29 @@
+2005-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+        Committed by John Sullivan.
+
+        - .5% or so speedup by removing updateWidgetPositions
+
+	Instead, widget sizes are calculated in layout and widget positions are set at
+	paint time, with the same kind of special handling for incremental repaint that
+	RenderImage does.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::layout):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::layout):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollToOffset):
+        * khtml/rendering/render_object.cpp:
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::layout):
+        * khtml/rendering/render_replaced.h:
+
 2005-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

@@ -165,21 +165,27 @@ void RenderFormElement::updateFromElement()
 
 void RenderFormElement::layout()
 {
-    KHTMLAssert( needsLayout() );
-    KHTMLAssert( minMaxKnown() );
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
 
+    QRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = getAbsoluteRepaintRect();
+    
     // minimum height
     m_height = 0;
 
     calcWidth();
     calcHeight();
 
-#if !APPLE_CHANGES
-    if ( m_widget )
+    if (m_widget)
         resizeWidget(m_widget,
                      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
                      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight());
-#endif
+    
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
     
     setNeedsLayout(false);
 }

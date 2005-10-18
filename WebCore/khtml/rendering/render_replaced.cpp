@@ -339,17 +339,16 @@ void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
     m_deleteWidget = deleteWidget;
 }
 
-void RenderWidget::layout( )
+void RenderWidget::layout()
 {
-    KHTMLAssert( needsLayout() );
-    KHTMLAssert( minMaxKnown() );
-#if !APPLE_CHANGES
-    if ( m_widget ) {
-	resizeWidget( m_widget,
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
+
+    if (m_widget) {
+	resizeWidget(m_widget,
 		      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
-		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
+		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight());
     }
-#endif
 
     setNeedsLayout(false);
 }
@@ -541,39 +540,6 @@ void RenderWidget::deref(RenderArena *arena)
     if (!_ref)
         arenaDelete(arena, this);
 }
-
-#if APPLE_CHANGES
-void RenderWidget::updateWidgetPositions()
-{
-    if (!m_widget)
-        return;
-    
-    int x, y, width, height;
-    absolutePosition(x,y);
-    x += borderLeft() + paddingLeft();
-    y += borderTop() + paddingTop();
-    width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    QRect newBounds(x,y,width,height);
-    QRect oldBounds(m_widget->frameGeometry());
-    if (newBounds != oldBounds) {
-        // The widget changed positions.  Update the frame geometry.
-        if (checkForRepaintDuringLayout()) {
-            RenderCanvas* c = canvas();
-            if (!c->printingMode()) {
-                c->repaintViewRectangle(oldBounds);
-                c->repaintViewRectangle(newBounds);
-            }
-        }
-
-        RenderArena *arena = ref();
-        element()->ref();
-        m_widget->setFrameGeometry(newBounds);
-        element()->deref();
-        deref(arena);
-    }
-}
-#endif
 
 void RenderWidget::setSelectionState(SelectionState s) 
 {
