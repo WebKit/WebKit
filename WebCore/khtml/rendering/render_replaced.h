@@ -100,6 +100,7 @@ public:
 
 #if APPLE_CHANGES 
     void sendConsumedMouseUp();
+    virtual void updateWidgetPositions();
 #endif
 
 public slots:

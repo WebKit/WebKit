@@ -463,6 +463,9 @@ public:
     virtual int availableHeight() const { return 0; }
 
 #if APPLE_CHANGES
+    // Called recursively to update the absolute positions of all widgets.
+    virtual void updateWidgetPositions();
+    
     QValueList<DashboardRegionValue> RenderObject::computeDashboardRegions();
     void addDashboardRegions (QValueList<DashboardRegionValue>& regions);
     void collectDashboardRegions (QValueList<DashboardRegionValue>& regions);

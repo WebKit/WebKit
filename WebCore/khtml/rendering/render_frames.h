@@ -100,6 +100,12 @@ public:
 
     virtual void setWidget( QWidget *widget );
 
+#if APPLE_CHANGES
+    // FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
+    // layouts using WebCore when objects resize.
+    void updateWidgetPositions();
+#endif
+
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
 public slots:

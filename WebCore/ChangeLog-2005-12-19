@@ -1,5 +1,27 @@
 2005-10-18  Maciej Stachowiak  <mjs@apple.com>
 
+        - back out the last change, it caused a regression with painting of offscreen plugins
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::layout):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::layout):
+        (RenderPart::updateWidgetPositions):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollToOffset):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::updateWidgetPositions):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::layout):
+        (RenderWidget::updateWidgetPositions):
+        * khtml/rendering/render_replaced.h:
+
+2005-10-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave Hyatt.
         Committed by John Sullivan.
 
