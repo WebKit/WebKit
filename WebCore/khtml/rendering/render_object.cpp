@@ -2295,23 +2295,21 @@ void RenderObject::deleteLineBoxWrapper()
 {
 }
 
-RenderStyle* RenderObject::style(bool firstLine) const {
-    RenderStyle *s = m_style;
-    if (firstLine) {
-        const RenderObject* obj = isText() ? parent() : this;
-        if (obj->isBlockFlow()) {
-            RenderBlock* firstLineBlock = obj->firstLineBlock();
-            if (firstLineBlock)
-                s = firstLineBlock->getPseudoStyle(RenderStyle::FIRST_LINE, style());
-        }
-        else if (!obj->isAnonymous() && obj->isInlineFlow()) {
-            RenderStyle* parentStyle = obj->parent()->style(true);
-            if (parentStyle != obj->parent()->style()) {
-                // A first-line style is in effect. We need to cache a first-line style
-                // for ourselves.
-                style()->setHasPseudoStyle(RenderStyle::FIRST_LINE_INHERITED);
-                s = obj->getPseudoStyle(RenderStyle::FIRST_LINE_INHERITED, parentStyle);
-            }
+RenderStyle* RenderObject::firstLineStyle() const 
+{
+    RenderStyle *s = m_style; 
+    const RenderObject* obj = isText() ? parent() : this;
+    if (obj->isBlockFlow()) {
+        RenderBlock* firstLineBlock = obj->firstLineBlock();
+        if (firstLineBlock)
+            s = firstLineBlock->getPseudoStyle(RenderStyle::FIRST_LINE, style());
+    } else if (!obj->isAnonymous() && obj->isInlineFlow()) {
+        RenderStyle* parentStyle = obj->parent()->firstLineStyle();
+        if (parentStyle != obj->parent()->style()) {
+            // A first-line style is in effect. We need to cache a first-line style
+            // for ourselves.
+            style()->setHasPseudoStyle(RenderStyle::FIRST_LINE_INHERITED);
+            s = obj->getPseudoStyle(RenderStyle::FIRST_LINE_INHERITED, parentStyle);
         }
     }
     return s;

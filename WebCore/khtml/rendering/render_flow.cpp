@@ -600,7 +600,7 @@ QRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     // constructed properly and this kludge is not called any more. So only
     // the caret size of an empty :first-line'd block is wrong, but I think we
     // can live with that.
-    RenderStyle *currentStyle = style(true);
+    RenderStyle *currentStyle = firstLineStyle();
     //height = currentStyle->fontMetrics().height();
     height = lineHeight(true);
     width = 1;

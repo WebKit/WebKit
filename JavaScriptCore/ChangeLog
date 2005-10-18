@@ -1,3 +1,15 @@
+2005-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff. Code changes by Darin.
+
+	- some micro-optimizations to FastMalloc to reduce math and branches.
+
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::TCMalloc_Central_FreeList::Populate):
+        (KXMLCore::fastMallocRegisterThread):
+        (KXMLCore::TCMalloc_ThreadCache::GetCache):
+        (KXMLCore::TCMalloc_ThreadCache::GetCacheIfPresent):
+
 2005-10-15  Maciej Stachowiak  <mjs@apple.com>
 
 	Reverted fix for this bug, because it was part of a time range that caused a performance

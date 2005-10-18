@@ -1234,10 +1234,11 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
   char* limit = ptr + (npages << kPageShift);
   const size_t size = ByteSizeForClass(size_class_);
   int num = 0;
-  while (ptr + size <= limit) {
+  char* nptr;
+  while ((nptr = ptr + size) <= limit) {
     *tail = ptr;
     tail = reinterpret_cast<void**>(ptr);
-    ptr += size;
+    ptr = nptr;
     num++;
   }
   ASSERT(ptr <= limit);
@@ -1393,17 +1394,20 @@ void fastMallocRegisterThread(pthread_t thread)
         // variable cache is the same as the thread-specific cache for the main thread.
         // And other threads can't get it wrong because they must have gone through 
         // this function before allocating so they've synchronized.
+        // Also, mainThreadCache is only set when isMultiThreaded is false, 
+        // to save a branchin some cases.
         SpinLockHolder lock(&multiThreadedLock);
         isMultiThreaded = true;
+        mainThreadCache = 0;
     }
 }
 
-inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
+ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
   void* ptr = NULL;
   if (!tsd_inited) {
     InitModule();
   } else {
-      if (!isMultiThreaded)
+      if (mainThreadCache)
           ptr = mainThreadCache;
       else
           ptr = pthread_getspecific(heap_key);
@@ -1416,7 +1420,7 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
 // because we may be in the thread destruction code and may have
 // already cleaned up the cache for this thread.
 inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
-  if (!isMultiThreaded)
+  if (mainThreadCache)
       return mainThreadCache;
   if (!tsd_inited) return NULL;
   return reinterpret_cast<TCMalloc_ThreadCache*>

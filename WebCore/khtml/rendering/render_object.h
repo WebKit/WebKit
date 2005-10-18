@@ -676,7 +676,9 @@ public:
     virtual int maxWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style; }
-    RenderStyle* style( bool firstLine ) const;
+    RenderStyle* firstLineStyle() const;
+    RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
+
 
     void getTextDecorationColors(int decorations, QColor& underline, QColor& overline,
                                  QColor& linethrough, bool quirksMode=false);

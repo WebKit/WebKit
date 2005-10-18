@@ -128,24 +128,25 @@ public:
     virtual bool processingData() const;
 
 protected:
+    class State;
+
+    // Where we are in parsing a tag
     void begin();
     void end();
 
     void reset();
     void processToken();
-    void processListing(TokenizerString list);
 
-    void parseComment(TokenizerString &str);
-    void parseServer(TokenizerString &str);
-    void parseText(TokenizerString &str);
-    void parseListing(TokenizerString &str);
-    void parseSpecial(TokenizerString &str);
-    void parseTag(TokenizerString &str);
-    void parseEntity(TokenizerString &str, QChar *&dest, bool start = false);
-    void parseProcessingInstruction(TokenizerString &str);
-    void scriptHandler();
-    void scriptExecution(const QString& script, QString scriptURL = QString(),
-                         int baseLine = 0);
+    State processListing(TokenizerString, State);
+    State parseComment(TokenizerString&, State);
+    State parseServer(TokenizerString&, State);
+    State parseText(TokenizerString&, State);
+    State parseSpecial(TokenizerString&, State);
+    State parseTag(TokenizerString&, State);
+    State parseEntity(TokenizerString &, QChar*& dest, State, unsigned& _cBufferPos, bool start, bool parsingTag);
+    State parseProcessingInstruction(TokenizerString&, State);
+    State scriptHandler(State);
+    State scriptExecution(const QString& script, State state, QString scriptURL = QString(), int baseLine = 0);
     void setSrc(const TokenizerString &source);
 
     // check if we have enough space in the buffer.
@@ -164,7 +165,7 @@ protected:
     void enlargeBuffer(int len);
     void enlargeScriptBuffer(int len);
 
-    bool continueProcessing(int& processedCount, const QTime& startTime, const KWQUIEventTime& eventTime);
+    bool continueProcessing(int& processedCount, const QTime& startTime, const KWQUIEventTime& eventTime, State &state);
     void timerEvent(QTimerEvent*);
     void allDataProcessed();
 
@@ -192,77 +193,117 @@ protected:
         DoubleQuote
     } tquote;
 
-    // Discard line breaks immediately after <pre> tags
-    enum
-    {
-        NoneDiscard = 0,
-        LFDiscard
-    } discard;
-
-    // Discard the LF part of CRLF sequence
-    bool skipLF;
-
-    // Flag to say that we have the '<' but not the character following it.
-    bool startTag;
-
-    // Flag to say, we are just parsing a tag, meaning, we are in the middle
-    // of <tag...
-    enum {
-        NoTag = 0,
-        TagName,
-        SearchAttribute,
-        AttributeName,
-        SearchEqual,
-        SearchValue,
-        QuotedValue,
-        Value,
-        SearchEnd
-    } tag;
-
     // Are we in a &... character entity description?
-    enum {
+    enum EntityState {
         NoEntity = 0,
-        SearchEntity,
-        NumericSearch,
-        Hexadecimal,
-        Decimal,
-        EntityName,
-        SearchSemicolon
-    } Entity;
+        SearchEntity = 1,
+        NumericSearch = 2,
+        Hexadecimal = 3,
+        Decimal = 4,
+        EntityName = 5,
+        SearchSemicolon = 6
+    };
     unsigned EntityUnicodeValue;
 
-    // are we in a <script> ... </script block
-    bool script;
+    enum TagState {
+        NoTag = 0,
+        TagName = 1,
+        SearchAttribute = 2,
+        AttributeName = 3,
+        SearchEqual = 4,
+        SearchValue = 5,
+        QuotedValue = 6,
+        Value = 7,
+        SearchEnd = 8
+    };
 
-    // Are we in a <style> ... </style> block
-    bool style;
+    class State {
+    public:
+        State() : m_bits(0) {}
 
-    // Are we in a <select> ... </select> block
-    bool select;
+        TagState tagState() const { return static_cast<TagState>(m_bits & TagMask); }
+        void setTagState(TagState t) { m_bits = (m_bits & ~TagMask) | t; }
+        EntityState entityState() const { return static_cast<EntityState>((m_bits & EntityMask) >> EntityShift); }
+        void setEntityState(EntityState e) { m_bits = (m_bits & ~EntityMask) | (e << EntityShift); }
 
-    // Are we in a <xmp> ... </xmp> block
-    bool xmp;
+        bool inScript() const { return testBit(InScript); }
+        void setInScript(bool v) { setBit(InScript, v); }
+        bool inStyle() const { return testBit(InStyle); }
+        void setInStyle(bool v) { setBit(InStyle, v); }
+        bool inSelect() const { return testBit(InSelect); }
+        void setInSelect(bool v) { setBit(InSelect, v); }
+        bool inXmp() const { return testBit(InXmp); }
+        void setInXmp(bool v) { setBit(InXmp, v); }
+        bool inTitle() const { return testBit(InTitle); }
+        void setInTitle(bool v) { setBit(InTitle, v); }
+        bool inPlainText() const { return testBit(InPlainText); }
+        void setInPlainText(bool v) { setBit(InPlainText, v); }
+        bool inProcessingInstruction() const { return testBit(InProcessingInstruction); }
+        void setInProcessingInstruction(bool v) { return setBit(InProcessingInstruction, v); }
+        bool inComment() const { return testBit(InComment); }
+        void setInComment(bool v) { setBit(InComment, v); }
+        bool inTextArea() const { return testBit(InTextArea); }
+        void setInTextArea(bool v) { setBit(InTextArea, v); }
+        bool escaped() const { return testBit(Escaped); }
+        void setEscaped(bool v) { setBit(Escaped, v); }
+        bool inServer() const { return testBit(InServer); }
+        void setInServer(bool v) { setBit(InServer, v); }
+        bool skipLF() const { return testBit(SkipLF); }
+        void setSkipLF(bool v) { setBit(SkipLF, v); }
+        bool startTag() const { return testBit(StartTag); }
+        void setStartTag(bool v) { setBit(StartTag, v); }
+        bool discardLF() const { return testBit(DiscardLF); }
+        void setDiscardLF(bool v) { setBit(DiscardLF, v); }
+        bool allowYield() const { return testBit(AllowYield); }
+        void setAllowYield(bool v) { setBit(AllowYield, v); }
+        bool loadingExtScript() const { return testBit(LoadingExtScript); }
+        void setLoadingExtScript(bool v) { setBit(LoadingExtScript, v); }
+        bool forceSynchronous() const { return testBit(ForceSynchronous); }
+        void setForceSynchronous(bool v) { setBit(ForceSynchronous, v); }
 
-    // Are we in a <title> ... </title> block
-    bool title;
+        bool inAnySpecial() const { return m_bits & (InScript | InStyle | InXmp | InTextArea | InTitle); }
+        bool hasTagState() const { return m_bits & TagMask; }
+        bool hasEntityState() const { return m_bits & EntityMask; }
 
-    // Are we in plain textmode ?
-    bool plaintext;
+        bool needsSpecialWriteHandling() const { return m_bits & (InScript | InStyle | InXmp | InTextArea | InTitle | TagMask | EntityMask | InPlainText | InComment | InServer | InProcessingInstruction | StartTag); }
 
-    // XML processing instructions. Ignored at the moment
-    bool processingInstruction;
+    private:
+        static const int EntityShift = 4;
+        enum StateBits {
+            TagMask = (1 << 4) - 1,
+            EntityMask = (1 << 7) - (1 << 4),
+            InScript = 1 << 7,
+            InStyle = 1 << 8,
+            InSelect = 1 << 9,
+            InXmp = 1 << 10,
+            InTitle = 1 << 11,
+            InPlainText = 1 << 12,
+            InProcessingInstruction = 1 << 13,
+            InComment = 1 << 14,
+            InTextArea = 1 << 15,
+            Escaped = 1 << 16,
+            InServer = 1 << 17,
+            SkipLF = 1 << 18,
+            StartTag = 1 << 19,
+            DiscardLF = 1 << 20, // FIXME: should clarify difference between skip and discard
+            AllowYield = 1 << 21,
+            LoadingExtScript = 1 << 22,
+            ForceSynchronous = 1 << 23,
+        };
+    
+        void setBit(StateBits bit, bool value) 
+        { 
+            if (value) 
+                m_bits |= bit; 
+            else 
+                m_bits &= ~bit;
+        }
+        bool testBit(StateBits bit) const { return m_bits & bit; }
 
-    // Area we in a <!-- comment --> block
-    bool comment;
+        unsigned m_bits;
+    };
 
-    // Are we in a <textarea> ... </textarea> block
-    bool textarea;
-
-    // was the previous character escaped ?
-    bool escaped;
-
-    // are we in a server includes statement?
-    bool server;
+    State m_state;
 
     bool brokenServer;
 
@@ -288,9 +329,6 @@ protected:
     const char* searchStopper;
     // the stopper len
     int searchStopperLen;
-    // true if we are waiting for an external script (<SCRIPT SRC=...) to load, i.e.
-    // we don't do any parsing while this is true
-    bool loadingExtScript;
     // if no more data is coming, just parse what we have (including ext scripts that
     // may be still downloading) and finish
     bool noMoreData;
@@ -323,8 +361,6 @@ protected:
 
     // The timer for continued processing.
     int timerId;
-    bool allowYield;
-    bool forceSynchronous;  // disables yielding
 
     bool includesCommentsInDOM;
 
@@ -333,7 +369,7 @@ protected:
 // we'll just make it large enough to handle all imaginable cases.
 #define CBUFLEN 1024
     char cBuffer[CBUFLEN+2];
-    unsigned int cBufferPos;
+    unsigned int m_cBufferPos;
 
     TokenizerString src;
 

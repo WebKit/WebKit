@@ -1,5 +1,94 @@
 2005-10-17  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff.
+
+        Speed up the tokenizer by keeping more state on the stack instead of in the object,
+	to avoid load-store traffic. About a .5% speedup.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        (khtml::HTMLTokenizer::reset):
+        (khtml::HTMLTokenizer::begin):
+        (khtml::HTMLTokenizer::setForceSynchronous):
+        (khtml::HTMLTokenizer::processListing):
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::scriptExecution):
+        (khtml::HTMLTokenizer::parseComment):
+        (khtml::HTMLTokenizer::parseServer):
+        (khtml::HTMLTokenizer::parseProcessingInstruction):
+        (khtml::HTMLTokenizer::parseText):
+        (khtml::HTMLTokenizer::parseEntity):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::continueProcessing):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::allDataProcessed):
+        (khtml::HTMLTokenizer::end):
+        (khtml::HTMLTokenizer::finish):
+        (khtml::HTMLTokenizer::notifyFinished):
+        (khtml::HTMLTokenizer::isWaitingForScripts):
+        * khtml/html/htmltokenizer.h:
+        (khtml::HTMLTokenizer::):
+        (khtml::HTMLTokenizer::State::State):
+        (khtml::HTMLTokenizer::State::tagState):
+        (khtml::HTMLTokenizer::State::setTagState):
+        (khtml::HTMLTokenizer::State::entityState):
+        (khtml::HTMLTokenizer::State::setEntityState):
+        (khtml::HTMLTokenizer::State::inScript):
+        (khtml::HTMLTokenizer::State::setInScript):
+        (khtml::HTMLTokenizer::State::inStyle):
+        (khtml::HTMLTokenizer::State::setInStyle):
+        (khtml::HTMLTokenizer::State::inSelect):
+        (khtml::HTMLTokenizer::State::setInSelect):
+        (khtml::HTMLTokenizer::State::inXmp):
+        (khtml::HTMLTokenizer::State::setInXmp):
+        (khtml::HTMLTokenizer::State::inTitle):
+        (khtml::HTMLTokenizer::State::setInTitle):
+        (khtml::HTMLTokenizer::State::inPlainText):
+        (khtml::HTMLTokenizer::State::setInPlainText):
+        (khtml::HTMLTokenizer::State::inProcessingInstruction):
+        (khtml::HTMLTokenizer::State::setInProcessingInstruction):
+        (khtml::HTMLTokenizer::State::inComment):
+        (khtml::HTMLTokenizer::State::setInComment):
+        (khtml::HTMLTokenizer::State::inTextArea):
+        (khtml::HTMLTokenizer::State::setInTextArea):
+        (khtml::HTMLTokenizer::State::escaped):
+        (khtml::HTMLTokenizer::State::setEscaped):
+        (khtml::HTMLTokenizer::State::inServer):
+        (khtml::HTMLTokenizer::State::setInServer):
+        (khtml::HTMLTokenizer::State::skipLF):
+        (khtml::HTMLTokenizer::State::setSkipLF):
+        (khtml::HTMLTokenizer::State::startTag):
+        (khtml::HTMLTokenizer::State::setStartTag):
+        (khtml::HTMLTokenizer::State::discardLF):
+        (khtml::HTMLTokenizer::State::setDiscardLF):
+        (khtml::HTMLTokenizer::State::allowYield):
+        (khtml::HTMLTokenizer::State::setAllowYield):
+        (khtml::HTMLTokenizer::State::loadingExtScript):
+        (khtml::HTMLTokenizer::State::setLoadingExtScript):
+        (khtml::HTMLTokenizer::State::forceSynchronous):
+        (khtml::HTMLTokenizer::State::setForceSynchronous):
+        (khtml::HTMLTokenizer::State::inAnySpecial):
+        (khtml::HTMLTokenizer::State::hasTagState):
+        (khtml::HTMLTokenizer::State::hasEntityState):
+        (khtml::HTMLTokenizer::State::):
+        (khtml::HTMLTokenizer::State::setBit):
+        (khtml::HTMLTokenizer::State::testBit):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::firstLineStyle):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::style):
+
+2005-10-17  Maciej Stachowiak  <mjs@apple.com>
+
         - temporarily back out hyatt's recent changes since the tree was closed
 
         * khtml/rendering/render_container.cpp:

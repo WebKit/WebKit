@@ -1067,7 +1067,7 @@ void InlineFlowBox::clearTruncation()
 void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
 {
     QPainter* p = i.p;
-    RenderStyle* _style = m_firstLine ? m_object->style(true) : m_object->style();
+    RenderStyle* _style = m_firstLine ? m_object->firstLineStyle() : m_object->style();
     if (_style->font() != p->font())
         p->setFont(_style->font());
 
