@@ -1,3 +1,13 @@
+2005-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        - temporarily back out hyatt's recent changes since the tree was closed
+
+        * fast/clip/008-expected.txt:
+        * fast/css/acid2-expected.txt:
+        * fast/css/acid2-pixel-expected.txt:
+        * fast/dom/gc-3.html:
+        * fast/table/overflowHidden-expected.txt:
+
 2005-10-13  Eric Seidel  <eseidel@apple.com>
 
         Committed file w/ extra newline by mistake.

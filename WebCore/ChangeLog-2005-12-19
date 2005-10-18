@@ -1,3 +1,19 @@
+2005-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        - temporarily back out hyatt's recent changes since the tree was closed
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::destroy):
+        (RenderContainer::destroyChildren):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::destroy):
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::isTransparent):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::sortByZOrder):
+        * khtml/rendering/render_layer.h:
+
 2005-10-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for bugzilla bug 5283.  Make overflow layers lose to other kinds of
