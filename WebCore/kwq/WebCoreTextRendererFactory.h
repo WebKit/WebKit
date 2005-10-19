@@ -32,9 +32,9 @@ class NSFont;
 
 typedef struct WebCoreFont {
     NSFont *font;
-    unsigned syntheticBold : 1;
-    unsigned syntheticOblique : 1;
-    unsigned forPrinter : 1;
+    bool syntheticBold;
+    bool syntheticOblique;
+    bool forPrinter;
 } WebCoreFont;
 
 #ifdef __cplusplus

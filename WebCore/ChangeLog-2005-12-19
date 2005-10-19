@@ -1,3 +1,19 @@
+2005-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed and landed by Maciej.
+
+        - some simple changes that amount to a < 1% speedup.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::direction):
+        * kwq/KWQKURL.mm:
+        (hasSlashDotOrDotDot):
+        * kwq/KWQString.mm:
+        (QString::~QString):
+        * kwq/WebCoreTextRendererFactory.h:
+
 2005-10-18  Maciej Stachowiak  <mjs@apple.com>
 
         - back out the last change, it caused a regression with painting of offscreen plugins

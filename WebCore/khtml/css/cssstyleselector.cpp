@@ -1822,9 +1822,10 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     Length l;
     bool apply = false;
 
-    bool isInherit = (parentNode && value->cssValueType() == CSSValue::CSS_INHERIT);
-    bool isInitial = (value->cssValueType() == CSSValue::CSS_INITIAL) ||
-                     (!parentNode && value->cssValueType() == CSSValue::CSS_INHERIT);
+    unsigned short valueType = value->cssValueType();
+
+    bool isInherit = parentNode && valueType == CSSValue::CSS_INHERIT;
+    bool isInitial = valueType == CSSValue::CSS_INITIAL || (!parentNode && valueType == CSSValue::CSS_INHERIT);
 
     // These properties are used to set the correct margins/padding on RTL lists.
     if (id == CSS_PROP__KHTML_MARGIN_START)
@@ -3764,7 +3765,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             style->setBoxSizing(BORDER_BOX);
         break;
     case CSS_PROP__KHTML_MARQUEE:
-        if (value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
+        if (valueType != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());
         style->setMarqueeIncrement(parentStyle->marqueeIncrement());
         style->setMarqueeSpeed(parentStyle->marqueeSpeed());

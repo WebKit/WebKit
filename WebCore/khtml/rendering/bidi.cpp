@@ -353,7 +353,7 @@ const QChar &BidiIterator::current() const
     return text->text()[pos];
 }
 
-inline QChar::Direction BidiIterator::direction() const
+ALWAYS_INLINE QChar::Direction BidiIterator::direction() const
 {
     if (!obj)
         return QChar::DirON;

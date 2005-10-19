@@ -1056,11 +1056,11 @@ static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int sr
 
 static inline bool hasSlashDotOrDotDot(const char *str)
 {
-    const char *p = str;
+    const unsigned char *p = reinterpret_cast<const unsigned char *>(str);
     if (!*p)
         return false;
-    char pc = *p;
-    while (char c = *++p) {
+    unsigned char pc = *p;
+    while (unsigned char c = *++p) {
         if (c == '.' && (pc == '/' || pc == '.'))
             return true;
         pc = c;
