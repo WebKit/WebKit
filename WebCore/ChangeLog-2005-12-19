@@ -1,3 +1,35 @@
+2005-10-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+        - instead of walking the render tree to update widget positions, instead
+	keep a set of widgets per canvas, maintained by the constructor and destroy method
+	for RenderWidget. About a .5% speedup.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::updateWidgetPositions):
+        (RenderCanvas::addWidget):
+        (RenderCanvas::removeWidget):
+        * khtml/rendering/render_canvas.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::updateWidgetPosition):
+        (RenderPart::needWidgetPositionUpdating):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollToOffset):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::updateWidgetPosition):
+        (RenderObject::needWidgetPositionUpdating):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::RenderWidget):
+        (RenderWidget::destroy):
+        (RenderWidget::updateWidgetPosition):
+        (RenderWidget::needWidgetPositionUpdating):
+        * khtml/rendering/render_replaced.h:
+
 2005-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Maciej.

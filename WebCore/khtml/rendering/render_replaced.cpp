@@ -228,6 +228,8 @@ RenderWidget::RenderWidget(DOM::NodeImpl* node)
     assert(node);
     m_view = node->getDocument()->view();
 
+    canvas()->addWidget(this);
+
     // this is no real reference counting, its just there
     // to make sure that we're not deleted while we're recursed
     // in an eventFilter of the widget
@@ -241,11 +243,14 @@ void RenderWidget::destroy()
     // So the code below includes copied and pasted contents of
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
-    
+
+    if (RenderCanvas *c = canvas())
+        c->removeWidget(this);
+
     remove();
 
-    if ( m_widget ) {
-        if ( m_view )
+    if (m_widget) {
+        if (m_view)
             m_view->removeChild( m_widget );
 
         m_widget->removeEventFilter( this );
@@ -343,13 +348,6 @@ void RenderWidget::layout( )
 {
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
-#if !APPLE_CHANGES
-    if ( m_widget ) {
-	resizeWidget( m_widget,
-		      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
-		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
-    }
-#endif
 
     setNeedsLayout(false);
 }
@@ -542,8 +540,7 @@ void RenderWidget::deref(RenderArena *arena)
         arenaDelete(arena, this);
 }
 
-#if APPLE_CHANGES
-void RenderWidget::updateWidgetPositions()
+void RenderWidget::updateWidgetPosition()
 {
     if (!m_widget)
         return;
@@ -573,7 +570,6 @@ void RenderWidget::updateWidgetPositions()
         deref(arena);
     }
 }
-#endif
 
 void RenderWidget::setSelectionState(SelectionState s) 
 {

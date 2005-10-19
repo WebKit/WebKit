@@ -526,16 +526,16 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(false, false);
     
-#if APPLE_CHANGES
-    // Move our widgets.
-    m_object->updateWidgetPositions();
-    
-    // Update dashboard regions, scrolling may change the clip of a
-    // particular region.
     RenderCanvas *canvas = renderer()->canvas();
-    if (canvas)
+    if (canvas) {
+#if APPLE_CHANGES
+        // Update dashboard regions, scrolling may change the clip of a
+        // particular region.
         canvas->view()->updateDashboardRegions();
 #endif
+
+        m_object->canvas()->updateWidgetPositions();
+    }
 
     // Fire the scroll DOM event.
     m_object->element()->dispatchHTMLEvent(scrollEvent, true, false);

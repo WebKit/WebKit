@@ -699,10 +699,8 @@ void KHTMLView::layout()
     // Now update the positions of all layers.
     layer->updateLayerPositions(d->doFullRepaint);
 
-#if APPLE_CHANGES
     // We update our widget positions right after doing a layout.
     root->updateWidgetPositions();
-#endif
     
     if (d->repaintRects && !d->repaintRects->isEmpty()) {
         // FIXME: Could optimize this and have objects removed from this list

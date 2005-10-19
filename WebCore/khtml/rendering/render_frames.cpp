@@ -919,10 +919,9 @@ void RenderPartObject::slotViewCleared()
   }
 }
 
-#if APPLE_CHANGES
 // FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
 // layouts using WebCore when objects resize.
-void RenderPart::updateWidgetPositions()
+void RenderPart::updateWidgetPosition()
 {
     if (!m_widget)
         return;
@@ -947,6 +946,5 @@ void RenderPart::updateWidgetPositions()
             static_cast<KHTMLView*>(view)->layout();
     }
 }
-#endif
 
 #include "render_frames.moc"

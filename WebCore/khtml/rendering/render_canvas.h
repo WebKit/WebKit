@@ -23,6 +23,7 @@
 #define render_canvas_h
 
 #include "render_block.h"
+#include <kxmlcore/HashSet.h>
 
 class KHTMLView;
 class QScrollView;
@@ -102,6 +103,10 @@ public:
     QRect printRect() const { return m_printRect; }
     void setPrintRect(const QRect& r) { m_printRect = r; }
 
+    void updateWidgetPositions();
+    void addWidget(RenderObject *);
+    void removeWidget(RenderObject *);
+
 protected:
 
     KHTMLView *m_view;
@@ -124,6 +129,10 @@ protected:
     
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
     QRect m_printRect; // Used when printing.
+
+    typedef HashSet<RenderObject *, PointerHash<RenderObject *> > RenderObjectSet;
+
+    RenderObjectSet m_widgets;
 };
 
 };
