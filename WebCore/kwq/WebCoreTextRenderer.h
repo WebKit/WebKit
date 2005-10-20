@@ -25,26 +25,22 @@
 
 #import <Cocoa/Cocoa.h>
 
-#ifndef ROUND_TO_INT
-#define ROUND_TO_INT(x) (unsigned int)((x)+.5)
-#endif
-
 struct WebCoreTextStyle
 {
     NSColor *textColor;
     NSColor *backgroundColor;
-    float letterSpacing;
-    float wordSpacing;
-    float padding;
-    float tabWidth;
-    float xpos;
+    int letterSpacing;
+    int wordSpacing;
+    int padding;
+    int tabWidth;
+    int xpos;
     NSString **families;
-    unsigned smallCaps : 1;
-    unsigned rtl : 1;
-    unsigned directionalOverride : 1;
-    unsigned applyRunRounding : 1;
-    unsigned applyWordRounding : 1;
-    unsigned attemptFontSubstitution : 1;
+    bool smallCaps;
+    bool rtl;
+    bool directionalOverride;
+    bool applyRunRounding;
+    bool applyWordRounding;
+    bool attemptFontSubstitution;
 };
 
 struct WebCoreTextRun
@@ -60,7 +56,7 @@ struct WebCoreTextGeometry
     NSPoint point;
     float selectionY;
     float selectionHeight;
-    bool useFontMetricsForSelectionYAndHeight : 1;
+    bool useFontMetricsForSelectionYAndHeight;
 };
 
 #ifdef __cplusplus
@@ -94,7 +90,7 @@ extern void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 - (float)xHeight;
 
 // horizontal metrics
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)buffer;
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 // drawing
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
@@ -105,4 +101,5 @@ extern void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 
 // selection point check
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
+
 @end

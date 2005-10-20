@@ -29,6 +29,7 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQBrush.h"
 #import "KWQExceptions.h"
+#import "KWQFont.h"
 #import "KWQFoundationExtras.h"
 #import "KWQPaintDevice.h"
 #import "KWQPen.h"
@@ -636,7 +637,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, int, int, int alig
     style.xpos = xpos;
     
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([data->textRenderer floatWidthForRun:&run style:&style widths:0]);
+        x -= lroundf([data->textRenderer floatWidthForRun:&run style:&style]);
 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);

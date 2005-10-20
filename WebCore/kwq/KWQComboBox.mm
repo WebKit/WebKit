@@ -195,7 +195,7 @@ QSize QComboBox::sizeHint() const
                 } else {
                     renderer = itemRenderer;
                 }
-                float textWidth = [renderer floatWidthForRun:&run style:&style widths:0];
+                float textWidth = [renderer floatWidthForRun:&run style:&style];
                 width = kMax(width, textWidth);
             } while (i != e);
         }

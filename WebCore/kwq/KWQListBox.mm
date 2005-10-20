@@ -304,7 +304,7 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
-                float textWidth = [(((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer) floatWidthForRun:&run style:&style widths:0];
+                float textWidth = [(((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer) floatWidthForRun:&run style:&style];
                 width = kMax(width, textWidth);
                 
                 ++i;
@@ -727,7 +727,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (!rtl) {
         point.x = NSMinX(cellRect) + leftMargin;
     } else {
-        point.x = NSMaxX(cellRect) - rightMargin - [renderer floatWidthForRun:&run style:&style widths:0];
+        point.x = NSMaxX(cellRect) - rightMargin - [renderer floatWidthForRun:&run style:&style];
     }
     point.y = NSMaxY(cellRect) - [renderer descent] - bottomMargin;
 

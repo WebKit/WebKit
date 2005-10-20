@@ -21,8 +21,6 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-//#define DEBUG_LAYOUT
-//#define BIDI_DEBUG
 
 #include "config.h"
 #include "rendering/render_text.h"
@@ -49,6 +47,8 @@
 #include <unicode/uloc.h>
 #include <unicode/utypes.h>
 #include <unicode/parseerr.h>
+
+//#define DEBUG_LAYOUT
 
 using namespace khtml;
 using namespace DOM;
@@ -780,11 +780,9 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
     m_minWidth = -1;
     m_maxWidth = -1;
 
-#ifdef APPLE_CHANGES
     m_monospaceCharacterWidth = 0;
     m_allAsciiChecked = false;
     m_allAscii = false;
-#endif
 
     str = _str;
     if (str) {
@@ -816,11 +814,9 @@ void RenderText::setStyle(RenderStyle *_style)
             if (textToTransform.notNull())
                 setText(textToTransform.get(), true);
         }
-#if APPLE_CHANGES
         // setText also calls cacheWidths(), so there is no need to call it again in that case.
         else
             cacheWidths();
-#endif
     }
 }
 
@@ -1126,8 +1122,6 @@ void RenderText::posOfChar(int chr, int &x, int &y)
     }
 }
 
-#ifdef APPLE_CHANGES
-
 bool RenderText::allAscii() const
 {
     if (m_allAsciiChecked)
@@ -1157,22 +1151,18 @@ bool RenderText::shouldUseMonospaceCache(const Font *f) const
 // RenderText.
 void RenderText::cacheWidths()
 {
-    const Font *f = htmlFont( false );
-    
-    if (shouldUseMonospaceCache(f)){
-        float fw;
+    const Font *f = htmlFont(false);
+    if (shouldUseMonospaceCache(f)) {
         QChar c(' ');
-        f->floatCharacterWidths( &c, 1, 0, 1, 0, 0, 0, &fw);
-        m_monospaceCharacterWidth = (int)fw;
-    }
-    else
+        m_monospaceCharacterWidth = (int)f->floatWidth(&c, 1, 0, 1, 0, 0);
+    } else {
         m_monospaceCharacterWidth = 0;
+    }
 }
 
-
-inline int RenderText::widthFromCache(const Font *f, int start, int len, int tabWidth, int xpos) const
+ALWAYS_INLINE int RenderText::widthFromCache(const Font *f, int start, int len, int tabWidth, int xpos) const
 {
-    if (m_monospaceCharacterWidth != 0){
+    if (m_monospaceCharacterWidth != 0) {
         int i, w = 0;
         for (i = start; i < start+len; i++){
             QChar c = str->s[i];
@@ -1192,19 +1182,6 @@ inline int RenderText::widthFromCache(const Font *f, int start, int len, int tab
     
     return f->width(str->s, str->l, start, len, tabWidth, xpos);
 }
-
-#ifdef XXX
-inline int RenderText::widthFromCache(const Font *f, int start, int len) const
-{
-    if (m_monospaceCharacterWidth != 0){
-        return len * m_monospaceCharacterWidth;
-    }
-
-    return f->width(str->s, str->l, start, len);
-}
-#endif
-
-#endif
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
                                     int& beginMinW, bool& beginWS, 
@@ -1266,11 +1243,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
                 
             if (linelen)
             {
-#if !APPLE_CHANGES
-                endMaxW = f->width(str->s, str->l, i, linelen, tabWidth(), leadWidth + endMaxW); 
-#else
                 endMaxW = widthFromCache(f, i, linelen, tabWidth(), leadWidth + endMaxW);
-#endif
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
@@ -1379,11 +1352,7 @@ void RenderText::calcMinMaxWidth(int leadWidth)
         int wordlen = j - i;
         if (wordlen)
         {
-#if !APPLE_CHANGES
-            int w = f->width(str->s, str->l, i, wordlen, tabWidth(), leadWidth + currMaxWidth);
-#else
             int w = widthFromCache(f, i, wordlen, tabWidth(), leadWidth + currMaxWidth);
-#endif
             currMinWidth += w;
             currMaxWidth += w;
             
@@ -1602,17 +1571,15 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     if (str)
         str->deref();
 
-#ifdef APPLE_CHANGES
     m_allAsciiChecked = false;
-#endif
 
     str = text;
     if (str) {
         str = str->replace('\\', backslashAsCurrencySymbol());
-        if ( style() ) {
-            switch(style()->textTransform()) {
-                case CAPITALIZE:   str = str->capitalize();  break;
-                case UPPERCASE:   str = str->upper();       break;
+        if (style()) {
+            switch (style()->textTransform()) {
+                case CAPITALIZE: str = str->capitalize();  break;
+                case UPPERCASE:  str = str->upper();       break;
                 case LOWERCASE:  str = str->lower();       break;
                 case NONE:
                 default:;
@@ -1621,9 +1588,7 @@ void RenderText::setText(DOMStringImpl *text, bool force)
         str->ref();
     }
 
-#if APPLE_CHANGES
     cacheWidths();
-#endif
 
     // ### what should happen if we change the text of a
     // RenderBR object ?
@@ -1631,11 +1596,6 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     KHTMLAssert(!str->l || str->s);
 
     setNeedsLayoutAndMinMaxRecalc();
-    
-#ifdef BIDI_DEBUG
-    QConstString cstr(str->s, str->l);
-    kdDebug( 6040 ) << "RenderText::setText( " << cstr.qstring().length() << " ) '" << cstr.qstring() << "'" << endl;
-#endif
 }
 
 int RenderText::height() const
@@ -1730,10 +1690,8 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     int w;
     if ( style()->whiteSpace() != PRE && f == &style()->htmlFont() && from == 0 && len == str->l ) {
         w = m_maxWidth;
-#if APPLE_CHANGES
     } else if (f == &style()->htmlFont()) {
-        w = widthFromCache (f, from, len, tabWidth(), xpos);
-#endif
+        w = widthFromCache(f, from, len, tabWidth(), xpos);
     } else {
 	w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
     }
@@ -1909,5 +1867,3 @@ SharedPtr<DOMStringImpl> RenderTextFragment::originalString() const
         result = result->substring(start(), end());
     return SharedPtr<DOMStringImpl>(result);
 }
-#undef BIDI_DEBUG
-#undef DEBUG_LAYOUT

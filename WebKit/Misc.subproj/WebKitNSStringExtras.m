@@ -114,7 +114,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
     [self getCharacters:buffer];
 
-    if (canUseFastRenderer(buffer, length)){
+    if (canUseFastRenderer(buffer, length)) {
         WebCoreFont f;
         WebCoreInitializeFont(&f);
         f.font = font;
@@ -126,9 +126,8 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         WebCoreInitializeEmptyTextStyle(&style);
         style.applyRunRounding = NO;
         style.applyWordRounding = NO;
-        width = [renderer floatWidthForRun:&run style:&style widths: 0];
-    }
-    else {
+        width = [renderer floatWidthForRun:&run style:&style];
+    } else {
         width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
     }
     

@@ -72,10 +72,6 @@
 // This will typically be for other character sets.
 #define INCREMENTAL_BLOCK_SIZE 0x400
 
-#define UNINITIALIZED_GLYPH_WIDTH 65535
-
-#define INVALID_WIDTH (-FLT_MAX)
-
 #if !defined(ScaleEmToUnits)
 #define CONTEXT_DPI	(72.0)
 
@@ -83,7 +79,6 @@
 #endif
 
 typedef float WebGlyphWidth;
-typedef UInt32 UnicodeChar;
 
 struct WidthMap {
     ATSGlyphRef startRange;
@@ -94,17 +89,17 @@ struct WidthMap {
 
 typedef struct GlyphEntry {
     ATSGlyphRef glyph;
-    WebTextRenderer *substituteRenderer;
+    WebTextRenderer *renderer;
 } GlyphEntry;
 
 struct GlyphMap {
-    UnicodeChar startRange;
-    UnicodeChar endRange;
+    UChar32 startRange;
+    UChar32 endRange;
     GlyphMap *next;
     GlyphEntry *glyphs;
 };
 
-typedef struct CharacterWidthIterator {
+typedef struct WidthIterator {
     WebTextRenderer *renderer;
     const WebCoreTextRun *run;
     const WebCoreTextStyle *style;
@@ -113,7 +108,7 @@ typedef struct CharacterWidthIterator {
     float widthToStart;
     float padding;
     float padPerSpace;
-} CharacterWidthIterator;
+} WidthIterator;
 
 typedef struct ATSULayoutParameters
 {
@@ -129,12 +124,10 @@ typedef struct ATSULayoutParameters
 - (WebTextRenderer *)rendererForAlternateFont:(WebCoreFont)alternateNSFont;
 
 - (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
-- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c;
-- (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer;
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UChar32)c;
+- (void)updateGlyphEntryForCharacter:(UChar32)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer;
 
 // Measuring runs.
-static inline float floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer,
-    CGGlyph *glyphBuffer, float *startPosition, int *numGlyphs);
 static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult);
 static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style);
 
@@ -143,14 +136,14 @@ static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextR
 - (void)ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 // Selection point detection in runs.
-- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
-- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
+- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(bool)reversed includePartialGlyphs:(bool)includePartialGlyphs;
+- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(bool)reversed includePartialGlyphs:(bool)includePartialGlyphs;
 
 // Drawing highlight for runs.
 - (void)CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 - (void)ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
-- (BOOL)setUpFont;
+- (bool)setUpFont;
 
 - (ATSUTextLayout)createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
@@ -160,7 +153,7 @@ static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextR
 
 // Character property functions.
 
-static inline BOOL isSpace(UniChar c)
+static inline bool isSpace(UChar32 c)
 {
     return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
 }
@@ -176,7 +169,7 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static inline BOOL isRoundingHackCharacter(UniChar c)
+static inline bool isRoundingHackCharacter(UChar32 c)
 {
     return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
 }
@@ -185,43 +178,29 @@ static inline BOOL isRoundingHackCharacter(UniChar c)
 static void freeWidthMap(WidthMap *map);
 static void freeGlyphMap(GlyphMap *map);
 
-static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
+static inline WebGlyphWidth widthForGlyph(WebTextRenderer *renderer, ATSGlyphRef glyph)
 {
+    WidthMap *map;
+    for (map = renderer->glyphToWidthMap; 1; map = map->next) {
+        if (!map)
+            map = [renderer extendGlyphToWidthMapToInclude:glyph];
+        if (glyph >= map->startRange && glyph <= map->endRange)
+            break;
+    }
+    WebGlyphWidth width = map->widths[glyph - map->startRange];
+    if (width >= 0)
+        return width;
     NSFont *font = renderer->font.font;
-
     float pointSize = [font pointSize];
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
     if (!WKGetGlyphTransformedAdvances(font, &m, &glyph, &advance)) {
         ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
-        return 0;
+        advance.width = 0;
     }
-
-    return advance.width;
-}
-
-static inline WebGlyphWidth widthFromMap(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
-{
-    while (1) {
-        if (map == 0)
-            map = [renderer extendGlyphToWidthMapToInclude:glyph];
-
-        if (glyph >= map->startRange && glyph <= map->endRange) {
-            WebGlyphWidth width = map->widths[glyph - map->startRange];
-            if (width == UNINITIALIZED_GLYPH_WIDTH) {
-                width = getUncachedWidth(renderer, map, glyph);
-                map->widths[glyph - map->startRange] = width;
-            }
-            return width;
-        }
-
-        map = map->next;
-    }
-}    
-
-static inline WebGlyphWidth widthForGlyph(WebTextRenderer *renderer, ATSGlyphRef glyph)
-{
-    return widthFromMap(renderer, renderer->glyphToWidthMap, glyph) + renderer->syntheticBoldOffset;
+    width = advance.width + renderer->syntheticBoldOffset;
+    map->widths[glyph - map->startRange] = width;
+    return width;
 }
 
 static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, UInt32 iRefCon, void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
@@ -242,7 +221,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
         // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
         // does in any of its device-metrics modes.
-        Boolean roundEachGlyph = [params->renderer->font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
+        bool roundEachGlyph = [params->renderer->font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
         const WebCoreTextRun *run = params->run;
@@ -285,21 +264,21 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
 }
 
 // Iterator functions
-static void initializeCharacterWidthIterator(CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
-static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, WebTextRenderer **rendererUsed);
+static void initializeWidthIterator(WidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style);
+static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, float *widths, WebTextRenderer **renderersUsed, ATSGlyphRef *glyphsUsed);
 
-static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
-static BOOL shouldUseATSU(const WebCoreTextRun *run);
+static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
+static bool shouldUseATSU(const WebCoreTextRun *run);
 
 #if !ERROR_DISABLED
 static NSString *pathFromFont(NSFont *font);
 #endif
 
-static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
+static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style);
 static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
 // Globals
-static BOOL alwaysUseATSU = NO;
+static bool alwaysUseATSU = NO;
 
 @implementation WebTextRenderer
 
@@ -405,8 +384,8 @@ static BOOL alwaysUseATSU = NO;
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         asc += floorf(((asc + dsc) * 0.15f) + 0.5f);
 
-    ascent = ROUND_TO_INT(asc);
-    descent = ROUND_TO_INT(dsc);
+    ascent = lroundf(asc);
+    descent = lroundf(dsc);
 
     _lineGap = _lineGap > 0.0 ? floorf(_lineGap + 0.5f) : 0.0f;
     lineGap = (int)_lineGap;
@@ -488,9 +467,11 @@ static BOOL alwaysUseATSU = NO;
         [self CG_drawRun:run style:style geometry:geometry];
 }
 
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
 {
-    return floatWidthForRun(self, run, style, widthBuffer, 0, 0, 0, 0);
+    if (shouldUseATSU(run))
+        return ATSU_floatWidthForRun(self, run, style);
+    return CG_floatWidthForRun(self, run, style, 0, 0, 0, 0, 0);
 }
 
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness
@@ -503,7 +484,7 @@ static BOOL alwaysUseATSU = NO;
     // Remember that descender is negative.
     point.y -= [self lineSpacing] - [self descent];
     
-    BOOL flag = [graphicsContext shouldAntialias];
+    bool flag = [graphicsContext shouldAntialias];
 
     // We don't want antialiased lines on screen, but we do when printing (else they are too thick).
     if ([graphicsContext isDrawingToScreen]) {
@@ -514,7 +495,7 @@ static BOOL alwaysUseATSU = NO;
 
     cgContext = (CGContextRef)[graphicsContext graphicsPort];
 
-    // hack to make thickness 2 underlines for internation text input look right
+    // Hack to make thickness 2 underlines for international text input look right
     if (thickness > 1.5F && thickness < 2.5F) {
         yOffset += .5F;
     }
@@ -631,7 +612,7 @@ static BOOL alwaysUseATSU = NO;
 
 @implementation WebTextRenderer (WebInternal)
 
-+ (void)setAlwaysUseATSU:(BOOL)f
++ (void)setAlwaysUseATSU:(bool)f
 {
     alwaysUseATSU = f;
 }
@@ -652,7 +633,7 @@ static BOOL alwaysUseATSU = NO;
     return smallCapsRenderer;
 }
 
-static inline BOOL fontContainsString(NSFont *font, NSString *string)
+static inline bool fontContainsString(NSFont *font, NSString *string)
 {
     NSCharacterSet *set = [[font coveredCharacterSet] invertedSet];
     return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
@@ -741,7 +722,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 // Nasty hack to determine if we should round or ceil space widths.
 // If the font is monospace or fake monospace we ceil to ensure that 
 // every character and the space are the same width.  Otherwise we round.
-- (BOOL)computeWidthForSpace
+- (bool)computeWidthForSpace
 {
     spaceGlyph = [self extendCharacterToGlyphMapToInclude:SPACE];
     if (spaceGlyph == 0) {
@@ -753,12 +734,12 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     spaceWidth = width;
 
     treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:font];
-    adjustedSpaceWidth = treatAsFixedPitch ? ceilf(width) : (int)ROUND_TO_INT(width);
+    adjustedSpaceWidth = treatAsFixedPitch ? ceilf(width) : roundf(width);
     
     return YES;
 }
 
-- (BOOL)setUpFont
+- (bool)setUpFont
 {
     font.font = font.forPrinter ? [font.font printerFont] : [font.font screenFont];
 
@@ -813,7 +794,7 @@ static NSString *pathFromFont(NSFont *font)
 
 // Useful page for testing http://home.att.net/~jameskass
 static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs,
-    float syntheticBoldOffset, BOOL syntheticOblique)
+    float syntheticBoldOffset, bool syntheticOblique)
 {
     NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext = (CGContextRef)[gContext graphicsPort];
@@ -867,47 +848,33 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     if (run->length == 0)
         return;
 
-    CharacterWidthIterator widthIterator;
+    if (style->backgroundColor == nil)
+        return;
+
+    [style->backgroundColor set];
+
+    float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] - (lineGap/2) : geometry->selectionY;
+    float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
+
     WebCoreTextRun completeRun = *run;
     completeRun.from = 0;
     completeRun.to = run->length;
-    initializeCharacterWidthIterator(&widthIterator, self, &completeRun, style);
+
+    WidthIterator it;
+    initializeWidthIterator(&it, self, &completeRun, style);
     
-    float startPosition = 0;
-
-    // The starting point needs to be adjusted to account for the width of
-    // the glyphs at the start of the run.
-    while (widthIterator.currentCharacter < (unsigned)run->from) {
-        startPosition += widthForNextCharacter(&widthIterator, 0, 0);
-    }
-    float startX = startPosition + geometry->point.x;
-    
-    float backgroundWidth = 0.0F;
-    while (widthIterator.currentCharacter < (unsigned)run->to) {
-        backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
-    }
-
-    if (style->backgroundColor != nil) {
-        // Calculate the width of the selection background by adding
-        // up the advances of all the glyphs in the selection.
-        
-        [style->backgroundColor set];
-
-        float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] - (lineGap/2) : geometry->selectionY;
-        float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
-        if (style->rtl) {
-            float completeRunWidth = startPosition + backgroundWidth;
-            while (widthIterator.currentCharacter < run->length) {
-                completeRunWidth += widthForNextCharacter(&widthIterator, 0, 0);
-            }
-
-            [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, height)];
-        } else {
-            [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, height)];
-        }
+    advanceWidthIterator(&it, run->from, 0, 0, 0);
+    float beforeWidth = it.runWidthSoFar;
+    advanceWidthIterator(&it, run->to, 0, 0, 0);
+    float backgroundWidth = it.runWidthSoFar;
+    if (style->rtl) {
+        advanceWidthIterator(&it, run->length, 0, 0, 0);
+        float afterWidth = it.runWidthSoFar;
+        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + afterWidth, yPos, backgroundWidth, height)];
+    } else {
+        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + beforeWidth, yPos, backgroundWidth, height)];
     }
 }
-
 
 - (void)CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
@@ -922,11 +889,11 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     if (run->length == 0)
         return;
 
-    if (length*MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(CGSize));
-        widthBuffer = (float *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(float));
-        glyphBuffer = (CGGlyph *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(ATSGlyphRef));
-        rendererBuffer = (WebTextRenderer **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(WebTextRenderer *));
+    if (length * MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
+        advances = malloc(length * MAX_GLYPH_EXPANSION * sizeof(CGSize));
+        widthBuffer = malloc(length * MAX_GLYPH_EXPANSION * sizeof(float));
+        glyphBuffer = malloc(length * MAX_GLYPH_EXPANSION * sizeof(ATSGlyphRef));
+        rendererBuffer = malloc(length * MAX_GLYPH_EXPANSION * sizeof(WebTextRenderer *));
     } else {
         advances = localAdvanceBuffer;
         widthBuffer = localWidthBuffer;
@@ -934,7 +901,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         rendererBuffer = localRendererBuffer;
     }
 
-    floatWidthForRun(self, run, style, widthBuffer, rendererBuffer, glyphBuffer, &startX, &numGlyphs);
+    CG_floatWidthForRun(self, run, style, widthBuffer, rendererBuffer, glyphBuffer, &startX, &numGlyphs);
         
     // Eek.  We couldn't generate ANY glyphs for the run.
     if (numGlyphs <= 0)
@@ -976,17 +943,14 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         }
     }
 
-    // Finally, draw the glyphs.
-    int lastFrom = 0;
-    int pos = 0;
-
     // Draw each contiguous run of glyphs that use the same renderer.
-    WebTextRenderer *currentRenderer = rendererBuffer[pos];
+    WebTextRenderer *currentRenderer = rendererBuffer[0];
     float nextX = startX;
-    int nextGlyph = pos;
+    int lastFrom = 0;
+    int nextGlyph = 0;
     while (nextGlyph < numGlyphs) {
         WebTextRenderer *nextRenderer = rendererBuffer[nextGlyph];
-        if (nextRenderer && nextRenderer != currentRenderer) {
+        if (nextRenderer != currentRenderer) {
             drawGlyphs(currentRenderer->font.font, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom],
                 startX, geometry->point.y, nextGlyph - lastFrom,
                 currentRenderer->syntheticBoldOffset, currentRenderer->font.syntheticOblique);
@@ -1009,68 +973,41 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     }
 }
 
-static inline float floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer,
-    CGGlyph *glyphBuffer, float *startPosition, int *numGlyphs)
-{
-    if (shouldUseATSU(run))
-        return ATSU_floatWidthForRun(renderer, run, style);
-    
-    return CG_floatWidthForRun(renderer, run, style, widthBuffer, rendererBuffer, glyphBuffer, startPosition, numGlyphs);
-}
-
 static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult)
 {
-    float _nextWidth;
-    CharacterWidthIterator widthIterator;
-    WebTextRenderer *rendererUsed = nil;
-    ATSGlyphRef glyphUsed;
-    int numGlyphs = 0;
-    
-    initializeCharacterWidthIterator(&widthIterator, renderer, run, style);
+    WidthIterator it;
+    initializeWidthIterator(&it, renderer, run, style);
+    int numGlyphs = advanceWidthIterator(&it, run->to, widthBuffer, rendererBuffer, glyphBuffer);
     if (startPosition)
-        *startPosition = widthIterator.widthToStart;
-    while (widthIterator.currentCharacter < (unsigned)widthIterator.run->to) {
-        _nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &rendererUsed);
-        if (_nextWidth == INVALID_WIDTH)
-            break;
-        if (rendererBuffer)
-            rendererBuffer[numGlyphs] = rendererUsed;
-        if (glyphBuffer)
-            glyphBuffer[numGlyphs] = glyphUsed;
-        if (widthBuffer)
-            widthBuffer[numGlyphs] = _nextWidth;
-        numGlyphs++;
-    }
-        
+        *startPosition = it.widthToStart;
     if (numGlyphsResult)
         *numGlyphsResult = numGlyphs;
-
-    return widthIterator.runWidthSoFar;
+    return it.runWidthSoFar;
 }
 
-- (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer
+- (void)updateGlyphEntryForCharacter:(UChar32)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer
 {
     GlyphMap *map;
     for (map = characterToGlyphMap; map; map = map->next) {
-        UnicodeChar start = map->startRange;
+        UChar32 start = map->startRange;
         if (c >= start && c <= map->endRange) {
             int i = c - start;
             map->glyphs[i].glyph = glyphID;
             // This renderer will leak.
             // No problem though; we want it to stick around forever.
             // Max theoretical retain counts applied here will be num_fonts_on_system * num_glyphs_in_font.
-            map->glyphs[i].substituteRenderer = [substituteRenderer retain];
+            map->glyphs[i].renderer = [substituteRenderer retain];
             break;
         }
     }
 }
 
-- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UChar32)c
 {
-    GlyphMap *map = (GlyphMap *)calloc(1, sizeof(GlyphMap));
+    GlyphMap *map = malloc(sizeof(GlyphMap));
     ATSLayoutRecord *glyphRecord;
     char glyphVector[WKGlyphVectorSize];
-    UnicodeChar end, start;
+    UChar32 end, start;
     unsigned blockSize;
     
     if (characterToGlyphMap == 0)
@@ -1084,6 +1021,7 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
 
     map->startRange = start;
     map->endRange = end;
+    map->next = 0;
     
     unsigned i;
     unsigned count = end - start + 1;
@@ -1128,14 +1066,16 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
     if (numGlyphs != count) {
         // This should never happen, perhaps indicates a bad font?
         // If it does happen, the font substitution code will find an alternate font.
+        WKClearGlyphVector(&glyphVector);
         free(map);
         return 0;
     }
 
-    map->glyphs = (GlyphEntry *)calloc(count, sizeof(GlyphEntry));
+    map->glyphs = malloc(count * sizeof(GlyphEntry));
     glyphRecord = (ATSLayoutRecord *)WKGetGlyphVectorFirstRecord(glyphVector);
     for (i = 0; i < count; i++) {
         map->glyphs[i].glyph = glyphRecord->glyphID;
+        map->glyphs[i].renderer = self;
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + WKGetGlyphVectorRecordSize(glyphVector));
     }
     WKClearGlyphVector(&glyphVector);
@@ -1190,9 +1130,9 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
     map->endRange = end;
     count = end - start + 1;
 
-    map->widths = (WebGlyphWidth *)malloc(count * sizeof(WebGlyphWidth));
+    map->widths = malloc(count * sizeof(WebGlyphWidth));
     for (i = 0; i < count; i++)
-        map->widths[i] = UNINITIALIZED_GLYPH_WIDTH;
+        map->widths[i] = NAN;
 
     if (glyphToWidthMap == 0)
         glyphToWidthMap = map;
@@ -1314,7 +1254,6 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
     return layout;
 }
 
-
 - (ATSTrapezoid)trapezoidForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint )p
 {
     // The only Cocoa call here is the self call to
@@ -1343,54 +1282,57 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
     return firstGlyphBounds;
 }
 
-
 static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style)
 {
-    ATSTrapezoid oGlyphBounds;
-    
-    oGlyphBounds = [renderer trapezoidForRun:run style:style atPoint:NSMakePoint(0,0)];
-    
-    float width = 
-        MAX(FixedToFloat(oGlyphBounds.upperRight.x), FixedToFloat(oGlyphBounds.lowerRight.x)) - 
+    ATSTrapezoid oGlyphBounds = [renderer trapezoidForRun:run style:style atPoint:NSMakePoint(0, 0)];
+    return MAX(FixedToFloat(oGlyphBounds.upperRight.x), FixedToFloat(oGlyphBounds.lowerRight.x)) -
         MIN(FixedToFloat(oGlyphBounds.upperLeft.x), FixedToFloat(oGlyphBounds.lowerLeft.x));
-    
-    return width;
 }
 
 // Be sure to free the run.characters allocated by this function.
-static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, BOOL rtl)
+static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl)
 {
-    WebCoreTextRun swappedRun;
-    
-    UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*(run->length+2));
-    memcpy(swappedCharacters+1, run->characters, sizeof(UniChar)*run->length);
-    swappedRun.from = (run->from == -1 ? 0 : run->from) + 1;
-    swappedRun.to = (run->to == -1 ? (int)run->length - 1 : run->to + 1);
-    swappedRun.length = run->length+2;
-    swappedCharacters[swappedRun.from - 1] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
-    swappedCharacters[swappedRun.to] = POP_DIRECTIONAL_FORMATTING;
-    swappedRun.characters = swappedCharacters;
+    int from = run->from;
+    int to = run->to;
+    if (from == -1)
+        from = 0;
+    if (to == -1)
+        to = run->length;
 
-    return swappedRun;
+    UniChar *charactersWithOverride = malloc(sizeof(UniChar) * (run->length + 2));
+
+    memcpy(&charactersWithOverride[0], &run->characters[0], sizeof(UniChar) * from);
+    charactersWithOverride[from] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
+    memcpy(&charactersWithOverride[from + 1], &run->characters[from], sizeof(UniChar) * (to - from));
+    charactersWithOverride[to + 1] = POP_DIRECTIONAL_FORMATTING;
+    memcpy(&charactersWithOverride[to + 2], &run->characters[to], sizeof(UniChar) * (run->length - to));
+
+    WebCoreTextRun runWithOverride;
+
+    runWithOverride.from = from;
+    runWithOverride.to = to + 2;
+    runWithOverride.length = run->length + 2;
+    runWithOverride.characters = charactersWithOverride;
+
+    return runWithOverride;
 }
 
 // Be sure to free the run.characters allocated by this function.
 static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
 {
-    WebCoreTextRun swappedRun;
+    UniChar *mirroredCharacters = malloc(sizeof(UniChar)*(run->length));
     unsigned int i;
-    
-    UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*(run->length));
-    for (i = 0; i < run->length; i++) {
-        // will choke on surrogate pairs?
-        swappedCharacters[i] = u_charMirror(run->characters[i]);
-    }
-    swappedRun.from = run->from;
-    swappedRun.to = run->to;
-    swappedRun.length = run->length;
-    swappedRun.characters = swappedCharacters;
+    for (i = 0; i < run->length; i++)
+        mirroredCharacters[i] = u_charMirror(run->characters[i]);
 
-    return swappedRun;
+    WebCoreTextRun mirroredRun;
+
+    mirroredRun.from = run->from;
+    mirroredRun.to = run->to;
+    mirroredRun.length = run->length;
+    mirroredRun.characters = mirroredCharacters;
+
+    return mirroredRun;
 }
 
 - (void)ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
@@ -1511,7 +1453,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[gContext graphicsPort];
     CGContextTranslateCTM(context, geometry->point.x, geometry->point.y);
-    BOOL flipped = [gContext isFlipped];
+    bool flipped = [gContext isFlipped];
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
     status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
@@ -1530,7 +1472,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         free((void *)swappedRun.characters);
 }
 
-- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
+- (int)ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(bool)reversed includePartialGlyphs:(bool)includePartialGlyphs
 {
     // The only Cocoa calls made here is to the self call to
     // _createATSUTextLayoutForRun:. This is exception-safe.
@@ -1582,58 +1524,62 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     return offset - aRun->from;
 }
 
-- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
+static bool advanceWidthIteratorOneCharacter(WidthIterator *iterator, float *totalWidth)
+{
+    float widths[MAX_GLYPH_EXPANSION];
+    WebTextRenderer *renderers[MAX_GLYPH_EXPANSION];
+    ATSGlyphRef glyphs[MAX_GLYPH_EXPANSION];            
+    unsigned numGlyphs = advanceWidthIterator(iterator, iterator->currentCharacter + 1, widths, renderers, glyphs);
+    unsigned i;
+    float w = 0;
+    for (i = 0; i < numGlyphs; ++i)
+        w += widths[i];
+    *totalWidth = w;
+    return numGlyphs != 0;
+}
+
+- (int)CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(bool)reversed includePartialGlyphs:(bool)includePartialGlyphs
 {
     float delta = (float)x;
-    unsigned offset = run->from;
-    CharacterWidthIterator widthIterator;
-    
-    initializeCharacterWidthIterator(&widthIterator, self, run, style);
+
+    WidthIterator it;    
+    initializeWidthIterator(&it, self, run, style);
+
+    unsigned offset;
 
     if (reversed) {
-        float width = [self floatWidthForRun:run style:style widths:nil];
-        delta -= width;
-        while (offset < run->length) {
-            float w = widthForNextCharacter(&widthIterator, 0, 0);
-            if (w == INVALID_WIDTH) {
-                // Something very bad happened, like we only have half of a surrogate pair.
+        delta -= CG_floatWidthForRun(self, run, style, 0, 0, 0, 0, 0);
+        while (1) {
+            offset = it.currentCharacter;
+            float w;
+            if (!advanceWidthIteratorOneCharacter(&it, &w))
                 break;
-            }
-            else {
-                if (w) {
-                    if (includePartialGlyphs)
-                       w -= w/2;
-                    delta += w;
-                    if (delta >= 0)
-                        break;
-                    if (includePartialGlyphs)
-                        delta += w;
-                }
-                offset = widthIterator.currentCharacter;
+            delta += w;
+            if (includePartialGlyphs) {
+                if (delta - w / 2 >= 0)
+                    break;
+            } else {
+                if (delta >= 0)
+                    break;
             }
         }
     } else {
-        while (offset < run->length) {
-            float w = widthForNextCharacter(&widthIterator, 0, 0);
-            if (w == INVALID_WIDTH) {
-                // Something very bad happened, like we only have half of a surrogate pair.
+        while (1) {
+            offset = it.currentCharacter;
+            float w;
+            if (!advanceWidthIteratorOneCharacter(&it, &w))
                 break;
-            }
-            else {
-                if (w) {
-                    if (includePartialGlyphs)
-                        w -= w/2;
-                    delta -= w;
-                    if (delta <= 0) 
-                        break;
-                    if (includePartialGlyphs)
-                        delta -= w;
-                }
-                offset = widthIterator.currentCharacter;
+            delta -= w;
+            if (includePartialGlyphs) {
+                if (delta + w / 2 <= 0)
+                    break;
+            } else {
+                if (delta <= 0)
+                    break;
             }
         }
     }
-    
+
     return offset - run->from;
 }
 
@@ -1661,29 +1607,25 @@ static void freeGlyphMap(GlyphMap *map)
     }
 }
 
-static inline ATSGlyphRef glyphForCharacter(GlyphMap *map, UnicodeChar c, WebTextRenderer **renderer)
+static inline ATSGlyphRef glyphForCharacter(WebTextRenderer **renderer, UChar32 c)
 {
-    if (map == 0)
-        return nonGlyphID;
-    
     // this loop is hot, so it is written to avoid LSU stalls
-    while (map) {
-        UnicodeChar start = map->startRange;
-        GlyphMap *nextMap = map->next;
+    GlyphMap *map;
+    GlyphMap *nextMap;
+    for (map = (*renderer)->characterToGlyphMap; map; map = nextMap) {
+        UChar32 start = map->startRange;
+        nextMap = map->next;
         if (c >= start && c <= map->endRange) {
             GlyphEntry *ge = &map->glyphs[c - start];
-            WebTextRenderer *substituteRenderer = ge->substituteRenderer;
-            if (substituteRenderer)
-                *renderer = substituteRenderer;
+            *renderer = ge->renderer;
             return ge->glyph;
         }
-        map = nextMap;
     }
 
-    return nonGlyphID;
+    return [*renderer extendCharacterToGlyphMapToInclude:c];
 }
 
-static void initializeCharacterWidthIterator(CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
+static void initializeWidthIterator(WidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style) 
 {
     iterator->renderer = renderer;
     iterator->run = run;
@@ -1693,42 +1635,37 @@ static void initializeCharacterWidthIterator(CharacterWidthIterator *iterator, W
 
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
-    iterator->padding = style->padding;
-    if (iterator->padding > 0){
-        uint numSpaces = 0;
-        int from = run->from;
-        int len = run->to - from;
-        int k;
-        for (k = from; k < from + len; k++) {
-            if (isSpace(run->characters[k])) {
-                numSpaces++;
-            }
-        }
-        iterator->padPerSpace = ceilf((((float)style->padding) / ((float)numSpaces)));
-    }
-    else {
+    if (!style->padding) {
+        iterator->padding = 0;
         iterator->padPerSpace = 0;
+    } else {
+        float numSpaces = 0;
+        int k;
+        for (k = run->from; k < run->to; k++)
+            if (isSpace(run->characters[k]))
+                numSpaces++;
+
+        iterator->padding = style->padding;
+        iterator->padPerSpace = ceilf(iterator->padding / numSpaces);
     }
     
     // Calculate width up to starting position of the run.  This is
     // necessary to ensure that our rounding hacks are always consistently
     // applied.
-    if (run->from != 0){
+    if (run->from == 0) {
+        iterator->widthToStart = 0;
+    } else {
         WebCoreTextRun startPositionRun = *run;
         startPositionRun.from = 0;
-        startPositionRun.to = run->from;
-        CharacterWidthIterator startPositionIterator;
-        initializeCharacterWidthIterator(&startPositionIterator, renderer, &startPositionRun, style);
-        
-        while (startPositionIterator.currentCharacter < (unsigned)startPositionRun.to)
-            widthForNextCharacter(&startPositionIterator, 0, 0);
+        startPositionRun.to = run->length;
+        WidthIterator startPositionIterator;
+        initializeWidthIterator(&startPositionIterator, renderer, &startPositionRun, style);
+        advanceWidthIterator(&startPositionIterator, run->to, 0, 0, 0);
         iterator->widthToStart = startPositionIterator.runWidthSoFar;
     }
-    else
-        iterator->widthToStart = 0;
 }
 
-static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
+static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style) 
 {
     params->renderer = renderer;
     params->run = run;
@@ -1742,198 +1679,202 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     ATSUDisposeTextLayout(params->layout);
 }
 
-static inline float ceilCurrentWidth(CharacterWidthIterator *iterator)
+static UChar32 normalizeVoicingMarks(WidthIterator *iterator)
 {
-    float totalWidth = iterator->widthToStart + iterator->runWidthSoFar;
-    float delta = ceilf(totalWidth) - totalWidth;
-    iterator->runWidthSoFar += delta;
-    return delta;
+    unsigned currentCharacter = iterator->currentCharacter;
+    const WebCoreTextRun *run = iterator->run;
+    if (currentCharacter + 1 < (unsigned)run->to) {
+        if (u_getCombiningClass(run->characters[currentCharacter + 1]) == HIRAGANA_KATAKANA_VOICING_MARKS) {
+            // Normalize into composed form using 3.2 rules.
+            UChar normalizedCharacters[2] = { 0, 0 };
+            UErrorCode uStatus = 0;                
+            int32_t resultLength = unorm_normalize(&run->characters[currentCharacter], 2,
+                UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
+            if (resultLength == 1 && uStatus == 0)
+                return normalizedCharacters[0];
+        }
+    }
+    return 0;
 }
 
-// Return INVALID_WIDTH if an error is encountered or we're at the end of the range in the run.
-static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, WebTextRenderer **rendererUsed)
+static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, float *widths, WebTextRenderer **renderersUsed, ATSGlyphRef *glyphsUsed)
 {
-    WebTextRenderer *renderer = iterator->renderer;
     const WebCoreTextRun *run = iterator->run;
-    const WebCoreTextStyle *style = iterator->style;
+    if (offset > (unsigned)run->to)
+        offset = run->to;
+
+    unsigned numGlyphs = 0;
+
     unsigned currentCharacter = iterator->currentCharacter;
-
-    ATSGlyphRef glyph = 0;
-    
-    // Check for end of run.
-    if (currentCharacter >= (unsigned)run->to)
-        return INVALID_WIDTH;
-
     const UniChar *cp = &run->characters[currentCharacter];
-    
-    UnicodeChar c = *cp;
 
-    if (U16_IS_TRAIL(c))
-        return INVALID_WIDTH;
+    const WebCoreTextStyle *style = iterator->style;
+    bool needCharTransform = style->rtl | style->smallCaps;
+    bool hasExtraSpacing = style->letterSpacing | style->wordSpacing | style->padding;
 
-    // Do we have a surrogate pair?  If so, determine the full Unicode (32 bit)
-    // code point before glyph lookup.
-    unsigned clusterLength = 1;
-    if (U16_IS_LEAD(c)) {
-        // Make sure we have another character and it's a low surrogate.
-        if (currentCharacter + 1 >= run->length)
-            return INVALID_WIDTH;
-        UniChar low = cp[1];
-        if (!U16_IS_TRAIL(low))
-            return INVALID_WIDTH;
-        c = U16_GET_SUPPLEMENTARY(c, low);
-        clusterLength = 2;
-    }
+    float runWidthSoFar = iterator->runWidthSoFar;
 
-    // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
-    // Normalize into composed form, and then look for glyph with base + combined mark.
-    if (c >= 0x3041 && c <= 0x30FE) { // Early out to minimize performance impact. Do we have a Hiragana/Katakana character?
-        if (currentCharacter < (unsigned)run->to) {
-            UnicodeChar nextCharacter = run->characters[currentCharacter+1];
-            if (u_getCombiningClass(nextCharacter) == HIRAGANA_KATAKANA_VOICING_MARKS) {
-                // Normalize into composed form using 3.2 rules.
-                UChar normalizedCharacters[2] = { 0, 0 };
-                UErrorCode uStatus = 0;                
-                int32_t resultLength = unorm_normalize(&run->characters[currentCharacter], 2,
-                    UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
-                if (resultLength == 1 && uStatus == 0) {
-                    c = normalizedCharacters[0];
+    while (currentCharacter < offset) {
+        UChar32 c = *cp;
+
+        unsigned clusterLength = 1;
+        if (c >= 0x3041) {
+            if (c <= 0x30FE) {
+                // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
+                // Normalize into composed form, and then look for glyph with base + combined mark.
+                // Check above for character range to minimize performance impact.
+                UChar32 normalized = normalizeVoicingMarks(iterator);
+                if (normalized) {
+                    c = normalized;
                     clusterLength = 2;
+                }
+            } else if (U16_IS_SURROGATE(c)) {
+                if (!U16_IS_SURROGATE_LEAD(c))
+                    break;
+
+                // Do we have a surrogate pair?  If so, determine the full Unicode (32 bit)
+                // code point before glyph lookup.
+                // Make sure we have another character and it's a low surrogate.
+                if (currentCharacter + 1 >= run->length)
+                    break;
+                UniChar low = cp[1];
+                if (!U16_IS_TRAIL(low))
+                    break;
+                c = U16_GET_SUPPLEMENTARY(c, low);
+                clusterLength = 2;
+            }
+        }
+
+        WebTextRenderer *renderer = iterator->renderer;
+
+        if (needCharTransform) {
+            if (style->rtl)
+                c = u_charMirror(c);
+
+            // If small-caps, convert lowercase to upper.
+            if (style->smallCaps && !u_isUUppercase(c)) {
+                UChar32 upperC = u_toupper(c);
+                if (upperC != c) {
+                    c = upperC;
+                    renderer = [renderer smallCapsRenderer];
                 }
             }
         }
-    }
 
-    if (style->rtl)
-        c = u_charMirror(c);
-    
-    // If small-caps, convert lowercase to upper.
-    if (style->smallCaps && !u_isUUppercase(c)) {
-        UnicodeChar newC = u_toupper(c);
-        if (newC != c) {
-            c = newC;
-            renderer = [renderer smallCapsRenderer];
-        }
-    }
-    
-    glyph = glyphForCharacter(renderer->characterToGlyphMap, c, &renderer);
-    if (glyph == nonGlyphID)
-        glyph = [renderer extendCharacterToGlyphMapToInclude:c];
+        ATSGlyphRef glyph = glyphForCharacter(&renderer, c);
 
-    // Now that we have glyph and font, get its width.
-    WebGlyphWidth width;
-    if (style->tabWidth != 0.0F && c == '\t') {
-        width = style->tabWidth - fmodf(style->xpos+iterator->runWidthSoFar, style->tabWidth);
-    } else {
-        width = widthForGlyph(renderer, glyph);
-        // We special case spaces in two ways when applying word rounding.
-        // First, we round spaces to an adjusted width in all fonts.
-        // Second, in fixed-pitch fonts we ensure that all characters that
-        // match the width of the space character have the same width as the space character.
-        if (style->applyWordRounding && (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : glyph == renderer->spaceGlyph))
-            width = renderer->adjustedSpaceWidth;
-    }
-    
-    // Try to find a substitute font if this font didn't have a glyph for a character in the
-    // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
-    if (glyph == 0 && style->attemptFontSubstitution) {
-        UniChar characterArray[2];
-        unsigned characterArrayLength;
-        
-        if (c <= 0xFFFF) {
-            characterArray[0] = c;
-            characterArrayLength = 1;
+        // Now that we have glyph and font, get its width.
+        WebGlyphWidth width;
+        if (c == '\t' && style->tabWidth) {
+            width = style->tabWidth - fmodf(style->xpos + runWidthSoFar, style->tabWidth);
         } else {
-            characterArray[0] = U16_LEAD(c);
-            characterArray[1] = U16_TRAIL(c);
-            characterArrayLength = 2;
+            width = widthForGlyph(renderer, glyph);
+            // We special case spaces in two ways when applying word rounding.
+            // First, we round spaces to an adjusted width in all fonts.
+            // Second, in fixed-pitch fonts we ensure that all characters that
+            // match the width of the space character have the same width as the space character.
+            if (width == renderer->spaceWidth && (renderer->treatAsFixedPitch || glyph == renderer->spaceGlyph) && style->applyWordRounding)
+                width = renderer->adjustedSpaceWidth;
         }
-        
-        WebTextRenderer *substituteRenderer = [renderer substituteRendererForCharacters:characterArray
-            length:characterArrayLength families:style->families];
-        if (substituteRenderer) {
-            WebCoreTextRun clusterRun;
-            WebCoreInitializeTextRun(&clusterRun, characterArray, characterArrayLength, 0, characterArrayLength);
-            WebCoreTextStyle clusterStyle = *iterator->style;
-            clusterStyle.padding = 0;
-            clusterStyle.applyRunRounding = false;
-            clusterStyle.attemptFontSubstitution = false;
-            
-            int cNumGlyphs;
-            ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];            
-            width = floatWidthForRun(substituteRenderer, &clusterRun, &clusterStyle, 0, 0, localGlyphBuffer, 0, &cNumGlyphs);
-            if (cNumGlyphs == 1) {
-                glyph = localGlyphBuffer[0];
-                [renderer updateGlyphEntryForCharacter:c glyphID:glyph substituteRenderer:substituteRenderer];
-                renderer = substituteRenderer;
+
+        // Try to find a substitute font if this font didn't have a glyph for a character in the
+        // string. If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
+        if (glyph == 0 && style->attemptFontSubstitution) {
+            WebTextRenderer *substituteRenderer = [renderer substituteRendererForCharacters:cp
+                length:clusterLength families:style->families];
+            if (substituteRenderer) {
+                WebCoreTextRun clusterRun = { cp, clusterLength, 0, clusterLength };
+                WebCoreTextStyle clusterStyle = *style;
+                clusterStyle.padding = 0;
+                clusterStyle.applyRunRounding = NO;
+                clusterStyle.attemptFontSubstitution = NO;
+                
+                int cNumGlyphs;
+                float localWidthBuffer[MAX_GLYPH_EXPANSION];
+                WebTextRenderer *localRendererBuffer[MAX_GLYPH_EXPANSION];
+                ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];            
+                CG_floatWidthForRun(substituteRenderer, &clusterRun, &clusterStyle, localWidthBuffer, localRendererBuffer, localGlyphBuffer, 0, &cNumGlyphs);
+                if (cNumGlyphs == 1) {
+                    ASSERT(substituteRenderer == localRendererBuffer[0]);
+                    width = localWidthBuffer[0];
+                    glyph = localGlyphBuffer[0];
+                    [renderer updateGlyphEntryForCharacter:c glyphID:glyph substituteRenderer:substituteRenderer];
+                    renderer = substituteRenderer;
+                }
             }
         }
-    }
 
-    // Force characters that are used to determine word boundaries for the rounding hack
-    // to be integer width, so following words will start on an integer boundary.
-    if (style->applyWordRounding && isRoundingHackCharacter(c))
-        width = ceilf(width);
-    
-    // Account for letter-spacing
-    if (style->letterSpacing && width > 0)
-        width += style->letterSpacing;
+        if (hasExtraSpacing) {
+            // Account for letter-spacing.
+            if (width && style->letterSpacing)
+                width += style->letterSpacing;
 
-    // Account for padding. WebCore uses space padding to justify text.
-    // We distribute the specified padding over the available spaces in the run.
-    if (isSpace(c)) {
-        if (iterator->padding > 0) {
-            // Only use left over padding if note evenly divisible by 
-            // number of spaces.
-            if (iterator->padding < iterator->padPerSpace){
-                width += iterator->padding;
-                iterator->padding = 0;
-            } else {
-                width += iterator->padPerSpace;
-                iterator->padding -= iterator->padPerSpace;
+            if (isSpace(c)) {
+                // Account for padding. WebCore uses space padding to justify text.
+                // We distribute the specified padding over the available spaces in the run.
+                if (style->padding) {
+                    // Use left over padding if not evenly divisible by number of spaces.
+                    if (iterator->padding < iterator->padPerSpace) {
+                        width += iterator->padding;
+                        iterator->padding = 0;
+                    } else {
+                        width += iterator->padPerSpace;
+                        iterator->padding -= iterator->padPerSpace;
+                    }
+                }
+
+                // Account for word spacing.
+                // We apply additional space between "words" by adding width to the space character.
+                if (currentCharacter != 0 && !isSpace(cp[-1]) && style->wordSpacing)
+                    width += style->wordSpacing;
             }
         }
-        
-        // Account for word-spacing.  We apply additional space between "words" by
-        // adding width to the space character.
-        if (currentCharacter > 0 && !isSpace(cp[-1]))
-            width += style->wordSpacing;
+
+        // Advance past the character we just dealt with.
+        cp += clusterLength;
+        currentCharacter += clusterLength;
+
+        // Account for float/integer impedance mismatch between CG and KHTML. "Words" (characters 
+        // followed by a character defined by isRoundingHackCharacter()) are always an integer width.
+        // We adjust the width of the last character of a "word" to ensure an integer width.
+        // If we move KHTML to floats we can remove this (and related) hacks.
+
+        // Force characters that are used to determine word boundaries for the rounding hack
+        // to be integer width, so following words will start on an integer boundary.
+        if (style->applyWordRounding && isRoundingHackCharacter(c))
+            width = ceilf(width);
+
+        // Check to see if the next character is a "rounding hack character", if so, adjust
+        // width so that the total run width will be on an integer boundary.
+        if ((style->applyWordRounding && currentCharacter < run->length && isRoundingHackCharacter(*cp))
+                || (style->applyRunRounding && currentCharacter >= (unsigned)run->to && (run->length == 1 || run->to - run->from > 1))) {
+            float totalWidth = iterator->widthToStart + runWidthSoFar + width;
+            width += ceilf(totalWidth) - totalWidth;
+        }
+
+        runWidthSoFar += width;
+
+        if (!widths) {
+            ASSERT(!renderersUsed);
+            ASSERT(!glyphsUsed);
+        } else {
+            ASSERT(renderersUsed);
+            ASSERT(glyphsUsed);
+            *widths++ = width;
+            *renderersUsed++ = renderer;
+            *glyphsUsed++ = glyph;
+        }
+
+        ++numGlyphs;
     }
 
-    iterator->runWidthSoFar += width;
-
-    // Advance past the character we just dealt with.
-    currentCharacter += clusterLength;
     iterator->currentCharacter = currentCharacter;
+    iterator->runWidthSoFar = runWidthSoFar;
 
-    // Account for float/integer impedance mismatch between CG and khtml.  "Words" (characters 
-    // followed by a character defined by isSpace()) are always an integer width.  We adjust the 
-    // width of the last character of a "word" to ensure an integer width.  When we move khtml to
-    // floats we can remove this (and related) hacks.
-    //
-    // Check to see if the next character is a "RoundingHackCharacter", if so, adjust.
-    if (style->applyWordRounding && currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength])) {
-        float delta = ceilCurrentWidth(iterator);
-        if (delta)
-            width += delta;
-    } else {
-        if (style->applyRunRounding && currentCharacter >= (unsigned)run->to && (run->length == 1 || run->to - run->from > 1)) {
-            float delta = ceilCurrentWidth(iterator);
-            if (delta)
-                width += delta;
-        }
-    }
-
-    if (rendererUsed)
-        *rendererUsed = renderer;
-    
-    if (glyphUsed)
-        *glyphUsed = glyph;
-
-    return width;
+    return numGlyphs;
 }
 
-static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
+static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (!theFont)
         return NO;
@@ -1952,7 +1893,7 @@ static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
     return YES;
 }
 
-static BOOL shouldUseATSU(const WebCoreTextRun *run)
+static bool shouldUseATSU(const WebCoreTextRun *run)
 {
     if (alwaysUseATSU)
         return YES;

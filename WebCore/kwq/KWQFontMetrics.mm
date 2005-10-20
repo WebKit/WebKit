@@ -156,57 +156,6 @@ float QFontMetrics::xHeight() const
     return [data->getRenderer() xHeight];
 }
 
-int QFontMetrics::width(QChar qc, int tabWidth, int xpos) const
-{
-    if (data.isNull()) {
-        ERROR("called width on an empty QFontMetrics");
-        return 0;
-    }
-    
-    UniChar c = qc.unicode();
-
-    CREATE_FAMILY_ARRAY(data->font(), families);
-
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, &c, 1, 0, 1);
-    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.families = families;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
-
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
-}
-
-int QFontMetrics::charWidth(const QString &s, int pos, int tabWidth, int xpos) const
-{
-    return width(s[pos], tabWidth, xpos);
-}
-
-int QFontMetrics::width(char c, int tabWidth, int xpos) const
-{
-    if (data.isNull()) {
-        ERROR("called width on an empty QFontMetrics");
-        return 0;
-    }
-    
-    UniChar ch = (uchar) c;
-
-    CREATE_FAMILY_ARRAY(data->font(), families);
-
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, &ch, 1, 0, 1);
-    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.families = families;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
-
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
-}
-
 int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len) const
 {
     if (data.isNull()) {
@@ -227,7 +176,7 @@ int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len)
     style.tabWidth = tabWidth;
     style.xpos = xpos;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
+    return lroundf([data->getRenderer() floatWidthForRun:&run style:&style]);
 }
 
 int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) const
@@ -248,11 +197,10 @@ int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) co
     style.tabWidth = tabWidth;
     style.xpos = xpos;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
+    return lroundf([data->getRenderer() floatWidthForRun:&run style:&style]);
 }
 
-float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
-                               int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const
+float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
     if (data.isNull()) {
         ERROR("called floatWidth on an empty QFontMetrics");
@@ -260,6 +208,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
     }
 
     CREATE_FAMILY_ARRAY(data->font(), families);
+
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
     
@@ -272,35 +221,10 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
     style.smallCaps = smallCaps;
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
+    return [data->getRenderer() floatWidthForRun:&run style:&style];
 }
 
-float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, float *buffer, int letterSpacing, int wordSpacing, bool smallCaps) const
-{
-    if (data.isNull()) {
-        ERROR("called floatCharacterWidths on an empty QFontMetrics");
-        return 0;
-    }
-    
-    CREATE_FAMILY_ARRAY(data->font(), families);
-
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
-    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.letterSpacing = letterSpacing;
-    style.wordSpacing = wordSpacing;
-    style.smallCaps = smallCaps;
-    style.padding = toAdd;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
-    style.families = families;
-
-    return [data->getRenderer() floatWidthForRun:&run style:&style widths:buffer];
-}
-
-int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
+int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
 {
     if (data.isNull()) {
         ERROR("called checkSelectionPoint on an empty QFontMetrics");
@@ -308,6 +232,7 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     }
     
     CREATE_FAMILY_ARRAY(data->font(), families);
+
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)s, slen, pos, pos+len);
     

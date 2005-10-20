@@ -122,17 +122,12 @@ static const ushort windowsLatin1ExtensionArray[32] = {
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178  // 98-9F
 };
 
-static ushort mapChar(ushort c)
-{
-    assert(c >= 0x80 && c <= 0x9F);
-    return windowsLatin1ExtensionArray[c - 0x80];
-}
-
-static inline void fixUpChar(QChar &c)
+static inline QChar fixUpChar(QChar c)
 {
     ushort code = c.unicode();
-    if ((code & ~0x1F) == 0x0080)
-        c = mapChar(code);
+    if ((code & ~0x1F) != 0x0080)
+        return c;
+    return windowsLatin1ExtensionArray[code - 0x80];
 }
 
 inline bool tagMatch(const char *s1, const QChar *s2, uint length)
@@ -264,15 +259,17 @@ HTMLTokenizer::State HTMLTokenizer::processListing(TokenizerString list, State s
     // This function adds the listing 'list' as
     // preformatted text-tokens to the token-collection
     while (!list.isEmpty()) {
-        checkBuffer();
-
-        if (state.skipLF() && *list != '\n')
-            state.setSkipLF(false);
-
         if (state.skipLF()) {
             state.setSkipLF(false);
-            ++list;
-        } else if (*list == '\n' || *list == '\r') {
+            if (*list == '\n') {
+                ++list;
+                continue;
+            }
+        }
+
+        checkBuffer();
+
+        if (*list == '\n' || *list == '\r') {
             if (state.discardLF())
                 // Ignore this LF
                 state.setDiscardLF(false); // We have discarded 1 LF
@@ -371,8 +368,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(TokenizerString &src, State sta
             scriptCodeSize = scriptCodeDest-scriptCode;
         }
         else {
-            fixUpChar(scriptCode[scriptCodeSize] = *src);
-            ++scriptCodeSize;
+            scriptCode[scriptCodeSize++] = fixUpChar(*src);
             ++src;
         }
     }
@@ -677,35 +673,26 @@ HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(TokenizerString &
 
 HTMLTokenizer::State HTMLTokenizer::parseText(TokenizerString &src, State state)
 {
-    while (!src.isEmpty())
-    {
+    while (!src.isEmpty()) {
+        ushort cc = src->unicode();
+
+        if (state.skipLF()) {
+            state.setSkipLF(false);
+            if (cc == '\n') {
+                ++src;
+                continue;
+            }
+        }
+
         // do we need to enlarge the buffer?
         checkBuffer();
 
-        // ascii is okay because we only do ascii comparisons
-        unsigned char chbegin = src->latin1();
-
-        if (state.skipLF() && (chbegin != '\n' ))
-            state.setSkipLF(false);
-
-        if (state.skipLF())
-        {
-            state.setSkipLF(false);
-            ++src;
-        } else if ((chbegin == '\n') || (chbegin == '\r'))
-        {
-            if (chbegin == '\r')
-                state.setSkipLF(true);
-
+        if (cc == '\r') {
+            state.setSkipLF(true);
             *dest++ = '\n';
-            ++src;
-        }
-        else {
-            *dest = *src;
-            fixUpChar(*dest);
-            ++dest;
-            ++src;
-        }
+        } else
+            *dest++ = fixUpChar(cc);
+        ++src;
     }
 
     return state;
@@ -835,10 +822,8 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(TokenizerString &src, QChar *&de
                     ++src;
 
                 if (EntityUnicodeValue <= 0xFFFF) {
-                    QChar c(EntityUnicodeValue);
-                    fixUpChar(c);
                     checkBuffer();
-                    src.push(c);
+                    src.push(fixUpChar(EntityUnicodeValue));
                 } else {
                     // Convert to UTF-16, using surrogate code points.
                     QChar c1(0xD800 | (((EntityUnicodeValue >> 16) - 1) << 6) | ((EntityUnicodeValue >> 10) & 0x3F));
@@ -1155,9 +1140,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                         break;
                     }
                 }
-                *dest = *src;
-                fixUpChar(*dest);
-                ++dest;
+                *dest++ = fixUpChar(*src);
                 ++src;
             }
             break;
@@ -1191,9 +1174,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                     }
                 }
 
-                *dest = *src;
-                fixUpChar(*dest);
-                ++dest;
+                *dest++ = fixUpChar(*src);
                 ++src;
             }
             break;
@@ -1553,9 +1534,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             if ( row > 0x05 && row < 0x10 || row > 0xfd )
                     currToken.complexText = true;
 #endif
-            *dest = *src;
-            fixUpChar(*dest);
-            ++dest;
+            *dest++ = fixUpChar(*src);
             ++src;
         }
     }

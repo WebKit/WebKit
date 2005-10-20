@@ -86,7 +86,7 @@ static float stringWidth(WebTextRenderer *renderer, const unichar *characters, u
     WebCoreInitializeEmptyTextStyle(&style);
     style.applyRunRounding = NO;
     style.applyWordRounding = NO;
-    return [renderer floatWidthForRun:&run style:&style widths:0];
+    return [renderer floatWidthForRun:&run style:&style];
 }
 
 static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)

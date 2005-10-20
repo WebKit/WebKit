@@ -1,3 +1,45 @@
+2005-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - optimizations for a total of about 1% speed-up on PLT
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::fixUpChar): Changed to be more inlinable.
+        (khtml::HTMLTokenizer::processListing): Simplified the skipLF handling.
+        (khtml::HTMLTokenizer::parseSpecial): Changed to call the new fixUpChar.
+        (khtml::HTMLTokenizer::parseText): Simplified the skipLF handling and
+        changed to call the new fixUpChar.
+        (khtml::HTMLTokenizer::parseEntity): Changed to call the new fixUpChar.
+        (khtml::HTMLTokenizer::parseTag): Changed to call the new fixUpChar.
+        (khtml::HTMLTokenizer::write): Changed to call the new fixUpChar.
+
+        * khtml/rendering/font.h: Removed the floatCharacterWidths function,
+        since it's never needed. Made some more functions inline.
+        * khtml/rendering/font.cpp: Removed lots of stuff that was only for the
+        !APPLE_CHANGES case.
+
+        * kwq/KWQFontMetrics.h: Removed the single-character width overloads, charWidth,
+        and floatCharacterWidths.
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width): Use lroundf instead of the ROUND_TO_INT macro.
+        (QFontMetrics::floatWidth): Removed the bogus unneeded call to the ROUND_TO_INT macro.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::cacheWidths): Use floatWidth instead of floatCharacterWidths.
+
+        * kwq/KWQComboBox.mm: (QComboBox::sizeHint): Update since the floatWidthForRun
+        method no longer takes a widths parameter.
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Ditto.
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines): Ditto.
+        (-[KWQTableView drawRow:clipRect:]): Ditto.
+        * kwq/KWQPainter.mm: (QPainter::drawText): Ditto. Also use lroundf instead of the
+        ROUND_TO_INT macro.
+
+        * kwq/WebCoreTextRenderer.h: Removed the ROUND_TO_INT macro. Changed to use bool
+        instead of bit fields. Removed the widths parameter from the floatWidthForRun method.
+
 2005-10-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

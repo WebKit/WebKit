@@ -1,3 +1,92 @@
+2005-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - optimizations for a total of about 1% speed-up on PLT
+
+        * WebCoreSupport.subproj/WebTextRenderer.h: Updated to use bool instead of BOOL,
+        since BOOL is a signed char (which is not so efficient, at least on PPC).
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isSpace): Changed BOOL to bool and UniChar to UChar32. This actually fixes a
+        potential bug when the passed-in character is a non-BMP character (> FFFF).
+        (isRoundingHackCharacter): Ditto.
+        (widthForGlyph): Merged getUncachedWidth, widthFromMap, and widthForGlyph into
+        one function. Marked it inline. Changed to include syntheticBoldOffset in the
+        cached widths to save an add in the cached case. Instead of the special constant
+        UNINITIALIZED_GLYPH_WIDTH, just check for a width >= 0. This allows us to use
+        a negative number or NAN for the uninitialized width value -- I chose NAN.
+        (overrideLayoutOperation): Use bool instead of Boolean in one place.
+        (-[WebTextRenderer initWithFont:]): Use lroundf instead of ROUND_TO_INT.
+        (-[WebTextRenderer floatWidthForRun:style:]): Put the code to choose the ATSU
+        vs. CG code path back in here, because there are no callers inside the class
+        that need to call both.
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]):
+        Use bool instead of BOOL.
+        (+[WebTextRenderer setAlwaysUseATSU:]): Ditto.
+        (fontContainsString): Ditto.
+        (-[WebTextRenderer computeWidthForSpace]): Ditto. Also use roundf instead of
+        using ROUND_TO_INT.
+        (-[WebTextRenderer setUpFont]): Use bool instead of BOOL.
+        (drawGlyphs): Ditto.
+        (-[WebTextRenderer CG_drawHighlightForRun:style:geometry:]): Restructure the
+        code so it can use the new advanceWidthIterator function instead of the old
+        widthForNextCharacter function.
+        (-[WebTextRenderer CG_drawRun:style:geometry:]): Use malloc instead of calloc
+        since we don't need initialization. Call CG_floatWidthForRun instead of
+        floatWidthForRun -- no need to re-check whether to use the CG or ATSU code path.
+        Removed code to handle a renderer of 0 since we no longer generate that in
+        the renderers array in advanceWidthIterator.
+        (CG_floatWidthForRun): Changed to call the new advanceWidthIterator instead of
+        the old widthForNextCharacter.
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]): Use malloc instead of
+        calloc and explicitly initialize the one field that needs it. Fixed a potential
+        storage leak by adding a call to WKClearGlyphVector. Initialize the renderers
+        to self instead of to 0.
+        (-[WebTextRenderer extendGlyphToWidthMapToInclude:]): Initialize the widths to
+        NAN instead of UNINITIALIZED_GLYPH_WIDTH.
+        (addDirectionalOverride): Fixed bug where the first and last character in the buffer
+        could be uninitialized and where characters before and after the direction override
+        could be incorrect.
+        (-[WebTextRenderer ATSU_drawRun:style:geometry:]): Use bool instead of BOOL.
+        (-[WebTextRenderer ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        Ditto.
+        (advanceWidthIteratorOneCharacter): Added new helper function for CG_pointToOffset.
+        (-[WebTextRenderer CG_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        Reimplemented to use advanceWidthIteratorOneCharacter instead of widthForNextCharacter.
+        Also call CG_floatWidthForRun instead of floatWidthForRun since we don't need to
+        reconsider whether to use CG or ATSU.
+        (glyphForCharacter): Removed the map parameter and changed the renderer parameter to
+        be an in-out one. Removed uneeded special case for when map is 0 and always get the
+        renderer from the map. Also call extendCharacterToGlyphMapToInclude in here instead of
+        making that the caller's responsibility.
+        (initializeWidthIterator): Renamed to make the name shorter (removed "Character").
+        Streamlned common cases like "no padding" and removed some unneeded casts. Changed to
+        use advanceWidthIterator to compute width fo the first part of the run.
+        (normalizeVoicingMarks): Factored this out into a separate function, since it's not part
+        of the common case.
+        (advanceWidthIterator): Changed widthForNextCharacter to this, eliminating per-character
+        function overhead for iterating past a few characters. Merged the handling of surrogate
+        pairs and of voicing marks so that we typically only have to do one "if" to rule out both.
+        Merged the mirroring for RTL and uppercasing for small caps into a single boolean so that
+        we only need one "if" to rule out both. Call the new glyphForCharacter. Check for the
+        character '\t' first since that's cheaper than looking at tabWidth. Check tabWidth for 0
+        first so that we don't have to convert it to floating point when not using it. Changed
+        the special case for spaces to first check width, so that we don't bother with the rest
+        of the code for glyphs not the same width as spaces. Fixed substitution code to call
+        CG_floatWidthForRun -- no need to reconsider whether to use CG or ATSU. Also changed to
+        properly get width from the result of that function. Merged the handling of letter spacing,
+        padding, and word spacing into a single boolean so that we typically only have to do one
+        "if" to rule out all three. Check for letterSpacing of 0 first so that we don't have to
+        convert it to floating point when not using it. Same for padding and wordSpacing.
+        Move the work from ceilCurrentWidth in line into this function. Assume that either we have
+        all three pointers (widths, renderers, glyphs), or none of the three, to cut down on branches.
+        (fillStyleWithAttributes): Use bool instead of BOOL.
+        (shouldUseATSU): Ditto.
+
+        * Misc.subproj/WebKitNSStringExtras.m: (-[NSString _web_widthWithFont:]): Update since
+        the floatWidthForRun method no longer takes a widths parameter.
+        * Misc.subproj/WebStringTruncator.m: (stringWidth): Ditto.
+
 2005-10-19  Tim Omernick  <tomernick@apple.com>
 
         Reviewed by eseidel & darin.

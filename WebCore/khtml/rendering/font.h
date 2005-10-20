@@ -33,83 +33,63 @@
 
 class QPaintDeviceMetrics;
 
+namespace khtml {
 
-namespace khtml
-{
 class RenderStyle;
 class CSSStyleSelector;
 
-class FontDef
-{
+class FontDef {
 public:
-    FontDef()
-        : specifiedSize(0), computedSize(0), 
-          italic( false ), smallCaps( false ), isAbsoluteSize(false), weight( 50 ), 
-          genericFamily(0), hasNbsp( true )
-#if APPLE_CHANGES
-          , usePrinterFont( false )
-#endif
-          {}
-    
-    bool operator == ( const FontDef &other ) const {
-        return ( family == other.family &&
-                 specifiedSize == other.specifiedSize &&
-                 computedSize == other.computedSize &&
-                 italic == other.italic &&
-                 smallCaps == other.smallCaps &&
-                 weight == other.weight &&
-                 isAbsoluteSize == other.isAbsoluteSize
-#if APPLE_CHANGES
-                 && usePrinterFont == other.usePrinterFont
-#endif
-                 );
-    }
-
     enum GenericFamilyType { eNone, eStandard, eSerif, eSansSerif, eMonospace, eCursive, eFantasy };
 
-    void setGenericFamily(unsigned int aGenericFamily) { genericFamily = aGenericFamily; }
+    FontDef()
+        : specifiedSize(0), computedSize(0), 
+          italic(false), smallCaps(false), isAbsoluteSize(false), weight(50), 
+          genericFamily(0), usePrinterFont(false)
+          {}
+    
+    void setGenericFamily(GenericFamilyType aGenericFamily) { genericFamily = aGenericFamily; }
     
     KWQFontFamily &firstFamily() { return family; }
-    
+    int computedPixelSize() const { return int(computedSize + 0.5f); }
+
     KWQFontFamily family;
 
-    int computedPixelSize() const { return int(computedSize+0.5); }
-    
-    float specifiedSize; // This is the specified CSS value.  It is independent of rendering issues such as
-                         // integer rounding, minimum font sizes, and zooming.
-    float computedSize; // This is the computed size adjusted for the minimum font size and the zoom
-                        // factor.  
-    
+    float specifiedSize; // Specified CSS value. Independent of rendering issues such as integer
+                         // rounding, minimum font sizes, and zooming.
+    float computedSize;  // Computed size adjusted for the minimum font size and the zoom factor.  
+
     bool italic 		: 1;
     bool smallCaps 		: 1;
-    bool isAbsoluteSize    : 1;  // Whether or not CSS specified an explicit size
+    bool isAbsoluteSize         : 1;  // Whether or not CSS specified an explicit size
                                       // (logical sizes like "medium" don't count).
     unsigned int weight 	: 8;
     unsigned int genericFamily	: 3;
-    mutable bool hasNbsp	: 1;
-#if APPLE_CHANGES
     bool usePrinterFont		: 1;
-#endif
 };
 
-
-class Font
+inline bool operator==(const FontDef& a, const FontDef& b)
 {
+    return a.family == b.family
+        && a.specifiedSize == b.specifiedSize
+        && a.computedSize == b.computedSize
+        && a.italic == b.italic
+        && a.smallCaps == b.smallCaps
+        && a.isAbsoluteSize == b.isAbsoluteSize
+        && a.weight == b.weight
+        && a.genericFamily == b.genericFamily
+        && a.usePrinterFont == b.usePrinterFont;
+}
+
+class Font {
     friend class RenderStyle;
     friend class CSSStyleSelector;
 
 public:
-#if APPLE_CHANGES
     Font() : letterSpacing(0), wordSpacing(0) {}
     Font(const FontDef &fd, int l, int w) : fontDef(fd), letterSpacing(l), wordSpacing(w) {}
-#else
-    Font() : fontDef(), f(), fm( f ), scFont( 0 ), letterSpacing( 0 ), wordSpacing( 0 ) {}
-    Font( const FontDef &fd, int l, int w )
-        :  fontDef( fd ), f(), fm( f ), scFont( 0 ), letterSpacing( l ), wordSpacing( w )
-        {}
-#endif
 
-    bool operator == ( const Font &other ) const {
+    bool operator ==(const Font& other) const {
         return (fontDef == other.fontDef &&
                 letterSpacing == other.letterSpacing &&
                 wordSpacing == other.wordSpacing );
@@ -117,40 +97,56 @@ public:
 
     const FontDef& getFontDef() const { return fontDef; }
     
-    void update( QPaintDeviceMetrics *devMetrics ) const;
+    void update(QPaintDeviceMetrics *devMetrics) const;
 
-                   
-#if !APPLE_CHANGES
-    void drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
-                   QPainter::TextDirection d, int from=-1, int to=-1, QColor bg=QColor() ) const;
-
-#else
-    void drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
-                   QPainter::TextDirection d, bool visuallyOrdered = false, int from=-1, int to=-1, QColor bg=QColor() ) const;
-    float floatWidth( QChar *str, int slen, int pos, int len, int tabWidth, int xpos ) const;
-    void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, float *buffer) const;
+    void drawText(QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
+                  QPainter::TextDirection d, bool visuallyOrdered = false, int from = -1, int to = -1, QColor bg = QColor()) const;
+    float floatWidth(QChar *str, int slen, int pos, int len, int tabWidth, int xpos) const;
     bool isFixedPitch() const;
-    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const;
-    void drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
-                   QChar *str, int slen, int pos, int len, int width,
-                   QPainter::TextDirection d, bool visuallyOrdered = false, int from=-1, int to=-1, QColor bg=QColor()) const;
-#endif
-    int width( QChar *str, int slen, int pos, int len, int tabWidth, int xpos ) const;
-    int width( QChar *str, int slen, int tabWidth, int xpos ) const;
+    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const;
+    void drawHighlightForText(QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
+        QChar *str, int slen, int pos, int len, int width,
+        QPainter::TextDirection d, bool visuallyOrdered = false, int from = -1, int to = -1, QColor bg = QColor()) const;
+
+    int width(QChar *str, int slen, int pos, int len, int tabWidth, int xpos) const;
+    int width(QChar *str, int slen, int tabWidth, int xpos) const;
 
     bool isSmallCaps() const { return fontDef.smallCaps; }
     short getWordSpacing() const { return wordSpacing; }
+
 private:
     FontDef fontDef;
     mutable QFont f;
     mutable QFontMetrics fm;
-#if !APPLE_CHANGES
-    QFont *scFont;
-#endif
     short letterSpacing;
     short wordSpacing;
 };
 
-};
+inline float Font::floatWidth(QChar *chs, int slen, int pos, int len, int tabWidth, int xpos) const
+{
+    return fm.floatWidth(chs, slen, pos, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps);
+}
+
+inline int Font::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const
+{
+    return fm.checkSelectionPoint(s, slen, pos, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed, includePartialGlyphs);
+}
+
+inline int Font::width(QChar *chs, int slen, int pos, int len, int tabWidth, int xpos) const
+{
+    return lroundf(fm.floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps));
+}
+
+inline int Font::width(QChar *chs, int slen, int tabWidth, int xpos) const
+{
+    return width(chs, slen, 0, 1, tabWidth, xpos);
+}
+
+inline bool Font::isFixedPitch() const
+{
+    return f.isFixedPitch();
+}
+
+}
 
 #endif

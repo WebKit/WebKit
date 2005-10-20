@@ -272,7 +272,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, &zero, 1, 0, 1);
 
-    size.width += ceilf([renderer floatWidthForRun:&run style:&style widths:0] * numCharacters);
+    size.width += ceilf([renderer floatWidthForRun:&run style:&style] * numCharacters);
 
     KWQ_UNBLOCK_EXCEPTIONS;
 
