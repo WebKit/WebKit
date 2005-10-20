@@ -1,3 +1,20 @@
+2005-10-19  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by eseidel & darin.
+
+	Changed some of the run measurement methods to C functions
+        to avoid overhead associated with objc_msgSend().
+		
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer floatWidthForRun:style:widths:]):
+	Updated to call new run measurement functions instead
+        of calling ObjC methods.
+        (-[WebTextRenderer CG_drawRun:style:geometry:]): ditto
+        (floatWidthForRun): ditto
+        (CG_floatWidthForRun): ditto
+        (ATSU_floatWidthForRun): ditto
+        (widthForNextCharacter): ditto
+
 2005-10-14  Vicki Murley  <vicki@apple.com>
 
 	Changes by Mitz Pettel, reviewed by Maciej.

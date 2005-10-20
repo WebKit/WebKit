@@ -132,11 +132,11 @@ typedef struct ATSULayoutParameters
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UnicodeChar)c;
 - (void)updateGlyphEntryForCharacter:(UnicodeChar)c glyphID:(ATSGlyphRef)glyphID substituteRenderer:(WebTextRenderer *)substituteRenderer;
 
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs;
-
 // Measuring runs.
-- (float)CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs;
-- (float)ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
+static inline float floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer,
+    CGGlyph *glyphBuffer, float *startPosition, int *numGlyphs);
+static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult);
+static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style);
 
 // Drawing runs.
 - (void)CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
@@ -490,8 +490,7 @@ static BOOL alwaysUseATSU = NO;
 
 - (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer
 {
-    return [self floatWidthForRun:run style:style widths:widthBuffer
-        substituteRenderers:0 glyphs:0 startPosition:0 numGlyphs:0];
+    return floatWidthForRun(self, run, style, widthBuffer, 0, 0, 0, 0);
 }
 
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness
@@ -935,13 +934,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         rendererBuffer = localRendererBuffer;
     }
 
-    [self floatWidthForRun:run
-        style:style
-        widths:widthBuffer 
-        substituteRenderers:rendererBuffer
-        glyphs:glyphBuffer
-        startPosition:&startX
-        numGlyphs: &numGlyphs];
+    floatWidthForRun(self, run, style, widthBuffer, rendererBuffer, glyphBuffer, &startX, &numGlyphs);
         
     // Eek.  We couldn't generate ANY glyphs for the run.
     if (numGlyphs <= 0)
@@ -1016,17 +1009,16 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     }
 }
 
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
-    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphs
+static inline float floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer,
+    CGGlyph *glyphBuffer, float *startPosition, int *numGlyphs)
 {
     if (shouldUseATSU(run))
-        return [self ATSU_floatWidthForRun:run style:style];
+        return ATSU_floatWidthForRun(renderer, run, style);
     
-    return [self CG_floatWidthForRun:run style:style widths:widthBuffer substituteRenderers:rendererBuffer glyphs:glyphBuffer startPosition:startPosition numGlyphs:numGlyphs];
+    return CG_floatWidthForRun(renderer, run, style, widthBuffer, rendererBuffer, glyphBuffer, startPosition, numGlyphs);
 }
 
-- (float)CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer substituteRenderers:(WebTextRenderer **)rendererBuffer
-    glyphs:(CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs:(int *)numGlyphsResult
+static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult)
 {
     float _nextWidth;
     CharacterWidthIterator widthIterator;
@@ -1034,7 +1026,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     ATSGlyphRef glyphUsed;
     int numGlyphs = 0;
     
-    initializeCharacterWidthIterator(&widthIterator, self, run, style);
+    initializeCharacterWidthIterator(&widthIterator, renderer, run, style);
     if (startPosition)
         *startPosition = widthIterator.widthToStart;
     while (widthIterator.currentCharacter < (unsigned)widthIterator.run->to) {
@@ -1352,11 +1344,11 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
 }
 
 
-- (float)ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
+static float ATSU_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style)
 {
     ATSTrapezoid oGlyphBounds;
     
-    oGlyphBounds = [self trapezoidForRun:run style:style atPoint:NSMakePoint(0,0)];
+    oGlyphBounds = [renderer trapezoidForRun:run style:style atPoint:NSMakePoint(0,0)];
     
     float width = 
         MAX(FixedToFloat(oGlyphBounds.upperRight.x), FixedToFloat(oGlyphBounds.lowerRight.x)) - 
@@ -1869,8 +1861,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             
             int cNumGlyphs;
             ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];            
-            width = [substituteRenderer floatWidthForRun:&clusterRun style:&clusterStyle 
-                widths:0 substituteRenderers:0 glyphs:localGlyphBuffer startPosition:0 numGlyphs:&cNumGlyphs];
+            width = floatWidthForRun(substituteRenderer, &clusterRun, &clusterStyle, 0, 0, localGlyphBuffer, 0, &cNumGlyphs);
             if (cNumGlyphs == 1) {
                 glyph = localGlyphBuffer[0];
                 [renderer updateGlyphEntryForCharacter:c glyphID:glyph substituteRenderer:substituteRenderer];
