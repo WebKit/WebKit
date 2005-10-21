@@ -22,12 +22,16 @@
 #include "config.h"
 #import "render_theme_mac.h"
 
+#import "cssstyleselector.h"
+#import "font.h"
 #import "render_style.h"
 #import "render_canvas.h"
 #import "dom_elementimpl.h"
 #import "khtmlview.h"
 
 // The methods in this file are specific to the Mac OS X platform.
+
+using DOM::ElementImpl;
 
 enum {
     topMargin,
@@ -167,10 +171,49 @@ void RenderThemeMac::setSizeFromFont(RenderStyle* style, const QSize* sizes) con
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     QSize size = sizeForFont(style, sizes);
-    if (style->width().isIntrinsicOrAuto())
+    if (style->width().isIntrinsicOrAuto() && size.width() > 0)
         style->setWidth(Length(size.width(), Fixed));
-    if (style->height().isAuto())
+    if (style->height().isAuto() && size.height() > 0)
         style->setHeight(Length(size.height(), Fixed));
+}
+
+void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize controlSize) const
+{
+    FontDef fontDef(style->htmlFont().getFontDef());
+    fontDef.isAbsoluteSize = true;
+    fontDef.genericFamily = FontDef::eSansSerif;
+    
+    NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
+    fontDef.family.setFamily(QString::fromNSString([font fontName]));
+    fontDef.computedSize = fontDef.specifiedSize = [font pointSize];
+
+    if (style->setFontDef(fontDef))
+        style->htmlFont().update(selector->paintMetrics());
+}
+
+void RenderThemeMac::addIntrinsicMargins(RenderStyle* style, NSControlSize size) const
+{
+    // Cut out the intrinsic margins completely if we end up using mini controls.
+    if (size == NSMiniControlSize)
+        return;
+    
+    // Intrinsic margin value.
+    const int m = 2;
+    
+    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
+    if (style->width().isIntrinsicOrAuto()) {
+        if (style->marginLeft().quirk)
+            style->setMarginLeft(Length(m, Fixed));
+        if (style->marginRight().quirk)
+            style->setMarginRight(Length(m, Fixed));
+    }
+
+    if (style->height().isAuto()) {
+        if (style->marginTop().quirk)
+            style->setMarginTop(Length(m, Fixed));
+        if (style->marginBottom().quirk)
+            style->setMarginBottom(Length(m, Fixed));
+    }
 }
 
 void RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
@@ -219,7 +262,6 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
     updatePressedState(checkbox, o);
     updateFocusedState(checkbox, o);
 }
-
 
 void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
 {
@@ -287,6 +329,173 @@ void RenderThemeMac::setRadioSize(RenderStyle* style) const
     
     // Use the font size to determine the intrinsic width of the control.
     setSizeFromFont(style, radioSizes());
+}
+
+void RenderThemeMac::setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
+{
+    // More magical mystery constants designed to match what NSButtonCell does by default with push-in buttons.
+    int padding;
+    switch (size) {
+        case NSRegularControlSize:
+            padding = 8;
+            break;
+        case NSSmallControlSize:
+            padding = 8;
+            break;
+        case NSMiniControlSize:
+            padding = 11;
+            break;
+    }
+    style->setPaddingLeft(Length(padding, Fixed));
+    style->setPaddingRight(Length(padding, Fixed));
+    style->setPaddingTop(Length(0, Fixed));
+    style->setPaddingBottom(Length(0, Fixed));
+}
+
+void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const
+{
+    // There are three appearance constants for buttons.
+    // (1) Push-button is the constant for the default Aqua system button.  Push buttons will not scale vertically and will not allow
+    // custom fonts or colors.  <input>s use this constant.  The fundamental rule for push-button is that we will never display a push-button
+    // that looks "half-Aqua."  Either the button will look perfectly native, or it will turn off the Aqua look completely.
+    // (2) square-button is the constant for the square button.  This button will allow custom fonts and colors and will scale vertically.
+    // (3) Button is the constant that means "pick the best button as appropriate."  <button>s use this constant.  This button will
+    // also scale vertically and allow custom fonts and colors.  It will attempt to use Aqua if possible and will make this determination
+    // solely on the rectangle of the control.
+    
+    // Determine our control size based off our font.
+    NSControlSize controlSize = controlSizeForFont(style);
+
+    // Add in intrinsic margins
+    addIntrinsicMargins(style, controlSize);
+            
+    // Whenever a button has a background or border specified, then appearance is disabled.
+    // FIXME: We can't support the disabling of appearance yet until box-sizing is fully implemented.
+    bool disableAppearance = false; // style->hasBorder() || style->hasBackground();
+    if (!disableAppearance) {
+        // FIXME: This line is temporary. It can go away once the presence of a border really disables appearance.
+        style->resetBorder();
+     
+        if (style->appearance() == PushButtonAppearance) {
+            // Color is locked to black.
+            if (!e || e->isEnabled())
+                style->setColor(Qt::black);
+            else
+                style->setColor(QColor(128,128,128));
+
+            // Height is locked to auto.
+            style->setHeight(Length(Auto));
+            
+            // Set the button's vertical size.
+            setButtonSize(style);
+
+            // Add in the padding that we'd like to use.
+            setButtonPaddingFromControlSize(style, controlSize);
+
+            // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
+            // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
+            // system font for the control size instead.
+            setFontFromControlSize(selector, style, controlSize);
+        } else {
+            // Reset padding to a sensible size.
+            // FIXME: Honor author's padding if it's set.
+            style->setPaddingLeft(Length(8, Fixed));
+            style->setPaddingRight(Length(8, Fixed));
+            style->setPaddingTop(Length(2, Fixed));
+            style->setPaddingBottom(Length(3, Fixed));
+            
+            // Set a min-height so that we can't get smaller than the mini button.
+            // FIXME: Once we support box-sizing, we'll have to change this value to include the padding.
+            style->setMinHeight(Length(10, Fixed));
+
+            // Color is locked to black.
+            // FIXME: Honor author's color if it's set.
+            if (!e || e->isEnabled())
+                style->setColor(Qt::black);
+            else
+                style->setColor(QColor(128,128,128));
+        }
+    } else {
+        // FIXME: We're going to have to make sure some sort of decent padding/border/background is in effect when the appearance gets turned off.
+        // We will need to know whether or not the user set these, and then fill in the ones that weren't set.
+    }
+
+}
+
+const QSize* RenderThemeMac::buttonSizes() const
+{
+    static const QSize sizes[3] = { QSize(0, 21), QSize(0, 18), QSize(0, 15) };
+    return sizes;
+}
+
+const int* RenderThemeMac::buttonMargins() const
+{
+    static const int margins[3][4] = 
+    {
+        { 4, 6, 7, 6 },
+        { 4, 5, 6, 5 },
+        { 0, 1, 1, 1 },
+    };
+    return margins[[button controlSize]];
+}
+
+void RenderThemeMac::setButtonSize(RenderStyle* style) const
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+        return;
+    
+    // Use the font size to determine the intrinsic width of the control.
+    setSizeFromFont(style, buttonSizes());
+}
+
+void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
+{
+    if (!button) {
+        button = [[NSButtonCell alloc] init];
+        [button setTitle:nil];
+        [button setButtonType:NSMomentaryPushInButton];
+    }
+
+    // Set the control size based off the rectangle we're painting into.
+    if (o->style()->appearance() == SquareButtonAppearance || r.height() > buttonSizes()[NSRegularControlSize].height()) {
+        // Use the square button
+        if ([button bezelStyle] != NSShadowlessSquareBezelStyle)
+            [button setBezelStyle:NSShadowlessSquareBezelStyle];
+    } else if ([button bezelStyle] != NSRoundedBezelStyle)
+        [button setBezelStyle:NSRoundedBezelStyle];
+            
+    setControlSize(button, buttonSizes(), QSize(r.width(), r.height()));
+    
+    // Update the various states we respond to.
+    updateCheckedState(button, o);
+    updateEnabledState(button, o);
+    updatePressedState(button, o);
+    updateFocusedState(button, o);
+}
+
+void RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
+{
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    setButtonCellState(o, r);
+    
+    // We inflate the rect as needed to account for padding included in the cell to accommodate the button
+    // shadow.  We don't consider this part of the bounds of the control in WebKit.
+    QSize size = buttonSizes()[[button controlSize]];
+    size.setWidth(r.width());
+    QRect inflatedRect = r;
+    if ([button bezelStyle] == NSRoundedBezelStyle) {
+        // Center the button within the available space.
+        if (inflatedRect.height() > size.height()) {
+            inflatedRect.setX(inflatedRect.x() + (inflatedRect.height() - size.height())/2);
+            inflatedRect.setHeight(size.height());
+        }
+        
+        // Now inflate it to account for the shadow.
+        inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
+    }
+    [button drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [button setControlView: nil];
 }
 
 }

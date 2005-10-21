@@ -166,7 +166,6 @@
 		93F1992508245E59001E9ABC /* KWQAsyncIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867902DE3B8601EA4122 /* KWQAsyncIO.h */; };
 		93F1992608245E59001E9ABC /* KWQBrush.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867B02DE3B8601EA4122 /* KWQBrush.h */; };
 		93F1992708245E59001E9ABC /* KWQBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867C02DE3B8601EA4122 /* KWQBuffer.h */; };
-		93F1992808245E59001E9ABC /* KWQButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867D02DE3B8601EA4122 /* KWQButton.h */; };
 		93F1992908245E59001E9ABC /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784CC02DE375901EA4122 /* KWQCharsets.h */; };
 		93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
@@ -258,7 +257,6 @@
 		93F1998308245E59001E9ABC /* KWQPtrQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */; };
 		93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
-		93F1998608245E59001E9ABC /* KWQPushButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B002DE3B8601EA4122 /* KWQPushButton.h */; };
 		93F1998808245E59001E9ABC /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
 		93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
@@ -387,7 +385,6 @@
 		93F19A0E08245E59001E9ABC /* KWQArrayImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C602DE375801EA4122 /* KWQArrayImpl.mm */; };
 		93F19A0F08245E59001E9ABC /* KWQKPartsBrowserInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C702DE375801EA4122 /* KWQKPartsBrowserInterface.mm */; };
 		93F19A1008245E59001E9ABC /* KWQBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.mm */; };
-		93F19A1108245E59001E9ABC /* KWQButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C902DE375901EA4122 /* KWQButton.mm */; };
 		93F19A1308245E59001E9ABC /* KWQCharsets.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CD02DE375901EA4122 /* KWQCharsets.mm */; };
 		93F19A1508245E59001E9ABC /* KWQCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CF02DE375901EA4122 /* KWQCollection.mm */; };
 		93F19A1608245E59001E9ABC /* KWQColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D002DE375901EA4122 /* KWQColor.mm */; };
@@ -532,7 +529,6 @@
 		93F19ABA08245E59001E9ABC /* dom2_traversalimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */; };
 		93F19ABB08245E59001E9ABC /* dom2_viewsimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30702DE4476018635CA /* dom2_viewsimpl.cpp */; };
 		93F19ABC08245E59001E9ABC /* xml_tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* xml_tokenizer.cpp */; };
-		93F19ABD08245E59001E9ABC /* KWQPushButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F550D70A02E13281018635CA /* KWQPushButton.mm */; };
 		93F19ABE08245E59001E9ABC /* WebCoreCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */; };
 		93F19ABF08245E59001E9ABC /* WebCoreJavaScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */; };
 		93F19AC008245E59001E9ABC /* KWQKHTMLPart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54A61D302E3523B01A80180 /* KWQKHTMLPart.cpp */; };
@@ -972,7 +968,6 @@
 		A8212AF008794A2300677359 /* KWQAsyncIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867902DE3B8601EA4122 /* KWQAsyncIO.h */; };
 		A8212AF108794A2300677359 /* KWQBrush.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867B02DE3B8601EA4122 /* KWQBrush.h */; };
 		A8212AF208794A2300677359 /* KWQBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867C02DE3B8601EA4122 /* KWQBuffer.h */; };
-		A8212AF308794A2300677359 /* KWQButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867D02DE3B8601EA4122 /* KWQButton.h */; };
 		A8212AF408794A2300677359 /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		A8212AF508794A2300677359 /* KWQCharsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784CC02DE375901EA4122 /* KWQCharsets.h */; };
 		A8212AF708794A2300677359 /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
@@ -1064,7 +1059,6 @@
 		A8212B4E08794A2300677359 /* KWQPtrQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */; };
 		A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
-		A8212B5108794A2300677359 /* KWQPushButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B002DE3B8601EA4122 /* KWQPushButton.h */; };
 		A8212B5308794A2300677359 /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
 		A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		A8212B5508794A2300677359 /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
@@ -1225,7 +1219,6 @@
 		A8212BF608794A2300677359 /* KWQArrayImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C602DE375801EA4122 /* KWQArrayImpl.mm */; };
 		A8212BF708794A2300677359 /* KWQKPartsBrowserInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C702DE375801EA4122 /* KWQKPartsBrowserInterface.mm */; };
 		A8212BF808794A2300677359 /* KWQBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.mm */; };
-		A8212BF908794A2300677359 /* KWQButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C902DE375901EA4122 /* KWQButton.mm */; };
 		A8212BFA08794A2300677359 /* KWQCharsets.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CD02DE375901EA4122 /* KWQCharsets.mm */; };
 		A8212BFC08794A2300677359 /* KWQCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CF02DE375901EA4122 /* KWQCollection.mm */; };
 		A8212BFD08794A2300677359 /* KWQColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D002DE375901EA4122 /* KWQColor.mm */; };
@@ -1370,7 +1363,6 @@
 		A8212C8B08794A2300677359 /* dom2_traversalimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */; };
 		A8212C8C08794A2300677359 /* dom2_viewsimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30702DE4476018635CA /* dom2_viewsimpl.cpp */; };
 		A8212C8D08794A2300677359 /* xml_tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* xml_tokenizer.cpp */; };
-		A8212C8E08794A2300677359 /* KWQPushButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F550D70A02E13281018635CA /* KWQPushButton.mm */; };
 		A8212C8F08794A2300677359 /* WebCoreCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */; };
 		A8212C9008794A2300677359 /* WebCoreJavaScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */; };
 		A8212C9108794A2300677359 /* KWQKHTMLPart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54A61D302E3523B01A80180 /* KWQKHTMLPart.cpp */; };
@@ -2290,6 +2282,8 @@
 		BC179893088D975F006068A5 /* render_theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC179890088D975F006068A5 /* render_theme.cpp */; };
 		BC179894088D975F006068A5 /* render_theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC179891088D975F006068A5 /* render_theme.h */; };
 		BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1798D9088DA4F8006068A5 /* render_theme_mac.h */; };
+		BC42035C08FC334100B782E0 /* render_button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC42035A08FC334100B782E0 /* render_button.cpp */; };
+		BC42035D08FC334100B782E0 /* render_button.h in Headers */ = {isa = PBXBuildFile; fileRef = BC42035B08FC334100B782E0 /* render_button.h */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3834,6 +3828,8 @@
 		BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = dom_atomicstringlist.h; sourceTree = "<group>"; };
 		BC41978E059293F30016347F /* xbl_binding_manager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = xbl_binding_manager.h; path = xbl/xbl_binding_manager.h; sourceTree = "<group>"; };
 		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding_manager.cpp; path = xbl/xbl_binding_manager.cpp; sourceTree = "<group>"; };
+		BC42035A08FC334100B782E0 /* render_button.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = render_button.cpp; sourceTree = "<group>"; };
+		BC42035B08FC334100B782E0 /* render_button.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = render_button.h; sourceTree = "<group>"; };
 		BC433ACF05D3046F003A5A14 /* stringit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = stringit.cpp; sourceTree = "<group>"; };
 		BC7294F703804B3C00A80166 /* arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = arena.cpp; sourceTree = "<group>"; };
 		BC7294F803804B3C00A80166 /* arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = arena.h; sourceTree = "<group>"; };
@@ -4054,7 +4050,6 @@
 		F523D30902DE4476018635CA /* xml_tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = xml_tokenizer.cpp; sourceTree = "<group>"; };
 		F523D30A02DE4476018635CA /* xml_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = xml_tokenizer.h; sourceTree = "<group>"; };
 		F54A61D302E3523B01A80180 /* KWQKHTMLPart.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KWQKHTMLPart.cpp; sourceTree = "<group>"; };
-		F550D70A02E13281018635CA /* KWQPushButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPushButton.mm; sourceTree = "<group>"; };
 		F550D70B02E13281018635CA /* mac-encodings.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "mac-encodings.txt"; sourceTree = "<group>"; };
 		F550D70C02E13281018635CA /* make-charset-table.pl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; path = "make-charset-table.pl"; sourceTree = "<group>"; };
 		F5517DC2031AB56301A80180 /* WebCoreHistory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WebCoreHistory.h; path = kwq/WebCoreHistory.h; sourceTree = SOURCE_ROOT; };
@@ -4071,7 +4066,6 @@
 		F58784C602DE375801EA4122 /* KWQArrayImpl.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQArrayImpl.mm; sourceTree = "<group>"; };
 		F58784C702DE375801EA4122 /* KWQKPartsBrowserInterface.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsBrowserInterface.mm; sourceTree = "<group>"; };
 		F58784C802DE375901EA4122 /* KWQBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQBuffer.mm; sourceTree = "<group>"; };
-		F58784C902DE375901EA4122 /* KWQButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQButton.mm; sourceTree = "<group>"; };
 		F58784CC02DE375901EA4122 /* KWQCharsets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQCharsets.h; sourceTree = "<group>"; };
 		F58784CD02DE375901EA4122 /* KWQCharsets.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCharsets.mm; sourceTree = "<group>"; };
 		F58784CF02DE375901EA4122 /* KWQCollection.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCollection.mm; sourceTree = "<group>"; };
@@ -4220,7 +4214,6 @@
 		F587867902DE3B8601EA4122 /* KWQAsyncIO.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQAsyncIO.h; sourceTree = "<group>"; };
 		F587867B02DE3B8601EA4122 /* KWQBrush.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQBrush.h; sourceTree = "<group>"; };
 		F587867C02DE3B8601EA4122 /* KWQBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQBuffer.h; sourceTree = "<group>"; };
-		F587867D02DE3B8601EA4122 /* KWQButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQButton.h; sourceTree = "<group>"; };
 		F587868002DE3B8601EA4122 /* KWQCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQCollection.h; sourceTree = "<group>"; };
 		F587868102DE3B8601EA4122 /* KWQColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQColor.h; sourceTree = "<group>"; };
 		F587868202DE3B8601EA4122 /* KWQComboBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQComboBox.h; sourceTree = "<group>"; };
@@ -4258,7 +4251,6 @@
 		F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrQueue.h; sourceTree = "<group>"; };
 		F58786AE02DE3B8601EA4122 /* KWQPtrStack.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrStack.h; sourceTree = "<group>"; };
 		F58786AF02DE3B8601EA4122 /* KWQPtrVector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrVector.h; sourceTree = "<group>"; };
-		F58786B002DE3B8601EA4122 /* KWQPushButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPushButton.h; sourceTree = "<group>"; };
 		F58786B202DE3B8601EA4122 /* KWQRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRect.h; sourceTree = "<group>"; };
 		F58786B302DE3B8601EA4122 /* KWQRegExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRegExp.h; sourceTree = "<group>"; };
 		F58786B402DE3B8601EA4122 /* KWQRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRegion.h; sourceTree = "<group>"; };
@@ -6493,6 +6485,8 @@
 				F523D2A702DE4438018635CA /* render_box.cpp */,
 				F523D2AA02DE4438018635CA /* render_br.h */,
 				F523D2A902DE4438018635CA /* render_br.cpp */,
+				BC42035A08FC334100B782E0 /* render_button.cpp */,
+				BC42035B08FC334100B782E0 /* render_button.h */,
 				BC80A6940468B78100DBCC9C /* render_canvas.h */,
 				BC80A6930468B78100DBCC9C /* render_canvas.cpp */,
 				51F6A3DD0663C2EC004D2919 /* render_canvasimage.cpp */,
@@ -6789,8 +6783,6 @@
 				F587867B02DE3B8601EA4122 /* KWQBrush.h */,
 				F587867C02DE3B8601EA4122 /* KWQBuffer.h */,
 				F58784C802DE375901EA4122 /* KWQBuffer.mm */,
-				F587867D02DE3B8601EA4122 /* KWQButton.h */,
-				F58784C902DE375901EA4122 /* KWQButton.mm */,
 				F587868002DE3B8601EA4122 /* KWQCollection.h */,
 				F58784CF02DE375901EA4122 /* KWQCollection.mm */,
 				F587868102DE3B8601EA4122 /* KWQColor.h */,
@@ -6866,8 +6858,6 @@
 				F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */,
 				F58786AE02DE3B8601EA4122 /* KWQPtrStack.h */,
 				F58786AF02DE3B8601EA4122 /* KWQPtrVector.h */,
-				F58786B002DE3B8601EA4122 /* KWQPushButton.h */,
-				F550D70A02E13281018635CA /* KWQPushButton.mm */,
 				F58786B202DE3B8601EA4122 /* KWQRect.h */,
 				F587852902DE375901EA4122 /* KWQRect.mm */,
 				F58786B302DE3B8601EA4122 /* KWQRegExp.h */,
@@ -7010,7 +7000,6 @@
 				93F1992508245E59001E9ABC /* KWQAsyncIO.h in Headers */,
 				93F1992608245E59001E9ABC /* KWQBrush.h in Headers */,
 				93F1992708245E59001E9ABC /* KWQBuffer.h in Headers */,
-				93F1992808245E59001E9ABC /* KWQButton.h in Headers */,
 				93F1992908245E59001E9ABC /* KWQCString.h in Headers */,
 				93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */,
 				93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */,
@@ -7102,7 +7091,6 @@
 				93F1998308245E59001E9ABC /* KWQPtrQueue.h in Headers */,
 				93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */,
 				93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */,
-				93F1998608245E59001E9ABC /* KWQPushButton.h in Headers */,
 				93F1998808245E59001E9ABC /* KWQRect.h in Headers */,
 				93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */,
 				93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */,
@@ -7254,6 +7242,7 @@
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
+				BC42035D08FC334100B782E0 /* render_button.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7354,7 +7343,6 @@
 				A8212AF008794A2300677359 /* KWQAsyncIO.h in Headers */,
 				A8212AF108794A2300677359 /* KWQBrush.h in Headers */,
 				A8212AF208794A2300677359 /* KWQBuffer.h in Headers */,
-				A8212AF308794A2300677359 /* KWQButton.h in Headers */,
 				A8212AF408794A2300677359 /* KWQCString.h in Headers */,
 				A8212AF508794A2300677359 /* KWQCharsets.h in Headers */,
 				A8212AF708794A2300677359 /* KWQCollection.h in Headers */,
@@ -7446,7 +7434,6 @@
 				A8212B4E08794A2300677359 /* KWQPtrQueue.h in Headers */,
 				A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */,
 				A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */,
-				A8212B5108794A2300677359 /* KWQPushButton.h in Headers */,
 				A8212B5308794A2300677359 /* KWQRect.h in Headers */,
 				A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */,
 				A8212B5508794A2300677359 /* KWQRegExp.h in Headers */,
@@ -9300,7 +9287,6 @@
 				93F19A0E08245E59001E9ABC /* KWQArrayImpl.mm in Sources */,
 				93F19A0F08245E59001E9ABC /* KWQKPartsBrowserInterface.mm in Sources */,
 				93F19A1008245E59001E9ABC /* KWQBuffer.mm in Sources */,
-				93F19A1108245E59001E9ABC /* KWQButton.mm in Sources */,
 				93F19A1308245E59001E9ABC /* KWQCharsets.mm in Sources */,
 				93F19A1508245E59001E9ABC /* KWQCollection.mm in Sources */,
 				93F19A1608245E59001E9ABC /* KWQColor.mm in Sources */,
@@ -9445,7 +9431,6 @@
 				93F19ABA08245E59001E9ABC /* dom2_traversalimpl.cpp in Sources */,
 				93F19ABB08245E59001E9ABC /* dom2_viewsimpl.cpp in Sources */,
 				93F19ABC08245E59001E9ABC /* xml_tokenizer.cpp in Sources */,
-				93F19ABD08245E59001E9ABC /* KWQPushButton.mm in Sources */,
 				93F19ABE08245E59001E9ABC /* WebCoreCache.mm in Sources */,
 				93F19ABF08245E59001E9ABC /* WebCoreJavaScript.mm in Sources */,
 				93F19AC008245E59001E9ABC /* KWQKHTMLPart.cpp in Sources */,
@@ -9560,6 +9545,7 @@
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
+				BC42035C08FC334100B782E0 /* render_button.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9572,7 +9558,6 @@
 				A8212BF608794A2300677359 /* KWQArrayImpl.mm in Sources */,
 				A8212BF708794A2300677359 /* KWQKPartsBrowserInterface.mm in Sources */,
 				A8212BF808794A2300677359 /* KWQBuffer.mm in Sources */,
-				A8212BF908794A2300677359 /* KWQButton.mm in Sources */,
 				A8212BFA08794A2300677359 /* KWQCharsets.mm in Sources */,
 				A8212BFC08794A2300677359 /* KWQCollection.mm in Sources */,
 				A8212BFD08794A2300677359 /* KWQColor.mm in Sources */,
@@ -9717,7 +9702,6 @@
 				A8212C8B08794A2300677359 /* dom2_traversalimpl.cpp in Sources */,
 				A8212C8C08794A2300677359 /* dom2_viewsimpl.cpp in Sources */,
 				A8212C8D08794A2300677359 /* xml_tokenizer.cpp in Sources */,
-				A8212C8E08794A2300677359 /* KWQPushButton.mm in Sources */,
 				A8212C8F08794A2300677359 /* WebCoreCache.mm in Sources */,
 				A8212C9008794A2300677359 /* WebCoreJavaScript.mm in Sources */,
 				A8212C9108794A2300677359 /* KWQKHTMLPart.cpp in Sources */,

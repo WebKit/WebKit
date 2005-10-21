@@ -196,7 +196,8 @@ using khtml::VisiblePosition;
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
         if (!input->disabled() && (input->inputType() == HTMLInputElementImpl::CHECKBOX ||
-                                   input->inputType() == HTMLInputElementImpl::RADIO))
+                                   input->inputType() == HTMLInputElementImpl::RADIO ||
+                                   input->isTextButton()))
             return input;
     }
 
@@ -381,6 +382,8 @@ using khtml::VisiblePosition;
             return NSAccessibilityCheckBoxRole;
         if (input->inputType() == HTMLInputElementImpl::RADIO)
             return NSAccessibilityRadioButtonRole;
+        if (input->isTextButton())
+            return NSAccessibilityButtonRole;
     }
     
     if (m_renderer->isBlockFlow())
@@ -545,8 +548,13 @@ using khtml::VisiblePosition;
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return nil;
     
-    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->hasTagName(buttonTag))
+    if (m_renderer->element()->hasTagName(buttonTag))
         return [self textUnderElement];
+    if (m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
+        if (input->isTextButton())
+            return input->value();
+    }
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
     if ([self isAttachment])

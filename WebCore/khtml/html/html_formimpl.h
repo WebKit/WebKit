@@ -251,6 +251,8 @@ public:
     };
 
     DOMString type() const;
+        
+    virtual khtml::RenderObject *createRenderer(RenderArena*, khtml::RenderStyle*);
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
@@ -346,6 +348,8 @@ public:
 
     virtual bool isChecked() const { return checked(); }
     
+    bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
+
     bool checked() const { return m_checked; }
     void setChecked(bool);
     int maxLength() const { return m_maxLen; }

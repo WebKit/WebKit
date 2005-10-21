@@ -26,7 +26,6 @@
 #include "config.h"
 #import "KWQLineEdit.h"
 
-#import "KWQButton.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
@@ -40,6 +39,16 @@
 @interface NSSearchField (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
+
+NSControlSize KWQNSControlSizeForFont(const QFont& f)
+{
+    const int fontSize = f.pixelSize();
+    if (fontSize >= 16)
+        return NSRegularControlSize;
+    if (fontSize >= 11)
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
 
 QLineEdit::QLineEdit(Type type)
     : m_returnPressed(this, SIGNAL(returnPressed()))

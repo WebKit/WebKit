@@ -278,15 +278,8 @@ fieldset {
 }
 
 button {
-    border: 2px outset ButtonFace;
-    background-color: ButtonFace;
-    color: ButtonText;
-    padding: 2px 2px 2px 2px;
-    cursor: default
-}
-
-button:active {
-    border-style: inset
+    cursor: default;
+    -khtml-appearance: button
 }
 
 input, textarea {
@@ -299,7 +292,7 @@ input, textarea, select, button {
     font: 11px 'Lucida Grande';
     color: initial;
     display: inline-block;
-    -khtml-box-sizing: border-box
+    box-sizing: border-box
 }
 
 input[type="hidden"] {
@@ -309,6 +302,16 @@ input[type="hidden"] {
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
     -khtml-user-select: ignore
+}
+
+input[type="button"], input[type="submit"], input[type="reset"]
+{
+    -khtml-appearance: push-button
+}
+
+input[type="button"], input[type="submit"], input[type="reset"], button {
+    -khtml-box-align: center;
+    text-align:center;
 }
 
 select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {

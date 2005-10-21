@@ -29,25 +29,31 @@
 using namespace DOM::HTMLNames;
 
 using DOM::HTMLInputElementImpl;
+using DOM::ElementImpl;
 
 // The methods in this file are shared by all themes on every platform.
 
 namespace khtml {
 
-void RenderTheme::adjustStyle(RenderStyle* style)
+void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e)
 {
     // Force inline to be inline-block
     if (style->display() == INLINE)
         style->setDisplay(INLINE_BLOCK);
     else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM)
         style->setDisplay(BLOCK);
-
+    // FIXME: Do we really want to honor table display styles?
+    
     // Call the appropriate style adjustment method based off the appearance value.
     switch (style->appearance()) {
         case CheckboxAppearance:
-            return adjustCheckboxStyle(style);
+            return adjustCheckboxStyle(selector, style, e);
         case RadioAppearance:
-            return adjustRadioStyle(style);
+            return adjustRadioStyle(selector, style, e);
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+            return adjustButtonStyle(selector, style, e);
         default:
             break;
     }
@@ -72,6 +78,10 @@ void RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
             return paintCheckbox(o, i, r);
         case RadioAppearance:
             return paintRadio(o, i, r);
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+            return paintButton(o, i, r);
         default:
             break;
     }
@@ -132,7 +142,7 @@ bool RenderTheme::isPressed(const RenderObject* o) const
     return o->element()->active();
 }
 
-void RenderTheme::adjustCheckboxStyle(RenderStyle* style) const
+void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const
 {
     // A summary of the rules for checkbox designed to match WinIE:
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
@@ -147,7 +157,7 @@ void RenderTheme::adjustCheckboxStyle(RenderStyle* style) const
     style->resetBorder();
 }
 
-void RenderTheme::adjustRadioStyle(RenderStyle* style) const
+void RenderTheme::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const
 {
     // A summary of the rules for checkbox designed to match WinIE:
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
@@ -160,6 +170,13 @@ void RenderTheme::adjustRadioStyle(RenderStyle* style) const
     // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
     // for now, we will not honor it.
     style->resetBorder();
+}
+
+void RenderTheme::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const
+{
+    // Most platforms will completely honor all CSS, and so we have no need to adjust the style
+    // at all by default.  We will still allow the theme a crack at setting up a desired vertical size.
+    setButtonSize(style);
 }
 
 }

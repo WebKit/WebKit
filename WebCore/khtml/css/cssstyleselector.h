@@ -139,6 +139,8 @@ namespace khtml
         
         QColor getColorFromPrimitiveValue(DOM::CSSPrimitiveValueImpl* primitiveValue);
         
+        QPaintDeviceMetrics* paintMetrics() const { return paintDeviceMetrics; }
+
     protected:
 
 	/* checks if a compound selector (which can consist of multiple simple selectors)

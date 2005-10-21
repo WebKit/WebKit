@@ -995,7 +995,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
 
     // Let the theme get a crack at changing the style if an appearance has been set.
     if (style->hasAppearance())
-        theme()->adjustStyle(style);
+        theme()->adjustStyle(this, style, e);
 
     // Only use slow repaints if we actually have a background image.
     // FIXME: We only need to invalidate the fixed regions when scrolling.  It's total overkill to

@@ -46,6 +46,7 @@
 #include "khtml_ext.h"
 
 #include "rendering/render_form.h"
+#include "render_button.h"
 #include "render_theme.h"
 
 #include <kcharsets.h>
@@ -1200,6 +1201,11 @@ HTMLButtonElementImpl::~HTMLButtonElementImpl()
 {
 }
 
+RenderObject* HTMLButtonElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    return new (arena) RenderButton(this);
+}
+
 DOMString HTMLButtonElementImpl::type() const
 {
     return getAttribute(typeAttr);
@@ -1699,17 +1705,7 @@ void HTMLInputElementImpl::click(bool sendMouseEvents, bool showPressedLook)
             break;
         case SUBMIT:
         case RESET:
-        case BUTTON: 
-#if APPLE_CHANGES
-        {
-            QWidget *widget;
-            if (showPressedLook && renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
-                // using this method gives us nice Cocoa user interface feedback
-                static_cast<QButton *>(widget)->click(sendMouseEvents);
-                break;
-            }
-        }
-#endif
+        case BUTTON:
             HTMLGenericFormElementImpl::click(sendMouseEvents, showPressedLook);
             break;
         case FILE:
@@ -1919,12 +1915,13 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case CHECKBOX:
     case RADIO:
         return RenderObject::createObject(this, style);
-    case SUBMIT:   return new (arena) RenderSubmitButton(this);
+    case SUBMIT:
+    case RESET:
+    case BUTTON:
+        return new (arena) RenderButton(this);
     case IMAGE:    return new (arena) RenderImageButton(this);
-    case RESET:    return new (arena) RenderResetButton(this);
     case FILE:     return new (arena) RenderFileButton(this);
-    case BUTTON:   return new (arena) RenderPushButton(this);
-#if APPLE_CHANGES
+    #if APPLE_CHANGES
     case RANGE:    return new (arena) RenderSlider(this);
 #endif
     case HIDDEN:   break;

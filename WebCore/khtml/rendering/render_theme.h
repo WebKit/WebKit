@@ -25,6 +25,10 @@
 
 #include "render_object.h"
 
+namespace DOM {
+class ElementImpl;
+};
+
 namespace khtml {
 
 class RenderStyle;
@@ -41,7 +45,7 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(RenderStyle* style);
+    void adjustStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e);
     
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.
@@ -85,13 +89,17 @@ protected:
     bool isPressed(const RenderObject* o) const;
 
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(RenderStyle* style) const;
+    virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
     virtual void setCheckboxSize(RenderStyle* style) const {};
     
-    virtual void adjustRadioStyle(RenderStyle* style) const;
+    virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
     virtual void paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
     virtual void setRadioSize(RenderStyle* style) const {};
+    
+    virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
+    virtual void paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual void setButtonSize(RenderStyle* style) const {};
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

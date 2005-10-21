@@ -1,3 +1,75 @@
+2005-10-21  David Hyatt  <hyatt@apple.com>
+
+	Land the new "NSView-less" buttons.  With this landing both
+	<input type=button> and <button> will now look like OS X-style
+	widgets.  Customization of background and border is not yet
+	enabled, but this is still a big improvement over the old
+	AppKit widgets.
+	
+        Reviewed by mjs
+
+        * ForwardingHeaders/qpushbutton.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/css/cssstyleselector.h:
+        (khtml::CSSStyleSelector::paintMetrics):
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLButtonElementImpl::createRenderer):
+        (DOM::HTMLInputElementImpl::click):
+        (DOM::HTMLInputElementImpl::createRenderer):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::isTextButton):
+        * khtml/rendering/render_button.cpp: Added.
+        (khtml::m_inner):
+        (khtml::RenderButton::~RenderButton):
+        (khtml::RenderButton::addChild):
+        (khtml::RenderButton::removeChild):
+        (khtml::RenderButton::setStyle):
+        (khtml::RenderButton::updateFromElement):
+        * khtml/rendering/render_button.h: Added.
+        (khtml::RenderButton::removeLeftoverAnonymousBoxes):
+        (khtml::RenderButton::renderName):
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_form.h:
+        (khtml::RenderFileButton::calcReplacedHeight):
+        (khtml::RenderFileButton::isEditable):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::adjustStyle):
+        (khtml::RenderTheme::paint):
+        (khtml::RenderTheme::adjustCheckboxStyle):
+        (khtml::RenderTheme::adjustRadioStyle):
+        (khtml::RenderTheme::adjustButtonStyle):
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::setButtonSize):
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::setSizeFromFont):
+        (khtml::RenderThemeMac::setFontFromControlSize):
+        (khtml::RenderThemeMac::addIntrinsicMargins):
+        (khtml::RenderThemeMac::setButtonPaddingFromControlSize):
+        (khtml::RenderThemeMac::adjustButtonStyle):
+        (khtml::RenderThemeMac::buttonSizes):
+        (khtml::RenderThemeMac::buttonMargins):
+        (khtml::RenderThemeMac::setButtonSize):
+        (khtml::RenderThemeMac::setButtonCellState):
+        (khtml::RenderThemeMac::paintButton):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject title]):
+        * kwq/KWQButton.h: Removed.
+        * kwq/KWQButton.mm: Removed.
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQPushButton.h: Removed.
+        * kwq/KWQPushButton.mm: Removed.
+
 2005-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

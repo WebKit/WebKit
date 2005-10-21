@@ -32,6 +32,7 @@
 
 #ifdef __OBJC__
 @class KWQTextFieldController;
+NSControlSize KWQNSControlSizeForFont(const QFont&);
 #else
 class KWQTextFieldController;
 #endif

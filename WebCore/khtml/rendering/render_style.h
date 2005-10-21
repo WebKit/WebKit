@@ -747,7 +747,7 @@ enum EMatchNearestMailBlockquoteColor {
 };
 
 enum EAppearance {
-    NoAppearance, CheckboxAppearance, RadioAppearance, ButtonAppearance,
+    NoAppearance, CheckboxAppearance, RadioAppearance, PushButtonAppearance, SquareButtonAppearance, ButtonAppearance,
     ButtonBevelAppearance, ListboxAppearance, ListItemAppearance, MenulistAppearance,
     MenulistButtonAppearance, MenulistTextAppearance, MenulistTextFieldAppearance,
     ScrollbarButtonUpAppearance, ScrollbarButtonDownAppearance, 
