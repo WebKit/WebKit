@@ -8,6 +8,24 @@
 
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Hyatt
+
+	Fix for <rdar://problem/3847926> crash due to infinite 
+	layout regression in RenderLayer::updateScrollInfoAfterLayout 
+	(was at ourmedia.org)
+
+	Cannot use hasOverhangingFloats() in this case because
+	borderBottom() has already been added into m_height.
+	This was causing m_height to be off by a pixel in some
+	cases and then causing infinite recursion in the scroll
+	bar code.
+
+        * khtml/rendering/render_block.cpp: Replaced call to
+					hasOverhangingFloats()
+        (khtml::RenderBlock::layoutBlock):
+
+2005-10-21  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Hyatt...sort of.
 
         No test cases added.
