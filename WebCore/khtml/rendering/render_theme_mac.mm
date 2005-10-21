@@ -336,6 +336,7 @@ void RenderThemeMac::setButtonPaddingFromControlSize(RenderStyle* style, NSContr
     // More magical mystery constants designed to match what NSButtonCell does by default with push-in buttons.
     int padding;
     switch (size) {
+        default: // needed to make stupid compiler happy
         case NSRegularControlSize:
             padding = 8;
             break;

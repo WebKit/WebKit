@@ -1,3 +1,11 @@
+2005-10-21  John Sullivan  <sullivan@apple.com>
+
+        No test cases added.
+        
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::setButtonPaddingFromControlSize):
+        fix deployment build by adding default: statement to button-size switch statement
+
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt...sort of.
