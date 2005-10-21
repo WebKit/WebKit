@@ -1,3 +1,17 @@
+2005-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        - temporarily reverted test changes corresponding to reverted changes
+
+        * dom/xhtml/level3/core/nodeissamenode01-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode02-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode03-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode04-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode05-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode06-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode10-expected.txt:
+        * fast/js/for-in-expected.txt: Removed.
+        * fast/js/for-in.html: Removed.
+
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Layout test to go with fix for <rdar://problem/3847926> crash 

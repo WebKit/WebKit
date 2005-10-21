@@ -1,2 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeissamenode03
-Status	Success
+Status	error
+Message	TypeError: Value undefined (result of expression element2.isSameNode) is not object.
