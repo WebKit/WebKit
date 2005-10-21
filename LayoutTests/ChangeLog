@@ -1,3 +1,16 @@
+2005-10-21  Beth Dakin  <bdakin@apple.com>
+
+        Layout test to go with fix for <rdar://problem/3847926> crash 
+	due to infinite layout regression in RenderLayer::updateScrollInfoAfterLayout 
+	(was at ourmedia.org)
+
+	Fix is in WebCore.
+
+        * fast/overflow/infiniteRecursion-expected.checksum: Added.
+        * fast/overflow/infiniteRecursion-expected.png: Added.
+        * fast/overflow/infiniteRecursion-expected.txt: Added.
+        * fast/overflow/infiniteRecursion.html: Added.
+
 2005-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         - temporarily back out hyatt's recent changes since the tree was closed
