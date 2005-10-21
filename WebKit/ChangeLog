@@ -1,3 +1,30 @@
+2005-10-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by TimO, Reviewed by hyatt, tested and landed by me.
+
+        Found what appears to be a misguided optimization that actually causes a measurable performance problem.
+        A fixed-size buffer was allocated on the stack to pass into CFURLGetBytes(), presumably to avoid malloc()
+        for URLs less than 2048 bytes.  There was also a fallback which malloc()'ed a buffer in case the fixed-size
+        buffer was too small to hold the URL's bytes.  This malloc()'ed buffer was then wrapped in an NSData using
+        +dataWithBytesNoCopy:length:, avoiding a memory copy (yay!)
+
+        The problem with this approach is two-fold:
+    
+        1. Regardless of how the buffer was allocated and filled, it is immediately wrapped in an NSData using
+        +dataWithBytes:length:, which copies the input bytes.  This is pretty much unavoidable; we need to get
+        the data into a malloc()'ed buffer to return it to the caller, unless the caller provides its own storage
+        (which would be super inconvenient).
+    
+        2. The size of the fixed buffer was large enough that it fit most (if not all) URLs involved in our Page
+        Load Test.  This means the unintentionally-inefficient case was by far the most *common* case!
+        
+        My fix is to malloc() the buffer from the start, and then use +[NSData dataWithBytes:length:freeWhenDone:]
+        to wrap the buffer in an NSData.  This avoids a memory copy for the normal case where a URL is less than
+        2048 bytes, and keeps the efficient behavior for the uncommon long URL case.
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_originalData]):
+
 2005-10-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

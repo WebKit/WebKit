@@ -382,28 +382,23 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 - (NSData *)_web_originalData
 {
-    NSData *data = nil;
-
-    UInt8 static_buffer[URL_BYTES_BUFFER_LENGTH];
-    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, static_buffer, URL_BYTES_BUFFER_LENGTH);
-    if (bytesFilled != -1) {
-        data = [NSData dataWithBytes:static_buffer length:bytesFilled];
-    }
-    else {
+    UInt8 *buffer = (UInt8 *)malloc(URL_BYTES_BUFFER_LENGTH);
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, URL_BYTES_BUFFER_LENGTH);
+    if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
-        UInt8 *buffer = malloc(bytesToAllocate);
+        buffer = (UInt8 *)realloc(buffer, bytesToAllocate);
         bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, bytesToAllocate);
         ASSERT(bytesFilled == bytesToAllocate);
-        // buffer is adopted by the NSData
-        data = [NSData dataWithBytesNoCopy:buffer length:bytesFilled];
     }
-
+    
+    // buffer is adopted by the NSData
+    NSData *data = [NSData dataWithBytesNoCopy:buffer length:bytesFilled freeWhenDone:YES];
+    
     NSURL *baseURL = (NSURL *)CFURLGetBaseURL((CFURLRef)self);
     if (baseURL) {
         NSURL *URL = [NSURL _web_URLWithData:data relativeToURL:baseURL];
         return [URL _web_originalData];
-    }
-    else {
+    } else {
         return data;
     }
 }
