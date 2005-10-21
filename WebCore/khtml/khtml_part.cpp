@@ -1802,19 +1802,17 @@ void KHTMLPart::stopAnimations()
 
 void KHTMLPart::gotoAnchor()
 {
-    if (m_url.hasRef()) {
-        QString ref = m_url.encodedHtmlRef();
-        if (!gotoAnchor(ref)) {
-            // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
-            // Decoding here has to match encoding in completeURL, which means it has to use the
-            // page's encoding rather than UTF-8.
-            if (d->m_decoder)
+    QString ref = m_url.encodedHtmlRef();
+    if (!gotoAnchor(ref)) {
+        // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
+        // Decoding here has to match encoding in completeURL, which means it has to use the
+        // page's encoding rather than UTF-8.
+        if (d->m_decoder)
 #if !APPLE_CHANGES
-                gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()->mibEnum()));
+            gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()->mibEnum()));
 #else
-                gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()));
+            gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()));
 #endif
-        }
     }
 }
 

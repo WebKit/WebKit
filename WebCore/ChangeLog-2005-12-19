@@ -1,3 +1,14 @@
+2005-10-21  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John.
+ 
+	- fixed <rdar://problem/4304213> sometimes have to click twice to jump to top, on href=""
+
+        * manual-tests/linkjump-1.html: Added.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor): remove check for m_url.hasRef() - encodedHtmlRef and gotoAnchor handle empty 
+	strings for scrolling to the top of the document
+
 2005-10-21  John Sullivan  <sullivan@apple.com>
 
         No test cases added.
