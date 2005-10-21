@@ -80,7 +80,10 @@ layer at (0,0) size 800x600
                 RenderText {TEXT} at (1,1) size 224x18
                   text run at (1,1) width 224: "button with value property changed"
               RenderTableCell {TD} at (389,100) size 236x24 [r=4 c=1 rs=1 cs=1]
-                RenderSubmitButton {INPUT} at (3,3) size 41x18
+                RenderButton {INPUT} at (3,3) size 41x18
+                  RenderBlock (anonymous) at (8,2) size 25x13
+                    RenderText at (0,0) size 25x13
+                      text run at (0,0) width 25: "after"
               RenderTableCell {TD} at (627,102) size 62x20 [r=4 c=2 rs=1 cs=1]
                 RenderText {TEXT} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"

@@ -18,7 +18,10 @@ layer at (0,0) size 785x625
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x18
-                  RenderSubmitButton {INPUT} at (2,2) size 52x18
+                  RenderButton {INPUT} at (2,2) size 52x18
+                    RenderBlock (anonymous) at (8,2) size 36x13
+                      RenderText at (0,0) size 36x13
+                        text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x18
@@ -42,7 +45,10 @@ layer at (0,0) size 785x625
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
-                RenderSubmitButton {INPUT} at (2,2) size 52x18
+                RenderButton {INPUT} at (2,2) size 52x18
+                  RenderBlock (anonymous) at (8,2) size 36x13
+                    RenderText at (0,0) size 36x13
+                      text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderSelect {SELECT} at (2,2) size 62x18
@@ -58,7 +64,10 @@ layer at (0,0) size 785x625
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x13
-                  RenderSubmitButton {INPUT} at (2,2) size 52x18
+                  RenderButton {INPUT} at (2,2) size 52x18
+                    RenderBlock (anonymous) at (8,2) size 36x13
+                      RenderText at (0,0) size 36x13
+                        text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x13
@@ -90,21 +99,25 @@ layer at (0,0) size 785x625
         RenderText {TEXT} at (0,0) size 200x28
           text run at (0,0) width 200: "Baseline Alignment"
       RenderBlock {DIV} at (0,360) size 769x29
-        RenderInline {FONT} at (0,0) size 213x28
+        RenderInline {FONT} at (0,0) size 207x28
           RenderText {TEXT} at (0,0) size 43x28
             text run at (0,0) width 43: "text "
-          RenderSubmitButton {INPUT} at (45,9) size 52x18
-          RenderText {TEXT} at (99,0) size 6x28
-            text run at (99,0) width 6: " "
-          RenderSelect {SELECT} at (107,9) size 62x18
-          RenderText {TEXT} at (171,0) size 6x28
-            text run at (171,0) width 6: " "
-          RenderBlock {INPUT} at (180,11) size 12x13
-          RenderBlock {INPUT} at (198,12) size 12x12
+          RenderButton {INPUT} at (45,9) size 52x18
+            RenderBlock (anonymous) at (8,2) size 36x13
+              RenderText at (0,0) size 36x13
+                text run at (0,0) width 36: "button"
+          RenderSelect {SELECT} at (101,9) size 62x18
+          RenderText {TEXT} at (165,0) size 6x28
+            text run at (165,0) width 6: " "
+          RenderBlock {INPUT} at (174,11) size 12x13
+          RenderBlock {INPUT} at (192,12) size 12x12
       RenderBlock {DIV} at (0,389) size 769x22
         RenderText {TEXT} at (0,1) size 27x18
           text run at (0,1) width 27: "text "
-        RenderSubmitButton {INPUT} at (29,2) size 52x18
+        RenderButton {INPUT} at (29,2) size 52x18
+          RenderBlock (anonymous) at (8,2) size 36x13
+            RenderText at (0,0) size 36x13
+              text run at (0,0) width 36: "button"
         RenderText {TEXT} at (83,1) size 4x18
           text run at (83,1) width 4: " "
         RenderSelect {SELECT} at (89,2) size 62x18
@@ -116,17 +129,18 @@ layer at (0,0) size 785x625
         RenderBlock {INPUT} at (182,5) size 12x12
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,411) size 769x22
-        RenderInline {FONT} at (0,0) size 182x13
+        RenderInline {FONT} at (0,0) size 179x13
           RenderText {TEXT} at (0,5) size 18x13
             text run at (0,5) width 18: "text "
-          RenderSubmitButton {INPUT} at (20,2) size 52x18
-          RenderText {TEXT} at (74,5) size 3x13
-            text run at (74,5) width 3: " "
-          RenderSelect {SELECT} at (79,2) size 62x18
-          RenderText {TEXT} at (143,5) size 3x13
-            text run at (143,5) width 3: " "
-          RenderBlock {INPUT} at (149,4) size 12x13
-          RenderBlock {INPUT} at (167,5) size 12x12
+          RenderButton {INPUT} at (20,2) size 52x18
+            RenderBlock (anonymous) at (8,2) size 36x13
+              RenderText at (0,0) size 36x13
+                text run at (0,0) width 36: "button"
+          RenderSelect {SELECT} at (76,2) size 62x18
+          RenderText {TEXT} at (140,5) size 3x13
+            text run at (140,5) width 3: " "
+          RenderBlock {INPUT} at (146,4) size 12x13
+          RenderBlock {INPUT} at (164,5) size 12x12
       RenderBlock {DIV} at (0,433) size 769x37
         RenderText {TEXT} at (0,16) size 27x18
           text run at (0,16) width 27: "text "

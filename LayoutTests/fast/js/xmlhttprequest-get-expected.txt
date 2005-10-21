@@ -25,6 +25,9 @@ readyState
 Event information
 Event object: [object Event]
 Event properties:
+stopPropagation : '[function]'
+preventDefault : '[function]'
+initEvent : '[function]'
 cancelBubble : 'false'
 bubbles : 'true'
 returnValue : 'true'
@@ -36,7 +39,4 @@ eventPhase : '0'
 cancelable : 'true'
 dataTransfer : 'undefined'
 clipboardData : 'undefined'
-stopPropagation : '[function]'
-preventDefault : '[function]'
-initEvent : '[function]'
 
