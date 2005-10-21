@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQSlider.h"
 
-#import "KWQButton.h"
+#import "KWQLineEdit.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"

@@ -1,3 +1,16 @@
+2005-10-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt...sort of.
+
+        No test cases added.
+
+	Fix for a build failure after Hyatt's button check-in. KWQSlider.mm was
+	still importing the now deprecated KWQButton.h
+
+	Changed it to import KWQLineEdit.h instead.
+
+        * kwq/KWQSlider.mm:
+
 2005-10-21  David Hyatt  <hyatt@apple.com>
 
 	Land the new "NSView-less" buttons.  With this landing both
