@@ -866,7 +866,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     advanceWidthIterator(&it, run->from, 0, 0, 0);
     float beforeWidth = it.runWidthSoFar;
     advanceWidthIterator(&it, run->to, 0, 0, 0);
-    float backgroundWidth = it.runWidthSoFar;
+    float backgroundWidth = it.runWidthSoFar - beforeWidth;
     if (style->rtl) {
         advanceWidthIterator(&it, run->length, 0, 0, 0);
         float afterWidth = it.runWidthSoFar;
@@ -1309,8 +1309,8 @@ static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl
 
     WebCoreTextRun runWithOverride;
 
-    runWithOverride.from = from;
-    runWithOverride.to = to + 2;
+    runWithOverride.from = from + 1;
+    runWithOverride.to = to + 1;
     runWithOverride.length = run->length + 2;
     runWithOverride.characters = charactersWithOverride;
 
@@ -1660,7 +1660,7 @@ static void initializeWidthIterator(WidthIterator *iterator, WebTextRenderer *re
         startPositionRun.to = run->length;
         WidthIterator startPositionIterator;
         initializeWidthIterator(&startPositionIterator, renderer, &startPositionRun, style);
-        advanceWidthIterator(&startPositionIterator, run->to, 0, 0, 0);
+        advanceWidthIterator(&startPositionIterator, run->from, 0, 0, 0);
         iterator->widthToStart = startPositionIterator.runWidthSoFar;
     }
 }

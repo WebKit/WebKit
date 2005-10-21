@@ -1,3 +1,19 @@
+2005-10-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed a couple regressions caused by my last check-in
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5437
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5443
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer CG_drawHighlightForRun:style:geometry:]): Compute background width
+        correctly, by subtracting position after run from position before run.
+        (addDirectionalOverride): Make the range include only the characters between the
+        directional override characters, not the directional override characters themselves.
+        (initializeWidthIterator): Correctly compute "widthToStart" based on the offset to
+        the beginning of the run, not to the end of the run!
+
 2005-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -29986,7 +30002,8 @@ l.
 
 2003-01-23  Trey Matteson  <trey@apple.com>
 
-        3155162 - cursor changes to I-beam after dragging image        3154468 - no mouseup event comes through after text snippet drag
+        3155162 - cursor changes to I-beam after dragging image
+        3154468 - no mouseup event comes through after text snippet drag
 
         During AK dragging the system takes over the event stream and we never get any mouse
         move or up events.  It also changes the cursor behind out back.  When done
