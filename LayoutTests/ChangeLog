@@ -1,3 +1,83 @@
+2005-10-22  Darin Adler  <darin@apple.com>
+
+        - updated pixel results for tests with results that changed recently
+
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-expected.checksum:
+        * editing/selection/3690703-expected.png:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/3690719-expected.png:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/formmove3-expected.checksum:
+        * fast/forms/formmove3-expected.png:
+        * fast/forms/input-value-expected.checksum:
+        * fast/forms/input-value-expected.png:
+        * fast/selectors/064-expected.checksum:
+        * fast/selectors/064-expected.png:
+
+        - added pixel results for a bunch of tests that, for whatever reason, didn't have them
+
+        * dom/xhtml/level2/html/HTMLBaseElement01-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBaseElement01-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement01-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement01-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement02-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement02-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement03-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement03-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement04-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement04-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement05-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement05-expected.png: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement06-expected.checksum: Added.
+        * dom/xhtml/level2/html/HTMLBodyElement06-expected.png: Added.
+        * dom/xhtml/level2/html/body01-expected.checksum: Added.
+        * dom/xhtml/level2/html/body01-expected.png: Added.
+        * dom/xhtml/level2/html/frame-expected.checksum: Added.
+        * dom/xhtml/level2/html/frame-expected.png: Added.
+        * dom/xhtml/level2/html/iframe-expected.checksum: Added.
+        * dom/xhtml/level2/html/iframe-expected.png: Added.
+        * dom/xhtml/level3/core/canonicalform08-expected.checksum: Added.
+        * dom/xhtml/level3/core/canonicalform08-expected.png: Added.
+        * dom/xhtml/level3/core/canonicalform09-expected.checksum: Added.
+        * dom/xhtml/level3/core/canonicalform09-expected.png: Added.
+        * dom/xhtml/level3/core/documentgetinputencoding03-expected.checksum: Added.
+        * dom/xhtml/level3/core/documentgetinputencoding03-expected.png: Added.
+        * dom/xhtml/level3/core/documentgetxmlencoding03-expected.checksum: Added.
+        * dom/xhtml/level3/core/documentgetxmlencoding03-expected.png: Added.
+        * dom/xhtml/level3/core/entitygetinputencoding02-expected.checksum: Added.
+        * dom/xhtml/level3/core/entitygetinputencoding02-expected.png: Added.
+        * dom/xhtml/level3/core/entitygetxmlversion02-expected.checksum: Added.
+        * dom/xhtml/level3/core/entitygetxmlversion02-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri05-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri05-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri07-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri07-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri09-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri09-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri10-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri10-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri11-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri11-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri15-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri15-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri17-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri17-expected.png: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri18-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri18-expected.png: Added.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri01-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri01-expected.png: Added.
+        * dom/xhtml/level3/core/nodelookupprefix19-expected.checksum: Added.
+        * dom/xhtml/level3/core/nodelookupprefix19-expected.png: Added.
+        * fast/forms/button-sizes-expected.checksum: Added.
+        * fast/forms/button-sizes-expected.png: Added.
+
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt
