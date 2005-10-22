@@ -1,3 +1,25 @@
+2005-10-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+        
+        WebKit side of the fix for <rdar://problem/4184719> window.print() followed by 
+        window.close() causes world leak
+        
+        No test case added because I have another reviewed patch that will include a test
+        for this bug as well as many others.
+
+        Under some conditions, [WebDataSource stopLoading] did not set [WebDataSource isLoading]
+        to false, so the didFInishLoad delegates never fired.
+        
+        The reason isLoading didn't become false was that the tokenizer was still running.
+        The fix here is to move the call to [WebCoreBridge stopLoading] above the early return
+        inside [WebDataSource stopLoading] -- since the tokenizer may still be running even if the
+        loader is finished loading -- and then to call [WebFrame _checkLoadComplete] to 
+        give the frame a chance to fire its delegates.
+        
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stopLoadingInternal]):
+
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin??
