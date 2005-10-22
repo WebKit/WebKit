@@ -1,3 +1,52 @@
+2005-10-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        WebCore side of fix for <rdar://problem/4184719> window.print() followed by window.close() 
+        causes world leak
+
+        No test case added because I have another reviewed patch that will include a test
+        for this bug as well as many others.
+
+        Under some conditions, [WebDataSource stopLoading] did not set [WebDataSource isLoading]
+        to false, so the didFInishLoad delegates never fired.
+        
+        The reason isLoading didn't become false was that the tokenizer was still running.
+        The fix here is to add a call to Tokenizer::stopParsing inside HTMLPart::stopLoading. 
+        
+        Since the WebKit side of the fix eliminates an early return that used to protect
+        HTMLPart::stopLoading from multiple calls, I added an early return inside
+        HTMLPart::stopLoading.
+
+        I also merged stopped and stopLoading, and merged the way XMLTokenizer and HTMLTokenizer
+        track whether they're in a stopped state, because anything less would be uncivilized.
+        
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::stopParsing):
+        (khtml::HTMLTokenizer::processToken):
+        * khtml/html/htmltokenizer.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::stopLoading):
+        (KHTMLPart::endIfNotLoading):
+        (KHTMLPart::stop):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::Tokenizer::Tokenizer):
+        (khtml::Tokenizer::finishedParsing):
+        (khtml::XMLTokenizer::XMLTokenizer):
+        (khtml::XMLTokenizer::endElementNs):
+        (khtml::XMLTokenizer::characters):
+        (khtml::XMLTokenizer::error):
+        (khtml::XMLTokenizer::processingInstruction):
+        (khtml::XMLTokenizer::cdataBlock):
+        (khtml::XMLTokenizer::comment):
+        (khtml::XMLTokenizer::stopParsing):
+        * khtml/xml/xml_tokenizer.h:
+        (khtml::Tokenizer::stopParsing):
+        * kwq/KWQSignalStubs.mm:
+        (Loader::requestStarted):
+
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt

@@ -51,6 +51,7 @@ class Tokenizer : public QObject
     Q_OBJECT
 
 public:
+    Tokenizer();
     // script output must be prepended, while new data
     // received during executing a script must be appended, hence the
     // extra bool to be able to distinguish between both cases. document.write()
@@ -59,26 +60,24 @@ public:
     virtual void finish() = 0;
     virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() const = 0;
-    void stopParsing() { loadStopped = true; }
-
-    virtual void stopped() {};
+    virtual void stopParsing() { m_parserStopped = true; }
     virtual bool processingData() const { return false; }
 
-    // The tokenizer has buffers which mean parsing can continue even after
-    // loading is supposed to be stopped. If the loading process has stopped,
-    // so should we. 
-    bool loadStopped;
+protected:
+    // The tokenizer has buffers, so parsing may continue even after
+    // it stops receiving data. We use m_parserStopped to stop the tokenizer
+    // even when it has buffered data.
+    bool m_parserStopped;
     
 #ifdef KHTML_XSLT
+public:
     virtual void setTransformSource(DOM::DocumentImpl* doc) {};
 #endif
-    
+
 signals:
     void finishedParsing();
 
 #if APPLE_CHANGES
-public:
-    Tokenizer();
 private:
     KWQSignal m_finishedParsing;
 #endif

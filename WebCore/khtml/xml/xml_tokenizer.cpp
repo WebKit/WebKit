@@ -68,6 +68,20 @@ const int maxErrors = 25;
 
 typedef HashMap<DOMStringImpl *, DOMStringImpl *> PrefixForNamespaceMap;
 
+Tokenizer::Tokenizer() : m_parserStopped(false)
+#if APPLE_CHANGES
+    , m_finishedParsing(this, SIGNAL(finishedParsing()))
+#endif
+{
+}
+
+void Tokenizer::finishedParsing()
+{
+#if APPLE_CHANGES
+    m_finishedParsing.call();
+#endif
+}
+
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
@@ -82,6 +96,7 @@ public:
     virtual void finish();
     virtual void setOnHold(bool onHold);
     virtual bool isWaitingForScripts() const;
+    virtual void stopParsing();
 
 #ifdef KHTML_XSLT
     void setTransformSource(DocumentImpl* doc);
@@ -104,7 +119,6 @@ private:
 
     int lineNumber() const;
     int columnNumber() const;
-    void stopParsing();
 
     void insertErrorMessageBlock();
 
@@ -123,7 +137,6 @@ private:
     DOM::NodeImpl *m_currentNode;
 
     bool m_sawError;
-    bool m_parserStopped;
     bool m_sawXSLTransform;
     
     int m_errorCount;
@@ -196,26 +209,22 @@ static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
     : m_doc(_doc), m_view(_view),
       m_context(NULL), m_currentNode(m_doc->document()),
-      m_sawError(false), m_parserStopped(false), m_errorCount(0),
+      m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(false)
 {
     if (m_doc)
         m_doc->ref();
-    
-    //FIXME: XMLTokenizer should use this in a fashion similiar to how
-    //HTMLTokenizer uses loadStopped, in the future.
-    loadStopped = false;
 }
 
 XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentElement)
     : m_doc(fragment->docPtr()), m_view(0),
       m_context(0), m_currentNode(fragment),
-      m_sawError(false), m_parserStopped(false), m_errorCount(0),
+      m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(true)
 {
     if (m_doc)
         m_doc->ref();
-    
+          
     // Add namespaces based on the parent node
     QPtrStack<ElementImpl> elemStack;
     while (parentElement) {
@@ -237,10 +246,6 @@ XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentEl
             }
         }
     }
-          
-    //FIXME: XMLTokenizer should use this in a fashion similiar to how
-    //HTMLTokenizer uses loadStopped, in the future.
-    loadStopped = false;
 }
 
 XMLTokenizer::~XMLTokenizer()
@@ -380,7 +385,8 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
 
 void XMLTokenizer::endElementNs()
 {
-    if (m_parserStopped) return;
+    if (m_parserStopped) 
+        return;
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
@@ -394,7 +400,8 @@ void XMLTokenizer::endElementNs()
 
 void XMLTokenizer::characters(const xmlChar *s, int len)
 {
-    if (m_parserStopped) return;
+    if (m_parserStopped) 
+        return;
     
     if (m_currentNode->nodeType() == Node::TEXT_NODE ||
         m_currentNode->nodeType() == Node::CDATA_SECTION_NODE ||
@@ -430,9 +437,8 @@ void XMLTokenizer::exitText()
 
 void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
 {
-    if (m_parserStopped) {
+    if (m_parserStopped)
         return;
-    }
 
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber() && m_lastErrorColumn != columnNumber())) {
 
@@ -479,9 +485,8 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
 
 void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *data)
 {
-    if (m_parserStopped) {
+    if (m_parserStopped)
         return;
-    }
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
@@ -507,9 +512,8 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
 
 void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
 {
-    if (m_parserStopped) {
+    if (m_parserStopped)
         return;
-    }
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
@@ -534,7 +538,8 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
 
 void XMLTokenizer::comment(const xmlChar *s)
 {
-    if (m_parserStopped) return;
+    if (m_parserStopped) 
+        return;
     
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
@@ -816,8 +821,8 @@ int XMLTokenizer::columnNumber() const
 
 void XMLTokenizer::stopParsing()
 {
+    Tokenizer::stopParsing();
     xmlStopParser(m_context);
-    m_parserStopped = true;
 }
 
 bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fragment, ElementImpl *parent)

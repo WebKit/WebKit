@@ -124,7 +124,7 @@ public:
     virtual void setOnHold(bool onHold);
     virtual void setForceSynchronous(bool force);
     virtual bool isWaitingForScripts() const;
-    virtual void stopped();
+    virtual void stopParsing();
     virtual bool processingData() const;
 
 protected:

@@ -53,13 +53,3 @@ void Loader::requestStarted(DocLoader *l, CachedObject *o)
 {
     kwq->_requestStarted.call(l, o);
 }
-
-Tokenizer::Tokenizer()
-    : m_finishedParsing(this, SIGNAL(finishedParsing()))
-{
-}
-
-void Tokenizer::finishedParsing()
-{
-    m_finishedParsing.call();
-}
