@@ -55,9 +55,16 @@ function myfunc(e)
   document.getElementById("id4").firstChild.nodeValue = p.status;
   document.getElementById("id5").firstChild.nodeValue = p.statusText;
   document.getElementById("id6").firstChild.nodeValue = p.readyState;
-  var eventProperties = "";
+  var propNames = new Array;
   for (prop in e) {
-  	if (prop != "timeStamp")
+    if (prop != "timeStamp") {
+        propNames.push(prop);
+    }
+  }
+  propNames.sort();
+  var eventProperties = "";
+  for (i in propNames) {
+        var prop = propNames[i];
     	eventProperties += prop + " : '" + e[prop] + "'\n";
   }
   

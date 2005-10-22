@@ -1,3 +1,12 @@
+2005-10-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric, landed by Maciej.
+
+	- fixed xmlhttprequest test to not depend on property enumeration order
+
+        * fast/js/xmlhttprequest-get-expected.txt:
+        * fast/js/xmlhttprequest-get.xhtml:
+
 2005-10-21  Maciej Stachowiak  <mjs@apple.com>
 
         - temporarily reverted test changes corresponding to reverted changes
