@@ -325,10 +325,11 @@ void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     else
         mh = kMin(i.r.height(), h);
 
-    // If we have a native theme appearance, use that instead of painting our border/background.
-    if (style()->hasAppearance())
-        return theme()->paint(this, i, QRect(_tx, _ty, w, h));
-        
+    // If we have a native theme appearance, paint that before painting our border/background.  The theme will
+    // tell us whether or not we should also paint the CSS border/background.
+    if (style()->hasAppearance() && !theme()->paint(this, i, QRect(_tx, _ty, w, h)))
+        return;
+
     // The <body> only paints its background if the root element has defined a background
     // independent of the body.  Go through the DOM to get to the root element's render object,
     // since the root could be inline and wrapped in an anonymous block.

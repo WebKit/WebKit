@@ -48,8 +48,9 @@ public:
     void adjustStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e);
     
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
-    // text of a button, is always rendered by the engine itself.
-    void paint(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    // text of a button, is always rendered by the engine itself.  The boolean return value indicates
+    // whether the CSS border/background should also be painted.
+    bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // render_theme_mac.cpp for Mac OS X.
@@ -90,15 +91,15 @@ protected:
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
     virtual void setCheckboxSize(RenderStyle* style) const {};
     
     virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual void paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
     virtual void setRadioSize(RenderStyle* style) const {};
     
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual void paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
     virtual void setButtonSize(RenderStyle* style) const {};
 };
 

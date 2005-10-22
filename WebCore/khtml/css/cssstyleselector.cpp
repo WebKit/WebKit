@@ -746,7 +746,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     // 3. If our medium is print, then we match rules from the print sheet.
     if (m_medium == "print")
         matchRules(defaultPrintStyle, firstUARule, lastUARule);
-    
+
     // 4. Now we check user sheet rules.
     int firstUserRule = -1, lastUserRule = -1;
     matchRules(m_userStyle, firstUserRule, lastUserRule);
@@ -1625,7 +1625,7 @@ static const colorMap cmap[] = {
     { CSS_VAL_BUTTONSHADOW, 0xFFFFFFFF },
     { CSS_VAL_BUTTONTEXT, 0xFF000000 },
     { CSS_VAL_CAPTIONTEXT, 0xFF000000 },
-    { CSS_VAL_GRAYTEXT, 0xFF000000 },
+    { CSS_VAL_GRAYTEXT, 0xFF808080 },
     { CSS_VAL_HIGHLIGHT, 0xFFFFFFFF },
     { CSS_VAL_HIGHLIGHTTEXT, 0xFFFFFFFF },
     { CSS_VAL_INACTIVEBORDER, 0xFFFFFFFF },

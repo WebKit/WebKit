@@ -1,3 +1,72 @@
+2005-10-21  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+	Add support for the GrayText CSS2 system color to represent
+	the disabled text color for controls.
+	
+        * khtml/css/html4.css:
+	Make sure that the default cursor is set for all types of buttons
+	and not just the HTML4 button.
+
+	Set the foreground color for buttons using the CSS2 system color.
+	Set the disabled text color using the CSS2 system color.
+
+	Move the default padding for buttons into the CSS file.  It will
+	get overridden by Aqua buttons but be honored by all other types
+	of buttons.  This allows the author to override it as well when
+	customizing.
+	
+        * khtml/rendering/render_block.h:
+        Make paintChildren virtual so that RenderButton can push a clip
+	and pop a clip when painting children.
+	
+	* khtml/rendering/render_box.cpp:
+        (RenderBox::paintBoxDecorations):
+        Let the theme now decide whether the border/background should
+	still be painted after the theme has painted.  This allows buttons
+	to paint custom borders but still use a pretty OS X background for
+	the button face.
+	
+	* khtml/rendering/render_button.cpp:
+        (khtml::RenderButton::paintChildren):
+        Overridden to push/pop a clip so that the contents of a button
+	don't ever spill out.
+	
+	* khtml/rendering/render_button.h:
+        Added paintChildren method.
+	
+	* khtml/rendering/render_style.h:
+        (khtml::BorderData::hasBorder):
+        Fixed a regression in hasBorder.  The border-image logic was
+	inverted, resulting in hasBorder being true for every element!
+	
+	* khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::paint):
+        Patched to return a boolean indicating whether or not the
+	border/background should be painted.
+	
+	* khtml/rendering/render_theme.h:
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::adjustRepaintRect):
+        Forgot to include radio and button in this method so that repaint
+	rects would be correct.
+	
+	(khtml::RenderThemeMac::paintCheckbox):
+        (khtml::RenderThemeMac::paintRadio):
+        Adjusted to return the boolean to indicate that painting of
+	border/background should not occur.
+	
+	(khtml::RenderThemeMac::adjustButtonStyle):
+        Added support for border/background/colors.  Also locked
+	white-space to nowrap for Aqua buttons to avoid line wrapping.
+	
+	(khtml::RenderThemeMac::setButtonCellState):
+	(khtml::RenderThemeMac::paintButton):
+	More support for custom border/background/color.
+	
 2005-10-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.

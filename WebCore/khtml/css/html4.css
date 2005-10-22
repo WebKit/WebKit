@@ -278,8 +278,8 @@ fieldset {
 }
 
 button {
-    cursor: default;
-    -khtml-appearance: button
+    -khtml-appearance: button;
+    white-space: normal
 }
 
 input, textarea {
@@ -306,12 +306,21 @@ input[type="radio"], input[type="checkbox"] {
 
 input[type="button"], input[type="submit"], input[type="reset"]
 {
-    -khtml-appearance: push-button
+    -khtml-appearance: push-button;
+    white-space: pre;
+    line-height: normal !important
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], button {
     -khtml-box-align: center;
     text-align:center;
+    cursor: default;
+    color: ButtonText;
+    padding: 2px 8px 3px 8px
+}
+
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled {
+    color: GrayText;
 }
 
 select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {

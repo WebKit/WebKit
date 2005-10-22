@@ -49,14 +49,14 @@ public:
 
 protected:
     // Methods for each appearance value.
-    virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
     virtual void setCheckboxSize(RenderStyle* style) const;
     
-    virtual void paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
     virtual void setRadioSize(RenderStyle* style) const;
     
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual void paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
     virtual void setButtonSize(RenderStyle* style) const;
 
 private:

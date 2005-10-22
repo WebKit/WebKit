@@ -93,4 +93,22 @@ void RenderButton::updateFromElement()
     }
 }
 
+void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
+{
+    // Push a clip.
+    if (m_inner && i.phase == PaintActionForeground) {
+        QRect clipRect(_tx + m_inner->xPos(), _ty + m_inner->yPos(), m_inner->width(), m_inner->height());
+        clipRect = i.p->xForm(clipRect);
+        i.p->save();
+        i.p->addClip(clipRect);
+    }
+    
+    // Paint the children.
+    RenderBlock::paintObject(i, _tx, _ty);
+    
+    // Pop the clip.
+    if (m_inner && i.phase == PaintActionForeground)
+        i.p->restore();
+}
+
 }
