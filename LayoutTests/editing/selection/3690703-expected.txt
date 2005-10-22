@@ -2,12 +2,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -82,8 +76,14 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (191,0) size 395x45 [r=0 c=1 rs=1 cs=1]
                   RenderLineEdit {INPUT} at (2,2) size 391x19
                   RenderBR {BR} at (0,0) size 0x0
-                  RenderSubmitButton {INPUT} at (95,25) size 93x18
-                  RenderSubmitButton {INPUT} at (192,25) size 108x18
+                  RenderButton {INPUT} at (95,25) size 93x18
+                    RenderBlock (anonymous) at (8,2) size 77x13
+                      RenderText at (0,0) size 77x13
+                        text run at (0,0) width 77: "Google Search"
+                  RenderButton {INPUT} at (192,25) size 108x18
+                    RenderBlock (anonymous) at (8,2) size 92x13
+                      RenderText at (0,0) size 92x13
+                        text run at (0,0) width 92: "I'm Feeling Lucky"
                 RenderTableCell {TD} at (586,0) size 194x39 [r=0 c=2 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 74x39
                     RenderText {TEXT} at (0,0) size 6x13
@@ -140,4 +140,4 @@ layer at (0,0) size 800x600
             RenderText {TEXT} at (362,0) size 60x13
               text run at (362,0) width 60: "\x{A9}2005 Google"
 selection start: position 0 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 6 {BR} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 3 {INPUT} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
