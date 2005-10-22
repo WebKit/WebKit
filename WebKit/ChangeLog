@@ -1,3 +1,16 @@
+2005-10-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin??
+
+	Fix for <rdar://problem/3853672> Malformed HTML using crashes Safari in NSFireTimer
+
+	The webFrame was being deleted prematurely by a call to stop(), so we changed it
+	so that the calls to _receivedMainResourceError and _mainReceivedError happen 
+	before the stop(), and we retain the bridge.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+
 2005-10-21  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by TimO, Reviewed by hyatt, tested and landed by me.
