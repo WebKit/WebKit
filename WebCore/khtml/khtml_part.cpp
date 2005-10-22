@@ -1803,6 +1803,10 @@ void KHTMLPart::stopAnimations()
 
 void KHTMLPart::gotoAnchor()
 {
+    // If our URL has no ref, then we have no place we need to jump to.
+    if (!m_url.hasRef())
+        return;
+
     QString ref = m_url.encodedHtmlRef();
     if (!gotoAnchor(ref)) {
         // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
