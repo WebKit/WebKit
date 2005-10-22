@@ -1,3 +1,15 @@
+2005-10-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+	Fix for <rdar://problem/3947202> certain sequence of DOM 
+	method calls involving CSS outline and display crashes Safari 
+	(in repaint code).
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::destroy): Need to set m_continuation to 0 after it
+	is destroyed to prevent possible crashes.
+
 2005-10-21  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John.
