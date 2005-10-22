@@ -36,28 +36,27 @@ layer at (0,0) size 800x600
                     RenderText at (0,0) size 20x13
                       text run at (0,0) width 20: "Foo"
               RenderTableCell {TD} at (42,11) size 738x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,222) size 784x66
-        RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
-          RenderTableSection {TBODY} at (2,2) size 0x20
+      RenderBlock {P} at (0,222) size 784x303
+        RenderTable {TABLE} at (0,0) size 784x103 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 0x99
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 42x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderButton {INPUT} at (3,1) size 36x18
-                  RenderBlock (anonymous) at (8,2) size 20x13
+              RenderTableCell {TD} at (0,0) size 122x99 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderButton {INPUT} at (3,1) size 116x97 [border: (40px solid #FF0000)]
+                  RenderBlock (anonymous) at (48,42) size 20x13
                     RenderText at (0,0) size 20x13
                       text run at (0,0) width 20: "Foo"
-              RenderTableCell {TD} at (42,9) size 738x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-        RenderTable {TABLE} at (0,24) size 784x24 [border: (2px outset #808080)]
-          RenderTableSection {TBODY} at (2,2) size 0x20
+              RenderTableCell {TD} at (122,48) size 658x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+        RenderTable {TABLE} at (0,103) size 784x103 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 0x99
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 60x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderButton {INPUT} at (3,1) size 54x18
-                  RenderBlock (anonymous) at (8,-4) size 38x26
-                    RenderText at (0,0) size 38x26
-                      text run at (0,0) width 38: "Submit"
-                      text run at (3,13) width 31: "a bug"
-              RenderTableCell {TD} at (60,9) size 720x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-        RenderBlock (anonymous) at (0,48) size 784x18
-          RenderButton {INPUT} at (2,0) size 36x18
-            RenderBlock (anonymous) at (8,2) size 20x13
+              RenderTableCell {TD} at (0,0) size 174x99 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderButton {INPUT} at (3,1) size 168x97 [border: (40px solid #FF0000)]
+                  RenderBlock (anonymous) at (48,42) size 72x13
+                    RenderText at (0,0) size 72x13
+                      text run at (0,0) width 72: "Submit a bug"
+              RenderTableCell {TD} at (174,48) size 606x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+        RenderBlock (anonymous) at (0,206) size 784x97
+          RenderButton {INPUT} at (2,0) size 116x97 [border: (40px solid #FF0000)]
+            RenderBlock (anonymous) at (48,42) size 20x13
               RenderText at (0,0) size 20x13
                 text run at (0,0) width 20: "Foo"
