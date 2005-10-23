@@ -150,13 +150,16 @@ void CSSSelector::extractPseudoType() const
     static AtomicString firstChild("first-child");
     static AtomicString firstLetter("first-letter");
     static AtomicString firstLine("first-line");
+    static AtomicString firstOfType("first-of-type");
     static AtomicString focus("focus");
     static AtomicString hover("hover");
     static AtomicString link("link");
     static AtomicString lang("lang(");
     static AtomicString lastChild("last-child");
+    static AtomicString lastOfType("last-of-type");
     static AtomicString notStr("not(");
     static AtomicString onlyChild("only-child");
+    static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
     static AtomicString selection("selection");
     static AtomicString target("target");
@@ -193,7 +196,9 @@ void CSSSelector::extractPseudoType() const
     } else if (value == firstLine) {
         _pseudoType = PseudoFirstLine;
         element = compat = true;
-    } else if (value == focus)
+    } else if (value == firstOfType)
+        _pseudoType = PseudoFirstOfType;
+    else if (value == focus)
         _pseudoType = PseudoFocus;
     else if (value == hover)
         _pseudoType = PseudoHover;
@@ -203,10 +208,14 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoLang;
     else if (value == lastChild)
         _pseudoType = PseudoLastChild;
+    else if (value == lastOfType)
+        _pseudoType = PseudoLastOfType;
     else if (value == notStr)
         _pseudoType = PseudoNot;
     else if (value == onlyChild)
         _pseudoType = PseudoOnlyChild;
+    else if (value == onlyOfType)
+        _pseudoType = PseudoOnlyOfType;
     else if (value == root)
         _pseudoType = PseudoRoot;
     else if (value == selection) {

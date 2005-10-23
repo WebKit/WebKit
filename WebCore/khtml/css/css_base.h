@@ -77,97 +77,100 @@ namespace DOM {
               pseudoId( 0 ), _pseudoType(PseudoNotParsed)
         {}
         
-	CSSSelector(const QualifiedName& qName)
-	    : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(qName),
+        CSSSelector(const QualifiedName& qName)
+            : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(qName),
               relation( Descendant ), match( None ),
               pseudoId( 0 ), _pseudoType(PseudoNotParsed)
         {}
 
-	~CSSSelector() {
-	    delete tagHistory;
+        ~CSSSelector() {
+            delete tagHistory;
             delete simpleSelector;
             delete nextSelector;
-	}
+        }
 
         void append(CSSSelector* n) {
             if (!nextSelector) nextSelector = n; else nextSelector->append(n);
         }
         CSSSelector* next() { return nextSelector; }
 
-	/**
-	 * Print debug output for this selector
-	 */
-	void print();
+        /**
+         * Print debug output for this selector
+         */
+        void print();
 
-	/**
-	 * Re-create selector text from selector's data
-	 */
-	DOMString selectorText() const;
+        /**
+         * Re-create selector text from selector's data
+         */
+        DOMString selectorText() const;
 
-	// checks if the 2 selectors (including sub selectors) agree.
-	bool operator == ( const CSSSelector &other );
+        // checks if the 2 selectors (including sub selectors) agree.
+        bool operator == ( const CSSSelector &other );
 
-	// tag == -1 means apply to all elements (Selector = *)
+        // tag == -1 means apply to all elements (Selector = *)
 
-	unsigned int specificity();
+        unsigned int specificity();
 
-	/* how the attribute value has to match.... Default is Exact */
-	enum Match
-	{
-	    None = 0,
-	    Id,
+        /* how the attribute value has to match.... Default is Exact */
+        enum Match
+        {
+            None = 0,
+            Id,
         Class,
-	    Exact,
-	    Set,
-	    List,
-	    Hyphen,
-	    PseudoClass,
-	    PseudoElement,
-	    Contain,   // css3: E[foo*="bar"]
-	    Begin,     // css3: E[foo^="bar"]
-	    End        // css3: E[foo$="bar"]
-	};
+            Exact,
+            Set,
+            List,
+            Hyphen,
+            PseudoClass,
+            PseudoElement,
+            Contain,   // css3: E[foo*="bar"]
+            Begin,     // css3: E[foo^="bar"]
+            End        // css3: E[foo$="bar"]
+        };
 
-	enum Relation
-	{
-	    Descendant = 0,
-	    Child,
-	    DirectAdjacent,
+        enum Relation
+        {
+            Descendant = 0,
+            Child,
+            DirectAdjacent,
             IndirectAdjacent,
             SubSelector
-	};
+        };
 
-	enum PseudoType
-	{
-	    PseudoNotParsed = 0,
-	    PseudoOther,
-	    PseudoEmpty,
+        enum PseudoType
+        {
+            PseudoNotParsed = 0,
+            PseudoOther,
+            PseudoEmpty,
             PseudoFirstChild,
+            PseudoFirstOfType,
             PseudoLastChild,
+            PseudoLastOfType,
             PseudoOnlyChild,
-	    PseudoFirstLine,
-	    PseudoFirstLetter,
-	    PseudoLink,
-	    PseudoVisited,
+            PseudoOnlyOfType,
+            PseudoFirstLine,
+            PseudoFirstLetter,
+            PseudoLink,
+            PseudoVisited,
             PseudoAnyLink,
-	    PseudoHover,
-	    PseudoDrag,
-	    PseudoFocus,
-	    PseudoActive,
+            PseudoHover,
+            PseudoDrag,
+            PseudoFocus,
+            PseudoActive,
             PseudoChecked,
             PseudoEnabled,
             PseudoDisabled,
             PseudoTarget,
-	    PseudoBefore,
-	    PseudoAfter,
+            PseudoBefore,
+            PseudoAfter,
             PseudoLang,
             PseudoNot,
             PseudoRoot,
             PseudoSelection
-	};
+        };
 
-	inline PseudoType pseudoType() const
-	{
+        inline PseudoType pseudoType() const
+        {
             if (_pseudoType == PseudoNotParsed)
                 extractPseudoType();
             return _pseudoType;
@@ -176,91 +179,91 @@ namespace DOM {
         bool hasTag() const { return tag != anyQName(); }
         bool hasAttribute() const { return attr != anyQName(); }
 
-	mutable DOM::AtomicString value;
-	CSSSelector* tagHistory;
+        mutable DOM::AtomicString value;
+        CSSSelector* tagHistory;
         CSSSelector* simpleSelector; // Used for :not.
         CSSSelector* nextSelector; // used for ,-chained selectors
-	
+        
         QualifiedName attr;
         QualifiedName tag;
         
         Relation relation              : 3;
-	mutable Match  match           : 4;
-	unsigned int pseudoId          : 3;
-	mutable PseudoType _pseudoType : 5;
+        mutable Match  match           : 4;
+        unsigned int pseudoId          : 3;
+        mutable PseudoType _pseudoType : 5;
 
     private:
-	void extractPseudoType() const;
+        void extractPseudoType() const;
     };
 
     // a style class which has a parent (almost all have)
     class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
     {
     public:
-	StyleBaseImpl()  { m_parent = 0; strictParsing = true; multiLength = false; }
-	StyleBaseImpl(StyleBaseImpl *p) {
-	    m_parent = p;
-	    strictParsing = (m_parent ? m_parent->useStrictParsing() : true);
-	    multiLength = false;
-	}
+        StyleBaseImpl()  { m_parent = 0; strictParsing = true; multiLength = false; }
+        StyleBaseImpl(StyleBaseImpl *p) {
+            m_parent = p;
+            strictParsing = (m_parent ? m_parent->useStrictParsing() : true);
+            multiLength = false;
+        }
 
-	virtual ~StyleBaseImpl() {}
+        virtual ~StyleBaseImpl() {}
 
-	// returns the url of the style sheet this object belongs to
-	DOMString baseURL();
+        // returns the url of the style sheet this object belongs to
+        DOMString baseURL();
 
-	virtual bool isStyleSheet() const { return false; }
-	virtual bool isCSSStyleSheet() const { return false; }
+        virtual bool isStyleSheet() const { return false; }
+        virtual bool isCSSStyleSheet() const { return false; }
         virtual bool isXSLStyleSheet() const { return false; }
-	virtual bool isStyleSheetList() const { return false; }
-	virtual bool isMediaList() { return false; }
-	virtual bool isRuleList() { return false; }
-	virtual bool isRule() { return false; }
-	virtual bool isStyleRule() { return false; }
-	virtual bool isCharetRule() { return false; }
-	virtual bool isImportRule() { return false; }
-	virtual bool isMediaRule() { return false; }
-	virtual bool isFontFaceRule() { return false; }
-	virtual bool isPageRule() { return false; }
-	virtual bool isUnknownRule() { return false; }
-	virtual bool isStyleDeclaration() { return false; }
-	virtual bool isValue() { return false; }
-	virtual bool isPrimitiveValue() const { return false; }
-	virtual bool isValueList() { return false; }
-	virtual bool isValueCustom() { return false; }
+        virtual bool isStyleSheetList() const { return false; }
+        virtual bool isMediaList() { return false; }
+        virtual bool isRuleList() { return false; }
+        virtual bool isRule() { return false; }
+        virtual bool isStyleRule() { return false; }
+        virtual bool isCharetRule() { return false; }
+        virtual bool isImportRule() { return false; }
+        virtual bool isMediaRule() { return false; }
+        virtual bool isFontFaceRule() { return false; }
+        virtual bool isPageRule() { return false; }
+        virtual bool isUnknownRule() { return false; }
+        virtual bool isStyleDeclaration() { return false; }
+        virtual bool isValue() { return false; }
+        virtual bool isPrimitiveValue() const { return false; }
+        virtual bool isValueList() { return false; }
+        virtual bool isValueCustom() { return false; }
 
-	void setParent(StyleBaseImpl *parent) { m_parent = parent; }
+        void setParent(StyleBaseImpl *parent) { m_parent = parent; }
 
-	virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
+        virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
 
-	virtual void checkLoaded();
+        virtual void checkLoaded();
 
-	void setStrictParsing( bool b ) { strictParsing = b; }
-	bool useStrictParsing() const { return strictParsing; }
+        void setStrictParsing( bool b ) { strictParsing = b; }
+        bool useStrictParsing() const { return strictParsing; }
 
-	StyleSheetImpl* stylesheet();
+        StyleSheetImpl* stylesheet();
 
     protected:
-	bool strictParsing : 1;
-	bool multiLength : 1;
+        bool strictParsing : 1;
+        bool multiLength : 1;
     };
 
     // a style class which has a list of children (StyleSheets for example)
     class StyleListImpl : public StyleBaseImpl
     {
     public:
-	StyleListImpl() : StyleBaseImpl() { m_lstChildren = 0; }
-	StyleListImpl(StyleBaseImpl *parent) : StyleBaseImpl(parent) { m_lstChildren = 0; }
+        StyleListImpl() : StyleBaseImpl() { m_lstChildren = 0; }
+        StyleListImpl(StyleBaseImpl *parent) : StyleBaseImpl(parent) { m_lstChildren = 0; }
 
-	virtual ~StyleListImpl();
+        virtual ~StyleListImpl();
 
-	unsigned length() { return m_lstChildren->count(); }
-	StyleBaseImpl *item(unsigned num) { return m_lstChildren->at(num); }
+        unsigned length() { return m_lstChildren->count(); }
+        StyleBaseImpl *item(unsigned num) { return m_lstChildren->at(num); }
 
-	void append(StyleBaseImpl *item) { m_lstChildren->append(item); }
+        void append(StyleBaseImpl *item) { m_lstChildren->append(item); }
 
     protected:
-	QPtrList<StyleBaseImpl> *m_lstChildren;
+        QPtrList<StyleBaseImpl> *m_lstChildren;
     };
 
     int getPropertyID(const char *tagStr, int len);

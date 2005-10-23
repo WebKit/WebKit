@@ -1048,7 +1048,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
             bool found = false;
             while(!found)
             {
-		n = n->parentNode();
+                n = n->parentNode();
                 if(!n || !n->isElementNode()) return false;
                 ElementImpl *elem = static_cast<ElementImpl *>(n);
                 if (checkOneSelector(sel, elem)) found = true;
@@ -1091,7 +1091,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
             break;
         }
        case CSSSelector::SubSelector:
-	{
+       {
             if (onlyHoverActive)
                 onlyHoverActive = (sel->match == CSSSelector::PseudoClass &&
                                    (sel->pseudoType() == CSSSelector::PseudoHover ||
@@ -1105,7 +1105,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
 	    if (!checkOneSelector(sel, elem)) return false;
 	    //kdDebug() << "CSSOrderedRule::checkSelector: passed" << endl;
 	    break;
-	}
+        }
         }
         relation = sel->relation;
     }
@@ -1259,46 +1259,93 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
     {
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
-//	kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
-	    switch (sel->pseudoType()) {
-	        // Pseudo classes:
+//        kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
+            switch (sel->pseudoType()) {
+                // Pseudo classes:
             case CSSSelector::PseudoEmpty:
                 if (!e->firstChild())
                     return true;
                 break;
             case CSSSelector::PseudoFirstChild: {
                 // first-child matches the first child that is an element!
-                if (e->parentNode()) {
-                    NodeImpl* n = e->previousSibling();
-                    while ( n && !n->isElementNode() )
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    NodeImpl *n = e->previousSibling();
+                    while (n && !n->isElementNode())
                         n = n->previousSibling();
-                    if ( !n )
+                    if (!n)
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoFirstOfType: {
+                // first-of-type matches the first element of its type!
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    const QualifiedName& type = e->tagName();
+                    NodeImpl *n = e->previousSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<ElementImpl*>(n)->hasTagName(type))
+                            break;
+                        n = n->previousSibling();
+                    }
+                    if (!n)
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoLastChild: {
                 // last-child matches the last child that is an element!
-                if (e->parentNode()) {
-                    NodeImpl* n = e->nextSibling();
-                    while ( n && !n->isElementNode() )
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    NodeImpl *n = e->nextSibling();
+                    while (n && !n->isElementNode())
                         n = n->nextSibling();
-                    if ( !n )
+                    if (!n)
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoLastOfType: {
+                // last-of-type matches the last element of its type!
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    const QualifiedName& type = e->tagName();
+                    NodeImpl *n = e->nextSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<ElementImpl*>(n)->hasTagName(type))
+                            break;
+                        n = n->nextSibling();
+                    }
+                    if (!n)
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoOnlyChild: {
                 // If both first-child and last-child apply, then only-child applies.
-                if (e->parentNode()) {
-                    NodeImpl* n = e->previousSibling();
-                    while ( n && !n->isElementNode() )
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    NodeImpl *n = e->previousSibling();
+                    while (n && !n->isElementNode())
                         n = n->previousSibling();
-                    if ( !n ) {
+                    if (!n) {
                         n = e->nextSibling();
-                        while ( n && !n->isElementNode() )
+                        while (n && !n->isElementNode())
                             n = n->nextSibling();
-                        if ( !n )
+                        if (!n)
+                            return true;
+                    }
+                }
+                break;
+            }
+            case CSSSelector::PseudoOnlyOfType: {
+                // If both first-of-type and last-of-type apply, then only-of-type applies.
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    const QualifiedName& type = e->tagName();
+                    NodeImpl *n = e->previousSibling();
+                    while (n && !static_cast<ElementImpl*>(n)->hasTagName(type))
+                        n = n->previousSibling();
+                    if (!n) {
+                        n = e->nextSibling();
+                        while (n && !static_cast<ElementImpl*>(n)->hasTagName(type))
+                            n = n->nextSibling();
+                        if (!n)
                             return true;
                     }
                 }
@@ -1315,15 +1362,15 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
                     return true;
                 break;
             case CSSSelector::PseudoLink:
-                if ( pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink )
-                    checkPseudoState( e );
-                if ( pseudoState == PseudoLink )
+                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
+                    checkPseudoState(e);
+                if (pseudoState == PseudoLink)
                     return true;
                 break;
             case CSSSelector::PseudoVisited:
-                if ( pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink )
-                    checkPseudoState( e );
-                if ( pseudoState == PseudoVisited )
+                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
+                    checkPseudoState(e);
+                if (pseudoState == PseudoVisited)
                     return true;
                 break;
             case CSSSelector::PseudoHover: {
@@ -1411,13 +1458,13 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             
             // Pseudo-elements:
             case CSSSelector::PseudoFirstLine:
-                if ( subject ) {
+                if (subject) {
                     dynamicPseudo=RenderStyle::FIRST_LINE;
                     return true;
                 }
                 break;
             case CSSSelector::PseudoFirstLetter:
-                if ( subject ) {
+                if (subject) {
                     dynamicPseudo=RenderStyle::FIRST_LETTER;
                     return true;
                 }
@@ -1436,7 +1483,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
                 assert(false);
                 break;
         }
-	    return false;
+            return false;
     }
     // ### add the rest of the checks...
     return true;

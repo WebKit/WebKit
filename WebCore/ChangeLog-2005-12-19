@@ -1,3 +1,50 @@
+2005-10-23  Nicholas Shanks  <contact@nickshanks.com>
+
+        Reviewed by Dave Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3442
+        Adds support for :first-of-type CSS3 pseudo-selectors
+        And builds foundations for :last-of-type and :only-of-type
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::CSSSelector):
+        (DOM::CSSSelector::~CSSSelector):
+        (DOM::CSSSelector::):
+        (DOM::CSSSelector::pseudoType):
+        (DOM::StyleBaseImpl::StyleBaseImpl):
+        (DOM::StyleBaseImpl::~StyleBaseImpl):
+        (DOM::StyleBaseImpl::isStyleSheet):
+        (DOM::StyleBaseImpl::isCSSStyleSheet):
+        (DOM::StyleBaseImpl::isStyleSheetList):
+        (DOM::StyleBaseImpl::isMediaList):
+        (DOM::StyleBaseImpl::isRuleList):
+        (DOM::StyleBaseImpl::isRule):
+        (DOM::StyleBaseImpl::isStyleRule):
+        (DOM::StyleBaseImpl::isCharetRule):
+        (DOM::StyleBaseImpl::isImportRule):
+        (DOM::StyleBaseImpl::isMediaRule):
+        (DOM::StyleBaseImpl::isFontFaceRule):
+        (DOM::StyleBaseImpl::isPageRule):
+        (DOM::StyleBaseImpl::isUnknownRule):
+        (DOM::StyleBaseImpl::isStyleDeclaration):
+        (DOM::StyleBaseImpl::isValue):
+        (DOM::StyleBaseImpl::isPrimitiveValue):
+        (DOM::StyleBaseImpl::isValueList):
+        (DOM::StyleBaseImpl::isValueCustom):
+        (DOM::StyleBaseImpl::setParent):
+        (DOM::StyleBaseImpl::parseString):
+        (DOM::StyleBaseImpl::setStrictParsing):
+        (DOM::StyleBaseImpl::useStrictParsing):
+        (DOM::StyleListImpl::StyleListImpl):
+        (DOM::StyleListImpl::length):
+        (DOM::StyleListImpl::item):
+        (DOM::StyleListImpl::append):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+
 2005-10-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed by darin
