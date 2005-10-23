@@ -1,3 +1,13 @@
+2005-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Layout test to go with fix for bugzilla bug 3442 
+        Adds support for :first-of-type CSS3 pseudo-selectors
+
+        * fast/selectors/034-expected.checksum: Added.
+        * fast/selectors/034-expected.png: Added.
+        * fast/selectors/034-expected.txt: Added.
+        * fast/selectors/034.html: Added.
+
 2005-10-22  Darin Adler  <darin@apple.com>
 
         - updated pixel results for tests with results that changed recently
