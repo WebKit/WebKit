@@ -1,3 +1,11 @@
+2005-10-23 Julien Palmas <julien.palmas@gmail.com>
+
+        Reviewed by mjs.
+
+        * WebCore+SVG/xml_kdomtokenizer.cpp:
+        (KDOMTokenizer::KDOMTokenizer): build fix.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5462
+
 2005-10-23  Nicholas Shanks  <contact@nickshanks.com>
 
         Reviewed by Dave Hyatt.
