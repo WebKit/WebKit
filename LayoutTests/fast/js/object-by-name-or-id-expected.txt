@@ -1,0 +1,22 @@
+This tests when object elements are accessible by name or id directly as properties of the document object. IE allows this only if the object has not child nodes other than param and whitespace anonymous text. A PASS result means that behavior matches IE. WebKit’s results for comments differ.
+
+Results:
+
+By name:
+no children: PASS
+param: PASS
+param and whitespace: PASS
+param and empty comment (expected to fail): FAIL
+param and non-empty comment (expected to fail): FAIL
+param and text: PASS
+param and img: PASS
+
+By id:
+no children: PASS
+param: PASS
+param and whitespace: PASS
+param and empty comment (expected to fail): FAIL
+param and non-empty comment (expected to fail): FAIL
+param and text: PASS
+param and img: PASS
+

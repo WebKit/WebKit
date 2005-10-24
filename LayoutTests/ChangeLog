@@ -1,3 +1,13 @@
+2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.  Committed by David Harrison.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5449
+        "OBJECT should be accessible by id/name as document property only if its only children are PARAMs"
+
+        * fast/js/object-by-name-or-id-expected.txt: Added.
+        * fast/js/object-by-name-or-id.html: Added.
+
 2005-10-24  Beth Dakin  <bdakin@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5318
