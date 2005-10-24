@@ -1,3 +1,12 @@
+2005-10-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Re-landing Dave Hyatt's changes from when the tree was closed.
+
+        * fast/clip/008-expected.txt:
+        * fast/css/acid2-expected.txt:
+        * fast/css/acid2-pixel-expected.txt:
+        * fast/table/overflowHidden-expected.txt:
+
 2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.  Committed by David Harrison.

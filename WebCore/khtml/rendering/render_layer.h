@@ -187,11 +187,9 @@ public:
     Marquee* marquee() const { return m_marquee; }
     void suspendMarquees();
 
-#if APPLE_CHANGES
-    bool isTransparent();
+    bool isTransparent() const;
     RenderLayer* transparentAncestor();
     void beginTransparencyLayers(QPainter* p);
-#endif
     
     RenderLayer* root() {
         RenderLayer* curr = this;

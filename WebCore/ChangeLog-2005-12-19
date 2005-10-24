@@ -1,3 +1,21 @@
+2005-10-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Re-landing Dave Hyatt's changes from when the tree was closed.
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::destroy):
+        (RenderContainer::destroyLeftoverAnonymousChildren):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::destroy):
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::isTransparent):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::isOverflowOnly):
+        (khtml::compare):
+        (khtml::sortByZOrder):
+        * khtml/rendering/render_layer.h:
+
 2005-10-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin Adler.

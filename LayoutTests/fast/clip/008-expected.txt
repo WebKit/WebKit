@@ -11,9 +11,9 @@ layer at (0,0) size 800x70
         text run at (293,18) width 446: "a containing block model, and that a fixed positioned element inside an"
         text run at (0,36) width 353: "absolute positioned element is not considered overflow. "
       RenderText {TEXT} at (0,0) size 0x0
+layer at (200,200) size 100x100
+  RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#008000]
 layer at (8,62) size 100x100
   RenderBlock (positioned) {DIV} at (8,62) size 100x100
 layer at (100,100) size 200x200
   RenderBlock (positioned) {DIV} at (100,100) size 100x100
-layer at (200,200) size 100x100
-  RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#008000]
