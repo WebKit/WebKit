@@ -1,3 +1,21 @@
+2005-10-24  Vicki Murley  <vicki@apple.com>
+
+        Changes by Alexey Proskuryakov, reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5140 (CachedObject loading 
+	ignores charset from HTTP headers)
+
+	* khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::setCharset):
+        (CachedScript::setCharset):
+        (CachedXSLStyleSheet::setCharset):
+        (CachedXSLStyleSheet::data):
+        (CachedXBLDocument::CachedXBLDocument):
+        (CachedXBLDocument::setCharset):
+        (CachedXBLDocument::data):
+        (Loader::slotReceivedResponse):
+        * khtml/misc/loader.h:
+
 2005-10-24  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt, landed by beth.

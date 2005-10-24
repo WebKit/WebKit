@@ -155,6 +155,7 @@ namespace khtml
 	}
 	virtual ~CachedObject();
 
+	virtual void setCharset( const QString &chs ) {}
 	virtual void data( QBuffer &buffer, bool eof) = 0;
 	virtual void error( int err, const char *text ) = 0;
 
@@ -267,7 +268,8 @@ namespace khtml
 	virtual void ref(CachedObjectClient *consumer);
 	virtual void deref(CachedObjectClient *consumer);
 
-	virtual void data( QBuffer &buffer, bool eof );
+        virtual void setCharset( const QString &chs );
+        virtual void data( QBuffer &buffer, bool eof );
 	virtual void error( int err, const char *text );
 
         virtual bool schedule() const { return true; }
@@ -294,6 +296,7 @@ namespace khtml
 	virtual void ref(CachedObjectClient *consumer);
 	virtual void deref(CachedObjectClient *consumer);
 
+        virtual void setCharset( const QString &chs );
 	virtual void data( QBuffer &buffer, bool eof );
 	virtual void error( int err, const char *text );
 
@@ -423,6 +426,7 @@ public:
         virtual void ref(CachedObjectClient *consumer);
         virtual void deref(CachedObjectClient *consumer);
         
+        virtual void setCharset(const QString &chs);
         virtual void data(QBuffer &buffer, bool eof);
         virtual void error(int err, const char *text);
         
@@ -448,6 +452,7 @@ protected:
         virtual void ref(CachedObjectClient *consumer);
         virtual void deref(CachedObjectClient *consumer);
         
+        virtual void setCharset( const QString &chs );
         virtual void data( QBuffer &buffer, bool eof );
         virtual void error( int err, const char *text );
         
@@ -457,7 +462,7 @@ protected:
         
 protected:
         XBL::XBLDocumentImpl* m_document;
-        QTextCodec* m_codec;
+        Decoder* m_decoder;
     };
 #endif
 
