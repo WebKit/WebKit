@@ -30,7 +30,7 @@ namespace KDOM
 
 namespace XPointer
 {
-    class XPointerExceptionImpl : public Shared
+    class XPointerExceptionImpl : public Shared<XPointerExceptionImpl>
     {
     public:
         XPointerExceptionImpl(unsigned short code);

@@ -34,7 +34,7 @@
 namespace KDOM
 {
     class NodeImpl;
-    class NodeListImpl : public Shared
+    class NodeListImpl : public Shared<NodeListImpl>
     {
     public:
         NodeListImpl(NodeImpl *_refNode);

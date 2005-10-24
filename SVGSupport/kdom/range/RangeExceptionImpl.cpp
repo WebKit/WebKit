@@ -25,7 +25,7 @@
 
 using namespace KDOM;
 
-RangeExceptionImpl::RangeExceptionImpl(unsigned short code) : Shared()
+RangeExceptionImpl::RangeExceptionImpl(unsigned short code) : Shared<RangeExceptionImpl>()
 {
     ref(); // ExceptionImpl classes need to ref themselves() as it's just
            // very convienient to just use 'throw new ExceptionImpl' ...

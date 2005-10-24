@@ -27,7 +27,7 @@
 
 using namespace KSVG;
 
-SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
+SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : KDOM::Shared<SVGRectImpl>()
 {
     m_context = context;
     m_x = m_y = m_width = m_height = 0.0;

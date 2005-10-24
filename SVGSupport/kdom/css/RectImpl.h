@@ -29,7 +29,7 @@ namespace KDOM
 {
     class CDFInterface;
     class CSSPrimitiveValueImpl;
-    class RectImpl : public Shared
+    class RectImpl : public Shared<RectImpl>
     {
     public:
         RectImpl(CDFInterface *interface);

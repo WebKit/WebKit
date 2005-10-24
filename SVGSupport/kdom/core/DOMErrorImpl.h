@@ -35,11 +35,11 @@ namespace KDOM
     {
         SEVERITY_WARNING = 1,
         SEVERITY_ERROR = 2,
-        SEVERITY_FATAL_ERROR = 3,
+        SEVERITY_FATAL_ERROR = 3
     };
 
     // Introduced in DOM Level 3:
-    class DOMErrorImpl : public Shared
+    class DOMErrorImpl : public Shared<DOMErrorImpl>
     {
     public:
         DOMErrorImpl();

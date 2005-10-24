@@ -25,7 +25,7 @@
 
 using namespace KDOM;
 
-DOMExceptionImpl::DOMExceptionImpl(unsigned short code) : Shared()
+DOMExceptionImpl::DOMExceptionImpl(unsigned short code) : Shared<DOMExceptionImpl>()
 {
     ref(); // ExceptionImpl classes need to ref themselves() as it's just
            // very convienient to just use 'throw new ExceptionImpl' ...

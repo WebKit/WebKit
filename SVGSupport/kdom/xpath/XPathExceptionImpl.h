@@ -33,7 +33,7 @@ namespace KDOM
 namespace XPath
 {
 
-class XPathExceptionImpl : public Shared
+class XPathExceptionImpl : public Shared<XPathExceptionImpl>
 {
     public:
         XPathExceptionImpl( unsigned short code );

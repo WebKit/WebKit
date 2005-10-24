@@ -35,7 +35,7 @@ using namespace KDOM;
 
 RenderStyle *RenderStyle::s_defaultStyle = 0;
 
-RenderStyle::RenderStyle() : Shared()
+RenderStyle::RenderStyle() : Shared<RenderStyle>()
 {
     if(!s_defaultStyle)
         s_defaultStyle = new RenderStyle(true);
@@ -57,7 +57,7 @@ RenderStyle::RenderStyle() : Shared()
     counter_increment = 0;
 }
 
-RenderStyle::RenderStyle(bool) : Shared()
+RenderStyle::RenderStyle(bool) : Shared<RenderStyle>()
 {
     setBitDefaults();
     
@@ -76,7 +76,7 @@ RenderStyle::RenderStyle(bool) : Shared()
     counter_increment = 0;
 }
 
-RenderStyle::RenderStyle(const RenderStyle &other) : Shared()
+RenderStyle::RenderStyle(const RenderStyle &other) : Shared<RenderStyle>()
 {
     inherited_flags = other.inherited_flags;
     noninherited_flags = other.noninherited_flags;

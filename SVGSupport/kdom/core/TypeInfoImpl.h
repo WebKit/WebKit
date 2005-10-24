@@ -30,7 +30,7 @@ namespace KDOM
     class DOMStringImpl;
 
     // Introduced in DOM Level 3:
-    class TypeInfoImpl : public Shared
+    class TypeInfoImpl : public Shared<TypeInfoImpl>
     {
     public:
         TypeInfoImpl();

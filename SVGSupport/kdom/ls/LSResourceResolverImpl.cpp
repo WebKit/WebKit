@@ -26,7 +26,7 @@
 
 using namespace KDOM;
 
-LSResourceResolverImpl::LSResourceResolverImpl() : Shared()
+LSResourceResolverImpl::LSResourceResolverImpl() : Shared<LSResourceResolverImpl>()
 {
 }
 

@@ -31,7 +31,7 @@
 using namespace KDOM;
 
 NodeFilterImpl::NodeFilterImpl(NodeFilterCondition *condition)
-: Shared(), m_condition(condition)
+: Shared<NodeFilterImpl>(), m_condition(condition)
 {
     if(m_condition)
         m_condition->ref();

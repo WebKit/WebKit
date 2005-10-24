@@ -33,7 +33,7 @@ using namespace KDOM;
 using namespace KDOM::XPointer;
 
 PointerPartImpl::PointerPartImpl(DOMStringImpl *name, DOMStringImpl *schemeData, NBCImpl *nbc)
-: Shared(), m_data(schemeData), m_name(name), m_nbc(nbc)
+: Shared<PointerPartImpl>(), m_data(schemeData), m_name(name), m_nbc(nbc)
 {
     Q_ASSERT(m_name);
     Q_ASSERT(m_data);

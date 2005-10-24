@@ -37,7 +37,7 @@ namespace KDOM
     class LSSerializerFilterImpl;
     class DocumentTypeImpl;
 
-    class LSSerializerImpl : public Shared
+    class LSSerializerImpl : public Shared<LSSerializerImpl>
     {
     public:
         LSSerializerImpl();

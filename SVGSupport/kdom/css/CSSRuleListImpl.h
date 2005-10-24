@@ -30,7 +30,7 @@
 namespace KDOM
 {
     class CSSRuleImpl;
-    class CSSRuleListImpl : public Shared
+    class CSSRuleListImpl : public Shared<CSSRuleListImpl>
     {
     public:
         CSSRuleListImpl();

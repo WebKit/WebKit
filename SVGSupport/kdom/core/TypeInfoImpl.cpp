@@ -24,7 +24,7 @@
 
 using namespace KDOM;
 
-TypeInfoImpl::TypeInfoImpl() : Shared()
+TypeInfoImpl::TypeInfoImpl()
 {
 }
 

@@ -30,7 +30,7 @@ namespace KSVG
 {
     class SVGStyledElementImpl;
 
-    class SVGAngleImpl : public KDOM::Shared
+    class SVGAngleImpl : public KDOM::Shared<SVGAngleImpl>
     {
     public:
         SVGAngleImpl(const SVGStyledElementImpl *context);

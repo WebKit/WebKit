@@ -30,16 +30,16 @@
 
 using namespace KSVG;
 
-SVGMatrixImpl::SVGMatrixImpl() : KDOM::Shared()
+SVGMatrixImpl::SVGMatrixImpl() : KDOM::Shared<SVGMatrixImpl>()
 {
 }
 
-SVGMatrixImpl::SVGMatrixImpl(QMatrix mat) : KDOM::Shared()
+SVGMatrixImpl::SVGMatrixImpl(QMatrix mat) : KDOM::Shared<SVGMatrixImpl>()
 {
     m_mat = mat;
 }
 
-SVGMatrixImpl::SVGMatrixImpl(double a, double b, double c, double d, double e, double f) : KDOM::Shared()
+SVGMatrixImpl::SVGMatrixImpl(double a, double b, double c, double d, double e, double f) : KDOM::Shared<SVGMatrixImpl>()
 {
     m_mat.setMatrix(a, b, c, d, e, f);
 }

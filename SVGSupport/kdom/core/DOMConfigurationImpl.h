@@ -33,7 +33,7 @@ namespace KDOM
     class DOMUserDataImpl;
     class DOMStringListImpl;
 
-    class DOMConfigurationImpl : public Shared
+    class DOMConfigurationImpl : public Shared<DOMConfigurationImpl>
     {
     public:
         DOMConfigurationImpl();

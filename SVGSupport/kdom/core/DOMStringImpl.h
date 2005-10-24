@@ -33,7 +33,7 @@
 
 namespace KDOM
 {
-    class DOMStringImpl : public Shared
+    class DOMStringImpl : public Shared<DOMStringImpl>
     {
     public:
         DOMStringImpl();

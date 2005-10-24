@@ -29,7 +29,7 @@
 
 using namespace KDOM;
 
-AbstractViewImpl::AbstractViewImpl() : Shared()
+AbstractViewImpl::AbstractViewImpl() : Shared<AbstractViewImpl>()
 {
     m_documentView = 0;
 }

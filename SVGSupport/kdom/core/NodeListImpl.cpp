@@ -32,7 +32,7 @@
 
 using namespace KDOM;
 
-NodeListImpl::NodeListImpl(NodeImpl *refNode) : Shared(), m_refNode(refNode)
+NodeListImpl::NodeListImpl(NodeImpl *refNode) : Shared<NodeListImpl>(), m_refNode(refNode)
 {
     if(m_refNode)
         m_refNode->ref();

@@ -54,7 +54,7 @@ QString UnitText[] =
     QString::fromLatin1("pc")
 };
 
-SVGLengthImpl::SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : KDOM::Shared()
+SVGLengthImpl::SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : KDOM::Shared<SVGLengthImpl>()
 {
     m_mode = mode;
     m_context = context;

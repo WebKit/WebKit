@@ -30,7 +30,7 @@ namespace KDOM
     class NodeImpl;
     class ElementImpl;
 
-    class LSParserFilterImpl : public Shared
+    class LSParserFilterImpl : public Shared<LSParserFilterImpl>
     {
     public:
         LSParserFilterImpl();

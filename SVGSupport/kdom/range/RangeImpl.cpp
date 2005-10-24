@@ -40,7 +40,7 @@
 
 using namespace KDOM;
 
-RangeImpl::RangeImpl(DocumentPtr *_ownerDocument)  : Shared()
+RangeImpl::RangeImpl(DocumentPtr *_ownerDocument)  : Shared<RangeImpl>()
 {
     m_ownerDocument = _ownerDocument;
     m_ownerDocument->ref();
@@ -58,7 +58,7 @@ RangeImpl::RangeImpl(DocumentPtr *_ownerDocument)  : Shared()
 
 RangeImpl::RangeImpl(DocumentPtr *_ownerDocument,
                      NodeImpl *_startContainer, long _startOffset,
-                     NodeImpl *_endContainer, long _endOffset) : Shared()
+                     NodeImpl *_endContainer, long _endOffset) : Shared<RangeImpl>()
 {
     m_ownerDocument = _ownerDocument;
     m_ownerDocument->ref();

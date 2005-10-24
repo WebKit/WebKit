@@ -29,7 +29,7 @@ namespace KDOM
     class DOMStringImpl;
     class LSInputImpl;
 
-    class LSResourceResolverImpl : public Shared
+    class LSResourceResolverImpl : public Shared<LSResourceResolverImpl>
     {
     public:
         LSResourceResolverImpl();

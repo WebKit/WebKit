@@ -34,7 +34,7 @@ namespace KSVG
 {
     class SVGElementImpl;
     class SVGStyledElementImpl;
-    class SVGLengthImpl : public KDOM::Shared
+    class SVGLengthImpl : public KDOM::Shared<SVGLengthImpl>
     {
     public:
         SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode = LM_UNKNOWN, const SVGElementImpl *viewport = 0);

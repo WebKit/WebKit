@@ -60,8 +60,9 @@ namespace KDOM
     class NodeListImpl;
     class DocumentImpl;
     class NamedAttrMapImpl;
+    template<typename T> class SharedPtr;
 
-    class DocumentPtr : public Shared
+    class DocumentPtr : public Shared<DocumentPtr>
     {
     public:
         DocumentPtr() { doc = 0; }
@@ -82,6 +83,8 @@ namespace KDOM
     class NodeImpl : public EventTargetImpl
     {
     public:
+        typedef SharedPtr<NodeImpl> Ptr;
+
         NodeImpl(DocumentPtr *doc);
         virtual ~NodeImpl();
 

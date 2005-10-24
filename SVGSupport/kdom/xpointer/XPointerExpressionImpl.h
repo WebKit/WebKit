@@ -39,7 +39,7 @@ namespace XPointer
     class PointerPartImpl;
     class XPointerResultImpl;
 
-    class XPointerExpressionImpl : public Shared
+    class XPointerExpressionImpl : public Shared<XPointerExpressionImpl>
     {
     public:
         typedef Q3ValueList<PointerPartImpl *> List;

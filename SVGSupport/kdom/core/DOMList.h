@@ -29,12 +29,12 @@
 namespace KDOM
 {
     template<class T>
-    class DOMList : public Shared
+    class DOMList : public Shared<DOMList<T> >
     {
     public:
-        DOMList() : Shared() { m_impl.setAutoDelete(false); }
+        DOMList() : Shared<DOMList<T> >() { m_impl.setAutoDelete(false); }
         DOMList(const DOMList &other) { *this = other; }
-        ~DOMList() { clear(); }
+        virtual ~DOMList() { clear(); }
 
         DOMList<T> &operator=(const DOMList<T> &other)
         {

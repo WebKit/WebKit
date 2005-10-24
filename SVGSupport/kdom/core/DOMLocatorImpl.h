@@ -31,7 +31,7 @@ namespace KDOM
     class DOMStringImpl;
 
     // Introduced in DOM Level 3:
-    class DOMLocatorImpl : public Shared
+    class DOMLocatorImpl : public Shared<DOMLocatorImpl>
     {
     public:
         DOMLocatorImpl();

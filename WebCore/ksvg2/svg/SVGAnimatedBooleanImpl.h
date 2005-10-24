@@ -28,7 +28,7 @@
 namespace KSVG
 {
     class SVGStyledElementImpl;
-    class SVGAnimatedBooleanImpl : public KDOM::Shared
+    class SVGAnimatedBooleanImpl : public KDOM::Shared<SVGAnimatedBooleanImpl>
     {
     public:
         SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context);

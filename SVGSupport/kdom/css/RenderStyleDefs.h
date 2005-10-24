@@ -293,10 +293,10 @@ namespace KDOM
         EBorderPrecedence precedence;
     };
 
-    class BorderData : public Shared
+    class BorderData : public Shared<BorderData>
     {
     public:
-        BorderData() : Shared() { }
+        BorderData() : Shared<BorderData>() { }
         virtual ~BorderData() { }
 
         bool hasBorder() const
@@ -315,7 +315,7 @@ namespace KDOM
         BorderValue top, bottom;
     };
 
-    class StyleSurroundData : public Shared
+    class StyleSurroundData : public Shared<StyleSurroundData>
     {
     public:
         StyleSurroundData();
@@ -341,7 +341,7 @@ namespace KDOM
 
     enum EBoxSizing { BS_BORDER_BOX, BS_CONTENT_BOX };
 
-    class StyleBoxData : public Shared
+    class StyleBoxData : public Shared<StyleBoxData>
     {
     public:
         StyleBoxData();
@@ -373,7 +373,7 @@ namespace KDOM
 
     // Random visual rendering model attributes. Not inherited.
 
-    class StyleVisualData : public Shared
+    class StyleVisualData : public Shared<StyleVisualData>
     {
     public:
         StyleVisualData();
@@ -394,7 +394,7 @@ namespace KDOM
 
     enum EBackgroundRepeat { BR_REPEAT, BR_REPEAT_X, BR_REPEAT_Y, BR_NO_REPEAT };
 
-    class StyleBackgroundData : public Shared
+    class StyleBackgroundData : public Shared<StyleBackgroundData>
     {
     public:
         StyleBackgroundData();
@@ -432,7 +432,7 @@ namespace KDOM
         MD_BACKWARD = -3
     };
 
-    class StyleMarqueeData : public Shared
+    class StyleMarqueeData : public Shared<StyleMarqueeData>
     {
     public:
         StyleMarqueeData();
@@ -480,7 +480,7 @@ namespace KDOM
     // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
     // we save space, and only allocate this object when someone actually uses
     // a non-inherited CSS3 property.
-    class StyleCSS3NonInheritedData : public Shared
+    class StyleCSS3NonInheritedData : public Shared<StyleCSS3NonInheritedData>
     {
     public:
         StyleCSS3NonInheritedData();
@@ -498,7 +498,7 @@ namespace KDOM
     // This struct is for rarely used inherited CSS3 properties.  By grouping them together,
     // we save space, and only allocate this object when someone actually uses
     // an inherited CSS3 property.
-    class StyleCSS3InheritedData : public Shared
+    class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>
     {
     public:
         StyleCSS3InheritedData();
@@ -520,7 +520,7 @@ namespace KDOM
 
     enum EPageBreak { PB_AUTO, PB_ALWAYS, PB_AVOID };
 
-    class StyleInheritedData : public Shared
+    class StyleInheritedData : public Shared<StyleInheritedData>
     {
     public:
         StyleInheritedData();

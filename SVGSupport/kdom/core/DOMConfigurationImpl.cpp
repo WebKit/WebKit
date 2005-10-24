@@ -32,7 +32,7 @@ using namespace KDOM;
 
 DOMStringListImpl *DOMConfigurationImpl::m_paramNames = 0;
 
-DOMConfigurationImpl::DOMConfigurationImpl() : Shared()
+DOMConfigurationImpl::DOMConfigurationImpl() : Shared<DOMConfigurationImpl>()
 {
     m_flags = 0;
     m_flags |= FEATURE_COMMENTS;

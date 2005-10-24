@@ -27,7 +27,7 @@
 
 using namespace KDOM;
 
-CounterImpl::CounterImpl() : Shared()
+CounterImpl::CounterImpl() : Shared<CounterImpl>()
 {
     m_listStyle = 0;
     m_separator = 0;

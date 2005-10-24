@@ -31,7 +31,7 @@ namespace KDOM
     class NodeImpl;
     class NodeFilterImpl;
 
-    class TraversalImpl : public Shared
+    class TraversalImpl : public Shared<TraversalImpl>
     {
     public:
         TraversalImpl(NodeImpl *n, short show,

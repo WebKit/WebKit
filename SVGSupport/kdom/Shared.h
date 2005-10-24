@@ -25,19 +25,25 @@
 
 namespace KDOM
 {
+	template<class T>
     class Shared
     {
     public:
-        Shared();
-        virtual ~Shared();
+        Shared() : m_ref(0) { }
+        ~Shared() { }
 
-        void ref();
-        virtual void deref();
+        int refCount() const { return m_ref; }
 
-        int refCount() const;
+        void ref() { m_ref++; }
+
+        void deref()
+        {
+            if(m_ref) m_ref--;
+			if(!m_ref) delete static_cast<T *>(this);
+        }
 
     protected:
-        int m_ref;
+        unsigned int m_ref;
     };
 
     template<class T>

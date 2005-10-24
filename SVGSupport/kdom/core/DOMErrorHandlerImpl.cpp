@@ -26,7 +26,7 @@
 
 using namespace KDOM;
 
-DOMErrorHandlerImpl::DOMErrorHandlerImpl() : Shared()
+DOMErrorHandlerImpl::DOMErrorHandlerImpl() : Shared<DOMErrorHandlerImpl>()
 {
 }
 

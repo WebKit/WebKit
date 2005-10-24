@@ -29,7 +29,7 @@
 
 namespace KSVG
 {
-    class SVGMatrixImpl : public KDOM::Shared
+    class SVGMatrixImpl : public KDOM::Shared<SVGMatrixImpl>
     { 
     public:
         SVGMatrixImpl();

@@ -36,7 +36,7 @@ namespace KDOM
     class NodeImpl;
     class NodeFilterCondition;
 
-    class NodeFilterImpl : public Shared
+    class NodeFilterImpl : public Shared<NodeFilterImpl>
     {
     public:
         NodeFilterImpl(NodeFilterCondition *);
@@ -51,12 +51,13 @@ namespace KDOM
         NodeFilterCondition *m_condition;
     };
 
-    class NodeFilterCondition : public Shared
+    class NodeFilterCondition : public Shared<NodeFilterCondition>
     {
     public:
-        NodeFilterCondition() : Shared() { }
+        NodeFilterCondition() : Shared<NodeFilterCondition>() { }
+        virtual ~NodeFilterCondition() { }
 
-        virtual short acceptNode(NodeImpl *n) const { return FILTER_ACCEPT; }
+        virtual short acceptNode(NodeImpl * /*n*/) const { return FILTER_ACCEPT; }
     };
 };
 

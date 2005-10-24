@@ -27,7 +27,7 @@
 
 using namespace KDOM;
 
-CSSRuleListImpl::CSSRuleListImpl() : Shared()
+CSSRuleListImpl::CSSRuleListImpl() : Shared<CSSRuleListImpl>()
 {
 }
 

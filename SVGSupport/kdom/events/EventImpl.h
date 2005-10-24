@@ -41,7 +41,7 @@ namespace KDOM
     } EventImplType;
 
     class EventTargetImpl;
-    class EventImpl : public Shared
+    class EventImpl : public Shared<EventImpl>
     {
     public:
         EventImpl(EventImplType identifier);

@@ -36,7 +36,7 @@ class NodeImpl;
 namespace XPath
 {
 
-class XPathNSResolverImpl : public Shared
+class XPathNSResolverImpl : public Shared<XPathNSResolverImpl>
 {
     public:
         XPathNSResolverImpl( NodeImpl *node );

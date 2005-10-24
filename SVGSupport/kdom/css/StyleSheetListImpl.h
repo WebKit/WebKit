@@ -30,7 +30,7 @@
 namespace KDOM
 {
     class StyleSheetImpl;
-    class StyleSheetListImpl : public Shared
+    class StyleSheetListImpl : public Shared<StyleSheetListImpl>
     {
     public:
         StyleSheetListImpl();

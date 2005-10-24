@@ -35,7 +35,7 @@ namespace KJS
 namespace KDOM
 {
     // Introduced in DOM Level 3:
-    class DOMUserDataImpl : public Shared
+    class DOMUserDataImpl : public Shared<DOMUserDataImpl>
     {
     public:
         DOMUserDataImpl();

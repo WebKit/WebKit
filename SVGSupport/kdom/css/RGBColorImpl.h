@@ -32,7 +32,7 @@ namespace KDOM
     class DOMString;
     class CDFInterface;
     class CSSPrimitiveValueImpl;
-    class RGBColorImpl : public Shared
+    class RGBColorImpl : public Shared<RGBColorImpl>
     {
     public:
         RGBColorImpl(CDFInterface *interface);

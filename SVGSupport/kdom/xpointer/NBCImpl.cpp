@@ -29,7 +29,7 @@
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-NBCImpl::NBCImpl(NBCImpl *parent) : /* XPathNSResolverImpl(), */ Shared(), m_parent(parent)
+NBCImpl::NBCImpl(NBCImpl *parent) : /* XPathNSResolverImpl(), */ Shared<NBCImpl>(), m_parent(parent)
 {
     /* Rigg the "initial namespace binding context". We can't use addMapping,
      * because it's ment for mere mortals who aren't allowed to re-write the world. */

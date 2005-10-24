@@ -28,12 +28,12 @@ using namespace KDOM;
 const bool False = false;
 const bool True = true;
 
-DOMObjectImpl::DOMObjectImpl() : Shared()
+DOMObjectImpl::DOMObjectImpl() : Shared<DOMObjectImpl>()
 {
     m_userData = 0;
 }
 
-DOMObjectImpl::DOMObjectImpl(bool b) : Shared()
+DOMObjectImpl::DOMObjectImpl(bool b) : Shared<DOMObjectImpl>()
 {
     m_userData = b ? (void *)&True : (void *)&False;
 }

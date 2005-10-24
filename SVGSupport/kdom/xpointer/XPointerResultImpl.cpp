@@ -33,7 +33,7 @@ using namespace KDOM;
 using namespace KDOM::XPointer;
     
 XPointerResultImpl::XPointerResultImpl(const ResultType code)
-: Shared(), m_single(0), m_resultType(code)
+: Shared<XPointerResultImpl>(), m_single(0), m_resultType(code)
 {
 }
 

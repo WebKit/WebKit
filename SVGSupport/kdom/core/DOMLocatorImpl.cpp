@@ -27,7 +27,7 @@
 
 using namespace KDOM;
 
-DOMLocatorImpl::DOMLocatorImpl() : Shared()
+DOMLocatorImpl::DOMLocatorImpl() : Shared<DOMLocatorImpl>()
 {
     m_utf16Offset = -1;
     m_relatedNode = 0;

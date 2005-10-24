@@ -32,7 +32,7 @@ namespace KDOM
     class DOMString;
     class DOMStringImpl;
 
-    class LSInputImpl : public Shared
+    class LSInputImpl : public Shared<LSInputImpl>
     {
     public:
         LSInputImpl();

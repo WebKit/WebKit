@@ -30,7 +30,7 @@ namespace KDOM
     class DOMString;
     class DOMStringImpl;
 
-    class LSOutputImpl : public Shared
+    class LSOutputImpl : public Shared<LSOutputImpl>
     {
     public:
         LSOutputImpl();

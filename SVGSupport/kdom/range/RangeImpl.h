@@ -36,7 +36,7 @@ class DocumentPtr;
 class DOMStringImpl;
 class DocumentFragmentImpl;
 
-class RangeImpl : public Shared
+class RangeImpl : public Shared<RangeImpl>
 {
 friend class DocumentImpl;
 public:

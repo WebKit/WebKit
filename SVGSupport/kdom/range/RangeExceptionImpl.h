@@ -27,7 +27,7 @@
 
 namespace KDOM
 {
-    class RangeExceptionImpl : public Shared
+    class RangeExceptionImpl : public Shared<RangeExceptionImpl>
     {
     public:
         RangeExceptionImpl(unsigned short code);

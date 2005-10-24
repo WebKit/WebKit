@@ -32,13 +32,13 @@ using namespace KDOM;
 #define QT_ALLOC_QCHAR_VEC(N)    (QChar *) new char[sizeof(QChar) * (N)]
 #define QT_DELETE_QCHAR_VEC(P)    delete[]((char *) (P))
 
-DOMStringImpl::DOMStringImpl() : Shared()
+DOMStringImpl::DOMStringImpl() : Shared<DOMStringImpl>()
 {
     m_str = 0;
     m_len = 0;
 }
 
-DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared()
+DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared<DOMStringImpl>()
 {
     bool haveStr = str && len;
     m_str = QT_ALLOC_QCHAR_VEC(haveStr ? len : 1);
@@ -56,7 +56,7 @@ DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared()
     }
 }
 
-DOMStringImpl::DOMStringImpl(const QString &str) : Shared()
+DOMStringImpl::DOMStringImpl(const QString &str) : Shared<DOMStringImpl>()
 {
     int len = str.length();
     m_str = QT_ALLOC_QCHAR_VEC(len);
@@ -64,7 +64,7 @@ DOMStringImpl::DOMStringImpl(const QString &str) : Shared()
     m_len = len;
 }
 
-DOMStringImpl::DOMStringImpl(const char *str) : Shared()
+DOMStringImpl::DOMStringImpl(const char *str) : Shared<DOMStringImpl>()
 {
     if(str && *str)
     {

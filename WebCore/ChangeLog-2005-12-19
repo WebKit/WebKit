@@ -1,3 +1,221 @@
+2005-10-23  Julien Palmas <julien.palmas@gmail.com>
+
+        Reviewed by eseidel.
+
+        Merged over Shared -> Shared<T> change from kdom.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5391
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kdom/Shared.h:
+        (KDOM::Shared::Shared):
+        (KDOM::Shared::~Shared):
+        (KDOM::Shared::refCount):
+        (KDOM::Shared::ref):
+        (KDOM::Shared::deref):
+        * kdom/SharedPtr.h: Added.
+        (KDOM::SharedPtr::SharedPtr):
+        (KDOM::SharedPtr::~SharedPtr):
+        (KDOM::SharedPtr::isNull):
+        (KDOM::SharedPtr::notNull):
+        (KDOM::SharedPtr::reset):
+        (KDOM::SharedPtr::get):
+        (KDOM::SharedPtr::operator!):
+        (KDOM::SharedPtr::operator bool):
+        (KDOM::SharedPtr::operator==):
+        (KDOM::::operator):
+        * kdom/TreeShared.h:
+        (KDOM::TreeShared::TreeShared):
+        (KDOM::TreeShared::~TreeShared):
+        (KDOM::TreeShared::refCount):
+        (KDOM::TreeShared::ref):
+        (KDOM::TreeShared::deref):
+        (KDOM::TreeShared::parent):
+        (KDOM::TreeShared::setParent):
+        * kdom/core/DOMConfigurationImpl.cpp:
+        (DOMConfigurationImpl::DOMConfigurationImpl):
+        * kdom/core/DOMConfigurationImpl.h:
+        * kdom/core/DOMErrorHandlerImpl.cpp:
+        (DOMErrorHandlerImpl::DOMErrorHandlerImpl):
+        * kdom/core/DOMErrorHandlerImpl.h:
+        * kdom/core/DOMErrorImpl.cpp:
+        (DOMErrorImpl::DOMErrorImpl):
+        * kdom/core/DOMErrorImpl.h:
+        (KDOM::):
+        * kdom/core/DOMExceptionImpl.cpp:
+        (DOMExceptionImpl::DOMExceptionImpl):
+        * kdom/core/DOMExceptionImpl.h:
+        * kdom/core/DOMList.h:
+        (KDOM::DOMList::DOMList):
+        (KDOM::DOMList::~DOMList):
+        * kdom/core/DOMLocatorImpl.cpp:
+        (DOMLocatorImpl::DOMLocatorImpl):
+        * kdom/core/DOMLocatorImpl.h:
+        * kdom/core/DOMObjectImpl.cpp:
+        (DOMObjectImpl::DOMObjectImpl):
+        * kdom/core/DOMObjectImpl.h:
+        * kdom/core/DOMStringImpl.cpp:
+        (DOMStringImpl::DOMStringImpl):
+        * kdom/core/DOMStringImpl.h:
+        * kdom/core/DOMUserDataImpl.cpp:
+        (DOMUserDataImpl::DOMUserDataImpl):
+        * kdom/core/DOMUserDataImpl.h:
+        * kdom/core/NamedNodeMapImpl.cpp:
+        (NamedNodeMapImpl::NamedNodeMapImpl):
+        * kdom/core/NamedNodeMapImpl.h:
+        * kdom/core/NodeImpl.h:
+        * kdom/core/NodeListImpl.cpp:
+        (NodeListImpl::NodeListImpl):
+        * kdom/core/NodeListImpl.h:
+        * kdom/core/TypeInfoImpl.cpp:
+        (TypeInfoImpl::TypeInfoImpl):
+        * kdom/core/TypeInfoImpl.h:
+        * kdom/css/CSSRuleListImpl.cpp:
+        (CSSRuleListImpl::CSSRuleListImpl):
+        * kdom/css/CSSRuleListImpl.h:
+        * kdom/css/CounterImpl.cpp:
+        (CounterImpl::CounterImpl):
+        * kdom/css/CounterImpl.h:
+        * kdom/css/RGBColorImpl.cpp:
+        (RGBColorImpl::RGBColorImpl):
+        * kdom/css/RGBColorImpl.h:
+        * kdom/css/RectImpl.cpp:
+        (RectImpl::RectImpl):
+        * kdom/css/RectImpl.h:
+        * kdom/css/RenderStyle.cpp:
+        (RenderStyle::RenderStyle):
+        * kdom/css/RenderStyle.h:
+        (KDOM::RenderStyle::RenderStyle):
+        * kdom/css/RenderStyleDefs.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        (StyleBoxData::StyleBoxData):
+        (StyleVisualData::StyleVisualData):
+        (StyleBackgroundData::StyleBackgroundData):
+        (StyleMarqueeData::StyleMarqueeData):
+        (StyleCSS3NonInheritedData::StyleCSS3NonInheritedData):
+        (StyleCSS3InheritedData::StyleCSS3InheritedData):
+        (StyleInheritedData::StyleInheritedData):
+        * kdom/css/RenderStyleDefs.h:
+        (KDOM::BorderData::BorderData):
+        * kdom/css/StyleSheetListImpl.cpp:
+        (StyleSheetListImpl::StyleSheetListImpl):
+        * kdom/css/StyleSheetListImpl.h:
+        * kdom/events/EventExceptionImpl.cpp:
+        (EventExceptionImpl::EventExceptionImpl):
+        * kdom/events/EventExceptionImpl.h:
+        * kdom/events/EventImpl.cpp:
+        (EventImpl::EventImpl):
+        * kdom/events/EventImpl.h:
+        * kdom/events/EventListenerImpl.cpp:
+        (EventListenerImpl::EventListenerImpl):
+        * kdom/events/EventListenerImpl.h:
+        * kdom/ls/LSExceptionImpl.cpp:
+        (LSExceptionImpl::LSExceptionImpl):
+        * kdom/ls/LSExceptionImpl.h:
+        * kdom/ls/LSInputImpl.cpp:
+        (LSInputImpl::LSInputImpl):
+        * kdom/ls/LSInputImpl.h:
+        * kdom/ls/LSOutputImpl.cpp:
+        (LSOutputImpl::LSOutputImpl):
+        * kdom/ls/LSOutputImpl.h:
+        * kdom/ls/LSParserFilterImpl.cpp:
+        (LSParserFilterImpl::LSParserFilterImpl):
+        * kdom/ls/LSParserFilterImpl.h:
+        * kdom/ls/LSResourceResolverImpl.cpp:
+        (LSResourceResolverImpl::LSResourceResolverImpl):
+        * kdom/ls/LSResourceResolverImpl.h:
+        * kdom/ls/LSSerializerImpl.cpp:
+        (LSSerializerImpl::LSSerializerImpl):
+        * kdom/ls/LSSerializerImpl.h:
+        * kdom/range/RangeExceptionImpl.cpp:
+        (RangeExceptionImpl::RangeExceptionImpl):
+        * kdom/range/RangeExceptionImpl.h:
+        * kdom/range/RangeImpl.cpp:
+        (RangeImpl::RangeImpl):
+        * kdom/range/RangeImpl.h:
+        * kdom/traversal/NodeFilterImpl.cpp:
+        (NodeFilterImpl::NodeFilterImpl):
+        * kdom/traversal/NodeFilterImpl.h:
+        (KDOM::NodeFilterCondition::NodeFilterCondition):
+        (KDOM::NodeFilterCondition::~NodeFilterCondition):
+        (KDOM::NodeFilterCondition::acceptNode):
+        * kdom/traversal/TraversalImpl.cpp:
+        (TraversalImpl::TraversalImpl):
+        * kdom/traversal/TraversalImpl.h:
+        * kdom/views/AbstractViewImpl.cpp:
+        (AbstractViewImpl::AbstractViewImpl):
+        * kdom/views/AbstractViewImpl.h:
+        * kdom/xpath/XPathExceptionImpl.h:
+        * kdom/xpath/XPathExpressionImpl.h:
+        * kdom/xpath/XPathNSResolverImpl.h:
+        * kdom/xpath/XPathResultImpl.h:
+        * kdom/xpointer/NBCImpl.cpp:
+        (NBCImpl::NBCImpl):
+        * kdom/xpointer/NBCImpl.h:
+        * kdom/xpointer/PointerPartImpl.cpp:
+        (PointerPartImpl::PointerPartImpl):
+        * kdom/xpointer/PointerPartImpl.h:
+        * kdom/xpointer/XPointerExceptionImpl.cpp:
+        (XPointerExceptionImpl::XPointerExceptionImpl):
+        * kdom/xpointer/XPointerExceptionImpl.h:
+        * kdom/xpointer/XPointerExpressionImpl.cpp:
+        (XPointerExpressionImpl::XPointerExpressionImpl):
+        * kdom/xpointer/XPointerExpressionImpl.h:
+        * kdom/xpointer/XPointerResultImpl.cpp:
+        (XPointerResultImpl::XPointerResultImpl):
+        * kdom/xpointer/XPointerResultImpl.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleClipData::StyleClipData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/svg/SVGAngleImpl.cpp:
+        (SVGAngleImpl::SVGAngleImpl):
+        * ksvg2/svg/SVGAngleImpl.h:
+        * ksvg2/svg/SVGAnimatedBooleanImpl.cpp:
+        (SVGAnimatedBooleanImpl::SVGAnimatedBooleanImpl):
+        * ksvg2/svg/SVGAnimatedBooleanImpl.h:
+        * ksvg2/svg/SVGAnimatedEnumerationImpl.cpp:
+        (SVGAnimatedEnumerationImpl::SVGAnimatedEnumerationImpl):
+        * ksvg2/svg/SVGAnimatedEnumerationImpl.h:
+        * ksvg2/svg/SVGAnimatedIntegerImpl.cpp:
+        (SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl):
+        * ksvg2/svg/SVGAnimatedIntegerImpl.h:
+        * ksvg2/svg/SVGAnimatedNumberImpl.cpp:
+        (SVGAnimatedNumberImpl::SVGAnimatedNumberImpl):
+        * ksvg2/svg/SVGAnimatedNumberImpl.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        (KSVG::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        * ksvg2/svg/SVGExceptionImpl.cpp:
+        (SVGExceptionImpl::SVGExceptionImpl):
+        * ksvg2/svg/SVGExceptionImpl.h:
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::SVGLengthImpl):
+        * ksvg2/svg/SVGLengthImpl.h:
+        * ksvg2/svg/SVGMatrixImpl.cpp:
+        (SVGMatrixImpl::SVGMatrixImpl):
+        * ksvg2/svg/SVGMatrixImpl.h:
+        * ksvg2/svg/SVGNumberImpl.cpp:
+        (SVGNumberImpl::SVGNumberImpl):
+        * ksvg2/svg/SVGNumberImpl.h:
+        * ksvg2/svg/SVGPathSegImpl.cpp:
+        (SVGPathSegImpl::SVGPathSegImpl):
+        * ksvg2/svg/SVGPathSegImpl.h:
+        * ksvg2/svg/SVGPointImpl.cpp:
+        (SVGPointImpl::SVGPointImpl):
+        * ksvg2/svg/SVGPointImpl.h:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        (SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl):
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.h:
+        * ksvg2/svg/SVGRectImpl.cpp:
+        (SVGRectImpl::SVGRectImpl):
+        * ksvg2/svg/SVGRectImpl.h:
+        * ksvg2/svg/SVGTransformImpl.cpp:
+        (SVGTransformImpl::SVGTransformImpl):
+        * ksvg2/svg/SVGTransformImpl.h:
+
 2005-10-23  Eric Seidel  <eseidel@apple.com>
 
         No review, build fix only.

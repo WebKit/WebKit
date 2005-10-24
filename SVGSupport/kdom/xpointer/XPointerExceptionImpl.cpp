@@ -26,7 +26,7 @@
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-XPointerExceptionImpl::XPointerExceptionImpl(unsigned short code) : Shared()
+XPointerExceptionImpl::XPointerExceptionImpl(unsigned short code) : Shared<XPointerExceptionImpl>()
 {
     ref(); /* See comment in DOMExceptionImpl.cc */
          

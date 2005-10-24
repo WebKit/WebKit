@@ -36,7 +36,7 @@ class DOMStringImpl;
 
 namespace XPointer
 {
-    class NBCImpl : public Shared // : public XPathNSResolverImpl
+    class NBCImpl : public Shared<NBCImpl> // : public XPathNSResolverImpl
     {
     public:
         NBCImpl(NBCImpl *parent);

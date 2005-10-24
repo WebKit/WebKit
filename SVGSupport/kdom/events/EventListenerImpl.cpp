@@ -28,7 +28,7 @@
 
 using namespace KDOM;
 
-EventListenerImpl::EventListenerImpl() : Shared()
+EventListenerImpl::EventListenerImpl() : Shared<EventListenerImpl>()
 {
     m_doc = 0;
     m_internalType = 0;

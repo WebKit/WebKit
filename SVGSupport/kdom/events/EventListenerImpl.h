@@ -30,7 +30,7 @@
 
 namespace KDOM
 {
-    class EventListenerImpl : public Shared
+    class EventListenerImpl : public Shared<EventListenerImpl>
     {
     public:
         EventListenerImpl();

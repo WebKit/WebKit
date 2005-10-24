@@ -29,7 +29,7 @@
 
 using namespace KDOM;
 
-EventImpl::EventImpl(EventImplType identifier) : Shared(), m_identifier(identifier)
+EventImpl::EventImpl(EventImplType identifier) : Shared<EventImpl>(), m_identifier(identifier)
 {
     m_createTime = QDateTime::currentDateTime();
 

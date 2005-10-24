@@ -38,7 +38,7 @@ class NodeImpl;
 namespace XPath
 {
 
-class XPathResultImpl : public Shared
+class XPathResultImpl : public Shared<XPathResultImpl>
 {
     public:
         XPathResultImpl();

@@ -27,7 +27,7 @@
 
 using namespace KDOM;
 
-LSOutputImpl::LSOutputImpl() : Shared(), m_systemId(0), m_encoding(0)
+LSOutputImpl::LSOutputImpl() : Shared<LSOutputImpl>(), m_systemId(0), m_encoding(0)
 {
 }
 

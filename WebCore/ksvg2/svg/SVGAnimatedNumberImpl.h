@@ -29,7 +29,7 @@ namespace KSVG
 {
     class SVGStyledElementImpl;
 
-    class SVGAnimatedNumberImpl : public KDOM::Shared
+    class SVGAnimatedNumberImpl : public KDOM::Shared<SVGAnimatedNumberImpl>
     {
     public:
         SVGAnimatedNumberImpl(const SVGStyledElementImpl *context);

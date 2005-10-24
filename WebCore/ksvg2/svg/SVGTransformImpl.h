@@ -28,7 +28,7 @@
 namespace KSVG
 {
     class SVGMatrixImpl;
-    class SVGTransformImpl : public KDOM::Shared
+    class SVGTransformImpl : public KDOM::Shared<SVGTransformImpl>
     {
     public:
         SVGTransformImpl();

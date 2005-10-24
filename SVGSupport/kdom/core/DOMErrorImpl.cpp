@@ -28,7 +28,7 @@
 
 using namespace KDOM;
 
-DOMErrorImpl::DOMErrorImpl() : Shared()
+DOMErrorImpl::DOMErrorImpl() : Shared<DOMErrorImpl>()
 {
     m_severity = 0;
     m_message = 0;

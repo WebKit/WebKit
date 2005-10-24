@@ -108,7 +108,7 @@ namespace KSVG
     };
 
     // Inherited/Non-Inherited Style Datastructures
-    class StyleFillData : public KDOM::Shared
+    class StyleFillData : public KDOM::Shared<StyleFillData>
     {
     public:
         StyleFillData();
@@ -127,7 +127,7 @@ namespace KSVG
         StyleFillData &operator=(const StyleFillData &);
     };
 
-    class StyleStrokeData : public KDOM::Shared
+    class StyleStrokeData : public KDOM::Shared<StyleStrokeData>
     {
     public:
         StyleStrokeData();
@@ -152,7 +152,7 @@ namespace KSVG
         StyleStrokeData &operator=(const StyleStrokeData &);
     };
 
-    class StyleStopData : public KDOM::Shared
+    class StyleStopData : public KDOM::Shared<StyleStopData>
     {
     public:
         StyleStopData();
@@ -171,7 +171,7 @@ namespace KSVG
         StyleStopData &operator=(const StyleStopData &);
     };
 
-    class StyleClipData : public KDOM::Shared
+    class StyleClipData : public KDOM::Shared<StyleClipData>
     {
     public:
         StyleClipData();
@@ -189,7 +189,7 @@ namespace KSVG
         StyleClipData &operator=(const StyleClipData &);
     };
 
-    class StyleMarkerData : public KDOM::Shared
+    class StyleMarkerData : public KDOM::Shared<StyleMarkerData>
     {
     public:
         StyleMarkerData();
@@ -210,7 +210,7 @@ namespace KSVG
     };
 
     // Note : the rule for this class is, *no inheritance* of these props
-    class StyleMiscData : public KDOM::Shared
+    class StyleMiscData : public KDOM::Shared<StyleMiscData>
     {
     public:
         StyleMiscData();

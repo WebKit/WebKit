@@ -31,7 +31,7 @@
 namespace KDOM
 {
     class DocumentViewImpl;
-    class AbstractViewImpl : public Shared
+    class AbstractViewImpl : public Shared<AbstractViewImpl>
     {
     public:
         AbstractViewImpl();

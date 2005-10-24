@@ -34,7 +34,7 @@
 
 using namespace KDOM;
 
-NamedNodeMapImpl::NamedNodeMapImpl() : Shared()
+NamedNodeMapImpl::NamedNodeMapImpl() : Shared<NamedNodeMapImpl>()
 {
 }
 
