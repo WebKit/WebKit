@@ -1,5 +1,15 @@
 2005-10-24  Darin Adler  <darin@apple.com>
 
+        - changed a test to use a GIF instead of a PNG to avoid issues with color correction
+          also, it was using an image that's part of OS X, and it's nicer to have a standalone test
+
+        * fast/dynamic/genContentDestroyChildren-expected.checksum:
+        * fast/dynamic/genContentDestroyChildren-expected.png:
+        * fast/dynamic/genContentDestroyChildren-expected.txt:
+        * fast/dynamic/genContentDestroyChildren.html:
+
+2005-10-24  Darin Adler  <darin@apple.com>
+
         - fixed results for http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
 
         Mitz's patch removed some strange code about 1-character runs and rounding.
