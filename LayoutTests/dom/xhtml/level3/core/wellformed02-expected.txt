@@ -1,4 +1,4 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/wellformed02
-Status	failure
-Message	xml10InvalidName: assertTrue failed
+Status	error
+Message	Error: DOM exception 5
 
