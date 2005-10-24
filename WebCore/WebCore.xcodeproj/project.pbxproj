@@ -1524,6 +1524,9 @@
 		A8700A4808DD734300CC5A86 /* CDFInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F9FE089701F500BA5114 /* CDFInterface.cpp */; };
 		A898F147088121E90075EFB2 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		A898F148088121ED0075EFB2 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
+		A8BA5C70090CB077004D1180 /* render_button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC42035A08FC334100B782E0 /* render_button.cpp */; };
+		A8BA5C71090CB07A004D1180 /* render_arena.h in Headers */ = {isa = PBXBuildFile; fileRef = 832557C3061E3172007B8054 /* render_arena.h */; };
+		A8BA5C72090CB07A004D1180 /* render_button.h in Headers */ = {isa = PBXBuildFile; fileRef = BC42035B08FC334100B782E0 /* render_button.h */; };
 		A8BC0C8608D19F1A00379918 /* AttrWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8BC0BE608D19F1900379918 /* AttrWrapper.cpp */; };
 		A8BC0C8708D19F1A00379918 /* AttrWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A8BC0BE708D19F1900379918 /* AttrWrapper.h */; };
 		A8BC0C8808D19F1A00379918 /* CDATASectionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8BC0BE808D19F1900379918 /* CDATASectionWrapper.cpp */; };
@@ -8125,6 +8128,8 @@
 				A8EA434B08E14EAC004BC396 /* dom_kdomdocumentwrapper.h in Headers */,
 				65C97AF408EA908800ACD273 /* config.h in Headers */,
 				E1EE773908F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
+				A8BA5C71090CB07A004D1180 /* render_arena.h in Headers */,
+				A8BA5C72090CB07A004D1180 /* render_button.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10327,6 +10332,7 @@
 				A8EA434C08E14EAC004BC396 /* dom_kdomdocumentwrapper.cpp in Sources */,
 				A863312F08E3AB25009CFEF4 /* CDFInterface.cpp in Sources */,
 				E1EE773A08F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
+				A8BA5C70090CB077004D1180 /* render_button.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

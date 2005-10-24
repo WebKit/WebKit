@@ -1,3 +1,9 @@
+2005-10-23  Eric Seidel  <eseidel@apple.com>
+
+        No review, build fix only.
+
+        * WebCore.xcodeproj/project.pbxproj: added RenderButton.cpp
+
 2005-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
