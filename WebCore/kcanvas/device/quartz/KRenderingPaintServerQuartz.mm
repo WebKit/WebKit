@@ -106,15 +106,10 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 	// Patterns don't seem to resepect the CTM unless we make them...
 	CGAffineTransform ctm = CGContextGetCTM(context);
 	CGAffineTransform transform = CGAffineTransform(patternTransform().qmatrix());
-	CGSize phase = CGSizeMake(x(), y());
-	if (boundingBoxMode()) {
-		// get the object bbox
-		CGRect objectBBox = CGContextGetPathBoundingBox(context);
-		phase.width += objectBBox.origin.x;
-		phase.height += objectBBox.origin.y;
-	}
-	transform = CGAffineTransformTranslate(transform, phase.width, phase.height);
 	transform = CGAffineTransformConcat(transform, ctm);
+    
+    CGSize phase = CGSizeMake(x(), y());
+    CGContextSetPatternPhase(context, phase);
 		
 	CGPatternCallbacks callbacks = {0, patternCallback, NULL};
 	CGPatternRef pattern = CGPatternCreate (
@@ -130,19 +125,6 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 	applyStyleToContext(context, style); // or do I set the alpha above?
 	
 	CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-	
-	
-//	CGSize phase = CGSizeMake(x(), y());
-//	if (boundingBoxMode()) {
-//		// get the object bbox
-//		CGRect objectBBox = CGContextGetPathBoundingBox(context);
-//		phase.width += objectBBox.origin.x;
-//		phase.height += objectBBox.origin.y;
-//	}
-	//CGContextSetPatternPhase(context, phase);
-	CGContextSetPatternPhase(context, CGSizeZero); // FIXME: this might be right... might not.
-	
-	//NSLog(@"pattern phase: %f, %f transform: %@", phase.width, phase.height, CFStringFromCGAffineTransform(transform));
 	
 	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
 		CGContextSetFillColorSpace(context, patternSpace);

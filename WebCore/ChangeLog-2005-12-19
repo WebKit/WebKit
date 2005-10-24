@@ -2,6 +2,23 @@
 
         Reviewed by eseidel.
 
+        Finally fix pattern "userspaceonuse" support.
+        Several test cases already cover this.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5361
+
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::draw):
+        * svg-tests/W3C-SVG-1.1/pservers-grad-03-b-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/pservers-grad-03-b-expected.png:
+        * svg-tests/W3C-SVG-1.1/pservers-grad-06-b-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * svg-tests/W3C-SVG-1.1/pservers-pattern-01-b-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+
+2005-10-23  Julien Palmas <julien.palmas@gmail.com>
+
+        Reviewed by eseidel.
+
         Merged over Shared -> Shared<T> change from kdom.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5391
 
