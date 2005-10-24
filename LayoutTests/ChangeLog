@@ -1,3 +1,14 @@
+2005-10-24  Darin Adler  <darin@apple.com>
+
+        - fixed results for http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
+
+        Mitz's patch removed some strange code about 1-character runs and rounding.
+        It affected the results of this one test. Here are new results.
+
+        * fast/text/international/bidi-explicit-embedding-expected.checksum:
+        * fast/text/international/bidi-explicit-embedding-expected.png:
+        * fast/text/international/bidi-explicit-embedding-expected.txt:
+
 2005-10-24  Maciej Stachowiak  <mjs@apple.com>
 
         Re-landing Dave Hyatt's changes from when the tree was closed.
