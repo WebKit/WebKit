@@ -39,6 +39,7 @@
 #include "identifier.h"
 #include "lookup.h"
 #include "internal.h"
+#include <unicode/uchar.h>
 
 // we can't specify the namespace in yacc's C output, so do it here
 using namespace KJS;
@@ -73,7 +74,7 @@ Lexer::Lexer()
 {
   // allocate space for read buffers
   buffer8 = new char[size8];
-  buffer16 = new UChar[size16];
+  buffer16 = new KJS::UChar[size16];
   currLexer = this;
 }
 
@@ -101,7 +102,7 @@ void Lexer::globalClear()
 }
 #endif
 
-void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const UChar *c, unsigned int len)
+void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const KJS::UChar *c, unsigned int len)
 {
   yylineno = 1 + startingLineNumber;
   m_sourceURL = sourceURL;
@@ -121,20 +122,22 @@ void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const UCha
 #endif
 
   // read first characters
-  current = (length > 0) ? code[0].uc : 0;
-  next1 = (length > 1) ? code[1].uc : 0;
-  next2 = (length > 2) ? code[2].uc : 0;
-  next3 = (length > 3) ? code[3].uc : 0;
+  shift(4);
 }
 
 void Lexer::shift(unsigned int p)
 {
   while (p--) {
-    pos++;
     current = next1;
     next1 = next2;
     next2 = next3;
-    next3 = (pos + 3 < length) ? code[pos+3].uc : 0;
+    do {
+      if (pos >= length) {
+	next3 = 0;
+	break;
+      }
+      next3 = code[pos++].uc;
+    } while (u_charType(next3) == U_FORMAT_CHAR);
   }
 }
 
@@ -751,10 +754,10 @@ unsigned char Lexer::convertHex(unsigned short c1, unsigned short c2)
   return ((convertHex(c1) << 4) + convertHex(c2));
 }
 
-UChar Lexer::convertUnicode(unsigned short c1, unsigned short c2,
+KJS::UChar Lexer::convertUnicode(unsigned short c1, unsigned short c2,
                                      unsigned short c3, unsigned short c4)
 {
-  return UChar((convertHex(c1) << 4) + convertHex(c2),
+  return KJS::UChar((convertHex(c1) << 4) + convertHex(c2),
                (convertHex(c3) << 4) + convertHex(c4));
 }
 
@@ -774,12 +777,12 @@ void Lexer::record8(unsigned short c)
   buffer8[pos8++] = (char) c;
 }
 
-void Lexer::record16(UChar c)
+void Lexer::record16(KJS::UChar c)
 {
   // enlarge buffer if full
   if (pos16 >= size16 - 1) {
-    UChar *tmp = new UChar[2 * size16];
-    memcpy(tmp, buffer16, size16 * sizeof(UChar));
+    KJS::UChar *tmp = new KJS::UChar[2 * size16];
+    memcpy(tmp, buffer16, size16 * sizeof(KJS::UChar));
     delete [] buffer16;
     buffer16 = tmp;
     size16 *= 2;
@@ -851,7 +854,7 @@ void Lexer::doneParsing()
 const int initialCapacity = 64;
 const int growthFactor = 2;
 
-Identifier *Lexer::makeIdentifier(UChar *buffer, unsigned int pos)
+Identifier *Lexer::makeIdentifier(KJS::UChar *buffer, unsigned int pos)
 {
   if (numIdentifiers == identifiersCapacity) {
     identifiersCapacity = (identifiersCapacity == 0) ? initialCapacity : identifiersCapacity *growthFactor;
@@ -863,7 +866,7 @@ Identifier *Lexer::makeIdentifier(UChar *buffer, unsigned int pos)
   return identifier;
 }
  
-UString *Lexer::makeUString(UChar *buffer, unsigned int pos)
+UString *Lexer::makeUString(KJS::UChar *buffer, unsigned int pos)
 {
   if (numStrings == stringsCapacity) {
     stringsCapacity = (stringsCapacity == 0) ? initialCapacity : stringsCapacity *growthFactor;

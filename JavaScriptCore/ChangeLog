@@ -1,5 +1,33 @@
 2005-10-24  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin Adler. Code changes by Alexey Proskuryakov.
+        
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4931
+        Unicode format characters (Cf) should be removed from JavaScript source
+
+        * kjs/lexer.cpp:
+        include <unicode/uchar.h>
+        (Lexer::Lexer):
+        use KJS::UChar instead of UChar to avoid ambiguity caused by new include
+        (Lexer::setCode):
+        ditto; also, use shift(4) to skip first 4 chars to take advantage of new
+        logic there.
+        (Lexer::shift):
+        skip chars of type U_FORMAT_CHAR
+        (Lexer::convertUnicode):
+        use KJS::UChar instead of UChar to avoid ambiguity caused by new include
+        (Lexer::record16):
+        ditto
+        (Lexer::makeIdentifier):
+        ditto
+        (Lexer::makeUString):
+        ditto
+        
+        * tests/mozilla/ecma/Array/15.4.5.1-1.js:
+        updated to skip soft hyphens
+
+2005-10-24  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Darin Adler. Code changes by George Staikos/Geoff Garen.
         
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4142
