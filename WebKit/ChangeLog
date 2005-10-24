@@ -1,3 +1,30 @@
+2005-10-23  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+	<http://bugzilla.opendarwin.org/show_bug.cgi?id=5365>
+
+	Send -webPlugInStop (or -pluginStop) and -webPluginDestroy (or -pluginDestroy)
+	to complying plugins right when they're removed from the WebHTMLView, and also
+	release them from the plugin controller's arrays.
+	
+	I think this patch makes WebKit behave more like plugins expect it to, which is
+	the way it already behaves with Netscape plugins.
+	
+	I expect complying plugins to stop making noise when receiving the stop
+	message, but QuickTime doesn't. If it's lucky, then it will be deallocated
+	because of the release and will stop then. However, JS, for one, can retain the
+	plugin (e.g. if you execute <javascript:document.getElementById('obj').width;>
+	before clicking Remove OBJECT), in which case it will just keep playing.
+	
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController destroyPlugin:]):
+	Stop and destroy the plugin.
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray willRemoveSubview:]):
+	Destroy plugins when they are removed from the HTML view.
+	
 2005-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

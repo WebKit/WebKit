@@ -178,6 +178,26 @@ static NSMutableSet *pluginViews = nil;
     }
 }
 
+- (void)destroyPlugin:(NSView *)view
+{
+    if ([_views containsObject:view]) {
+        if (_started) {
+            if ([view respondsToSelector:@selector(webPlugInStop)])
+                [view webPlugInStop];
+            else if ([view respondsToSelector:@selector(pluginStop)])
+                [view pluginStop];
+        }
+        
+        if ([view respondsToSelector:@selector(webPlugInDestroy)])
+            [view webPlugInDestroy];
+        else if ([view respondsToSelector:@selector(pluginDestroy)])
+            [view pluginDestroy];
+        
+        [pluginViews removeObject:view];
+        [_views removeObject:view];
+    }
+}
+
 - (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
 {
     [checkIdentifier cancel];

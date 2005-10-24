@@ -47,6 +47,7 @@
 - (id)initWithDocumentView:(NSView *)view;
 
 - (void)addPlugin:(NSView *)view;
+- (void)destroyPlugin:(NSView *)view;
 
 - (void)startAllPlugins;
 - (void)stopAllPlugins;

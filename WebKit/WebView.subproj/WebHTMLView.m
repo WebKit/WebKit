@@ -2169,6 +2169,13 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (void)willRemoveSubview:(NSView *)subview
+{
+    if ([WebPluginController isPlugInView:subview])
+        [[self _pluginController] destroyPlugin:subview];
+    [super willRemoveSubview:subview];
+}
+
 - (void)reapplyStyles
 {
     if (!_private->needsToApplyStyles) {
