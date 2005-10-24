@@ -9,6 +9,19 @@
 
 2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin. Committed by beth.
+
+	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5384
+	Soft hyphen displayed as hyphen when it is the first character 
+	in a line/run.
+
+        * fast/text/softHyphen-expected.checksum: Added.
+        * fast/text/softHyphen-expected.png: Added.
+        * fast/text/softHyphen-expected.txt: Added.
+        * fast/text/softHyphen.html: Added.
+
+2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.  Committed by David Harrison.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5449

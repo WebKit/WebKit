@@ -1334,13 +1334,13 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             ignoringSpaces = false;
         
         // Ignore spaces and soft hyphens
-        if (ignoringSpaces || (i > 0 && c.unicode() == SOFT_HYPHEN)) {
+        if (ignoringSpaces || c.unicode() == SOFT_HYPHEN) {
             continue;
         }
         
         bool hasBreak = isBreakable(txt, i, len, nextBreakable);
         int j = i;
-        while (c != '\n' && c != ' ' && c != '\t' && (j == 0 || c.unicode() != SOFT_HYPHEN)) {
+        while (c != '\n' && c != ' ' && c != '\t' && c.unicode() != SOFT_HYPHEN) {
             j++;
             if (j == len)
                 break;

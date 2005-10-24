@@ -475,9 +475,14 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
                 if (endpoint.obj->isText()) {
                     // Don't shave a character off the endpoint if it was from a soft hyphen.
                     RenderText* textObj = static_cast<RenderText*>(endpoint.obj);
-                    if (endpoint.pos+1 < textObj->length() &&
-                        textObj->text()[endpoint.pos+1].unicode() == SOFT_HYPHEN)
-                        return;
+                    if (endpoint.pos+1 < textObj->length()) {
+                        if (textObj->text()[endpoint.pos+1].unicode() == SOFT_HYPHEN)
+                            return;
+                    } else if (startpoint.obj->isText()) {
+                        RenderText *startText = static_cast<RenderText*>(startpoint.obj);
+                        if (startText->length() > 0 && startText->text()[0].unicode() == SOFT_HYPHEN)
+                            return;
+                    }
                 }
                 endpoint.pos--;
             }
@@ -1893,7 +1898,7 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // object iteration process.
     int w = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
-          (it.current() == ' ' || it.current() == '\t' || it.current() == '\n' || 
+          (it.current() == ' ' || it.current() == '\t' || it.current() == '\n' || it.current().unicode() == SOFT_HYPHEN ||
            skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
@@ -1969,6 +1974,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     RenderObject *o = start.obj;
     RenderObject *last = o;
+    RenderObject *previous = o;
     int pos = start.pos;
 
     bool prevLineBrokeCleanly = previousLineBrokeCleanly;
@@ -2145,11 +2151,19 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     isLineEmpty = false;
                 
                 // Check for soft hyphens.  Go ahead and ignore them.
-                if (c.unicode() == SOFT_HYPHEN && pos > 0) {
+                if (c.unicode() == SOFT_HYPHEN) {
                     if (!ignoringSpaces) {
                         // Ignore soft hyphens
-                        BidiIterator endMid(0, o, pos-1);
-                        addMidpoint(endMid);
+                        BidiIterator endMid;
+                        if (pos > 0)
+                            endMid = BidiIterator(0, o, pos-1);
+                        else
+                            endMid = BidiIterator(0, previous, previous->isText() ? static_cast<RenderText *>(previous)->stringLength() - 1 : 0);
+                        // Two consecutive soft hyphens. Avoid overlapping midpoints.
+                        if (sNumMidpoints && smidpoints->at(sNumMidpoints - 1).obj == endMid.obj && smidpoints->at(sNumMidpoints - 1).pos > endMid.pos)
+                            sNumMidpoints--;
+                        else
+                            addMidpoint(endMid);
                         
                         // Add the width up to but not including the hyphen.
                         tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW);
@@ -2248,7 +2262,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             }
                             goto end; // Didn't fit. Jump to the end.
                         }
-                        else if (pos > 1 && str[pos-1].unicode() == SOFT_HYPHEN)
+                        else if (pos > 0 && str[pos-1].unicode() == SOFT_HYPHEN)
                             // Subtract the width of the soft hyphen out since we fit on a line.
                             tmpW -= t->width(pos-1, 1, f, w+tmpW);
                     }
@@ -2396,6 +2410,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         }
 
         last = o;
+        if (!o->isFloating() && (!o->isPositioned() || o->hasStaticX() || o->hasStaticY() || !o->container()->isInlineFlow()))
+            previous = o;
         o = next;
 
         if (!last->isFloatingOrPositioned() && last->isReplaced() && last->style()->whiteSpace() == NORMAL && 
