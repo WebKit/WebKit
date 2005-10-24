@@ -1,3 +1,24 @@
+2005-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix Qualified Name parsing to match spec.
+        xhtml dom tests cover these cases.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5317
+
+        * khtml/xml/dom_docimpl.cpp:
+        (isValidNameStart):
+        (isValidNamePart):
+        (qualifiedNameIsMalformed):
+        (DOMImplementationImpl::createDocumentType):
+        (DOMImplementationImpl::createDocument):
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::isValidName):
+        (DocumentImpl::parseQualifiedName):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::setAttributeNS):
+
 2005-10-23  Julien Palmas <julien.palmas@gmail.com>
 
         Reviewed by eseidel.

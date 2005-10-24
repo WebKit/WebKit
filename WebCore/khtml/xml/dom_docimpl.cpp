@@ -111,20 +111,86 @@ const int cLayoutScheduleThreshold = 250;
 
 DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
-static bool qualifiedNameIsValid(const DOMString &qualifiedName)
+// DOM Level 2 says (letters added):
+//
+// a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
+// b) Name characters other than Name-start characters must have one of the categories Mc, Me, Mn, Lm, or Nd.
+// c) Characters in the compatibility area (i.e. with character code greater than #xF900 and less than #xFFFE) are not allowed in XML names.
+// d) Characters which have a font or compatibility decomposition (i.e. those with a "compatibility formatting tag" in field 5 of the database -- marked by field 5 beginning with a "<") are not allowed.
+// e) The following characters are treated as name-start characters rather than name characters, because the property file classifies them as Alphabetic: [#x02BB-#x02C1], #x0559, #x06E5, #x06E6.
+// f) Characters #x20DD-#x20E0 are excluded (in accordance with Unicode, section 5.14).
+// g) Character #x00B7 is classified as an extender, because the property list so identifies it.
+// h) Character #x0387 is added as a name character, because #x00B7 is its canonical equivalent.
+// i) Characters ':' and '_' are allowed as name-start characters.
+// j) Characters '-' and '.' are allowed as name characters.
+//
+// It also contains complete tables. If we decide it's better, we could include those instead of the following code.
+
+static inline bool isValidNameStart(UChar32 c)
 {
-    // Not mentioned in spec: empty qualified names are not valid.
-    if (qualifiedName.isEmpty())
+    // rule (e) above
+    if ((c >= 0x02BB && c <= 0x02C1) || c == 0x559 || c == 0x6E5 || c == 0x6E6)
+        return true;
+
+    // rule (i) above
+    if (c == ':' || c == '_')
+        return true;
+
+    // rules (a) and (f) above
+    const uint32_t nameStartMask = U_GC_LL_MASK | U_GC_LU_MASK | U_GC_LO_MASK | U_GC_LT_MASK | U_GC_NL_MASK;
+    if (!(U_GET_GC_MASK(c) & nameStartMask))
         return false;
-    // FIXME: Check for illegal characters.
-    // FIXME: Merge/reconcile with DocumentImpl::isValidName.
+
+    // rule (c) above
+    if (c >= 0xF900 && c < 0xFFFE)
+        return false;
+
+    // rule (d) above
+    UDecompositionType decompType = static_cast<UDecompositionType>(u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE));
+    if (decompType == U_DT_FONT || decompType == U_DT_COMPAT)
+        return false;
+
     return true;
 }
 
-static bool qualifiedNameIsMalformed(const DOMString &qualifiedName)
+static inline bool isValidNamePart(UChar32 c)
 {
-    assert(qualifiedNameIsValid(qualifiedName));
-    // FIXME: Implement this check.
+    // rules (a), (e), and (i) above
+    if (isValidNameStart(c))
+        return true;
+
+    // rules (g) and (h) above
+    if (c == 0x00B7 || c == 0x0387)
+        return true;
+
+    // rule (j) above
+    if (c == '-' || c == '.')
+        return true;
+
+    // rules (b) and (f) above
+    const uint32_t otherNamePartMask = U_GC_MC_MASK | U_GC_ME_MASK | U_GC_MN_MASK | U_GC_LM_MASK | U_GC_ND_MASK;
+    if (!(U_GET_GC_MASK(c) & otherNamePartMask))
+        return false;
+
+    // rule (c) above
+    if (c >= 0xF900 && c < 0xFFFE)
+        return false;
+
+    // rule (d) above
+    UDecompositionType decompType = static_cast<UDecompositionType>(u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE));
+    if (decompType == U_DT_FONT || decompType == U_DT_COMPAT)
+        return false;
+
+    return true;
+}
+
+// FIXME: An implementation of this is still waiting for me to understand the distinction between
+// a "malformed" qualified name and one with bad characters in it. For example, is a second colon
+// an illegal character or a malformed qualified name? This will determine both what parameters
+// this function needs to take and exactly what it will do. Should also be exported so that
+// ElementImpl can use it too.
+static bool qualifiedNameIsMalformed(const DOMString &)
+{
     return false;
 }
 
@@ -166,7 +232,8 @@ DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qu
     }
 
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if (!qualifiedNameIsValid(qualifiedName)) {
+    DOMString prefix, localName;
+    if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
@@ -198,7 +265,8 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     }
 
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if (!qualifiedNameIsValid(qualifiedName)) {
+    DOMString prefix, localName;
+    if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
@@ -649,31 +717,23 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
     return 0;
 }
 
-ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
+ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const DOMString &qualifiedName, int &exceptioncode)
 {
-    // Split the name.
-    int exceptionCode = 0;
-    ElementImpl* e = 0;
+    // FIXME: We'd like a faster code path that skips this check for calls from inside the engine where the name is known to be valid.
     DOMString prefix, localName;
-    int colonPos = _qualifiedName.find(':');
-    if (colonPos >= 0) {
-        prefix = _qualifiedName.substring(0, colonPos);
-        localName = _qualifiedName.substring(colonPos+1, _qualifiedName.length() - colonPos);
+    if (!parseQualifiedName(qualifiedName, prefix, localName)) {
+        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
     }
-    else
-        localName = _qualifiedName;
+
+    ElementImpl *e = 0;
     
     // FIXME: Use registered namespaces and look up in a hash to find the right factory.
     if (_namespaceURI == xhtmlNamespaceURI) {
-        // FIXME: Really should only be done from the public DOM API.  Internal callers know the name is valid.
-        if (!isValidName(localName)) {
-            exceptioncode = DOMException::INVALID_CHARACTER_ERR;
-            return 0;
-        }
         e = HTMLElementFactory::createHTMLElement(AtomicString(localName), this, 0, false);
         if (e && !prefix.isNull()) {
-            e->setPrefix(AtomicString(prefix), exceptionCode);
-            if (exceptionCode)
+            e->setPrefix(AtomicString(prefix), exceptioncode);
+            if (exceptioncode)
                 return 0;
         }
     }
@@ -2561,39 +2621,67 @@ void DocumentImpl::setDomain(const DOMString &newDomain, bool force /*=false*/)
 
 bool DocumentImpl::isValidName(const DOMString &name)
 {
-    // DOM Level 2 says:
-    //
-    // Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
-    // Name characters other than Name-start characters must have one of the categories Mc, Me, Mn, Lm, or Nd.
-    // Characters in the compatibility area (i.e. with character code greater than #xF900 and less than #xFFFE) are not allowed in XML names.
-    // Characters which have a font or compatibility decomposition (i.e. those with a "compatibility formatting tag" in field 5 of the database -- marked by field 5 beginning with a "<") are not allowed.
-    // The following characters are treated as name-start characters rather than name characters, because the property file classifies them as Alphabetic: [#x02BB-#x02C1], #x0559, #x06E5, #x06E6.
-    // Characters #x20DD-#x20E0 are excluded (in accordance with Unicode, section 5.14).
-    // Character #x00B7 is classified as an extender, because the property list so identifies it.
-    // Character #x0387 is added as a name character, because #x00B7 is its canonical equivalent.
-    // Characters ':' and '_' are allowed as name-start characters.
-    // Characters '-' and '.' are allowed as name characters.
-    //
-    // FIXME: Implement the above!
+    const UChar *s = reinterpret_cast<const UChar *>(name.unicode());
+    unsigned length = name.length();
 
-    static const char validFirstCharacter[] = "ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijklmnopqrstuvwxyz";
-    static const char validSubsequentCharacter[] = "ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijklmnopqrstuvwxyz0123456789-_:.";
-    const unsigned length = name.length();
     if (length == 0)
         return false;
-    const QChar * const characters = name.unicode();
-    const char fc = characters[0];
-    if (!fc)
+
+    unsigned i = 0;
+
+    UChar32 c;
+    U16_NEXT(s, i, length, c)
+    if (!isValidNameStart(c))
         return false;
-    if (strchr(validFirstCharacter, fc) == 0)
-        return false;
-    for (unsigned i = 1; i < length; ++i) {
-        const char sc = characters[i];
-        if (!sc)
-            return false;
-        if (strchr(validSubsequentCharacter, sc) == 0)
+
+    while (i < length) {
+        U16_NEXT(s, i, length, c)
+        if (!isValidNamePart(c))
             return false;
     }
+
+    return true;
+}
+
+bool DocumentImpl::parseQualifiedName(const DOMString &qualifiedName, DOMString &prefix, DOMString &localName)
+{
+    unsigned length = qualifiedName.length();
+
+    if (length == 0)
+        return false;
+
+    bool nameStart = true;
+    bool sawColon = false;
+    int colonPos = 0;
+
+    const QChar *s = qualifiedName.unicode();
+    for (unsigned i = 0; i < length; ) {
+        UChar32 c;
+        U16_NEXT(s, i, length, c)
+        if (c == ':') {
+            if (sawColon)
+                return false; // multiple colons: not allowed
+            nameStart = true;
+            sawColon = true;
+            colonPos = i - 1;
+        } else if (nameStart) {
+            if (!isValidNameStart(c))
+                return false;
+            nameStart = false;
+        } else {
+            if (!isValidNamePart(c))
+                return false;
+        }
+    }
+
+    if (!sawColon) {
+        prefix = DOMString();
+        localName = qualifiedName.copy();
+    } else {
+        prefix = qualifiedName.substring(0, colonPos);
+        localName = qualifiedName.substring(colonPos + 1, length - (colonPos + 1));
+    }
+
     return true;
 }
 
