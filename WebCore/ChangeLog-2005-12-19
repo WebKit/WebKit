@@ -1,3 +1,13 @@
+2005-10-24  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Hyatt, landed by beth.
+
+	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5318
+	forced line break should not be allowed after a list marker.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2005-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by hyatt.

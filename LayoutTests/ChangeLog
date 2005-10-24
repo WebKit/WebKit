@@ -1,3 +1,13 @@
+2005-10-24  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5318
+	forced line break should not be allowed after a list marker
+
+        * fast/lists/li-br-expected.checksum: Added.
+        * fast/lists/li-br-expected.png: Added.
+        * fast/lists/li-br-expected.txt: Added.
+        * fast/lists/li-br.html: Added.
+
 2005-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by hyatt.
