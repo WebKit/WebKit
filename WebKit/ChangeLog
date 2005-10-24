@@ -1,3 +1,14 @@
+2005-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        For better abstraction, made the tokenizer -- instead of the 
+        data source -- responsible for calling [WebFrame _checkLoadComplete]
+        when the tokenizer stops.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stopLoadingInternal]):
+
 2005-10-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.

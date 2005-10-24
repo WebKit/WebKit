@@ -452,13 +452,8 @@
     [_private->iconLoader stopLoading];
 
     // The same goes for the bridge/part, which may still be parsing.
-    if (_private->committed) {
+    if (_private->committed)
         [[self _bridge] stopLoading];
-      
-        // If the data source was done loading, but the tokenizer was still running, the frame
-        // didn't have a chance to fire its didFinish delegates, so we give it a chance here.
-        [[self webFrame] _checkLoadComplete];
-    }
 
     if (!_private->loading) {
 	return;
