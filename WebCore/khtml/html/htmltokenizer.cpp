@@ -1557,6 +1557,11 @@ void HTMLTokenizer::stopParsing()
         killTimer(timerId);
         timerId = 0;
     }
+
+    // The part needs to know that the tokenizer has finished with its data,
+    // regardless of whether it happened naturally or due to manual intervention.
+    if (view && view->part())
+      view->part()->tokenizerProcessedData();
 }
 
 bool HTMLTokenizer::processingData() const

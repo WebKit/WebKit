@@ -602,9 +602,6 @@ void KHTMLPart::didExplicitOpen()
 
 void KHTMLPart::stopLoading(bool sendUnload)
 {
-  if (d->m_bComplete)
-    return;
-  
   if (d->m_doc && d->m_doc->tokenizer())
     d->m_doc->tokenizer()->stopParsing();
     
