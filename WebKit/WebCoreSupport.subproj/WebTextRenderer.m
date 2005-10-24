@@ -251,7 +251,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             lastAdjustedPos = lastAdjustedPos + width;
             if (isRoundingHackCharacter(nextCh))
                 if (!isLastChar
-                        || (style->applyRunRounding && (run->length == 1 || run->to - run->from > 1))
+                        || style->applyRunRounding
                         || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to])))
                     lastAdjustedPos = ceilf(lastAdjustedPos);
             layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
@@ -865,14 +865,20 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     
     advanceWidthIterator(&it, run->from, 0, 0, 0);
     float beforeWidth = it.runWidthSoFar;
+    // apply rounding as if this is the end of the run, since that's how RenderText::selectionRect() works
+    if ((style->applyWordRounding && isRoundingHackCharacter(run->characters[run->from]))
+            || style->applyRunRounding)
+        beforeWidth = ceilf(beforeWidth);
     advanceWidthIterator(&it, run->to, 0, 0, 0);
     float backgroundWidth = it.runWidthSoFar - beforeWidth;
     if (style->rtl) {
         advanceWidthIterator(&it, run->length, 0, 0, 0);
-        float afterWidth = it.runWidthSoFar;
-        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + afterWidth, yPos, backgroundWidth, height)];
+        float totalWidth = it.runWidthSoFar;
+        if (style->applyRunRounding)
+            totalWidth = ceilf(totalWidth);
+        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + roundf(totalWidth - backgroundWidth - beforeWidth), yPos, roundf(backgroundWidth), height)];
     } else {
-        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + beforeWidth, yPos, backgroundWidth, height)];
+        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + roundf(beforeWidth), yPos, roundf(backgroundWidth), height)];
     }
 }
 
@@ -1391,15 +1397,19 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
     else while (j < count - 1 && layoutRecords[j].originalOffset >= sizeof(UniChar) * aRun->from)
             j++;
     
-    float backgroundWidth = FixedToFloat(layoutRecords[j].realPos - layoutRecords[i].realPos);
+    float beforeWidth = FixedToFloat(layoutRecords[i].realPos);
+    if ((style->applyWordRounding && isRoundingHackCharacter(run->characters[run->from])) || style->applyRunRounding)
+        beforeWidth = ceilf(beforeWidth);
+    float afterWidth = FixedToFloat(layoutRecords[j].realPos);
+    float backgroundWidth = afterWidth - beforeWidth;
 
-    selectedLeftX = geometry->point.x + FixedToFloat(layoutRecords[i].realPos);
+    selectedLeftX = geometry->point.x + beforeWidth;
     
     [style->backgroundColor set];
 
     float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
-    [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
+    [NSBezierPath fillRect:NSMakeRect(roundf(selectedLeftX), yPos, roundf(backgroundWidth), height)];
 
     disposeATSULayoutParameters(&params);
 
@@ -1847,7 +1857,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
         // Check to see if the next character is a "rounding hack character", if so, adjust
         // width so that the total run width will be on an integer boundary.
         if ((style->applyWordRounding && currentCharacter < run->length && isRoundingHackCharacter(*cp))
-                || (style->applyRunRounding && currentCharacter >= (unsigned)run->to && (run->length == 1 || run->to - run->from > 1))) {
+                || (style->applyRunRounding && currentCharacter >= (unsigned)run->to)) {
             float totalWidth = iterator->widthToStart + runWidthSoFar + width;
             width += ceilf(totalWidth) - totalWidth;
         }
