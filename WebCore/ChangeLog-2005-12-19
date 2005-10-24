@@ -1,3 +1,15 @@
+2005-10-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin Adler.
+        Commited by Tim Hatcher.
+
+        - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5484
+        REGRESSION: reproducible crash in CachedCSSStyleSheet::setCharset
+
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::setCharset):
+        (CachedScript::setCharset):
+
 2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.  Committed by David Harrison.

@@ -226,10 +226,8 @@ void CachedCSSStyleSheet::setCharset( const QString &chs )
 {
     if (!chs.isEmpty()) {
         QTextCodec *codec = QTextCodec::codecForName(chs.latin1());
-        if (codec) {
-            delete m_codec;
+        if (codec)
             m_codec = codec;
-        }
     }
 }
 
@@ -320,10 +318,8 @@ void CachedScript::setCharset( const QString &chs )
 {
     if (!chs.isEmpty()) {
         QTextCodec *codec = QTextCodec::codecForName(chs.latin1());
-        if (codec) {
-            delete m_codec;
+        if (codec)
             m_codec = codec;
-        }
     }
 }
 
