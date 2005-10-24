@@ -75,7 +75,7 @@ void RenderButton::updateFromElement()
     // If we're an input element, we may need to change our button text.
     if (element()->hasTagName(inputTag)) {
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
-        DOMString value = input->value();
+        DOMString value = input->valueWithDefault();
         if (value.isEmpty()) {
             if (m_buttonText) {
                 m_buttonText->destroy();

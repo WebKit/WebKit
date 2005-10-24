@@ -1,3 +1,15 @@
+2005-10-23  David Hyatt  <hyatt@apple.com>
+
+	Make sure the button's generated text using the value with
+	the default label so that Submit/Reset buttons aren't blank.
+	
+        Reviewed by mjs
+
+	Added fast/forms/blankbuttons.html
+	
+        * khtml/rendering/render_button.cpp:
+        (khtml::RenderButton::updateFromElement):
+
 2005-10-24  Maciej Stachowiak  <mjs@apple.com>
 
         Re-landing Dave Hyatt's changes from when the tree was closed.
