@@ -1,3 +1,14 @@
+2005-10-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler. Code changes by George Staikos/Geoff Garen.
+        
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4142
+        Date object does not always adjust daylight savings correctly
+
+        * kjs/date_object.cpp:
+        (KJS::makeTime):
+        Fix the case where a time change crosses the daylight savings start/end dates.
+
 2005-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff. Code changes by Darin.

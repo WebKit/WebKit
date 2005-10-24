@@ -884,6 +884,17 @@ static double makeTime(tm *t, double ms, bool utc)
         t->tm_year = baseYear - 1900;
     }
 
+    // Determine whether DST is in effect. mktime() can't do this for us because
+    // it doesn't know about ms and yearOffset.
+    // NOTE: Casting values of large magnitude to time_t (long) will 
+    // produce incorrect results, but there's no other option when calling localtime_r().
+    if (!utc) { 
+        time_t tval = mktime(t) + (time_t)((ms + yearOffset) / 1000);  
+        struct tm t3;  
+        localtime_r(&tval, &t3);  
+        t->tm_isdst = t3.tm_isdst;  
+    }
+
     return (mktime(t) + utcOffset) * msPerSecond + ms + yearOffset;
 }
 
