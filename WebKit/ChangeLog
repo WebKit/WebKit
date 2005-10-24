@@ -1,3 +1,26 @@
+2005-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - change internal methods in WebTextRenderer to be functions in case this
+          has any effect on speed (also makes things a bit clearer, in my opinion)
+
+        * WebCoreSupport.subproj/WebTextRenderer.h: Made all fields public, which is
+        OK since this is really a private class. Made setAlwaysUseATSU: class method
+        public too for the same reason.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Change all methods to functions.
+        (destroy): Function name for method free.
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]): Removed code to first subtract
+        lineSpacing - descent, then later add it back.
+        (getSmallCapsRenderer): Function name for method smallCapsRenderer.
+        (findSubstituteFont): Function name for method substituteFontForString:families:.
+        (findSubstituteRenderer): Function name for method substituteRendererForCharacters:length:families:.
+        (updateGlyphMapEntry): Function name for method updateGlyphEntryForCharacter:glyphID:substituteRenderer:.
+        (extendGlyphMap): Function name for method extendCharacterToGlyphMapToInclude:.
+        (extendWidthMap): Function name for method extendGlyphToWidthMapToInclude:.
+        (getTextBounds): Function name for method trapezoidForRun:style:atPoint:.
+
 2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.  Committed by David Harrison.
