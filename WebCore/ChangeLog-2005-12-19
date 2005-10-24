@@ -1,5 +1,15 @@
 2005-10-24  Vicki Murley  <vicki@apple.com>
 
+	Changes by Mitz Pettel, reviewed by Maciej.
+
+	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5306 (KHTMLPart::requestObject 
+	doesn't destroy old plugin content)
+
+	* khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::recalcStyle):
+
+2005-10-24  Vicki Murley  <vicki@apple.com>
+
         Changes by Alexey Proskuryakov, reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5140 (CachedObject loading 

@@ -802,11 +802,8 @@ void HTMLObjectElementImpl::removedFromDocument()
 void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 {
     if (!m_useFallbackContent && needWidgetUpdate && m_render && !isImageType()) {
-        // Set needWidgetUpdate to false before calling updateWidget because updateWidget may cause
-        // this method or attach (which also calls updateWidget) to be called.
-        needWidgetUpdate = false;
-        static_cast<RenderPartObject*>(m_render)->updateWidget();
-        dispatchHTMLEvent(loadEvent,false,false);
+        detach();
+        attach();
     }
     HTMLElementImpl::recalcStyle(ch);
 }
