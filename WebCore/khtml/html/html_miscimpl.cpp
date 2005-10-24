@@ -27,6 +27,7 @@
 #include "html/html_formimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_documentimpl.h"
+#include "html/html_objectimpl.h"
 
 #include "dom/dom_node.h"
 
@@ -393,10 +394,12 @@ NodeImpl *HTMLNameCollectionImpl::traverseNextItem(NodeImpl *current) const
                     e->hasTagName(embedTag) ||
                     e->hasTagName(iframeTag))
                     found = e->getAttribute(nameAttr) == m_name;
-                else if (e->hasTagName(appletTag) ||
-                         e->hasTagName(objectTag))
+                else if (e->hasTagName(appletTag))
                     found = e->getAttribute(nameAttr) == m_name ||
                         e->getAttribute(idAttr) == m_name;
+                else if (e->hasTagName(objectTag))
+                    found = (e->getAttribute(nameAttr) == m_name || e->getAttribute(idAttr) == m_name) &&
+                        static_cast<HTMLObjectElementImpl *>(e)->isDocNamedItem();
                 break;
             default:
                 assert(0);

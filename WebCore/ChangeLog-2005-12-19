@@ -2,6 +2,31 @@
 
         Reviewed by Darin.  Committed by David Harrison.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5449
+        "OBJECT should be accessible by id/name as document property only if its only children are PARAMs"
+
+        Test added:
+        * fast/js/object-by-name-or-id-expected.txt: Added.
+        * fast/js/object-by-name-or-id.html: Added.
+
+        Files changed:
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLNameCollectionImpl::traverseNextItem):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::insertedIntoDocument):
+        (DOM::HTMLObjectElementImpl::removedFromDocument):
+        (DOM::HTMLObjectElementImpl::childrenChanged):
+        (DOM::HTMLObjectElementImpl::updateDocNamedItem):
+        * khtml/html/html_objectimpl.h:
+        (DOM::HTMLObjectElementImpl::isDocNamedItem):
+        * manual-tests/drag_select_highlighting.html: Added.
+
+2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.  Committed by David Harrison.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
         "Left border of selection highlight leaves behind a trail"
 

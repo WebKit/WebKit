@@ -236,6 +236,7 @@ public:
     DOMString width() const;
     void setWidth(const DOMString &);
 
+    bool isDocNamedItem() const { return m_docNamedItem; }
 #if APPLE_CHANGES
     KJS::Bindings::Instance *getObjectInstance() const;
 #endif
@@ -248,11 +249,13 @@ public:
     HTMLImageLoader* m_imageLoader;
 
 private:
+    void updateDocNamedItem();
     DOMString oldIdAttr;
     DOMString oldNameAttr;
 #if APPLE_CHANGES
     mutable KJS::Bindings::Instance *objectInstance;
 #endif
+    bool m_docNamedItem;
 };
 
 // -------------------------------------------------------------------------

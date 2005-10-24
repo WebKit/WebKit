@@ -42,6 +42,7 @@
 #include "rendering/render_frames.h"
 #include "rendering/render_image.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
@@ -561,6 +562,7 @@ HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc)
 {
     needWidgetUpdate = false;
     m_useFallbackContent = false;
+    m_docNamedItem = true;
 }
 
 HTMLObjectElementImpl::~HTMLObjectElementImpl()
@@ -678,7 +680,7 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == nameAttr) {
 	    DOMString newNameAttr = attr->value();
-	    if (inDocument() && getDocument()->isHTMLDocument()) {
+	    if (isDocNamedItem() && inDocument() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedItem(oldNameAttr);
 		document->addNamedItem(newNameAttr);
@@ -686,7 +688,7 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 	    oldNameAttr = newNameAttr;
     } else if (attr->name() == idAttr) {
         DOMString newIdAttr = attr->value();
-        if (inDocument() && getDocument()->isHTMLDocument()) {
+        if (isDocNamedItem() && inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
             document->removeDocExtraNamedItem(oldIdAttr);
             document->addDocExtraNamedItem(newIdAttr);
@@ -779,7 +781,7 @@ void HTMLObjectElementImpl::detach()
 
 void HTMLObjectElementImpl::insertedIntoDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
+    if (isDocNamedItem() && getDocument()->isHTMLDocument()) {
         HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
         document->addNamedItem(oldNameAttr);
         document->addDocExtraNamedItem(oldIdAttr);
@@ -790,7 +792,7 @@ void HTMLObjectElementImpl::insertedIntoDocument()
 
 void HTMLObjectElementImpl::removedFromDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
+    if (isDocNamedItem() && getDocument()->isHTMLDocument()) {
         HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
         document->removeNamedItem(oldNameAttr);
         document->removeDocExtraNamedItem(oldIdAttr);
@@ -810,6 +812,7 @@ void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 
 void HTMLObjectElementImpl::childrenChanged()
 {
+    updateDocNamedItem();
     if (inDocument() && !m_useFallbackContent) {
         needWidgetUpdate = true;
         setChanged();
@@ -852,6 +855,38 @@ void HTMLObjectElementImpl::renderFallbackContent()
     // FIXME: Style gets recalculated which is suboptimal.
     detach();
     attach();
+}
+
+void HTMLObjectElementImpl::updateDocNamedItem()
+{
+    // The rule is "<object> elements with no children other than
+    // <param> elements and whitespace can be found by name in a
+    // document, and other <object> elements cannot."
+    bool wasNamedItem = m_docNamedItem;
+    bool isNamedItem = true;
+    NodeImpl *child = firstChild();
+    while (child && isNamedItem) {
+        if (child->isElementNode()) {
+            if (!static_cast<ElementImpl *>(child)->hasTagName(paramTag))
+                isNamedItem = false;
+        } else if (child->isTextNode()) {
+            if (!static_cast<TextImpl *>(child)->containsOnlyWhitespace())
+                isNamedItem = false;
+        } else
+            isNamedItem = false;
+        child = child->nextSibling();
+    }
+    if (isNamedItem != wasNamedItem && getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        if (isNamedItem) {
+            document->addNamedItem(oldNameAttr);
+            document->addDocExtraNamedItem(oldIdAttr);
+        } else {
+            document->removeNamedItem(oldNameAttr);
+            document->removeDocExtraNamedItem(oldIdAttr);
+        }
+    }
+    m_docNamedItem = isNamedItem;
 }
 
 DOMString HTMLObjectElementImpl::code() const
