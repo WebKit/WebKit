@@ -1,3 +1,14 @@
+2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.  Committed by David Harrison.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
+        "Left border of selection highlight leaves behind a trail"
+
+        (Code changes are in WebKit)
+        
+        * manual-tests/drag_select_highlighting.html: Added.
+
 2005-10-24  Vicki Murley  <vicki@apple.com>
 
 	Changes by Mitz Pettel, reviewed by Maciej.
