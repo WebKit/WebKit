@@ -1,3 +1,14 @@
+2005-10-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 5485, make sure generated content's "rightmost selector"
+	check does not apply once you move to another selector in the 
+	compound selector chain.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkSelector):
+
 2005-10-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, committed by beth.
