@@ -1,3 +1,52 @@
+2005-10-25  David Hyatt  <hyatt@apple.com>
+
+	Land box-sizing support and change button to work correctly
+	with it.
+
+	Also stop honoring of font properties on <input> if
+	Aqua is enabled.  If you allow bold, but don't honor size, then
+	you end up with poorly rendered buttons on cnn.com (box-sizing
+	made this apparent, since the buttons got smaller).
+
+	Fix the clipping code for button content to actually work. :)
+	Function needed to be designated virtual in order to get
+	called.
+	
+        Reviewed by darin
+
+	fast/box-sizing/box-sizing.html is the new test case.
+	
+        * ChangeLog:
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcMinMaxWidth):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcBorderBoxWidth):
+        (RenderBox::calcBorderBoxHeight):
+        (RenderBox::calcContentBoxWidth):
+        (RenderBox::calcContentBoxHeight):
+        (RenderBox::calcWidth):
+        (RenderBox::calcWidthUsing):
+        (RenderBox::calcHeight):
+        (RenderBox::calcHeightUsing):
+        (RenderBox::calcPercentageHeight):
+        (RenderBox::calcReplacedWidth):
+        (RenderBox::calcReplacedWidthUsing):
+        (RenderBox::calcReplacedHeightUsing):
+        (RenderBox::availableHeightUsing):
+        (RenderBox::calcAbsoluteHorizontalValues):
+        (RenderBox::calcAbsoluteVerticalValues):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_button.cpp:
+        (khtml::RenderButton::paintObject):
+        * khtml/rendering/render_button.h:
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcMinMaxWidth):
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::setFontFromControlSize):
+        (khtml::RenderThemeMac::adjustButtonStyle):
+
 2005-10-25  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Hyatt.

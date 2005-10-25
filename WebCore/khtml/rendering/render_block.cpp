@@ -2678,19 +2678,19 @@ void RenderBlock::calcMinMaxWidth()
 
     if (style()->width().isFixed() && style()->width().value > 0) {
         if (isTableCell())
-            m_maxWidth = kMax(m_minWidth, style()->width().value);
+            m_maxWidth = kMax(m_minWidth, calcContentBoxWidth(style()->width().value));
         else
-            m_minWidth = m_maxWidth = style()->width().value;
+            m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value);
     }
     
     if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
-        m_maxWidth = kMax(m_maxWidth, style()->minWidth().value);
-        m_minWidth = kMax(m_minWidth, style()->minWidth().value);
+        m_maxWidth = kMax(m_maxWidth, calcContentBoxWidth(style()->minWidth().value));
+        m_minWidth = kMax(m_minWidth, calcContentBoxWidth(style()->minWidth().value));
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value != UNDEFINED) {
-        m_maxWidth = kMin(m_maxWidth, style()->maxWidth().value);
-        m_minWidth = kMin(m_minWidth, style()->maxWidth().value);
+        m_maxWidth = kMin(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value));
+        m_minWidth = kMin(m_minWidth, calcContentBoxWidth(style()->maxWidth().value));
     }
 
     int toAdd = 0;

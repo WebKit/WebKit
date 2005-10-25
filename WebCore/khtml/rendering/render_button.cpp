@@ -97,7 +97,9 @@ void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
 {
     // Push a clip.
     if (m_inner && i.phase == PaintActionForeground) {
-        QRect clipRect(_tx + m_inner->xPos(), _ty + m_inner->yPos(), m_inner->width(), m_inner->height());
+        QRect clipRect(_tx + borderLeft() + paddingLeft(), _ty + borderTop() + paddingTop(), contentWidth(), contentHeight());
+        if (clipRect.width() == 0 || clipRect.height() == 0)
+            return;
         clipRect = i.p->xForm(clipRect);
         i.p->save();
         i.p->addClip(clipRect);

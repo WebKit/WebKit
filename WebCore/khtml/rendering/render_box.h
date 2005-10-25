@@ -83,6 +83,11 @@ public:
 
     virtual QRect borderBox() const { return QRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
 
+    int calcBorderBoxWidth(int w) const;
+    int calcBorderBoxHeight(int h) const;
+    int calcContentBoxWidth(int w) const;
+    int calcContentBoxHeight(int h) const;
+    
     // This method is now public so that centered objects like tables that are
     // shifted right by left-aligned floats can recompute their left and
     // right margins (so that they can remain centered after being 

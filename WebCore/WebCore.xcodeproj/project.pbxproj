@@ -2293,7 +2293,6 @@
 		E1EE773908F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773A08F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
-		F99FC1D0090473A700712A54 /* SharedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A7A992090467BE00BD59C9 /* SharedPtr.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */

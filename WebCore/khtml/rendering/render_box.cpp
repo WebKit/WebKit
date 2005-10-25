@@ -212,6 +212,36 @@ int RenderBox::height() const
     return m_height;
 }
 
+int RenderBox::calcBorderBoxWidth(int w) const
+{
+    int toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
+    if (style()->boxSizing() == CONTENT_BOX)
+        return w + toAdd;
+    return kMax(w, toAdd);
+}
+
+int RenderBox::calcBorderBoxHeight(int h) const
+{
+    int toAdd = borderTop() + borderBottom() + paddingTop() + paddingBottom();
+    if (style()->boxSizing() == CONTENT_BOX)
+        return h + toAdd;
+    return kMax(h, toAdd);
+}
+
+int RenderBox::calcContentBoxWidth(int w) const
+{
+    if (style()->boxSizing() == BORDER_BOX)
+        w -= (borderLeft() + borderRight() + paddingLeft() + paddingRight());
+    return kMax(0, w);
+}
+
+int RenderBox::calcContentBoxHeight(int h) const
+{
+    if (style()->boxSizing() == BORDER_BOX)
+        h -= (borderTop() + borderBottom() + paddingTop() + paddingBottom());
+    return kMax(0, h);
+}
+
 // Hit Testing
 bool RenderBox::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                             HitTestAction hitTestAction)
@@ -861,25 +891,20 @@ void RenderBox::calcWidth()
         m_marginLeft = 0;
         m_marginRight = 0;
 
-        if (isInline() && !isInlineBlockOrInlineTable())
-        {
+        if (isInline() && !isInlineBlockOrInlineTable()) {
             // just calculate margins
             m_marginLeft = ml.minWidth(cw);
             m_marginRight = mr.minWidth(cw);
-            if (treatAsReplaced)
-            {
-                m_width = w.width(cw);
-                m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
-                if(m_width < m_minWidth) m_width = m_minWidth;
+            if (treatAsReplaced) {
+                m_width = w.width(cw) + borderLeft() + borderRight() + paddingLeft() + paddingRight();
+                m_width = kMax(m_width, m_minWidth);
             }
-
             return;
         }
         else {
             LengthType widthType, minWidthType, maxWidthType;
             if (treatAsReplaced) {
-                m_width = w.width(cw);
-                m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
+                m_width = w.width(cw) + borderLeft() + borderRight() + paddingLeft() + paddingRight();
                 widthType = w.type;
             } else {
                 m_width = calcWidthUsing(Width, cw, widthType);
@@ -944,17 +969,12 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthTyp
         if (cw) width = cw - marginLeft - marginRight;
         
         if (sizesToIntrinsicWidth(widthType)) {
-            if (width < m_minWidth) 
-                width = m_minWidth;
-            if (width > m_maxWidth) 
-                width = m_maxWidth;
+            width = kMax(width, m_minWidth);
+            width = kMin(width, m_maxWidth);
         }
     }
     else
-    {
-        width = w.width(cw);
-        width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
-    }
+        width = calcBorderBoxWidth(w.width(cw));
     
     return width;
 }
@@ -1091,8 +1111,10 @@ void RenderBox::calcHeight()
         }
         else
             // The only times we don't check min/max height are when a fixed length has 
-            // been given as an override.  Just use that.
-            height = h.value + borderTop() + paddingTop() + borderBottom() + paddingBottom(); 
+            // been given as an override.  Just use that.  The value has already been adjusted
+            // for box-sizing.
+            height = h.value + borderTop() + borderBottom() + paddingTop() + paddingBottom();
+
         m_height = height;
     }
     
@@ -1129,7 +1151,7 @@ int RenderBox::calcHeightUsing(const Length& h)
         else if (h.isPercent())
             height = calcPercentageHeight(h);
         if (height != -1) {
-            height += borderTop() + paddingTop() + borderBottom() + paddingBottom();
+            height = calcBorderBoxHeight(height);
             return height;
         }
     }
@@ -1175,7 +1197,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.
     else if (cb->style()->height().isFixed())
-        result = cb->style()->height().value;
+        result = cb->calcContentBoxHeight(cb->style()->height().value);
     else if (cb->style()->height().isPercent())
         // We need to recur and compute the percentage height for our containing block.
         result = cb->calcPercentageHeight(cb->style()->height());
@@ -1206,11 +1228,8 @@ int RenderBox::calcReplacedWidth() const
     int minW = calcReplacedWidthUsing(MinWidth);
     int maxW = style()->maxWidth().value == UNDEFINED ? width : calcReplacedWidthUsing(MaxWidth);
 
-    if (width > maxW)
-        width = maxW;
-    
-    if (width < minW)
-        width = minW;
+    width = kMin(width, maxW);
+    width = kMax(width, minW);
 
     return width;
 }
@@ -1227,14 +1246,11 @@ int RenderBox::calcReplacedWidthUsing(WidthType widthType) const
     
     switch (w.type) {
     case Fixed:
-        return w.value;
-    case Percent:
-    {
+        return calcContentBoxWidth(w.value);
+    case Percent: {
         const int cw = containingBlockWidth();
-        if (cw > 0) {
-            int result = w.minWidth(cw);
-            return result;
-        }
+        if (cw > 0)
+            return calcContentBoxWidth(w.minWidth(cw));
     }
     // fall through
     default:
@@ -1270,7 +1286,7 @@ int RenderBox::calcReplacedHeightUsing(HeightType heightType) const
     case Percent:
         return availableHeightUsing(h);
     case Fixed:
-        return h.value;
+        return calcContentBoxHeight(h.value);
     default:
         return intrinsicHeight();
     };
@@ -1284,7 +1300,7 @@ int RenderBox::availableHeight() const
 int RenderBox::availableHeightUsing(const Length& h) const
 {
     if (h.isFixed())
-        return h.value;
+        return calcContentBoxHeight(h.value);
 
     if (isCanvas())
         return static_cast<const RenderCanvas*>(this)->viewportHeight();
@@ -1292,12 +1308,11 @@ int RenderBox::availableHeightUsing(const Length& h) const
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
-    if (isTableCell() && (h.isAuto() || h.isPercent())) {
-        return overrideSize() - (borderLeft()+borderRight()+paddingLeft()+paddingRight());
-    }
+    if (isTableCell() && (h.isAuto() || h.isPercent()))
+        return overrideSize() - (borderLeft() + borderRight() + paddingLeft() + paddingRight());
     
     if (h.isPercent())
-       return h.width(containingBlock()->availableHeight());
+       return calcContentBoxHeight(h.width(containingBlock()->availableHeight()));
        
     return containingBlock()->availableHeight();
 }
@@ -1422,7 +1437,7 @@ void RenderBox::calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* 
         width = style()->maxWidth();
 
     if (!width.isAuto())
-        w = width.width(cw);
+        w = calcContentBoxWidth(width.width(cw));
     else if (isReplaced())
         w = intrinsicWidth();
 
@@ -1597,7 +1612,7 @@ void RenderBox::calcAbsoluteVerticalValues(HeightType heightType, RenderObject* 
         h = ourHeight - pab;
     else if (!height.isAuto())
     {
-        h = height.width(ch);
+        h = calcContentBoxHeight(height.width(ch));
         if (ourHeight - pab > h)
             ourHeight = h + pab;
     }

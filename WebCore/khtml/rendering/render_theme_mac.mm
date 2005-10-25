@@ -204,7 +204,7 @@ void RenderThemeMac::setSizeFromFont(RenderStyle* style, const QSize* sizes) con
 
 void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize controlSize) const
 {
-    FontDef fontDef(style->htmlFont().getFontDef());
+    FontDef fontDef;
     fontDef.isAbsoluteSize = true;
     fontDef.genericFamily = FontDef::eSansSerif;
     
@@ -400,7 +400,6 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     addIntrinsicMargins(style, controlSize);
             
     // Whenever a button has a background or border specified, then appearance is disabled.
-    // FIXME: We need to support box-sizing properly on bordered buttons!  They end up too big right now!
     bool disableAppearance = style->hasBorder() || style->hasBackground();
     if (!disableAppearance) {
         if (style->appearance() == PushButtonAppearance) {
@@ -420,11 +419,9 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
             // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
             // system font for the control size instead.
             setFontFromControlSize(selector, style, controlSize);
-        } else {
+        } else
             // Set a min-height so that we can't get smaller than the mini button.
-            // FIXME: Once we support box-sizing, we'll have to change this value to include the padding.
-            style->setMinHeight(Length(10, Fixed));
-        }
+            style->setMinHeight(Length(15, Fixed));
     }
 }
 

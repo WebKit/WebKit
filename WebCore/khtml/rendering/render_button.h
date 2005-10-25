@@ -43,7 +43,7 @@ public:
     virtual void setStyle(RenderStyle* style);
     virtual void updateFromElement();
 
-    void paintObject(PaintInfo& i, int _tx, int _ty);
+    virtual void paintObject(PaintInfo& i, int _tx, int _ty);
 
     virtual const char *renderName() const { return "RenderButton"; }
 
