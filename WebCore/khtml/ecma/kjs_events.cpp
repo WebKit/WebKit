@@ -1250,7 +1250,7 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
 
             // See if they passed us an Image object
             ObjectImp *o = static_cast<ObjectImp*>(args[0]);
-            if (o->inherits(&Image::info)) {
+            if (o->isObject() && o->inherits(&Image::info)) {
                 Image *JSImage = static_cast<Image*>(o);
                 cb->clipboard->setDragImage(JSImage->image()->pixmap(), QPoint(x,y));                
                 return Undefined();
