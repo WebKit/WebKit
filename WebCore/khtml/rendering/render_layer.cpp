@@ -555,17 +555,33 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, ScrollAlignment vertica
 {
     RenderLayer* parentLayer = 0;
     QRect newRect;
-    QScrollView* view = m_object->document()->view();
-    QRect viewRect = QRect(view->contentsX(), view->contentsY(), view->visibleWidth(), view->visibleHeight());
-    if (view) {
-        QRect r = getRectToExpose(viewRect, rect, verticalAlignment, verticalAlignment);
-        view->ensureRectVisible(r);
+    
+    if (m_object->hasOverflowClip()) {
+        QRect layerBounds = QRect(m_x + m_scrollX, m_y + m_scrollY, m_width, m_height);
+        QRect exposeRect = QRect(rect.x() + m_scrollX, rect.y() + m_scrollY, rect.width(), rect.height());
+        QRect r = getRectToExpose(layerBounds, exposeRect, verticalAlignment, horizontalAlignment);
+        
+        int xOffset = r.x() - m_x;
+        int yOffset = r.y() - m_y;
+        if (xOffset != m_scrollX || yOffset != m_scrollY)
+            scrollToOffset(xOffset, yOffset);
+    
+        newRect = layerBounds;
+        if (m_object->parent())
+            parentLayer = m_object->parent()->enclosingLayer();
+    } else {
+        QScrollView* view = m_object->document()->view();
+        QRect viewRect = QRect(view->contentsX(), view->contentsY(), view->visibleWidth(), view->visibleHeight());
+        if (view) {
+            QRect r = getRectToExpose(viewRect, rect, verticalAlignment, verticalAlignment);
+            view->ensureRectVisible(r);
+        }
+        if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
+            parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
+            newRect = QRect(view->viewport()->x(), view->viewport()->y(), view->viewport()->width(), view->viewport()->height());
+        }
     }
-    if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
-        parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
-        newRect = QRect(view->viewport()->x(), view->viewport()->y(), view->viewport()->width(), view->viewport()->height());
-    }
-
+    
     if (parentLayer)
         parentLayer->scrollRectToVisible(newRect, verticalAlignment, horizontalAlignment);
 }

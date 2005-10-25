@@ -1,5 +1,14 @@
 2005-10-25  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/3612121> setting focus, by tabbing, searching, or with JavaScript does not scroll overflow:auto/scroll/overlay to reveal focused element (3480)
+
+        * khtml/rendering/render_layer.cpp: 
+        (khtml::RenderLayer::scrollRectToVisible): Added case for when the renderer has an overflow clip, so we can scroll overflow and views recursively.
+
+2005-10-25  Adele Peterson  <adele@apple.com>
+
         Reviewed by Vicki.
 
         Fixed <rdar://problem/4098450> RoboHelp-generated html help system crashes in latest Safari -KWQValueListImpl::copyOnWrite
