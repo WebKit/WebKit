@@ -1,3 +1,13 @@
+2005-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Re-land the following fix, I tested to verify there is no performance regression:
+
+	Makes <object> tags not use image mode for svg content:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5175
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::isImageType):
+
 2005-10-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
