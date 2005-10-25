@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef _CSS_BASE_H
-#define _CSS_BASE_H
+#ifndef CSS_BASE_H
+#define CSS_BASE_H
 
 #include "dom/dom_string.h"
 #include "dom/dom_misc.h"
@@ -116,7 +116,7 @@ namespace DOM {
         {
             None = 0,
             Id,
-        Class,
+            Class,
             Exact,
             Set,
             List,
@@ -200,10 +200,10 @@ namespace DOM {
     class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
     {
     public:
-        StyleBaseImpl()  { m_parent = 0; strictParsing = true; multiLength = false; }
-        StyleBaseImpl(StyleBaseImpl *p) {
-            m_parent = p;
-            strictParsing = (m_parent ? m_parent->useStrictParsing() : true);
+        typedef khtml::TreeShared<StyleBaseImpl> TreeShared;
+        StyleBaseImpl()  { strictParsing = true; multiLength = false; }
+        StyleBaseImpl(StyleBaseImpl *p) : TreeShared(p) {
+            strictParsing = (p ? p->useStrictParsing() : true);
             multiLength = false;
         }
 
@@ -231,8 +231,6 @@ namespace DOM {
         virtual bool isPrimitiveValue() const { return false; }
         virtual bool isValueList() { return false; }
         virtual bool isValueCustom() { return false; }
-
-        void setParent(StyleBaseImpl *parent) { m_parent = parent; }
 
         virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
 

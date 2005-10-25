@@ -41,14 +41,14 @@ using namespace DOM;
 
 void StyleBaseImpl::checkLoaded()
 {
-    if(m_parent) m_parent->checkLoaded();
+    if (parent()) parent()->checkLoaded();
 }
 
 StyleSheetImpl* StyleBaseImpl::stylesheet()
 {
     StyleBaseImpl *b = this;
-    while(b && !b->isStyleSheet())
-        b = b->m_parent;
+    while (b && !b->isStyleSheet())
+        b = b->parent();
     return static_cast<StyleSheetImpl *>(b);
 }
 

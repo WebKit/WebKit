@@ -345,7 +345,7 @@ NodeImpl *NodeImpl::addChild(NodeImpl *)
 
 bool NodeImpl::isContentEditable() const
 {
-    return m_parent ? m_parent->isContentEditable() : false;
+    return parent() && parent()->isContentEditable();
 }
 
 QRect NodeImpl::getRect() const

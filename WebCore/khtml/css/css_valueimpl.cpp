@@ -449,8 +449,8 @@ bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const DOMString
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
 #if !APPLE_CHANGES
-	kdDebug( 6080 ) << "CSSMutableStyleDeclarationImpl::setProperty invalid property: [" << getPropertyName(id).qstring()
-			<< "] value: [" << value.qstring() << "]"<< endl;
+        kdDebug( 6080 ) << "CSSMutableStyleDeclarationImpl::setProperty invalid property: [" << getPropertyName(id).qstring()
+                        << "] value: [" << value.qstring() << "]"<< endl;
 #endif
         exceptionCode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
     } else if (notifyChanged)
@@ -523,8 +523,7 @@ DOMString CSSMutableStyleDeclarationImpl::item(unsigned i) const
 
 CSSRuleImpl *CSSStyleDeclarationImpl::parentRule() const
 {
-    return (m_parent && m_parent->isRule() ) ?
-	static_cast<CSSRuleImpl *>(m_parent) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
 DOM::DOMString CSSMutableStyleDeclarationImpl::cssText() const
@@ -712,11 +711,8 @@ CSSValueListImpl::CSSValueListImpl()
 
 CSSValueListImpl::~CSSValueListImpl()
 {
-    CSSValueImpl *val = m_values.first();
-    while( val ) {
-	val->deref();
-	val = m_values.next();
-    }
+    for (CSSValueImpl *val = m_values.first(); val; val = m_values.next())
+        val->deref();
 }
 
 unsigned short CSSValueListImpl::cssValueType() const
@@ -735,10 +731,9 @@ DOM::DOMString CSSValueListImpl::cssText() const
     DOMString result = "";
 
     for (QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator) {
-	if (result.length() != 0) {
-	    result += ", ";
-	}
-	result += iterator.current()->cssText();
+        if (!result.isEmpty())
+            result += ", ";
+        result += iterator.current()->cssText();
     }
     
     return result;
@@ -776,7 +771,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CounterImpl *c)
 {
     m_value.counter = c;
     if (m_value.counter)
-	m_value.counter->ref();
+        m_value.counter->ref();
     m_type = CSSPrimitiveValue::CSS_COUNTER;
 }
 
@@ -784,7 +779,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl( RectImpl *r)
 {
     m_value.rect = r;
     if (m_value.rect)
-	m_value.rect->ref();
+        m_value.rect->ref();
     m_type = CSSPrimitiveValue::CSS_RECT;
 }
 
@@ -792,7 +787,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl( DashboardRegionImpl *r)
 {
     m_value.region = r;
     if (m_value.region)
-	m_value.region->ref();
+        m_value.region->ref();
     m_type = CSSPrimitiveValue::CSS_DASHBOARD_REGION;
 }
 
@@ -806,7 +801,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PairImpl* p)
 {
     m_value.pair = p;
     if (p)
-	p->ref();
+        p->ref();
     m_type = CSSPrimitiveValue::CSS_PAIR;
 }
 
@@ -890,7 +885,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPa
         // FIXME: We have a bug right now where the zoom will be applied multiple times to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
-	{
+        {
         QFontMetrics fm = style->fontMetrics();
 #if APPLE_CHANGES
         factor = fm.xHeight();
@@ -899,14 +894,14 @@ double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPa
         factor = b.height();
 #endif
         break;
-	}
+        }
     case CSSPrimitiveValue::CSS_PX:
         break;
     case CSSPrimitiveValue::CSS_CM:
-	factor = dpiY/2.54; //72dpi/(2.54 cm/in)
+        factor = dpiY/2.54; //72dpi/(2.54 cm/in)
         break;
     case CSSPrimitiveValue::CSS_MM:
-	factor = dpiY/25.4;
+        factor = dpiY/25.4;
         break;
     case CSSPrimitiveValue::CSS_IN:
             factor = dpiY;
@@ -930,9 +925,9 @@ void CSSPrimitiveValueImpl::setFloatValue( unsigned short unitType, double float
     exceptioncode = 0;
     cleanup();
     // ### check if property supports this type
-    if(m_type > CSSPrimitiveValue::CSS_DIMENSION) {
-	exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
-	return;
+    if (m_type > CSSPrimitiveValue::CSS_DIMENSION) {
+        exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+        return;
     }
     //if(m_type > CSSPrimitiveValue::CSS_DIMENSION) throw DOMException(DOMException::INVALID_ACCESS_ERR);
     m_value.num = floatValue;
@@ -945,15 +940,15 @@ void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const DOM
     cleanup();
     //if(m_type < CSSPrimitiveValue::CSS_STRING) throw DOMException(DOMException::INVALID_ACCESS_ERR);
     //if(m_type > CSSPrimitiveValue::CSS_ATTR) throw DOMException(DOMException::INVALID_ACCESS_ERR);
-    if(m_type < CSSPrimitiveValue::CSS_STRING || m_type >> CSSPrimitiveValue::CSS_ATTR) {
-	exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
-	return;
+    if (m_type < CSSPrimitiveValue::CSS_STRING || m_type >> CSSPrimitiveValue::CSS_ATTR) {
+        exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+        return;
     }
     if(stringType != CSSPrimitiveValue::CSS_IDENT)
     {
-	m_value.string = stringValue.impl();
-	m_value.string->ref();
-	m_type = stringType;
+        m_value.string = stringValue.impl();
+        m_value.string->ref();
+        m_type = stringType;
     }
     // ### parse ident
 }
@@ -998,90 +993,90 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
     // name if it was specified) - check what spec says about this
     DOMString text;
     switch ( m_type ) {
-	case CSSPrimitiveValue::CSS_UNKNOWN:
-	    // ###
-	    break;
-	case CSSPrimitiveValue::CSS_NUMBER:
-	    text = DOMString(QString::number( m_value.num ));
-	    break;
-	case CSSPrimitiveValue::CSS_PERCENTAGE:
-	    text = DOMString(QString::number( m_value.num ) + "%");
-	    break;
-	case CSSPrimitiveValue::CSS_EMS:
-	    text = DOMString(QString::number( m_value.num ) + "em");
-	    break;
-	case CSSPrimitiveValue::CSS_EXS:
-	    text = DOMString(QString::number( m_value.num ) + "ex");
-	    break;
-	case CSSPrimitiveValue::CSS_PX:
-	    text = DOMString(QString::number( m_value.num ) + "px");
-	    break;
-	case CSSPrimitiveValue::CSS_CM:
-	    text = DOMString(QString::number( m_value.num ) + "cm");
-	    break;
-	case CSSPrimitiveValue::CSS_MM:
-	    text = DOMString(QString::number( m_value.num ) + "mm");
-	    break;
-	case CSSPrimitiveValue::CSS_IN:
-	    text = DOMString(QString::number( m_value.num ) + "in");
-	    break;
-	case CSSPrimitiveValue::CSS_PT:
-	    text = DOMString(QString::number( m_value.num ) + "pt");
-	    break;
-	case CSSPrimitiveValue::CSS_PC:
-	    text = DOMString(QString::number( m_value.num ) + "pc");
-	    break;
-	case CSSPrimitiveValue::CSS_DEG:
-	    text = DOMString(QString::number( m_value.num ) + "deg");
-	    break;
-	case CSSPrimitiveValue::CSS_RAD:
-	    text = DOMString(QString::number( m_value.num ) + "rad");
-	    break;
-	case CSSPrimitiveValue::CSS_GRAD:
-	    text = DOMString(QString::number( m_value.num ) + "grad");
-	    break;
-	case CSSPrimitiveValue::CSS_MS:
-	    text = DOMString(QString::number( m_value.num ) + "ms");
-	    break;
-	case CSSPrimitiveValue::CSS_S:
-	    text = DOMString(QString::number( m_value.num ) + "s");
-	    break;
-	case CSSPrimitiveValue::CSS_HZ:
-	    text = DOMString(QString::number( m_value.num ) + "hz");
-	    break;
-	case CSSPrimitiveValue::CSS_KHZ:
-	    text = DOMString(QString::number( m_value.num ) + "khz");
-	    break;
-	case CSSPrimitiveValue::CSS_DIMENSION:
-	    // ###
-	    break;
-	case CSSPrimitiveValue::CSS_STRING:
-	    text = quoteStringIfNeeded(m_value.string);
-	    break;
-	case CSSPrimitiveValue::CSS_URI:
+        case CSSPrimitiveValue::CSS_UNKNOWN:
+            // ###
+            break;
+        case CSSPrimitiveValue::CSS_NUMBER:
+            text = DOMString(QString::number( m_value.num ));
+            break;
+        case CSSPrimitiveValue::CSS_PERCENTAGE:
+            text = DOMString(QString::number( m_value.num ) + "%");
+            break;
+        case CSSPrimitiveValue::CSS_EMS:
+            text = DOMString(QString::number( m_value.num ) + "em");
+            break;
+        case CSSPrimitiveValue::CSS_EXS:
+            text = DOMString(QString::number( m_value.num ) + "ex");
+            break;
+        case CSSPrimitiveValue::CSS_PX:
+            text = DOMString(QString::number( m_value.num ) + "px");
+            break;
+        case CSSPrimitiveValue::CSS_CM:
+            text = DOMString(QString::number( m_value.num ) + "cm");
+            break;
+        case CSSPrimitiveValue::CSS_MM:
+            text = DOMString(QString::number( m_value.num ) + "mm");
+            break;
+        case CSSPrimitiveValue::CSS_IN:
+            text = DOMString(QString::number( m_value.num ) + "in");
+            break;
+        case CSSPrimitiveValue::CSS_PT:
+            text = DOMString(QString::number( m_value.num ) + "pt");
+            break;
+        case CSSPrimitiveValue::CSS_PC:
+            text = DOMString(QString::number( m_value.num ) + "pc");
+            break;
+        case CSSPrimitiveValue::CSS_DEG:
+            text = DOMString(QString::number( m_value.num ) + "deg");
+            break;
+        case CSSPrimitiveValue::CSS_RAD:
+            text = DOMString(QString::number( m_value.num ) + "rad");
+            break;
+        case CSSPrimitiveValue::CSS_GRAD:
+            text = DOMString(QString::number( m_value.num ) + "grad");
+            break;
+        case CSSPrimitiveValue::CSS_MS:
+            text = DOMString(QString::number( m_value.num ) + "ms");
+            break;
+        case CSSPrimitiveValue::CSS_S:
+            text = DOMString(QString::number( m_value.num ) + "s");
+            break;
+        case CSSPrimitiveValue::CSS_HZ:
+            text = DOMString(QString::number( m_value.num ) + "hz");
+            break;
+        case CSSPrimitiveValue::CSS_KHZ:
+            text = DOMString(QString::number( m_value.num ) + "khz");
+            break;
+        case CSSPrimitiveValue::CSS_DIMENSION:
+            // ###
+            break;
+        case CSSPrimitiveValue::CSS_STRING:
+            text = quoteStringIfNeeded(m_value.string);
+            break;
+        case CSSPrimitiveValue::CSS_URI:
             text  = "url(";
-	    text += DOMString( m_value.string );
+            text += DOMString( m_value.string );
             text += ")";
-	    break;
-	case CSSPrimitiveValue::CSS_IDENT:
-	    text = getValueName(m_value.ident);
-	    break;
-	case CSSPrimitiveValue::CSS_ATTR:
-	    // ###
-	    break;
-	case CSSPrimitiveValue::CSS_COUNTER:
-	    // ###
-	    break;
+            break;
+        case CSSPrimitiveValue::CSS_IDENT:
+            text = getValueName(m_value.ident);
+            break;
+        case CSSPrimitiveValue::CSS_ATTR:
+            // ###
+            break;
+        case CSSPrimitiveValue::CSS_COUNTER:
+            // ###
+            break;
         case CSSPrimitiveValue::CSS_RECT: {
-	    RectImpl* rectVal = getRectValue();
+            RectImpl* rectVal = getRectValue();
             text = "rect(";
             text += rectVal->top()->cssText() + " ";
             text += rectVal->right()->cssText() + " ";
             text += rectVal->bottom()->cssText() + " ";
             text += rectVal->left()->cssText() + ")";
-	    break;
+            break;
         }
-	case CSSPrimitiveValue::CSS_RGBCOLOR: {
+        case CSSPrimitiveValue::CSS_RGBCOLOR: {
             QColor color(m_value.rgbcolor);
             if (qAlpha(m_value.rgbcolor) < 0xFF)
                 text = "rgba(";
@@ -1358,38 +1353,33 @@ DOMString FontValueImpl::cssText() const
     DOMString result("");
 
     if (style) {
-	result += style->cssText();
+        result += style->cssText();
     }
     if (variant) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += variant->cssText();
+        if (!result.isEmpty())
+            result += " ";
+        result += variant->cssText();
     }
     if (weight) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += weight->cssText();
+        if (!result.isEmpty())
+            result += " ";
+        result += weight->cssText();
     }
     if (size) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += size->cssText();
+        if (!result.isEmpty())
+            result += " ";
+        result += size->cssText();
     }
     if (lineHeight) {
-	if (!size) {
-	    result += " ";
-	}
-	result += "/";
-	result += lineHeight->cssText();
+        if (!size)
+            result += " ";
+        result += "/";
+        result += lineHeight->cssText();
     }
     if (family) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += family->cssText();
+        if (!result.isEmpty())
+            result += " ";
+        result += family->cssText();
     }
 
     return result;
@@ -1399,7 +1389,7 @@ DOMString FontValueImpl::cssText() const
 // Used for text-shadow and box-shadow
 ShadowValueImpl::ShadowValueImpl(CSSPrimitiveValueImpl* _x, CSSPrimitiveValueImpl* _y,
                                  CSSPrimitiveValueImpl* _blur, CSSPrimitiveValueImpl* _color)
-:x(_x), y(_y), blur(_blur), color(_color)	
+:x(_x), y(_y), blur(_blur), color(_color)
 {}
 
 ShadowValueImpl::~ShadowValueImpl()
@@ -1413,26 +1403,22 @@ ShadowValueImpl::~ShadowValueImpl()
 DOMString ShadowValueImpl::cssText() const
 {
     DOMString text("");
-    if (color) {
-	text += color->cssText();
-    }
+    if (color)
+        text += color->cssText();
     if (x) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += x->cssText();
+        if (!text.isEmpty())
+            text += " ";
+        text += x->cssText();
     }
     if (y) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += y->cssText();
+        if (!text.isEmpty())
+            text += " ";
+        text += y->cssText();
     }
     if (blur) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += blur->cssText();
+        if (!text.isEmpty())
+            text += " ";
+        text += blur->cssText();
     }
 
     return text;

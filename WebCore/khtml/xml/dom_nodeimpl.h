@@ -88,7 +88,7 @@ public:
     virtual DOMString nodeValue() const;
     virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
     virtual unsigned short nodeType() const = 0;
-    NodeImpl *parentNode() const { return m_parent; }
+    NodeImpl *parentNode() const { return parent(); }
     NodeImpl *previousSibling() const { return m_previous; }
     NodeImpl *nextSibling() const { return m_next; }
     virtual SharedPtr<NodeListImpl> childNodes();

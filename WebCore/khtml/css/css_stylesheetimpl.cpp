@@ -75,25 +75,23 @@ StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMString href)
 
 StyleSheetImpl::~StyleSheetImpl()
 {
-    if(m_media) {
-	m_media->setParent( 0 );
-	m_media->deref();
+    if (m_media) {
+        m_media->setParent( 0 );
+        m_media->deref();
     }
 }
 
 StyleSheetImpl *StyleSheetImpl::parentStyleSheet() const
 {
-    if( !m_parent ) return 0;
-    if( m_parent->isStyleSheet() ) return static_cast<StyleSheetImpl *>(m_parent);
-    return 0;
+    return (parent() && parent()->isStyleSheet()) ? static_cast<StyleSheetImpl *>(parent()) : 0;
 }
 
 void StyleSheetImpl::setMedia( MediaListImpl *media )
 {
-    if( media )
-	media->ref();
-    if( m_media )
-	m_media->deref();
+    if (media)
+        media->ref();
+    if (m_media)
+        m_media->deref();
     m_media = media;
 }
 
@@ -160,22 +158,20 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *
 
 CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
 {
-    if( !m_parent ) return 0;
-    if( m_parent->isRule() ) return static_cast<CSSRuleImpl *>(m_parent);
-    return 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
 unsigned CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned index, int &exceptioncode )
 {
     exceptioncode = 0;
-    if(index > m_lstChildren->count()) {
+    if (index > m_lstChildren->count()) {
         exceptioncode = DOMException::INDEX_SIZE_ERR;
         return 0;
     }
     CSSParser p( strictParsing );
     CSSRuleImpl *r = p.parseRule( this, rule );
 
-    if(!r) {
+    if (!r) {
         exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
         return 0;
     }
@@ -202,7 +198,7 @@ void CSSStyleSheetImpl::deleteRule( unsigned index, int &exceptioncode )
 {
     exceptioncode = 0;
     StyleBaseImpl *b = m_lstChildren->take(index);
-    if(!b) {
+    if (!b) {
         exceptioncode = DOMException::INDEX_SIZE_ERR;
         return;
     }
@@ -253,13 +249,13 @@ bool CSSStyleSheetImpl::isLoading()
     StyleBaseImpl *rule;
     for ( rule = m_lstChildren->first(); rule != 0; rule = m_lstChildren->next() )
     {
-        if(rule->isImportRule())
+        if (rule->isImportRule())
         {
             CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(rule);
 #ifdef CSS_STYLESHEET_DEBUG
             kdDebug( 6080 ) << "found import" << endl;
 #endif
-            if(import->isLoading())
+            if (import->isLoading())
             {
 #ifdef CSS_STYLESHEET_DEBUG
                 kdDebug( 6080 ) << "--> not loaded" << endl;
@@ -273,9 +269,9 @@ bool CSSStyleSheetImpl::isLoading()
 
 void CSSStyleSheetImpl::checkLoaded()
 {
-    if(isLoading()) return;
-    if(m_parent) m_parent->checkLoaded();
-    if(m_parentNode) m_parentNode->sheetLoaded();
+    if (isLoading()) return;
+    if (parent()) parent()->checkLoaded();
+    if (m_parentNode) m_parentNode->sheetLoaded();
 }
 
 khtml::DocLoader *CSSStyleSheetImpl::docLoader()
@@ -359,20 +355,18 @@ bool MediaListImpl::contains( const DOMString &medium ) const
 
 CSSStyleSheetImpl *MediaListImpl::parentStyleSheet() const
 {
-    if( m_parent->isCSSStyleSheet() ) return static_cast<CSSStyleSheetImpl *>(m_parent);
-    return 0;
+    return parent()->isCSSStyleSheet() ? static_cast<CSSStyleSheetImpl *>(parent()) : 0;
 }
 
 CSSRuleImpl *MediaListImpl::parentRule() const
 {
-    if( m_parent->isRule() ) return static_cast<CSSRuleImpl *>(m_parent);
-    return 0;
+    return parent()->isRule() ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
 void MediaListImpl::deleteMedium( const DOMString &oldMedium )
 {
     for ( QValueList<DOMString>::Iterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
-        if( (*it) == oldMedium ) {
+        if ((*it) == oldMedium) {
             m_lstMedia.remove( it );
             return;
         }
@@ -398,7 +392,7 @@ void MediaListImpl::setMediaText(const DOM::DOMString &value)
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
     {
         DOMString medium = (*it).stripWhiteSpace();
-        if( medium != "" )
+        if (!medium.isEmpty())
             m_lstMedia.append( medium );
     }
 }

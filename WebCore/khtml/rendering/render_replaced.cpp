@@ -281,9 +281,8 @@ RenderWidget::~RenderWidget()
 {
     KHTMLAssert( refCount() <= 0 );
 
-    if (m_deleteWidget) {
-	delete m_widget;
-    }
+    if (m_deleteWidget)
+        delete m_widget;
 }
 
 void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
@@ -310,9 +309,8 @@ void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
         if (m_widget) {
             m_widget->removeEventFilter(this);
             disconnect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
-	    if (m_deleteWidget) {
-		delete m_widget;
-	    }
+            if (m_deleteWidget)
+                delete m_widget;
             m_widget = 0;
         }
         m_widget = widget;
@@ -323,23 +321,21 @@ void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
             // widget immediately, but we have to have really been full constructed (with a non-null
             // style pointer).
             if (!needsLayout() && style()) {
-		resizeWidget( m_widget,
-			      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
-			      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
+                resizeWidget( m_widget,
+                              m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
+                              m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
             }
             else
                 setPos(xPos(), -500000);
 
-#if APPLE_CHANGES
-	    if (style()) {
-	        if (style()->visibility() != VISIBLE)
+            if (style()) {
+                if (style()->visibility() != VISIBLE)
                     m_widget->hide();
-		else
-		    m_widget->show();
-	    }
-#endif
+                else
+                    m_widget->show();
+            }
         }
-	m_view->addChild( m_widget, -500000, 0 );
+        m_view->addChild( m_widget, -500000, 0 );
     }
     m_deleteWidget = deleteWidget;
 }
@@ -391,7 +387,6 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
         paintBoxDecorations(i, _tx, _ty);
 
-#if APPLE_CHANGES
     if (!m_widget || !m_view || i.phase != PaintActionForeground ||
         style()->visibility() != VISIBLE)
         return;
@@ -415,56 +410,6 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
         QRect selRect(selectionRect());
         i.p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
     }
-    
-#else
-    if (!m_widget || !m_view || i.phase != PaintActionForeground)
-        return;
-    
-    if (style()->visibility() != VISIBLE) {
-        m_widget->hide();
-        return;
-    }
-
-    int xPos = _tx+borderLeft()+paddingLeft();
-    int yPos = _ty+borderTop()+paddingTop();
-
-    int childw = m_widget->width();
-    int childh = m_widget->height();
-    if ( (childw == 2000 || childh == 3072) && m_widget->inherits( "KHTMLView" ) ) {
-	KHTMLView *vw = static_cast<KHTMLView *>(m_widget);
-	int cy = m_view->contentsY();
-	int ch = m_view->visibleHeight();
-
-
-	int childx = m_view->childX( m_widget );
-	int childy = m_view->childY( m_widget );
-
-	int xNew = xPos;
-	int yNew = childy;
-
-	// 	qDebug("cy=%d, ch=%d, childy=%d, childh=%d", cy, ch, childy, childh );
-	if ( childh == 3072 ) {
-	    if ( cy + ch > childy + childh ) {
-		yNew = cy + ( ch - childh )/2;
-	    } else if ( cy < childy ) {
-		yNew = cy + ( ch - childh )/2;
-	    }
-// 	    qDebug("calculated yNew=%d", yNew);
-	}
-	yNew = kMin( yNew, yPos + m_height - childh );
-	yNew = kMax( yNew, yPos );
-	if ( yNew != childy || xNew != childx ) {
-	    if ( vw->contentsHeight() < yNew - yPos + childh )
-		vw->resizeContents( vw->contentsWidth(), yNew - yPos + childh );
-	    vw->setContentsPos( xNew - xPos, yNew - yPos );
-	}
-	xPos = xNew;
-	yPos = yNew;
-    }
-
-    m_view->addChild(m_widget, xPos, yPos );
-    m_widget->show();
-#endif
 }
 
 void RenderWidget::handleFocusOut()
@@ -497,7 +442,7 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 //                 KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>( elem->view->part()->browserExtension() );
 //                 if ( ext )  ext->editableWidgetBlurred( m_widget );
 //             }
-	    handleFocusOut();
+            handleFocusOut();
         }
         break;
     case QEvent::FocusIn:

@@ -34,20 +34,18 @@
 #include "misc/loader.h"
 #include "xml/dom_docimpl.h"
 
-using namespace DOM;
-
 #include <kdebug.h>
+
+namespace DOM {
 
 CSSStyleSheetImpl *CSSRuleImpl::parentStyleSheet() const
 {
-    return ( m_parent && m_parent->isCSSStyleSheet() )  ?
-	static_cast<CSSStyleSheetImpl *>(m_parent) : 0;
+    return (parent() && parent()->isCSSStyleSheet()) ? static_cast<CSSStyleSheetImpl *>(parent()) : 0;
 }
 
 CSSRuleImpl *CSSRuleImpl::parentRule() const
 {
-    return ( m_parent && m_parent->isRule() )  ?
-	static_cast<CSSRuleImpl *>(m_parent) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
 DOM::DOMString CSSRuleImpl::cssText() const
@@ -86,7 +84,7 @@ CSSImportRuleImpl::CSSImportRuleImpl( StyleBaseImpl *parent,
 
     m_lstMedia = media;
     if ( !m_lstMedia )
-	m_lstMedia = new MediaListImpl( this, DOMString() );
+        m_lstMedia = new MediaListImpl( this, DOMString() );
     m_lstMedia->setParent( this );
     m_lstMedia->ref();
 
@@ -118,8 +116,8 @@ CSSImportRuleImpl::CSSImportRuleImpl( StyleBaseImpl *parent,
 CSSImportRuleImpl::~CSSImportRuleImpl()
 {
     if( m_lstMedia ) {
- 	m_lstMedia->setParent( 0 );
-	m_lstMedia->deref();
+        m_lstMedia->setParent( 0 );
+        m_lstMedia->deref();
     }
     if(m_styleSheet) {
         m_styleSheet->setParent(0);
@@ -156,9 +154,9 @@ void CSSImportRuleImpl::init()
     StyleBaseImpl *root = this;
     StyleBaseImpl *parent;
     while ( ( parent = root->parent()) )
-	root = parent;
+        root = parent;
     if (root->isCSSStyleSheet())
-	docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
+        docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
 
     DOMString absHref = m_strHref;
     CSSStyleSheetImpl *parentSheet = parentStyleSheet();
@@ -246,13 +244,13 @@ CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, const DOM::DOMString 
 CSSMediaRuleImpl::~CSSMediaRuleImpl()
 {
     if( m_lstMedia ) {
-	m_lstMedia->setParent( 0 );
+        m_lstMedia->setParent( 0 );
         m_lstMedia->deref();
     }
 
     int length = m_lstCSSRules->length();
     for (int i = 0; i < length; i++) {
-	m_lstCSSRules->item( i )->setParent( 0 );
+        m_lstCSSRules->item( i )->setParent( 0 );
     }
     m_lstCSSRules->deref();
 }
@@ -260,7 +258,7 @@ CSSMediaRuleImpl::~CSSMediaRuleImpl()
 unsigned CSSMediaRuleImpl::append( CSSRuleImpl *rule )
 {
     if (!rule) {
-	return 0;
+        return 0;
     }
 
     rule->setParent(this);
@@ -274,7 +272,7 @@ unsigned CSSMediaRuleImpl::insertRule( const DOMString &rule,
     CSSRuleImpl *newRule = p.parseRule( parentStyleSheet(), rule );
 
     if (!newRule) {
-	return 0;
+        return 0;
     }
 
     newRule->setParent(this);
@@ -362,8 +360,8 @@ CSSStyleRuleImpl::CSSStyleRuleImpl(StyleBaseImpl *parent)
 CSSStyleRuleImpl::~CSSStyleRuleImpl()
 {
     if(m_style) {
-	m_style->setParent( 0 );
-	m_style->deref();
+        m_style->setParent( 0 );
+        m_style->deref();
     }
     delete m_selector;
 }
@@ -434,4 +432,6 @@ unsigned CSSRuleListImpl::insertRule( CSSRuleImpl *rule,
 
     // ### Should throw INDEX_SIZE_ERR exception instead! (TODO)
     return 0;
+}
+
 }

@@ -1,3 +1,36 @@
+2005-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - got ready to make m_parent private by removing references to it
+          also removed tabs (and used spaces instead) to files I touched
+        - fixed code that initialized m_parent twice
+
+        * khtml/css/css_base.cpp:
+        (StyleBaseImpl::checkLoaded): Use parent().
+        (StyleBaseImpl::stylesheet): Ditto.
+        * khtml/css/css_base.h:
+        (DOM::StyleBaseImpl::StyleBaseImpl): Initialize base TreeShared with the appropriate
+        parent instead of first setting m_parent to 0 and then to the correct value. Also
+        removed setParent, since the base class setParent works fine.
+        * khtml/css/css_ruleimpl.cpp:
+        (DOM::CSSRuleImpl::parentStyleSheet): Use parent().
+        (DOM::CSSRuleImpl::parentRule): Ditto.
+        * khtml/css/css_stylesheetimpl.cpp:
+        (StyleSheetImpl::parentStyleSheet): Ditto.
+        (MediaListImpl::parentStyleSheet): Ditto.
+        (MediaListImpl::parentRule): Ditto.
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSStyleDeclarationImpl::parentRule): Ditto.
+        * khtml/rendering/render_replaced.cpp: Reformatting only, and removed some
+        APPLE_CHANGES-only instead.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::isContentEditable): Use parent().
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::parentNode): Ditto.
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLImportRuleImpl::parentStyleSheet): Ditto.
+
 2005-10-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 5485, make sure generated content's "rightmost selector"
