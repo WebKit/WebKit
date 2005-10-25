@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_nodeappendchildinvalidnodetype	
-Status:	failure
-Detail:	throw_HIERARCHY_REQUEST_ERR: assertTrue failed
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_nodeappendchildinvalidnodetype
+Status:	Success

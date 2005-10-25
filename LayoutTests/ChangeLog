@@ -1,3 +1,24 @@
+2005-10-25  Vicki Murley  <vicki@apple.com>
+
+	- updated results for <rdar://problem/4288276> DOM tests expect hierarchy exception 
+	adding wrong types of nodes to parents (4568)
+
+        * dom/html/level1/core/hc_attrappendchild2-expected.txt:
+        * dom/html/level1/core/hc_nodeappendchildinvalidnodetype-expected.txt:
+        * dom/html/level1/core/hc_nodeinsertbeforeinvalidnodetype-expected.txt:
+        * dom/html/level1/core/hc_nodereplacechildinvalidnodetype-expected.txt:
+        * dom/xhtml/level1/core/hc_attrappendchild2-expected.txt:
+        * dom/xhtml/level1/core/hc_attrappendchild4-expected.txt:
+        * dom/xhtml/level1/core/hc_attrinsertbefore5-expected.txt:
+        * dom/xhtml/level1/core/hc_attrinsertbefore7-expected.txt:
+        * dom/xhtml/level1/core/hc_nodeappendchildinvalidnodetype-expected.txt:
+        * dom/xhtml/level1/core/hc_nodeinsertbeforeinvalidnodetype-expected.txt:
+        * dom/xhtml/level1/core/hc_nodereplacechildinvalidnodetype-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore03-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore20-expected.txt:
+        * dom/xhtml/level3/core/nodereplacechild20-expected.txt:
+        * dom/xhtml/level3/core/nodereplacechild35-expected.txt:
+
 2005-10-25  Darin Adler  <darin@apple.com>
 
         - added test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4945
