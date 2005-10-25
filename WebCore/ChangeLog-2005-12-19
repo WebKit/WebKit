@@ -1,3 +1,30 @@
+2005-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by Niels Leenheer.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3587
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3587
+
+        Reviewed by hyatt.
+
+        Layout tests added:
+
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.txt:
+        * dom/xhtml/level2/html/frame-expected.txt:
+        * fast/frames/calculate-fixed-expected.txt: Added.
+        * fast/frames/calculate-fixed.html: Added.
+        * fast/frames/calculate-order-expected.txt: Added.
+        * fast/frames/calculate-order.html: Added.
+        * fast/frames/calculate-percentage-expected.txt: Added.
+        * fast/frames/calculate-percentage.html: Added.
+        * fast/frames/calculate-relative-expected.txt: Added.
+        * fast/frames/calculate-relative.html: Added.
+        * fast/frames/calculate-round-expected.txt: Added.
+        * fast/frames/calculate-round.html: Added.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::layout):
+
 2005-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

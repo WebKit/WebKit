@@ -149,6 +149,7 @@ void RenderFrameSet::layout( )
         int totalFixed = 0;
         int totalPercent = 0;
         int countRelative = 0;
+        int countFixed = 0;
         int countPercent = 0;
         int gridLen = m_gridLen[k];
         int* gridDelta = m_gridDelta[k];
@@ -156,55 +157,160 @@ void RenderFrameSet::layout( )
         int* gridLayout = m_gridLayout[k];
 
         if (grid) {
-            // first distribute the available width for fixed rows, then handle the
-            // percentage ones and distribute remaining over relative
-            for(int i = 0; i< gridLen; ++i) {
+            // First we need to investigate how many columns of each type we have and
+            // how much space these columns are going to require.
+            for (int i = 0; i < gridLen; ++i) {
+                // Count the total length of all of the fixed columns/rows -> totalFixed
+                // Count the number of columns/rows which are fixed -> countFixed
                 if (grid[i].isFixed()) {
-                    gridLayout[i] = kMin(grid[i].value > 0 ? grid[i].value : 0, remainingLen[k]);
-                    remainingLen[k] -= gridLayout[i];
+                    gridLayout[i] = kMax(grid[i].value, 0);
                     totalFixed += gridLayout[i];
+                    countFixed++;
                 }
-                else if(grid[i].isRelative()) {
-                    totalRelative += grid[i].value > 1 ? grid[i].value : 1;
-                    countRelative++;
-                }
-                else if (grid[i].isPercent()) {
-                    totalPercent += grid[i].value >= 0 ? grid[i].value : 0;
+                
+                // Count the total percentage of all of the percentage columns/rows -> totalPercent
+                // Count the number of columns/rows which are percentages -> countPercent
+                if (grid[i].isPercent()) {
+                    gridLayout[i] = kMax(grid[i].width(availableLen[k]), 0);
+                    totalPercent += gridLayout[i];
                     countPercent++;
                 }
+
+                // Count the total relative of all the relative columns/rows -> totalRelative
+                // Count the number of columns/rows which are relative -> countRelative
+                if (grid[i].isRelative()) {
+                    totalRelative += kMax(grid[i].value, 1);
+                    countRelative++;
+                }            
             }
 
-            int currPercent = totalPercent;
-            int percentLen = (countRelative && currPercent < 100) ? currPercent * remainingLen[k] / 100 : remainingLen[k];
-            for(int i = 0; i < gridLen; i++)
-                if (grid[i].isPercent() && grid[i].value >= 0 && currPercent) {
-                    gridLayout[i] = grid[i].value * percentLen / currPercent;
-                    remainingLen[k] -= gridLayout[i];
-                    percentLen -= gridLayout[i];
-                    currPercent -= grid[i].value;
-                }
+            // Fixed columns/rows are our first priority. If there is not enough space to fit all fixed
+            // columns/rows we need to proportionally adjust their size. 
+            if (totalFixed > remainingLen[k]) {
+                int remainingFixed = remainingLen[k];
 
-            assert(remainingLen[k] >= 0);
-
-            if (countRelative) {
-                int remaining = remainingLen[k];
-                for (int i = 0; i < gridLen; ++i)
-                    if (grid[i].isRelative()) {
-                        gridLayout[i] = ((grid[i].value > 1 ? grid[i].value : 1) * remaining) / totalRelative;
+                for (int i = 0; i < gridLen; ++i) {
+                    if (grid[i].isFixed()) {
+                        gridLayout[i] = (gridLayout[i] * remainingFixed) / totalFixed;
                         remainingLen[k] -= gridLayout[i];
                     }
+                }
+            } else {
+                remainingLen[k] -= totalFixed;
             }
 
-            // distribute the rest
-            if (remainingLen[k]) {
-                LengthType distributeType = countPercent ? Percent : Fixed;
-                int total = countPercent ? totalPercent : totalFixed;
-                if (!total) total = 1;
-                for (int i = 0; i < gridLen; ++i)
-                    if (grid[i].type == distributeType) {
-                        int toAdd = (remainingLen[k] * grid[i].value) / total;
-                        gridLayout[i] += toAdd;
+            // Percentage columns/rows are our second priority. Divide the remaining space proportionally 
+            // over all percentage columns/rows. IMPORTANT: the size of each column/row is not relative 
+            // to 100%, but to the total percentage. For example, if there are three columns, each of 75%,
+            // and the available space is 300px, each column will become 100px in width.
+            if (totalPercent > remainingLen[k]) {
+                int remainingPercent = remainingLen[k];
+
+                for (int i = 0; i < gridLen; ++i) {
+                    if (grid[i].isPercent()) {
+                        gridLayout[i] = (gridLayout[i] * remainingPercent) / totalPercent;
+                        remainingLen[k] -= gridLayout[i];
                     }
+                }
+            } else {
+                remainingLen[k] -= totalPercent;
+            }
+
+            // Relative columns/rows are our last priority. Divide the remaining space proportionally
+            // over all relative columns/rows. IMPORTANT: the relative value of 0* is treated as 1*.
+            if (countRelative) {
+                int lastRelative = 0;
+                int remainingRelative = remainingLen[k];
+
+                for (int i = 0; i < gridLen; ++i) {
+                    if (grid[i].isRelative()) {
+                        gridLayout[i] = (kMax(grid[i].value, 1) * remainingRelative) / totalRelative;
+                        remainingLen[k] -= gridLayout[i];
+                        lastRelative = i;
+                    }
+                }
+                
+                // If we could not evently distribute the available space of all of the relative  
+                // columns/rows, the remainder will be added to the last column/row.
+                // For example: if we have a space of 100px and three columns (*,*,*), the remainder will
+                // be 1px and will be added to the last column: 33px, 33px, 34px.
+                if (remainingLen[k]) {
+                    gridLayout[lastRelative] += remainingLen[k];
+                    remainingLen[k] = 0;
+                }
+            }
+
+            // If we still have some left over space we need to divide it over the already existing
+            // columns/rows
+            if (remainingLen[k]) {
+                // Our first priority is to spread if over the percentage columns. The remaining
+                // space is spread evenly, for example: if we have a space of 100px, the columns 
+                // definition of 25%,25% used to result in two columns of 25px. After this the 
+                // columns will each be 50px in width. 
+                if (countPercent && totalPercent) {
+                    int remainingPercent = remainingLen[k];
+                    int changePercent = 0;
+
+                    for (int i = 0; i < gridLen; ++i) {
+                        if (grid[i].isPercent()) {
+                            changePercent = (remainingPercent * gridLayout[i]) / totalPercent;
+                            gridLayout[i] += changePercent;
+                            remainingLen[k] -= changePercent;
+                        }
+                    }
+                } else if (totalFixed) {
+                    // Our last priority is to spread the remaining space over the fixed columns.
+                    // For example if we have 100px of space and two column of each 40px, both
+                    // columns will become exactly 50px.
+                    int remainingFixed = remainingLen[k];
+                    int changeFixed = 0;
+
+                    for (int i = 0; i < gridLen; ++i) {
+                        if (grid[i].isFixed()) {
+                            changeFixed = (remainingFixed * gridLayout[i]) / totalFixed;
+                            gridLayout[i] += changeFixed;
+                            remainingLen[k] -= changeFixed;
+                        } 
+                    }
+                }
+            }
+            
+            // If we still have some left over space we probably ended up with a remainder of
+            // a division. We can not spread it evenly anymore. If we have any percentage 
+            // columns/rows simply spread the remainder equally over all available percentage columns, 
+            // regardless of their size.
+            if (remainingLen[k] && countPercent) {
+                int remainingPercent = remainingLen[k];
+                int changePercent = 0;
+
+                for (int i = 0; i < gridLen; ++i) {
+                    if (grid[i].isPercent()) {
+                        changePercent = remainingPercent / countPercent;
+                        gridLayout[i] += changePercent;
+                        remainingLen[k] -= changePercent;
+                    }
+                }
+            } 
+            
+            // If we don't have any percentage columns/rows we only have fixed columns. Spread
+            // the remainder equally over all fixed columns/rows.
+            else if (remainingLen[k] && countFixed) {
+                int remainingFixed = remainingLen[k];
+                int changeFixed = 0;
+                
+                for (int i = 0; i < gridLen; ++i) {
+                    if (grid[i].isFixed()) {
+                        changeFixed = remainingFixed / countFixed;
+                        gridLayout[i] += changeFixed;
+                        remainingLen[k] -= changeFixed;
+                    }
+                }
+            }
+
+            // Still some left over... simply add it to the last column, because it is impossible
+            // spread it evenly or equally.
+            if (remainingLen[k]) {
+                gridLayout[gridLen - 1] += remainingLen[k];
             }
 
             // now we have the final layout, distribute the delta over it
