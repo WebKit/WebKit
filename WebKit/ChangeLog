@@ -1,3 +1,12 @@
+2005-10-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Remove the use of a stamp file in the Frameworks symlink build phase.
+        This lets us pass the build verification.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2005-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

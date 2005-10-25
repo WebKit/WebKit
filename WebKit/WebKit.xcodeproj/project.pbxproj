@@ -1473,7 +1473,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrm -f \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\nln -s Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\ntouch \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/frameworks-symlink-stamp\"";
+			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
 		};
 		93AF528708254B33005D0156 /* DOM.h */ = {
 			isa = PBXShellScriptBuildPhase;
