@@ -1,3 +1,15 @@
+2005-10-25  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Hyatt.
+ 
+	- fix <rdar://problem/4288276> DOM tests expect hierarchy exception adding wrong types of nodes to parents (4568)
+
+	Check that the node being added is an allowable child.  If inserting a document fragment node, check each child of
+	the node.  Fixes 4 of the W3C DOM HTML tests and 11 of the XHTML tests.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::checkAddChild):
+
 2005-10-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

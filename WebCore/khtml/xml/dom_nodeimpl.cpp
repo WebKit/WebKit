@@ -1141,7 +1141,22 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
         exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
         return;
     }
-
+    
+    if (newChild->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+        if (!childTypeAllowed(newChild->nodeType())) {
+            exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+            return;
+        }
+    }
+    else {
+        for (NodeImpl *n = newChild->firstChild(); n; n = n->nextSibling()) {
+            if (!childTypeAllowed(n->nodeType())) {
+                exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+                return;
+            }
+        }
+    }
+    
     // change the document pointer of newChild and all of its children to be the new document
     if (shouldAdoptChild) {
         for (NodeImpl* node = newChild; node; node = node->traverseNextNode(newChild)) {
