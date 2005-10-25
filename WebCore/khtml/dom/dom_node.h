@@ -21,7 +21,7 @@
  * This file includes excerpts from the Document Object Model (DOM)
  * Level 1 Specification (Recommendation)
  * http://www.w3.org/TR/REC-DOM-Level-1/
- * Copyright © World Wide Web Consortium , (Massachusetts Institute of
+ * Copyright ï¿½ World Wide Web Consortium , (Massachusetts Institute of
  * Technology , Institut National de Recherche en Informatique et en
  * Automatique , Keio University ). All Rights Reserved.
  *
@@ -972,7 +972,11 @@ protected:
  * A DOMTimeStamp represents a number of milliseconds.
  *
  */
+#if __APPLE__
+typedef unsigned long long DOMTimeStamp;
+#else
 typedef unsigned long DOMTimeStamp;
+#endif
 
 } //namespace
 

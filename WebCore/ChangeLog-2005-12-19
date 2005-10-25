@@ -1,3 +1,58 @@
+2005-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4945
+          event init calls should not do anything if the event has already been dispatched
+        - made a small performance improvement to event creation by simplifying the date code
+          (seen on profiles)
+        - changed DOMTimestamp to be a 64-bit integer on Mac OS X (requested by the DOM standard)
+
+        * khtml/dom/dom_node.h: Made DOMTimestamp be unsigned long long on Mac OS X.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchGenericEvent): Assert that the event has a target.
+        (DOM::NodeImpl::dispatchWindowEvent): Set the event target to the document.
+
+        * khtml/xml/dom2_eventsimpl.h: Changed many data members to use SharedPtr instead of
+        explicit ref/deref. Changed m_createTime to be a DOMTimeStamp instead of a QDateTime.
+        (DOM::EventImpl::setTarget): Now inlined.
+        (DOM::EventImpl::timeStamp): Now inlined.
+        (DOM::EventImpl::preventDefault): Now inlined.
+        (DOM::EventImpl::dispatched): Added. Returns true if the event was already dispatched,
+        meaning it already has a target.
+
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::currentTimeStamp): Added. Faster inline version on Mac OS X, since this shows
+        up in profiles.
+        (DOM::EventImpl::EventImpl): Changed to use contructor syntax and set m_createTime to
+        currentTimeStamp().
+        (DOM::EventImpl::~EventImpl): Removed explicit derefs; no longer needed.
+        (DOM::EventImpl::initEvent): Do nothing if dispatched() is true. Simplify since
+        SharedPtr handles ref/deref.
+        (DOM::UIEventImpl::UIEventImpl): Changed to use contructor syntax and take advantage
+        of the fact that some data members are now SharedPtr.
+        (DOM::UIEventImpl::initUIEvent): Do nothing if dispatched() is true. Simplify since
+        SharedPtr handles ref/deref.
+        (DOM::MouseEventImpl::MouseEventImpl): Changed to use contructor syntax and take advantage
+        of the fact that some data members are now SharedPtr.
+        (DOM::MouseEventImpl::~MouseEventImpl): Removed explicit derefs; no longer needed.
+        (DOM::MouseEventImpl::initMouseEvent): Do nothing if dispatched() is true. Simplify since
+        SharedPtr handles ref/deref.
+        (DOM::MouseEventImpl::isDragEvent): Use a local variable.
+        (DOM::KeyboardEventImpl::KeyboardEventImpl): Changed to use contructor syntax and take
+        advantage of the fact that some data members are now SharedPtr.
+        (DOM::KeyboardEventImpl::~KeyboardEventImpl): Removed explicit derefs; no longer needed.
+        (DOM::KeyboardEventImpl::initKeyboardEvent): Do nothing if dispatched() is true. Simplify
+        since SharedPtr handles ref/deref.
+        (DOM::MutationEventImpl::MutationEventImpl): Changed to use contructor syntax and take
+        advantage of the fact that some data members are now SharedPtr.
+        (DOM::MutationEventImpl::initMutationEvent): Do nothing if dispatched() is true. Simplify
+        since SharedPtr handles ref/deref.
+        (DOM::ClipboardEventImpl::ClipboardEventImpl): Simplify since SharedPtr handles initialization
+        and ref/deref.
+        (DOM::RegisteredEventListener::RegisteredEventListener): Ditto.
+
 2005-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by Niels Leenheer.

@@ -25,9 +25,10 @@
 #ifndef DOM_EVENTSIMPL_H
 #define DOM_EVENTSIMPL_H
 
-#include <qdatetime.h>
 #include "dom/dom_node.h"
+#include "xml/dom_nodeimpl.h"
 #include "xml/dom_atomicstring.h"
+#include "xml/dom2_viewsimpl.h"
 #include "misc/shared.h"
 
 class KHTMLPart;
@@ -38,10 +39,7 @@ class QStringList;
 
 namespace DOM {
 
-class AbstractViewImpl;
-class DOMStringImpl;
 class EventListener;
-class NodeImpl;
 class ClipboardImpl;
 
 class EventImpl : public khtml::Shared<EventImpl>
@@ -52,24 +50,24 @@ public:
     virtual ~EventImpl();
 
     const AtomicString &type() const { return m_type; }
-    NodeImpl *target() const { return m_target; }
-    void setTarget(NodeImpl *target);
+    NodeImpl *target() const { return m_target.get(); }
+    void setTarget(NodeImpl *target) { m_target = target; }
     NodeImpl *currentTarget() const { return m_currentTarget; }
     void setCurrentTarget(NodeImpl *currentTarget) { m_currentTarget = currentTarget; }
     unsigned short eventPhase() const { return m_eventPhase; }
     void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
-    DOMTimeStamp timeStamp();
+    DOMTimeStamp timeStamp() { return m_createTime; }
     void stopPropagation() { m_propagationStopped = true; }
-    void preventDefault();
+    void preventDefault() { if (m_cancelable) m_defaultPrevented = true; }
     void initEvent(const AtomicString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
 
     virtual bool isUIEvent() const;
     virtual bool isMouseEvent() const;
     virtual bool isMutationEvent() const;
     virtual bool isKeyboardEvent() const;
-    virtual bool isDragEvent() const;   // a subset of mouse events
+    virtual bool isDragEvent() const; // a subset of mouse events
     virtual bool isClipboardEvent() const;
     virtual bool isWheelEvent() const;
 
@@ -84,6 +82,9 @@ public:
     bool getCancelBubble() const { return m_cancelBubble; }
 
 protected:
+    bool dispatched() const { return m_target; }
+
+private:
     AtomicString m_type;
     bool m_canBubble;
     bool m_cancelable;
@@ -95,11 +96,9 @@ protected:
 
     NodeImpl *m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
-    NodeImpl *m_target;
-    QDateTime m_createTime;
+    SharedPtr<NodeImpl> m_target;
+    DOMTimeStamp m_createTime;
 };
-
-
 
 class UIEventImpl : public EventImpl
 {
@@ -110,8 +109,7 @@ public:
 		bool cancelableArg,
 		AbstractViewImpl *viewArg,
 		int detailArg);
-    virtual ~UIEventImpl();
-    AbstractViewImpl *view() const { return m_view; }
+    AbstractViewImpl *view() const { return m_view.get(); }
     int detail() const { return m_detail; }
     void initUIEvent(const AtomicString &typeArg,
 		     bool canBubbleArg,
@@ -131,10 +129,9 @@ public:
 
     virtual int which() const;
 
-protected:
-    AbstractViewImpl *m_view;
+private:
+    SharedPtr<AbstractViewImpl> m_view;
     int m_detail;
-
 };
 
 class UIEventWithKeyStateImpl : public UIEventImpl {
@@ -215,8 +212,8 @@ public:
                    ClipboardImpl *clipboardArg=0);
     virtual ~MouseEventImpl();
     unsigned short button() const { return m_button; }
-    NodeImpl *relatedTarget() const { return m_relatedTarget; }
-    ClipboardImpl *clipboard() const { return m_clipboard; }
+    NodeImpl *relatedTarget() const { return m_relatedTarget.get(); }
+    ClipboardImpl *clipboard() const { return m_clipboard.get(); }
     void initMouseEvent(const AtomicString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,
@@ -237,8 +234,8 @@ public:
     virtual int which() const;
 private:
     unsigned short m_button;
-    NodeImpl *m_relatedTarget;
-    ClipboardImpl *m_clipboard;
+    SharedPtr<NodeImpl> m_relatedTarget;
+    SharedPtr<ClipboardImpl> m_clipboard;
 };
 
 
@@ -272,7 +269,7 @@ public:
                 bool metaKeyArg,
                 bool altGraphKeyArg);
     
-    DOMString keyIdentifier() const { return m_keyIdentifier; }
+    DOMString keyIdentifier() const { return m_keyIdentifier.get(); }
     unsigned keyLocation() const { return m_keyLocation; }
     
     bool altGraphKey() const { return m_altGraphKey; }
@@ -287,7 +284,7 @@ public:
 
 private:
     QKeyEvent *m_keyEvent;
-    DOMStringImpl *m_keyIdentifier;
+    SharedPtr<DOMStringImpl> m_keyIdentifier;
     unsigned m_keyLocation;
     bool m_altGraphKey : 1;
 };
@@ -304,12 +301,11 @@ public:
 		      const DOMString &newValueArg,
 		      const DOMString &attrNameArg,
 		      unsigned short attrChangeArg);
-    ~MutationEventImpl();
 
-    NodeImpl *relatedNode() const { return m_relatedNode; }
-    DOMString prevValue() const { return m_prevValue; }
-    DOMString newValue() const { return m_newValue; }
-    DOMString attrName() const { return m_attrName; }
+    NodeImpl *relatedNode() const { return m_relatedNode.get(); }
+    DOMString prevValue() const { return m_prevValue.get(); }
+    DOMString newValue() const { return m_newValue.get(); }
+    DOMString attrName() const { return m_attrName.get(); }
     unsigned short attrChange() const { return m_attrChange; }
     void initMutationEvent(const AtomicString &typeArg,
 			   bool canBubbleArg,
@@ -320,11 +316,11 @@ public:
 			   const DOMString &attrNameArg,
 			   unsigned short attrChangeArg);
     virtual bool isMutationEvent() const;
-protected:
-    NodeImpl *m_relatedNode;
-    DOMStringImpl *m_prevValue;
-    DOMStringImpl *m_newValue;
-    DOMStringImpl *m_attrName;
+private:
+    SharedPtr<NodeImpl> m_relatedNode;
+    SharedPtr<DOMStringImpl> m_prevValue;
+    SharedPtr<DOMStringImpl> m_newValue;
+    SharedPtr<DOMStringImpl> m_attrName;
     unsigned short m_attrChange;
 };
 
@@ -332,12 +328,11 @@ class ClipboardEventImpl : public EventImpl {
 public:
     ClipboardEventImpl();
     ClipboardEventImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg);
-    ~ClipboardEventImpl();
 
-    ClipboardImpl *clipboard() const { return m_clipboard; }
+    ClipboardImpl *clipboard() const { return m_clipboard.get(); }
     virtual bool isClipboardEvent() const;
-protected:
-    ClipboardImpl *m_clipboard;
+private:
+    SharedPtr<ClipboardImpl> m_clipboard;
 };
 
 // extension: mouse wheel event
@@ -362,19 +357,15 @@ private:
 class RegisteredEventListener {
 public:
     RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
-    ~RegisteredEventListener();
 
     const AtomicString &eventType() const { return m_eventType; }
-    EventListener *listener() const { return m_listener; }
+    EventListener *listener() const { return m_listener.get(); }
     bool useCapture() const { return m_useCapture; }
 
 private:
     AtomicString m_eventType;
-    EventListener *m_listener;
+    SharedPtr<EventListener> m_listener;
     bool m_useCapture;
-
-    RegisteredEventListener(const RegisteredEventListener &);
-    RegisteredEventListener &operator=(const RegisteredEventListener &);
 };
 
 bool operator==(const RegisteredEventListener &, const RegisteredEventListener &);
