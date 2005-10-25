@@ -56,7 +56,7 @@ public:
     // received during executing a script must be appended, hence the
     // extra bool to be able to distinguish between both cases. document.write()
     // always uses false, while khtmlpart uses true
-    virtual void write(const TokenizerString &str, bool appendData) = 0;
+    virtual bool write(const TokenizerString &str, bool appendData) = 0;
     virtual void finish() = 0;
     virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() const = 0;

@@ -1,3 +1,19 @@
+2005-10-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Vicki.
+
+        Fixed <rdar://problem/4098450> RoboHelp-generated html help system crashes in latest Safari -KWQValueListImpl::copyOnWrite
+
+        The tokenizer's timer was causing the tokenizer to be deleted twice.  
+        In timerEvent, we'll now check to see if the write has destroyed the tokenizer before trying to do it again.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::write): Returns a boolean to indicate whether end() gets called
+        (khtml::HTMLTokenizer::timerEvent): Moved code from allDataProcessed, and now, checks to see if write() called end() to notify WebKit that processing is done.
+        * khtml/html/htmltokenizer.h: write() returns a bool.
+        * khtml/xml/xml_tokenizer.cpp: (khtml::XMLTokenizer::write): returns a bool (always false in the XMLTokenizer case).
+        * khtml/xml/xml_tokenizer.h: ditto.
+
 2005-10-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej
