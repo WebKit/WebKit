@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x125
+  RenderBlock {HTML} at (0,0) size 800x125
+    RenderBody {BODY} at (8,16) size 784x94
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 313x18
+          text run at (0,0) width 313: "There should be a small light green square below:"
+      RenderBlock {DIV} at (15,34) size 754x60
+        RenderBlock {P} at (0,0) size 75x60 [color=#FFFFFF]
+          RenderText {TEXT} at (0,0) size 30x30
+            text run at (0,0) width 30: "xx"
+            text run at (0,15) width 30: "xx"
+          RenderInline {SPAN} at (0,0) size 75x15 [color=#00FF00]
+            RenderText {TEXT} at (60,30) size 15x15
+              text run at (60,30) width 15: "x"
+          RenderText {TEXT} at (0,45) size 75x15
+            text run at (0,45) width 75: "xx xx"

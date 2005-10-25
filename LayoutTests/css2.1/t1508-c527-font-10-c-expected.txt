@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x468
+  RenderBlock {HTML} at (0,0) size 800x468
+    RenderBody {BODY} at (8,18) size 784x432
+      RenderBlock {P} at (0,0) size 784x432
+        RenderInline {SPAN} at (0,0) size 769x399 [color=#FFFFFF] [bgcolor=#000080]
+          RenderText {TEXT} at (0,16) size 759x108
+            text run at (0,16) width 465: "This text should be 18px sans-serif, in small-caps, italicized, "
+            text run at (465,16) width 294: "and very light. There should be a 36px"
+            text run at (0,70) width 199: "gap betwen each line. The "
+            text run at (199,70) width 436: "text should have a blue background, the gap should not. "
+          RenderInline {SPAN} at (0,0) size 769x345 [color=#0000FF]
+            RenderText {TEXT} at (635,70) size 769x378
+              text run at (635,70) width 134: "dummy text dummy"
+              text run at (0,124) width 352: "text dummy text dummy text dummy text dummy "
+              text run at (352,124) width 384: "text dummy text dummy text dummy text dummy text"
+              text run at (0,178) width 139: "dummy text dummy "
+              text run at (139,178) width 528: "text dummy text dummy text dummy text dummy text dummy text dummy "
+              text run at (667,178) width 83: "text dummy"
+              text run at (0,232) width 440: "text dummy text dummy text dummy text dummy text dummy "
+              text run at (440,232) width 296: "text dummy text dummy text dummy text"
+              text run at (0,286) width 227: "dummy text dummy text dummy "
+              text run at (227,286) width 523: "text dummy text dummy text dummy text dummy text dummy text dummy"
+              text run at (0,340) width 528: "text dummy text dummy text dummy text dummy text dummy text dummy "
+              text run at (528,340) width 208: "text dummy text dummy text"
+              text run at (0,394) width 259: "dummy text dummy text dummy text"
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

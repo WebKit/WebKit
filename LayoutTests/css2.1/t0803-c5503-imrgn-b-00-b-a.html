@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>CSS 2.1 Test Suite: margin-bottom</title>
+  <style type="text/css">
+   .test { background-color: yellow; color: orange; margin: 1em 0; width: 10em; font: 16px/1 Ahem; }
+   .one { margin-bottom: 25px; background-color: lime; }
+   .two { margin-bottom: -10px; background-color: lime; }
+   img.b { border: 16px yellow; border-style: solid none; }
+  </style>
+  <link title="8.3 Margin properties: 'margin-top',  'margin-right',  'margin-bottom', 'margin-left', and 'margin'" href="http://www.w3.org/TR/CSS21/box.html#margin-properties" rel="help">
+ </head>
+ <body>
+  <p>The three diagrams below should be identical:</p>
+  <p class="test"> xxx xxx <span class="one">xxx xxx</span> xxx xxx </p>
+  <p class="test"> xxx xxx <span class="two">xxx xxx</span> xxx xxx </p>
+  <div>
+     <img height="48" alt="" src="support/swatch-orange.png" width="48"><img height="16" alt="" src="support/swatch-lime.png" class="b" width="16"><img height="48" alt="" src="support/swatch-orange.png" width="48"><img height="48" alt="" src="support/swatch-yellow.png" width="48">
+  </div>
+ </body>
+</html>

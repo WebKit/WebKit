@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>CSS 2.1 Test Suite: float</title>
+  <style type="text/css">
+   .a { color: navy; }
+   div.yellow, div.blue, div.red, div.green {
+    width: 60px; padding: 20px; margin: 10px;
+    border: 20px solid black; float: left; text-align: center;
+   }
+   div.yellow {margin-left: 0px; background: yellow; color: black;}
+   div.blue {background: blue; color: white;}
+   div.red {background: red; color: black;}
+   div.green {background: green; color: white;}
+   div.below {clear: both;}
+   table {margin: 10px 0px;}
+  </style>
+  <link title="9.5 Floats" href="http://www.w3.org/TR/CSS21/visuren.html#floats" rel="help">
+  <link title="9.5.1 Positioning the float: the 'float' property" href="http://www.w3.org/TR/CSS21/visuren.html#float-position" rel="help">
+ </head>
+ <body>
+  <p class="a">
+   Below you should see four blocks side by side followed by a
+   matching cross section of the four blocks.
+  </p>
+  <div class="yellow">
+   <p>
+    Yellow
+   </p>
+  </div>
+  <div class="blue">
+   <p>
+    Blue
+   </p>
+  </div>
+  <div class="red">
+   <p>
+    Red
+   </p>
+  </div>
+  <div class="green">
+   <p>
+    Green
+   </p>
+  </div>
+  <div class="below">
+   <table cellpadding="0" cellspacing="0">
+    <tr>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: yellow" width="100">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: white" width="20">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: blue" width="100">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: white" width="20">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: red" width="100">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: white" width="20">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+     <td style="background: green" width="100">
+       
+     </td>
+     <td style="background: black" width="20">
+       
+     </td>
+    </tr>
+   </table>
+  </div>
+ </body>
+</html>

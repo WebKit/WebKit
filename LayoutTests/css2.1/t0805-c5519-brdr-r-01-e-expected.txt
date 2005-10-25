@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x246
+  RenderBlock {HTML} at (0,0) size 800x246
+    RenderBody {BODY} at (8,16) size 784x214 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x37
+        RenderText {TEXT} at (0,15) size 489x18
+          text run at (0,15) width 489: "There should be a solid blue line to the right of every occurance of the word \""
+        RenderInline {SPAN} at (0,0) size 173x37 [border: (2px solid #0000FF) none]
+          RenderText {TEXT} at (489,0) size 171x37
+            text run at (489,0) width 171: "THERE \x{E2}\x{17E}\x{2122}"
+        RenderText {TEXT} at (662,15) size 11x18
+          text run at (662,15) width 11: "\"."
+      RenderTable {TABLE} at (0,53) size 364x127
+        RenderTableSection {TBODY} at (0,0) size 0x127
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 360x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
+              RenderText {TEXT} at (186,1) size 171x37
+                text run at (186,1) width 171: "THERE \x{E2}\x{17E}\x{2122}"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,64) size 175x39 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 171x37
+                text run at (1,1) width 171: "THERE \x{E2}\x{17E}\x{2122}"
+            RenderTableCell {TD} at (179,43) size 183x82 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 179x37
+                RenderText {TEXT} at (28,0) size 151x37
+                  text run at (28,0) width 151: "THERE \x{E2}\x{17E}\x{2DC}"
+              RenderTable {TABLE} at (1,38) size 179x43
+                RenderTableSection {TBODY} at (0,0) size 0x43
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,2) size 175x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
+                      RenderText {TEXT} at (1,1) size 171x37
+                        text run at (1,1) width 171: "THERE \x{E2}\x{17E}\x{2122}"
+      RenderBlock {P} at (0,196) size 784x18
+        RenderText {TEXT} at (0,0) size 337x18
+          text run at (0,0) width 337: "There should be 3 short lines and 2 long lines in total."
