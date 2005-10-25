@@ -1334,7 +1334,10 @@ void KHTMLView::doAutoScroll()
     if ( (pos.y() < 0) || (pos.y() > visibleHeight()) ||
          (pos.x() < 0) || (pos.x() > visibleWidth()) )
     {
-        ensureVisible( xm, ym, 0, 5 );
+        DocumentImpl *doc = m_part->xmlDocImpl();
+        if (doc && doc->renderer() && doc->renderer()->enclosingLayer()) {
+            doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(xm, ym, 0, 5));
+        }
     }
 }
 
@@ -1494,7 +1497,9 @@ void KHTMLView::focusNextPrevNode(bool next)
                 return;
         }
         else {
-            ensureVisible(contentsX(), next ? 0: contentsHeight());
+            if (doc->renderer() && doc->renderer()->enclosingLayer()) {
+                doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(contentsX(), next ? 0: contentsHeight(), 0, 0));
+            }
         }
     }
     // Set focus node on the document

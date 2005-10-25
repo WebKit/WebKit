@@ -28,7 +28,6 @@
 
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
-#import "KWQNSViewExtras.h"
 #import "WebCoreFrameView.h"
 
 /*
@@ -447,43 +446,11 @@ void QScrollView::resizeEvent(QResizeEvent *)
 {
 }
 
-void QScrollView::setContentsPosRecursive(int x, int y)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    NSPoint tempPoint = { x, y }; // workaround for 4213314
-    [getDocumentView() _KWQ_scrollPointRecursive:tempPoint];
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void QScrollView::ensureVisible(int x, int y)
-{
-    // Note that the definition of ensureVisible in trolltech documentation says:
-    // "Scrolls the content so that the point (x, y) is visible with at least 
-    // 50-pixel margins (if possible, otherwise centered).", which is
-    // not what we're doing here.
-    KWQ_BLOCK_EXCEPTIONS;
-    NSRect tempRect = { {x, y}, {0, 0} }; // workaround for 4213314
-    [getDocumentView() scrollRectToVisible:tempRect];
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void QScrollView::ensureVisible(int x, int y, int xmargin, int ymargin)
-{
-    // Note that the definition of ensureVisible in trolltech documentation says:
-    // "Scrolls the content so that the point (x, y) is visible with at least the 
-    // xmargin and ymargin margins (if possible, otherwise centered).", which is
-    // not what we're doing here.
-    KWQ_BLOCK_EXCEPTIONS;
-    NSRect tempRect = { {x, y}, {xmargin, ymargin} }; // workaround for 4213314
-    [getDocumentView() scrollRectToVisible:tempRect];
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void QScrollView::ensureRectVisibleCentered(const QRect &rect, bool forceCentering)
+void QScrollView::ensureRectVisible(const QRect &rect)
 {
     KWQ_BLOCK_EXCEPTIONS;
     NSRect tempRect = { {rect.x(), rect.y()}, {rect.width(), rect.height()} }; // workaround for 4213314
-    [getDocumentView() _KWQ_scrollRectToVisible:tempRect forceCentering:forceCentering];
+    [getDocumentView() scrollRectToVisible:tempRect];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

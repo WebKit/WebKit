@@ -50,6 +50,15 @@
 
 #include "render_object.h"
 
+typedef enum {
+    alignTop,
+    alignBottom,
+    alignLeft,
+    alignRight,
+    alignCenter,
+    alignDefault
+} ScrollAlignment;
+
 class QScrollBar;
 template <class T> class QPtrVector;
 
@@ -221,6 +230,9 @@ public:
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
+    void scrollToPoint(int x, int y) { scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft); }
+    void scrollRectToVisible(const QRect &r, ScrollAlignment verticalAlignment = alignDefault, ScrollAlignment horizontalAlignment = alignDefault);
+    QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, ScrollAlignment verticalAlignment = alignDefault, ScrollAlignment horizontalAlignment = alignDefault);
     void setHasHorizontalScrollbar(bool hasScrollbar);
     void setHasVerticalScrollbar(bool hasScrollbar);
     QScrollBar* horizontalScrollbar() { return m_hBar; }

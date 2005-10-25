@@ -29,9 +29,12 @@
 #import "KWQLineEdit.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
-#import "KWQNSViewExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
+#import "render_form.h"
+
+using khtml::RenderWidget;
+using khtml::RenderLayer;
 
 @interface KWQSlider : NSSlider <KWQWidgetHolder>
 {
@@ -100,7 +103,10 @@
     BOOL become = [super becomeFirstResponder];
     if (become && slider) {
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(slider)) {
-            [self _KWQ_scrollFrameToVisible];
+            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(slider->eventFilterObject()));
+            RenderLayer *layer = widget->enclosingLayer();
+            if (layer)
+                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }
 
         if (slider) {

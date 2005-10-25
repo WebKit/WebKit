@@ -29,9 +29,12 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
-#import "KWQNSViewExtras.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
+#import "render_form.h"
+
+using khtml::RenderWidget;
+using khtml::RenderLayer;
 
 @interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
 {
@@ -154,7 +157,11 @@ void KWQFileButton::focusChanged(bool nowHasFocus)
 {
     if (nowHasFocus) {
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(this)) {
-            [getView() _KWQ_scrollFrameToVisible];
+            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(eventFilterObject()));
+            RenderLayer *layer = widget->enclosingLayer();
+            layer = layer->renderer()->enclosingLayer();
+            if (layer)
+                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }        
         QFocusEvent event(QEvent::FocusIn);
         const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);

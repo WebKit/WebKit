@@ -29,12 +29,16 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
-#import "KWQNSViewExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 #import "WebCoreScrollView.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+
+#import "render_form.h"
+
+using khtml::RenderWidget;
+using khtml::RenderLayer;
 
 @interface NSTableView (KWQListBoxKnowsAppKitSecrets)
 - (NSCell *)_accessibilityTableCell:(int)row tableColumn:(NSTableColumn *)tableColumn;
@@ -580,7 +584,10 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     
     if (become) {
         if (_box && !KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
-            [self _KWQ_scrollFrameToVisible];
+            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(_box->eventFilterObject()));
+            RenderLayer *layer = widget->enclosingLayer();
+            if (layer)
+                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }        
     [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 

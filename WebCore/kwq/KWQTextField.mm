@@ -29,9 +29,12 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQKHTMLPart.h"
 #import "KWQLineEdit.h"
-#import "KWQNSViewExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
+#import "render_form.h"
+
+using khtml::RenderWidget;
+using khtml::RenderLayer;
 
 @interface NSString (KWQTextField)
 - (int)_KWQ_numComposedCharacterSequences;
@@ -394,8 +397,12 @@
         
         hasFocusAndSelectionSet = YES;
 
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget))
-            [field _KWQ_scrollFrameToVisible];
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget) && widget) {
+            RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
+            RenderLayer *layer = w->enclosingLayer();
+            if (layer)
+                layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
+        }
         
         if (widget) {
             QFocusEvent event(QEvent::FocusIn);

@@ -66,6 +66,8 @@
 #define LINE_STEP   40
 #define PAGE_KEEP   40
 
+#define MIN_INTERSECT_FOR_REVEAL 32
+
 using namespace DOM;
 using namespace DOM::EventNames;
 using namespace HTMLNames;
@@ -549,8 +551,114 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     }
 }
 
-void
-RenderLayer::updateScrollPositionFromScrollbars()
+void RenderLayer::scrollRectToVisible(const QRect &rect, ScrollAlignment verticalAlignment, ScrollAlignment horizontalAlignment)
+{
+    RenderLayer* parentLayer = 0;
+    QRect newRect;
+    QScrollView* view = m_object->document()->view();
+    QRect viewRect = QRect(view->contentsX(), view->contentsY(), view->visibleWidth(), view->visibleHeight());
+    if (view) {
+        QRect r = getRectToExpose(viewRect, rect, verticalAlignment, verticalAlignment);
+        view->ensureRectVisible(r);
+    }
+    if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
+        parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
+        newRect = QRect(view->viewport()->x(), view->viewport()->y(), view->viewport()->width(), view->viewport()->height());
+    }
+
+    if (parentLayer)
+        parentLayer->scrollRectToVisible(newRect, verticalAlignment, horizontalAlignment);
+}
+
+QRect RenderLayer::getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, ScrollAlignment verticalAlignment, ScrollAlignment horizontalAlignment) {
+
+    int x, y, w, h;
+    x = exposeRect.x();
+    y = exposeRect.y();
+    w = exposeRect.width();
+    h = exposeRect.height();
+
+    int intersectWidth = visibleRect.intersect(exposeRect).width();    
+    if (intersectWidth <= w || (horizontalAlignment != alignDefault)) {       
+        switch (horizontalAlignment) {
+            case alignLeft:
+                // The x value is already equal to the left of the exposeRect
+                break;
+            case alignRight:
+                x += exposeRect.width() - visibleRect.width();
+                break;  //note- we don't have anything to test this right now.
+            case alignCenter: 
+                if (w < visibleRect.width())
+                    x -= (visibleRect.width() - w) / 2;
+                else {
+                    if (visibleRect.x() >= x && exposeRect.right() >= visibleRect.right()) {
+                        // Exposed rect fills the visible rect.
+                        // We don't want the view to budge.
+                        x = visibleRect.x();
+                    }
+                    else if (visibleRect.x() < x) {
+                        // Scroll so left of visible region shows left of expose rect.
+                        // Leave expose origin as it is to make this happen.
+                    }
+                    else {
+                        // Scroll so right of visible region shows right of expose rect.
+                        x = exposeRect.right() - visibleRect.width();
+                    }
+                }
+                w = visibleRect.width();
+                break;
+            case alignDefault :
+            default :
+                // First check whether enough of the desired rect is already visible horizontally. If so, and we're not forcing centering,
+                // we don't want to scroll horizontally because doing so is surprising.
+                if (intersectWidth >= MIN_INTERSECT_FOR_REVEAL)
+                    x = visibleRect.x();
+                else if (w < visibleRect.width()) {
+                    x -= (visibleRect.width() - w) / 2;
+                }
+                w = visibleRect.width();
+        }
+    }
+
+    int intersectHeight = visibleRect.intersect(exposeRect).height();
+    if (intersectHeight <= h || (verticalAlignment != alignDefault)) {
+        switch (verticalAlignment) {
+            case alignTop:
+                // The y value is already equal to the top of the exposeRect
+                break;
+            case alignBottom: 
+                y += exposeRect.height() - visibleRect.height();
+                break;
+            case alignCenter:
+                if (h < visibleRect.height()) {
+                    y -= (visibleRect.height() - h) / 2;
+                } else {
+                    if (visibleRect.y() >= y && exposeRect.bottom() >= visibleRect.bottom()) {
+                        // Exposed rect fills the visible rect.
+                        // We don't want the view to budge.
+                        y = visibleRect.y();
+                    }
+                    else if (visibleRect.y() < y) {
+                        // Scroll so top of visible region shows top of expose rect.
+                        // Leave expose origin as it is to make this happen.
+                    }
+                    else {
+                        // Scroll so bottom of visible region shows bottom of expose rect.
+                        y = exposeRect.bottom() - visibleRect.height();
+                    }
+                }
+            case alignDefault :
+            default :
+                if (h < visibleRect.height()) {
+                    y -= (visibleRect.height() - h) / 2;
+                }
+        }
+        h = visibleRect.height();
+    }
+    return QRect(x, y, w, h);
+}
+
+void RenderLayer::updateScrollPositionFromScrollbars()
 {
     bool needUpdate = false;
     int newX = m_scrollX;

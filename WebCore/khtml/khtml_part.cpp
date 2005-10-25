@@ -2308,7 +2308,11 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   // Scroll to actual top left of element with no slop, since some pages expect anchors to be exactly scrolled to.
 #if APPLE_CHANGES
   // Call recursive version so this will expose correctly from within nested frames.
-  d->m_view->setContentsPosRecursive(x, y);
+  if (d->m_doc && d->m_doc->renderer()) {
+    khtml::RenderLayer *layer =  d->m_doc->renderer()->enclosingLayer();
+    if (layer)
+        d->m_doc->renderer()->enclosingLayer()->scrollToPoint(x, y);
+  }
 #else
   d->m_view->setContentsPos(x, y);
 #endif
@@ -5403,9 +5407,10 @@ void KHTMLPart::setActiveNode(const DOM::Node &node)
     d->m_doc->setFocusNode(node.handle());
 
     // Scroll the view if necessary to ensure that the new focus node is visible
-    QRect rect  = node.handle()->getRect();
-    d->m_view->ensureVisible(rect.right(), rect.bottom());
-    d->m_view->ensureVisible(rect.left(), rect.top());
+    QRect rect  = node.handle()->getRect();    
+    if (node.handle()->renderer() && node.handle()->renderer()->enclosingLayer()) {
+        node.handle()->renderer()->enclosingLayer()->scrollRectToVisible(rect);
+    }
 }
 
 DOM::Node KHTMLPart::activeNode() const

@@ -36,7 +36,6 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
-#import "KWQNSViewExtras.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
 #import "KWQRegExp.h"
@@ -934,9 +933,9 @@ void KWQKHTMLPart::unfocusWindow()
 void KWQKHTMLPart::jumpToSelection()
 {
     if (d->m_selection.start().isNotNull()) {
-	KWQ_BLOCK_EXCEPTIONS;
-        [d->m_view->getDocumentView() _KWQ_scrollRectToVisible:NSRect(selectionRect()) forceCentering:NO];
-	KWQ_UNBLOCK_EXCEPTIONS;
+        RenderLayer *layer = renderer()->enclosingLayer();
+        if (layer)
+            layer->scrollRectToVisible(selectionRect());
     }
 }
 
@@ -1261,16 +1260,18 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
         }
         else {
             doc->setFocusNode(node);
-
             if (node->isEditableBlock()) {
                 SelectionController sel(Position(node, 0), DOWNSTREAM, Position(node, node->maxDeepOffset()), DOWNSTREAM);
                 if (((KHTMLPart *)this)->shouldChangeSelection(sel))
                     setSelection(sel);    
             }
-                
-            if (view() && node->renderer() && !node->renderer()->isRoot()) {
-                view()->ensureRectVisibleCentered(node->getRect());
+               
+            if (node->renderer() && !node->renderer()->isRoot()) {
+                RenderLayer *layer = node->renderer()->enclosingLayer();
+                if (layer)
+                    layer->scrollRectToVisible(node->getRect());
             }
+ 
             [_bridge makeFirstResponder:[_bridge documentView]];
             return [_bridge documentView];
         }
@@ -3386,15 +3387,19 @@ void KWQKHTMLPart::centerSelectionInVisibleArea() const
         case SelectionController::NONE:
             break;
         case SelectionController::CARET: {
-            if (view())
-                // passing true forces centering even if selection is already exposed
-                view()->ensureRectVisibleCentered(selection().caretRect(), true);
+            if (renderer()) {
+                RenderLayer *layer = renderer()->enclosingLayer();
+                if (layer)
+                    layer->scrollRectToVisible(selection().caretRect(), alignCenter, alignCenter);
+            }
             break;
         }
         case SelectionController::RANGE:
-            if (view())
-                // passing true forces centering even if selection is already exposed
-                view()->ensureRectVisibleCentered(selectionRect(), true);
+            if (renderer()) {
+                RenderLayer *layer = renderer()->enclosingLayer();
+                if (layer)
+                    layer->scrollRectToVisible(selectionRect(), alignCenter, alignCenter);
+            }
             break;
     }
 }

@@ -1,3 +1,44 @@
+2005-10-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - first step of fix for <rdar://problem/3612121> setting focus, by tabbing, searching, or with JavaScript does not scroll overflow:auto/scroll/overlay to reveal focused element (3480)
+        This change moves the scrolling code for revealing elements to the RenderLayer, instead of being specific to the view.
+
+        * khtml/rendering/render_layer.h: Added scrollRectToVisible. Added getRectToExpose.
+        Added ScrollAlignment enum so callers can be more specific about exactly where they want to scroll.
+        (khtml::RenderLayer::scrollToPoint): Added inline function to scroll to a point.
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollRectToVisible):  Replaces recursive view scrolling functions.
+        (khtml::RenderLayer::getRectToExpose):  Calculates the rectangle to expose based on the alignment parameters.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor): Changed use of setContentsPosRecursive to scrollToPoint.
+        (KHTMLPart::setActiveNode): Changed use of ensureVisible to scrollRectToVisible.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::doAutoScroll): Changed use of ensureVisible to scrollRectToVisible.
+        (KHTMLView::focusNextPrevNode): ditto.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::jumpToSelection): Changed use of _KWQ_scrollRectToVisible to scrollRectToVisible.
+        (KWQKHTMLPart::nextKeyViewInFrame): Changed use of ensureRectVisibleCentered to scrollRectToVisible.
+        (KWQKHTMLPart::centerSelectionInVisibleArea): ditto.
+        * khtml/xml/dom_elementimpl.cpp: (ElementImpl::scrollIntoView): Changed use of setContentsPos and ensureVisible to scrollRectToVisible.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge ensureSelectionVisible]): Changed use of ensureRectVisibleCentered to scrollRectToVisible.
+
+        * kwq/KWQComboBox.mm: (-[KWQPopUpButton becomeFirstResponder]): Changing use of _KWQ_scrollFrameToVisible to scrollRectToVisible.
+        * kwq/KWQFileButton.mm: (KWQFileButton::focusChanged): ditto.
+        * kwq/KWQListBox.mm: (-[KWQTableView becomeFirstResponder]): ditto.
+        * kwq/KWQSlider.mm: (-[KWQSlider becomeFirstResponder]): ditto.
+        * kwq/KWQTextArea.mm: (-[KWQTextAreaTextView becomeFirstResponder]): ditto.
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController setHasFocus:]): ditto.
+
+        * kwq/KWQScrollView.h: Removed ensureVisible, and ensureRectVisibleCentered.  Added ensureRectVisible which just calls across to AppKit to scroll the NSView.
+        * kwq/KWQScrollView.mm: (QScrollView::ensureRectVisible): ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed KWQNSViewExtras since it is no longer needed.
+        * kwq/KWQNSViewExtras.h: Removed.
+        * kwq/KWQNSViewExtras.m: Removed.
+
 2005-10-25  David Hyatt  <hyatt@apple.com>
 
 	Land box-sizing support and change button to work correctly

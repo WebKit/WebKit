@@ -50,7 +50,6 @@ public:
     void scrollBy(int dx, int dy);
 
     void setContentsPos(int x, int y);
-    void setContentsPosRecursive(int,int);
 
     virtual void setVScrollBarMode(ScrollBarMode vMode);
     virtual void setHScrollBarMode(ScrollBarMode hMode);
@@ -89,9 +88,7 @@ public:
 
     void resizeEvent(QResizeEvent *);
 
-    void ensureVisible(int,int);
-    void ensureVisible(int,int,int,int);
-    void ensureRectVisibleCentered(const QRect &r, bool forceCentering=false);
+    void ensureRectVisible(const QRect &r);
         
     NSView *getDocumentView() const;
 
