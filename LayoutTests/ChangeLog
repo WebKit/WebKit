@@ -1,3 +1,13 @@
+2005-10-25  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for <rdar://problem/4148730> SureSec si#182 safari heap overflow
+	The fix is in WebCore.
+
+        * fast/table/giantRowspan-expected.checksum: Added.
+        * fast/table/giantRowspan-expected.png: Added.
+        * fast/table/giantRowspan-expected.txt: Added.
+        * fast/table/giantRowspan.html: Added.
+
 2005-10-25  Vicki Murley  <vicki@apple.com>
 
 	- updated results for <rdar://problem/4288276> DOM tests expect hierarchy exception 

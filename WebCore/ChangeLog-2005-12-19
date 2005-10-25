@@ -1,3 +1,19 @@
+2005-10-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for <rdar://problem/4148730> SureSec si#182 safari heap overflow.
+	When a table has a really huge rowSpan, Safari used to crash because
+	the malloc of the grid for the table failed. This fix just checks for
+	the success of the malloc.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::ensureRows): Return false if the grid resize is not 
+	successful.
+        (RenderTableSection::addCell): Return early if ensureRows() returned false.
+        * khtml/rendering/render_table.h: Make ensureRows() return a bool instead
+	of void.
+
 2005-10-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

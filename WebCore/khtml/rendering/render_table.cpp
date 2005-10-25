@@ -902,12 +902,13 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
     RenderContainer::addChild(child,beforeChild);
 }
 
-void RenderTableSection::ensureRows(int numRows)
+bool RenderTableSection::ensureRows(int numRows)
 {
     int nRows = gridRows;
     if (numRows > nRows) {
         if (numRows > static_cast<int>(grid.size()))
-            grid.resize(numRows*2+1);
+            if (!grid.resize(numRows*2+1))
+                return false;
 
         gridRows = numRows;
         int nCols = table()->numEffCols();
@@ -919,6 +920,7 @@ void RenderTableSection::ensureRows(int numRows)
 	}
     }
 
+    return true;
 }
 
 void RenderTableSection::addCell( RenderTableCell *cell )
@@ -991,7 +993,8 @@ void RenderTableSection::addCell( RenderTableCell *cell )
     }
 
     // make sure we have enough rows
-    ensureRows( cRow + rSpan );
+    if (!ensureRows( cRow + rSpan ))
+        return;
 
     int col = cCol;
     // tell the cell where it is

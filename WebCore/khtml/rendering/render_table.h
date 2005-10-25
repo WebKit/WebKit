@@ -267,7 +267,7 @@ public:
 
     void recalcCells();
 protected:
-    void ensureRows( int numRows );
+    bool ensureRows(int numRows);
     void clearGrid();
 };
 
