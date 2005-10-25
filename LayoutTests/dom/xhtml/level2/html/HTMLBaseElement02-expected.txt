@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
           layer at (0,0) size 157x10
             RenderBlock {HTML} at (0,0) size 157x10
               RenderBody {BODY} at (5,10) size 147x0
-      RenderFrame {FRAME} at (163,0) size 636x600
-        layer at (0,0) size 634x596
-          RenderCanvas at (0,0) size 634x596
-        layer at (0,0) size 634x8
-          RenderBlock {HTML} at (0,0) size 634x8
-            RenderBody {BODY} at (8,8) size 618x0
+      RenderFrame {FRAME} at (163,0) size 637x600
+        layer at (0,0) size 635x596
+          RenderCanvas at (0,0) size 635x596
+        layer at (0,0) size 635x8
+          RenderBlock {HTML} at (0,0) size 635x8
+            RenderBody {BODY} at (8,8) size 619x0

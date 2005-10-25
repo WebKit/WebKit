@@ -1,3 +1,26 @@
+2005-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by hyatt.
+
+        Layout tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=3587
+        Frameset size calculation does not resize or distribute evenly
+
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.txt:
+        * dom/xhtml/level2/html/frame-expected.txt:
+        * fast/frames/calculate-fixed-expected.txt: Added.
+        * fast/frames/calculate-fixed.html: Added.
+        * fast/frames/calculate-order-expected.txt: Added.
+        * fast/frames/calculate-order.html: Added.
+        * fast/frames/calculate-percentage-expected.txt: Added.
+        * fast/frames/calculate-percentage.html: Added.
+        * fast/frames/calculate-relative-expected.txt: Added.
+        * fast/frames/calculate-relative.html: Added.
+        * fast/frames/calculate-round-expected.txt: Added.
+        * fast/frames/calculate-round.html: Added.
+        * fast/frames/empty-frame-src-expected.txt:
+        * fast/frames/invalid-expected.txt:
+        * fast/frames/valid-expected.txt:
+
 2005-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
         layer at (0,0) size 798x193
           RenderBlock {HTML} at (0,0) size 798x193
             RenderBody {BODY} at (8,8) size 782x177 [bgcolor=#800080]
-      RenderFrame {FRAME} at (0,402) size 800x197
-        layer at (0,0) size 798x193
-          RenderCanvas at (0,0) size 798x193
+      RenderFrame {FRAME} at (0,402) size 800x198
+        layer at (0,0) size 798x194
+          RenderCanvas at (0,0) size 798x194
         layer at (0,0) size 798x8
           RenderBlock {HTML} at (0,0) size 798x8
             RenderBody {BODY} at (8,8) size 782x0

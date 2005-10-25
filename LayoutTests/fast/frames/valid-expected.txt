@@ -68,21 +68,21 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
       RenderFrameSet {FRAMESET} at (292,0) size 69x600
-        RenderFrame {FRAME} at (0,0) size 69x5
+        RenderFrame {FRAME} at (0,0) size 69x4
           layer at (0,0) size 52x8
-            RenderCanvas at (0,0) size 52x1
+            RenderCanvas at (0,0) size 52x0
           layer at (0,0) size 52x8
             RenderBlock {HTML} at (0,0) size 52x8
               RenderBody {BODY} at (8,8) size 36x0
-        RenderFrame {FRAME} at (0,9) size 69x53
+        RenderFrame {FRAME} at (0,8) size 69x53
           layer at (0,0) size 67x49
             RenderCanvas at (0,0) size 67x49
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,66) size 69x534
-          layer at (0,0) size 67x530
-            RenderCanvas at (0,0) size 67x530
+        RenderFrame {FRAME} at (0,65) size 69x535
+          layer at (0,0) size 67x531
+            RenderCanvas at (0,0) size 67x531
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
@@ -112,9 +112,9 @@ layer at (0,0) size 800x600
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,402) size 69x197
-          layer at (0,0) size 67x193
-            RenderCanvas at (0,0) size 67x193
+        RenderFrame {FRAME} at (0,402) size 69x198
+          layer at (0,0) size 67x194
+            RenderCanvas at (0,0) size 67x194
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
@@ -131,9 +131,9 @@ layer at (0,0) size 800x600
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,402) size 69x197
-          layer at (0,0) size 67x193
-            RenderCanvas at (0,0) size 67x193
+        RenderFrame {FRAME} at (0,402) size 69x198
+          layer at (0,0) size 67x194
+            RenderCanvas at (0,0) size 67x194
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
@@ -175,28 +175,28 @@ layer at (0,0) size 800x600
           layer at (0,0) size 67x8
             RenderBlock {HTML} at (0,0) size 67x8
               RenderBody {BODY} at (8,8) size 51x0
-      RenderFrameSet {FRAMESET} at (730,0) size 69x600
-        RenderFrame {FRAME} at (0,0) size 69x147
-          layer at (0,0) size 67x143
-            RenderCanvas at (0,0) size 67x143
-          layer at (0,0) size 67x8
-            RenderBlock {HTML} at (0,0) size 67x8
-              RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,151) size 69x147
-          layer at (0,0) size 67x143
-            RenderCanvas at (0,0) size 67x143
-          layer at (0,0) size 67x8
-            RenderBlock {HTML} at (0,0) size 67x8
-              RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,302) size 69x147
-          layer at (0,0) size 67x143
-            RenderCanvas at (0,0) size 67x143
-          layer at (0,0) size 67x8
-            RenderBlock {HTML} at (0,0) size 67x8
-              RenderBody {BODY} at (8,8) size 51x0
-        RenderFrame {FRAME} at (0,453) size 69x147
-          layer at (0,0) size 67x143
-            RenderCanvas at (0,0) size 67x143
-          layer at (0,0) size 67x8
-            RenderBlock {HTML} at (0,0) size 67x8
-              RenderBody {BODY} at (8,8) size 51x0
+      RenderFrameSet {FRAMESET} at (730,0) size 70x600
+        RenderFrame {FRAME} at (0,0) size 70x147
+          layer at (0,0) size 68x143
+            RenderCanvas at (0,0) size 68x143
+          layer at (0,0) size 68x8
+            RenderBlock {HTML} at (0,0) size 68x8
+              RenderBody {BODY} at (8,8) size 52x0
+        RenderFrame {FRAME} at (0,151) size 70x147
+          layer at (0,0) size 68x143
+            RenderCanvas at (0,0) size 68x143
+          layer at (0,0) size 68x8
+            RenderBlock {HTML} at (0,0) size 68x8
+              RenderBody {BODY} at (8,8) size 52x0
+        RenderFrame {FRAME} at (0,302) size 70x147
+          layer at (0,0) size 68x143
+            RenderCanvas at (0,0) size 68x143
+          layer at (0,0) size 68x8
+            RenderBlock {HTML} at (0,0) size 68x8
+              RenderBody {BODY} at (8,8) size 52x0
+        RenderFrame {FRAME} at (0,453) size 70x147
+          layer at (0,0) size 68x143
+            RenderCanvas at (0,0) size 68x143
+          layer at (0,0) size 68x8
+            RenderBlock {HTML} at (0,0) size 68x8
+              RenderBody {BODY} at (8,8) size 52x0
