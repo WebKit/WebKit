@@ -68,6 +68,8 @@ void RenderButton::setStyle(RenderStyle* style)
     RenderBlock::setStyle(style);
     if (m_buttonText)
         m_buttonText->setStyle(style);
+    if (m_inner)
+        m_inner->style()->setBoxFlex(1.0f);
 }
 
 void RenderButton::updateFromElement()
@@ -97,7 +99,8 @@ void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
 {
     // Push a clip.
     if (m_inner && i.phase == PaintActionForeground) {
-        QRect clipRect(_tx + borderLeft() + paddingLeft(), _ty + borderTop() + paddingTop(), contentWidth(), contentHeight());
+        QRect clipRect(_tx + borderLeft(), _ty + borderTop(), width() - borderLeft() - borderRight(),
+                       height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
         clipRect = i.p->xForm(clipRect);

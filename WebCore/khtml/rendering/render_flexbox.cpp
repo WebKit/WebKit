@@ -478,7 +478,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             int childY = yPos;
             switch (style()->boxAlign()) {
                 case BCENTER:
-                    childY += child->marginTop() + (contentHeight() - (child->height() + child->marginTop() + child->marginBottom()))/2;
+                    childY += child->marginTop() + kMax(0, (contentHeight() - (child->height() + child->marginTop() + child->marginBottom()))/2);
                     break;
                 case BBASELINE: {
                     int ascent = child->marginTop() + child->getBaselineOfFirstLineBox();
@@ -827,7 +827,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             switch (style()->boxAlign()) {
                 case BCENTER:
                 case BBASELINE: // Baseline just maps to center for vertical boxes
-                    childX += child->marginLeft() + (contentWidth() - (child->width() + child->marginLeft() + child->marginRight()))/2;
+                    childX += child->marginLeft() + kMax(0, (contentWidth() - (child->width() + child->marginLeft() + child->marginRight()))/2);
                     break;
                 case BEND:
                     if (style()->direction() == RTL)

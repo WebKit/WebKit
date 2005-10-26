@@ -1,3 +1,40 @@
+2005-10-25  David Hyatt  <hyatt@apple.com>
+
+	This patch makes a number of refinements to buttons to make
+	the custom <input>s on hotwire.com look correct.
+
+	Also back out my fix for bug 5283, since it causes some bad
+	regressions and basically needs to be rethought. (This part
+	not reviewed, since it's just a backout.)
+	
+        Reviewed by darin
+	
+        * khtml/css/html4.css:
+	Added rules to reset many more properties on form controls,
+	including text-align, letter-spacing, word-spacing, line-height
+	text-transform and others.  Remove the !important from the
+	line-height reset, since WinIE honors line-height on buttons.
+	Mozilla does not, but we will match WinIE.
+	
+        * khtml/rendering/render_button.cpp:
+        (khtml::RenderButton::setStyle):
+        Make sure to preserve the box-flex of our generated interior
+	block, so that it doesn't end up packing left inside its
+	container when styles change.
+	
+	(khtml::RenderButton::paintObject):
+        Change the clipping heuristic to only clip to the border box.
+	This does mean text can run right up to the edge of an Aqua
+	button, but without this change we just don't match other
+	browsers.
+	
+	* khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutHorizontalBox):
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+	Change the behavior of box-align:center.  If it would result
+	in spillage out the top or left when centering, then don't move
+	it.
+
 2005-10-25  Maciej Stachowiak  <mjs@apple.com>
 
         Re-landing the isSameNode fix from Anders, I verified there is no effect on performance:

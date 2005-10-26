@@ -282,17 +282,19 @@ button {
     white-space: normal
 }
 
-input, textarea {
-    text-align: -khtml-auto
-}
-
 /* If we support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
 input, textarea, select, button {
     margin: 0__qem;
     font: 11px 'Lucida Grande';
     color: initial;
+    text-align: -khtml-auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0;
     display: inline-block;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 input[type="hidden"] {
@@ -307,13 +309,12 @@ input[type="radio"], input[type="checkbox"] {
 input[type="button"], input[type="submit"], input[type="reset"]
 {
     -khtml-appearance: push-button;
-    white-space: pre;
-    line-height: normal !important
+    white-space: pre
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], button {
     -khtml-box-align: center;
-    text-align:center;
+    text-align: center;
     cursor: default;
     color: ButtonText;
     padding: 2px 8px 3px 8px

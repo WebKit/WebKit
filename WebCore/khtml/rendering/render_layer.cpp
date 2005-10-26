@@ -1447,14 +1447,8 @@ static inline bool isOverflowOnly(const RenderLayer* layer)
 
 static inline bool compare(const RenderLayer* layer1, const RenderLayer* layer2)
 {
-    if (layer1->zIndex() == layer2->zIndex())
-        // Layers that exist solely because of overflow clip do not technically establish a stacking context.
-        // Our creation of RenderLayers for overflow regions is a convenience but is not really correct.  Overflow
-        // content should have just painted where it occurred in the document.  Although we can't do that,
-        // we will at least make sure that overflow layers lose to the other types of layers (positioned, relative positioned
-        // and opacity).
-        return isOverflowOnly(layer1) || !isOverflowOnly(layer2);
-    return layer1->zIndex() < layer2->zIndex();
+    // Just compare z-index.
+    return (layer1->zIndex() <= layer2->zIndex());
 }
 
 // Sort the buffer from lowest z-index to highest.  The common scenario will have
