@@ -1,3 +1,15 @@
+2005-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Update isSameNode results back, now that the fix is landed.
+
+        * dom/xhtml/level3/core/nodeissamenode01-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode02-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode03-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode04-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode05-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode06-expected.txt:
+        * dom/xhtml/level3/core/nodeissamenode10-expected.txt:
+
 2005-10-25  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4148730> SureSec si#182 safari heap overflow
