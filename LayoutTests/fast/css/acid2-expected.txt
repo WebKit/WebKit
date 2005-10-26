@@ -45,13 +45,6 @@ layer at (132,108) size 48x18
   RenderBlock (positioned) {P} at (132,108) size 48x18 [bgcolor=#000000] [border: none (6px solid #FFFF00) none]
 layer at (132,144) size 48x15
   RenderBlock (positioned) {P} at (132,144) size 48x15 [bgcolor=#000000] [border: none (3px solid #FF0000) none]
-layer at (48,2842) size 740x10 scrollHeight 276
-  RenderBlock {DIV} at (12,204) size 740x10
-    RenderTable {TABLE} at (0,0) size 64x276
-      RenderTableSection {TBODY} at (0,0) size 0x276
-        RenderTableRow {TR} at (0,0) size 0x0
-          RenderTableCell {TD} at (0,0) size 64x276 [r=0 c=0 rs=1 cs=1]
-            RenderImage {IMG} at (0,152) size 64x64
 layer at (108,2686) size 96x12
   RenderBlock (positioned) {BLOCKQUOTE} at (72,48) size 96x12 [border: none (24px solid #000000) none (24px solid #000000)]
     RenderBlock (floating) {ADDRESS} at (24,0) size 48x12 [bgcolor=#FFFF00]
@@ -70,6 +63,13 @@ layer at (96,2782) size 120x24
     RenderBlock (floating) {SPAN} at (12,0) size 96x12 [border: none (12px solid #00000000) none (12px solid #00000000)]
       RenderBlock (floating) {EM} at (12,0) size 72x24 [border: (12px solid #FFFF00) none (12px solid #000000) none]
         RenderBlock {STRONG} at (0,12) size 72x0
+layer at (48,2842) size 740x10 scrollHeight 276
+  RenderBlock {DIV} at (12,204) size 740x10
+    RenderTable {TABLE} at (0,0) size 64x276
+      RenderTableSection {TBODY} at (0,0) size 0x276
+        RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableCell {TD} at (0,0) size 64x276 [r=0 c=0 rs=1 cs=1]
+            RenderImage {IMG} at (0,152) size 64x64
 layer at (48,84) size 704x82
   RenderBlock (relative positioned) zI: 2 {DIV} at (48,0) size 704x82 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {H1} at (13,13) size 678x28
