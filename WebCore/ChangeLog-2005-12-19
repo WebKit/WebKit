@@ -1,3 +1,30 @@
+2005-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5315
+          need to set document type based on contents of <!DOCTYPE>
+          (fixes one layout test)
+
+        * khtml/html/html_documentimpl.cpp: (DOM::HTMLDocumentImpl::determineParseMode):
+        Use the new setDocType function instead of modifying m_doctype directly.
+
+        * khtml/xml/dom_docimpl.h: Changed to use SharedPtr more.
+        (DOM::DocumentImpl::realDocType): Add get() since we're using SharedPtr.
+        (DOM::DocumentImpl::setDocType): Added.
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument): Use setDocType instead of using
+        realDocType()->copyFrom to set up the document type in the new document.
+        (DocumentImpl::DocumentImpl): Don't create an empty document type during constructor.
+        (DocumentImpl::~DocumentImpl): Remove explicit deref since we're using SharedPtr.
+        (DocumentImpl::doctype): Add get() since we're using SharedPtr.
+        (DocumentTypeImpl::DocumentTypeImpl): Streamlined implementation since we're using SharedPtr.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::internalSubset): Added. Calls setDocType.
+        (khtml::internalSubsetHandler): Added. Calls xmlSAX2InternalSubset after calling our function.
+        (khtml::XMLTokenizer::finish): Changed to pass our internalSubsetHandler function pointer.
+
 2005-10-25  David Hyatt  <hyatt@apple.com>
 
 	This patch makes a number of refinements to buttons to make

@@ -175,7 +175,7 @@ public:
     // DOM methods & attributes for Document
 
     virtual DocumentTypeImpl *doctype() const; // returns 0 for HTML documents
-    DocumentTypeImpl *realDocType() const { return m_doctype; }
+    DocumentTypeImpl *realDocType() const { return m_docType.get(); }
 
     DOMImplementationImpl *impl() const;
     virtual ElementImpl *documentElement() const;
@@ -584,6 +584,8 @@ public:
     void incDOMTreeVersion() { ++m_domtree_version; }
     unsigned int domTreeVersion() const { return m_domtree_version; }
 
+    void setDocType(DocumentTypeImpl *docType) { m_docType = docType; }
+
 signals:
     void finishedParsing();
 
@@ -598,7 +600,7 @@ protected:
     QString m_baseURL;
     QString m_baseTarget;
 
-    DocumentTypeImpl *m_doctype;
+    SharedPtr<DocumentTypeImpl> m_docType;
     DOMImplementationImpl *m_implementation;
 
     StyleSheetImpl *m_sheet;
@@ -794,50 +796,41 @@ public:
     virtual DOMString toString() const;
 };
 
-
 class DocumentTypeImpl : public NodeImpl
 {
 public:
-    DocumentTypeImpl(DOMImplementationImpl *_implementation, DocumentPtr *doc,
-                     const DOMString &qualifiedName, const DOMString &publicId,
-                     const DOMString &systemId);
-    ~DocumentTypeImpl();
+    DocumentTypeImpl(DOMImplementationImpl *, DocumentPtr *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
+    DocumentTypeImpl(DocumentPtr *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
+    DocumentTypeImpl(DocumentPtr *, const DocumentTypeImpl &);
 
     // DOM methods & attributes for DocumentType
-    NamedNodeMapImpl *entities() const { return m_entities; }
-    NamedNodeMapImpl *notations() const { return m_notations; }
+    NamedNodeMapImpl *entities() const { return m_entities.get(); }
+    NamedNodeMapImpl *notations() const { return m_notations.get(); }
 
-    DOMString name() const { return m_qualifiedName; }
+    DOMString name() const { return m_name; }
     DOMString publicId() const { return m_publicId; }
     DOMString systemId() const { return m_systemId; }
     DOMString internalSubset() const { return m_subset; }
 
-    // DOM methods overridden from  parent classes
+    // DOM methods overridden from parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual bool childTypeAllowed( unsigned short type );
-    virtual NodeImpl *cloneNode ( bool deep );
+    virtual NodeImpl *cloneNode(bool deep);
 
     // Other methods (not part of DOM)
-    void setName(const DOMString& n) { m_qualifiedName = n; }
-    void setPublicId(const DOMString& publicId) { m_publicId = publicId; }
-    void setSystemId(const DOMString& systemId) { m_systemId = systemId; }
-    DOMImplementationImpl *impl() const { return m_implementation; }
-    void copyFrom(const DocumentTypeImpl&);
-
+    DOMImplementationImpl *impl() const { return m_implementation.get(); }
     virtual DOMString toString() const;
 
-protected:
-    DOMImplementationImpl *m_implementation;
-    NamedNodeMapImpl* m_entities;
-    NamedNodeMapImpl* m_notations;
+private:
+    SharedPtr<DOMImplementationImpl> m_implementation;
+    SharedPtr<NamedNodeMapImpl> m_entities;
+    SharedPtr<NamedNodeMapImpl> m_notations;
 
-    DOMString m_qualifiedName;
+    DOMString m_name;
     DOMString m_publicId;
     DOMString m_systemId;
     DOMString m_subset;
 };
-
 
 } //namespace
 

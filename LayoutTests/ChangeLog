@@ -1,3 +1,7 @@
+2005-10-25  Darin Adler  <darin@apple.com>
+
+        * dom/xhtml/level1/core/hc_documentgetdoctype-expected.txt: Expect success.
+
 2005-10-25  Maciej Stachowiak  <mjs@apple.com>
 
         Update isSameNode results back, now that the fix is landed.

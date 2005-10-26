@@ -305,7 +305,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
 
     // now get the interesting parts of the doctype
     if (doctype)
-        doc->realDocType()->copyFrom(*doctype);
+        doc->setDocType(new DocumentTypeImpl(doc->docPtr(), *doctype));
 
     return doc;
 }
@@ -415,14 +415,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_elemSheet = 0;
     m_tokenizer = 0;
 
-    // ### this should be created during parsing a <!DOCTYPE>
-    // not during construction. Not sure who added that and why (Dirk)
-    m_doctype = new DocumentTypeImpl(_implementation, document,
-                                     DOMString() /* qualifiedName */,
-                                     DOMString() /* publicId */,
-                                     DOMString() /* systemId */);
-    m_doctype->ref();
-
     m_implementation = _implementation;
     if (m_implementation)
         m_implementation->ref();
@@ -492,8 +484,6 @@ DocumentImpl::~DocumentImpl()
     delete m_styleSelector;
     delete m_docLoader;
     if (m_elemSheet )  m_elemSheet->deref();
-    if (m_doctype)
-        m_doctype->deref();
     if (m_implementation)
         m_implementation->deref();
     delete m_paintDeviceMetrics;
@@ -571,7 +561,7 @@ void DocumentImpl::resetActiveLinkColor()
 
 DocumentTypeImpl *DocumentImpl::doctype() const
 {
-    return m_doctype;
+    return m_docType.get();
 }
 
 DOMImplementationImpl *DocumentImpl::impl() const
@@ -3310,49 +3300,29 @@ NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep )
 
 // ----------------------------------------------------------------------------
 
-DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *implementation, DocumentPtr *doc,
-                                   const DOMString &qualifiedName, const DOMString &publicId,
-                                   const DOMString &systemId)
-    : NodeImpl(doc), m_implementation(implementation),
-      m_qualifiedName(qualifiedName), m_publicId(publicId), m_systemId(systemId)
+DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *i, DocumentPtr *doc, const DOMString &n, const DOMString &p, const DOMString &s)
+    : NodeImpl(doc), m_implementation(i), m_name(n), m_publicId(p), m_systemId(s)
 {
-    if (m_implementation)
-        m_implementation->ref();
-
-    m_entities = 0;
-    m_notations = 0;
-
-    // if doc is 0, it is not attached to a document and / or
-    // therefore does not provide entities or notations. (DOM Level 3)
 }
 
-DocumentTypeImpl::~DocumentTypeImpl()
+DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc, const DOMString &n, const DOMString &p, const DOMString &s)
+    : NodeImpl(doc), m_name(n), m_publicId(p), m_systemId(s)
 {
-    if (m_implementation)
-        m_implementation->deref();
-    if (m_entities)
-        m_entities->deref();
-    if (m_notations)
-        m_notations->deref();
 }
 
-void DocumentTypeImpl::copyFrom(const DocumentTypeImpl& other)
+DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc, const DocumentTypeImpl &t)
+    : NodeImpl(doc), m_implementation(t.m_implementation)
+    , m_name(t.m_name), m_publicId(t.m_publicId), m_systemId(t.m_systemId), m_subset(t.m_subset)
 {
-    m_qualifiedName = other.m_qualifiedName;
-    m_publicId = other.m_publicId;
-    m_systemId = other.m_systemId;
-    m_subset = other.m_subset;
 }
 
 DOMString DocumentTypeImpl::toString() const
 {
-    DOMString result;
-    if (m_qualifiedName.isEmpty()) {
+    if (m_name.isEmpty())
         return "";
-    } else {
-        result = "<!DOCTYPE ";
-        result += m_qualifiedName;
-    }
+
+    DOMString result = "<!DOCTYPE ";
+    result += m_name;
     if (!m_publicId.isEmpty()) {
 	result += " PUBLIC \"";
 	result += m_publicId;
@@ -3383,16 +3353,9 @@ unsigned short DocumentTypeImpl::nodeType() const
     return Node::DOCUMENT_TYPE_NODE;
 }
 
-// DOM Section 1.1.1
-bool DocumentTypeImpl::childTypeAllowed( unsigned short /*type*/ )
+NodeImpl *DocumentTypeImpl::cloneNode(bool /*deep*/)
 {
-    return false;
-}
-
-NodeImpl *DocumentTypeImpl::cloneNode ( bool /*deep*/ )
-{
-    // Spec says cloning Document nodes is "implementation dependent"
-    // so we do not support it...
+    // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
     return 0;
 }
 

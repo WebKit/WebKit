@@ -42,25 +42,8 @@
 
 #include <qptrstack.h>
 
-using namespace DOM::HTMLNames;
-
-using DOM::AttributeImpl;
-using DOM::NamedAttrMapImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentImpl;
-using DOM::DocumentPtr;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::ElementImpl;
-using DOM::HTMLScriptElementImpl;
-using DOM::HTMLTableSectionElementImpl;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::nullAtom;
-using DOM::ProcessingInstructionImpl;
-using DOM::QualifiedName;
-using DOM::TextImpl;
-using DOM::AtomicString;
+using namespace DOM;
+using namespace HTMLNames;
 
 namespace khtml {
 
@@ -113,6 +96,7 @@ public:
     void processingInstruction(const xmlChar *target, const xmlChar *data);
     void cdataBlock(const xmlChar *s, int len);
     void comment(const xmlChar *s);
+    void internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID);
 
 private:
     void end();
@@ -134,7 +118,7 @@ private:
     QString m_xmlCode;
 
     xmlParserCtxtPtr m_context;
-    DOM::NodeImpl *m_currentNode;
+    NodeImpl *m_currentNode;
 
     bool m_sawError;
     bool m_sawXSLTransform;
@@ -386,7 +370,7 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
 
 void XMLTokenizer::endElementNs()
 {
-    if (m_parserStopped) 
+    if (m_parserStopped)
         return;
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
@@ -401,7 +385,7 @@ void XMLTokenizer::endElementNs()
 
 void XMLTokenizer::characters(const xmlChar *s, int len)
 {
-    if (m_parserStopped) 
+    if (m_parserStopped)
         return;
     
     if (m_currentNode->nodeType() == Node::TEXT_NODE ||
@@ -539,13 +523,26 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
 
 void XMLTokenizer::comment(const xmlChar *s)
 {
-    if (m_parserStopped) 
+    if (m_parserStopped)
         return;
     
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     // ### handle exceptions
     m_currentNode->addChild(m_doc->document()->createComment(toQString(s)));
+}
+
+void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+{
+    if (m_parserStopped)
+        return;
+
+    DocumentPtr *docPtr = m_doc;
+    DocumentImpl *doc = docPtr->document();
+    if (!doc)
+        return;
+
+    doc->setDocType(new DocumentTypeImpl(docPtr, toQString(name), toQString(externalID), toQString(systemID)));
 }
 
 inline XMLTokenizer *getTokenizer(void *closure)
@@ -615,13 +612,19 @@ static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
     if(ent)
         return ent;
 
-    // Workaround a libxml SAX2 bug whereby charactersHandler is called twice
+    // Work around a libxml SAX2 bug that causes charactersHandler to be called twice.
     bool inAttr = ctxt->instate == XML_PARSER_ATTRIBUTE_VALUE;
     ent = xmlGetDocEntity(ctxt->myDoc, name);
-    if(ent)
+    if (ent)
         ctxt->replaceEntities = inAttr || (ent->etype != XML_INTERNAL_GENERAL_ENTITY);
     
     return ent;
+}
+
+static void internalSubsetHandler(void *closure, const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+{
+    getTokenizer(closure)->internalSubset(name, externalID, systemID);
+    xmlSAX2InternalSubset(closure, name, externalID, systemID);
 }
 
 void XMLTokenizer::finish()
@@ -639,7 +642,7 @@ void XMLTokenizer::finish()
     sax.endElementNs = endElementNsHandler;
     sax.getEntity = getEntityHandler;
     sax.startDocument = xmlSAX2StartDocument;
-    sax.internalSubset = xmlSAX2InternalSubset;
+    sax.internalSubset = internalSubsetHandler;
     sax.entityDecl = xmlSAX2EntityDecl;
     sax.initialized = XML_SAX2_MAGIC;
     
