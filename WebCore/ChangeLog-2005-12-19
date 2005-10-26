@@ -1,3 +1,13 @@
+2005-10-26  David Hyatt  <hyatt@apple.com>
+
+	Don't allow position:relative to apply to table sections.  Fixes the crash described in
+	Radar bug 4107882. (http://cityoflakeforest.com/cs/pw/cs_pw2a3.htm)
+	
+        Reviewed by bdakin
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        
 2005-10-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.
