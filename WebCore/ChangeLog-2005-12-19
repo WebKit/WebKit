@@ -1,3 +1,16 @@
+2005-10-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Fixes a few problems with <rdar://problem/3612121> that I noticed with code inspection.
+
+        * khtml/rendering/render_layer.h: removed inline scrollToPoint
+        * khtml/rendering/render_layer.cpp: (khtml::RenderLayer::getRectToExpose):
+        * khtml/khtml_part.cpp: (KHTMLPart::gotoAnchor): Used to call scrollToPoint, now calls scrollRectToVisible
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::jumpToSelection): Now uses the enclosing layer of the selection start, instead of the outermost layer.
+        (KWQKHTMLPart::centerSelectionInVisibleArea): ditto.
+
 2005-10-26  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

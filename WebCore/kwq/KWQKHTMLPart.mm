@@ -933,9 +933,13 @@ void KWQKHTMLPart::unfocusWindow()
 void KWQKHTMLPart::jumpToSelection()
 {
     if (d->m_selection.start().isNotNull()) {
-        RenderLayer *layer = renderer()->enclosingLayer();
-        if (layer)
-            layer->scrollRectToVisible(selectionRect());
+        if (selectionStart() && selectionStart()->renderer()) {
+            RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+            if (layer) {
+                ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+                layer->scrollRectToVisible(selectionRect());
+            }
+        }
     }
 }
 
@@ -3383,24 +3387,28 @@ NSRect KWQKHTMLPart::visibleSelectionRect() const
 
 void KWQKHTMLPart::centerSelectionInVisibleArea() const
 {
+    QRect rect;
+    
     switch (selection().state()) {
         case SelectionController::NONE:
+            return;
+            
+        case SelectionController::CARET:
+            rect = selection().caretRect();
             break;
-        case SelectionController::CARET: {
-            if (renderer()) {
-                RenderLayer *layer = renderer()->enclosingLayer();
-                if (layer)
-                    layer->scrollRectToVisible(selection().caretRect(), alignCenter, alignCenter);
-            }
-            break;
-        }
+
         case SelectionController::RANGE:
-            if (renderer()) {
-                RenderLayer *layer = renderer()->enclosingLayer();
-                if (layer)
-                    layer->scrollRectToVisible(selectionRect(), alignCenter, alignCenter);
-            }
+            rect = selectionRect();
             break;
+    }
+    
+    ASSERT(d->m_selection.start().isNotNull());
+    if (selectionStart() && selectionStart()->renderer()) {
+        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+        if (layer) {
+            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+            layer->scrollRectToVisible(rect, alignCenter, alignCenter);
+        }
     }
 }
 

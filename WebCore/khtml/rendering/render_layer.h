@@ -56,7 +56,7 @@ typedef enum {
     alignLeft,
     alignRight,
     alignCenter,
-    alignDefault
+    alignDefault // If the rect is visible in this dimension, we will not scroll.  Otherwise, we will center.  
 } ScrollAlignment;
 
 class QScrollBar;
@@ -230,7 +230,6 @@ public:
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
-    void scrollToPoint(int x, int y) { scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft); }
     void scrollRectToVisible(const QRect &r, ScrollAlignment verticalAlignment = alignDefault, ScrollAlignment horizontalAlignment = alignDefault);
     QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, ScrollAlignment verticalAlignment = alignDefault, ScrollAlignment horizontalAlignment = alignDefault);
     void setHasHorizontalScrollbar(bool hasScrollbar);

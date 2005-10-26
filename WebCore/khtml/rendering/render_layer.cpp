@@ -594,8 +594,10 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect,  const QRect &expos
     w = exposeRect.width();
     h = exposeRect.height();
 
-    int intersectWidth = visibleRect.intersect(exposeRect).width();    
-    if (intersectWidth <= w || (horizontalAlignment != alignDefault)) {       
+    int intersectWidth = visibleRect.intersect(exposeRect).width(); 
+    if ((intersectWidth == w) && (horizontalAlignment == alignDefault))
+        x = visibleRect.x();
+    else {   
         switch (horizontalAlignment) {
             case alignLeft:
                 // The x value is already equal to the left of the exposeRect
@@ -621,7 +623,6 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect,  const QRect &expos
                         x = exposeRect.right() - visibleRect.width();
                     }
                 }
-                w = visibleRect.width();
                 break;
             case alignDefault :
             default :
@@ -632,12 +633,14 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect,  const QRect &expos
                 else if (w < visibleRect.width()) {
                     x -= (visibleRect.width() - w) / 2;
                 }
-                w = visibleRect.width();
         }
     }
+    w = visibleRect.width();
 
     int intersectHeight = visibleRect.intersect(exposeRect).height();
-    if (intersectHeight <= h || (verticalAlignment != alignDefault)) {
+    if ((intersectHeight == h) && (verticalAlignment == alignDefault))
+        y = visibleRect.y();
+    else {
         switch (verticalAlignment) {
             case alignTop:
                 // The y value is already equal to the top of the exposeRect
@@ -669,8 +672,9 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect,  const QRect &expos
                     y -= (visibleRect.height() - h) / 2;
                 }
         }
-        h = visibleRect.height();
     }
+    h = visibleRect.height();
+
     return QRect(x, y, w, h);
 }
 

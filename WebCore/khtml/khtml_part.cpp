@@ -2305,13 +2305,13 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   if (n) {
     static_cast<HTMLElementImpl *>(n)->getUpperLeftCorner(x, y);
   }
-  // Scroll to actual top left of element with no slop, since some pages expect anchors to be exactly scrolled to.
 #if APPLE_CHANGES
-  // Call recursive version so this will expose correctly from within nested frames.
+  // scrollRectToVisible will expose correctly from within nested layers and frames.
   if (d->m_doc && d->m_doc->renderer()) {
     khtml::RenderLayer *layer =  d->m_doc->renderer()->enclosingLayer();
     if (layer)
-        d->m_doc->renderer()->enclosingLayer()->scrollToPoint(x, y);
+        // We used to align to the top left corner, but now, if the anchor is already horizontally visible, we won't scroll horizontally.
+        d->m_doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop);
   }
 #else
   d->m_view->setContentsPos(x, y);
