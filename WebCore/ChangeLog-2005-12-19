@@ -1,3 +1,51 @@
+2005-10-26  David Hyatt  <hyatt@apple.com>
+
+	Add support for the indeterminate boolean for placing checkboxes
+	into a mixed state.  This is a feature of WinIE.
+
+	Along with this feature, add support for the CSS3 :indeterminate
+	selector, although one wonders how this could be part of the selectors spec
+	when no DOM standard covers the ability to make a mixed checkbox
+	in the first place.
+
+	This implementation may seem like it's overlooking some things, but it's not.
+	Specifically "indeterminate" has no effect on form submission, it does not
+	get cleared by a form reset, and the pre/post reversal code for undoing clicks
+	only resets the state that changed in WinIE.  This is all bizarre behavior,
+	but this is a WinIE extension, so we're going to match.
+	
+        Reviewed by mjs
+
+	fast/forms/indeterminate.html
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::inputGetter):
+        (KJS::HTMLElement::inputSetter):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLElement::):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::init):
+        (DOM::HTMLInputElementImpl::setIndeterminate):
+        (DOM::HTMLInputElementImpl::preDispatchEventHandler):
+        (DOM::HTMLInputElementImpl::postDispatchEventHandler):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::isIndeterminate):
+        (DOM::HTMLInputElementImpl::indeterminate):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::isIndeterminate):
+        * khtml/rendering/render_theme.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::updateCheckedState):
+        (khtml::RenderThemeMac::setCheckboxCellState):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::isIndeterminate):
+
 2005-10-26  Maciej Stachowiak  <mjs@apple.com>
 
         Re-landed fix for the following bug:

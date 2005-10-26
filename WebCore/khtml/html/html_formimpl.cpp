@@ -1372,7 +1372,8 @@ void HTMLInputElementImpl::init()
     m_checked = false;
     m_defaultChecked = false;
     m_useDefaultChecked = true;
-    
+    m_indeterminate = false;
+
     m_haveType = false;
     m_activeSubmit = false;
     m_autocomplete = true;
@@ -2170,6 +2171,19 @@ void HTMLInputElementImpl::setChecked(bool _checked)
         theme()->stateChanged(renderer(), CheckedState);
 }
 
+void HTMLInputElementImpl::setIndeterminate(bool _indeterminate)
+{
+    // Only checkboxes honor indeterminate.
+    if (m_type != CHECKBOX || indeterminate() == _indeterminate)
+        return;
+
+    m_indeterminate = _indeterminate;
+
+    setChanged();
+
+    if (renderer() && renderer()->style()->hasAppearance())
+        theme()->stateChanged(renderer(), CheckedState);
+}
 
 DOMString HTMLInputElementImpl::value() const
 {
@@ -2297,12 +2311,16 @@ void* HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
     if ((m_type == CHECKBOX || m_type == RADIO) && evt->isMouseEvent() && evt->type() == clickEvent && 
         static_cast<MouseEventImpl*>(evt)->button() == 0) {
         if (m_type == CHECKBOX) {
-            // As a way to store the boolean, we return our node pointer if we were checked and 0 if we were unchecked.
-            if (checked()) {
-                ref();
-                result = this;
+            // As a way to store the state, we return 0 if we were unchecked, 1 if we were checked, and 2 for
+            // indeterminate.
+            if (indeterminate()) {
+                result = (void*)0x2;
+                setIndeterminate(false);
+            } else {
+                if (checked())
+                    result = (void*)0x1;
+                setChecked(!checked());
             }
-            setChecked(!checked());
         } else {
             // For radio buttons, store the current selected radio object.
             if (name().isEmpty() || checked() || !form())
@@ -2327,15 +2345,18 @@ void* HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 
 void HTMLInputElementImpl::postDispatchEventHandler(EventImpl *evt, void* data)
 {
-    HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(data);
-
     if ((m_type == CHECKBOX || m_type == RADIO) && evt->isMouseEvent() && evt->type() == clickEvent && 
         static_cast<MouseEventImpl*>(evt)->button() == 0) {
         if (m_type == CHECKBOX) {
             // Reverse the checking we did in preDispatch.
-            if (evt->defaultPrevented() || evt->defaultHandled())
-                setChecked(input);
-        } else if (input) {
+            if (evt->defaultPrevented() || evt->defaultHandled()) {
+                if (data == (void*)0x2)
+                    setIndeterminate(true);
+                else
+                    setChecked(data);
+            }
+        } else if (data) {
+            HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(data);
             if (evt->defaultPrevented() || evt->defaultHandled()) {
                 // Restore the original selected radio button if possible.
                 // Make sure it is still a radio button and only do the restoration if it still
@@ -2346,11 +2367,9 @@ void HTMLInputElementImpl::postDispatchEventHandler(EventImpl *evt, void* data)
                     input->setChecked(true);
                 }
             }
+            input->deref();
         }
     }
-    
-    if (input)
-        input->deref();
 }
 
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)

@@ -227,7 +227,7 @@ namespace KJS {
            OptionLabel, OptionValue, InputBlur, InputReadOnly, InputAccept,
            InputSize, InputDefaultValue, InputTabIndex, InputValue, InputType,
            InputFocus, InputMaxLength, InputDefaultChecked, InputDisabled,
-           InputChecked, InputForm, InputAccessKey, InputAlign, InputAlt,
+           InputChecked, InputIndeterminate, InputForm, InputAccessKey, InputAlign, InputAlt,
            InputName, InputSrc, InputUseMap, InputSelect, InputClick,
            InputSelectionStart, InputSelectionEnd, InputSetSelectionRange,
            TextAreaAccessKey, TextAreaName, TextAreaDefaultValue, TextAreaSelect, TextAreaSetSelectionRange,

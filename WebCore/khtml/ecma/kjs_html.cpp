@@ -891,7 +891,7 @@ const HTMLElement::Accessors* HTMLElement::getSetInfo() const
   selected	KJS::HTMLElement::OptionSelected	DontDelete
   value		KJS::HTMLElement::OptionValue		DontDelete
 @end
-@begin HTMLInputElementTable 23
+@begin HTMLInputElementTable 24
   defaultValue	KJS::HTMLElement::InputDefaultValue	DontDelete
   defaultChecked KJS::HTMLElement::InputDefaultChecked	DontDelete
   form		KJS::HTMLElement::InputForm		DontDelete|ReadOnly
@@ -901,6 +901,7 @@ const HTMLElement::Accessors* HTMLElement::getSetInfo() const
   alt		KJS::HTMLElement::InputAlt		DontDelete
   checked	KJS::HTMLElement::InputChecked		DontDelete
   disabled	KJS::HTMLElement::InputDisabled		DontDelete
+  indeterminate KJS::HTMLElement::InputIndeterminate    DontDelete
   maxLength	KJS::HTMLElement::InputMaxLength	DontDelete
   name		KJS::HTMLElement::InputName		DontDelete
   readOnly	KJS::HTMLElement::InputReadOnly		DontDelete
@@ -1654,6 +1655,7 @@ ValueImp *HTMLElement::inputGetter(ExecState* exec, int token) const
         case InputAlt:             return String(input.alt());
         case InputChecked:         return Boolean(input.checked());
         case InputDisabled:        return Boolean(input.disabled());
+        case InputIndeterminate:   return Boolean(input.indeterminate());
         case InputMaxLength:       return Number(input.maxLength());
         case InputName:            return String(input.name());
         case InputReadOnly:        return Boolean(input.readOnly());
@@ -2739,6 +2741,7 @@ void HTMLElement::inputSetter(ExecState *exec, int token, ValueImp *value, const
         case InputAlt:             { input.setAlt(str); return; }
         case InputChecked:         { input.setChecked(value->toBoolean(exec)); return; }
         case InputDisabled:        { input.setDisabled(value->toBoolean(exec)); return; }
+        case InputIndeterminate:   { input.setIndeterminate(value->toBoolean(exec)); return; }
         case InputMaxLength:       { input.setMaxLength(value->toInt32(exec)); return; }
         case InputName:            { input.setName(str); return; }
         case InputReadOnly:        { input.setReadOnly(value->toBoolean(exec)); return; }

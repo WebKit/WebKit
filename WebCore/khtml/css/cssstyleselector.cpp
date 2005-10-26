@@ -1431,8 +1431,15 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
                     return !e->isEnabled();                    
                 break;
             case CSSSelector::PseudoChecked:
-                if (e && e->isChecked())
+                // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
+                // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
+                // obey the CSS spec here in the test for matching the pseudo.
+                if (e && e->isChecked() && !e->isIndeterminate())
                     return true;
+                break;
+            case CSSSelector::PseudoIndeterminate:
+	        if (e && e->isIndeterminate())
+		    return true;
                 break;
             case CSSSelector::PseudoRoot:
                 if (e == e->getDocument()->documentElement())

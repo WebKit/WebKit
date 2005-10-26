@@ -153,6 +153,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString firstOfType("first-of-type");
     static AtomicString focus("focus");
     static AtomicString hover("hover");
+    static AtomicString indeterminate("indeterminate");
     static AtomicString link("link");
     static AtomicString lang("lang(");
     static AtomicString lastChild("last-child");
@@ -202,6 +203,8 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoFocus;
     else if (value == hover)
         _pseudoType = PseudoHover;
+    else if (value == indeterminate)
+        _pseudoType = PseudoIndeterminate;
     else if (value == link)
         _pseudoType = PseudoLink;
     else if (value == lang)

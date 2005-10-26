@@ -110,8 +110,16 @@ QRect RenderThemeMac::inflateRect(const QRect& r, const QSize& size, const int* 
 
 void RenderThemeMac::updateCheckedState(NSCell* cell, const RenderObject* o)
 {
-    bool oldChecked = [cell state] == NSOnState;
+    bool oldIndeterminate = [cell state] == NSMixedState;
+    bool indeterminate = isIndeterminate(o);
     bool checked = isChecked(o);
+    
+    if (oldIndeterminate != indeterminate) {
+        [cell setState:indeterminate ? NSMixedState : (checked ? NSOnState : NSOffState)];
+        return;
+    }
+
+    bool oldChecked = [cell state] == NSOnState;
     if (checked != oldChecked)
         [cell setState:checked ? NSOnState : NSOffState];
 }
@@ -278,6 +286,8 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
         checkbox = [[NSButtonCell alloc] init];
         [checkbox setButtonType:NSSwitchButton];
         [checkbox setTitle:nil];
+        [checkbox setAllowsMixedState:YES];
+        
     }
     
     // Set the control size based off the rectangle we're painting into.

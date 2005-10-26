@@ -160,6 +160,7 @@ namespace DOM {
             PseudoChecked,
             PseudoEnabled,
             PseudoDisabled,
+            PseudoIndeterminate,
             PseudoTarget,
             PseudoBefore,
             PseudoAfter,
