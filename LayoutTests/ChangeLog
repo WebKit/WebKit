@@ -1,3 +1,29 @@
+2005-10-26  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * dom/xhtml/level3/core/nodeisequalnode01-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode02-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode04-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode06-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode07-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode10-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode11-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode12-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode13-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode14-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode19-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode20-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode22-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode28-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode29-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode31-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode32-expected.txt:
+        These now pass.
+        
+        * dom/xhtml/level3/core/nodeisequalnode21-expected.txt:
+        This now fails because doctype is null.
+
 2005-10-25  Darin Adler  <darin@apple.com>
 
         * dom/xhtml/level1/core/hc_documentgetdoctype-expected.txt: Expect success.

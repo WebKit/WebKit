@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeisequalnode14
-Status	error
-Message	TypeError: Value undefined (result of expression attr1.isEqualNode) is not object.
+Status	Success
