@@ -1,5 +1,16 @@
 2005-10-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Re-landing the isSameNode fix from Anders, I verified there is no effect on performance:
+
+	<rdar://problem/4302880> Re-land isSameNode change
+	
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/DOM.mm:
+
+2005-10-25  Maciej Stachowiak  <mjs@apple.com>
+
         Re-land the following fix, I tested to verify there is no performance regression:
 
 	Makes <object> tags not use image mode for svg content:
