@@ -1,3 +1,22 @@
+2005-10-26  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+        Add JS wrapper.
+        
+        (KJS::DOMNode::):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::isEqualNode):
+        * khtml/xml/dom_nodeimpl.h:
+        Implement isEqualNode.
+        
+        * kwq/DOM.mm:
+        (-[DOMNode isEqualNode:]):
+        Add Objective C wrapper.
+
 2005-10-26  David Hyatt  <hyatt@apple.com>
 
 	Add support for the indeterminate boolean for placing checkboxes

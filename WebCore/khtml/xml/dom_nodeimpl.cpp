@@ -1650,6 +1650,58 @@ NamedAttrMapImpl *NodeImpl::attributes() const
     return 0;
 }
 
+bool NodeImpl::isEqualNode(NodeImpl *other) const
+{
+    if (!other)
+        return false;
+    
+    if (nodeType() != other->nodeType())
+        return false;
+    
+    if (nodeName() != other->nodeName())
+        return false;
+    
+    if (localName() != other->localName())
+        return false;
+    
+    if (namespaceURI() != other->namespaceURI())
+        return false;
+    
+    if (prefix() != other->prefix())
+        return false;
+    
+    if (nodeValue() != other->nodeValue())
+        return false;
+    
+    NamedAttrMapImpl *attrs = attributes();
+    NamedAttrMapImpl *otherAttrs = attributes();
+    
+    if (!attrs && otherAttrs)
+        return false;
+    
+    if (attrs && !attrs->mapsEquivalent(otherAttrs))
+        return false;
+    
+    NodeImpl *child = firstChild();
+    NodeImpl *otherChild = other->firstChild();
+    
+    while (child) {
+        if (!child->isEqualNode(otherChild))
+            return false;
+        
+        child = child->nextSibling();
+        otherChild = otherChild->nextSibling();
+    }
+    
+    if (otherChild)
+        return false;
+    
+    // FIXME: For DocumentType nodes we should check equality on
+    // the entities and notations NamedNodeMaps as well.
+    
+    return true;
+}
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const NodeImpl *node, QString &string, const QualifiedName& name, QString attrDesc)

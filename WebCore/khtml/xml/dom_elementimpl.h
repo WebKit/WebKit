@@ -316,6 +316,8 @@ public:
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& _id) { m_id = _id; }
     
+    bool mapsEquivalent(const NamedAttrMapImpl* otherMap) const;
+
 protected:
     // this method is internal, does no error checking at all
     void addAttribute(AttributeImpl* newAttribute);

@@ -381,6 +381,11 @@ static ListenerMap *listenerMap;
     return [self _nodeImpl]->isSameNode([other _nodeImpl]);
 }
 
+- (BOOL)isEqualNode:(DOMNode *)other
+{
+    return [self _nodeImpl]->isEqualNode([other _nodeImpl]);
+}
+
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     EventListener *wrapper = ObjCEventListener::create(listener);

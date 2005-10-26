@@ -1084,6 +1084,25 @@ void NamedAttrMapImpl::removeAttribute(const QualifiedName& name)
     attr->deref();
 }
 
+bool NamedAttrMapImpl::mapsEquivalent(const NamedAttrMapImpl* otherMap) const
+{
+    if (!otherMap)
+        return false;
+    
+    if (length() != otherMap->length())
+        return false;
+    
+    for (unsigned i = 0; i < length(); i++) {
+        AttributeImpl *attr = attributeItem(i);
+        AttributeImpl *otherAttr = otherMap->getAttributeItem(attr->name());
+            
+        if (!otherAttr || attr->value() != otherAttr->value())
+            return false;
+    }
+    
+    return true;
+}
+
 // ------------------------------- Styled Element and Mapped Attribute Implementation
 
 CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl() {

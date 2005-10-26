@@ -88,7 +88,7 @@ namespace KJS {
 
 // -------------------------------------------------------------------------
 /* Source for DOMNodeProtoTable. Use "make hashtables" to regenerate.
-@begin DOMNodeProtoTable 14
+@begin DOMNodeProtoTable 15
   insertBefore	DOMNode::InsertBefore	DontDelete|Function 2
   replaceChild	DOMNode::ReplaceChild	DontDelete|Function 2
   removeChild	DOMNode::RemoveChild	DontDelete|Function 1
@@ -101,6 +101,7 @@ namespace KJS {
   isSupported   DOMNode::IsSupported	DontDelete|Function 2
 # DOM3
   isSameNode    DOMNode::IsSameNode     DontDelete|Function 1
+  isEqualNode   DOMNode::IsEqualNode    DontDelete|Function 1
 # from the EventTarget interface
   addEventListener	DOMNode::AddEventListener	DontDelete|Function 3
   removeEventListener	DOMNode::RemoveEventListener	DontDelete|Function 3
@@ -653,6 +654,8 @@ ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
             args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).domString()));
     case DOMNode::IsSameNode:
         return Boolean(node.isSameNode(toNode(args[0])));
+    case DOMNode::IsEqualNode:
+        return Boolean(node.isEqualNode(toNode(args[0])));
     case DOMNode::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)

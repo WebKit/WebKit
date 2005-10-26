@@ -69,7 +69,7 @@ namespace KJS {
            Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
            ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
            CloneNode, Normalize, IsSupported, AddEventListener, RemoveEventListener,
-           DispatchEvent, Contains, IsSameNode,
+           DispatchEvent, Contains, IsSameNode, IsEqualNode,
            OnAbort, OnBlur, OnChange, OnClick, OnContextMenu, OnDblClick, OnDragDrop, OnError,
            OnDragEnter, OnDragOver, OnDragLeave, OnDrop, OnDragStart, OnDrag, OnDragEnd,
            OnBeforeCut, OnCut, OnBeforeCopy, OnCopy, OnBeforePaste, OnPaste, OnSelectStart,
