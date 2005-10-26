@@ -1,3 +1,12 @@
+2005-10-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Re-landed fix for the following bug:
+
+	<rdar://problem/4302874> crash repeatedly reloading www.supermanhomepage.com (fixed in Denver, broken on TOT)
+	
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+
 2005-10-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
