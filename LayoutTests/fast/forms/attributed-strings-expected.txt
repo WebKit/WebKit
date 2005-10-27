@@ -1,0 +1,21 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:test replacingDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+test
+test{}
+4
+test
+4
+test
+NSForegroundColor,NSToolTip,NSFont,NSObliqueness
+NSToolTip,NSForegroundColor,NSFont
+0.5
+undefined
+undefined
+NSDeviceRGBColorSpace 1 0.5 1 0.5
+
+

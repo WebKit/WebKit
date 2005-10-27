@@ -1,3 +1,11 @@
+2005-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+		Layout test included with http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
+		TextInputController should support attributed strings
+		
+        * fast/forms/attributed-strings-expected.txt: Added.
+        * fast/forms/attributed-strings.html: Added.
+
 2005-10-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
