@@ -84,6 +84,9 @@ private:
 };
 
 Tokenizer *newXMLTokenizer(DOM::DocumentPtr *, KHTMLView * = 0);
+#ifdef KHTML_XSLT
+void *xmlDocPtrForString(const QString &source, const QString &url = QString());
+#endif
 QMap<QString, QString> parseAttributes(const DOM::DOMString &, bool &attrsOK);
 bool parseXMLDocumentFragment(const DOM::DOMString &, DOM::DocumentFragmentImpl *, DOM::ElementImpl *parent = 0);
 }

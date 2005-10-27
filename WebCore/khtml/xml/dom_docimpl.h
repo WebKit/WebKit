@@ -572,8 +572,8 @@ public:
     void applyXSLTransform(ProcessingInstructionImpl* pi);
     void setTransformSource(void* doc) { m_transformSource = doc; }
     const void* transformSource() { return m_transformSource; }
-    DocumentImpl* transformSourceDocument() { return m_transformSourceDocument; }
-    void setTransformSourceDocument(DocumentImpl* doc);
+    SharedPtr<DocumentImpl> transformSourceDocument() { return m_transformSourceDocument; }
+    void setTransformSourceDocument(DocumentImpl *doc) { m_transformSourceDocument = doc; }
 #endif
 
 #ifndef KHTML_NO_XBL
@@ -696,8 +696,8 @@ protected:
     bool m_overMinimumLayoutThreshold;
     
 #ifdef KHTML_XSLT
-    void* m_transformSource;
-    DocumentImpl* m_transformSourceDocument;
+    void *m_transformSource;
+    SharedPtr<DocumentImpl> m_transformSourceDocument;
 #endif
 
 #ifndef KHTML_NO_XBL

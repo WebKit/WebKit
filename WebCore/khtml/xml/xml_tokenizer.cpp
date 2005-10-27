@@ -791,20 +791,25 @@ bool XMLTokenizer::isWaitingForScripts() const
 }
 
 #ifdef KHTML_XSLT
-void XMLTokenizer::setTransformSource(DocumentImpl* doc)
+void *xmlDocPtrForString(const QString &source, const QString &url)
 {
-    // Time to spin up a new parse and save the xmlDocPtr.
     // Parse in a single chunk into an xmlDocPtr
     // FIXME: Hook up error handlers so that a failure to parse the main document results in
     // good error messages.
     const QChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
-    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char *>(m_xmlCode.unicode()),
-                                        m_xmlCode.length() * sizeof(QChar),
-                                        doc->URL().ascii(),
+    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char *>(source.unicode()),
+                                        source.length() * sizeof(QChar),
+                                        url.ascii(),
                                         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
                                         XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
-    doc->setTransformSource(sourceDoc);
+    return sourceDoc;
+}
+
+void XMLTokenizer::setTransformSource(DocumentImpl *doc)
+{
+    // Time to spin up a new parse and save the xmlDocPtr.
+    doc->setTransformSource(xmlDocPtrForString(m_xmlCode, doc->URL()));
 }
 #endif
 

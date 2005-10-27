@@ -372,8 +372,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
       , m_bindingManager(new XBLBindingManager(this))
 #endif
 #ifdef KHTML_XSLT
-    , m_transformSource(NULL)
-    , m_transformSourceDocument(0)
+    , m_transformSource(0)
 #endif
 #if APPLE_CHANGES
     , m_finishedParsing(this, SIGNAL(finishedParsing()))
@@ -518,8 +517,6 @@ DocumentImpl::~DocumentImpl()
 
 #ifdef KHTML_XSLT
     xmlFreeDoc((xmlDocPtr)m_transformSource);
-    if (m_transformSourceDocument)
-        m_transformSourceDocument->deref();
 #endif
 
 #ifndef KHTML_NO_XBL
@@ -3101,20 +3098,15 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, unsigned startOffset, int delta,
 
 void DocumentImpl::applyXSLTransform(ProcessingInstructionImpl* pi)
 {
-    // FIXME: Be sure to change this next line to use a SharedPtr instead of a stack-allocated
-    // object once XSLTProcessorImpl gets a ref count.
-    XSLTProcessorImpl processor(static_cast<XSLStyleSheetImpl*>(pi->sheet()), this);
-    processor.transformDocument(this);
+    SharedPtr<XSLTProcessorImpl> processor = new XSLTProcessorImpl;
+    processor->setXSLStylesheet(static_cast<XSLStyleSheetImpl*>(pi->sheet()));
+    
+    QString resultMIMEType;
+    QString newSource;
+    if (!processor->transformToString(this, resultMIMEType, newSource))
+        return;
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).
-}
-
-void DocumentImpl::setTransformSourceDocument(DocumentImpl* doc)
-{ 
-    if (doc)
-        doc->ref();
-    if (m_transformSourceDocument)
-        m_transformSourceDocument->deref(); 
-    m_transformSourceDocument = doc;
+    processor->createDocumentFromSource(newSource, resultMIMEType, this, view());
 }
 
 #endif

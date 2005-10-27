@@ -1,3 +1,70 @@
+2005-10-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Add XSLTProcessor support to WebCore's JavaScript bindings.
+        <rdar://problem/3642402> add XSLTProcessor to WebCore's JavaScript support
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
+
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/ecma/XSLTProcessor.cpp: Added.
+        (KJS::):
+        (KJS::XSLTProcessor::XSLTProcessor):
+        (KJS::XSLTProcessor::~XSLTProcessor):
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/XSLTProcessor.h: Added.
+        (KJS::XSLTProcessor::classInfo):
+        (KJS::XSLTProcessor::):
+        (KJS::XSLTProcessor::impl):
+        (KJS::XSLTProcessorConstructorImp::XSLTProcessorConstructorImp):
+        (KJS::XSLTProcessorConstructorImp::implementsConstruct):
+        (KJS::XSLTProcessorConstructorImp::construct):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::replaceDocImpl):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::applyXSLTransform):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::transformSourceDocument):
+        (DOM::DocumentImpl::setTransformSourceDocument):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::xmlDocPtrForString):
+        (khtml::XMLTokenizer::setTransformSource):
+        * khtml/xml/xml_tokenizer.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::parseErrorFunc):
+        (DOM::stylesheetLoadFunc):
+        (DOM::setXSLTLoadCallBack):
+        (DOM::writeToQString):
+        (DOM::saveResultToString):
+        (DOM::transformTextStringToXHTMLDocumentString):
+        (DOM::xsltParamArrayFromQDict):
+        (DOM::freeXsltParamArray):
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+        (DOM::createFragmentFromSource):
+        (DOM::xsltStylesheetPointer):
+        (DOM::xmlDocPtrFromNode):
+        (DOM::resultMIMEType):
+        (DOM::XSLTProcessorImpl::transformToString):
+        (DOM::XSLTProcessorImpl::transformToDocument):
+        (DOM::XSLTProcessorImpl::transformToFragment):
+        (DOM::XSLTProcessorImpl::setParameter):
+        (DOM::XSLTProcessorImpl::getParameter):
+        (DOM::XSLTProcessorImpl::removeParameter):
+        * khtml/xsl/xslt_processorimpl.h:
+        (DOM::XSLTProcessorImpl::XSLTProcessorImpl):
+        (DOM::XSLTProcessorImpl::setXSLStylesheet):
+        (DOM::XSLTProcessorImpl::importStylesheet):
+        (DOM::XSLTProcessorImpl::clearParameters):
+        (DOM::XSLTProcessorImpl::reset):
+        (DOM::XSLTProcessorImpl::xslStylesheet):
+
 2005-10-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Vicki.

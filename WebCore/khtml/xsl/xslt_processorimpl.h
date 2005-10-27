@@ -29,38 +29,51 @@
 #include <libxml/parserInternals.h>
 
 #include <libxslt/transform.h>
+#include <libxslt/documents.h>
 
 #include <misc/shared.h>
+#include "dom_stringimpl.h"
+#include "xsl_stylesheetimpl.h"
 #include <qstring.h>
 
 namespace DOM {
 
-class XSLStyleSheetImpl;
+class NodeImpl;
 class DocumentImpl;
-    
-class XSLTProcessorImpl
+class DocumentFragmentImpl;
+
+class XSLTProcessorImpl : public khtml::Shared<XSLTProcessorImpl>
 {
 public:
-    // Constructors
-    XSLTProcessorImpl(XSLStyleSheetImpl* stylesheet, DocumentImpl* source);
-    ~XSLTProcessorImpl();
-    
-    // Method for transforming a source document into a result document.
-    SharedPtr<DocumentImpl> transformDocument(DocumentImpl* sourceDoc);
+    XSLTProcessorImpl() { m_parameters.setAutoDelete(true); };
 
-    // Convert a libxml doc ptr to a KHTML DOM Document
-    SharedPtr<DocumentImpl> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet);
+    void setXSLStylesheet(XSLStyleSheetImpl *styleSheet) { m_stylesheet = styleSheet; }
+    bool transformToString(NodeImpl *source, QString &resultMIMEType, QString &resultString);
+    SharedPtr<DocumentImpl> createDocumentFromSource(const QString &source, const QString &sourceMIMEType, NodeImpl *sourceNode, KHTMLView *view = 0);
     
-    // Helpers
-    void addToResult(const char* buffer, int len);
+    // DOM methods
+    void importStylesheet(NodeImpl *style) { m_stylesheetRootNode = style; }
+    SharedPtr<DocumentFragmentImpl> transformToFragment(NodeImpl *source, DocumentImpl *ouputDoc);
+    SharedPtr<DocumentImpl> transformToDocument(NodeImpl *source);
     
-    XSLStyleSheetImpl *stylesheet() { return m_stylesheet.get(); }
-    DocumentImpl *sourceDocument() { return m_sourceDocument.get(); }
+    void setParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName, DOMStringImpl *value);
+    SharedPtr<DOMStringImpl> getParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
+    void removeParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
+    void clearParameters() { m_parameters.clear(); }
+
+    void reset() { m_stylesheet = NULL; m_stylesheetRootNode = NULL;  m_parameters.clear(); }
+    
+public:
+    // Only for libXSLT callbacks
+    XSLStyleSheetImpl *xslStylesheet() const { return m_stylesheet.get(); }
     
 private:
+    // Convert a libxml doc ptr to a KHTML DOM Document
+    SharedPtr<DocumentImpl> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, DocumentImpl *ownerDocument, bool sourceIsDocument);
+
     SharedPtr<XSLStyleSheetImpl> m_stylesheet;
-    QString m_resultOutput;
-    SharedPtr<DocumentImpl> m_sourceDocument;
+    SharedPtr<NodeImpl> m_stylesheetRootNode;
+    QDict<DOMString> m_parameters;
 };
 
 }

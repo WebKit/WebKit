@@ -693,23 +693,6 @@ bool KHTMLPart::closeURL()
   return true;
 }
 
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-DOM::HTMLDocument KHTMLPart::htmlDocument() const
-{
-  if (d->m_doc && d->m_doc->isHTMLDocument())
-    return static_cast<HTMLDocumentImpl*>(d->m_doc);
-  else
-    return static_cast<HTMLDocumentImpl*>(0);
-}
-
-DOM::Document KHTMLPart::document() const
-{
-    return d->m_doc;
-}
-
-#endif
-
 KParts::BrowserExtension *KHTMLPart::browserExtension() const
 {
   return d->m_extension;
@@ -1187,8 +1170,10 @@ void KHTMLPart::replaceDocImpl(DocumentImpl* newDoc)
             d->m_doc->deref();
         }
         d->m_doc = newDoc;
-        if (newDoc)
+        if (newDoc) {
             newDoc->ref();
+            newDoc->attach();
+        }
     }
 }
 

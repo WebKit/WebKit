@@ -52,6 +52,7 @@
 #include "kjs_events.h"
 #include "xmlhttprequest.h"
 #include "xmlserializer.h"
+#include "XSLTProcessor.h"
 #include "domparser.h"
 
 #include "khtmlview.h"
@@ -212,7 +213,7 @@ ValueImp *Screen::getValueProperty(ExecState *exec, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 91
+@begin WindowTable 103
   closed	Window::Closed		DontDelete|ReadOnly
   crypto	Window::Crypto		DontDelete|ReadOnly
   defaultStatus	Window::DefaultStatus	DontDelete
@@ -270,6 +271,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   XMLHttpRequest	Window::XMLHttpRequest	DontDelete|ReadOnly
   XMLSerializer	Window::XMLSerializer	DontDelete|ReadOnly
   DOMParser	Window::DOMParser	DontDelete|ReadOnly
+  XSLTProcessor	Window::XSLTProcessor	DontDelete|ReadOnly
   alert		Window::Alert		DontDelete|Function 1
   confirm	Window::Confirm		DontDelete|Function 1
   prompt	Window::Prompt		DontDelete|Function 2
@@ -866,6 +868,8 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
       return new XMLSerializerConstructorImp(exec);
     case DOMParser:
       return new DOMParserConstructorImp(exec, m_part->xmlDocImpl());
+    case XSLTProcessor:
+      return new XSLTProcessorConstructorImp(exec);
     case FrameElement:
       if (DocumentImpl *doc = m_part->xmlDocImpl())
         if (ElementImpl *fe = doc->ownerElement())
