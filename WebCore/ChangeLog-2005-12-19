@@ -1,3 +1,12 @@
+2005-10-27  Eric Seidel  <eseidel@apple.com>
+
+        No review, SVG build fix only.
+        Fixing fallout from <rdar://problem/4098450>.
+
+        * WebCore+SVG/xml_kdomtokenizer.cpp:
+        (KDOMTokenizer::write): now returns bool
+        (KDOMTokenizer::finish): error check
+
 2005-10-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs & darin.

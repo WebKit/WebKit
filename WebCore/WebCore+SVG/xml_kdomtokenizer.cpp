@@ -58,7 +58,7 @@ public:
     ~KDOMTokenizer();
 
     // from Tokenizer
-    virtual void write(const TokenizerString &str, bool);
+    virtual bool write(const TokenizerString &str, bool);
     virtual void finish();
     virtual void setOnHold(bool onHold);
     virtual bool isWaitingForScripts() const;
@@ -103,9 +103,10 @@ KDOMDocumentWrapperImpl *KDOMTokenizer::documentWrapper()
     return m_doc ? static_cast<KDOMDocumentWrapperImpl *>(m_doc->document()) : NULL;
 }
 
-void KDOMTokenizer::write(const TokenizerString &s, bool /*appendData*/ )
+bool KDOMTokenizer::write(const TokenizerString &s, bool /*appendData*/ )
 {
     m_xmlCode += s.toString();
+    return false;
 }
 
 void KDOMTokenizer::setOnHold(bool onHold)
@@ -126,6 +127,11 @@ void KDOMTokenizer::finish()
     parser->doOneShotParse(m_xmlCode.utf8(), m_xmlCode.length());
     
     SVGDocumentImpl *svgDoc = static_cast<SVGDocumentImpl *>(parser->document());
+    if (!svgDoc) {
+        fprintf(stderr, "Failed to parse document.\n");
+        delete parser;
+        return;
+    }
     NodeImpl *wrappedDoc = new KDOMNodeTreeWrapperImpl(m_doc, svgDoc);
     delete parser; // builder is owned (deleted) by parser
     
