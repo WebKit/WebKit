@@ -1,0 +1,134 @@
+0.1 original xml:
+<?xml-stylesheet type="text/xsl" href="xslt-text.xsl"?><TEST>SOURCE XML: <<<&тест&>>></TEST>
+0.2 xsl1:
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+<xsl:output method="text" encoding="KOI8-R" />
+<xsl:template match="TEST">CHARACTERS IN XSLT: <<<&тест&>>>
+<xsl:apply-templates /><xsl:text>
+</xsl:text></xsl:template>
+
+<xsl:template>
+		<xsl:value-of select="." />
+</xsl:template>
+
+</xsl:stylesheet>
+0.3 xsl2:
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method="html" encoding="UTF-8" />
+    <xsl:template match="TEST">
+        <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            </head>  
+            <body>
+              CHARACTERS IN XSLT: ééééééééééé <br /> <xsl:apply-templates />
+            </body>
+        </html>
+  </xsl:template>
+
+<xsl:template>
+		<xsl:value-of select="." />
+</xsl:template>
+
+</xsl:stylesheet>
+
+1.0 void importStylesheet(in DOMNode style):
+
+1.1 Import two different stylesheets:
+<HTML xmlns="http://www.w3.org/1999/xhtml"><HEAD><META http-equiv="Content-Type" content="text/html; charset=UTF-8"></HEAD><BODY>
+              CHARACTERS IN XSLT: ééééééééééé <BR><BR>SOURCE XML: <<<&тест&>>>
+</BODY></HTML>
+1.2 Import same stylesheet twice:
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title /></head>
+<body>
+<pre>CHARACTERS IN XSLT: <<<&тест&>>>
+SOURCE XML: <<<&тест&>>>
+</pre>
+</body>
+</html>
+1.3 Import undefined stylesheet:
+****Failure**** (expected exception, instead got result: "undefined")
+1.4 Import undefined stylesheet:
+****Failure**** (expected exception, instead got result: "undefined")
+1.5 Don't import stylesheet:
+undefined
+
+2.0 DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output):
+
+2.1 fragment with undefined source:
+****Failure**** (expected exception, instead got result: "undefined")
+2.2 fragment with undefined output document:
+undefined
+2.3 use non-DOMDocument output parameter:
+****Failure**** (expected exception, instead got result: "undefined")
+2.4 transform to same fragment twice:
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title /></head>
+<body>
+<pre>CHARACTERS IN XSLT: <<<&тест&>>>
+SOURCE XML: <<<&тест&>>>
+</pre>
+</body>
+</html>
+
+3.0 DOMDocument transformToDocument(in DOMNode source):
+
+3.1 use non-DOMDocument output parameter:
+****Failure**** (expected exception, instead got result: "undefined")
+3.2 document from undefined source:
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title /></head>
+<body>
+<pre>CHARACTERS IN XSLT: <<<&тест&>>>
+SOURCE XML: <<<&тест&>>>
+</pre>
+</body>
+</html>
+
+4.0 void setParameter(in DOMString namespaceURI, in DOMString localName, in Value value):
+
+4.1 pass setParameter same localname, different namespaces:
+****Failure**** (expected: "Success" actual: "Failure")
+4.2 pass undefined namespace:
+Success
+4.3 pass setParameter an undefined name:
+****Failure**** (expected exception, instead got result: "undefined")
+4.4 pass unsupported value to setParameter:
+****Failure**** (expected exception, instead got result: "undefined")
+
+5.0 Value getParameter(in DOMString namespaceURI, in DOMString localName):
+
+5.1 pass getParameter an undefined name:
+****Failure**** (expected exception, instead got result: "undefined")
+5.2 pass getParameter a name which has not been set:
+Success
+5.3 verify getParameter actually gets (and set sets):
+Success
+
+6.0 void removeParameter(in DOMString namespaceURI, in DOMString localName):
+
+6.1 pass removeParameter same localname, different namespaces:
+****Failure**** (expected: "Success" actual: "Failure")
+6.2 verify removeParameter actually removes using undefined namespace:
+Success
+6.3 pass removeParameter undefined name:
+Success
+6.4 pass removeParameter a name which has not been set:
+Success
+6.5 verify removeParameter actually removes:
+Success
+
+7.0 void clearParameters():
+
+7.1 verify that clearParameters does:
+Success
+
+8.0 void reset():
+
+8.1 verify that parameters have been cleared:
+Success
+8.2 verify that stylesheet has been cleared:
+Success
+

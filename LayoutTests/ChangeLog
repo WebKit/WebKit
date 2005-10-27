@@ -1,3 +1,13 @@
+2005-10-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Test cases for the new XSLTProcessor JS object.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
+
+        * fast/xsl/xslt-processer-expected.txt: Added.
+        * fast/xsl/xslt-processer.html: Added.
+
 2005-10-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs & darin.
