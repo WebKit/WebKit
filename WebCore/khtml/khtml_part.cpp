@@ -2307,11 +2307,11 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   }
 #if APPLE_CHANGES
   // scrollRectToVisible will expose correctly from within nested layers and frames.
-  if (d->m_doc && d->m_doc->renderer()) {
-    khtml::RenderLayer *layer =  d->m_doc->renderer()->enclosingLayer();
+  if (n && n->renderer()) {
+    khtml::RenderLayer *layer = n->renderer()->enclosingLayer();
     if (layer)
         // We used to align to the top left corner, but now, if the anchor is already horizontally visible, we won't scroll horizontally.
-        d->m_doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft);
+        n->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft);
   }
 #else
   d->m_view->setContentsPos(x, y);

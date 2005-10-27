@@ -2,6 +2,15 @@
 
         Reviewed by Vicki.
 
+        Fixed bug that prevents overflow areas from scrolling to reveal anchor.
+        Part of <rdar://problem/3612121>.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::gotoAnchor):  
+
+2005-10-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Vicki.
+
         - fixed <rdar://problem/4318167> REGRESSION: content doesn't scroll far enough to the left after clicking links at aplacecalledcommon.co.uk
 
         * khtml/rendering/render_layer.cpp: 
