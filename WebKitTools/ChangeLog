@@ -1,3 +1,30 @@
+2005-10-27  Geoffrey Garen  <ggaren@apple.com>
+		
+		Patch by Alexey Proskuryakov.
+		
+        Reviewed by Maciej.
+        
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
+        TextInputController should support attributed strings
+
+        * DumpRenderTree/TextInputController.m:
+        (+[NSMutableAttributedString isSelectorExcludedFromWebScript:]):
+        (+[NSMutableAttributedString webScriptNameForSelector:]):
+        (-[NSMutableAttributedString getLength]):
+        (-[NSMutableAttributedString attributeNamesAtIndex:]):
+        (-[NSMutableAttributedString valueOfAttribute:atIndex:]):
+        (-[NSMutableAttributedString addAttribute:value:]):
+        (-[NSMutableAttributedString addAttribute:value:from:length:]):
+        (-[NSMutableAttributedString addColorAttribute:red:green:blue:alpha:]):
+        (-[NSMutableAttributedString addColorAttribute:red:green:blue:alpha:from:length:]):
+        (-[NSMutableAttributedString addFontAttribute:fontName:size:]):
+        (-[NSMutableAttributedString addFontAttribute:fontName:size:from:length:]):
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        (-[TextInputController insertText:]):
+        (-[TextInputController attributedSubstringFrom:length:]):
+        (-[TextInputController attributedStringWithString:]):
+
 2005-10-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

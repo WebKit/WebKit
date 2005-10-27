@@ -34,9 +34,97 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebView.h>
 
-@implementation TextInputController
+@implementation NSMutableAttributedString (TextInputController)
 
-// FIXME: need to support attributed strings
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
+{
+    if (aSelector == @selector(string)
+            || aSelector == @selector(getLength)
+            || aSelector == @selector(attributeNamesAtIndex:)
+            || aSelector == @selector(valueOfAttribute:atIndex:)
+            || aSelector == @selector(addAttribute:value:)
+            || aSelector == @selector(addAttribute:value:from:length:)
+            || aSelector == @selector(addColorAttribute:red:green:blue:alpha:)
+            || aSelector == @selector(addColorAttribute:red:green:blue:alpha:from:length:)
+            || aSelector == @selector(addFontAttribute:fontName:size:)
+            || aSelector == @selector(addFontAttribute:fontName:size:from:length:))
+        return NO;
+    return YES;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(getLength))
+        return @"length";
+    if (aSelector == @selector(attributeNamesAtIndex:))
+        return @"getAttributeNamesAtIndex";
+    if (aSelector == @selector(valueOfAttribute:atIndex:))
+        return @"getAttributeValueAtIndex";
+    if (aSelector == @selector(addAttribute:value:))
+        return @"addAttribute";
+    if (aSelector == @selector(addAttribute:value:from:length:))
+        return @"addAttributeForRange";
+    if (aSelector == @selector(addColorAttribute:red:green:blue:alpha:))
+        return @"addColorAttribute";
+    if (aSelector == @selector(addColorAttribute:red:green:blue:alpha:from:length:))
+        return @"addColorAttributeForRange";
+    if (aSelector == @selector(addFontAttribute:fontName:size:))
+        return @"addFontAttribute";
+    if (aSelector == @selector(addFontAttribute:fontName:size:from:length:))
+        return @"addFontAttributeForRange";
+
+    return nil;
+}
+
+- (int)getLength
+{
+    return (int)[self length];
+}
+
+- (NSArray *)attributeNamesAtIndex:(int)index
+{
+    NSDictionary *attributes = [self attributesAtIndex:(unsigned)index effectiveRange:nil];
+    return [attributes allKeys];
+}
+
+- (id)valueOfAttribute:(NSString *)attrName atIndex:(int)index
+{
+    return [self attribute:attrName atIndex:(unsigned)index effectiveRange:nil];
+}
+
+- (void)addAttribute:(NSString *)attrName value:(id)value
+{
+    [self addAttribute:attrName value:value range:NSMakeRange(0, [self length])];
+}
+
+- (void)addAttribute:(NSString *)attrName value:(id)value from:(int)from length:(int)length
+{
+    [self addAttribute:attrName value:value range:NSMakeRange((unsigned)from, (unsigned)length)];
+}
+
+- (void)addColorAttribute:(NSString *)attrName red:(float)red green:(float)green blue:(float)blue alpha:(float)alpha
+{
+    [self addAttribute:attrName value:[NSColor colorWithDeviceRed:red green:green blue:blue alpha:alpha] range:NSMakeRange(0, [self length])];
+}
+
+- (void)addColorAttribute:(NSString *)attrName red:(float)red green:(float)green blue:(float)blue alpha:(float)alpha from:(int)from length:(int)length
+{
+    [self addAttribute:attrName value:[NSColor colorWithDeviceRed:red green:green blue:blue alpha:alpha] range:NSMakeRange((unsigned)from, (unsigned)length)];
+}
+
+- (void)addFontAttribute:(NSString *)attrName fontName:(NSString *)fontName size:(float)fontSize
+{
+    [self addAttribute:attrName value:[NSFont fontWithName:fontName size:fontSize] range:NSMakeRange(0, [self length])];
+}
+
+- (void)addFontAttribute:(NSString *)attrName fontName:(NSString *)fontName size:(float)fontSize from:(int)from length:(int)length
+{
+    [self addAttribute:attrName value:[NSFont fontWithName:fontName size:fontSize] range:NSMakeRange((unsigned)from, (unsigned)length)];
+}
+
+@end
+
+@implementation TextInputController
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -47,11 +135,13 @@
             || aSelector == @selector(hasMarkedText)
             || aSelector == @selector(conversationIdentifier)
             || aSelector == @selector(substringFrom:length:)
+            || aSelector == @selector(attributedSubstringFrom:length:)
             || aSelector == @selector(markedRange)
             || aSelector == @selector(selectedRange)
             || aSelector == @selector(firstRectForCharactersFrom:length:)
             || aSelector == @selector(characterIndexForPointX:Y:)
-            || aSelector == @selector(validAttributesForMarkedText))
+            || aSelector == @selector(validAttributesForMarkedText)
+            || aSelector == @selector(attributedStringWithString:))
         return NO;
     return YES;
 }
@@ -66,10 +156,14 @@
         return @"setMarkedText";
     else if (aSelector == @selector(substringFrom:length:))
         return @"substringFromRange";
+    else if (aSelector == @selector(attributedSubstringFrom:length:))
+        return @"attributedSubstringFromRange";
     else if (aSelector == @selector(firstRectForCharactersFrom:length:))
         return @"firstRectForCharacterRange";
     else if (aSelector == @selector(characterIndexForPointX:Y:))
         return @"characterIndexForPoint";
+    else if (aSelector == @selector(attributedStringWithString:))
+        return @"makeAttributedString"; // just a factory method, doesn't call into NSTextInput
 
     return nil;
 }
@@ -87,7 +181,7 @@
     return [view conformsToProtocol:@protocol(NSTextInput)] ? view : nil;
 }
 
-- (void)insertText:(NSString *)aString
+- (void)insertText:(id)aString
 {
     NSObject <NSTextInput> *textInput = [self textInput];
 
@@ -147,6 +241,18 @@
         return [[textInput attributedSubstringFromRange:NSMakeRange(from, length)] string];
     
     return @"";
+}
+
+- (NSMutableAttributedString *)attributedSubstringFrom:(int)from length:(int)length
+{
+    NSObject <NSTextInput> *textInput = [self textInput];
+
+    NSMutableAttributedString *ret = [[[NSMutableAttributedString alloc] init] autorelease];
+
+    if (textInput)
+        [ret setAttributedString:[textInput attributedSubstringFromRange:NSMakeRange(from, length)]];
+    
+    return ret;
 }
 
 - (NSArray *)markedRange
@@ -209,6 +315,13 @@
         return [textInput validAttributesForMarkedText];
 
     return nil;
+}
+
+- (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
+{
+    NSMutableAttributedString *ret = [[[NSMutableAttributedString alloc] init] autorelease];
+    [ret setAttributedString:[[[NSAttributedString alloc] initWithString:aString] autorelease]];
+    return ret;
 }
 
 @end
