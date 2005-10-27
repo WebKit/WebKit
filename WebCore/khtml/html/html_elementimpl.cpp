@@ -286,22 +286,14 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     DocumentFragmentImpl *fragment = new DocumentFragmentImpl(docPtr());
     fragment->ref();
     
-    if (!getDocument()->isHTMLDocument()) {
-        bool ret = parseXMLDocumentFragment(html, fragment, this);
-        
-        if (!ret) {
+    if (getDocument()->isHTMLDocument())
+         parseHTMLDocumentFragment(html, fragment);
+    else {
+        if (!parseXMLDocumentFragment(html, fragment, this)) {
             // FIXME: We should propagate a syntax error exception out here.
             fragment->deref();
             return 0;
         }
-    }
-    else
-    {
-        HTMLTokenizer tok(docPtr(), fragment);
-        tok.setForceSynchronous(true);            // disable asynchronous parsing
-        tok.write( html.qstring(), true );
-        tok.finish();
-        assert(!tok.processingData());            // make sure we're done (see 3963151)
     }
 
     // Exceptions are ignored because none ought to happen here.
@@ -603,7 +595,7 @@ void HTMLElementImpl::accessKeyAction(bool sendToAnyElement)
 
 DOMString HTMLElementImpl::toString() const
 {
-    if (!hasChildNodes()) {
+    if (!hasChildNodes() && getDocument()->isHTMLDocument()) {
 	DOMString result = openTagStartToString();
 	result += ">";
 

@@ -23,6 +23,7 @@
 #ifndef _DOM_XmlImpl_h_
 #define _DOM_XmlImpl_h_
 
+#include "css_stylesheetimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "misc/loader_client.h"
 
@@ -33,8 +34,6 @@ class CachedCSSStyleSheet;
 namespace DOM {
 
 class DocumentImpl;
-class CSSStyleSheetImpl;
-class StyleSheetImpl;
 class DOMString;
 #if APPLE_CHANGES
 class ProcessingInstruction;
@@ -150,10 +149,10 @@ public:
 
     virtual DOMString localHref() const;
     virtual bool childTypeAllowed( unsigned short type );
-    StyleSheetImpl *sheet() const;
+    StyleSheetImpl *sheet() const { return m_sheet.get(); }
     bool checkStyleSheet();
     virtual void setStyleSheet(const DOMString &url, const DOMString &sheet);
-    virtual void setStyleSheet(CSSStyleSheetImpl* sheet);
+    virtual void setStyleSheet(CSSStyleSheetImpl *sheet) { m_sheet = sheet; }
     bool isLoading() const;
     void sheetLoaded();
 
@@ -168,7 +167,7 @@ protected:
     DOMStringImpl *m_data;
     DOMStringImpl *m_localHref;
     khtml::CachedObject *m_cachedSheet;
-    StyleSheetImpl *m_sheet;
+    SharedPtr<StyleSheetImpl> m_sheet;
     bool m_loading;
 #ifdef KHTML_XSLT
     bool m_isXSL;

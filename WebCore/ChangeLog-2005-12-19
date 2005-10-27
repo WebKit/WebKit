@@ -1,3 +1,33 @@
+2005-10-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs & darin.
+
+        Various fixes to createMarkup and toString code to properly
+        support serialization of XML.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5404
+
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        (khtml::doesHTMLForbidEndTag):
+        (khtml::shouldSelfClose):
+        (khtml::endMarkup):
+        (khtml::markup):
+        (khtml::createFragmentFromMarkup):
+        (khtml::createMarkup):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::toString):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::parseHTMLDocumentFragment):
+        * khtml/html/htmltokenizer.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (DOM::ProcessingInstructionImpl::~ProcessingInstructionImpl):
+        (DOM::ProcessingInstructionImpl::toString):
+        * khtml/xml/dom_xmlimpl.h:
+        (DOM::ProcessingInstructionImpl::sheet):
+        (DOM::ProcessingInstructionImpl::setStyleSheet):
+
 2005-10-26  David Hyatt  <hyatt@apple.com>
 
 	Don't allow position:relative to apply to table sections.  Fixes the crash described in

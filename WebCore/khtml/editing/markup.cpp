@@ -34,6 +34,7 @@
 #include "editing/visible_units.h"
 #include "html/html_elementimpl.h"
 #include "xml/dom_position.h"
+#include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "rendering/render_text.h"
 #include "htmlnames.h"
@@ -42,6 +43,7 @@ using namespace DOM::HTMLNames;
 
 using DOM::AttributeImpl;
 using DOM::CommentImpl;
+using DOM::ProcessingInstructionImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::DocumentFragmentImpl;
@@ -70,6 +72,9 @@ using DOM::TextImpl;
 #endif
 
 namespace khtml {
+
+static inline bool doesHTMLForbidEndTag(const NodeImpl *node);
+static inline bool shouldSelfClose(const NodeImpl *node);
 
 static QString escapeHTML(const QString &in)
 {
@@ -173,6 +178,7 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
 
 static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclarationImpl *defaultStyle)
 {
+    bool documentIsHTML = node->getDocument()->isHTMLDocument();
     unsigned short type = node->nodeType();
     switch (type) {
         case Node::TEXT_NODE: {
@@ -187,18 +193,14 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             if (defaultStyle) {
                 NodeImpl *element = node->parentNode();
                 if (element) {
-                    CSSComputedStyleDeclarationImpl *computedStyle = Position(element, 0).computedStyle();
-                    computedStyle->ref();
-                    CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-                    computedStyle->deref();
-                    style->ref();
-                    defaultStyle->diff(style);
+                    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(element, 0).computedStyle();
+                    SharedPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         // FIXME: Handle case where style->cssText() has illegal characters in it, like "
                         QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().qstring() + "\">";
                         markup = openTag + markup + "</span>";
                     }
-                    style->deref();
                 }            
             }
             return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
@@ -207,25 +209,23 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             return static_cast<const CommentImpl *>(node)->toString().qstring();
         case Node::DOCUMENT_NODE:
             return "";
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            return static_cast<const ProcessingInstructionImpl *>(node)->toString().qstring();
         default: {
             QString markup = QChar('<') + node->nodeName().qstring();
             if (type == Node::ELEMENT_NODE) {
                 const ElementImpl *el = static_cast<const ElementImpl *>(node);
                 DOMString additionalStyle;
                 if (defaultStyle && el->isHTMLElement()) {
-                    CSSComputedStyleDeclarationImpl *computedStyle = Position(const_cast<ElementImpl *>(el), 0).computedStyle();
-                    computedStyle->ref();
-                    CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-                    computedStyle->deref();
-                    style->ref();
-                    defaultStyle->diff(style);
+                    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(const_cast<ElementImpl *>(el), 0).computedStyle();
+                    SharedPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         CSSMutableStyleDeclarationImpl *inlineStyleDecl = static_cast<const HTMLElementImpl *>(el)->inlineStyleDecl();
                         if (inlineStyleDecl)
-                            inlineStyleDecl->diff(style);
+                            inlineStyleDecl->diff(style.get());
                         additionalStyle = style->cssText();
                     }
-                    style->deref();
                 }
                 NamedAttrMapImpl *attrs = el->attributes();
                 unsigned length = attrs->length();
@@ -240,25 +240,56 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                         if (attr->name() == styleAttr && additionalStyle.length() > 0)
                             value += "; " + additionalStyle;
                         // FIXME: Handle case where value has illegal characters in it, like "
-                        // FIXME: Namespaces! XML! Ack!
-                        markup += " " + attr->name().localName().qstring() + "=\"" + value.qstring() + "\"";
+                        if (documentIsHTML)
+                            markup += " " + attr->name().localName().qstring();
+                        else
+                            markup += " " + attr->name().toString().qstring();
+                        markup += "=\"" + value.qstring() + "\"";
                     }
                 }
             }
-            markup += node->isHTMLElement() ? ">" : "/>";
+            
+            if (shouldSelfClose(node)) {
+                if (node->isHTMLElement())
+                    markup += " "; // XHTML 1.0 <-> HTML compatibility.
+                markup += "/>";
+            } else
+                markup += ">";
+            
             return markup;
         }
     }
 }
 
-static QString endMarkup(const NodeImpl *node)
+static inline bool doesHTMLForbidEndTag(const NodeImpl *node)
 {
-    bool hasEndTag = node->isElementNode();
     if (node->isHTMLElement()) {
         const HTMLElementImpl* htmlElt = static_cast<const HTMLElementImpl*>(node);
-        hasEndTag = (htmlElt->endTagRequirement() != TagStatusForbidden);
+        return (htmlElt->endTagRequirement() == TagStatusForbidden);
     }
-    if (hasEndTag)
+    return false;
+}
+
+// Rules of self-closure
+// 1. all html elements in html documents close with >
+// 2. all elements w/ children close with >
+// 3. all non-html elements w/o children close with />
+// 4. all html elements with a FORBIDDEN close tag, self close in XML docs
+static inline bool shouldSelfClose(const NodeImpl *node)
+{
+    bool htmlForbidsEndTag = doesHTMLForbidEndTag(node);
+    bool documentIsHTML = node->getDocument()->isHTMLDocument();
+    
+    if (node->isHTMLElement() && (documentIsHTML || !htmlForbidsEndTag))
+        return false;
+    else if (!node->hasChildNodes() || htmlForbidsEndTag)
+        return true;
+    return false;
+}
+
+static QString endMarkup(const NodeImpl *node)
+{
+    if (node->isElementNode() && !shouldSelfClose(node) && !doesHTMLForbidEndTag(node))
         return "</" + node->nodeName().qstring() + ">";
     return "";
 }
@@ -270,27 +301,18 @@ static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool 
     QString me = "";
     for (const NodeImpl *current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
         if (!onlyIncludeChildren) {
-            if (nodes) {
+            if (nodes)
                 nodes->append(current);
-            }
             me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
         }
-        
-        bool container = true;
-        if (current->isHTMLElement()) {
-            const HTMLElementImpl* h = static_cast<const HTMLElementImpl*>(current);
-            container = h->endTagRequirement() != TagStatusForbidden;
-        }
-        if (container) {
-            // print children
-            if (NodeImpl *n = current->firstChild()) {
+        // print children
+        if (NodeImpl *n = current->firstChild())
+            if (!(n->getDocument()->isHTMLDocument() && doesHTMLForbidEndTag(current)))
                 me += markup(n, false, true, nodes);
-            }
-            // Print my ending tag
-            if (!onlyIncludeChildren) {
-                me += endMarkup(current);
-            }
-        }
+        
+        // Print my ending tag
+        if (!onlyIncludeChildren)
+            me += endMarkup(current);
     }
     return me;
 }
@@ -477,6 +499,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
 
 DocumentFragmentImpl *createFragmentFromMarkup(DocumentImpl *document, const QString &markup, const QString &baseURL)
 {
+    ASSERT(document->documentElement()->isHTMLElement());
     // FIXME: What if the document element is not an HTML element?
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
 
@@ -493,14 +516,7 @@ QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
     QPtrList<DOM::NodeImpl> *nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
-
-    // FIXME: We could take out this if statement if we had more time to test.
-    // I'm concerned that making this crash when the document is nil might be too risky a change at the moment.
-    DocumentImpl *doc = node->getDocument();
-    assert(doc);
-    if (doc)
-        doc->updateLayout();
-
+    node->getDocument()->updateLayout();
     return markup(node, includeChildren, false, nodes);
 }
 

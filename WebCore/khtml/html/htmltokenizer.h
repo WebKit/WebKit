@@ -381,6 +381,8 @@ protected:
     bool inWrite;
 };
 
+void parseHTMLDocumentFragment(const DOM::DOMString &, DOM::DocumentFragmentImpl *);
+
 }
 
 #if APPLE_CHANGES
