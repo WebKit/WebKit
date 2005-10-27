@@ -1,3 +1,16 @@
+2005-10-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs & darin.
+
+        Test case updates for XML serialization fixes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5404
+
+        * fast/dom/dom-parse-serialize-display-expected.txt:
+        * fast/innerHTML/004-expected.txt: Added.
+        * fast/innerHTML/004.xhtml: Added.
+        * fast/innerHTML/005-expected.txt: Added.
+        * fast/innerHTML/005.html: Added.
+
 2005-10-26  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
