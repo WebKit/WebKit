@@ -643,7 +643,12 @@ bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
             !s->renderer()->style()->affectedByAttributeSelectors() &&
             (s->hovered() == element->hovered()) &&
             (s->active() == element->active()) &&
-            (s->focused() == element->focused())) {
+            (s->focused() == element->focused()) &&
+            (s->isEnabled() == element->isEnabled()) &&
+            (s->isIndeterminate() == element->isIndeterminate()) &&
+            (s->isChecked() == element->isChecked()) &&
+            (s != s->getDocument()->getCSSTarget() && element != element->getDocument()->getCSSTarget()) &&
+            (s->getAttribute(typeAttr) == element->getAttribute(typeAttr))) {
             bool classesMatch = true;
             if (s->hasClass()) {
                 const AtomicString& class1 = element->getAttribute(classAttr);
@@ -1159,8 +1164,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
         }
         else if (sel->match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->value;
-        else if (style && (e != element || !styledElement || !styledElement->isMappedAttribute(sel->attr)))
-            style->setAffectedByAttributeSelectors();
+        else if (style && (e != element || !styledElement || (!styledElement->isMappedAttribute(sel->attr) && sel->attr != typeAttr)))
+            style->setAffectedByAttributeSelectors(); // Special-case the "type" attribute so input form controls can share style.
 
         const AtomicString& value = e->getAttribute(sel->attr);
         if (value.isNull()) return false; // attribute is not set

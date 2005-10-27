@@ -1,5 +1,28 @@
 2005-10-27  David Hyatt  <hyatt@apple.com>
 
+	Fix form controls so that they can take advantage of
+	the style sharing optimization.  Special-case the "type"
+	attribute to accomplish this.
+
+	Also add checks for missing pseudo-classes that the sharing
+	code now needs to check once form controls start sharing
+	style.  These include enabled, checked and indeterminate.
+
+	Finally, :target should have been checked all along and was
+	broken by the original style sharing landing.  Add it to the list
+	of things checked as well.
+
+	It's impossible to write a :target test.  Other areas more than
+	covered by existing test cases.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::checkOneSelector):
+
+2005-10-27  David Hyatt  <hyatt@apple.com>
+
 	Fix for bug 5517, percentage height relative block inside a percentage height absolute
 	block did not stretch properly to fill the absolute block.
 
