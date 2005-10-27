@@ -1,3 +1,14 @@
+2005-10-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed <rdar://problem/4318167> REGRESSION: content doesn't scroll far enough to the left after clicking links at aplacecalledcommon.co.uk
+
+        * khtml/rendering/render_layer.cpp: 
+        (khtml::RenderLayer::scrollRectToVisible): fixed a typo where verticalAlignment was being passed instead of horizontalAlignment.
+        * khtml/khtml_part.cpp: 
+        (KHTMLPart::gotoAnchor): specified alignLeft as horizontal alignment.
+
 2005-10-27  David Hyatt  <hyatt@apple.com>
 
 	Fix form controls so that they can take advantage of

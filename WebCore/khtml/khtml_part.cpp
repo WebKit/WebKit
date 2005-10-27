@@ -2311,7 +2311,7 @@ bool KHTMLPart::gotoAnchor( const QString &name )
     khtml::RenderLayer *layer =  d->m_doc->renderer()->enclosingLayer();
     if (layer)
         // We used to align to the top left corner, but now, if the anchor is already horizontally visible, we won't scroll horizontally.
-        d->m_doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop);
+        d->m_doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft);
   }
 #else
   d->m_view->setContentsPos(x, y);

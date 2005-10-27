@@ -573,7 +573,7 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, ScrollAlignment vertica
         QScrollView* view = m_object->document()->view();
         QRect viewRect = QRect(view->contentsX(), view->contentsY(), view->visibleWidth(), view->visibleHeight());
         if (view) {
-            QRect r = getRectToExpose(viewRect, rect, verticalAlignment, verticalAlignment);
+            QRect r = getRectToExpose(viewRect, rect, verticalAlignment, horizontalAlignment);
             view->ensureRectVisible(r);
         }
         if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
