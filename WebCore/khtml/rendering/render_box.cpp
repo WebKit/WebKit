@@ -1200,7 +1200,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->calcContentBoxHeight(cb->style()->height().value);
     else if (cb->style()->height().isPercent())
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->calcPercentageHeight(cb->style()->height());
+        result = cb->calcContentBoxHeight(cb->calcPercentageHeight(cb->style()->height()));
     else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks())) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.
@@ -1208,7 +1208,12 @@ int RenderBox::calcPercentageHeight(const Length& height)
         cb->calcHeight();
         result = cb->contentHeight();
         cb->setHeight(oldHeight);
+    } else if (cb->isRoot() && isPositioned()) {
+        // Match the positioned objects behavior, which is that positioned objects will fill their viewport
+        // always.  Note we could only hit this case by recurring into calcPercentageHeight on a positioned containing block.
+        result = cb->calcContentBoxHeight(cb->availableHeight());
     }
+
     if (result != -1) {
         result = height.width(result);
         if (includeBorderPadding) {

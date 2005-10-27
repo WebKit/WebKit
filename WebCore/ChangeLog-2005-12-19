@@ -1,3 +1,21 @@
+2005-10-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 5517, percentage height relative block inside a percentage height absolute
+	block did not stretch properly to fill the absolute block.
+
+	Also fixing box-sizing bugs in percentage height calculations.  Recurrence in
+	calcPercentageHeight needed a content box adjustment.
+	
+        Reviewed by mjs
+
+        fast/block/positioning/062.html
+	fast/box-sizing/percentage-test.html
+	fast/box-sizing/panels-one.html
+	fast/box-sizing/panels-two.html
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcPercentageHeight):
+
 2005-10-27  Eric Seidel  <eseidel@apple.com>
 
         No review, SVG build fix only.
