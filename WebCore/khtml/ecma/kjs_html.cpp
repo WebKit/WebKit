@@ -27,6 +27,7 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include "xml/dom_textimpl.h"
+#include "xml/EventNames.h"
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"
 #include "html/html_canvasimpl.h"
@@ -66,6 +67,7 @@
 #endif
 
 using namespace DOM::HTMLNames;
+using namespace DOM::EventNames;
 
 using DOM::DOMString;
 using DOM::DocumentImpl;
@@ -3720,7 +3722,7 @@ void Image::notifyFinished(khtml::CachedObject *)
     int ignoreException;
     EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
     ev->ref();
-    ev->initEvent("load", true, true);
+    ev->initEvent(loadEvent, true, true);
     onLoadListener->handleEventImpl(ev, true);
     ev->deref();
   }

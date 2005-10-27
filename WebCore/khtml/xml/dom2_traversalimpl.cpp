@@ -186,36 +186,36 @@ void NodeIteratorImpl::setDocument(DocumentImpl *doc)
         old->deref();
 }
 
-void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
+void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *removedNode)
 {
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    if (!willRemove || willRemove == root())
+    if (!removedNode || removedNode == root())
         return;
-    bool willRemoveReferenceNode = willRemove == referenceNode();
-    bool willRemoveReferenceNodeAncestor = referenceNode() && referenceNode()->isAncestor(willRemove);
+    bool willRemoveReferenceNode = removedNode == referenceNode();
+    bool willRemoveReferenceNodeAncestor = referenceNode() && referenceNode()->isAncestor(removedNode);
     if (!willRemoveReferenceNode && !willRemoveReferenceNodeAncestor)
         return;
 
     if (pointerBeforeReferenceNode()) {
-        NodeImpl *node = findNextNode(willRemove);
+        NodeImpl *node = findNextNode(removedNode);
         if (node) {
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && node->isAncestor(willRemove))
+                while (node && node->isAncestor(removedNode))
                     node = findNextNode(node);
             }
             if (node)
                 setReferenceNode(node);
         }
         else {
-            node = findPreviousNode(willRemove);
+            node = findPreviousNode(removedNode);
             if (node) {
                 // Move out from under the node being removed if the reference node is
                 // a descendant of the node being removed.
                 if (willRemoveReferenceNodeAncestor) {
-                    while (node && node->isAncestor(willRemove))
+                    while (node && node->isAncestor(removedNode))
                         node = findPreviousNode(node);
                 }
                 if (node) {
@@ -229,23 +229,23 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
         }
     }
     else {
-        NodeImpl *node = findPreviousNode(willRemove);
+        NodeImpl *node = findPreviousNode(removedNode);
         if (node) {
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && node->isAncestor(willRemove))
+                while (node && node->isAncestor(removedNode))
                     node = findPreviousNode(node);
             }
             if (node)
                 setReferenceNode(node);
         }
         else {
-            node = findNextNode(willRemove);
+            node = findNextNode(removedNode);
                 // Move out from under the node being removed if the reference node is
                 // a descendant of the node being removed.
                 if (willRemoveReferenceNodeAncestor) {
-                    while (node && node->isAncestor(willRemove))
+                    while (node && node->isAncestor(removedNode))
                         node = findPreviousNode(node);
                 }
                 if (node)

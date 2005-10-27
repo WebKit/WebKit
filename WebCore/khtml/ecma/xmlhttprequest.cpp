@@ -28,6 +28,7 @@
 #include "misc/loader.h"
 #include "html/html_documentimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 
 #include "khtml_part.h"
 #include "khtmlview.h"
@@ -45,6 +46,7 @@
 
 using DOM::DocumentImpl;
 using DOM::EventImpl;
+using namespace DOM::EventNames;
 
 using khtml::Decoder;
 
@@ -262,7 +264,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
-      ev->initEvent("readystatechange", true, true);
+      ev->initEvent(readystatechangeEvent, true, true);
       onReadyStateChangeListener->handleEventImpl(ev, true);
       ev->deref();
     }
@@ -271,7 +273,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
-      ev->initEvent("load", true, true);
+      ev->initEvent(loadEvent, true, true);
       onLoadListener->handleEventImpl(ev, true);
       ev->deref();
     }

@@ -507,6 +507,7 @@ EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
 
 bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     if (!evt || evt->type().isEmpty()) { 
         exceptioncode = EventException::_EXCEPTION_OFFSET + EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
@@ -550,6 +551,7 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 
 bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     assert(evt->target());
 
     evt->ref();
@@ -650,12 +652,14 @@ DocumentPtr *DocumentPtr::nullDocumentPtr()
 
 bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     int exceptioncode = 0;
     return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), exceptioncode, true);
 }
 
 bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     int exceptioncode = 0;
     EventImpl *evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     evt->ref();
@@ -696,6 +700,7 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
 
 bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType, int overrideDetail)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     int detail = overrideDetail; // defaults to 0
     AtomicString eventType;
     if (!overrideType.isEmpty()) {
@@ -754,6 +759,7 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
 
 bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
     // Internet Explorer instead gives the current mouse position and state.
     return dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, false, false, false, false);
@@ -763,6 +769,7 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
     int clientX, int clientY, int screenX, int screenY,
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     if (disabled()) // Don't even send DOM events for disabled controls..
         return true;
 
@@ -818,6 +825,7 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
 
 bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     assert (!( (eventType != DOMFocusInEvent &&
                 eventType != DOMFocusOutEvent &&
                 eventType != DOMActivateEvent)));
@@ -894,6 +902,10 @@ void NodeImpl::notifyNodeListsChildrenChanged()
 
 bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 {
+    // forbidder will send this event later
+    if (getDocument()->eventDispatchForbidden())
+        return true;
+
     // FIXME: Pull this whole if clause out of this function.
     if (sendChildrenChanged) {
         notifyNodeListsChildrenChanged();
@@ -910,6 +922,7 @@ bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 
 bool NodeImpl::dispatchKeyEvent(QKeyEvent *key)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     int exceptioncode = 0;
     //kdDebug(6010) << "DOM::NodeImpl: dispatching keyboard event" << endl;
     KeyboardEventImpl *keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
@@ -930,10 +943,12 @@ bool NodeImpl::dispatchKeyEvent(QKeyEvent *key)
 
     keyboardEventImpl->deref();
     return r;
+
 }
 
 void NodeImpl::dispatchWheelEvent(QWheelEvent *e)
 {
+    assert(!getDocument()->eventDispatchForbidden());
     if (e->delta() == 0)
         return;
 
@@ -1239,6 +1254,10 @@ void NodeImpl::attach()
     assert(!m_render || (m_render->style() && m_render->parent()));
     getDocument()->incDOMTreeVersion();
     m_attached = true;
+}
+
+void NodeImpl::willRemove()
+{
 }
 
 void NodeImpl::detach()
@@ -1894,6 +1913,7 @@ NodeImpl *ContainerNodeImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChi
             return 0;
 
         // Add child in the correct position
+        getDocument()->forbidEventDispatch();
         if (prev)
             prev->setNextSibling(child);
         else
@@ -1907,7 +1927,8 @@ NodeImpl *ContainerNodeImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChi
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
-
+        getDocument()->allowEventDispatch();
+        
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
 
@@ -1954,6 +1975,7 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
 
     // Add the new child(ren)
     while (child) {
+        getDocument()->forbidEventDispatch();
         nextChild = isFragment ? child->nextSibling() : 0;
 
         // If child is already present in the tree, first remove it
@@ -1976,6 +1998,7 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
+        getDocument()->allowEventDispatch();
 
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -1988,6 +2011,28 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
     getDocument()->setDocumentChanged(true);
     dispatchSubtreeModifiedEvent();
     return oldChild;
+}
+
+void ContainerNodeImpl::willRemove()
+{
+    for (NodeImpl *n = _first; n != 0; n = n->nextSibling()) {
+        n->willRemove();
+    }
+}
+
+int ContainerNodeImpl::willRemoveChild(NodeImpl *child)
+{
+    int exceptionCode = 0;
+
+    // fire removed from document mutation events.
+    dispatchChildRemovalEvents(child, exceptionCode);
+    if (exceptionCode)
+        return exceptionCode;
+
+    if (child->attached())
+        child->willRemove();
+    
+    return 0;
 }
 
 NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncode )
@@ -2005,9 +2050,12 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
         exceptioncode = DOMException::NOT_FOUND_ERR;
         return 0;
     }
+    
+    // update auxiliary doc info (e.g. iterators) to note that node is being removed
+    // FIX: This looks redundant with same call from dispatchChildRemovalEvents in willRemoveChild
+//  getDocument()->notifyBeforeNodeRemoval(oldChild); // ### use events instead
 
-    // Dispatch pre-removal mutation events
-    getDocument()->notifyBeforeNodeRemoval(oldChild); // ### use events instead
+    // dispatch pre-removal mutation events
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
 	oldChild->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent,
 			     true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
@@ -2015,9 +2063,11 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
 	    return 0;
     }
 
-    dispatchChildRemovalEvents(oldChild,exceptioncode);
+    exceptioncode = willRemoveChild(oldChild);
     if (exceptioncode)
         return 0;
+
+    getDocument()->forbidEventDispatch();
 
     // Remove from rendering tree
     if (oldChild->attached())
@@ -2039,6 +2089,8 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
 
     getDocument()->setDocumentChanged(true);
 
+    getDocument()->allowEventDispatch();
+
     // Dispatch post-removal mutation events
     dispatchSubtreeModifiedEvent();
 
@@ -2050,22 +2102,28 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
     return oldChild;
 }
 
+// this differs from other remove functions because it forcibly removes all the children,
+// regardless of read-only status or event exceptions, e.g.
 void ContainerNodeImpl::removeChildren()
 {
+    NodeImpl *n;
+    
     if (!_first)
         return;
 
-    int exceptionCode;
-    while (NodeImpl *n = _first) {
+    // do any prep work needed before actually starting to detach
+    // and remove... e.g. stop loading frames, fire unload events
+    for (n = _first; n != 0; n = n->nextSibling())
+        willRemoveChild(n);
+    
+    getDocument()->forbidEventDispatch();
+    while ((n = _first) != 0) {
         NodeImpl *next = n->nextSibling();
         
         n->ref();
 
-        // Fire removed from document mutation events.
-        dispatchChildRemovalEvents(n, exceptionCode);
-
         if (n->attached())
-	    n->detach();
+            n->detach();
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
@@ -2078,6 +2136,7 @@ void ContainerNodeImpl::removeChildren()
         _first = next;
     }
     _last = 0;
+    getDocument()->allowEventDispatch();
     
     // Dispatch a single post-removal mutation event denoting a modified subtree.
     dispatchSubtreeModifiedEvent();
@@ -2110,6 +2169,7 @@ NodeImpl *ContainerNodeImpl::appendChild ( NodeImpl *newChild, int &exceptioncod
     NodeImpl *child = isFragment ? newChild->firstChild() : newChild;
 
     while (child) {
+        getDocument()->forbidEventDispatch();
         nextChild = isFragment ? child->nextSibling() : 0;
 
         // If child is already present in the tree, first remove it
@@ -2138,7 +2198,9 @@ NodeImpl *ContainerNodeImpl::appendChild ( NodeImpl *newChild, int &exceptioncod
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
-          
+        
+        getDocument()->allowEventDispatch();
+        
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
 
@@ -2202,6 +2264,8 @@ NodeImpl *ContainerNodeImpl::addChild(NodeImpl *newChild)
     if (getDocument()->isHTMLDocument() && !childAllowed(newChild))
         return 0;
 
+    getDocument()->forbidEventDispatch();
+
     // just add it...
     newChild->setParent(this);
 
@@ -2220,6 +2284,8 @@ NodeImpl *ContainerNodeImpl::addChild(NodeImpl *newChild)
         newChild->insertedIntoDocument();
     childrenChanged();
 
+    getDocument()->allowEventDispatch();
+    
     if(newChild->nodeType() == Node::ELEMENT_NODE)
         return newChild;
     return this;
@@ -2489,6 +2555,7 @@ NodeImpl *ContainerNodeImpl::childNode(unsigned index)
 
 void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode )
 {
+    assert(!getDocument()->eventDispatchForbidden());
     if (inDocument())
         child->insertedIntoDocument();
     else
@@ -2517,8 +2584,10 @@ void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &excep
 // base class for nodes that may have children
 void ContainerNodeImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptioncode )
 {
-    // Dispatch pre-removal mutation events
+    // update auxiliary doc info (e.g. iterators) to note that node is being removed
     getDocument()->notifyBeforeNodeRemoval(child); // ### use events instead
+
+    // dispatch pre-removal mutation events
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
 	child->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent,
 			     true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);

@@ -385,6 +385,7 @@ public:
      */
     virtual void detach();
 
+    virtual void willRemove();
     void createRendererIfNeeded();
     virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -522,6 +523,8 @@ public:
     virtual bool hasChildNodes (  ) const;
 
     // Other methods (not part of DOM)
+    void willRemove();
+    int willRemoveChild(NodeImpl *child);
     void removeChildren();
     void cloneChildNodes(NodeImpl *clone);
 

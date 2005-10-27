@@ -424,6 +424,9 @@ public:
     void detachNodeIterator(NodeIteratorImpl *ni);
     void notifyBeforeNodeRemoval(NodeImpl *n);
     AbstractViewImpl *defaultView() const;
+    void forbidEventDispatch();
+    void allowEventDispatch();
+    bool eventDispatchForbidden();
     EventImpl *createEvent(const DOMString &eventType, int &exceptioncode);
 
     // keep track of what types of event listeners are registered, so we don't
@@ -672,7 +675,7 @@ protected:
     bool m_closeAfterStyleRecalc;
     bool m_usesDescendantRules;
     bool m_usesSiblingRules;
-
+    
     DOMString m_title;
     bool m_titleSetExplicitly;
     NodeImpl *m_titleElement;
@@ -685,6 +688,7 @@ protected:
     KWQAccObjectCache* m_accCache;
 #endif
     
+    int m_eventDispatchForbidden;
     QPtrList<HTMLImageLoader> m_imageLoadEventDispatchSoonList;
     QPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;
     int m_imageLoadEventTimer;

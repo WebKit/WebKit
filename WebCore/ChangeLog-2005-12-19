@@ -1,5 +1,74 @@
 2005-10-27  David Harrison  <harrison@apple.com>
 
+        Reviewed by Justin Garcia and Dave Hyatt.
+
+        <rdar://problem/4134884> crash trying to forward msg - khtml::RenderBlock::addChildToFlow
+
+        Problem was that onunload events were being fired while in the middle of trying to detach, which resulted in updateDocumentsRendering re-attaching the previously detached nodes.  Similar problem with load events while attaching.
+        
+        Solved by eliminating load and unload for object nodes, pre-sending unload before detach, and sending dom mutation and load events after attaching.
+        
+        Also, added asserts to catch this problem more easily in the future.
+        
+        Added test:
+        * fast/events/event-targets.html
+        Make sure that load and unload events do not fire on certain objects.
+        
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Image::notifyFinished):
+        Use constant string for "load" event name.
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::changeState):
+        Use constant strings for "load" and "readystatechange" event names.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::close):
+        (HTMLFrameElementImpl::willRemove):
+        (HTMLFrameElementImpl::detach):
+        Add willRemove() function.
+        * khtml/html/html_baseimpl.h:
+        Add willRemove() function.
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::attach):
+        (DOM::HTMLObjectElementImpl::detach):
+        Stop needlessly sending load and unload events for OBJECT elements.
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeIteratorImpl::notifyBeforeNodeRemoval):
+        Rename local variable from willRemove to removedNode for clarity.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::forbidEventDispatch):
+        (DocumentImpl::allowEventDispatch):
+        (DocumentImpl::eventDispatchForbidden):
+        (DocumentImpl::createEvent):
+        Add mechanism to prevent event dispatch.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchEvent):
+        (DOM::NodeImpl::dispatchGenericEvent):
+        (DOM::NodeImpl::dispatchHTMLEvent):
+        (DOM::NodeImpl::dispatchWindowEvent):
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::dispatchSimulatedMouseEvent):
+        (DOM::NodeImpl::dispatchUIEvent):
+        (DOM::NodeImpl::dispatchSubtreeModifiedEvent):
+        (DOM::NodeImpl::dispatchKeyEvent):
+        (DOM::NodeImpl::dispatchWheelEvent):
+        (DOM::NodeImpl::willRemove):
+        (DOM::ContainerNodeImpl::insertBefore):
+        (DOM::ContainerNodeImpl::replaceChild):
+        (DOM::ContainerNodeImpl::willRemove):
+        (DOM::ContainerNodeImpl::willRemoveChild):
+        (DOM::ContainerNodeImpl::removeChild):
+        (DOM::ContainerNodeImpl::removeChildren):
+        (DOM::ContainerNodeImpl::appendChild):
+        (DOM::ContainerNodeImpl::addChild):
+        (DOM::ContainerNodeImpl::dispatchChildInsertedEvents):
+        (DOM::ContainerNodeImpl::dispatchChildRemovalEvents):
+        Prevent event dispatch during DOM node removals and additions.
+        * khtml/xml/dom_nodeimpl.h:
+
+2005-10-27  David Harrison  <harrison@apple.com>
+
         Reviewed by Tim Omerick.
 
         <rdar://problem/4251172> AX: Safari crashes on www.mozilla.org with Voice Over - khtml::RenderImage::imageMap
