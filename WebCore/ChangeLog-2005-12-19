@@ -1,3 +1,15 @@
+2005-10-28  David Hyatt  <hyatt@apple.com>
+
+	Make sure positioned content works with width:intrinsic.  Fixes positioned buttons.  The bug
+	is bugzilla #5520.
+	
+        Reviewed by mjs
+
+        fast/forms/positioned-button.html
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontalValues):
+
 2005-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

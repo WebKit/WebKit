@@ -1441,7 +1441,7 @@ void RenderBox::calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* 
     else
         width = style()->maxWidth();
 
-    if (!width.isAuto())
+    if (!width.isIntrinsicOrAuto())
         w = calcContentBoxWidth(width.width(cw));
     else if (isReplaced())
         w = intrinsicWidth();
