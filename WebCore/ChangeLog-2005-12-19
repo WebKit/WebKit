@@ -1,3 +1,9 @@
+2005-10-27  Eric Seidel  <eseidel@apple.com>
+
+        No review needed, svg build fix only.
+
+        * kdom/xpointer/XPointerExpressionImpl.cpp: "Shared.h" to "kdom/Shared.h"
+
 2005-10-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin Garcia and Dave Hyatt.
@@ -90,7 +96,6 @@
         Add XSLTProcessor support to WebCore's JavaScript bindings.
         <rdar://problem/3642402> add XSLTProcessor to WebCore's JavaScript support
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
-
 
         * WebCore.xcodeproj/project.pbxproj:
         * khtml/ecma/XSLTProcessor.cpp: Added.

@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "Shared.h"
+#include "kdom/Shared.h"
 #include "NodeImpl.h"
 #include "kdomxpointer.h"
 #include "DocumentImpl.h"
