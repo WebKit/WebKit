@@ -48,19 +48,19 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (0,0) size 201x18
             text run at (0,0) width 201: "2. 3. will not crash Safari either."
         RenderBlock (anonymous) at (40,144) size 744x22
-          RenderButton {INPUT} at (2,2) size 137x18
+          RenderButton {INPUT} at (2,2) size 137x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 121x13
               RenderText at (0,0) size 121x13
                 text run at (0,0) width 121: "1. Set outline property"
           RenderText {TEXT} at (141,1) size 4x18
             text run at (141,1) width 4: " "
-          RenderButton {INPUT} at (147,2) size 137x18
+          RenderButton {INPUT} at (147,2) size 137x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 121x13
               RenderText at (0,0) size 121x13
                 text run at (0,0) width 121: "2. Set display property"
           RenderText {TEXT} at (286,1) size 4x18
             text run at (286,1) width 4: " "
-          RenderButton {INPUT} at (292,2) size 151x18
+          RenderButton {INPUT} at (292,2) size 151x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 135x13
               RenderText at (0,0) size 135x13
                 text run at (0,0) width 135: "3. Replace span-element"
