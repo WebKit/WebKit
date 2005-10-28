@@ -1,3 +1,30 @@
+2005-10-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John
+
+        Fix for <rdar://problem/4098083> REGRESSION (125-312): crash 
+	in [KWQTableView resignFirstResponder] selecting from JS menu 
+	(car4you.at, etc.)
+
+	Since it is possible that a render widget's eventFilterObject
+	has been destroyed even though the render widget is still ref-ed,
+	we need to nil-check the eventFilterObject before we use it to get
+	the eventFilter.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton becomeFirstResponder]): Added nil check.
+        (-[KWQPopUpButton resignFirstResponder]): Added nil check.
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView becomeFirstResponder]): Added nil check.
+        (-[KWQTableView resignFirstResponder]): Added nil check.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]): Added nil check.
+        (-[KWQTextAreaTextView resignFirstResponder]): Added nil check.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setHasFocus:]): Added nil check.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementForView:]): Added nil check.
+
 2005-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

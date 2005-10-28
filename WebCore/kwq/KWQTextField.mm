@@ -406,7 +406,8 @@ using khtml::RenderLayer;
         
         if (widget) {
             QFocusEvent event(QEvent::FocusIn);
-            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+            if (widget->eventFilterObject())
+                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
         
 	// Sending the onFocus event above, may have resulted in a blur() - if this
@@ -425,9 +426,10 @@ using khtml::RenderLayer;
         
         if (widget) {
             QFocusEvent event(QEvent::FocusOut);
-            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-            if (widget)
+            if (widget->eventFilterObject()) {
+                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
                 [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
+            }
         }
     }
 }

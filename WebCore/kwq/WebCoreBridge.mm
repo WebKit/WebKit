@@ -911,7 +911,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
         NSView <KWQWidgetHolder> *widgetHolder = view;
         QWidget *widget = [widgetHolder widget];
-        if (widget != nil) {
+        if (widget != nil && widget->eventFilterObject() != nil) {
             NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
             return [DOMElement _elementWithImpl:static_cast<ElementImpl *>(node)];
         }

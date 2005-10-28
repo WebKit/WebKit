@@ -972,7 +972,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
         if (widget) {
             QFocusEvent event(QEvent::FocusIn);
-            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+            if (widget->eventFilterObject())
+                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
     }
 
@@ -992,8 +993,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
         if (widget) {
             QFocusEvent event(QEvent::FocusOut);
-            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-            [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+            if (widget->eventFilterObject()) {
+                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+                [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+            }
         }        
     }
 
