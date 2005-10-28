@@ -372,20 +372,12 @@ void RenderThemeMac::setRadioSize(RenderStyle* style) const
 
 void RenderThemeMac::setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
 {
-    // More magical mystery constants designed to match what NSButtonCell does by default with push-in buttons.
-    int padding;
-    switch (size) {
-        default: // needed to make stupid compiler happy
-        case NSRegularControlSize:
-            padding = 8;
-            break;
-        case NSSmallControlSize:
-            padding = 8;
-            break;
-        case NSMiniControlSize:
-            padding = 11;
-            break;
-    }
+    // Just use 8px.  AppKit wants to use 11px for mini buttons, but that padding is just too large
+    // for real-world Web sites (creating a huge necessary minimum width for buttons whose space is
+    // by definition constrained, since we select mini only for small cramped environments.
+    // This also guarantees the HTML4 <button> will match our rendering by default, since we're using a consistent
+    // padding.
+    const int padding = 8;
     style->setPaddingLeft(Length(padding, Fixed));
     style->setPaddingRight(Length(padding, Fixed));
     style->setPaddingTop(Length(0, Fixed));
