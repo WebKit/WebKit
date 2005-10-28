@@ -1480,6 +1480,10 @@
 		A82FC2F308C9AAE400EFEE23 /* LinkStyleImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82FC2F108C9AAE400EFEE23 /* LinkStyleImpl.cpp */; };
 		A82FC33D08CBB07C00EFEE23 /* SVGCursorElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */; };
 		A82FC33E08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */; };
+		A83C81A1091189B9009BF4A7 /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A83C819F091189B9009BF4A7 /* XSLTProcessor.h */; };
+		A83C81A2091189B9009BF4A7 /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */; };
+		A83C81A3091189B9009BF4A7 /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A83C819F091189B9009BF4A7 /* XSLTProcessor.h */; };
+		A83C81A4091189B9009BF4A7 /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */; };
 		A841EC7208C6636600DDA21C /* KCanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4758C44308C5F217009BAF05 /* KCanvasPath.cpp */; };
 		A856E9BC08B45B1E0042E303 /* XPathResultImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D5A5508ADF6EB00136AC1 /* XPathResultImpl.h */; };
 		A856E9BD08B45B1E0042E303 /* XPathResultImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81D5A5608ADF6EB00136AC1 /* XPathResultImpl.cpp */; };
@@ -3011,6 +3015,8 @@
 		A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElementImpl.cpp; sourceTree = "<group>"; };
 		A838543108B0A00B000AF580 /* variablereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variablereference.h; sourceTree = "<group>"; };
 		A838543208B0A00B000AF580 /* variablereference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = variablereference.cpp; sourceTree = "<group>"; };
+		A83C819F091189B9009BF4A7 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; };
+		A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; };
 		A856E9F808B4608F0042E303 /* xpath.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = xpath.y; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQWMatrix.mm; sourceTree = "<group>"; };
@@ -6395,6 +6401,8 @@
 				65912B0E0586921000123A69 /* xmlserializer.h */,
 				1A69D380085627410009880D /* domparser.cpp */,
 				1A69D37F085627410009880D /* domparser.h */,
+				A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */,
+				A83C819F091189B9009BF4A7 /* XSLTProcessor.h */,
 			);
 			path = ecma;
 			sourceTree = "<group>";
@@ -7238,6 +7246,7 @@
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
 				BC42035D08FC334100B782E0 /* render_button.h in Headers */,
+				A83C81A3091189B9009BF4A7 /* XSLTProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8121,6 +8130,7 @@
 				E1EE773908F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
 				A8BA5C71090CB07A004D1180 /* render_arena.h in Headers */,
 				A8BA5C72090CB07A004D1180 /* render_button.h in Headers */,
+				A83C81A1091189B9009BF4A7 /* XSLTProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8150,6 +8160,7 @@
 				932FC38F0824BA30005B3C75 /* tokenizer.cpp */,
 				932FC1710824A913005B3C75 /* xmlhttprequest.lut.h */,
 				932FC1730824A919005B3C75 /* xmlserializer.lut.h */,
+				A83C867D0911AA19009BF4A7 /* XSLTProcessor.lut.h */,
 				1A69D387085628650009880D /* domparser.lut.h */,
 				93F198A608245E59001E9ABC /* Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
@@ -8248,6 +8259,7 @@
 				A8AA619B089CDABF00666825 /* WebCore+SVG.exp */,
 				A8212A8308794A2300677359 /* xmlhttprequest.lut.h */,
 				A8212A8408794A2300677359 /* xmlserializer.lut.h */,
+				A83C86850911AA9D009BF4A7 /* XSLTProcessor.lut.h */,
 				A8212A8508794A2300677359 /* domparser.lut.h */,
 				A81D5AAB08ADFAA200136AC1 /* GlobalObject.lut.h */,
 				A856E96708B450330042E303 /* kdomcssproperties.c/h */,
@@ -9198,6 +9210,40 @@
 			shellPath = /bin/sh;
 			shellScript = "cat ksvg2/css/cssvalues.in > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
 		};
+		A83C867D0911AA19009BF4A7 /* XSLTProcessor.lut.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(CREATE_HASH_TABLE)",
+				khtml/ecma/XSLTProcessor.cpp,
+			);
+			name = XSLTProcessor.lut.h;
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/XSLTProcessor.lut.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/XSLTProcessor.cpp > \"$DERIVED_FILE_DIR/XSLTProcessor.lut.h\"";
+		};
+		A83C86850911AA9D009BF4A7 /* XSLTProcessor.lut.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(CREATE_HASH_TABLE)",
+				khtml/ecma/XSLTProcessor.cpp,
+			);
+			name = XSLTProcessor.lut.h;
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/XSLTProcessor.lut.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/XSLTProcessor.cpp > \"$DERIVED_FILE_DIR/XSLTProcessor.lut.h\"";
+		};
 		A856E96708B450330042E303 /* kdomcssproperties.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -9242,6 +9288,7 @@
 				kdom/bindings/idl/core/Node.idl,
 				kdom/bindings/IDLCodeGeneratorEcmaInterface.pm,
 				kdom/bindings/kdomidl.pl,
+				kdom/bindings/IDLCodeGeneratorJs.pm,
 			);
 			name = "KDOM EcmaInterface.cpp/h";
 			outputPaths = (
@@ -9261,6 +9308,7 @@
 				ksvg2/bindings/idl/svg/SVGElement.idl,
 				kdom/bindings/IDLCodeGeneratorEcmaInterface.pm,
 				kdom/bindings/kdomidl.pl,
+				kdom/bindings/IDLCodeGeneratorJs.pm,
 			);
 			name = "KSVG EcmaInterface.cpp/h";
 			outputPaths = (
@@ -9541,6 +9589,7 @@
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
 				BC42035C08FC334100B782E0 /* render_button.cpp in Sources */,
+				A83C81A4091189B9009BF4A7 /* XSLTProcessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10321,6 +10370,7 @@
 				A863312F08E3AB25009CFEF4 /* CDFInterface.cpp in Sources */,
 				E1EE773A08F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
 				A8BA5C70090CB077004D1180 /* render_button.cpp in Sources */,
+				A83C81A2091189B9009BF4A7 /* XSLTProcessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

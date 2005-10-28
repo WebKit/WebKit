@@ -52,7 +52,9 @@
 #include "kjs_events.h"
 #include "xmlhttprequest.h"
 #include "xmlserializer.h"
+#ifdef KHTML_XSLT
 #include "XSLTProcessor.h"
+#endif
 #include "domparser.h"
 
 #include "khtmlview.h"
@@ -868,8 +870,10 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
       return new XMLSerializerConstructorImp(exec);
     case DOMParser:
       return new DOMParserConstructorImp(exec, m_part->xmlDocImpl());
+#ifdef KHTML_XSLT
     case XSLTProcessor:
       return new XSLTProcessorConstructorImp(exec);
+#endif
     case FrameElement:
       if (DocumentImpl *doc = m_part->xmlDocImpl())
         if (ElementImpl *fe = doc->ownerElement())

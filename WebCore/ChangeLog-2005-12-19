@@ -1,5 +1,17 @@
 2005-10-27  Eric Seidel  <eseidel@apple.com>
 
+        Build fix, forgot to commit project file.
+        Also need to make XSLT #ifdef's work for portability.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/ecma/XSLTProcessor.cpp:
+        * khtml/ecma/XSLTProcessor.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+
+2005-10-27  Eric Seidel  <eseidel@apple.com>
+
         No review needed, svg build fix only.
 
         * kdom/xpointer/XPointerExpressionImpl.cpp: "Shared.h" to "kdom/Shared.h"

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifdef KHTML_XSLT
+
 #include "config.h"
 
 #include "XSLTProcessor.h"
@@ -151,3 +153,4 @@ ValueImp *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
 
 };
 
+#endif // KHTML_XSLT
