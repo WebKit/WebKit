@@ -1750,6 +1750,9 @@ QRect RenderText::selectionRect()
 
     int absx, absy;
     cb->absolutePosition(absx, absy);
+    RenderLayer *layer = cb->layer();
+    if (layer)
+       layer->subtractScrollOffset(absx, absy); 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         QRect r = box->selectionRect(absx, absy, startPos, endPos);
         if (!r.isEmpty()) {

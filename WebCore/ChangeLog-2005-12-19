@@ -1,3 +1,12 @@
+2005-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        - fixed <rdar://problem/4319232> finding text in overflow area doesn't always scroll to the right place
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::selectionRect): Subtracts scroll offset of containing block layer.
+
 2005-10-28  David Hyatt  <hyatt@apple.com>
 
 	Make sure positioned content works with width:intrinsic.  Fixes positioned buttons.  The bug
