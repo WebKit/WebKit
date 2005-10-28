@@ -23,6 +23,7 @@
 #ifndef RENDER_THEME_H
 #define RENDER_THEME_H
 
+#include "render_style.h"
 #include "render_object.h"
 
 namespace DOM {
@@ -30,8 +31,6 @@ class ElementImpl;
 };
 
 namespace khtml {
-
-class RenderStyle;
 
 enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState };
 
@@ -55,19 +54,23 @@ public:
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // render_theme_mac.cpp for Mac OS X.
     
-    // An API to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
+    // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
     virtual short baselinePosition(const RenderObject* o) const;
 
-    // An API for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
+    // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
     virtual bool isControlContainer(EAppearance appearance) const;
 
-    // An API asking if the control changes its tint when the window has focus or not.
+    // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject* o) const { return false; }
 
-    // A general API asking if any control tinting is supported at all.
+    // Whether or not the control has been styled enough by the author to disable the native appearance.
+    virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
+                                 const BackgroundLayer& background, const QColor& backgroundColor) const;
+
+    // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return false; }
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,

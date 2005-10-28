@@ -408,30 +408,34 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
 
     // Add in intrinsic margins
     addIntrinsicMargins(style, controlSize);
-            
-    // Whenever a button has a background or border specified, then appearance is disabled.
-    bool disableAppearance = style->hasBorder() || style->hasBackground();
-    if (!disableAppearance) {
-        if (style->appearance() == PushButtonAppearance) {
-            // Height is locked to auto.
-            style->setHeight(Length(Auto));
-            
-            // White-space is locked to nowrap
-            style->setWhiteSpace(PRE);
 
-            // Set the button's vertical size.
-            setButtonSize(style);
+    if (style->appearance() == PushButtonAppearance) {
+        // Ditch the border.
+        style->resetBorder();
 
-            // Add in the padding that we'd like to use.
-            setButtonPaddingFromControlSize(style, controlSize);
+        // Height is locked to auto.
+        style->setHeight(Length(Auto));
+        
+        // White-space is locked to nowrap
+        style->setWhiteSpace(PRE);
 
-            // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
-            // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
-            // system font for the control size instead.
-            setFontFromControlSize(selector, style, controlSize);
-        } else
-            // Set a min-height so that we can't get smaller than the mini button.
-            style->setMinHeight(Length(15, Fixed));
+        // Set the button's vertical size.
+        setButtonSize(style);
+
+        // Add in the padding that we'd like to use.
+        setButtonPaddingFromControlSize(style, controlSize);
+
+        // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
+        // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
+        // system font for the control size instead.
+        setFontFromControlSize(selector, style, controlSize);
+    } else {
+        // Set a min-height so that we can't get smaller than the mini button.
+        style->setMinHeight(Length(15, Fixed));
+        
+        // Reset the top and bottom borders.
+        style->resetBorderTop();
+        style->resetBorderBottom();
     }
 }
 
@@ -472,7 +476,6 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
 
     // Set the control size based off the rectangle we're painting into.
     if (o->style()->appearance() == SquareButtonAppearance ||
-        o->style()->hasBorder() || 
         r.height() > buttonSizes()[NSRegularControlSize].height()) {
         // Use the square button
         if ([button bezelStyle] != NSShadowlessSquareBezelStyle)
@@ -490,35 +493,30 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
 }
 
 bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
-{
-    bool hasBorder = o->style()->hasBorder();
-    bool hasBackground = o->style()->hasBackground();
+{    
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    setButtonCellState(o, r);
     
-    if (!hasBackground) {
-        // Determine the width and height needed for the control and prepare the cell for painting.
-        setButtonCellState(o, r);
-        
-        // We inflate the rect as needed to account for padding included in the cell to accommodate the button
-        // shadow.  We don't consider this part of the bounds of the control in WebKit.
-        QSize size = buttonSizes()[[button controlSize]];
-        size.setWidth(r.width());
-        QRect inflatedRect = r;
-        if ([button bezelStyle] == NSRoundedBezelStyle) {
-            // Center the button within the available space.
-            if (inflatedRect.height() > size.height()) {
-                inflatedRect.setX(inflatedRect.x() + (inflatedRect.height() - size.height())/2);
-                inflatedRect.setHeight(size.height());
-            }
-            
-            // Now inflate it to account for the shadow.
-            inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
+    // We inflate the rect as needed to account for padding included in the cell to accommodate the button
+    // shadow.  We don't consider this part of the bounds of the control in WebKit.
+    QSize size = buttonSizes()[[button controlSize]];
+    size.setWidth(r.width());
+    QRect inflatedRect = r;
+    if ([button bezelStyle] == NSRoundedBezelStyle) {
+        // Center the button within the available space.
+        if (inflatedRect.height() > size.height()) {
+            inflatedRect.setX(inflatedRect.x() + (inflatedRect.height() - size.height())/2);
+            inflatedRect.setHeight(size.height());
         }
-
-        [button drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
-        [button setControlView: nil];
+        
+        // Now inflate it to account for the shadow.
+        inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
     }
-    
-    return hasBorder || hasBackground;
+
+    [button drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [button setControlView: nil];
+
+    return false;
 }
 
 }

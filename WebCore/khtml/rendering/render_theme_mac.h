@@ -34,15 +34,15 @@ public:
     RenderThemeMac();
     virtual ~RenderThemeMac() { /* Have to just leak the cells, since statics are destroyed with no autorelease pool available */ }
 
-    // An API to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
+    // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
     virtual short baselinePosition(const RenderObject* o) const;
 
-    // An API asking if the control changes its tint when the window has focus or not.
+    // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject* o) const;
 
-    // A general API asking if any control tinting is supported at all.
+    // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
     virtual void adjustRepaintRect(const RenderObject* o, QRect& r);

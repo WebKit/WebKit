@@ -1,3 +1,40 @@
+2005-10-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 5519, buttons need to honor background/border: none and turn off styles.
+	This patch changes the default style rules so that buttons have both a border and
+	a background color.
+
+	If the author changes the border/background so that it no longer matches these chosen
+	defaults, we assume that the button has now been styled and we turn off the Aqua
+	appearance.
+
+	We also play more games with border and padding and juggle the values around so that
+	things look right with Aqua turned on and off.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::applyDeclarations):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/html4.css:
+        * khtml/rendering/render_style.h:
+        (khtml::BorderValue::BorderValue):
+        (khtml::BorderData::operator!=):
+        (khtml::RenderStyle::border):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::paint):
+        (khtml::RenderTheme::isControlStyled):
+        * khtml/rendering/render_theme.h:
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::adjustButtonStyle):
+        (khtml::RenderThemeMac::setButtonCellState):
+        (khtml::RenderThemeMac::paintButton):
+
 2005-10-26  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Hyatt.

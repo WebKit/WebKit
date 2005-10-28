@@ -317,11 +317,21 @@ input[type="button"], input[type="submit"], input[type="reset"], button {
     text-align: center;
     cursor: default;
     color: ButtonText;
-    padding: 2px 8px 3px 8px
+    padding: 2px 6px 3px 6px;
+    border: 2px outset ButtonFace;
+    background-color: ButtonFace
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled {
     color: GrayText;
+}
+
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, button:active {
+    border-style: inset
+}
+
+input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, button:active:disabled {
+    border-style: outset
 }
 
 select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {
