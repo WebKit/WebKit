@@ -1,3 +1,18 @@
+2005-10-26  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Hyatt.
+ 
+	Fix problems with link jumping.  In the cases below, we were calculating the wrong position to scroll to.
+
+        <rdar://problem/4247537> link jumping should scroll to tallest object on line, not first object on line
+        <rdar://problem/3489554> when calculating position for link jumping, skip siblings that are unrendered whitespace
+        <rdar://problem/4244382> Safari - erratic behavior of empty anchor tags followed by whitespace
+        <rdar://problem/4256060> Link scrolling to last object on the page doesn't work if the link being scrolled to contains an empty inline
+        <rdar://problem/4276623> erratic link jumping when tables are involved
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::getUpperLeftCorner):
+
 2005-10-27  Eric Seidel  <eseidel@apple.com>
 
         Build fix, forgot to commit project file.

@@ -2356,50 +2356,63 @@ void ContainerNodeImpl::cloneChildNodes(NodeImpl *clone)
     }
 }
 
-// I don't like this way of implementing the method, but I didn't find any
-// other way. Lars
 bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
 {
     if (!m_render)
         return false;
     RenderObject *o = m_render;
+    RenderObject *p = o;
+
     xPos = yPos = 0;
-    if ( !o->isInline() || o->isReplaced() ) {
+    if (!o->isInline() || o->isReplaced()) {
         o->absolutePosition( xPos, yPos );
         return true;
     }
 
     // find the next text/image child, to get a position
     while(o) {
+        p = o;
         if(o->firstChild())
             o = o->firstChild();
         else if(o->nextSibling())
             o = o->nextSibling();
         else {
-            // FIXME: If the element we're scrolling to doesn't have a child or next sibling and none of the nodes on 
-            // the parent chain have siblings, then this loop returns false prematurely - 4256060
-            RenderObject *next = 0;
-            while(!next) {
-                o = o->parent();
-                if(!o) return false;
-                next = o->nextSibling();
-            }
-            o = next;
+            o = o->parent();
+            if (o) 
+                o = o->nextSibling();
+            if (!o)
+                break;
         }
-        if (o->parent()->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
-            // do nothing - skip child node of the named anchor if it doesn't have a text box rdar://problems/4233844&4246096
+
+        if (!o->isInline() || o->isReplaced()) {
+            o->absolutePosition( xPos, yPos );
+            return true;
+        }
+
+        if (p->element() && p->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
+                // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         }
         else if((o->isText() && !o->isBR()) || o->isReplaced()) {
             o->container()->absolutePosition( xPos, yPos );
-            if (o->isText())
+            if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
                 xPos += static_cast<RenderText *>(o)->minXPos();
-            else
+                yPos += static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow();
+            }
+            else {
                 xPos += o->xPos();
-            yPos += o->yPos();
+                yPos += o->yPos();
+            }
             return true;
         }
     }
-    return true;
+    
+    // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
+    // at the end of the document.  Scroll to the bottom.
+    if (!o) {
+        yPos += getDocument()->view()->contentsHeight();
+        return true;
+    }
+    return false;
 }
 
 bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
