@@ -1,3 +1,13 @@
+2005-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        -fixed <rdar://problem/4081091> focus() does not work properly on anchors
+        <rdar://problem/4317689> new form elements don't get revealed when focus() is called on them
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode): call scrollRectToVisible.
+
 2005-10-27  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 5519, buttons need to honor background/border: none and turn off styles.
