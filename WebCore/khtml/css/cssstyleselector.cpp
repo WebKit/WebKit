@@ -522,11 +522,6 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     m_tmpRuleCount = 0;
     
     fontDirty = false;
-    
-    // Clear out our cached border/background data.
-    m_borderData = BorderData();
-    m_backgroundData = BackgroundLayer();
-    m_backgroundColor = QColor();
 }
 
 // modified version of the one in kurl.cpp
@@ -823,10 +818,13 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     applyDeclarations(false, false, firstUARule, lastUARule);
     
     // Cache our border and background so that we can examine them later.
-    m_borderData = style->border();
-    m_backgroundData = *style->backgroundLayers();
-    m_backgroundColor = style->backgroundColor();
-
+    m_hasUAAppearance = style->hasAppearance();
+    if (m_hasUAAppearance) {
+        m_borderData = style->border();
+        m_backgroundData = *style->backgroundLayers();
+        m_backgroundColor = style->backgroundColor();
+    }
+    
     // Now do the author and user normal priority properties and all the !important properties.
     applyDeclarations(false, false, lastUARule+1, m_matchedDeclCount-1);
     applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
@@ -897,7 +895,17 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     }
     
     // Now do the normal priority properties.
-    applyDeclarations(false, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(false, false, firstUARule, lastUARule);
+    
+    // Cache our border and background so that we can examine them later.
+    m_hasUAAppearance = style->hasAppearance();
+    if (m_hasUAAppearance) {
+        m_borderData = style->border();
+        m_backgroundData = *style->backgroundLayers();
+        m_backgroundColor = style->backgroundColor();
+    }
+    
+    applyDeclarations(false, false, lastUARule+1, m_matchedDeclCount-1);
     applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
     applyDeclarations(false, true, firstUserRule, lastUserRule);
     applyDeclarations(false, true, firstUARule, lastUARule);
@@ -1012,9 +1020,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
 
-    // Let the theme get a crack at changing the style if an appearance has been set.
+    // Let the theme also have a crack at adjusting the style.
     if (style->hasAppearance()) {
-        if (theme()->isControlStyled(style, m_borderData, m_backgroundData, m_backgroundColor))
+        if (m_hasUAAppearance && theme()->isControlStyled(style, m_borderData, m_backgroundData, m_backgroundColor))
             style->setAppearance(NoAppearance);
         else
             theme()->adjustStyle(this, style, e);

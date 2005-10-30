@@ -1,3 +1,20 @@
+2005-10-29  David Hyatt  <hyatt@apple.com>
+        Fix the performance regression caused by doing too much copying of background/border values.  This patch attempts to rectify things by doing the following:
+
+	(1) Don't initialize the border/background cached values on every single style resolution.
+	(2) Only cache the border/background values just after user agent styles have been resolved if the user agent set an appearance.
+	(3) Only check for appearance disabling if you had a UA appearance originally (and then continue to have an appearance after author/user styles have been resolved too)
+	(4) Make sure to patch the pseudoStyleForElement method too.  With the removal of the initialization code for the values running over and over again, I needed to make sure to patch this function to match styleForElement.
+        
+	Reviewed by sullivan
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/css/cssstyleselector.h:
+
 2005-10-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John

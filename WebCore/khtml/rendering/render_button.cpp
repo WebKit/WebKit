@@ -70,6 +70,7 @@ void RenderButton::setStyle(RenderStyle* style)
         m_buttonText->setStyle(style);
     if (m_inner)
         m_inner->style()->setBoxFlex(1.0f);
+    setReplaced(isInline());
 }
 
 void RenderButton::updateFromElement()
