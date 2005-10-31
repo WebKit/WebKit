@@ -1,3 +1,10 @@
+2005-10-31  Timothy Hatcher  <timothy@apple.com>
+
+        Added a correct expected image.
+
+        * fast/dom/dom-parse-serialize-display-expected.checksum:
+        * fast/dom/dom-parse-serialize-display-expected.png:
+
 2005-10-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin Garcia and Dave Hyatt.
