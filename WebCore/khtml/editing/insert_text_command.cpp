@@ -91,14 +91,6 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
 
     if (isTabSpanTextNode(pos.node())) {
         Position tempPos = pos;
-//#ifndef COALESCE_TAB_SPANS
-#if 0
-        NodeImpl *node = pos.node()->parentNode();
-        if (pos.offset() > pos.node()->caretMinOffset())
-            tempPos = Position(node->parentNode(), node->nodeIndex() + 1);
-        else
-            tempPos = Position(node->parentNode(), node->nodeIndex());
-#endif        
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *originalTabSpan = tempPos.node()->parent();
         if (tempPos.offset() <= tempPos.node()->caretMinOffset()) {
@@ -188,24 +180,11 @@ DOM::Position InsertTextCommand::insertTab(Position pos)
     NodeImpl *node = insertPos.node();
     unsigned int offset = insertPos.offset();
 
-//#ifdef COALESCE_TAB_SPANS
-#if 1
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
         insertTextIntoNode(static_cast<TextImpl *>(node), offset, "\t");
         return Position(node, offset + 1);
     }
-#else
-    if (isTabSpanTextNode(node)) {
-        node = node->parentNode();
-        if (offset > (unsigned int) node->caretMinOffset())
-            insertPos = Position(node->parentNode(), node->nodeIndex() + 1);
-        else
-            insertPos = Position(node->parentNode(), node->nodeIndex());
-        node = insertPos.node();
-        offset = insertPos.offset();
-    }
-#endif
     
     // create new tab span
     DOM::ElementImpl * spanNode = createTabSpanElement(document());

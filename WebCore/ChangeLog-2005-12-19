@@ -1,3 +1,13 @@
+2005-10-31  David Harrison  <harrison@apple.com>
+
+        Remove conditionalized away code added as part of tab character support.
+        
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::insertTab):
+        * khtml/editing/markup.cpp:
+        (khtml::createParagraphContentsFromString):
+
 2005-10-29  David Hyatt  <hyatt@apple.com>
         Fix the performance regression caused by doing too much copying of background/border values.  This patch attempts to rectify things by doing the following:
 
