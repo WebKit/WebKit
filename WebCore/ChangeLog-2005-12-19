@@ -1,3 +1,25 @@
+2005-11-01  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        Add setter and setter for textContent.
+        
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::textContent):
+        (DOM::NodeImpl::setTextContent):
+        * khtml/xml/dom_nodeimpl.h:
+        Implement textContent and setTextContent.
+        
+        * kwq/DOM.mm:
+        (-[DOMNode textContent]):
+        (-[DOMNode setTextContent:]):
+        Add Objective C wrappers.
+
 2005-10-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

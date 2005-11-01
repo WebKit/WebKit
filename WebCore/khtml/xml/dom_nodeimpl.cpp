@@ -1721,6 +1721,72 @@ bool NodeImpl::isEqualNode(NodeImpl *other) const
     return true;
 }
 
+DOMString NodeImpl::textContent() const
+{
+    switch (nodeType()) {
+        case Node::TEXT_NODE:
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            return nodeValue();
+        
+        case Node::ELEMENT_NODE:
+        case Node::ATTRIBUTE_NODE:
+        case Node::ENTITY_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE: {
+            DOMString s = "";
+        
+            for (NodeImpl *child = firstChild(); child; child = child->nextSibling()) {
+                if (child->nodeType() == Node::COMMENT_NODE || 
+                    child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
+                    continue;
+            
+                s += child->textContent();
+            }
+        
+            return s;
+        }
+        
+        case Node::DOCUMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::NOTATION_NODE:
+        default:
+            return DOMString();            
+    }
+}
+
+void NodeImpl::setTextContent(const DOMString &text, int &exception)
+{           
+    switch (nodeType()) {
+        case Node::TEXT_NODE:
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            setNodeValue(text, exception);
+            break;
+        case Node::ELEMENT_NODE:
+        case Node::ATTRIBUTE_NODE:
+        case Node::ENTITY_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE: {
+            ContainerNodeImpl *container = static_cast<ContainerNodeImpl *>(this);
+            
+            container->removeChildren();
+            
+            if (!text.isEmpty())
+                appendChild(getDocument()->createTextNode(text), exception);
+            break;
+        }
+        case Node::DOCUMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::NOTATION_NODE:
+        default:
+            // Do nothing
+            break;
+    }
+}
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const NodeImpl *node, QString &string, const QualifiedName& name, QString attrDesc)

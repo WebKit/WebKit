@@ -193,7 +193,7 @@ bool DOMNode::toBoolean(ExecState *) const
 }
 
 /* Source for DOMNodeTable. Use "make hashtables" to regenerate.
-@begin DOMNodeTable 68
+@begin DOMNodeTable 69
   nodeName	DOMNode::NodeName	DontDelete|ReadOnly
   nodeValue	DOMNode::NodeValue	DontDelete
   nodeType	DOMNode::NodeType	DontDelete|ReadOnly
@@ -210,6 +210,8 @@ bool DOMNode::toBoolean(ExecState *) const
   prefix	DOMNode::Prefix		DontDelete
   localName	DOMNode::LocalName	DontDelete|ReadOnly
   ownerDocument	DOMNode::OwnerDocument	DontDelete|ReadOnly
+# DOM3
+  textContent   DOMNode::TextContent    DontDelete
 #
   onabort	DOMNode::OnAbort		DontDelete
   onblur	DOMNode::OnBlur			DontDelete
@@ -305,6 +307,8 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
     return getStringOrNull(node.localName());
   case OwnerDocument:
     return getDOMNode(exec,node.ownerDocument());
+  case TextContent:
+    return getStringOrNull(node.textContent());
   case OnAbort:
     return getListener(abortEvent);
   case OnBlur:
@@ -455,6 +459,12 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     break;
   case Prefix:
     node.setPrefix(value->toString(exec).domString().impl(), exception);
+    break;
+  case TextContent:
+    if (value->isNull())
+      node.setTextContent(DOMString(), exception);
+    else
+      node.setTextContent(value->toString(exec).domString(), exception);
     break;
   case OnAbort:
     setListener(exec,abortEvent,value);

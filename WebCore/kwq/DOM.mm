@@ -386,6 +386,18 @@ static ListenerMap *listenerMap;
     return [self _nodeImpl]->isEqualNode([other _nodeImpl]);
 }
 
+- (NSString *)textContent
+{
+    return [self _nodeImpl]->textContent();
+}
+
+- (void)setTextContent:(NSString *)text
+{
+    int exceptionCode = 0;
+    [self _nodeImpl]->setTextContent(text, exceptionCode);
+    raiseOnDOMError(exceptionCode);
+}
+
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     EventListener *wrapper = ObjCEventListener::create(listener);
