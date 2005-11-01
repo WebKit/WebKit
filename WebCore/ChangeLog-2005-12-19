@@ -1,3 +1,11 @@
+2005-11-01  John Sullivan  <sullivan@apple.com>
+
+        Change by Alexey Proskuryakov, reviewed by Darin Adler.
+
+        * kwq/KWQKURL.mm:
+        (encodeRelativeString):
+        don't use strdup, as it has problems with a curly quote in the string
+
 2005-11-01  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

@@ -1713,7 +1713,10 @@ static char *encodeRelativeString(const KURL &base, const QString &rel, const QT
     }
     if (pathEnd == -1) {
         QCString decoded = pathCodec->fromUnicode(s);
-        strBuffer = strdup(decoded);
+        int decodedLength = decoded.length();
+        strBuffer = static_cast<char *>(fastMalloc(decodedLength + 1));
+        memcpy(strBuffer, decoded, decodedLength);
+        strBuffer[decodedLength] = 0;
     } else {
         QCString pathDecoded = pathCodec->fromUnicode(s.left(pathEnd));
         QCString otherDecoded = otherCodec->fromUnicode(s.mid(pathEnd));
