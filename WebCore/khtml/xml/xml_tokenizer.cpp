@@ -489,7 +489,12 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     // don't load stylesheets for standalone documents
     if (m_doc->document()->part()) {
 	m_sawXSLTransform = !pi->checkStyleSheet();
+#ifdef KHTML_XSLT
+        // Pretend we didn't see this PI if we're the result of a transform.
+        if (m_sawXSLTransform && !m_doc->document()->transformSourceDocument())
+#else
         if (m_sawXSLTransform)
+#endif
             // Stop the SAX parser.
             stopParsing();
     }

@@ -1,3 +1,15 @@
+2005-10-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Now ignores XSLT PIs in documents resulting from transforms.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5529
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::processingInstruction):
+
 2005-10-31  David Harrison  <harrison@apple.com>
 
         Remove conditionalized away code added as part of tab character support.

@@ -2069,7 +2069,9 @@ void DocumentImpl::recalcStyleSelector()
             sheet = pi->sheet();
 #ifdef KHTML_XSLT
             if (pi->isXSL()) {
-                applyXSLTransform(pi);
+                // Don't apply transforms to already transformed documents -- <rdar://problem/4132806>
+                if (!transformSourceDocument())
+                    applyXSLTransform(pi);
                 return;
             }
 #endif
