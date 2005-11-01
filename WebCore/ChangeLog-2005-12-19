@@ -1,5 +1,17 @@
 2005-11-01  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        Tweaked my previous fix for caret movement while scrolling.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::SelectionController): Forgot to copy m_caretPositionOnLayout.
+        (khtml::SelectionController::operator=): Ditto.
+        (khtml::SelectionController::layout): Initialize m_caretPositionOnLayout to a dummy value when the selection isNone.
+        * khtml/editing/SelectionController.h: Tweaked my comment.
+
+2005-11-01  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         Fixes <rdar://problem/4074536> Seed: Mail crash adjusting quote level - KHTMLPart::computeAndSetTypingStyle

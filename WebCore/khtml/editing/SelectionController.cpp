@@ -117,6 +117,7 @@ SelectionController::SelectionController(const SelectionController &o)
     // and the old rectangle needs to be repainted.
     if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
+        m_caretPositionOnLayout = o.m_caretPositionOnLayout;
     }
 }
 
@@ -151,6 +152,7 @@ SelectionController &SelectionController::operator=(const SelectionController &o
     // and the old rectangle needs to be repainted.
     if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
+        m_caretPositionOnLayout = o.m_caretPositionOnLayout;
     }
     
     return *this;
@@ -667,12 +669,14 @@ void SelectionController::layout()
 {
     if (isNone() || !m_start.node()->inDocument() || !m_end.node()->inDocument()) {
         m_caretRect = QRect();
+        m_caretPositionOnLayout = QPoint();
         return;
     }
 
     m_start.node()->getDocument()->updateRendering();
     
     m_caretRect = QRect();
+    m_caretPositionOnLayout = QPoint();
         
     if (isCaret()) {
         Position pos = m_start;

@@ -145,8 +145,11 @@ private:
     EAffinity m_affinity;         // the upstream/downstream affinity of the selection
 
     QRect m_caretRect;            // caret coordinates, size, and position
-    QPoint m_caretPositionOnLayout;   // When asked for caretRect(), we correct m_caretRect for offset due to scrolling.
-                                      // This is faster than recalcuating m_caretRect.
+    
+    // m_caretPositionOnLayout stores the scroll offset on the previous call to SelectionController::layout().
+    // When asked for caretRect(), we correct m_caretRect for offset due to scrolling since the last layout().
+    // This is faster than doing another layout().
+    QPoint m_caretPositionOnLayout;
     
     bool m_baseIsStart : 1;       // true if base node is before the extent node
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
