@@ -1,3 +1,27 @@
+2005-11-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Dave Hyatt.
+        Commited by Tim Hatcher.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5256
+        Relayout during load causes duplicate plugin part.
+
+        This was a problem with <OBJECT>s that contain an <EMBED>, if 
+        layout happened in the middle of the OBJECT but before the EMBED.
+
+        No test case added, requires manual testing. 
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLObjectElementImpl::closeRenderer):
+        (DOM::HTMLObjectElementImpl::setComplete):
+        * khtml/html/html_objectimpl.h:
+        (DOM::HTMLObjectElementImpl::isComplete):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::objectConstructor):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+
 2005-11-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Dave Hyatt.

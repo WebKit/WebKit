@@ -170,6 +170,7 @@ public:
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual void closeRenderer();
     virtual void detach();
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -236,6 +237,9 @@ public:
     DOMString width() const;
     void setWidth(const DOMString &);
 
+    bool isComplete() const { return m_complete; }
+    void setComplete(bool complete);
+    
     bool isDocNamedItem() const { return m_docNamedItem; }
 #if APPLE_CHANGES
     KJS::Bindings::Instance *getObjectInstance() const;
@@ -255,6 +259,7 @@ private:
 #if APPLE_CHANGES
     mutable KJS::Bindings::Instance *objectInstance;
 #endif
+    bool m_complete;
     bool m_docNamedItem;
 };
 

@@ -781,6 +781,8 @@ void RenderPartObject::updateWidget()
 
       HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
 
+      if (!o->isComplete())
+        return;
       // Check for a child EMBED tag.
       HTMLEmbedElementImpl *embed = 0;
       for (NodeImpl *child = o->firstChild(); child; ) {

@@ -562,6 +562,7 @@ HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc)
 {
     needWidgetUpdate = false;
     m_useFallbackContent = false;
+    m_complete = false;
     m_docNamedItem = true;
 }
 
@@ -760,6 +761,25 @@ void HTMLObjectElementImpl::attach()
                 needWidgetUpdate = true;
                 setChanged();
             }
+        }
+    }
+}
+
+void HTMLObjectElementImpl::closeRenderer()
+{
+    // The parser just reached </object>.
+    setComplete(true);
+    
+    HTMLElementImpl::closeRenderer();
+}
+
+void HTMLObjectElementImpl::setComplete(bool complete)
+{
+    if (complete != m_complete) {
+        m_complete = complete;
+        if (complete && inDocument() && !m_useFallbackContent) {
+            needWidgetUpdate = true;
+            setChanged();
         }
     }
 }
