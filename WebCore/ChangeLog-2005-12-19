@@ -2,6 +2,8 @@
 
         Reviewed by darin
         
+        Fixes <rdar://problem/4074536> Seed: Mail crash adjusting quote level - KHTMLPart::computeAndSetTypingStyle
+        
         No test cases added, requires Mail
 
         * kwq/WebCoreBridge.mm:
