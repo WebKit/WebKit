@@ -1,3 +1,23 @@
+2005-11-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Fixed <rdar://problem/3690705> caret does not move when scrolling overflow: auto editable area
+
+        * manual-tests/caretScrolling.html: Added.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::SelectionController): Removed the unused expectedVisibleRect
+        (khtml::SelectionController::operator=): Ditto.
+        (khtml::SelectionController::layout): Save the caret's absolute position on layout.
+        (khtml::SelectionController::caretRect): Adjust the returned caret rect for offset due to scrolling since the last layout.
+        (khtml::SelectionController::paintCaret):
+        * khtml/editing/SelectionController.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Small tweak to a previous change.
+        * kwq/KWQRect.h:
+        (QRect::moveTopLeft): Added.
+
 2005-11-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Dave Hyatt.

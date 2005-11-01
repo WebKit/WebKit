@@ -64,6 +64,8 @@ public:
     QPoint topRight() const;
     QPoint bottomRight() const;
     QPoint bottomLeft() const;
+    
+    void moveTopLeft(const QPoint &p) { xp += p.x(); yp += p.y(); } 
 	
     QSize size() const;
     void setX(int x) { xp = x; }

@@ -1266,8 +1266,8 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
             doc->setFocusNode(node);
             if (node->isEditableBlock()) {
                 SelectionController sel(Position(node, 0), DOWNSTREAM, Position(node, node->maxDeepOffset()), DOWNSTREAM);
-                if (((KHTMLPart *)this)->shouldChangeSelection(sel))
-                    setSelection(sel);    
+                if (KHTMLPart::shouldChangeSelection(sel))
+                    setSelection(sel);
             }
                
             if (node->renderer() && !node->renderer()->isRoot()) {

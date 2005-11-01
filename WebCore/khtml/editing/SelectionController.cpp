@@ -117,7 +117,6 @@ SelectionController::SelectionController(const SelectionController &o)
     // and the old rectangle needs to be repainted.
     if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
-        m_expectedVisibleRect = o.m_expectedVisibleRect;
     }
 }
 
@@ -152,7 +151,6 @@ SelectionController &SelectionController::operator=(const SelectionController &o
     // and the old rectangle needs to be repainted.
     if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
-        m_expectedVisibleRect = o.m_expectedVisibleRect;
     }
     
     return *this;
@@ -669,11 +667,12 @@ void SelectionController::layout()
 {
     if (isNone() || !m_start.node()->inDocument() || !m_end.node()->inDocument()) {
         m_caretRect = QRect();
-        m_expectedVisibleRect = QRect();
         return;
     }
 
     m_start.node()->getDocument()->updateRendering();
+    
+    m_caretRect = QRect();
         
     if (isCaret()) {
         Position pos = m_start;
@@ -688,28 +687,11 @@ void SelectionController::layout()
         if (pos.isNotNull()) {
             ASSERT(pos.node()->renderer());
             m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
-            m_expectedVisibleRect = m_caretRect;
+            
+            int x, y;
+            pos.node()->renderer()->absolutePosition(x, y);
+            m_caretPositionOnLayout = QPoint(x, y);
         }
-        else {
-            m_caretRect = QRect();
-            m_expectedVisibleRect = QRect();
-        }
-    }
-    else {
-        // Calculate which position to use based on whether the base is the start.
-        // We want the position, start or end, that was calculated using the extent. 
-        // This makes the selection follow the extent position while scrolling as a 
-        // result of arrow navigation. 
-        //
-        // Note: no need to get additional help from VisiblePosition. The m_start and
-        // m_end positions should already be visible, and we're only interested in 
-        // a rectangle for m_expectedVisibleRect, hence affinity is not a factor
-        // like it is when drawing a caret.
-        //
-        Position pos = m_baseIsStart ? m_end : m_start;
-        ASSERT(pos.node()->renderer()); 
-        m_expectedVisibleRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
-        m_caretRect = QRect();
     }
 
     m_needsLayout = false;
@@ -720,17 +702,17 @@ QRect SelectionController::caretRect() const
     if (m_needsLayout) {
         const_cast<SelectionController *>(this)->layout();
     }
-
-    return m_caretRect;
-}
-
-QRect SelectionController::expectedVisibleRect() const
-{
-    if (m_needsLayout) {
-        const_cast<SelectionController *>(this)->layout();
+    
+    QRect caret = m_caretRect;
+    
+    if (m_start.node() && m_start.node()->renderer()) {
+        int x, y;
+        m_start.node()->renderer()->absolutePosition(x, y);
+        QPoint diff = QPoint(x, y) - m_caretPositionOnLayout;
+        caret.moveTopLeft(diff);
     }
 
-    return m_expectedVisibleRect;
+    return caret;
 }
 
 QRect SelectionController::caretRepaintRect() const
@@ -782,9 +764,11 @@ void SelectionController::paintCaret(QPainter *p, const QRect &rect)
 
     if (m_needsLayout)
         layout();
+        
+    QRect caret = caretRect();
 
-    if (m_caretRect.isValid())
-        p->fillRect(m_caretRect & rect, QBrush());
+    if (caret.isValid())
+        p->fillRect(caret & rect, QBrush());
 }
 
 void SelectionController::adjustExtentForEditableContent()
