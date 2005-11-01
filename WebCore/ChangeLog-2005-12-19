@@ -1,10 +1,24 @@
+2005-11-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Dave Hyatt.
+        Commited by Tim Hatcher.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5541
+
+        HTMLNames constants are not yet initialized at Safari startup,
+        when bookmarks are imported, which caused a crash in Decoder::decode().
+
+        * kwq/WebCoreEncodings.mm:
+        (+[WebCoreEncodings decodeData:]):
+
 2005-11-01  John Sullivan  <sullivan@apple.com>
 
         Change by Alexey Proskuryakov, reviewed by Darin Adler.
 
         * kwq/KWQKURL.mm:
         (encodeRelativeString):
-        don't use strdup, as it has problems with a curly quote in the string
+        switched to use fastStrdup(), we can't use strdup because we
+        need to use fastFree(), not regular free()
 
 2005-11-01  Anders Carlsson  <andersca@mac.com>
 
