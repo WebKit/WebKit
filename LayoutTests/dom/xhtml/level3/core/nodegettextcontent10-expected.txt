@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent10
-Status	failure
-Message	nodegettextcontent10: assertEquals failed, actual null, expected EMP0001.
+Status	Success

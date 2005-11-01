@@ -1,3 +1,23 @@
+2005-11-01  Anders Carlsson  <andersca@mac.com>
+ 
+        Reviewed by Darin.
+ 
+        * dom/xhtml/level3/core/nodegettextcontent06-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent07-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent08-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent09-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent10-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent11-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent12-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent13-expected.txt:
+        * dom/xhtml/level3/core/nodegettextcontent14-expected.txt:
+        * dom/xhtml/level3/core/nodesettextcontent03-expected.txt:
+        * dom/xhtml/level3/core/nodesettextcontent12-expected.txt:
+        These now pass.
+         
+        * dom/xhtml/level3/core/nodegettextcontent17-expected.txt:
+        This still fails, but now because entity references are unsupported.
+
 2005-10-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodesettextcontent03
-Status	failure
-Message	nodesettextcontent03: assertNull failed, actual textContent
+Status	Success

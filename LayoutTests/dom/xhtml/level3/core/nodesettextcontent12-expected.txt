@@ -1,4 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodesettextcontent12
-Status	failure
-Message	nodesettextcontent12: assertTrue failed
+Status	Success
 

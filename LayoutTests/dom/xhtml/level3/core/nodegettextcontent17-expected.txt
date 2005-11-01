@@ -1,4 +1,4 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent17
 Status	failure
-Message	nodegettextcontent17: assertEquals failed, actual null, expected β.
+Message	nodegettextcontent17: assertEquals failed, actual , expected β.
 

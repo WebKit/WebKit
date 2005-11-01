@@ -1,4 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent12
-Status	failure
-Message	nodegettextcontent12: assertEquals failed, actual null, expected Comment.
+Status	Success
 

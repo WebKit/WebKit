@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodegettextcontent14
-Status	failure
-Message	nodegettextcontent13: assertEquals failed, actual null, expected EMP0003 Roger Jones Department Manager 100,000 Element data PO Box 27 Irving, texas 98553 .
+Status	Success
