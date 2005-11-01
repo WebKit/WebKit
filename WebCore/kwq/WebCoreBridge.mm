@@ -1989,7 +1989,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     if (!_part || !_part->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:_part->typingStyle()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:_part->typingStyle()->copy()];
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction

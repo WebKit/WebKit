@@ -1,5 +1,16 @@
 2005-11-01  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by darin
+        
+        No test cases added, requires Mail
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge typingStyle]):
+        Crashes were happening after a style was merged with itself.  Mail was doing a setTypingStyle
+        with a pointer to our internal typing style.  Fix is to only hand out copies of our typingStyle.
+
+2005-11-01  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
         
         Fixed <rdar://problem/3690705> caret does not move when scrolling overflow: auto editable area
