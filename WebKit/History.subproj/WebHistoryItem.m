@@ -384,9 +384,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
         _private->lastVisitedDate = nil;
         _private->visitCount++;
     }
-
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 // FIXME:  Remove this accessor and related ivar.

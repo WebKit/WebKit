@@ -84,6 +84,9 @@
 - (BOOL)alwaysAttemptToUsePageCache;
 
 - (NSCalendarDate *)_lastVisitedDate;
+
+// This should not be called directly for WebHistoryItems that are already included
+// in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
 - (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
 
 @end

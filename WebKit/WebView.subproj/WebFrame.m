@@ -816,10 +816,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
                 NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
-                WebHistoryItem *oldItem = [[WebHistory optionalSharedHistory] itemForURL:URL];
-                if (oldItem) {
-                    [oldItem _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-                }
+                WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
+                WebHistoryItem *oldItem = [sharedHistory itemForURL:URL];
+                if (oldItem)
+                    [sharedHistory setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate] forItem:oldItem];
+                
                 [self _makeDocumentView];
                 break;
             }

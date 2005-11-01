@@ -138,66 +138,86 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     [entriesForDate insertObject: entry atIndex: index];
 }
 
-- (BOOL)removeItemForURLString: (NSString *)URLString
+- (BOOL)_removeItemFromDateCaches:(WebHistoryItem *)entry
 {
-    NSMutableArray *entriesForDate;
-    WebHistoryItem *entry;
     int dateIndex;
-    BOOL foundDate;
-
-    entry = [_entriesByURL objectForKey: URLString];
-    if (entry == nil) {
+    BOOL foundDate = [self findIndex: &dateIndex forDay: [entry _lastVisitedDate]];
+ 
+    if (!foundDate)
         return NO;
-    }
-
-    [_entriesByURL removeObjectForKey: URLString];
-
-    foundDate = [self findIndex: &dateIndex forDay: [entry _lastVisitedDate]];
-
-    ASSERT(foundDate);
     
-    entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
+    NSMutableArray *entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
     [entriesForDate removeObjectIdenticalTo: entry];
-
+    
     // remove this date entirely if there are no other entries on it
     if ([entriesForDate count] == 0) {
         [_entriesByDate removeObjectAtIndex: dateIndex];
         [_datesWithEntries removeObjectAtIndex: dateIndex];
     }
+    
+    return YES;
+}
+
+- (BOOL)removeItemForURLString: (NSString *)URLString
+{
+    WebHistoryItem *entry = [_entriesByURL objectForKey: URLString];
+    if (entry == nil) {
+        return NO;
+    }
+
+    [_entriesByURL removeObjectForKey: URLString];
+    
+    BOOL itemWasInDateCaches = [self _removeItemFromDateCaches:entry];
+    ASSERT(itemWasInDateCaches);
 
     return YES;
 }
 
-
-- (void)addItem: (WebHistoryItem *)entry
+- (void)_addItemToDateCaches:(WebHistoryItem *)entry
 {
     int dateIndex;
-    NSString *URLString;
+    if ([self findIndex:&dateIndex forDay:[entry _lastVisitedDate]]) {
+        // other entries already exist for this date
+        [self insertItem:entry atDateIndex:dateIndex];
+    } else {
+        // no other entries exist for this date
+        [_datesWithEntries insertObject:[entry _lastVisitedDate] atIndex:dateIndex];
+        [_entriesByDate insertObject:[NSMutableArray arrayWithObject:entry] atIndex:dateIndex];
+    }
+}
 
+- (void)addItem:(WebHistoryItem *)entry
+{
     ASSERT_ARG(entry, entry);
     ASSERT_ARG(entry, [entry lastVisitedTimeInterval] != 0);
 
-    URLString = [entry URLString];
+    NSString *URLString = [entry URLString];
 
-    // If we already have an item with this URL, we need to merge info that drives the
-    // URL autocomplete heuristics from that item into the new one.
-    WebHistoryItem *oldEntry = [_entriesByURL objectForKey: URLString];
+    WebHistoryItem *oldEntry = [_entriesByURL objectForKey:URLString];
     if (oldEntry) {
+        [self removeItemForURLString:URLString];
+
+        // If we already have an item with this URL, we need to merge info that drives the
+        // URL autocomplete heuristics from that item into the new one.
         [entry _mergeAutoCompleteHints:oldEntry];
     }
 
-    [self removeItemForURLString: URLString];
+    [self _addItemToDateCaches:entry];
+    [_entriesByURL setObject:entry forKey:URLString];
+}
 
-    if ([self findIndex: &dateIndex forDay: [entry _lastVisitedDate]]) {
-        // other entries already exist for this date
-        [self insertItem: entry atDateIndex: dateIndex];
-    } else {
-        // no other entries exist for this date
-        [_datesWithEntries insertObject: [entry _lastVisitedDate] atIndex: dateIndex];
-        [_entriesByDate insertObject: [NSMutableArray arrayWithObject:entry] atIndex: dateIndex];
-    }
+- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
+{
+    BOOL entryWasPresent = [self _removeItemFromDateCaches:entry];
+    ASSERT(entryWasPresent);
+    
+    [entry _setLastVisitedTimeInterval:time];
+    [self _addItemToDateCaches:entry];
 
-    [_entriesByURL setObject: entry forKey: URLString];
+    // Don't send notification until entry is back in the right place in the date caches,
+    // since observers might fetch history by date when they receive the notification.
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:WebHistoryItemChangedNotification object:entry userInfo:nil];
 }
 
 - (BOOL)removeItem: (WebHistoryItem *)entry
@@ -758,6 +778,11 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     [_historyPrivate addItems:newEntries];
     [self _sendNotification: WebHistoryItemsAddedNotification
                     entries: newEntries];
+}
+
+- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
+{
+    [_historyPrivate setLastVisitedTimeInterval:time forItem:entry];
 }
 
 #pragma mark DATE-BASED RETRIEVAL

@@ -1,3 +1,42 @@
+2005-11-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/4324104> Assertion failure (foundDate) in WebHistory
+        
+        WebFrame was updating the last visited date on a WebHistoryItem behind WebHistory's
+        back, causing WebHistory's caches of items by date to get out of sync with reality.
+        Changed to set the date through WebHistory rather than directly.
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate _removeItemFromDateCaches:]):
+        New method, extracted from removeItemForURLString.
+        (-[WebHistoryPrivate removeItemForURLString:]):
+        Now calls extracted method. Cleaned up white space a little.
+        (-[WebHistoryPrivate _addItemToDateCaches:]):
+        New method, extracted from addItem:
+        (-[WebHistoryPrivate addItem:]):
+        Now calls extracted method. Cleaned up white space a little.
+        (-[WebHistoryPrivate setLastVisitedTimeInterval:forItem:]):
+        New method, removes item from date caches, changes date, then adds item back to
+        date caches and sends notification.
+        (-[WebHistory setLastVisitedTimeInterval:forItem:]):
+        New method, cover for WebHistoryPrivate version.
+        
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        Don't send notification here; send from new WebHistory method instead.
+        
+        * History.subproj/WebHistoryItemPrivate.h:
+        Added comment about avoiding incorrect use of _setLastVisitedTimeInterval:
+        * History.subproj/WebHistoryPrivate.h:
+        Added declarations for WebHistory and WebHistoryPrivate versions of 
+        setLastVisitedTimeInterval:forItem:
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        change history item's date via new WebHistory method rather than directly
+
 2005-10-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

@@ -49,6 +49,7 @@
 - (BOOL)removeItem:(WebHistoryItem *)entry;
 - (BOOL)removeItems:(NSArray *)entries;
 - (BOOL)removeAllItems;
+- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)item;
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
@@ -72,6 +73,8 @@
 @interface WebHistory (WebPrivate)
 - (void)removeItem:(WebHistoryItem *)entry;
 - (void)addItem:(WebHistoryItem *)entry;
+// Change date on existing item
+- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)item;
 
 - (BOOL)loadHistory;
 - initWithFile:(NSString *)file;
