@@ -1,3 +1,15 @@
+2005-10-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Test cases for XLST recursion check.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5529
+
+        * fast/xsl/resources/xslt-recursion-chain1.xsl: Added.
+        * fast/xsl/resources/xslt-recursion-chain2.xsl: Added.
+        * fast/xsl/xslt-recursion-expected.txt: Added.
+        * fast/xsl/xslt-recursion.xml: Added.
+
 2005-10-31  Timothy Hatcher  <timothy@apple.com>
 
         Added a correct expected image.
