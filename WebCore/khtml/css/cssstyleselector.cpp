@@ -2395,6 +2395,12 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         case CSS_VAL_PRE:
             s = PRE;
             break;
+        case CSS_VAL_PRE_WRAP:
+            s = PRE_WRAP;
+            break;
+        case CSS_VAL_PRE_LINE:
+            s = PRE_LINE;
+            break;
         case CSS_VAL_NORMAL:
         default:
             s = NORMAL;

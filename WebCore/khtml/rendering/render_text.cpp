@@ -1098,7 +1098,7 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
 
     RenderBlock *cb = containingBlock();
     int availableWidth = cb->lineWidth(top);
-    if (style()->whiteSpace() == NORMAL)
+    if (style()->autoWrap())
         left = kMin(left, absx + box->m_x + availableWidth - 1);
     
     return QRect(left, top, 1, height);
@@ -1190,8 +1190,8 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
                                     int& beginMaxW, int& endMaxW,
                                     int& minW, int& maxW, bool& stripFrontSpaces)
 {
-    bool isPre = style()->whiteSpace() == PRE;
-    if (isPre)
+    bool collapseWhiteSpace = style()->collapseWhiteSpace();
+    if (!collapseWhiteSpace)
         stripFrontSpaces = false;
     
     int len = str->l;
@@ -1207,7 +1207,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     
     minW = m_minWidth;
     maxW = m_maxWidth;
-    beginWS = stripFrontSpaces ? false : m_hasBeginWS;
+    beginWS = !stripFrontSpaces && m_hasBeginWS;
     endWS = m_hasEndWS;
     
     beginMinW = m_beginMinWidth;
@@ -1216,20 +1216,18 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     hasBreakableChar = m_hasBreakableChar;
     hasBreak = m_hasBreak;
 
-    if (stripFrontSpaces && (str->s[0] == ' ' || (!isPre && (str->s[0] == '\n' || str->s[0] == '\t')))) {
+    if (stripFrontSpaces && (str->s[0] == ' ' || (str->s[0] == '\n' && !style()->preserveNewline()) || str->s[0] == '\t')) {
         const Font *f = htmlFont( false );
         QChar space[1]; space[0] = ' ';
         int spaceWidth = f->width(space, 1, 0, 0);
         maxW -= spaceWidth + f->getWordSpacing();
     }
     
-    stripFrontSpaces = !isPre && m_hasEndWS;
+    stripFrontSpaces = collapseWhiteSpace && m_hasEndWS;
     
-    if (style()->whiteSpace() == NOWRAP)
+    if (!style()->autoWrap() || minW > maxW)
         minW = maxW;
-    else if (minW > maxW)
-        minW = maxW;
-        
+
     // Compute our max widths by scanning the string for newlines.
     if (hasBreak) {
         const Font *f = htmlFont( false );
@@ -1294,7 +1292,6 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
-    bool isPre = style()->whiteSpace() == PRE;
     bool firstWord = true;
     bool firstLine = true;
     int nextBreakable = -1;
@@ -1306,14 +1303,14 @@ void RenderText::calcMinMaxWidth(int leadWidth)
         
         bool isNewline = false;
         if (c == '\n') {
-            if (isPre) {
+            if (style()->preserveNewline()) {
                 m_hasBreak = true;
                 isNewline = true;
                 isSpace = false;
             } else
                 isSpace = true;
         } else if (c == '\t') {
-            if (isPre) {
+            if (!style()->collapseWhiteSpace()) {
                 m_hasTab = true;
                 isSpace = false;
             } else
@@ -1327,7 +1324,7 @@ void RenderText::calcMinMaxWidth(int leadWidth)
         if ((isSpace || isNewline) && i == len-1)
             m_hasEndWS = true;
             
-        if (!ignoringSpaces && !isPre && previousCharacterIsSpace && isSpace)
+        if (!ignoringSpaces && style()->collapseWhiteSpace() && previousCharacterIsSpace && isSpace)
             ignoringSpaces = true;
         
         if (ignoringSpaces && !isSpace)
@@ -1350,20 +1347,19 @@ void RenderText::calcMinMaxWidth(int leadWidth)
         }
             
         int wordlen = j - i;
-        if (wordlen)
-        {
+        if (wordlen) {
             int w = widthFromCache(f, i, wordlen, tabWidth(), leadWidth + currMaxWidth);
             currMinWidth += w;
             currMaxWidth += w;
             
-            bool isBreakableCharSpace = (j < len) && ((!isPre && (c == '\n' || c == '\t')) || c == ' ');
-
-            if (j < len && style()->whiteSpace() == NORMAL)
+            bool isSpace = (j < len) && c == ' ';
+            bool isCollapsibleWhiteSpace = (j < len) && style()->isCollapsibleWhiteSpace(c);
+            if (j < len && style()->autoWrap())
                 m_hasBreakableChar = true;
             
             // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
             // last word in the run.
-            if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(j, len-j))
+            if (wordSpacing && (isSpace || isCollapsibleWhiteSpace) && !containsOnlyWhitespace(j, len-j))
                 currMaxWidth += wordSpacing;
 
             if (firstWord) {
@@ -1385,14 +1381,13 @@ void RenderText::calcMinMaxWidth(int leadWidth)
         else {
             // Nowrap can never be broken, so don't bother setting the
             // breakable character boolean. Pre can only be broken if we encounter a newline.     
-            if (style()->whiteSpace() == NORMAL || isNewline)
+            if (style()->autoWrap() || isNewline)
                 m_hasBreakableChar = true;
 
             if (currMinWidth > m_minWidth) m_minWidth = currMinWidth;
             currMinWidth = 0;
             
-            if (isNewline) // Only set if isPre was true and we saw a newline.
-            {
+            if (isNewline) { // Only set if preserveNewline was true and we saw a newline.
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
@@ -1413,13 +1408,15 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     if (needsWordSpacing && len > 1) 
         currMaxWidth += wordSpacing;
     
-    if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
-    if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
+    m_minWidth = kMax(currMinWidth, m_minWidth);
+    m_maxWidth = kMax(currMaxWidth, m_maxWidth);
         
-    if (style()->whiteSpace() != NORMAL)
+    if (!style()->autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (isPre) {
+    if (style()->whiteSpace() == PRE) {
+        // FIXME: pre-wrap and pre-line need to be dealt with possibly?  This code won't be right
+        // for them though.
         if (firstLine)
             m_beginMinWidth = m_maxWidth;
         m_endMinWidth = currMaxWidth;
@@ -1688,7 +1685,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     if ( from + len > str->l ) len = str->l - from;
 
     int w;
-    if ( style()->whiteSpace() != PRE && f == &style()->htmlFont() && from == 0 && len == str->l ) {
+    if (!style()->preserveNewline() && f == &style()->htmlFont() && from == 0 && len == str->l ) {
         w = m_maxWidth;
     } else if (f == &style()->htmlFont()) {
         w = widthFromCache(f, from, len, tabWidth(), xpos);

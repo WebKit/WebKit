@@ -1,3 +1,77 @@
+2005-11-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 5587, implement pre-wrap and pre-line white-space values.
+	
+        Reviewed by mjs
+
+	Tests Added in fast/text/whitespace
+	
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::preGetter):
+        (KJS::HTMLElement::preSetter):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLElement::):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode):
+        * khtml/editing/visible_units.cpp:
+        (khtml::startOfParagraph):
+        (khtml::endOfParagraph):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLPreElementImpl::mapToEntry):
+        (HTMLPreElementImpl::parseMappedAttribute):
+        (HTMLPreElementImpl::wrap):
+        (HTMLPreElementImpl::setWrap):
+        * khtml/html/html_blockimpl.h:
+        * khtml/rendering/bidi.cpp:
+        (khtml::checkMidpoints):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::skipNonBreakingSpace):
+        (khtml::RenderBlock::skipWhitespace):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::setStyle):
+        (khtml::RenderBlock::calcMinMaxWidth):
+        (khtml::stripTrailingSpace):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+        (khtml::RenderBlock::dump):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_layer.h:
+        (khtml::):
+        * khtml/rendering/render_line.cpp:
+        (khtml::shouldDrawDecoration):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::tabWidth):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::autoWrap):
+        (khtml::RenderStyle::preserveNewline):
+        (khtml::RenderStyle::collapseWhiteSpace):
+        (khtml::RenderStyle::isCollapsibleWhiteSpace):
+        (khtml::RenderStyle::breakOnlyAfterWhiteSpace):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::calcMinMaxWidth):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::width):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::):
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+
 2005-11-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 5580, slashdot regression with percentage height

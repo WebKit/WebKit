@@ -136,8 +136,14 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
 
+    bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    void parseMappedAttribute(MappedAttributeImpl *attr);
+
     int width() const;
     void setWidth(int w);
+    
+    bool wrap() const;
+    void setWrap(bool b);
 };
 
 // -------------------------------------------------------------------------

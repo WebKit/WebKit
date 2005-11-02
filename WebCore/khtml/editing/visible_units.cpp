@@ -565,6 +565,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         if (r->isBR() || r->isBlockFlow())
             break;
         if (r->isText()) {
+            // FIXME: Not clear what to do with pre-wrap or pre-line here.
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
                 int i = static_cast<RenderText *>(r)->length();
@@ -625,6 +626,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
             if (includeLineBreak && !n->isAncestor(startBlock))
                 return VisiblePosition(n, 0, DOWNSTREAM);
             int length = static_cast<RenderText *>(r)->length();
+            // FIXME: Not clear what to do with pre-wrap or pre-line here.
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
                 int o = 0;

@@ -308,6 +308,8 @@ overlay
 overline
 portrait
 pre
+pre-line
+pre-wrap
 relative
 scroll
 separate

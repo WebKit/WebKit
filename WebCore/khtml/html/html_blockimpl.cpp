@@ -294,6 +294,29 @@ HTMLPreElementImpl::HTMLPreElementImpl(const QualifiedName& tagName, DocumentPtr
 {
 }
 
+bool HTMLPreElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+{
+    if (attrName == widthAttr || attrName == wrapAttr) {
+        result = ePre;
+        return false;
+    }
+    return HTMLElementImpl::mapToEntry(attrName, result);
+}
+
+void HTMLPreElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+{
+    if (attr->name() == widthAttr) {
+        // FIXME: Implement this some day.  Width on a <pre> is the # of characters that
+        // we should size the pre to.  We basically need to take the width of a space,
+        // multiply by the value of the attribute and then set that as the width CSS
+        // property.
+    } else if (attr->name() == wrapAttr) {
+        if (!attr->value().isNull())
+            addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_PRE_WRAP);
+    } else
+        return HTMLElementImpl::parseMappedAttribute(attr);
+}
+
 int HTMLPreElementImpl::width() const
 {
     return getAttribute(widthAttr).toInt();
@@ -304,6 +327,16 @@ void HTMLPreElementImpl::setWidth(int width)
     setAttribute(widthAttr, QString::number(width));
 }
 
+bool HTMLPreElementImpl::wrap() const
+{
+    return !getAttribute(wrapAttr).isNull();
+}
+
+void HTMLPreElementImpl::setWrap(bool wrap)
+{
+    setAttribute(wrapAttr, wrap ? "" : 0);
+}
+    
 // -------------------------------------------------------------------------
 
  // WinIE uses 60ms as the minimum delay by default.

@@ -240,7 +240,7 @@ namespace KJS {
            LegendAlign, LegendFocus, UListType, UListCompact, OListStart, OListCompact,
            OListType, DListCompact, DirectoryCompact, MenuCompact, LIType,
            LIValue, DivAlign, ParagraphAlign, HeadingAlign, BlockQuoteCite,
-           QuoteCite, PreWidth, BRClear, BaseFontColor, BaseFontSize,
+           QuoteCite, PreWidth, PreWrap, BRClear, BaseFontColor, BaseFontSize,
            BaseFontFace, FontColor, FontSize, FontFace, HRWidth, HRNoShade,
            HRAlign, HRSize, ModCite, ModDateTime, AnchorShape, AnchorRel,
            AnchorAccessKey, AnchorCoords, AnchorHref, AnchorProtocol, AnchorHost,

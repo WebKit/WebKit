@@ -221,7 +221,7 @@ bool TextIterator::handleTextNode()
     DOMString str = renderer->string();
 
     // handle pre-formatted text
-    if (renderer->style()->whiteSpace() == khtml::PRE) {
+    if (!renderer->style()->collapseWhiteSpace()) {
         int runStart = m_offset;
         if (m_lastTextNodeEndedWithCollapsedSpace) {
             emitCharacter(' ', m_node, 0, runStart, runStart);

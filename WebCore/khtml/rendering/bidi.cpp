@@ -459,8 +459,8 @@ static void chopMidpointsAt(RenderObject* obj, uint pos)
 static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
-    // shave it off the list, and shave off a trailing space if the previous end point isn't
-    // white-space: pre.
+    // shave it off the list, and shave off a trailing space if the previous end point doesn't
+    // preserve whitespace.
     if (lBreak.obj && sNumMidpoints && sNumMidpoints%2 == 0) {
         BidiIterator* midpoints = smidpoints->data();
         BidiIterator& endpoint = midpoints[sNumMidpoints-2];
@@ -471,7 +471,7 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
         if (currpoint == lBreak) {
             // We hit the line break before the start point.  Shave off the start point.
             sNumMidpoints--;
-            if (endpoint.obj->style()->whiteSpace() != PRE) {
+            if (endpoint.obj->style()->collapseWhiteSpace()) {
                 if (endpoint.obj->isText()) {
                     // Don't shave a character off the endpoint if it was from a soft hyphen.
                     RenderText* textObj = static_cast<RenderText*>(endpoint.obj);
@@ -818,7 +818,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             }
             if (!r->compact) {
                 RenderStyle *style = r->obj->style();
-                if (style->whiteSpace() == NORMAL && style->khtmlLineBreak() == AFTER_WHITE_SPACE) {
+                if (style->autoWrap() && style->breakOnlyAfterWhiteSpace()) {
                     // shrink the box as needed to keep the line from overflowing the available width
                     textWidth = kMin(effectiveWidth, availableWidth - totWidth + style->borderLeftWidth());
                 }
@@ -892,8 +892,8 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
 
                 KHTMLAssert(spaces <= numSpaces);
 
-                // Only justify text with white-space: normal.
-                if (r->obj->style()->whiteSpace() != PRE) {
+                // Only justify text if whitespace is collapsed.
+                if (r->obj->style()->collapseWhiteSpace()) {
                     spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
                     static_cast<InlineTextBox*>(r->box)->setSpaceAdd(spaceAdd);
                     totWidth += spaceAdd;
@@ -1639,7 +1639,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     }
                 }
                 
-                if (end == start || (!previousLineBrokeCleanly && end.obj && end.obj->style()->whiteSpace() == PRE && end.current() == QChar('\n'))) {
+                if (end == start || (!previousLineBrokeCleanly && end.obj && end.obj->style()->preserveNewline() && end.current() == '\n')) {
                     adjustEmbedding = true;
                     end.increment(bidi);
                     adjustEmbedding = false;
@@ -1877,14 +1877,12 @@ inline bool RenderBlock::skipNonBreakingSpace(BidiIterator &it)
     if (it.obj->style()->nbspMode() != SPACE || it.current().unicode() != nonBreakingSpace)
         return false;
  
+    // FIXME: This is bad.  It makes nbsp inconsistent with space and won't work correctly
+    // with m_minWidth/m_maxWidth.
     // Do not skip a non-breaking space if it is the first character
-    // on the first line of a block.
-    if (m_firstLine && isLineEmpty)
-        return false;
-        
-    // Do not skip a non-breaking space if it is the first character
-    // on a line after a clean line break.
-    if (!m_firstLine && isLineEmpty && previousLineBrokeCleanly)
+    // on a line after a clean line break (or on the first line, since previousLineBrokeCleanly starts off
+    // |true|).
+    if (isLineEmpty && previousLineBrokeCleanly)
         return false;
     
     return true;
@@ -1897,9 +1895,9 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // elements quite right.  In other words, we need to build this function's work into the normal line
     // object iteration process.
     int w = lineWidth(m_height);
-    while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
-          (it.current() == ' ' || it.current() == '\t' || it.current() == '\n' || it.current().unicode() == SOFT_HYPHEN ||
-           skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
+    while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->collapseWhiteSpace() && !it.obj->isBR() &&
+          (it.current() == ' ' || it.current() == '\t' || (!it.obj->style()->preserveNewline() && it.current() == '\n') ||
+          it.current().unicode() == SOFT_HYPHEN || skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
             // add to special objects...
@@ -2081,7 +2079,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             // FIXME: This does not match WinIE, Opera, and Mozilla.  They treat replaced elements
             // like characters in a word, and require spaces between the replaced elements in order
             // to break.
-            if (currWS == NORMAL || lastWS == NORMAL) {
+            if (RenderStyle::autoWrap(currWS) || RenderStyle::autoWrap(lastWS)) {
                 w += tmpW;
                 tmpW = 0;
                 lBreak.obj = o;
@@ -2107,13 +2105,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // Optimize for a common case. If we can't find whitespace after the list
                 // item, then this is all moot. -dwh
                 RenderObject* next = Bidinext( start.par, o, bidi );
-                if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
+                if (style()->collapseWhiteSpace() && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
                     RenderText *nextText = static_cast<RenderText*>(next);
                     QChar nextChar = nextText->text()[0];
 
-                    if (nextText->style()->whiteSpace() != PRE && 
-                        (nextChar == ' ' || nextChar == '\n' || nextChar == '\t' ||
-                        nextChar.unicode() == nonBreakingSpace && next->style()->nbspMode() == SPACE)) {
+                    if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
                         currentCharacterIsSpace = true;
                         currentCharacterIsWS = true;
                         ignoringSpaces = true;
@@ -2131,7 +2127,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             const Font *f = t->htmlFont( m_firstLine );
             // proportional font, needs a bit more work.
             int lastSpace = pos;
-            bool isPre = o->style()->whiteSpace() == PRE;
             int wordSpacing = o->style()->wordSpacing();
 
             bool appliedStartWidth = pos > 0; // If the span originated on a previous line,
@@ -2145,9 +2140,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
                 const QChar c = str[pos];
-                currentCharacterIsSpace = c == ' ' || c == '\t' || (!isPre && (c == '\n'));
+                currentCharacterIsSpace = c == ' ' || c == '\t' || (!o->style()->preserveNewline() && (c == '\n'));
 
-                if (isPre || !currentCharacterIsSpace)
+                if (!style()->collapseWhiteSpace() || !currentCharacterIsSpace)
                     isLineEmpty = false;
                 
                 // Check for soft hyphens.  Go ahead and ignore them.
@@ -2168,9 +2163,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         // Add the width up to but not including the hyphen.
                         tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW);
                         
-                        // For whitespace normal only, include the hyphen.  We need to ensure it will fit
+                        // For wrapping text only, include the hyphen.  We need to ensure it will fit
                         // on the line if it shows when we break.
-                        if (o->style()->whiteSpace() == NORMAL)
+                        if (o->style()->autoWrap())
                             tmpW += t->width(pos, 1, f, w+tmpW);
                         
                         BidiIterator startMid(0, o, pos+1);
@@ -2184,16 +2179,18 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 }
                 
                 bool applyWordSpacing = false;
-                bool isNormal = o->style()->whiteSpace() == NORMAL;
-                bool breakNBSP = isNormal && o->style()->nbspMode() == SPACE;
-                bool breakWords = o->style()->wordWrap() == BREAK_WORD && ((isNormal && w == 0) || o->style()->whiteSpace() == PRE);
+                bool allowBreak = o->style()->autoWrap();
+                bool breakNBSP = allowBreak && o->style()->nbspMode() == SPACE;
+                
+                // FIXME: This check looks suspicious. Why does w have to be 0?  
+                bool breakWords = o->style()->wordWrap() == BREAK_WORD && ((allowBreak && w == 0) || o->style()->whiteSpace() == PRE);
 
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c.unicode() == nonBreakingSpace);
 
                 if (breakWords)
                     wrapW += t->width(pos, 1, f, w+wrapW);
 
-                if (c == '\n' || (!isPre && isBreakable(str, pos, strlen, nextBreakable, breakNBSP)) || (breakWords && (w + wrapW > width))) {
+                if (c == '\n' || (o->style()->whiteSpace() != PRE && isBreakable(str, pos, strlen, nextBreakable, breakNBSP)) || (breakWords && (w + wrapW > width))) {
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this
@@ -2222,7 +2219,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 #ifdef DEBUG_LINEBREAKS
                     kdDebug(6041) << "found space at " << pos << " in string '" << QString( str, strlen ).latin1() << "' adding " << tmpW << " new width = " << w << endl;
 #endif
-                    if (isNormal && w + tmpW > width && w == 0) {
+                    if (o->style()->autoWrap() && w + tmpW > width && w == 0) {
                         int fb = nearestFloatBottom(m_height);
                         int newLineWidth = lineWidth(fb);
                         // See if |tmpW| will fit on the new line.  As long as it does not,
@@ -2243,12 +2240,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                     }
         
-                    if (o->style()->whiteSpace() == NORMAL || breakWords) {
-                        // In AFTER_WHITE_SPACE mode, consider the current character
+                    if (o->style()->autoWrap() || breakWords) {
+                        // If we break only after white-space, consider the current character
                         // as candidate width for this line.
-                        int charWidth = o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE ? t->width(pos, 1, f, w + tmpW) : 0;
+                        int charWidth = o->style()->breakOnlyAfterWhiteSpace() ? t->width(pos, 1, f, w + tmpW) : 0;
                         if (w + tmpW + charWidth > width) {
-                            if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE) {
+                            if (o->style()->breakOnlyAfterWhiteSpace()) {
                                 // Check if line is too big even without the extra space
                                 // at the end of the line. If it is not, do nothing. 
                                 // If the line needs the extra whitespace to be too long, 
@@ -2267,7 +2264,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             tmpW -= t->width(pos-1, 1, f, w+tmpW);
                     }
 
-                    if( *(str+pos) == '\n' && isPre) {
+                    if( *(str+pos) == '\n' && o->style()->preserveNewline()) {
                         lBreak.obj = o;
                         lBreak.pos = pos;
 
@@ -2277,7 +2274,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         return lBreak;
                     }
 
-                    if (o->style()->whiteSpace() == NORMAL) {
+                    if (o->style()->autoWrap()) {
                         w += tmpW;
                         tmpW = 0;
                         lBreak.obj = o;
@@ -2289,7 +2286,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if (applyWordSpacing)
                         w += wordSpacing;
                         
-                    if (!ignoringSpaces && !isPre) {
+                    if (!ignoringSpaces && o->style()->collapseWhiteSpace()) {
                         // If we encounter a newline, or if we encounter a
                         // second space, we need to go ahead and break up this
                         // run and enter a mode where we start collapsing spaces.
@@ -2319,15 +2316,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 }
 
                 if (!currentCharacterIsWS && previousCharacterIsWS) {
-                    if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE && o->style()->whiteSpace() == NORMAL) {
+                    if (o->style()->autoWrap() && o->style()->breakOnlyAfterWhiteSpace()) {
                         lBreak.obj = o;
                         lBreak.pos = pos;
                     }
                 }
                 
-                if (!isPre && currentCharacterIsSpace && !ignoringSpaces)
+                if (o->style()->collapseWhiteSpace() && currentCharacterIsSpace && !ignoringSpaces)
                     trailingSpaceObject = o;
-                else if (isPre || !currentCharacterIsSpace)
+                else if (!o->style()->collapseWhiteSpace() || !currentCharacterIsSpace)
                     trailingSpaceObject = 0;
                     
                 pos++;
@@ -2345,12 +2342,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             KHTMLAssert( false );
 
         RenderObject* next = Bidinext(start.par, o, bidi);
-        bool isNormal = o->style()->whiteSpace() == NORMAL;
-        bool checkForBreak = isNormal;
+        bool autoWrap = o->style()->autoWrap();
+        bool checkForBreak = autoWrap;
         if (w && w + tmpW > width+1 && lBreak.obj && o->style()->whiteSpace() == NOWRAP)
             checkForBreak = true;
         else if (next && o->isText() && next->isText() && !next->isBR()) {
-            if (isNormal || (next->style()->whiteSpace() == NORMAL)) {
+            if (autoWrap || (next->style()->autoWrap())) {
                 if (currentCharacterIsSpace)
                     checkForBreak = true;
                 else {
@@ -2358,7 +2355,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     RenderText* nextText = static_cast<RenderText*>(next);
                     if (nextText->stringLength() != 0) {
 	                    QChar c = nextText->text()[0];
-                        if (c == ' ' || c == '\t' || (c == '\n' && next->style()->whiteSpace() != PRE)) {
+                        if (c == ' ' || c == '\t' || (c == '\n' && !next->style()->preserveNewline())) {
                         	// If the next item on the line is text, and if we did not end with
                         	// a space, then the next text run continues our word (and so it needs to
                        	 	// keep adding to |tmpW|.  Just update and continue.
@@ -2366,7 +2363,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         	tmpW += nextText->htmlFont(m_firstLine)->getWordSpacing();
                         }
                     }
-                    bool canPlaceOnLine = (w + tmpW <= width+1) || !isNormal;
+                    bool canPlaceOnLine = (w + tmpW <= width+1) || !autoWrap;
                     if (canPlaceOnLine && checkForBreak) {
                         w += tmpW;
                         tmpW = 0;
@@ -2381,7 +2378,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             //kdDebug() << " too wide w=" << w << " tmpW = " << tmpW << " width = " << width << endl;
             //kdDebug() << "start=" << start.obj << " current=" << o << endl;
             // if we have floats, try to get below them.
-            if (currentCharacterIsSpace && !ignoringSpaces && o->style()->whiteSpace() != PRE)
+            if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace())
                 trailingSpaceObject = 0;
             
             int fb = nearestFloatBottom(m_height);
@@ -2414,7 +2411,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             previous = o;
         o = next;
 
-        if (!last->isFloatingOrPositioned() && last->isReplaced() && last->style()->whiteSpace() == NORMAL && 
+        if (!last->isFloatingOrPositioned() && last->isReplaced() && last->style()->autoWrap() && 
             (!last->isListMarker() || last->style()->listStylePosition()==INSIDE)) {
             // Go ahead and add in tmpW.
             w += tmpW;
@@ -2425,7 +2422,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
         // Clear out our character space bool, since inline <pre>s don't collapse whitespace
         // with adjacent inline normal/nowrap spans.
-        if (last->style()->whiteSpace() == PRE)
+        if (!last->style()->collapseWhiteSpace())
             currentCharacterIsSpace = false;
         
         pos = 0;
@@ -2443,7 +2440,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     if( lBreak == start && !lBreak.obj->isBR() ) {
         // we just add as much as possible
-        if ( m_pre ) {
+        if (style()->whiteSpace() == PRE) {
+            // FIXME: Don't really understand this case.
             if(pos != 0) {
                 lBreak.obj = o;
                 lBreak.pos = pos - 1;

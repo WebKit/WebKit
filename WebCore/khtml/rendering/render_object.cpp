@@ -1917,7 +1917,7 @@ int RenderObject::paddingRight() const
 
 int RenderObject::tabWidth() const
 {
-    if (style()->whiteSpace() != PRE)
+    if (style()->collapseWhiteSpace())
         return 0;
         
     return containingBlock()->tabWidth(true);

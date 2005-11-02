@@ -1840,6 +1840,8 @@ ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
     if (token == PreWidth)
         return Number(pre.width());
+    if (token == PreWrap)
+        return Boolean(pre.wrap());
     return Undefined();
 }
 
@@ -2902,10 +2904,11 @@ void HTMLElement::quoteSetter(ExecState *exec, int token, ValueImp *value, const
 
 void HTMLElement::preSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
-    // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
     if (token == PreWidth)
         pre.setWidth(value->toInt32(exec));
+    else if (token == PreWrap)
+        pre.setWrap(value->toBoolean(exec));
 }
 
 void HTMLElement::brSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)

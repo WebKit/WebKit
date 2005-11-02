@@ -2990,7 +2990,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
-                    if (style->whiteSpace() == PRE) {
+                    if (!style->collapseWhiteSpace()) {
                         if (needSpace && !addedSpace) {
                             if (text.isEmpty() && linkStartLocation == [result length]) {
                                 ++linkStartLocation;

@@ -499,9 +499,11 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_WHITE_SPACE:          // normal | pre | nowrap | inherit
-	if ( id == CSS_VAL_NORMAL ||
-	     id == CSS_VAL_PRE ||
-	     id == CSS_VAL_NOWRAP )
+	if (id == CSS_VAL_NORMAL ||
+            id == CSS_VAL_PRE ||
+            id == CSS_VAL_PRE_WRAP ||
+            id == CSS_VAL_PRE_LINE ||
+            id == CSS_VAL_NOWRAP)
 	    valid_primitive = true;
 	break;
 

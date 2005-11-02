@@ -1090,6 +1090,10 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
                 return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
             case khtml::PRE:
                 return new CSSPrimitiveValueImpl(CSS_VAL_PRE);
+            case khtml::PRE_WRAP:
+                return new CSSPrimitiveValueImpl(CSS_VAL_PRE_WRAP);
+            case khtml::PRE_LINE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_PRE_LINE);
             case khtml::NOWRAP:
                 return new CSSPrimitiveValueImpl(CSS_VAL_NOWRAP);
             case khtml::KHTML_NOWRAP:

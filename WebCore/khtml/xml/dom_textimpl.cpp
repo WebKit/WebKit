@@ -429,7 +429,7 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
     if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol() || par->isFrameSet())
         return false;
     
-    if (style->whiteSpace() == PRE)
+    if (style->preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
     
     RenderObject *prev = previousRenderer();
