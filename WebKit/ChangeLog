@@ -1,5 +1,16 @@
 2005-11-01  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        fixed deployment build by hiding local variables used only in ASSERTs on builds for
+        which ASSERT_DISABLED is true.
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate removeItemForURLString:]):
+        (-[WebHistoryPrivate setLastVisitedTimeInterval:forItem:]):
+
+2005-11-01  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim Omernick.
         
         - fixed <rdar://problem/4324104> Assertion failure (foundDate) in WebHistory

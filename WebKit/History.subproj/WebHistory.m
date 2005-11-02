@@ -167,8 +167,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     [_entriesByURL removeObjectForKey: URLString];
     
+#if ASSERT_DISABLED
+    [self _removeItemFromDateCaches:entry];
+#else
     BOOL itemWasInDateCaches = [self _removeItemFromDateCaches:entry];
     ASSERT(itemWasInDateCaches);
+#endif
 
     return YES;
 }
@@ -208,8 +212,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
 {
+#if ASSERT_DISABLED
+    [self _removeItemFromDateCaches:entry];
+#else
     BOOL entryWasPresent = [self _removeItemFromDateCaches:entry];
     ASSERT(entryWasPresent);
+#endif
     
     [entry _setLastVisitedTimeInterval:time];
     [self _addItemToDateCaches:entry];
