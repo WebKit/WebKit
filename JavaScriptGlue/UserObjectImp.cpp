@@ -1,5 +1,5 @@
 #include "UserObjectImp.h"
-#include "JavaScriptCore/IdentifierSequencedSet.h"
+#include "JavaScriptCore/reference_list.h"
 
 const ClassInfo UserObjectImp::info = {"UserObject", 0, 0, 0};
 
@@ -97,8 +97,9 @@ ValueImp *UserObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
 }
 
 
-void UserObjectImp::getPropertyNames(ExecState *exec, IdentifierSequencedSet& propertyNames)
+ReferenceList UserObjectImp::propList(ExecState *exec, bool recursive)
 {
+    ReferenceList list = ObjectImp::propList(exec, recursive);
     JSUserObject* ptr = GetJSUserObject();
     if (ptr) {
         CFArrayRef cfPropertyNames = ptr->CopyPropertyNames();
@@ -107,12 +108,13 @@ void UserObjectImp::getPropertyNames(ExecState *exec, IdentifierSequencedSet& pr
             CFIndex i;
             for (i = 0; i < count; i++) {
                 CFStringRef propertyName = (CFStringRef)CFArrayGetValueAtIndex(cfPropertyNames, i);
-                propertyNames.insert(CFStringToIdentifier(propertyName));
+                list.append(Reference(this, CFStringToIdentifier(propertyName)));
             }
             CFRelease(cfPropertyNames);
         }
     }
-    ObjectImp::getPropertyNames(exec, propertyNames);
+
+    return list;
 }
 
 ValueImp *UserObjectImp::userObjectGetter(ExecState *, const Identifier& propertyName, const PropertySlot& slot)

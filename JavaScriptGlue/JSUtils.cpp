@@ -9,7 +9,7 @@
 #include "UserObjectImp.h"
 #include "JSValueWrapper.h"
 #include "JSObject.h"
-#include "JavaScriptCore/IdentifierSequencedSet.h"
+#include "JavaScriptCore/reference_list.h"
 
 struct ObjectImpList {
     ObjectImp* imp;
@@ -269,13 +269,12 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                         isArray = true;
                         JSInterpreter* intrepreter = (JSInterpreter*)exec->dynamicInterpreter();
                         if (intrepreter && (intrepreter->Flags() & kJSFlagConvertAssociativeArray)) {
-                            IdentifierSequencedSet propList;
-                                                        object->getPropertyNames(exec, propList);
-                            IdentifierSequencedSetIterator iter = propList.begin();
-                            IdentifierSequencedSetIterator end = propList.end();
+                            ReferenceList propList = object->propList(exec);
+                            ReferenceListIterator iter = propList.begin();
+                            ReferenceListIterator end = propList.end();
                             while(iter != end && isArray)
                             {
-                                Identifier propName = *iter;
+                                Identifier propName = iter->getPropertyName(exec);
                                 UString ustr = propName.ustring();
                                 const UniChar* uniChars = (const UniChar*)ustr.data();
                                 int size = ustr.size();
@@ -285,7 +284,7 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                                         break;
                                     }
                                 }
-                                ++iter;
+                                iter++;
                             }
                         }
                     }
@@ -308,8 +307,7 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                     else
                     {
                         // Not an array, just treat it like a dictionary which contains (property name, property value) pairs
-                        IdentifierSequencedSet propList;
-                                                object->getPropertyNames(exec, propList);
+                        ReferenceList propList = object->propList(exec);
                         {
                             result = CFDictionaryCreateMutable(0,
                                                                0,
@@ -317,11 +315,11 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                                                                &kCFTypeDictionaryValueCallBacks);
                             if (result)
                             {
-                                IdentifierSequencedSetIterator iter = propList.begin();
-                                IdentifierSequencedSetIterator end = propList.end();
+                                ReferenceListIterator iter = propList.begin();
+                                ReferenceListIterator end = propList.end();
                                 while(iter != end)
                                 {
-                                    Identifier propName = *iter;
+                                    Identifier propName = iter->getPropertyName(exec);
                                     if (object->hasProperty(exec, propName))
                                     {
                                         CFStringRef cfKey = IdentifierToCFString(propName);
@@ -333,7 +331,7 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                                         ReleaseCFType(cfKey);
                                         ReleaseCFType(cfValue);
                                     }
-                                    ++iter;
+                                    iter++;
                                 }
                             }
                         }

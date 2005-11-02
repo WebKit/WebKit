@@ -1,3 +1,19 @@
+2005-11-01  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by: Eric.
+	
+        <rdar://problem/4324107> get JavaScriptGlue working with TOT JavaScriptCore again
+
+	- reverted all this stuff to use ReferenceList instead of IdentifierSequencedSet
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        * UserObjectImp.cpp:
+        (UserObjectImp::propList):
+        * UserObjectImp.h:
+
 2005-10-11  Timothy Hatcher  <timothy@apple.com>
 
         Setup the proper Framework search path for the Default config.

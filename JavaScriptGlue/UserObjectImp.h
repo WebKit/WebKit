@@ -20,7 +20,7 @@ public:
 
     virtual bool implementsCall() const;
 
-    virtual void getPropertyNames(ExecState *exec, IdentifierSequencedSet& propertyNames);
+    virtual ReferenceList propList(ExecState *exec, bool recursive = true);
 
     virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
