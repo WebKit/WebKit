@@ -1198,9 +1198,12 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // height.
     else if (cb->style()->height().isFixed())
         result = cb->calcContentBoxHeight(cb->style()->height().value);
-    else if (cb->style()->height().isPercent())
+    else if (cb->style()->height().isPercent()) {
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->calcContentBoxHeight(cb->calcPercentageHeight(cb->style()->height()));
+        result = cb->calcPercentageHeight(cb->style()->height());
+        if (result != -1)
+            result = cb->calcContentBoxHeight(result);
+    }
     else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks())) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.

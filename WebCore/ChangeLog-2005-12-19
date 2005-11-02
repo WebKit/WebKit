@@ -1,3 +1,15 @@
+2005-11-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 5580, slashdot regression with percentage height
+	blocks.
+	
+        Reviewed by darin
+
+	Added fast/block/basic/021.html
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcPercentageHeight):
+
 2005-11-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
