@@ -1,3 +1,26 @@
+2005-11-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+	<rdar://problem/4318632>
+
+	I've added a new notification, WebPluginWillPresentNativeUserInterfaceNotification.  Plugins are expected to post this
+	notification before presenting "native UI", such as dialog boxes.  A Dashboard client can observe this notification to
+	hide the Dashboard layer when plugins present external UI.
+	
+        * English.lproj/StringsNotToBeLocalized.txt:
+	Added "WebPluginWillPresentNativeUserInterface".
+
+        * Plugins.subproj/WebPluginsPrivate.h: Added.
+        * Plugins.subproj/WebPluginsPrivate.m: Added.
+	Declare WebPluginWillPresentNativeUserInterfaceNotification.
+
+        * WebKit.xcodeproj/project.pbxproj:
+	Added WebPluginsPrivate.[hm]
+
+	* WebKit.exp:
+	Added _WebPluginWillPresentNativeUserInterfaceNotification.
+
 2005-11-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

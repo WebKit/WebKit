@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
 		65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */; };
@@ -328,6 +330,8 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
+		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; };
+		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; };
 		2568C72C0174912D0ECA149E /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; };
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; };
@@ -1027,6 +1031,8 @@
 		F5EBC45202134BB601CA1520 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				224100F2091818D900D2D266 /* WebPluginsPrivate.h */,
+				224100F80918190100D2D266 /* WebPluginsPrivate.m */,
 				848DFF410365F6FB00CA2ACA /* Netscape Plug-ins */,
 				848DFF430365F71500CA2ACA /* WebKit Plug-ins */,
 				83E4AF46036652150000E506 /* WebBasePluginPackage.h */,
@@ -1258,6 +1264,7 @@
 				7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
 				ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */,
+				224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1798,6 +1805,7 @@
 				ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */,
 				7E6FEF0208985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m in Sources */,
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */,
+				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
