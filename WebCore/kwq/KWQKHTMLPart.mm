@@ -1079,8 +1079,16 @@ bool KWQKHTMLPart::wheelEvent(NSEvent *event)
     KHTMLView *v = d->m_view;
 
     if (v) {
+        NSEvent *oldCurrentEvent = _currentEvent;
+        _currentEvent = KWQRetain(event);
+
         QWheelEvent qEvent(event);
         v->viewportWheelEvent(&qEvent);
+
+        ASSERT(_currentEvent == event);
+        KWQRelease(event);
+        _currentEvent = oldCurrentEvent;
+
         if (qEvent.isAccepted())
             return true;
     }
@@ -2636,6 +2644,32 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 
+    return false;
+}
+
+bool KWQKHTMLPart::passWheelEventToChildWidget(DOM::NodeImpl *node)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+        
+    if ([_currentEvent type] != NSScrollWheel || _sendingEventToSubview || !node) 
+        return false;
+    else {
+        RenderObject *renderer = node->renderer();
+        if (!renderer || !renderer->isWidget())
+            return false;
+        QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        if (!widget)
+            return false;
+            
+        NSView *view = widget->getView();
+        ASSERT(view);
+        _sendingEventToSubview = true;
+        [view scrollWheel:_currentEvent];
+        _sendingEventToSubview = false;
+        return true;
+    }
+            
+    KWQ_UNBLOCK_EXCEPTIONS;
     return false;
 }
 
