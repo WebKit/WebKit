@@ -109,7 +109,8 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       return Null();
     }
 
-    UString match = regExpObj->performMatch(regExp, input, static_cast<int>(lastIndex));
+    int foundIndex;
+    UString match = regExpObj->performMatch(regExp, input, static_cast<int>(lastIndex), &foundIndex);
     bool didMatch = !match.isNull();
 
     // Test
@@ -119,7 +120,7 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     // Exec
     if (didMatch) {
       if (globalFlag)
-        thisObj->put(exec, "lastIndex", Number(lastIndex + match.size()), DontDelete | DontEnum);
+        thisObj->put(exec, "lastIndex", Number(foundIndex + match.size()), DontDelete | DontEnum);
       return regExpObj->arrayOfMatches(exec, match);
     } else {
       if (globalFlag)

@@ -1,3 +1,17 @@
+2005-11-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5602
+          REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches
+
+        We now update lastIndex relative to the start of the last match,
+        rather than the start of the last search. We used to assume that
+        the two were equal, but that may not be the case in $ matches.
+
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFuncImp::callAsFunction):
+
 2005-10-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler. Code changes by Alexey Proskuryakov.
