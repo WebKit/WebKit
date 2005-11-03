@@ -132,6 +132,7 @@ using khtml::PARAGRAPH;
 using khtml::plainText;
 using khtml::RenderObject;
 using khtml::RenderText;
+using khtml::RenderLayer;
 using khtml::RenderWidget;
 using khtml::SelectionController;
 using khtml::Tokenizer;
@@ -2286,18 +2287,12 @@ bool KHTMLPart::gotoAnchor( const QString &name )
     }
   }
   
-  int x = 0, y = 0;
-  if (n) {
-    static_cast<HTMLElementImpl *>(n)->getUpperLeftCorner(x, y);
-  }
 #if APPLE_CHANGES
-  // scrollRectToVisible will expose correctly from within nested layers and frames.
-  if (n && n->renderer()) {
-    khtml::RenderLayer *layer = n->renderer()->enclosingLayer();
-    if (layer)
-        // We used to align to the top left corner, but now, if the anchor is already horizontally visible, we won't scroll horizontally.
-        n->renderer()->enclosingLayer()->scrollRectToVisible(QRect(x, y, 0, 0), alignTop, alignLeft);
-  }
+    // Scroll nested layers and frames to reveal the anchor.
+    if (n && n->renderer()) {
+        // Align to the top and to the closest side (this matches other browsers).
+        n->renderer()->enclosingLayer()->scrollRectToVisible(n->getRect(), RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
+    }
 #else
   d->m_view->setContentsPos(x, y);
 #endif
@@ -5390,12 +5385,6 @@ void KHTMLPart::setActiveNode(const DOM::Node &node)
 
     // Set the document's active node
     d->m_doc->setFocusNode(node.handle());
-
-    // Scroll the view if necessary to ensure that the new focus node is visible
-    QRect rect  = node.handle()->getRect();    
-    if (node.handle()->renderer() && node.handle()->renderer()->enclosingLayer()) {
-        node.handle()->renderer()->enclosingLayer()->scrollRectToVisible(rect);
-    }
 }
 
 DOM::Node KHTMLPart::activeNode() const

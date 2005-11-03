@@ -87,8 +87,6 @@ public:
     void setStaticBackground(bool);
 
     void resizeEvent(QResizeEvent *);
-
-    void ensureRectVisible(const QRect &r);
         
     NSView *getDocumentView() const;
 

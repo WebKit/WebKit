@@ -446,14 +446,6 @@ void QScrollView::resizeEvent(QResizeEvent *)
 {
 }
 
-void QScrollView::ensureRectVisible(const QRect &rect)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    NSRect tempRect = { {rect.x(), rect.y()}, {rect.width(), rect.height()} }; // workaround for 4213314
-    [getDocumentView() scrollRectToVisible:tempRect];
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
 NSView *QScrollView::getDocumentView() const
 {
     id view = getView();

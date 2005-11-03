@@ -2108,7 +2108,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     QRect extentRect = renderer->caretRect(extent.offset(), _part->selection().extentAffinity());
     RenderLayer *layer = renderer->enclosingLayer();
     if (layer)
-        layer->scrollRectToVisible(extentRect, alignCenter, alignCenter);
+        layer->scrollRectToVisible(extentRect);
 }
 
 // [info draggingLocation] is in window coords

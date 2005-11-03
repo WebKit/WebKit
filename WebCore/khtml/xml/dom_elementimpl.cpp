@@ -352,11 +352,12 @@ const AtomicString& ElementImpl::getAttribute(const QualifiedName& name) const
 void ElementImpl::scrollIntoView(bool alignToTop) 
 {
     QRect bounds = this->getRect();    
-    if (m_render && m_render->enclosingLayer()) {
+    if (m_render) {
+        // Align to the top / bottom and to the closest edge.
         if (alignToTop)
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, alignTop);
+            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
         else
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, alignBottom);
+            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignBottomAlways);
     }
 }
 

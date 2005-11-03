@@ -1,3 +1,14 @@
+2005-11-03  Adele Peterson  <adele@apple.com>
+
+        Test for...
+        <rdar://problem/3612121> setting focus, by tabbing, searching, or with JavaScript does not scroll overflow:auto/scroll/overlay to reveal focused element (3480)
+
+        * fast/overflow/resources/scrollButton1.html: Added.
+        * fast/overflow/scrollRevealButton-expected.checksum: Added.
+        * fast/overflow/scrollRevealButton-expected.png: Added.
+        * fast/overflow/scrollRevealButton-expected.txt: Added.
+        * fast/overflow/scrollRevealButton.html: Added.
+
 2005-11-03  David Harrison  <harrison@apple.com>
 
         Other files that should have been included with my previous commit.

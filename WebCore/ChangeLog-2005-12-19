@@ -1,3 +1,38 @@
+2005-11-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Clean up of layer scrolling code.  Now we can clearly define what to do if a rectangle is fully visible, partially visible, or hidden.
+        This also fixes a bug with the previous implementation where nested layers/frames would get passed a rect that was too large.
+
+        Added fast/overflow/scrollRevealButton.html
+
+        * khtml/rendering/render_layer.h: (khtml::RenderLayer::): 
+        Added ScrollBehavior enum, ScrollAlignment struct, and ScrollAlignment static members
+        to describe specific scrolling behaviors depending on how visible the rectangle is.
+        In the future, we can add other statics to easily describe desired behaviors.
+        * khtml/rendering/render_layer.cpp:
+        (khtml::): initialize ScrollAlignment static members: 
+        alignCenterIfNeeded, alignToEdgeIfNeeded, alignCenterAlways, alignTopAlways, alignBottomAlways
+        (khtml::RenderLayer::scrollRectToVisible):
+        alignCenterIfNeeded is the default behavior for both directions.
+        Pass the original rect (adjusted if scrolling has occurred) when recursively calling this function.
+        (khtml::RenderLayer::getRectToExpose): Adjusted for new ScrollAlignment parameters.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor): Use the node's rect to determine where to scroll.  
+        We used to just use the origin, but this helps us match other browsers better.
+        (KHTMLPart::setActiveNode): Removed scrolling code, since this is now also done in setFocusNode
+        * khtml/xml/dom_elementimpl.cpp: (ElementImpl::scrollIntoView): Use new ScrollAlignment values to describe scrolling behavior.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Removed scrolling code, since this is now also done in setFocusNode
+        (KWQKHTMLPart::centerSelectionInVisibleArea): Use new ScrollAlignment values to describe scrolling behavior.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge ensureSelectionVisible]): ditto.
+        * kwq/KWQScrollView.h: Removed ensureRectVisible, since we no longer use this.
+        * kwq/KWQScrollView.mm: ditto.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::doAutoScroll): Removed unnecessary nil checks for enclosingLayer
+        (KHTMLView::focusNextPrevNode): ditto.
+
 2005-11-02  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

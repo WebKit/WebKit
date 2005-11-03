@@ -1277,12 +1277,6 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
                 if (KHTMLPart::shouldChangeSelection(sel))
                     setSelection(sel);
             }
-               
-            if (node->renderer() && !node->renderer()->isRoot()) {
-                RenderLayer *layer = node->renderer()->enclosingLayer();
-                if (layer)
-                    layer->scrollRectToVisible(node->getRect());
-            }
  
             [_bridge makeFirstResponder:[_bridge documentView]];
             return [_bridge documentView];
@@ -3441,7 +3435,7 @@ void KWQKHTMLPart::centerSelectionInVisibleArea() const
         RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
         if (layer) {
             ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
-            layer->scrollRectToVisible(rect, alignCenter, alignCenter);
+            layer->scrollRectToVisible(rect, RenderLayer::gAlignCenterAlways, RenderLayer::gAlignCenterAlways);
         }
     }
 }
