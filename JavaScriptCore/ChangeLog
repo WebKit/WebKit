@@ -1,5 +1,11 @@
 2005-11-03  Geoffrey Garen  <ggaren@apple.com>
 
+        - Updated JavaScriptCore test results to reflect recent fixes.
+
+        * tests/mozilla/expected.html:
+
+2005-11-03  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by darin.
 
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5602
