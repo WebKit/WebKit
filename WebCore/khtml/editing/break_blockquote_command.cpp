@@ -50,19 +50,15 @@ using DOM::TextImpl;
 namespace khtml {
 
 BreakBlockquoteCommand::BreakBlockquoteCommand(DocumentImpl *document)
-    : CompositeEditCommand(document), m_breakNode(0)
+    : CompositeEditCommand(document)
 {
-}
-
-BreakBlockquoteCommand::~BreakBlockquoteCommand()
-{
-    derefNodesInList(clonedNodes);
-    if (m_breakNode)
-        m_breakNode->deref();
 }
 
 void BreakBlockquoteCommand::doApply()
 {
+    DOM::ElementImpl *breakNode;
+    QPtrList<DOM::NodeImpl> ancestors;
+    
     SelectionController selection = endingSelection();
     if (selection.isNone())
         return;
@@ -79,17 +75,16 @@ void BreakBlockquoteCommand::doApply()
     // Find the top-most blockquote from the start.
     NodeImpl *startNode = pos.node();
     NodeImpl *topBlockquote = 0;
-    for (NodeImpl *n = startNode->parentNode(); n; n = n->parentNode()) {
-        if (isMailBlockquote(n))
-            topBlockquote = n;
+    for (NodeImpl *node = startNode->parentNode(); node; node = node->parentNode()) {
+        if (isMailBlockquote(node))
+            topBlockquote = node;
     }
     if (!topBlockquote || !topBlockquote->parentNode())
         return;
     
     // Insert a break after the top blockquote.
-    m_breakNode = createBreakElement(document());
-    m_breakNode->ref();
-    insertNodeAfter(m_breakNode, topBlockquote);
+    breakNode = createBreakElement(document());
+    insertNodeAfter(breakNode, topBlockquote);
     
     if (!isLastVisiblePositionInNode(VisiblePosition(pos, affinity), topBlockquote)) {
         
@@ -97,17 +92,15 @@ void BreakBlockquoteCommand::doApply()
         // Split at pos if in the middle of a text node.
         if (startNode->isTextNode()) {
             TextImpl *textNode = static_cast<TextImpl *>(startNode);
-            bool atEnd = (unsigned)pos.offset() >= textNode->length();
-            if (pos.offset() > 0 && !atEnd) {
-                splitTextNode(textNode, pos.offset());
-                pos = Position(startNode, 0);
-            }
-            else if (atEnd) {
+            if ((unsigned)pos.offset() >= textNode->length()) {
                 newStartNode = startNode->traverseNextNode();
                 ASSERT(newStartNode);
-            }
-        }
-        else if (pos.offset() > 0) {
+            } else if (pos.offset() > 0)
+                splitTextNode(textNode, pos.offset());
+        } else if (startNode->hasTagName(brTag)) {
+            newStartNode = startNode->traverseNextNode();
+            ASSERT(newStartNode);
+        } else if (pos.offset() > 0) {
             newStartNode = startNode->traverseNextNode();
             ASSERT(newStartNode);
         }
@@ -115,75 +108,60 @@ void BreakBlockquoteCommand::doApply()
         // If a new start node was determined, find a new top block quote.
         if (newStartNode) {
             startNode = newStartNode;
-            for (NodeImpl *n = startNode->parentNode(); n; n = n->parentNode()) {
-                if (isMailBlockquote(n))
-                    topBlockquote = n;
+            for (NodeImpl *node = startNode->parentNode(); node; node = node->parentNode()) {
+                if (isMailBlockquote(node))
+                    topBlockquote = node;
             }
             if (!topBlockquote || !topBlockquote->parentNode())
                 return;
         }
         
         // Build up list of ancestors in between the start node and the top blockquote.
-        if (startNode != topBlockquote) {
-            for (NodeImpl *n = startNode->parentNode(); n && n != topBlockquote; n = n->parentNode())
-                ancestors.prepend(n);
-        }                    
+        for (NodeImpl *node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
+            ancestors.prepend(node);
         
         // Insert a clone of the top blockquote after the break.
         NodeImpl *clonedBlockquote = topBlockquote->cloneNode(false);
-        clonedBlockquote->ref();
-        clonedNodes.append(clonedBlockquote);
-        insertNodeAfter(clonedBlockquote, m_breakNode);
+        insertNodeAfter(clonedBlockquote, breakNode);
         
-        // Make clones of ancestors in between the start node and the top blockquote.
-        NodeImpl *parent = clonedBlockquote;
+        // Clone startNode's ancestors into the cloned blockquote.
+        // On exiting this loop, clonedAncestor is the lowest ancestor
+        // that was cloned (i.e. the clone of either ancestors.last()
+        // or clonedBlockquote if ancestors is empty).
+        NodeImpl *clonedAncestor = clonedBlockquote;
         for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
-            NodeImpl *child = it.current()->cloneNode(false); // shallow clone
-            child->ref();
-            clonedNodes.append(child);
-            appendNode(child, parent);
-            parent = child;
+            NodeImpl *clonedChild = it.current()->cloneNode(false); // shallow clone
+            appendNode(clonedChild, clonedAncestor);
+            clonedAncestor = clonedChild;
         }
         
-        // Move the start node and the siblings of the start node.
-        bool startIsBR = false;
-        if (startNode != topBlockquote) {
-            NodeImpl *n = startNode;
-            startIsBR = n->hasTagName(brTag);
-            if (startIsBR)
-                n = n->nextSibling();
-            while (n) {
-                NodeImpl *next = n->nextSibling();
-                removeNode(n);
-                appendNode(n, parent);
-                n = next;
-            }
+        // Move the startNode and its siblings.
+        NodeImpl *moveNode = startNode;
+        while (moveNode) {
+            NodeImpl *next = moveNode->nextSibling();
+            removeNode(moveNode);
+            appendNode(moveNode, clonedAncestor);
+            moveNode = next;
         }
-        
-        // Move everything after the start node.
-        NodeImpl *leftParent = ancestors.last();
-        
-        // Insert an extra new line when the start is at the beginning of a line.
-        if (!newStartNode && !startIsBR) {
-            if (!leftParent)
-                leftParent = topBlockquote;
-            ElementImpl *b = createBreakElement(document());
-            b->ref();
-            clonedNodes.append(b);
-            appendNode(b, leftParent);
-        }        
-        
-        leftParent = ancestors.last();
-        while (leftParent && leftParent != topBlockquote) {
-            parent = parent->parentNode();
-            NodeImpl *n = leftParent->nextSibling();
-            while (n) {
-                NodeImpl *next = n->nextSibling();
-                removeNode(n);
-                appendNode(n, parent);
-                n = next;
+
+        // Hold open startNode's original parent if we emptied it
+        addBlockPlaceholderIfNeeded(ancestors.last());
+
+        // Split the tree up the ancestor chain until the topBlockquote
+        // Throughout this loop, clonedParent is the clone of ancestor's parent.
+        // This is so we can clone ancestor's siblings and place the clones
+        // into the clone corresponding to the ancestor's parent.
+        NodeImpl *ancestor, *clonedParent;
+        for (ancestor = ancestors.last(), clonedParent = clonedAncestor->parentNode();
+             ancestor && ancestor != topBlockquote;
+             ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
+            moveNode = ancestor->nextSibling();
+            while (moveNode) {
+                NodeImpl *next = moveNode->nextSibling();
+                removeNode(moveNode);
+                appendNode(moveNode, clonedParent);
+                moveNode = next;
             }
-            leftParent = leftParent->parentNode();
         }
         
         // Make sure the cloned block quote renders.
@@ -191,7 +169,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Put the selection right before the break.
-    setEndingSelection(Position(m_breakNode, 0), DOWNSTREAM);
+    setEndingSelection(Position(breakNode, 0), DOWNSTREAM);
     rebalanceWhitespace();
 }
 

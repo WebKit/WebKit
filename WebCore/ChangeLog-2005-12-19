@@ -1,3 +1,19 @@
+2005-11-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        Tests added in editing/inserting.
+        
+        <rdar://problem/4017861> in reply, extra line is inserted after pressing return on blank quoted line
+        Also, did some minor cleanup.
+
+        * khtml/editing/break_blockquote_command.cpp:
+        (khtml::BreakBlockquoteCommand::BreakBlockquoteCommand):
+        (khtml::BreakBlockquoteCommand::doApply):
+        Make sure not to clone parent of skipped BR unless there are siblings to move over.
+        * khtml/editing/break_blockquote_command.h:
+        * khtml/editing/jsediting.cpp:
+
 2005-11-02  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.

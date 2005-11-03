@@ -263,6 +263,12 @@ bool execInsertParagraph(KHTMLPart *part, bool userInterface, const DOMString &v
     return true;
 }
 
+bool execInsertNewlineInQuotedContent(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    TypingCommand::insertParagraphSeparatorInQuotedContent(part->xmlDocImpl());
+    return true;
+}
+
 bool execInsertText(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     TypingCommand::insertText(part->xmlDocImpl(), value);
@@ -513,6 +519,7 @@ CommandMap *createCommandDictionary()
         { "Indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
         { "InsertLineBreak", { execInsertLineBreak, enabledAnySelection, stateNone, valueNull } },
         { "InsertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },
+        { "InsertNewlineInQuotedContent", { execInsertNewlineInQuotedContent, enabledAnySelection, stateNone, valueNull } },
         { "InsertText", { execInsertText, enabledAnySelection, stateNone, valueNull } },
         { "Italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },
         { "JustifyCenter", { execJustifyCenter, enabledAnySelection, stateNone, valueNull } },

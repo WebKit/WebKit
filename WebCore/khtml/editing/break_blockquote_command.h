@@ -35,14 +35,8 @@ class BreakBlockquoteCommand : public CompositeEditCommand
 {
 public:
     BreakBlockquoteCommand(DOM::DocumentImpl *);
-    virtual ~BreakBlockquoteCommand();
 	
     virtual void doApply();
-    
-private:
-    QPtrList<DOM::NodeImpl> ancestors;
-    QPtrList<DOM::NodeImpl> clonedNodes;
-    DOM::ElementImpl *m_breakNode;
 };
 
 } // namespace khtml
