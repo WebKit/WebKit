@@ -1,5 +1,44 @@
 2005-11-03  David Hyatt  <hyatt@apple.com>
 
+	Cleanup of bidi.cpp.  This is bug 5532.  I merged it nearly as is, although I
+	did one additional rename of my own (BidiIterator's "par" -> "block") and
+	I did not merge the * changes, since that particular style guideline is 
+	"in dispute." :)
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::BidiIterator):
+        (khtml::BidiIterator::pos):
+        (khtml::BidiState::BidiState):
+        (khtml::getBPMWidth):
+        (khtml::BidiContext::BidiContext):
+        (khtml::BidiContext::~BidiContext):
+        (khtml::BidiContext::deref):
+        (khtml::operator==):
+        (khtml::operator!=):
+        (khtml::bidiNext):
+        (khtml::bidiFirst):
+        (khtml::BidiIterator::increment):
+        (khtml::BidiIterator::atEnd):
+        (khtml::BidiIterator::current):
+        (khtml::chopMidpointsAt):
+        (khtml::checkMidpoints):
+        (khtml::appendRunsForObject):
+        (khtml::appendRun):
+        (khtml::embed):
+        (khtml::RenderBlock::constructLine):
+        (khtml::RenderBlock::tabWidth):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::buildCompactRuns):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::determineStartPosition):
+        (khtml::RenderBlock::skipWhitespace):
+        (khtml::RenderBlock::findNextLineBreak):
+
+2005-11-03  David Hyatt  <hyatt@apple.com>
+
 	Make pre-wrap collapse away spaces at the start of a line.  There are
 	still several bugs, namely with overflow and with selection.  This is bugzilla
 	bug 5593.

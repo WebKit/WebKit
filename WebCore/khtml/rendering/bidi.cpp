@@ -34,29 +34,26 @@
 #include "qdatetime.h"
 #include "qfontmetrics.h"
 
-#define BIDI_DEBUG 0
-//#define DEBUG_LINEBREAKS
-
 using DOM::AtomicString;
 
 namespace khtml {
 
-
-// an iterator which goes through a BidiParagraph
+// an iterator which traverses all the objects within a block
 struct BidiIterator
 {
-    BidiIterator() : par(0), obj(0), pos(0) {}
-    BidiIterator(RenderBlock *_par, RenderObject *_obj, unsigned int _pos) : par(_par), obj(_obj), pos(_pos) {}
+    BidiIterator() : block(0), obj(0), pos(0) {}
+    BidiIterator(RenderBlock* b, RenderObject* o, unsigned int p) 
+     :block(b), obj(o), pos(p) {}
     
-    void increment( BidiState &bidi );
-    
+    void increment(BidiState& state);
     bool atEnd() const;
     
-    const QChar &current() const;
-    QChar::Direction direction() const;
+    const QChar& current() const;
     
-    RenderBlock *par;
-    RenderObject *obj;
+    QChar::Direction direction() const;
+
+    RenderBlock* block;
+    RenderObject* obj;
     unsigned int pos;
 };
 
@@ -69,14 +66,16 @@ struct BidiStatus {
 };
     
 struct BidiState {
-    BidiState() : context(0) {}
+    BidiState() : context(0), dir(QChar::DirON), adjustEmbedding(false) {}
     
     BidiIterator sor;
     BidiIterator eor;
     BidiIterator last;
     BidiIterator current;
-    BidiContext *context;
+    BidiContext* context;
     BidiStatus status;
+    QChar::Direction dir;
+    bool adjustEmbedding;
 };
 
 // Used to track a list of chained bidi runs.
@@ -98,17 +97,15 @@ static bool betweenMidpoints;
 
 static bool isLineEmpty = true;
 static bool previousLineBrokeCleanly = true;
-static QChar::Direction dir;
-static bool adjustEmbedding;
 static bool emptyRun = true;
 static int numSpaces;
 
-static void embed( QChar::Direction d, BidiState &bidi );
-static void appendRun( BidiState &bidi );
+static void embed(QChar::Direction d, BidiState &bidi);
+static void appendRun(BidiState &bidi);
 
 static int getBPMWidth(int childValue, Length cssUnit)
 {
-    if (cssUnit.type != Auto)
+    if (!cssUnit.isIntrinsicOrAuto())
         return (cssUnit.type == Fixed ? cssUnit.value : childValue);
     return 0;
 }
@@ -199,10 +196,10 @@ static void deleteBidiRuns(RenderArena* arena)
    relayouting
 */
 BidiContext::BidiContext(unsigned char l, QChar::Direction e, BidiContext *p, bool o)
-    : level(l) , override(o), dir(e)
+    : level(l), override(o), dir(e)
 {
     parent = p;
-    if(p) {
+    if (p) {
         p->ref();
         basicDir = p->basicDir;
     } else
@@ -212,7 +209,8 @@ BidiContext::BidiContext(unsigned char l, QChar::Direction e, BidiContext *p, bo
 
 BidiContext::~BidiContext()
 {
-    if(parent) parent->deref();
+    if (parent) 
+        parent->deref();
 }
 
 void BidiContext::ref() const
@@ -223,65 +221,70 @@ void BidiContext::ref() const
 void BidiContext::deref() const
 {
     count--;
-    if(count <= 0) delete this;
+    if (count <= 0)
+        delete this;
 }
 
 // ---------------------------------------------------------------------
 
-inline bool operator==( const BidiIterator &it1, const BidiIterator &it2 )
+inline bool operator==(const BidiIterator& it1, const BidiIterator& it2)
 {
-    if(it1.pos != it2.pos) return false;
-    if(it1.obj != it2.obj) return false;
+    if (it1.pos != it2.pos)
+        return false;
+    if (it1.obj != it2.obj)
+        return false;
     return true;
 }
 
-inline bool operator!=( const BidiIterator &it1, const BidiIterator &it2 )
+inline bool operator!=(const BidiIterator& it1, const BidiIterator& it2)
 {
-    if(it1.pos != it2.pos) return true;
-    if(it1.obj != it2.obj) return true;
+    if (it1.pos != it2.pos)
+        return true;
+    if (it1.obj != it2.obj)
+        return true;
     return false;
 }
 
-static inline RenderObject *Bidinext(RenderObject *par, RenderObject *current, BidiState &bidi,
+static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, BidiState& bidi,
                                      bool skipInlines = true, bool* endOfInline = 0)
 {
-    RenderObject *next = 0;
+    RenderObject* next = 0;
     bool oldEndOfInline = endOfInline ? *endOfInline : false;
     if (endOfInline)
         *endOfInline = false;
 
-    while(current != 0)
-    {
-        //kdDebug( 6040 ) << "current = " << current << endl;
+    while (current) {
         if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned()) {
             next = current->firstChild();
-            if ( next && adjustEmbedding ) {
+            if (next && bidi.adjustEmbedding) {
                 EUnicodeBidi ub = next->style()->unicodeBidi();
-                if ( ub != UBNormal ) {
+                if (ub != UBNormal) {
                     EDirection dir = next->style()->direction();
-QChar::Direction d = ( ub == Embed ? ( dir == RTL ? QChar::DirRLE : QChar::DirLRE )
-                                   : ( dir == RTL ? QChar::DirRLO : QChar::DirLRO ) );
-                    embed( d, bidi );
+                    QChar::Direction d = (ub == Embed ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
+                                            : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
+                    embed(d, bidi);
                 }
             }
         }
+
         if (!next) {
-            if (!skipInlines && !oldEndOfInline && current->isInlineFlow())
-            {
+            if (!skipInlines && !oldEndOfInline && current->isInlineFlow()) {
                 next = current;
                 if (endOfInline)
                     *endOfInline = true;
                 break;
             }
 
-            while (current && current != par) {
+            while (current && current != block) {
                 next = current->nextSibling();
-                if (next) break;
-                if ( adjustEmbedding && current->style()->unicodeBidi() != UBNormal ) {
-                    embed( QChar::DirPDF, bidi );
-                }
+                if (next)
+                    break;
+                
+                if (bidi.adjustEmbedding && current->style()->unicodeBidi() != UBNormal)
+                    embed(QChar::DirPDF, bidi);
+
                 current = current->parent();
-                if (!skipInlines && current && current != par && current->isInlineFlow()) {
+                if (!skipInlines && current && current != block && current->isInlineFlow()) {
                     next = current;
                     if (endOfInline)
                         *endOfInline = true;
@@ -290,7 +293,8 @@ QChar::Direction d = ( ub == Embed ? ( dir == RTL ? QChar::DirRLE : QChar::DirLR
             }
         }
 
-        if (!next) break;
+        if (!next)
+            break;
 
         if (next->isText() || next->isBR() || next->isFloating() || next->isReplaced() || next->isPositioned()
             || ((!skipInlines || !next->firstChild()) // Always return EMPTY inlines.
@@ -301,50 +305,51 @@ QChar::Direction d = ( ub == Embed ? ( dir == RTL ? QChar::DirRLE : QChar::DirLR
     return next;
 }
 
-static RenderObject *first( RenderObject *par, BidiState &bidi, bool skipInlines = true )
+static RenderObject* bidiFirst(RenderBlock* block, BidiState& bidi, bool skipInlines = true )
 {
-    if(!par->firstChild()) return 0;
-    RenderObject *o = par->firstChild();
-
+    if (!block->firstChild())
+        return 0;
+    
+    RenderObject* o = block->firstChild();
     if (o->isInlineFlow()) {
         if (skipInlines && o->firstChild())
-            o = Bidinext( par, o, bidi, skipInlines );
+            o = bidiNext(block, o, bidi, skipInlines);
         else
             return o; // Never skip empty inlines.
     }
 
     if (o && !o->isText() && !o->isBR() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
-        o = Bidinext( par, o, bidi, skipInlines );
+        o = bidiNext(block, o, bidi, skipInlines);
     return o;
 }
 
-inline void BidiIterator::increment (BidiState &bidi)
+inline void BidiIterator::increment(BidiState& bidi)
 {
-    if(!obj) return;
-    if(obj->isText()) {
+    if (!obj)
+        return;
+    if (obj->isText()) {
         pos++;
         if(pos >= static_cast<RenderText *>(obj)->stringLength()) {
-            obj = Bidinext( par, obj, bidi );
+            obj = bidiNext(block, obj, bidi);
             pos = 0;
         }
     } else {
-        obj = Bidinext( par, obj, bidi );
+        obj = bidiNext(block, obj, bidi);
         pos = 0;
     }
 }
 
 inline bool BidiIterator::atEnd() const
 {
-    if(!obj) return true;
-    return false;
+    return !obj;
 }
 
-const QChar &BidiIterator::current() const
+const QChar& BidiIterator::current() const
 {
     static QChar nullCharacter;
     
     if (!obj || !obj->isText())
-      return nullCharacter;
+        return nullCharacter;
     
     RenderText* text = static_cast<RenderText*>(obj);
     if (!text->text())
@@ -445,7 +450,8 @@ static void reverseRuns(int start, int end)
 
 static void chopMidpointsAt(RenderObject* obj, uint pos)
 {
-    if (!sNumMidpoints) return;
+    if (!sNumMidpoints)
+        return;
     BidiIterator* midpoints = smidpoints->data();
     for (uint i = 0; i < sNumMidpoints; i++) {
         const BidiIterator& point = midpoints[i];
@@ -456,7 +462,7 @@ static void chopMidpointsAt(RenderObject* obj, uint pos)
     }
 }
 
-static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
+static void checkMidpoints(BidiIterator& lBreak, BidiState& bidi)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
@@ -467,7 +473,7 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
         const BidiIterator& startpoint = midpoints[sNumMidpoints-1];
         BidiIterator currpoint = endpoint;
         while (!currpoint.atEnd() && currpoint != startpoint && currpoint != lBreak)
-            currpoint.increment( bidi );
+            currpoint.increment(bidi);
         if (currpoint == lBreak) {
             // We hit the line break before the start point.  Shave off the start point.
             sNumMidpoints--;
@@ -525,7 +531,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
     }
     else {
         if (!smidpoints || !haveNextMidpoint || (obj != nextMidpoint.obj)) {
-            addRun(new (obj->renderArena()) BidiRun(start, end, obj, bidi.context, dir));
+            addRun(new (obj->renderArena()) BidiRun(start, end, obj, bidi.context, bidi.dir));
             return;
         }
         
@@ -537,16 +543,16 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
             if (nextMidpoint.pos != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
                 if (int(nextMidpoint.pos+1) > start)
                     addRun(new (obj->renderArena())
-                        BidiRun(start, nextMidpoint.pos+1, obj, bidi.context, dir));
+                        BidiRun(start, nextMidpoint.pos+1, obj, bidi.context, bidi.dir));
                 return appendRunsForObject(nextMidpoint.pos+1, end, obj, bidi);
             }
         }
         else
-           addRun(new (obj->renderArena()) BidiRun(start, end, obj, bidi.context, dir));
+           addRun(new (obj->renderArena()) BidiRun(start, end, obj, bidi.context, bidi.dir));
     }
 }
 
-static void appendRun( BidiState &bidi )
+static void appendRun(BidiState &bidi)
 {
     if (emptyRun || !bidi.eor.obj)
         return;
@@ -554,142 +560,139 @@ static void appendRun( BidiState &bidi )
     kdDebug(6041) << "appendRun: dir="<<(int)dir<<endl;
 #endif
 
-    bool b = adjustEmbedding;
-    adjustEmbedding = false;
+    bool b = bidi.adjustEmbedding;
+    bidi.adjustEmbedding = false;
 
     int start = bidi.sor.pos;
     RenderObject *obj = bidi.sor.obj;
-    while( obj && obj != bidi.eor.obj ) {
+    while (obj && obj != bidi.eor.obj) {
         appendRunsForObject(start, obj->length(), obj, bidi);        
         start = 0;
-        obj = Bidinext( bidi.sor.par, obj, bidi );
+        obj = bidiNext(bidi.sor.block, obj, bidi);
     }
     if (obj) {
         // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-        int end = obj->length() ? bidi.eor.pos+1 : 0;
+        int end = obj->length() ? bidi.eor.pos + 1 : 0;
         appendRunsForObject(start, end, obj, bidi);
     }
     
-    bidi.eor.increment( bidi );
+    bidi.eor.increment(bidi);
     bidi.sor = bidi.eor;
-    dir = QChar::DirON;
+    bidi.dir = QChar::DirON;
     bidi.status.eor = QChar::DirON;
-    adjustEmbedding = b;
+    bidi.adjustEmbedding = b;
 }
 
-static void embed( QChar::Direction d, BidiState &bidi )
+static void embed(QChar::Direction d, BidiState& bidi)
 {
-#if BIDI_DEBUG > 1
-    qDebug("*** embed dir=%d emptyrun=%d", d, emptyRun );
-#endif
-    bool b = adjustEmbedding ;
-    adjustEmbedding = false;
+    bool b = bidi.adjustEmbedding;
+    bidi.adjustEmbedding = false;
     if (d == QChar::DirPDF) {
 	BidiContext *c = bidi.context->parent;
 	if (c) {
-	    if ( !emptyRun && bidi.eor != bidi.last ) {
-            assert(bidi.status.eor != QChar::DirON);
-            // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-            assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
-            if (dir == QChar::DirON)
-                dir = bidi.context->dir;
-            if (bidi.context->dir == QChar::DirL) {
-                // bidi.sor ... bidi.eor ... bidi.last L
-                if (bidi.status.eor == QChar::DirEN) {
-                    if (bidi.status.lastStrong != QChar::DirL) {
-                        dir = QChar::DirEN;
+	    if (!emptyRun && bidi.eor != bidi.last) {
+                assert(bidi.status.eor != QChar::DirON);
+                // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
+                assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
+                if (bidi.dir == QChar::DirON)
+                    bidi.dir = bidi.context->dir;
+                if (bidi.context->dir == QChar::DirL) {
+                    // bidi.sor ... bidi.eor ... bidi.last L
+                    if (bidi.status.eor == QChar::DirEN) {
+                        if (bidi.status.lastStrong != QChar::DirL) {
+                            bidi.dir = QChar::DirEN;
+                            appendRun(bidi);
+                        }
+                    } else if (bidi.status.eor == QChar::DirAN) {
+                        bidi.dir = QChar::DirAN;
                         appendRun(bidi);
-                    }
-                } else if (bidi.status.eor == QChar::DirAN) {
-                    dir = QChar::DirAN;
+                    } else if (bidi.status.eor != QChar::DirL)
+                        appendRun(bidi);
+                } else if (bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL)
                     appendRun(bidi);
-                } else if (bidi.status.eor != QChar::DirL)
-                    appendRun(bidi);
-            } else if (bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL)
-                appendRun(bidi);
-            bidi.eor = bidi.last;
-        }
+                bidi.eor = bidi.last;
+            }
 	    appendRun(bidi);
 	    emptyRun = true;
-        // sor for the new run is determined by the higher level (rule X10)
+            // sor for the new run is determined by the higher level (rule X10)
 	    bidi.status.last = bidi.context->dir;
 	    bidi.status.lastStrong = bidi.context->dir;
 	    bidi.context->deref();
 	    bidi.context = c;
-        bidi.status.eor = bidi.context->dir;
-        bidi.eor.obj = 0;
-	}
+            bidi.status.eor = bidi.context->dir;
+            bidi.eor.obj = 0;
+        }
     } else {
 	QChar::Direction runDir;
-	if( d == QChar::DirRLE || d == QChar::DirRLO )
+	if (d == QChar::DirRLE || d == QChar::DirRLO)
 	    runDir = QChar::DirR;
 	else
 	    runDir = QChar::DirL;
 	bool override = d == QChar::DirLRO || d == QChar::DirRLO;
 
 	unsigned char level = bidi.context->level;
-	if ( runDir == QChar::DirR ) {
-	    if(level%2) // we have an odd level
+	if (runDir == QChar::DirR) {
+	    if (level%2) // we have an odd level
 		level += 2;
 	    else
 		level++;
 	} else {
-	    if(level%2) // we have an odd level
+	    if (level%2) // we have an odd level
 		level++;
 	    else
 		level += 2;
 	}
 
-	if(level < 61) {
-	    if ( !emptyRun && bidi.eor != bidi.last ) {
-            assert(bidi.status.eor != QChar::DirON);
-            // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-            assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
-            if (dir == QChar::DirON)
-                dir = runDir;
-            if (runDir == QChar::DirL) {
-                // bidi.sor ... bidi.eor ... bidi.last L
-                if (bidi.status.eor == QChar::DirEN) {
-                    if (bidi.status.lastStrong != QChar::DirL) {
-                        dir = QChar::DirEN;
+	if (level < 61) {
+	    if (!emptyRun && bidi.eor != bidi.last) {
+                assert(bidi.status.eor != QChar::DirON);
+                // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
+                assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
+                if (bidi.dir == QChar::DirON)
+                    bidi.dir = runDir;
+                if (runDir == QChar::DirL) {
+                    // bidi.sor ... bidi.eor ... bidi.last L
+                    if (bidi.status.eor == QChar::DirEN) {
+                        if (bidi.status.lastStrong != QChar::DirL) {
+                            bidi.dir = QChar::DirEN;
+                            appendRun(bidi);
+                            if (bidi.context->dir != QChar::DirL)
+                                bidi.dir = QChar::DirR;
+                        }
+                    } else if (bidi.status.eor == QChar::DirAN) {
+                        bidi.dir = QChar::DirAN;
                         appendRun(bidi);
-                        if (bidi.context->dir != QChar::DirL)
-                            dir = QChar::DirR;
+                        if (bidi.context->dir != QChar::DirL) {
+                            bidi.eor = bidi.last;
+                            bidi.dir = QChar::DirR;
+                            appendRun(bidi);
+                        }
+                    } else if (bidi.status.eor != QChar::DirL) {
+                        if (bidi.context->dir == QChar::DirL || bidi.status.lastStrong == QChar::DirL)
+                            appendRun(bidi);
+                        else
+                            bidi.dir = QChar::DirR; 
                     }
-                } else if (bidi.status.eor == QChar::DirAN) {
-                    dir = QChar::DirAN;
-                    appendRun(bidi);
-                    if (bidi.context->dir != QChar::DirL) {
-                        bidi.eor = bidi.last;
-                        dir = QChar::DirR;
-                        appendRun(bidi);
-                    }
-                } else if (bidi.status.eor != QChar::DirL) {
-                    if(bidi.context->dir == QChar::DirL || bidi.status.lastStrong == QChar::DirL)
+                } else if (bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL) {
+                    // bidi.sor ... bidi.eor ... bidi.last R; bidi.eor=L/EN/AN; EN,AN behave like R (rule N1)
+                    if (bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR || bidi.status.lastStrong == QChar::DirAL)
                         appendRun(bidi);
                     else
-                        dir = QChar::DirR; 
+                        bidi.dir = QChar::DirL; 
                 }
-            } else if (bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL) {
-                // bidi.sor ... bidi.eor ... bidi.last R; bidi.eor=L/EN/AN; EN,AN behave like R (rule N1)
-                if (bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR || bidi.status.lastStrong == QChar::DirAL)
-                    appendRun(bidi);
-                else
-                    dir = QChar::DirL; 
+                bidi.eor = bidi.last;
             }
-            bidi.eor = bidi.last;
+            appendRun(bidi);
+            emptyRun = true;
+            bidi.context = new BidiContext(level, runDir, bidi.context, override);
+            bidi.context->ref();
+            bidi.status.last = runDir;
+            bidi.status.lastStrong = runDir;
+            bidi.status.eor = runDir;
+            bidi.eor.obj = 0;
         }
-        appendRun(bidi);
-        emptyRun = true;
-	    bidi.context = new BidiContext(level, runDir, bidi.context, override);
-	    bidi.context->ref();
-	    bidi.status.last = runDir;
-	    bidi.status.lastStrong = runDir;
-	    bidi.status.eor = runDir;
-        bidi.eor.obj = 0;
-	}
     }
-    adjustEmbedding = b;
+    bidi.adjustEmbedding = b;
 }
 
 InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
@@ -728,7 +731,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     return box;
 }
 
-RootInlineBox* RenderBlock::constructLine(const BidiIterator &start, const BidiIterator &end)
+RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiIterator& end)
 {
     if (!sFirstBidiRun)
         return 0; // We had no runs. Don't make a root inline box at all. The line is empty.
@@ -741,7 +744,7 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
             // If we have no parent box yet, or if the run is not simply a sibling,
             // then we need to construct inline boxes as necessary to properly enclose the
             // run's inline box.
-            if (!parentBox || (parentBox->object() != r->obj->parent()))
+            if (!parentBox || parentBox->object() != r->obj->parent())
                 // Create new inline boxes all the way back to the appropriate insertion point.
                 parentBox = createLineBoxes(r->obj->parent());
 
@@ -753,13 +756,12 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
                 text->setStart(r->start);
                 text->setLen(r->stop-r->start);
             }
-              
         }
     }
 
     // We should have a root inline box.  It should be unconstructed and
     // be the last continuation of our line list.
-    KHTMLAssert(lastLineBox() && !lastLineBox()->isConstructed());
+    assert(lastLineBox() && !lastLineBox()->isConstructed());
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding.  This knowledge will ultimately be used when
@@ -785,7 +787,7 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
         return 0;
 
     if (!m_tabWidth) {
-        QChar   spaceChar(' ');
+        QChar spaceChar(' ');
         const Font& font = style()->htmlFont();
         int spaceWidth = font.width(&spaceChar, 1, 0, 0);
         m_tabWidth = spaceWidth * 8;
@@ -795,7 +797,7 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
     return m_tabWidth;
 }
 
-void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi)
+void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState& bidi)
 {
     // First determine our total width.
     int availableWidth = lineWidth(m_height);
@@ -938,28 +940,20 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
 }
 
 // collects one line of the paragraph and transforms it to visual order
-void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator &end, BidiState &bidi)
+void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState& bidi)
 {
-    if ( start == end ) {
-        if ( start.current() == '\n' ) {
-            m_height += lineHeight( m_firstLine, true );
-        }
+    if (start == end) {
+        if (start.current() == '\n')
+            m_height += lineHeight(m_firstLine, true);
         return;
     }
-
-#if BIDI_DEBUG > 1
-    kdDebug(6041) << "reordering Line from " << start.obj << "/" << start.pos << " to " << end.obj << "/" << end.pos << endl;
-#endif
 
     sFirstBidiRun = 0;
     sLastBidiRun = 0;
     sBidiRunCount = 0;
-    
-    //    context->ref();
-
-    dir = QChar::DirON;
 
     emptyRun = true;
+    bidi.dir = QChar::DirON;
     bidi.status.eor = bidi.context->dir;
     bidi.eor.obj = 0;
 
@@ -969,8 +963,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     bidi.last = bidi.current;
     bool atEnd = false;
 
-    while( 1 ) {
-
+    while (true) {
         QChar::Direction dirCurrent;
         if (atEnd) {
             //kdDebug(6041) << "atEnd" << endl;
@@ -987,34 +980,28 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 dirCurrent = bidi.status.last;
         }
 
-#ifndef QT_NO_UNICODETABLES
-
-#if BIDI_DEBUG > 1
-        kdDebug(6041) << "directions: dir=" << (int)dir << " current=" << (int)dirCurrent << " last=" << status.last << " eor=" << status.eor << " lastStrong=" << status.lastStrong << " embedding=" << (int)context->dir << " level =" << (int)context->level << endl;
-#endif
         assert(bidi.status.eor != QChar::DirON);
-        switch(dirCurrent) {
+        switch (dirCurrent) {
 
-            // embedding and overrides (X1-X9 in the Bidi specs)
+        // embedding and overrides (X1-X9 in the Bidi specs)
         case QChar::DirRLE:
         case QChar::DirLRE:
         case QChar::DirRLO:
         case QChar::DirLRO:
         case QChar::DirPDF:
-            embed( dirCurrent, bidi );
+            embed(dirCurrent, bidi);
             break;
 
             // strong types
         case QChar::DirL:
-            switch(bidi.status.last)
-                {
+            switch(bidi.status.last) {
                 case QChar::DirR:
                 case QChar::DirAL:
                 case QChar::DirEN:
                 case QChar::DirAN:
                     if (bidi.status.last != QChar::DirEN || bidi.status.lastStrong != QChar::DirL)
-                        appendRun( bidi );
-                    dir = QChar::DirL;
+                        appendRun(bidi);
+                    bidi.dir = QChar::DirL;
                     // fall through
                 case QChar::DirL:
                     bidi.eor = bidi.current;
@@ -1031,33 +1018,33 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                     if (bidi.status.eor == QChar::DirEN) {
                         if (bidi.status.lastStrong != QChar::DirL) {
                             // the numbers need to be on a higher embedding level, so let's close that run
-                            dir = QChar::DirEN;
+                            bidi.dir = QChar::DirEN;
                             appendRun(bidi);
                             if (bidi.context->dir != QChar::DirL) {
                                 // the neutrals take the embedding direction, which is R
                                 bidi.eor = bidi.last;
-                                dir = QChar::DirR;
+                                bidi.dir = QChar::DirR;
                                 appendRun(bidi);
                             }
                         }
                     } else if (bidi.status.eor == QChar::DirAN) {
                         // Arabic numbers are always on a higher embedding level, so let's close that run
-                        dir = QChar::DirAN;
+                        bidi.dir = QChar::DirAN;
                         appendRun(bidi);
                         if (bidi.context->dir != QChar::DirL) {
                             // the neutrals take the embedding direction, which is R
                             bidi.eor = bidi.last;
-                            dir = QChar::DirR;
+                            bidi.dir = QChar::DirR;
                             appendRun(bidi);
                         }
-                    } else if(bidi.status.eor != QChar::DirL) {
-                        //last stuff takes embedding dir
-                        if(bidi.context->dir == QChar::DirL || bidi.status.lastStrong == QChar::DirL)
-                            appendRun( bidi );
+                    } else if (bidi.status.eor != QChar::DirL) {
+                        // last stuff takes embedding dir
+                        if (bidi.context->dir == QChar::DirL || bidi.status.lastStrong == QChar::DirL)
+                            appendRun(bidi);
                         else {
-                            dir = QChar::DirR; 
+                            bidi.dir = QChar::DirR; 
                             bidi.eor = bidi.last; 
-                            appendRun( bidi ); 
+                            appendRun(bidi); 
                         }
                     }
                     bidi.eor = bidi.current;
@@ -1066,12 +1053,11 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                     break;
                 }
             bidi.status.lastStrong = QChar::DirL;
-            dir = QChar::DirL;
+            bidi.dir = QChar::DirL;
             break;
         case QChar::DirAL:
         case QChar::DirR:
-            switch(bidi.status.last)
-                {
+            switch(bidi.status.last) {
                 case QChar::DirL:
                 case QChar::DirEN:
                 case QChar::DirAN:
@@ -1092,12 +1078,12 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                         //last stuff takes embedding dir
                         if(bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR 
                             || bidi.status.lastStrong == QChar::DirAL) { 
-                            appendRun( bidi );
+                            appendRun(bidi);
                             bidi.eor = bidi.current;
                         } else {
-                            dir = QChar::DirL; 
+                            bidi.dir = QChar::DirL; 
                             bidi.eor = bidi.last;
-                            appendRun( bidi );
+                            appendRun(bidi);
                         }
                     } else
                         bidi.eor = bidi.current;
@@ -1106,20 +1092,19 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 }
             bidi.status.eor = QChar::DirR;
             bidi.status.lastStrong = dirCurrent;
-            dir = QChar::DirR;
+            bidi.dir = QChar::DirR;
             break;
 
             // weak types:
 
         case QChar::DirEN:
-            if(!(bidi.status.lastStrong == QChar::DirAL)) {
+            if (!(bidi.status.lastStrong == QChar::DirAL)) {
                 // if last strong was AL change EN to AN
-                switch(bidi.status.last)
-                    {
+                switch (bidi.status.last) {
                     case QChar::DirET:
-			if ( bidi.status.lastStrong == QChar::DirR || bidi.status.lastStrong == QChar::DirAL ) {
-			    appendRun( bidi );
-                            dir = QChar::DirEN;
+			if (bidi.status.lastStrong == QChar::DirR || bidi.status.lastStrong == QChar::DirAL) {
+			    appendRun(bidi);
+                            bidi.dir = QChar::DirEN;
                             bidi.status.eor = QChar::DirEN;
 			}
 			// fall through
@@ -1132,16 +1117,15 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                     case QChar::DirAL:
                     case QChar::DirAN:
                         bidi.eor = bidi.last;
-                        appendRun( bidi );
+                        appendRun(bidi);
                         bidi.eor = bidi.current;
                         bidi.status.eor = QChar::DirEN;
-                        dir = QChar::DirEN;
+                        bidi.dir = QChar::DirEN;
                         break;
                     case QChar::DirES:
                     case QChar::DirCS:
-                        if(bidi.status.eor == QChar::DirEN) {
+                        if (bidi.status.eor == QChar::DirEN)
                             bidi.eor = bidi.current; break;
-                        }
                     case QChar::DirBN:
                     case QChar::DirB:
                     case QChar::DirS:
@@ -1150,37 +1134,35 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                         if(bidi.status.eor == QChar::DirR) {
                             // neutrals go to R
                             bidi.eor = bidi.last;
-                            appendRun( bidi );
-                            dir = QChar::DirEN;
+                            appendRun(bidi);
+                            bidi.dir = QChar::DirEN;
                             bidi.status.eor = QChar::DirEN;
-                        }
-                        else if( bidi.status.eor == QChar::DirL ||
+                        } else if (bidi.status.eor == QChar::DirL ||
                                  (bidi.status.eor == QChar::DirEN && bidi.status.lastStrong == QChar::DirL)) {
-                            bidi.eor = bidi.current; bidi.status.eor = dirCurrent;
+                            bidi.eor = bidi.current; 
+                            bidi.status.eor = dirCurrent;
                         } else {
                             // numbers on both sides, neutrals get right to left direction
-                            if(dir != QChar::DirL) {
-                                appendRun( bidi );
+                            if (bidi.dir != QChar::DirL) {
+                                appendRun(bidi);
                                 bidi.eor = bidi.last;
-                                dir = QChar::DirR;
-                                appendRun( bidi );
-                                dir = QChar::DirEN;
+                                bidi.dir = QChar::DirR;
+                                appendRun(bidi);
+                                bidi.dir = QChar::DirEN;
                                 bidi.status.eor = QChar::DirEN;
-                            } else {
+                            } else
                                 bidi.eor = bidi.current; bidi.status.eor = dirCurrent;
-                            }
                         }
                     default:
                         break;
                     }
-                if (dir==QChar::DirON)
-                    dir = QChar::DirL;
+                if (bidi.dir == QChar::DirON)
+                    bidi.dir = QChar::DirL;
                 break;
             }
         case QChar::DirAN:
             dirCurrent = QChar::DirAN;
-            switch(bidi.status.last)
-                {
+            switch(bidi.status.last) {
                 case QChar::DirL:
                 case QChar::DirAN:
                     bidi.eor = bidi.current; bidi.status.eor = QChar::DirAN; break;
@@ -1188,15 +1170,15 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 case QChar::DirAL:
                 case QChar::DirEN:
                     bidi.eor = bidi.last;
-                    appendRun( bidi );
+                    appendRun(bidi);
                     bidi.eor = bidi.current;
                     bidi.status.eor = QChar::DirAN;
-                    dir = QChar::DirAN;
+                    bidi.dir = QChar::DirAN;
                     break;
                 case QChar::DirCS:
-                    if(bidi.status.eor == QChar::DirAN) {
-                        bidi.eor = bidi.current; break;
-                    }
+                    if (bidi.status.eor == QChar::DirAN)
+                        bidi.eor = bidi.current; 
+                    break;
                 case QChar::DirES:
                 case QChar::DirET:
                 case QChar::DirBN:
@@ -1204,22 +1186,22 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 case QChar::DirS:
                 case QChar::DirWS:
                 case QChar::DirON:
-                    if(bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL) {
+                    if (bidi.status.eor != QChar::DirR && bidi.status.eor != QChar::DirAL) {
                         // run of L before neutrals, neutrals take embedding dir (N2)
-                        if(bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR 
+                        if (bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR 
                             || bidi.status.lastStrong == QChar::DirAL) { 
                             // the embedding direction is R
                             // close the L run
-                            appendRun( bidi );
+                            appendRun(bidi);
                             // neutrals become an R run
                             bidi.eor = bidi.last;
-                            dir = QChar::DirR;
-                            appendRun( bidi );
+                            bidi.dir = QChar::DirR;
+                            appendRun(bidi);
                             bidi.eor = bidi.current;
                         } else {
                             // the embedding direction is L
                             // append neutrals to the L run and close it
-                            dir = QChar::DirL; 
+                            bidi.dir = QChar::DirL; 
                             bidi.eor = bidi.last;
                             appendRun(bidi);
                         }
@@ -1228,32 +1210,33 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                         appendRun(bidi);
                         bidi.eor = bidi.current;
                     }
-                    dir = QChar::DirAN;
+                    bidi.dir = QChar::DirAN;
                     bidi.status.eor = QChar::DirAN;
                 default:
                     break;
-                }
-            if (dir == QChar::DirON)
-                dir = QChar::DirAN;
+            }
+            if (bidi.dir == QChar::DirON)
+                bidi.dir = QChar::DirAN;
             break;
         case QChar::DirES:
         case QChar::DirCS:
             break;
         case QChar::DirET:
-            if(bidi.status.last == QChar::DirEN) {
+            if (bidi.status.last == QChar::DirEN) {
                 dirCurrent = QChar::DirEN;
-                bidi.eor = bidi.current; bidi.status.eor = dirCurrent;
+                bidi.eor = bidi.current;
+                bidi.status.eor = dirCurrent;
                 break;
             } else if ((bidi.status.eor == QChar::DirR || bidi.status.eor == QChar::DirAL || bidi.status.eor == QChar::DirAN || (bidi.status.eor == QChar::DirEN && bidi.status.lastStrong == QChar::DirR)) && bidi.last!=bidi.current) {
                 // most of the time this is unnecessary, but we need to secure the R run in case
                 // the ET ends up being neutral and followed by L
                 if (bidi.status.last!=QChar::DirET) {
-                    dir = bidi.status.eor;
+                    bidi.dir = bidi.status.eor;
                     appendRun(bidi);
                     bidi.eor = bidi.last;
                 }
                 bidi.status.eor = QChar::DirR;
-                dir = QChar::DirR;
+                bidi.dir = QChar::DirR;
                 break;
             }
             break;
@@ -1278,13 +1261,11 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             break;
         }
 
-        //cout << "     after: dir=" << //        dir << " current=" << dirCurrent << " last=" << status.last << " eor=" << status.eor << " lastStrong=" << status.lastStrong << " embedding=" << context->dir << endl;
-
-        if(bidi.current.atEnd()) break;
+        if (bidi.current.atEnd())
+            break;
 
         // set status.last as needed.
-        switch(dirCurrent)
-            {
+        switch (dirCurrent) {
             case QChar::DirET:
                 if (bidi.status.last != QChar::DirEN)
                     bidi.status.last = QChar::DirET;
@@ -1294,8 +1275,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             case QChar::DirS:
             case QChar::DirWS:
             case QChar::DirON:
-                switch(bidi.status.last)
-                    {
+                switch(bidi.status.last) {
                     case QChar::DirL:
                     case QChar::DirR:
                     case QChar::DirAL:
@@ -1320,10 +1300,10 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 // fall through
             default:
                 bidi.status.last = dirCurrent;
-            }
-#endif
+        }
 
-	if ( atEnd ) break;
+	if (atEnd)
+            break;
         bidi.last = bidi.current;
 
 	if (emptyRun && !(dirCurrent == QChar::DirRLE || dirCurrent == QChar::DirLRE || dirCurrent == QChar::DirRLO || dirCurrent == QChar::DirLRO || dirCurrent == QChar::DirPDF)) {
@@ -1333,9 +1313,9 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
 
 	// this causes the operator ++ to open and close embedding levels as needed
 	// for the CSS unicode-bidi property
-	adjustEmbedding = true;
-        bidi.current.increment( bidi );
-	adjustEmbedding = false;
+	bidi.adjustEmbedding = true;
+        bidi.current.increment(bidi);
+	bidi.adjustEmbedding = false;
         if (emptyRun && (dirCurrent == QChar::DirRLE || dirCurrent == QChar::DirLRE || dirCurrent == QChar::DirRLO || dirCurrent == QChar::DirLRO || dirCurrent == QChar::DirPDF)) {
             // exclude the embedding char itself from the new run so that ATSUI will never see it
             bidi.eor.obj = 0;
@@ -1343,20 +1323,16 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             bidi.sor = bidi.current;
         }
 
-	if ( bidi.current == end ) {
-	    if ( emptyRun )
+	if (bidi.current == end) {
+	    if (emptyRun)
 		break;
 	    atEnd = true;
 	}
     }
 
-#if BIDI_DEBUG > 0
-    kdDebug(6041) << "reached end of line current=" << current.obj << "/" << current.pos
-		  << ", eor=" << eor.obj << "/" << eor.pos << endl;
-#endif
-    if ( !emptyRun && bidi.sor != bidi.current ) {
-	    bidi.eor = bidi.last;
-	    appendRun( bidi );
+    if (!emptyRun && bidi.sor != bidi.current) {
+        bidi.eor = bidi.last;
+        appendRun(bidi);
     }
 
     // reorder line according to run structure...
@@ -1364,11 +1340,11 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     // first find highest and lowest levels
     uchar levelLow = 128;
     uchar levelHigh = 0;
-    BidiRun *r = sFirstBidiRun;
-    while ( r ) {
-        if ( r->level > levelHigh )
+    BidiRun* r = sFirstBidiRun;
+    while (r) {
+        if (r->level > levelHigh)
             levelHigh = r->level;
-        if ( r->level < levelLow )
+        if (r->level < levelLow)
             levelLow = r->level;
         r = r->nextRun;
     }
@@ -1378,31 +1354,23 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     // reverse any contiguous sequence of characters that are at that level or higher.
 
     // reversing is only done up to the lowest odd level
-    if( !(levelLow%2) ) levelLow++;
-
-#if BIDI_DEBUG > 0
-    kdDebug(6041) << "lineLow = " << (uint)levelLow << ", lineHigh = " << (uint)levelHigh << endl;
-    kdDebug(6041) << "logical order is:" << endl;
-    QPtrListIterator<BidiRun> it2(runs);
-    BidiRun *r2;
-    for ( ; (r2 = it2.current()); ++it2 )
-        kdDebug(6041) << "    " << r2 << "  start=" << r2->start << "  stop=" << r2->stop << "  level=" << (uint)r2->level << endl;
-#endif
+    if (!(levelLow%2))
+        levelLow++;
 
     int count = sBidiRunCount - 1;
 
     // do not reverse for visually ordered web sites
-    if(!style()->visuallyOrdered()) {
-        while(levelHigh >= levelLow) {
+    if (!style()->visuallyOrdered()) {
+        while (levelHigh >= levelLow) {
             int i = 0;
             BidiRun* currRun = sFirstBidiRun;
-            while ( i < count ) {
-                while(i < count && currRun && currRun->level < levelHigh) {
+            while (i < count) {
+                while (i < count && currRun && currRun->level < levelHigh) {
                     i++;
                     currRun = currRun->nextRun;
                 }
                 int start = i;
-                while(i <= count && currRun && currRun->level >= levelHigh) {
+                while (i <= count && currRun && currRun->level >= levelHigh) {
                     i++;
                     currRun = currRun->nextRun;
                 }
@@ -1412,29 +1380,23 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             levelHigh--;
         }
     }
-
-#if BIDI_DEBUG > 0
-    kdDebug(6041) << "visual order is:" << endl;
-    for (BidiRun* curr = sFirstRun; curr; curr = curr->nextRun)
-        kdDebug(6041) << "    " << curr << endl;
-#endif
 }
 
-static void buildCompactRuns(RenderObject* compactObj, BidiState &bidi)
+static void buildCompactRuns(RenderObject* compactObj, BidiState& bidi)
 {
     sBuildingCompactRuns = true;
     if (!compactObj->isRenderBlock()) {
         // Just append a run for our object.
         isLineEmpty = false;
-        addRun(new (compactObj->renderArena()) BidiRun(0, compactObj->length(), compactObj, bidi.context, dir));
+        addRun(new (compactObj->renderArena()) BidiRun(0, compactObj->length(), compactObj, bidi.context, bidi.dir));
     }
     else {
         // Format the compact like it is its own single line.  We build up all the runs for
         // the little compact and then reorder them for bidi.
         RenderBlock* compactBlock = static_cast<RenderBlock*>(compactObj);
-        adjustEmbedding = true;
-        BidiIterator start(compactBlock, first(compactBlock, bidi), 0);
-        adjustEmbedding = false;
+        bidi.adjustEmbedding = true;
+        BidiIterator start(compactBlock, bidiFirst(compactBlock, bidi), 0);
+        bidi.adjustEmbedding = false;
         BidiIterator end = start;
     
         betweenMidpoints = false;
@@ -1445,8 +1407,7 @@ static void buildCompactRuns(RenderObject* compactObj, BidiState &bidi)
         if (!isLineEmpty)
             compactBlock->bidiReorderLine(start, end, bidi);
     }
-    
-    
+
     sCompactFirstBidiRun = sFirstBidiRun;
     sCompactLastBidiRun = sLastBidiRun;
     sCompactBidiRunCount = sBidiRunCount;
@@ -1467,14 +1428,6 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     m_overflowHeight = 0;
     
     invalidateVerticalPositions();
-#ifdef DEBUG_LAYOUT
-    QTime qt;
-    qt.start();
-    kdDebug( 6040 ) << renderName() << " layoutInlineChildren( " << this <<" )" << endl;
-#endif
-#if BIDI_DEBUG > 1 || defined( DEBUG_LINEBREAKS )
-    kdDebug(6041) << " ------- bidi start " << this << " -------" << endl;
-#endif
     
     m_height = borderTop() + paddingTop();
     int toAdd = borderBottom() + paddingBottom();
@@ -1505,7 +1458,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     if (firstChild()) {
         // layout replaced elements
         bool endOfInline = false;
-        RenderObject *o = first(this, bidi, false);
+        RenderObject *o = bidiFirst(this, bidi, false);
         bool hasFloat = false;
         while (o) {
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
@@ -1526,7 +1479,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     o->dirtyLineBoxes(fullLayout);
                 o->setNeedsLayout(false);
             }
-            o = Bidinext( this, o, bidi, false, &endOfInline);
+            o = bidiNext(this, o, bidi, false, &endOfInline);
         }
 
         if (hasFloat)
@@ -1547,7 +1500,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         }
 
         BidiContext *startEmbed;
-        if( style()->direction() == LTR ) {
+        if (style()->direction() == LTR) {
             startEmbed = new BidiContext( 0, QChar::DirL, NULL, style()->unicodeBidi() == Override );
             bidi.status.eor = QChar::DirL;
         } else {
@@ -1640,9 +1593,9 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 }
                 
                 if (end == start || (!previousLineBrokeCleanly && end.obj && end.obj->style()->preserveNewline() && end.current() == '\n')) {
-                    adjustEmbedding = true;
+                    bidi.adjustEmbedding = true;
                     end.increment(bidi);
-                    adjustEmbedding = false;
+                    bidi.adjustEmbedding = false;
                 }
 
                 if (lineBox)
@@ -1796,12 +1749,11 @@ RootInlineBox* RenderBlock::determineStartPosition(bool fullLayout, BidiIterator
         pos = last->lineBreakPos();
     }
     else
-        startObj = first(this, bidi, 0);
+        startObj = bidiFirst(this, bidi, 0);
         
-    adjustEmbedding = true;
+    bidi.adjustEmbedding = true;
     start = BidiIterator(this, startObj, pos);
-    
-    adjustEmbedding = false;
+    bidi.adjustEmbedding = false;
     
     return curr;
 }
@@ -1940,9 +1892,9 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
             }
         }
         
-        adjustEmbedding = true;
+        bidi.adjustEmbedding = true;
         it.increment(bidi);
-        adjustEmbedding = false;
+        bidi.adjustEmbedding = false;
     }
     return w;
 }
@@ -1953,10 +1905,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     int width = skipWhitespace(start, bidi);
     int w = 0;
     int tmpW = 0;
-#ifdef DEBUG_LINEBREAKS
-    kdDebug(6041) << "findNextLineBreak: line at " << m_height << " line width " << width << endl;
-    kdDebug(6041) << "sol: " << start.obj << " " << start.pos << endl;
-#endif
 
     if (start.atEnd())
         return start;
@@ -1983,11 +1931,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     bool prevLineBrokeCleanly = previousLineBrokeCleanly;
     previousLineBrokeCleanly = false;
     
-    while( o ) {
-#ifdef DEBUG_LINEBREAKS
-        kdDebug(6041) << "new object "<< o <<" width = " << w <<" tmpw = " << tmpW << endl;
-#endif
-        if(o->isBR()) {
+    while (o) {
+        if (o->isBR()) {
             if (w + tmpW <= width) {
                 lBreak.obj = o;
                 lBreak.pos = 0;
@@ -2012,9 +1957,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             }
             goto end;
         }
-        if( o->isFloatingOrPositioned() ) {
+        if (o->isFloatingOrPositioned()) {
             // add to special objects...
-            if(o->isFloating()) {
+            if (o->isFloating()) {
                 insertFloatingObject(o);
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
@@ -2023,8 +1968,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     positionNewFloats();
                     width = lineWidth(m_height);
                 }
-            }
-            else if (o->isPositioned()) {
+            } else if (o->isPositioned()) {
                 // If our original display wasn't an inline type, then we can
                 // go ahead and determine our static x position now.
                 bool isInlineType = o->style()->isOriginalDisplayInlineType();
@@ -2064,10 +2008,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             }
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
-            KHTMLAssert(!o->firstChild());
+            assert(!o->firstChild());
             tmpW += o->marginLeft()+o->borderLeft()+o->paddingLeft()+
                     o->marginRight()+o->borderRight()+o->paddingRight();
-        } else if ( o->isReplaced() ) {
+        } else if (o->isReplaced()) {
             EWhiteSpace currWS = o->style()->whiteSpace();
             EWhiteSpace lastWS = last->style()->whiteSpace();
             
@@ -2109,7 +2053,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 //
                 // Optimize for a common case. If we can't find whitespace after the list
                 // item, then this is all moot. -dwh
-                RenderObject* next = Bidinext( start.par, o, bidi );
+                RenderObject* next = bidiNext(start.block, o, bidi);
                 if (style()->collapseWhiteSpace() && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
                     RenderText *nextText = static_cast<RenderText*>(next);
                     QChar nextChar = nextText->text()[0];
@@ -2141,7 +2085,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             int wrapW = tmpW;
             int nextBreakable = -1;
 
-            while(len) {
+            while (len) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
                 const QChar c = str[pos];
@@ -2221,9 +2165,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     applyWordSpacing = (wordSpacing && currentCharacterIsSpace && !previousCharacterIsSpace &&
                         !t->containsOnlyWhitespace(pos+1, strlen-(pos+1)));
 
-#ifdef DEBUG_LINEBREAKS
-                    kdDebug(6041) << "found space at " << pos << " in string '" << QString( str, strlen ).latin1() << "' adding " << tmpW << " new width = " << w << endl;
-#endif
                     if (o->style()->autoWrap() && w + tmpW > width && w == 0) {
                         int fb = nearestFloatBottom(m_height);
                         int newLineWidth = lineWidth(fb);
@@ -2236,12 +2177,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             newLineWidth = lineWidth(fb);
                         }
                         
-                        if(!w && m_height < fb && width < newLineWidth) {
+                        if (!w && m_height < fb && width < newLineWidth) {
                             m_height = fb;
                             width = newLineWidth;
-#ifdef DEBUG_LINEBREAKS
-                            kdDebug() << "RenderBlock::findNextLineBreak new position at " << m_height << " newWidth " << width << endl;
-#endif
                         }
                     }
         
@@ -2272,10 +2210,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if( *(str+pos) == '\n' && o->style()->preserveNewline()) {
                         lBreak.obj = o;
                         lBreak.pos = pos;
-
-#ifdef DEBUG_LINEBREAKS
-                        kdDebug(6041) << "forced break sol: " << start.obj << " " << start.pos << "   end: " << lBreak.obj << " " << lBreak.pos << "   width=" << w << endl;
-#endif
                         return lBreak;
                     }
 
@@ -2346,7 +2280,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         } else
             KHTMLAssert( false );
 
-        RenderObject* next = Bidinext(start.par, o, bidi);
+        RenderObject* next = bidiNext(start.block, o, bidi);
         bool autoWrap = o->style()->autoWrap();
         bool checkForBreak = autoWrap;
         if (w && w + tmpW > width+1 && lBreak.obj && o->style()->whiteSpace() == NOWRAP)
@@ -2380,8 +2314,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         }
 
         if (checkForBreak && (w + tmpW > width+1)) {
-            //kdDebug() << " too wide w=" << w << " tmpW = " << tmpW << " width = " << width << endl;
-            //kdDebug() << "start=" << start.obj << " current=" << o << endl;
             // if we have floats, try to get below them.
             if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace())
                 trailingSpaceObject = 0;
@@ -2396,12 +2328,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 fb = nearestFloatBottom(fb);
                 newLineWidth = lineWidth(fb);
             }            
-            if( !w && m_height < fb && width < newLineWidth ) {
+            if (!w && m_height < fb && width < newLineWidth) {
                 m_height = fb;
                 width = newLineWidth;
-#ifdef DEBUG_LINEBREAKS
-                kdDebug() << "RenderBlock::findNextLineBreak new position at " << m_height << " newWidth " << width << endl;
-#endif
             }
 
             // |width| may have been adjusted because we got shoved down past a float (thus
@@ -2433,29 +2362,26 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         pos = 0;
     }
 
-#ifdef DEBUG_LINEBREAKS
-    kdDebug( 6041 ) << "end of par, width = " << width << " linewidth = " << w + tmpW << endl;
-#endif
-    if( w + tmpW <= width || (last && last->style()->whiteSpace() == NOWRAP)) {
+    if (w + tmpW <= width || (last && last->style()->whiteSpace() == NOWRAP)) {
         lBreak.obj = 0;
         lBreak.pos = 0;
     }
 
  end:
 
-    if( lBreak == start && !lBreak.obj->isBR() ) {
+    if (lBreak == start && !lBreak.obj->isBR()) {
         // we just add as much as possible
         if (style()->whiteSpace() == PRE) {
             // FIXME: Don't really understand this case.
-            if(pos != 0) {
+            if (pos != 0) {
                 lBreak.obj = o;
                 lBreak.pos = pos - 1;
             } else {
                 lBreak.obj = last;
                 lBreak.pos = last->isText() ? last->length() : 0;
             }
-        } else if( lBreak.obj ) {
-            if( last != o && !last->isListMarker() ) {
+        } else if (lBreak.obj) {
+            if (last != o && !last->isListMarker()) {
                 // better to break between object boundaries than in the middle of a word (except for list markers)
                 lBreak.obj = o;
                 lBreak.pos = 0;
@@ -2470,12 +2396,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     }
 
     // make sure we consume at least one char/object.
-    if( lBreak == start )
+    if (lBreak == start)
         lBreak.increment(bidi);
-    
-#ifdef DEBUG_LINEBREAKS
-    kdDebug(6041) << "regular break sol: " << start.obj << " " << start.pos << "   end: " << lBreak.obj << " " << lBreak.pos << "   width=" << w << endl;
-#endif
 
     // Sanity check our midpoints.
     checkMidpoints(lBreak, bidi);
@@ -2567,10 +2489,5 @@ void RenderBlock::checkLinesForTextOverflow()
         }
     }
 }
-
-// For --enable-final
-#undef BIDI_DEBUG
-#undef DEBUG_LINEBREAKS
-#undef DEBUG_LAYOUT
 
 }
