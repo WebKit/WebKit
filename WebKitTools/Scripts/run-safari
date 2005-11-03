@@ -41,7 +41,7 @@ my $safariPath = safariPath();
 checkFrameworks();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
-print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 exec $safariPath, @ARGV or die;

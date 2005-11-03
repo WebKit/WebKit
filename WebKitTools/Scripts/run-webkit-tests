@@ -515,7 +515,7 @@ if ($counts{match} && $counts{match} == $count) {
     print HTML "</html>\n";
     close HTML;
     
-    system "WebKitTools/Scripts/run-safari", $testResults;
+    system "WebKitTools/Scripts/run-safari", "-NSOpen",$testResults;
 }
 
 sub printLeaks

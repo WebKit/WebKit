@@ -1,6 +1,17 @@
+2005-11-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+
+        * Scripts/run-safari:
+        changed message to say "Starting Safari" instead of odd "Start Safari"
+        * Scripts/run-webkit-tests:
+        changed the way we pass the file parameter to use -NSOpen rather than relying on
+        unlabeled arguments being treated as files. This was failing on some machines that 
+        (mysteriously) had NSTreatUnknownArgumentsAsOpen set to NO in com.apple.Safari.plist.
+
 2005-10-27  Geoffrey Garen  <ggaren@apple.com>
 		
-		Patch by Alexey Proskuryakov.
+        Patch by Alexey Proskuryakov.
 		
         Reviewed by Maciej.
         
