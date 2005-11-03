@@ -344,7 +344,6 @@ function justifyRightCommand() {
     }
 }
 
-
 //-------------------------------------------------------------------------------------------------------
 
 function execInsertLineBreakCommand() {
@@ -372,6 +371,21 @@ function insertParagraphCommand() {
     }
     else {
         execInsertParagraphCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execInsertNewlineInQuotedContentCommand() {
+    document.execCommand("InsertNewlineInQuotedContent");
+}
+function insertNewlineInQuotedContentCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execInsertNewlineInQuotedContentCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execInsertNewlineInQuotedContentCommand();
     }
 }
 

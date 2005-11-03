@@ -1,3 +1,15 @@
+2005-11-03  David Harrison  <harrison@apple.com>
+
+        Other files that should have been included with my previous commit.
+        
+        * editing/editing.js:
+        * editing/inserting/insert-br-quoted-001-expected.checksum: Added.
+        * editing/inserting/insert-br-quoted-002-expected.checksum: Added.
+        * editing/inserting/insert-br-quoted-003-expected.checksum: Added.
+        * editing/inserting/insert-br-quoted-004-expected.checksum: Added.
+        * editing/inserting/insert-br-quoted-005-expected.checksum: Added.
+        * editing/inserting/insert-br-quoted-006-expected.checksum: Added.
+
 2005-11-03  Geoffrey Garen  <ggaren@apple.com>
         
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5602
