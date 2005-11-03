@@ -1,0 +1,8 @@
+Test for regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5602 REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches
+
+The following line should be "abcdefg;".
+
+abcdefg;
+The following line should be "1; 2; 3; 4; 5; 6; 7; 8; 9;".
+
+1; 2; 3; 4; 5; 6; 7; 8; 9;
