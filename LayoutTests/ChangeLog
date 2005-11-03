@@ -1,3 +1,30 @@
+2005-11-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        Tests for...
+        <rdar://problem/4017861> in reply, extra line is inserted after pressing return on blank quoted line
+        
+        * editing/editing.js:
+        * editing/inserting/insert-br-quoted-001-expected.png: Added.
+        * editing/inserting/insert-br-quoted-001-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-001.html: Added.
+        * editing/inserting/insert-br-quoted-002-expected.png: Added.
+        * editing/inserting/insert-br-quoted-002-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-002.html: Added.
+        * editing/inserting/insert-br-quoted-003-expected.png: Added.
+        * editing/inserting/insert-br-quoted-003-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-003.html: Added.
+        * editing/inserting/insert-br-quoted-004-expected.png: Added.
+        * editing/inserting/insert-br-quoted-004-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-004.html: Added.
+        * editing/inserting/insert-br-quoted-005-expected.png: Added.
+        * editing/inserting/insert-br-quoted-005-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-005.html: Added.
+        * editing/inserting/insert-br-quoted-006-expected.png: Added.
+        * editing/inserting/insert-br-quoted-006-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-006.html: Added.
+
 2005-11-01  Anders Carlsson  <andersca@mac.com>
  
         Reviewed by Darin.
