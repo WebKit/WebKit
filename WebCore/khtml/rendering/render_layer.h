@@ -159,7 +159,7 @@ private:
 class RenderLayer
 {
 public:
-    typedef enum {
+    enum ScrollBehavior {
         noScroll,
         alignCenter,
         alignTop,
@@ -167,23 +167,23 @@ public:
         alignLeft,
         alignRight,
         alignToClosestEdge
-    } ScrollBehavior;
+    };
 
-    typedef struct {
+    struct ScrollAlignment {
         ScrollBehavior m_rectVisible;
         ScrollBehavior m_rectHidden;
         ScrollBehavior m_rectPartial;
-    } ScrollAlignment;
+    };
 
-    static ScrollAlignment gAlignCenterIfNeeded;
-    static ScrollAlignment gAlignToEdgeIfNeeded;
-    static ScrollAlignment gAlignCenterAlways;
-    static ScrollAlignment gAlignTopAlways;
-    static ScrollAlignment gAlignBottomAlways;
+    static const ScrollAlignment gAlignCenterIfNeeded;
+    static const ScrollAlignment gAlignToEdgeIfNeeded;
+    static const ScrollAlignment gAlignCenterAlways;
+    static const ScrollAlignment gAlignTopAlways;
+    static const ScrollAlignment gAlignBottomAlways;
     
-    ScrollBehavior getVisibleBehavior(ScrollAlignment s) { return s.m_rectVisible; }
-    ScrollBehavior getPartialBehavior(ScrollAlignment s) { return s.m_rectPartial; }
-    ScrollBehavior getHiddenBehavior(ScrollAlignment s) { return s.m_rectHidden; }
+    static ScrollBehavior getVisibleBehavior(const ScrollAlignment& s) { return s.m_rectVisible; }
+    static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
+    static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
 #ifdef APPLE_CHANGES
     static QScrollBar* gScrollBar;
@@ -247,8 +247,8 @@ public:
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
-    void scrollRectToVisible(const QRect &r, ScrollAlignment alignX = gAlignCenterIfNeeded, ScrollAlignment alignY = gAlignCenterIfNeeded);
-    QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, ScrollAlignment alignX, ScrollAlignment alignY);    
+    void scrollRectToVisible(const QRect &r, const ScrollAlignment& alignX = gAlignCenterIfNeeded, const ScrollAlignment& alignY = gAlignCenterIfNeeded);
+    QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);    
     void setHasHorizontalScrollbar(bool hasScrollbar);
     void setHasVerticalScrollbar(bool hasScrollbar);
     QScrollBar* horizontalScrollbar() { return m_hBar; }

@@ -82,11 +82,11 @@ QScrollBar* RenderLayer::gScrollBar = 0;
 static bool inRenderLayerDestroy;
 #endif
 
-RenderLayer::ScrollAlignment RenderLayer::gAlignCenterIfNeeded = { RenderLayer::noScroll, RenderLayer::alignCenter, RenderLayer::alignToClosestEdge };
-RenderLayer::ScrollAlignment RenderLayer::gAlignToEdgeIfNeeded = { RenderLayer::noScroll, RenderLayer::alignToClosestEdge, RenderLayer::alignToClosestEdge };
-RenderLayer::ScrollAlignment RenderLayer::gAlignCenterAlways = { RenderLayer::alignCenter, RenderLayer::alignCenter, RenderLayer::alignCenter };
-RenderLayer::ScrollAlignment RenderLayer::gAlignTopAlways = { RenderLayer::alignTop, RenderLayer::alignTop, RenderLayer::alignTop };
-RenderLayer::ScrollAlignment RenderLayer::gAlignBottomAlways = { RenderLayer::alignBottom, RenderLayer::alignBottom, RenderLayer::alignBottom };
+const RenderLayer::ScrollAlignment RenderLayer::gAlignCenterIfNeeded = { RenderLayer::noScroll, RenderLayer::alignCenter, RenderLayer::alignToClosestEdge };
+const RenderLayer::ScrollAlignment RenderLayer::gAlignToEdgeIfNeeded = { RenderLayer::noScroll, RenderLayer::alignToClosestEdge, RenderLayer::alignToClosestEdge };
+const RenderLayer::ScrollAlignment RenderLayer::gAlignCenterAlways = { RenderLayer::alignCenter, RenderLayer::alignCenter, RenderLayer::alignCenter };
+const RenderLayer::ScrollAlignment RenderLayer::gAlignTopAlways = { RenderLayer::alignTop, RenderLayer::alignTop, RenderLayer::alignTop };
+const RenderLayer::ScrollAlignment RenderLayer::gAlignBottomAlways = { RenderLayer::alignBottom, RenderLayer::alignBottom, RenderLayer::alignBottom };
 
 void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
 {
@@ -557,7 +557,7 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     }
 }
 
-void RenderLayer::scrollRectToVisible(const QRect &rect, ScrollAlignment alignX, ScrollAlignment alignY)
+void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
     QRect newRect = rect;
@@ -603,7 +603,7 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, ScrollAlignment alignX,
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 }
 
-QRect RenderLayer::getRectToExpose(const QRect &visibleRect, const QRect &exposeRect, ScrollAlignment alignX, ScrollAlignment alignY) {
+QRect RenderLayer::getRectToExpose(const QRect &visibleRect, const QRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) {
 
     int x, y, w, h;
     x = exposeRect.x();

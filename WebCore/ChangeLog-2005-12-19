@@ -1,5 +1,19 @@
 2005-11-03  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        * khtml/rendering/render_layer.cpp:
+        (khtml::): Made global ScrollAlignment members const
+        (khtml::RenderLayer::scrollRectToVisible): Changed ScrollAlignment parameters to const ScrollAlignment&
+        (khtml::RenderLayer::getRectToExpose): ditto.
+        * khtml/rendering/render_layer.h:
+        (khtml::RenderLayer::): removed typedefs
+        (khtml::RenderLayer::getVisibleBehavior): Made this static.
+        (khtml::RenderLayer::getPartialBehavior): ditto.
+        (khtml::RenderLayer::getHiddenBehavior): ditto.
+
+2005-11-03  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Clean up of layer scrolling code.  Now we can clearly define what to do if a rectangle is fully visible, partially visible, or hidden.
