@@ -270,7 +270,6 @@ protected:
 private:
     DOM::Position positionForBox(InlineBox *box, bool start=true) const;
     DOM::Position positionForRenderer(RenderObject *renderer, bool start=true) const;
-    bool skipNonBreakingSpace(BidiIterator &it);
     
 protected:
     struct FloatingObject {

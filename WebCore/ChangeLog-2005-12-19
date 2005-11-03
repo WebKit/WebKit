@@ -1,3 +1,19 @@
+2005-11-03  David Hyatt  <hyatt@apple.com>
+
+	Make pre-wrap collapse away spaces at the start of a line.  There are
+	still several bugs, namely with overflow and with selection.  This is bugzilla
+	bug 5593.
+	
+        Reviewed by adele
+
+	fast/text/whitespace/pre-wrap.html
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::skipNonBreakingSpace):
+        (khtml::shouldCollapseWhiteSpace):
+        (khtml::RenderBlock::skipWhitespace):
+        * khtml/rendering/render_block.h:
+
 2005-11-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
