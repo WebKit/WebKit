@@ -1,3 +1,11 @@
+2005-11-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+          Fixed the FRAMEWORK_SEARCH_PATHS to look in the WebKit
+          Frameworks for the Default config.
+
 2005-11-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin and Vicki.
