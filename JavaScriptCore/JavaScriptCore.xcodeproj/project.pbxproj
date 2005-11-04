@@ -2091,7 +2091,7 @@
 					.,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",

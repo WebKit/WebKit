@@ -1,3 +1,11 @@
+2005-11-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin and Vicki.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+          Change to use $(SYSTEM_LIBRARY_DIR) consistently and place
+          $(NEXT_ROOT) in a few spots to make build-root work.
+
 2005-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         - Updated JavaScriptCore test results to reflect recent fixes.

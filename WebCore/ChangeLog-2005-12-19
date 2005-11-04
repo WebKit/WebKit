@@ -1,3 +1,11 @@
+2005-11-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin and Vicki.
+
+        * WebCore.xcodeproj/project.pbxproj:
+          Change to use $(SYSTEM_LIBRARY_DIR) consistently and place
+          $(NEXT_ROOT) in a few spots to make build-root work.
+
 2005-11-03  David Hyatt  <hyatt@apple.com>
 
 	Cleanup of bidi.cpp.  This is bug 5532.  I merged it nearly as is, although I

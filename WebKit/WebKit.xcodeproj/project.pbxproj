@@ -1864,11 +1864,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = (
-					/System/Library/Frameworks/WebKit.framework/Frameworks,
-					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					/System/Library/Frameworks/Quartz.framework/Frameworks,
-					/System/Library/PrivateFrameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -1889,7 +1889,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_CFLAGS = (
@@ -1928,11 +1928,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = (
-					/System/Library/Frameworks/WebKit.framework/Frameworks,
-					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					/System/Library/Frameworks/Quartz.framework/Frameworks,
-					/System/Library/PrivateFrameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -1952,7 +1952,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_CFLAGS = (
@@ -1991,11 +1991,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = (
-					/System/Library/Frameworks/WebKit.framework/Frameworks,
-					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					/System/Library/Frameworks/Quartz.framework/Frameworks,
-					/System/Library/PrivateFrameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -2016,7 +2016,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_CFLAGS = (
@@ -2055,11 +2055,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = (
-					/System/Library/Frameworks/WebKit.framework/Frameworks,
-					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					/System/Library/Frameworks/Quartz.framework/Frameworks,
-					/System/Library/PrivateFrameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -2079,7 +2079,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_CFLAGS = (
 					"-Wbad-function-cast",
@@ -2096,7 +2096,7 @@
 					/AppleInternal/OrderFiles/WebKit.order,
 				);
 				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
-				UMBRELLA_FRAMEWORKS_DIR = /System/Library/Frameworks/WebKit.framework/Frameworks;
+				UMBRELLA_FRAMEWORKS_DIR = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",

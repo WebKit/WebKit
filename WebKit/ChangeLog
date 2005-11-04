@@ -1,3 +1,11 @@
+2005-11-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin and Vicki.
+
+        * WebKit.xcodeproj/project.pbxproj:
+          Change to use $(SYSTEM_LIBRARY_DIR) consistently and place
+          $(NEXT_ROOT) in a few spots to make build-root work.
+
 2005-11-01  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

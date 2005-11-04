@@ -10408,7 +10408,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_LDFLAGS = (
@@ -10466,7 +10466,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_LDFLAGS = (
@@ -10524,7 +10524,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_LDFLAGS = (
@@ -10554,7 +10554,7 @@
 		149C283D08902B11008A9EFC /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CREATE_HASH_TABLE = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table;
+				CREATE_HASH_TABLE = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -10582,7 +10582,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
