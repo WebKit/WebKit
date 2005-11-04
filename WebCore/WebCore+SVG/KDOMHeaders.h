@@ -6,7 +6,7 @@ class KHTMLPart;
 class KHTMLView;
 
 namespace khtml {
-    class CSSRuleSet;
+    class StyleListImpl;
 }
 
 namespace KDOM {
@@ -14,7 +14,7 @@ namespace KDOM {
     using namespace khtml;
     using ::KHTMLPart;
     using ::KHTMLView;
-    typedef khtml::CSSRuleSet CSSStyleSelectorList;
+    typedef khtml::StyleListImpl CSSStyleSelectorList;
 }
 
 namespace KSVG {
