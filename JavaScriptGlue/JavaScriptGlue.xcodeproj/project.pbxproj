@@ -380,7 +380,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;
 				SECTORDER_FLAGS = (
 					"-sectorder",
@@ -403,7 +403,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;
 				SECTORDER_FLAGS = (
 					"-sectorder",
@@ -422,10 +422,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
-				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;
 				SECTORDER_FLAGS = (
 					"-sectorder",
