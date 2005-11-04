@@ -1812,8 +1812,18 @@ InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
 {
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
-            if (affinity == DOWNSTREAM && box->nextTextBox() && offset == box->m_start + box->m_len)
-                return box->nextTextBox();
+            if (affinity == DOWNSTREAM) {
+                // Take special care because in white-space:pre, the newline
+                // characters are in between the text boxes (i.e. not in any
+                // box's m_start thru m_start+m_len-1).  So, check that the
+                // offset really is in the next text box, vs checking that it
+                // is simply "past" the current box.
+                InlineTextBox *nextBox = box->nextTextBox();
+                if (nextBox && offset >= nextBox->m_start) {
+                    assert(offset < nextBox->m_start + nextBox->m_len);
+                    return box->nextTextBox();
+                }
+            }
             return box;
         }
         else if (offset < box->m_start) {

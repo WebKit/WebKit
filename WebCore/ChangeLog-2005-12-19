@@ -1,3 +1,21 @@
+2005-11-04  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Test case added:
+        * manual-tests/whitespace-pre-affinity.html
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3739
+
+        This patch addresses the root cause of the problem by making
+        RenderText::inlineBox() cope with the fact that in white-space:pre text the
+        newline characters are not part of any InlineTextBox... they lie "between"
+        them.	Now DOWNSTREAM affinity selects the next text box only if the offset
+        that is past the current box is actually _in_ the next box.
+        
+        * khtml/rendering/render_text.cpp:
+        (RenderText::inlineBox):
+
 2005-11-04  Darin Adler  <darin@apple.com>
 
         - removed unused duplicate copy of hash table code
