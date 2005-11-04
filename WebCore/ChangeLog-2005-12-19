@@ -1,3 +1,20 @@
+2005-11-03  Evan Gross  <evan@rainmakerinc.com>
+
+        Bugzilla 5604: plainText (visible_text.cpp) performance improvement
+        
+        Reviewed by justin and darin
+        
+        Optimized plainText for a ~100% speedup in most cases.
+        
+        No test cases added, change only effects performance.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::rangeLength): Removed an extraneous comment.
+        (khtml::plainText): The length of the string to be created was 
+        pre-calculated to avoid the expense of many QString::append() calls.
+        Removed this since TextIterator::advance() is much more expensive 
+        than append.
+
 2005-11-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin and Vicki.
