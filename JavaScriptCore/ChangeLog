@@ -21,7 +21,8 @@
 
         We now update lastIndex relative to the start of the last match,
         rather than the start of the last search. We used to assume that
-        the two were equal, but that may not be the case in $ matches.
+        the two were equal, but that is not the case when a pattern
+        matches at a character after the first in the string.
 
         * kjs/regexp_object.cpp:
         (RegExpProtoFuncImp::callAsFunction):
