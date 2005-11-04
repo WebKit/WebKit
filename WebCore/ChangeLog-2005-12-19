@@ -1,3 +1,15 @@
+2005-11-04  Darin Adler  <darin@apple.com>
+
+        - removed unused duplicate copy of hash table code
+
+        * khtml/misc/hashfunctions.h: Removed.
+        * khtml/misc/hashmap.h: Removed.
+        * khtml/misc/hashset.h: Removed.
+        * khtml/misc/hashtable.cpp: Removed.
+        * khtml/misc/hashtable.h: Removed.
+        * khtml/misc/hashtraits.h: Removed.
+        * khtml/misc/pointerhash.h: Removed.
+
 2005-11-03  Evan Gross  <evan@rainmakerinc.com>
 
         Bugzilla 5604: plainText (visible_text.cpp) performance improvement
