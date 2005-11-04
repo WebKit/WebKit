@@ -1,3 +1,9 @@
+2005-11-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * kxmlcore/HashSet.h: Fixed case of "hashfunctions.h" -- needs to be "HashFunctions.h".
+
 2005-11-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin and Vicki.

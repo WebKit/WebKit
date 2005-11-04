@@ -25,7 +25,7 @@
 
 #include "HashTable.h"
 #include "HashTraits.h"
-#include "hashfunctions.h"
+#include "HashFunctions.h"
 
 namespace KXMLCore {
 
