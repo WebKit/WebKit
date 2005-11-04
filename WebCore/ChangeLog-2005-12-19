@@ -1,3 +1,15 @@
+2005-11-04  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 5626, ghosted float steals mouse events.  Make sure
+	that the floatRect() method deals with overflow.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::floatRect):
+        (khtml::RenderBlock::nodeAtPoint):
+
 2005-11-04  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.
