@@ -1,3 +1,40 @@
+2005-11-04  Darin Adler  <darin@apple.com>
+
+        - added pixel results for a bunch of tests that didn't have them
+
+        * fast/block/basic/021-expected.checksum: Added.
+        * fast/block/basic/021-expected.png: Added.
+        * fast/block/positioning/062-expected.checksum: Added.
+        * fast/block/positioning/062-expected.png: Added.
+        * fast/box-sizing/box-sizing-expected.checksum: Added.
+        * fast/box-sizing/box-sizing-expected.png: Added.
+        * fast/box-sizing/panels-one-expected.checksum: Added.
+        * fast/box-sizing/panels-one-expected.png: Added.
+        * fast/box-sizing/panels-two-expected.checksum: Added.
+        * fast/box-sizing/panels-two-expected.png: Added.
+        * fast/box-sizing/percentage-height-expected.checksum: Added.
+        * fast/box-sizing/percentage-height-expected.png: Added.
+        * fast/css-generated-content/014-expected.checksum: Added.
+        * fast/css-generated-content/014-expected.png: Added.
+        * fast/events/event-targets-expected.checksum: Added.
+        * fast/events/event-targets-expected.png: Added.
+        * fast/forms/blankbuttons-expected.checksum: Added.
+        * fast/forms/blankbuttons-expected.png: Added.
+        * fast/forms/button-positioned-expected.checksum: Added.
+        * fast/forms/button-positioned-expected.png: Added.
+        * fast/forms/indeterminate-expected.checksum: Added.
+        * fast/forms/indeterminate-expected.png: Added.
+        * fast/frames/calculate-fixed-expected.checksum: Added.
+        * fast/frames/calculate-fixed-expected.png: Added.
+        * fast/frames/calculate-order-expected.checksum: Added.
+        * fast/frames/calculate-order-expected.png: Added.
+        * fast/frames/calculate-percentage-expected.checksum: Added.
+        * fast/frames/calculate-percentage-expected.png: Added.
+        * fast/frames/calculate-relative-expected.checksum: Added.
+        * fast/frames/calculate-relative-expected.png: Added.
+        * fast/frames/calculate-round-expected.checksum: Added.
+        * fast/frames/calculate-round-expected.png: Added.
+
 2005-11-03  Adele Peterson  <adele@apple.com>
 
         Test for...
