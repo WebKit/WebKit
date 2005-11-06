@@ -1,3 +1,11 @@
+2005-11-05  Geoffrey Garen  <ggaren@apple.com>
+        
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5409 
+        slice() testcase doesn't pass
+
+        * fast/js/string-slice-abnormal-values.html: Added.
+        * fast/js/string-slice-abnormal-values-expected.txt: Added.
+
 2005-11-04  Darin Adler  <darin@apple.com>
 
         - added pixel results for a bunch of tests that didn't have them
@@ -46,6 +54,7 @@
         * fast/overflow/scrollRevealButton-expected.txt: Added.
         * fast/overflow/scrollRevealButton.html: Added.
 
+>>>>>>> 1.71
 2005-11-03  David Harrison  <harrison@apple.com>
 
         Other files that should have been included with my previous commit.
