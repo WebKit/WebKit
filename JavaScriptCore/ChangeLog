@@ -1,3 +1,17 @@
+2005-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5409
+        slice() testcase doesn't pass
+
+        Modified String.slice to deal with funky values.
+        Updated test results. We now pass <js1_2/String/slice.js>.
+
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::callAsFunction):
+        * tests/mozilla/expected.html:
+
 2005-11-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
