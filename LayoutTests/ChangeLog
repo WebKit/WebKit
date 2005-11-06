@@ -1,3 +1,18 @@
+2005-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5571
+        REGRESSION (412.5-TOT): duplicated words/sentences at 
+        shakespeer.sourceforge.net
+
+        Also renamed previous test for consistency.
+
+        * fast/js/regexp-big-unicode-ranges-expected.txt: Removed.
+        * fast/js/regexp-big-unicode-ranges.html: Removed.
+        * fast/js/regexp-extended-characters-crash-expected.txt: Added.
+        * fast/js/regexp-extended-characters-crash.html: Added.
+        * fast/js/regexp-extended-characters-match-expected.txt: Added.
+        * fast/js/regexp-extended-characters-match.html: Added.
+
 2005-11-05  Geoffrey Garen  <ggaren@apple.com>
         
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5357 

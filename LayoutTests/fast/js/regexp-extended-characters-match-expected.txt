@@ -1,0 +1,31 @@
+This test checks regular expressions using extended (> 255) characters and character classes.
+
+These regular expressions should return null:
+
+var r = new RegExp("[Ā-ā]"); r.exec("a"): null
+
+var r = new RegExp("[Ā]"); r.exec("a"): null
+
+var r = new RegExp("Ā"); r.exec("a"): null
+
+These regular expressions should return "a"
+
+var r = new RegExp("[a]"); r.exec("a"): a
+
+var r = new RegExp("[Ā-āa]"); r.exec("a"): a
+
+var r = new RegExp("[Āa]"); r.exec("a"): a
+
+var r = new RegExp("a"); r.exec("a"): a
+
+var r = new RegExp("[a-Ā]"); r.exec("a"): a
+
+These regular expressions should return "Ā":
+
+var r = new RegExp("[Ā]"); r.exec("Ā"): Ā
+
+var r = new RegExp("[Ā-ā]"); r.exec("Ā"): Ā
+
+var r = new RegExp("Ā"); r.exec("Ā"): Ā
+
+
