@@ -1,3 +1,15 @@
+2005-11-06  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::dragNSImage):
+        Get the NSImage from the image renderer.
+        
+        * kwq/WebCoreImageRenderer.h:
+        Add image method. This already exists in WebImageRenderer in
+        WebKit.
+
 2005-11-04  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 5626, ghosted float steals mouse events.  Make sure
