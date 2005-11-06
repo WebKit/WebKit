@@ -236,7 +236,12 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
 
 ValueImp *ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
 {
-    return new ObjcFallbackObjectImp(static_cast<ObjcInstance*>(instance), propertyName);
+    ObjcInstance * objcInstance = static_cast<ObjcInstance*>(instance);
+    id targetObject = objcInstance->getObject();
+    
+    if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+        return jsUndefined();
+    return new ObjcFallbackObjectImp(objcInstance, propertyName);
 }
 
 }
