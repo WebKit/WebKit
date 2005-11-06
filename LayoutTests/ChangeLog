@@ -54,7 +54,6 @@
         * fast/overflow/scrollRevealButton-expected.txt: Added.
         * fast/overflow/scrollRevealButton.html: Added.
 
->>>>>>> 1.71
 2005-11-03  David Harrison  <harrison@apple.com>
 
         Other files that should have been included with my previous commit.
