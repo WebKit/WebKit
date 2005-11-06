@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Plugin hides OBJECT's properties</title>
+<script type="text/javascript">
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var result = document.getElementById('obj').children == undefined ? "FAILED" : "PASSED";
+    document.getElementById("result").innerText = result;
+}
+</script>
+</head>
+<body onload="test()">
+<p>
+This test checks for a regression where scriptable plugins hide properties of
+the OBJECT element.
+If the test passes, you will see a "PASSED" message below.
+</p>
+<p id="result"></p>
+<object id="obj" classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"><!-- quicktime -->
+</object>
+</body>

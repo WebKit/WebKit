@@ -1,5 +1,13 @@
 2005-11-05  Geoffrey Garen  <ggaren@apple.com>
         
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5357 
+        REGRESSION: Scriptable plugin hides properties of OBJECT element
+
+        * fast/dom/object-plugin-hides-properties.html: Added.
+        * fast/js/object-plugin-hides-properties-expected.txt: Added.
+
+2005-11-05  Geoffrey Garen  <ggaren@apple.com>
+        
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5409 
         slice() testcase doesn't pass
 
