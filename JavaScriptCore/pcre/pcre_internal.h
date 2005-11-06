@@ -291,6 +291,23 @@ if there are extra bytes. This is called when we know we are in UTF-8 mode. */
     len += gcaa; \
     }
 
+/* Get the next UTF-8 character, advancing the pointer. This is called when we
+know we are in UTF-8 mode. */
+
+#define GETUTF8CHARINC(c, eptr) \
+c = *eptr++; \
+if ((c & 0xc0) == 0xc0) \
+{ \
+  int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */ \
+    int gcss = 6*gcaa; \
+      c = (c & _pcre_utf8_table3[gcaa]) << gcss; \
+        while (gcaa-- > 0) \
+        { \
+          gcss -= 6; \
+            c |= (*eptr++ & 0x3f) << gcss; \
+        } \
+}
+
 #if PCRE_UTF16
 
 #define LEAD_OFFSET (0xd800 - (0x10000 >> 10))
@@ -368,19 +385,7 @@ pointer. */
 /* Get the next UTF-8 character, advancing the pointer. This is called when we
 know we are in UTF-8 mode. */
 
-#define GETCHARINC(c, eptr) \
-  c = *eptr++; \
-  if ((c & 0xc0) == 0xc0) \
-    { \
-    int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */ \
-    int gcss = 6*gcaa; \
-    c = (c & _pcre_utf8_table3[gcaa]) << gcss; \
-    while (gcaa-- > 0) \
-      { \
-      gcss -= 6; \
-      c |= (*eptr++ & 0x3f) << gcss; \
-      } \
-    }
+#define GETCHARINC GETUTF8CHARINC
 
 /* Get the next character, testing for UTF-8 mode, and advancing the pointer */
 

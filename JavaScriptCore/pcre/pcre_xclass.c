@@ -87,13 +87,13 @@ while ((t = *data++) != XCL_END)
   int x, y;
   if (t == XCL_SINGLE)
     {
-    GETCHARINC(x, data);
+    GETUTF8CHARINC(x, data);
     if (c == x) return !negated;
     }
   else if (t == XCL_RANGE)
     {
-    GETCHARINC(x, data);
-    GETCHARINC(y, data);
+    GETUTF8CHARINC(x, data);
+    GETUTF8CHARINC(y, data);
     if (c >= x && c <= y) return !negated;
     }
 

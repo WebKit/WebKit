@@ -1,3 +1,26 @@
+2005-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5571
+          REGRESSION (412.5-TOT): duplicated words/sentences at 
+          shakespeer.sourceforge.net
+
+        Our UTF16-modified PCRE didn't work with extended character classes
+        (classes involving characters > 255) because it used the GETCHARINC
+        macro to read through them. In UTF16 mode, GETCHARINC expects UTF16 
+        input, but PCRE encodes character classes in UTF8 regardless of the
+        input mode of the subject string.
+
+        The fix is to explicitly define GETUTF8CHARINC, and to use it,
+        rather than GETCHARINC, when reading extended character classes. 
+        
+        In UTF8 mode, we simply define GETCHARINC to be GETUTF8CHARINC.
+
+        * pcre/pcre_internal.h:
+        * pcre/pcre_xclass.c:
+        (_pcre_xclass):
+
 2005-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by Mitz Pettel, reviewed by Maciej.
