@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQPageState.h"
 
 #import <JavaScriptCore/interpreter.h>
@@ -37,65 +37,50 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
-using DOM::DocumentImpl;
+using namespace DOM;
 
-using khtml::RenderObject;
+using namespace khtml;
 
-using KJS::Interpreter;
-using KJS::InterpreterLock;
-using KJS::SavedProperties;
-using KJS::SavedBuiltins;
+using namespace KJS;
 
 @implementation KWQPageState
 
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib
+- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
 {
     [super init];
+
     doc->ref();
     document = doc;
-    document->setInPageCache(YES);
-    parseMode = document->parseMode();
-    document->view()->ref();
-    mousePressNode = static_cast<KWQKHTMLPart *>(document->part())->mousePressNode();
-    if (mousePressNode) {
+    doc->setInPageCache(YES);
+    mousePressNode = static_cast<KWQKHTMLPart *>(doc->part())->mousePressNode();
+    if (mousePressNode)
         mousePressNode->ref();
-    }
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
     interpreterBuiltins = ib;
+    pausedTimeouts = pt;
+    parseMode = doc->parseMode();
+
+    doc->view()->ref();
+
     return self;
 }
 
-- (DOM::DocumentImpl::ParseMode)parseMode { return parseMode; }
-
-- (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa
+- (DocumentImpl::ParseMode)parseMode
 {
-    pausedActions = pa;
+    return parseMode;
 }
 
-- (QMap<int, KJS::ScheduledAction*> *)pausedActions
+- (PausedTimeouts *)pausedTimeouts
 {
-    return pausedActions;
-}
-
-- (void)_cleanupPausedActions
-{
-    if (pausedActions){
-        QMapIterator<int,KJS::ScheduledAction*> it;
-        for (it = pausedActions->begin(); it != pausedActions->end(); ++it) {
-            KJS::ScheduledAction *action = *it;
-            delete action;
-        }
-        delete pausedActions;
-        pausedActions = 0;
-    }
-    QObject::clearPausedTimers(self);
+    return pausedTimeouts;
 }
 
 - (void)clear
 {
-    document = 0;
+    if (mousePressNode)
+        mousePressNode->deref();        
     mousePressNode = 0;
 
     delete URL;
@@ -110,7 +95,8 @@ using KJS::SavedBuiltins;
     delete interpreterBuiltins;
     interpreterBuiltins = 0;
 
-    [self _cleanupPausedActions];
+    delete pausedTimeouts;
+    pausedTimeouts = 0;
 }
 
 - (void)invalidate
@@ -120,19 +106,22 @@ using KJS::SavedBuiltins;
     ASSERT(document->view());
     ASSERT(!document->inPageCache());
 
-    if (document && document->view()) {
-        document->view()->deref();
+    if (document) {
+        KHTMLView *view = document->view();
+        if (view)
+            view->deref();
         document->deref();
+        document = 0;
     }
-    
+
     [self clear];
 }
 
 - (void)dealloc
 {
     if (document) {
-        ASSERT(document->inPageCache());
         ASSERT(document->view());
+        ASSERT(document->inPageCache());
 
         KHTMLView *view = document->view();
 
@@ -145,10 +134,7 @@ using KJS::SavedBuiltins;
             document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
-        
-        if (mousePressNode) {
-            mousePressNode->deref();
-        }
+        document = 0;
         
         if (view) {
             view->clearPart();
@@ -181,6 +167,7 @@ using KJS::SavedBuiltins;
             document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
+        document = 0;
         
         if (view) {
             view->clearPart();
@@ -198,7 +185,7 @@ using KJS::SavedBuiltins;
     return document;
 }
 
-- (DOM::NodeImpl *)mousePressNode
+- (NodeImpl *)mousePressNode
 {
     return mousePressNode;
 }

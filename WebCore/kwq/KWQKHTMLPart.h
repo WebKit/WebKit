@@ -61,6 +61,7 @@ namespace khtml {
 }
 
 namespace KJS {
+    class PausedTimeouts;
     class SavedProperties;
     class SavedBuiltins;
     class ScheduledAction;
@@ -160,8 +161,8 @@ public:
 
     void unfocusWindow();
 
-    QMap<int, KJS::ScheduledAction*> *pauseActions(const void *key);
-    void resumeActions(QMap<int, KJS::ScheduledAction*> *actions, const void *key);
+    KJS::PausedTimeouts *pauseTimeouts();
+    void resumeTimeouts(KJS::PausedTimeouts *);
     
     bool canCachePage();
     void saveWindowProperties(KJS::SavedProperties *windowProperties);
