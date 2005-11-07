@@ -1,3 +1,17 @@
+2005-11-07  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Darin Adler.
+        Committed by Adele Peterson.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5398
+        source visible when <script> used inside <option>
+
+        Added:
+        * fast/forms/option-select.html
+
+        * khtml/html/html_formimpl.h: (DOM::HTMLOptionElementImpl::checkDTD): Allow <script> tags to be children of option elements
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLOptionElementImpl::text): Skip the script content when creating text string
+
 2005-11-07  Geoffrey Garen  <ggaren@apple.com>
 	        
         - Added manual test cases for <rdar://problem/4161660> window.close

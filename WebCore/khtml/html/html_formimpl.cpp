@@ -3452,10 +3452,15 @@ DOMString HTMLOptionElementImpl::text() const
             return text;
     }
 
-    const NodeImpl *n = this;
-    while ((n = n->traverseNextNode(this))) {
+    const NodeImpl *n = this->firstChild();
+    while (n) {
         if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE)
             text += n->nodeValue();
+        // skip script content
+        if (n->isElementNode() && n->hasTagName(HTMLNames::scriptTag))
+            n = n->traverseNextSibling(this);
+        else
+            n = n->traverseNextNode(this);
     }
 
     return text;
