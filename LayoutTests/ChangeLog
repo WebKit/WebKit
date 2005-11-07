@@ -1,3 +1,28 @@
+2005-11-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        New/updated layout tests for fixes for:
+        
+        <rdar://problem/4125131> REGRESSION (Mail): after certain steps, 
+        extra blank line appears when typing past end of reply-quoted text
+        <rdar://problem/4024996> Applying block styles can cause assertion 
+        failure in inline style removal
+
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * editing/deleting/delete-br-011-expected.checksum:
+        * editing/deleting/delete-br-011-expected.png:
+        * editing/deleting/delete-br-011-expected.txt:
+        * editing/inserting/insert-3786362-fix-expected.txt:
+        * editing/inserting/insert-at-end-01-expected.checksum: Added.
+        * editing/inserting/insert-at-end-01-expected.png: Added.
+        * editing/inserting/insert-at-end-01-expected.txt: Added.
+        * editing/inserting/insert-at-end-01.html: Added.
+        * editing/inserting/insert-at-end-02-expected.checksum: Added.
+        * editing/inserting/insert-at-end-02-expected.png: Added.
+        * editing/inserting/insert-at-end-02-expected.txt: Added.
+        * editing/inserting/insert-at-end-02.html: Added.
+
 2005-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5571
