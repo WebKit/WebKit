@@ -351,14 +351,20 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
-    // can't find it. Otherwise, window.open will select a closed WebView instead of opening a new one.
+    // can't find it. Otherwise, window.open will select a closed WebView instead of 
+    // opening a new one <rdar://problem/3572585>.
 
+    // We also need to stop the load to prevent further parsing or JavaScript execution
+    // after the window has torn down <rdar://problem/4161660>.
+  
     // FIXME: This code assumes that the UI delegate will respond to a webViewClose
     // message by actually closing the WebView. Safari guarantees this behavior, but other apps might not.
     // This approach is an inherent limitation of not making a close execute immediately
     // after a call to window.close.
     
     [WebViewSets removeWebView:parentWebView fromSetNamed:[parentWebView groupName]];
+
+    [parentWebView stopLoading:self];
     
     [parentWebView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
 }

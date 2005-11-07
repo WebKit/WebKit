@@ -1,3 +1,19 @@
+2005-11-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Darin reviewed this a while back.
+
+        - Fixed <rdar://problem/4161660> window.close followed by window.print
+        in onload handler crashes Safari in KJS::ScopeChain::bottom
+        (redmccombstoyota.com)
+        
+        Added a call to stopLoading inside closeWindowSoon to prevent load
+        events from firing after a window has torn down.
+        
+        Manual test case: WebCore/manual-tests/window-close-during-parsing.html
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge closeWindowSoon]):
+
 2005-11-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin and Vicki.
