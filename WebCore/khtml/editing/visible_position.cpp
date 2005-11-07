@@ -147,7 +147,7 @@ void VisiblePosition::initDownstream(const Position &pos)
         if (next.isNotNull()) {
             m_deepPosition = next;
         } else if (isRenderedBR(deepPos.node()) && deepPos.offset() == 1) {
-            m_deepPosition = deepPos;
+            m_deepPosition = Position(deepPos.node(), 0);
         } else {
             Position previous = previousVisiblePosition(deepPos);
             if (previous.isNotNull())

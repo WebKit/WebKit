@@ -438,8 +438,9 @@ NodeImpl *CompositeEditCommand::appendBlockPlaceholder(NodeImpl *node)
 {
     if (!node)
         return NULL;
-
-    ASSERT(node->renderer() && node->renderer()->isBlockFlow());
+    
+    // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
+    ASSERT(node->renderer());
 
     NodeImpl *placeholder = createBlockPlaceholderElement(document());
     appendNode(placeholder, node);
@@ -451,7 +452,8 @@ NodeImpl *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
     if (pos.isNull())
         return NULL;
 
-    ASSERT(pos.node()->renderer() && pos.node()->renderer()->isBlockFlow());
+    // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
+    ASSERT(pos.node()->renderer());
 
     NodeImpl *placeholder = createBlockPlaceholderElement(document());
     insertNodeAt(placeholder, pos.node(), pos.offset());

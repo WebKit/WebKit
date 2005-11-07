@@ -5112,7 +5112,7 @@ void KHTMLPart::slotSelectAll()
     static_cast<KHTMLPart *>(part)->selectAll();
 }
 
-#endif // APPLE_CHANGES
+#endif // !APPLE_CHANGES
 
 void KHTMLPart::startAutoScroll()
 {

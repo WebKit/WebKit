@@ -501,8 +501,13 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
 
 void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
 {
+    // update document layout once before removing styles
+    // so that we avoid the expense of updating before each and every call
+    // to check a computed style
+    document()->updateLayout();
+    
     // adjust to the positions we want to use for applying style
-    Position start(endingSelection().start().downstream().equivalentRangeCompliantPosition());
+    Position start(endingSelection().start().downstream());
     Position end(endingSelection().end().upstream());
 
     if (RangeImpl::compareBoundaryPoints(end, start) < 0) {
@@ -510,11 +515,6 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
         start = end;
         end = swap;
     }
-
-    // update document layout once before removing styles
-    // so that we avoid the expense of updating before each and every call
-    // to check a computed style
-    document()->updateLayout();
 
     // split the start node and containing element if the selection starts inside of it
     bool splitStart = splitTextElementAtStartIfNeeded(start, end); 
@@ -525,8 +525,10 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
 
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = splitTextElementAtEndIfNeeded(start, end);
-    start = endingSelection().start();
-    end = endingSelection().end();
+    if (splitEnd) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
 
     // Remove style from the selection.
     // Use the upstream position of the start for removing style.
@@ -556,14 +558,13 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // to check a computed style
     document()->updateLayout();
     
+    NodeImpl *node = start.node();
+    if (start.offset() >= start.node()->caretMaxOffset())
+        node = node->traverseNextNode();
+    
     if (start.node() == end.node()) {
-        // simple case...start and end are the same node
-        addInlineStyleIfNeeded(style, start.node(), end.node());
-    }
-    else {
-        NodeImpl *node = start.node();
-        if (start.offset() >= start.node()->caretMaxOffset())
-            node = node->traverseNextNode();
+        addInlineStyleIfNeeded(style, node, node);
+    } else {
         while (1) {
             if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
                 NodeImpl *runStart = node;

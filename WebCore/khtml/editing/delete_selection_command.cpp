@@ -666,13 +666,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
         // then start typing. In this case, the typing style is applied right now, and
         // is not retained until the next typing action.
 
-        // FIXME: is this even right? I don't think post-deletion typing style is supposed 
-        // to be saved across clicking away and clicking back, it certainly isn't in TextEdit
-
-        Position pastPlaceholder(insertedPlaceholder, 1);
-
-        setEndingSelection(SelectionController(m_endingPosition, m_selectionToDelete.endAffinity(), pastPlaceholder, DOWNSTREAM));
-
+        setEndingSelection(SelectionController(Position(insertedPlaceholder, 0), DOWNSTREAM));
         applyStyle(m_typingStyle, EditActionUnspecified);
 
         m_typingStyle->deref();

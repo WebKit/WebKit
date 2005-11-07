@@ -1,3 +1,58 @@
+2005-11-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4125131> REGRESSION (Mail): after certain steps, 
+        extra blank line appears when typing past end of reply-quoted text
+        <rdar://problem/4024996> Applying block styles can cause assertion 
+        failure in inline style removal
+        
+        Prevent VisiblePositions at [br, 1] at the end of root editable elements.
+        
+        Layout tests added:
+        * inserting/insert-at-end-01.html
+        * inserting/insert-at-end-02.html
+        
+        Layout tests changed (fixed):
+        * editing/deleting/delete-br-011.html
+        * editing/deleting/delete-at-paragraph-boundaries-011.html
+        * editing/inserting/insert-3786362-fix.html
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        Do the layout before calculating start/end positions, not after, 
+        since upstream/downstream need to know who is rendered/unrendered. 
+        Don't do equivalentRangeCompliantPosition() on the start position 
+        in addition to downstream(), since it a) is confusing, b) frequently 
+        causes start/end to be equal, making removeInlineStyle a no-op and 
+        c) causes an assertion to fire.  
+        Only reset start/end using endingSelection() if splitTextElement was 
+        needed, since reseting start/end negates the work done above to swap 
+        start/end if they are backwards.  
+        When the start position points off the end of a node, that node should 
+        be skipped in all cases, not just the start.node() != end.node() case.
+        
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::appendBlockPlaceholder):
+        (khtml::CompositeEditCommand::insertBlockPlaceholder):
+        Placeholders should be allowed in nodes that aren't blockFlow, for example, 
+        deleting the b in <div><span>b</span></div> should insert a placeholder.  
+        The assertion here should really be something like isBlockFlow || 
+        isInlineFlow, but I can't assert those until deletion improves (4244964).
+        
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        Don't try to select the placeholder when applying style to it.  It 
+        isn't necessary, and it's now impossible to do at the end of the 
+        document in any case.
+        
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::initDownstream):
+        Don't create VisiblePositions at [br, 1] at the end of editable blocks, it 
+        produces strange/inconsistent editing behavior at the end of the document.
+        
+        * khtml/khtml_part.cpp: Fixed a comment.
+
 2005-11-06  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
