@@ -86,9 +86,11 @@ push @patches, $patch if $patch;
 if ($merge) {
     for my $file (sort keys %versions) {
         print "Getting version $versions{$file} of $file\n";
-        $file =~ m|^(([^/\n]*/)+)([^/\n]+)$| or die;
+        $file =~ m|^(([^/\n]*/)*)([^/\n]+)$| or die;
         my ($prefix, $base) = ($1, $3);
-        chdir $prefix;
+        if ($prefix) {
+            chdir $prefix or die;
+        }
         system "cvs update -r $versions{$file} $base";
         chdir $startDir;
     }

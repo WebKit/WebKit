@@ -1,3 +1,7 @@
+2005-11-07  Darin Adler  <darin@apple.com>
+
+        * Scripts/cvs-apply: Fix case where the patch has files at the top level.
+
 2005-11-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
