@@ -1,3 +1,16 @@
+2005-11-07  David Hyatt  <hyatt@apple.com>
+
+	Fix for sluggish loading of large pages due to excessive
+	repaints.  Large pages still need a lot of work while
+	loading, but this helps.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::mustRepaintBackgroundOrBorder):
+        (RenderObject::repaintAfterLayoutIfNeeded):
+        * khtml/rendering/render_object.h:
+
 2005-11-07  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Darin Adler.

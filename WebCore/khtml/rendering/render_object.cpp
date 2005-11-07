@@ -751,6 +751,39 @@ int RenderObject::containingBlockHeight() const
     return containingBlock()->contentHeight();
 }
 
+bool RenderObject::mustRepaintBackgroundOrBorder() const
+{
+    // If we don't have a background/border, then nothing to do.
+    if (!shouldPaintBackgroundOrBorder())
+        return false;
+    
+    // Ok, let's check the background first.
+    const BackgroundLayer* bgLayer = style()->backgroundLayers();
+    if (bgLayer->next())
+        return true; // Nobody will use multiple background layers without wanting fancy positioning.
+    
+    // Make sure we have a valid background image.
+    CachedImage* bg = bgLayer->backgroundImage();
+    bool shouldPaintBackgroundImage = bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage();
+    
+    // These are always percents or auto.
+    if (shouldPaintBackgroundImage && 
+        (bgLayer->backgroundXPosition().length() != 0 || bgLayer->backgroundYPosition().length() != 0))
+        return true; // The background image will shift unpredictably if the size changes.
+        
+    // Background is ok.  Let's check border.
+    if (style()->hasBorder()) {
+        // Border images are not ok.
+        CachedImage* borderImage = style()->borderImage().image();
+        bool shouldPaintBorderImage = borderImage && borderImage->pixmap_size() == borderImage->valid_rect().size() && 
+                                      !borderImage->isTransparent() && !borderImage->isErrorImage();
+        if (shouldPaintBorderImage && borderImage->isLoaded())
+            return true; // If the image hasn't loaded, we're still using the normal border style.
+    }
+
+    return false;
+}
+
 void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
                               BorderSide s, QColor c, const QColor& textcolor, EBorderStyle style,
                               int adjbw1, int adjbw2, bool invalidisInvert)
@@ -1388,18 +1421,39 @@ void RenderObject::repaintRectangle(const QRect& r, bool immediate)
 
 bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
 {
+    RenderCanvas* c = canvas();
+    if (c->printingMode())
+        return false; // Don't repaint if we're printing.
+            
     QRect newBounds, newFullBounds;
     getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
-    if (newBounds != oldBounds || selfNeedsLayout()) {
-        RenderCanvas* c = canvas();
-        if (c->printingMode())
-            return false; // Don't repaint if we're printing.
+    if (newBounds == oldBounds && !selfNeedsLayout())
+        return false;
+
+    bool fullRepaint = selfNeedsLayout() || newBounds.x() != oldBounds.x() ||
+                       newBounds.y() != oldBounds.y() || 
+                       mustRepaintBackgroundOrBorder();
+    if (fullRepaint) {
         c->repaintViewRectangle(oldFullBounds);
         if (newBounds != oldBounds)
             c->repaintViewRectangle(newFullBounds);
-        return true;
+    } else {
+        // We didn't move, but we did change size.  Invalidate the delta, which will consist of possibly 
+        // two rectangles (but typically only one).
+        int width = abs(newBounds.width() - oldBounds.width());
+        if (width)
+            c->repaintViewRectangle(QRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()),
+                                    newBounds.y(), 
+                                    width,
+                                    kMax(newBounds.height(), oldBounds.height())));
+        int height = abs(newBounds.height() - oldBounds.height());
+        if (height)
+            c->repaintViewRectangle(QRect(newBounds.x(),
+                                          kMin(newBounds.y() + newBounds.height(), oldBounds.y() + oldBounds.height()),
+                                          kMax(newBounds.width(), oldBounds.width()),
+                                          height));
     }
-    return false;
+    return true;
 }
 
 void RenderObject::repaintDuringLayoutIfMoved(int x, int y)
