@@ -1,3 +1,13 @@
+2005-11-07  Geoffrey Garen  <ggaren@apple.com>
+	        
+        - Added manual test cases for <rdar://problem/4161660> window.close
+        followed by window.print in onload handler crashes Safari in
+        KJS::ScopeChain::bottom (redmccombstoyota.com)
+        
+        * manual-tests/resources/window-close-during-parsing-popup1.html: Added.
+        * manual-tests/resources/window-close-during-parsing-popup2.html: Added.
+        * manual-tests/window-close-during-parsing.html: Added.
+
 2005-11-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Omernick.
