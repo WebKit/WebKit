@@ -1,3 +1,12 @@
+2005-11-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed <rdar://problem/4333862> REGRESSION: Crash in new JavaScript timer implementation (5661)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5661
+
+        * kwq/KWQObject.mm: (sendDeferredTimerEvents): Added nil check for timers.
+
 2005-11-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric, Geoff and Darin.

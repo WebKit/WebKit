@@ -247,9 +247,10 @@ static void sendDeferredTimerEvents(CFRunLoopTimerRef, void *)
     CFArrayRef timers = deferredTimers;
     deferredTimers = 0;
 
-    CFArrayApplyFunction(timers, CFRangeMake(0, CFArrayGetCount(timers)), sendDeferredTimerEvent, 0);
-
-    CFRelease(timers);
+    if (timers) {
+        CFArrayApplyFunction(timers, CFRangeMake(0, CFArrayGetCount(timers)), sendDeferredTimerEvent, 0);
+        CFRelease(timers);
+    }
 }
 
 void QObject::setDefersTimers(bool defers)
