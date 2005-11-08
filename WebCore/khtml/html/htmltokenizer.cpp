@@ -157,7 +157,7 @@ void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const 
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool includesComments)
+HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, KHTMLView *_view, bool includesComments)
     : inWrite(false)
 {
     view = _view;
@@ -174,7 +174,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool incl
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *i, bool includesComments)
+HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, DOM::DocumentFragmentImpl *i, bool includesComments)
     : inWrite(false)
 {
     view = 0;
@@ -1053,7 +1053,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                         ++src;
                     }
                     else {
-                        currToken.addAttribute(parser->docPtr()->document(), attrName, emptyAtom);
+                        currToken.addAttribute(parser->doc(), attrName, emptyAtom);
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                     }
@@ -1105,7 +1105,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                         dest--; // remove trailing newlines
                     AtomicString v(buffer+1, dest-buffer-1);
                     attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
-                    currToken.addAttribute(parser->docPtr()->document(), attrName, v);
+                    currToken.addAttribute(parser->doc(), attrName, v);
                     state.setTagState(SearchAttribute);
                     dest = buffer;
                     tquote = NoQuote;
@@ -1129,7 +1129,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                         AtomicString v(buffer+1, dest-buffer-1);
                         if (attrName.isEmpty())
                             attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
-                        currToken.addAttribute(parser->docPtr()->document(), attrName, v);
+                        currToken.addAttribute(parser->doc(), attrName, v);
 
                         dest = buffer;
                         state.setTagState(SearchAttribute);
@@ -1165,7 +1165,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                     if ( curchar <= ' ' || curchar == '>' )
                     {
                         AtomicString v(buffer+1, dest-buffer-1);
-                        currToken.addAttribute(parser->docPtr()->document(), attrName, v);
+                        currToken.addAttribute(parser->doc(), attrName, v);
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                         break;
@@ -1838,7 +1838,7 @@ void HTMLTokenizer::setOnHold(bool _onHold)
 
 void parseHTMLDocumentFragment(const DOM::DOMString &source, DOM::DocumentFragmentImpl *fragment)
 {
-    HTMLTokenizer tok(fragment->docPtr(), fragment);
+    HTMLTokenizer tok(fragment->getDocument(), fragment);
     tok.setForceSynchronous(true);
     tok.write(source.qstring(), true);
     tok.finish();

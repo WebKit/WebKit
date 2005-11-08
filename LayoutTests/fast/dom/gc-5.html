@@ -10,8 +10,10 @@ function doit()
 
     // create lots of objects to force a garbage collection
     var i = 0;
-    while (i < 1000) {
-        i = i+1;
+    var s;
+    while (i < 5000) {
+        i = i+1.11;
+	s = s + " ";
     }
 
     var output= document.getElementById("output");

@@ -651,7 +651,7 @@ SharedPtr<RangeImpl> SelectionController::toRange() const
     }
 
     int exceptionCode = 0;
-    SharedPtr<RangeImpl> result(new RangeImpl(s.node()->docPtr()));
+    SharedPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
     result->setStart(s.node(), s.offset(), exceptionCode);
     if (exceptionCode) {
         ERROR("Exception setting Range start from SelectionController: %d", exceptionCode);

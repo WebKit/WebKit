@@ -55,7 +55,7 @@ using namespace khtml;
 
 // -------------------------------------------------------------------------
 
-HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentPtr *doc)
+HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentImpl *doc)
     : HTMLImageElementImpl(canvasTag, doc)
 {
 }

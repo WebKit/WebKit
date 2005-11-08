@@ -35,14 +35,14 @@ template<class type> class TreeShared
 public:
     TreeShared() { _ref = 0; m_parent = 0; /*counter++;*/ }
     TreeShared( type *parent ) { _ref=0; m_parent = parent; /*counter++;*/ }
-    ~TreeShared() { /*counter--;*/ }
+    virtual ~TreeShared() { /*counter--;*/ }
 
+    virtual void removedLastRef() { delete static_cast<type *>(this); }
     void ref() { _ref++;  }
     void deref() { 
 	if(_ref) _ref--; 
-	if(!_ref && !m_parent) {
-	    delete static_cast<type *>(this); 
-	}
+	if(!_ref && !m_parent)
+	    removedLastRef();
     }
     bool hasOneRef() { //kdDebug(300) << "ref=" << _ref << endl;
     	return _ref==1; }

@@ -10,7 +10,6 @@
 #include "xbl_protohandler.h"
 #include "xbl_protoimplementation.h"
 
-using DOM::DocumentPtr;
 using DOM::ElementImpl;
 using DOM::Node;
 
@@ -18,7 +17,7 @@ namespace XBL {
 
 const char xblNS[] = "http://www.mozilla.org/xbl";
     
-XBLTokenHandler::XBLTokenHandler(DocumentPtr* doc)
+XBLTokenHandler::XBLTokenHandler(DocumentImpl* doc)
 :   XMLHandler(doc, 0),
     m_state(eXBL_InDocument),
     m_secondaryState(eXBL_None),

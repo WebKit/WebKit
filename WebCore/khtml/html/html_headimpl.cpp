@@ -46,7 +46,7 @@ using namespace DOM;
 using namespace HTMLNames;
 using namespace khtml;
 
-HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)
+HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(baseTag, doc)
 {
 }
@@ -109,7 +109,7 @@ void HTMLBaseElementImpl::setTarget(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
+HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(linkTag, doc)
 {
     m_sheet = 0;
@@ -401,7 +401,7 @@ void HTMLLinkElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(metaTag, doc)
+HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentImpl *doc) : HTMLElementImpl(metaTag, doc)
 {
 }
 
@@ -479,7 +479,7 @@ void HTMLMetaElementImpl::setScheme(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentPtr *doc)
+HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(scriptTag, doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
 {
 }
@@ -660,7 +660,7 @@ void HTMLScriptElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(styleTag, doc)
+HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentImpl *doc) : HTMLElementImpl(styleTag, doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -776,7 +776,7 @@ void HTMLStyleElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentPtr *doc)
+HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(titleTag, doc), m_title("")
 {
 }

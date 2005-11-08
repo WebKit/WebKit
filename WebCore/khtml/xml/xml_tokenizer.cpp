@@ -68,7 +68,7 @@ void Tokenizer::finishedParsing()
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
-    XMLTokenizer(DocumentPtr *, KHTMLView * = 0);
+    XMLTokenizer(DocumentImpl *, KHTMLView * = 0);
     XMLTokenizer(DocumentFragmentImpl *, ElementImpl *);
     ~XMLTokenizer();
 
@@ -112,7 +112,7 @@ private:
     bool enterText();
     void exitText();
 
-    DocumentPtr *m_doc;
+    DocumentImpl *m_doc;
     KHTMLView *m_view;
 
     QString m_xmlCode;
@@ -190,9 +190,9 @@ static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 
 // --------------------------------
 
-XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
+XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, KHTMLView *_view)
     : m_doc(_doc), m_view(_view),
-      m_context(NULL), m_currentNode(m_doc->document()),
+      m_context(NULL), m_currentNode(m_doc),
       m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(false)
 {
@@ -201,7 +201,7 @@ XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
 }
 
 XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentElement)
-    : m_doc(fragment->docPtr()), m_view(0),
+    : m_doc(fragment->getDocument()), m_view(0),
       m_context(0), m_currentNode(fragment),
       m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(true)
@@ -329,7 +329,7 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     }
 
     int exceptioncode = 0;
-    ElementImpl *newElement = m_doc->document()->createElementNS(uri, qName, exceptioncode);
+    ElementImpl *newElement = m_doc->createElementNS(uri, qName, exceptioncode);
     if (!newElement)
         return;
     
@@ -399,7 +399,7 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
 
 bool XMLTokenizer::enterText()
 {
-    NodeImpl *newNode = m_doc->document()->createTextNode("");
+    NodeImpl *newNode = m_doc->createTextNode("");
     if (m_currentNode->addChild(newNode)) {
         m_currentNode = newNode;
         return true;
@@ -478,7 +478,7 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     
     // ### handle exceptions
     int exception = 0;
-    ProcessingInstructionImpl *pi = m_doc->document()->createProcessingInstruction(
+    ProcessingInstructionImpl *pi = m_doc->createProcessingInstruction(
         toQString(target),
         toQString(data),
         exception);
@@ -487,11 +487,11 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
 
     m_currentNode->addChild(pi);
     // don't load stylesheets for standalone documents
-    if (m_doc->document()->part()) {
+    if (m_doc->part()) {
 	m_sawXSLTransform = !pi->checkStyleSheet();
 #ifdef KHTML_XSLT
         // Pretend we didn't see this PI if we're the result of a transform.
-        if (m_sawXSLTransform && !m_doc->document()->transformSourceDocument())
+        if (m_sawXSLTransform && !m_doc->transformSourceDocument())
 #else
         if (m_sawXSLTransform)
 #endif
@@ -509,7 +509,7 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
         exitText();
 
     int ignoreException = 0;
-    NodeImpl *newNode = m_doc->document()->createCDATASection("", ignoreException);
+    NodeImpl *newNode = m_doc->createCDATASection("", ignoreException);
     if (m_currentNode->addChild(newNode)) {
         if (m_view && !newNode->attached())
             newNode->attach();
@@ -534,7 +534,7 @@ void XMLTokenizer::comment(const xmlChar *s)
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     // ### handle exceptions
-    m_currentNode->addChild(m_doc->document()->createComment(toQString(s)));
+    m_currentNode->addChild(m_doc->createComment(toQString(s)));
 }
 
 void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
@@ -542,12 +542,11 @@ void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID
     if (m_parserStopped)
         return;
 
-    DocumentPtr *docPtr = m_doc;
-    DocumentImpl *doc = docPtr->document();
+    DocumentImpl *doc = m_doc;
     if (!doc)
         return;
 
-    doc->setDocType(new DocumentTypeImpl(docPtr, toQString(name), toQString(externalID), toQString(systemID)));
+    doc->setDocType(new DocumentTypeImpl(doc, toQString(name), toQString(externalID), toQString(systemID)));
 }
 
 inline XMLTokenizer *getTokenizer(void *closure)
@@ -666,7 +665,7 @@ void XMLTokenizer::finish()
     } else {
         // Parsing was successful. Now locate all html <script> tags in the document and execute them
         // one by one.
-        addScripts(m_doc->document());
+        addScripts(m_doc);
         m_scriptsIt = new QPtrListIterator<HTMLScriptElementImpl>(m_scripts);
         executeScripts();
     }
@@ -682,7 +681,7 @@ void XMLTokenizer::insertErrorMessageBlock()
 
     // Create elements for display
     int exceptioncode = 0;
-    DocumentImpl *doc = m_doc->document();
+    DocumentImpl *doc = m_doc;
     NodeImpl* root = doc->documentElement();
     if (!root) {
         root = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
@@ -744,9 +743,9 @@ void XMLTokenizer::executeScripts()
         QString charset = m_scriptsIt->current()->getAttribute(charsetAttr).qstring();
 
 	// don't load external scripts for standalone documents (for now)
-        if (scriptSrc != "" && m_doc->document()->part()) {
+        if (scriptSrc != "" && m_doc->part()) {
             // we have a src attribute
-            m_cachedScript = m_doc->document()->docLoader()->requestScript(scriptSrc, charset);
+            m_cachedScript = m_doc->docLoader()->requestScript(scriptSrc, charset);
             ++(*m_scriptsIt);
             m_cachedScript->ref(this); // will call executeScripts() again if already cached
             return;
@@ -773,7 +772,7 @@ void XMLTokenizer::executeScripts()
 
     // All scripts have finished executing, so calculate the style for the document and close
     // the last element
-    m_doc->document()->updateStyleSelector();
+    m_doc->updateStyleSelector();
 }
 
 void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
@@ -818,7 +817,7 @@ void XMLTokenizer::setTransformSource(DocumentImpl *doc)
 }
 #endif
 
-Tokenizer *newXMLTokenizer(DocumentPtr *d, KHTMLView *v)
+Tokenizer *newXMLTokenizer(DocumentImpl *d, KHTMLView *v)
 {
     return new XMLTokenizer(d, v);
 }

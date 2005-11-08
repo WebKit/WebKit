@@ -38,7 +38,7 @@ enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
 class HTMLElementImpl : public StyledElementImpl
 {
 public:
-    HTMLElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
+    HTMLElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
     virtual ~HTMLElementImpl();
 
     virtual bool isHTMLElement() const { return true; }

@@ -62,7 +62,7 @@ using namespace khtml;
 
 // ------------------------------------------------------------------
 
-HTMLElementImpl::HTMLElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLElementImpl::HTMLElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : StyledElementImpl(tagName, doc)
 {
 }
@@ -283,7 +283,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
         hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
-    DocumentFragmentImpl *fragment = new DocumentFragmentImpl(docPtr());
+    DocumentFragmentImpl *fragment = new DocumentFragmentImpl(getDocument());
     fragment->ref();
     
     if (getDocument()->isHTMLDocument())
@@ -390,7 +390,7 @@ void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
     }
 
     removeChildren();
-    appendChild(new TextImpl(docPtr(), text), exception);
+    appendChild(new TextImpl(getDocument(), text), exception);
 }
 
 void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
@@ -416,7 +416,7 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
         return;
     }
 
-    TextImpl *t = new TextImpl(docPtr(), text);
+    TextImpl *t = new TextImpl(getDocument(), text);
     ref();
     parent->replaceChild(t, this, exception);
     deref();

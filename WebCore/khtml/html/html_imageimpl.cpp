@@ -139,14 +139,14 @@ void HTMLImageLoader::notifyFinished(CachedObject* image)
 
 // -------------------------------------------------------------------------
 
-HTMLImageElementImpl::HTMLImageElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
+HTMLImageElementImpl::HTMLImageElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f)
     : HTMLElementImpl(imgTag, doc), m_imageLoader(this), ismap(false), m_form(f)
 {
     if (m_form)
         m_form->registerImgElement(this);
 }
 
-HTMLImageElementImpl::HTMLImageElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLImageElementImpl::HTMLImageElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : HTMLElementImpl(tagName, doc), m_imageLoader(this), ismap(false), m_form(0)
 {
 }
@@ -493,7 +493,7 @@ int HTMLImageElementImpl::y() const
 
 // -------------------------------------------------------------------------
 
-HTMLMapElementImpl::HTMLMapElementImpl(DocumentPtr *doc)
+HTMLMapElementImpl::HTMLMapElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(mapTag, doc)
 {
 }
@@ -582,7 +582,7 @@ void HTMLMapElementImpl::setName(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
+HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentImpl *doc)
     : HTMLAnchorElementImpl(areaTag, doc)
 {
     m_coords=0;

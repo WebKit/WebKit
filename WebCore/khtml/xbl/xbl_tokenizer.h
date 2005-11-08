@@ -41,7 +41,7 @@ typedef enum {
 } XBLSecondaryState;
 
 public:
-    XBLTokenHandler(DOM::DocumentPtr *_doc);
+    XBLTokenHandler(DOM::DocumentImpl *_doc);
     ~XBLTokenHandler();
     
     XBLDocumentImpl* xblDocument() const;

@@ -37,7 +37,7 @@ class HTMLCollection;
 class HTMLBaseFontElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLBaseFontElementImpl(DocumentPtr *doc);
+    HTMLBaseFontElementImpl(DocumentImpl *doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }

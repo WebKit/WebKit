@@ -36,7 +36,6 @@ class HTMLStackElem;
 
 namespace DOM {
     class HTMLDocumentImpl;
-    class DocumentPtr;
     class HTMLElementImpl;
     class NodeImpl;
     class HTMLFormElementImpl;
@@ -56,8 +55,8 @@ namespace khtml {
 class HTMLParser
 {
 public:
-    HTMLParser(KHTMLView *w, DOM::DocumentPtr *i, bool includesComments=false);
-    HTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentPtr *doc, bool includesComments=false);
+    HTMLParser(KHTMLView *w, DOM::DocumentImpl *i, bool includesComments=false);
+    HTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentImpl *doc, bool includesComments=false);
     virtual ~HTMLParser();
 
     /**
@@ -79,15 +78,14 @@ public:
     bool noSpaces() const { return !inBody; }
     bool selectMode() const { return inSelect; }
 
-    DOM::HTMLDocumentImpl *doc() const { return static_cast<DOM::HTMLDocumentImpl *>(document->document()); }
-    DOM::DocumentPtr *docPtr() const { return document; }
+    DOM::HTMLDocumentImpl *doc() const { return static_cast<DOM::HTMLDocumentImpl *>(document); }
 
 protected:
     void setCurrent(DOM::NodeImpl* newCurrent);
     void setSkipMode(const DOM::QualifiedName& qName) { discard_until = qName.localName(); }
 
     KHTMLView *HTMLWidget;
-    DOM::DocumentPtr *document;
+    DOM::DocumentImpl *document;
 
     /*
      * generate a node from the token

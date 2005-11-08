@@ -51,7 +51,7 @@ using namespace DOM::EventNames;
 using namespace khtml;
 using namespace HTMLNames;
 
-HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
+HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(bodyTag, doc), m_linkDecl(0)
 {
 }
@@ -263,13 +263,13 @@ void HTMLBodyElementImpl::setVLink(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
+HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(frameTag, doc)
 {
     init();
 }
 
-HTMLFrameElementImpl::HTMLFrameElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLFrameElementImpl::HTMLFrameElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : HTMLElementImpl(tagName, doc)
 {
     init();
@@ -645,7 +645,7 @@ void HTMLFrameElementImpl::setSrc(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
+HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(framesetTag, doc)
 {
     // default value for rows and cols...
@@ -785,7 +785,7 @@ void HTMLFrameSetElementImpl::setRows(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentPtr *doc)
+HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(headTag, doc)
 {
 }
@@ -814,7 +814,7 @@ bool HTMLHeadElementImpl::checkDTD(const NodeImpl* newChild)
 
 // -------------------------------------------------------------------------
 
-HTMLHtmlElementImpl::HTMLHtmlElementImpl(DocumentPtr *doc)
+HTMLHtmlElementImpl::HTMLHtmlElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(htmlTag, doc)
 {
 }
@@ -843,7 +843,7 @@ bool HTMLHtmlElementImpl::checkDTD(const NodeImpl* newChild)
 
 // -------------------------------------------------------------------------
 
-HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(iframeTag, doc)
+HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentImpl *doc) : HTMLFrameElementImpl(iframeTag, doc)
 {
     m_frameBorder = false;
     m_marginWidth = -1;

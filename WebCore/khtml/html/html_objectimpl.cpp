@@ -63,7 +63,7 @@ using namespace HTMLNames;
 
 // -------------------------------------------------------------------------
 
-HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentPtr *doc)
+HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentImpl *doc)
   : HTMLElementImpl(appletTag, doc)
 {
     appletInstance = 0;
@@ -389,7 +389,7 @@ void HTMLAppletElementImpl::setWidth(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
+HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(embedTag, doc), embedInstance(0)
 {}
 
@@ -553,7 +553,7 @@ bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 // -------------------------------------------------------------------------
 
-HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) 
+HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentImpl *doc) 
 #if APPLE_CHANGES
 : HTMLElementImpl(objectTag, doc), m_imageLoader(0), objectInstance(0)
 #else
@@ -1082,7 +1082,7 @@ void HTMLObjectElementImpl::setWidth(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
+HTMLParamElementImpl::HTMLParamElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(paramTag, doc)
 {
 }

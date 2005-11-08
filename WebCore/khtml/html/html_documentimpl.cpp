@@ -238,7 +238,7 @@ void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)
 
 Tokenizer *HTMLDocumentImpl::createTokenizer()
 {
-    return new HTMLTokenizer(docPtr(),m_view);
+    return new HTMLTokenizer(this, m_view);
 }
 
 // --------------------------------------------------------------------------
@@ -496,7 +496,7 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
     int resultFlags = 0;
     if (parseDocTypeDeclaration(str, &resultFlags, publicID, systemID)) {
         if (resultFlags & PARSEMODE_HAVE_DOCTYPE)
-            setDocType(new DocumentTypeImpl(docPtr(), "HTML", publicID, systemID));
+            setDocType(new DocumentTypeImpl(this, "HTML", publicID, systemID));
         if (!(resultFlags & PARSEMODE_HAVE_DOCTYPE)) {
             // No doctype found at all.  Default to quirks mode and Html4.
             pMode = Compat;

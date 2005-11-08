@@ -1,3 +1,300 @@
+2005-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric, Geoff and Darin.
+
+	- fixed <rdar://problem/4118258> XML DOM trees freed prematurely unless reference held to document node (causes crash)
+
+	I changed the design for how DOM nodes maintain their reference to
+	the document. Instead of using DocumentPtr, an indirect reference
+	which would go null in a clean way when the document is destroyed,
+	they now have a different strategy.
+
+	Nodes that belong to the document now hold a special kind of
+	reference on the document - a "self only reference". When a
+	document has no regular references but still has self-only
+	references, it won't be destroyed, but it will drop all its
+	children. This allows detached nodees to still have a valid
+	document reference, but they won't keep the rest of the DOM alive
+	or cause circular references.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::toRange):
+        * khtml/editing/visible_position.cpp:
+        (khtml::makeRange):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::range):
+        (khtml::SimplifiedBackwardsTextIterator::range):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (HTMLFrameElementImpl::HTMLFrameElementImpl):
+        (HTMLFrameSetElementImpl::HTMLFrameSetElementImpl):
+        (HTMLHeadElementImpl::HTMLHeadElementImpl):
+        (HTMLHtmlElementImpl::HTMLHtmlElementImpl):
+        (HTMLIFrameElementImpl::HTMLIFrameElementImpl):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl):
+        (HTMLDivElementImpl::HTMLDivElementImpl):
+        (HTMLHRElementImpl::HTMLHRElementImpl):
+        (HTMLHeadingElementImpl::HTMLHeadingElementImpl):
+        (HTMLParagraphElementImpl::HTMLParagraphElementImpl):
+        (HTMLPreElementImpl::HTMLPreElementImpl):
+        (HTMLMarqueeElementImpl::HTMLMarqueeElementImpl):
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::HTMLCanvasElementImpl):
+        * khtml/html/html_canvasimpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::createTokenizer):
+        (DOM::HTMLDocumentImpl::determineParseMode):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::setInnerText):
+        (HTMLElementImpl::setOuterText):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl):
+        (DOM::HTMLGenericFormElementImpl::HTMLGenericFormElementImpl):
+        (DOM::HTMLButtonElementImpl::HTMLButtonElementImpl):
+        (DOM::HTMLFieldSetElementImpl::HTMLFieldSetElementImpl):
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl):
+        (DOM::HTMLLabelElementImpl::HTMLLabelElementImpl):
+        (DOM::HTMLLegendElementImpl::HTMLLegendElementImpl):
+        (DOM::HTMLSelectElementImpl::HTMLSelectElementImpl):
+        (DOM::HTMLKeygenElementImpl::HTMLKeygenElementImpl):
+        (DOM::HTMLOptGroupElementImpl::HTMLOptGroupElementImpl):
+        (DOM::HTMLOptionElementImpl::HTMLOptionElementImpl):
+        (DOM::HTMLOptionElementImpl::setText):
+        (DOM::HTMLTextAreaElementImpl::HTMLTextAreaElementImpl):
+        (DOM::HTMLIsIndexElementImpl::HTMLIsIndexElementImpl):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::HTMLBaseElementImpl):
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLMetaElementImpl::HTMLMetaElementImpl):
+        (HTMLScriptElementImpl::HTMLScriptElementImpl):
+        (HTMLStyleElementImpl::HTMLStyleElementImpl):
+        (HTMLTitleElementImpl::HTMLTitleElementImpl):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::HTMLImageElementImpl):
+        (HTMLMapElementImpl::HTMLMapElementImpl):
+        (HTMLAreaElementImpl::HTMLAreaElementImpl):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::HTMLAnchorElementImpl):
+        (DOM::HTMLBRElementImpl::HTMLBRElementImpl):
+        (DOM::HTMLFontElementImpl::HTMLFontElementImpl):
+        (DOM::HTMLModElementImpl::HTMLModElementImpl):
+        (DOM::HTMLQuoteElementImpl::HTMLQuoteElementImpl):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.h:
+        (DOM::HTMLUListElementImpl::HTMLUListElementImpl):
+        (DOM::HTMLDirectoryElementImpl::HTMLDirectoryElementImpl):
+        (DOM::HTMLMenuElementImpl::HTMLMenuElementImpl):
+        (DOM::HTMLOListElementImpl::HTMLOListElementImpl):
+        (DOM::HTMLLIElementImpl::HTMLLIElementImpl):
+        (DOM::HTMLDListElementImpl::HTMLDListElementImpl):
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLBaseFontElementImpl::HTMLBaseFontElementImpl):
+        * khtml/html/html_miscimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::HTMLAppletElementImpl):
+        (DOM::HTMLEmbedElementImpl::HTMLEmbedElementImpl):
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLParamElementImpl::HTMLParamElementImpl):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::HTMLTableElementImpl):
+        (DOM::HTMLTableElementImpl::createTHead):
+        (DOM::HTMLTableElementImpl::createTFoot):
+        (DOM::HTMLTableElementImpl::createCaption):
+        (DOM::HTMLTableElementImpl::insertRow):
+        (DOM::HTMLTableSectionElementImpl::HTMLTableSectionElementImpl):
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableCellElementImpl::HTMLTableCellElementImpl):
+        (DOM::HTMLTableColElementImpl::HTMLTableColElementImpl):
+        * khtml/html/html_tableimpl.h:
+        (DOM::HTMLTablePartElementImpl::HTMLTablePartElementImpl):
+        (DOM::HTMLTableRowElementImpl::HTMLTableRowElementImpl):
+        (DOM::HTMLTableCaptionElementImpl::HTMLTableCaptionElementImpl):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::htmlConstructor):
+        (DOM::headConstructor):
+        (DOM::bodyConstructor):
+        (DOM::baseConstructor):
+        (DOM::linkConstructor):
+        (DOM::metaConstructor):
+        (DOM::styleConstructor):
+        (DOM::titleConstructor):
+        (DOM::frameConstructor):
+        (DOM::framesetConstructor):
+        (DOM::iframeConstructor):
+        (DOM::formConstructor):
+        (DOM::buttonConstructor):
+        (DOM::inputConstructor):
+        (DOM::isindexConstructor):
+        (DOM::fieldsetConstructor):
+        (DOM::labelConstructor):
+        (DOM::legendConstructor):
+        (DOM::optgroupConstructor):
+        (DOM::optionConstructor):
+        (DOM::selectConstructor):
+        (DOM::textareaConstructor):
+        (DOM::dlConstructor):
+        (DOM::ulConstructor):
+        (DOM::olConstructor):
+        (DOM::dirConstructor):
+        (DOM::menuConstructor):
+        (DOM::liConstructor):
+        (DOM::blockquoteConstructor):
+        (DOM::divConstructor):
+        (DOM::headingConstructor):
+        (DOM::hrConstructor):
+        (DOM::paragraphConstructor):
+        (DOM::preConstructor):
+        (DOM::basefontConstructor):
+        (DOM::fontConstructor):
+        (DOM::modConstructor):
+        (DOM::anchorConstructor):
+        (DOM::imageConstructor):
+        (DOM::mapConstructor):
+        (DOM::areaConstructor):
+        (DOM::canvasConstructor):
+        (DOM::appletConstructor):
+        (DOM::embedConstructor):
+        (DOM::objectConstructor):
+        (DOM::paramConstructor):
+        (DOM::scriptConstructor):
+        (DOM::tableConstructor):
+        (DOM::tableCaptionConstructor):
+        (DOM::tableColConstructor):
+        (DOM::tableRowConstructor):
+        (DOM::tableCellConstructor):
+        (DOM::tableSectionConstructor):
+        (DOM::brConstructor):
+        (DOM::quoteConstructor):
+        (DOM::marqueeConstructor):
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::HTMLParser):
+        (HTMLParser::~HTMLParser):
+        * khtml/html/htmlparser.h:
+        (HTMLParser::doc):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::parseHTMLDocumentFragment):
+        * khtml/html/htmltokenizer.h:
+        * khtml/misc/loader.h:
+        * khtml/misc/shared.h:
+        (khtml::TreeShared::~TreeShared):
+        (khtml::TreeShared::destroy):
+        (khtml::TreeShared::deref):
+        * khtml/xbl/xbl_tokenizer.cpp:
+        (XBL::XBLTokenHandler::XBLTokenHandler):
+        * khtml/xbl/xbl_tokenizer.h:
+        (XBL::):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::RangeImpl):
+        (DOM::RangeImpl::setStart):
+        (DOM::RangeImpl::setEnd):
+        (DOM::RangeImpl::processContents):
+        (DOM::RangeImpl::cloneRange):
+        (DOM::RangeImpl::setStartAfter):
+        (DOM::RangeImpl::setEndBefore):
+        (DOM::RangeImpl::setEndAfter):
+        (DOM::RangeImpl::setStartBefore):
+        (DOM::rangeOfContents):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocumentType):
+        (DOMImplementationImpl::createDocument):
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::destroy):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::createDocumentFragment):
+        (DocumentImpl::createTextNode):
+        (DocumentImpl::createComment):
+        (DocumentImpl::createCDATASection):
+        (DocumentImpl::createProcessingInstruction):
+        (DocumentImpl::createEntityReference):
+        (DocumentImpl::createEditingTextNode):
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::setTitle):
+        (DocumentImpl::removeTitle):
+        (DocumentImpl::createRange):
+        (DocumentImpl::createTokenizer):
+        (DocumentImpl::implicitClose):
+        (DocumentImpl::setHoverNode):
+        (DocumentImpl::setActiveNode):
+        (DocumentImpl::setFocusNode):
+        (DocumentImpl::createAttributeNS):
+        (DocumentFragmentImpl::DocumentFragmentImpl):
+        (DocumentFragmentImpl::cloneNode):
+        (DocumentTypeImpl::DocumentTypeImpl):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::selfOnlyRef):
+        (DOM::DocumentImpl::selfOnlyDeref):
+        (DOM::DocumentImpl::focusNode):
+        (DOM::DocumentImpl::hoverNode):
+        (DOM::DocumentImpl::activeNode):
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttributeImpl::allocateImpl):
+        (AttrImpl::AttrImpl):
+        (AttrImpl::cloneNode):
+        (ElementImpl::ElementImpl):
+        (StyledElementImpl::StyledElementImpl):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::NodeImpl):
+        (DOM::NodeImpl::setDocument):
+        (DOM::NodeImpl::~NodeImpl):
+        (DOM::NodeImpl::dispatchEvent):
+        (DOM::NodeImpl::dispatchWindowEvent):
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::checkAddChild):
+        (DOM::ContainerNodeImpl::ContainerNodeImpl):
+        (DOM::ContainerNodeImpl::removeAllChildren):
+        (DOM::ContainerNodeImpl::~ContainerNodeImpl):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::inDocument):
+        (DOM::NodeImpl::getDocument):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::CharacterDataImpl):
+        (CommentImpl::CommentImpl):
+        (TextImpl::TextImpl):
+        (TextImpl::createNew):
+        (CDATASectionImpl::CDATASectionImpl):
+        (CDATASectionImpl::createNew):
+        (EditingTextImpl::EditingTextImpl):
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::EntityImpl::EntityImpl):
+        (DOM::EntityReferenceImpl::EntityReferenceImpl):
+        (DOM::EntityReferenceImpl::cloneNode):
+        (DOM::NotationImpl::NotationImpl):
+        (DOM::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (DOM::ProcessingInstructionImpl::cloneNode):
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::XMLTokenizer):
+        (khtml::XMLTokenizer::startElementNs):
+        (khtml::XMLTokenizer::enterText):
+        (khtml::XMLTokenizer::processingInstruction):
+        (khtml::XMLTokenizer::cdataBlock):
+        (khtml::XMLTokenizer::comment):
+        (khtml::XMLTokenizer::internalSubset):
+        (khtml::XMLTokenizer::finish):
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+        (khtml::XMLTokenizer::executeScripts):
+        (khtml::newXMLTokenizer):
+        * khtml/xml/xml_tokenizer.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::createFragmentFromSource):
+
 2005-11-07  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin and Hyatt.

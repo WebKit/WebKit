@@ -52,6 +52,7 @@
 
 #include <khtml_settings.h>
 #include <dom/dom_string.h>
+#include "DocPtr.h"
 
 class QMovie;
 class KHTMLPart;
@@ -517,7 +518,7 @@ protected:
         bool m_bautoloadImages : 1;
         KHTMLSettings::KAnimationAdvice m_showAnimations : 2;
         KHTMLPart* m_part;
-        DOM::DocumentImpl* m_doc;
+        DOM::DocumentImpl *m_doc;
         bool m_loadInProgress;
     };
 

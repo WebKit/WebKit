@@ -65,7 +65,7 @@ class HTMLOptionsCollectionImpl;
 class HTMLFormElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLFormElementImpl(DocumentPtr *doc);
+    HTMLFormElementImpl(DocumentImpl *doc);
     virtual ~HTMLFormElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -166,7 +166,7 @@ class HTMLGenericFormElementImpl : public HTMLElementImpl
     friend class khtml::RenderFormElement;
 
 public:
-    HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLGenericFormElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -241,7 +241,7 @@ protected:
 class HTMLButtonElementImpl : public HTMLGenericFormElementImpl
 {
 public:
-    HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLButtonElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLButtonElementImpl();
 
     enum typeEnum {
@@ -286,7 +286,7 @@ protected:
 class HTMLFieldSetElementImpl : public HTMLGenericFormElementImpl
 {
 public:
-    HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLFieldSetElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLFieldSetElementImpl();
     
     virtual int tagPriority() const { return 3; }
@@ -331,8 +331,8 @@ public:
 #endif
     };
 
-    HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
-    HTMLInputElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLInputElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
+    HTMLInputElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLInputElementImpl();
     void init();
 
@@ -480,7 +480,7 @@ protected:
 class HTMLLabelElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLLabelElementImpl(DocumentPtr *doc);
+    HTMLLabelElementImpl(DocumentImpl *doc);
     virtual ~HTMLLabelElementImpl();
 
     virtual int tagPriority() const { return 5; }
@@ -515,7 +515,7 @@ public:
 class HTMLLegendElementImpl : public HTMLGenericFormElementImpl
 {
 public:
-    HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLLegendElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLLegendElementImpl();
 
     virtual bool isFocusable() const;
@@ -547,8 +547,8 @@ class HTMLSelectElementImpl : public HTMLGenericFormElementImpl
     friend class khtml::RenderSelect;
 
 public:
-    HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
-    HTMLSelectElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLSelectElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
+    HTMLSelectElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     ~HTMLSelectElementImpl();
     void init();
 
@@ -639,7 +639,7 @@ protected:
 class HTMLKeygenElementImpl : public HTMLSelectElementImpl
 {
 public:
-    HTMLKeygenElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLKeygenElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
 
     virtual int tagPriority() const { return 0; }
 
@@ -660,7 +660,7 @@ protected:
 class HTMLOptGroupElementImpl : public HTMLGenericFormElementImpl
 {
 public:
-    HTMLOptGroupElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLOptGroupElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLOptGroupElementImpl();
 
     virtual bool checkDTD(const NodeImpl* newChild) { return newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag); }
@@ -690,7 +690,7 @@ class HTMLOptionElementImpl : public HTMLGenericFormElementImpl
     friend class DOM::HTMLSelectElementImpl;
 
 public:
-    HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLOptionElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 2; }
@@ -742,7 +742,7 @@ public:
         ta_Physical
     };
 
-    HTMLTextAreaElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLTextAreaElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     ~HTMLTextAreaElementImpl();
 
     virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
@@ -814,7 +814,7 @@ protected:
 class HTMLIsIndexElementImpl : public HTMLInputElementImpl
 {
 public:
-    HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLIsIndexElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }

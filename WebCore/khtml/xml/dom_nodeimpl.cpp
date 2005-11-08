@@ -103,7 +103,7 @@ int NodeImplCounter::count = 0;
 static NodeImplCounter nodeImplCounter;
 #endif NDEBUG
 
-NodeImpl::NodeImpl(DocumentPtr *doc)
+NodeImpl::NodeImpl(DocumentImpl *doc)
     : document(doc),
       m_previous(0),
       m_next(0),
@@ -129,21 +129,13 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
 #ifndef NDEBUG
     ++NodeImplCounter::count;
 #endif
-    if (document)
-        document->ref();
 }
 
-void NodeImpl::setDocument(DocumentPtr *doc)
+void NodeImpl::setDocument(DocumentImpl *doc)
 {
     if (inDocument())
 	return;
     
-    if (doc)
-	doc->ref();
-    
-    if (document)
-	document->deref();
-
     document = doc;
 }
 
@@ -158,8 +150,6 @@ NodeImpl::~NodeImpl()
         getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
     delete m_regdListeners;
     delete m_nodeLists;
-    if (document)
-        document->deref();
     if (m_previous)
         m_previous->setNextSibling(0);
     if (m_next)
@@ -525,9 +515,9 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
     KHTMLPart *part = nil;
     KHTMLView *view = nil;
     
-    if (document && document->document()) {
-        part = document->document()->part();
-        view = document->document()->view();
+    if (DocumentImpl *doc = getDocument()) {
+        part = doc->part();
+        view = doc->view();
         // Since event handling code could cause this object to be deleted, grab a reference to the view now
         if (view)
             view->ref();
@@ -642,14 +632,6 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
     return !defaultPrevented; // ### what if defaultPrevented was called before dispatchEvent?
 }
 
-DocumentPtr *DocumentPtr::nullDocumentPtr()
-{
-    static DocumentPtr doc;
-    
-    doc.ref();
-    return &doc;
-}
-
 bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     assert(!getDocument()->eventDispatchForbidden());
@@ -661,39 +643,34 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
 {
     assert(!getDocument()->eventDispatchForbidden());
     int exceptioncode = 0;
-    EventImpl *evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
-    evt->ref();
-    DocumentPtr *doc = document;
-    doc->ref();
-    evt->setTarget(doc->document());
-    bool r = dispatchGenericEvent( evt, exceptioncode );
-    if (!evt->defaultPrevented() && doc->document())
-	doc->document()->defaultEventHandler(evt);
-    
-    if (eventType == loadEvent && !evt->propagationStopped() && doc->document()) {
+    SharedPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
+    SharedPtr<DocumentImpl> doc = getDocument();
+    evt->setTarget(doc.get());
+    bool r = dispatchGenericEvent(evt.get(), exceptioncode);
+    if (!evt->defaultPrevented() && doc)
+ 	doc->defaultEventHandler(evt.get());
+
+    if (eventType == loadEvent && !evt->propagationStopped() && doc) {
         // For onload events, send them to the enclosing frame only.
         // This is a DOM extension and is independent of bubbling/capturing rules of
         // the DOM.  You send the event only to the enclosing frame.  It does not
         // bubble through the parent document.
-        ElementImpl* elt = doc->document()->ownerElement();
+        ElementImpl* elt = doc->ownerElement();
         if (elt && (elt->getDocument()->domain().isNull() ||
-                    elt->getDocument()->domain() == doc->document()->domain())) {
+                    elt->getDocument()->domain() == doc->domain())) {
             // We also do a security check, since we don't want to allow the enclosing
             // iframe to see loads of child documents in other domains.
             evt->setCurrentTarget(elt);
 
             // Capturing first.
-            elt->handleLocalEvents(evt,true);
+            elt->handleLocalEvents(evt.get(), true);
 
             // Bubbling second.
             if (!evt->propagationStopped())
-                elt->handleLocalEvents(evt,false);
+                elt->handleLocalEvents(evt.get(), false);
             r = !evt->defaultPrevented();
         }
     }
-
-    doc->deref();
-    evt->deref();
 
     return r;
 }
@@ -727,7 +704,7 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
 
     int clientX = 0;
     int clientY = 0;
-    if (KHTMLView *view = document->document()->view())
+    if (KHTMLView *view = getDocument()->view())
         view->viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
     int screenX = _mouse->globalX();
     int screenY = _mouse->globalY();
@@ -1176,7 +1153,7 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
     if (shouldAdoptChild) {
         for (NodeImpl* node = newChild; node; node = node->traverseNextNode(newChild)) {
             KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->getDocument(), getDocument());
-            node->setDocument(getDocument()->docPtr());
+            node->setDocument(getDocument());
         }
     }
 }
@@ -1862,14 +1839,13 @@ void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
 
 //-------------------------------------------------------------------------
 
-ContainerNodeImpl::ContainerNodeImpl(DocumentPtr *doc)
+ContainerNodeImpl::ContainerNodeImpl(DocumentImpl *doc)
     : NodeImpl(doc)
 {
     _first = _last = 0;
 }
 
-
-ContainerNodeImpl::~ContainerNodeImpl()
+void ContainerNodeImpl::removeAllChildren()
 {
     //kdDebug( 6020 ) << "ContainerNodeImpl destructor" << endl;
 
@@ -1901,7 +1877,8 @@ ContainerNodeImpl::~ContainerNodeImpl()
             else
                 head = n;
             tail = n;
-        }
+        } else if (n->inDocument())
+            n->removedFromDocument();
     }
     
     // Only for the top level call, do the actual deleting.
@@ -1918,7 +1895,14 @@ ContainerNodeImpl::~ContainerNodeImpl()
         }
         
         alreadyInsideDestructor = false;
+        _first = 0;
+        _last = 0;
     }
+}
+
+ContainerNodeImpl::~ContainerNodeImpl()
+{
+    removeAllChildren();
 }
 
 

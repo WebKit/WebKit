@@ -48,13 +48,13 @@ namespace DOM {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
+HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(aTag, doc)
 {
     m_hasTarget = false;
 }
 
-HTMLAnchorElementImpl::HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLAnchorElementImpl::HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : HTMLElementImpl(tagName, doc)
 {
     m_hasTarget = false;
@@ -382,7 +382,7 @@ void HTMLAnchorElementImpl::focus()
 
 // -------------------------------------------------------------------------
 
-HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(brTag, doc)
+HTMLBRElementImpl::HTMLBRElementImpl(DocumentImpl *doc) : HTMLElementImpl(brTag, doc)
 {
 }
 
@@ -433,7 +433,7 @@ void HTMLBRElementImpl::setClear(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLFontElementImpl::HTMLFontElementImpl(DocumentPtr *doc)
+HTMLFontElementImpl::HTMLFontElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(fontTag, doc)
 {
 }
@@ -562,7 +562,7 @@ void HTMLFontElementImpl::setSize(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLModElementImpl::HTMLModElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLModElementImpl::HTMLModElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : HTMLElementImpl(tagName, doc)
 {
 }
@@ -589,7 +589,7 @@ void HTMLModElementImpl::setDateTime(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentPtr *doc)
+HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(qTag, doc)
 {
 }

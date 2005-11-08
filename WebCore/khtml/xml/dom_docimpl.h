@@ -172,6 +172,21 @@ public:
     DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v);
     ~DocumentImpl();
 
+    virtual void removedLastRef();
+
+    // Nodes belonging to this document hold "self-only" references -
+    // these are enough to keep the document from being destroyed, but
+    // not enough to keep it from removing its children. This allows a
+    // node that outlives its document to still have a valid document
+    // pointer without introducing reference cycles
+
+    void selfOnlyRef() { ++m_selfOnlyRefCount; }
+    void selfOnlyDeref() {
+        --m_selfOnlyRefCount;
+        if (!m_selfOnlyRefCount && !refCount())
+            delete this;
+    }
+
     // DOM methods & attributes for Document
 
     virtual DocumentTypeImpl *doctype() const; // returns 0 for HTML documents
@@ -405,13 +420,13 @@ public:
 
     QStringList availableStyleSheets() const;
 
-    NodeImpl *focusNode() const { return m_focusNode; }
+    NodeImpl *focusNode() const { return m_focusNode.get(); }
     bool setFocusNode(NodeImpl *newFocusNode);
 
-    NodeImpl *hoverNode() const { return m_hoverNode; }
+    NodeImpl *hoverNode() const { return m_hoverNode.get(); }
     void setHoverNode(NodeImpl *newHoverNode);
     
-    NodeImpl *activeNode() const { return m_activeNode; }
+    NodeImpl *activeNode() const { return m_activeNode.get(); }
     void setActiveNode(NodeImpl *newActiveNode);
 
     // Updates for :target (CSS3 selector).
@@ -630,9 +645,9 @@ protected:
 
     QColor m_textColor;
 
-    NodeImpl *m_focusNode;
-    NodeImpl *m_hoverNode;
-    NodeImpl *m_activeNode;
+    SharedPtr<NodeImpl> m_focusNode;
+    SharedPtr<NodeImpl> m_hoverNode;
+    SharedPtr<NodeImpl> m_activeNode;
 
     unsigned int m_domtree_version;
     
@@ -678,7 +693,7 @@ protected:
     
     DOMString m_title;
     bool m_titleSetExplicitly;
-    NodeImpl *m_titleElement;
+    SharedPtr<NodeImpl> m_titleElement;
     
     RenderArena* m_renderArena;
 
@@ -781,13 +796,14 @@ private:
     QValueList<khtml::DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;
     bool m_dashboardRegionsDirty;
+    int m_selfOnlyRefCount;
 #endif
 };
 
 class DocumentFragmentImpl : public ContainerNodeImpl
 {
 public:
-    DocumentFragmentImpl(DocumentPtr *doc);
+    DocumentFragmentImpl(DocumentImpl *doc);
 
     // DOM methods overridden from  parent classes
     virtual DOMString nodeName() const;
@@ -803,9 +819,9 @@ public:
 class DocumentTypeImpl : public NodeImpl
 {
 public:
-    DocumentTypeImpl(DOMImplementationImpl *, DocumentPtr *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
-    DocumentTypeImpl(DocumentPtr *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
-    DocumentTypeImpl(DocumentPtr *, const DocumentTypeImpl &);
+    DocumentTypeImpl(DOMImplementationImpl *, DocumentImpl *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
+    DocumentTypeImpl(DocumentImpl *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
+    DocumentTypeImpl(DocumentImpl *, const DocumentTypeImpl &);
 
     // DOM methods & attributes for DocumentType
     NamedNodeMapImpl *entities() const { return m_entities.get(); }

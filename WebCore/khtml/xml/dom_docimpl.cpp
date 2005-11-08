@@ -244,7 +244,7 @@ DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qu
         return 0;
     }
 
-    return new DocumentTypeImpl(this,DocumentPtr::nullDocumentPtr(),qualifiedName,publicId,systemId);
+    return new DocumentTypeImpl(this, 0, qualifiedName, publicId, systemId);
 }
 
 DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*feature*/) const
@@ -305,7 +305,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
 
     // now get the interesting parts of the doctype
     if (doctype)
-        doc->setDocType(new DocumentTypeImpl(doc->docPtr(), *doctype));
+        doc->setDocType(new DocumentTypeImpl(doc, *doctype));
 
     return doc;
 }
@@ -362,11 +362,10 @@ QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 
 // KHTMLView might be 0
 DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
-    : ContainerNodeImpl( new DocumentPtr() )
+    : ContainerNodeImpl(0)
       , m_domtree_version(0)
       , m_title("")
       , m_titleSetExplicitly(false)
-      , m_titleElement(0)
       , m_imageLoadEventTimer(0)
 #ifndef KHTML_NO_XBL
       , m_bindingManager(new XBLBindingManager(this))
@@ -385,9 +384,10 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_designMode(inherit)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
+    , m_selfOnlyRefCount(0)
 #endif
 {
-    document->doc = this;
+    document.resetSkippingRef(this);
 
     m_paintDevice = 0;
     m_paintDeviceMetrics = 0;
@@ -426,9 +426,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_attrNames = 0;
     m_attrNameAlloc = 0;
     m_attrNameCount = 0;
-    m_focusNode = 0;
-    m_hoverNode = 0;
-    m_activeNode = 0;
     m_defaultView = new AbstractViewImpl(this);
     m_defaultView->ref();
     m_listenerTypes = 0;
@@ -466,6 +463,29 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_docID = docID++;
 }
 
+void DocumentImpl::removedLastRef()
+{
+    if (m_selfOnlyRefCount) {
+        // if removing a child removes the last self-only ref, we don't
+        // want the document to be destructed until after
+        // removeAllChildren returns, so we guard ourselves with an
+        // extra self-only ref
+
+        DocPtr<DocumentImpl> guard(this);
+
+        // we must make sure not to be retaining any of our children through
+        // these extra pointers or we will create a reference cycle
+        m_docType = 0;
+        m_focusNode = 0;
+        m_hoverNode = 0;
+        m_activeNode = 0;
+        m_titleElement = 0;
+
+        removeAllChildren();
+    } else
+        delete this;
+}
+
 DocumentImpl::~DocumentImpl()
 {
     assert(!m_render);
@@ -479,7 +499,7 @@ DocumentImpl::~DocumentImpl()
     if (changedDocuments && m_docChanged)
         changedDocuments->remove(this);
     delete m_tokenizer;
-    document->doc = 0;
+    document.resetSkippingRef(0);
     delete m_sheet;
     delete m_styleSelector;
     delete m_docLoader;
@@ -500,16 +520,6 @@ DocumentImpl::~DocumentImpl()
     }
     m_defaultView->deref();
     m_styleSheets->deref();
-
-    if (m_focusNode)
-        m_focusNode->deref();
-    if (m_hoverNode)
-        m_hoverNode->deref();
-    if (m_activeNode)
-        m_activeNode->deref();
-
-    if (m_titleElement)
-        m_titleElement->deref();
 
     if (m_renderArena){
         delete m_renderArena;
@@ -582,17 +592,17 @@ ElementImpl *DocumentImpl::createElement(const DOMString &name, int &exceptionCo
 
 DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
 {
-    return new DocumentFragmentImpl( docPtr() );
+    return new DocumentFragmentImpl(getDocument());
 }
 
-TextImpl *DocumentImpl::createTextNode( const DOMString &data )
+TextImpl *DocumentImpl::createTextNode(const DOMString &data)
 {
-    return new TextImpl( docPtr(), data);
+    return new TextImpl(this, data);
 }
 
-CommentImpl *DocumentImpl::createComment ( const DOMString &data )
+CommentImpl *DocumentImpl::createComment (const DOMString &data)
 {
-    return new CommentImpl( docPtr(), data );
+    return new CommentImpl(this, data);
 }
 
 CDATASectionImpl *DocumentImpl::createCDATASection(const DOMString &data, int &exception)
@@ -601,7 +611,7 @@ CDATASectionImpl *DocumentImpl::createCDATASection(const DOMString &data, int &e
         exception = DOMException::NOT_SUPPORTED_ERR;
         return NULL;
     }
-    return new CDATASectionImpl(docPtr(), data);
+    return new CDATASectionImpl(this, data);
 }
 
 ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction(const DOMString &target, const DOMString &data, int &exception)
@@ -614,7 +624,7 @@ ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction(const DOMSt
         exception = DOMException::NOT_SUPPORTED_ERR;
         return NULL;
     }
-    return new ProcessingInstructionImpl(docPtr(),target,data);
+    return new ProcessingInstructionImpl(this, target, data);
 }
 
 EntityReferenceImpl *DocumentImpl::createEntityReference(const DOMString &name, int &exception)
@@ -627,12 +637,12 @@ EntityReferenceImpl *DocumentImpl::createEntityReference(const DOMString &name, 
         exception = DOMException::NOT_SUPPORTED_ERR;
         return NULL;
     }
-    return new EntityReferenceImpl(docPtr(), name.impl());
+    return new EntityReferenceImpl(this, name.impl());
 }
 
 EditingTextImpl *DocumentImpl::createEditingTextNode(const DOMString &text)
 {
-    return new EditingTextImpl(docPtr(), text);
+    return new EditingTextImpl(this, text);
 }
 
 CSSStyleDeclarationImpl *DocumentImpl::createCSSStyleDeclaration()
@@ -727,7 +737,7 @@ ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const
     }
     
     if (!e)
-        e = new ElementImpl(QualifiedName(AtomicString(prefix), AtomicString(localName), AtomicString(_namespaceURI)), document);
+        e = new ElementImpl(QualifiedName(AtomicString(prefix), AtomicString(localName), AtomicString(_namespaceURI)), getDocument());
     
     return e;
 }
@@ -872,17 +882,12 @@ void DocumentImpl::setTitle(DOMString title, NodeImpl *titleElement)
     if (!titleElement) {
         // Title set by JavaScript -- overrides any title elements.
         m_titleSetExplicitly = true;
-        if (m_titleElement) {
-            m_titleElement->deref();
-            m_titleElement = 0;
-        }
+        m_titleElement = 0;
     } else if (titleElement != m_titleElement) {
-        if (m_titleElement) {
+        if (m_titleElement)
             // Only allow the first title element to change the title -- others have no effect.
             return;
-        }
         m_titleElement = titleElement;
-        titleElement->ref();
     }
 
     if (m_title == title)
@@ -899,8 +904,6 @@ void DocumentImpl::removeTitle(NodeImpl *titleElement)
 
     // FIXME: Ideally we might want this to search for the first remaining title element, and use it.
     m_titleElement = 0;
-
-    titleElement->deref();
 
     if (!m_title.isEmpty()) {
         m_title = "";
@@ -945,7 +948,7 @@ KHTMLPart *DocumentImpl::part() const
 
 RangeImpl *DocumentImpl::createRange()
 {
-    return new RangeImpl( docPtr() );
+    return new RangeImpl(this);
 }
 
 NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned whatToShow, 
@@ -1302,7 +1305,7 @@ void DocumentImpl::updateSelection()
 
 Tokenizer *DocumentImpl::createTokenizer()
 {
-    return newXMLTokenizer(docPtr(), m_view);
+    return newXMLTokenizer(this, m_view);
 }
 
 void DocumentImpl::setPaintDevice( QPaintDevice *dev )
@@ -1402,7 +1405,7 @@ void DocumentImpl::implicitClose()
     if (!body && isHTMLDocument()) {
         NodeImpl *de = documentElement();
         if (de) {
-            body = new HTMLBodyElementImpl(docPtr());
+            body = new HTMLBodyElementImpl(this);
             int exceptionCode = 0;
             de->appendChild(body, exceptionCode);
             if (exceptionCode != 0)
@@ -2171,24 +2174,14 @@ void DocumentImpl::recalcStyleSelector()
 
 void DocumentImpl::setHoverNode(NodeImpl* newHoverNode)
 {
-    if (m_hoverNode != newHoverNode) {
-        if (m_hoverNode)
-            m_hoverNode->deref();
+    if (m_hoverNode != newHoverNode)
         m_hoverNode = newHoverNode;
-        if (m_hoverNode)
-            m_hoverNode->ref();
-    }    
 }
 
 void DocumentImpl::setActiveNode(NodeImpl* newActiveNode)
 {
-    if (m_activeNode != newActiveNode) {
-        if (m_activeNode)
-            m_activeNode->deref();
+    if (m_activeNode != newActiveNode)
         m_activeNode = newActiveNode;
-        if (m_activeNode)
-            m_activeNode->ref();
-    }    
 }
 
 #if APPLE_CHANGES
@@ -2250,12 +2243,12 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         return true;
 
 #if APPLE_CHANGES
-    if (m_focusNode && m_focusNode->isContentEditable() && !relinquishesEditingFocus(m_focusNode))
+    if (m_focusNode && m_focusNode->isContentEditable() && !relinquishesEditingFocus(m_focusNode.get()))
         return false;
 #endif     
        
     bool focusChangeBlocked = false;
-    NodeImpl *oldFocusNode = m_focusNode;
+    SharedPtr<NodeImpl> oldFocusNode = m_focusNode;
     m_focusNode = 0;
 
     // Remove focus from the existing focus node (if any)
@@ -2265,24 +2258,19 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 
         oldFocusNode->setFocus(false);
         oldFocusNode->dispatchHTMLEvent(blurEvent, false, false);
-        if (m_focusNode != 0) {
+        if (m_focusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             newFocusNode = 0;
         }
         oldFocusNode->dispatchUIEvent(DOMFocusOutEvent);
-        if (m_focusNode != 0) {
+        if (m_focusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             newFocusNode = 0;
         }
-        if ((oldFocusNode == this) && oldFocusNode->hasOneRef()) {
-            oldFocusNode->deref(); // deletes this
+        if ((oldFocusNode.get() == this) && oldFocusNode->hasOneRef())
             return true;
-        }
-        else {
-            oldFocusNode->deref();
-        }
     }
 
     // Clear the selection when changing the focus node to null or to a node that is not 
@@ -2303,7 +2291,6 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 #endif
         // Set focus on the new node
         m_focusNode = newFocusNode;
-        m_focusNode->ref();
         m_focusNode->dispatchHTMLEvent(focusEvent, false, false);
         if (m_focusNode != newFocusNode) {
             // handler shifted focus
@@ -2320,14 +2307,14 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
         if (view()) {
-            QWidget *focusWidget = widgetForNode(m_focusNode);
+            QWidget *focusWidget = widgetForNode(m_focusNode.get());
             if (focusWidget) {
                 // Make sure a widget has the right size before giving it focus.
                 // Otherwise, we are testing edge cases of the QWidget code.
                 // Specifically, in WebCore this does not work well for text fields.
                 updateLayout();
                 // Re-get the widget in case updating the layout changed things.
-                focusWidget = widgetForNode(m_focusNode);
+                focusWidget = widgetForNode(m_focusNode.get());
             }
             if (focusWidget)
                 focusWidget->setFocus();
@@ -3205,9 +3192,9 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
     
     // FIXME: Assume this is a mapped attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
     // documents if we're wrong.
-    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(QualifiedName(prefix.impl(), 
-                                                                           localName.impl(),
-                                                                           namespaceURI.impl()), DOMString("").impl()), false);
+    return new AttrImpl(0, this, new MappedAttributeImpl(QualifiedName(prefix.impl(), 
+                                                                       localName.impl(),
+                                                                       namespaceURI.impl()), DOMString("").impl()), false);
 }
 
 SharedPtr<HTMLCollectionImpl> DocumentImpl::images()
@@ -3267,7 +3254,7 @@ SharedPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &ele
 
 // ----------------------------------------------------------------------------
 
-DocumentFragmentImpl::DocumentFragmentImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
+DocumentFragmentImpl::DocumentFragmentImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
 {
 }
 
@@ -3309,9 +3296,9 @@ DOMString DocumentFragmentImpl::toString() const
 }
 
 
-NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep )
+NodeImpl *DocumentFragmentImpl::cloneNode (bool deep)
 {
-    DocumentFragmentImpl *clone = new DocumentFragmentImpl( docPtr() );
+    DocumentFragmentImpl *clone = new DocumentFragmentImpl(getDocument());
     if (deep)
         cloneChildNodes(clone);
     return clone;
@@ -3320,17 +3307,17 @@ NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep )
 
 // ----------------------------------------------------------------------------
 
-DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *i, DocumentPtr *doc, const DOMString &n, const DOMString &p, const DOMString &s)
+DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *i, DocumentImpl *doc, const DOMString &n, const DOMString &p, const DOMString &s)
     : NodeImpl(doc), m_implementation(i), m_name(n), m_publicId(p), m_systemId(s)
 {
 }
 
-DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc, const DOMString &n, const DOMString &p, const DOMString &s)
+DocumentTypeImpl::DocumentTypeImpl(DocumentImpl *doc, const DOMString &n, const DOMString &p, const DOMString &s)
     : NodeImpl(doc), m_name(n), m_publicId(p), m_systemId(s)
 {
 }
 
-DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc, const DocumentTypeImpl &t)
+DocumentTypeImpl::DocumentTypeImpl(DocumentImpl *doc, const DocumentTypeImpl &t)
     : NodeImpl(doc), m_implementation(t.m_implementation)
     , m_name(t.m_name), m_publicId(t.m_publicId), m_systemId(t.m_systemId), m_subset(t.m_subset)
 {

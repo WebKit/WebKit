@@ -52,7 +52,7 @@ namespace DOM {
 
 using namespace HTMLNames;
 
-HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
+HTMLTableElementImpl::HTMLTableElementImpl(DocumentImpl *doc)
   : HTMLElementImpl(tableTag, doc)
 {
     tCaption = 0;
@@ -157,7 +157,7 @@ HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
     if(!head)
     {
         int exceptioncode = 0;
-        head = new HTMLTableSectionElementImpl(theadTag, docPtr(), true /* implicit */);
+        head = new HTMLTableSectionElementImpl(theadTag, getDocument(), true /* implicit */);
         if(foot)
             insertBefore( head, foot, exceptioncode );
         else if(firstBody)
@@ -184,7 +184,7 @@ HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
     if(!foot)
     {
         int exceptioncode = 0;
-        foot = new HTMLTableSectionElementImpl(tfootTag, docPtr(), true /*implicit */);
+        foot = new HTMLTableSectionElementImpl(tfootTag, getDocument(), true /*implicit */);
         if(firstBody)
             insertBefore( foot, firstBody, exceptioncode );
         else
@@ -209,7 +209,7 @@ HTMLElementImpl *HTMLTableElementImpl::createCaption(  )
     if(!tCaption)
     {
         int exceptioncode = 0;
-        tCaption = new HTMLTableCaptionElementImpl(docPtr());
+        tCaption = new HTMLTableCaptionElementImpl(getDocument());
         insertBefore( tCaption, firstChild(), exceptioncode );
     }
     return tCaption;
@@ -233,7 +233,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
     // (note: this is different from "if the table has no sections", since we can have
     // <TABLE><TR>)
     if(!firstBody && !head && !foot)
-        setTBody( new HTMLTableSectionElementImpl(tbodyTag, docPtr(), true /* implicit */) );
+        setTBody( new HTMLTableSectionElementImpl(tbodyTag, getDocument(), true /* implicit */) );
 
     //kdDebug(6030) << k_funcinfo << index << endl;
     // IE treats index=-1 as default value meaning 'append after last'
@@ -780,7 +780,7 @@ void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 // -------------------------------------------------------------------------
 
-HTMLTableSectionElementImpl::HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentPtr *doc, bool implicit)
+HTMLTableSectionElementImpl::HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentImpl *doc, bool implicit)
     : HTMLTablePartElementImpl(tagName, doc)
 {
     m_implicit = implicit;
@@ -821,7 +821,7 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, int& excepti
     }
     else
     {
-        r = new HTMLTableRowElementImpl(docPtr());
+        r = new HTMLTableRowElementImpl(getDocument());
         if ( numRows == index || index == -1 )
             appendChild(r, exceptioncode);
         else {
@@ -992,7 +992,7 @@ HTMLElementImpl *HTMLTableRowElementImpl::insertCell( int index, int &exceptionc
         exceptioncode = DOMException::INDEX_SIZE_ERR; // per the DOM
     else
     {
-        c = new HTMLTableCellElementImpl(tdTag, docPtr());
+        c = new HTMLTableCellElementImpl(tdTag, getDocument());
         if(numCells == index || index == -1)
             appendChild(c, exceptioncode);
         else {
@@ -1083,7 +1083,7 @@ void HTMLTableRowElementImpl::setVAlign(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLTableCellElementImpl::HTMLTableCellElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLTableCellElementImpl::HTMLTableCellElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
   : HTMLTablePartElementImpl(tagName, doc)
 {
     _col = -1;
@@ -1307,7 +1307,7 @@ void HTMLTableCellElementImpl::setWidth(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLTableColElementImpl::HTMLTableColElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+HTMLTableColElementImpl::HTMLTableColElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : HTMLTablePartElementImpl(tagName, doc)
 {
     _span = (tagName.matches(colgroupTag) ? 0 : 1);

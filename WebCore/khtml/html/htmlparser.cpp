@@ -117,24 +117,22 @@ public:
  *    element or ignore the tag.
  *
  */
-HTMLParser::HTMLParser(KHTMLView *_parent, DocumentPtr *doc, bool includesComments) 
+HTMLParser::HTMLParser(KHTMLView *_parent, DocumentImpl *doc, bool includesComments) 
     : current(0), currentIsReferenced(false), includesCommentsInDOM(includesComments)
 {
     HTMLWidget    = _parent;
     document      = doc;
-    document->ref();
 
     blockStack = 0;
 
     reset();
 }
 
-HTMLParser::HTMLParser(DOM::DocumentFragmentImpl *i, DocumentPtr *doc, bool includesComments)
+HTMLParser::HTMLParser(DOM::DocumentFragmentImpl *i, DocumentImpl *doc, bool includesComments)
     : current(0), currentIsReferenced(false), includesCommentsInDOM(includesComments)
 {
     HTMLWidget = 0;
     document = doc;
-    document->ref();
 
     blockStack = 0;
 
@@ -148,8 +146,6 @@ HTMLParser::~HTMLParser()
     freeBlock();
 
     setCurrent(0);
-
-    document->deref();
 
     if (isindex)
         isindex->deref();

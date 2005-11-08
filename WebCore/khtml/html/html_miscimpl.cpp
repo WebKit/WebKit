@@ -37,7 +37,7 @@ namespace DOM {
 
 using namespace HTMLNames;
 
-HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentPtr *doc)
+HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(basefontTag, doc)
 {
 }

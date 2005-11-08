@@ -1,3 +1,21 @@
+2005-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric, Geoff and Darin.
+
+	- added test cases for <rdar://problem/4118258> XML DOM trees freed prematurely unless reference held to document node (causes crash)
+
+	Also updated the GC tests to try a little harder to trigger GC,
+	the old way might not work as well with the reworking of SimpleNumber.
+	
+        * fast/dom/gc-1.html:
+        * fast/dom/gc-2.html:
+        * fast/dom/gc-3.html:
+        * fast/dom/gc-5.html:
+        * fast/dom/gc-6-expected.txt: Added.
+        * fast/dom/gc-6.html: Added.
+        * fast/dom/gc-7-expected.txt: Added.
+        * fast/dom/gc-7.html: Added.
+
 2005-11-07  David Harrison  <harrison@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3739

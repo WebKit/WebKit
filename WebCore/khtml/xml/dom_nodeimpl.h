@@ -30,6 +30,7 @@
 #include "misc/helper.h"
 #include "misc/shared.h"
 #include "dom_atomicstring.h"
+#include "DocPtr.h"
 
 class QPainter;
 template <class type> class QPtrList;
@@ -60,26 +61,12 @@ class NamedAttrMapImpl;
 class QualifiedName;
 class RegisteredEventListener;
 
-class DocumentPtr : public khtml::Shared<DocumentPtr>
-{
-public:
-    DocumentImpl *document() const { return doc; }
-    static DocumentPtr *nullDocumentPtr();
-    
-private:
-    DocumentPtr() { doc = 0; }
-    friend class DocumentImpl;
-    friend class DOMImplementationImpl;
-
-    DocumentImpl *doc;
-};
-
 // this class implements nodes, which can have a parent but no children:
 class NodeImpl : public khtml::TreeShared<NodeImpl>
 {
     friend class DocumentImpl;
 public:
-    NodeImpl(DocumentPtr *doc);
+    NodeImpl(DocumentImpl *doc);
     virtual ~NodeImpl();
 
     // DOM methods & attributes for Node
@@ -227,7 +214,7 @@ public:
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }
     // inDocument should also make sure a document exists in case the document has been destroyed before the node is removed from the document.
-    bool inDocument() const { return document->document() && m_inDocument; }
+    bool inDocument() const { return document.get() && m_inDocument; }
     bool styleElement() const { return m_styleElement; }
     bool implicitNode() const { return m_implicit; }
     void setHasID(bool b=true) { m_hasId = b; }
@@ -265,9 +252,9 @@ public:
     unsigned nodeIndex() const;
     // Returns the document that this node is associated with. This is guaranteed to always be non-null, as opposed to
     // DOM's ownerDocument() which is null for Document nodes (and sometimes DocumentType nodes).
-    DocumentImpl* getDocument() const { return document->document(); }
+    DocumentImpl* getDocument() const { return document.get(); }
 
-    void setDocument(DocumentPtr *doc);
+    void setDocument(DocumentImpl *doc);
 
     void addEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     void removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
@@ -338,8 +325,6 @@ public:
 
     /* Like traversePreviousNode, but visits nodes before their children. */
     NodeImpl *traversePreviousNodePostOrder(const NodeImpl *stayWithin = 0) const;
-
-    DocumentPtr *docPtr() const { return document; }
 
     NodeImpl *previousEditable() const;
     NodeImpl *nextEditable() const;
@@ -479,7 +464,7 @@ public:
     SharedPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
 
 private: // members
-    DocumentPtr *document;
+    DocPtr<DocumentImpl> document;
     NodeImpl *m_previous;
     NodeImpl *m_next;
 protected:
@@ -513,7 +498,7 @@ protected:
 class ContainerNodeImpl : public NodeImpl
 {
 public:
-    ContainerNodeImpl(DocumentPtr *doc);
+    ContainerNodeImpl(DocumentImpl *doc);
     virtual ~ContainerNodeImpl();
 
     // DOM methods overridden from  parent classes
@@ -528,6 +513,7 @@ public:
     // Other methods (not part of DOM)
     void willRemove();
     int willRemoveChild(NodeImpl *child);
+    void removeAllChildren();
     void removeChildren();
     void cloneChildNodes(NodeImpl *clone);
 

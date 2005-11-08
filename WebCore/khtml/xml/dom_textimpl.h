@@ -38,8 +38,8 @@ namespace DOM {
 class CharacterDataImpl : public NodeImpl
 {
 public:
-    CharacterDataImpl(DocumentPtr *doc, const DOMString &_text);
-    CharacterDataImpl(DocumentPtr *doc);
+    CharacterDataImpl(DocumentImpl *doc, const DOMString &_text);
+    CharacterDataImpl(DocumentImpl *doc);
     virtual ~CharacterDataImpl();
 
     // DOM methods & attributes for CharacterData
@@ -90,8 +90,8 @@ protected:
 class CommentImpl : public CharacterDataImpl
 {
 public:
-    CommentImpl(DocumentPtr *doc, const DOMString &_text);
-    CommentImpl(DocumentPtr *doc);
+    CommentImpl(DocumentImpl *doc, const DOMString &_text);
+    CommentImpl(DocumentImpl *doc);
     virtual ~CommentImpl();
 
     // DOM methods overridden from  parent classes
@@ -112,8 +112,8 @@ public:
 class TextImpl : public CharacterDataImpl
 {
 public:
-    TextImpl(DocumentPtr *impl, const DOMString &_text);
-    TextImpl(DocumentPtr *impl);
+    TextImpl(DocumentImpl *impl, const DOMString &_text);
+    TextImpl(DocumentImpl *impl);
     virtual ~TextImpl();
 
     // DOM methods & attributes for CharacterData
@@ -151,8 +151,8 @@ class CDATASectionImpl : public TextImpl
 {
 // ### should these have id==ID_TEXT
 public:
-    CDATASectionImpl(DocumentPtr *impl, const DOMString &_text);
-    CDATASectionImpl(DocumentPtr *impl);
+    CDATASectionImpl(DocumentImpl *impl, const DOMString &_text);
+    CDATASectionImpl(DocumentImpl *impl);
     virtual ~CDATASectionImpl();
 
     // DOM methods overridden from  parent classes
@@ -175,8 +175,8 @@ protected:
 class EditingTextImpl : public TextImpl
 {
 public:
-    EditingTextImpl(DocumentPtr *impl, const DOMString &text);
-    EditingTextImpl(DocumentPtr *impl);
+    EditingTextImpl(DocumentImpl *impl, const DOMString &text);
+    EditingTextImpl(DocumentImpl *impl);
     virtual ~EditingTextImpl();
 
     virtual bool rendererIsNeeded(khtml::RenderStyle *);

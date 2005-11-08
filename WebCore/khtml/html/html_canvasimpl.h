@@ -42,7 +42,7 @@ class HTMLCanvasElementImpl
     : public HTMLImageElementImpl
 {
 public:
-    HTMLCanvasElementImpl(DocumentPtr *doc);
+    HTMLCanvasElementImpl(DocumentImpl *doc);
     ~HTMLCanvasElementImpl();
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;

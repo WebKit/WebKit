@@ -46,7 +46,7 @@ class CSSStyleSheetImpl;
 class HTMLBaseElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLBaseElementImpl(DocumentPtr *doc);
+    HTMLBaseElementImpl(DocumentImpl *doc);
     ~HTMLBaseElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -76,7 +76,7 @@ protected:
 class HTMLLinkElementImpl : public khtml::CachedObjectClient, public HTMLElementImpl
 {
 public:
-    HTMLLinkElementImpl(DocumentPtr *doc);
+    HTMLLinkElementImpl(DocumentImpl *doc);
     ~HTMLLinkElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -154,7 +154,7 @@ protected:
 class HTMLMetaElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLMetaElementImpl(DocumentPtr *doc);
+    HTMLMetaElementImpl(DocumentImpl *doc);
     ~HTMLMetaElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -187,7 +187,7 @@ protected:
 class HTMLScriptElementImpl : public HTMLElementImpl, public khtml::CachedObjectClient
 {
 public:
-    HTMLScriptElementImpl(DocumentPtr *doc);
+    HTMLScriptElementImpl(DocumentImpl *doc);
     ~HTMLScriptElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -238,7 +238,7 @@ private:
 class HTMLStyleElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLStyleElementImpl(DocumentPtr *doc);
+    HTMLStyleElementImpl(DocumentImpl *doc);
     ~HTMLStyleElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -277,7 +277,7 @@ protected:
 class HTMLTitleElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLTitleElementImpl(DocumentPtr *doc);
+    HTMLTitleElementImpl(DocumentImpl *doc);
     ~HTMLTitleElementImpl();
 
     virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }

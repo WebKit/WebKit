@@ -36,7 +36,7 @@ using khtml::parseAttributes;
 
 namespace DOM {
 
-EntityImpl::EntityImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
+EntityImpl::EntityImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
 {
     m_publicId = 0;
     m_systemId = 0;
@@ -44,7 +44,7 @@ EntityImpl::EntityImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
     m_name = 0;
 }
 
-EntityImpl::EntityImpl(DocumentPtr *doc, DOMString _name) : ContainerNodeImpl(doc)
+EntityImpl::EntityImpl(DocumentImpl *doc, DOMString _name) : ContainerNodeImpl(doc)
 {
     m_publicId = 0;
     m_systemId = 0;
@@ -54,7 +54,7 @@ EntityImpl::EntityImpl(DocumentPtr *doc, DOMString _name) : ContainerNodeImpl(do
         m_name->ref();
 }
 
-EntityImpl::EntityImpl(DocumentPtr *doc, DOMString _publicId, DOMString _systemId, DOMString _notationName) : ContainerNodeImpl(doc)
+EntityImpl::EntityImpl(DocumentImpl *doc, DOMString _publicId, DOMString _systemId, DOMString _notationName) : ContainerNodeImpl(doc)
 {
     m_publicId = _publicId.impl();
     if (m_publicId)
@@ -164,12 +164,12 @@ DOMString EntityImpl::toString() const
 
 // -------------------------------------------------------------------------
 
-EntityReferenceImpl::EntityReferenceImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
+EntityReferenceImpl::EntityReferenceImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
 {
     m_entityName = 0;
 }
 
-EntityReferenceImpl::EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *_entityName) : ContainerNodeImpl(doc)
+EntityReferenceImpl::EntityReferenceImpl(DocumentImpl *doc, DOMStringImpl *_entityName) : ContainerNodeImpl(doc)
 {
     m_entityName = _entityName;
     if (m_entityName)
@@ -194,7 +194,7 @@ unsigned short EntityReferenceImpl::nodeType() const
 
 NodeImpl *EntityReferenceImpl::cloneNode ( bool deep )
 {
-    EntityReferenceImpl *clone = new EntityReferenceImpl(docPtr(),m_entityName);
+    EntityReferenceImpl *clone = new EntityReferenceImpl(getDocument(), m_entityName);
     // ### make sure children are readonly
     // ### since we are a reference, should we clone children anyway (even if not deep?)
     if (deep)
@@ -230,14 +230,14 @@ DOMString EntityReferenceImpl::toString() const
 
 // -------------------------------------------------------------------------
 
-NotationImpl::NotationImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
+NotationImpl::NotationImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
 {
     m_publicId = 0;
     m_systemId = 0;
     m_name = 0;
 }
 
-NotationImpl::NotationImpl(DocumentPtr *doc, DOMString _name, DOMString _publicId, DOMString _systemId) : ContainerNodeImpl(doc)
+NotationImpl::NotationImpl(DocumentImpl *doc, DOMString _name, DOMString _publicId, DOMString _systemId) : ContainerNodeImpl(doc)
 {
     m_name = _name.impl();
     if (m_name)
@@ -298,7 +298,7 @@ bool NotationImpl::childTypeAllowed( unsigned short /*type*/ )
 // ### need a way of updating these properly whenever child nodes of the processing instruction
 // change or are added/removed
 
-ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
+ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
 {
     m_target = 0;
     m_data = 0;
@@ -310,7 +310,7 @@ ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc) : Contain
 #endif
 }
 
-ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMString _target, DOMString _data) : ContainerNodeImpl(doc)
+ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentImpl *doc, DOMString _target, DOMString _data) : ContainerNodeImpl(doc)
 {
     m_target = _target.impl();
     if (m_target)
@@ -384,7 +384,7 @@ void ProcessingInstructionImpl::setNodeValue( const DOMString &_nodeValue, int &
 NodeImpl *ProcessingInstructionImpl::cloneNode ( bool /*deep*/)
 {
     // ### copy m_localHref
-    return new ProcessingInstructionImpl(docPtr(),m_target,m_data);
+    return new ProcessingInstructionImpl(getDocument(), m_target, m_data);
 }
 
 DOMString ProcessingInstructionImpl::localHref() const

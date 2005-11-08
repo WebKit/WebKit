@@ -58,10 +58,10 @@ AttributeImpl* AttributeImpl::clone(bool) const
 }
 
 void AttributeImpl::allocateImpl(ElementImpl* e) {
-    m_impl = new AttrImpl(e, e->docPtr(), this, true);
+    m_impl = new AttrImpl(e, e->getDocument(), this, true);
 }
 
-AttrImpl::AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a, bool createTextChild)
+AttrImpl::AttrImpl(ElementImpl* element, DocumentImpl* docPtr, AttributeImpl* a, bool createTextChild)
     : ContainerNodeImpl(docPtr),
       m_element(element),
       m_attribute(a),
@@ -164,7 +164,7 @@ void AttrImpl::setNodeValue( const DOMString &v, int &exceptioncode )
 
 NodeImpl *AttrImpl::cloneNode ( bool /*deep*/)
 {
-    AttrImpl *clone = new AttrImpl(0, docPtr(), m_attribute->clone(), false);
+    AttrImpl *clone = new AttrImpl(0, getDocument(), m_attribute->clone(), false);
     
     cloneChildNodes(clone);
     return clone;
@@ -256,7 +256,7 @@ int ElementImplCounter::count;
 static ElementImplCounter elementImplCounter;
 #endif NDEBUG
 
-ElementImpl::ElementImpl(const QualifiedName& qName, DocumentPtr *doc)
+ElementImpl::ElementImpl(const QualifiedName& qName, DocumentImpl *doc)
     : ContainerNodeImpl(doc), m_tagName(qName)
 {
 #ifndef NDEBUG
@@ -1272,7 +1272,7 @@ void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
     }
 }
 
-StyledElementImpl::StyledElementImpl(const QualifiedName& name, DocumentPtr *doc)
+StyledElementImpl::StyledElementImpl(const QualifiedName& name, DocumentImpl *doc)
     : ElementImpl(name, doc)
 {
     m_inlineStyleDecl = 0;

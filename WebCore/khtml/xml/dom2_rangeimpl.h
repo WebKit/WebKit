@@ -29,11 +29,11 @@
 
 #include "dom/dom2_range.h"
 #include "misc/shared.h"
+#include "DocPtr.h"
 
 namespace DOM {
 
 class DocumentFragmentImpl;
-class DocumentPtr;
 class DOMString;
 class NodeImpl;
 class Position;
@@ -42,8 +42,8 @@ class RangeImpl : public khtml::Shared<RangeImpl>
 {
     friend class DocumentImpl;
 public:
-    RangeImpl(DocumentPtr *_ownerDocument);
-    RangeImpl(DocumentPtr *_ownerDocument,
+    RangeImpl(DocumentImpl *_ownerDocument);
+    RangeImpl(DocumentImpl *_ownerDocument,
               NodeImpl *_startContainer, int _startOffset,
               NodeImpl *_endContainer, int _endOffset);
 
@@ -106,7 +106,8 @@ public:
 #endif
 
 protected:
-    DocumentPtr *m_ownerDocument;
+    // FIXME - this could be a full-on SharedPtr in principle...
+    DocPtr<DocumentImpl> m_ownerDocument;
     NodeImpl *m_startContainer;
     unsigned m_startOffset;
     NodeImpl *m_endContainer;

@@ -33,8 +33,8 @@ class DOMString;
 class HTMLAnchorElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLAnchorElementImpl(DocumentPtr *doc);
-    HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentPtr* doc);
+    HTMLAnchorElementImpl(DocumentImpl *doc);
+    HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentImpl* doc);
     ~HTMLAnchorElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -98,7 +98,7 @@ protected:
 class HTMLBRElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLBRElementImpl(DocumentPtr *doc);
+    HTMLBRElementImpl(DocumentImpl *doc);
     ~HTMLBRElementImpl();
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -118,7 +118,7 @@ public:
 class HTMLFontElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLFontElementImpl(DocumentPtr *doc);
+    HTMLFontElementImpl(DocumentImpl *doc);
     ~HTMLFontElementImpl();
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -142,7 +142,7 @@ public:
 class HTMLModElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLModElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
+    HTMLModElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -159,7 +159,7 @@ public:
 class HTMLQuoteElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLQuoteElementImpl(DocumentPtr *doc);
+    HTMLQuoteElementImpl(DocumentImpl *doc);
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
