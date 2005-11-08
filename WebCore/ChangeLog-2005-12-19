@@ -1,3 +1,23 @@
+2005-11-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin and Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3739
+        Unreproducible - Assertion failure in isEqualIgnoringAffinity on double-click
+
+        Test case added:
+        * editing/inserting/doubleclick-crash.html
+        
+        * khtml/rendering/render_text.cpp:
+        (RenderText::atLineWrap):
+        New utility function.
+        (RenderText::caretRect):
+        Use atLineWrap.  Remove dead code.
+        (RenderText::inlineBox):
+        Use atLineWrap.
+        * khtml/rendering/render_text.h:
+        Add atLineWrap.
+
 2005-11-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for sluggish loading of large pages due to excessive

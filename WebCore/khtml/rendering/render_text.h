@@ -274,6 +274,7 @@ public:
     virtual int previousOffset (int current) const;
     virtual int nextOffset (int current) const;
     
+    bool atLineWrap(InlineTextBox *box, int offset);
     bool containsReversedText() { return m_containsReversedText; }
     
 #if APPLE_CHANGES

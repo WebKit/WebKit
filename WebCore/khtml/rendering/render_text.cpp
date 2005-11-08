@@ -985,6 +985,7 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
+static RenderObject *firstRendererOnNextLine(InlineBox *box) __attribute__ ((unused));
 static RenderObject *firstRendererOnNextLine(InlineBox *box)
 {
     if (!box)
@@ -1031,31 +1032,33 @@ static RenderObject *lastRendererOnPrevLine(InlineBox *box)
     return lastChild->object();
 }
 
+bool RenderText::atLineWrap(InlineTextBox *box, int offset)
+{
+    if (box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len) {
+        // Take special care because in preformatted text, the newlines
+        // are in between the text boxes (i.e. not in any box's m_start
+        // thru m_start+m_len-1), even though they are rendered.
+        if (!style()->preserveNewline() || str->s[offset] != '\n')
+            return true;
+    }
+    
+    return false;
+}
+
 QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
-    if (!firstTextBox() || stringLength() == 0) {
+    if (!firstTextBox() || stringLength() == 0)
         return QRect();
-    }
 
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
         if ((offset >= box->m_start) && (offset <= box->m_start + box->m_len)) {
             // Check if downstream affinity would make us move to the next line.
-            InlineTextBox *nextBox = box->nextTextBox();
-            if (offset == box->m_start + box->m_len && affinity == DOWNSTREAM  && nextBox &&  !box->nextOnLine()) {
-                // We're at the end of a line broken on a word boundary and affinity is downstream.
-                // Try to jump down to the next line.
-                if (nextBox) {
-                    // Use the next text box
-                    box = nextBox;
-                    offset = box->m_start;
-                } else {
-                    // Look on the next line
-                    RenderObject *object = firstRendererOnNextLine(box);
-                    if (object)
-                        return object->caretRect(0, affinity);
-                }
+            if (affinity == DOWNSTREAM && atLineWrap(box, offset)) {
+                // Use the next text box
+                box = box->nextTextBox();
+                offset = box->m_start;
             } else {
                 InlineTextBox *prevBox = box->prevTextBox();
                 if (offset == box->m_start && affinity == UPSTREAM && prevBox && !box->prevOnLine()) {
@@ -1812,21 +1815,12 @@ InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
 {
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
-            if (affinity == DOWNSTREAM) {
-                // Take special care because in white-space:pre, the newline
-                // characters are in between the text boxes (i.e. not in any
-                // box's m_start thru m_start+m_len-1).  So, check that the
-                // offset really is in the next text box, vs checking that it
-                // is simply "past" the current box.
-                InlineTextBox *nextBox = box->nextTextBox();
-                if (nextBox && offset >= nextBox->m_start) {
-                    assert(offset < nextBox->m_start + nextBox->m_len);
-                    return box->nextTextBox();
-                }
-            }
+            if (affinity == DOWNSTREAM && atLineWrap(box, offset))
+                return box->nextTextBox();
             return box;
         }
-        else if (offset < box->m_start) {
+        
+        if (offset < box->m_start) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered.
