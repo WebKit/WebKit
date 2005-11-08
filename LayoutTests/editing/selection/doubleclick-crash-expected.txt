@@ -1,0 +1,18 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > PRE > BODY > HTML > #document to 5 of #text > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > PRE > BODY > HTML > #document to 5 of #text > PRE > BODY > HTML > #document toDOMRange:range from 5 of #text > PRE > BODY > HTML > #document to 6 of #text > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x587
+      RenderBlock {PRE} at (0,0) size 800x75
+        RenderText {TEXT} at (0,0) size 40x30
+          text run at (0,0) width 40: "Test."
+          text run at (0,15) width 40: "Test."
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+selection start: position 5 of child 0 {TEXT} of child 1 {PRE} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 0 {TEXT} of child 1 {PRE} of child 1 {BODY} of child 0 {HTML} of document

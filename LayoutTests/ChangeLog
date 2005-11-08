@@ -1,3 +1,13 @@
+2005-11-07  David Harrison  <harrison@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3739
+        Unreproducible - Assertion failure in isEqualIgnoringAffinity on double-click
+        
+        * editing/selection/doubleclick-crash-expected.checksum: Added.
+        * editing/inserting/doubleclick-crash-expected.png: Added.
+        * editing/inserting/doubleclick-crash-expected.txt: Added.
+        * editing/inserting/doubleclick-crash.html: Added.
+
 2005-11-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
