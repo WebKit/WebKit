@@ -1,3 +1,45 @@
+2005-11-07  David Harrison  <harrison@apple.com>
+
+        Layout tests for <rdar://problem/4313925>
+        Denver Regression: Mail: "TAB+paste+insert before" actually inserts after the pasted text
+
+        * editing/inserting/insert-br-at-tabspan-001-expected.checksum: Added.
+        * editing/inserting/insert-br-at-tabspan-001-expected.png: Added.
+        * editing/inserting/insert-br-at-tabspan-001-expected.txt: Added.
+        * editing/inserting/insert-br-at-tabspan-001.html: Added.
+        * editing/inserting/insert-br-at-tabspan-002-expected.checksum: Added.
+        * editing/inserting/insert-br-at-tabspan-002-expected.png: Added.
+        * editing/inserting/insert-br-at-tabspan-002-expected.txt: Added.
+        * editing/inserting/insert-br-at-tabspan-002.html: Added.
+        * editing/inserting/insert-br-at-tabspan-003-expected.checksum: Added.
+        * editing/inserting/insert-br-at-tabspan-003-expected.png: Added.
+        * editing/inserting/insert-br-at-tabspan-003-expected.txt: Added.
+        * editing/inserting/insert-br-at-tabspan-003.html: Added.
+        * editing/inserting/insert-text-at-tabspan-001-expected.checksum: Added.
+        * editing/inserting/insert-text-at-tabspan-001-expected.png: Added.
+        * editing/inserting/insert-text-at-tabspan-001-expected.txt: Added.
+        * editing/inserting/insert-text-at-tabspan-001.html: Added.
+        * editing/inserting/insert-text-at-tabspan-002-expected.checksum: Added.
+        * editing/inserting/insert-text-at-tabspan-002-expected.png: Added.
+        * editing/inserting/insert-text-at-tabspan-002-expected.txt: Added.
+        * editing/inserting/insert-text-at-tabspan-002.html: Added.
+        * editing/inserting/insert-text-at-tabspan-003-expected.checksum: Added.
+        * editing/inserting/insert-text-at-tabspan-003-expected.png: Added.
+        * editing/inserting/insert-text-at-tabspan-003-expected.txt: Added.
+        * editing/inserting/insert-text-at-tabspan-003.html: Added.
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.checksum: Added.
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.png: Added.
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt: Added.
+        * editing/pasteboard/paste-text-at-tabspan-001.html: Added.
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.checksum: Added.
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.png: Added.
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.txt: Added.
+        * editing/pasteboard/paste-text-at-tabspan-002.html: Added.
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.checksum: Added.
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.png: Added.
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.txt: Added.
+        * editing/pasteboard/paste-text-at-tabspan-003.html: Added.
+
 2005-11-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric, Geoff and Darin.
