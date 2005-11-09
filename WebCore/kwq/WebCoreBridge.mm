@@ -476,11 +476,13 @@ static bool initializedKJS = FALSE;
 - (BOOL)saveDocumentToPageCache
 {
     DocumentImpl *doc = _part->xmlDocImpl();
-    if (!doc)
+    if (!doc) {
         return NO;
-    if (!doc->view())
+    }
+    
+    if (!doc->view()) {
         return NO;
-
+    }
     _part->clearTimers();
 
     InterpreterLock lock;
@@ -494,18 +496,14 @@ static bool initializedKJS = FALSE;
     SavedBuiltins *interpreterBuiltins = new SavedBuiltins;
     _part->saveInterpreterBuiltins(*interpreterBuiltins);
 
-    KWQPageState *pageState = [[KWQPageState alloc] initWithDocument:doc
-                                                                 URL:_part->m_url
-                                                    windowProperties:windowProperties
-                                                  locationProperties:locationProperties
-                                                 interpreterBuiltins:interpreterBuiltins
-                                                      pausedTimeouts:_part->pauseTimeouts()];
+    KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument:doc
+                                                                  URL:_part->m_url
+                                                     windowProperties:windowProperties
+                                                   locationProperties:locationProperties
+				                  interpreterBuiltins:interpreterBuiltins] autorelease];
+    [pageState setPausedActions: _part->pauseActions((const void *)pageState)];
 
-    BOOL result = [self saveDocumentToPageCache:pageState];
-
-    [pageState release];
-
-    return result;
+    return [self saveDocumentToPageCache:pageState];
 }
 
 - (BOOL)canCachePage

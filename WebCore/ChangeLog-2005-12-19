@@ -1,3 +1,9 @@
+2005-11-08  Tim Omernick  <timo@apple.com>
+	
+	<http://bugzilla.opendarwin.org/show_bug.cgi?id=5665> (REGRESSION: Crash in deleteTimer)
+	
+	Rolled back Darin's timer changes from 2005-11-07, as they caused a couple of regressions.
+	
 2005-11-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

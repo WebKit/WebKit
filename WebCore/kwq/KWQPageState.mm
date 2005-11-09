@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
+#include "config.h"
 #import "KWQPageState.h"
 
 #import <JavaScriptCore/interpreter.h>
@@ -37,50 +37,65 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
-using namespace DOM;
+using DOM::DocumentImpl;
 
-using namespace khtml;
+using khtml::RenderObject;
 
-using namespace KJS;
+using KJS::Interpreter;
+using KJS::InterpreterLock;
+using KJS::SavedProperties;
+using KJS::SavedBuiltins;
 
 @implementation KWQPageState
 
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
+- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib
 {
     [super init];
-
     doc->ref();
     document = doc;
-    doc->setInPageCache(YES);
-    mousePressNode = static_cast<KWQKHTMLPart *>(doc->part())->mousePressNode();
-    if (mousePressNode)
+    document->setInPageCache(YES);
+    parseMode = document->parseMode();
+    document->view()->ref();
+    mousePressNode = static_cast<KWQKHTMLPart *>(document->part())->mousePressNode();
+    if (mousePressNode) {
         mousePressNode->ref();
+    }
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
     interpreterBuiltins = ib;
-    pausedTimeouts = pt;
-    parseMode = doc->parseMode();
-
-    doc->view()->ref();
-
     return self;
 }
 
-- (DocumentImpl::ParseMode)parseMode
+- (DOM::DocumentImpl::ParseMode)parseMode { return parseMode; }
+
+- (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa
 {
-    return parseMode;
+    pausedActions = pa;
 }
 
-- (PausedTimeouts *)pausedTimeouts
+- (QMap<int, KJS::ScheduledAction*> *)pausedActions
 {
-    return pausedTimeouts;
+    return pausedActions;
+}
+
+- (void)_cleanupPausedActions
+{
+    if (pausedActions){
+        QMapIterator<int,KJS::ScheduledAction*> it;
+        for (it = pausedActions->begin(); it != pausedActions->end(); ++it) {
+            KJS::ScheduledAction *action = *it;
+            delete action;
+        }
+        delete pausedActions;
+        pausedActions = 0;
+    }
+    QObject::clearPausedTimers(self);
 }
 
 - (void)clear
 {
-    if (mousePressNode)
-        mousePressNode->deref();        
+    document = 0;
     mousePressNode = 0;
 
     delete URL;
@@ -95,8 +110,7 @@ using namespace KJS;
     delete interpreterBuiltins;
     interpreterBuiltins = 0;
 
-    delete pausedTimeouts;
-    pausedTimeouts = 0;
+    [self _cleanupPausedActions];
 }
 
 - (void)invalidate
@@ -106,22 +120,19 @@ using namespace KJS;
     ASSERT(document->view());
     ASSERT(!document->inPageCache());
 
-    if (document) {
-        KHTMLView *view = document->view();
-        if (view)
-            view->deref();
+    if (document && document->view()) {
+        document->view()->deref();
         document->deref();
-        document = 0;
     }
-
+    
     [self clear];
 }
 
 - (void)dealloc
 {
     if (document) {
-        ASSERT(document->view());
         ASSERT(document->inPageCache());
+        ASSERT(document->view());
 
         KHTMLView *view = document->view();
 
@@ -134,7 +145,10 @@ using namespace KJS;
             document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
-        document = 0;
+        
+        if (mousePressNode) {
+            mousePressNode->deref();
+        }
         
         if (view) {
             view->clearPart();
@@ -167,7 +181,6 @@ using namespace KJS;
             document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
-        document = 0;
         
         if (view) {
             view->clearPart();
@@ -185,7 +198,7 @@ using namespace KJS;
     return document;
 }
 
-- (NodeImpl *)mousePressNode
+- (DOM::NodeImpl *)mousePressNode
 {
     return mousePressNode;
 }

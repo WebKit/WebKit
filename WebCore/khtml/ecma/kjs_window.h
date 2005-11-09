@@ -40,57 +40,17 @@ namespace DOM {
 
 namespace KJS {
 
-    class BarInfo;
-    class FrameArray;
-    class History;
-    class JSEventListener;
-    class JSLazyEventListener;
-    class JSUnprotectedEventListener;
-    class Location;
-    class PausedTimeout;
-    class ScheduledAction;
-    class Selection;
-    class Window;
-    class WindowFunc;
-
-    class PausedTimeouts {
-    public:
-        PausedTimeouts(PausedTimeout *a, size_t length) : m_array(a), m_length(length) { }
-        ~PausedTimeouts();
-
-        size_t numTimeouts() const { return m_length; }
-        PausedTimeout *takeTimeouts()
-            { PausedTimeout *a = m_array; m_array = 0; return a; }
-
-    private:
-        PausedTimeout *m_array;
-        size_t m_length;
-
-        PausedTimeouts(const PausedTimeouts&);
-        PausedTimeouts& operator=(const PausedTimeouts&);
-    };
-
-    class WindowQObject : public QObject {
-        Q_OBJECT
-    public:
-        WindowQObject(Window *);
-        ~WindowQObject() { parentDestroyed(); }
-
-        int installTimeout(const UString &handler, int interval, bool singleShot);
-        int installTimeout(ValueImp *function, const List &, int interval, bool singleShot);
-        void clearTimeout(int timerId, bool delAction = true);
-
-        PausedTimeouts *pauseTimeouts();
-        void resumeTimeouts(PausedTimeouts *);
-
-    private slots:
-        void parentDestroyed();
-    private:
-        virtual void timerEvent(QTimerEvent *);
-
-        Window *m_parent;
-        QMap<int, ScheduledAction *> m_timeouts;
-  };
+  class WindowFunc;
+  class WindowQObject;
+  class Location;
+  class Selection;
+  class BarInfo;
+  class History;
+  class FrameArray;
+  class JSEventListener;
+  class JSUnprotectedEventListener;
+  class JSLazyEventListener;
+  class ScheduledAction;
 
   class Screen : public ObjectImp {
   public:
@@ -138,19 +98,21 @@ namespace KJS {
     ValueImp *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
-
-    int installTimeout(const UString &handler, int t, bool singleShot) { return winq->installTimeout(handler, t, singleShot); }
-    int installTimeout(ValueImp *function, List &args, int t, bool singleShot) { return winq->installTimeout(function, args, t, singleShot); }
-    void clearTimeout(int timerId) { winq->clearTimeout(timerId); }
-    PausedTimeouts *pauseTimeouts() { return winq->pauseTimeouts(); }
-    void resumeTimeouts(PausedTimeouts *t) { winq->resumeTimeouts(t); }
+    int installTimeout(const UString &handler, int t, bool singleShot);
+    int installTimeout(ValueImp *function, List &args, int t, bool singleShot);
+    void clearTimeout(int timerId);
+#ifdef APPLE_CHANGES
+    bool hasTimeouts();
+    QMap<int, ScheduledAction*> *pauseTimeouts(const void *key);
+    void resumeTimeouts(QMap<int, ScheduledAction*>*sa, const void *key);
     
     KJS::Interpreter *interpreter() const;
 
+    static bool isSafeScript (const KJS::ScriptInterpreter *origin, const KJS::ScriptInterpreter *target);
+#endif
     void scheduleClose();
         
     bool isSafeScript(ExecState *exec) const;
-    static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
     Location *location() const;
     Selection *selection() const;
     BarInfo *locationbar(ExecState *exec) const;
@@ -224,21 +186,44 @@ namespace KJS {
    * time interval, either once or repeatedly. Used for window.setTimeout()
    * and window.setInterval()
    */
-    class ScheduledAction {
-    public:
-        ScheduledAction(ValueImp *func, const List& args, bool singleShot)
-            : m_func(func), m_args(args), m_singleShot(singleShot) { }
-        ScheduledAction(const QString& code, bool singleShot)
-            : m_code(code), m_singleShot(singleShot) { }
-        void execute(Window *);
-        bool singleShot() const { return m_singleShot; }
+  class ScheduledAction {
+  public:
+    ScheduledAction(ObjectImp *_func, List _args, bool _singleShot);
+    ScheduledAction(const QString &_code, bool _singleShot);
+    void execute(Window *window);
 
-    private:
-        ProtectedPtr<ValueImp> m_func;
-        List m_args;
-        QString m_code;
-        bool m_singleShot;
-    };
+    ProtectedPtr<ObjectImp> func;
+    List args;
+    QString code;
+    bool isFunction;
+    bool singleShot;
+  };
+
+  class WindowQObject : public QObject {
+    Q_OBJECT
+  public:
+    WindowQObject(Window *w);
+    ~WindowQObject();
+    int installTimeout(const UString &handler, int t, bool singleShot);
+    int installTimeout(ValueImp *func, List args, int t, bool singleShot);
+    void clearTimeout(int timerId, bool delAction = true);
+#ifdef APPLE_CHANGES
+    bool hasTimeouts();
+    QMap<int, ScheduledAction*> *WindowQObject::pauseTimeouts(const void *key);
+    void WindowQObject::resumeTimeouts(QMap<int, ScheduledAction*> *sa, const void *key);
+#endif
+
+  public slots:
+    void timeoutClose();
+  protected slots:
+    void parentDestroyed();
+  protected:
+    void timerEvent(QTimerEvent *e);
+  private:
+    Window *parent;
+    KHTMLPart *part;   		// not guarded, may be dangling
+    QMap<int, ScheduledAction*> scheduledActions;
+  };
 
   class Location : public ObjectImp {
   public:
