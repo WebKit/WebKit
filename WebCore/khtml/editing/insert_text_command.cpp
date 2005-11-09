@@ -90,17 +90,8 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
     }
 
     if (isTabSpanTextNode(pos.node())) {
-        Position tempPos = pos;
         NodeImpl *textNode = document()->createEditingTextNode("");
-        NodeImpl *originalTabSpan = tempPos.node()->parent();
-        if (tempPos.offset() <= tempPos.node()->caretMinOffset()) {
-            insertNodeBefore(textNode, originalTabSpan);
-        } else if (tempPos.offset() >= tempPos.node()->caretMaxOffset()) {
-            insertNodeAfter(textNode, originalTabSpan);
-        } else {
-            splitTextNodeContainingElement(static_cast<TextImpl *>(tempPos.node()), tempPos.offset());
-            insertNodeBefore(textNode, originalTabSpan);
-        }
+        insertNodeAtTabSpanPosition(textNode, pos);
         return Position(textNode, 0);
     }
 

@@ -1,3 +1,32 @@
+2005-11-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4313925> Denver Regression: Mail: "TAB+paste+insert before" actually inserts after the pasted text
+
+        - added tab span editing functions in composite_edit_command.cpp
+        - called them from insertText, insertLineBreak, and replaceSelection commands
+        - also exposed some handy tab span funcs from htmlediting.cpp
+
+        Tests added in editing/insertion and editing/pasteboard.
+        
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::positionOutsideTabSpan):
+        (khtml::CompositeEditCommand::insertNodeAtTabSpanPosition):
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::positionBeforeNode):
+        (khtml::positionAfterNode):
+        (khtml::tabSpanNode):
+        (khtml::positionBeforeTabSpan):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+
 2005-11-08  Tim Omernick  <timo@apple.com>
 	
 	<http://bugzilla.opendarwin.org/show_bug.cgi?id=5665> (REGRESSION: Crash in deleteTimer)

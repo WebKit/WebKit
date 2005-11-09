@@ -60,20 +60,24 @@ void derefNodesInList(QPtrList<DOM::NodeImpl> &list);
 
 //------------------------------------------------------------------------------------------
 
-bool isSpecialElement(const DOM::NodeImpl *n);
+DOM::Position positionBeforeNode(const DOM::NodeImpl *node);
+DOM::Position positionAfterNode(const DOM::NodeImpl *node);
+
+bool isSpecialElement(const DOM::NodeImpl *node);
 
 DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
 
 bool isTabSpanNode(const DOM::NodeImpl *node);
 bool isTabSpanTextNode(const DOM::NodeImpl *node);
+DOM::NodeImpl *tabSpanNode(const DOM::NodeImpl *node);
 DOM::Position positionBeforeTabSpan(const DOM::Position& pos);
 DOM::ElementImpl *createTabSpanElement(DOM::DocumentImpl *document, DOM::NodeImpl *tabTextNode=0);
 DOM::ElementImpl *createTabSpanElement(DOM::DocumentImpl *document, QString *tabText);
 
-bool isNodeRendered(const DOM::NodeImpl *);
-bool isMailBlockquote(const DOM::NodeImpl *);
-DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *);
+bool isNodeRendered(const DOM::NodeImpl *node);
+bool isMailBlockquote(const DOM::NodeImpl *node);
+DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *node);
 
 //------------------------------------------------------------------------------------------
 

@@ -719,7 +719,10 @@ void ReplaceSelectionCommand::doApply()
     if (startAtStartOfBlock && startBlock->inDocument())
         startPos = Position(startBlock, 0);
 
-    startPos = positionOutsideContainingSpecialElement(startPos);
+    if (isTabSpanTextNode(startPos.node()))
+        startPos = positionOutsideTabSpan(startPos);
+    else
+        startPos = positionOutsideContainingSpecialElement(startPos);
 
     KHTMLPart *part = document()->part();
     

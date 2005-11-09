@@ -213,7 +213,7 @@ bool isFirstVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-static Position positionBeforeNode(NodeImpl *node)
+Position positionBeforeNode(const NodeImpl *node)
 {
     return Position(node->parentNode(), node->nodeIndex());
 }
@@ -263,7 +263,7 @@ bool isLastVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-static Position positionAfterNode(NodeImpl *node)
+Position positionAfterNode(const NodeImpl *node)
 {
     return Position(node->parentNode(), node->nodeIndex() + 1);
 }
@@ -336,11 +336,16 @@ bool isTabSpanTextNode(const NodeImpl *node)
     return (node && node->parentNode() && isTabSpanNode(node->parentNode()));
 }
 
+NodeImpl *tabSpanNode(const NodeImpl *node)
+{
+    return isTabSpanTextNode(node) ? node->parentNode() : 0;
+}
+
 Position positionBeforeTabSpan(const Position& pos)
 {
     NodeImpl *node = pos.node();
     if (isTabSpanTextNode(node))
-        node = node->parent();
+        node = tabSpanNode(node);
     else if (!isTabSpanNode(node))
         return pos;
     

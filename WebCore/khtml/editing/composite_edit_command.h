@@ -73,6 +73,8 @@ protected:
     void removeNode(DOM::NodeImpl *removeChild);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
     void replaceTextInNode(DOM::TextImpl *node, int offset, int count, const DOM::DOMString &replacementText);
+    DOM::Position positionOutsideTabSpan(const DOM::Position& pos);
+    void insertNodeAtTabSpanPosition(DOM::NodeImpl *node, const DOM::Position& pos);
     void setNodeAttribute(DOM::ElementImpl *, const DOM::QualifiedName& attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, int offset);
     void splitElement(DOM::ElementImpl *element, DOM::NodeImpl *atChild);

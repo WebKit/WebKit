@@ -280,6 +280,29 @@ void CompositeEditCommand::replaceTextInNode(TextImpl *node, int offset, int cou
     applyCommandToComposite(insertCommand);
 }
 
+Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
+{
+    ASSERT(isTabSpanTextNode(pos.node()));
+    
+    NodeImpl *tabSpan = tabSpanNode(pos.node());
+    
+    if (pos.offset() <= pos.node()->caretMinOffset())
+        return positionBeforeNode(tabSpan);
+        
+    if (pos.offset() >= pos.node()->caretMaxOffset())
+        return positionAfterNode(tabSpan);
+
+    splitTextNodeContainingElement(static_cast<TextImpl *>(pos.node()), pos.offset());
+    return positionBeforeNode(tabSpan);
+}
+
+void CompositeEditCommand::insertNodeAtTabSpanPosition(NodeImpl *node, const Position& pos)
+{
+    // insert node before, after, or at split of tab span
+    Position insertPos = positionOutsideTabSpan(pos);
+    insertNodeAt(node, insertPos.node(), insertPos.offset());
+}
+
 void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete)
 {
     if (endingSelection().isRange()) {
