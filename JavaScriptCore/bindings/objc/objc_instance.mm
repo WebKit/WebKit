@@ -139,15 +139,11 @@ NS_DURING
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
     [invocation setSelector:(SEL)method->name()];
     [invocation setTarget:_instance];
-    unsigned i, count = args.size();
     
     if (method->isFallbackMethod()) {
-        // invokeUndefinedMethodFromWebScript:withArguments: implementation must return an
-        // object.
-        if (strcmp ([signature methodReturnType], "@") != 0) {
-            OBJC_LOG ("incorrect signature for invokeUndefinedMethodFromWebScript:withArguments:, expected object return type");
-            delete method;
-            return Undefined();
+        if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
+            NSLog(@"Incorrect signature for invokeUndefinedMethodFromWebScript:withArguments: -- return type must be object.");
+            NS_VALUERETURN(Undefined(), ValueImp *);
         }
         
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
@@ -156,18 +152,16 @@ NS_DURING
         [invocation setArgument:&jsName atIndex:2];
         
         NSMutableArray *objcArgs = [NSMutableArray array];
-        for (i = 0; i < count; i++) {
+        int count = args.size();
+        for (int i = 0; i < count; i++) {
             ObjcValue value = convertValueToObjcValue (exec, args.at(i), ObjcObjectType);
             [objcArgs addObject:value.objectValue];
         }
         [invocation setArgument:&objcArgs atIndex:3];
     }
     else {
-        if (count != [signature numberOfArguments] - 2){
-            return Undefined();
-        }
-        
-        for (i = 2; i < count+2; i++) {
+        unsigned count = [signature numberOfArguments];
+        for (unsigned i = 2; i < count ; i++) {
             const char *type = [signature getArgumentTypeAtIndex:i];
             ObjcValueType objcValueType = objcValueTypeForType (type);
 
@@ -205,7 +199,7 @@ NS_DURING
                     // the assert above should have fired in the impossible case
                     // of an invalid type anyway).
                     fprintf (stderr, "%s:  invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
-                    assert (true);
+                    assert(false);
             }
         }
     }
@@ -239,7 +233,7 @@ NS_DURING
 NS_HANDLER
     
     resultValue = Undefined();
-    
+
 NS_ENDHANDLER
 
     return resultValue;
@@ -252,7 +246,7 @@ ValueImp *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 NS_DURING
 
     if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
-        return Undefined();
+        NS_VALUERETURN(Undefined(), ValueImp *);
     
     NSMethodSignature *signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -260,11 +254,9 @@ NS_DURING
     [invocation setTarget:_instance];
     unsigned i, count = args.size();
     
-    // invokeDefaultMethodWithArguments: implementation must return an
-    // object.
-    if (strcmp ([signature methodReturnType], "@") != 0) {
-        OBJC_LOG ("incorrect signature for invokeDefaultMethodWithArguments:, expected object return type");
-        return Undefined();
+    if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
+        NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
+        NS_VALUERETURN(Undefined(), ValueImp *);
     }
     
     NSMutableArray *objcArgs = [NSMutableArray array];
@@ -290,9 +282,9 @@ NS_DURING
     resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
 
 NS_HANDLER
-    
+
     resultValue = Undefined();
-    
+
 NS_ENDHANDLER
 
     return resultValue;

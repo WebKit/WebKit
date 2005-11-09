@@ -1,3 +1,40 @@
+2005-11-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        This patch fixes some naughty naughty code -- 5 crashes and 2 
+        may-go-haywire-in-the-futures.
+        
+        One such crash is <rdar://problem/4247330> 8C46 Crash with with 
+        incomplete parameter list to webScript object function.
+        
+        I replaced early returns from within NS_DURINGs with calls to
+        NS_VALUERETURN because the doc says, "You cannot use goto or 
+        return to exit an exception handling domain -- errors will result."
+        
+        I replaced hard-coded analyses of -[NSMethodSignature 
+        methodReturnType] with more abstracted alternatives, since
+        the documentation says "This encoding is implementation-specific, 
+        so applications should use it with caution," and then emits an
+        evil cackle.
+        
+        I removed the early return in the case where a JavaScript caller
+        supplies an insufficient number of arguments, because the right
+        thing to do in such a case is to use JavaScript's defined behavior
+        of supplying "undefined" for any missing arguments.
+        
+        I also changed ObjcInstance::invokeMethod so that it no longer
+        deletes the method passed to it. It doesn't create the method,
+        so it shouldn't delete it. A friend of mine named
+        KERNEL_PROTECTION_FAILURE agrees with me on this point.
+        
+        Finally, I changed an assert(true) to assert(false) because
+        all the other asserts were making fun of it.
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+
 2005-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
