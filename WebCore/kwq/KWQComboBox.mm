@@ -335,16 +335,8 @@ const int *QComboBox::dimensions() const
 
 QWidget::FocusPolicy QComboBox::focusPolicy() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
-    if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
-        return NoFocus;
-    }
-    
-    KWQ_UNBLOCK_EXCEPTIONS;
-    
-    return QWidget::focusPolicy();
+    FocusPolicy policy = QWidget::focusPolicy();
+    return policy == TabFocus ? StrongFocus : policy;
 }
 
 void QComboBox::setWritingDirection(QPainter::TextDirection direction)

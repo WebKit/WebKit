@@ -330,16 +330,8 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 
 QWidget::FocusPolicy QListBox::focusPolicy() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
-    if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
-        return NoFocus;
-    }
-    
-    KWQ_UNBLOCK_EXCEPTIONS;
-    
-    return QScrollView::focusPolicy();
+    FocusPolicy policy = QWidget::focusPolicy();
+    return policy == TabFocus ? StrongFocus : policy;
 }
 
 bool QListBox::checksDescendantsForFocus() const

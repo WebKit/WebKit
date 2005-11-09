@@ -1,3 +1,18 @@
+2005-11-09  David Hyatt  <hyatt@apple.com>
+
+	Fix hit testing of relative positioned inline flows inside
+	clipped overflow blocks so that they aren't mistakenly included
+	in hit testing.
+
+	Reviewed by Beth.
+
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::containsPoint):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::focusPolicy):
+        * kwq/KWQListBox.mm:
+        (QListBox::focusPolicy):
+
 2005-11-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

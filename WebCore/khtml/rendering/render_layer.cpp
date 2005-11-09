@@ -1321,7 +1321,7 @@ bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& da
 
 bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
 {
-    return mustExamineRenderer(renderer()) || damageRect.contains(x, y);
+    return damageRect.contains(x, y);
 }
 
 void RenderLayer::clearClipRects()
