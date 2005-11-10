@@ -1,3 +1,12 @@
+2005-11-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        * fast/dom/HTMLImageElement/image-src-absolute-url-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-src-absolute-url.html: Added.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3473
+        <rdar://problem/3787988> Preloaded Image objects .src field is not a fully resolved path (3473)
+
 2005-11-07  David Harrison  <harrison@apple.com>
 
         Layout tests for <rdar://problem/4313925>

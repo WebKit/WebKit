@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Image Tester</title>
+	<base id="foo" href="http://www.apple.com/">
+
+<script type="text/javascript" language="javascript">
+	var IconImages = null;
+	 
+	function stringResult(value, expected) {
+		var result = eval(value);
+		var resultString;
+		if (result == expected)
+			resultString = "SUCCESS";
+		else
+			resultString = "FAILURE";
+		return "<strong>" + resultString +  "<\/strong> (" + value + " = " + result + ")";
+	}
+
+	function init() {
+		if (window.layoutTestController)
+			layoutTestController.dumpAsText();
+	
+		IconImages = new Array();
+		IconImages["grey"] = new Image(129,35);
+		IconImages["grey"].src ="test.jpg";
+		document.images["grey"].src = IconImages["grey"].src;
+			
+		var beforeDiv = document.getElementById("before");
+		beforeDiv.innerHTML = stringResult("document.images[0].src", "http://www.apple.com/test.jpg");
+		beforeDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "http://www.apple.com/test.jpg");
+		
+		document.getElementById("foo").setAttribute("href", "http://www.example.com/");
+		var afterDiv = document.getElementById("after");
+		afterDiv.innerHTML = stringResult("document.images[0].src", "http://www.apple.com/test.jpg");
+		afterDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "http://www.example.com/test.jpg");
+	}
+</script>
+</head>
+<body onLoad="init()">
+<p>
+This page preloads 2 images in an onLoad function.<br>
+The image object.src is expected to be the full path to the image, relative to the document base.<br>
+To match WinIE (but not FireFox), we resolve the image path in the getter, rather than the setter, allowing for pages to change the Document base URL via javascript and have object.src reflect said change.
+</p>
+
+<image id="grey" name="grey" src="" style="display: none">
+<div style="font-size:small" id="before"></div>
+<p>After changing the base URL:</p>
+<div style="font-size:small" id="after"></div>
+</body>
+</html>
