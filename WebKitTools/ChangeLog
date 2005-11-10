@@ -1,3 +1,9 @@
+2005-11-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        * Scripts/build-webkit: Pass through options to xcodebuild
+
 2005-11-07  Darin Adler  <darin@apple.com>
 
         * Scripts/cvs-apply: Fix case where the patch has files at the top level.
