@@ -1,3 +1,12 @@
+2005-11-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Image::getValueProperty): resolve relative urls in Image::src
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3473
+        <rdar://problem/3787988> Preloaded Image objects .src field is not a fully resolved path (3473)
+
 2005-11-09  David Hyatt  <hyatt@apple.com>
 
 	Fix hit testing of relative positioned inline flows inside
