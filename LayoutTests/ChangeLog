@@ -2,6 +2,17 @@
 
         Reviewed by Maciej.
 
+        Layout test for <rdar://problem/4327363> GAP: tabs not treated as whitespace in option element
+
+        * fast/forms/option-strip-whitespace-expected.checksum: Added.
+        * fast/forms/option-strip-whitespace-expected.png: Added.
+        * fast/forms/option-strip-whitespace-expected.txt: Added.
+        * fast/forms/option-strip-whitespace.html: Added.
+
+2005-11-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
         Layout test for <rdar://problem/4228997> selecting a new radio button does not automatically clear the previous selected (outside <form> element)
 
         * fast/forms/radio_checked-expected.checksum: Added.

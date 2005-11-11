@@ -2,6 +2,17 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/4327363> GAP: tabs not treated as whitespace in option element
+
+        Added
+        * fast/forms/option-strip-whitespace.html
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement): call simplifyWhiteSpace() on the itemText or label to collapse whitespace.
+
+2005-11-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
         -fixed <rdar://problem/4228997> selecting a new radio button does not automatically clear the previous selected (outside <form> element)
 
         Moved the radio button checking code to the document, since we shouldn't need a form to keep track of grouped radio buttons.

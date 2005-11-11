@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 403x18
+          text run at (0,0) width 403: "All of these selects should have the same amount of whitespace."
+      RenderBlock (anonymous) at (0,34) size 784x262
+        RenderText {TEXT} at (0,41) size 71x18
+          text run at (0,41) width 71: "Five Tabs: "
+        RenderSelect {SELECT} at (73,2) size 67x58
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,62) size 0x18
+        RenderText {TEXT} at (0,121) size 84x18
+          text run at (0,121) width 84: "Five Spaces: "
+        RenderSelect {SELECT} at (86,82) size 67x58
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,142) size 0x18
+        RenderText {TEXT} at (0,161) size 298x18
+          text run at (0,161) width 298: "Five Spaces (with leading/trailing whitespace): "
+        RenderSelect {SELECT} at (300,162) size 92x18
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,182) size 0x18
+        RenderText {TEXT} at (0,201) size 285x18
+          text run at (0,201) width 285: "Five Tabs (with leading/trailing whitespace): "
+        RenderSelect {SELECT} at (287,202) size 81x18
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,222) size 0x18
+        RenderText {TEXT} at (0,241) size 126x18
+          text run at (0,241) width 126: "Mixed Whitespace: "
+        RenderSelect {SELECT} at (128,242) size 81x18
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
