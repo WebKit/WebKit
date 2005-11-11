@@ -190,12 +190,12 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
 // Caller is responsible for releasing the returned CFTypeRef
 CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImpList* inImps)
 {
-    if (inValue)
+    if (!inValue)
         return 0;
 
     CFTypeRef result = 0;
 
-        InterpreterLock lock;
+    InterpreterLock lock;
 
     switch (inValue->type())
     {

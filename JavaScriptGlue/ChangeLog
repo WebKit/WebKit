@@ -1,3 +1,24 @@
+2005-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fixed <rdar://problem/4334445> installer crashed on my 
+          dual g4 450Mhz after clicking language
+
+        - Reversed backwards NULL check.
+        - Inserted guards against NULL fJSUserObject data member.
+        - Cleaned up some style.
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * UserObjectImp.cpp:
+        (UserObjectImp::~UserObjectImp):
+        (UserObjectImp::callAsFunction):
+        (UserObjectImp::userObjectGetter):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::mark):
+
 2005-11-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
