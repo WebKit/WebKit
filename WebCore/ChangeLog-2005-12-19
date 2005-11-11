@@ -1,3 +1,23 @@
+2005-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+	Fix for <rdar://problem/3952698> Function buttons do not display 
+	properly with Telia Webmail (3488). 
+
+	Replaced elements with a percentage width used to be given a minimum
+	width of 0. This caused buttons etc with width:100% to overlap when
+	they shouldn't. Textareas and text boxes are still given a minimum
+	width of 0 because they need slightly different behavior to match 
+	WinIE. I filed <rdar://problem/4339518> to track this remaining problem.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::calcMinMaxWidth): Still give text fields a m_minWidth of 0.
+        (RenderTextArea::calcMinMaxWidth): And textareas.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth): Remove the check for width().isPercent()
+					when making m_minWidth 0.
+
 2005-11-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

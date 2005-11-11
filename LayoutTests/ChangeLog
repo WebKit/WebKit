@@ -1,3 +1,15 @@
+2005-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+	Layout test for <rdar://problem/3952698> Function buttons do not display 
+	properly with Telia Webmail (3488).
+
+        * fast/replaced/width100percent-expected.checksum: Added.
+        * fast/replaced/width100percent-expected.png: Added.
+        * fast/replaced/width100percent-expected.txt: Added.
+        * fast/replaced/width100percent.html: Added.
+
 2005-11-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

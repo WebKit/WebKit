@@ -1,0 +1,185 @@
+layer at (0,0) size 785x926
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x926
+  RenderBlock {HTML} at (0,0) size 785x926
+    RenderBody {BODY} at (8,8) size 769x910
+      RenderTable {TABLE} at (0,0) size 769x26
+        RenderTableSection {TBODY} at (0,0) size 0x26
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 64x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 48x13
+                  RenderText at (0,0) size 48x13
+                    text run at (0,0) width 48: "New Mail"
+            RenderTableCell {TD} at (68,1) size 47x24 [r=0 c=1 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 45x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 29x13
+                  RenderText at (0,0) size 29x13
+                    text run at (0,0) width 29: "Reply"
+            RenderTableCell {TD} at (116,1) size 64x24 [r=0 c=2 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 62x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 46x13
+                  RenderText at (0,0) size 46x13
+                    text run at (0,0) width 46: "Reply All"
+            RenderTableCell {TD} at (181,3) size 587x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,26) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,62) size 769x26
+        RenderTableSection {TBODY} at (0,0) size 0x26
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 64x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 48x13
+                  RenderText at (0,0) size 48x13
+                    text run at (0,0) width 48: "New Mail"
+            RenderTableCell {TD} at (68,1) size 47x24 [r=0 c=1 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 45x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 29x13
+                  RenderText at (0,0) size 29x13
+                    text run at (0,0) width 29: "Reply"
+            RenderTableCell {TD} at (116,1) size 64x24 [r=0 c=2 rs=1 cs=1]
+              RenderButton {INPUT} at (1,3) size 62x18 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 46x13
+                  RenderText at (0,0) size 46x13
+                    text run at (0,0) width 46: "Reply All"
+            RenderTableCell {TD} at (181,3) size 587x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,88) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,124) size 769x22
+        RenderTableSection {TBODY} at (0,0) size 0x22
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 8x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x12
+            RenderTableCell {TD} at (10,1) size 8x20 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x12
+            RenderTableCell {TD} at (19,1) size 8x20 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x12
+            RenderTableCell {TD} at (28,1) size 740x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,146) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,182) size 769x23
+        RenderTableSection {TBODY} at (0,0) size 0x23
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 8x21 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x13
+            RenderTableCell {TD} at (10,1) size 8x21 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x13
+            RenderTableCell {TD} at (19,1) size 8x21 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {INPUT} at (4,4) size 6x13
+            RenderTableCell {TD} at (28,1) size 740x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,205) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,241) size 769x27
+        RenderTableSection {TBODY} at (0,0) size 0x27
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 150x25 [r=0 c=0 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 148x19
+            RenderTableCell {TD} at (152,1) size 2x25 [r=0 c=1 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 148x19
+            RenderTableCell {TD} at (155,1) size 2x25 [r=0 c=2 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 148x19
+            RenderTableCell {TD} at (158,3) size 610x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,268) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,304) size 769x27
+        RenderTableSection {TBODY} at (0,0) size 0x27
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 706x25 [r=0 c=0 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 704x19
+            RenderTableCell {TD} at (708,1) size 2x25 [r=0 c=1 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 704x19
+            RenderTableCell {TD} at (711,1) size 2x25 [r=0 c=2 rs=1 cs=1]
+              RenderLineEdit {INPUT} at (1,3) size 704x19
+            RenderTableCell {TD} at (714,3) size 54x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,331) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,367) size 769x279
+        RenderTableSection {TBODY} at (0,0) size 0x279
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 216x277 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 214x275
+            RenderTableCell {TD} at (218,1) size 216x277 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 214x275
+            RenderTableCell {TD} at (435,1) size 216x277 [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 214x275
+            RenderTableCell {TD} at (652,129) size 116x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,646) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,682) size 769x36
+        RenderTableSection {TBODY} at (0,0) size 0x36
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 169x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 167x28
+            RenderTableCell {TD} at (171,1) size 2x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 167x28
+            RenderTableCell {TD} at (174,1) size 2x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 167x28
+            RenderTableCell {TD} at (177,8) size 591x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,718) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,754) size 769x36
+        RenderTableSection {TBODY} at (0,0) size 0x36
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 238x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 236x28
+            RenderTableCell {TD} at (240,1) size 2x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 236x28
+            RenderTableCell {TD} at (243,1) size 2x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (1,3) size 236x28
+            RenderTableCell {TD} at (246,8) size 522x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,790) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,826) size 769x26
+        RenderTableSection {TBODY} at (0,0) size 0x26
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 53x24 [r=0 c=0 rs=1 cs=1]
+              RenderSelect {SELECT} at (1,3) size 51x18
+            RenderTableCell {TD} at (55,1) size 53x24 [r=0 c=1 rs=1 cs=1]
+              RenderSelect {SELECT} at (1,3) size 51x18
+            RenderTableCell {TD} at (109,1) size 61x24 [r=0 c=2 rs=1 cs=1]
+              RenderSelect {SELECT} at (1,3) size 59x18
+            RenderTableCell {TD} at (171,3) size 597x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,852) size 769x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderTable {TABLE} at (0,888) size 769x22
+        RenderTableSection {TBODY} at (0,0) size 0x22
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (1,1) size 2x18 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 12x16
+            RenderTableCell {TD} at (4,1) size 2x18 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 12x16
+            RenderTableCell {TD} at (7,1) size 2x18 [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 12x16
+            RenderTableCell {TD} at (10,1) size 758x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 4x18
+                text run at (1,1) width 4: " "
