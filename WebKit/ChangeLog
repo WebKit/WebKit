@@ -1,3 +1,9 @@
+2005-11-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Build fix, not reviewed.
+
+        * Plugins.subproj/WebBaseNetscapePluginViewInternal.h: Added.
+
 2005-11-10  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.
