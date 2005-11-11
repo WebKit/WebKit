@@ -51,7 +51,6 @@ const float rightMargin = 2;
 
 @interface KWQListBoxScrollView : WebCoreScrollView <KWQWidgetHolder>
 {
-    QListBox *_box;
 }
 @end
 
@@ -140,7 +139,7 @@ QListBox::QListBox(QWidget *parent)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = [[KWQListBoxScrollView alloc] initWithListBox:this];
+    NSScrollView *scrollView = [[KWQListBoxScrollView alloc] initWithFrame:NSZeroRect];
     setView(scrollView);
     [scrollView release];
     
@@ -380,18 +379,13 @@ void QListBox::setFont(const QFont &font)
 
 @implementation KWQListBoxScrollView
 
-- (id)initWithListBox:(QListBox *)b
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _box = b;
-    return self;
-}
-
 - (QWidget *)widget
 {
-    return _box;
+    KWQTableView *tableView = [self documentView];
+    
+    assert([tableView isKindOfClass:[KWQTableView class]]);
+    
+    return [tableView widget];
 }
 
 - (void)setFrameSize:(NSSize)size

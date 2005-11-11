@@ -1,3 +1,27 @@
+2005-11-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+	
+	<rdar://problem/4202650> crash in QWidget::afterMouseDown selecting "Departure box"; http://www.funjet.com/ (works in Firefox)
+	
+	This crash was caused by a script which replaced the QWidget for a RenderSelect while the user was clicking on that widget.
+	RenderSelect has the interesting property that it dynamically recreates its QWidget based on how many items there are and
+	whether the select is "multiple".  Any script which caused a change to those attributes in mouseDown could have triggered
+	this crash.
+	
+	The problem was simply that of a stale pointer; KWQTableView and KWQListBoxScrollView both kept a pointer to the associated
+	QListBox, but only KWQTableView had any logic to clear the pointer when the QListBox was deallocated.  Instead of adding
+	similar functionality to KWQTableViewListBox (thus duplicating code), I removed KWQTableViewListBox's "_box" pointer and
+	changed its -widget method to get the widget via the KWQTableView.
+
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):
+        (-[KWQListBoxScrollView widget]):
+	Instead of keeping a pointer to the QListBox, get the QListBox from the KWQTableView, which is always this
+	view's documentView.
+	(-[KWQListBoxScrollView initWithListBox:]):
+	Removed this method, since we can get at the QListBox by simply asking the KWQTableView for it.
+	
 2005-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
