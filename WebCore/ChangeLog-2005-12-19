@@ -1,3 +1,16 @@
+2005-11-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        <rdar://problem/3766883> AX: Should be able to tell whether an AXLink has been visited to or not
+
+        No test cases because this does not affect layout.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        Added "AXVisited" attribute.
+
 2005-11-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

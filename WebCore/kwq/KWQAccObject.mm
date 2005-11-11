@@ -675,6 +675,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
+            @"AXVisited",
             nil];
     }
     if (anchorAttrs == nil) {
@@ -694,6 +695,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
+            @"AXVisited",
             nil];
     }
     if (webAreaAttrs == nil) {
@@ -715,6 +717,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
+            @"AXVisited",
             nil];
     }
     
@@ -886,6 +889,10 @@ static QRect boundingBoxRect(RenderObject* obj)
                 return s.getNSString();
             }
         }
+    }
+
+    if ([attributeName isEqualToString: @"AXVisited"]) {
+        return [NSNumber numberWithBool: m_renderer->style()->pseudoState() == khtml::PseudoVisited];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
