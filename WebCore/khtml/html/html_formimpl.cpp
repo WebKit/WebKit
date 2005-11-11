@@ -122,7 +122,6 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentImpl *doc)
     m_boundary = "----------0xKhTmLbOuNdArY";
     m_acceptcharset = "UNKNOWN";
     m_malformed = false;
-    m_selectedRadioButtons = 0;
 }
 
 HTMLFormElementImpl::~HTMLFormElementImpl()
@@ -133,8 +132,6 @@ HTMLFormElementImpl::~HTMLFormElementImpl()
         formElements[i]->m_form = 0;
     for (unsigned i = 0; i < imgElements.count(); ++i)
         imgElements[i]->m_form = 0;
-        
-    delete m_selectedRadioButtons;
 }
 
 #if APPLE_CHANGES
@@ -684,36 +681,6 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         HTMLElementImpl::parseMappedAttribute(attr);
 }
 
-void HTMLFormElementImpl::radioButtonChecked(HTMLInputElementImpl *caller)
-{
-    // Without a name, there is no group.
-    if (caller->name().isEmpty())
-        return;
-
-    // Uncheck the currently selected item
-    if (!m_selectedRadioButtons)
-        m_selectedRadioButtons = new NameToInputMap;
-
-    HTMLInputElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(caller->name().impl());
-    if (currentCheckedRadio && currentCheckedRadio != caller)
-        currentCheckedRadio->setChecked(false);
-        
-    m_selectedRadioButtons->set(caller->name().impl(), caller);
-}
-
-HTMLInputElementImpl* HTMLFormElementImpl::checkedRadioButtonForGroup(DOMStringImpl* name)
-{
-    if (!m_selectedRadioButtons)
-        return 0;
-    return m_selectedRadioButtons->get(name);
-}
-
-void HTMLFormElementImpl::removeRadioButtonGroup(DOMStringImpl* name)
-{
-    if (m_selectedRadioButtons)
-        m_selectedRadioButtons->remove(name);
-}
-
 template<class T> static void insertIntoVector(QPtrVector<T> &vec, unsigned pos, T* item)
 {
     unsigned size = vec.size();
@@ -773,12 +740,11 @@ void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
 {
-    if (m_selectedRadioButtons && !e->name().isEmpty()) {
-        HTMLGenericFormElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(e->name().impl());
+    if (!e->name().isEmpty()) {
+        HTMLGenericFormElementImpl* currentCheckedRadio = getDocument()->checkedRadioButtonForGroup(e->name().impl(), this);
         if (currentCheckedRadio == e)
-            m_selectedRadioButtons->remove(e->name().impl());
+            getDocument()->removeRadioButtonGroup(e->name().impl(), this);
     }
-            
     removeFromVector(formElements, e);
 }
 
@@ -1421,7 +1387,7 @@ bool HTMLInputElementImpl::isKeyboardFocusable() const
         }
         
         // Allow keyboard focus if we're checked or if nothing in the group is checked.
-        return checked() || !m_form->checkedRadioButtonForGroup(name().impl());
+        return checked() || !getDocument()->checkedRadioButtonForGroup(name().impl(), m_form);
     }
     
     return true;
@@ -1479,9 +1445,9 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
         } else {
-            if (m_form && m_type == RADIO && !name().isEmpty()) {
-                if (m_form->checkedRadioButtonForGroup(name().impl()) == this)
-                    m_form->removeRadioButtonGroup(name().impl());
+            if (m_type == RADIO && !name().isEmpty()) {
+                if (getDocument()->checkedRadioButtonForGroup(name().impl(), m_form) == this)
+                    getDocument()->removeRadioButtonGroup(name().impl(), m_form);
             }
             bool wasAttached = m_attached;
             if (wasAttached)
@@ -1501,8 +1467,8 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
                 
             // If our type morphs into a radio button and we are checked, then go ahead
             // and signal this to the form.
-            if (m_type == RADIO && checked() && m_form)
-                m_form->radioButtonChecked(this);
+            if (m_type == RADIO && checked())
+                getDocument()->radioButtonChecked(this, m_form);
         }
     }
     m_haveType = true;
@@ -1790,16 +1756,16 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     if (attr->name() == nameAttr) {
         if (m_type == RADIO && checked() && m_form) {
             // Remove the radio from its old group.
-            if (m_form && m_type == RADIO && !m_name.isEmpty())
-                m_form->removeRadioButtonGroup(m_name.impl());
+            if (m_type == RADIO && !m_name.isEmpty())
+                getDocument()->removeRadioButtonGroup(m_name.impl(), m_form);
         }
         
         // Update our cached reference to the name.
         m_name = attr->value();
         
         // Add it to its new group.
-        if (m_type == RADIO && checked() && m_form)
-            m_form->radioButtonChecked(this);
+        if (m_type == RADIO && checked())
+            getDocument()->radioButtonChecked(this, m_form);
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
     } else if (attr->name() ==  typeAttr) {
@@ -2161,8 +2127,8 @@ void HTMLInputElementImpl::setChecked(bool _checked)
     if (checked() == _checked || (m_type == RADIO && name().isEmpty()))
         return;
 
-    if (m_form && m_type == RADIO && _checked)
-        m_form->radioButtonChecked(this);
+    if (m_type == RADIO && _checked)
+        getDocument()->radioButtonChecked(this, m_form);
 
     m_useDefaultChecked = false;
     m_checked = _checked;
@@ -2323,14 +2289,14 @@ void* HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
             }
         } else {
             // For radio buttons, store the current selected radio object.
-            if (name().isEmpty() || checked() || !form())
+            if (name().isEmpty() || checked())
                 return 0; // Unnamed radio buttons dont get checked. Checked buttons just stay checked.
                           // FIXME: Need to learn to work without a form.
 
             // We really want radio groups to end up in sane states, i.e., to have something checked.
             // Therefore if nothing is currently selected, we won't allow this action to be "undone", since
             // we want some object in the radio group to actually get selected.
-            HTMLInputElementImpl* currRadio = form()->checkedRadioButtonForGroup(name().impl());
+            HTMLInputElementImpl* currRadio = getDocument()->checkedRadioButtonForGroup(name().impl(), m_form);
             if (currRadio) {
                 // We have a radio button selected that is not us.  Cache it in our result field and ref it so
                 // that it can't be destroyed.

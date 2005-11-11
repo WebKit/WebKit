@@ -68,6 +68,7 @@
 #include "html/html_documentimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
+#include "html/html_formimpl.h"
 #include "htmlfactory.h"
 
 #include "cssvalues.h"
@@ -385,6 +386,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
     , m_selfOnlyRefCount(0)
+    , m_selectedRadioButtons(0)
 #endif
 {
     document.resetSkippingRef(this);
@@ -507,7 +509,7 @@ DocumentImpl::~DocumentImpl()
     if (m_implementation)
         m_implementation->deref();
     delete m_paintDeviceMetrics;
-
+    
     if (m_elementNames) {
         for (unsigned short id = 0; id < m_elementNameCount; id++)
             m_elementNames[id]->deref();
@@ -549,6 +551,16 @@ DocumentImpl::~DocumentImpl()
     if (m_jsEditor) {
         delete m_jsEditor;
         m_jsEditor = 0;
+    }
+    
+    if (m_selectedRadioButtons) {
+        FormToGroupMap::iterator end = m_selectedRadioButtons->end();
+        for (FormToGroupMap::iterator it = m_selectedRadioButtons->begin(); it != end; ++it) {
+            NameToInputMap *n = it->second;
+            if (n)
+                delete n;
+        }
+        delete m_selectedRadioButtons;
     }
 }
 
@@ -3195,6 +3207,55 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
     return new AttrImpl(0, this, new MappedAttributeImpl(QualifiedName(prefix.impl(), 
                                                                        localName.impl(),
                                                                        namespaceURI.impl()), DOMString("").impl()), false);
+}
+
+void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElementImpl *form)
+{
+    // Without a name, there is no group.
+    if (caller->name().isEmpty())
+        return;
+    
+    if (!form)
+        form = (HTMLFormElementImpl*) 1;
+    // Uncheck the currently selected item
+    if (!m_selectedRadioButtons)
+        m_selectedRadioButtons = new FormToGroupMap;
+    NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
+    if (!formRadioButtons) {
+        formRadioButtons = new NameToInputMap;
+        m_selectedRadioButtons->set(form, formRadioButtons);
+    }
+    
+    HTMLInputElementImpl* currentCheckedRadio = formRadioButtons->get(caller->name().impl());
+    if (currentCheckedRadio && currentCheckedRadio != caller)
+        currentCheckedRadio->setChecked(false);
+
+    formRadioButtons->set(caller->name().impl(), caller);
+}
+
+HTMLInputElementImpl* DocumentImpl::checkedRadioButtonForGroup(DOMStringImpl* name, HTMLFormElementImpl *form)
+{
+    if (!m_selectedRadioButtons)
+        return 0;
+    NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
+    if (!formRadioButtons)
+        return 0;
+    
+    return formRadioButtons->get(name);
+}
+
+void DocumentImpl::removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementImpl *form)
+{
+    if (m_selectedRadioButtons) {
+        NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
+        if (formRadioButtons) {
+            formRadioButtons->remove(name);
+            if (formRadioButtons->isEmpty()) {
+                m_selectedRadioButtons->remove(form);
+                delete formRadioButtons;
+            }
+        }
+    }
 }
 
 SharedPtr<HTMLCollectionImpl> DocumentImpl::images()

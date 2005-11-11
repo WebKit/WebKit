@@ -1,3 +1,14 @@
+2005-11-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Layout test for <rdar://problem/4228997> selecting a new radio button does not automatically clear the previous selected (outside <form> element)
+
+        * fast/forms/radio_checked-expected.checksum: Added.
+        * fast/forms/radio_checked-expected.png: Added.
+        * fast/forms/radio_checked-expected.txt: Added.
+        * fast/forms/radio_checked.html: Added.
+
 2005-11-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

@@ -1,3 +1,33 @@
+2005-11-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        -fixed <rdar://problem/4228997> selecting a new radio button does not automatically clear the previous selected (outside <form> element)
+
+        Moved the radio button checking code to the document, since we shouldn't need a form to keep track of grouped radio buttons.
+
+        Added 
+        * fast/forms/radio_checked.html
+
+        * khtml/xml/dom_docimpl.h: Added m_selectedRadioButtons (now a two level hash table to account for forms and group names),
+        radioButtonChecked, checkedRadioButtonForGroup, and removeRadioButtonGroup
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): initialize m_selectedRadioButtons
+        (DocumentImpl::~DocumentImpl): delete m_selectedRadioButtons, and any of the inner hashtables if necessary
+        (DocumentImpl::radioButtonChecked): moved from HTMLFormElementImpl.
+        (DocumentImpl::checkedRadioButtonForGroup): ditto.
+        (DocumentImpl::removeRadioButtonGroup): ditto.
+        * khtml/html/html_formimpl.cpp: 
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl): removed initialization of m_selectedRadioButtons.
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl): removed deletion of m_selectedRadioButtons.
+        (DOM::HTMLFormElementImpl::removeFormElement): now calls document's radio button functions
+        (DOM::HTMLInputElementImpl::isKeyboardFocusable): ditto.
+        (DOM::HTMLInputElementImpl::setInputType): ditto.
+        (DOM::HTMLInputElementImpl::parseMappedAttribute): ditto.
+        (DOM::HTMLInputElementImpl::setChecked): ditto.
+        (DOM::HTMLInputElementImpl::preDispatchEventHandler): ditto.
+        * khtml/html/html_formimpl.h: removed m_selectedRadioButtons, radioButtonChecked, checkedRadioButtonForGroup, and removeRadioButtonGroup
+
 2005-11-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Omernick.
