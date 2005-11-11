@@ -95,4 +95,6 @@
 - (unsigned int)_delegateDragSourceActionMask;
 - (BOOL)_canSmartCopyOrDelete;
 - (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
+- (void)_pauseNullEventsForAllNetscapePlugins;
+- (void)_resumeNullEventsForAllNetscapePlugins;
 @end

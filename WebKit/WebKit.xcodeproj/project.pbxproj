@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220398770922D816009C3FFC /* WebBaseNetscapePluginViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */; settings = {ATTRIBUTES = (); }; };
 		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -330,6 +331,7 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
+		2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginViewInternal.h; sourceTree = "<group>"; };
 		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; };
 		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; };
@@ -800,6 +802,7 @@
 				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
 				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.m */,
 				F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */,
+				2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */,
 				931A72D203265920008635CE /* WebBaseNetscapePluginViewPrivate.h */,
 				F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.m */,
 				84D4BFFB0348EF9D00CA2ACA /* WebNetscapePluginDocumentView.h */,
@@ -1113,6 +1116,7 @@
 				9398100E0824BF01008DF038 /* WebDOMDocument.h in Headers */,
 				9398100F0824BF01008DF038 /* WebDOMElement.h in Headers */,
 				939810100824BF01008DF038 /* WebDOMNode.h in Headers */,
+				220398770922D816009C3FFC /* WebBaseNetscapePluginViewInternal.h in Headers */,
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,
 				939810120824BF01008DF038 /* WebHistory.h in Headers */,
 				939810130824BF01008DF038 /* WebHistoryItem.h in Headers */,

@@ -32,6 +32,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
+#import <WebKit/WebBaseNetscapePluginViewInternal.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataProtocol.h>
@@ -4852,6 +4853,32 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder
 {
     return responder == _private->firstResponderAtMouseDownTime;
+}
+
+- (void)_pauseNullEventsForAllNetscapePlugins
+{
+    NSArray *subviews = [self subviews];
+    unsigned int subviewCount = [subviews count];
+    unsigned int subviewIndex;
+    
+    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) {
+        NSView *subview = [subviews objectAtIndex:subviewIndex];
+        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]])
+            [(WebBaseNetscapePluginView *)subview stopNullEvents];
+    }
+}
+
+- (void)_resumeNullEventsForAllNetscapePlugins
+{
+    NSArray *subviews = [self subviews];
+    unsigned int subviewCount = [subviews count];
+    unsigned int subviewIndex;
+    
+    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) {
+        NSView *subview = [subviews objectAtIndex:subviewIndex];
+        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]])
+            [(WebBaseNetscapePluginView *)subview restartNullEvents];
+    }
 }
 
 @end

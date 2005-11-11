@@ -43,6 +43,7 @@
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -2592,6 +2593,24 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!_private->scriptDebugger) {
         _private->scriptDebugger = [[WebScriptDebugger alloc] initWithWebFrame:self];
     }
+}
+
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins
+{
+    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
+    
+    [[self childFrames] makeObjectsPerformSelector:@selector(_recursive_pauseNullEventsForAllNetscapePlugins)];
+}
+
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins
+{
+    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
+
+    [[self childFrames] makeObjectsPerformSelector:@selector(_recursive_resumeNullEventsForAllNetscapePlugins)];
 }
 
 @end

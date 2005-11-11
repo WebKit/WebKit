@@ -1,3 +1,34 @@
+2005-11-10  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+	<rdar://problem/4237941> Dashboard needs a way to stop Netscape plug-ins from getting null events
+
+        * Plugins.subproj/WebBaseNetscapePluginViewInternal.h: Added.
+	Added WebInternal category, with -stopNullEvents and -restartNullEvents.  These methods already exist on WebBaseNetscapePluginView.
+	I am just exposing them	to callers elsewhere within WebKit.
+
+        * WebKit.xcodeproj/project.pbxproj:
+	Added WebBaseNetscapePluginViewInternal.h.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+	Walks down the web frame hierarchy and calls -_pauseNullEventsForAllNetscapePlugins on each WebHTMLView.
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+	Same as above, but calls -_resumeNullEventsForAllNetscapePlugins.
+	
+        * WebView.subproj/WebFramePrivate.h:
+	Declared -_recursive_pauseNullEventsForAllNetscapePlugins and -_recursive_pauseNullEventsForAllNetscapePlugins.
+	
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]):
+	Checks subviews for WebBaseNetscapePluginViews, and calls -stopNullEvents on them.
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]):
+	Same as above, but calls -restartNullEvents.
+
+        * WebView.subproj/WebHTMLViewInternal.h:
+	Declared -_pauseNullEventsForAllNetscapePlugins and -_resumeNullEventsForAllNetscapePlugins.
+
 2005-11-07  Geoffrey Garen  <ggaren@apple.com>
 
         Darin reviewed this a while back.
