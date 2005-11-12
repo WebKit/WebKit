@@ -1,3 +1,19 @@
+2005-11-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Unfortunately both the Render and DOM trees will actually preform
+        the load on <embed> <object> and <iframe> tags depending on the
+        circumstances.  The <iframe> code path was missing a recursion
+        check in the render tree.  I fixed that.  And improved the
+        recursion checking for all tags.
+        <rdar://problem/4187169> High CPU usage/hang occurs with Safari after loading cbsnews.com (also at cbs.com)
+
+        * khtml/rendering/render_frames.cpp:
+        (isURLAllowed): added, to prevent recursive loops
+        (mapClassIdToServiceType): added, to simplify code
+        (RenderPartObject::updateWidget): updated, to use above functions.
+
 2005-11-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

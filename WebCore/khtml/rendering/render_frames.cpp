@@ -767,6 +767,53 @@ RenderPartObject::RenderPartObject( DOM::HTMLElementImpl* element )
     m_hasFallbackContent = false;
 }
 
+static bool isURLAllowed(DOM::DocumentImpl *doc, const QString &url)
+{
+    KURL newURL(doc->completeURL(url));
+    newURL.setRef(QString::null);
+    
+    if (doc->part()->topLevelFrameCount() >= 200)
+	return false;
+
+    // We allow one level of self-reference because some sites depend on that.
+    // But we don't allow more than one.
+    bool foundSelfReference = false;
+    for (KHTMLPart *part = doc->part(); part; part = part->parentPart()) {
+        KURL partURL = part->url();
+        partURL.setRef(QString::null);
+        if (partURL == newURL) {
+            if (foundSelfReference)
+                return false;
+            foundSelfReference = true;
+        }
+    }
+    return true;
+}
+
+static inline void mapClassIdToServiceType(const QString &classId, QString &serviceType)
+{
+    // It is ActiveX, but the nsplugin system handling
+    // should also work, that's why we don't override the
+    // serviceType with application/x-activex-handler
+    // but let the KTrader in khtmlpart::createPart() detect
+    // the user's preference: launch with activex viewer or
+    // with nspluginviewer (Niko)
+    if (classId.contains("D27CDB6E-AE6D-11cf-96B8-444553540000"))
+        serviceType = "application/x-shockwave-flash";
+    else if (classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA"))
+        serviceType = "audio/x-pn-realaudio-plugin";
+    else if (classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"))
+        serviceType = "video/quicktime";
+    else if (classId.contains("166B1BCA-3F9C-11CF-8075-444553540000"))
+        serviceType = "application/x-director";
+    else if (classId.contains("6BF52A52-394A-11d3-B153-00C04F79FAA6"))
+        serviceType = "application/x-mplayer2";
+    else if (!classId.isEmpty())
+        // We have a clsid, means this is activex (Niko)
+        serviceType = "application/x-activex-handler";
+    // TODO: add more plugins here
+}
+
 void RenderPartObject::updateWidget()
 {
   QString url;
@@ -876,46 +923,14 @@ void RenderPartObject::updateWidget()
       }
       
       // If we still don't have a type, try to map from a specific CLASSID to a type.
-      if (serviceType.isEmpty() && !o->classId.isEmpty()) {
-          // It is ActiveX, but the nsplugin system handling
-          // should also work, that's why we don't override the
-          // serviceType with application/x-activex-handler
-          // but let the KTrader in khtmlpart::createPart() detect
-          // the user's preference: launch with activex viewer or
-          // with nspluginviewer (Niko)          
-          if (o->classId.contains("D27CDB6E-AE6D-11cf-96B8-444553540000")) {
-              serviceType = "application/x-shockwave-flash";
-          } else if (o->classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")) {
-              serviceType = "audio/x-pn-realaudio-plugin";
-          } else if (o->classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")) {
-              serviceType = "video/quicktime";
-          } else if (o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
-              serviceType = "application/x-director";
-          } else if (o->classId.contains("6BF52A52-394A-11d3-B153-00C04F79FAA6")) {
-              serviceType = "application/x-mplayer2";
-          } else {
-              // We have a clsid, means this is activex (Niko)
-              serviceType = "application/x-activex-handler";
-          }
-          // TODO: add more plugins here
-      }
+      if (serviceType.isEmpty() && !o->classId.isEmpty())
+          mapClassIdToServiceType(o->classId, serviceType);
       
       // If no URL and type, abort.
-      if (url.isEmpty() && serviceType.isEmpty()) {
-#ifdef DEBUG_LAYOUT
-          kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;
-#endif
+      if (url.isEmpty() && serviceType.isEmpty())
           return;
-      }
-      // Avoid infinite recursion. If the plug-in's URL is the same as the part's URL, infinite frames may be created.
-      if (!url.isEmpty() && part->completeURL(url) == part->baseURL()) {
+      if (!isURLAllowed(document(), url))
           return;
-      }
-            
-#if !APPLE_CHANGES      
-      params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
-      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(codebaseAttr).qstring() ) );
-#endif
 
       // Find out if we support fallback content.
       m_hasFallbackContent = false;
@@ -933,16 +948,11 @@ void RenderPartObject::updateWidget()
       url = o->url;
       serviceType = o->serviceType;
 
-      if ( url.isEmpty() && serviceType.isEmpty() ) {
-#ifdef DEBUG_LAYOUT
-          kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;
-#endif
+      if (url.isEmpty() && serviceType.isEmpty())
           return;
-      }
-      // Avoid infinite recursion. If the plug-in's URL is the same as the part's URL, infinite frames may be created.
-      if (!url.isEmpty() && part->completeURL(url) == part->baseURL()) {
+      if (!isURLAllowed(document(), url))
           return;
-      }
+      
       // add all attributes set on the embed object
       NamedAttrMapImpl* a = o->attributes();
       if (a) {
@@ -957,9 +967,10 @@ void RenderPartObject::updateWidget()
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
       url = o->m_URL.qstring();
-      if (url.isEmpty()) {
+      if (!isURLAllowed(document(), url))
+          return;
+      if (url.isEmpty())
 	  url = "about:blank";
-      }
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
       bool requestSucceeded = v->part()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
