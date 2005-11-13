@@ -1,3 +1,27 @@
+2005-11-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::valueToStringWithNullCheck):
+        * khtml/ecma/kjs_binding.h:
+        Add function which converts a JavaScript value to a DOMString,
+        converting the null value to a null DOMString.
+		
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        Use valueToStringWithNullCheck in setAttributeNS and the textContent
+        setter.
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::insertedIntoDocument):
+        Don't try to evaluate scripts for viewless documents.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::isEqualNode):
+        Get the attribute map from the correct element.
+
 2005-11-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

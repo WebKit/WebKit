@@ -1670,7 +1670,7 @@ bool NodeImpl::isEqualNode(NodeImpl *other) const
         return false;
     
     NamedAttrMapImpl *attrs = attributes();
-    NamedAttrMapImpl *otherAttrs = attributes();
+    NamedAttrMapImpl *otherAttrs = other->attributes();
     
     if (!attrs && otherAttrs)
         return false;

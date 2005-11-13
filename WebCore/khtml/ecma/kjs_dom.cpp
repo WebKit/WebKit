@@ -461,10 +461,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     node.setPrefix(value->toString(exec).domString().impl(), exception);
     break;
   case TextContent:
-    if (value->isNull())
-      node.setTextContent(DOMString(), exception);
-    else
-      node.setTextContent(value->toString(exec).domString(), exception);
+    node.setTextContent(valueToStringWithNullCheck(exec, value), exception);
     break;
   case OnAbort:
     setListener(exec,abortEvent,value);
@@ -1237,7 +1234,7 @@ ValueImp *DOMElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
     case DOMElement::GetAttributeNS: // DOM2
       return String(element.getAttributeNS(args[0]->toString(exec).domString(),args[1]->toString(exec).domString()).domString());
     case DOMElement::SetAttributeNS: // DOM2
-      element.setAttributeNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
+      element.setAttributeNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
       return Undefined();
     case DOMElement::RemoveAttributeNS: // DOM2
       element.removeAttributeNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception);

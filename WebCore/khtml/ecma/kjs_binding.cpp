@@ -319,6 +319,14 @@ ValueImp *getStringOrNull(DOMString s)
     return String(s);
 }
 
+DOMString valueToStringWithNullCheck(ExecState *exec, ValueImp *val)
+{
+    if (val->isNull())
+        return DOMString();
+    
+    return val->toString(exec).domString();
+}
+
 QVariant ValueToVariant(ExecState* exec, ValueImp *val) {
   QVariant res;
   switch (val->type()) {

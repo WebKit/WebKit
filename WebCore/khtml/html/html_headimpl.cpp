@@ -513,6 +513,12 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     if (m_createdByParser)
         return;
     
+    // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
+    // viewless document but this'll do for now.
+    // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
+    if (!getDocument()->part())
+        return;
+    
     QString url = getAttribute(srcAttr).qstring();
     if (!url.isEmpty()) {
         QString charset = getAttribute(charsetAttr).qstring();
