@@ -1,0 +1,3 @@
+This tests that setAttributeNS with a null namespaceURI actually sets it to the value null and not a string with the contents 'null'. If the test is sucessful, the text below should say "SUCCESS".
+SUCCESS
+
