@@ -2,6 +2,30 @@
 
         Reviewed by Eric.
 
+        Update tests for change to createDocument which now creates a document element.
+
+        * dom/xhtml/level3/core/documentadoptnode14-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode26-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode27-expected.txt:
+        * dom/xhtml/level3/core/infoset07-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace05-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri05-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix05-expected.txt:
+        * dom/xhtml/level3/core/wellformed03-expected.txt:
+        * dom/xhtml/level3/core/wellformed04-expected.txt:
+        These tests still fail, but elsewhere now.
+
+        * dom/xhtml/level3/core/nodereplacechild14-expected.txt:
+        * dom/xhtml/level3/core/nodesettextcontent02-expected.txt:
+        These tests now succeed.
+
+        * fast/dom/createDocument.html: Added.
+        * fast/dom/createDocument-expected.txt: Added.
+
+2005-11-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
         Add test for setAttributeNS with null namespaceURI.
 		
         * fast/dom/setAttributeNS.html: Added.
