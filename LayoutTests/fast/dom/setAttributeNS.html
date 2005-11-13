@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script>
+function debug(str) {
+    pre = document.getElementById('console');
+    text = document.createTextNode(str + '\n');
+    pre.appendChild(text);
+}
+
+function runTests() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    elem = document.createElementNS('http://www.example.org', 'test')
+    attr = elem.setAttributeNS(null, 'name', 'value')
+    
+    if (elem.attributes[0].namespaceURI == null)
+        debug('SUCCESS')
+    else
+        debug('FAILURE')
+}
+
+</script>
+</head>
+<body onload="runTests();">
+This tests that setAttributeNS with a null namespaceURI actually sets it to the value null and not a string with the contents 'null'. If the test is sucessful, the text below should say "SUCCESS".
+<pre id="console">
+</pre>
+</body>
+</html>

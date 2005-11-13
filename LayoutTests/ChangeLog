@@ -1,3 +1,11 @@
+2005-11-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        Add test for setAttributeNS with null namespaceURI.
+		
+        * fast/dom/setAttributeNS.html: Added.
+
 2005-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
