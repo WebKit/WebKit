@@ -682,8 +682,8 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
             return createComment(importedNode->nodeValue());
         case Node::ELEMENT_NODE: {
             ElementImpl *oldElement = static_cast<ElementImpl *>(importedNode);
-            // FIXME: Prefix is lost.  Is that right?
-            ElementImpl *newElement = createElementNS(oldElement->namespaceURI(), oldElement->localName(), exceptioncode);
+            ElementImpl *newElement = createElementNS(oldElement->namespaceURI(), oldElement->tagName().toString(), exceptioncode);
+			
             if (exceptioncode != 0)
                 return 0;
 

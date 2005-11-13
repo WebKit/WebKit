@@ -1,3 +1,11 @@
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode):
+        Use tagName() instead of localName() so the prefix will be preserved.
+
 2005-11-13  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
