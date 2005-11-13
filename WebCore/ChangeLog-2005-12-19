@@ -2,6 +2,14 @@
 
         Reviewed by Eric.
 
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument):
+        Make sure to create a document element.
+
+2005-11-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
         * khtml/ecma/kjs_binding.cpp:
         (KJS::valueToStringWithNullCheck):
         * khtml/ecma/kjs_binding.h:

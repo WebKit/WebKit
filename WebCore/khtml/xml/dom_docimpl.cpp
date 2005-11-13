@@ -308,6 +308,9 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     if (doctype)
         doc->setDocType(new DocumentTypeImpl(doc, *doctype));
 
+    ElementImpl *rootElement = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
+    doc->addChild(rootElement);
+    
     return doc;
 }
 
