@@ -1,3 +1,12 @@
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        Add test to make sure that importNode preserves element prefixes.
+		
+        * fast/dom/importNode-prefix-expected.txt: Added.
+        * fast/dom/importNode-prefix.html: Added.
+
 2005-11-13  Beth Dakin  <bdakin@apple.com>
 
         Forgot to add this image for fast/replaced/width100percent.html
