@@ -1,5 +1,14 @@
 2005-11-13  Vicki Murley  <vicki@apple.com>
 
+        Reviewed by Adele.
+ 
+	- fix <rdar://problem/4341389> crash in elementAtPoint code quitting Safari, and make this code slightly more readable
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): add a nil check
+
+2005-11-13  Vicki Murley  <vicki@apple.com>
+
         Reviewed by Maciej.
 
 	- fix <rdar://problem/4316201> REGRESSION: cursor and text in status bar is not updated when mousing over links in a frame (5509)

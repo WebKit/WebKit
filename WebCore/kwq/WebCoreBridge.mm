@@ -1030,25 +1030,28 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
 
-    NodeImpl *n = nodeInfo.innerNode();
-    QWidget *widget = static_cast<RenderWidget *>(n->renderer())->widget();
+    NodeImpl *n;
+    QWidget *widget;
     
-    while (n && n->renderer() && n->renderer()->isWidget() && widget && widget->inherits("KHTMLView")) {
-        KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
-        if (kpart && static_cast<KWQKHTMLPart *>(kpart)->renderer()) {
-            int _x, _y;
-            n->renderer()->absolutePosition(_x, _y, true);
-            _x = (int)point.x - _x;
-            _y = (int)point.y - _y;
-            RenderObject::NodeInfo widgetNodeInfo(true, true);
-            static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
-            nodeInfo = widgetNodeInfo;
-            n = nodeInfo.innerNode();
-            if (n && n->renderer())
-                widget = static_cast<RenderWidget *>(n->renderer())->widget();
+    do {
+        n = nodeInfo.innerNode();
+        if (n && n->renderer() && n->renderer()->isWidget()) {
+            widget = static_cast<RenderWidget *>(n->renderer())->widget();
+            if (widget && widget->inherits("KHTMLView")) {
+                KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
+                if (kpart && static_cast<KWQKHTMLPart *>(kpart)->renderer()) {
+                    int _x, _y;
+                    n->renderer()->absolutePosition(_x, _y, true);
+                    _x = (int)point.x - _x;
+                    _y = (int)point.y - _y;
+                    RenderObject::NodeInfo widgetNodeInfo(true, true);
+                    static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
+                    nodeInfo = widgetNodeInfo;
+                }
+            }
         }
-    }  
-        
+    } while (n && n->renderer() && n->renderer()->isWidget() && widget && widget->inherits("KHTMLView"));
+
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
                 forKey:WebCoreElementIsSelectedKey];
