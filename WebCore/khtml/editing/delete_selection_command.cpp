@@ -220,7 +220,7 @@ void DeleteSelectionCommand::initializePositionData()
     // This is one of the tests that determines if block merging of content needs to be done.
     //
     VisiblePosition visibleEnd(end, m_selectionToDelete.endAffinity());
-    if (isStartOfParagraph(visibleEnd) || isEndOfParagraph(visibleEnd)) {
+    if (isEndOfParagraph(visibleEnd)) {
         Position previousLineStart = previousLinePosition(visibleEnd, 0).deepEquivalent();
         if (previousLineStart.isNull() || RangeImpl::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
             m_mergeBlocksAfterDelete = false;
