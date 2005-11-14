@@ -755,6 +755,9 @@
 
         Reviewed by Darin.
 
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5643>
+        setDragImage fails when passed Image object.
+
         * kwq/KWQClipboard.mm:
         (KWQClipboard::dragNSImage):
         Get the NSImage from the image renderer.
@@ -1145,6 +1148,9 @@
 2005-11-01  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
+
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5572>
+        Implement textContent property.
 
         * khtml/ecma/kjs_dom.cpp:
         (KJS::DOMNode::getValueProperty):
@@ -1608,6 +1614,9 @@
 2005-10-26  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
+
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5513>
+        Implement isEqualNode.
 
         * khtml/ecma/kjs_dom.cpp:
         (KJS::DOMNodeProtoFunc::callAsFunction):
@@ -3824,6 +3833,9 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 2005-10-05  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
+
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5271>
+        Implement isSameNode.
 
         * khtml/ecma/kjs_dom.cpp:
         (KJS::DOMNodeProtoFunc::callAsFunction):
