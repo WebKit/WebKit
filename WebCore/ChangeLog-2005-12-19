@@ -1,3 +1,7 @@
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
+        * ChangeLog: Add bug numbers for recent fixes.
+
 2005-11-13  Maciej Stachowiak  <mjs@apple.com>
 
         - fix Deployment build
@@ -39,6 +43,9 @@
 
         Reviewed by Eric.
 
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5728>
+        createDocument should create a document element
+
         * khtml/xml/dom_docimpl.cpp:
         (DOMImplementationImpl::createDocument):
         Make sure to create a document element.
@@ -46,6 +53,9 @@
 2005-11-13  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
+
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5725>
+        setAttributeNS with null namespace sets namespace to string containing 'null'
 
         * khtml/ecma/kjs_binding.cpp:
         (KJS::valueToStringWithNullCheck):
