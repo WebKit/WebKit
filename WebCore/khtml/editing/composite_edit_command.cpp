@@ -571,33 +571,14 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
         }
     }
 
-    // Create the block to insert. Most times, this will be a shallow clone of the block containing
-    // the start of the selection (the start block), except for two cases:
-    //    1) When the start block is a body element.
-    //    2) When the start block is a mail blockquote and we are not in a position to insert
-    //       the new block as a peer of the start block. This prevents creating an unwanted 
-    //       additional level of quoting.
-    NodeImpl *startBlock = paragraphStart.node()->enclosingBlockFlowElement();
-    NodeImpl *newBlock = 0;
-    if (startBlock->hasTagName(bodyTag) || (isMailBlockquote(startBlock) && paragraphStart.node() != startBlock))
-        newBlock = createDefaultParagraphElement(document());
-    else
-        newBlock = startBlock->cloneNode(false);
+    NodeImpl *newBlock = createDefaultParagraphElement(document());
 
     NodeImpl *moveNode = paragraphStart.node();
     if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
         moveNode = moveNode->traverseNextNode();
     NodeImpl *endNode = paragraphEnd.node();
-
-    if (paragraphStart.node()->hasTagName(bodyTag)) {
-        insertNodeAt(newBlock, paragraphStart.node(), 0);
-    }
-    else if (paragraphStart.node()->hasTagName(brTag)) {
-        insertNodeAfter(newBlock, paragraphStart.node());
-    }
-    else {
-        insertNodeBefore(newBlock, paragraphStart.upstream().node());
-    }
+    
+    insertNodeAt(newBlock, paragraphStart.node(), paragraphStart.offset());
 
     while (moveNode && !moveNode->isBlockFlow()) {
         NodeImpl *next = moveNode->traverseNextSibling();

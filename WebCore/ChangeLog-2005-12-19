@@ -1,3 +1,22 @@
+2005-11-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4180820> Erroneous spacing between lines introduced on paste
+        
+        Updated layout test results in editing/style
+        Added layout test in editing/pasteboard
+
+        * khtml/css/css_valueimpl.cpp:
+        Fixed a comment.
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        Don't use clones of paragraphs already in the document to hold paragraph
+        contents, since they are likely to introduce unwanted styles, just use
+        a generic paragraph element.  It's less likely, but still possible that a generic
+        paragraph element will have unwanted style, so we may want to eventually
+        use class=Apple-style-block.
+
 2005-11-11  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

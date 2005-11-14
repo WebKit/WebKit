@@ -617,7 +617,7 @@ const int inheritableProperties[] = {
 const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
 
 // This is the list of properties we want to copy in the copyBlockProperties() function.
-// It is the list of CSS properties that apply to specially to block-level elements.
+// It is the list of CSS properties that apply specially to block-level elements.
 static const int blockProperties[] = {
     CSS_PROP_ORPHANS,
     CSS_PROP_OVERFLOW, // This can be also be applied to replaced elements
