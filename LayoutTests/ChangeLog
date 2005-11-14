@@ -1,3 +1,46 @@
+2005-11-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4180820> Erroneous spacing between lines introduced on paste
+        
+        Added/update layout test results:
+        
+        * editing/pasteboard/block-wrappers-necessary-expected.checksum: Added.
+        * editing/pasteboard/block-wrappers-necessary-expected.png: Added.
+        * editing/pasteboard/block-wrappers-necessary-expected.txt: Added.
+        * editing/pasteboard/block-wrappers-necessary.html: Added.
+        * editing/style/create-block-for-style-001-expected.checksum:
+        * editing/style/create-block-for-style-001-expected.png:
+        * editing/style/create-block-for-style-001-expected.txt:
+        * editing/style/create-block-for-style-002-expected.checksum:
+        * editing/style/create-block-for-style-002-expected.png:
+        * editing/style/create-block-for-style-002-expected.txt:
+        * editing/style/create-block-for-style-003-expected.checksum:
+        * editing/style/create-block-for-style-003-expected.png:
+        * editing/style/create-block-for-style-003-expected.txt:
+        * editing/style/create-block-for-style-004-expected.checksum:
+        * editing/style/create-block-for-style-004-expected.png:
+        * editing/style/create-block-for-style-004-expected.txt:
+        * editing/style/create-block-for-style-007-expected.checksum:
+        * editing/style/create-block-for-style-007-expected.png:
+        * editing/style/create-block-for-style-007-expected.txt:
+        * editing/style/create-block-for-style-009-expected.checksum:
+        * editing/style/create-block-for-style-009-expected.png:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-010-expected.checksum:
+        * editing/style/create-block-for-style-010-expected.png:
+        * editing/style/create-block-for-style-010-expected.txt:
+        * editing/style/create-block-for-style-011-expected.checksum:
+        * editing/style/create-block-for-style-011-expected.png:
+        * editing/style/create-block-for-style-011-expected.txt:
+        * editing/style/create-block-for-style-012-expected.checksum:
+        * editing/style/create-block-for-style-012-expected.png:
+        * editing/style/create-block-for-style-012-expected.txt:
+        * editing/style/create-block-for-style-013-expected.checksum:
+        * editing/style/create-block-for-style-013-expected.png:
+        * editing/style/create-block-for-style-013-expected.txt:
+
 2005-11-14  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4337532> Paragraph concatenation fails
