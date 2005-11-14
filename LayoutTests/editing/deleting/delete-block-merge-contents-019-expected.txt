@@ -12,14 +12,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 652x28
-          text run at (14,14) width 652: "Should see \"X\" in top red box, followed by \"X\", in its own red box."
-      RenderBlock {DIV} at (0,80) size 784x112
-        RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {TEXT} at (0,0) size 17x28
-              text run at (0,0) width 17: "X"
-          RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-            RenderText {TEXT} at (14,14) size 17x28
-              text run at (14,14) width 17: "X"
+        RenderText {TEXT} at (14,14) size 292x28
+          text run at (14,14) width 292: "Should see \"XX\" in a red box."
+      RenderBlock {DIV} at (0,80) size 784x56
+        RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
+          RenderText {TEXT} at (14,14) size 17x28
+            text run at (14,14) width 17: "X"
+          RenderText {TEXT} at (31,14) size 17x28
+            text run at (31,14) width 17: "X"
 caret: position 2 of child 0 {TEXT} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

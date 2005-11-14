@@ -1,3 +1,14 @@
+2005-11-14  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4337532> Paragraph concatenation fails
+
+        Fix these tests to check for same behavior as in TextEdit.
+        
+        * editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * editing/deleting/delete-block-merge-contents-019.html:
+        * editing/deleting/delete-line-011-expected.txt:
+        * editing/deleting/delete-line-012-expected.txt:
+
 2005-11-14  Anders Carlsson  <andersca@mac.com>
 
         * ChangeLog: Add bug numbers for recent fixes.

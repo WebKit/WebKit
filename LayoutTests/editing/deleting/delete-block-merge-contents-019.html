@@ -29,9 +29,9 @@ function editingTest() {
 
 <title>Editing Test</title> 
 </head> 
-<body contenteditable="true">
+<body contenteditable="true" onload="runEditingTest()">
 <div class="explanation">
-Should see "X" in top red box, followed by "X", in its own red box.
+Should see "XX" in a red box.
 </div>
 
 <div id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
@@ -42,10 +42,6 @@ should not see this content<br>X
 </div>
 </div>
 </div>
-
-<script>
-runEditingTest();
-</script>
 
 </body>
 </html>
