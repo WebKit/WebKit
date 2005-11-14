@@ -1,5 +1,9 @@
 2005-11-14  Anders Carlsson  <andersca@mac.com>
 
+        * ChangeLog: Add bug numbers for recent fixes.
+
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Eric.
 
         Add test to make sure that importNode preserves element prefixes.
@@ -18,7 +22,8 @@
 
         Reviewed by Eric.
 
-        Update tests for change to createDocument which now creates a document element.
+        Updated/added tests for fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5728>
+        createDocument should create a document element
 
         * dom/xhtml/level3/core/documentadoptnode14-expected.txt:
         * dom/xhtml/level3/core/documentadoptnode26-expected.txt:
@@ -42,7 +47,8 @@
 
         Reviewed by Eric.
 
-        Add test for setAttributeNS with null namespaceURI.
+        - Add layout test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5725>
+        setAttributeNS with null namespace sets namespace to string containing 'null'
 		
         * fast/dom/setAttributeNS.html: Added.
 
@@ -314,6 +320,9 @@
  
         Reviewed by Darin.
  
+        - update tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5572>
+        Implement textContent property.
+
         * dom/xhtml/level3/core/nodegettextcontent06-expected.txt:
         * dom/xhtml/level3/core/nodegettextcontent07-expected.txt:
         * dom/xhtml/level3/core/nodegettextcontent08-expected.txt:
@@ -392,6 +401,9 @@
 2005-10-26  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
+
+        - Update test cases for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5513>
+        Implement isEqualNode.
 
         * dom/xhtml/level3/core/nodeisequalnode01-expected.txt:
         * dom/xhtml/level3/core/nodeisequalnode02-expected.txt:
@@ -2221,6 +2233,9 @@
 
         Reviewed by Maciej.
 
+        - update test cases for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5271>
+        Implement isSameNode.
+
         * dom/xhtml/level3/core/nodeissamenode01-expected.txt:
         * dom/xhtml/level3/core/nodeissamenode02-expected.txt:
         * dom/xhtml/level3/core/nodeissamenode03-expected.txt:
@@ -2300,6 +2315,9 @@
 2005-10-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
+
+        Added test for <http://bugzilla.opendarwin.org/attachment.cgi?id=4145>
+        attributes don't return correct values for namespaceURI and localName
 
         * fast/dom/attribute-namespaces-expected.txt: Added.
         * fast/dom/attribute-namespaces.xhtml: Added.
