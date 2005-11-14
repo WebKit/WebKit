@@ -1031,7 +1031,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
 
     NodeImpl *n;
-    QWidget *widget;
+    QWidget *widget = 0;
     
     do {
         n = nodeInfo.innerNode();

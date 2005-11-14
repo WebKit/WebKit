@@ -1,3 +1,10 @@
+2005-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix Deployment build
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2005-11-13  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Adele.
