@@ -1024,16 +1024,35 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();
-    if (!renderer) {
+    if (!renderer) 
         return nil;
-    }
+    
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
+
+    NodeImpl *n = nodeInfo.innerNode();
+    QWidget *widget = static_cast<RenderWidget *>(n->renderer())->widget();
     
+    while (n && n->renderer() && n->renderer()->isWidget() && widget && widget->inherits("KHTMLView")) {
+        KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
+        if (kpart && static_cast<KWQKHTMLPart *>(kpart)->renderer()) {
+            int _x, _y;
+            n->renderer()->absolutePosition(_x, _y, true);
+            _x = (int)point.x - _x;
+            _y = (int)point.y - _y;
+            RenderObject::NodeInfo widgetNodeInfo(true, true);
+            static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
+            nodeInfo = widgetNodeInfo;
+            n = nodeInfo.innerNode();
+            if (n && n->renderer())
+                widget = static_cast<RenderWidget *>(n->renderer())->widget();
+        }
+    }  
+        
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
                 forKey:WebCoreElementIsSelectedKey];
-    
+
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
