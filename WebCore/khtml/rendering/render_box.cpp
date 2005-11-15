@@ -3,7 +3,8 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
