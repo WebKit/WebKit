@@ -1,3 +1,12 @@
+2005-11-15  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Tim O.
+ 
+	Improve this loop.  We'd get an infinite loop in the old code if we came across a part with no renderer, such as a frame whose src is an image.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2005-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

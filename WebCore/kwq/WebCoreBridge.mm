@@ -1033,25 +1033,25 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     NodeImpl *n;
     QWidget *widget = 0;
     
-    do {
+    while (true) {
         n = nodeInfo.innerNode();
-        if (n && n->renderer() && n->renderer()->isWidget()) {
-            widget = static_cast<RenderWidget *>(n->renderer())->widget();
-            if (widget && widget->inherits("KHTMLView")) {
-                KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
-                if (kpart && static_cast<KWQKHTMLPart *>(kpart)->renderer()) {
-                    int _x, _y;
-                    n->renderer()->absolutePosition(_x, _y, true);
-                    _x = (int)point.x - _x;
-                    _y = (int)point.y - _y;
-                    RenderObject::NodeInfo widgetNodeInfo(true, true);
-                    static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
-                    nodeInfo = widgetNodeInfo;
-                }
-            }
-        }
-    } while (n && n->renderer() && n->renderer()->isWidget() && widget && widget->inherits("KHTMLView"));
-
+        if (!n || !n->renderer() || !n->renderer()->isWidget())
+            break;
+        widget = static_cast<RenderWidget *>(n->renderer())->widget();
+        if (!widget || !widget->inherits("KHTMLView"))
+            break;
+        KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
+        if (!kpart || !static_cast<KWQKHTMLPart *>(kpart)->renderer())
+            break;
+        int _x, _y;
+        n->renderer()->absolutePosition(_x, _y, true);
+        _x = (int)point.x - _x;
+        _y = (int)point.y - _y;
+        RenderObject::NodeInfo widgetNodeInfo(true, true);
+        static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
+        nodeInfo = widgetNodeInfo;
+    }
+    
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
                 forKey:WebCoreElementIsSelectedKey];
