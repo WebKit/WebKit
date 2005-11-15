@@ -1953,7 +1953,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
-    if (!node->renderer())
+    if (!node || !node->renderer())
         return VisiblePosition();
     
     return node->renderer()->positionForCoordinates((int)point.x, (int)point.y);

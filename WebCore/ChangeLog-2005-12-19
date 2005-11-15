@@ -1,3 +1,13 @@
+2005-11-15  Alexey Proskuryakov  <ap@nypop.com>
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5717>
+        REGRESSION: [WebCoreBridge _visiblePositionForPoint:(0,x)] crashes
+        
+        Reviewed by justin
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _visiblePositionForPoint:]): Early return if node found by hitTest is null.
+
 2005-11-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej and Darin.
