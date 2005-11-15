@@ -1,3 +1,17 @@
+2005-11-15  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4337532> Paragraph concatenation fails
+
+        Fix these tests to check for same behavior as in TextEdit.
+        (updated png and checksums)
+        
+        * editing/deleting/delete-block-merge-contents-019-expected.checksum:
+        * editing/deleting/delete-block-merge-contents-019-expected.png:
+        * editing/deleting/delete-line-011-expected.checksum:
+        * editing/deleting/delete-line-011-expected.png:
+        * editing/deleting/delete-line-012-expected.checksum:
+        * editing/deleting/delete-line-012-expected.png:
+
 2005-11-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
