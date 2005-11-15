@@ -165,7 +165,7 @@ namespace KJS {
            SetAttributeNode, RemoveAttributeNode, GetElementsByTagName,
            GetAttributeNS, SetAttributeNS, RemoveAttributeNS, GetAttributeNodeNS,
            SetAttributeNodeNS, GetElementsByTagNameNS, HasAttribute, HasAttributeNS,
-           ScrollByLines, ScrollByPages, ScrollIntoView};
+           ScrollByLines, ScrollByPages, ScrollIntoView, ElementFocus, ElementBlur};
   protected:
     // Constructor for inherited classes; doesn't set up a prototype.
     DOMElement(DOM::ElementImpl *e);

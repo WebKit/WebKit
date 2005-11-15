@@ -1,3 +1,20 @@
+2005-11-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Added layout tests for:
+        <rdar://problem/4233938> calling focus on contentEditable block elements should scroll them into view
+        <rdar://problem/3624946> No 'blur' method defined on editable non-form DOM objects
+
+        * fast/dom/blur-contenteditable-expected.checksum: Added.
+        * fast/dom/blur-contenteditable-expected.png: Added.
+        * fast/dom/blur-contenteditable-expected.txt: Added.
+        * fast/dom/blur-contenteditable.html: Added.
+        * fast/dom/focus-contenteditable-expected.checksum: Added.
+        * fast/dom/focus-contenteditable-expected.png: Added.
+        * fast/dom/focus-contenteditable-expected.txt: Added.
+        * fast/dom/focus-contenteditable.html: Added.
+
 2005-11-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

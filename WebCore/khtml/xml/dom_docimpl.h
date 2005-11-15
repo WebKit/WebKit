@@ -426,6 +426,7 @@ public:
 
     NodeImpl *focusNode() const { return m_focusNode.get(); }
     bool setFocusNode(NodeImpl *newFocusNode);
+    void clearSelectionIfNeeded(NodeImpl *newFocusNode);
 
     NodeImpl *hoverNode() const { return m_hoverNode.get(); }
     void setHoverNode(NodeImpl *newHoverNode);

@@ -252,6 +252,9 @@ public:
     virtual DOMString toString() const;
 
     virtual bool isURLAttribute(AttributeImpl *attr) const;
+        
+    void focus();
+    void blur();
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;

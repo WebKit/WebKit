@@ -1119,6 +1119,8 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   getElementsByTagNameNS DOMElement::GetElementsByTagNameNS	DontDelete|Function 2
   hasAttributeNS	DOMElement::HasAttributeNS	DontDelete|Function 2
   scrollIntoView        DOMElement::ScrollIntoView      DontDelete|Function 1
+  focus                 DOMElement::ElementFocus        DontDelete|Function 0
+  blur                  DOMElement::ElementBlur         DontDelete|Function 0
 
 # extension for Safari RSS
   scrollByLines         DOMElement::ScrollByLines       DontDelete|Function 1
@@ -1267,6 +1269,12 @@ ValueImp *DOMElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
           }
       }
       return Undefined();
+    case DOMElement::ElementFocus:
+        element.focus();
+        return Undefined();
+    case DOMElement::ElementBlur:
+        element.blur();
+        return Undefined();
     default:
       return Undefined();
     }

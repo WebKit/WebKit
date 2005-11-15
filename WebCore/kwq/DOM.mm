@@ -1433,6 +1433,20 @@ static ListenerMap *listenerMap;
 
 @end
 
+@implementation DOMElement (DOMElementExtensions)
+
+- (void)focus
+{
+    [self _elementImpl]->focus();
+}
+
+- (void)blur
+{
+    [self _elementImpl]->blur();
+}
+
+@end
+
 @implementation DOMElement (WebCoreInternal)
 
 + (DOMElement *)_elementWithImpl:(ElementImpl *)impl

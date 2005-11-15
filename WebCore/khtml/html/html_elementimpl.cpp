@@ -189,6 +189,9 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(DOMFocusInEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+    } else if (attr->name() == onblurAttr) {
+        setHTMLEventListener(DOMFocusOutEvent,
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeydownAttr) {
         setHTMLEventListener(keydownEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));

@@ -32,6 +32,11 @@
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
 @end
 
+@interface DOMElement (DOMElementExtensions)
+- (void)focus;
+- (void)blur;
+@end
+
 @interface DOMHTMLElement (DOMHTMLElementExtensions)
 - (NSString *)innerHTML;
 - (void)setInnerHTML:(NSString *)innerHTML;

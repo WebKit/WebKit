@@ -1,3 +1,33 @@
+2005-11-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej and Darin.
+
+        - fix for <rdar://problem/4233938> calling focus on contentEditable block elements should scroll them into view
+        - fix for <rdar://problem/3624946> No 'blur' method defined on editable non-form DOM objects
+
+        Added
+        * fast/dom/focus-contenteditable.html
+        * fast/dom/blur-contenteditable.html
+
+        * khtml/ecma/kjs_dom.cpp: Added ElementFocus and ElementBlur to DOMElementProtoTable
+        (KJS::DOMElementProtoFunc::callAsFunction): Added cases for ElementFocus and ElementBlur
+        * khtml/ecma/kjs_dom.h: (KJS::DOMElement::): Added ElementFocus and ElementBlur to enum
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseMappedAttribute): Added case for onblur.
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::focus): If the element isFocusable, calls setFocusNode to give element focus.
+        (ElementImpl::blur): If the element is focused, calls setFocusNode to take away focus.
+        * khtml/xml/dom_elementimpl.h: Added focus and blur functions
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode): If we're trying to take focus away from a node, then we should clear the selection before we fire events.
+        If we don't, then efforts to focus the cursor during the event can reset focus on the old node.
+        (DocumentImpl::clearSelectionIfNeeded): Added function since we need to clear the selection at multiple points.
+        * khtml/xml/dom_docimpl.h: Added clearSelectionIfNeeded.
+        * kwq/DOMExtensions.h: Added Obj-C bindings for focus and blur.
+        * kwq/DOM.mm:
+        (-[DOMElement focus]):
+        (-[DOMElement blur]):
+
 2005-11-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -3297,7 +3327,7 @@
         (QWidget::paint):
         (QWidget::setDeferFirstResponderChanges):
 
-2005-10-11  Rob Buis  <rwlbuis@xs4all.nl>>
+2005-10-11  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.
 

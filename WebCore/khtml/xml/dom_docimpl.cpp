@@ -2265,6 +2265,7 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
     bool focusChangeBlocked = false;
     SharedPtr<NodeImpl> oldFocusNode = m_focusNode;
     m_focusNode = 0;
+    clearSelectionIfNeeded(newFocusNode);
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusNode) {
@@ -2278,22 +2279,16 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
             focusChangeBlocked = true;
             newFocusNode = 0;
         }
+        clearSelectionIfNeeded(newFocusNode);
         oldFocusNode->dispatchUIEvent(DOMFocusOutEvent);
         if (m_focusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             newFocusNode = 0;
         }
+        clearSelectionIfNeeded(newFocusNode);
         if ((oldFocusNode.get() == this) && oldFocusNode->hasOneRef())
             return true;
-    }
-
-    // Clear the selection when changing the focus node to null or to a node that is not 
-    // contained by the current selection.
-    if (part()) {
-        NodeImpl *startContainer = part()->selection().start().node();
-        if (!newFocusNode || (startContainer && startContainer != newFocusNode && !startContainer->isAncestor(newFocusNode)))
-            part()->clearSelection();
     }
 
     if (newFocusNode) {
@@ -2351,6 +2346,18 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 SetFocusNodeDone:
     updateRendering();
     return !focusChangeBlocked;
+}
+
+void DocumentImpl::clearSelectionIfNeeded(NodeImpl *newFocusNode)
+{
+    if (!part())
+        return;
+
+    // Clear the selection when changing the focus node to null or to a node that is not 
+    // contained by the current selection.
+    NodeImpl *startContainer = part()->selection().start().node();
+    if (!newFocusNode || (startContainer && startContainer != newFocusNode && !startContainer->isAncestor(newFocusNode)))
+        part()->clearSelection();
 }
 
 void DocumentImpl::setCSSTarget(NodeImpl* n)
