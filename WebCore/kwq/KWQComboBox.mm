@@ -524,11 +524,6 @@ void QComboBox::populate()
 {
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
-    QWidget *widget = [self widget];
-    if (widget && !KWQKHTMLPart::partForWidget([self widget])->tabsToAllControls()) {
-        return NO;
-    }
-    
     return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
 }
 
