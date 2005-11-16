@@ -1,3 +1,16 @@
+2005-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        - Part of the fix for <rdar://problem/4342216> Installer crash in 
+          KJS::ValueImp::marked() when garbage collector runs inside call to 
+          ConstantValues::init()
+          
+        Added locking in JSRunCreate, since JSRun::JSRun constructs an object.
+        
+        * JavaScriptGlue.cpp:
+        (JSRunCreate):
+
 2005-11-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
