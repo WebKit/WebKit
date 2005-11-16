@@ -1698,6 +1698,181 @@ bool NodeImpl::isEqualNode(NodeImpl *other) const
     return true;
 }
 
+bool NodeImpl::isDefaultNamespace(const DOMString &namespaceURI) const
+{
+    // Implemented according to
+    // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/namespaces-algorithms.html#isDefaultNamespaceAlgo
+    
+    switch (nodeType()) {
+        case Node::ELEMENT_NODE: {
+            const ElementImpl *elem = static_cast<const ElementImpl *>(this);
+            
+            if (elem->prefix().isNull())
+                return elem->namespaceURI() == namespaceURI;
+
+            if (elem->hasAttributes()) {
+                NamedAttrMapImpl *attrs = elem->attributes();
+                
+                for (unsigned i = 0; i < attrs->length(); i++) {
+                    AttributeImpl *attr = attrs->attributeItem(i);
+                    
+                    if (attr->localName() == "xmlns")
+                        return attr->value() == namespaceURI;
+                }
+            }
+            
+            if (ElementImpl *ancestor = getAncestorElement())
+                return ancestor->isDefaultNamespace(namespaceURI);
+
+            return false;
+        }
+        case Node::DOCUMENT_NODE:
+            return static_cast <const DocumentImpl *>(this)->documentElement()->isDefaultNamespace(namespaceURI);
+        case Node::ENTITY_NODE:
+        case Node::NOTATION_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
+            return false;
+        case Node::ATTRIBUTE_NODE: {
+            const AttrImpl *attr = static_cast<const AttrImpl *>(this);
+            
+            if (attr->ownerElement())
+                return attr->ownerElement()->isDefaultNamespace(namespaceURI);
+            
+            return false;
+        }
+        default:
+            if (ElementImpl *ancestor = getAncestorElement())
+                return ancestor->isDefaultNamespace(namespaceURI);
+            
+            return false;
+    }
+}
+
+DOMString NodeImpl::lookupPrefix(const DOMString &namespaceURI) const
+{
+    // Implemented according to
+    // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/namespaces-algorithms.html#lookupNamespacePrefixAlgo
+    
+    if (namespaceURI.isEmpty())
+        return DOMString();
+    
+    switch (nodeType()) {
+        case Node::ELEMENT_NODE:
+            return lookupNamespacePrefix(namespaceURI, static_cast<const ElementImpl *>(this));
+        case Node::DOCUMENT_NODE:
+            return static_cast<const DocumentImpl *>(this)->documentElement()->lookupPrefix(namespaceURI);
+        case Node::ENTITY_NODE:
+        case Node::NOTATION_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+            return DOMString();
+        case Node::ATTRIBUTE_NODE: {
+            const AttrImpl *attr = static_cast<const AttrImpl *>(this);
+            
+            if (attr->ownerElement())
+                return attr->ownerElement()->lookupPrefix(namespaceURI);
+            
+            return DOMString();
+        }
+        default:
+            if (ElementImpl *ancestor = getAncestorElement())
+                return ancestor->lookupPrefix(namespaceURI);
+            
+            return DOMString();
+    }
+}
+
+DOMString NodeImpl::lookupNamespaceURI(const DOMString &prefix) const
+{
+    // Implemented according to
+    // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/namespaces-algorithms.html#lookupNamespaceURIAlgo
+    
+    if (!prefix.isNull() && prefix.isEmpty())
+        return DOMString();
+    
+    switch (nodeType()) {
+        case Node::ELEMENT_NODE: {
+            const ElementImpl *elem = static_cast<const ElementImpl *>(this);
+            
+            if (!elem->namespaceURI().isNull() && elem->prefix() == prefix)
+                return elem->namespaceURI();
+            
+            if (elem->hasAttributes()) {
+                NamedAttrMapImpl *attrs = elem->attributes();
+                
+                for (unsigned i = 0; i < attrs->length(); i++) {
+                    AttributeImpl *attr = attrs->attributeItem(i);
+                    
+                    if (attr->prefix() == "xmlns" && attr->localName() == prefix) {
+                        if (!attr->value().isEmpty())
+                            return attr->value();
+                        
+                        return DOMString();
+                    } else if (attr->localName() == "xmlns" && prefix.isNull()) {
+                        if (!attr->value().isEmpty())
+                            return attr->value();
+                        
+                        return DOMString();
+                    }
+                }
+            }
+            
+            if (ElementImpl *ancestor = getAncestorElement())
+                return ancestor->lookupNamespaceURI(prefix);
+            
+            return DOMString();
+        }
+        case Node::DOCUMENT_NODE:
+            return static_cast<const DocumentImpl *>(this)->documentElement()->lookupNamespaceURI(prefix);
+        case Node::ENTITY_NODE:
+        case Node::NOTATION_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
+            return DOMString();
+        case Node::ATTRIBUTE_NODE: {
+            const AttrImpl *attr = static_cast<const AttrImpl *>(this);
+            
+            if (attr->ownerElement())
+                return attr->ownerElement()->lookupNamespaceURI(prefix);
+            else
+                return DOMString();
+        }
+        default:
+            if (ElementImpl *ancestor = getAncestorElement())
+                return ancestor->lookupNamespaceURI(prefix);
+            
+            return DOMString();
+    }
+}
+
+DOMString NodeImpl::lookupNamespacePrefix(const DOMString &_namespaceURI, const ElementImpl *originalElement) const
+{
+    if (_namespaceURI.isNull())
+        return DOMString();
+            
+    if (originalElement->lookupNamespaceURI(prefix()) == _namespaceURI)
+        return prefix();
+    
+    if (hasAttributes()) {
+        NamedAttrMapImpl *attrs = attributes();
+        
+        for (unsigned i = 0; i < attrs->length(); i++) {
+            AttributeImpl *attr = attrs->attributeItem(i);
+            
+            if (attr->prefix() == "xmlns" &&
+                attr->value() == _namespaceURI &&
+                originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
+                return attr->localName();
+        }
+    }
+    
+    if (ElementImpl *ancestor = getAncestorElement())
+        return ancestor->lookupNamespacePrefix(_namespaceURI, originalElement);
+    
+    return DOMString();
+}
+
 DOMString NodeImpl::textContent() const
 {
     switch (nodeType()) {
@@ -1762,6 +1937,18 @@ void NodeImpl::setTextContent(const DOMString &text, int &exception)
             // Do nothing
             break;
     }
+}
+
+ElementImpl *NodeImpl::getAncestorElement() const
+{
+    // In theory, there can be EntityReference nodes between elements
+    // but this is currently not supported.
+    for (NodeImpl *n = parentNode(); n; n = n->parentNode()) {
+        if (n->isElementNode())
+            return static_cast<ElementImpl *>(n);
+    }
+    
+    return 0;
 }
 
 #ifndef NDEBUG

@@ -1,3 +1,33 @@
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        - fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=5737>
+        Implement DOM3 namespace functions.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        Add JavaScript wrappers for new Node namespace functions.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::isDefaultNamespace):
+        (DOM::NodeImpl::lookupPrefix):
+        (DOM::NodeImpl::lookupNamespaceURI):
+        (DOM::NodeImpl::lookupNamespacePrefix):
+        (DOM::NodeImpl::getAncestorElement):
+        Implement Node namespace functions.
+
+        * khtml/xml/dom_nodeimpl.h:
+        Add definitions for Node namespace functions.
+
+        * kwq/DOM.mm:
+        (-[DOMNode isDefaultNamespace:]):
+        (-[DOMNode lookupPrefix:]):
+        (-[DOMNode lookupNamespaceURI:]):
+        Add objective C wrappers for new Node namespace functions.
+
 2005-11-15  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Tim O.

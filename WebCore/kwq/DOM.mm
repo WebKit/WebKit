@@ -386,6 +386,21 @@ static ListenerMap *listenerMap;
     return [self _nodeImpl]->isEqualNode([other _nodeImpl]);
 }
 
+- (BOOL)isDefaultNamespace:(NSString *)namespaceURI
+{
+    return [self _nodeImpl]->isDefaultNamespace(namespaceURI);
+}
+
+- (NSString *)lookupPrefix:(NSString *)namespaceURI
+{
+    return [self _nodeImpl]->lookupPrefix(namespaceURI);
+}
+
+- (NSString *)lookupNamespaceURI:(NSString *)prefix
+{
+    return [self _nodeImpl]->lookupNamespaceURI(prefix);
+}
+
 - (NSString *)textContent
 {
     return [self _nodeImpl]->textContent();

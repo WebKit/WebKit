@@ -88,7 +88,7 @@ namespace KJS {
 
 // -------------------------------------------------------------------------
 /* Source for DOMNodeProtoTable. Use "make hashtables" to regenerate.
-@begin DOMNodeProtoTable 15
+@begin DOMNodeProtoTable 18
   insertBefore	DOMNode::InsertBefore	DontDelete|Function 2
   replaceChild	DOMNode::ReplaceChild	DontDelete|Function 2
   removeChild	DOMNode::RemoveChild	DontDelete|Function 1
@@ -102,6 +102,9 @@ namespace KJS {
 # DOM3
   isSameNode    DOMNode::IsSameNode     DontDelete|Function 1
   isEqualNode   DOMNode::IsEqualNode    DontDelete|Function 1
+  isDefaultNamespace    DOMNode::IsDefaultNamespace DontDelete|Function 1
+  lookupNamespaceURI    DOMNode::LookupNamespaceURI DontDelete|Function 1
+  lookupPrefix  DOMNode::LookupPrefix   DontDelete|Function 1
 # from the EventTarget interface
   addEventListener	DOMNode::AddEventListener	DontDelete|Function 3
   removeEventListener	DOMNode::RemoveEventListener	DontDelete|Function 3
@@ -663,6 +666,12 @@ ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
         return Boolean(node.isSameNode(toNode(args[0])));
     case DOMNode::IsEqualNode:
         return Boolean(node.isEqualNode(toNode(args[0])));
+    case DOMNode::IsDefaultNamespace:
+        return Boolean(node.isDefaultNamespace(valueToStringWithNullCheck(exec, args[0])));
+    case DOMNode::LookupNamespaceURI:
+        return getStringOrNull(node.lookupNamespaceURI(valueToStringWithNullCheck(exec, args[0])));
+    case DOMNode::LookupPrefix:
+        return getStringOrNull(node.lookupPrefix(valueToStringWithNullCheck(exec, args[0])));
     case DOMNode::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)
