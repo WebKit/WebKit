@@ -1,3 +1,56 @@
+2005-11-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        Updated tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5737>
+        Implement DOM3 namespace functions.
+
+        * dom/xhtml/level3/core/nodeisdefaultnamespace01-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace02-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace03-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace05-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace06-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace07-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace08-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace09-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace10-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace11-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace13-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace14-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace15-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace16-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri02-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri03-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri05-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri06-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri07-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri08-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri09-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri10-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri11-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri13-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri14-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri15-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri16-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri18-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri19-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix01-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix02-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix03-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix05-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix06-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix07-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix08-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix09-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix10-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix11-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix13-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix14-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix15-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix16-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix18-expected.txt:
+        These tests pass now.
+
 2005-11-15  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4337532> Paragraph concatenation fails

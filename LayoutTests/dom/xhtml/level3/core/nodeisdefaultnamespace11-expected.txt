@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeisdefaultnamespace11
-Status	error
-Message	TypeError: Value undefined (result of expression importedNode.isDefaultNamespace) is not object.
+Status	Success
