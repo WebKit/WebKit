@@ -434,16 +434,6 @@ void Parser::accept(ProgramNode *prog)
 
 InterpreterImp* InterpreterImp::s_hook = 0L;
 
-void InterpreterImp::globalInit()
-{
-    ConstantValues::init();
-}
-
-void InterpreterImp::globalClear()
-{
-    ConstantValues::clear();
-}
-
 typedef HashMap<ObjectImp *, InterpreterImp *, PointerHash<ObjectImp *> > InterpreterMap;
 
 static inline InterpreterMap &interpreterMap()
@@ -469,7 +459,6 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
   } else {
     // This is the first interpreter
     s_hook = next = prev = this;
-    globalInit();
   }
 
   interpreterMap().set(glob, this);
@@ -487,6 +476,12 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
 void InterpreterImp::lock()
 {
   lockInterpreter();
+
+  // FIXME: Hack-o-rama. To prevent construction of a global object with a null prototype (4342216),
+  // we need to intialize our constants before the first object is constructed. InterpreterImp::lock()
+  // is a good place to do this because you have to call it before doing any allocations. Once we change our 
+  // implementation to use immediate values, we should remove this code.
+  ConstantValues::initIfNeeded();
 }
 
 int InterpreterImp::lockCount()
@@ -638,14 +633,12 @@ void InterpreterImp::clear()
   {
     // This was the last interpreter
     s_hook = 0L;
-    globalClear();
   }
   interpreterMap().remove(global);
 }
 
 void InterpreterImp::mark()
 {
-  ConstantValues::mark();
   if (m_interpreter)
     m_interpreter->mark();
   if (_context)

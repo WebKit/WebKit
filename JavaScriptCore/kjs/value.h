@@ -196,8 +196,7 @@ public:
     static AllocatedValueImp *jsFalse;
     static AllocatedValueImp *jsTrue;
 
-    static void init();
-    static void clear();
+    static void initIfNeeded();
     static void mark();
 };
 

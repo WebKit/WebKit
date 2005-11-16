@@ -246,9 +246,6 @@ namespace KJS {
   class InterpreterImp {
     friend class Collector;
   public:
-    static void globalInit();
-    static void globalClear();
-
     InterpreterImp(Interpreter *interp, ObjectImp *glob);
     ~InterpreterImp();
 

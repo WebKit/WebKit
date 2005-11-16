@@ -403,6 +403,7 @@ bool Collector::collect()
       scr = scr->next;
     } while (scr != InterpreterImp::s_hook);
   }
+  ConstantValues::mark();
 
   // MARK: first mark all referenced objects recursively starting out from the set of root objects
 

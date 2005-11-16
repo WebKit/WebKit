@@ -1,3 +1,43 @@
+2005-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+        
+        - Fixed <rdar://problem/4342216> Installer crash in 
+          KJS::ValueImp::marked() when garbage collector runs inside call to 
+          ConstantValues::init()
+          
+        I took responsibility for initializing and marking ConstantValues away 
+        from InterpreterImp, since it's possible to reference such a value 
+        before any interpreter has been created and after the last interpreter 
+        has been destroyed.
+
+        InterpreterImp::lock now initializes ConstantValues. It's a good
+        place for the initialization because you have to call it before
+        creating any objects. Since ::lock can be called more than once,
+        I added a check in ConstantValues::init to ensure that it executes 
+        only once.
+
+        Collector:collect is now responsible for marking ConstantValues.
+
+        We no longer clear the ConstantValues since we can't guarantee that no 
+        one has a reference to them.
+
+        FIXME: This is hackery. The long-term plan is to make ConstantValues
+        use immediate values that require no initialization.
+
+        * ChangeLog:
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::InterpreterImp):
+        (KJS::InterpreterImp::lock):
+        (KJS::InterpreterImp::clear):
+        (KJS::InterpreterImp::mark):
+        * kjs/internal.h:
+        * kjs/value.cpp:
+        (KJS::ConstantValues::initIfNeeded):
+        * kjs/value.h:
+
 2005-11-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

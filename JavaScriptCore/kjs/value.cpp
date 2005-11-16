@@ -187,20 +187,15 @@ ValueImp *jsNumber(double d)
   return v ? v : new NumberImp(d);
 }
 
-void ConstantValues::init()
+void ConstantValues::initIfNeeded()
 {
+    if (undefined)
+        return;
+    
     undefined = new UndefinedImp();
     null = new NullImp();
     jsTrue = new BooleanImp(true);
     jsFalse = new BooleanImp(false);
-}
-
-void ConstantValues::clear()
-{
-    undefined = NULL;
-    null = NULL;
-    jsTrue = NULL;
-    jsFalse = NULL;
 }
 
 void ConstantValues::mark()
