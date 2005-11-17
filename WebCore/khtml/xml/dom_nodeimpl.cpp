@@ -2717,9 +2717,11 @@ QRect ContainerNodeImpl::getRect() const
         if (yPos==0)
             yPos = yEnd;
     }
-    if ( xEnd <= xPos || yEnd <= yPos )
-        return QRect( QPoint( xPos, yPos ), QSize() );
-
+    if (xEnd < xPos)
+        xEnd = xPos;
+    if (yEnd < yPos)
+        yEnd = yPos;
+        
     return QRect(xPos, yPos, xEnd - xPos, yEnd - yPos);
 }
 

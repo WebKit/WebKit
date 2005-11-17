@@ -1,3 +1,14 @@
+2005-11-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Harrson.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5759
+        <rdar://problem/4346132> REGRESSION (10.4.3-10.4.4): horizontal link scrolling broken at aplacecalledcommon.co.uk (5759)
+
+        * khtml/rendering/render_layer.cpp: (khtml::RenderLayer::getRectToExpose): If the rect is larger than the visible rect, and we're trying to align to the closest edge, align to the left edge.
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::ContainerNodeImpl::getRect): If width or height is negative, we were setting both to zero.
+        Now we only set the negative value to zero without affecting the other value.
+
 2005-11-14  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
