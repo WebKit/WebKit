@@ -1,3 +1,16 @@
+2005-11-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        - fix for <rdar://problem/4347856> Safari crash after browsing Fandango.
+
+        When removeFormElement is getting called in a destructor, there may not be a document.
+        So we don't need to worry about cleaning up the radio buttons in this case, not only to
+        avoid the crash, but also because the document's destructor will clean that up.
+
+        * khtml/html/html_formimpl.cpp: 
+        (DOM::HTMLFormElementImpl::removeFormElement): Added nil check for document.
+
 2005-11-17  David Hyatt  <hyatt@apple.com>
 
 	Add support for getting a style property off of a DOMAttr.  This is an API that allows
