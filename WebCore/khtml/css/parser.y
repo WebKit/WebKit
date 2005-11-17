@@ -38,7 +38,7 @@
 // #define CSS_DEBUG
 
 using namespace DOM;
- using namespace HTMLNames;
+using namespace HTMLNames;
 
 //
 // The following file defines the function

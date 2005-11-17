@@ -114,6 +114,10 @@ namespace khtml
         DOM::NodeImpl* locateCousinList(DOM::ElementImpl* parent);
         bool canShareStyleWithElement(DOM::NodeImpl* n);
         
+        // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
+        SharedPtr<DOM::CSSRuleListImpl> styleRulesForElement(DOM::ElementImpl* e, bool authorOnly);
+        SharedPtr<DOM::CSSRuleListImpl> pseudoStyleRulesForElement(DOM::ElementImpl* e, DOM::DOMStringImpl* pseudoStyle, bool authorOnly);
+
 	bool strictParsing;
 	
         struct Encodedurl {
@@ -209,7 +213,8 @@ public:
         unsigned m_matchedRuleCount;
         QMemArray<CSSRuleData*> m_tmpRules;
         unsigned m_tmpRuleCount;
-        
+        DOM::CSSRuleListImpl* m_ruleList;
+
         QString m_medium;
 
 	RenderStyle::PseudoId dynamicPseudo;

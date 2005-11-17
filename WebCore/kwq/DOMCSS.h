@@ -456,6 +456,7 @@ enum {
 
 @interface DOMDocument (DOMViewCSS)
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
 @end
 
 @interface DOMDocument (DOMDocumentCSS)

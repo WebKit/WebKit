@@ -2538,4 +2538,11 @@ void removeWrapperForRGB(QRgb value)
         AbstractViewImpl([self _documentImpl]).getComputedStyle([elt _elementImpl], DOMString(pseudoElt).impl())];
 }
 
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
+{
+    // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
+    return [DOMCSSRuleList _ruleListWithImpl:
+        AbstractViewImpl([self _documentImpl]).getMatchedCSSRules([elt _elementImpl], DOMString(pseudoElt).impl(), false).get()];
+}
+
 @end

@@ -26,6 +26,8 @@
 
 #include "css/css_computedstyle.h"
 #include "dom_elementimpl.h"
+#include "dom_docimpl.h"
+#include "cssstyleselector.h"
 
 namespace DOM {
 
@@ -41,11 +43,18 @@ AbstractViewImpl::~AbstractViewImpl()
 CSSStyleDeclarationImpl *AbstractViewImpl::getComputedStyle(ElementImpl *elt, DOMStringImpl *pseudoElt)
 {
     // FIXME: This should work even if we do not have a renderer.
-    
+    // FIXME: This needs to work with pseudo elements.
     if (!elt || !elt->renderer())
         return 0;
 
     return new CSSComputedStyleDeclarationImpl(elt);
+}
+
+SharedPtr<CSSRuleListImpl> AbstractViewImpl::getMatchedCSSRules(ElementImpl* elt, DOMStringImpl* pseudoElt, bool authorOnly)
+{
+    if (pseudoElt && pseudoElt->l)
+        return m_document->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt, authorOnly);
+    return m_document->styleSelector()->styleRulesForElement(elt, authorOnly);
 }
 
 }

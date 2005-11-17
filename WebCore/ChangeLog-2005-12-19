@@ -1,3 +1,33 @@
+2005-11-17  David Hyatt  <hyatt@apple.com>
+
+	Add support for getMatchedCSSRules, an API that can be used to
+	inspect the set of rules that match on an element.  From Obj-C
+	you see all rules (user agent, author, user).  From JS you just
+	see author rules.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::CSSStyleSelector::matchRulesForList):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleRulesForElement):
+        (khtml::CSSStyleSelector::pseudoStyleRulesForElement):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/parser.y:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_views.h:
+        (KJS::DOMAbstractView::):
+        * khtml/xml/dom2_viewsimpl.cpp:
+        (DOM::AbstractViewImpl::getComputedStyle):
+        (DOM::AbstractViewImpl::getMatchedCSSRules):
+        * khtml/xml/dom2_viewsimpl.h:
+        * kwq/DOM-CSS.mm:
+        (-[DOMDocument getMatchedCSSRules::]):
+        * kwq/DOMCSS.h:
+
 2005-11-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin
