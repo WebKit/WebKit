@@ -229,18 +229,22 @@ public:
 
     RenderTable *table() const { return static_cast<RenderTable *>(parent()); }
 
-    typedef QMemArray<RenderTableCell *> Row;
+    struct CellStruct {
+        RenderTableCell *cell;
+        bool inColSpan; // true for columns after the first in a colspan
+    };
+    typedef QMemArray<CellStruct> Row;
     struct RowStruct {
 	Row *row;
 	int baseLine;
 	Length height;
     };
 
-    RenderTableCell *&cellAt( int row,  int col ) {
-	return (*(grid[row].row))[col];
+    CellStruct& cellAt(int row,  int col) {
+	return (*grid[row].row)[col];
     }
-    RenderTableCell *cellAt( int row,  int col ) const {
-	return (*(grid[row].row))[col];
+    const CellStruct& cellAt(int row, int col) const {
+	return (*grid[row].row)[col];
     }
 
     virtual void paint(PaintInfo& i, int tx, int ty);

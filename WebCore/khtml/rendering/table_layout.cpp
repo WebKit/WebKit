@@ -370,35 +370,37 @@ void AutoTableLayout::recalcColumn( int effCol )
     RenderTableCell *fixedContributor = 0;
     RenderTableCell *maxContributor = 0;
 
-    while ( child ) {
-	if ( child->isTableSection() ) {
+    while (child) {
+	if (child->isTableSection()) {
 	    RenderTableSection *section = static_cast<RenderTableSection *>(child);
 	    int numRows = section->numRows();
 	    RenderTableCell *last = 0;
 	    for ( int i = 0; i < numRows; i++ ) {
-		RenderTableCell *cell = section->cellAt( i,  effCol );
-		if ( cell == (RenderTableCell *)-1 )
+		RenderTableSection::CellStruct current = section->cellAt(i, effCol);
+                RenderTableCell *cell = current.cell;
+		
+                if (current.inColSpan)
 		    continue;
-		if ( cell && cell->colSpan() == 1 ) {
+		if (cell && cell->colSpan() == 1) {
                     // A cell originates in this column.  Ensure we have
                     // a min/max width of at least 1px for this column now.
                     l.minWidth = kMax(l.minWidth, 1);
                     l.maxWidth = kMax(l.maxWidth, 1);
-		    if ( !cell->minMaxKnown() )
+		    if (!cell->minMaxKnown())
 			cell->calcMinMaxWidth();
-		    if ( cell->minWidth() > l.minWidth )
+		    if (cell->minWidth() > l.minWidth)
 			l.minWidth = cell->minWidth();
-		    if ( cell->maxWidth() > l.maxWidth ) {
+		    if (cell->maxWidth() > l.maxWidth) {
 			l.maxWidth = cell->maxWidth();
 			maxContributor = cell;
 		    }
 
 		    Length w = cell->style()->width();
-		    if ( w.value > 32760 )
+		    if (w.value > 32760)
 			w.value = 32760;
-		    if ( w.value < 0 )
+		    if (w.value < 0)
 			w.value = 0;
-		    switch( w.type ) {
+		    switch(w.type) {
 		    case Fixed:
 			// ignore width=0
 			if ( w.value > 0 && (int)l.width.type != Percent ) {
@@ -419,17 +421,17 @@ void AutoTableLayout::recalcColumn( int effCol )
 			break;
 		    case Percent:
                         hasPercent = true;
-                        if ( w.value > 0 && (l.width.type != Percent || w.value > l.width.value ) )
+                        if (w.value > 0 && (l.width.type != Percent || w.value > l.width.value ))
                             l.width = w;
 			break;
 		    case Relative:
-			if ( w.type == Auto || (w.type == Relative && w.value > l.width.value ) )
+			if (w.type == Auto || (w.type == Relative && w.value > l.width.value ))
 				l.width = w;
 		    default:
 			break;
 		    }
 		} else {
-                    if ( cell && (!effCol || section->cellAt( i, effCol-1 ) != cell) ) {
+                    if (cell && (!effCol || section->cellAt(i, effCol-1).cell != cell)) {
                         // This spanning cell originates in this column.  Ensure we have
                         // a min/max width of at least 1px for this column now.
                         l.minWidth = kMax(l.minWidth, 1);
@@ -626,7 +628,7 @@ int AutoTableLayout::calcEffectiveWidth()
 
     for ( unsigned int i = 0; i < spanCells.size(); i++ ) {
 	RenderTableCell *cell = spanCells[i];
-	if ( !cell || cell == (RenderTableCell *)-1 )
+	if (!cell)
 	    break;
 	int span = cell->colSpan();
 
@@ -816,7 +818,7 @@ int AutoTableLayout::calcEffectiveWidth()
 */
 void AutoTableLayout::insertSpanCell( RenderTableCell *cell )
 {
-    if ( !cell || cell == (RenderTableCell *)-1 || cell->colSpan() == 1 )
+    if (!cell || cell->colSpan() == 1)
 	return;
 
 //     qDebug("inserting span cell %p with span %d", cell, cell->colSpan() );

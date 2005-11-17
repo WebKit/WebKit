@@ -1,3 +1,48 @@
+2005-11-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin
+
+       	Fix for <rdar://problem/3871165> text box in nested table 
+	disappears when you click on it (3452) (Safari PSOFT: US 
+	EDU PS8: Lead List searches)
+
+	Table cells that are in an overlap of a rowspan and a colspan
+	were not always being repainted correctly. This is because our
+	previous implementation had no way for a cell to keep track of
+	both its rowspan and its colspan. This patch maintains the old
+	way of dealing with rowspan and introduces CellStruct for dealing
+	with colspan. CellStruct is a structure that contains a 
+	RenderTableCell and a boolean value that is true if the cell is in
+	a colspan. 
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::splitColumn): The section grid now returns a CellStruct.
+        (RenderTable::appendColumn): Same as above, and cellAt() also returns
+				a CellStruct and needs to be set appropriately.
+        (RenderTable::cellAbove): cellAt() now returns a CellStruct. 
+        (RenderTable::cellBelow): Same.
+        (RenderTable::cellLeft): Same.
+        (RenderTable::cellRight): Same.
+        (RenderTableSection::ensureRows): Create empty CellStruct to fill the
+				grid. 
+        (RenderTableSection::addCell): cellAt() now returns a CellStruct. This 
+				is also where the change in behavior is to fix 
+				the bug. 
+        (RenderTableSection::setCellWidths): cellAt() now returns a CellStruct.
+        (RenderTableSection::calcRowHeight): Same.
+        (RenderTableSection::layoutRows): Same.
+        (RenderTableSection::paint): Same.
+        (RenderTableSection::dump): Same.
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTableSection::cellAt): Same.
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::recalcColumn): Same.
+        (AutoTableLayout::calcEffectiveWidth): Removed reference to 
+				(RenderTableCell *)-1 because that is now 
+				removed, and a cell will never be in a colspan
+				in this function anyway. 
+        (AutoTableLayout::insertSpanCell): Same.
+
 2005-11-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

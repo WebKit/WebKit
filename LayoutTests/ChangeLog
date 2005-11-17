@@ -1,3 +1,16 @@
+2005-11-17  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for <rdar://problem/3871165> text box in nested 
+	table disappears when you click on it (3452) (Safari PSOFT: 
+	US EDU PS8: Lead List searches)
+
+	This is a manual test. 
+
+        * fast/table/spanOverlapRepaint-expected.checksum: Added.
+        * fast/table/spanOverlapRepaint-expected.png: Added.
+        * fast/table/spanOverlapRepaint-expected.txt: Added.
+        * fast/table/spanOverlapRepaint.html: Added.
+
 2005-11-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
