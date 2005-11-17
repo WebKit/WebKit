@@ -94,11 +94,11 @@ public:
     const QColor &bgColor() const { return style()->backgroundColor(); }
 
     uint cellPadding() const { return padding; }
-    void setCellPadding( uint p ) { padding = p; }
+    void setCellPadding(uint p) { padding = p; }
 
     // overrides
-    virtual int overflowHeight(bool includeInterior=true) const { return height(); }
-    virtual int overflowWidth(bool includeInterior=true) const { return width(); }
+    virtual int overflowHeight(bool includeInterior = true) const { return height(); }
+    virtual int overflowWidth(bool includeInterior = true) const { return width(); }
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
     virtual void paint(PaintInfo& i, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
@@ -108,7 +108,7 @@ public:
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
     
-    virtual void setCellWidths( );
+    virtual void setCellWidths();
 
     virtual void calcWidth();
 
@@ -130,32 +130,32 @@ public:
     QMemArray<int> columnPos;
     QMemArray<ColumnStruct> columns;
 
-    void splitColumn( int pos, int firstSpan );
-    void appendColumn( int span );
+    void splitColumn(int pos, int firstSpan);
+    void appendColumn(int span);
     int numEffCols() const { return columns.size(); }
-    int spanOfEffCol( int effCol ) const { return columns[effCol].span; }
-    int colToEffCol( int col ) const {
+    int spanOfEffCol(int effCol) const { return columns[effCol].span; }
+    int colToEffCol(int col) const {
 	int c = 0;
 	int i = 0;
-	while ( c < col && i < (int)columns.size() ) {
+	while (c < col && i < (int)columns.size()) {
 	    c += columns[i].span;
 	    i++;
 	}
 	return i;
     }
-    int effColToCol( int effCol ) const {
+    int effColToCol(int effCol) const {
 	int c = 0;
-	for ( int i = 0; i < effCol; i++ )
+	for (int i = 0; i < effCol; i++)
 	    c += columns[i].span;
 	return c;
     }
 
     int bordersPaddingAndSpacing() const {
 	return borderLeft() + borderRight() + 
-               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols()+1) * hBorderSpacing()));
+               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
-    RenderTableCol *colElement( int col );
+    RenderTableCol *colElement(int col);
 
     void setNeedSectionRecalc() { needSectionRecalc = true; }
 
@@ -177,7 +177,7 @@ protected:
     friend class AutoTableLayout;
     friend class FixedTableLayout;
 
-    RenderBlock         *tCaption;
+    RenderBlock *tCaption;
     RenderTableSection *head;
     RenderTableSection *foot;
     RenderTableSection *firstBody;
@@ -221,11 +221,11 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-    void addCell( RenderTableCell *cell );
+    void addCell(RenderTableCell *cell);
 
     void setCellWidths();
     void calcRowHeight();
-    int layoutRows( int height );
+    int layoutRows(int height);
 
     RenderTable *table() const { return static_cast<RenderTable *>(parent()); }
 
@@ -284,7 +284,7 @@ public:
 
     virtual void destroy();
 
-    virtual void setStyle( RenderStyle* );
+    virtual void setStyle(RenderStyle*);
     virtual const char *renderName() const { return "RenderTableRow"; }
 
     virtual bool isTableRow() const { return true; }
@@ -293,7 +293,7 @@ public:
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
     virtual RenderObject* removeChildNode(RenderObject* child);
 
-    virtual short lineHeight( bool ) const { return 0; }
+    virtual short lineHeight(bool) const { return 0; }
     virtual void position(int, int, int, int, int, bool, bool, int) {}
 
     virtual void layout();
@@ -324,7 +324,7 @@ public:
 
     // ### FIX these two...
     int cellIndex() const { return 0; }
-    void setCellIndex( int ) { }
+    void setCellIndex(int) { }
 
     int colSpan() const { return cSpan; }
     void setColSpan(int c) { cSpan = c; }
@@ -340,8 +340,8 @@ public:
     // overrides
     virtual void calcMinMaxWidth();
     virtual void calcWidth();
-    virtual void setWidth( int width );
-    virtual void setStyle( RenderStyle *style );
+    virtual void setWidth(int width);
+    virtual void setStyle(RenderStyle *style);
 
     int borderLeft() const;
     int borderRight() const;
@@ -371,7 +371,7 @@ public:
     virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
     virtual bool absolutePosition(int &xPos, int &yPos, bool f = false);
 
-    virtual short baselinePosition( bool = false ) const;
+    virtual short baselinePosition(bool = false) const;
 
     virtual int borderTopExtra() const { return _topExtra; }
     virtual int borderBottomExtra() const { return _bottomExtra; }
@@ -417,7 +417,7 @@ public:
 
     virtual bool isTableCol() const { return true; }
 
-    virtual short lineHeight( bool ) const { return 0; }
+    virtual short lineHeight(bool) const { return 0; }
 
     virtual void updateFromElement();
 

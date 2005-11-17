@@ -1,3 +1,76 @@
+2005-11-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt and Eric.
+
+        This patch does not fix any bugs or change any behavior. It is
+	just a clean-up of the style in render_table.cpp and render_table.h
+	A lot of spacing fixes, tabbing fixes, changing some while-loops 
+	that are really for-loops into for-loops.
+
+	No layout test needed as it does not change any behavior.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::setStyle):
+        (RenderTable::addChild):
+        (RenderTable::calcWidth):
+        (RenderTable::layout):
+        (RenderTable::setCellWidths):
+        (RenderTable::paint):
+        (RenderTable::calcMinMaxWidth):
+        (RenderTable::splitColumn):
+        (RenderTable::appendColumn):
+        (RenderTable::colElement):
+        (RenderTable::recalcSections):
+        (RenderTable::removeChildNode):
+        (RenderTable::cellAbove):
+        (RenderTable::cellBelow):
+        (RenderTable::cellRight):
+        (RenderTableSection::addChild):
+        (RenderTableSection::ensureRows):
+        (RenderTableSection::addCell):
+        (RenderTableSection::setCellWidths):
+        (RenderTableSection::calcRowHeight):
+        (RenderTableSection::layoutRows):
+        (RenderTableSection::paint):
+        (RenderTableSection::recalcCells):
+        (RenderTableSection::clearGrid):
+        (RenderTableSection::removeChildNode):
+        (RenderTableRow::destroy):
+        (RenderTableRow::addChild):
+        (RenderTableRow::removeChildNode):
+        (RenderTableRow::layout):
+        (RenderTableCell::setWidth):
+        (RenderTableCell::baselinePosition):
+        (RenderTableCell::setStyle):
+        (RenderTableCell::collapsedLeftBorder):
+        (RenderTableCell::collapsedRightBorder):
+        (RenderTableCell::collapsedTopBorder):
+        (RenderTableCell::collapsedBottomBorder):
+        (RenderTableCell::borderLeft):
+        (RenderTableCell::borderRight):
+        (RenderTableCell::borderTop):
+        (RenderTableCell::borderBottom):
+        (outlineBox):
+        (RenderTableCell::paint):
+        (RenderTableCell::paintCollapsedBorder):
+        (RenderTableCell::getAbsoluteRepaintRect):
+        (RenderTableCell::paintBoxDecorations):
+        (RenderTableCol::updateFromElement):
+        (RenderTableCol::addChild):
+        (RenderTableCol::dump):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTable::setCellPadding):
+        (khtml::RenderTable::overflowHeight):
+        (khtml::RenderTable::overflowWidth):
+        (khtml::RenderTable::spanOfEffCol):
+        (khtml::RenderTable::colToEffCol):
+        (khtml::RenderTable::effColToCol):
+        (khtml::RenderTable::bordersPaddingAndSpacing):
+        (khtml::RenderTableRow::lineHeight):
+        (khtml::RenderTableCell::setCellIndex):
+        (khtml::RenderTableCol::lineHeight):
+
 2005-11-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
