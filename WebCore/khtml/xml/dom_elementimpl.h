@@ -90,6 +90,9 @@ public:
     
     virtual AttributeImpl* clone(bool preserveDecl=true) const;
 
+    // An extension to get the style information for presentational attributes.
+    virtual CSSStyleDeclarationImpl* style() const { return 0; }
+    
 private:
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
@@ -150,6 +153,9 @@ public:
     virtual void childrenChanged();
     virtual DOMString toString() const;
 
+    // An extension to get presentational information for attributes.
+    CSSStyleDeclarationImpl* style() { return m_attribute->style(); }
+    
 protected:
     ElementImpl* m_element;
     AttributeImpl* m_attribute;
@@ -382,6 +388,8 @@ public:
     ~MappedAttributeImpl();
 
     virtual AttributeImpl* clone(bool preserveDecl=true) const;
+
+    virtual CSSStyleDeclarationImpl* style() const { return m_styleDecl; }
 
     CSSMappedAttributeDeclarationImpl* decl() const { return m_styleDecl; }
     void setDecl(CSSMappedAttributeDeclarationImpl* decl) 

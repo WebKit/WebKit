@@ -75,3 +75,13 @@
 - (NSArray *)_optionLabels;
 @end
 
+// BEGIN PENDING PUBLIC WEB INSPECTOR APIS
+// These APIs are for the Web Inspector, and they will be made public eventually.
+@interface DOMAttr (DOMAttrExtensions)
+- (DOMCSSStyleDeclaration *)style;
+@end
+
+@interface DOMDocument (DOMViewCSSExtensions)
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
+// END

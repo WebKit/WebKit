@@ -1,5 +1,22 @@
 2005-11-17  David Hyatt  <hyatt@apple.com>
 
+	Add support for getting a style property off of a DOMAttr.  This is an API that allows
+	access to the style declaration for HTML presentational attributes like width and height.  This API exists only
+	in Objective-C, since JS would have to make the declaration readonly before it could be safely
+	returned.
+	
+        Reviewed by darin
+
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::AttributeImpl::style):
+        (DOM::AttrImpl::style):
+        (DOM::MappedAttributeImpl::style):
+        * kwq/DOM.mm:
+        (-[DOMAttr style]):
+        * kwq/DOMPrivate.h:
+
+2005-11-17  David Hyatt  <hyatt@apple.com>
+
 	Add support for getMatchedCSSRules, an API that can be used to
 	inspect the set of rules that match on an element.  From Obj-C
 	you see all rules (user agent, author, user).  From JS you just

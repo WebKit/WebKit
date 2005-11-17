@@ -1277,6 +1277,11 @@ static ListenerMap *listenerMap;
     return [DOMElement _elementWithImpl:[self _attrImpl]->ownerElement()];
 }
 
+- (DOMCSSStyleDeclaration *)style
+{
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl: [self _attrImpl]->style()];
+}
+
 @end
 
 @implementation DOMAttr (WebCoreInternal)
