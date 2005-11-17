@@ -1,3 +1,36 @@
+2005-11-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4108909> Editing delegate gets extra webViewDidChangeSelection: notifications
+        
+        Editing operations used to set an empty selection on the part before 
+        doing work.  Doing this 1) isn't necessary* 2) creates an extra didChangeSelection 
+        notification (4108909) 3) produces a strange shouldChangeSelection call after the 
+        editing operation is complete, i.e. "shouldChangeSelection from null to ...?"
+        
+        There are still strange shouldChangeSelection calls after this change. For example, 
+        after a delete, the selection before the delete no longer exists, so it probably 
+        doesn't make sense to ask the delegate if WebKit shouldChangeSelection.  This is filed 
+        as 4343068.
+        
+        * This was added on 2004-09-28 in order to mark misspellings in the selection to 
+        be operated on (marking misspellings is a side effect of setting a selection).  
+        Misspellings in the old selection are still marked, but not until after the operation 
+        is complete.  Since some editing operations remove the selection from the document 
+        (i.e. delete or undo-typing), respondToChangedSelection no longer assumes that the old 
+        selection is in the document.
+        
+        Updated layout tests to reflect this change.
+        
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::EditCommand): Don't set the part's selection to empty before editing.
+        (khtml::EditCommand::apply): Ditto.
+        (khtml::EditCommand::unapply): Ditto.
+        (khtml::EditCommand::reapply): Ditto.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::respondToChangedSelection): Don't assume that the old selection is still in the document.
+
 2005-11-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrson.

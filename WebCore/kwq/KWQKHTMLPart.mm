@@ -4142,8 +4142,14 @@ void KWQKHTMLPart::respondToChangedSelection(const SelectionController &oldSelec
 {
     if (xmlDocImpl()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
-            VisiblePosition oldStart(oldSelection.start(), oldSelection.startAffinity());
-            SelectionController oldAdjacentWords(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
+            SelectionController oldAdjacentWords = SelectionController();
+            
+            // If this is a change in selection resulting from a delete operation, oldSelection may no longer
+            // be in the document.
+            if (oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
+                VisiblePosition oldStart(oldSelection.start(), oldSelection.startAffinity());
+                oldAdjacentWords = SelectionController(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
+            }
 
             VisiblePosition newStart(selection().start(), selection().startAffinity());
             SelectionController newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));

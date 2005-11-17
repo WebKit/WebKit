@@ -213,8 +213,6 @@ EditCommand::EditCommand(DocumentImpl *document)
     m_document->ref();
     m_startingSelection = m_document->part()->selection();
     m_endingSelection = m_startingSelection;
-
-    m_document->part()->setSelection(SelectionController(), false, true);
 }
 
 EditCommand::~EditCommand()
@@ -232,8 +230,6 @@ void EditCommand::apply()
     ASSERT(state() == NotApplied);
  
     KHTMLPart *part = m_document->part();
-
-    ASSERT(part->selection().isNone());
 
     doApply();
     
@@ -260,11 +256,6 @@ void EditCommand::unapply()
     bool topLevel = !isCompositeStep();
  
     KHTMLPart *part = m_document->part();
-
-    if (topLevel) {
-        part->setSelection(SelectionController(), false, true);
-    }
-    ASSERT(part->selection().isNone());
     
     doUnapply();
     
@@ -286,11 +277,6 @@ void EditCommand::reapply()
     bool topLevel = !isCompositeStep();
  
     KHTMLPart *part = m_document->part();
-
-    if (topLevel) {
-        part->setSelection(SelectionController(), false, true);
-    }
-    ASSERT(part->selection().isNone());
     
     doReapply();
     
