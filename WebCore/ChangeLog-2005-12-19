@@ -14,7 +14,7 @@
         doesn't make sense to ask the delegate if WebKit shouldChangeSelection.  This is filed 
         as 4343068.
         
-        * This was added on 2004-09-28 in order to mark misspellings in the selection to 
+        * This was added on 2004-09-28 in order to mark misspellings in the selection to
         be operated on (marking misspellings is a side effect of setting a selection).  
         Misspellings in the old selection are still marked, but not until after the operation 
         is complete.  Since some editing operations remove the selection from the document 
@@ -30,7 +30,7 @@
         (khtml::EditCommand::reapply): Ditto.
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::respondToChangedSelection): Don't assume that the old selection is still in the document.
-
+        
 2005-11-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrson.
