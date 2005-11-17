@@ -1,3 +1,11 @@
+2005-11-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        Updated editing tests to reflect changes for:
+        
+        <rdar://problem/4108909> Editing delegate gets extra webViewDidChangeSelection: notifications
+
 2005-11-14  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
