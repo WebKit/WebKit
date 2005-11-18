@@ -1,3 +1,12 @@
+2005-11-15  David Harrison  <harrison@apple.com>
+
+        Layout tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5629>
+        
+        * editing/deleting/move-nodes-001-expected.checksum: Added.
+        * editing/deleting/move-nodes-001-expected.png: Added.
+        * editing/deleting/move-nodes-001-expected.txt: Added.
+        * editing/deleting/move-nodes-001.html: Added.
+
 2005-11-17  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/3871165> text box in nested 
