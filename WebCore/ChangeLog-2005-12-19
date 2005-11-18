@@ -1,3 +1,19 @@
+2005-11-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+	This is an additional fix for <rdar://problem/3871165> text box 
+	in nested table disappears when you click on it (3452) (Safari 
+	PSOFT: US EDU PS8: Lead List searches). The test case I used 
+	previously did not cover the case where one cell has both a
+	rowspan and a colspan and other cells later have rowspan and
+	colspan from two different cells overlapping.
+
+        One manual test case added.
+
+        * khtml/rendering/render_table.cpp: Remove check for inColSpan
+        (RenderTableSection::addCell):
+
 2005-11-18  David Harrison  <harrison@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=5629>
