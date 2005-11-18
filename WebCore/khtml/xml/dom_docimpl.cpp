@@ -2396,28 +2396,10 @@ AbstractViewImpl *DocumentImpl::defaultView() const
     return m_defaultView;
 }
 
-void DocumentImpl::forbidEventDispatch()
-{
-    m_eventDispatchForbidden += 1;
-}
-
-void DocumentImpl::allowEventDispatch()
-{
-    ASSERT(m_eventDispatchForbidden > 0);
-    m_eventDispatchForbidden -= 1;
-}
-
-bool DocumentImpl::eventDispatchForbidden()
-{
-    return m_eventDispatchForbidden > 0;
-}
-
 EventImpl *DocumentImpl::createEvent(const DOMString &eventType, int &exceptioncode)
 {
     // createEvent ought to be at a time completely separate from DOM modifications that forbidEventDispatch
     // (of course, the event _could_ be sent later, but this seems like a good bottleneck)
-    ASSERT(!eventDispatchForbidden());
-    
     if (eventType == "UIEvents" || eventType == "UIEvent")
         return new UIEventImpl();
     else if (eventType == "MouseEvents" || eventType == "MouseEvent")

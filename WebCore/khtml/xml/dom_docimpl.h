@@ -444,9 +444,6 @@ public:
     void detachNodeIterator(NodeIteratorImpl *ni);
     void notifyBeforeNodeRemoval(NodeImpl *n);
     AbstractViewImpl *defaultView() const;
-    void forbidEventDispatch();
-    void allowEventDispatch();
-    bool eventDispatchForbidden();
     EventImpl *createEvent(const DOMString &eventType, int &exceptioncode);
 
     // keep track of what types of event listeners are registered, so we don't
