@@ -1466,6 +1466,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return YES;
 }
 
+- (BOOL)shouldClose
+{
+    return _part->shouldClose();
+}
+
 - (NSColor *)bodyBackgroundColor
 {
     return _part->bodyBackgroundColor();

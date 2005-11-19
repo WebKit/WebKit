@@ -154,6 +154,9 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onloadAttr) {
         getDocument()->setHTMLWindowEventListener(loadEvent,	    
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+    } else if (attr->name() == onbeforeunloadAttr) {
+        getDocument()->setHTMLWindowEventListener(beforeunloadEvent,
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onunloadAttr) {
         getDocument()->setHTMLWindowEventListener(unloadEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
@@ -422,6 +425,9 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(loadEvent,
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+    } else if (attr->name() == onbeforeunloadAttr) {
+        setHTMLEventListener(beforeunloadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(unloadEvent,
@@ -706,6 +712,9 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             frameborder = false;
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(loadEvent,
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+    } else if (attr->name() == onbeforeunloadAttr) {
+        setHTMLEventListener(beforeunloadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(unloadEvent,

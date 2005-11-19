@@ -59,6 +59,7 @@ namespace DOM { namespace EventNames {
     macro(mouseover) \
     macro(mouseup) \
     macro(mousewheel) \
+    macro(beforeunload) \
     macro(paste) \
     macro(readystatechange) \
     macro(reset) \

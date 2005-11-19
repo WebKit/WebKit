@@ -1,3 +1,37 @@
+2005-11-18  Vicki Murley  <vicki@apple.com>
+
+        Changes by Darin, reviewed by Beth and Vicki.
+
+        - fix <rdar://problem/3939265> support "before unload" event and onbeforeunload handler (supported by both IE and Mozilla)
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        (HTMLFrameSetElementImpl::parseMappedAttribute):
+        * khtml/html/htmlnames.h:
+        * khtml/xml/EventNames.h:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::EventImpl::storesResultAsString):
+        (DOM::EventImpl::storeResult):
+        (DOM::BeforeUnloadEventImpl::BeforeUnloadEventImpl):
+        (DOM::BeforeUnloadEventImpl::storesResultAsString):
+        (DOM::BeforeUnloadEventImpl::storeResult):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::BeforeUnloadEventImpl::result):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::shouldClose):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge shouldClose]):
+
 2005-11-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

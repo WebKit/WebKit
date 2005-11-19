@@ -88,29 +88,9 @@
 
 #undef _KWQ_TIMING
 
-using namespace DOM::EventNames;
-using namespace DOM::HTMLNames;
-
-using DOM::AtomicString;
-using DOM::ClipboardEventImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentImpl;
-using DOM::DocumentMarker;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::EventImpl;
-using DOM::HTMLDocumentImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLFormElementImpl;
-using DOM::HTMLFrameElementImpl;
-using DOM::HTMLGenericFormElementImpl;
-using DOM::HTMLTableCellElementImpl;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::Range;
-using DOM::RangeImpl;
-using DOM::TextImpl;
+using namespace DOM;
+using namespace EventNames;
+using namespace HTMLNames;
 
 using khtml::Cache;
 using khtml::CharacterIterator;
@@ -4377,4 +4357,37 @@ DOM::NodeImpl *KWQKHTMLPart::mousePressNode()
 void KWQKHTMLPart::handledOnloadEvents()
 {
     [_bridge handledOnloadEvents];
+}
+
+bool KWQKHTMLPart::shouldClose()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    if (![_bridge canRunBeforeUnloadConfirmPanel])
+        return true;
+
+    SharedPtr<DocumentImpl> document = xmlDocImpl();
+    if (!document)
+        return true;
+    HTMLElementImpl* body = document->body();
+    if (!body)
+        return true;
+
+    SharedPtr<BeforeUnloadEventImpl> event = new BeforeUnloadEventImpl;
+    event->setTarget(document.get());
+    int exception = 0;
+    body->dispatchGenericEvent(event.get(), exception);
+    if (!event->defaultPrevented() && document)
+ 	document->defaultEventHandler(event.get());
+    if (event->result().isNull())
+        return true;
+
+    QString text = event->result().qstring();
+    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+
+    return [_bridge runBeforeUnloadConfirmPanelWithMessage:text.getNSString()];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return true;
 }

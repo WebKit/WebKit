@@ -949,7 +949,9 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
      return getListener(exec,selectEvent);
    case Onsubmit:
      return getListener(exec,submitEvent);
-   case Onunload:
+   case Onbeforeunload:
+      return getListener(exec, beforeunloadEvent);
+    case Onunload:
      return getListener(exec,scrollEvent);
    }
    assert(0);
@@ -1235,6 +1237,10 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
     case Onsubmit:
       if (isSafeScript(exec))
         setListener(exec,submitEvent,value);
+      return;
+    case Onbeforeunload:
+      if (isSafeScript(exec))
+        setListener(exec, beforeunloadEvent, value);
       return;
     case Onunload:
       if (isSafeScript(exec))

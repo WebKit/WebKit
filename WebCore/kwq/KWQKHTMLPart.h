@@ -204,6 +204,8 @@ public:
     bool statusbarVisible();
     bool toolbarVisible();
 
+    bool shouldClose();
+
     void KWQKHTMLPart::addMessageToConsole(const QString &message,  unsigned int lineNumber, const QString &sourceID);
     using KHTMLPart::xmlDocImpl;
     khtml::RenderObject *renderer() const;

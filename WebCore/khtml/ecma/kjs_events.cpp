@@ -131,7 +131,7 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
           retval = handleEventFunc->call(exec, listener, args);
       else
           retval = listener->call(exec, thisObj, args);
-      
+
       window->setCurrentEvent( 0 );
       interpreter->setCurrentEvent( 0 );
       if ( exec->hadException() ) {
@@ -151,10 +151,14 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
           if (Interpreter::shouldPrintExceptions())
               printf("(event handler):%s\n", message);
           exec->clearException();
-      } else if (html) {
-          QVariant ret = ValueToVariant(exec, retval);
-        if (ret.type() == QVariant::Bool && ret.toBool() == false)
-            evt->preventDefault();
+      } else {
+            if (!retval->isUndefinedOrNull() && evt->storesResultAsString())
+                evt->storeResult(retval->toString(exec).domString());
+            if (html) {
+                QVariant ret = ValueToVariant(exec, retval);
+                if (ret.type() == QVariant::Bool && ret.toBool() == false)
+                    evt->preventDefault();
+            }
       }
   
       DOM::DocumentImpl::updateDocumentsRendering();
