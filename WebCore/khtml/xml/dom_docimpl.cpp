@@ -455,7 +455,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     resetVisitedLinkColor();
     resetActiveLinkColor();
 
-    m_eventDispatchForbidden = 0;
     m_processingLoadEvent = false;
     m_startTime.restart();
     m_overMinimumLayoutThreshold = false;

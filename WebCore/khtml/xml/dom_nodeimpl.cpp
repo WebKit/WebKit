@@ -890,7 +890,7 @@ void NodeImpl::notifyNodeListsChildrenChanged()
 bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 {
     assert(!eventDispatchForbidden());
-    
+
     // FIXME: Pull this whole if clause out of this function.
     if (sendChildrenChanged) {
         notifyNodeListsChildrenChanged();
@@ -2167,12 +2167,12 @@ NodeImpl *ContainerNodeImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChi
         child->setParent(this);
         child->setPreviousSibling(prev);
         child->setNextSibling(refChild);
+        allowEventDispatch();
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
-        allowEventDispatch();
         
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -2229,9 +2229,8 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
         if (exceptioncode)
             return 0;
 
-        forbidEventDispatch();
-
         // Add child in the correct position
+        forbidEventDispatch();
         if (prev) prev->setNextSibling(child);
         if (next) next->setPreviousSibling(child);
         if(!prev) _first = child;
@@ -2239,12 +2238,12 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
         child->setParent(this);
         child->setPreviousSibling(prev);
         child->setNextSibling(next);
+        allowEventDispatch();
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
-        allowEventDispatch();
 
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -2333,9 +2332,9 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    getDocument()->setDocumentChanged(true);
-
     allowEventDispatch();
+
+    getDocument()->setDocumentChanged(true);
 
     // Dispatch post-removal mutation events
     dispatchSubtreeModifiedEvent();
@@ -2425,25 +2424,21 @@ NodeImpl *ContainerNodeImpl::appendChild ( NodeImpl *newChild, int &exceptioncod
                 return 0;
         }
 
-        forbidEventDispatch();
-
         // Append child to the end of the list
+        forbidEventDispatch();
         child->setParent(this);
-
-        if(_last)
-        {
+        if (_last) {
             child->setPreviousSibling(_last);
             _last->setNextSibling(child);
             _last = child;
         } else
             _first = _last = child;
+        allowEventDispatch();
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
-        
-        allowEventDispatch();
         
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -2508,27 +2503,20 @@ NodeImpl *ContainerNodeImpl::addChild(NodeImpl *newChild)
     if (getDocument()->isHTMLDocument() && !childAllowed(newChild))
         return 0;
 
-    forbidEventDispatch();
-
     // just add it...
+    forbidEventDispatch();
     newChild->setParent(this);
-
-    if(_last)
-    {
+    if(_last) {
         newChild->setPreviousSibling(_last);
         _last->setNextSibling(newChild);
         _last = newChild;
-    }
-    else
-    {
+    } else
         _first = _last = newChild;
-    }
+    allowEventDispatch();
 
     if (inDocument())
         newChild->insertedIntoDocument();
     childrenChanged();
-
-    allowEventDispatch();
     
     if(newChild->nodeType() == Node::ELEMENT_NODE)
         return newChild;
