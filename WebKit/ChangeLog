@@ -1,5 +1,14 @@
 2005-11-18  Vicki Murley  <vicki@apple.com>
 
+	Changes by Tim H, reviewed by Vicki.
+
+	- call shouldClose on the bridge for the main frame
+
+        * WebView.subproj/WebView.m:
+        (-[WebView shouldClose]):
+
+2005-11-18  Vicki Murley  <vicki@apple.com>
+
         Changes by Darin, reviewed by Beth and Vicki.
 
         - fix <rdar://problem/3939265> support "before unload" event and onbeforeunload handler (supported by both IE and Mozilla)

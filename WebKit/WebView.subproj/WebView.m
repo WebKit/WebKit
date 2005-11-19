@@ -2567,7 +2567,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)shouldClose
 {
-    WebBridge *bridge = [self _bridgeForSelectedOrMainFrame];
+    WebBridge *bridge = [[self mainFrame] _bridge];
     if (!bridge)
         return YES;
     return [bridge shouldClose];
