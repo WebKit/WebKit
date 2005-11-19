@@ -402,6 +402,22 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
 }
 
+- (BOOL)canRunBeforeUnloadConfirmPanel
+{
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
+    return [wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
+}
+
+- (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message
+{
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
+    if ([wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)])
+        return [wd webView:wv runBeforeUnloadConfirmPanelWithMessage:message initiatedByFrame:_frame];
+    return YES;
+}
+
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
     WebView *wv = [_frame webView];

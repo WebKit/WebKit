@@ -1711,13 +1711,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                formState:(WebFormState *)formState
                                  andCall:(id)target
                             withSelector:(SEL)selector
-{
+{    
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
         action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
         [dataSource _setTriggeringAction:action];
     }
-
+        
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if ([request isEqual:[dataSource _lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
@@ -2354,7 +2354,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT(_private->policyDataSource || [[self provisionalDataSource] unreachableURL] != nil);
 
     WebHistoryItem *item = [_private provisionalItem];
-    if (!request) {
+
+    // Two reasons we can't continue:
+    //    1) navigation policy delegate said we can't so request is nil.
+    //    2) before unload event handler caused an alert to come up and the user said cancel.
+    // The "before unload" event handler runs only for the main frame.
+    BOOL canContinue = request && ([[self webView] mainFrame] != self || [_private->bridge shouldClose]);
+
+    if (!canContinue) {
         [self _setPolicyDataSource:nil];
         // If the delegate punts on the navigation, we have the problem that we have optimistically moved
         // the b/f cursor already, so move it back.  For sanity we only do this if the navigation of the

@@ -1,3 +1,20 @@
+2005-11-18  Vicki Murley  <vicki@apple.com>
+
+        Changes by Darin, reviewed by Beth and Vicki.
+
+        - fix <rdar://problem/3939265> support "before unload" event and onbeforeunload handler (supported by both IE and Mozilla)
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canRunBeforeUnloadConfirmPanel]):
+        (-[WebBridge runBeforeUnloadConfirmPanelWithMessage:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView shouldClose]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-11-10  Maciej Stachowiak  <mjs@apple.com>
 
         Build fix, not reviewed.

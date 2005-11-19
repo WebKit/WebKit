@@ -67,7 +67,7 @@
      @param sender The WebView sending the delegate method.
      @param message The message to display.
      @param frame The WebFrame whose JavaScript initiated this call.
-     @result YES if the user hit OK, no if the user chose Cancel.
+     @result YES if the user hit OK, NO if the user chose Cancel.
      @discussion Clients should visually indicate that this panel comes
      from JavaScript initiated by the specified frame. The panel should have 
      two buttons, e.g. "OK" and "Cancel".
@@ -88,5 +88,18 @@
 */
 - (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame;
 
+/*!
+     @method webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:
+     @abstract Display a confirm panel by an "before unload" event handler.
+     @param sender The WebView sending the delegate method.
+     @param message The message to display.
+     @param frame The WebFrame whose JavaScript initiated this call.
+     @result YES if the user hit OK, NO if the user chose Cancel.
+     @discussion Clients should include a message in addition to the one
+     supplied by the web page that indicates. The panel should have 
+     two buttons, e.g. "OK" and "Cancel".
+*/
+// FIXME: Should we indicate a distinction between navigation and close?
+- (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame;
 
 @end
