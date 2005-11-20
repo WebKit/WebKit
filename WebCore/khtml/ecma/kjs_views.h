@@ -39,7 +39,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     DOM::AbstractViewImpl *impl() const { return m_impl.get(); }
-    enum { Document, GetComputedStyle, GetMatchedCSSRules };
+    enum { Document, GetComputedStyle };
   private:
     SharedPtr<DOM::AbstractViewImpl> m_impl;
   };

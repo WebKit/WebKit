@@ -2,8 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -378,16 +377,8 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     sortMatchedRules(0, m_matchedRuleCount);
     
     // Now transfer the set of matched rules over to our list of decls.
-    if (style) {
-        for (unsigned i = 0; i < m_matchedRuleCount; i++)
-            addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
-    } else {
-        for (unsigned i = 0; i < m_matchedRuleCount; i++) {
-            if (!m_ruleList)
-                m_ruleList = new CSSRuleListImpl();
-            m_ruleList->append(m_matchedRules[i]->rule());
-        }
-    }
+    for (unsigned i = 0; i < m_matchedRuleCount; i++)
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
 }
 
 void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
@@ -405,7 +396,7 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
             
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
-            if (style && dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO)
+            if (dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO)
                 style->setHasPseudoStyle(dynamicPseudo);
             else {
                 // Update our first/last rule indices in the matched rules array.
@@ -529,8 +520,7 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     m_matchedRuleCount = 0;
     m_matchedDeclCount = 0;
     m_tmpRuleCount = 0;
-    m_ruleList = 0;
-
+    
     fontDirty = false;
 }
 
@@ -1043,45 +1033,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
     // prevent the entire view from blitting on a scroll.
     if (style->hasFixedBackgroundImage() && view)
         view->useSlowRepaints();
-}
-
-SharedPtr<CSSRuleListImpl> CSSStyleSelector::styleRulesForElement(ElementImpl* e, bool authorOnly)
-{
-    if (!e->getDocument()->haveStylesheetsLoaded())
-        return 0;
-
-    initElementAndPseudoState(e);
-    initForStyleResolve(e, 0);
-    
-    if (!authorOnly) {
-        // First we match rules from the user agent sheet.
-        int firstUARule = -1, lastUARule = -1;
-        matchRules(defaultStyle, firstUARule, lastUARule);
-        
-        // In quirks mode, we match rules from the quirks user agent sheet.
-        if (!strictParsing)
-            matchRules(defaultQuirksStyle, firstUARule, lastUARule);
-        
-        // If our medium is print, then we match rules from the print sheet.
-        if (m_medium == "print")
-            matchRules(defaultPrintStyle, firstUARule, lastUARule);
-
-        // Now we check user sheet rules.
-        int firstUserRule = -1, lastUserRule = -1;
-        matchRules(m_userStyle, firstUserRule, lastUserRule);
-    }
-
-    // Check the rules in author sheets.
-    int firstAuthorRule = -1, lastAuthorRule = -1;
-    matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
-    
-    return m_ruleList;
-}
-
-SharedPtr<CSSRuleListImpl> CSSStyleSelector::pseudoStyleRulesForElement(ElementImpl* e, DOMStringImpl* pseudoStyle, bool authorOnly)
-{
-    // FIXME: Implement this.
-    return 0;
 }
 
 static bool subject;

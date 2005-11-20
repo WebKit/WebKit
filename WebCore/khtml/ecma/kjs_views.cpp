@@ -32,7 +32,7 @@ using DOM::AbstractViewImpl;
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
-using DOM::CSSRuleListImpl;
+
 
 #include "kjs_views.lut.h"
 
@@ -47,7 +47,6 @@ const ClassInfo DOMAbstractView::info = { "AbstractView", 0, &DOMAbstractViewTab
 @end
 @begin DOMAbstractViewProtoTable 1
   getComputedStyle	DOMAbstractView::GetComputedStyle	DontDelete|Function 2
-  getMatchedCSSRules   DOMAbstractView::GetMatchedCSSRules    DontDelete|Function 2
 @end
 */
 
@@ -93,16 +92,6 @@ ValueImp *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, ObjectImp *t
           return getDOMCSSStyleDeclaration(exec, abstractView.getComputedStyle(arg0, args[1]->toString(exec).domString().impl()));
         }
       }
-    case DOMAbstractView::GetMatchedCSSRules: {
-        ElementImpl *arg0 = toElement(args[0]);
-        if (!arg0)
-          return Undefined(); // throw exception?
-        else {
-          // No need to update layout, since we just want the back-end rules.
-          return getDOMCSSRuleList(exec, abstractView.getMatchedCSSRules(arg0, args[1]->toString(exec).domString().impl()).get());
-        }
-      }
-
   }
   return Undefined();
 }
