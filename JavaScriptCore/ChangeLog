@@ -1,3 +1,11 @@
+2005-11-21  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by hyatt.
+        
+        Removed JavaScriptCore+SVG target.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2005-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.
