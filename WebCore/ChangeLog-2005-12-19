@@ -1,3 +1,27 @@
+2005-11-21  eseidel  <eseidel@apple.com>
+
+        No review required, SVG target only.
+
+        Fix SVG from having duplicate entries (with khtml) in its
+        cssproperties.in and cssvalues.in files.  I've added an explicit
+        check in the build phase for duplicates to prevent this in the
+        future.  Minor code adjustments were necessary to use these
+        the khtml value & property ids.
+
+        No additional test cases needed, this change fixes:
+        W3C-SVG-1.1/painting-stroke-02-t
+        W3C-SVG-1.1/painting-stroke-03-t
+
+        * WebCore.xcodeproj/project.pbxproj: duplicate id check
+        * ksvg2/css/KSVGCSSParser.cpp:
+        (DOM::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/cssproperties.in: commented out duplicates
+        * ksvg2/css/cssvalues.in: commented out duplicates
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        (SVGStyledTransformableElementImpl::parseMappedAttribute):
+
 2005-11-20  Eric Seidel  <eseidel@apple.com>
 
         Only affects SVG; no review required (or possible due to size).

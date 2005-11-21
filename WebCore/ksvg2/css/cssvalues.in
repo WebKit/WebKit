@@ -14,14 +14,14 @@
 #
 aliceblue
 antiquewhite
-aqua
+# aqua
 aquamarine
 azure
 beige
 bisque
-black
+# black
 blanchedalmond
-blue
+# blue
 blueviolet
 brown
 burlywood
@@ -60,14 +60,14 @@ dodgerblue
 firebrick
 floralwhite
 forestgreen
-fuchsia
+# fuchsia
 gainsboro
 ghostwhite
 gold
 goldenrod
-gray
-grey
-green
+# gray
+# grey
+# green
 greenyellow
 honeydew
 hotpink
@@ -94,11 +94,11 @@ lightslategray
 lightslategrey
 lightsteelblue
 lightyellow
-lime
+# lime
 limegreen
 linen
 magenta
-maroon
+# maroon
 mediumaquamarine
 mediumblue
 mediumorchid
@@ -113,11 +113,11 @@ mintcream
 mistyrose
 moccasin
 navajowhite
-navy
+# navy
 oldlace
-olive
+# olive
 olivedrab
-orange
+# orange
 orangered
 orchid
 palegoldenrod
@@ -130,8 +130,8 @@ peru
 pink
 plum
 powderblue
-purple
-red
+# purple
+# red
 rosybrown
 royalblue
 saddlebrown
@@ -140,7 +140,7 @@ sandybrown
 seagreen
 seashell
 sienna
-silver
+# silver
 skyblue
 slateblue
 slategray
@@ -149,15 +149,15 @@ snow
 springgreen
 steelblue
 tan
-teal
+# teal
 thistle
 tomato
 turquoise
 violet
 wheat
-white
+# white
 whitesmoke
-yellow
+# yellow
 yellowgreen
 
 # CSS_PROP_CLIP_PATH
@@ -238,12 +238,12 @@ geometricPrecision
 # CSS_PROP_STROKE_DASHOFFSET
 # CSS_PROP_STROKE_LINECAP
 butt
-round
-square
+# round
+# square
 
 # CSS_PROP_STROKE_LINEJOIN
 miter
-#round
+# round
 bevel
 
 # CSS_PROP_STROKE_MITERLIMIT
@@ -257,7 +257,7 @@ optimizeLegibility
 
 # CSS_PROP_ALIGNMENT_BASELINE
 #auto
-baseline
+# baseline
 before-edge
 after-edge
 #middle
@@ -271,8 +271,8 @@ mathematical
 
 # CSS_PROP_BASELINE_SHIFT
 #baseline
-sub
-super
+# sub
+# super
 
 # CSS_PROP_DOMINANT_BASELINE
 #auto
@@ -285,9 +285,9 @@ reset-size
 # CSS_PROP_GLYP_ORIENTATION_VERTICAL
 # CSS_PROP_KERNING
 # CSS_PROP_TEXT_ANCHOR
-start
-middle
-end
+# start
+# middle
+# end
 
 # CSS_PROP_WRITING_MODE
 lr-tb

@@ -119,7 +119,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
                 case CSS_VAL_AUTO:
                     svgstyle->setAlignmentBaseline(AB_AUTO);
                     break;
-                case SVGCSS_VAL_BASELINE:
+                case CSS_VAL_BASELINE:
                     svgstyle->setAlignmentBaseline(AB_BASELINE);
                     break;
                 case SVGCSS_VAL_BEFORE_EDGE:
@@ -343,7 +343,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
                 case SVGCSS_VAL_MITER:
                     svgstyle->setJoinStyle(JS_MITER);
                     break;
-                case SVGCSS_VAL_ROUND:
+                case CSS_VAL_ROUND:
                     svgstyle->setJoinStyle(JS_ROUND);
                     break;
                 case SVGCSS_VAL_BEVEL:
@@ -530,8 +530,22 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
         case SVGCSS_PROP_STROKE_LINECAP:
         {
             HANDLE_INHERIT_AND_INITIAL(capStyle, CapStyle)
-            if(primitiveValue)
-                svgstyle->setCapStyle((ECapStyle)(primitiveValue->getIdent() - SVGCSS_VAL_GEOMETRICPRECISION));
+            if (!primitiveValue)
+                break;
+            
+            switch (primitiveValue->getIdent())
+            {
+                case SVGCSS_VAL_BUTT:
+                    svgstyle->setCapStyle(CS_BUTT);
+                    break;
+                case CSS_VAL_ROUND:
+                    svgstyle->setCapStyle(CS_ROUND);
+                    break;
+                case CSS_VAL_SQUARE:
+                    svgstyle->setCapStyle(CS_SQUARE);
+                default:
+                    return;
+            }
 
             break;
         }
@@ -585,9 +599,23 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
         case SVGCSS_PROP_TEXT_ANCHOR:
         {
             HANDLE_INHERIT_AND_INITIAL(textAnchor, TextAnchor)
-            if(primitiveValue)
-                svgstyle->setTextAnchor((ETextAnchor)(primitiveValue->getIdent() - SVGCSS_VAL_RESET_SIZE));
-                
+            if (!primitiveValue)
+                break;
+            
+            switch(primitiveValue->getIdent())
+            {
+                case CSS_VAL_START:
+                    svgstyle->setTextAnchor(TA_START);
+                    break;
+                case CSS_VAL_MIDDLE:
+                    svgstyle->setTextAnchor(TA_MIDDLE);
+                    break;
+                case CSS_VAL_END:
+                    svgstyle->setTextAnchor(TA_END);
+                default:
+                    return;
+            }
+            
             break;
         }
 #if 0

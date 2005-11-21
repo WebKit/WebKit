@@ -103,15 +103,13 @@ void SVGStyledTransformableElementImpl::parseMappedAttribute(KDOM::MappedAttribu
     if(attr->name() == SVGNames::transformAttr)
     {
         SVGTransformListImpl *localTransforms = transform()->baseVal();
-
         localTransforms->clear();
+        
         SVGTransformableImpl::parseTransformAttribute(localTransforms, attr->value().impl());
-
-        // Update cached local matrix
         updateLocalTransform(localTransforms);
     }
     else
-        SVGStyledElementImpl::parseMappedAttribute(attr);
+        SVGStyledLocatableElementImpl::parseMappedAttribute(attr);
 }
 
 SVGElementImpl *SVGStyledTransformableElementImpl::nearestViewportElement() const

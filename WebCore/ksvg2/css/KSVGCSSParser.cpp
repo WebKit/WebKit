@@ -64,8 +64,8 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
     // auto | baseline | before-edge | text-before-edge | middle |
     // central | after-edge | text-after-edge | ideographic | alphabetic |
     // hanging | mathematical | inherit
-        if(id == CSS_VAL_AUTO || id == CSS_VAL_MIDDLE ||
-          (id >= SVGCSS_VAL_BASELINE && id <= SVGCSS_VAL_MATHEMATICAL))
+        if(id == CSS_VAL_AUTO || id == CSS_VAL_BASELINE || id == CSS_VAL_MIDDLE ||
+          (id >= SVGCSS_VAL_BEFORE_EDGE && id <= SVGCSS_VAL_MATHEMATICAL))
             valid_primitive = true;
         break;
 
@@ -119,12 +119,12 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
         break;
 
     case SVGCSS_PROP_STROKE_LINEJOIN:   // miter | round | bevel | inherit
-        if(id == SVGCSS_VAL_MITER || id == SVGCSS_VAL_ROUND || id == SVGCSS_VAL_BEVEL)
+        if(id == SVGCSS_VAL_MITER || id == CSS_VAL_ROUND || id == SVGCSS_VAL_BEVEL)
             valid_primitive = true;
         break;
 
     case SVGCSS_PROP_STROKE_LINECAP:    // butt | round | square | inherit
-        if(id == SVGCSS_VAL_BUTT || id == SVGCSS_VAL_ROUND || id == SVGCSS_VAL_SQUARE)
+        if(id == SVGCSS_VAL_BUTT || id == CSS_VAL_ROUND || id == CSS_VAL_SQUARE)
             valid_primitive = true;
         break;
 
@@ -179,7 +179,7 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
         break;
 
     case SVGCSS_PROP_TEXT_ANCHOR:    // start | middle | end | inherit
-        if(id >= SVGCSS_VAL_START && id <= SVGCSS_VAL_END)
+        if(id == CSS_VAL_START || id == CSS_VAL_MIDDLE || id == CSS_VAL_END)
             valid_primitive = true;
         break;
 

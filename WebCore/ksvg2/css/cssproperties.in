@@ -6,7 +6,7 @@
 clip-path
 clip-rule
 mask
-opacity
+# opacity
 enable-background
 filter
 flood-color
