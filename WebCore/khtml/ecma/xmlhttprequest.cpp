@@ -43,6 +43,7 @@
 #include "xmlhttprequest.lut.h"
 
 using DOM::DocumentImpl;
+using DOM::DOMImplementationImpl;
 using DOM::EventImpl;
 using namespace DOM::EventNames;
 
@@ -150,9 +151,8 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
         mimeType = MIMETypeOverride;
       }
       
-      if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
-          mimeType == "text/xsl" || mimeType == "application/rss+xml" || mimeType == "application/atom+xml") {
-	responseXML.reset(doc->impl()->createDocument());
+      if (typeIsXML = DOMImplementationImpl::isXMLMIMEType(mimeType)) {
+	responseXML.reset(doc->implementation()->createDocument());
 
 	DocumentImpl *docImpl = responseXML.get();
 	
@@ -160,9 +160,6 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
 	docImpl->write(response);
 	docImpl->finishParsing();
 	docImpl->close();
-	typeIsXML = true;
-      } else {
-	typeIsXML = false;
       }
       createdDocument = true;
     }

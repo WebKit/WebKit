@@ -60,6 +60,24 @@ DOMStringImpl::DOMStringImpl(const QChar *str, unsigned len)
     }
 }
 
+DOMStringImpl::DOMStringImpl(const QString &string)
+{
+    const QChar *str = string.unicode();
+    unsigned len = string.length();
+    _hash = 0;
+    _inTable = false;
+    bool havestr = str && len;
+    s = QT_ALLOC_QCHAR_VEC(havestr ? len : 1);
+    if (havestr) {
+        memcpy( s, str, len * sizeof(QChar) );
+        l = len;
+    } else {
+        // crash protection
+        s[0] = 0x0;
+        l = 0;
+    }
+}
+
 DOMStringImpl::DOMStringImpl(const char *str)
 {
     _hash = 0;

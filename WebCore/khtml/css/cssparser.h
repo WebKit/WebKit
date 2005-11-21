@@ -145,6 +145,13 @@ namespace DOM {
 	CSSValueListImpl *parseFontFamily();
         CSSPrimitiveValueImpl *parseColor();
 	CSSPrimitiveValueImpl *parseColorFromValue(Value* val);
+        
+#if SVG_SUPPORT
+        bool parseSVGValue(int propId, bool important, int expected = 1);
+        CSSValueImpl *parseSVGPaint();
+        CSSValueImpl *parseSVGColor();
+        CSSValueImpl *parseSVGStrokeDasharray();
+#endif
 
         static bool parseColor(const QString &name, QRgb& rgb);
 

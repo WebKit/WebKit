@@ -132,7 +132,7 @@ public:
     ~DOMImplementationImpl();
 
     // DOM methods & attributes for DOMImplementation
-    bool hasFeature ( const DOMString &feature, const DOMString &version );
+    bool hasFeature(const DOMString& feature, const DOMString& version) const;
     DocumentTypeImpl *createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
                                           const DOMString &systemId, int &exceptioncode );
     DocumentImpl *createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
@@ -149,13 +149,12 @@ public:
     // Other methods (not part of DOM)
     DocumentImpl *createDocument( KHTMLView *v = 0 );
     HTMLDocumentImpl *createHTMLDocument( KHTMLView *v = 0 );
-#if SVG_SUPPORT
-    DocumentImpl *createKDOMDocument( KHTMLView *v = 0 );
-#endif
 
     // Returns the static instance of this class - only one instance of this class should
     // ever be present, and is used as a factory method for creating DocumentImpl objects
     static DOMImplementationImpl *instance();
+    
+    static bool isXMLMIMEType(const DOMString& mimeType);
 
 protected:
     static DOMImplementationImpl *m_instance;
@@ -192,7 +191,7 @@ public:
     virtual DocumentTypeImpl *doctype() const; // returns 0 for HTML documents
     DocumentTypeImpl *realDocType() const { return m_docType.get(); }
 
-    DOMImplementationImpl *impl() const;
+    DOMImplementationImpl *implementation() const;
     virtual ElementImpl *documentElement() const;
     virtual ElementImpl *createElement(const DOMString &tagName, int &exceptioncode);
     DocumentFragmentImpl *createDocumentFragment ();
@@ -519,7 +518,8 @@ public:
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
     ElementImpl *ownerElement();
-
+    
+    DOMString referrer() const;
     DOMString domain() const;
     void setDomain( const DOMString &newDomain, bool force = false ); // not part of the DOM
 
@@ -836,7 +836,7 @@ public:
     virtual NodeImpl *cloneNode(bool deep);
 
     // Other methods (not part of DOM)
-    DOMImplementationImpl *impl() const { return m_implementation.get(); }
+    DOMImplementationImpl *implementation() const { return m_implementation.get(); }
     virtual DOMString toString() const;
 
 private:

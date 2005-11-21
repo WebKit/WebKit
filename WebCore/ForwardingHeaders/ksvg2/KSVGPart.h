@@ -1,1 +1,1 @@
-#include <KWQKSVGPart.h>
+#include "KDOMHeaders.h"

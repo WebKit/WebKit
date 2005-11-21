@@ -38,11 +38,15 @@
 #include "xml/dom_docimpl.h"
 #include "csshelper.h"
 
-using namespace DOM;
-
 #include <stdlib.h>
 
+#if SVG_SUPPORT
+#include "SVGPaintImpl.h"
+#endif
+
 void qFatal ( const char * msg ) {}
+
+using namespace DOM;
 
 ValueList::ValueList()
 {
@@ -73,8 +77,6 @@ void ValueList::addValue(const Value &val)
     values[numValues++] = val;
 }
 
-
-using namespace DOM;
 
 #if YYDEBUG > 0
 extern int cssyydebug;
@@ -1246,6 +1248,10 @@ bool CSSParser::parseValue( int propId, bool important )
 // #ifdef CSS_DEBUG
 // 	kdDebug( 6080 ) << "illegal or CSS2 Aural property: " << val << endl;
 // #endif
+#if SVG_SUPPORT
+    if (parseSVGValue(propId, important))
+        return true;
+#endif
 	break;
     }
 
@@ -2612,7 +2618,7 @@ static inline int yyerror( const char *str ) {
     return 1;
 }
 
-#define END 0
+#define END_TOKEN 0
 
 #include "parser.h"
 
@@ -2623,7 +2629,7 @@ int DOM::CSSParser::lex( void *_yylval ) {
     unsigned short *t = text( &length );
 
 #ifdef TOKEN_DEBUG
-    qDebug("CSSTokenizer: got token %d: '%s'", token, token == END ? "" : QString( (QChar *)t, length ).latin1() );
+    qDebug("CSSTokenizer: got token %d: '%s'", token, token == END_TOKEN ? "" : QString( (QChar *)t, length ).latin1() );
 #endif
     switch( token ) {
     case WHITESPACE:
@@ -2821,6 +2827,10 @@ unsigned short *DOM::CSSParser::text(int *length)
     return start;
 }
 
+#if SVG_SUPPORT
+#include "ksvg2/css/KSVGCSSParser.cpp"
+#endif
+
 
 #define YY_DECL int DOM::CSSParser::lex()
 #define yyconst const
@@ -2839,9 +2849,8 @@ typedef unsigned int YY_CHAR;
 #define YY_RULE_SETUP
 #define INITIAL 0
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
-#define yyterminate() yyTok = END; return yyTok
+#define yyterminate() yyTok = END_TOKEN; return yyTok
 #define YY_FATAL_ERROR(a) qFatal(a)
-#define BEGIN yy_start = 1 + 2 *
-#define COMMENT 1
 
 #include "tokenizer.cpp"
+

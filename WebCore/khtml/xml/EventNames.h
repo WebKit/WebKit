@@ -71,6 +71,7 @@ namespace DOM { namespace EventNames {
     macro(submit) \
     macro(textInput) \
     macro(unload) \
+    macro(zoom) \
     \
     macro(DOMActivate) \
     macro(DOMAttrModified) \

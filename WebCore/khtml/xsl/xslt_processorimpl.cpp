@@ -185,9 +185,9 @@ SharedPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QStrin
 
     SharedPtr<DocumentImpl> result;
     if (sourceMIMEType == "text/html")
-        result = ownerDocument->impl()->createHTMLDocument(view);
+        result = ownerDocument->implementation()->createHTMLDocument(view);
     else {
-        result = ownerDocument->impl()->createDocument(view);
+        result = ownerDocument->implementation()->createDocument(view);
         if (sourceMIMEType == "text/plain")
             transformTextStringToXHTMLDocumentString(documentSource);
     }

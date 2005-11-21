@@ -45,6 +45,7 @@ public:
     DOMStringImpl(const char *str);
     DOMStringImpl(const char *str, unsigned int len);
     DOMStringImpl(const QChar &ch);
+    DOMStringImpl(const QString &str);
     ~DOMStringImpl();
     
     unsigned hash() const { if (_hash == 0) _hash = computeHash(s, l); return _hash; }

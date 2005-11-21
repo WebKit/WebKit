@@ -25,6 +25,7 @@
 #include "html/html_documentimpl.h"
 
 using DOM::DocumentImpl;
+using DOM::DOMImplementationImpl;
 
 ////////////////////// DOMParser Object ////////////////////////
 
@@ -78,15 +79,14 @@ ValueImp *DOMParserProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
   switch (id) {
   case DOMParser::ParseFromString:
     {
-      if (args.size() != 2) {
-				return Undefined();
-      }
+        if (args.size() != 2)
+            return jsUndefined();
 
       QString str = args[0]->toString(exec).qstring();
       QString contentType = args[1]->toString(exec).qstring().stripWhiteSpace();
 
-      if (contentType == "text/xml" || contentType == "application/xml" || contentType == "application/xhtml+xml") {
-        DocumentImpl *docImpl = parser->doc->impl()->createDocument();
+      if (DOMImplementationImpl::isXMLMIMEType(contentType)) {
+        DocumentImpl *docImpl = parser->doc->implementation()->createDocument();
 
         docImpl->open();
         docImpl->write(str);

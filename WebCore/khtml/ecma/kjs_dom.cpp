@@ -956,7 +956,7 @@ ValueImp *DOMDocument::getValueProperty(ExecState *exec, int token) const
   case DocType:
     return getDOMNode(exec,doc.doctype());
   case Implementation:
-    return getDOMDOMImplementation(exec,doc.impl());
+    return getDOMDOMImplementation(exec, doc.implementation());
   case DocumentElement:
     return getDOMNode(exec,doc.documentElement());
   case StyleSheets:

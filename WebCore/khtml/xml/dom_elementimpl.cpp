@@ -37,6 +37,10 @@
 
 #include "html/htmlparser.h"
 
+#if SVG_SUPPORT
+#include "SVGNames.h"
+#endif
+
 #include "rendering/render_canvas.h"
 #include "css/css_valueimpl.h"
 #include "css/cssproperties.h"
@@ -337,6 +341,11 @@ const AtomicString& ElementImpl::getIDAttribute() const
     return namedAttrMap ? namedAttrMap->id() : nullAtom;
 }
 
+bool ElementImpl::hasAttribute(const QualifiedName& name) const
+{
+    return hasAttributeNS(name.namespaceURI(), name.localName());
+}
+
 const AtomicString& ElementImpl::getAttribute(const QualifiedName& name) const
 {
     if (name == styleAttr)
@@ -511,6 +520,16 @@ void ElementImpl::removedFromDocument()
 
     ContainerNodeImpl::removedFromDocument();
 }
+
+#if SVG_SUPPORT
+bool ElementImpl::rendererIsNeeded(khtml::RenderStyle *)
+{
+    // SVG ignores arbitrary xml elements in its render tree contrary to the normal CSS/XML behavior.
+    if ((KSVG::SVGNames::svgNamespaceURI == parentNode()->namespaceURI()) && !parentNode()->hasTagName(KSVG::SVGNames::foreignObjectTag))
+        return false;
+    return true;
+}
+#endif
 
 void ElementImpl::attach()
 {

@@ -28,6 +28,8 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+class QRect;
+
 class QWMatrix {
 public:
     QWMatrix();
@@ -36,6 +38,7 @@ public:
     
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
+    QRect QWMatrix::mapRect(const QRect &rect) const;
     
     bool isIdentity() const;
     

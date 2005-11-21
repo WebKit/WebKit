@@ -58,6 +58,9 @@
 #include "xml/dom2_rangeimpl.h"
 #include "xml/EventNames.h"
 #include "xml/xml_tokenizer.h"
+#if SVG_SUPPORT
+#include "SVGNames.h"
+#endif
 
 using namespace DOM;
 using namespace HTMLNames;
@@ -195,6 +198,9 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   QualifiedName::init();
   EventNames::init();
   HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
+#if SVG_SUPPORT
+  KSVG::SVGNames::init();
+#endif
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
   else if ( prof == BrowserViewGUI )
@@ -1010,13 +1016,8 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     baseurl = m_url;
   }
 
-  if (args.serviceType == "text/xml" || args.serviceType == "application/xml" || args.serviceType == "application/xhtml+xml" ||
-      args.serviceType == "text/xsl" || args.serviceType == "application/rss+xml" || args.serviceType == "application/atom+xml")
+  if (DOMImplementationImpl::isXMLMIMEType(args.serviceType))
     d->m_doc = DOMImplementationImpl::instance()->createDocument( d->m_view );
-#if SVG_SUPPORT
-  else if (args.serviceType == "image/svg+xml")
-    d->m_doc = DOMImplementationImpl::instance()->createKDOMDocument(d->m_view);
-#endif
   else
     d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument( d->m_view );
 

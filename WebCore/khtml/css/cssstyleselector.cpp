@@ -215,6 +215,9 @@ CSSRuleSet *CSSStyleSelector::defaultPrintStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
 RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
 CSSStyleSheetImpl *CSSStyleSelector::quirksSheet = 0;
+#if SVG_SUPPORT
+CSSStyleSheetImpl *CSSStyleSelector::svgSheet = 0;
+#endif
 
 static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
 static PseudoState pseudoState;
@@ -338,6 +341,12 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
     quirksSheet = parseUASheet(0, "khtml/css/quirks.css");
     defaultQuirksStyle = new CSSRuleSet();
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, "screen");
+    
+#if SVG_SUPPORT
+    svgSheet = parseUASheet(0, "ksvg2/css/svg.css");
+    defaultStyle->addRulesFromSheet(svgSheet, "screen");
+    defaultPrintStyle->addRulesFromSheet(svgSheet, "print");
+#endif
 }
 
 void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
@@ -3969,6 +3978,10 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     }   
 
     default:
+#if SVG_SUPPORT
+        // Try the SVG properties
+        applySVGProperty(id, value);
+#endif
         return;
     }
 }

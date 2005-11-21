@@ -28,6 +28,10 @@
 #include "css/cssstyleselector.h"
 #include "render_arena.h"
 
+#if SVG_SUPPORT
+#include "SVGRenderStyle.h"
+#endif
+
 #include "kdebug.h"
 
 using namespace khtml;
@@ -525,6 +529,10 @@ RenderStyle::RenderStyle()
     
     inherited = _default->inherited;
 
+#if SVG_SUPPORT
+    m_svgStyle = new KSVG::SVGRenderStyle();
+#endif
+
     setBitDefaults();
 
     pseudoStyle = 0;
@@ -545,6 +553,10 @@ RenderStyle::RenderStyle(bool)
     css3NonInheritedData.access()->marquee.init();
     css3InheritedData.init();
     inherited.init();
+    
+#if SVG_SUPPORT
+    m_svgStyle = new KSVG::SVGRenderStyle(true);
+#endif
 
     pseudoStyle = 0;
     content = 0;
@@ -558,6 +570,9 @@ RenderStyle::RenderStyle(const RenderStyle& o)
       inherited( o.inherited ), pseudoStyle( 0 ), content( o.content ), m_pseudoState(o.m_pseudoState),
       m_affectedByAttributeSelectors(false)
 {
+#if SVG_SUPPORT
+    m_svgStyle = new KSVG::SVGRenderStyle(*o.svgStyle());
+#endif
     m_ref = 0;
 }
 
@@ -566,6 +581,9 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
     css3InheritedData = inheritParent->css3InheritedData;
     inherited = inheritParent->inherited;
     inherited_flags = inheritParent->inherited_flags;
+#if SVG_SUPPORT
+    svgStyle()->inheritFrom(inheritParent->svgStyle());
+#endif
 }
 
 RenderStyle::~RenderStyle()
@@ -583,7 +601,11 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             surround == o.surround &&
             css3NonInheritedData == o.css3NonInheritedData &&
             css3InheritedData == o.css3InheritedData &&
-            inherited == o.inherited);
+            inherited == o.inherited
+#if SVG_SUPPORT
+            && (svgStyle() &&  o.svgStyle()->equals(o.svgStyle()))
+#endif
+            );
 }
 
 bool RenderStyle::isStyleAvailable() const
@@ -869,7 +891,7 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.left = left;
 }
 
-bool RenderStyle::contentDataEquivalent(RenderStyle* otherStyle)
+bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const
 {
     ContentData* c1 = content;
     ContentData* c2 = otherStyle->content;

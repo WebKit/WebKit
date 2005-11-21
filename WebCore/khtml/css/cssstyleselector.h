@@ -167,6 +167,9 @@ namespace khtml
         
 	static DOM::CSSStyleSheetImpl *defaultSheet;
         static DOM::CSSStyleSheetImpl *quirksSheet;
+#if SVG_SUPPORT
+        static DOM::CSSStyleSheetImpl *svgSheet;
+#endif
 	static CSSRuleSet* defaultStyle;
         static CSSRuleSet* defaultQuirksStyle;
 	static CSSRuleSet* defaultPrintStyle;
@@ -226,6 +229,9 @@ public:
         bool isXMLDoc;
         
 	void applyProperty(int id, DOM::CSSValueImpl *value);
+#if SVG_SUPPORT
+        void applySVGProperty(int id, DOM::CSSValueImpl *value);
+#endif
     };
 
     class CSSRuleData {

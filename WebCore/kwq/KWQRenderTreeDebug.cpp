@@ -37,6 +37,12 @@
 #include "render_br.h"
 #include "SelectionController.h"
 
+#if SVG_SUPPORT
+#include "KCanvasTreeDebug.h"
+#include "KCanvasItem.h"
+#include "KCanvasContainer.h"
+#endif
+
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
 
@@ -62,10 +68,12 @@ using khtml::UPSTREAM;
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const QRect& paintDirtyRect, int indent=0);
 
+#if !SVG_SUPPORT
 static QTextStream &operator<<(QTextStream &ts, const QRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
+#endif
 
 static void writeIndent(QTextStream &ts, int indent)
 {
@@ -261,8 +269,19 @@ static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextB
     	<< "\n"; 
 }
 
-static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
+void write(QTextStream &ts, const RenderObject &o, int indent)
 {
+#if SVG_SUPPORT
+    // FIXME:  A hackish way to doing our own "virtual" dispatch
+    if (o.isRenderPath()) {
+        write(ts, static_cast<const RenderPath &>(o), indent);
+        return;
+    }
+    if (o.isKCanvasContainer()) {
+        write(ts, static_cast<const KCanvasContainer &>(o), indent);
+        return;
+    }
+#endif
     writeIndent(ts, indent);
     
     ts << o << "\n";
@@ -421,6 +440,9 @@ QString externalRepresentation(RenderObject *o)
     QString s;
     {
         QTextStream ts(&s);
+#if SVG_SUPPORT
+        ts.precision(2);
+#endif
         if (o) {
             o->canvas()->view()->layout();
             RenderLayer* l = o->layer();

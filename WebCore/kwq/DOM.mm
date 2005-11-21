@@ -978,7 +978,7 @@ static ListenerMap *listenerMap;
 
 - (DOMImplementation *)implementation
 {
-    return [DOMImplementation _DOMImplementationWithImpl:[self _documentImpl]->impl()];
+    return [DOMImplementation _DOMImplementationWithImpl:[self _documentImpl]->implementation()];
 }
 
 - (DOMElement *)documentElement

@@ -26,12 +26,15 @@
 #ifdef __cplusplus
 
 #include "KWQString.h"
+#include "KWQTextStream.h"
+#include "render_object.h"
 
 namespace khtml {
     class RenderObject;
 }
 
 QString externalRepresentation(khtml::RenderObject *);
+void write(QTextStream &ts, const khtml::RenderObject &o, int indent = 0);
 
 #endif
 

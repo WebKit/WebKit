@@ -72,3 +72,9 @@
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
+
+#define KDOM DOM
+#define KSVGView KHTMLView
+#define KDOMView KHTMLView
+#define KDOMPart KHTMLPart
+

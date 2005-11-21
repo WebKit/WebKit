@@ -1418,7 +1418,7 @@ void NodeImpl::createRendererIfNeeded()
     
     NodeImpl *parent = parentNode();    
     assert(parent);
-    
+        
     RenderObject *parentRenderer = parent->renderer();
     if (parentRenderer && parentRenderer->canHaveChildren()) {
         RenderStyle *style = styleForRenderer(parentRenderer);
@@ -1435,8 +1435,10 @@ void NodeImpl::createRendererIfNeeded()
         if (rendererIsNeeded(style)) {
 #endif
             m_render = createRenderer(getDocument()->renderArena(), style);
-            m_render->setStyle(style);
-            parentRenderer->addChild(m_render, nextRenderer());
+            if (m_render) {
+                m_render->setStyle(style);
+                parentRenderer->addChild(m_render, nextRenderer());
+            }
 #ifndef KHTML_NO_XBL
         } // avoid confusing the change log code parser by having two close braces to match the two open braces above
 #else

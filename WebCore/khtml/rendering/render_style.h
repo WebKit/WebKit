@@ -58,6 +58,12 @@ namespace DOM {
     class ShadowValueImpl;
 }
 
+#if SVG_SUPPORT
+namespace KSVG {
+    class SVGRenderStyle;
+}
+#endif
+
 namespace khtml {
 
     class CachedImage;
@@ -945,6 +951,33 @@ enum EDisplay {
     TABLE_CAPTION, BOX, INLINE_BOX, NONE
 };
 
+#if SVG_SUPPORT
+
+// Helper macros for SVG's 'RenderStyle' properties
+#define RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
+    void set##Type(Data val) { noninherited_flags.f._##Name = val; } \
+    Data Name() const { return (Data) noninherited_flags.f._##Name; } \
+    static Data initial##Type() { return Initial; }
+
+#define RS_DEFINE_ATTRIBUTE_INHERITED(Data, Type, Name, Initial) \
+    void set##Type(Data val) { inherited_flags.f._##Name = val; } \
+    Data Name() const { return (Data) inherited_flags.f._##Name; } \
+    static Data initial##Type() { return Initial; }
+
+#define RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    Data Name() const { return Group->Variable; } \
+    void set##Type(Data obj) { RS_SET_VARIABLE(Group, Variable, obj) }
+
+#define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Data, Group, Variable, Type, Name, Initial) \
+    RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    static Data initial##Type() { return Initial; }
+
+#define RS_SET_VARIABLE(Group, Variable, Value) \
+    if(!(Group->Variable == Value)) \
+        Group.access()->Variable = Value;
+
+#endif
+
 class RenderStyle
 {
     friend class CSSStyleSelector;
@@ -1092,6 +1125,10 @@ protected:
     bool m_affectedByAttributeSelectors : 1;
     
     int m_ref;
+    
+#if SVG_SUPPORT
+    KSVG::SVGRenderStyle *m_svgStyle;
+#endif
     
 // !END SYNC!
 
@@ -1614,8 +1651,12 @@ public:
     void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
 
 
+#if SVG_SUPPORT
+    KSVG::SVGRenderStyle *svgStyle() const { return m_svgStyle; }
+#endif
+
     ContentData* contentData() { return content; }
-    bool contentDataEquivalent(RenderStyle* otherStyle);
+    bool contentDataEquivalent(const RenderStyle *otherStyle) const;
     void setContent(DOM::DOMStringImpl* s, bool add = false);
     void setContent(CachedObject* o, bool add = false);
 

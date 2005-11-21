@@ -37,6 +37,11 @@
 #include <kdebug.h>
 // #define CSS_DEBUG
 
+#if SVG_SUPPORT
+#include "ksvgcssproperties.h"
+#include "ksvgcssvalues.h"
+#endif
+
 using namespace DOM;
  using namespace HTMLNames;
 
@@ -958,6 +963,10 @@ property:
     IDENT maybe_space {
 	QString str = qString($1);
 	$$ = getPropertyID( str.lower().latin1(), str.length() );
+#if SVG_SUPPORT
+      if ($$ == 0)
+          $$ = KSVG::getPropertyID(str.lower().latin1(), str.length());
+#endif
     }
   ;
 
@@ -1009,6 +1018,10 @@ term:
   | IDENT maybe_space {
       QString str = qString( $1 );
       $$.id = getValueID( str.lower().latin1(), str.length() );
+#if SVG_SUPPORT
+      if ($$.id == 0)
+          $$.id = KSVG::getValueID(str.lower().latin1(), str.length());
+#endif
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;
   }

@@ -1,3 +1,93 @@
+2005-11-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        The first part of the big KDOM-DOM merger.
+        This section covers the additions necessary to the khtml/kwq side
+        in order to support ksvg2 on top of WebCore's DOM.  All changes
+        are enclosed within SVG_SUPPORT blocks for easy disabling.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3249
+
+        * ForwardingHeaders/ksvg2/KSVGPart.h: to KDOMHeaders.h
+        * ForwardingHeaders/ksvg2/KSVGView.h: to KDOMHeaders.h
+        * WebCore-svg.exp: removed Draw* symbols
+        * WebCorePrefix.h: map KDOM to DOM
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSValueImpl::cssValueType): defaults to CSS_CUSTOM
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): calls parseSVGValue as necessary
+        (DOM::CSSParser::lex):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp: svg specific support
+        (khtml::CSSStyleSelector::loadDefaultStyle): loads svg UA sheet
+        (khtml::CSSStyleSelector::applyProperty): calls applySVGProperty
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/parser.y: calls KSVG::get(Property|Value)ID
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserProtoFunc::callAsFunction): use isXMLMIMEType
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty): impl -> implementation
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty): use isXMLMIMEType
+        * khtml/html/html_documentimpl.cpp: remove referrer
+        * khtml/html/html_documentimpl.h: remove referrer
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::begin):
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_canvas.cpp: m_renderingDevice && m_registry support.
+        (RenderCanvas::RenderCanvas): 
+        (RenderCanvas::~RenderCanvas):
+        (RenderCanvas::renderingDevice): new method for svg
+        (RenderCanvas::registry): new method for svg
+        * khtml/rendering/render_canvas.h:
+        * khtml/rendering/render_container.h: private -> protected (child manipulation)
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::isKCanvasContainer): new for svg
+        (khtml::RenderObject::isRenderPath): new for svg
+        (khtml::RenderObject::bbox): new for svg
+        * khtml/rendering/render_style.cpp: svg support
+        (m_affectedByAttributeSelectors):
+        (RenderStyle::RenderStyle):
+        (RenderStyle::inheritFrom):
+        (RenderStyle::operator==):
+        (RenderStyle::contentDataEquivalent):
+        * khtml/rendering/render_style.h: add m_svgStyle
+        (khtml::RenderStyle::svgStyle):
+        * khtml/xml/EventNames.h: add zoom event
+        * khtml/xml/dom_docimpl.cpp: add referrer
+        (DOMImplementationImpl::hasFeature): made const
+        (DOMImplementationImpl::createDocument):
+        (DOMImplementationImpl::isXMLMIMEType): new function
+        (DocumentImpl::implementation): renamed function
+        (DocumentImpl::createElementNS): svg support
+        (DocumentImpl::recalcStyleSelector): svg <style> support
+        (DocumentImpl::createEvent): SVGEvent support
+        (DocumentImpl::referrer): moved from HTMLDocument
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentTypeImpl::implementation): renamed function
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::hasAttribute): convenience function
+        (ElementImpl::rendererIsNeeded): disable renderers for unknown elements in svg
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::createRendererIfNeeded): null check on returned rederer
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::isSVGElement): added for svg
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::DOMStringImpl): init from QString
+        * khtml/xml/dom_stringimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded): don't create RenderText in SVG trees
+        * khtml/xsl/xslt_processorimpl.cpp: 
+        (DOM::XSLTProcessorImpl::createDocumentFromSource): impl -> implementation
+        * kwq/DOM.mm:
+        (-[DOMDocument implementation]): impl -> implementation
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write): dispatch to kcanvas write functions
+        (externalRepresentation): dump registry
+        * kwq/KWQRenderTreeDebug.h: export write function for kcanvas to use
+
 2005-11-20  eseidel  <eseidel@apple.com>
 
         Reviewed by mjs.
