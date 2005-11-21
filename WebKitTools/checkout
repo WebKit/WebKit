@@ -73,7 +73,6 @@ close CVS;
 if ($includeSVG) {
     # Make the necessary symlinks
     print "\nCreating symlinks (kdom, kcanvas, ksvg2, WebCore+SVG, svg-tests) from WebCore into SVGSupport\n";
-    symlink("../SVGSupport/kdom", "WebCore/kdom");
     symlink("../SVGSupport/kcanvas", "WebCore/kcanvas");
     symlink("../SVGSupport/ksvg2", "WebCore/ksvg2");
     symlink("../SVGSupport/WebCore+SVG", "WebCore/WebCore+SVG");

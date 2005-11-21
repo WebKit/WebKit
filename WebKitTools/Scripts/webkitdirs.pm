@@ -196,32 +196,32 @@ sub checkFrameworks
     }
 }
 
-sub isRTTIEnabled
+sub hasSVGSupport
 {
     my $path = shift;
     my $frameworkSymbols = `nm $path`;
-    my $isRTTIEnabled = ($frameworkSymbols =~ /__ZTI/);
-    return $isRTTIEnabled;
+    my $hasSVGSupport = ($frameworkSymbols =~ /SVGElementImpl/);
+    return $hasSVGSupport;
 }
 
-sub removeLibraryDependingOnRTTI
+sub removeLibraryDependingOnSVG
 {
     my $frameworkName = shift;
-    my $shouldHaveRTTI = shift;
+    my $shouldHaveSVG = shift;
     
     my $path = builtDylibPathForName($frameworkName);
     return unless -x $path;
     
-    my $hasRTTI = isRTTIEnabled($path);
-    system "rm -f $path" if ($shouldHaveRTTI xor $hasRTTI);
+    my $hasSVG = hasSVGSupport($path);
+    system "rm -f $path" if ($shouldHaveSVG xor $hasSVG);
 }
 
 sub checkWebCoreSVGSupport
 {
     my $framework = "WebCore";
     my $path = builtDylibPathForName($framework);
-    my $hasSVGSupport = isRTTIEnabled($path);
-    die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n" unless $hasSVGSupport;
+    my $hasSVG = hasSVGSupport($path);
+    die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n" unless $hasSVG;
 }
 
 sub checkRequiredSystemConfig

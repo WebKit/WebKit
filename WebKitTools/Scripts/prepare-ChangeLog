@@ -254,7 +254,7 @@ foreach my $prefix (sort keys %files)
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         my $testsDir = "../LayoutTests";
         $testsDir = "$prefix/$testsDir" if length($prefix);
-        my $haveNewTests = (system("find \"$testsDir/../LayoutTests\" -path \"*/CVS/Entries\" | xargs grep -q \"/0/dummy timestamp//\"") == 0);
+        my $haveNewTests = ((-x "$testsDir/../LayoutTests") && (system("find \"$testsDir/../LayoutTests\" -path \"*/CVS/Entries\" | xargs grep -q \"/0/dummy timestamp//\"") == 0));
         print CHANGE_LOG "        WARNING: NO TEST CASES ADDED\n\n" unless $haveNewTests;
     }
 

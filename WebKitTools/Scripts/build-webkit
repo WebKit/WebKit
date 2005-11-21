@@ -75,14 +75,13 @@ if (!-e $header || -M $header > -M $srcHeader) {
 }
 
 # Force re-link of existing libraries if different than expected
-removeLibraryDependingOnRTTI("JavaScriptCore", $svgSupport);
-removeLibraryDependingOnRTTI("WebCore", $svgSupport);
+removeLibraryDependingOnSVG("WebCore", $svgSupport);
 
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
     my $result;
-    if ($svgSupport && ($dir eq "JavaScriptCore" || $dir eq "WebCore")) {
+    if ($svgSupport && ($dir eq "WebCore")) {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "$dir+SVG";
     } else {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options;
@@ -103,7 +102,5 @@ print " code, use the \"run-safari\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " Safari will have basic SVG viewing capatibilies.\n";
-    print " Additional SVG testing is possible using DrawTest:\n";
-    print " run \"build-drawtest\" followed by \"run-drawtest\"\n";
 }
 print "===========================================================\n";

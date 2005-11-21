@@ -70,8 +70,8 @@ GetOptions('svg' => \$testSVGs,
     'pixel-tests|p' => \$pixelTests,
     'leaks|l' => \$checkLeaks,
     'guard-malloc|g' => \$guardMalloc,
-    'max-width|w' => \$maxWidth,
-    'max-height|h' => \$maxHeight, 
+    'max-width|w=s' => \$maxWidth,
+    'max-height|h=s' => \$maxHeight, 
     'verbose|v' => \$verbose,
     'quiet|q' => \$quiet,
     'singly|1' => \$singly);
@@ -80,10 +80,10 @@ my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
 if ($testSVGs) {
-    my $result = system "WebKitTools/Scripts/build-dumpkcanvastree", @ARGV;
-    exit $result if $result;
-    $dumpToolName = "DumpKCanvasTree";
     $pixelTests = 1; # Pixel tests are always on for SVG.
+    # Temporary Hack: to pass w3c SVG layout tests which assume a smaller window size.
+    $maxWidth = 480 if (!$maxWidth);
+    $maxHeight = 360 if (!$maxHeight);
 }
 
 my $tool = "$productDir/$dumpToolName";

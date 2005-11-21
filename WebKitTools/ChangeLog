@@ -1,3 +1,17 @@
+2005-11-21  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Some simple fixes to the build/test scripts now that SVG uses the
+        WebCore DOM.  JSC+SVG is no longer needed, nor is RTTI support
+        or symlinks for KDOM.
+
+        * Scripts/build-webkit: No longer builds JavaScriptCore+SVG
+        * Scripts/prepare-ChangeLog: handles missing LayoutTests directory
+        * Scripts/run-webkit-tests: now runs SVG tests using DRT
+        * Scripts/webkitdirs.pm: use SVG symbols instead of RTTI 
+        * checkout: no longer symlink kdom
+
 2005-11-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.
