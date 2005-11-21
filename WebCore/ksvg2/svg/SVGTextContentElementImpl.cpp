@@ -23,7 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 //#include "SVGDocument.h"
 #include "SVGTextContentElementImpl.h"
@@ -32,8 +32,8 @@
 
 using namespace KSVG;
 
-SVGTextContentElementImpl::SVGTextContentElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
+SVGTextContentElementImpl::SVGTextContentElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_textLength = 0;
     m_lengthAdjust = 0;
@@ -101,26 +101,20 @@ void SVGTextContentElementImpl::selectSubString(unsigned long charnum, unsigned 
 {
 }
 
-void SVGTextContentElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGTextContentElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    
+    //if (attr->name() == SVGNames::lengthAdjustAttr)
+    //    x()->baseVal()->setValueAsString(value.impl());
+    //else
     {
-        case ATTR_LENGTHADJUST:
-        {
-            //x()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
 
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        SVGStyledElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 // vim:ts=4:noet

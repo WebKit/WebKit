@@ -148,7 +148,7 @@ QTextStream &KRenderingPaintServerPattern::externalRepresentation(QTextStream &t
     if (!boundingBoxMode())
         ts << " [bounding box mode=" << boundingBoxMode() << "]";        
     if (!patternTransform().qmatrix().isIdentity())
-        ts << " [pattern transform=" << patternTransform() << "]";
+        ts << " [pattern transform=" << patternTransform().qmatrix() << "]";
     return ts;
 }
 

@@ -25,19 +25,17 @@
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGLocatableImpl.h"
 #include "SVGURIReferenceImpl.h"
 #include "SVGFitToViewBoxImpl.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledLocatableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 #include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/KCanvasResourceListener.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
+#include <kcanvas/device/KRenderingPaintServerPattern.h>
 
-class KCanvas;
 class KCanvasImage;
-class KRenderingPaintServerPattern;
 
 namespace KSVG
 {
@@ -45,17 +43,16 @@ namespace KSVG
     class SVGPatternElementImpl;
     class SVGAnimatedEnumerationImpl;
     class SVGAnimatedTransformListImpl;
-    class SVGPatternElementImpl : public SVGStyledElementImpl,
+    class SVGPatternElementImpl : public SVGStyledLocatableElementImpl,
                                   public SVGURIReferenceImpl,
                                   public SVGTestsImpl,
                                   public SVGLangSpaceImpl,
                                   public SVGExternalResourcesRequiredImpl,
                                   public SVGFitToViewBoxImpl,
-                                  public SVGLocatableImpl, // TODO : really needed?
                                   public KCanvasResourceListener
     {
     public:
-        SVGPatternElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGPatternElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPatternElementImpl();
 
         // 'SVGPatternElement' functions
@@ -69,7 +66,7 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
@@ -77,10 +74,11 @@ namespace KSVG
         virtual void notifyAttributeChange() const;
 
         // Derived from: 'SVGStyledElementImpl'
-        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
+        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return true; }
 
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual KRenderingPaintServerPattern *canvasResource();
 
         // 'virtual SVGLocatable' functions
         virtual SVGMatrixImpl *getCTM() const;
@@ -98,7 +96,7 @@ namespace KSVG
 
         mutable KCanvasImage *m_tile;
         mutable bool m_ignoreAttributeChanges;
-        mutable KRenderingPaintServer *m_paintServer;
+        mutable KRenderingPaintServerPattern *m_paintServer;
     };
 };
 

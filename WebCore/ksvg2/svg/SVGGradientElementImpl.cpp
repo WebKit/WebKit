@@ -24,23 +24,24 @@
 #include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGTransformableImpl.h"
 #include "SVGTransformListImpl.h"
 #include "SVGGradientElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 #include "SVGAnimatedEnumerationImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
+#include "SVGAnimatedNumberImpl.h"
+#include "SVGStopElementImpl.h"
+#include "SVGRenderStyle.h"
 
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include <kcanvas/device/KRenderingDevice.h>
 
 using namespace KSVG;
 
-SVGGradientElementImpl::SVGGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
+SVGGradientElementImpl::SVGGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_spreadMethod = 0;
     m_gradientUnits = 0;
@@ -78,74 +79,92 @@ SVGAnimatedEnumerationImpl *SVGGradientElementImpl::spreadMethod() const
     return lazy_create<SVGAnimatedEnumerationImpl>(m_spreadMethod, this);
 }
 
-void SVGGradientElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGGradientElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::gradientUnitsAttr)
     {
-        case ATTR_GRADIENTUNITS:
-        {
-            if(value == "userSpaceOnUse")
-                gradientUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-            else if(value == "objectBoundingBox")
-                gradientUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-            break;
-        }
-        case ATTR_GRADIENTTRANSFORM:
-        {
-            SVGTransformListImpl *gradientTransforms = gradientTransform()->baseVal();
-            SVGTransformableImpl::parseTransformAttribute(gradientTransforms, attr->value());
-            break;
-        }
-        case ATTR_SPREADMETHOD:
-        {
-            if(value == "reflect")
-                spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REFLECT);
-            else if(value == "repeat")
-                spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REPEAT);
-            else if(value == "pad")
-                spreadMethod()->setBaseVal(SVG_SPREADMETHOD_PAD);
-            break;
-        }
-        default:
-        {
-            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(value == "userSpaceOnUse")
+            gradientUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+        else if(value == "objectBoundingBox")
+            gradientUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    }
+    else if (attr->name() == SVGNames::gradientTransformAttr)
+    {
+        SVGTransformListImpl *gradientTransforms = gradientTransform()->baseVal();
+        SVGTransformableImpl::parseTransformAttribute(gradientTransforms, attr->value().impl());
+    }
+    else if (attr->name() == SVGNames::spreadMethodAttr)
+    {
+        if(value == "reflect")
+            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REFLECT);
+        else if(value == "repeat")
+            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REPEAT);
+        else if(value == "pad")
+            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_PAD);
+    }
+    else
+    {
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        
+        SVGStyledElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 void SVGGradientElementImpl::notifyAttributeChange() const
 {
-    if(ownerDocument()->parsing())
+    if(ownerDocument()->parsing() || !attached())
         return;
 
     // Update clients of this gradient resource...
-    SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-    KCanvas *canvas = (document ? document->canvas() : 0);
-    if(canvas)
+    buildGradient(m_resource);
+    
+    m_resource->invalidate();  // should this be added to build gradient?
+    
+    const KCanvasItemList &clients = m_resource->clients();
+    for(KCanvasItemList::ConstIterator it = clients.begin(); it != clients.end(); ++it)
     {
-        KRenderingPaintServerGradient *pserver = static_cast<KRenderingPaintServerGradient *>(canvas->registry()->getPaintServerById(KDOM::DOMString(getId()).string()));
-        if(pserver)
-        {
-            buildGradient(pserver, canvas);
-            
-            pserver->invalidate();  // should this be added to build gradient?
-            
-            const KCanvasItemList &clients = pserver->clients();
+        const RenderPath *current = (*it);
+        SVGStyledElementImpl *styled = (current ? static_cast<SVGStyledElementImpl *>(current->element()) : 0);
+        if(styled)
+            styled->setChanged(true);
+    }
+}
 
-            KCanvasItemList::ConstIterator it = clients.begin();
-            KCanvasItemList::ConstIterator end = clients.end();
+KRenderingPaintServerGradient *SVGGradientElementImpl::canvasResource()
+{
+    if (!m_resource) {
+        KRenderingPaintServer *temp = canvas()->renderingDevice()->createPaintServer(gradientType());
+        m_resource = static_cast<KRenderingPaintServerGradient *>(temp);
+        m_resource->setListener(this);
+        buildGradient(m_resource);
+    }
+    return m_resource;
+}
 
-            for(; it != end; ++it)
-            {
-                const KCanvasItem *current = (*it);
-                SVGStyledElementImpl *styled = (current ? static_cast<SVGStyledElementImpl *>(current->userData()) : 0);
-                if(styled)
-                    styled->setChanged(true);
+void SVGGradientElementImpl::resourceNotification() const
+{
+    // We're referenced by a "client", build the gradient now...
+    buildGradient(m_resource);
+}
+
+void SVGGradientElementImpl::rebuildStops() const
+{
+    if (m_resource && !ownerDocument()->parsing()) {
+        KCSortedGradientStopList &stops = m_resource->gradientStops();
+        stops.clear();
+        for (KDOM::NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
+            SVGElementImpl *element = svg_dynamic_cast(n);
+            if (element && element->isGradientStop()) {
+                SVGStopElementImpl *stop = static_cast<SVGStopElementImpl *>(element);
+                float stopOffset = stop->offset()->baseVal();
+                
+                SVGRenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop)->svgStyle();
+                QColor c = stopStyle->stopColor();
+                float opacity = stopStyle->stopOpacity();
+                
+                stops.addStop(stopOffset, qRgba(c.red(), c.green(), c.blue(), int(opacity * 255.)));
             }
         }
     }

@@ -27,10 +27,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-#include <kcanvas/KCanvasResourceListener.h>
-
-class KCanvas;
-class KRenderingPaintServerGradient;
+#include "KRenderingPaintServerGradient.h"
 
 namespace KSVG
 {
@@ -43,7 +40,7 @@ namespace KSVG
                                    public KCanvasResourceListener
     {
     public:
-        SVGGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGGradientElementImpl();
 
         // 'SVGGradientElement' functions
@@ -51,16 +48,22 @@ namespace KSVG
         SVGAnimatedTransformListImpl *gradientTransform() const;
         SVGAnimatedEnumerationImpl *spreadMethod() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
         virtual void notifyAttributeChange() const;
+        
+        virtual KRenderingPaintServerGradient *canvasResource();
+        virtual void resourceNotification() const;
 
     protected:
-        virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const = 0;
+        virtual void buildGradient(KRenderingPaintServerGradient *grad) const = 0;
+        virtual KCPaintServerType gradientType() const = 0;
+        void rebuildStops() const;
 
     protected:
         mutable SVGAnimatedEnumerationImpl *m_spreadMethod;
         mutable SVGAnimatedEnumerationImpl *m_gradientUnits;
         mutable SVGAnimatedTransformListImpl *m_gradientTransform;
+        mutable KRenderingPaintServerGradient *m_resource;
     };
 };
 

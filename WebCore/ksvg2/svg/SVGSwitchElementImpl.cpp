@@ -27,17 +27,16 @@
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGTestsImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGSwitchElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 
 using namespace KSVG;
 
-SVGSwitchElementImpl::SVGSwitchElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
+SVGSwitchElementImpl::SVGSwitchElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
 
@@ -47,27 +46,19 @@ SVGSwitchElementImpl::~SVGSwitchElementImpl()
 
 bool SVGSwitchElementImpl::allowAttachChildren(KDOM::ElementImpl *child) const
 {
-    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
+    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
-        SVGTestsImpl *element = dynamic_cast<SVGTestsImpl *>(n);
-
-        // Lookup first valid item...
-        if(element && element->isValid())
-        {
-            // Only render first valid child!
-            if(n == child)
-                return true;
-
-            return false;
-        }
+        SVGElementImpl *element = svg_dynamic_cast(n);
+        if (element && element->isValid())
+            return (n == child); // Only allow this child if it's the first valid child
     }
 
     return false;
 }
 
-KCanvasItem *SVGSwitchElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGSwitchElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return KCanvasCreator::self()->createContainer(canvas, style);
+    return canvas()->renderingDevice()->createContainer(arena, style, this);
 }
 
 // vim:ts=4:noet

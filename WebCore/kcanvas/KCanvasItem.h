@@ -30,18 +30,22 @@
 #include <q3valuelist.h>
 
 #include <kcanvas/KCanvasTypes.h>
+#include "khtml/rendering/render_object.h"
 
-class KCanvas;
-class KRenderingStyle;
+namespace KSVG {
+    class SVGStyledElementImpl;
+};
+
+namespace KSVG {
+    class KCanvasRenderingStyle;
+}
 class KCanvasContainer;
-class KCanvasItem
+class KCanvasMatrix;
+class RenderPath : public khtml::RenderObject
 {
 public:
-    KCanvasItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path);
-    virtual ~KCanvasItem();
-
-    int zIndex() const;
-    bool isVisible() const;
+    RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node);
+    virtual ~RenderPath();
 
     // Hit-detection seperated for the fill and the stroke
     virtual bool fillContains(const QPoint &p) const;
@@ -51,41 +55,20 @@ public:
     virtual QRect bbox(bool includeStroke = true) const;
 
     // Drawing
-    virtual void draw(const QRect &rect) const;
+    void setupForDraw() const;
 
     // Update
     void changePath(KCanvasUserData newPath);
 
-    KCanvas *canvas() const;
     KCanvasUserData path() const;
-    KRenderingStyle *style() const;
+    virtual void setStyle(khtml::RenderStyle *style);
+    KSVG::KCanvasRenderingStyle *canvasStyle() const;
 
-    // Convenience function
-    virtual void invalidate() const;
-
-    // Returns pointer to a self-specified data structure
-    // ie. to "link" a KCanvasItem to a KDOM::NodeImpl *
-    KCanvasUserData userData() const;
-    void setUserData(KCanvasUserData userData);
-
-    // Container handling...
-    virtual bool isContainer() const { return false; }
+    virtual bool isRenderPath() const { return true; }
+    virtual const char *renderName() const { return "KCanvasItem"; }
     
-    virtual void appendItem(KCanvasItem *) { }
-    virtual void insertItemBefore(KCanvasItem *, KCanvasItem *) { }
-    virtual void removeItem(const KCanvasItem *) { }
-
-    virtual bool raise();
-    virtual bool lower();
-    
-    KCanvasContainer *parent() const;
-    void setParent(KCanvasContainer *parent);
-
-    KCanvasItem *prev() const;
-    void setPrev(KCanvasItem *prev);
-
-    KCanvasItem *next() const;
-    void setNext(KCanvasItem *next);
+    virtual QMatrix localTransform() const;
+    virtual void setLocalTransform(const QMatrix &matrix);
     
 protected:
     // restricted set of args for passing to paint servers, etc.
@@ -99,7 +82,7 @@ private:
 };
 
 // Helper data structure
-typedef Q3ValueList<const KCanvasItem *> KCanvasItemList;
+typedef Q3ValueList<const RenderPath *> KCanvasItemList;
 
 #endif
 

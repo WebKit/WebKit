@@ -27,12 +27,12 @@
 #include "config.h"
 #import "KCanvasResourcesQuartz.h"
 
+#import "kcanvas/KCanvas.h"
+#import "SVGRenderStyle.h"
+#import "KCanvasMatrix.h"
+
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasFilterQuartz.h"
-
-#import "KRenderingStyle.h" // for style() call
-#import "KCanvas.h" // for registry()
-
 #import "QuartzSupport.h"
 
 #import <kxmlcore/Assertions.h>
@@ -60,61 +60,125 @@ CGPathRef CGPathFromKCPathDataList(KCPathDataList pathData)
 	return path;
 }
 
-
-KCanvasContainerQuartz::KCanvasContainerQuartz(KCanvas *canvas, KRenderingStyle *style) : KCanvasContainer(canvas, style)
+void KCanvasContainerQuartz::calcMinMaxWidth()
 {
-	//NSLog(@"KCanvasContainerQuartz::KCanvasContainerQuartz()");
+    KHTMLAssert( !minMaxKnown());
+    m_minWidth = m_maxWidth = 0;
+    setMinMaxKnown();
 }
 
-void KCanvasContainerQuartz::draw(const QRect &dirtyRect) const
+void KCanvasContainerQuartz::layout()
 {
-    // don't draw if there are no children
-    if (first() == 0)
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
+
+    QRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = getAbsoluteRepaintRect();
+
+    calcWidth();
+    calcHeight();
+
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+    
+    setNeedsLayout(false);
+}
+
+void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
+{
+    if (paintInfo.p->paintingDisabled())
         return;
     
-	KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
-	CGContextRef context = quartzDevice->currentCGContext();
-	ASSERT(context != NULL);
-	
-	CGContextSaveGState(context);
-	
-	// clip
-//	NSLog(@"clipping to viewport rect: %@", NSStringFromRect(NSRect(dirtyRect)));
-//	CGContextAddRect(context,CGRect(dirtyRect));
-//	CGContextClip(context);
-	if (! style()->clipPaths().isEmpty())
-        applyClipPathsForStyle(context, canvas()->registry(), style(), bbox()); // apply any explicit clips
-	
-	// handle opacity.
-	float opacity = style()->opacity();
-	if (opacity < 1.0f) {
-		CGContextSetAlpha(context, opacity);
-		CGContextBeginTransparencyLayer(context,NULL);
-	}
+    int absoluteX = parentX + m_x;
+    int absoluteY = parentY + m_y;
+        
+    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintActionOutline) 
+        paintBoxDecorations(paintInfo, absoluteX, absoluteY);
+    
+    if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
+        paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
+    
+    if (paintInfo.phase != PaintActionForeground)
+        return;
 
-	// setup to apply filters
-	KCanvasFilterQuartz *filter = static_cast<KCanvasFilterQuartz *>(style()->filter());
-	if (filter) {
-		filter->prepareFilter(quartzDevice->currentContext(), bbox());
-	}
-	
-	// do the draw
-	KCanvasContainer::draw(dirtyRect);
-	
-	// actually apply the filter
-	if (filter) {
-		filter->applyFilter(quartzDevice->currentContext(), commonArgs(), bbox());
-	}
-	
-	if (opacity < 1.0f)
-		CGContextEndTransparencyLayer(context);
-	
-	CGContextRestoreGState(context);
+    if (!firstChild())
+        return;
+    
+    KRenderingDevice *renderingDevice = canvas()->renderingDevice();
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(paintInfo.p->renderingDeviceContext());
+    renderingDevice->pushContext(quartzContext);
+    paintInfo.p->save();
+    
+    CGContextRef context = paintInfo.p->currentContext();
+    
+    if(!localTransform().isIdentity())
+        CGContextConcatCTM(context, CGAffineTransform(localTransform()));
+    
+    if(!viewBox().isNull())
+        CGContextConcatCTM(context, CGAffineTransform(getAspectRatio(viewBox(), viewport()).qmatrix()));
+
+    QRect dirtyRect = paintInfo.r;
+    
+    QString clipname = style()->svgStyle()->clipPath().mid(1);
+    KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
+    if (clipper)
+        clipper->applyClip(context, bbox());
+    
+    float opacity = style()->opacity();
+    if (opacity < 1.0f)
+        paintInfo.p->beginTransparencyLayer(opacity);
+
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    if (filter)
+        filter->prepareFilter(renderingDevice->currentContext(), bbox());
+    
+    RenderContainer::paint(paintInfo, parentX, parentY);
+    
+    if (filter)
+        filter->applyFilter(renderingDevice->currentContext(), localTransform(), bbox()); // FIXME, I'm not sure if this should be "localTransform"
+    
+    if (opacity < 1.0f)
+        paintInfo.p->endTransparencyLayer();
+    
+    // restore drawing state
+    paintInfo.p->restore();
+    renderingDevice->popContext();
+}
+
+void KCanvasContainerQuartz::setViewport(const QRect &viewport)
+{
+    m_viewport = viewport;
+}
+
+QRect KCanvasContainerQuartz::viewport() const
+{
+   return m_viewport;
+}
+
+void KCanvasContainerQuartz::setViewBox(const QRect &viewBox)
+{
+    m_viewBox = viewBox;
+}
+
+QRect KCanvasContainerQuartz::viewBox() const
+{
+    return m_viewBox;
+}
+
+void KCanvasContainerQuartz::setAlign(KCAlign align)
+{
+    m_align = align;
+}
+
+KCAlign KCanvasContainerQuartz::align() const
+{
+    return m_align;
 }
 
 void KCanvasClipperQuartz::applyClip(CGContextRef context, const QRect &bbox) const
 {
-	//NSLog(@"applyClip to context %p with data: %p this: %i", context, &m_clipData, this);
 	// FIXME: until the path representation is fixed in
 	// KCanvas, we have to convert a KCPathDataList to a CGPath
 	

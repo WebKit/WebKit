@@ -66,7 +66,7 @@ KDOM::DOMStringImpl *SVGPaintImpl::uri() const
 
 void SVGPaintImpl::setUri(KDOM::DOMStringImpl *uri)
 {
-    KDOM_SAFE_SET(m_uri, uri);
+    KDOM::KDOM_SAFE_SET(m_uri, uri);
 }
 
 void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *)
@@ -79,14 +79,14 @@ void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, 
         setRGBColor(rgbPaint);
 }
 
-KDOM::DOMStringImpl *SVGPaintImpl::cssText() const
+KDOM::DOMString SVGPaintImpl::cssText() const
 {
     if(m_paintType == SVG_PAINTTYPE_NONE)
-        return new KDOM::DOMStringImpl("none");
+        return "none";
     else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
-        return new KDOM::DOMStringImpl("currentColor");
+        return "currentColor";
     else if(m_paintType == SVG_PAINTTYPE_URI)
-        return new KDOM::DOMStringImpl(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).string() + QString::fromLatin1(")"));
+        return KDOM::DOMString(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).qstring() + QString::fromLatin1(")"));
 
     return SVGColorImpl::cssText();
 }

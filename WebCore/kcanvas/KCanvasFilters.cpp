@@ -47,6 +47,14 @@ QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
+KCanvasFilter *getFilterById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KCanvasResource *resource = getResourceById(document, id);
+    if (resource && resource->isFilter())
+        return static_cast<KCanvasFilter *>(resource);
+    return 0;
+}
+
 QTextStream &operator<<(QTextStream &ts, const KCanvasFilterEffect &e)
 {
     return e.externalRepresentation(ts);

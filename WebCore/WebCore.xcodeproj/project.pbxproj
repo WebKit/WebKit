@@ -5689,6 +5689,7 @@
 				A8212A8408794A2300677359 /* xmlserializer.lut.h */,
 				A83C86850911AA9D009BF4A7 /* XSLTProcessor.lut.h */,
 				A8212A8508794A2300677359 /* domparser.lut.h */,
+				A890EA0A0931A92D00513F88 /* SVG Names & ElementFactory */,
 				A837AEF108B6991100EBFFDC /* ksvgcssproperties.c/h */,
 				A837AEF308B6992C00EBFFDC /* ksvgcssvalues.c/h */,
 				A8212A8608794A2300677359 /* Headers */,
@@ -6595,6 +6596,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/XSLTProcessor.cpp > \"$DERIVED_FILE_DIR/XSLTProcessor.lut.h\"";
+		};
+		A890EA0A0931A92D00513F88 /* SVG Names & ElementFactory */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				ksvg2/svg/svgtags.in,
+				ksvg2/svg/svgattrs.in,
+				ksvg2/scripts/make_names.pl,
+			);
+			name = "SVG Names & ElementFactory";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/SVGElementFactory.cpp",
+				"$(DERIVED_FILE_DIR)/SVGElementFactory.h",
+				"$(DERIVED_FILE_DIR)/SVGNames.cpp",
+				"$(DERIVED_FILE_DIR)/SVGNames.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in --output \"$DERIVED_FILE_DIR\"";
 		};
 		A8AA619B089CDABF00666825 /* WebCore+SVG.exp */ = {
 			isa = PBXShellScriptBuildPhase;

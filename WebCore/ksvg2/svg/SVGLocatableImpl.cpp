@@ -28,7 +28,7 @@
 #include "SVGLocatableImpl.h"
 #include "SVGSVGElementImpl.h"
 
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 
 using namespace KSVG;
 
@@ -40,15 +40,14 @@ SVGLocatableImpl::~SVGLocatableImpl()
 {
 }
 
-SVGElementImpl *SVGLocatableImpl::nearestViewportElement() const
+SVGElementImpl *SVGLocatableImpl::nearestViewportElement(const SVGStyledElementImpl *e)
 {
-    const SVGStyledElementImpl *e = dynamic_cast<const SVGStyledElementImpl *>(this);
     KDOM::NodeImpl *n = e->parentNode();
     while(n && n->nodeType() != KDOM::DOCUMENT_NODE)
     {
         if(n->nodeType() == KDOM::ELEMENT_NODE &&
-            (n->id() == ID_SVG || n->id() == ID_SYMBOL ||
-             n->id() == ID_FOREIGNOBJECT || n->id() == ID_IMAGE))
+            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
+             n->hasTagName(SVGNames::foreignObjectTag) || n->hasTagName(SVGNames::imageTag)))
             return static_cast<SVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -57,20 +56,19 @@ SVGElementImpl *SVGLocatableImpl::nearestViewportElement() const
     return 0;
 }
 
-SVGElementImpl *SVGLocatableImpl::farthestViewportElement() const
+SVGElementImpl *SVGLocatableImpl::farthestViewportElement(const SVGStyledElementImpl *e)
 {
     // FIXME : likely this will be always the <svg> farthest away.
     // If we have a different implementation of documentElement(), one
     // that give the documentElement() of the svg fragment, it could be
     // used instead. This depends on cdf demands though(Rob.)
     SVGElementImpl *farthest = 0;
-    const SVGStyledElementImpl *e = dynamic_cast<const SVGStyledElementImpl *>(this);
     KDOM::NodeImpl *n = e->parentNode();
     while(n && n->nodeType() != KDOM::DOCUMENT_NODE)
     {
         if(n->nodeType() == KDOM::ELEMENT_NODE &&
-            (n->id() == ID_SVG || n->id() == ID_SYMBOL ||
-             n->id() == ID_FOREIGNOBJECT || n->id() == ID_IMAGE))
+            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
+             n->hasTagName(SVGNames::foreignObjectTag) || n->hasTagName(SVGNames::imageTag)))
             farthest = static_cast<SVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -79,14 +77,13 @@ SVGElementImpl *SVGLocatableImpl::farthestViewportElement() const
     return farthest;
 }
 
-SVGRectImpl *SVGLocatableImpl::getBBox() const
+SVGRectImpl *SVGLocatableImpl::getBBox(const SVGStyledElementImpl *e)
 {
     SVGRectImpl *rect = 0;
 
-    const SVGStyledElementImpl *e = dynamic_cast<const SVGStyledElementImpl *>(this);
-    if(e && e->canvasItem())
+    if(e && e->renderer())
     {
-        QRect bboxRect = e->canvasItem()->bbox(false);
+        QRect bboxRect = e->renderer()->bbox(false);
         rect = new SVGRectImpl(0);
         rect->setX(bboxRect.x());
         rect->setY(bboxRect.y());
@@ -97,33 +94,8 @@ SVGRectImpl *SVGLocatableImpl::getBBox() const
     return rect;
 }
 
-SVGMatrixImpl *SVGLocatableImpl::getCTM() const
+SVGMatrixImpl *SVGLocatableImpl::getCTM(const SVGElementImpl *element)
 {
-    const SVGElementImpl *element = dynamic_cast<const SVGElementImpl *>(this);
-    if(!element)
-        return 0;
-
-    SVGMatrixImpl *ctm = SVGSVGElementImpl::createSVGMatrix();
-
-    SVGElementImpl *parentElement = svg_dynamic_cast(element->parentNode());
-    if(parentElement)
-    {
-        SVGLocatableImpl *parentLocatable = dynamic_cast<SVGLocatableImpl *>(parentElement);
-        if(parentLocatable)
-        {
-            SVGMatrixImpl *parentCTM = parentLocatable->getCTM();
-            parentCTM->ref();
-            ctm->multiply(parentCTM);
-            parentCTM->deref();
-        }
-    }
-
-    return ctm;
-}
-
-SVGMatrixImpl *SVGLocatableImpl::getScreenCTM() const
-{
-    const SVGElementImpl *element = dynamic_cast<const SVGElementImpl *>(this);
     if(!element)
         return 0;
 
@@ -132,24 +104,42 @@ SVGMatrixImpl *SVGLocatableImpl::getScreenCTM() const
     KDOM::NodeImpl *parent = element->parentNode();
     if(parent && parent->nodeType() == KDOM::ELEMENT_NODE)
     {
-        SVGElementImpl *parentElement = static_cast<SVGElementImpl *>(parent);
-        SVGLocatableImpl *parentLocatable = dynamic_cast<SVGLocatableImpl *>(parentElement);
-        if(parentLocatable)
+        SVGElementImpl *parentElement = svg_dynamic_cast(parent);
+        if(parentElement && parentElement->isStyledLocatable())
         {
-            SVGMatrixImpl *parentCTM = parentLocatable->getScreenCTM();
-            parentCTM->ref();
-            ctm->multiply(parentCTM);
-            parentCTM->deref();
+            SharedPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getCTM();
+            ctm->multiply(parentCTM.get());
         }
     }
 
     return ctm;
 }
 
+SVGMatrixImpl *SVGLocatableImpl::getScreenCTM(const SVGElementImpl *element)
+{
+    if(!element)
+        return 0;
+
+    SVGMatrixImpl *ctm = SVGSVGElementImpl::createSVGMatrix();
+
+    KDOM::NodeImpl *parent = element->parentNode();
+    if(parent && parent->isElementNode())
+    {
+        SVGElementImpl *parentElement = static_cast<SVGElementImpl *>(parent);
+        if(parentElement->isStyledLocatable())
+        {
+            SharedPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getScreenCTM();
+            ctm->multiply(parentCTM.get());
+        }
+    }
+
+    return ctm;
+}
+/*
 SVGMatrixImpl *SVGLocatableImpl::getTransformToElement(SVGElementImpl *) const
 {
     // TODO!
     return 0;
 }
-
+*/
 // vim:ts=4:noet

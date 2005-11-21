@@ -26,8 +26,7 @@
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGURIReferenceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 #include <kdom/cache/KDOMCachedImage.h>
 #include <kdom/cache/KDOMCachedDocument.h>
@@ -39,16 +38,15 @@ namespace KSVG
     class SVGAnimatedLengthImpl;
     class SVGDocumentImpl;
 
-    class SVGImageElementImpl : public SVGStyledElementImpl,
+    class SVGImageElementImpl : public SVGStyledTransformableElementImpl,
                                 public SVGTestsImpl,
                                 public SVGLangSpaceImpl,
                                 public SVGExternalResourcesRequiredImpl,
-                                public SVGTransformableImpl,
                                 public SVGURIReferenceImpl,
                                 public KDOM::CachedObjectClient
     {
     public:
-        SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        SVGImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGImageElementImpl();
 
         // 'SVGImageElement' functions
@@ -60,10 +58,10 @@ namespace KSVG
 
         SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
@@ -76,7 +74,7 @@ namespace KSVG
         mutable SVGAnimatedLengthImpl *m_width;
         mutable SVGAnimatedLengthImpl *m_height;
         mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
-        mutable KDOM::CachedDocument *m_cachedDocument;
+        //mutable KDOM::CachedDocument *m_cachedDocument;
         KDOM::CachedImage *m_cachedImage;
         SVGDocumentImpl *m_svgDoc;
     };

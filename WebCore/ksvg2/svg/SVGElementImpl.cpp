@@ -30,17 +30,15 @@
 #include <kdom/events/EventListenerImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 //#include "SVGException.h"
 #include "SVGElementImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
-#include "SVGCSSStyleDeclarationImpl.h"
 
 using namespace KSVG;
 
-SVGElementImpl::SVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : KDOM::XMLElementImpl(doc, id, prefix)
+SVGElementImpl::SVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : KDOM::XMLElementImpl(tagName, doc), m_closed(false)
 {
 }
 
@@ -50,31 +48,10 @@ SVGElementImpl::~SVGElementImpl()
 
 bool SVGElementImpl::isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const
 {
-    if(SVGDOMImplementationImpl::self()->hasFeature(feature, version))
+    if(SVGDOMImplementationImpl::instance()->hasFeature(feature, version))
         return true;
 
-    return KDOM::DOMImplementationImpl::self()->hasFeature(feature, version);
-}
-
-KDOM::DOMStringImpl *SVGElementImpl::getId() const
-{
-    KDOM::DOMString id("id");
-    return tryGetAttribute(id.handle());
-}
-
-void SVGElementImpl::setGetId(KDOM::DOMStringImpl *)
-{
-    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
-}
-
-KDOM::DOMStringImpl *SVGElementImpl::xmlbase() const
-{
-    return tryGetAttribute(KDOM::DOMString("xml:base").handle());
-}
-
-void SVGElementImpl::setXmlbase(KDOM::DOMStringImpl *)
-{
-    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
+    return KDOM::DOMImplementationImpl::instance()->hasFeature(feature, version);
 }
 
 SVGSVGElementImpl *SVGElementImpl::ownerSVGElement() const
@@ -82,7 +59,7 @@ SVGSVGElementImpl *SVGElementImpl::ownerSVGElement() const
     NodeImpl *n = parentNode();
     while(n)
     {
-        if(n->nodeType() == KDOM::ELEMENT_NODE && n->id() == ID_SVG)
+        if(n->nodeType() == KDOM::ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -97,7 +74,7 @@ SVGElementImpl *SVGElementImpl::viewportElement() const
     while(n)
     {
         if(n->nodeType() == KDOM::ELEMENT_NODE &&
-            (n->id() == ID_SVG || n->id() == ID_IMAGE || n->id() == ID_SYMBOL))
+            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
             return static_cast<SVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -106,80 +83,55 @@ SVGElementImpl *SVGElementImpl::viewportElement() const
     return 0;
 }
 
-KDOM::DOMStringImpl *SVGElementImpl::tryGetAttribute(KDOM::DOMStringImpl *name, KDOM::DOMStringImpl *defaultVal) const
+KDOM::AtomicString SVGElementImpl::tryGetAttribute(const KDOM::DOMString& name, KDOM::AtomicString defaultVal) const
 {
     if(hasAttribute(name))
         return getAttribute(name);
 
-    return defaultVal->copy();
+    return defaultVal;
 }
 
-KDOM::DOMStringImpl *SVGElementImpl::tryGetAttributeNS(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *localName, KDOM::DOMStringImpl *defaultVal) const
+KDOM::AtomicString SVGElementImpl::tryGetAttributeNS(const KDOM::DOMString& namespaceURI, const KDOM::DOMString& localName, KDOM::AtomicString defaultVal) const
 {
     if(hasAttributeNS(namespaceURI, localName))
         return getAttributeNS(namespaceURI, localName);
 
-    return defaultVal->copy();
+    return defaultVal;
 }
 
-void SVGElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
     const KDOM::DocumentImpl *doc = ownerDocument();
     if(!doc)
         return;
 
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    switch(id)
-    {
-        case ATTR_ONLOAD:
-        {
+//    if (attr->name() == SVGNames::onloadAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("load"), value);
-            break;
-        }
-        case ATTR_ONUNLOAD:
-        {
+//    else if (attr->name() == SVGNames::onunloadAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("unload"), value);
-            break;
-        }
-        case ATTR_ONABORT:
-        {
+//    else if (attr->name() == SVGNames::onabortAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("abort"), value);
-            break;
-        }
-        case ATTR_ONERROR:
-        {
+//    else if (attr->name() == SVGNames::onerrorAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("error"), value);
-            break;
-        }
-        case ATTR_ONRESIZE:
-        {
+//    else if (attr->name() == SVGNames::onresizeAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("resize"), value);
-            break;
-        }
-        case ATTR_ONSCROLL:
-        {
+//    else if (attr->name() == SVGNames::onscrollAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("scroll"), value);
-            break;
-        }
-        case ATTR_ONZOOM:
-        {
+//    else if (attr->name() == SVGNames::onzoomAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("zoom"), value);
-            break;
-        }
-        case ATTR_ID:
-        {
-            KDOM::DOMString svg(KDOM::NS_SVG);
-            KDOM::DOMString id("id");
-
-            KDOM::AttrImpl *attr = getAttributeNodeNS(svg.handle(), id.handle());
-            if(attr)
-                attr->setIsId(true);
-
-            break;
-        }
-        default:
-            KDOM::ElementImpl::parseAttribute(attr);
-    };
+//    else
+#ifndef APPLE_COMPILE_HACK
+    // We don't yet know how to support setIsId/isId
+    if (attr->name() == SVGNames::idAttr)
+    {
+        // FIXME: This seems bogus.  id should be in the null or xml namespace, right? -- ecs 10/31/05
+        KDOM::AttrImpl *attr = getAttributeNodeNS(KDOM::NS_SVG, "id");
+        if(attr)
+            attr->setIsId(true);
+    }
+    else
+#endif
+    KDOM::StyledElementImpl::parseMappedAttribute(attr);
 }
 #if 0
 void SVGElementImpl::addSVGEventListener(KDOM::Ecma *ecmaEngine, KDOM::DOMStringImpl *type, KDOM::DOMStringImpl *value)
@@ -195,18 +147,5 @@ void SVGElementImpl::addSVGEventListener(KDOM::Ecma *ecmaEngine, KDOM::DOMString
     }
 }
 #endif
-void SVGElementImpl::createStyleDeclaration() const
-{
-    m_styleDeclarations = new SVGCSSStyleDeclarationImpl(ownerDocument()->implementation()->cdfInterface(), 0);
-    m_styleDeclarations->ref();
-
-    m_styleDeclarations->setNode(const_cast<SVGElementImpl *>(this));
-    m_styleDeclarations->setParent(ownerDocument()->elementSheet());
-}
-
-SVGDocumentImpl *SVGElementImpl::getDocument() const
-{
-    return static_cast<SVGDocumentImpl *>(ownerDocument());
-}
 
 // vim:ts=4:noet

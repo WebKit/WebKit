@@ -25,25 +25,24 @@
 
 #include <kdom/kdom.h>
 #include <kdom/core/AttrImpl.h>
-#include <kdom/core/CDFInterface.h>
 #include <kdom/core/DOMImplementationImpl.h>
 #include <kdom/css/CSSStyleDeclarationImpl.h>
 #include <kdom/DOMString.h>
 
-#include "svgattrs.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGURIReferenceImpl.h"
 #include "SVGStyledElementImpl.h"
 #include "SVGAnimationElementImpl.h"
+#include "SVGSVGElementImpl.h"
+#include "KSVGTimeScheduler.h"
 
 #include <cmath>
 
 using namespace KSVG;
 using namespace std;
 
-SVGAnimationElementImpl::SVGAnimationElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGElementImpl(doc, id, prefix), SVGTestsImpl(), SVGExternalResourcesRequiredImpl()
+SVGAnimationElementImpl::SVGAnimationElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGElementImpl(tagName, doc), SVGTestsImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_connected = false;
 
@@ -90,7 +89,7 @@ SVGElementImpl *SVGAnimationElementImpl::targetElement() const
         if(!m_href.isEmpty())
         {
             KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(m_href);
-            KDOM::ElementImpl *element = ownerDocument()->getElementById(targetId.handle());
+            KDOM::ElementImpl *element = ownerDocument()->getElementById(targetId.impl());
             m_targetElement = svg_dynamic_cast(element);
         }
         else if(parentNode())
@@ -130,259 +129,212 @@ double SVGAnimationElementImpl::getSimpleDuration() const
     return m_simpleDuration;
 }
 
-void SVGAnimationElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::hrefAttr)
+            m_href = value.qstring();
+    else if (attr->name() == SVGNames::attributeNameAttr)
+            m_attributeName = value.qstring();
+    else if (attr->name() == SVGNames::attributeTypeAttr)
     {
-        case ATTR_HREF:
-        {
-            m_href = value.string();
-            break;
-        }
-        case ATTR_ATTRIBUTENAME:
-        {
-            m_attributeName = value.string();
-            break;
-        }
-        case ATTR_ATTRIBUTETYPE:
-        {
-            if(value == "CSS")
-                m_attributeType = ATTRIBUTETYPE_CSS;
-            else if(value == "XML")
-                m_attributeType = ATTRIBUTETYPE_XML;
-            else if(value == "auto")
-                m_attributeType = ATTRIBUTETYPE_AUTO;
+        if(value == "CSS")
+            m_attributeType = ATTRIBUTETYPE_CSS;
+        else if(value == "XML")
+            m_attributeType = ATTRIBUTETYPE_XML;
+        else if(value == "auto")
+            m_attributeType = ATTRIBUTETYPE_AUTO;
+    }
+    else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr)
+    {
+        // Create list
+        SVGStringListImpl *temp = new SVGStringListImpl();
+        temp->ref();
 
-            break;
-        }                
-        case ATTR_BEGIN:
-        case ATTR_END:
+        // Feed data into list
+        SVGHelper::ParseSeperatedList(temp, value.qstring(), ';');
+
+        // Parse data
+        for(unsigned int i = 0; i < temp->numberOfItems(); i++)
         {
-            // Create list
-            SVGStringListImpl *temp = new SVGStringListImpl();
-            temp->ref();
+            QString current = KDOM::DOMString(temp->getItem(i)).qstring();
 
-            // Feed data into list
-            SVGHelper::ParseSeperatedList(temp, value.string(), ';');
-
-            // Parse data
-            for(unsigned int i = 0; i < temp->numberOfItems(); i++)
+            if(current.startsWith(QString::fromLatin1("accessKey")))
             {
-                QString current = KDOM::DOMString(temp->getItem(i)).string();
+                // Register keyDownEventListener for the character
+                QString character = current.mid(current.length() - 2, 1);
 
-                if(current.startsWith(QString::fromLatin1("accessKey")))
+                kdDebug() << k_funcinfo << " Supposed to register accessKey Character: " << character << " UNSUPPORTED!" << endl;
+            }
+            else if(current.startsWith(QString::fromLatin1("wallclock")))
+            {
+                int firstBrace = current.find('(');
+                int secondBrace = current.find(')');
+
+                QString wallclockValue = current.mid(firstBrace + 1, secondBrace - firstBrace - 2);
+                kdDebug() << k_funcinfo << " Supposed to use wallClock value: " << wallclockValue << " UNSUPPORTED!" << endl;
+            }
+            else if(current.contains('.'))
+            {
+                int dotPosition = current.find('.');
+
+                QString element = current.mid(0, dotPosition);
+                QString clockValue;
+                if(current.contains(QString::fromLatin1("begin")))
+                    clockValue = current.mid(dotPosition + 6);
+                else if(current.contains(QString::fromLatin1("end")))
+                    clockValue = current.mid(dotPosition + 4);
+                else if(current.contains(QString::fromLatin1("repeat")))
+                    clockValue = current.mid(dotPosition + 7);
+                else // DOM2 Event Reference
                 {
-                    // Register keyDownEventListener for the character
-                    QString character = current.mid(current.length() - 2, 1);
+                    int plusMinusPosition = -1;
 
-                    kdDebug() << k_funcinfo << " Supposed to register accessKey Character: " << character << " UNSUPPORTED!" << endl;
+                    if(current.contains('+'))
+                        plusMinusPosition = current.find('+');
+                    else if(current.contains('-'))
+                        plusMinusPosition = current.find('-');
+
+                    QString event = current.mid(dotPosition + 1, plusMinusPosition - dotPosition - 1);
+                    clockValue = current.mid(dotPosition + event.length() + 1);
+
+                    kdDebug() << k_funcinfo << " Supposed to use DOM Event: " << event << " UNSUPPORTED!" << endl;
                 }
-                else if(current.startsWith(QString::fromLatin1("wallclock")))
+            }
+            else
+            {
+                if(attr->name() == SVGNames::beginAttr)
                 {
-                    int firstBrace = current.find('(');
-                    int secondBrace = current.find(')');
+                    m_begin = parseClockValue(current);
+                    if(!isIndefinite(m_begin))
+                        m_begin *= 1000.0;
 
-                    QString wallclockValue = current.mid(firstBrace + 1, secondBrace - firstBrace - 2);
-                    kdDebug() << k_funcinfo << " Supposed to use wallClock value: " << wallclockValue << " UNSUPPORTED!" << endl;
-                }
-                else if(current.contains('.'))
-                {
-                    int dotPosition = current.find('.');
-
-                    QString element = current.mid(0, dotPosition);
-                    QString clockValue;
-                    if(current.contains(QString::fromLatin1("begin")))
-                        clockValue = current.mid(dotPosition + 6);
-                    else if(current.contains(QString::fromLatin1("end")))
-                        clockValue = current.mid(dotPosition + 4);
-                    else if(current.contains(QString::fromLatin1("repeat")))
-                        clockValue = current.mid(dotPosition + 7);
-                    else // DOM2 Event Reference
-                    {
-                        int plusMinusPosition = -1;
-
-                        if(current.contains('+'))
-                            plusMinusPosition = current.find('+');
-                        else if(current.contains('-'))
-                            plusMinusPosition = current.find('-');
-
-                        QString event = current.mid(dotPosition + 1, plusMinusPosition - dotPosition - 1);
-                        clockValue = current.mid(dotPosition + event.length() + 1);
-
-                        kdDebug() << k_funcinfo << " Supposed to use DOM Event: " << event << " UNSUPPORTED!" << endl;
-                    }
+                    kdDebug() << k_funcinfo << " Setting begin time to " << m_begin << " ms!" << endl;
                 }
                 else
                 {
-                    if(id == ATTR_BEGIN)
-                    {
-                        m_begin = parseClockValue(current);
-                        if(!isIndefinite(m_begin))
-                            m_begin *= 1000.0;
+                    m_end = parseClockValue(current);
+                    if(!isIndefinite(m_end))
+                        m_end *= 1000.0;
 
-                        kdDebug() << k_funcinfo << " Setting begin time to " << m_begin << " ms!" << endl;
-                    }
-                    else
-                    {
-                        m_end = parseClockValue(current);
-                        if(!isIndefinite(m_end))
-                            m_end *= 1000.0;
-
-                        kdDebug() << k_funcinfo << " Setting end time to " << m_end << " ms!" << endl;
-                    }
+                    kdDebug() << k_funcinfo << " Setting end time to " << m_end << " ms!" << endl;
                 }
             }
+        }
 
-            temp->deref();
-            break;
-        }
-        case ATTR_DUR:
-        {
-            m_simpleDuration = parseClockValue(value.string());
-            if(!isIndefinite(m_simpleDuration))
-                m_simpleDuration *= 1000.0;
+        temp->deref();
+    }
+    else if (attr->name() == SVGNames::durAttr)
+    {
+        m_simpleDuration = parseClockValue(value.qstring());
+        if(!isIndefinite(m_simpleDuration))
+            m_simpleDuration *= 1000.0;
+    }
+    else if (attr->name() == SVGNames::minAttr)
+    {
+        m_min = parseClockValue(value.qstring());
+        if(!isIndefinite(m_min))
+            m_min *= 1000.0;
+    }
+    else if (attr->name() == SVGNames::maxAttr)
+    {
+        m_max = parseClockValue(value.qstring());
+        if(!isIndefinite(m_max))
+            m_max *= 1000.0;
+    }
+    else if (attr->name() == SVGNames::restartAttr)
+    {
+        if(value == "whenNotActive")
+            m_restart = RESTART_WHENNOTACTIVE;
+        else if(value == "never")
+            m_restart = RESTART_NEVER;
+        else if(value == "always")
+            m_restart = RESTART_ALWAYS;
+    }
+    else if (attr->name() == SVGNames::repeatCountAttr)
+    {
+        if(value == "indefinite")
+            m_repeatCount = DBL_MAX;
+        else
+            m_repeatCount = value.qstring().toDouble();
+    }
+    else if (attr->name() == SVGNames::repeatDurAttr)
+        m_repeatDur = value.qstring();
+    else if (attr->name() == SVGNames::fillAttr)
+    {
+        if(value == "freeze")
+            m_fill = FILL_FREEZE;
+        else if(value == "remove")
+            m_fill = FILL_REMOVE;
+    }
+    else if (attr->name() == SVGNames::calcModeAttr)
+    {
+        if(value == "discrete")
+            m_calcMode = CALCMODE_DISCRETE;
+        else if(value == "linear")
+            m_calcMode = CALCMODE_LINEAR;
+        else if(value == "spline")
+            m_calcMode = CALCMODE_SPLINE;
+        else if(value == "paced")
+            m_calcMode = CALCMODE_PACED;
+    }
+    else if (attr->name() == SVGNames::valuesAttr)
+    {
+        if(m_values)
+            m_values->deref();
 
-            break;
-        }
-        case ATTR_MIN:
-        {
-            m_min = parseClockValue(value.string());
-            if(!isIndefinite(m_min))
-                m_min *= 1000.0;
+        m_values = new SVGStringListImpl();
+        m_values->ref();
+                    
+        SVGHelper::ParseSeperatedList(m_values, value.qstring(), ';');
+    }
+    else if (attr->name() == SVGNames::keyTimesAttr)
+    {
+        if(m_keyTimes)
+            m_keyTimes->deref();
 
-            break;
-        }
-        case ATTR_MAX:
-        {
-            m_max = parseClockValue(value.string());
-            if(!isIndefinite(m_max))
-                m_max *= 1000.0;
+        m_keyTimes = new SVGStringListImpl();
+        m_keyTimes->ref();
+                    
+        SVGHelper::ParseSeperatedList(m_keyTimes, value.qstring(), ';');
+    }
+    else if (attr->name() == SVGNames::keySplinesAttr)
+    {
+        if(m_keySplines)
+            m_keySplines->deref();
 
-            break;
-        }
-        case ATTR_RESTART:
-        {
-            if(value == "whenNotActive")
-                m_restart = RESTART_WHENNOTACTIVE;
-            else if(value == "never")
-                m_restart = RESTART_NEVER;
-            else if(value == "always")
-                m_restart = RESTART_ALWAYS;
-
-            break;
-        }
-        case ATTR_REPEATCOUNT:
-        {
-            if(value == "indefinite")
-                m_repeatCount = DBL_MAX;
-            else
-                m_repeatCount = value.string().toDouble();
-                
-            break;
-        }
-        case ATTR_REPEATDUR:
-        {
-            m_repeatDur = value.string();
-            break;
-        }
-        case ATTR_FILL:
-        {
-            if(value == "freeze")
-                m_fill = FILL_FREEZE;
-            else if(value == "remove")
-                m_fill = FILL_REMOVE;
-
-            break;
-        }
-        case ATTR_CALCMODE:
-        {
-            if(value == "discrete")
-                m_calcMode = CALCMODE_DISCRETE;
-            else if(value == "linear")
-                m_calcMode = CALCMODE_LINEAR;
-            else if(value == "spline")
-                m_calcMode = CALCMODE_SPLINE;
-            else if(value == "paced")
-                m_calcMode = CALCMODE_PACED;
-            
-            break;
-        }
-        case ATTR_VALUES:
-        {
-            if(m_values)
-                m_values->deref();
-
-            m_values = new SVGStringListImpl();
-            m_values->ref();
-                        
-            SVGHelper::ParseSeperatedList(m_values, value.string(), ';');
-            break;
-        }
-        case ATTR_KEYTIMES:
-        {
-            if(m_keyTimes)
-                m_keyTimes->deref();
-
-            m_keyTimes = new SVGStringListImpl();
-            m_keyTimes->ref();
-                        
-            SVGHelper::ParseSeperatedList(m_keyTimes, value.string(), ';');
-            break;
-        }
-        case ATTR_KEYSPLINES:
-        {
-            if(m_keySplines)
-                m_keySplines->deref();
-
-            m_keySplines = new SVGStringListImpl();
-            m_keySplines->ref();
-                        
-            SVGHelper::ParseSeperatedList(m_keySplines, value.string(), ';');
-            break;
-        }
-        case ATTR_FROM:
-        {
-            m_from = value.string();
-            break;
-        }
-        case ATTR_TO:
-        {
-            m_to = value.string();
-            break;
-        }
-        case ATTR_BY:
-        {
-            m_by = value.string();
-            break;
-        }
-        case ATTR_ADDITIVE:
-        {
-            if(value == "sum")
-                m_additive = ADDITIVE_SUM;
-            else if(value == "replace")
-                m_additive = ADDITIVE_REPLACE;
-                        
-            break;
-        }
-        case ATTR_ACCUMULATE:
-        {
-            if(value == "sum")
-                m_accumulate = ACCUMULATE_SUM;
-            else if(value == "none")
-                m_accumulate = ACCUMULATE_NONE;
-                        
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            
-            SVGElementImpl::parseAttribute(attr);
-        }
-    };
+        m_keySplines = new SVGStringListImpl();
+        m_keySplines->ref();
+                    
+        SVGHelper::ParseSeperatedList(m_keySplines, value.qstring(), ';');
+    }
+    else if (attr->name() == SVGNames::fromAttr)
+        m_from = value.qstring();
+    else if (attr->name() == SVGNames::toAttr)
+        m_to = value.qstring();
+    else if (attr->name() == SVGNames::byAttr)
+        m_by = value.qstring();
+    else if (attr->name() == SVGNames::additiveAttr)
+    {
+        if(value == "sum")
+            m_additive = ADDITIVE_SUM;
+        else if(value == "replace")
+            m_additive = ADDITIVE_REPLACE;
+    }
+    else if (attr->name() == SVGNames::accumulateAttr)
+    {
+        if(value == "sum")
+            m_accumulate = ACCUMULATE_SUM;
+        else if(value == "none")
+            m_accumulate = ACCUMULATE_NONE;
+    }
+    else
+    {
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        
+        SVGElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 double SVGAnimationElementImpl::parseClockValue(const QString &data) const
@@ -483,28 +435,27 @@ double SVGAnimationElementImpl::parseClockValue(const QString &data) const
     return result;
 }
 
-void SVGAnimationElementImpl::close()
+void SVGAnimationElementImpl::closeRenderer()
 {
     kdDebug() << " --> ADDING " << KDOM::DOMString(localName()) << " animation (startTime = " << getStartTime() << " ms) to scheduler!" << endl;
-    SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-    if(!document)
+    SVGSVGElementImpl *ownerSVG = ownerSVGElement();
+    if(!ownerSVG)
         return;
 
-    document->timeScheduler()->addTimer(this, qRound(getStartTime()));
+    ownerSVG->timeScheduler()->addTimer(this, qRound(getStartTime()));
 }
 
-KDOM::DOMStringImpl *SVGAnimationElementImpl::targetAttribute() const
+KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
 {
     if(!targetElement())
-        return 0;
+        return KDOM::DOMString();
     
     SVGElementImpl *target = targetElement();
     SVGStyledElementImpl *styled = NULL;
     if (target && target->isStyled())
         styled = static_cast<SVGStyledElementImpl *>(target);
-    KDOM::CDFInterface *interface = (styled ? styled->ownerDocument()->implementation()->cdfInterface() : 0);
     
-    KDOM::DOMStringImpl *ret = 0;
+    KDOM::DOMString ret;
 
     EAttributeType attributeType = m_attributeType;
     if(attributeType == ATTRIBUTETYPE_AUTO)
@@ -515,9 +466,9 @@ KDOM::DOMStringImpl *SVGAnimationElementImpl::targetAttribute() const
         // for the target element. The implementation must first search through the
         // list of CSS properties for a matching property name, and if none is found,
         // search the default XML namespace for the element.
-        if(styled && styled->style() && interface)
+        if(styled && styled->style())
         {
-            int id = interface->getPropertyID(m_attributeName.ascii(), m_attributeName.length());
+            int id = KDOM::getPropertyID(m_attributeName.ascii(), m_attributeName.length());
             if(styled->style()->getPropertyCSSValue(id))
                 attributeType = ATTRIBUTETYPE_CSS;
         }
@@ -525,33 +476,33 @@ KDOM::DOMStringImpl *SVGAnimationElementImpl::targetAttribute() const
     
     if(attributeType == ATTRIBUTETYPE_CSS)
     {
-        if(styled && styled->style() && interface)
+        if(styled && styled->style())
         {
-            int id = interface->getPropertyID(m_attributeName.ascii(), m_attributeName.length());
+            int id = KDOM::getPropertyID(m_attributeName.ascii(), m_attributeName.length());
             ret = styled->style()->getPropertyValue(id);
         }
     }
 
-    if(attributeType == ATTRIBUTETYPE_XML || (!ret || (ret && ret->isEmpty())))
-        ret = targetElement()->getAttribute(KDOM::DOMString(m_attributeName).handle());
+    if(attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
+        ret = targetElement()->getAttribute(KDOM::DOMString(m_attributeName).impl());
 
     return ret;
 }
 
 void SVGAnimationElementImpl::setTargetAttribute(KDOM::DOMStringImpl *value)
 {
-    SVGAnimationElementImpl::setTargetAttribute(targetElement(), KDOM::DOMString(m_attributeName).handle(), value, m_attributeType);
+    SVGAnimationElementImpl::setTargetAttribute(targetElement(), KDOM::DOMString(m_attributeName).impl(), value, m_attributeType);
 }
 
-void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::DOMStringImpl *name, KDOM::DOMStringImpl *value, EAttributeType type)
+void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::DOMStringImpl *nameImpl, KDOM::DOMStringImpl *value, EAttributeType type)
 {
-    if(!target || !name || !value)
+    if(!target || !nameImpl || !value)
         return;
+    KDOM::DOMString name(nameImpl);
     
     SVGStyledElementImpl *styled = NULL;
     if (target && target->isStyled())
         styled = static_cast<SVGStyledElementImpl *>(target);
-    KDOM::CDFInterface *interface = (styled ? styled->ownerDocument()->implementation()->cdfInterface() : 0);
 
     EAttributeType attributeType = type;
     if(type == ATTRIBUTETYPE_AUTO)
@@ -564,19 +515,21 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::D
         // search the default XML namespace for the element.
         if(styled && styled->style())
         {
-            int id = interface->getPropertyID(name->string().ascii(), name->string().length());
+            QString attrName = name.qstring();
+            int id = KDOM::getPropertyID(attrName.ascii(), attrName.length());
             if(styled->style()->getPropertyCSSValue(id))
                 attributeType = ATTRIBUTETYPE_CSS;
         }
     }
-    
+    int exceptioncode;
     if(attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
     {
-        int id = interface->getPropertyID(name->string().ascii(), name->string().length());
-        styled->style()->setProperty(id, value);
+        QString attrName = name.qstring();
+        int id = KDOM::getPropertyID(attrName.ascii(), attrName.length());
+        styled->style()->setProperty(id, value, false, exceptioncode);
     }
     else if(attributeType == ATTRIBUTETYPE_XML)
-        target->setAttribute(name, value);
+        target->setAttribute(nameImpl, value, exceptioncode);
 }
 
 QString SVGAnimationElementImpl::attributeName() const

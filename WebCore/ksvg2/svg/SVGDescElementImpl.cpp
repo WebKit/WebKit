@@ -25,7 +25,7 @@
 
 using namespace KSVG;
 
-SVGDescElementImpl::SVGDescElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix), SVGLangSpaceImpl()
+SVGDescElementImpl::SVGDescElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
 {
 }
 
@@ -35,7 +35,7 @@ SVGDescElementImpl::~SVGDescElementImpl()
 
 KDOM::DOMStringImpl *SVGDescElementImpl::description() const
 {
-    return new KDOM::DOMStringImpl(KDOM::DOMString(textContent()).string().simplifyWhiteSpace());
+    return new KDOM::DOMStringImpl(KDOM::DOMString(textContent()).qstring().simplifyWhiteSpace());
 }
 
 // vim:ts=4:noet

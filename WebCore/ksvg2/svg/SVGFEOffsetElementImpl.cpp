@@ -26,13 +26,11 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
-#include "svgattrs.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEOffsetElementImpl.h"
@@ -42,8 +40,8 @@
 
 using namespace KSVG;
 
-SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_in1 = 0;
     m_dx = 0;
@@ -79,38 +77,23 @@ SVGAnimatedNumberImpl *SVGFEOffsetElementImpl::dy() const
     return lazy_create<SVGAnimatedNumberImpl>(m_dy, dummy);
 }
 
-void SVGFEOffsetElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEOffsetElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
-    {
-        case ATTR_DX:
-        {
-            dx()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_DY:
-        {
-            dy()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+    if (attr->name() == SVGNames::dxAttr)
+        dx()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::dyAttr)
+        dy()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFEOffsetElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFEOffsetElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    m_filterEffect = static_cast<KCanvasFEOffset *>(canvas->renderingDevice()->createFilterEffect(FE_OFFSET));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    m_filterEffect = static_cast<KCanvasFEOffset *>(canvas()->renderingDevice()->createFilterEffect(FE_OFFSET));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setDx(dx()->baseVal());
     m_filterEffect->setDy(dy()->baseVal());

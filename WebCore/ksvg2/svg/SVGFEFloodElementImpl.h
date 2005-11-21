@@ -35,18 +35,18 @@ namespace KSVG
     class SVGFEFloodElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEFloodElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGFEFloodElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGFEFloodElementImpl();
 
         // 'SVGFEFloodElement' functions
         SVGAnimatedStringImpl *in1() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
 
         virtual KCanvasFilterEffect *filterEffect() const;
 

@@ -89,7 +89,7 @@ void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
 {
     m_valueAsString = KDOM::DOMString(valueAsString);
 
-    QString s = m_valueAsString.string();
+    QString s = m_valueAsString.qstring();
 
     bool bOK;
     m_valueInSpecifiedUnits = s.toDouble(&bOK);
@@ -110,23 +110,23 @@ void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
 
 KDOM::DOMStringImpl *SVGAngleImpl::valueAsString() const
 {
-    m_valueAsString.string().setNum(m_valueInSpecifiedUnits);
+    m_valueAsString.qstring().setNum(m_valueInSpecifiedUnits);
 
     switch(m_unitType)
     {
         case SVG_ANGLETYPE_UNSPECIFIED:
         case SVG_ANGLETYPE_DEG:
-            m_valueAsString.string() += QString::fromLatin1("deg");
+            m_valueAsString.qstring() += QString::fromLatin1("deg");
             break;
         case SVG_ANGLETYPE_RAD:
-            m_valueAsString.string() += QString::fromLatin1("rad");
+            m_valueAsString.qstring() += QString::fromLatin1("rad");
             break;
         case SVG_ANGLETYPE_GRAD:
-            m_valueAsString.string() += QString::fromLatin1("grad");
+            m_valueAsString.qstring() += QString::fromLatin1("grad");
             break;
     }
     
-    return m_valueAsString.handle();
+    return m_valueAsString.impl();
 }
 
 void SVGAngleImpl::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

@@ -24,17 +24,21 @@
  */
 
 
-#import "KCanvasItem.h"
+#import "kcanvas/RenderPath.h"
 
-class KCanvasItemQuartz : public KCanvasItem {
+class KCanvasItemQuartz : public RenderPath {
 public:
-    KCanvasItemQuartz(KCanvas *, KRenderingStyle *, KCanvasUserData);
+    KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node);
     virtual ~KCanvasItemQuartz() { }
     
-    virtual void draw(const QRect &rect) const;
     virtual QRect bboxPath(bool includeStroke, bool applyTransforms = true) const;
     virtual bool hitsPath(const QPoint &p, bool fill /* false means stroke */) const;
     
+    virtual bool requiresLayer() { return false; }
+    virtual void layout() { setNeedsLayout(false); }
+    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
+    virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                            HitTestAction hitTestAction);
 private:
-    void drawMarkers() const;
+    void drawMarkersIfNeeded(const QRect &rect) const;
 };

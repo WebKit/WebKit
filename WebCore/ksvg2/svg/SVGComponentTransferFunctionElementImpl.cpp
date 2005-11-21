@@ -26,7 +26,7 @@
 #include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGComponentTransferFunctionElementImpl.h"
@@ -37,8 +37,8 @@
 
 using namespace KSVG;
 
-SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGElementImpl(doc, id, prefix)
+SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGElementImpl(tagName, doc)
 {
     m_type = 0;
     m_tableValues = 0;
@@ -109,61 +109,36 @@ SVGAnimatedNumberImpl *SVGComponentTransferFunctionElementImpl::offset() const
     return lazy_create<SVGAnimatedNumberImpl>(m_offset, dummy);
 }
 
-void SVGComponentTransferFunctionElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGComponentTransferFunctionElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::typeAttr)
     {
-        case ATTR_TYPE:
-        {
-            if(value == "identity")
-                type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY);
-            else if(value == "table")
-                type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_TABLE);
-            else if(value == "discrete")
-                type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE);
-            else if(value == "linear")
-                type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_LINEAR);
-            else if(value == "gamma")
-                type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_GAMMA);
-            break;
-        }
-        case ATTR_VALUES:
-        {
-            tableValues()->baseVal()->parse(value.string());
-            break;
-        }
-        case ATTR_SLOPE:
-        {
-            slope()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_INTERCEPT:
-        {
-            intercept()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_AMPLITUDE:
-        {
-            amplitude()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_EXPONENT:
-        {
-            exponent()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_OFFSET:
-        {
-            offset()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        default:
-        {
-            SVGElementImpl::parseAttribute(attr);
-        }
-    };
+        if(value == "identity")
+            type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY);
+        else if(value == "table")
+            type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_TABLE);
+        else if(value == "discrete")
+            type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE);
+        else if(value == "linear")
+            type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_LINEAR);
+        else if(value == "gamma")
+            type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_GAMMA);
+    }
+    else if (attr->name() == SVGNames::valuesAttr)
+        tableValues()->baseVal()->parse(value.qstring());
+    else if (attr->name() == SVGNames::slopeAttr)
+        slope()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::interceptAttr)
+        intercept()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::amplitudeAttr)
+        amplitude()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::exponentAttr)
+        exponent()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::offsetAttr)
+        offset()->setBaseVal(value.qstring().toDouble());
+    else
+        SVGElementImpl::parseMappedAttribute(attr);
 }
 
 // vim:ts=4:noet

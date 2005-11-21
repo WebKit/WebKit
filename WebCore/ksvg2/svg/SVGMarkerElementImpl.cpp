@@ -27,16 +27,14 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGAngleImpl.h"
 #include "SVGLengthImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGFitToViewBoxImpl.h"
 #include "SVGMarkerElementImpl.h"
@@ -46,8 +44,8 @@
 
 using namespace KSVG;
 
-SVGMarkerElementImpl::SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGLangSpaceImpl(),
+SVGMarkerElementImpl::SVGMarkerElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl(),
   SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl()
 {
     m_refX = m_refY = m_markerWidth = m_markerHeight = 0;
@@ -74,53 +72,36 @@ SVGMarkerElementImpl::~SVGMarkerElementImpl()
         m_orientAngle->deref();
 }
 
-void SVGMarkerElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGMarkerElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::refXAttr)
+        refX()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::refYAttr)
+        refY()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::markerWidthAttr)
+        markerWidth()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::markerHeightAttr)
+        markerHeight()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::orientAttr)
     {
-        case ATTR_REFX:
+        if(KDOM::DOMString(value) == "auto")
+            setOrientToAuto();
+        else
         {
-            refX()->baseVal()->setValueAsString(value);
-            break;
+            SVGAngleImpl *angle = SVGSVGElementImpl::createSVGAngle();
+            angle->setValueAsString(value.impl());
+            setOrientToAngle(angle);
         }
-        case ATTR_REFY:
-        {
-            refY()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_MARKERWIDTH:
-        {
-            markerWidth()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_MARKERHEIGHT:
-        {
-            markerHeight()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_ORIENT:
-        {
-            if(KDOM::DOMString(value) == "auto")
-                setOrientToAuto();
-            else
-            {
-                SVGAngleImpl *angle = SVGSVGElementImpl::createSVGAngle();
-                angle->setValueAsString(value);
-                setOrientToAngle(angle);
-            }
-            break;
-        }
-        default:
-        {
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
+    }
+    else
+    {
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        if(SVGFitToViewBoxImpl::parseMappedAttribute(attr)) return;
 
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        SVGStyledElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 SVGAnimatedLengthImpl *SVGMarkerElementImpl::refX() const
@@ -175,22 +156,19 @@ void SVGMarkerElementImpl::setOrientToAngle(SVGAngleImpl *angle)
     orientAngle()->setBaseVal(angle);
 }
 
-void SVGMarkerElementImpl::close()
+KCanvasMarker *SVGMarkerElementImpl::canvasResource()
 {
     if(!m_marker)
-    {
         m_marker = static_cast<KCanvasMarker *>(canvas()->renderingDevice()->createResource(RS_MARKER));
-        canvas()->registry()->addResourceById(KDOM::DOMString(getId()).string(), m_marker);
-    }
     
-    m_marker->setMarker(m_canvasItem);
+    m_marker->setMarker(renderer());
 
     // Spec: If the attribute is not specified, the effect is as if a
     // value of "0" were specified.
     if(!m_orientType)
     {
         SVGAngleImpl *angle = SVGSVGElementImpl::createSVGAngle();
-        angle->setValueAsString(KDOM::DOMString("0").handle());
+        angle->setValueAsString(KDOM::DOMString("0").impl());
         setOrientToAngle(angle);
     }
     
@@ -201,13 +179,14 @@ void SVGMarkerElementImpl::close()
 
     m_marker->setRefX(refX()->baseVal()->value());
     m_marker->setRefY(refY()->baseVal()->value());
+    return m_marker;
 }
 
-KCanvasItem *SVGMarkerElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGMarkerElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    KCanvasContainer *container = KCanvasCreator::self()->createContainer(canvas, style);
-    container->setDrawContents(false); // Marker contents will be explicitly drawn.
-    return container;
+    KCanvasContainer *markerContainer = canvas()->renderingDevice()->createContainer(arena, style, this);
+    markerContainer->setDrawContents(false); // Marker contents will be explicitly drawn.
+    return markerContainer;
 }
 
 // vim:ts=4:noet

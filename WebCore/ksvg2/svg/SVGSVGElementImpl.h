@@ -25,22 +25,17 @@
 
 #include <qpoint.h>
 
-#include <kdom/events/DocumentEventImpl.h>
-
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGLocatableImpl.h"
 #include "SVGFitToViewBoxImpl.h"
 #include "SVGZoomAndPanImpl.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledLocatableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KDOM
 {
     class DocumentPtr;
 };
-
-class KCanvasClipper;
 
 namespace KSVG
 {
@@ -52,19 +47,18 @@ namespace KSVG
     class SVGMatrixImpl;
     class SVGTransformImpl;
     class SVGAnimatedLengthImpl;
-    class SVGSVGElementImpl : public SVGStyledElementImpl,
+    class TimeScheduler;
+    class SVGSVGElementImpl : public SVGStyledLocatableElementImpl,
                               public SVGTestsImpl,
                               public SVGLangSpaceImpl,
                               public SVGExternalResourcesRequiredImpl,
-                              public SVGLocatableImpl,
                               public SVGFitToViewBoxImpl,
-                              public SVGZoomAndPanImpl,
-                              public KDOM::DocumentEventImpl
+                              public SVGZoomAndPanImpl
     {
     public:
-        SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGSVGElementImpl();
-        
+
         virtual bool isSVG() const { return true; }
 
         // 'SVGSVGElement' functions
@@ -73,11 +67,11 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        KDOM::DOMStringImpl *contentScriptType() const;
-        void setContentScriptType(KDOM::DOMStringImpl *type);
+        KDOM::AtomicString contentScriptType() const;
+        void setContentScriptType(const KDOM::AtomicString& type);
 
-        KDOM::DOMStringImpl *contentStyleType() const;
-        void setContentStyleType(KDOM::DOMStringImpl *type);
+        KDOM::AtomicString contentStyleType() const;
+        void setContentStyleType(const KDOM::AtomicString& type);
 
         SVGRectImpl *viewport() const;
 
@@ -123,23 +117,20 @@ namespace KSVG
         static SVGTransformImpl *createSVGTransform();
         static SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix);
 
-        // 'DocumentEvent' functions
-        virtual KDOM::EventImpl *createEvent(KDOM::DOMStringImpl *eventType);
-
-        virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // 'virtual SVGLocatable' functions
         virtual SVGMatrixImpl *getCTM() const;
         virtual SVGMatrixImpl *getScreenCTM() const;
 
-        virtual QString adjustViewportClipping() const;
-
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
-        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);
+        
+        // Animations
+        TimeScheduler *timeScheduler() const { return m_timeScheduler; }
 
     private:
         mutable SVGAnimatedLengthImpl *m_x;
@@ -149,7 +140,7 @@ namespace KSVG
 
         bool m_useCurrentView;
 
-        mutable KCanvasClipper *m_clipper;
+        TimeScheduler *m_timeScheduler;
     };
 };
 

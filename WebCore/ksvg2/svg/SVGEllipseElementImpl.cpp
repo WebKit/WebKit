@@ -23,7 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGEllipseElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
@@ -31,10 +31,10 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
-using namespace KSVG;
+namespace KSVG {
 
-SVGEllipseElementImpl::SVGEllipseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
+SVGEllipseElementImpl::SVGEllipseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_cx = m_cy = m_rx = m_ry = 0;
 }
@@ -71,42 +71,24 @@ SVGAnimatedLengthImpl *SVGEllipseElementImpl::ry() const
     return lazy_create<SVGAnimatedLengthImpl>(m_ry, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGEllipseElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGEllipseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::cxAttr)
+        cx()->baseVal()->setValueAsString(value.impl());
+    if (attr->name() == SVGNames::cyAttr)
+        cy()->baseVal()->setValueAsString(value.impl());
+    if (attr->name() == SVGNames::rxAttr)
+        rx()->baseVal()->setValueAsString(value.impl());
+    if (attr->name() == SVGNames::ryAttr)
+        ry()->baseVal()->setValueAsString(value.impl());
+    else
     {
-        case ATTR_CX:
-        {
-            cx()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_CY:
-        {
-            cy()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_RX:
-        {
-            rx()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_RY:
-        {
-            ry()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-            
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 KCPathDataList SVGEllipseElementImpl::toPathData() const
@@ -129,6 +111,8 @@ const SVGStyledElementImpl *SVGEllipseElementImpl::pushAttributeContext(const SV
 
     SVGStyledElementImpl::pushAttributeContext(context);
     return restore;
+}
+
 }
 
 // vim:ts=4:noet

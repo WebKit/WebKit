@@ -30,25 +30,25 @@
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/cache/KDOMCachedObject.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "Namespace.h"
-#include "SVGDocumentImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGImageElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 #include "SVGAnimatedStringImpl.h"
 #include "KCanvasRenderingStyle.h"
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
+#ifndef APPLE_CHANGES
 #include "KSVGDocumentBuilder.h"
+#endif
+#include "SVGDocumentImpl.h"
 #include <ksvg2/KSVGView.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasView.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasImage.h>
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerImage.h>
@@ -62,12 +62,12 @@
 
 using namespace KSVG;
 
-SVGImageElementImpl::SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()
+SVGImageElementImpl::SVGImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()
 {
     m_x = m_y = m_width = m_height = 0;
     m_preserveAspectRatio = 0;
-    m_cachedDocument = 0;
+    //m_cachedDocument = 0;
     m_cachedImage = 0;
     m_svgDoc = 0;
 }
@@ -113,59 +113,38 @@ SVGAnimatedPreserveAspectRatioImpl *SVGImageElementImpl::preserveAspectRatio() c
     return lazy_create<SVGAnimatedPreserveAspectRatioImpl>(m_preserveAspectRatio, this);
 }
 
-void SVGImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::xAttr)
+        x()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::yAttr)
+        y()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::preserveAspectRatioAttr)
+        preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
+    else if (attr->name() == SVGNames::widthAttr)
+        width()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::heightAttr)
+        height()->baseVal()->setValueAsString(value.impl());
+    else
     {
-        case ATTR_X:
-        {
-            x()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y:
-        {
-            y()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_PRESERVEASPECTRATIO:
-        {
-            preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value);
-            break;
-        }
-        case ATTR_WIDTH:
-        {
-            width()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_HEIGHT:
-        {
-            height()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-            
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
-KCanvasItem *SVGImageElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    QString fname = KDOM::DOMString(href()->baseVal()).string();
+    QString fname = KDOM::DOMString(href()->baseVal()).qstring();
 #ifndef APPLE_COMPILE_HACK
     KURL fullUrl(ownerDocument()->documentKURI(), fname);
     KMimeType::Ptr mimeType = KMimeType::findByURL(fullUrl);
     if(mimeType->is(QString::fromLatin1("image/svg+xml"))) // does it have svg content?
     {
-        KCanvasItem *ret = canvas->renderingDevice()->createContainer(canvas, style);
+        RenderPath *ret = canvas()->renderingDevice()->createContainer(style, this);
         m_cachedDocument = ownerDocument()->docLoader()->requestDocument(fullUrl, QString());
 
         if(m_cachedDocument)
@@ -182,19 +161,20 @@ KCanvasItem *SVGImageElementImpl::createCanvasItem(KCanvas *canvas, KRenderingSt
     if(pathData.isEmpty())
         return 0;
 
-    return KCanvasCreator::self()->createPathItem(canvas, style, pathData);
+    KCanvasUserData path = KCanvasCreator::self()->createCanvasPathData(canvas()->renderingDevice(), pathData);
+    return canvas()->renderingDevice()->createItem(arena, style, this, path);
 }
 
 
 void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
+#ifndef APPLE_COMPILE_HACK
     if(finishedObj == m_cachedDocument)
     {
-#ifndef APPLE_COMPILE_HACK
         KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(0);
         KDOM::Parser *parser = KDOM::ParserFactory::self()->request(KURL(), builder);
-        parser->domConfig()->setParameter(KDOM::ENTITIES.handle(), false);
-        parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.handle(), false);
+        parser->domConfig()->setParameter(KDOM::ENTITIES.impl(), false);
+        parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.impl(), false);
 
         QBuffer *temp = new QBuffer(&m_cachedDocument->documentBuffer()->buffer());
         m_svgDoc = static_cast<SVGDocumentImpl *>(parser->syncParse(temp));
@@ -204,28 +184,27 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
             KDOM::DOMStringImpl *_x = x()->baseVal()->valueAsString(), *_y = y()->baseVal()->valueAsString();
             KDOM::DOMStringImpl *_width = width()->baseVal()->valueAsString(), *_height = height()->baseVal()->valueAsString();
 
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("x").handle(), _x);
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("y").handle(), _y);
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), _width);
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), _height);
+            root->setAttribute(SVGNames::xAttr, _x);
+            root->setAttribute(SVGNames::yAttr, _y);
+            root->setAttribute(SVGNames::widthAttr, _width);
+            root->setAttribute(SVGNames::heightAttr, _height);
 
             // TODO: viewBox handling? animations? ecmascript?
 
             m_svgDoc->setView(getDocument()->view());
             m_svgDoc->setCanvasView(getDocument()->canvasView());
 
-            m_svgDoc->attach();    
-            m_canvasItem->appendItem(root->canvasItem());
+            m_svgDoc->attach();
+            m_canvasItem->appendItem(root->renderer());
         }
-#endif
         m_cachedDocument->deref(this);
         m_cachedDocument = 0;
     }
-    else if(finishedObj == m_cachedImage)
+    else
+    if(finishedObj == m_cachedImage)
     {
         if(m_canvasItem && m_canvasItem->style())
         {    
-#ifndef APPLE_COMPILE_HACK
             KRenderingFillPainter *fillPainter = m_canvasItem->style()->fillPainter();
             if(!fillPainter)
                 return;
@@ -240,7 +219,6 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 			ip.paint(0, 0, &p, 0, 0, pixm.width(), pixm.height());
             KCanvasImageBuffer *imageBuffer = new KCanvasImageBuffer(pixm);
             fillPaintServerImage->setImage(imageBuffer);
-#endif
 
             m_canvasItem->invalidate();
         }
@@ -248,30 +226,32 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
         m_cachedImage->deref(this);
         m_cachedImage = 0;
     }
+#endif
 }
 
 void SVGImageElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool /* needFillStrokeUpdate */)
 {
-    SVGStyledElementImpl *parent = dynamic_cast<SVGStyledElementImpl *>(parentNode());
-    if(parent && !parent->allowAttachChildren(this))
+    SVGElementImpl *parentElement = svg_dynamic_cast(parentNode());
+    if (!parentElement || !parentElement->isStyled())
+        return;
+    SVGStyledElementImpl *parent = static_cast<SVGStyledElementImpl *>(parentElement);
+    if(!parent->allowAttachChildren(this))
         return;
 
     // Set up image paint server
     style->disableFillPainter();
     style->disableStrokePainter();
 
-    KRenderingPaintServer *fillPaintServer = m_canvasItem->canvas()->renderingDevice()->createPaintServer(KCPaintServerType(PS_IMAGE));
+    KRenderingPaintServer *fillPaintServer = canvas()->renderingDevice()->createPaintServer(KCPaintServerType(PS_IMAGE));
     style->fillPainter()->setPaintServer(fillPaintServer);
 
-    if(!m_cachedDocument) // bitmap
-    {
-        QString fname = KDOM::DOMString(href()->baseVal()).string();
-        KURL fullUrl(ownerDocument()->documentKURI(), fname);
-        m_cachedImage = ownerDocument()->docLoader()->requestImage(fullUrl);
+//    if(!m_cachedDocument) // bitmap
+//    {
+        m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
 
         if(m_cachedImage)
             m_cachedImage->ref(this);
-    }
+//    }
 }
 
 // vim:ts=4:noet

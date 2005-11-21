@@ -26,12 +26,10 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEBlendElementImpl.h"
@@ -41,8 +39,8 @@
 
 using namespace KSVG;
 
-SVGFEBlendElementImpl::SVGFEBlendElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFEBlendElementImpl::SVGFEBlendElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_in1 = m_in2 = 0;
     m_mode = 0;
@@ -77,49 +75,36 @@ SVGAnimatedEnumerationImpl *SVGFEBlendElementImpl::mode() const
     return lazy_create<SVGAnimatedEnumerationImpl>(m_mode, dummy);
 }
 
-void SVGFEBlendElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEBlendElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::modeAttr)
     {
-        case ATTR_MODE:
-        {
-            if(value == "normal")
-                mode()->setBaseVal(SVG_FEBLEND_MODE_NORMAL);
-            else if(value == "multiply")
-                mode()->setBaseVal(SVG_FEBLEND_MODE_MULTIPLY);
-            else if(value == "screen")
-                mode()->setBaseVal(SVG_FEBLEND_MODE_SCREEN);
-            else if(value == "darken")
-                mode()->setBaseVal(SVG_FEBLEND_MODE_DARKEN);
-            else if(value == "lighten")
-                mode()->setBaseVal(SVG_FEBLEND_MODE_LIGHTEN);
-            break;
-        }
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        case ATTR_IN2:
-        {
-            in2()->setBaseVal(value.handle());
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+        if(value == "normal")
+            mode()->setBaseVal(SVG_FEBLEND_MODE_NORMAL);
+        else if(value == "multiply")
+            mode()->setBaseVal(SVG_FEBLEND_MODE_MULTIPLY);
+        else if(value == "screen")
+            mode()->setBaseVal(SVG_FEBLEND_MODE_SCREEN);
+        else if(value == "darken")
+            mode()->setBaseVal(SVG_FEBLEND_MODE_DARKEN);
+        else if(value == "lighten")
+            mode()->setBaseVal(SVG_FEBLEND_MODE_LIGHTEN);
+    }
+    else if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else if (attr->name() == SVGNames::in2Attr)
+        in2()->setBaseVal(value.impl());
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFEBlendElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFEBlendElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    m_filterEffect = static_cast<KCanvasFEBlend *>(canvas->renderingDevice()->createFilterEffect(FE_BLEND));
+    m_filterEffect = static_cast<KCanvasFEBlend *>(canvas()->renderingDevice()->createFilterEffect(FE_BLEND));
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
-    m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).string());
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     return 0;
 }

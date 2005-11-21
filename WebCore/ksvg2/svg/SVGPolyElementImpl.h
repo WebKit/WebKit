@@ -26,32 +26,30 @@
 #include "SVGTestsImpl.h"
 #include "svgpathparser.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGAnimatedPointsImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KSVG
 {
-    class SVGPolyElementImpl :  public SVGStyledElementImpl,
+    class SVGPolyElementImpl :  public SVGStyledTransformableElementImpl,
                                 public SVGTestsImpl,
                                 public SVGLangSpaceImpl,
                                 public SVGExternalResourcesRequiredImpl,
-                                   public SVGTransformableImpl,
                                 public SVGAnimatedPointsImpl,
                                 public SVGPolyParser
     {
     public:
-        SVGPolyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGPolyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPolyElementImpl();
 
         // Derived from: 'SVGAnimatedPoints'
         virtual SVGPointListImpl *points() const;
         virtual SVGPointListImpl *animatedPoints() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
  
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
 
         virtual void notifyAttributeChange() const;
 

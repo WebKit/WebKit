@@ -27,7 +27,6 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasTypes.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingStrokePainter.h>
@@ -35,20 +34,21 @@
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 #include <kdom/core/DocumentImpl.h>
+#include <kdom/DOMString.h>
 #include <kdom/css/RenderStyle.h>
 #include <kdom/css/CSSValueListImpl.h>
 #include <kdom/css/CSSPrimitiveValueImpl.h>
 
 #include "ksvg.h"
 #include "SVGLengthImpl.h"
-#include "SVGRenderStyle.h"
 #include "SVGStyledElementImpl.h"
 #include "KCanvasRenderingStyle.h"
+#include "SVGRenderStyle.h"
 
 using namespace KSVG;
 
-KCanvasRenderingStyle::KCanvasRenderingStyle(KCanvas *canvas, const SVGRenderStyle *style) : KRenderingStyle()
-{    
+KCanvasRenderingStyle::KCanvasRenderingStyle(khtml::RenderCanvas *canvas, const khtml::RenderStyle *style)
+{
     m_style = style;
     m_canvas = canvas;
     m_fillPainter = 0;
@@ -61,12 +61,12 @@ KCanvasRenderingStyle::~KCanvasRenderingStyle()
     disableStrokePainter();
 }
 
-void KCanvasRenderingStyle::updateFill(KCanvasItem *item)
+void KCanvasRenderingStyle::updateFill(RenderPath *item)
 {
     if(!m_canvas || !m_canvas->renderingDevice())
         return;
 
-    SVGPaintImpl *fill = m_style->fillPaint();
+    SVGPaintImpl *fill = m_style->svgStyle()->fillPaint();
 
     if (fill && fill->paintType() == SVG_PAINTTYPE_NONE)
         return;
@@ -82,8 +82,8 @@ void KCanvasRenderingStyle::updateFill(KCanvasItem *item)
     else if(fill->paintType() == SVG_PAINTTYPE_URI)
     {
         KDOM::DOMString id(fill->uri());
-
-        KRenderingPaintServer *fillPaintServer = m_canvas->registry()->getPaintServerById(id.string().mid(1));
+        
+        KRenderingPaintServer *fillPaintServer = getPaintServerById(item->document(), id.qstring().mid(1));
         if(item && fillPaintServer)
             fillPaintServer->addClient(item);
 
@@ -102,16 +102,16 @@ void KCanvasRenderingStyle::updateFill(KCanvasItem *item)
         fillPainter()->setPaintServer(fillPaintServer);
     }
 
-    fillPainter()->setFillRule(m_style->fillRule() == WR_NONZERO ? RULE_NONZERO : RULE_EVENODD);
-    fillPainter()->setOpacity(m_style->fillOpacity());
+    fillPainter()->setFillRule(m_style->svgStyle()->fillRule() == WR_NONZERO ? RULE_NONZERO : RULE_EVENODD);
+    fillPainter()->setOpacity(m_style->svgStyle()->fillOpacity());
 }
 
-void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
+void KCanvasRenderingStyle::updateStroke(RenderPath *item)
 {
     if(!m_canvas || !m_canvas->renderingDevice())
         return;
 
-    SVGPaintImpl *stroke = m_style->strokePaint();
+    SVGPaintImpl *stroke = m_style->svgStyle()->strokePaint();
 
     if (!stroke || stroke->paintType() == SVG_PAINTTYPE_NONE)
         return;
@@ -120,7 +120,7 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
     {
         KDOM::DOMString id(stroke->uri());
 
-        KRenderingPaintServer *strokePaintServer = m_canvas->registry()->getPaintServerById(id.string().mid(1));
+        KRenderingPaintServer *strokePaintServer = getPaintServerById(item->document(), id.qstring().mid(1));
         if(item && strokePaintServer)
             strokePaintServer->addClient(item);
 
@@ -139,16 +139,16 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
         strokePainter()->setPaintServer(strokePaintServer);
     }
 
-    strokePainter()->setOpacity(m_style->strokeOpacity());
-    strokePainter()->setStrokeWidth(cssPrimitiveToLength(item, m_style->strokeWidth(), 1.0));
+    strokePainter()->setOpacity(m_style->svgStyle()->strokeOpacity());
+    strokePainter()->setStrokeWidth(cssPrimitiveToLength(item, m_style->svgStyle()->strokeWidth(), 1.0));
 
-    KDOM::CSSValueListImpl *dashes = m_style->strokeDashArray();
+    KDOM::CSSValueListImpl *dashes = m_style->svgStyle()->strokeDashArray();
     if(dashes)
     {
         KDOM::CSSPrimitiveValueImpl *dash = 0;
         Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
 
-        SVGElementImpl *element = static_cast<SVGElementImpl *>(item->userData());
+        SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
         if(element && element->ownerDocument())
             paintDeviceMetrics = element->ownerDocument()->paintDeviceMetrics();
 
@@ -158,19 +158,19 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
         {
             dash = static_cast<KDOM::CSSPrimitiveValueImpl *>(dashes->item(i));
             if(dash)
-                array.append((float) dash->computeLengthFloat(const_cast<SVGRenderStyle *>(m_style), paintDeviceMetrics));
+                array.append((float) dash->computeLengthFloat(const_cast<khtml::RenderStyle *>(m_style), paintDeviceMetrics));
         }
 
         strokePainter()->setDashArray(array);
-        strokePainter()->setDashOffset(cssPrimitiveToLength(item, m_style->strokeDashOffset(), 0.0));
+        strokePainter()->setDashOffset(cssPrimitiveToLength(item, m_style->svgStyle()->strokeDashOffset(), 0.0));
     }
 
-    strokePainter()->setStrokeMiterLimit(m_style->strokeMiterLimit());
-    strokePainter()->setStrokeCapStyle((KCCapStyle) m_style->capStyle());
-    strokePainter()->setStrokeJoinStyle((KCJoinStyle) m_style->joinStyle());
+    strokePainter()->setStrokeMiterLimit(m_style->svgStyle()->strokeMiterLimit());
+    strokePainter()->setStrokeCapStyle((KCCapStyle) m_style->svgStyle()->capStyle());
+    strokePainter()->setStrokeJoinStyle((KCJoinStyle) m_style->svgStyle()->joinStyle());
 }
 
-void KCanvasRenderingStyle::updateStyle(const SVGRenderStyle *style, KCanvasItem *item)
+void KCanvasRenderingStyle::updateStyle(const khtml::RenderStyle *style, RenderPath *item)
 {
     m_style = style;
     
@@ -190,42 +190,31 @@ void KCanvasRenderingStyle::disableFillPainter()
     }
 }
 
-double KCanvasRenderingStyle::cssPrimitiveToLength(KCanvasItem *item, KDOM::CSSValueImpl *value, double defaultValue) const
+double KCanvasRenderingStyle::cssPrimitiveToLength(RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue) const
 {
     KDOM::CSSPrimitiveValueImpl *primitive = static_cast<KDOM::CSSPrimitiveValueImpl *>(value);
 
-    unsigned short cssType = (primitive ? primitive->primitiveType() : (unsigned short) KDOM::CSS_UNKNOWN);
-    if(!(cssType > KDOM::CSS_UNKNOWN && cssType <= KDOM::CSS_PC))
+    unsigned short cssType = (primitive ? primitive->primitiveType() : (unsigned short) KDOM::CSSPrimitiveValue::CSS_UNKNOWN);
+    if(!(cssType > KDOM::CSSPrimitiveValue::CSS_UNKNOWN && cssType <= KDOM::CSSPrimitiveValue::CSS_PC))
         return defaultValue;
 
     Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
 
-    SVGElementImpl *element = static_cast<SVGElementImpl *>(item->userData());
+    SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
     if(element && element->ownerDocument())
         paintDeviceMetrics = element->ownerDocument()->paintDeviceMetrics();
 
-    if(cssType == KDOM::CSS_PERCENTAGE)
+    if(cssType == KDOM::CSSPrimitiveValue::CSS_PERCENTAGE)
     {
         SVGElementImpl *viewportElement = (element ? element->viewportElement() : 0);
         if(viewportElement)
         {
-            double result = primitive->getFloatValue(KDOM::CSS_PERCENTAGE) / 100.0;
+            double result = primitive->getFloatValue(KDOM::CSSPrimitiveValue::CSS_PERCENTAGE) / 100.0;
             return SVGHelper::PercentageOfViewport(result, viewportElement, LM_OTHER);
         }
     }
 
-    return primitive->computeLengthFloat(const_cast<SVGRenderStyle *>(m_style), paintDeviceMetrics);
-}
-
-// World matrix property
-KCanvasMatrix KCanvasRenderingStyle::objectMatrix() const
-{
-    return m_matrix;
-}
-
-void KCanvasRenderingStyle::setObjectMatrix(const KCanvasMatrix &matrix)
-{
-    m_matrix = matrix;
+    return primitive->computeLengthFloat(const_cast<khtml::RenderStyle *>(m_style), paintDeviceMetrics);
 }
 
 // Stroke (aka Pen) properties
@@ -263,120 +252,6 @@ KRenderingFillPainter *KCanvasRenderingStyle::fillPainter()
         m_fillPainter = new KRenderingFillPainter();
     
     return m_fillPainter;
-}
-
-// Display states
-bool KCanvasRenderingStyle::visible() const
-{
-    return (m_style->display() != KDOM::DS_NONE) &&
-           (m_style->visibility() == KDOM::VS_VISIBLE);
-}
-
-void KCanvasRenderingStyle::setVisible(bool)
-{
-    // no-op
-}
-
-// Color interpolation
-KCColorInterpolation KCanvasRenderingStyle::colorInterpolation() const
-{
-    return KCColorInterpolation();
-}
-
-void KCanvasRenderingStyle::setColorInterpolation(KCColorInterpolation)
-{
-    // nop-op
-}
-
-KCImageRendering KCanvasRenderingStyle::imageRendering() const
-{
-    return (m_style->imageRendering() == IR_OPTIMIZESPEED) ? IR_OPTIMIZE_SPEED : IR_OPTIMIZE_QUALITY;
-}
-
-void KCanvasRenderingStyle::setImageRendering(KCImageRendering)
-{
-    // no-op
-}
-
-// Overall opacity
-float KCanvasRenderingStyle::opacity() const
-{
-    return m_style->opacity();
-}
-
-void KCanvasRenderingStyle::setOpacity(float)
-{
-    // no-op
-}
-
-// Clipping
-QStringList KCanvasRenderingStyle::clipPaths() const
-{
-    QString clipPathRef = m_style->clipPath();
-    if(!clipPathRef.isEmpty() && (m_clipPaths.isEmpty() || (m_clipPaths.last() != clipPathRef)) )
-        m_clipPaths.append(clipPathRef);
-
-    return m_clipPaths;
-}
-
-void KCanvasRenderingStyle::addClipPath(const QString &clipPath)
-{
-    m_clipPaths.append(clipPath);
-}
-
-void KCanvasRenderingStyle::removeClipPaths()
-{
-    m_clipPaths.clear();
-}
-
-// Markers
-KCanvasMarker *KCanvasRenderingStyle::startMarker() const
-{
-    // TODO: somewhere, somehow addClient should be called on this resource
-    return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->startMarker().mid(1)));
-}
-
-void KCanvasRenderingStyle::setStartMarker(KCanvasMarker *)
-{
-    // no-op
-}
-
-KCanvasMarker *KCanvasRenderingStyle::midMarker() const
-{
-    // TODO: somewhere, somehow addClient should be called on this resource
-    return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->midMarker().mid(1)));
-}
-
-void KCanvasRenderingStyle::setMidMarker(KCanvasMarker *)
-{
-}
-
-KCanvasMarker *KCanvasRenderingStyle::endMarker() const
-{
-    // TODO: somewhere, somehow addClient should be called on this resource
-    return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->endMarker().mid(1)));
-}
-
-void KCanvasRenderingStyle::setEndMarker(KCanvasMarker *)
-{
-    // no-op
-}
-
-bool KCanvasRenderingStyle::hasMarkers() const
-{
-    return !m_style->startMarker().isEmpty() ||
-           !m_style->midMarker().isEmpty() ||
-           !m_style->endMarker().isEmpty();
-}
-
-KCanvasFilter *KCanvasRenderingStyle::filter() const
-{
-    QString lookup = m_style->filter().mid(1);
-    if(lookup.isEmpty())
-        return 0;
-
-    // TODO: somewhere, somehow addClient should be called on this resource
-    return static_cast<KCanvasFilter *>(m_canvas->registry()->getResourceById(lookup));
 }
 
 // vim:ts=4:noet

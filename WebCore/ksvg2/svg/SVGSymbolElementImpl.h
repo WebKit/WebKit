@@ -36,10 +36,10 @@ namespace KSVG
                                  public SVGFitToViewBoxImpl
     {
     public:
-        SVGSymbolElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGSymbolElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGSymbolElementImpl();
 
-        virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // Derived from: 'SVGStyledElementImpl'
         virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }

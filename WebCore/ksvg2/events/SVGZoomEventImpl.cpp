@@ -23,12 +23,11 @@
 #include "config.h"
 #include "SVGRectImpl.h"
 #include "SVGPointImpl.h"
-#include "SVGEventImpl.h"
 #include "SVGZoomEventImpl.h"
 
 using namespace KSVG;
 
-SVGZoomEventImpl::SVGZoomEventImpl() : KDOM::UIEventImpl((KDOM::EventImplType) TypeSVGZoomEvent)
+SVGZoomEventImpl::SVGZoomEventImpl()
 {
     m_newScale = 0.0;
     m_previousScale = 0.0;

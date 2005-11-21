@@ -1,6 +1,0 @@
-module ls
-{
-  interface LSSerializerFilter : traversal::NodeFilter {
-    readonly attribute unsigned long   whatToShow;
-  };
-};

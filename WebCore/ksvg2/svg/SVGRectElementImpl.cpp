@@ -23,13 +23,12 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGRectElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
@@ -38,8 +37,8 @@
 
 using namespace KSVG;
 
-SVGRectElementImpl::SVGRectElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
+SVGRectElementImpl::SVGRectElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_x = m_y = m_rx = m_ry = m_width = m_height = 0;
 }
@@ -90,52 +89,28 @@ SVGAnimatedLengthImpl *SVGRectElementImpl::ry() const
     return lazy_create<SVGAnimatedLengthImpl>(m_ry, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGRectElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGRectElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::xAttr)
+        x()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::yAttr)
+        y()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::rxAttr)
+        rx()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::ryAttr)
+        ry()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::widthAttr)
+        width()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::heightAttr)
+        height()->baseVal()->setValueAsString(value.impl());
+    else
     {
-        case ATTR_X:
-        {
-            x()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y:
-        {
-            y()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_RX:
-        {
-            rx()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_RY:
-        {
-            ry()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_WIDTH:
-        {
-            width()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_HEIGHT:
-        {
-            height()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-            
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 KCPathDataList SVGRectElementImpl::toPathData() const
@@ -143,7 +118,7 @@ KCPathDataList SVGRectElementImpl::toPathData() const
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
 
-    if(hasAttribute(KDOM::DOMString("rx").handle()) || hasAttribute(KDOM::DOMString("ry").handle()))
+    if(hasAttribute(KDOM::DOMString("rx").impl()) || hasAttribute(KDOM::DOMString("ry").impl()))
     {
         float _rx = rx()->baseVal()->value(), _ry = rx()->baseVal()->value();
         return KCanvasCreator::self()->createRoundedRectangle(_x, _y, _width, _height, _rx, _ry);

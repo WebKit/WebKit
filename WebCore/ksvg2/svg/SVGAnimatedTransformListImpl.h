@@ -38,7 +38,7 @@ namespace KSVG
 
     protected:
         virtual SVGTransformListImpl *create() const;
-        virtual void assign(SVGTransformListImpl *src, SVGTransformListImpl *dst) const;
+        //virtual void assign(SVGTransformListImpl *src, SVGTransformListImpl *dst) const;
     };
 };
 

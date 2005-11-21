@@ -25,27 +25,25 @@
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KSVG
 {
-    class SVGSwitchElementImpl : public SVGStyledElementImpl,
+    class SVGSwitchElementImpl : public SVGStyledTransformableElementImpl,
                                  public SVGTestsImpl,
                                  public SVGLangSpaceImpl,
-                                 public SVGExternalResourcesRequiredImpl,
-                                 public SVGTransformableImpl
+                                 public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGSwitchElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        SVGSwitchElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGSwitchElementImpl();
 
         // Derived from: 'SVGStyledElementImpl'
         virtual bool allowAttachChildren(KDOM::ElementImpl *child) const;
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
 
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
     private:
         mutable bool m_insideRenderSection;

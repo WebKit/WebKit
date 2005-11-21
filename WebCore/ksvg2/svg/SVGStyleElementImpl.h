@@ -35,24 +35,24 @@ namespace KSVG
     class SVGStyleElementImpl : public SVGElementImpl
     {
     public:
-        SVGStyleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGStyleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGStyleElementImpl();
 
         // Derived from: 'ElementImpl'
         virtual void childrenChanged();
 
         // 'SVGStyleElement' functions
-        KDOM::DOMStringImpl *xmlspace() const;
-        void setXmlspace(KDOM::DOMStringImpl *);
+        KDOM::AtomicString xmlspace() const;
+        void setXmlspace(const KDOM::AtomicString&, int &exceptioncode);
 
-        KDOM::DOMStringImpl *type() const;
-        void setType(KDOM::DOMStringImpl *);
+        KDOM::AtomicString type() const;
+        void setType(const KDOM::AtomicString&, int &exceptioncode);
 
-        KDOM::DOMStringImpl *media() const;
-        void setMedia(KDOM::DOMStringImpl *);
+        KDOM::AtomicString media() const;
+        void setMedia(const KDOM::AtomicString&, int &exceptioncode);
 
-        KDOM::DOMStringImpl *title() const;
-        void setTitle(KDOM::DOMStringImpl *);
+        KDOM::AtomicString title() const;
+        void setTitle(const KDOM::AtomicString&, int &exceptioncode);
 
         KDOM::CSSStyleSheetImpl *sheet();
 
@@ -60,7 +60,7 @@ namespace KSVG
         bool isLoading() const;
 
     protected:
-        KDOM::CSSStyleSheetImpl *m_sheet;
+        SharedPtr<KDOM::CSSStyleSheetImpl> m_sheet;
         bool m_loading;
     };
 };

@@ -23,7 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGLineElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
@@ -33,8 +33,8 @@
 
 using namespace KSVG;
 
-SVGLineElementImpl::SVGLineElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
+SVGLineElementImpl::SVGLineElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_x1 = m_y1 = m_x2 = m_y2 = 0;
 }
@@ -71,42 +71,24 @@ SVGAnimatedLengthImpl *SVGLineElementImpl::y2() const
     return lazy_create<SVGAnimatedLengthImpl>(m_y2, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGLineElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGLineElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::x1Attr)
+        x1()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::y1Attr)
+        y1()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::x2Attr)
+        x2()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::y2Attr)
+        y2()->baseVal()->setValueAsString(value.impl());
+    else
     {
-        case ATTR_X1:
-        {
-            x1()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y1:
-        {
-            y1()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_X2:
-        {
-            x2()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y2:
-        {
-            y2()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-            
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 KCPathDataList SVGLineElementImpl::toPathData() const

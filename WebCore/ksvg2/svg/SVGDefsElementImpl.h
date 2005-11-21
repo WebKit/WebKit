@@ -23,22 +23,20 @@
 #ifndef KSVG_SVGDefsElementImpl_H
 #define KSVG_SVGDefsElementImpl_H
 
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
-#include "SVGTransformableImpl.h"
 
 namespace KSVG
 {
-    class SVGDefsElementImpl : public SVGStyledElementImpl,
+    class SVGDefsElementImpl : public SVGStyledTransformableElementImpl,
                                public SVGTestsImpl,
                                public SVGLangSpaceImpl,
-                               public SVGExternalResourcesRequiredImpl,
-                               public SVGTransformableImpl
+                               public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGDefsElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGDefsElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGDefsElementImpl();
 
         // Derived from: 'SVGStyledElementImpl'

@@ -31,16 +31,15 @@ namespace KSVG
     class SVGStopElementImpl : public SVGStyledElementImpl
     {
     public:
-        SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGStopElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGStopElementImpl();
+        
+        virtual bool isGradientStop() { return true; }
 
         // 'SVGStoplement' functions
         SVGAnimatedNumberImpl *offset() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
-
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
         mutable SVGAnimatedNumberImpl *m_offset;

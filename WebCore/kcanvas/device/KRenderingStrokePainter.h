@@ -24,10 +24,11 @@
 #define KRenderingStrokePainter_H
 
 #include <kcanvas/KCanvasTypes.h>
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
 
-class KCanvas;
-class KRenderingStyle;
+namespace KSVG {
+    class KCanvasRenderingStyle;
+}
 class KRenderingPaintServer;
 class KRenderingDeviceContext;
 class KRenderingStrokePainter

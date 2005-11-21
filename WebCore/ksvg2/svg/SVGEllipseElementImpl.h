@@ -25,21 +25,19 @@
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KSVG
 {
     class SVGAnimatedLengthImpl;
-    class SVGEllipseElementImpl : public SVGStyledElementImpl,
+    class SVGEllipseElementImpl : public SVGStyledTransformableElementImpl,
                                   public SVGTestsImpl,
                                   public SVGLangSpaceImpl,
-                                  public SVGExternalResourcesRequiredImpl,
-                                  public SVGTransformableImpl
+                                  public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGEllipseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGEllipseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGEllipseElementImpl();
 
         // 'SVGEllipseElement' functions
@@ -48,9 +46,9 @@ namespace KSVG
         SVGAnimatedLengthImpl *rx() const;
         SVGAnimatedLengthImpl *ry() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
         virtual KCPathDataList toPathData() const;
 
         virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);

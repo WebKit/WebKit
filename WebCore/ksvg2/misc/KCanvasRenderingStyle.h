@@ -26,88 +26,73 @@
 #include <kdom/css/CSSPrimitiveValueImpl.h>
 
 #include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/device/KRenderingStyle.h>
+
+// FIXME: these should be removed, use KSVG ones instead
+typedef enum
+{
+    CAP_BUTT = 1,
+    CAP_ROUND = 2,
+    CAP_SQUARE = 3
+} KCCapStyle;
+
+typedef enum
+{
+    JOIN_MITER = 1,
+    JOIN_ROUND = 2,
+    JOIN_BEVEL = 3
+} KCJoinStyle;
+
+
+// Special types
+typedef Q3ValueList<float> KCDashArray;
+
+
+namespace khtml {
+    class RenderStyle;
+}
+
+class KCanvasFilter;
+class KCanvasMarker;
+class KRenderingFillPainter;
+class KRenderingStrokePainter;
+class RenderPath;
 
 namespace KSVG
 {
-    class SVGRenderStyle;
-    class KCanvasRenderingStyle : public KRenderingStyle
+    class KCanvasRenderingStyle
     {
     public:
-        KCanvasRenderingStyle(KCanvas *canvas, const SVGRenderStyle *style);
-        virtual ~KCanvasRenderingStyle();
+        KCanvasRenderingStyle(khtml::RenderCanvas *canvas, const khtml::RenderStyle *style);
+        ~KCanvasRenderingStyle();
 
-        void updateFill(KCanvasItem *item);
-        void updateStroke(KCanvasItem *item);
+        void updateFill(RenderPath *item);
+        void updateStroke(RenderPath *item);
 
-        void updateStyle(const SVGRenderStyle *style, KCanvasItem *item);
-
-        // World matrix property
-        virtual KCanvasMatrix objectMatrix() const;
-        virtual void setObjectMatrix(const KCanvasMatrix &objectMatrix);
+        void updateStyle(const khtml::RenderStyle *style, RenderPath *item);
 
         // Stroke (aka Pen) properties
-        virtual bool isStroked() const;
+        bool isStroked() const;
 
-        virtual KRenderingStrokePainter *strokePainter();
-        virtual void disableStrokePainter();
+        KRenderingStrokePainter *strokePainter();
+        void disableStrokePainter();
 
-        double cssPrimitiveToLength(KCanvasItem *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0) const;
+        double cssPrimitiveToLength(RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0) const;
 
         // Fill (aka Brush) properties
-        virtual bool isFilled() const;
+        bool isFilled() const;
 
-        virtual KRenderingFillPainter *fillPainter();
-        virtual void disableFillPainter();
-
-        // Display states
-        virtual bool visible() const;
-        virtual void setVisible(bool visible);
-
-        // Color interpolation
-        virtual KCColorInterpolation colorInterpolation() const;
-        virtual void setColorInterpolation(KCColorInterpolation interpolation);
-
-        // Quality vs. speed control
-        virtual KCImageRendering imageRendering() const;
-        virtual void setImageRendering(KCImageRendering ir);
-
-        // Overall opacity
-        virtual float opacity() const;
-        virtual void setOpacity(float);
-
-        // Clipping
-        virtual QStringList clipPaths() const;
-
-        void addClipPath(const QString &clipPath);
-        void removeClipPaths();
-
-        // Markers
-        virtual KCanvasMarker *startMarker() const;
-        virtual void setStartMarker(KCanvasMarker *marker);
-
-        virtual KCanvasMarker *midMarker() const;
-        virtual void setMidMarker(KCanvasMarker *marker);
-
-        virtual KCanvasMarker *endMarker() const;
-        virtual void setEndMarker(KCanvasMarker *marker);
-
-        virtual bool hasMarkers() const;
-
-        // Filter support
-        virtual KCanvasFilter *filter() const;
-
+        KRenderingFillPainter *fillPainter();
+        void disableFillPainter();
+        
+        const khtml::RenderStyle *renderStyle() const { return m_style; }
+        
     private:
         KCanvasRenderingStyle(const KCanvasRenderingStyle &other);
 
-        // Data
-        KCanvasMatrix m_matrix;
-        mutable QStringList m_clipPaths;
-
-        const SVGRenderStyle *m_style;
+        const khtml::RenderStyle *m_style;
 
         // KCanvas stuff
-        KCanvas *m_canvas;
+        khtml::RenderCanvas *m_canvas;
         KRenderingFillPainter *m_fillPainter;
         KRenderingStrokePainter *m_strokePainter;
     };

@@ -25,8 +25,6 @@
 
 #include <kdom/events/UIEventImpl.h>
 
-#include <ksvg2/events/ksvgevents.h>
-
 namespace KSVG
 {
     class SVGRectImpl;

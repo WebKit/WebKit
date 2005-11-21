@@ -64,13 +64,14 @@ unsigned short SVGPreserveAspectRatioImpl::meetOrSlice() const
     return m_meetOrSlice;
 }
 
-void SVGPreserveAspectRatioImpl::parsePreserveAspectRatio(KDOM::DOMStringImpl *s)
+void SVGPreserveAspectRatioImpl::parsePreserveAspectRatio(KDOM::DOMStringImpl *strImpl)
 {
     // Spec: set the defaults
     setAlign(SVG_PRESERVEASPECTRATIO_NONE);
     setMeetOrSlice(SVG_MEETORSLICE_MEET);
-
-    QString str(s->unicode(), s->length());
+    
+    KDOM::DOMString s(strImpl);
+    QString str = s.qstring();
     QStringList params = QStringList::split(' ', str.simplifyWhiteSpace());
 
     if(params[0].compare(QString::fromLatin1("none")) == 0)

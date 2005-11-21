@@ -28,7 +28,7 @@
 
 #include <ksvg2/svg/SVGHelper.h>
 
-class KCanvasItem;
+class RenderPath;
 
 namespace KSVG
 {

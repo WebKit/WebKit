@@ -25,13 +25,11 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/KCanvasFilters.h>
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGFilterElementImpl.h"
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "SVGAnimatedLengthImpl.h"
@@ -41,8 +39,8 @@
 
 using namespace KSVG;
 
-SVGFilterElementImpl::SVGFilterElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
+SVGFilterElementImpl::SVGFilterElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_filterUnits = m_primitiveUnits = 0;
     m_x = m_y = m_width = m_height = 0;
@@ -98,7 +96,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::x() const
     if(!m_x)
     {
          lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
-        m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").handle());
+        m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
         return m_x;
     }
 
@@ -111,7 +109,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::y() const
     if(!m_y)
     {
          lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
-        m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").handle());
+        m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
         return m_y;
     }
 
@@ -124,7 +122,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::width() const
     if(!m_width)
     {
          lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
-        m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").handle());
+        m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
         return m_width;
     }
 
@@ -137,7 +135,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::height() const
     if(!m_height)
     {
          lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
-        m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").handle());
+        m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
         return m_height;
     }
 
@@ -158,70 +156,48 @@ void SVGFilterElementImpl::setFilterRes(unsigned long, unsigned long) const
 {
 }
 
-void SVGFilterElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFilterElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::filterUnitsAttr)
     {
-        case ATTR_FILTERUNITS:
-        {
-            if(value == "userSpaceOnUse")
-                filterUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-            else if(value == "objectBoundingBox")
-                filterUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-            break;
-        }
-        case ATTR_PRIMITIVEUNITS:
-        {
-            if(value == "userSpaceOnUse")
-                primitiveUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-            else if(value == "objectBoundingBox")
-                primitiveUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-            break;
-        }
-        case ATTR_X:
-        {
-            x()->baseVal()->setValueAsString(value.handle());
-            break;
-        }
-        case ATTR_Y:
-        {
-            y()->baseVal()->setValueAsString(value.handle());
-            break;
-        }
-        case ATTR_WIDTH:
-        {
-            width()->baseVal()->setValueAsString(value.handle());
-            break;
-        }
-        case ATTR_HEIGHT:
-        {
-            height()->baseVal()->setValueAsString(value.handle());
-            break;
-        }
-        default:
-        {
-            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+        if(value == "userSpaceOnUse")
+            filterUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+        else if(value == "objectBoundingBox")
+            filterUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    }
+    else if (attr->name() == SVGNames::primitiveUnitsAttr)
+    {
+        if(value == "userSpaceOnUse")
+            primitiveUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+        else if(value == "objectBoundingBox")
+            primitiveUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    }
+    else if (attr->name() == SVGNames::xAttr)
+        x()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::yAttr)
+        y()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::widthAttr)
+        width()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::heightAttr)
+        height()->baseVal()->setValueAsString(value.impl());
+    else
+    {
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
 
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        SVGStyledElementImpl::parseMappedAttribute(attr);
+    }
 }
 
-void SVGFilterElementImpl::close()
+KCanvasFilter *SVGFilterElementImpl::canvasResource()
 {
-    if(!m_filter)
-    {
-        KCanvas *_canvas = canvas();
-        if(!_canvas)
-            return;
+    if(!canvas())
+        return 0;
 
-        m_filter = static_cast<KCanvasFilter *>(_canvas->renderingDevice()->createResource(RS_FILTER));
-        _canvas->registry()->addResourceById(KDOM::DOMString(getId()).string(), m_filter);
-    }
+    if(!m_filter)
+        m_filter = static_cast<KCanvasFilter *>(canvas()->renderingDevice()->createResource(RS_FILTER));
 
     bool filterBBoxMode = filterUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
@@ -244,12 +220,14 @@ void SVGFilterElementImpl::close()
     // TODO : use switch/case instead?
     for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
-        SVGFilterPrimitiveStandardAttributesImpl *fe = dynamic_cast<SVGFilterPrimitiveStandardAttributesImpl *>(n);
-        if(fe && fe->filterEffect())
-        {
-            m_filter->addFilterEffect(fe->filterEffect());
+        SVGElementImpl *element = svg_dynamic_cast(n);
+        if(element->isFilterEffect()) {
+            SVGFilterPrimitiveStandardAttributesImpl *fe = static_cast<SVGFilterPrimitiveStandardAttributesImpl *>(n);
+            if (fe->filterEffect())
+                m_filter->addFilterEffect(fe->filterEffect());
         }
     }
+    return m_filter;
 }
 
 // vim:ts=4:noet

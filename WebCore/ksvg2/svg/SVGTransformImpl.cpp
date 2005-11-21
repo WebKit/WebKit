@@ -65,7 +65,7 @@ void SVGTransformImpl::setMatrix(SVGMatrixImpl *matrix)
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;
     
-    KDOM_SAFE_SET(m_matrix, matrix);
+    KDOM::KDOM_SAFE_SET(m_matrix, matrix);
 }
 
 void SVGTransformImpl::setTranslate(double tx, double ty)

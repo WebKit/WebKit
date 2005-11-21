@@ -31,11 +31,11 @@ namespace KSVG
     class SVGFEMergeNodeElementImpl : public SVGElementImpl
     {
     public:
-        SVGFEMergeNodeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGFEMergeNodeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGFEMergeNodeElementImpl();
 
         // Derived from: 'ElementImpl'
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // 'SVGFEMergeNodeElement' functions
         SVGAnimatedStringImpl *in1() const;

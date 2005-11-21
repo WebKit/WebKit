@@ -26,33 +26,31 @@
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGURIReferenceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KSVG
 {
     class SVGAnimatedStringImpl;
-    class SVGAElementImpl : public SVGStyledElementImpl,
+    class SVGAElementImpl : public SVGStyledTransformableElementImpl,
                             public SVGURIReferenceImpl,
                             public SVGTestsImpl,
                             public SVGLangSpaceImpl,
-                            public SVGExternalResourcesRequiredImpl,
-                            public SVGTransformableImpl
+                            public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGAElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGAElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGAElementImpl();
 
         // 'SVGAElement' functions
         SVGAnimatedStringImpl *target() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // Derived from: 'SVGStyledElementImpl'
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
 
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         virtual void defaultEventHandler(KDOM::EventImpl *evt);
 

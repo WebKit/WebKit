@@ -31,19 +31,17 @@
 
 namespace KSVG
 {
-    class SVGRenderStyle : public KDOM::RenderStyle
+    class SVGRenderStyle
     {    
     public:
         SVGRenderStyle();
         SVGRenderStyle(bool); // Used to create the default style.
         SVGRenderStyle(const SVGRenderStyle &other);
-        virtual ~SVGRenderStyle();
+        ~SVGRenderStyle();
 
-        virtual bool equals(KDOM::RenderStyle *other) const;
+        bool equals(SVGRenderStyle *other) const;
 
-        static void cleanup();
-
-        virtual void inheritFrom(const RenderStyle *inheritParent);
+        void inheritFrom(const SVGRenderStyle *inheritParent);
 
         // SVG CSS Properties
         SVG_RS_DEFINE_ATTRIBUTE(EAlignmentBaseline, AlignmentBaseline, alignmentBaseline, AB_AUTO)
@@ -82,7 +80,6 @@ namespace KSVG
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, midMarker, MidMarker, midMarker, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, endMarker, EndMarker, endMarker, QString())
 
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, opacity, Opacity, opacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, misc, filter, Filter, filter, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, misc, floodColor, FloodColor, floodColor, QColor(Qt::black))    
@@ -154,7 +151,7 @@ namespace KSVG
         static SVGRenderStyle *s_defaultStyle;
 
     private:
-        SVGRenderStyle(const SVGRenderStyle *) : KDOM::RenderStyle() { }
+        SVGRenderStyle(const SVGRenderStyle *) { }
 
         void setBitDefaults()
         {

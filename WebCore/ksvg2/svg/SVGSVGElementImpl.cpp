@@ -26,26 +26,22 @@
 #include <kdom/core/NamedAttrMapImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasItem.h>
-#include <kcanvas/KCanvasView.h>
+#include <kcanvas/RenderPath.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRectImpl.h"
 #include "SVGAngleImpl.h"
 #include "SVGPointImpl.h"
-#include "SVGEventImpl.h"
 #include "SVGMatrixImpl.h"
 #include "SVGNumberImpl.h"
 #include "SVGLengthImpl.h"
 #include "SVGRenderStyle.h"
-#include "SVGDocumentImpl.h"
 #include "SVGZoomEventImpl.h"
 #include "SVGTransformImpl.h"
 #include "SVGSVGElementImpl.h"
@@ -55,22 +51,22 @@
 #include "SVGAnimatedRectImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 #include "KCanvasRenderingStyle.h"
+#include "SVGPreserveAspectRatioImpl.h"
+#include "SVGAnimatedPreserveAspectRatioImpl.h"
 
 #include <q3paintdevicemetrics.h>
 #include <qtextstream.h>
 
 using namespace KSVG;
 
-SVGSVGElementImpl::SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(),
-  SVGExternalResourcesRequiredImpl(), SVGLocatableImpl(), SVGFitToViewBoxImpl(),
-  SVGZoomAndPanImpl(), KDOM::DocumentEventImpl()
+SVGSVGElementImpl::SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledLocatableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(),
+  SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl(),
+  SVGZoomAndPanImpl()
 {
-    m_clipper = 0;
-
     m_useCurrentView = false;
-
     m_x = m_y = m_width = m_height = 0;
+    m_timeScheduler = new TimeScheduler(getDocument());
 }
 
 SVGSVGElementImpl::~SVGSVGElementImpl()
@@ -83,6 +79,7 @@ SVGSVGElementImpl::~SVGSVGElementImpl()
         m_width->deref();
     if(m_height)
         m_height->deref();
+    delete m_timeScheduler;
 }
 
 SVGAnimatedLengthImpl *SVGSVGElementImpl::x() const
@@ -101,7 +98,7 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::width() const
     {
         KDOM::DOMString temp("100%");
         lazy_create<SVGAnimatedLengthImpl>(m_width, static_cast<const SVGStyledElementImpl *>(0), LM_WIDTH, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
-        m_width->baseVal()->setValueAsString(temp.handle());
+        m_width->baseVal()->setValueAsString(temp.impl());
     }
 
     return m_width;
@@ -113,31 +110,30 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::height() const
     {
         KDOM::DOMString temp("100%");
         lazy_create<SVGAnimatedLengthImpl>(m_height, static_cast<const SVGStyledElementImpl *>(0), LM_HEIGHT, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
-        m_height->baseVal()->setValueAsString(temp.handle());
+        m_height->baseVal()->setValueAsString(temp.impl());
     }
 
     return m_height;
 }
 
-KDOM::DOMStringImpl *SVGSVGElementImpl::contentScriptType() const
+KDOM::AtomicString SVGSVGElementImpl::contentScriptType() const
 {
-    return tryGetAttribute(KDOM::DOMString("contentScriptType").handle(), KDOM::DOMString("text/ecmascript").handle());
+    return tryGetAttribute("contentScriptType", "text/ecmascript");
 }
 
-void SVGSVGElementImpl::setContentScriptType(KDOM::DOMStringImpl *type)
+void SVGSVGElementImpl::setContentScriptType(const KDOM::AtomicString& type)
 {
-    KDOM::DOMString name("contentScriptType");    
-    setAttribute(name.handle(), type);
+    setAttribute(SVGNames::contentScriptTypeAttr, type);
 }
 
-KDOM::DOMStringImpl *SVGSVGElementImpl::contentStyleType() const
+KDOM::AtomicString SVGSVGElementImpl::contentStyleType() const
 {
-    return tryGetAttribute(KDOM::DOMString("contentStyleType").handle(), KDOM::DOMString("text/css").handle());
+    return tryGetAttribute("contentStyleType", "text/css");
 }
 
-void SVGSVGElementImpl::setContentStyleType(KDOM::DOMStringImpl *type)
+void SVGSVGElementImpl::setContentStyleType(const KDOM::AtomicString& type)
 {
-    setAttribute(KDOM::DOMString("contentStyleType").handle(), type);
+    setAttribute(SVGNames::contentStyleTypeAttr, type);
 }
 
 SVGRectImpl *SVGSVGElementImpl::viewport() const
@@ -214,86 +210,52 @@ SVGViewSpecImpl *SVGSVGElementImpl::currentView() const
 
 float SVGSVGElementImpl::currentScale() const
 {
-    if(!canvasView())
+    //if(!canvasView())
         return 1.;
 
-    return canvasView()->zoom();
+    //return canvasView()->zoom();
 }
 
 void SVGSVGElementImpl::setCurrentScale(float scale)
 {
-    if(canvasView())
-    {
-        float oldzoom = canvasView()->zoom();
-        canvasView()->setZoom(scale);
-        getDocument()->dispatchZoomEvent(oldzoom, scale);
-    }
+//    if(canvasView())
+//    {
+//        float oldzoom = canvasView()->zoom();
+//        canvasView()->setZoom(scale);
+//        getDocument()->dispatchZoomEvent(oldzoom, scale);
+//    }
 }
 
 SVGPointImpl *SVGSVGElementImpl::currentTranslate() const
 {
-    if(!canvas())
+    //if(!canvas())
         return 0;
 
-    return createSVGPoint(canvasView()->pan());
+    //return createSVGPoint(canvasView()->pan());
 }
 
-KDOM::EventImpl *SVGSVGElementImpl::createEvent(KDOM::DOMStringImpl *eventTypeImpl)
+void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    QString eventType = (eventTypeImpl ? eventTypeImpl->string() : QString::null);
-
-    if(eventType == QString::fromLatin1("SVGEvents"))
-        return new SVGEventImpl();
-    else if(eventType == QString::fromLatin1("SVGZoomEvents"))
-        return new SVGZoomEventImpl();
-
-    return DocumentEventImpl::createEvent(eventTypeImpl);
-}
-
-void SVGSVGElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
-{
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
+//    const KDOM::AtomicString& value = attr->value();
+// Try letting these fall through to CSS
+//    if (attr->name() == SVGNames::xAttr)
+//        x()->baseVal()->setValueAsString(value.impl());
+//    else if (attr->name() == SVGNames::yAttr)
+//        y()->baseVal()->setValueAsString(value.impl());
+//    else if (attr->name() == SVGNames::widthAttr)
+//        width()->baseVal()->setValueAsString(value.impl());
+//    else if (attr->name() == SVGNames::heightAttr)
+//        height()->baseVal()->setValueAsString(value.impl());
+//    else
     {
-        case ATTR_X:
-        {
-            x()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y:
-        {
-            y()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_WIDTH:
-        case ATTR_HEIGHT:
-        {
-            if(id == ATTR_WIDTH)
-                width()->baseVal()->setValueAsString(value);
-            else
-                height()->baseVal()->setValueAsString(value);
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        if(SVGFitToViewBoxImpl::parseMappedAttribute(attr)) return;
+        if(SVGZoomAndPanImpl::parseMappedAttribute(attr)) return;
 
-            SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-            if(document->canvas() && canvasItem() == document->canvas()->rootContainer())
-            {
-                document->canvas()->setCanvasSize(QSize(qRound(width()->baseVal()->value()),
-                                                        qRound(height()->baseVal()->value())));
-            }
-
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
-            if(SVGZoomAndPanImpl::parseAttribute(attr)) return;
-
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        SVGStyledLocatableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 unsigned long SVGSVGElementImpl::suspendRedraw(unsigned long /* max_wait_milliseconds */)
@@ -319,25 +281,24 @@ void SVGSVGElementImpl::forceRedraw()
 
 void SVGSVGElementImpl::pauseAnimations()
 {
-    if(!getDocument()->timeScheduler()->animationsPaused())
-        getDocument()->timeScheduler()->toggleAnimations();
+    if(!m_timeScheduler->animationsPaused())
+        m_timeScheduler->toggleAnimations();
 }
 
 void SVGSVGElementImpl::unpauseAnimations()
 {
-    if(getDocument()->timeScheduler()->animationsPaused())
-        getDocument()->timeScheduler()->toggleAnimations();
+    if(m_timeScheduler->animationsPaused())
+        m_timeScheduler->toggleAnimations();
 }
 
 bool SVGSVGElementImpl::animationsPaused()
 {
-    return getDocument()->timeScheduler()->animationsPaused();
+    return m_timeScheduler->animationsPaused();
 }
 
 float SVGSVGElementImpl::getCurrentTime()
 {
-    SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-    return document->timeScheduler()->elapsed();
+    return m_timeScheduler->elapsed();
 }
 
 void SVGSVGElementImpl::setCurrentTime(float /* seconds */)
@@ -361,34 +322,22 @@ KDOM::NodeListImpl *SVGSVGElementImpl::getEnclosureList(SVGRectImpl *rect, SVGEl
 bool SVGSVGElementImpl::checkIntersection(SVGElementImpl *element, SVGRectImpl *rect)
 {
     // TODO : take into account pointer-events?
-    SVGLocatableImpl *e = dynamic_cast<SVGLocatableImpl *>(element);
-    if(!e)
-        return false;
-
-    SVGRectImpl *bbox = e->getBBox();
-    bbox->ref();
-
+    SharedPtr<SVGRectImpl> bbox = getBBox();
+    
     QRect r(int(rect->x()), int(rect->y()), int(rect->width()), int(rect->height()));
     QRect r2(int(bbox->x()), int(bbox->y()), int(bbox->width()), int(bbox->height()));
-
-    bbox->deref();
+    
     return r.intersects(r2);
 }
 
 bool SVGSVGElementImpl::checkEnclosure(SVGElementImpl *element, SVGRectImpl *rect)
 {
     // TODO : take into account pointer-events?
-    SVGLocatableImpl *e = dynamic_cast<SVGLocatableImpl *>(element);
-    if(!e)
-        return false;
+    SharedPtr<SVGRectImpl> bbox = getBBox();
     
-    SVGRectImpl *bbox = e->getBBox();
-    bbox->ref();
-        
     QRect r(int(rect->x()), int(rect->y()), int(rect->width()), int(rect->height()));
     QRect r2(int(bbox->x()), int(bbox->y()), int(bbox->width()), int(bbox->height()));
-        
-    bbox->deref();
+    
     return r.contains(r2);
 }
 
@@ -449,12 +398,10 @@ SVGMatrixImpl *SVGSVGElementImpl::getCTM() const
     {
         mat->translate(x()->baseVal()->value(), y()->baseVal()->value());
 
-        if(attributes()->getValue(ATTR_VIEWBOX))
+        if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            SVGMatrixImpl *viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
-            viewBox->ref();
-            mat->multiply(viewBox);
-            viewBox->deref();
+            SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            mat->multiply(viewBox.get());
         }
     }
 
@@ -463,89 +410,43 @@ SVGMatrixImpl *SVGSVGElementImpl::getCTM() const
 
 SVGMatrixImpl *SVGSVGElementImpl::getScreenCTM() const
 {
-    SVGMatrixImpl *mat = SVGLocatableImpl::getScreenCTM();
+    SVGMatrixImpl *mat = SVGStyledLocatableElementImpl::getScreenCTM();
     if(mat)
     {
         mat->translate(x()->baseVal()->value(), y()->baseVal()->value());
 
-        if(attributes()->getValue(ATTR_VIEWBOX))
+        if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            SVGMatrixImpl *viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
-            viewBox->ref();
-            mat->multiply(viewBox);
-            viewBox->deref();
+            SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            mat->multiply(viewBox.get());
         }
     }
 
     return mat;
 }
 
-QString SVGSVGElementImpl::adjustViewportClipping() const
+khtml::RenderObject *SVGSVGElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    QString key;
-    QTextStream keyStream(&key, IO_WriteOnly);
-    keyStream << ((void *) this);
+    KCanvasContainer *rootContainer = canvas()->renderingDevice()->createContainer(arena, style, this);
 
-    if(renderStyle()->overflow() == KDOM::OF_VISIBLE)
-        return QString();
-
-    if(!m_clipper)
-    {
-        SVGDocumentImpl *doc = static_cast<SVGDocumentImpl *>(ownerDocument());
-        KCanvas *canvas = (doc ? doc->canvas() : 0);
-        if(!canvas)
-            return QString::null;
-
-        m_clipper = static_cast<KCanvasClipper *>(canvas->renderingDevice()->createResource(RS_CLIPPER));
-        m_clipper->setViewportClipper(true);
-
-        canvas->registry()->addResourceById(key, m_clipper);
-    }
-    else
-        m_clipper->resetClipData();
-
+    // FIXME: all this setup should be done after attributesChanged, not here.
     float _x = x()->baseVal()->value();
     float _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value();
     float _height = height()->baseVal()->value();
 
-    // We have to apply the matrix transformation here, as this <svg> may be some
-    // inner viewport, which has a certain 'ctm matrix', that we have to respect.
-    SVGMatrixImpl *ctm = SVGLocatableImpl::getScreenCTM();
-
-    KCanvasMatrix matrix = ctm->qmatrix();
-    KCPathDataList pathData = matrix.map(KCanvasCreator::self()->createRectangle(_x, _y, _width, _height));
-    m_clipper->addClipData(pathData, RULE_NONZERO, false);
-
-    ctm->deref();
-
-    return key;
-}
-
-KCanvasItem *SVGSVGElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
-{
-    KCanvasItem *item = KCanvasCreator::self()->createContainer(canvas, style);
-    if(ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) && !canvas->rootContainer())
-    {
-        canvas->setRootContainer(static_cast<KCanvasContainer *>(item));
-        canvas->setCanvasSize(QSize(qRound(width()->baseVal()->value()),
-                                qRound(height()->baseVal()->value())));
-    }
-
-    return item;
-}
-
-void SVGSVGElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool)
-{
-    QString reference = adjustViewportClipping();
-    if(!reference.isEmpty())
-        style->addClipPath(QString::fromLatin1("#") + reference);
+    rootContainer->setViewport(QRect((int)_x, (int)_y, (int)_width, (int)_height));
+    rootContainer->setViewBox(QRect((int)viewBox()->baseVal()->x(), (int)viewBox()->baseVal()->y(), (int)viewBox()->baseVal()->width(), (int)viewBox()->baseVal()->height()));
+    rootContainer->setAlign(KCAlign(preserveAspectRatio()->baseVal()->align() - 1));
+    rootContainer->setSlice(preserveAspectRatio()->baseVal()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
+    
+    return rootContainer;
 }
 
 void SVGSVGElementImpl::setZoomAndPan(unsigned short zoomAndPan)
 {
     SVGZoomAndPanImpl::setZoomAndPan(zoomAndPan);
-    canvasView()->enableZoomAndPan(zoomAndPan == SVG_ZOOMANDPAN_MAGNIFY);
+    //canvasView()->enableZoomAndPan(zoomAndPan == SVG_ZOOMANDPAN_MAGNIFY);
 }
 
 // vim:ts=4:noet

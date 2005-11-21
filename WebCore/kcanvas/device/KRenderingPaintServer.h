@@ -45,7 +45,7 @@ typedef enum
 } KCPaintTargetType;
 
 class QTextStream;
-class KCanvasItem;
+class RenderPath;
 class KRenderingDeviceContext;
 class KRenderingPaintServer : public KCanvasResource
 {
@@ -53,8 +53,8 @@ public:
     KRenderingPaintServer() : KCanvasResource() { m_activeClient = 0; }
     virtual ~KRenderingPaintServer() { }
 
-    const KCanvasItem *activeClient() const { return m_activeClient;}
-    void setActiveClient(const KCanvasItem *client) { m_activeClient = client; }
+    const RenderPath *activeClient() const { return m_activeClient;}
+    void setActiveClient(const RenderPath *client) { m_activeClient = client; }
 
     QString idInRegistry() const {  return m_registryId; }
     void setIdInRegistry(const QString& newId) { m_registryId = newId; } 
@@ -66,7 +66,7 @@ public:
 
     virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
 private:
-    const KCanvasItem *m_activeClient;
+    const RenderPath *m_activeClient;
     QString m_registryId;
 };
 

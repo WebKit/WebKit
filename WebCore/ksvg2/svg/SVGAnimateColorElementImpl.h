@@ -31,7 +31,7 @@ namespace KSVG
     class SVGAnimateColorElementImpl : public SVGAnimationElementImpl
     {
     public:
-        SVGAnimateColorElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGAnimateColorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGAnimateColorElementImpl();
 
         virtual void handleTimerEvent(double timePercentage);

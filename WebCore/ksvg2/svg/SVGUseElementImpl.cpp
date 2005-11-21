@@ -25,9 +25,8 @@
 #include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGGElementImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGUseElementImpl.h"
@@ -40,13 +39,13 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasContainer.h>
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 
 using namespace KSVG;
 
-SVGUseElementImpl::SVGUseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGURIReferenceImpl()
+SVGUseElementImpl::SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl()
 {
     m_x = m_y = m_width = m_height = 0;
 }
@@ -83,110 +82,95 @@ SVGAnimatedLengthImpl *SVGUseElementImpl::height() const
     return lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGUseElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGUseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
-    {
-        case ATTR_X:
-        {
-            x()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y:
-        {
-            y()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_WIDTH:
-        {
-            width()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_HEIGHT:
-        {
-            height()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+    const KDOM::AtomicString& value = attr->value();
+    
+    if (attr->name() == SVGNames::xAttr)
+        x()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::yAttr)
+        y()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::widthAttr)
+        width()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::heightAttr)
+        height()->baseVal()->setValueAsString(value.impl());
+    else {
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
-void SVGUseElementImpl::close()
+void SVGUseElementImpl::closeRenderer()
 {
-    QString ref = KDOM::DOMString(href()->baseVal()).string();
+    QString ref = KDOM::DOMString(href()->baseVal()).qstring();
     KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(ref);
-    KDOM::ElementImpl *targetElement = ownerDocument()->getElementById(targetId.handle());
+    KDOM::ElementImpl *targetElement = ownerDocument()->getElementById(targetId.impl());
     SVGElementImpl *target = svg_dynamic_cast(targetElement);
     if (!target)
     {
-        getDocument()->addForwardReference(this);
+        //getDocument()->addForwardReference(this);
         return;
     }
 
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _w = width()->baseVal()->value(), _h = height()->baseVal()->value();
     
-    QString w = QString::number(_w);
-    QString h = QString::number(_h);
+    KDOM::DOMString wString = QString::number(_w);
+    KDOM::DOMString hString = QString::number(_h);
     
-    QString trans = QString::fromLatin1("translate(%1, %2)").arg(_x).arg(_y);    
-    if(target->id() == ID_SYMBOL)
+    int exceptioncode;
+    QString trans = QString::fromLatin1("translate(%1, %2)").arg(_x).arg(_y);
+    if(target->hasTagName(SVGNames::symbolTag))
     {
-        SVGElementImpl *dummy = new SVGSVGElementImpl(docPtr(), ID_SVG, 0);
+        SVGElementImpl *dummy = new SVGSVGElementImpl(SVGNames::svgTag, getDocument());
         if(_w > 0)
-            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), KDOM::DOMString(w).handle());
+            dummy->setAttribute(SVGNames::widthAttr, wString.impl());
         if(_h > 0)
-            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), KDOM::DOMString(h).handle());
+            dummy->setAttribute(SVGNames::heightAttr, hString.impl());
         
         SVGSymbolElementImpl *symbol = static_cast<SVGSymbolElementImpl *>(target);
-        if(symbol->hasAttribute(new KDOM::DOMStringImpl("viewBox")))
-            dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle(), symbol->getAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("viewBox").handle()));
-        target->cloneChildNodes(dummy, docPtr());
+        if (symbol->hasAttribute(SVGNames::viewBoxAttr)) {
+            const KDOM::AtomicString& symbolViewBox = symbol->getAttribute(SVGNames::viewBoxAttr);
+            dummy->setAttribute(SVGNames::viewBoxAttr, symbolViewBox);
+        }
+        target->cloneChildNodes(dummy);
 
-        SVGElementImpl *dummy2 = new SVGDummyElementImpl(docPtr(), ID_G, 0);
-        dummy2->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("transform").handle(), KDOM::DOMString(trans).handle());
+        SVGElementImpl *dummy2 = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
+        dummy2->setAttribute(SVGNames::transformAttr, KDOM::DOMString(trans));
         
-        appendChild(dummy2);        
-        dummy2->appendChild(dummy);
+        appendChild(dummy2, exceptioncode);
+        dummy2->appendChild(dummy, exceptioncode);
     }
-    else if(target->id() == ID_SVG)
+    else if(target->hasTagName(SVGNames::svgTag))
     {
-        SVGDummyElementImpl *dummy = new SVGDummyElementImpl(docPtr(), ID_G, 0);
-        dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("transform").handle(), KDOM::DOMString(trans).handle());
+        SVGDummyElementImpl *dummy = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
+        dummy->setAttribute(SVGNames::transformAttr, KDOM::DOMString(trans));
         
-        SVGElementImpl *root = static_cast<SVGElementImpl *>(target->cloneNode(true, docPtr()));
-        if(hasAttribute(KDOM::DOMString("width").handle()))
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), KDOM::DOMString(w).handle());
+        SVGElementImpl *root = static_cast<SVGElementImpl *>(target->cloneNode(true));
+        if(hasAttribute(SVGNames::widthAttr))
+            root->setAttribute(SVGNames::widthAttr, wString.impl());
             
-        if(hasAttribute(KDOM::DOMString("height").handle()))
-            root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), KDOM::DOMString(h).handle());
+        if(hasAttribute(SVGNames::heightAttr))
+            root->setAttribute(SVGNames::heightAttr, hString.impl());
             
-        appendChild(dummy);
-        dummy->appendChild(root);
+        appendChild(dummy, exceptioncode);
+        dummy->appendChild(root, exceptioncode);
     }
     else
     {
-        SVGDummyElementImpl *dummy = new SVGDummyElementImpl(docPtr(), ID_G, 0);
-        dummy->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("transform").handle(), KDOM::DOMString(trans).handle());
+        SVGDummyElementImpl *dummy = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
+        dummy->setAttribute(SVGNames::transformAttr, trans);
         
-        KDOM::NodeImpl *root = target->cloneNode(true, docPtr());
+        KDOM::NodeImpl *root = target->cloneNode(true);
         
-        appendChild(dummy);
-        dummy->appendChild(root);
+        appendChild(dummy, exceptioncode);
+        dummy->appendChild(root, exceptioncode);
     }
 
-    SVGElementImpl::close();
+    SVGElementImpl::closeRenderer();
 }
 
 bool SVGUseElementImpl::hasChildNodes() const
@@ -194,9 +178,9 @@ bool SVGUseElementImpl::hasChildNodes() const
     return false;
 }
 
-KCanvasItem *SVGUseElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGUseElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return KCanvasCreator::self()->createContainer(canvas, style);
+    return canvas()->renderingDevice()->createContainer(arena, style, this);
 }
 
 // vim:ts=4:noet

@@ -43,14 +43,14 @@ namespace KSVG
                                  public KDOM::CachedObjectClient
     {
     public:
-        SVGCursorElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        SVGCursorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGCursorElementImpl();
 
         // 'SVGCursorElement' functions
         SVGAnimatedLengthImpl *x() const;
         SVGAnimatedLengthImpl *y() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 

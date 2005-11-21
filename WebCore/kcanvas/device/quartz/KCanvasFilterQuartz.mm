@@ -26,7 +26,7 @@
 
 #include "config.h"
 #import "KCanvasFilterQuartz.h"
-#import "KRenderingStyle.h"
+#import "KCanvasRenderingStyle.h"
 #import "KCanvasMatrix.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
@@ -73,7 +73,7 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDeviceContext *renderingContex
 	quartzContext->setCGContext(filterContext);
 }
 
-void KCanvasFilterQuartz::applyFilter(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, const QRect &bbox)
+void KCanvasFilterQuartz::applyFilter(KRenderingDeviceContext *renderingContext, KCanvasMatrix objectMatrix, const QRect &bbox)
 {
     if (! bbox.isValid())
         return;
@@ -84,7 +84,7 @@ void KCanvasFilterQuartz::applyFilter(KRenderingDeviceContext *renderingContext,
 	
 	CGContextRef filterContext = quartzContext->cgContext();
 	//NSLog(@"2before: %p stored: %p", filterContext, m_storedCGContext);
-	applyFilter(&filterContext, bbox, CGAffineTransform(args.style()->objectMatrix().qmatrix()));
+	applyFilter(&filterContext, bbox, CGAffineTransform(objectMatrix.qmatrix()));
 	//NSLog(@"2after: %p stored: %p", filterContext, m_storedCGContext);
 	quartzContext->setCGContext(filterContext);
 }

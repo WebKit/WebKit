@@ -27,9 +27,8 @@
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/cache/KDOMCachedObject.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGFEImageElementImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 #include "SVGAnimatedStringImpl.h"
@@ -39,15 +38,15 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerImage.h>
 
 using namespace KSVG;
 
-SVGFEImageElementImpl::SVGFEImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
+SVGFEImageElementImpl::SVGFEImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGFilterPrimitiveStandardAttributesImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_preserveAspectRatio = 0;
     m_cachedImage = 0;
@@ -64,26 +63,19 @@ SVGAnimatedPreserveAspectRatioImpl *SVGFEImageElementImpl::preserveAspectRatio()
     return lazy_create<SVGAnimatedPreserveAspectRatioImpl>(m_preserveAspectRatio, this);
 }
 
-void SVGFEImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::preserveAspectRatioAttr)
+        preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
+    else
     {
-        case ATTR_PRESERVEASPECTRATIO:
-        {
-            preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.handle());
-            break;
-        }
-        default:
-        {
-            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
 
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
+    }
 }
 
 void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
@@ -103,17 +95,19 @@ void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 
 void SVGFEImageElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool /* needFillStrokeUpdate */)
 {
-    KURL fullUrl(ownerDocument()->documentKURI(), KDOM::DOMString(href()->baseVal()).string());
+#ifndef APPLE_CHANGES
+    KURL fullUrl(ownerDocument()->documentKURI(), KDOM::DOMString(href()->baseVal()).qstring());
     kdDebug() << "REQUESTING LOAD OF " << fullUrl.prettyURL() << endl;
+#endif
 
-    m_cachedImage = ownerDocument()->docLoader()->requestImage(fullUrl);
+    m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
     if(m_cachedImage)
         m_cachedImage->ref(this);
 }
 
-KCanvasItem *SVGFEImageElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFEImageElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    m_filterEffect = static_cast<KCanvasFEImage *>(canvas->renderingDevice()->createFilterEffect(FE_IMAGE));
+    m_filterEffect = static_cast<KCanvasFEImage *>(canvas()->renderingDevice()->createFilterEffect(FE_IMAGE));
     setStandardAttributes(m_filterEffect);
     return 0;
 }

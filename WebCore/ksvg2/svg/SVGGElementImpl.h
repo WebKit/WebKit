@@ -23,28 +23,26 @@
 #ifndef KSVG_SVGGElementImpl_H
 #define KSVG_SVGGElementImpl_H
 
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
-#include "SVGTransformableImpl.h"
 
 namespace KSVG
 {
-    class SVGGElementImpl : public SVGStyledElementImpl,
+    class SVGGElementImpl : public SVGStyledTransformableElementImpl,
                             public SVGTestsImpl,
                             public SVGLangSpaceImpl,
-                            public SVGExternalResourcesRequiredImpl,
-                            public SVGTransformableImpl
+                            public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGGElementImpl();
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         virtual void setChanged(bool b = true, bool deep = false);
     };
@@ -52,11 +50,13 @@ namespace KSVG
     class SVGDummyElementImpl : public SVGGElementImpl
     {
     public:
-        SVGDummyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGDummyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGDummyElementImpl();
 
         // Derived from: 'ElementImpl'
-        virtual KDOM::DOMStringImpl *localName() const;
+        virtual const KDOM::AtomicString& localName() const;
+    private:
+        KDOM::AtomicString m_localName;
     };
 };
 

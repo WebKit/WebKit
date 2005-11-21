@@ -26,29 +26,27 @@
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGURIReferenceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
 namespace KSVG
 {
     //class SVGElementInstanceImpl;
     class SVGAnimatedLengthImpl;
-    class SVGUseElementImpl : public SVGStyledElementImpl,
+    class SVGUseElementImpl : public SVGStyledTransformableElementImpl,
                               public SVGTestsImpl,
                               public SVGLangSpaceImpl,
                               public SVGExternalResourcesRequiredImpl,
-                              public SVGTransformableImpl,
                               public SVGURIReferenceImpl
     {
     public:
-        SVGUseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGUseElementImpl();
 
         // Derived from: 'ElementImpl'
         virtual bool hasChildNodes() const;
 
-        virtual void close();
+        virtual void closeRenderer();
 
         // 'SVGUseElement' functions
         SVGAnimatedLengthImpl *x() const;
@@ -57,10 +55,10 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         // TODO: not sure about this API yet
         // SVGElementInstanceImpl *instanceRoot() const;

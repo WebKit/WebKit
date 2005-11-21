@@ -33,7 +33,7 @@ using namespace KSVG;
 
 SVGRenderStyle *SVGRenderStyle::s_defaultStyle = 0;
 
-SVGRenderStyle::SVGRenderStyle() : KDOM::RenderStyle()
+SVGRenderStyle::SVGRenderStyle()
 {
     if(!s_defaultStyle)    
         s_defaultStyle = new SVGRenderStyle(true);
@@ -48,7 +48,7 @@ SVGRenderStyle::SVGRenderStyle() : KDOM::RenderStyle()
     setBitDefaults();
 }
 
-SVGRenderStyle::SVGRenderStyle(bool) : KDOM::RenderStyle(true)
+SVGRenderStyle::SVGRenderStyle(bool)
 {
     setBitDefaults();
 
@@ -60,7 +60,7 @@ SVGRenderStyle::SVGRenderStyle(bool) : KDOM::RenderStyle(true)
     markers.init();
 }
 
-SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : KDOM::RenderStyle(other)
+SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other)
 {
     fill = other.fill;
     stroke = other.stroke;
@@ -73,42 +73,25 @@ SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : KDOM::RenderStyle(
     svg_noninherited_flags = other.svg_noninherited_flags;
 }
 
-SVGRenderStyle::~SVGRenderStyle()
+bool SVGRenderStyle::equals(SVGRenderStyle *svgOther) const
 {
-}
-
-void SVGRenderStyle::cleanup()
-{
-    delete s_defaultStyle;
-    s_defaultStyle = 0;
-}
-
-bool SVGRenderStyle::equals(KDOM::RenderStyle *other) const
-{
-    SVGRenderStyle *svgOther = dynamic_cast<SVGRenderStyle *>(other);
     if(!svgOther)
         return false;
 
     return (fill == svgOther->fill && stroke == svgOther->stroke &&
         stops == svgOther->stops && clip == svgOther->clip &&
-        misc == svgOther->misc && markers == svgOther->markers &&
-        KDOM::RenderStyle::equals(other));
+        misc == svgOther->misc && markers == svgOther->markers);
 }
 
-void SVGRenderStyle::inheritFrom(const RenderStyle *inheritParent)
+void SVGRenderStyle::inheritFrom(const SVGRenderStyle *svgInheritParent)
 {
-    const SVGRenderStyle *svgInheritParent = static_cast<const SVGRenderStyle *>(inheritParent);
     if(!svgInheritParent)
         return;
-
-    KDOM::RenderStyle::inheritFrom(inheritParent);
 
     fill = svgInheritParent->fill;
     stroke = svgInheritParent->stroke;
     stops = svgInheritParent->stops;
-    //misc = svgInheritParent->misc;
     markers = svgInheritParent->markers;
-    setOpacity(initialOpacity());
 
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
 }

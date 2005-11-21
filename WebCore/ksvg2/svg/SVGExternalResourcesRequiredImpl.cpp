@@ -23,7 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGElementImpl.h"
 #include "SVGAnimatedBooleanImpl.h"
@@ -47,12 +47,10 @@ SVGAnimatedBooleanImpl *SVGExternalResourcesRequiredImpl::externalResourcesRequi
     return lazy_create<SVGAnimatedBooleanImpl>(m_external, static_cast<const SVGStyledElementImpl *>(0));
 }
 
-bool SVGExternalResourcesRequiredImpl::parseAttribute(KDOM::AttributeImpl *attr)
+bool SVGExternalResourcesRequiredImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    if(id == ATTR_EXTERNALRESOURCESREQUIRED)
-    {
+    if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
         externalResourcesRequired()->setBaseVal(value == "true");
         return true;
     }

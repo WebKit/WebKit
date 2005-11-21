@@ -26,7 +26,7 @@
 #include <kdebug.h>
 #include <kstaticdeleter.h>
 
-#include "KCanvas.h"
+#include "kcanvas/KCanvas.h"
 #include "KCanvasPath.h"
 #include "KCanvasCreator.h"
 #include "KRenderingDevice.h"
@@ -161,16 +161,8 @@ KCPathDataList KCanvasCreator::createLine(float x1, float y1, float x2, float y2
     return list;
 }
 
-KCanvasUserData KCanvasCreator::createCanvasPathData(KCanvas *canvas, const KCPathDataList &pathData) const
+KCanvasUserData KCanvasCreator::createCanvasPathData(KRenderingDevice *device, const KCPathDataList &pathData) const
 {
-    if(!canvas || !canvas->renderingDevice())
-    {
-        kdError() << k_funcinfo << " 'canvas' can't be null!" << endl;
-        return 0;
-    }
-
-    KRenderingDevice *device = canvas->renderingDevice();
-
     device->startPath();
 
     int dataLength = pathData.count();
@@ -215,16 +207,6 @@ KCanvasUserData KCanvasCreator::createCanvasPathData(KCanvas *canvas, const KCPa
 
     device->endPath();
     return device->currentPath();
-}
-
-KCanvasItem *KCanvasCreator::createPathItem(KCanvas *canvas, KRenderingStyle *style, const KCPathDataList &pathData) const
-{
-    return static_cast<KCanvasItem *>(canvas->renderingDevice()->createItem(canvas, style, createCanvasPathData(canvas, pathData)));
-}
-
-KCanvasContainer *KCanvasCreator::createContainer(KCanvas *canvas, KRenderingStyle *style) const
-{
-    return static_cast<KCanvasContainer *>(canvas->renderingDevice()->createContainer(canvas, style));
 }
 
 // vim:ts=4:noet

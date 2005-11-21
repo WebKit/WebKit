@@ -26,7 +26,7 @@
 #include <qstring.h>
 #include <q3valuelist.h>
 
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
@@ -43,6 +43,7 @@ typedef enum
 } KCResourceType;
 
 class KCanvasMatrix;
+class KRenderingPaintServer;
 
 class KCanvasResource
 {
@@ -51,12 +52,17 @@ public:
     virtual ~KCanvasResource();
 
     virtual void invalidate();
-    void addClient(KCanvasItem *item);
+    void addClient(RenderPath *item);
 
     const KCanvasItemList &clients() const;
     
     QString idInRegistry() const;
     void setIdInRegistry(const QString& newId);
+    
+    virtual bool isPaintServer() { return false; }
+    virtual bool isFilter() { return false; }
+    virtual bool isClipper() { return false; }
+    virtual bool isMarker() { return false; }
     
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
@@ -88,32 +94,47 @@ protected:
 class KCanvasMarker : public KCanvasResource
 {
 public:
-    KCanvasMarker(KCanvasItem *marker = 0);
+    KCanvasMarker(khtml::RenderObject *marker = 0);
     virtual ~KCanvasMarker();
 
-    void setMarker(KCanvasItem *marker);
-
+    void setMarker(khtml::RenderObject *marker);
+    
     void setRefX(double refX);
     double refX() const;
-
+    
     void setRefY(double refY);
     double refY() const;
-
-    void setAutoAngle();
+    
     void setAngle(float angle);
+    void setAutoAngle();
     float angle() const;
 
-    // Draw onto the canvas
-    void draw(double x, double y, double angle = 0.0);
+    void setUseStrokeWidth(bool useStrokeWidth = true);
+    bool useStrokeWidth() const;
+
+    void setScaleX(float scaleX);
+    float scaleX() const;
+
+    void setScaleY(float scaleY);
+    float scaleY() const;
+
+     // Draw onto the canvas
+    void draw(const QRect &rect, const KCanvasMatrix &objectMatrix, double x, double y, double strokeWidth = 1., double angle = 0.0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 private:
     double m_refX, m_refY;
-    float m_angle;
-    KCanvasItem *m_marker;
+    float m_angle, m_scaleX, m_scaleY;
+    khtml::RenderObject *m_marker;
+    bool m_useStrokeWidth;
 };
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
+
+KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
 
 #endif
 

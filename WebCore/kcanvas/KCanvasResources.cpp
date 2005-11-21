@@ -24,13 +24,15 @@
 #include <qrect.h>
 #include <kdebug.h>
 
-#include "KCanvas.h"
-#include "KCanvasItem.h"
+#include "kcanvas/KCanvas.h"
+#include "kcanvas/RenderPath.h"
 #include "KCanvasMatrix.h"
 #include "KCanvasContainer.h"
 #include "KCanvasResources.h"
 #include "KRenderingDevice.h"
 #include "KCanvasResourceListener.h"
+
+#include "SVGStyledElementImpl.h"
 
 #include <qtextstream.h>
 #include "KCanvasTreeDebug.h"
@@ -49,7 +51,7 @@ KCanvasResource::~KCanvasResource()
 {
 }
 
-void KCanvasResource::addClient(KCanvasItem *item)
+void KCanvasResource::addClient(RenderPath *item)
 {
     if(m_clients.find(item) != m_clients.end())
         return;
@@ -68,12 +70,7 @@ void KCanvasResource::invalidate()
     KCanvasItemList::ConstIterator end = m_clients.end();
 
     for(; it != end; ++it)
-    {
-        const KCanvasItem *current = (*it);
-
-        Q_ASSERT(current->canvas());
-        current->canvas()->invalidate(current);
-    }
+        const_cast<RenderPath *>(*it)->repaint();
 }
 
 QString KCanvasResource::idInRegistry() const
@@ -136,19 +133,20 @@ QTextStream& KCanvasClipper::externalRepresentation(QTextStream &ts) const
 }
 
 // KCanvasMarker
-KCanvasMarker::KCanvasMarker(KCanvasItem *marker) : KCanvasResource()
+KCanvasMarker::KCanvasMarker(khtml::RenderObject *marker) : KCanvasResource()
 {
     m_refX = 0;
     m_refY = 0;
     m_marker = marker;
     setAutoAngle();
+    m_useStrokeWidth = true;
 }
 
 KCanvasMarker::~KCanvasMarker()
 {
 }
 
-void KCanvasMarker::setMarker(KCanvasItem *marker)
+void KCanvasMarker::setMarker(khtml::RenderObject *marker)
 {
     m_marker = marker;
 }
@@ -188,19 +186,55 @@ void KCanvasMarker::setAutoAngle()
     m_angle = -1;
 }
 
-void KCanvasMarker::draw(double x, double y, double angle)
+void KCanvasMarker::setUseStrokeWidth(bool useStrokeWidth)
 {
-    if(m_marker && m_marker->style())
+    m_useStrokeWidth = useStrokeWidth;
+}
+
+bool KCanvasMarker::useStrokeWidth() const
+{
+    return m_useStrokeWidth;
+}
+
+void KCanvasMarker::setScaleX(float scaleX)
+{
+    m_scaleX = scaleX;
+}
+
+float KCanvasMarker::scaleX() const
+{
+    return m_scaleX;
+}
+
+void KCanvasMarker::setScaleY(float scaleY)
+{
+    m_scaleY = scaleY;
+}
+
+float KCanvasMarker::scaleY() const
+{
+    return m_scaleY;
+}
+
+void KCanvasMarker::draw(const QRect &rect, const KCanvasMatrix &objectMatrix, double x, double y, double strokeWidth, double angle)
+{
+    if(m_marker)
     {
-        KCanvasMatrix translation;
+        KCanvasMatrix translation = objectMatrix;
         translation.translate(x, y);
 
         KCanvasMatrix rotation;
         rotation.setOperationMode(OPS_POSTMUL);
         rotation.translate(-m_refX, -m_refY);
+        rotation.scale(m_scaleX, m_scaleY);
         rotation.rotate(m_angle > -1 ? m_angle : angle);
+        
+        // stroke width
+        if(m_useStrokeWidth)
+            rotation.scale(strokeWidth, strokeWidth);
 
-        m_marker->draw(QRect());
+        // FIXME: Need to figure out how this should be called... paint(...)
+        //m_marker->draw(QRect());
     }
 }
 
@@ -214,6 +248,39 @@ QTextStream& KCanvasMarker::externalRepresentation(QTextStream &ts) const
         ts << angle() << "]";        
     ts << " [ref x=" << refX() << " y=" << refY() << "]";
     return ts;
+}
+
+KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KDOM::ElementImpl *element = document->getElementById(id);
+    KSVG::SVGElementImpl *svgElement = KSVG::svg_dynamic_cast(element);
+    if (svgElement && svgElement->isStyled())
+        return static_cast<KSVG::SVGStyledElementImpl *>(svgElement)->canvasResource();
+    return 0;
+}
+
+KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KCanvasResource *resource = getResourceById(document, id);
+    if (resource && resource->isMarker())
+        return static_cast<KCanvasMarker *>(resource);
+    return 0;
+}
+
+KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KCanvasResource *resource = getResourceById(document, id);
+    if (resource && resource->isClipper())
+        return static_cast<KCanvasClipper *>(resource);
+    return 0;
+}
+
+KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KCanvasResource *resource = getResourceById(document, id);
+    if (resource && resource->isPaintServer())
+        return static_cast<KRenderingPaintServer *>(resource);
+    return 0;
 }
 
 // vim:ts=4:noet

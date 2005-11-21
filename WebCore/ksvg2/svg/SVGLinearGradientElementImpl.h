@@ -31,7 +31,7 @@ namespace KSVG
     class SVGLinearGradientElementImpl : public SVGGradientElementImpl
     {
     public:
-        SVGLinearGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGLinearGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGLinearGradientElementImpl();
 
         // 'SVGLinearGradientElement' functions
@@ -40,15 +40,11 @@ namespace KSVG
         SVGAnimatedLengthImpl *x2() const;
         SVGAnimatedLengthImpl *y2() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
-        
-        virtual bool implementsCanvasItem() const { return true; }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
-
-        virtual void resourceNotification() const;
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     protected:
-        virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const;
+        virtual void buildGradient(KRenderingPaintServerGradient *grad) const;
+        virtual KCPaintServerType gradientType() const { return PS_LINEAR_GRADIENT; }
 
     private:
         mutable SVGAnimatedLengthImpl *m_x1;

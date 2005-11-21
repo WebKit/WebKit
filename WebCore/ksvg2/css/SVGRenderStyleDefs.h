@@ -222,7 +222,6 @@ namespace KSVG
             return !(*this == other);
         }
 
-        float opacity;
         QString filter;
         QColor floodColor;
         float floodOpacity;

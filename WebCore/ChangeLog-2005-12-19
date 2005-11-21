@@ -1,5 +1,939 @@
 2005-11-20  Eric Seidel  <eseidel@apple.com>
 
+        Only affects SVG; no review required (or possible due to size).
+
+        The KSVG/KCanvas section of the big DOM merger.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3249
+        At least the following were addressed in this patch:
+        
+        - Namespace mapping (KDOM -> DOM, khtml)
+        - Forwarding Headers (temp. all kdom .h map to all webcore .h)
+        - Various KDOM stub classes added to WebCore+SVG folder
+        - Various DOMStringImpl -> DOMString changes
+        - DOMString::string() -> DOMString::qstring() in ksvg2
+        - DOMString::handle() -> DOMString::impl() in ksvg2
+        - DocumentImpl, DocumentType  ::impl() -> ::implentation() in khtml
+        - Moved NodeImpl::Id to QualifiedString/AtomicString in ksvg2
+        - SVGNames.*, SVGElementFactory.* (and generating perl script)
+        - EventImpl::id() -> type() with AtomicString
+        - Removal of SVGEventImpl
+        - Adding svg document and event creation in xml_docimpl.h
+        - All in SVGDocumentImpl, also now using SharedPtr
+        - Mapped KSVGPart, KDOMPart, KSVGView, KDOMView to KHTML*
+        - Removed all throw calls, replacing with exceptioncode parameters
+        - SVGElement now derives from StyledElementImpl
+        - Corrected SVGNames cases (viewBoxAttr vs. viewboxAttr)
+        - Moved TimeScheduler from Doc -> SVGSVGElement (temp. & wrong)
+        - Moved off of DocPtr onto DocumentImpl * directly in ksvg2
+        - Made SVGRenderStyle a member of khtml::RenderStyle
+        - Worked KSVGCSSParser into CSSParser
+        - Worked SVGCSSStyleSelector into CSSStyleSelector
+        - Changed parseAttribute -> parseMappedAttribute
+        - Moved KCanvasContainer onto RenderContainer
+        - Renamed KCanvasItem, RenderPath, now subclass of RenderObject
+        - Added RenderObject: bbox(), isRenderPath(), isKCanvasContainer()
+        - Moved KCanvasContainer and RenderPath from draw() -> paint()
+        - Removed RenderSVGBox && render_kcanvaswrapper hacks
+        - Gutted KCanvasItem (now RenderPath) and KCanvasContainer
+        - Merged KCanvasTreeDebug into KWQRenderTreeDebug
+        - Made SVGNames.* SVGElementFactory.* generation a build phase
+        - Removed KRenderingStyle
+        - Gutted KCanvasRenderingStyle
+        - Moved objectTransform onto RenderObject as "localTransform"
+        - Removed KCanvasRegistry
+        - Changed the way Graidents build their stop lists
+        - Removed all dynamic_cast, turned off RTTI and Exceptions
+        - Picked up recent marker fix & relative transform fixes from KDE
+
+        * ForwardingHeaders/kcanvas/KCanvas.h: Added.
+        * ForwardingHeaders/kcanvas/RenderPath.h: Added.
+        * ForwardingHeaders/kdom/core/AttrImpl.h: Added.
+        * ForwardingHeaders/kdom/core/CDFInterface.h: Added.
+        * ForwardingHeaders/kdom/core/DOMConfigurationImpl.h: Added.
+        * ForwardingHeaders/kdom/core/DOMExceptionImpl.h: Added.
+        * ForwardingHeaders/kdom/core/DOMImplementationImpl.h: Added.
+        * ForwardingHeaders/kdom/core/DOMList.h: Added.
+        * ForwardingHeaders/kdom/core/DOMStringImpl.h: Added.
+        * ForwardingHeaders/kdom/core/DocumentImpl.h: Added.
+        * ForwardingHeaders/kdom/core/DocumentTypeImpl.h: Added.
+        * ForwardingHeaders/kdom/core/ElementImpl.h: Added.
+        * ForwardingHeaders/kdom/core/NamedAttrMapImpl.h: Added.
+        * ForwardingHeaders/kdom/core/NodeImpl.h: Added.
+        * ForwardingHeaders/kdom/core/NodeListImpl.h: Added.
+        * ForwardingHeaders/kdom/core/ProcessingInstructionImpl.h: Added.
+        * ForwardingHeaders/kdom/core/XMLElementImpl.h: Added.
+        * ForwardingHeaders/kdom/core/domattrs.h: Added.
+        * WebCore+SVG/DrawCanvasItem.mm:
+        (-[DrawCanvasItem dragAnchorPointForControlPointIndex:]):
+        (-[DrawCanvasItem controlPoints]):
+        (-[DrawCanvasItem fitToNewBBox:]):
+        (-[DrawCanvasItem valueForKey:]):
+        (-[DrawCanvasItem attributedXMLString]):
+        * WebCore+SVG/DrawDocument.mm:
+        (-[DrawView initWithSVGData:]):
+        (-[DrawView svgText]):
+        (-[DrawDocument documentListensForMouseMovedEvents]):
+        (-[DrawDocument documentListensForMouseDownEvents]):
+        (-[DrawDocument documentListensForMouseUpEvents]):
+        (-[DrawDocument KDOM::newMouseEventWithEventId:KDOM::qMouseEvent:]):
+        (cursorForStyle):
+        (-[DrawDocument cursorAfterPropagatingMouseMovedEvent:fromView:]):
+        (-[DrawDocument removeItemFromDOM:]):
+        (-[DrawDocument createItemForTool:atPoint:]):
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore+SVG/KDOMSettings.cpp:
+        * WebCore+SVG/SVGElementFactoryWrapper.cpp: Added.
+        * WebCore+SVG/SVGNames.cpp: Removed.
+        * WebCore+SVG/SVGNames.h: Removed.
+        * WebCore+SVG/SVGNamesWrapper.cpp: Added.
+        * WebCore+SVG/dom_kdomdocumentwrapper.cpp: Removed.
+        * WebCore+SVG/dom_kdomdocumentwrapper.h: Removed.
+        * WebCore+SVG/dom_kdomnodetreewrapper.cpp: Removed.
+        * WebCore+SVG/dom_kdomnodetreewrapper.h: Removed.
+        * WebCore+SVG/render_kcanvaswrapper.cpp: Removed.
+        * WebCore+SVG/render_kcanvaswrapper.h: Removed.
+        * WebCore+SVG/xml_kdomtokenizer.cpp: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvas.cpp: Removed.
+        * kcanvas/KCanvas.h: Removed.
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::Private::Private):
+        (KCanvasContainer::KCanvasContainer):
+        (KCanvasContainer::~KCanvasContainer):
+        (KCanvasContainer::localTransform):
+        (KCanvasContainer::setLocalTransform):
+        (KCanvasContainer::fillContains):
+        (KCanvasContainer::strokeContains):
+        (KCanvasContainer::bbox):
+        (KCanvasContainer::setSlice):
+        (KCanvasContainer::slice):
+        (KCanvasContainer::getAspectRatio):
+        * kcanvas/KCanvasContainer.h:
+        (KCanvasContainer::isKCanvasContainer):
+        (KCanvasContainer::renderName):
+        * kcanvas/KCanvasCreator.cpp:
+        (KCanvasCreator::createCanvasPathData):
+        * kcanvas/KCanvasCreator.h:
+        * kcanvas/KCanvasFilters.cpp:
+        (getFilterById):
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEImage::image):
+        (KCanvasFEImage::setImage):
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::Private::Private):
+        (RenderPath::Private::~Private):
+        (RenderPath::RenderPath):
+        (RenderPath::~RenderPath):
+        (RenderPath::setStyle):
+        (RenderPath::localTransform):
+        (RenderPath::setLocalTransform):
+        (RenderPath::fillContains):
+        (RenderPath::strokeContains):
+        (RenderPath::bbox):
+        (RenderPath::hitsPath):
+        (RenderPath::bboxPath):
+        (RenderPath::setupForDraw):
+        (RenderPath::changePath):
+        (RenderPath::path):
+        (RenderPath::canvasStyle):
+        (RenderPath::commonArgs):
+        * kcanvas/KCanvasItem.h:
+        (RenderPath::isRenderPath):
+        (RenderPath::renderName):
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasResource::addClient):
+        (KCanvasResource::invalidate):
+        (KCanvasMarker::KCanvasMarker):
+        (KCanvasMarker::setMarker):
+        (KCanvasMarker::setUseStrokeWidth):
+        (KCanvasMarker::useStrokeWidth):
+        (KCanvasMarker::setScaleX):
+        (KCanvasMarker::scaleX):
+        (KCanvasMarker::setScaleY):
+        (KCanvasMarker::scaleY):
+        (KCanvasMarker::draw):
+        (getResourceById):
+        (getMarkerById):
+        (getClipperById):
+        (getPaintServerById):
+        * kcanvas/KCanvasResources.h:
+        (KCanvasResource::isPaintServer):
+        (KCanvasResource::isFilter):
+        (KCanvasResource::isClipper):
+        (KCanvasResource::isMarker):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        (writeStyle):
+        (getTagName):
+        (write):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/KCanvasTypes.h:
+        * kcanvas/KCanvasView.cpp: Removed.
+        * kcanvas/KCanvasView.h: Removed.
+        * kcanvas/KCanvasView.moc: Removed.
+        * kcanvas/device/KRenderingDevice.cpp:
+        (KCanvasCommonArgs::KCanvasCommonArgs):
+        (KCanvasCommonArgs::canvasStyle):
+        (KCanvasCommonArgs::setStyle):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingDeviceFactory.cpp: Removed.
+        * kcanvas/device/KRenderingDeviceFactory.h: Removed.
+        * kcanvas/device/KRenderingPaintServer.h:
+        (KRenderingPaintServer::activeClient):
+        (KRenderingPaintServer::setActiveClient):
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KRenderingPaintServerGradient::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (KRenderingPaintServerPattern::externalRepresentation):
+        * kcanvas/device/KRenderingStrokePainter.h:
+        * kcanvas/device/KRenderingStyle.cpp: Removed.
+        * kcanvas/device/KRenderingStyle.h: Removed.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::applyFilter):
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        (KCanvasItemQuartz::requiresLayer):
+        (KCanvasItemQuartz::layout):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::KCanvasItemQuartz):
+        (KCanvasItemQuartz::drawMarkersIfNeeded):
+        (KCanvasItemQuartz::paint):
+        (KCanvasItemQuartz::nodeAtPoint):
+        (KCanvasItemQuartz::bboxPath):
+        (KCanvasItemQuartz::hitsPath):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasContainerQuartz::KCanvasContainerQuartz):
+        (KCanvasContainerQuartz::canHaveChildren):
+        (KCanvasContainerQuartz::requiresLayer):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::calcMinMaxWidth):
+        (KCanvasContainerQuartz::layout):
+        (KCanvasContainerQuartz::paint):
+        (KCanvasContainerQuartz::setViewport):
+        (KCanvasContainerQuartz::viewport):
+        (KCanvasContainerQuartz::setViewBox):
+        (KCanvasContainerQuartz::viewBox):
+        (KCanvasContainerQuartz::setAlign):
+        (KCanvasContainerQuartz::align):
+        (KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KCanvasViewQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasViewQuartz.mm: Removed.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::concatCTM):
+        (KRenderingDeviceContextQuartz::ctm):
+        (KRenderingDeviceQuartz::stringForPath):
+        (KRenderingDeviceQuartz::createContainer):
+        (KRenderingDeviceQuartz::createItem):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (drawShadingWithStyle):
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw):
+        (KRenderingPaintServerPatternQuartz::draw):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (CFStringFromCGAffineTransform):
+        (CGAffineTransformMakeMapBetweenRects):
+        (CGPathTransformCallback):
+        (CGPathApplyTransform):
+        (applyStrokeStyleToContext):
+        (CGPathToCFStringApplierFunction):
+        (CFStringFromCGPath):
+        * kdom/bindings/DocParser.pm: Removed.
+        * kdom/bindings/IDLCodeGenerator.pm: Removed.
+        * kdom/bindings/IDLCodeGeneratorCpp.pm: Removed.
+        * kdom/bindings/IDLCodeGeneratorEcmaInterface.pm: Removed.
+        * kdom/bindings/IDLCodeGeneratorJs.pm: Removed.
+        * kdom/bindings/IDLParser.pm: Removed.
+        * kdom/bindings/IDLStructure.pm: Removed.
+        * kdom/bindings/idl/core/Attr.idl: Removed.
+        * kdom/bindings/idl/core/CDATASection.idl: Removed.
+        * kdom/bindings/idl/core/CharacterData.idl: Removed.
+        * kdom/bindings/idl/core/Comment.idl: Removed.
+        * kdom/bindings/idl/core/DOMConfiguration.idl: Removed.
+        * kdom/bindings/idl/core/DOMError.idl: Removed.
+        * kdom/bindings/idl/core/DOMErrorHandler.idl: Removed.
+        * kdom/bindings/idl/core/DOMException.idl: Removed.
+        * kdom/bindings/idl/core/DOMImplementation.idl: Removed.
+        * kdom/bindings/idl/core/DOMLocator.idl: Removed.
+        * kdom/bindings/idl/core/DOMObject.idl: Removed.
+        * kdom/bindings/idl/core/DOMStringList.idl: Removed.
+        * kdom/bindings/idl/core/DOMUserData.idl: Removed.
+        * kdom/bindings/idl/core/Document.idl: Removed.
+        * kdom/bindings/idl/core/DocumentFragment.idl: Removed.
+        * kdom/bindings/idl/core/DocumentType.idl: Removed.
+        * kdom/bindings/idl/core/Element.idl: Removed.
+        * kdom/bindings/idl/core/Entity.idl: Removed.
+        * kdom/bindings/idl/core/EntityReference.idl: Removed.
+        * kdom/bindings/idl/core/NamedNodeMap.idl: Removed.
+        * kdom/bindings/idl/core/Node.idl: Removed.
+        * kdom/bindings/idl/core/NodeList.idl: Removed.
+        * kdom/bindings/idl/core/Notation.idl: Removed.
+        * kdom/bindings/idl/core/ProcessingInstruction.idl: Removed.
+        * kdom/bindings/idl/core/Text.idl: Removed.
+        * kdom/bindings/idl/core/TypeInfo.idl: Removed.
+        * kdom/bindings/idl/core/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/css/CSS2Properties.idl: Removed.
+        * kdom/bindings/idl/css/CSSCharsetRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSFontFaceRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSImportRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSMediaRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSPageRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSPrimitiveValue.idl: Removed.
+        * kdom/bindings/idl/css/CSSRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSRuleList.idl: Removed.
+        * kdom/bindings/idl/css/CSSStyleDeclaration.idl: Removed.
+        * kdom/bindings/idl/css/CSSStyleRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSStyleSheet.idl: Removed.
+        * kdom/bindings/idl/css/CSSUnknownRule.idl: Removed.
+        * kdom/bindings/idl/css/CSSValue.idl: Removed.
+        * kdom/bindings/idl/css/CSSValueList.idl: Removed.
+        * kdom/bindings/idl/css/Counter.idl: Removed.
+        * kdom/bindings/idl/css/DocumentCSS.idl: Removed.
+        * kdom/bindings/idl/css/ElementCSSInlineStyle.idl: Removed.
+        * kdom/bindings/idl/css/RGBColor.idl: Removed.
+        * kdom/bindings/idl/css/Rect.idl: Removed.
+        * kdom/bindings/idl/css/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/events/DocumentEvent.idl: Removed.
+        * kdom/bindings/idl/events/Event.idl: Removed.
+        * kdom/bindings/idl/events/EventException.idl: Removed.
+        * kdom/bindings/idl/events/EventListener.idl: Removed.
+        * kdom/bindings/idl/events/EventTarget.idl: Removed.
+        * kdom/bindings/idl/events/MouseEvent.idl: Removed.
+        * kdom/bindings/idl/events/MutationEvent.idl: Removed.
+        * kdom/bindings/idl/events/UIEvent.idl: Removed.
+        * kdom/bindings/idl/events/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/ls/DOMImplementationLS.idl: Removed.
+        * kdom/bindings/idl/ls/LSException.idl: Removed.
+        * kdom/bindings/idl/ls/LSInput.idl: Removed.
+        * kdom/bindings/idl/ls/LSOutput.idl: Removed.
+        * kdom/bindings/idl/ls/LSParser.idl: Removed.
+        * kdom/bindings/idl/ls/LSParserFilter.idl: Removed.
+        * kdom/bindings/idl/ls/LSResourceResolver.idl: Removed.
+        * kdom/bindings/idl/ls/LSSerializer.idl: Removed.
+        * kdom/bindings/idl/ls/LSSerializerFilter.idl: Removed.
+        * kdom/bindings/idl/ls/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/range/DocumentRange.idl: Removed.
+        * kdom/bindings/idl/range/Range.idl: Removed.
+        * kdom/bindings/idl/range/RangeException.idl: Removed.
+        * kdom/bindings/idl/range/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/stylesheets/DocumentStyle.idl: Removed.
+        * kdom/bindings/idl/stylesheets/LinkStyle.idl: Removed.
+        * kdom/bindings/idl/stylesheets/MediaList.idl: Removed.
+        * kdom/bindings/idl/stylesheets/StyleSheet.idl: Removed.
+        * kdom/bindings/idl/stylesheets/StyleSheetList.idl: Removed.
+        * kdom/bindings/idl/stylesheets/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/traversal/DocumentTraversal.idl: Removed.
+        * kdom/bindings/idl/traversal/NodeFilter.idl: Removed.
+        * kdom/bindings/idl/traversal/NodeIterator.idl: Removed.
+        * kdom/bindings/idl/traversal/TreeWalker.idl: Removed.
+        * kdom/bindings/idl/traversal/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/views/AbstractView.idl: Removed.
+        * kdom/bindings/idl/views/DocumentView.idl: Removed.
+        * kdom/bindings/idl/views/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathEvaluator.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathException.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathExpression.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathNSResolver.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathNamespace.idl: Removed.
+        * kdom/bindings/idl/xpath/XPathResult.idl: Removed.
+        * kdom/bindings/idl/xpath/kdomdefs.idl: Removed.
+        * kdom/bindings/idl/xpointer/XPointerEvaluator.idl: Removed.
+        * kdom/bindings/idl/xpointer/XPointerException.idl: Removed.
+        * kdom/bindings/idl/xpointer/XPointerExpression.idl: Removed.
+        * kdom/bindings/idl/xpointer/XPointerResult.idl: Removed.
+        * kdom/bindings/idl/xpointer/kdomdefs.idl: Removed.
+        * kdom/bindings/kdombinder.sh: Removed.
+        * kdom/bindings/kdomidl.pl: Removed.
+        * kdom/ls/DOMImplementationLSImpl.cpp: Removed.
+        * kdom/ls/DOMImplementationLSImpl.h: Removed.
+        * kdom/ls/LSExceptionImpl.cpp: Removed.
+        * kdom/ls/LSExceptionImpl.h: Removed.
+        * kdom/ls/LSInputImpl.cpp: Removed.
+        * kdom/ls/LSInputImpl.h: Removed.
+        * kdom/ls/LSOutputImpl.cpp: Removed.
+        * kdom/ls/LSOutputImpl.h: Removed.
+        * kdom/ls/LSParserFilterImpl.cpp: Removed.
+        * kdom/ls/LSParserFilterImpl.h: Removed.
+        * kdom/ls/LSParserImpl.cpp: Removed.
+        * kdom/ls/LSParserImpl.h: Removed.
+        * kdom/ls/LSResourceResolverImpl.cpp: Removed.
+        * kdom/ls/LSResourceResolverImpl.h: Removed.
+        * kdom/ls/LSSerializerFilterImpl.cpp: Removed.
+        * kdom/ls/LSSerializerFilterImpl.h: Removed.
+        * kdom/ls/LSSerializerImpl.cpp: Removed.
+        * kdom/ls/LSSerializerImpl.h: Removed.
+        * kdom/ls/kdomls.h: Removed.
+        * kdom/scripts/cssmakeprops: Removed.
+        * kdom/scripts/cssmakevalues: Removed.
+        * ksvg2/KSVGFactory.cpp: Removed.
+        * ksvg2/KSVGFactory.h: Removed.
+        * ksvg2/css/KSVGCSSParser.cpp:
+        (DOM::CSSParser::parseSVGValue):
+        (DOM::CSSParser::parseSVGStrokeDasharray):
+        (DOM::CSSParser::parseSVGPaint):
+        (DOM::CSSParser::parseSVGColor):
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.cpp: Removed.
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.h: Removed.
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGCSSStyleSheetImpl.cpp: Removed.
+        * ksvg2/css/SVGCSSStyleSheetImpl.h: Removed.
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::SVGRenderStyle):
+        (SVGRenderStyle::equals):
+        (SVGRenderStyle::inheritFrom):
+        * ksvg2/css/SVGRenderStyle.h:
+        (KSVG::SVGRenderStyle::SVGRenderStyle):
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleMiscData::StyleMiscData):
+        (StyleMiscData::operator==):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/ecma/Ecma.cpp:
+        (Ecma::inheritedGetDOMNode):
+        * ksvg2/ecma/GlobalObject.cpp:
+        * ksvg2/events/SVGZoomEventImpl.cpp:
+        (SVGZoomEventImpl::SVGZoomEventImpl):
+        * ksvg2/events/SVGZoomEventImpl.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::KCanvasRenderingStyle):
+        (KCanvasRenderingStyle::updateFill):
+        (KCanvasRenderingStyle::updateStroke):
+        (KCanvasRenderingStyle::updateStyle):
+        (KCanvasRenderingStyle::cssPrimitiveToLength):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        (KSVG::KCanvasRenderingStyle::renderStyle):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::notifyAll):
+        (KSVG::TimeScheduler::TimeScheduler):
+        * ksvg2/misc/KSVGTimeScheduler.h:
+        (KSVG::TimeScheduler::document):
+        * ksvg2/scripts/cssmakeprops: Added.
+        * ksvg2/scripts/cssmakevalues: Added.
+        * ksvg2/scripts/make_names.pl: Added.
+        * ksvg2/svg/CDFInterface.cpp: Removed.
+        * ksvg2/svg/CDFInterface.h: Removed.
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::SVGAElementImpl):
+        (SVGAElementImpl::parseMappedAttribute):
+        (SVGAElementImpl::createRenderer):
+        (SVGAElementImpl::defaultEventHandler):
+        * ksvg2/svg/SVGAElementImpl.h:
+        (KSVG::SVGAElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGAngleImpl.cpp:
+        (SVGAngleImpl::setValueAsString):
+        (SVGAngleImpl::valueAsString):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::SVGAnimateColorElementImpl):
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateColorElementImpl.h:
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::SVGAnimateElementImpl):
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElementImpl.h:
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::SVGAnimateTransformElementImpl):
+        (SVGAnimateTransformElementImpl::~SVGAnimateTransformElementImpl):
+        (SVGAnimateTransformElementImpl::parseMappedAttribute):
+        (SVGAnimateTransformElementImpl::handleTimerEvent):
+        (SVGAnimateTransformElementImpl::initialMatrix):
+        (SVGAnimateTransformElementImpl::transformMatrix):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.h:
+        * ksvg2/svg/SVGAnimatedLengthListImpl.cpp:
+        * ksvg2/svg/SVGAnimatedLengthListImpl.h:
+        * ksvg2/svg/SVGAnimatedNumberListImpl.cpp:
+        * ksvg2/svg/SVGAnimatedNumberListImpl.h:
+        * ksvg2/svg/SVGAnimatedStringImpl.cpp:
+        (SVGAnimatedStringImpl::create):
+        * ksvg2/svg/SVGAnimatedStringImpl.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        (KSVG::SVGAnimatedTemplate::setBaseVal):
+        (KSVG::SVGAnimatedTemplate::setAnimVal):
+        * ksvg2/svg/SVGAnimatedTransformListImpl.cpp:
+        * ksvg2/svg/SVGAnimatedTransformListImpl.h:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::SVGAnimationElementImpl):
+        (SVGAnimationElementImpl::targetElement):
+        (SVGAnimationElementImpl::parseMappedAttribute):
+        (SVGAnimationElementImpl::closeRenderer):
+        (SVGAnimationElementImpl::targetAttribute):
+        (SVGAnimationElementImpl::setTargetAttribute):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        (KSVG::SVGAnimationElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGCircleElementImpl.cpp:
+        (SVGCircleElementImpl::SVGCircleElementImpl):
+        (SVGCircleElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGCircleElementImpl.h:
+        (KSVG::SVGCircleElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::SVGClipPathElementImpl):
+        (SVGClipPathElementImpl::parseMappedAttribute):
+        (SVGClipPathElementImpl::canvasResource):
+        * ksvg2/svg/SVGClipPathElementImpl.h:
+        * ksvg2/svg/SVGColorImpl.cpp:
+        (SVGColorImpl::rgbColor):
+        (SVGColorImpl::setRGBColor):
+        (SVGColorImpl::cssText):
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        (SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl):
+        (SVGComponentTransferFunctionElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.h:
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        (SVGCursorElementImpl::SVGCursorElementImpl):
+        (SVGCursorElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        (SVGDOMImplementationImpl::~SVGDOMImplementationImpl):
+        (SVGDOMImplementationImpl::hasFeature):
+        (SVGDOMImplementationImpl::createDocumentType):
+        (SVGDOMImplementationImpl::createDocument):
+        (SVGDOMImplementationImpl::createCSSStyleSheet):
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDefsElementImpl.cpp:
+        (SVGDefsElementImpl::SVGDefsElementImpl):
+        * ksvg2/svg/SVGDefsElementImpl.h:
+        * ksvg2/svg/SVGDescElementImpl.cpp:
+        (SVGDescElementImpl::SVGDescElementImpl):
+        (SVGDescElementImpl::description):
+        * ksvg2/svg/SVGDescElementImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::SVGDocumentImpl):
+        (SVGDocumentImpl::~SVGDocumentImpl):
+        (SVGDocumentImpl::title):
+        (SVGDocumentImpl::createElement):
+        (SVGDocumentImpl::rootElement):
+        (SVGDocumentImpl::notifyFinished):
+        (SVGDocumentImpl::dispatchRecursiveEvent):
+        (SVGDocumentImpl::dispatchZoomEvent):
+        (SVGDocumentImpl::dispatchScrollEvent):
+        (SVGDocumentImpl::dispatchKeyEvent):
+        (SVGDocumentImpl::createStyleSelector):
+        (SVGDocumentImpl::addScripts):
+        (SVGDocumentImpl::executeScripts):
+        (SVGDocumentImpl::dispatchUIEvent):
+        (SVGDocumentImpl::dispatchMouseEvent):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementFactory.cpp: Removed.
+        * ksvg2/svg/SVGElementFactory.h: Removed.
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::SVGElementImpl):
+        (SVGElementImpl::isSupported):
+        (SVGElementImpl::ownerSVGElement):
+        (SVGElementImpl::viewportElement):
+        (SVGElementImpl::tryGetAttribute):
+        (SVGElementImpl::tryGetAttributeNS):
+        (SVGElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGElementImpl.h:
+        (KSVG::SVGElementImpl::isSVGElement):
+        (KSVG::SVGElementImpl::adjustViewportClipping):
+        (KSVG::SVGElementImpl::isStyledTransformable):
+        (KSVG::SVGElementImpl::isStyledLocatable):
+        (KSVG::SVGElementImpl::isFilterEffect):
+        (KSVG::SVGElementImpl::isGradientStop):
+        (KSVG::SVGElementImpl::isValid):
+        (KSVG::SVGElementImpl::closeRenderer):
+        (KSVG::SVGElementImpl::rendererIsNeeded):
+        (KSVG::SVGElementImpl::isClosed):
+        * ksvg2/svg/SVGEllipseElementImpl.cpp:
+        (KSVG::SVGEllipseElementImpl::SVGEllipseElementImpl):
+        (KSVG::SVGEllipseElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGEllipseElementImpl.h:
+        (KSVG::SVGEllipseElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.cpp:
+        (SVGExternalResourcesRequiredImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.h:
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::SVGFEBlendElementImpl):
+        (SVGFEBlendElementImpl::parseMappedAttribute):
+        (SVGFEBlendElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEBlendElementImpl.h:
+        (KSVG::SVGFEBlendElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl):
+        (SVGFEColorMatrixElementImpl::parseMappedAttribute):
+        (SVGFEColorMatrixElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.h:
+        (KSVG::SVGFEColorMatrixElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl):
+        (SVGFEComponentTransferElementImpl::parseMappedAttribute):
+        (SVGFEComponentTransferElementImpl::createRenderer):
+        (SVGFEComponentTransferElementImpl::closeRenderer):
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.h:
+        (KSVG::SVGFEComponentTransferElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::SVGFECompositeElementImpl):
+        (SVGFECompositeElementImpl::parseMappedAttribute):
+        (SVGFECompositeElementImpl::createRenderer):
+        * ksvg2/svg/SVGFECompositeElementImpl.h:
+        (KSVG::SVGFECompositeElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::SVGFEFloodElementImpl):
+        (SVGFEFloodElementImpl::parseMappedAttribute):
+        (SVGFEFloodElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEFloodElementImpl.h:
+        (KSVG::SVGFEFloodElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEFuncAElementImpl.cpp:
+        (SVGFEFuncAElementImpl::SVGFEFuncAElementImpl):
+        * ksvg2/svg/SVGFEFuncAElementImpl.h:
+        * ksvg2/svg/SVGFEFuncBElementImpl.cpp:
+        (SVGFEFuncBElementImpl::SVGFEFuncBElementImpl):
+        * ksvg2/svg/SVGFEFuncBElementImpl.h:
+        * ksvg2/svg/SVGFEFuncGElementImpl.cpp:
+        (SVGFEFuncGElementImpl::SVGFEFuncGElementImpl):
+        * ksvg2/svg/SVGFEFuncGElementImpl.h:
+        * ksvg2/svg/SVGFEFuncRElementImpl.cpp:
+        (SVGFEFuncRElementImpl::SVGFEFuncRElementImpl):
+        * ksvg2/svg/SVGFEFuncRElementImpl.h:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl):
+        (SVGFEGaussianBlurElementImpl::parseMappedAttribute):
+        (SVGFEGaussianBlurElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.h:
+        (KSVG::SVGFEGaussianBlurElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::SVGFEImageElementImpl):
+        (SVGFEImageElementImpl::parseMappedAttribute):
+        (SVGFEImageElementImpl::finalizeStyle):
+        (SVGFEImageElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEImageElementImpl.h:
+        (KSVG::SVGFEImageElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        (SVGFEMergeElementImpl::SVGFEMergeElementImpl):
+        (SVGFEMergeElementImpl::createRenderer):
+        (SVGFEMergeElementImpl::closeRenderer):
+        * ksvg2/svg/SVGFEMergeElementImpl.h:
+        (KSVG::SVGFEMergeElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.cpp:
+        (SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl):
+        (SVGFEMergeNodeElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.h:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::SVGFEOffsetElementImpl):
+        (SVGFEOffsetElementImpl::parseMappedAttribute):
+        (SVGFEOffsetElementImpl::createRenderer):
+        * ksvg2/svg/SVGFEOffsetElementImpl.h:
+        (KSVG::SVGFEOffsetElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::SVGFETileElementImpl):
+        (SVGFETileElementImpl::parseMappedAttribute):
+        (SVGFETileElementImpl::createRenderer):
+        * ksvg2/svg/SVGFETileElementImpl.h:
+        (KSVG::SVGFETileElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl):
+        (SVGFETurbulenceElementImpl::parseMappedAttribute):
+        (SVGFETurbulenceElementImpl::createRenderer):
+        * ksvg2/svg/SVGFETurbulenceElementImpl.h:
+        (KSVG::SVGFETurbulenceElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::SVGFilterElementImpl):
+        (SVGFilterElementImpl::x):
+        (SVGFilterElementImpl::y):
+        (SVGFilterElementImpl::width):
+        (SVGFilterElementImpl::height):
+        (SVGFilterElementImpl::parseMappedAttribute):
+        (SVGFilterElementImpl::canvasResource):
+        * ksvg2/svg/SVGFilterElementImpl.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl):
+        (SVGFilterPrimitiveStandardAttributesImpl::width):
+        (SVGFilterPrimitiveStandardAttributesImpl::height):
+        (SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute):
+        (SVGFilterPrimitiveStandardAttributesImpl::setStandardAttributes):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.h:
+        (KSVG::SVGFilterPrimitiveStandardAttributesImpl::isFilterEffect):
+        * ksvg2/svg/SVGFitToViewBoxImpl.cpp:
+        (SVGFitToViewBoxImpl::SVGFitToViewBoxImpl):
+        (SVGFitToViewBoxImpl::~SVGFitToViewBoxImpl):
+        (SVGFitToViewBoxImpl::viewBox):
+        (SVGFitToViewBoxImpl::preserveAspectRatio):
+        (SVGFitToViewBoxImpl::parseViewBox):
+        (SVGFitToViewBoxImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBoxImpl.h:
+        * ksvg2/svg/SVGGElementImpl.cpp:
+        (SVGGElementImpl::SVGGElementImpl):
+        (SVGGElementImpl::parseMappedAttribute):
+        (SVGGElementImpl::setChanged):
+        (SVGGElementImpl::createRenderer):
+        (SVGDummyElementImpl::SVGDummyElementImpl):
+        (SVGDummyElementImpl::localName):
+        * ksvg2/svg/SVGGElementImpl.h:
+        (KSVG::SVGGElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::SVGGradientElementImpl):
+        (SVGGradientElementImpl::parseMappedAttribute):
+        (SVGGradientElementImpl::notifyAttributeChange):
+        (SVGGradientElementImpl::canvasResource):
+        (SVGGradientElementImpl::resourceNotification):
+        (SVGGradientElementImpl::rebuildStops):
+        * ksvg2/svg/SVGGradientElementImpl.h:
+        * ksvg2/svg/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::SVGImageElementImpl):
+        (SVGImageElementImpl::parseMappedAttribute):
+        (SVGImageElementImpl::createRenderer):
+        (SVGImageElementImpl::notifyFinished):
+        (SVGImageElementImpl::finalizeStyle):
+        * ksvg2/svg/SVGImageElementImpl.h:
+        (KSVG::SVGImageElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGLangSpaceImpl.cpp:
+        (SVGLangSpaceImpl::SVGLangSpaceImpl):
+        (SVGLangSpaceImpl::~SVGLangSpaceImpl):
+        (SVGLangSpaceImpl::xmllang):
+        (SVGLangSpaceImpl::setXmllang):
+        (SVGLangSpaceImpl::xmlspace):
+        (SVGLangSpaceImpl::setXmlspace):
+        (SVGLangSpaceImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGLangSpaceImpl.h:
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::value):
+        (SVGLengthImpl::setValueAsString):
+        (SVGLengthImpl::updateValue):
+        * ksvg2/svg/SVGLengthImpl.h:
+        * ksvg2/svg/SVGLengthListImpl.cpp:
+        (SVGLengthListImpl::parse):
+        * ksvg2/svg/SVGLineElementImpl.cpp:
+        (SVGLineElementImpl::SVGLineElementImpl):
+        (SVGLineElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGLineElementImpl.h:
+        (KSVG::SVGLineElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::SVGLinearGradientElementImpl):
+        (SVGLinearGradientElementImpl::parseMappedAttribute):
+        (SVGLinearGradientElementImpl::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElementImpl.h:
+        (KSVG::SVGLinearGradientElementImpl::gradientType):
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::nearestViewportElement):
+        (SVGLocatableImpl::farthestViewportElement):
+        (SVGLocatableImpl::getBBox):
+        (SVGLocatableImpl::getCTM):
+        (SVGLocatableImpl::getScreenCTM):
+        * ksvg2/svg/SVGLocatableImpl.h:
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::SVGMarkerElementImpl):
+        (SVGMarkerElementImpl::parseMappedAttribute):
+        (SVGMarkerElementImpl::canvasResource):
+        (SVGMarkerElementImpl::createRenderer):
+        * ksvg2/svg/SVGMarkerElementImpl.h:
+        (KSVG::SVGMarkerElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGNames.cpp: Removed.
+        * ksvg2/svg/SVGNames.h: Removed.
+        * ksvg2/svg/SVGPaintImpl.cpp:
+        (SVGPaintImpl::setUri):
+        (SVGPaintImpl::cssText):
+        * ksvg2/svg/SVGPaintImpl.h:
+        * ksvg2/svg/SVGPathElementImpl.cpp:
+        (KSVG::SVGPathElementImpl::SVGPathElementImpl):
+        (KSVG::SVGPathElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGPathElementImpl.h:
+        (KSVG::SVGPathElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::SVGPatternElementImpl):
+        (SVGPatternElementImpl::~SVGPatternElementImpl):
+        (SVGPatternElementImpl::parseMappedAttribute):
+        (SVGPatternElementImpl::notifyAttributeChange):
+        (SVGPatternElementImpl::createRenderer):
+        (SVGPatternElementImpl::canvasResource):
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        (KSVG::SVGPatternElementImpl::allowAttachChildren):
+        (KSVG::SVGPatternElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        (SVGPolyElementImpl::SVGPolyElementImpl):
+        (SVGPolyElementImpl::parseMappedAttribute):
+        (SVGPolyElementImpl::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElementImpl.h:
+        (KSVG::SVGPolyElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGPolygonElementImpl.cpp:
+        (SVGPolygonElementImpl::SVGPolygonElementImpl):
+        * ksvg2/svg/SVGPolygonElementImpl.h:
+        * ksvg2/svg/SVGPolylineElementImpl.cpp:
+        (SVGPolylineElementImpl::SVGPolylineElementImpl):
+        * ksvg2/svg/SVGPolylineElementImpl.h:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        (SVGPreserveAspectRatioImpl::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::SVGRadialGradientElementImpl):
+        (SVGRadialGradientElementImpl::parseMappedAttribute):
+        (SVGRadialGradientElementImpl::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElementImpl.h:
+        (KSVG::SVGRadialGradientElementImpl::gradientType):
+        * ksvg2/svg/SVGRectElementImpl.cpp:
+        (SVGRectElementImpl::SVGRectElementImpl):
+        (SVGRectElementImpl::parseMappedAttribute):
+        (SVGRectElementImpl::toPathData):
+        * ksvg2/svg/SVGRectElementImpl.h:
+        (KSVG::SVGRectElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::SVGSVGElementImpl):
+        (SVGSVGElementImpl::~SVGSVGElementImpl):
+        (SVGSVGElementImpl::width):
+        (SVGSVGElementImpl::height):
+        (SVGSVGElementImpl::contentScriptType):
+        (SVGSVGElementImpl::setContentScriptType):
+        (SVGSVGElementImpl::contentStyleType):
+        (SVGSVGElementImpl::setContentStyleType):
+        (SVGSVGElementImpl::currentScale):
+        (SVGSVGElementImpl::setCurrentScale):
+        (SVGSVGElementImpl::currentTranslate):
+        (SVGSVGElementImpl::parseMappedAttribute):
+        (SVGSVGElementImpl::pauseAnimations):
+        (SVGSVGElementImpl::unpauseAnimations):
+        (SVGSVGElementImpl::animationsPaused):
+        (SVGSVGElementImpl::getCurrentTime):
+        (SVGSVGElementImpl::checkIntersection):
+        (SVGSVGElementImpl::checkEnclosure):
+        (SVGSVGElementImpl::getCTM):
+        (SVGSVGElementImpl::getScreenCTM):
+        (SVGSVGElementImpl::createRenderer):
+        (SVGSVGElementImpl::setZoomAndPan):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        (KSVG::SVGSVGElementImpl::rendererIsNeeded):
+        (KSVG::SVGSVGElementImpl::timeScheduler):
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::SVGScriptElementImpl):
+        (SVGScriptElementImpl::parseMappedAttribute):
+        (SVGScriptElementImpl::executeScript):
+        * ksvg2/svg/SVGScriptElementImpl.h:
+        * ksvg2/svg/SVGSetElementImpl.cpp:
+        (SVGSetElementImpl::SVGSetElementImpl):
+        (SVGSetElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGSetElementImpl.h:
+        * ksvg2/svg/SVGStopElementImpl.cpp:
+        (SVGStopElementImpl::SVGStopElementImpl):
+        (SVGStopElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElementImpl.h:
+        (KSVG::SVGStopElementImpl::isGradientStop):
+        * ksvg2/svg/SVGStylableImpl.h:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        (SVGStyleElementImpl::SVGStyleElementImpl):
+        (SVGStyleElementImpl::~SVGStyleElementImpl):
+        (SVGStyleElementImpl::xmlspace):
+        (SVGStyleElementImpl::setXmlspace):
+        (SVGStyleElementImpl::type):
+        (SVGStyleElementImpl::setType):
+        (SVGStyleElementImpl::media):
+        (SVGStyleElementImpl::setMedia):
+        (SVGStyleElementImpl::title):
+        (SVGStyleElementImpl::setTitle):
+        (SVGStyleElementImpl::sheet):
+        (SVGStyleElementImpl::childrenChanged):
+        * ksvg2/svg/SVGStyleElementImpl.h:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::SVGStyledElementImpl):
+        (SVGStyledElementImpl::~SVGStyledElementImpl):
+        (SVGStyledElementImpl::createRenderer):
+        (SVGStyledElementImpl::parseMappedAttribute):
+        (SVGStyledElementImpl::finalizeStyle):
+        (SVGStyledElementImpl::attach):
+        (SVGStyledElementImpl::canvas):
+        (SVGStyledElementImpl::updateCanvasItem):
+        (SVGStyledElementImpl::pushAttributeContext):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        (KSVG::SVGStyledElementImpl::rendererIsNeeded):
+        (KSVG::SVGStyledElementImpl::canvasResource):
+        * ksvg2/svg/SVGStyledLocatableElementImpl.cpp: Added.
+        (SVGStyledLocatableElementImpl::SVGStyledLocatableElementImpl):
+        (SVGStyledLocatableElementImpl::~SVGStyledLocatableElementImpl):
+        (SVGStyledLocatableElementImpl::nearestViewportElement):
+        (SVGStyledLocatableElementImpl::farthestViewportElement):
+        (SVGStyledLocatableElementImpl::getBBox):
+        (SVGStyledLocatableElementImpl::getCTM):
+        (SVGStyledLocatableElementImpl::getScreenCTM):
+        (SVGStyledLocatableElementImpl::getTransformToElement):
+        * ksvg2/svg/SVGStyledLocatableElementImpl.h: Added.
+        (KSVG::SVGStyledLocatableElementImpl::isStyledLocatable):
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp: Added.
+        (SVGStyledTransformableElementImpl::SVGStyledTransformableElementImpl):
+        (SVGStyledTransformableElementImpl::~SVGStyledTransformableElementImpl):
+        (SVGStyledTransformableElementImpl::transform):
+        (SVGStyledTransformableElementImpl::localMatrix):
+        (SVGStyledTransformableElementImpl::getCTM):
+        (SVGStyledTransformableElementImpl::getScreenCTM):
+        (SVGStyledTransformableElementImpl::updateLocalTransform):
+        (SVGStyledTransformableElementImpl::parseMappedAttribute):
+        (SVGStyledTransformableElementImpl::nearestViewportElement):
+        (SVGStyledTransformableElementImpl::farthestViewportElement):
+        (SVGStyledTransformableElementImpl::getBBox):
+        (SVGStyledTransformableElementImpl::getTransformToElement):
+        (SVGStyledTransformableElementImpl::attach):
+        * ksvg2/svg/SVGStyledTransformableElementImpl.h: Added.
+        (KSVG::SVGStyledTransformableElementImpl::isStyledTransformable):
+        * ksvg2/svg/SVGSwitchElementImpl.cpp:
+        (SVGSwitchElementImpl::SVGSwitchElementImpl):
+        (SVGSwitchElementImpl::allowAttachChildren):
+        (SVGSwitchElementImpl::createRenderer):
+        * ksvg2/svg/SVGSwitchElementImpl.h:
+        (KSVG::SVGSwitchElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGSymbolElementImpl.cpp:
+        (SVGSymbolElementImpl::SVGSymbolElementImpl):
+        (SVGSymbolElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGSymbolElementImpl.h:
+        * ksvg2/svg/SVGTSpanElementImpl.cpp:
+        (SVGTSpanElementImpl::SVGTSpanElementImpl):
+        * ksvg2/svg/SVGTSpanElementImpl.h:
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        (SVGTestsImpl::isValid):
+        (SVGTestsImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGTestsImpl.h:
+        * ksvg2/svg/SVGTextContentElementImpl.cpp:
+        (SVGTextContentElementImpl::SVGTextContentElementImpl):
+        (SVGTextContentElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElementImpl.h:
+        * ksvg2/svg/SVGTextElementImpl.cpp:
+        (SVGTextElementImpl::SVGTextElementImpl):
+        (SVGTextElementImpl::parseMappedAttribute):
+        (SVGTextElementImpl::nearestViewportElement):
+        (SVGTextElementImpl::farthestViewportElement):
+        (SVGTextElementImpl::getBBox):
+        (SVGTextElementImpl::getScreenCTM):
+        (SVGTextElementImpl::getCTM):
+        * ksvg2/svg/SVGTextElementImpl.h:
+        (KSVG::SVGTextElementImpl::getTransformToElement):
+        (KSVG::SVGTextElementImpl::transform):
+        (KSVG::SVGTextElementImpl::localMatrix):
+        (KSVG::SVGTextElementImpl::updateLocalTransform):
+        * ksvg2/svg/SVGTextPositioningElementImpl.cpp:
+        (SVGTextPositioningElementImpl::SVGTextPositioningElementImpl):
+        (SVGTextPositioningElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElementImpl.h:
+        * ksvg2/svg/SVGTitleElementImpl.cpp:
+        (SVGTitleElementImpl::SVGTitleElementImpl):
+        (SVGTitleElementImpl::title):
+        * ksvg2/svg/SVGTitleElementImpl.h:
+        * ksvg2/svg/SVGTransformImpl.cpp:
+        (SVGTransformImpl::setMatrix):
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::SVGTransformableImpl):
+        (SVGTransformableImpl::~SVGTransformableImpl):
+        (SVGTransformableImpl::parseTransformAttribute):
+        * ksvg2/svg/SVGTransformableImpl.h:
+        * ksvg2/svg/SVGURIReferenceImpl.cpp:
+        (SVGURIReferenceImpl::href):
+        (SVGURIReferenceImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGURIReferenceImpl.h:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::SVGUseElementImpl):
+        (SVGUseElementImpl::parseMappedAttribute):
+        (SVGUseElementImpl::closeRenderer):
+        (SVGUseElementImpl::createRenderer):
+        * ksvg2/svg/SVGUseElementImpl.h:
+        (KSVG::SVGUseElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGViewElementImpl.cpp:
+        (SVGViewElementImpl::SVGViewElementImpl):
+        (SVGViewElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGViewElementImpl.h:
+        * ksvg2/svg/SVGZoomAndPanImpl.cpp:
+        (SVGZoomAndPanImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPanImpl.h:
+
+2005-11-20  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         The first part of the big KDOM-DOM merger.

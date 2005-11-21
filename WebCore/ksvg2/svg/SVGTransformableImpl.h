@@ -46,24 +46,12 @@ namespace KSVG
         virtual ~SVGTransformableImpl();
 
         // 'SVGTransformable' functions
-        SVGAnimatedTransformListImpl *transform() const;
-        SVGMatrixImpl *localMatrix() const;
-
-        // Derived from: 'SVGLocatable'
-        virtual SVGMatrixImpl *getCTM() const;
-        virtual SVGMatrixImpl *getScreenCTM() const;
-
-        // Special parseAttribute function, returning a bool,
-        // whether it could handle the passed attribute or not.
-        bool parseAttribute(KDOM::AttributeImpl *attr);
+        virtual SVGAnimatedTransformListImpl *transform() const = 0;
+        virtual SVGMatrixImpl *localMatrix() const = 0;
+        
+        virtual void updateLocalTransform(SVGTransformListImpl *localTransforms) = 0;
+        
         static void parseTransformAttribute(SVGTransformListImpl *list, KDOM::DOMStringImpl *transform);
-
-        void updateSubtreeMatrices(KDOM::NodeImpl *node);
-        void updateLocalTransform(SVGTransformListImpl *localTransforms);
-
-    protected:
-        mutable SVGMatrixImpl *m_localMatrix;
-        mutable SVGAnimatedTransformListImpl *m_transform;
     };
 };
 

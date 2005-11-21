@@ -25,84 +25,69 @@
 #include <qrect.h>
 #include <kdebug.h>
 
-#include "KCanvas.h"
-#include "KCanvasItem.h"
+#include "kcanvas/KCanvas.h"
+#include "kcanvas/RenderPath.h"
 #include "KCanvasMatrix.h"
-#include "KCanvasRegistry.h"
 #include "KRenderingDevice.h"
 #include "KCanvasContainer.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
 
-class KCanvasItem::Private
+#include "KCanvasRenderingStyle.h"
+#include "SVGRenderStyle.h"
+
+class RenderPath::Private
 {
 public:
     Private()
     {
         path = 0;
         style = 0;
-        canvas = 0;
-        parent = 0;
-        prev = 0;
-        next = 0;
-        userData = 0;
-
-        // Set to invalid. '0' is reserved
-        // for the root container.
-        zIndex = -1;
     }
 
     ~Private()
     {
-        if(path && canvas && canvas->renderingDevice())
-            canvas->renderingDevice()->deletePath(path);
-
         delete style;
     }
 
-    KCanvas *canvas;    
-    KRenderingStyle *style;
-
-    int zIndex;
-    KCanvasUserData path, userData;
+    KSVG::KCanvasRenderingStyle *style;
+    KCanvasUserData path;
 
     QRect fillBBox, strokeBbox;
-
-    KCanvasContainer *parent;
-    KCanvasItem *prev;
-    KCanvasItem *next;
+    QMatrix matrix;
 };        
 
-// KCanvasItem
-KCanvasItem::KCanvasItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) : d(new Private())
+// RenderPath
+RenderPath::RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderObject((DOM::NodeImpl *)node), d(new Private())
 {
     Q_ASSERT(style != 0);
-    Q_ASSERT(canvas != 0);
-    
-    d->path = path;
-    d->style = style;
-    d->canvas = canvas;
+    d->style = new KSVG::KCanvasRenderingStyle(canvas(), style);
 }
 
-KCanvasItem::~KCanvasItem()
+RenderPath::~RenderPath()
 {
+    if(d->path && canvas() && canvas()->renderingDevice())
+        canvas()->renderingDevice()->deletePath(d->path);
     delete d;
 }
 
-int KCanvasItem::zIndex() const
+void RenderPath::setStyle(khtml::RenderStyle *style)
 {
-    return d->zIndex;
+    d->style->updateStyle(style, this);
+    khtml::RenderObject::setStyle(style);
 }
 
-bool KCanvasItem::isVisible() const
+QMatrix RenderPath::localTransform() const
 {
-    if(!d->style || !d->style->visible())
-        return false;
-
-    return true;
+    return d->matrix;
 }
 
-bool KCanvasItem::fillContains(const QPoint &p) const
+void RenderPath::setLocalTransform(const QMatrix &matrix)
+{
+    d->matrix = matrix;
+}
+
+bool RenderPath::fillContains(const QPoint &p) const
 {
     if(d->path && d->style && canvas() && canvas()->renderingDevice())
         return hitsPath(p, true);
@@ -110,7 +95,7 @@ bool KCanvasItem::fillContains(const QPoint &p) const
     return false;
 }
 
-bool KCanvasItem::strokeContains(const QPoint &p) const
+bool RenderPath::strokeContains(const QPoint &p) const
 {
     if(d->path && d->style && canvas() && canvas()->renderingDevice())
         return hitsPath(p, false);
@@ -118,7 +103,7 @@ bool KCanvasItem::strokeContains(const QPoint &p) const
     return false;
 }
 
-QRect KCanvasItem::bbox(bool includeStroke) const
+QRect RenderPath::bbox(bool includeStroke) const
 {
     QRect result;
     
@@ -138,23 +123,20 @@ QRect KCanvasItem::bbox(bool includeStroke) const
     return result;
 }
 
-bool KCanvasItem::hitsPath(const QPoint &hitPoint, bool fill) const
+bool RenderPath::hitsPath(const QPoint &hitPoint, bool fill) const
 {
     return false;
 }
 
-QRect KCanvasItem::bboxPath(bool includeStroke, bool includeTransforms) const
+QRect RenderPath::bboxPath(bool includeStroke, bool includeTransforms) const
 {
     return QRect();
 }
 
-void KCanvasItem::draw(const QRect &rect) const
+void RenderPath::setupForDraw() const
 {
     if(d->path && d->style && canvas() && canvas()->renderingDevice())
     {
-        if(!d->style->visible())
-            return;
-
         if(d->style->fillPainter() && d->style->fillPainter()->paintServer())
             d->style->fillPainter()->paintServer()->setActiveClient(this);
 
@@ -163,100 +145,33 @@ void KCanvasItem::draw(const QRect &rect) const
     }
 }
 
-void KCanvasItem::changePath(KCanvasUserData newPath)
+void RenderPath::changePath(KCanvasUserData newPath)
 {
-    if(d->path && canvas() && canvas()->renderingDevice())
+    if(canvas() && canvas()->renderingDevice())
     {
         canvas()->renderingDevice()->setCurrentPath(newPath);
-        canvas()->renderingDevice()->deletePath(d->path);
+        if (d->path)
+            canvas()->renderingDevice()->deletePath(d->path);
 
         d->path = newPath;
     }
 }
 
-KCanvas *KCanvasItem::canvas() const
-{
-    return d->canvas;
-}
-
-KCanvasUserData KCanvasItem::path() const
+KCanvasUserData RenderPath::path() const
 {
     return d->path;
 }
 
-KRenderingStyle *KCanvasItem::style() const
+KSVG::KCanvasRenderingStyle *RenderPath::canvasStyle() const
 {
     return d->style;
 }
 
-void KCanvasItem::invalidate() const
-{
-    if(d->canvas)
-    {
-        d->canvas->invalidate(this);
-        d->fillBBox = QRect();
-                d->strokeBbox = QRect();
-    }
-}
-
-KCanvasUserData KCanvasItem::userData() const
-{
-    return d->userData;
-}
-
-void KCanvasItem::setUserData(KCanvasUserData userData)
-{
-    d->userData = userData;
-}
-
-bool KCanvasItem::raise()
-{
-    Q_ASSERT(d->parent);
-    return d->parent->raiseItem(this);
-}
-
-bool KCanvasItem::lower()
-{
-    Q_ASSERT(d->parent);
-    return d->parent->lowerItem(this);
-}
-
-KCanvasContainer *KCanvasItem::parent() const
-{
-    return d->parent;
-}
-
-void KCanvasItem::setParent(KCanvasContainer *parent)
-{
-    d->parent = parent;
-}
-
-KCanvasItem *KCanvasItem::prev() const
-{
-    return d->prev;
-}
-
-void KCanvasItem::setPrev(KCanvasItem *prev)
-{
-    d->prev = prev;
-}
-
-KCanvasItem *KCanvasItem::next() const
-{
-    return d->next;
-}
-
-void KCanvasItem::setNext(KCanvasItem *next)
-{
-    d->next = next;
-}
-
-const KCanvasCommonArgs KCanvasItem::commonArgs() const
+const KCanvasCommonArgs RenderPath::commonArgs() const
 {
     KCanvasCommonArgs args;
     args.setPath(path());
-    args.setStyle(style());
-    args.setCanvas(canvas());
+    args.setStyle(canvasStyle());
     return args;
 }
 

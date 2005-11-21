@@ -24,20 +24,18 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
-#include "SVGDocumentImpl.h"
 #include "SVGStopElementImpl.h"
 #include "SVGAnimatedNumberImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
 using namespace KSVG;
 
-SVGStopElementImpl::SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix)
+SVGStopElementImpl::SVGStopElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc)
 {
     m_offset = 0;
 }
@@ -53,70 +51,25 @@ SVGAnimatedNumberImpl *SVGStopElementImpl::offset() const
     return lazy_create<SVGAnimatedNumberImpl>(m_offset, this);
 }
 
-void SVGStopElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGStopElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::offsetAttr) {
+        if(value.qstring().endsWith(QString::fromLatin1("%")))
+            offset()->setBaseVal(value.qstring().left(value.length() - 1).toDouble() / 100.);
+        else
+            offset()->setBaseVal(value.qstring().toDouble());
+    } else
+        SVGStyledElementImpl::parseMappedAttribute(attr);
+
+    if(!ownerDocument()->parsing() && attached())
     {
-        case ATTR_OFFSET:
-        {
-            if(value.string().endsWith(QString::fromLatin1("%")))
-                offset()->setBaseVal(value.string().left(value.length() - 1).toDouble() / 100.);
-            else
-                offset()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        default:
-            SVGStyledElementImpl::parseAttribute(attr);
-    };
-
-    if(!ownerDocument()->parsing())
-    {
-        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-        KCanvas *canvas = (document ? document->canvas() : 0);
-        if(canvas)
-        {
-            recalcStyle(Force);
-            createCanvasItem(canvas, 0);
-            
-            SVGStyledElementImpl *parentStyled = static_cast<SVGStyledElementImpl *>(parentNode());
-            if(parentStyled)
-                parentStyled->notifyAttributeChange();
-        }
-    }
-}
-
-KCanvasItem *SVGStopElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
-{
-    if(renderStyle())
-    {
-        QString gradientId = KDOM::DOMString(static_cast<SVGElementImpl *>(parentNode())->getId()).string();
-        KRenderingPaintServer *paintServer = canvas->registry()->getPaintServerById(gradientId);
-        KRenderingPaintServerGradient *paintServerGradient  = static_cast<KRenderingPaintServerGradient *>(paintServer);
-
-        float _offset = offset()->baseVal();
-
-        QColor c = static_cast<SVGRenderStyle *>(renderStyle())->stopColor();
-        float opacity = static_cast<SVGRenderStyle *>(renderStyle())->stopOpacity();
-
-        KCSortedGradientStopList &stops = paintServerGradient->gradientStops();
-
-        if(!ownerDocument()->parsing())
-        {
-            KCSortedGradientStopList::Iterator it(stops);
-            for(; it.current(); ++it)
-            {
-                KCGradientOffsetPair *pair = it.current();
-                if(pair->offset == _offset)
-                    stops.remove(pair);
-            }
-        }
+        recalcStyle(Force);
         
-        stops.addStop(_offset, qRgba(c.red(), c.green(), c.blue(), int(opacity * 255.)));
+        SVGStyledElementImpl *parentStyled = static_cast<SVGStyledElementImpl *>(parentNode());
+        if(parentStyled)
+            parentStyled->notifyAttributeChange();
     }
-
-    return 0;
 }
 
 // vim:ts=4:noet

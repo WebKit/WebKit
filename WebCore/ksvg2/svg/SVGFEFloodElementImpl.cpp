@@ -26,11 +26,10 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEFloodElementImpl.h"
@@ -39,8 +38,8 @@
 
 using namespace KSVG;
 
-SVGFEFloodElementImpl::SVGFEFloodElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFEFloodElementImpl::SVGFEFloodElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_in1 = 0;
     m_filterEffect = 0;
@@ -58,31 +57,22 @@ SVGAnimatedStringImpl *SVGFEFloodElementImpl::in1() const
     return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
-void SVGFEFloodElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEFloodElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
-    {
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+    if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFEFloodElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFEFloodElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    m_filterEffect = static_cast<KCanvasFEFlood *>(canvas->renderingDevice()->createFilterEffect(FE_FLOOD));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    m_filterEffect = static_cast<KCanvasFEFlood *>(canvas()->renderingDevice()->createFilterEffect(FE_FLOOD));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setFloodColor(static_cast<SVGRenderStyle *>(renderStyle())->floodColor());
-    m_filterEffect->setFloodOpacity(static_cast<SVGRenderStyle *>(renderStyle())->floodOpacity());
+    //m_filterEffect->setFloodColor(static_cast<SVGRenderStyle *>(renderStyle())->floodColor());
+    //m_filterEffect->setFloodOpacity(static_cast<SVGRenderStyle *>(renderStyle())->floodOpacity());
     return 0;
 }
 

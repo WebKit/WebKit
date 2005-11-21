@@ -35,7 +35,7 @@ public:
     virtual ~KCanvasFilterQuartz();
     
     virtual void prepareFilter(KRenderingDeviceContext *context, const QRect &bbox);
-    virtual void applyFilter(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, const QRect &bbox);
+    virtual void applyFilter(KRenderingDeviceContext *context, KCanvasMatrix objectMatrix, const QRect &bbox);
     
     // quartz only.
     void prepareFilter(CGContextRef *context, const QRect &bbox);

@@ -47,11 +47,8 @@ namespace KSVG
                                  public SVGFitToViewBoxImpl
     {
     public:
-        SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGMarkerElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGMarkerElementImpl();
-
-        // Derived from: 'ElementImpl'
-        virtual void close();
 
         // 'SVGMarkerElement' functions
         SVGAnimatedLengthImpl *refX() const;
@@ -65,11 +62,11 @@ namespace KSVG
         void setOrientToAuto();
         void setOrientToAngle(SVGAngleImpl *angle);
 
-        virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
     
-        virtual bool implementsCanvasItem() const { return true; }
-
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual KCanvasMarker *canvasResource();
 
     private:
         mutable SVGAnimatedLengthImpl *m_refX;

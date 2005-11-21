@@ -41,27 +41,24 @@ typedef Q3PtrList<void> KCanvasUserDataList;
 #endif
 
 // aka "what to draw"
-class KCanvas;
-class KRenderingStyle;
+namespace KSVG {
+    class KCanvasRenderingStyle;
+}
 class KCanvasCommonArgs
 {
 public:
     KCanvasCommonArgs();
     ~KCanvasCommonArgs();
-    
-    KCanvas *canvas() const;
-    void setCanvas(KCanvas *canvas);
 
     KCanvasUserData path() const;
     void setPath(KCanvasUserData path);
 
-    KRenderingStyle *style() const;
-    void setStyle(KRenderingStyle *style);
+    KSVG::KCanvasRenderingStyle *canvasStyle() const;
+    void setStyle(KSVG::KCanvasRenderingStyle *style);
     
 private:
-    KCanvas *m_canvas;
     KCanvasUserData m_path;
-    KRenderingStyle *m_style;
+    KSVG::KCanvasRenderingStyle *m_style;
 };
 
 

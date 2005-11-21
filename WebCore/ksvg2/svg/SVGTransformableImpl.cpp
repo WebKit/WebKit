@@ -27,12 +27,11 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGMatrixImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGTransformableImpl.h"
 #include "SVGStyledElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
@@ -42,117 +41,10 @@ using namespace KSVG;
 
 SVGTransformableImpl::SVGTransformableImpl() : SVGLocatableImpl()
 {
-    m_transform = 0;
-    m_localMatrix = 0;
 }
 
 SVGTransformableImpl::~SVGTransformableImpl()
 {
-    if(m_transform)
-        m_transform->deref();
-    if(m_localMatrix)
-        m_localMatrix->deref();
-}
-
-SVGAnimatedTransformListImpl *SVGTransformableImpl::transform() const
-{
-    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-    return lazy_create<SVGAnimatedTransformListImpl>(m_transform, context);
-}
-
-SVGMatrixImpl *SVGTransformableImpl::localMatrix() const
-{
-    return lazy_create<SVGMatrixImpl>(m_localMatrix);
-}
-
-SVGMatrixImpl *SVGTransformableImpl::getCTM() const
-{
-    SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM();
-
-    if(m_localMatrix)
-        ctm->multiply(m_localMatrix);
-
-    return ctm;
-}
-
-SVGMatrixImpl *SVGTransformableImpl::getScreenCTM() const
-{
-    SVGMatrixImpl *ctm = SVGLocatableImpl::getScreenCTM();
-
-    if(m_localMatrix)
-        ctm->multiply(m_localMatrix);
-
-    return ctm;
-}
-
-void SVGTransformableImpl::updateLocalTransform(SVGTransformListImpl *localTransforms)
-{
-    // Update cached local matrix
-    SVGTransformImpl *localTransform = localTransforms->concatenate();
-    if(localTransform)
-    {
-        localTransform->ref();
-        
-        KDOM_SAFE_SET(m_localMatrix, localTransform->matrix());
-
-        localTransform->deref();
-    }
-}
-
-void SVGTransformableImpl::updateSubtreeMatrices(KDOM::NodeImpl *node)
-{
-    if(!node)
-        return;
-
-    // First update local matrix...
-    SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(node);
-    SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(node);
-
-    if(styled && transform && transform->localMatrix())
-    {
-        QMatrix useMatrix = transform->localMatrix()->qmatrix();
-    
-        KDOM::NodeImpl *parentElement = node->parentNode();
-        if(parentElement && parentElement->id() == ID_G)
-        {
-            SVGMatrixImpl *ctm = transform->getCTM();
-            ctm->ref();
-                
-            useMatrix *= ctm->qmatrix();
-
-            ctm->deref();
-        }
-
-        styled->updateCTM(useMatrix);
-    }
-
-    // ... then update the whole subtree, if possible.
-    for(KDOM::NodeImpl *n = node->firstChild(); n != 0; n = n->nextSibling())
-        updateSubtreeMatrices(n);
-}
-
-bool SVGTransformableImpl::parseAttribute(KDOM::AttributeImpl *attr)
-{
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    if(id == ATTR_TRANSFORM)
-    {
-        SVGTransformListImpl *localTransforms = transform()->baseVal();
-        
-        localTransforms->clear();
-        SVGTransformableImpl::parseTransformAttribute(localTransforms, attr->value());
-
-        // Update cached local matrix
-        updateLocalTransform(localTransforms);
-
-        SVGStyledElementImpl *styledElement = dynamic_cast<SVGStyledElementImpl *>(this);
-        if(!styledElement)
-            return false;
-            
-        updateSubtreeMatrices(styledElement);
-        return true;
-    }
-
-    return false;
 }
 
 void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, KDOM::DOMStringImpl *transform)
@@ -161,7 +53,7 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
         return;
 
     // Split string for handling 1 transform statement at a time
-    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).string());
+    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).qstring());
     QStringList::ConstIterator it = subtransforms.begin();
     QStringList::ConstIterator end = subtransforms.end();
     for(; it != end; ++it)

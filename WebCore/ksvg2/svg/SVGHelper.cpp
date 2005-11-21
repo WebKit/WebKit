@@ -23,7 +23,6 @@
 #include "config.h"
 #include "ksvg.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGStringListImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGAnimatedRectImpl.h"
@@ -45,8 +44,7 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
     if(viewportElement->isSVG())
     {
         const SVGSVGElementImpl *svg = static_cast<const SVGSVGElementImpl *>(viewportElement);
-        KDOM::DOMString viewBox("viewBox");
-        if(svg->hasAttribute(viewBox.handle()))
+        if(svg->hasAttribute(SVGNames::viewBoxAttr))
         {
             width = svg->viewBox()->baseVal()->width();
             height = svg->viewBox()->baseVal()->height();
@@ -56,15 +54,15 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
         {
             // TODO: Shouldn't w/h be multiplied with the percentage values?!
             // AFAIK, this assumes width & height == 100%, Rob??
-            SVGDocumentImpl *doc = static_cast<SVGDocumentImpl *>(svg->ownerDocument());
-            if(doc && doc->rootElement() == svg)
+            KDOM::DocumentImpl *doc = svg->getDocument();
+            if(doc->documentElement() == svg)
             {
                 // We have to ask the canvas for the full "canvas size"...
-                KCanvas *canvas = doc->canvas();
+                khtml::RenderCanvas *canvas = static_cast<khtml::RenderCanvas *>(doc->renderer());
                 if(canvas)
                 {
-                    width = canvas->canvasSize().width(); // TODO: recheck!
-                    height = canvas->canvasSize().height(); // TODO: recheck!
+                    width = canvas->viewportWidth(); // TODO: recheck!
+                    height = canvas->viewportHeight(); // TODO: recheck!
                 }
             }
         }

@@ -24,17 +24,16 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/Namespace.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGPointListImpl.h"
 #include "SVGPolyElementImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
 using namespace KSVG;
 
-SVGPolyElementImpl::SVGPolyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGAnimatedPointsImpl(), SVGPolyParser()
+SVGPolyElementImpl::SVGPolyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGAnimatedPointsImpl(), SVGPolyParser()
 {
     m_points = 0;
 }
@@ -55,26 +54,17 @@ SVGPointListImpl *SVGPolyElementImpl::animatedPoints() const
     return 0;
 }
 
-void SVGPolyElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGPolyElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    switch(id)
+    if (attr->name() == SVGNames::pointsAttr)
+        parsePoints(KDOM::DOMString(attr->value()).qstring());
+    else
     {
-        case ATTR_POINTS:
-        {
-            parsePoints(KDOM::DOMString(attr->value()).string());
-            break;
-        }
-        default:
-        {
-            if(SVGTestsImpl::parseAttribute(attr)) return;
-            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-            if(SVGTransformableImpl::parseAttribute(attr)) return;
-
-            SVGStyledElementImpl::parseAttribute(attr);
-        }
-    };
+        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
+        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
+        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+        SVGStyledTransformableElementImpl::parseMappedAttribute(attr);
+    }
 }
 
 void SVGPolyElementImpl::svgPolyTo(double x1, double y1, int) const
@@ -84,7 +74,8 @@ void SVGPolyElementImpl::svgPolyTo(double x1, double y1, int) const
 
 void SVGPolyElementImpl::notifyAttributeChange() const
 {
-    if(ownerDocument()->parsing())
+    static bool ignoreNotifications = false;
+    if (ignoreNotifications || ownerDocument()->parsing())
         return;
 
     SVGStyledElementImpl::notifyAttributeChange();
@@ -101,12 +92,13 @@ void SVGPolyElementImpl::notifyAttributeChange() const
     }
 
     KDOM::DOMString p("points");
-    KDOM::AttrImpl *attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.handle());
+    KDOM::AttrImpl *attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.impl());
     if(attr)
     {
-        attr->setOwnerElement(0);
-        attr->setValue(_points.handle());
-        attr->setOwnerElement(const_cast<SVGPolyElementImpl *>(this));
+        int exceptionCode;
+        ignoreNotifications = true; // prevent recursion.
+        attr->setValue(_points, exceptionCode);
+        ignoreNotifications = false;
     }
 }
 

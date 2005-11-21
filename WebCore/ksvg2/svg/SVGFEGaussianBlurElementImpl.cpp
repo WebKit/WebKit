@@ -26,13 +26,12 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEGaussianBlurElementImpl.h"
@@ -42,8 +41,8 @@
 
 using namespace KSVG;
 
-SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_in1 = 0;
     m_stdDeviationX = 0;
@@ -83,39 +82,27 @@ void SVGFEGaussianBlurElementImpl::setStdDeviation(float stdDeviationX, float st
 {
 }
 
-void SVGFEGaussianBlurElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEGaussianBlurElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
-    {
-        case ATTR_STDDEVIATION:
-        {
-            QStringList numbers = QStringList::split(' ', value.string());
-            stdDeviationX()->setBaseVal(numbers[0].toDouble());
-            if(numbers.count() == 1)
-                stdDeviationY()->setBaseVal(numbers[0].toDouble());
-            else
-                stdDeviationY()->setBaseVal(numbers[1].toDouble());
-
-            break;
-        }
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+    if (attr->name() == SVGNames::stdDeviationAttr) {
+        QStringList numbers = QStringList::split(' ', value.qstring());
+        stdDeviationX()->setBaseVal(numbers[0].toDouble());
+        if(numbers.count() == 1)
+            stdDeviationY()->setBaseVal(numbers[0].toDouble());
+        else
+            stdDeviationY()->setBaseVal(numbers[1].toDouble());
+    }
+    else if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFEGaussianBlurElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFEGaussianBlurElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(canvas->renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(canvas()->renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setStdDeviationX(stdDeviationX()->baseVal());
     m_filterEffect->setStdDeviationY(stdDeviationY()->baseVal());

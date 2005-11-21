@@ -28,6 +28,7 @@ namespace KSVG
     class SVGRectImpl;
     class SVGMatrixImpl;
     class SVGElementImpl;
+    class SVGStyledElementImpl;
     class SVGLocatableImpl
     {
     public:
@@ -35,13 +36,20 @@ namespace KSVG
         virtual ~SVGLocatableImpl();
 
         // 'SVGLocatable' functions
-        SVGElementImpl *nearestViewportElement() const;
-        SVGElementImpl *farthestViewportElement() const;
+        virtual SVGElementImpl *nearestViewportElement() const = 0;
+        virtual SVGElementImpl *farthestViewportElement() const = 0;
 
-        virtual SVGRectImpl *getBBox() const;
-        virtual SVGMatrixImpl *getCTM() const;
-        virtual SVGMatrixImpl *getScreenCTM() const;
-        virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const;
+        virtual SVGRectImpl *getBBox() const = 0;
+        virtual SVGMatrixImpl *getCTM() const = 0;
+        virtual SVGMatrixImpl *getScreenCTM() const = 0;
+        virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const = 0;
+
+    protected:
+        static SVGElementImpl *nearestViewportElement(const SVGStyledElementImpl *element);
+        static SVGElementImpl *farthestViewportElement(const SVGStyledElementImpl *element);
+        static SVGRectImpl *getBBox(const SVGStyledElementImpl *element);
+        static SVGMatrixImpl *getCTM(const SVGElementImpl *element);
+        static SVGMatrixImpl *getScreenCTM(const SVGElementImpl *element);
     };
 };
 

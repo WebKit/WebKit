@@ -30,48 +30,42 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kdom/css/RenderStyle.h>
 
-class KCanvas;
-class KCanvasView;
-class KCanvasItem;
-class KRenderingStyle;
+class RenderPath;
+class KRenderingDevice;
+class KCanvasResource;
+
+namespace KDOM {
+    class CSSStyleDeclarationImpl;
+}
 
 namespace KSVG
 {
     class KCanvasRenderingStyle;
     class SVGStyledElementImpl;
-    class SVGCSSStyleDeclarationImpl;
-    class SVGStyledElementImpl : public SVGElementImpl,
-                                 public SVGStylableImpl
+    class SVGStyledElementImpl : public SVGElementImpl
     {
     public:
-        SVGStyledElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGStyledElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGStyledElementImpl();
         
         virtual bool isStyled() const { return true; }
 
         // 'SVGStylable' functions
         virtual SVGAnimatedStringImpl *className() const;
-        virtual KDOM::CSSStyleDeclarationImpl *style();
-        virtual KDOM::CSSStyleDeclarationImpl *pa() const;
-        virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name);
 
         virtual void attach();
-        virtual void detach();
-
         virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return true; }
 
-        // This needs to be implemented.
-        virtual bool implementsCanvasItem() const { return false; }
+        // These need to be implemented.
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
         virtual KCPathDataList toPathData() const { return KCPathDataList(); }
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual KCanvasResource *canvasResource() { return 0; }
+        
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
-
-        void updateCTM(const QWMatrix &ctm);
-
-        KCanvasItem *canvasItem() const;
+        khtml::RenderCanvas *canvas() const;
         virtual void notifyAttributeChange() const;
-        virtual void recalcStyle(StyleChange = NoChange);
 
         // Imagine we're a <rect> inside of a <pattern> section with patternContentUnits="objectBoundingBox"
         // and our 'width' attribute is set to 50%. When the pattern gets referenced it knows the "bbox"
@@ -83,22 +77,13 @@ namespace KSVG
         friend class SVGDocumentImpl; // Needs renderStyle accesss...
         friend class SVGClipPathElementImpl; // Needs renderStyle access..
 
-        KCanvas *canvas() const;
-        KCanvasView *canvasView() const;
-
-        virtual KDOM::RenderStyle *renderStyle() const;
         virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
-        void setStyle(KDOM::RenderStyle *newStyle);
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
 
-        KCanvasItem *m_canvasItem;
-
     private:
-        mutable SVGCSSStyleDeclarationImpl *m_pa;
+        mutable KDOM::CSSStyleDeclarationImpl *m_pa;
         mutable SVGAnimatedStringImpl *m_className;
-
-        mutable KDOM::RenderStyle *m_renderStyle;
 
         // Optimized updating logic
         bool m_updateVectorial : 1;

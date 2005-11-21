@@ -40,7 +40,7 @@ namespace KSVG
         unsigned short zoomAndPan() const;
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
-        bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
         unsigned short m_zoomAndPan;

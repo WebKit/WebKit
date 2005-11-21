@@ -31,8 +31,6 @@
 
 #import <qapplication.h>
 
-#define id ID_HACK
-
 #import <kdom/Namespace.h>
 #import <kdom/Helper.h>
 #import <kdom/DOMString.h>
@@ -42,11 +40,10 @@
 #import <ksvg2/svg/SVGRectElementImpl.h>
 #import <ksvg2/svg/SVGPathElementImpl.h>
 
-#undef id
-
 #import "KWQTextStream.h"
 
-using namespace KDOM;
+using namespace DOM;
+using namespace KSVG;
 
 @interface DrawCanvasItemPrivate : NSObject {
     @public
@@ -108,19 +105,18 @@ using namespace KDOM;
 // see note in header.
 - (NSPoint)dragAnchorPointForControlPointIndex:(int)controlPointIndex
 {
-    KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
-    int localId = node->localId();
+    //KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
     NSPoint dragAnchorPoint;
     
-    switch (localId) {
-	case ID_PATH:
-            //KSVG::SVGPathElementImpl *path = (KSVG::SVGPathElementImpl *)node;
-	default:
+//    switch (localId) {
+//	case ID_PATH:
+//            //KSVG::SVGPathElementImpl *path = (KSVG::SVGPathElementImpl *)node;
+//	default:
             // if we have no special knob list, grab the default
             dragAnchorPoint = [DrawCanvasItem dragAnchorPointForControlPointIndex:controlPointIndex
                                                             fromRectControlPoints:[self controlPoints]];
             
-    }
+    //}
     return dragAnchorPoint;
 }
 
@@ -138,17 +134,16 @@ using namespace KDOM;
 // see note in header.
 - (NSArray *)controlPoints
 {	
-    KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
-    int localId = node->localId();
+    //KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
     NSArray *controlPoints = nil;
     
-    switch (localId) {
-        case ID_PATH:
-            //KSVG::SVGPathElementImpl *path = (KSVG::SVGPathElementImpl *)node;
-        default:
+//    switch (localId) {
+//        case ID_PATH:
+//            //KSVG::SVGPathElementImpl *path = (KSVG::SVGPathElementImpl *)node;
+//        default:
             // if we have no special knob list, grab the default
             controlPoints = [DrawCanvasItem controlPointsForRect:[self boundingBox]];
-    }
+    //}
     return controlPoints;
 }
 
@@ -159,30 +154,22 @@ using namespace KDOM;
     //NSLog(@"Fitting canvasItem: %p from: %@ into new bbox: %@",
     //	self, NSStringFromRect([self boundingBox]), NSStringFromRect(newRect));
     KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
-    int localId = node->localId();
-    KDOM::DOMStringImpl *svgNamespace = KDOM::NS_SVG.handle();
-    switch (localId) {
-	case ID_ELLIPSE:
-	{
-            KSVG::SVGEllipseElementImpl *ellipse = (KSVG::SVGEllipseElementImpl *)node;
-            ellipse->setAttributeNS(svgNamespace, DOMString("cx").handle(), DOMString(QString::number(newRect.origin.x + newRect.size.width/2.f)).handle());
-            ellipse->setAttributeNS(svgNamespace, DOMString("cy").handle(), DOMString(QString::number(newRect.origin.y + newRect.size.height/2.f)).handle());
-            ellipse->setAttributeNS(svgNamespace, DOMString("rx").handle(), DOMString(QString::number(newRect.size.width/2.f)).handle());
-            ellipse->setAttributeNS(svgNamespace, DOMString("ry").handle(), DOMString(QString::number(newRect.size.height/2.f)).handle());
-            break;
-	}
-	case ID_RECT:
-	{
-            KSVG::SVGRectElementImpl *rect = (KSVG::SVGRectElementImpl *)node;
-            rect->setAttributeNS(svgNamespace, DOMString("x").handle(), DOMString(QString::number(newRect.origin.x)).handle());
-            rect->setAttributeNS(svgNamespace, DOMString("y").handle(), DOMString(QString::number(newRect.origin.y)).handle());
-            rect->setAttributeNS(svgNamespace, DOMString("width").handle(), DOMString(QString::number(newRect.size.width - 1)).handle());
-            rect->setAttributeNS(svgNamespace, DOMString("height").handle(), DOMString(QString::number(newRect.size.height - 1)).handle());
-            break;
-	}
-	default:
-            NSLog(@"Id not handled: %i", localId);
+    
+    int exceptionCode;
+    if (node->hasTagName(SVGNames::ellipseTag)) {
+        KSVG::SVGEllipseElementImpl *ellipse = (KSVG::SVGEllipseElementImpl *)node;
+        ellipse->setAttributeNS(KDOM::NS_SVG, DOMString("cx"), DOMString(QString::number(newRect.origin.x + newRect.size.width/2.f)), exceptionCode);
+        ellipse->setAttributeNS(KDOM::NS_SVG, DOMString("cy"), DOMString(QString::number(newRect.origin.y + newRect.size.height/2.f)), exceptionCode);
+        ellipse->setAttributeNS(KDOM::NS_SVG, DOMString("rx"), DOMString(QString::number(newRect.size.width/2.f)), exceptionCode);
+        ellipse->setAttributeNS(KDOM::NS_SVG, DOMString("ry"), DOMString(QString::number(newRect.size.height/2.f)), exceptionCode);
+   } else if (node->hasTagName(SVGNames::rectTag)) {
+        KSVG::SVGRectElementImpl *rect = (KSVG::SVGRectElementImpl *)node;
+        rect->setAttributeNS(KDOM::NS_SVG, DOMString("x"), DOMString(QString::number(newRect.origin.x)), exceptionCode);
+        rect->setAttributeNS(KDOM::NS_SVG, DOMString("y"), DOMString(QString::number(newRect.origin.y)), exceptionCode);
+        rect->setAttributeNS(KDOM::NS_SVG, DOMString("width"), DOMString(QString::number(newRect.size.width - 1)), exceptionCode);
+        rect->setAttributeNS(KDOM::NS_SVG, DOMString("height"), DOMString(QString::number(newRect.size.height - 1)), exceptionCode);
     }
+    
     [self didChangeValueForKey:@"boundingBox"];
     [self didChangeValueForKey:@"attributedXMLString"];
 }
@@ -211,19 +198,18 @@ using namespace KDOM;
     KSVG::SVGStyledElementImpl *element = (KSVG::SVGStyledElementImpl *)_private->item->userData();
     id theValue = nil;
     
-    KDOM::DOMStringImpl *svgNamespace = KDOM::NS_SVG.handle();
     if ([key isEqualToString:@"isFilled"]) {
-        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("fill").handle());
-        theValue = [NSNumber numberWithBool:(value->string().ascii() != "none")];
+        const AtomicString& value = element->getAttributeNS(KDOM::NS_SVG, DOMString("fill"));
+        theValue = [NSNumber numberWithBool:(value != "none")];
     } else if ([key isEqualToString:@"isStroked"]) {
-        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("stroke").handle());
-        theValue = [NSNumber numberWithBool:(value->string().ascii() != "none")];
+        const AtomicString& value = element->getAttributeNS(KDOM::NS_SVG, DOMString("stroke"));
+        theValue = [NSNumber numberWithBool:(value != "none")];
     } else if ([key isEqualToString:@"fillColor"]) {
-        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("fill").handle());
-        theValue = nsColor(QColor(value->string()));
+        const AtomicString& value = element->getAttributeNS(KDOM::NS_SVG, DOMString("fill"));
+        theValue = nsColor(QColor(value.qstring()));
     } else if ([key isEqualToString:@"strokeColor"]) {
-        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("stroke").handle());
-        theValue = nsColor(QColor(value->string()));
+        const AtomicString& value = element->getAttributeNS(KDOM::NS_SVG, DOMString("stroke"));
+        theValue = nsColor(QColor(value.qstring()));
     }
     
     if (theValue)
@@ -234,11 +220,8 @@ using namespace KDOM;
 
 - (NSAttributedString *)attributedXMLString
 {
-    QString *nodeText = new QString();
-    QTextStream nodeTextStream(nodeText, IO_WriteOnly);
-    KDOM::Helper::PrintNode(nodeTextStream, (KDOM::NodeImpl *)_private->item->userData());
-    NSString *nodeString = nodeText->getNSString();
-    delete nodeText;
+    QString nodeText = createMarkup((KDOM::NodeImpl *)_private->item->userData());
+    NSString *nodeString = nodeText.getNSString();
     
     if (nodeString)
         return [[NSAttributedString alloc] initWithString:nodeString];

@@ -36,7 +36,7 @@ SVGAnimatedStringImpl::~SVGAnimatedStringImpl()
 KDOM::DOMStringImpl *SVGAnimatedStringImpl::create() const
 {
     // TODO: Do we need notifications on string manipulations? ie. appendData()?
-    return new KDOM::DOMStringImpl();
+    return new KDOM::DOMStringImpl("");
 }
 
 void SVGAnimatedStringImpl::assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const

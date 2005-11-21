@@ -30,7 +30,7 @@ namespace KSVG
     class SVGAnimateElementImpl : public SVGAnimationElementImpl
     {
     public:
-        SVGAnimateElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGAnimateElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGAnimateElementImpl();
 
         virtual void handleTimerEvent(double timePercentage);

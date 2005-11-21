@@ -20,19 +20,59 @@
     Boston, MA 02111-1307, USA.
 */
 
-//#include "SVGDocument.h"
 #include "config.h"
+#include <kdom/kdom.h>
 #include "SVGTextElementImpl.h"
+#include "SVGTSpanElementImpl.h"
+#include "SVGAnimatedLengthListImpl.h"
+#include "SVGRenderStyle.h"
+#include "KCanvasRenderingStyle.h"
+#include <kdom/css/RenderStyle.h>
+
+#include <kcanvas/KCanvasCreator.h>
+
+#include <qvector.h>
 
 using namespace KSVG;
 
-SVGTextElementImpl::SVGTextElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGTextPositioningElementImpl(doc, id, prefix), SVGTransformableImpl()
+SVGTextElementImpl::SVGTextElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGTextPositioningElementImpl(tagName, doc), SVGTransformableImpl()
 {
 }
 
 SVGTextElementImpl::~SVGTextElementImpl()
 {
+}
+
+void SVGTextElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+{
+    //if(SVGTransformableImpl::parseMappedAttribute(attr)) return;
+    SVGTextPositioningElementImpl::parseMappedAttribute(attr);
+}
+
+SVGElementImpl *SVGTextElementImpl::nearestViewportElement() const
+{
+    return SVGTransformableImpl::nearestViewportElement(this);
+}
+
+SVGElementImpl *SVGTextElementImpl::farthestViewportElement() const
+{
+    return SVGTransformableImpl::farthestViewportElement(this);
+}
+
+SVGRectImpl *SVGTextElementImpl::getBBox() const
+{
+    return SVGTransformableImpl::getBBox(this);
+}
+
+SVGMatrixImpl *SVGTextElementImpl::getScreenCTM() const
+{
+    return SVGLocatableImpl::getScreenCTM(this);
+}
+
+SVGMatrixImpl *SVGTextElementImpl::getCTM() const
+{
+    return SVGLocatableImpl::getScreenCTM(this);
 }
 
 // vim:ts=4:noet

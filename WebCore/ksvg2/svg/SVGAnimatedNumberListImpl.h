@@ -38,7 +38,7 @@ namespace KSVG
 
     protected:
         virtual SVGNumberListImpl *create() const;
-        virtual void assign(SVGNumberListImpl *src, SVGNumberListImpl *dst) const;
+        //virtual void assign(SVGNumberListImpl *src, SVGNumberListImpl *dst) const;
     };
 };
 

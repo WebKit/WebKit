@@ -23,14 +23,31 @@
 #ifndef KCanvasContainer_H
 #define KCanvasContainer_H
 
-#include <kcanvas/KCanvasItem.h>
+#include "kcanvas/RenderPath.h"
+#include "khtml/rendering/render_container.h"
 
-class KCanvas;
-class KRenderingStyle;
-class KCanvasContainer : public KCanvasItem
+typedef enum
+{
+    ALIGN_NONE = 0,
+    ALIGN_XMINYMIN = 1,
+    ALIGN_XMIDYMIN = 2,
+    ALIGN_XMAXYMIN = 3,
+    ALIGN_XMINYMID = 4,
+    ALIGN_XMIDYMID = 5,
+    ALIGN_XMAXYMID = 6,
+    ALIGN_XMINYMAX = 7,
+    ALIGN_XMIDYMAX = 8,
+    ALIGN_XMAXYMAX = 9
+} KCAlign;
+
+namespace KSVG {
+    class KCanvasRenderingStyle;
+}
+
+class KCanvasContainer : public khtml::RenderContainer
 {
 public:
-    KCanvasContainer(KCanvas *canvas, KRenderingStyle *style);
+    KCanvasContainer(KSVG::SVGStyledElementImpl *node);
     virtual ~KCanvasContainer();
 
     // Some containers do not want it's children
@@ -38,36 +55,30 @@ public:
     // Example: <marker> children in SVG
     void setDrawContents(bool drawContents);
 
-    virtual bool needsTemporaryBuffer() const;
-    virtual bool isContainer() const { return true; }
+    virtual bool isKCanvasContainer() const { return true; }
+    virtual const char *renderName() const { return "KCanvasContainer"; }
 
-    // Container logic
-    virtual void appendItem(KCanvasItem *item);
-    virtual void insertItemBefore(KCanvasItem *item, KCanvasItem *reference);
-    virtual void removeItem(const KCanvasItem *item);
-
-    // 'KCanvasItem' functions
     virtual bool fillContains(const QPoint &p) const;
     virtual bool strokeContains(const QPoint &p) const;
-
-    virtual void draw(const QRect &rect) const;
-    
-    virtual void invalidate() const;
     virtual QRect bbox(bool includeStroke = true) const;
+    
+    virtual QMatrix localTransform() const;
+    virtual void setLocalTransform(const QMatrix &matrix);
+    
+    virtual void setViewport(const QRect &viewport) = 0;
+    virtual QRect viewport() const = 0;
 
-    KCanvasItem *first() const;
-    KCanvasItem *last() const;
+    virtual void setViewBox(const QRect &viewBox) = 0;
+    virtual QRect viewBox() const = 0;
 
-private:
-    friend class KCanvasItem;
+    virtual void setAlign(KCAlign align) = 0;
+    virtual KCAlign align() const = 0;
 
-    virtual bool raiseItem(KCanvasItem *item);
-    virtual bool lowerItem(KCanvasItem *item);
-
-private:
-    friend class KCanvas;
-
-    void collisions(const QPoint &p, KCanvasItemList &hits) const;
+    void setSlice(bool slice);
+    bool slice() const;
+    
+protected:
+    KCanvasMatrix getAspectRatio(const QRect logical, const QRect physical) const;
 
 private:
     class Private;

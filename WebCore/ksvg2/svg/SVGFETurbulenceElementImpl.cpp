@@ -26,14 +26,12 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFETurbulenceElementImpl.h"
@@ -44,8 +42,8 @@
 
 using namespace KSVG;
 
-SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_baseFrequencyX = m_baseFrequencyY = m_seed = 0;
     m_numOctaves = 0;
@@ -105,60 +103,44 @@ SVGAnimatedEnumerationImpl *SVGFETurbulenceElementImpl::type() const
     return lazy_create<SVGAnimatedEnumerationImpl>(m_type, dummy);
 }
 
-void SVGFETurbulenceElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFETurbulenceElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::typeAttr)
     {
-        case ATTR_TYPE:
-        {
-            if(value == "fractalNoise")
-                type()->setBaseVal(SVG_TURBULENCE_TYPE_FRACTALNOISE);
-            else if(value == "turbulence")
-                type()->setBaseVal(SVG_TURBULENCE_TYPE_TURBULENCE);
-            break;
-        }
-        case ATTR_STITCHTILES:
-        {
-            if(value == "stitch")
-                stitchTiles()->setBaseVal(SVG_STITCHTYPE_STITCH);
-            else if(value == "nostitch")
-                stitchTiles()->setBaseVal(SVG_STITCHTYPE_NOSTITCH);
-            break;
-        }
-        case ATTR_BASEFREQUENCY:
-        {
-            QStringList numbers = QStringList::split(' ', value.string());
-            baseFrequencyX()->setBaseVal(numbers[0].toDouble());
-            if(numbers.count() == 1)
-                baseFrequencyY()->setBaseVal(numbers[0].toDouble());
-            else
-                baseFrequencyY()->setBaseVal(numbers[1].toDouble());
-
-            break;
-        }
-        case ATTR_SEED:
-        {
-            seed()->setBaseVal(value.string().toDouble());
-            break;
-        }
-        case ATTR_NUMOCTAVES:
-        {
-            numOctaves()->setBaseVal(value.string().toUInt());
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+        if(value == "fractalNoise")
+            type()->setBaseVal(SVG_TURBULENCE_TYPE_FRACTALNOISE);
+        else if(value == "turbulence")
+            type()->setBaseVal(SVG_TURBULENCE_TYPE_TURBULENCE);
+    }
+    else if (attr->name() == SVGNames::stitchTilesAttr)
+    {
+        if(value == "stitch")
+            stitchTiles()->setBaseVal(SVG_STITCHTYPE_STITCH);
+        else if(value == "nostitch")
+            stitchTiles()->setBaseVal(SVG_STITCHTYPE_NOSTITCH);
+    }
+    else if (attr->name() == SVGNames::baseFrequencyAttr)
+    {
+        QStringList numbers = QStringList::split(' ', value.qstring());
+        baseFrequencyX()->setBaseVal(numbers[0].toDouble());
+        if(numbers.count() == 1)
+            baseFrequencyY()->setBaseVal(numbers[0].toDouble());
+        else
+            baseFrequencyY()->setBaseVal(numbers[1].toDouble());
+    }
+    else if (attr->name() == SVGNames::seedAttr)
+        seed()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::numOctavesAttr)
+        numOctaves()->setBaseVal(value.qstring().toUInt());
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFETurbulenceElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
+khtml::RenderObject *SVGFETurbulenceElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
 
-    m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas->renderingDevice()->createFilterEffect(FE_TURBULENCE));
+    m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas()->renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     

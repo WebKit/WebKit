@@ -33,10 +33,28 @@ typedef struct CGLayer *CGLayerRef;
 
 class KCanvasContainerQuartz : public KCanvasContainer {
 public:
-    KCanvasContainerQuartz(KCanvas *canvas, KRenderingStyle *style);
+    KCanvasContainerQuartz(KSVG::SVGStyledElementImpl *node) : KCanvasContainer(node) { }
     
-    // Draw onto the canvas
-    virtual void draw(const QRect &dirtyRect) const;
+    virtual bool canHaveChildren() const { return true; }
+    
+    virtual bool requiresLayer() { return false; }
+    virtual void calcMinMaxWidth();
+    virtual void layout();
+    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
+    
+    virtual void setViewport(const QRect &viewport);
+    virtual QRect viewport() const;
+
+    virtual void setViewBox(const QRect &viewBox);
+    virtual QRect viewBox() const;
+
+    virtual void setAlign(KCAlign align);
+    virtual KCAlign align() const;
+    
+private:
+    QRect m_viewport;
+    QRect m_viewBox;
+    KCAlign m_align;
 };
 
 class KCanvasClipperQuartz : public KCanvasClipper {

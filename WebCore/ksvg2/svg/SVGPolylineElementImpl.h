@@ -30,7 +30,7 @@ namespace KSVG
     class SVGPolylineElementImpl :  public SVGPolyElementImpl
     {
     public:
-        SVGPolylineElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGPolylineElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPolylineElementImpl();
 
         virtual KCPathDataList toPathData() const;

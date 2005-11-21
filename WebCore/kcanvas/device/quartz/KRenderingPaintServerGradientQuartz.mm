@@ -28,11 +28,11 @@
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 
-#import "KRenderingStyle.h"
+#import "kcanvas/KCanvas.h"
+#import "KCanvasRenderingStyle.h"
 #import "KRenderingPaintServer.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
-#import "KCanvas.h"
 #import "KCanvasMatrix.h"
 #import "KRenderingDeviceQuartz.h"
 
@@ -40,7 +40,7 @@
 
 
 // Maybe this should be in a base class instead...
-static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, KRenderingStyle *style, KCPaintTargetType type)
+static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, KSVG::KCanvasRenderingStyle *canvasStyle, KCPaintTargetType type)
 {
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(server->activeClient()->canvas()->renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
@@ -65,11 +65,11 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
     //NSLog(@"localTransform: %@\ncurrent: %@", CFStringFromCGAffineTransform(transform), CFStringFromCGAffineTransform(CGContextGetCTM(context)));
     CGContextConcatCTM(context, gradientTransform);
     
-    applyStyleToContext(context,style); // applies opacity.
+    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
     
-    if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
+    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
         CGContextSaveGState(context);
-        if (style->fillPainter()->fillRule() == RULE_EVENODD) {
+        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD) {
             CGContextEOClip(context);
         } else {
             CGContextClip(context);
@@ -78,9 +78,9 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
         CGContextRestoreGState(context);
     }
     
-    if ( (type & APPLY_TO_STROKE) && style->isStroked() ) {
+    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
         CGContextSaveGState(context);
-        applyStrokeStyleToContext(context, style); // FIXME: this seems like the wrong place for this.
+        applyStrokeStyleToContext(context, canvasStyle); // FIXME: this seems like the wrong place for this.
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
         CGContextDrawShading(context, shading);
@@ -298,7 +298,7 @@ void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerLinearGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args.style(), type);
+    drawShadingWithStyle(this, m_shadingCache, args.canvasStyle(), type);
 }
 
 void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
@@ -311,5 +311,5 @@ void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerRadialGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args.style(), type);
+    drawShadingWithStyle(this, m_shadingCache, args.canvasStyle(), type);
 }

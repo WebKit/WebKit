@@ -24,10 +24,9 @@
 #include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGMatrixImpl.h"
-#include "SVGDocumentImpl.h"
 #include "SVGTransformImpl.h"
 #include "SVGTransformListImpl.h"
 #include "SVGAnimatedStringImpl.h"
@@ -38,14 +37,13 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 using namespace KSVG;
 
-SVGLinearGradientElementImpl::SVGLinearGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGGradientElementImpl(doc, id, prefix)
+SVGLinearGradientElementImpl::SVGLinearGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGGradientElementImpl(tagName, doc)
 {
     m_x1 = m_y1 = m_x2 = m_y2 = 0;
 }
@@ -93,40 +91,25 @@ SVGAnimatedLengthImpl *SVGLinearGradientElementImpl::y2() const
     return lazy_create<SVGAnimatedLengthImpl>(m_y2, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGLinearGradientElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGLinearGradientElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMStringImpl *value = attr->value();
-    switch(id)
-    {
-        case ATTR_X1:
-        {
-            x1()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y1:
-        {
-            y1()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_X2:
-        {
-            x2()->baseVal()->setValueAsString(value);
-            break;
-        }
-        case ATTR_Y2:
-        {
-            y2()->baseVal()->setValueAsString(value);
-            break;
-        }
-        default:
-            SVGGradientElementImpl::parseAttribute(attr);
-    };
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::x1Attr)
+        x1()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::y1Attr)
+        y1()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::x2Attr)
+        x2()->baseVal()->setValueAsString(value.impl());
+    else if (attr->name() == SVGNames::y2Attr)
+        y2()->baseVal()->setValueAsString(value.impl());
+    else
+        SVGGradientElementImpl::parseMappedAttribute(attr);
 }
 
-void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *_grad, KCanvas *canvas) const
+void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *_grad) const
 {
-    QString ref = KDOM::DOMString(href()->baseVal()).string();
+    rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
+
     bool bbox = (gradientUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     
     x1()->baseVal()->setBboxRelative(bbox);
@@ -142,37 +125,36 @@ void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
     if(gradientTransform()->baseVal()->numberOfItems() > 0)
         mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->qmatrix());
 
-    KRenderingPaintServer *pserver = 0;
-    if(!ref.isEmpty())
-        pserver = canvas->registry()->getPaintServerById(ref.mid(1));
-
+    QString ref = KDOM::DOMString(href()->baseVal()).qstring();
+    KRenderingPaintServer *pserver = getPaintServerById(getDocument(), ref.mid(1));
+    
     if(pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))
     {
         bool isLinear = pserver->type() == PS_LINEAR_GRADIENT;
         KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
 
-        if(!hasAttribute(KDOM::DOMString("gradientUnits").handle()))
+        if(!hasAttribute(SVGNames::gradientUnitsAttr))
             bbox = gradient->boundingBoxMode();
             
         if(isLinear)
         {
             KRenderingPaintServerLinearGradient *linear = static_cast<KRenderingPaintServerLinearGradient *>(pserver);
-            if(!hasAttribute(KDOM::DOMString("x1").handle()))
+            if(!hasAttribute(SVGNames::x1Attr))
                 _x1 = linear->gradientStart().x();
             else if(bbox)
                 _x1 *= 100.;
 
-            if(!hasAttribute(KDOM::DOMString("y1").handle()))
+            if(!hasAttribute(SVGNames::y1Attr))
                 _y1 = linear->gradientStart().y();
             else if(bbox)
                 _y1 *= 100.;
 
-            if(!hasAttribute(KDOM::DOMString("x2").handle()))
+            if(!hasAttribute(SVGNames::x2Attr))
                 _x2 = linear->gradientEnd().x();
             else if(bbox)
                 _x2 *= 100.;
 
-            if(!hasAttribute(KDOM::DOMString("y2").handle()))
+            if(!hasAttribute(SVGNames::y2Attr))
                 _y2 = linear->gradientEnd().y();
             else if(bbox)
                 _y2 *= 100.;
@@ -185,7 +167,7 @@ void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
             _y2 *= 100.0;
         }
 
-        if(!hasAttribute(KDOM::DOMString("gradientTransform").handle()))
+        if(!hasAttribute(SVGNames::gradientTransformAttr))
             mat = gradient->gradientTransform();
 
         // Inherit color stops if empty
@@ -196,7 +178,7 @@ void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
                 grad->gradientStops().addStop(it.current()->offset, it.current()->color);
         }
 
-        if(!hasAttribute(KDOM::DOMString("spreadMethod").handle()))
+        if(!hasAttribute(SVGNames::spreadMethodAttr))
             grad->setGradientSpreadMethod(gradient->spreadMethod());
     }
     else
@@ -221,25 +203,6 @@ void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
     grad->setBoundingBoxMode(bbox);
     grad->setGradientStart(QPoint(qRound(_x1), qRound(_y1)));
     grad->setGradientEnd(QPoint(qRound(_x2), qRound(_y2)));
-}
-
-KCanvasItem *SVGLinearGradientElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
-{
-    KRenderingPaintServer *temp = canvas->renderingDevice()->createPaintServer(KCPaintServerType(PS_LINEAR_GRADIENT));
-    KRenderingPaintServerLinearGradient *pserver = static_cast<KRenderingPaintServerLinearGradient *>(temp);
-
-    pserver->setListener(const_cast<SVGLinearGradientElementImpl *>(this));
-
-    canvas->registry()->addPaintServerById(KDOM::DOMString(getId()).string(), pserver);
-    return 0;
-}
-
-void SVGLinearGradientElementImpl::resourceNotification() const
-{
-    // We're referenced by a "client", build the gradient now...
-    KRenderingPaintServer *pserver = canvas()->registry()->getPaintServerById(KDOM::DOMString(getId()).string());
-    KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
-    buildGradient(gradient, canvas());
 }
 
 // vim:ts=4:noet

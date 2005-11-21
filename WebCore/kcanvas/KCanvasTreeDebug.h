@@ -27,7 +27,7 @@
 #include <qtextstream.h>
 #include <q3valuelist.h>
 
-class KCanvasMatrix;
+class QMatrix;
 class QRect;
 class QPoint;
 class QColor;
@@ -35,12 +35,15 @@ class QStringList;
 class KCClipData;
 class KCPathData;
 
-class KCanvasItem;
+class RenderPath;
+class KCanvasContainer;
 
-QString externalRepresentation(KCanvasItem *);
+// functions used by the main KWQRenderTreeDebug code
+void write(QTextStream &ts, const KCanvasContainer &container, int indent = 0);
+void write(QTextStream &ts, const RenderPath &path, int indent = 0);
 
 // helper operators defined used in various classes to dump the render tree. 
-QTextStream &operator<<(QTextStream &ts, const KCanvasMatrix &);
+QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const QRect &);
 QTextStream &operator<<(QTextStream &ts, const QColor &);
 QTextStream &operator<<(QTextStream &ts, const QPoint &);

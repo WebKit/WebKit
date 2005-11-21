@@ -35,8 +35,10 @@ namespace KSVG
     class SVGFilterPrimitiveStandardAttributesImpl : public SVGStyledElementImpl
     {
     public:
-        SVGFilterPrimitiveStandardAttributesImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGFilterPrimitiveStandardAttributesImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGFilterPrimitiveStandardAttributesImpl();
+        
+        virtual bool isFilterEffect() { return true; }
 
         // 'SVGFilterPrimitiveStandardAttributes' functions
         SVGAnimatedLengthImpl *x() const;
@@ -45,7 +47,7 @@ namespace KSVG
         SVGAnimatedLengthImpl *height() const;
         SVGAnimatedStringImpl *result() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         virtual KCanvasFilterEffect *filterEffect() const = 0;
 

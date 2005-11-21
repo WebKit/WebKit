@@ -31,8 +31,7 @@
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 
-#import "KCanvas.h"
-#import "KCanvasRegistry.h"
+#import "kcanvas/KCanvas.h"
 #import "KCanvasMatrix.h"
 #import "KCanvasItemQuartz.h"
 #import "KRenderingFillPainter.h"
@@ -52,18 +51,21 @@ KCanvasQuartzPathData::~KCanvasQuartzPathData()
 	CGPathRelease(path);
 }
 
-
-void KRenderingDeviceContextQuartz::setWorldMatrix(const KCanvasMatrix &worldMatrix)
+KCanvasMatrix KRenderingDeviceContextQuartz::concatCTM(const KCanvasMatrix &worldMatrix)
 {
-	NSLog(@"setWorldMatrix ignored for Quartz");
+    KCanvasMatrix ret = ctm();
+    CGAffineTransform wMatrix = CGAffineTransformMake(worldMatrix.a(), worldMatrix.b(), worldMatrix.c(),
+                                                     worldMatrix.d(), worldMatrix.e(), worldMatrix.f());
+    CGContextConcatCTM(m_cgContext, wMatrix);
+    return ret;
 }
 
-KCanvasMatrix KRenderingDeviceContextQuartz::worldMatrix() const
+KCanvasMatrix KRenderingDeviceContextQuartz::ctm() const
 {
-	NSLog(@"worldMatrix ignored for Quartz");
-	return KCanvasMatrix();
+    CGAffineTransform contextCTM = CGContextGetCTM(m_cgContext);
+    return KCanvasMatrix(contextCTM.a, contextCTM.b, contextCTM.c, contextCTM.d, contextCTM.tx, contextCTM.ty);
 }
-	
+
 QRect KRenderingDeviceContextQuartz::mapFromVisual(const QRect &rect)
 {
 	NSLog(@"mapFromVisual not yet for Quartz");
@@ -198,6 +200,18 @@ KCanvasUserData KRenderingDeviceQuartz::pathForRect(const QRect &rect) const
 	return data;
 }
 
+QString KRenderingDeviceQuartz::stringForPath(KCanvasUserData path)
+{
+    QString result;
+    if (path) {
+        CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path)->path;
+        CFStringRef pathString = CFStringFromCGPath(cgPath);
+        result = QString::fromCFString(pathString);
+        CFRelease(pathString);
+    }
+    return result;
+}
+
 #pragma mark -
 #pragma mark Resource Creation
 
@@ -216,14 +230,16 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
 	return newServer;
 }
  
-KCanvasContainer *KRenderingDeviceQuartz::createContainer(KCanvas *canvas, KRenderingStyle *style) const
+KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const
 {
-	return new KCanvasContainerQuartz(canvas, style);
+    return new (arena) KCanvasContainerQuartz(node);
 }
 
-KCanvasItem *KRenderingDeviceQuartz::createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const
+RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasUserData path) const
 {
-	return new KCanvasItemQuartz(canvas, style, path);
+    RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
+    item->changePath(path);
+    return item;
 }
 
 KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &type) const

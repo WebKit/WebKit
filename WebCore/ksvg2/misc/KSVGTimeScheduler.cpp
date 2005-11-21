@@ -23,17 +23,17 @@
 #include "config.h"
 #include <kcanvas/KCanvas.h>
 
+#include "SVGNames.h"
 #include "SVGMatrixImpl.h"
-#include "SVGDocumentImpl.h"
-#include "KSVGTimeScheduler.moc"
-#include "SVGTransformableImpl.h"
+#include "KSVGTimeScheduler.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGStyledElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 #include "SVGAnimateColorElementImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
 #include "SVGAnimateTransformElementImpl.h"
 
-using namespace KSVG;
+namespace KSVG {
 
 SVGTimer::SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot)
 {
@@ -201,7 +201,7 @@ void SVGTimer::notifyAll()
                 animation->handleTimerEvent(percentage);
 
             // Special cases for animate* objects depending on 'additive' attribute
-            if(animation->id() == ID_ANIMATETRANSFORM)
+            if(animation->hasTagName(SVGNames::animateTransformTag))
             {
                 SVGAnimateTransformElementImpl *animTransform = static_cast<SVGAnimateTransformElementImpl *>(animation);
                 if(!animTransform)
@@ -256,7 +256,7 @@ void SVGTimer::notifyAll()
 
                 transformMatrix->deref();
             }
-            else if(animation->id() == ID_ANIMATECOLOR)
+            else if(animation->hasTagName(SVGNames::animateColorTag))
             {
                 SVGAnimateColorElementImpl *animColor = static_cast<SVGAnimateColorElementImpl *>(animation);
                 if(!animColor)
@@ -298,21 +298,11 @@ void SVGTimer::notifyAll()
         if(targetTransforms)
         {
             SVGElementImpl *key = tit.key();
-            SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(key);
-
-            if(key && key->isStyled() && transform)
+            if(key && key->isStyled() && key->isStyledTransformable())
             {
+                SVGStyledTransformableElementImpl *transform = static_cast<SVGStyledTransformableElementImpl *>(key);
                 transform->transform()->setAnimVal(targetTransforms);
-
-                // Switch to newly created baseVal...
                 transform->updateLocalTransform(transform->transform()->animVal());
-
-                // ... update element & child elements ...
-                SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(key);
-                transform->updateSubtreeMatrices(styled);
-
-                // ... and switch back to baseVal (and do not update!)
-                transform->updateLocalTransform(transform->transform()->baseVal());
             }
         }
 
@@ -324,8 +314,8 @@ void SVGTimer::notifyAll()
             if(cit.data().isValid())
             {
                 SVGAnimationElementImpl::setTargetAttribute(tit.key(),
-                                                            KDOM::DOMString(cit.key()).handle(),
-                                                            KDOM::DOMString(cit.data().name()).handle());
+                                                            KDOM::DOMString(cit.key()).impl(),
+                                                            KDOM::DOMString(cit.data().name()).impl());
             }
         }
     }
@@ -387,7 +377,7 @@ void SVGTimer::removeNotify(SVGAnimationElementImpl *element)
 
 const unsigned int TimeScheduler::staticTimerInterval = 50; // milliseconds
 
-TimeScheduler::TimeScheduler(SVGDocumentImpl *document) : QObject(), m_document(document)
+TimeScheduler::TimeScheduler(KDOM::DocumentImpl *document) : QObject(), m_document(document)
 {
     // Create static interval timers but don't start it yet!
     m_intervalTimer = new SVGTimer(this, staticTimerInterval, false);
@@ -510,5 +500,7 @@ float TimeScheduler::elapsed() const
 {
     return float(m_creationTime.elapsed()) / 1000.0;
 }
+
+} // namespace;
 
 // vim:ts=4:noet

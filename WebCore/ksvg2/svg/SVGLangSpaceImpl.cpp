@@ -26,7 +26,7 @@
 #include <kdom/core/DOMStringImpl.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGElementImpl.h"
 #include "SVGLangSpaceImpl.h"
 
@@ -34,62 +34,44 @@ using namespace KSVG;
 
 SVGLangSpaceImpl::SVGLangSpaceImpl()
 {
-    m_lang = 0;
-    m_space = 0;
 }
 
 SVGLangSpaceImpl::~SVGLangSpaceImpl()
 {
-    if(m_lang)
-        m_lang->deref();
-    if(m_space)
-        m_space->deref();
 }
 
-KDOM::DOMStringImpl *SVGLangSpaceImpl::xmllang() const
+const KDOM::AtomicString& SVGLangSpaceImpl::xmllang() const
 {
     return m_lang;
 }
 
-void SVGLangSpaceImpl::setXmllang(KDOM::DOMStringImpl *xmlLang)
+void SVGLangSpaceImpl::setXmllang(const KDOM::AtomicString& xmlLang)
 {
-    KDOM_SAFE_SET(m_lang, xmlLang);
+    m_lang = xmlLang;
 }
 
-KDOM::DOMStringImpl *SVGLangSpaceImpl::xmlspace() const
+const KDOM::AtomicString& SVGLangSpaceImpl::xmlspace() const
 {
     return m_space;
 }
 
-void SVGLangSpaceImpl::setXmlspace(KDOM::DOMStringImpl *xmlSpace)
+void SVGLangSpaceImpl::setXmlspace(const KDOM::AtomicString& xmlSpace)
 {
-    KDOM_SAFE_SET(m_space, xmlSpace);
+    m_space = xmlSpace;
 }
 
-bool SVGLangSpaceImpl::parseAttribute(KDOM::AttributeImpl *attr)
+bool SVGLangSpaceImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    switch(id)
+    if (attr->name() == SVGNames::langAttr)
     {
-        case ATTR_LANG:
-        {
-            if(attr->value())
-                setXmllang(attr->value()->copy());
-            else
-                setXmllang(0);
-
-            return true;
-        }
-        case ATTR_SPACE:
-        {
-            if(attr->value())
-                setXmlspace(attr->value()->copy());
-            else
-                setXmlspace(0);
-
-            return true;
-        }
-    };
+        setXmllang(attr->value());
+        return true;
+    }
+    else if (attr->name() == SVGNames::spaceAttr)
+    {
+        setXmlspace(attr->value());
+        return true;
+    }
 
     return false;
 }

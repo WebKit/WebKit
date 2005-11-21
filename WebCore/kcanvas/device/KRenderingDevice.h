@@ -39,8 +39,8 @@ public:
     KRenderingDeviceContext() { }
     virtual ~KRenderingDeviceContext() { }
 
-    virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix) = 0;
-    virtual KCanvasMatrix worldMatrix() const = 0;
+    virtual KCanvasMatrix concatCTM(const KCanvasMatrix &worldMatrix) = 0;
+    virtual KCanvasMatrix ctm() const = 0;
     
     virtual QRect mapFromVisual(const QRect &rect) = 0;
     virtual QRect mapToVisual(const QRect &rect) = 0;
@@ -81,17 +81,20 @@ public:
     virtual void lineTo(double x, double y) = 0;
     virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) = 0;
     virtual void closeSubpath() = 0;
+    
+    virtual QString stringForPath(KCanvasUserData path) = 0;
 
     // Creation tools
     virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-    virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const = 0;
-    virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const = 0;
+    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasUserData path) const = 0;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const = 0;
+
 
 protected: // To be used by from inherited endPath()
-    friend class KCanvasItem;
+    friend class RenderPath;
 
     void setCurrentPath(KCanvasUserData path);
 

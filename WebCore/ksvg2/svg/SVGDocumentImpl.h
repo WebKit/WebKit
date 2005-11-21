@@ -31,12 +31,12 @@
 
 #include <ksvg2/misc/KSVGTimeScheduler.h>
 
-class KCanvas;
-class KCanvasView;
+#ifdef APPLE_CHANGES
+class KHTMLView;
+#endif
 
 namespace KSVG
 {
-    class KSVGView;
     class SVGElementImpl;
     class SVGSVGElementImpl;
     class SVGScriptElementImpl;
@@ -49,19 +49,11 @@ namespace KSVG
         SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *view);
         virtual ~SVGDocumentImpl();
 
-        // 'SVGDocumentImpl' functions
-        KDOM::DOMStringImpl *title() const;
-        KDOM::DOMStringImpl *referrer() const;
-        KDOM::DOMStringImpl *domain() const;
-        KDOM::DOMStringImpl *URL() const;
-
         SVGSVGElementImpl *rootElement() const;
-
-        virtual KDOM::ElementImpl *createElement(KDOM::DOMStringImpl *tagName);
-        virtual KDOM::ElementImpl *createElementNS(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName);
-
-        // 'DocumentEvent' functions
-        virtual KDOM::EventImpl *createEvent(KDOM::DOMStringImpl *eventType);
+        
+        KDOM::DOMString title() const;
+        
+        virtual KDOM::ElementImpl *createElement(const KDOM::DOMString& tagName, int& exceptionCode);
 
         // Derived from: 'CachedObjectClient'
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
@@ -78,23 +70,6 @@ namespace KSVG
         void dispatchScrollEvent();
         bool dispatchKeyEvent(KDOM::EventTargetImpl *target, QKeyEvent *key, bool keypress);
 
-        virtual KDOM::DOMStringImpl *defaultNS() const;
-
-        KCanvas *canvas() const;
-        KCanvasView *canvasView() const { return m_canvasView; }
-        void setCanvasView(KCanvasView *canvasView) { m_canvasView = canvasView; }
-
-        virtual void attach();
-        virtual bool attached() const { return m_canvasView != 0; }
-
-        virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::NodeImpl *parent, KDOM::DOMStringImpl *url) const;
-        virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::CSSRuleImpl *ownerRule, KDOM::DOMStringImpl *url) const;
-        virtual bool prepareMouseEvent(bool readonly, int x, int y, KDOM::MouseEventImpl *event);
-
-        // Animations
-        TimeScheduler *timeScheduler() const;
-
-        virtual void recalcStyleSelector();
         virtual void recalcStyle(StyleChange = NoChange);
 
         void addForwardReference(const SVGElementImpl *element);
@@ -103,15 +78,10 @@ namespace KSVG
         virtual KDOM::CSSStyleSelector *createStyleSelector(const QString &);
 
     private:
-        void dispatchUIEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type);
-        void dispatchMouseEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type);
+        void dispatchUIEvent(KDOM::EventTargetImpl *target, const KDOM::AtomicString &type);
+        void dispatchMouseEvent(KDOM::EventTargetImpl *target, const KDOM::AtomicString &type);
 
-        SVGElementImpl *createSVGElement(KDOM::DOMStringImpl *prefix, KDOM::DOMStringImpl *localName);
-
-        KCanvasView *m_canvasView;
         KDOM::EventTargetImpl *m_lastTarget;
-
-        TimeScheduler *m_timeScheduler;
 
         // <script> related
         void executeScripts(bool needsStyleSelectorUpdate);

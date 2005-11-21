@@ -29,10 +29,10 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 #include <kcanvas/KCanvasContainer.h>
-#include <kcanvas/KCanvasRegistry.h>
-#include <kcanvas/device/KRenderingStyle.h>
+#include "KCanvasRenderingStyle.h"
+#include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingStrokePainter.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
@@ -41,15 +41,19 @@
 #include <kcanvas/device/KRenderingPaintServerImage.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
+
 #ifdef APPLE_CHANGES
-#include <kcanvas/device/quartz/KRenderingDeviceQuartz.h>
-#include <kcanvas/device/quartz/QuartzSupport.h>
+#include "KWQRenderTreeDebug.h"
 #endif
+
+#include "SVGRenderStyle.h"
 #include <ksvg2/svg/SVGStyledElementImpl.h>
 
 #include <kdom/DOMString.h>
 
 #include <qtextstream.h>
+
+using namespace KSVG;
 
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
  * Can be used in cases where you don't know which item in the list is the first
@@ -87,14 +91,14 @@ QTextStream &operator<<(QTextStream &ts, const QRect &r)
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
 
-QTextStream &operator<<(QTextStream &ts, const KCanvasMatrix &m)
+QTextStream &operator<<(QTextStream &ts, const QMatrix &m)
 {
-    if (m.qmatrix().isIdentity())
+    if (m.isIdentity())
         ts << "identity";
     else 
     {
-        ts << "{m=((" << m.a() << "," << m.b() << ")(" << m.c() << "," << m.d() << "))";
-        ts << " t=(" << m.e() << "," << m.f() << ")}";
+        ts << "{m=((" << m.m11() << "," << m.m12() << ")(" << m.m21() << "," << m.m22() << "))";
+        ts << " t=(" << m.dx() << "," << m.dy() << ")}";
     }
     return ts;
 }
@@ -203,123 +207,102 @@ static QTextStream &operator<<(QTextStream &ts, const KRenderingFillPainter *p)
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, const KCanvasFilter *f)
-{
-    if (!f->idInRegistry().isEmpty())
-        ts << "\"" << f->idInRegistry() << "\"";
-    else
-        ts << "{" << *f << "}";
-    return ts;
-}
-
-static QTextStream &operator<<(QTextStream &ts, const KCanvasMarker *f)
-{
-    if (!f->idInRegistry().isEmpty())
-        ts << "\"" << f->idInRegistry() << "\"";
-    else
-        ts << "{" << *f << "}";
-    return ts;
-}
-
-#define DIFFERS_FROM_PARENT(path) (o.parent() && (o.parent()->path != o.path))
+#define DIFFERS_FROM_PARENT(path) (!parentStyle || (parentStyle->path != childStyle->path))
 // avoids testing path if pred is false. This is used with tests that have side-effects
 // for the parent object
-#define DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(pred, path) (o.parent() && ((!o.parent()->pred) || (o.parent()->path != o.path)))
+#define DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(pred, path) (!parentStyle || ((!parentStyle->pred) || (parentStyle->path != childStyle->path)))
 
-static QTextStream &operator<<(QTextStream &ts, const KCanvasItem &o)
+static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
 {
-    ts << " " << o.bbox();
+    khtml::RenderStyle *style = object.style();
+    SVGRenderStyle *svgStyle = style->svgStyle();
     
-    if (DIFFERS_FROM_PARENT(style()->visible()) && !o.style()->visible())
-        ts << " [HIDDEN]";
-    if (DIFFERS_FROM_PARENT(style()->objectMatrix()))
-        ts << " [transform=" << o.style()->objectMatrix() << "]";
-    if (DIFFERS_FROM_PARENT(style()->colorInterpolation()))
-        ts << " [color interpolation=" << o.style()->colorInterpolation() << "]";
-    if (DIFFERS_FROM_PARENT(style()->imageRendering()))
-        ts << " [image rendering=" << o.style()->imageRendering() << "]";
-    if (DIFFERS_FROM_PARENT(style()->opacity()))
-        ts << " [opacity=" << o.style()->opacity() << "]";
-    if (o.style()->isStroked() 
-        && DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(style()->isStroked(), style()->strokePainter()))
-        ts << " [stroke=" << o.style()->strokePainter() << "]";
-    if (o.style()->isFilled() 
-        && DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(style()->isFilled(), style()->fillPainter()))
-        ts << " [fill=" << o.style()->fillPainter() << "]";
-    if (!o.style()->clipPaths().isEmpty())
-        ts << " [clip paths=\"" << o.style()->clipPaths().join(", ") << "\"]";
-    if (o.style()->hasMarkers()) {
-        if (o.style()->startMarker())
-            ts << " [start marker=" << o.style()->startMarker() << "]";
-        if (o.style()->midMarker())
-            ts << " [middle marker=" << o.style()->midMarker() << "]";
-        if (o.style()->endMarker())
-            ts << " [end marker=" << o.style()->endMarker() << "]";
+    if (!object.localTransform().isIdentity())
+        ts << " [transform=" << object.localTransform() << "]";
+    if (svgStyle->imageRendering() != SVGRenderStyle::initialImageRendering())
+        ts << " [image rendering=" << svgStyle->imageRendering() << "]";
+    if (style->opacity() != khtml::RenderStyle::initialOpacity())
+        ts << " [opacity=" << style->opacity() << "]";
+    if (object.isRenderPath()) {
+        const RenderPath &path = static_cast<const RenderPath &>(object);
+        KCanvasRenderingStyle *canvasStyle = path.canvasStyle();
+        if (canvasStyle->isStroked())
+            ts << " [stroke=" << canvasStyle->strokePainter() << "]";
+        if (canvasStyle->isFilled())
+            ts << " [fill=" << canvasStyle->fillPainter() << "]";
     }
-    if (DIFFERS_FROM_PARENT(style()->filter()) && o.style()->filter())
-        ts << " [filter=" << o.style()->filter() << "]";
-
-#ifdef APPLE_CHANGES
-    // Print the actual path data
-    if (o.path()) {
-        CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(o.path())->path;
-        CFStringRef pathString = CFStringFromCGPath(cgPath);
-        ts << " [data=\"" << QString::fromCFString(pathString) << "\"]";
-        CFRelease(pathString);
-    }
-#endif    
-    return ts;
+    if (!svgStyle->clipPath().isEmpty())
+        ts << " [clip path=\"" << svgStyle->clipPath() << "\"]";
+    if (!svgStyle->startMarker().isEmpty())
+        ts << " [start marker=" << svgStyle->startMarker() << "]";
+    if (!svgStyle->midMarker().isEmpty())
+        ts << " [middle marker=" << svgStyle->midMarker() << "]";
+    if (!svgStyle->endMarker().isEmpty())
+        ts << " [end marker=" << svgStyle->endMarker() << "]";
+    if (!svgStyle->filter().isEmpty())
+        ts << " [filter=" << svgStyle->filter() << "]";
 }
 #undef DIFFERS_FROM_PARENT
 #undef DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE
+
+static QTextStream &operator<<(QTextStream &ts, const RenderPath &o)
+{
+    ts << " " << o.bbox();
+    
+    writeStyle(ts, o);
+    
+    ts << " [data=\"" << o.canvas()->renderingDevice()->stringForPath(o.path()) << "\"]";
+    
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, const KCanvasContainer &o)
+{
+    ts << " " << o.bbox();
+    
+    writeStyle(ts, o);
+    
+    return ts;
+}
 
 static QString getTagName(void *node)
 {
     KSVG::SVGStyledElementImpl *elem = static_cast<KSVG::SVGStyledElementImpl *>(node);
     if (elem)
-        return KDOM::DOMString(elem->nodeName()).string();
+        return KDOM::DOMString(elem->nodeName()).qstring();
     return QString();
 }
 
-void write(QTextStream &ts, KCanvasItem *item, int indent = 0)
+void write(QTextStream &ts, const KCanvasContainer &container, int indent)
 {
-    if (item)
-    {
-        writeIndent(ts, indent);
-        if(item->isContainer())
-            ts << "KCanvasContainer";
-        else
-            ts << "KCanvasItem";
-        
-        if (item->userData()) {
-            QString tagName = getTagName(item->userData());
-            if (!tagName.isEmpty()) {
-                ts << " {" << tagName << "}";
-            }
-        }
-        
-        ts << *item << endl;
-        
-        if(item->isContainer()) {
-            KCanvasContainer *parent = static_cast<KCanvasContainer *>(item);
-            for (KCanvasItem *child = parent->first(); child != NULL; child = child->next())
-                write(ts, child, indent + 1);
-        }
+    writeIndent(ts, indent);
+    ts << container.renderName();
+    
+    if (container.element()) {
+        QString tagName = getTagName(container.element());
+        if (!tagName.isEmpty())
+            ts << " {" << tagName << "}";
     }
+    
+    ts << container << endl;
+    
+    for (khtml::RenderObject *child = container.firstChild(); child != NULL; child = child->nextSibling())
+        write(ts, *child, indent + 1);
 }
 
-QString externalRepresentation(KCanvasItem *item)
+void write(QTextStream &ts, const RenderPath &path, int indent)
 {
-    QString s;
-    {
-        QTextStream ts(&s);
-        ts.precision(2);
-        ts << *(item->canvas()->registry());
-        write(ts, item);
+    writeIndent(ts, indent);
+    ts << path.renderName();
+    
+    if (path.element()) {
+        QString tagName = getTagName(path.element());
+        if (!tagName.isEmpty())
+            ts << " {" << tagName << "}";
     }
-    return s;
+    
+    ts << path << endl;
 }
-
 
 QTextStream &operator<<(QTextStream &ts, const QStringList &l)
 {

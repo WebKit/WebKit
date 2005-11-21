@@ -120,28 +120,6 @@ public:
 };
 
 /**
- * Returns a writeable per-domains settings instance for the given
- * domain or a deep copy of the global settings if not existent.
- */
-static KPerDomainSettings &setup_per_domain_policy(PolicyMap &policies,
-                                                   const KPerDomainSettings &global,
-                                                   const QString &domain)
-{
-    if(domain.isEmpty())
-        kdWarning() << "setup_per_domain_policy: domain is empty" << endl;
-
-    const QString ldomain = domain.lower();
-    PolicyMap::iterator it = policies.find(ldomain);
-    if(it == policies.end())
-    {
-        // simply copy global domain settings (they should have been initialized by this time)
-        it = policies.insert(ldomain, global);
-    }
-
-    return *it;
-}
-
-/**
  * Local helper for retrieving per-domain settings.
  * In case of doubt, the global domain is returned.
  */

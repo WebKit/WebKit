@@ -85,7 +85,7 @@ namespace KSVG
                                     public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGAnimationElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGAnimationElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGAnimationElementImpl();
 
         // 'SVGAnimationElement' functions
@@ -96,17 +96,17 @@ namespace KSVG
         double getCurrentTime() const;
         double getSimpleDuration() const;
     
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
-        virtual bool implementsCanvasItem() const { return false; }
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
 
-        virtual void close();
+        virtual void closeRenderer();
 
         // Helpers
         virtual void handleTimerEvent(double timePercentage) = 0;
 
         double parseClockValue(const QString &data) const;
 
-        KDOM::DOMStringImpl *targetAttribute() const;
+        KDOM::DOMString targetAttribute() const;
         void setTargetAttribute(KDOM::DOMStringImpl *value);
 
         static void setTargetAttribute(SVGElementImpl *target,

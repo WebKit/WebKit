@@ -37,7 +37,7 @@ namespace KSVG
     class SVGFECompositeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFECompositeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGFECompositeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGFECompositeElementImpl();
 
         // 'SVGFECompositeElement' functions
@@ -50,11 +50,11 @@ namespace KSVG
         SVGAnimatedNumberImpl *k4() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
 
         virtual KCanvasFilterEffect *filterEffect() const;
 

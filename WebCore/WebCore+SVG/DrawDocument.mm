@@ -40,12 +40,8 @@
 #import <kcanvas/device/quartz/KCanvasViewQuartz.h>
 #import <kcanvas/device/quartz/KRenderingDeviceQuartz.h>
 
-#define id ID_HACK
-
 #import <kdom/Namespace.h>
 #import <kdom/Helper.h>
-#import <kdom/parser/KDOMParser.h>
-#import <kdom/backends/libxml/LibXMLParser.h>
 #import <kdom/core/NodeImpl.h>
 #import <kdom/core/NodeListImpl.h>
 #import <kdom/core/DOMConfigurationImpl.h>
@@ -57,15 +53,12 @@
 
 #import <ksvg2/KSVGPart.h>
 #import <ksvg2/KSVGView.h>
-#import <ksvg2/misc/KSVGDocumentBuilder.h>
 #import <ksvg2/svg/SVGDocumentImpl.h>
 #import <ksvg2/svg/SVGSVGElementImpl.h>
 #import <ksvg2/svg/SVGDescElementImpl.h>
 #import <ksvg2/svg/SVGStyledElementImpl.h>
 #import <ksvg2/svg/SVGEllipseElementImpl.h>
 #import <ksvg2/svg/SVGRectElementImpl.h>
-
-#undef id
 
 using namespace KDOM;
 using namespace KSVG;
@@ -189,8 +182,8 @@ using namespace KSVG;
     parser->setDocumentBuilder(builder);
     
     // no entity refs
-    parser->domConfig()->setParameter(KDOM::ENTITIES.handle(), false);
-    parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.handle(), false);
+    parser->domConfig()->setParameter(KDOM::ENTITIES, false);
+    parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE, false);
     
     // Feed the parser the whole document (a total hack)
     parser->doOneShotParse((const char *)[data bytes], [data length]);
@@ -282,13 +275,7 @@ using namespace KSVG;
 
 - (NSString *)svgText
 {
-    QString *dumpText = new QString();
-    QTextStream dumpStream(dumpText, IO_WriteOnly);
-    KDOM::Helper::PrintNode(dumpStream, _private->svgDocument);
-    NSString *svgText = dumpText->getNSString();
-    delete dumpText;
-    
-    return svgText;
+    return createMarkup(_private->svgDocument).getNSString();;
 }
 
 @end
@@ -297,29 +284,32 @@ using namespace KSVG;
 
 - (BOOL)documentListensForMouseMovedEvents
 {
-    SVGDocumentImpl *document = _private->svgDocument;
-    
-    return (document &&	
-            (document->hasListenerType(KDOM::DOMFOCUSOUT_EVENT) ||
-             document->hasListenerType(KDOM::MOUSEOVER_EVENT) ||
-             document->hasListenerType(KDOM::MOUSEMOVE_EVENT) ||
-             document->hasListenerType(KDOM::MOUSEOUT_EVENT)));
+//    SVGDocumentImpl *document = _private->svgDocument;
+//    
+//    return (document &&	
+//            (document->hasListenerType(KDOM::DOMFOCUSOUT_EVENT) ||
+//             document->hasListenerType(KDOM::MOUSEOVER_EVENT) ||
+//             document->hasListenerType(KDOM::MOUSEMOVE_EVENT) ||
+//             document->hasListenerType(KDOM::MOUSEOUT_EVENT)));
+    return YES;
 }
 
 - (BOOL)documentListensForMouseDownEvents
 {
-    return (_private->svgDocument && _private->svgDocument->hasListenerType(KDOM::MOUSEDOWN_EVENT));
+    //return (_private->svgDocument && _private->svgDocument->hasListenerType(KDOM::MOUSEDOWN_EVENT));
+    return YES;
 }
 
 - (BOOL)documentListensForMouseUpEvents
 {
-    SVGDocumentImpl *document = _private->svgDocument;
-    
-    return (document &&
-            (document->hasListenerType(KDOM::DOMFOCUSIN_EVENT) ||
-             document->hasListenerType(KDOM::DOMACTIVATE_EVENT) ||
-             document->hasListenerType(KDOM::CLICK_EVENT) ||
-             document->hasListenerType(KDOM::MOUSEUP_EVENT)));
+//    SVGDocumentImpl *document = _private->svgDocument;
+//    
+//    return (document &&
+//            (document->hasListenerType(KDOM::DOMFOCUSIN_EVENT) ||
+//             document->hasListenerType(KDOM::DOMACTIVATE_EVENT) ||
+//             document->hasListenerType(KDOM::CLICK_EVENT) ||
+//             document->hasListenerType(KDOM::MOUSEUP_EVENT)));
+    return YES;
 }
 
 - (KDOM::MouseEventImpl *)newMouseEventWithEventId:(KDOM::EventId)eventId qMouseEvent:(QMouseEvent *)qevent
@@ -333,61 +323,64 @@ using namespace KSVG;
     float scale = (root ? root->currentScale() : 1.0);
     
     // Setup kdom 'MouseEvent'...
-    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(_private->svgDocument->createEvent(DOMString("MouseEvents").handle()));
+    int exceptionCode;
+    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(_private->svgDocument->createEvent(DOMString("MouseEvents"), exceptionCode));
     event->ref();
     
     event->initMouseEvent(eventString, qevent, scale);
     return event;
 }
 
-NSCursor *cursorForStyle(KDOM::RenderStyle *style)
+NSCursor *cursorForStyle(khtml::RenderStyle *style)
 {
     if(!style) return nil;
     NSCursor *newCursor = nil;
     switch(style->cursor())
     {
+#if 0
         case KDOM::CS_AUTO:
         case KDOM::CS_DEFAULT:
-            newCursor = KCursor::arrowCursor().handle();
+            newCursor = KCursor::arrowCursor();
             break;
         case KDOM::CS_CROSS:
         case KDOM::CS_PROGRESS:
-            newCursor = KCursor::crossCursor().handle();
+            newCursor = KCursor::crossCursor();
             break;
         case KDOM::CS_POINTER:
-            newCursor = KCursor::handCursor().handle();
+            newCursor = KCursor::handCursor();
             break;
         case KDOM::CS_MOVE:
-            newCursor = KCursor::sizeAllCursor().handle();
+            newCursor = KCursor::sizeAllCursor();
             break;
         case KDOM::CS_E_RESIZE:
         case KDOM::CS_W_RESIZE:
-            newCursor = KCursor::sizeHorCursor().handle();
+            newCursor = KCursor::sizeHorCursor();
             break;
         case KDOM::CS_NE_RESIZE:
         case KDOM::CS_SW_RESIZE:
-            newCursor = KCursor::sizeBDiagCursor().handle();
+            newCursor = KCursor::sizeBDiagCursor();
             break;
         case KDOM::CS_NW_RESIZE:
         case KDOM::CS_SE_RESIZE:
-            newCursor = KCursor::sizeFDiagCursor().handle();
+            newCursor = KCursor::sizeFDiagCursor();
             break;
         case KDOM::CS_N_RESIZE:
         case KDOM::CS_S_RESIZE:
-            newCursor = KCursor::sizeVerCursor().handle();
+            newCursor = KCursor::sizeVerCursor();
             break;
         case KDOM::CS_TEXT:
-            newCursor = KCursor::ibeamCursor().handle();
+            newCursor = KCursor::ibeamCursor();
             break;
         case KDOM::CS_WAIT:
-            newCursor = KCursor::waitCursor().handle();
+            newCursor = KCursor::waitCursor();
             break;
         case KDOM::CS_HELP:
-            newCursor = KCursor::whatsThisCursor().handle();
+            newCursor = KCursor::whatsThisCursor();
             break;
+#endif
         default:
         NSLog(@"setting default mouse cursor");
-            newCursor = KCursor::arrowCursor().handle();
+            newCursor = KCursor::arrowCursor();
     }
     return newCursor;
 }
@@ -408,7 +401,7 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
         KDOM::ElementImpl *target = static_cast<KDOM::ElementImpl *>(mev->relatedTarget());
         if(target)
         {
-            KDOM::RenderStyle *style = target->renderStyle();
+            khtml::RenderStyle *style = target->renderStyle();
             newCursor = cursorForStyle(style);
         }
         mev->deref();
@@ -509,7 +502,8 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
         KCanvasItem *cItem = [canvasItem item];
         KDOM::NodeImpl *node = (KDOM::NodeImpl *)cItem->userData();
         KDOM::NodeImpl *parent = node->parentNode();
-        parent->removeChild(node);
+        int exceptioncode;
+        parent->removeChild(node, exceptioncode);
     }
 }
 
@@ -520,21 +514,22 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
     DOMString mouseX(QString::number(mousePoint.x));
     DOMString mouseY(QString::number(mousePoint.x));
     
+    int exceptionCode;
     switch (tool) {
 	case DrawViewToolElipse:
 	{
-            newElement = _private->svgDocument->createElement(DOMString("ellipse").handle());
-            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("cx").handle(), mouseX.handle());
-            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("cy").handle(), mouseY.handle());
+            newElement = _private->svgDocument->createElementNS(KDOM::NS_SVG, DOMString("ellipse"), exceptionCode);
+            newElement->setAttributeNS(KDOM::NS_SVG, DOMString("cx"), mouseX, exceptionCode);
+            newElement->setAttributeNS(KDOM::NS_SVG, DOMString("cy"), mouseY, exceptionCode);
             break;
 	}
 	case DrawViewToolTriangle:
             break;
 	case DrawViewToolRectangle:
 	{
-            newElement = _private->svgDocument->createElement(DOMString("rect").handle());
-            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("x").handle(), mouseX.handle());
-            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("y").handle(), mouseY.handle());
+            newElement = _private->svgDocument->createElementNS(KDOM::NS_SVG, DOMString("rect"), exceptionCode);
+            newElement->setAttributeNS(KDOM::NS_SVG, DOMString("x"), mouseX, exceptionCode);
+            newElement->setAttributeNS(KDOM::NS_SVG, DOMString("y"), mouseY, exceptionCode);
             break;
 	}
 	case DrawViewToolLine:
@@ -545,9 +540,9 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
             NSLog(@"Can't create item for unsupported tool.");
     }
     if (newElement) {
-        newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("fill").handle(), DOMString("navy").handle());
+        newElement->setAttributeNS(KDOM::NS_SVG, DOMString("fill"), DOMString("navy"), exceptionCode);
         SVGSVGElementImpl *rootNode = _private->svgDocument->rootElement();
-        rootNode->appendChild(newElement);
+        rootNode->appendChild(newElement, exceptionCode);
         newElement->ref(); // don't know why this is necessary...
         newElement->attach(); // attach it to the canvas.
         newCanvasItem = static_cast<SVGStyledElementImpl *>(newElement)->canvasItem();

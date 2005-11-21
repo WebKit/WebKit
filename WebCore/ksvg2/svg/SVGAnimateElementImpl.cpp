@@ -22,14 +22,15 @@
 
 #include "config.h"
 #include "SVGAnimateElementImpl.h"
-#include "SVGDocumentImpl.h"
+#include "SVGSVGElementImpl.h"
+#include "KSVGTimeScheduler.h"
 
 #include <kdebug.h>
 
 using namespace KSVG;
 
-SVGAnimateElementImpl::SVGAnimateElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
-: SVGAnimationElementImpl(doc, id, prefix)
+SVGAnimateElementImpl::SVGAnimateElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+: SVGAnimationElementImpl(tagName, doc)
 {
     m_currentItem = -1;
 }
@@ -44,8 +45,8 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
     if(!m_connected)
     {
         // Save initial attribute value...
-        KDOM::DOMStringImpl *attr = targetAttribute();
-        m_savedTo = (attr ? attr->string() : QString::null);
+        KDOM::DOMString attr(targetAttribute());
+        m_savedTo = attr.qstring();
 
         // Animation mode handling
         switch(detectAnimationMode())
@@ -54,7 +55,7 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             case FROM_TO_ANIMATION:
             {
                 KDOM::DOMString toColorString(m_to);
-                m_toColor->setRGBColor(toColorString.handle());
+                m_toColor->setRGBColor(toColorString.impl());
     
                 KDOM::DOMString fromColorString;
                 if(!m_from.isEmpty()) // from-to animation
@@ -62,7 +63,7 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
                 else // to animation
                     fromColorString = m_initialColor.name();
     
-                m_fromColor->setRGBColor(fromColorString.handle());    
+                m_fromColor->setRGBColor(fromColorString.impl());    
 
                 // Calculate color differences, once.
                 QColor qTo = m_toColor->color();
@@ -78,7 +79,7 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             case FROM_BY_ANIMATION:
             {
                 KDOM::DOMString byColorString(m_by);
-                m_toColor->setRGBColor(byColorString.handle());
+                m_toColor->setRGBColor(byColorString.impl());
 
                 KDOM::DOMString fromColorString;
             
@@ -87,7 +88,7 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
                 else // by animation
                     fromColorString = m_initialColor.name();
 
-                m_fromColor->setRGBColor(fromColorString.handle());
+                m_fromColor->setRGBColor(fromColorString.impl());
 
                 QColor qBy = m_toColor->color();
                 QColor qFrom = m_fromColor->color();
@@ -100,7 +101,7 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
                 QColor qTo = clampColor(r, g, b);
             
                 KDOM::DOMString toColorString(qTo.name());
-                m_toColor->setRGBColor(toColorString.handle());
+                m_toColor->setRGBColor(toColorString.impl());
             
                 m_redDiff = qTo.red() - qFrom.red();
                 m_greenDiff = qTo.green() - qFrom.green();
@@ -117,10 +118,10 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             }
         }
 
-        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-        if(document)
+        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
+        if(ownerSVG)
         {
-            document->timeScheduler()->connectIntervalTimer(this);
+            ownerSVG->timeScheduler()->connectIntervalTimer(this);
             m_connected = true;
         }
 
@@ -161,10 +162,10 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
                 }
 
                 KDOM::DOMString toColorString(value2);
-                m_toColor->setRGBColor(toColorString.handle());
+                m_toColor->setRGBColor(toColorString.impl());
     
                 KDOM::DOMString fromColorString(value1);
-                m_fromColor->setRGBColor(fromColorString.handle());    
+                m_fromColor->setRGBColor(fromColorString.impl());    
 
                 QColor qTo = m_toColor->color();
                 QColor qFrom = m_fromColor->color();
@@ -205,10 +206,10 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             return;
         }
 
-        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-        if(document)
+        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
+        if(ownerSVG)
         {
-            document->timeScheduler()->disconnectIntervalTimer(this);
+            ownerSVG->timeScheduler()->disconnectIntervalTimer(this);
             m_connected = false;
         }
 

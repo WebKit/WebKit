@@ -23,6 +23,8 @@
 #ifndef KSVG_SVGURIReferenceImpl_H
 #define KSVG_SVGURIReferenceImpl_H
 
+#include <qstring.h>
+
 namespace KDOM
 {
     class AttributeImpl;
@@ -41,7 +43,7 @@ namespace KSVG
         // 'SVGURIReference' functions
         virtual SVGAnimatedStringImpl *href() const;
 
-        bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // Helpers
         static QString getTarget(const QString &url);

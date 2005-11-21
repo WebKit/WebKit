@@ -32,10 +32,25 @@ namespace KSVG
                                public SVGTransformableImpl
     {
     public:
-        SVGTextElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        SVGTextElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGTextElementImpl();
 
-        // 'SVGTextElement' functions
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+
+         // 'SVGTextElement' functions
+        virtual SVGElementImpl *nearestViewportElement() const;
+        virtual SVGElementImpl *farthestViewportElement() const;
+
+        virtual SVGRectImpl *getBBox() const;
+        virtual SVGMatrixImpl *getCTM() const;
+        virtual SVGMatrixImpl *getScreenCTM() const;
+        virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const { return 0; }
+
+        virtual SVGAnimatedTransformListImpl *transform() const { return 0; }
+        virtual SVGMatrixImpl *localMatrix() const { return 0; }
+        
+        // FIXME: HACK
+        virtual void updateLocalTransform(SVGTransformListImpl *localTransforms) { };
     };
 };
 

@@ -26,14 +26,13 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasRegistry.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 #include "ksvg.h"
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEColorMatrixElementImpl.h"
@@ -44,8 +43,8 @@
 
 using namespace KSVG;
 
-SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
-SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
+SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_in1 = 0;
     m_type = 0;
@@ -81,45 +80,32 @@ SVGAnimatedNumberListImpl *SVGFEColorMatrixElementImpl::values() const
     return lazy_create<SVGAnimatedNumberListImpl>(m_values, dummy);
 }
 
-void SVGFEColorMatrixElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEColorMatrixElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
+    if (attr->name() == SVGNames::typeAttr)
     {
-        case ATTR_TYPE:
-        {
-            if(value == "matrix")
-                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_MATRIX);
-            else if(value == "saturate")
-                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_SATURATE);
-            else if(value == "hueRotate")
-                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
-            else if(value == "luminanceToAlpha")
-                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
-            break;
-        }
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        case ATTR_VALUES:
-        {
-            values()->baseVal()->parse(value.string(), this);
-            break;
-        }
-        default:
-        {
-            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-        }
-    };
+        if(value == "matrix")
+            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_MATRIX);
+        else if(value == "saturate")
+            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_SATURATE);
+        else if(value == "hueRotate")
+            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
+        else if(value == "luminanceToAlpha")
+            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
+    }
+    else if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else if (attr->name() == SVGNames::valuesAttr)
+        values()->baseVal()->parse(value.qstring(), this);
+    else
+        SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasItem *SVGFEColorMatrixElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
+khtml::RenderObject *SVGFEColorMatrixElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *)
 {
-    m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas()->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     Q3ValueList<float> _values;
     SVGNumberListImpl *numbers = values()->baseVal();

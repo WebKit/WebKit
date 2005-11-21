@@ -37,8 +37,8 @@ class KRenderingDeviceContextQuartz : public KRenderingDeviceContext
 {
 public:
     KRenderingDeviceContextQuartz() : m_cgContext(0) { }
-    virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix);
-    virtual KCanvasMatrix worldMatrix() const;
+    virtual KCanvasMatrix concatCTM(const KCanvasMatrix &worldMatrix);
+    virtual KCanvasMatrix ctm() const;
     
     virtual QRect mapFromVisual(const QRect &rect);
     virtual QRect mapToVisual(const QRect &rect);
@@ -75,6 +75,8 @@ public:
     virtual void closeSubpath();
     
     KCanvasUserData pathForRect(const QRect &) const;
+    
+    virtual QString stringForPath(KCanvasUserData path);
 
     // Resource creation
     virtual KCanvasResource *createResource(const KCResourceType &type) const;
@@ -82,15 +84,14 @@ public:
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const;
     
     // item creation
-    virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const;
-    virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const;
+    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasUserData path) const;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const;
 
     // filters (mostly debugging)
     static bool filtersEnabled();
     static void setFiltersEnabled(bool enabled);
-        static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
-        static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
-            
+    static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
+    static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
 };
 
 // Wraps NSBezierPaths for c++ consumption

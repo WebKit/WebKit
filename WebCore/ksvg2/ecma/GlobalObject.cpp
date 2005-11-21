@@ -26,7 +26,6 @@
 
 #include "GlobalObject.h"
 #include "Constructors.h"
-#include "SVGDocumentImpl.h"
 
 #include <ksvg2/data/EcmaConstants.h>
 #include <ksvg2/data/GlobalObject.lut.h>

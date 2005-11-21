@@ -23,15 +23,13 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "svgattrs.h"
 #include "SVGHelper.h"
-#include "SVGDocumentImpl.h"
 #include "SVGFEMergeNodeElementImpl.h"
 #include "SVGAnimatedStringImpl.h"
 
 using namespace KSVG;
 
-SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGElementImpl(doc, id, prefix)
+SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGElementImpl(tagName, doc)
 {
     m_in1 = 0;
 }
@@ -48,22 +46,13 @@ SVGAnimatedStringImpl *SVGFEMergeNodeElementImpl::in1() const
     return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
-void SVGFEMergeNodeElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
+void SVGFEMergeNodeElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
     KDOM::DOMString value(attr->value());
-    switch(id)
-    {
-        case ATTR_IN:
-        {
-            in1()->setBaseVal(value.handle());
-            break;
-        }
-        default:
-        {
-            SVGElementImpl::parseAttribute(attr);
-        }
-    };
+    if (attr->name() == SVGNames::inAttr)
+        in1()->setBaseVal(value.impl());
+    else
+        SVGElementImpl::parseMappedAttribute(attr);
 }
 
 

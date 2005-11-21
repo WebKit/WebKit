@@ -26,8 +26,7 @@
 #include "SVGTestsImpl.h"
 #include "svgpathparser.h"
 #include "SVGLangSpaceImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGTransformableImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
 #include "SVGAnimatedPathDataImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
@@ -55,16 +54,15 @@ namespace KSVG
     class SVGPathSegCurvetoCubicSmoothRelImpl;
     class SVGPathSegCurvetoQuadraticSmoothAbsImpl;
     class SVGPathSegCurvetoQuadraticSmoothRelImpl;
-    class SVGPathElementImpl : public SVGStyledElementImpl,
+    class SVGPathElementImpl : public SVGStyledTransformableElementImpl,
                                public SVGTestsImpl,
                                public SVGLangSpaceImpl,
                                public SVGExternalResourcesRequiredImpl,
-                               public SVGTransformableImpl,
                                public SVGAnimatedPathDataImpl,
                                public SVGPathParser
     {
     public:
-        SVGPathElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        SVGPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPathElementImpl();
 
         SVGAnimatedNumberImpl *pathLength() const;
@@ -98,9 +96,9 @@ namespace KSVG
         virtual SVGPathSegListImpl *animatedPathSegList() const;
         virtual SVGPathSegListImpl *animatedNormalizedPathSegList() const;
 
-        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual bool implementsCanvasItem() const { return true; }
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
         virtual KCPathDataList toPathData() const;
 
     private:

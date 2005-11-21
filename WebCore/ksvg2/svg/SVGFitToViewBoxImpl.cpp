@@ -26,7 +26,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/DOMStringImpl.h>
 
-#include "svgattrs.h"
+#include "SVGNames.h"
 #include "SVGRectImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGAnimatedRectImpl.h"
@@ -38,46 +38,38 @@ using namespace KSVG;
 
 SVGFitToViewBoxImpl::SVGFitToViewBoxImpl()
 {
-    m_viewBox = 0;
-    m_preserveAspectRatio = 0;
 }
 
 SVGFitToViewBoxImpl::~SVGFitToViewBoxImpl()
 {
-    if(m_viewBox)
-        m_viewBox->deref();
-    if(m_preserveAspectRatio)
-        m_preserveAspectRatio->deref();
 }
 
 SVGAnimatedRectImpl *SVGFitToViewBoxImpl::viewBox() const
 {
     if(!m_viewBox)
     {
-        const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-        m_viewBox = new SVGAnimatedRectImpl(context);
-        m_viewBox->ref();
+        //const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
+        m_viewBox = new SVGAnimatedRectImpl(0); // FIXME: 0 is a hack
     }
 
-    return m_viewBox;
+    return m_viewBox.get();
 }
 
 SVGAnimatedPreserveAspectRatioImpl *SVGFitToViewBoxImpl::preserveAspectRatio() const
 {
     if(!m_preserveAspectRatio)
     {
-        const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-        m_preserveAspectRatio = new SVGAnimatedPreserveAspectRatioImpl(context);
-        m_preserveAspectRatio->ref();
+        //const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
+        m_preserveAspectRatio = new SVGAnimatedPreserveAspectRatioImpl(0); // FIXME: 0 is a hack
     }
 
-    return m_preserveAspectRatio;
+    return m_preserveAspectRatio.get();
 }
 
 void SVGFitToViewBoxImpl::parseViewBox(KDOM::DOMStringImpl *str)
 {
     // allow for viewbox def with ',' or whitespace
-    QString viewbox(str->unicode(), str->length());
+    QString viewbox = KDOM::DOMString(str).qstring();
     QStringList points = QStringList::split(' ', viewbox.replace(',', ' ').simplifyWhiteSpace());
 
     if (points.count() == 4) {
@@ -85,9 +77,8 @@ void SVGFitToViewBoxImpl::parseViewBox(KDOM::DOMStringImpl *str)
         viewBox()->baseVal()->setY(points[1].toDouble());
         viewBox()->baseVal()->setWidth(points[2].toDouble());
         viewBox()->baseVal()->setHeight(points[3].toDouble());
-    } else {
+    } else
         fprintf(stderr, "WARNING: Malformed viewbox string: %s (l: %i)", viewbox.ascii(), viewbox.length());
-    }
 }
 
 SVGMatrixImpl *SVGFitToViewBoxImpl::viewBoxToViewTransform(float viewWidth, float viewHeight) const
@@ -101,21 +92,17 @@ SVGMatrixImpl *SVGFitToViewBoxImpl::viewBoxToViewTransform(float viewWidth, floa
             0, 0, viewWidth, viewHeight);
 }
 
-bool SVGFitToViewBoxImpl::parseAttribute(KDOM::AttributeImpl *attr)
+bool SVGFitToViewBoxImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    int id = (attr->id() & NodeImpl_IdLocalMask);
-    switch(id)
+    if (attr->name() == SVGNames::viewBoxAttr)
     {
-        case ATTR_VIEWBOX:
-        {
-            parseViewBox(attr->value());
-            return true;
-        }
-        case ATTR_PRESERVEASPECTRATIO:
-        {
-            preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(attr->value());
-            return true;
-        }
+        parseViewBox(attr->value().impl());
+        return true;
+    }
+    else if (attr->name() == SVGNames::preserveAspectRatioAttr)
+    {
+        preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(attr->value().impl());
+        return true;
     }
 
     return false;

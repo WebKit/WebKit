@@ -30,11 +30,10 @@
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 
-#import "KRenderingStyle.h"
+#import "KCanvasRenderingStyle.h"
 #import "KRenderingPaintServer.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
-#import "KCanvas.h"
 #import "KCanvasMatrix.h"
 #import "KRenderingDevice.h"
 
@@ -44,31 +43,31 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 {
 	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
 	CGContextRef context = quartzContext->cgContext();
-	KRenderingStyle *style = args.style();
+	KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
 	
-	applyStyleToContext(context, style);
+        CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
 		
-	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
+	if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
             CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->fillPainter()->opacity());
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->fillPainter()->opacity());
 		CGContextSetFillColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);
-		if (style->fillPainter()->fillRule() == RULE_EVENODD) {
+		if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD) {
 			CGContextEOFillPath(context);
 		} else {
 			CGContextFillPath(context);
 		}
 	}
 	
-	if ( (type & APPLY_TO_STROKE) && style->isStroked() ) {
+	if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
 		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->strokePainter()->opacity());		
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());		
 		CGContextSetStrokeColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);
 		
-		applyStrokeStyleToContext(context, style);
+		applyStrokeStyleToContext(context, canvasStyle);
 		
 		CGContextStrokePath(context);
 	}
@@ -87,9 +86,9 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
 
-	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
-	CGContextRef context = quartzContext->cgContext();
-	KRenderingStyle *style = args.style();
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();
+    KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
 
     KCanvasImage *cell = tile();
     if (!cell) {
@@ -97,56 +96,55 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
         return;
     }
 	
-	CGContextSaveGState(context);
+    CGContextSaveGState(context);
 
-	CGSize cellSize = CGSize(cell->size());
-	
-	float alpha = 1; // style->opacity(); //which?
-		
-	// Patterns don't seem to resepect the CTM unless we make them...
-	CGAffineTransform ctm = CGContextGetCTM(context);
-	CGAffineTransform transform = CGAffineTransform(patternTransform().qmatrix());
-	transform = CGAffineTransformConcat(transform, ctm);
-    
+    CGSize cellSize = CGSize(cell->size());
+
+    float alpha = 1; // canvasStyle->opacity(); //which?
+            
+    // Patterns don't seem to resepect the CTM unless we make them...
+    CGAffineTransform ctm = CGContextGetCTM(context);
+    CGAffineTransform transform = CGAffineTransform(patternTransform().qmatrix());
+    transform = CGAffineTransformConcat(transform, ctm);
+
     CGSize phase = CGSizeMake(x(), y());
     CGContextSetPatternPhase(context, phase);
 		
-	CGPatternCallbacks callbacks = {0, patternCallback, NULL};
-	CGPatternRef pattern = CGPatternCreate (
-	   tile(),
-	   CGRectMake(0,0,cellSize.width,cellSize.height),
-	   transform,
-	   width(), //cellSize.width,
-	   height(), //cellSize.height,
-	   kCGPatternTilingConstantSpacing,  // FIXME: should ask CG guys.
-	   true, // has color
-	   &callbacks );
-	   
-	applyStyleToContext(context, style); // or do I set the alpha above?
-	
-	CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-	
-	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
-		CGContextSetFillColorSpace(context, patternSpace);
-		CGContextSetFillPattern(context, pattern, &alpha);
-		if (style->fillPainter()->fillRule() == RULE_EVENODD) {
-			CGContextEOFillPath(context);
-		} else {
-			CGContextFillPath(context);
-		}
-	}
-	
-	if ( (type & APPLY_TO_STROKE) && style->isStroked() ) {
-		CGContextSetStrokeColorSpace(context, patternSpace);
-		CGContextSetStrokePattern(context, pattern, &alpha);		
-		applyStrokeStyleToContext(context, style);
-		CGContextStrokePath(context);
-	}
-	
-	CGPatternRelease(pattern);
-	CGColorSpaceRelease (patternSpace);
-	
-	CGContextRestoreGState(context);
+    CGPatternCallbacks callbacks = {0, patternCallback, NULL};
+    CGPatternRef pattern = CGPatternCreate (
+        tile(),
+        CGRectMake(0,0,cellSize.width,cellSize.height),
+        transform,
+        width(), //cellSize.width,
+        height(), //cellSize.height,
+        kCGPatternTilingConstantSpacing,  // FIXME: should ask CG guys.
+        true, // has color
+        &callbacks );
+
+    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity()); // or do I set the alpha above?
+
+    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
+
+    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
+        CGContextSetFillColorSpace(context, patternSpace);
+        CGContextSetFillPattern(context, pattern, &alpha);
+        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD)
+            CGContextEOFillPath(context);
+        else
+            CGContextFillPath(context);
+    }
+
+    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
+        CGContextSetStrokeColorSpace(context, patternSpace);
+        CGContextSetStrokePattern(context, pattern, &alpha);		
+        applyStrokeStyleToContext(context, canvasStyle);
+        CGContextStrokePath(context);
+    }
+
+    CGPatternRelease(pattern);
+    CGColorSpaceRelease (patternSpace);
+
+    CGContextRestoreGState(context);
 }
 
 void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
