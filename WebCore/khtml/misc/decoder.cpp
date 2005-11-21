@@ -302,7 +302,6 @@ void Decoder::setEncoding(const char *_encoding, EncodingType type)
     if(enc.isNull() || enc.isEmpty())
         return;
 
-#if APPLE_CHANGES
     QTextCodec *codec = (type == EncodingFromMetaTag || type == EncodingFromXMLHeader)
         ? QTextCodec::codecForNameEightBitOnly(enc)
         : QTextCodec::codecForName(enc);
@@ -310,21 +309,6 @@ void Decoder::setEncoding(const char *_encoding, EncodingType type)
         enc = codec->name();
         visualRTL = codec->usesVisualOrdering();
     }
-#else
-    if(enc == "visual") // hebrew visually ordered
-        enc = "iso8859-8";
-    bool b;
-    QTextCodec *codec = KGlobal::charsets()->codecForName(enc, b);
-    if (!b)
-        codec = 0;
-
-    if (codec && codec->mibEnum() == 11)  {
-        // visually ordered unless one of the following
-        if( !(enc == "iso-8859-8-i" || enc == "iso_8859-8-i"
-                || enc == "csiso88598i" || enc == "logical") )
-            visualRTL = true;
-    }
-#endif
 
     if( codec ) { // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
         m_codec = codec;
@@ -461,22 +445,7 @@ QString Decoder::decode(const char *data, int len)
         kdDebug(6005) << "looking for charset definition" << endl;
 #endif
         { // extra level of braces to keep indenting matching original for better diff'ing
-#if APPLE_CHANGES
             buffer.append(data, len);
-#else
-            if(m_codec->mibEnum() != 1000) // utf16
-            {
-                // ### hack for a bug in QTextCodec. It cut's the input stream
-                // in case there are \0 in it. ZDNET has them inside... :-(
-                char *d = const_cast<char *>(data);
-                int i = len - 1;
-                while(i >= 0) {
-                    if(*(d+i) == 0) *(d+i) = ' ';
-                    i--;
-                }
-            }
-            buffer += QCString(data, len+1);
-#endif
             // we still don't have an encoding, and are in the head
             // the following tags are allowed in <head>:
             // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
@@ -491,13 +460,8 @@ QString Decoder::decode(const char *data, int len)
             
             bool withinTitle = false;
 
-#if APPLE_CHANGES
             const char *ptr = buffer.latin1();
             const char *pEnd = ptr + buffer.length();
-#else
-            const char *ptr = buffer.data();
-            const char *pEnd = buffer.length();
-#endif
             while(ptr != pEnd)
             {
                 if(*ptr == '<') {
@@ -529,11 +493,7 @@ QString Decoder::decode(const char *data, int len)
                         goto found;
                     } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
                         // UTF-16 without BOM
-#if APPLE_CHANGES
                         setEncoding(((ptr - buffer.latin1()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
-#else
-                        setEncoding(((ptr - buffer.data()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
-#endif
                         goto found;
                     }
 
@@ -615,12 +575,8 @@ QString Decoder::decode(const char *data, int len)
     }
 
  found:
-#if APPLE_CHANGES
     // Do the auto-detect if our default encoding is one of the Japanese ones.
     if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_codec && m_codec->isJapanese())
-#else
-    if (m_type == DefaultEncoding && KGlobal::locale()->languageList()[0] == "ja")
-#endif
     {
 #ifdef DECODE_DEBUG
 	kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
@@ -665,7 +621,6 @@ QString Decoder::decode(const char *data, int len)
     }
     QString out;
 
-#if APPLE_CHANGES
     if (!buffer.isEmpty()) {
         if (!lookForMetaTag)
             buffer.append(data, len);
@@ -674,46 +629,13 @@ QString Decoder::decode(const char *data, int len)
     } else {
         out = m_decoder->toUnicode(data, len);
     }
-#else
-    if(!buffer.isEmpty() && enc != "ISO-10646-UCS-2") {
-        out = m_decoder->toUnicode(buffer.latin1(), buffer.length());
-        buffer = "";
-    } else {
-        if(m_codec->mibEnum() != 1000) // utf16
-        {
-            // ### hack for a bug in QTextCodec. It cut's the input stream
-            // in case there are \0 in it. ZDNET has them inside... :-(
-            char *d = const_cast<char *>(data);
-            int i = len - 1;
-            while(i >= 0) {
-                if(*(d+i) == 0) *(d+i) = ' ';
-                i--;
-            }
-        }
-        out = m_decoder->toUnicode(data, len);
-    }
-
-    if (out.isNull()) {
-        fprintf(stderr, "ERROR:  decoded string is null\n");
-    } else if (out.length() == 0) {
-        fprintf(stderr, "ERROR:  decoded string length == 0\n");
-    }
-    // the hell knows, why the output does sometimes have a QChar::null at
-    // the end...
-    else if(out[out.length()-1] == QChar::null)
-        out.truncate(out.length() - 1);
-#endif
 
     return out;
 }
 
 QString Decoder::flush() const
 {
-#if APPLE_CHANGES
     return m_decoder->toUnicode(buffer.latin1(), buffer.length(), true);
-#else
-    return m_decoder->toUnicode(buffer.latin1(), buffer.length());
-#endif
 }
 
 // -----------------------------------------------------------------------------

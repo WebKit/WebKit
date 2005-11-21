@@ -37,13 +37,8 @@
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
-#else
-#define ASSERT(assertion) assert(assertion)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#endif
 
 using namespace DOM::HTMLNames;
 

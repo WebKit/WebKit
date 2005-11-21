@@ -1319,11 +1319,7 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 
-#if APPLE_CHANGES
     DOMString text = searchableIndexIntroduction();
-#else
-    DOMString text = i18n("This is a searchable index. Enter search keywords: ");
-#endif
     if (attrs) {
         if (AttributeImpl *a = attrs->getAttributeItem(promptAttr))
             text = a->value().domString() + " ";

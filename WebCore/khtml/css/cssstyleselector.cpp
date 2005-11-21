@@ -1696,12 +1696,8 @@ static const colorMap cmap[] = {
     { CSS_VAL_TEAL, 0xFF008080  },
     { CSS_VAL_WHITE, 0xFFFFFFFF },
     { CSS_VAL_YELLOW, 0xFFFFFF00 },
-#if !APPLE_CHANGES
-    { CSS_VAL_INVERT, invertedColor },
-#endif
     { CSS_VAL_TRANSPARENT, transparentColor },
     { CSS_VAL_GREY, 0xFF808080 },
-#if APPLE_CHANGES
     { CSS_VAL_ACTIVEBORDER, 0xFFE0E0E0 },
     { CSS_VAL_ACTIVECAPTION, 0xFF000000 },
     { CSS_VAL_APPWORKSPACE, 0xFF000000 },
@@ -1730,88 +1726,9 @@ static const colorMap cmap[] = {
     { CSS_VAL_WINDOW, 0xFFFFFFFF },
     { CSS_VAL_WINDOWFRAME, 0xFFFFFFFF },
     { CSS_VAL_WINDOWTEXT, 0xFF000000 },
-#endif
     { 0, 0 }
 };
 
-#if !APPLE_CHANGES
-
-struct uiColors {
-    int css_value;
-    const char * configGroup;
-    const char * configEntry;
-QPalette::ColorGroup group;
-QColorGroup::ColorRole role;
-};
-
-const char * const wmgroup = "WM";
-const char * const generalgroup = "General";
-
-/* Mapping system settings to CSS 2
-* Tried hard to get an appropriate mapping - schlpbch
-*/
-static const uiColors uimap[] = {
-    // Active window border.
-    { CSS_VAL_ACTIVEBORDER, wmgroup, "background", QPalette::Active, QColorGroup::Light },
-    // Active window caption.
-    { CSS_VAL_ACTIVECAPTION, wmgroup, "background", QPalette::Active, QColorGroup::Text },
-    // Text in caption, size box, and scrollbar arrow box.
-    { CSS_VAL_CAPTIONTEXT, wmgroup, "activeForeground", QPalette::Active, QColorGroup::Text },
-    // Face color for three-dimensional display elements.
-    { CSS_VAL_BUTTONFACE, wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
-    // Dark shadow for three-dimensional display elements (for edges facing away from the light source).
-    { CSS_VAL_BUTTONHIGHLIGHT, wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
-    // Shadow color for three-dimensional display elements.
-    { CSS_VAL_BUTTONSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
-    // Text on push buttons.
-    { CSS_VAL_BUTTONTEXT, wmgroup, "buttonForeground", QPalette::Inactive, QColorGroup::ButtonText },
-    // Dark shadow for three-dimensional display elements.
-    { CSS_VAL_THREEDDARKSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Dark },
-    // Face color for three-dimensional display elements.
-    { CSS_VAL_THREEDFACE, wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
-    // Highlight color for three-dimensional display elements.
-    { CSS_VAL_THREEDHIGHLIGHT, wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
-    // Light color for three-dimensional display elements (for edges facing the light source).
-    { CSS_VAL_THREEDLIGHTSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Midlight },
-    // Dark shadow for three-dimensional display elements.
-    { CSS_VAL_THREEDSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
-
-    // Inactive window border.
-    { CSS_VAL_INACTIVEBORDER, wmgroup, "background", QPalette::Disabled, QColorGroup::Background },
-    // Inactive window caption.
-    { CSS_VAL_INACTIVECAPTION, wmgroup, "inactiveBackground", QPalette::Disabled, QColorGroup::Background },
-    // Color of text in an inactive caption.
-    { CSS_VAL_INACTIVECAPTIONTEXT, wmgroup, "inactiveForeground", QPalette::Disabled, QColorGroup::Text },
-    { CSS_VAL_GRAYTEXT, wmgroup, 0, QPalette::Disabled, QColorGroup::Text },
-
-    // Menu background
-    { CSS_VAL_MENU, generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
-    // Text in menus
-    { CSS_VAL_MENUTEXT, generalgroup, "foreground", QPalette::Inactive, QColorGroup::Background },
-
-    // Text of item(s) selected in a control.
-    { CSS_VAL_HIGHLIGHT, generalgroup, "selectBackground", QPalette::Inactive, QColorGroup::Background },
-
-    // Text of item(s) selected in a control.
-    { CSS_VAL_HIGHLIGHTTEXT, generalgroup, "selectForeground", QPalette::Inactive, QColorGroup::Background },
-
-    // Background color of multiple document interface.
-    { CSS_VAL_APPWORKSPACE, generalgroup, "background", QPalette::Inactive, QColorGroup::Text },
-
-    // Scroll bar gray area.
-    { CSS_VAL_SCROLLBAR, generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
-
-    // Window background.
-    { CSS_VAL_WINDOW, generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
-    // Window frame.
-    { CSS_VAL_WINDOWFRAME, generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
-    // WindowText
-    { CSS_VAL_WINDOWTEXT, generalgroup, "windowForeground", QPalette::Inactive, QColorGroup::Text },
-    { CSS_VAL_TEXT, generalgroup, 0, QPalette::Inactive, QColorGroup::Text },
-    { 0, 0, 0, QPalette::NColorGroups, QColorGroup::NColorRoles }
-};
-
-#endif // !APPLE_CHANGES
 
 static QColor colorForCSSValue( int css_value )
 {
@@ -1822,36 +1739,7 @@ static QColor colorForCSSValue( int css_value )
     if ( col->css_value )
         return col->color;
 
-#if APPLE_CHANGES
     return QColor();
-#else
-    const uiColors *uicol = uimap;
-    while ( uicol->css_value && uicol->css_value != css_value )
-        ++uicol;
-    if ( !uicol->css_value ) {
-        if ( css_value == CSS_VAL_INFOBACKGROUND )
-            return QToolTip::palette().inactive().background();
-        else if ( css_value == CSS_VAL_INFOTEXT )
-            return QToolTip::palette().inactive().foreground();
-        else if ( css_value == CSS_VAL_BACKGROUND ) {
-            KConfig bckgrConfig("kdesktoprc", true, false); // No multi-screen support
-            bckgrConfig.setGroup("Desktop0");
-            // Desktop background.
-            return bckgrConfig.readColorEntry("Color1", &qApp->palette().disabled().background());
-        }
-        return invalidColor;
-    }
-    
-    const QPalette &pal = qApp->palette();
-    QColor c = pal.color( uicol->group, uicol->role );
-    if ( uicol->configEntry ) {
-        KConfig *globalConfig = KGlobal::config();
-        globalConfig->setGroup( uicol->configGroup );
-        c = globalConfig->readColorEntry( uicol->configEntry, &c );
-    }
-    
-    return c;
-#endif
 }
 
 void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
@@ -1875,9 +1763,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     case CSS_PROP_FONT_STYLE:
                     case CSS_PROP_FONT_FAMILY:
                     case CSS_PROP_FONT_WEIGHT:
-#if APPLE_CHANGES
                     case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
-#endif
                         // these have to be applied first, because other properties use the computed
                         // values of these porperties.
                         first = true;
@@ -2460,15 +2346,6 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     case CSS_PROP_COLOR:
     case CSS_PROP_OUTLINE_COLOR:
         // this property is an extension used to get HTML4 <font> right.
-#if !APPLE_CHANGES
-    case CSS_PROP_SCROLLBAR_FACE_COLOR:
-    case CSS_PROP_SCROLLBAR_SHADOW_COLOR:
-    case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:
-    case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:
-    case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:
-    case CSS_PROP_SCROLLBAR_TRACK_COLOR:
-    case CSS_PROP_SCROLLBAR_ARROW_COLOR:
-#endif
     {
         QColor col;
         if (isInherit) {
@@ -2511,38 +2388,6 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             style->setColor(col); break;
         case CSS_PROP_OUTLINE_COLOR:
             style->setOutlineColor(col); break;
-#if !APPLE_CHANGES
-        case CSS_PROP_SCROLLBAR_FACE_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::Button, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Button, col);
-            break;
-        case CSS_PROP_SCROLLBAR_SHADOW_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::Shadow, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Shadow, col);
-            break;
-        case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::Light, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Light, col);
-            break;
-        case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:
-            break;
-        case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::Dark, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Dark, col);
-            break;
-        case CSS_PROP_SCROLLBAR_TRACK_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::Base, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Base, col);
-            style->setPaletteColor(QPalette::Active, QColorGroup::Mid, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Mid, col);
-            style->setPaletteColor(QPalette::Active, QColorGroup::Background, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::Background, col);
-            break;
-        case CSS_PROP_SCROLLBAR_ARROW_COLOR:
-            style->setPaletteColor(QPalette::Active, QColorGroup::ButtonText, col);
-            style->setPaletteColor(QPalette::Inactive, QColorGroup::ButtonText, col);
-            break;
-#endif
         default:
             return;
         }
@@ -4075,7 +3920,6 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         break;
     }
 
-#if APPLE_CHANGES
     // Apple-specific changes.  Do not merge these properties into KHTML.
     case CSS_PROP__KHTML_LINE_CLAMP: {
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
@@ -4123,7 +3967,6 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         
         break;
     }   
-#endif
 
     default:
         return;
@@ -4274,7 +4117,6 @@ void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValueIm
     layer->setBackgroundYPosition(l);
 }
 
-#if APPLE_CHANGES
 void CSSStyleSelector::checkForTextSizeAdjust()
 {
     if (style->textSizeAdjust())
@@ -4284,7 +4126,6 @@ void CSSStyleSelector::checkForTextSizeAdjust()
     newFontDef.computedSize = newFontDef.specifiedSize;
     style->setFontDef(newFontDef);
 }
-#endif
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
 {

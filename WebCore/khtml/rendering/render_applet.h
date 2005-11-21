@@ -44,9 +44,7 @@ public:
 
     virtual const char *renderName() const { return "RenderApplet"; }
 
-#if APPLE_CHANGES
     void createWidgetIfNecessary();
-#endif
 
     virtual void layout();
     virtual int intrinsicWidth() const;
@@ -57,12 +55,8 @@ public:
     { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
 
 private:
-#if APPLE_CHANGES
     KJavaAppletContext *m_context;
     QMap<QString, QString> m_args;
-#else
-    void processArguments( const QMap<QString, QString> &args );
-#endif
 };
 
 class RenderEmptyApplet : public RenderWidget

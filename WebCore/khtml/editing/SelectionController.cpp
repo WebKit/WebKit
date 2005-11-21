@@ -45,11 +45,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 #define EDIT_DEBUG 0
 
@@ -1070,41 +1066,6 @@ void SelectionController::debugPosition() const
         fprintf(stderr, "-----------------------------------\n");
     }
           
-#if 0
-    int back = 0;
-    r = m_start.node()->renderer();
-    for (int i = 0; i < context; i++, back++) {
-        if (r->previousRenderer())
-            r = r->previousRenderer();
-        else
-            break;
-    }
-    for (int i = 0; i < back; i++) {
-        debugRenderer(r, false);
-        r = r->nextRenderer();
-    }
-
-
-    fprintf(stderr, "\n");
-
-    if (m_start.node() == m_end.node())
-        debugRenderer(m_start.node()->renderer(), true);
-    else
-        for (r = m_start.node()->renderer(); r && r != m_end.node()->renderer(); r = r->nextRenderer())
-            debugRenderer(r, true);
-    
-    fprintf(stderr, "\n");
-    
-    r = m_end.node()->renderer();
-    for (int i = 0; i < context; i++) {
-        if (r->nextRenderer()) {
-            r = r->nextRenderer();
-            debugRenderer(r, false);
-        }
-        else
-            break;
-    }
-#endif
 
     fprintf(stderr, "================================\n");
 }

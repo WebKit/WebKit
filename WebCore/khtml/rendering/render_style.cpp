@@ -88,9 +88,6 @@ StyleVisualData::StyleVisualData()
       : hasClip(false), 
       textDecoration(RenderStyle::initialTextDecoration()), 
       colspan( 1 ), counter_increment( 0 ), counter_reset( 0 )
-#if !APPLE_CHANGES
-      , palette( QApplication::palette() )
-#endif
 {
 }
 
@@ -101,9 +98,6 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o )
     : Shared<StyleVisualData>(),
       clip( o.clip ), hasClip( o.hasClip ), textDecoration(o.textDecoration), colspan( o.colspan ),
       counter_increment( o.counter_increment ), counter_reset( o.counter_reset )
-#if !APPLE_CHANGES
-      , palette( o.palette )
-#endif
 {
 }
 
@@ -337,9 +331,7 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
 :Shared<StyleCSS3NonInheritedData>(), 
-#if APPLE_CHANGES
 lineClamp(RenderStyle::initialLineClamp()),
-#endif
 opacity(RenderStyle::initialOpacity()),
 userDrag(RenderStyle::initialUserDrag()),
 userSelect(RenderStyle::initialUserSelect()),
@@ -355,9 +347,7 @@ m_appearance(RenderStyle::initialAppearance())
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o)
 :Shared<StyleCSS3NonInheritedData>(), 
-#if APPLE_CHANGES
 lineClamp(o.lineClamp),
-#endif
 opacity(o.opacity), flexibleBox(o.flexibleBox), marquee(o.marquee),
 userDrag(o.userDrag), userSelect(o.userSelect), textOverflow(o.textOverflow),
 marginTopCollapse(o.marginTopCollapse), marginBottomCollapse(o.marginBottomCollapse),
@@ -396,18 +386,14 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 #ifndef KHTML_NO_XBL
            && bindingsEquivalent(o)
 #endif
-#if APPLE_CHANGES
            && lineClamp == o.lineClamp && m_dashboardRegions == o.m_dashboardRegions
-#endif
     ;
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
 :Shared<StyleCSS3InheritedData>(), textShadow(0), userModify(READ_ONLY), wordWrap(WBNORMAL), 
     nbspMode(NBNORMAL), khtmlLineBreak(LBNORMAL)
-#if APPLE_CHANGES
 , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
-#endif
 {
 
 }
@@ -420,9 +406,7 @@ StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     wordWrap = o.wordWrap;
     nbspMode = o.nbspMode;
     khtmlLineBreak = o.khtmlLineBreak;
-#if APPLE_CHANGES
     textSizeAdjust = o.textSizeAdjust;
-#endif
 }
 
 StyleCSS3InheritedData::~StyleCSS3InheritedData()
@@ -434,9 +418,7 @@ bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
     return (userModify == o.userModify) && shadowDataEquivalent(o) && (wordWrap == o.wordWrap) &&
         (nbspMode == o.nbspMode) && (khtmlLineBreak == o.khtmlLineBreak)
-#if APPLE_CHANGES
             && (textSizeAdjust == o.textSizeAdjust)
-#endif
     ;
 }
 
@@ -723,10 +705,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          css3NonInheritedData->marginTopCollapse != other->css3NonInheritedData->marginTopCollapse ||
          css3NonInheritedData->marginBottomCollapse != other->css3NonInheritedData->marginBottomCollapse ||
          *css3NonInheritedData->flexibleBox.get() != *other->css3NonInheritedData->flexibleBox.get() ||
-#if APPLE_CHANGES
          (css3NonInheritedData->lineClamp != other->css3NonInheritedData->lineClamp) ||
          (css3InheritedData->textSizeAdjust != other->css3InheritedData->textSizeAdjust) ||
-#endif
          (css3InheritedData->wordWrap != other->css3InheritedData->wordWrap) ||
          (css3InheritedData->nbspMode != other->css3InheritedData->nbspMode) ||
          (css3InheritedData->khtmlLineBreak != other->css3InheritedData->khtmlLineBreak) ||
@@ -808,11 +788,9 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         borderRightWidth() != other->borderRightWidth())
         return Layout;
 
-#if APPLE_CHANGES
     // If regions change trigger a relayout to re-calc regions.
     if (!(css3NonInheritedData->m_dashboardRegions == other->css3NonInheritedData->m_dashboardRegions))
         return Layout;
-#endif
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
     // all visible checks.
@@ -851,9 +829,6 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         css3InheritedData->userModify != other->css3InheritedData->userModify ||
         css3NonInheritedData->userSelect != other->css3NonInheritedData->userSelect ||
         css3NonInheritedData->userDrag != other->css3NonInheritedData->userDrag
-#if !APPLE_CHANGES
-        || !(visual->palette == other->visual->palette)
-#endif
 	)
         return Repaint;
 
@@ -873,14 +848,6 @@ void RenderStyle::cleanup()
 //    SharedData::counter = 0;
 }
 
-#if !APPLE_CHANGES
-
-void RenderStyle::setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c)
-{
-    visual.access()->palette.setColor(g,r,c);
-}
-
-#endif
 
 void RenderStyle::adjustBackgroundLayers()
 {

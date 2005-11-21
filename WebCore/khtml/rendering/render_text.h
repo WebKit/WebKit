@@ -260,12 +260,10 @@ public:
     
     virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
 
-#if APPLE_CHANGES
     int widthFromCache(const Font *, int start, int len, int tabWidth, int xpos) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
     bool allAscii() const;
-#endif
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -277,9 +275,7 @@ public:
     bool atLineWrap(InlineTextBox *box, int offset);
     bool containsReversedText() { return m_containsReversedText; }
     
-#if APPLE_CHANGES
 public:
-#endif
     InlineTextBox * findNextInlineTextBox( int offset, int &pos ) const;
 
 protected: // members
@@ -307,11 +303,9 @@ protected: // members
     bool m_containsReversedText : 1;
 
     // 22 bits left
-#if APPLE_CHANGES
     mutable bool m_allAsciiChecked:1;
     mutable bool m_allAscii:1;
     int m_monospaceCharacterWidth;
-#endif
 };
 
 // Used to represent a text substring of an element, e.g., for text runs that are split because of

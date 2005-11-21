@@ -414,27 +414,6 @@ bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& pr
 
   // IE also supports retrieving a stylesheet by name, using the name/id of the <style> tag
   // (this is consistent with all the other collections)
-#if 0
-  // Bad implementation because DOM::StyleSheet doesn't inherit DOM::Node
-  // so we can't use DOMNamedNodesCollection.....
-  // We could duplicate it for stylesheets though - worth it ?
-  // Other problem of this implementation: it doesn't look for the ID attribute!
-  DOM::NameNodeListImpl namedList( m_doc.documentElement().handle(), p.domString() );
-  int len = namedList.length();
-  if ( len ) {
-    QValueList<DOM::Node> styleSheets;
-    for ( int i = 0 ; i < len ; ++i ) {
-      DOM::HTMLStyleElement elem = DOM::Node(namedList.item(i));
-      if (!elem.isNull())
-        styleSheets.append(elem.sheet());
-    }
-    if ( styleSheets.count() == 1 ) // single result
-      return getDOMStyleSheet(exec, styleSheets[0]);
-    else if ( styleSheets.count() > 1 ) {
-      return new DOMNamedItemsCollection(exec,styleSheets);
-    }
-  }
-#endif
   // ### Bad implementation because returns a single element (are IDs always unique?)
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)

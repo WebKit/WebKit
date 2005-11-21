@@ -26,9 +26,7 @@
 #include <qvariant.h>
 #include <kjs/lookup.h>
 
-#if APPLE_CHANGES
 #include <JavaScriptCore/runtime.h>
-#endif
 
 class KHTMLPart;
 
@@ -105,13 +103,11 @@ namespace KJS {
     
     DOM::EventImpl *getCurrentEvent() const { return m_evt; }
 
-#if APPLE_CHANGES
     virtual bool isGlobalObject(ValueImp *v);
     virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp);
     virtual bool isSafeScript (const Interpreter *target);
     virtual void *createLanguageInstanceForValue (ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
     void *createObjcInstanceForValue (ExecState *exec, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
-#endif
 
   private:
     KHTMLPart* m_part;

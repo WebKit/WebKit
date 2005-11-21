@@ -35,9 +35,7 @@ namespace DOM {
 
 class DocumentImpl;
 class DOMString;
-#if APPLE_CHANGES
 class ProcessingInstruction;
-#endif
 
 class EntityImpl : public ContainerNodeImpl
 {

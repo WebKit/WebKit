@@ -526,20 +526,6 @@ void ElementImpl::recalcStyle( StyleChange change )
     RenderStyle* _style = m_render ? m_render->style() : 0;
     bool hasParentRenderer = parent() ? parent()->renderer() : false;
     
-#if 0
-    const char* debug;
-    switch(change) {
-    case NoChange: debug = "NoChange";
-        break;
-    case NoInherit: debug= "NoInherit";
-        break;
-    case Inherit: debug = "Inherit";
-        break;
-    case Force: debug = "Force";
-        break;
-    }
-    qDebug("recalcStyle(%d: %s)[%p: %s]", change, debug, this, tagName().qstring().latin1());
-#endif
     if ( hasParentRenderer && (change >= Inherit || changed()) ) {
         RenderStyle *newStyle = getDocument()->styleSelector()->styleForElement(this);
         newStyle->ref();

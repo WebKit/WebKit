@@ -185,9 +185,7 @@ public:
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
-#ifdef APPLE_CHANGES
     static QScrollBar* gScrollBar;
-#endif
     
     RenderLayer(RenderObject* object);
     ~RenderLayer();
@@ -257,9 +255,7 @@ public:
     int horizontalScrollbarHeight();
     void moveScrollbarsAside();
     void positionScrollbars(const QRect& absBounds);
-#ifdef APPLE_CHANGES
     void paintScrollbars(QPainter* p, const QRect& damageRect);
-#endif
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
     void updateScrollPositionFromScrollbars();
@@ -394,11 +390,9 @@ protected:
     bool m_scrollDimensionsDirty : 1;
     bool m_zOrderListsDirty : 1;
 
-#if APPLE_CHANGES
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
-#endif
 
     Marquee* m_marquee; // Used by layers with overflow:marquee
 };

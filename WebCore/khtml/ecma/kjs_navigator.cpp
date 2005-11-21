@@ -34,9 +34,7 @@
 #include "kjs_binding.h"
 #include "khtml_part.h"
 
-#if APPLE_CHANGES
 #include "KWQKCookieJar.h"
-#endif
 
 namespace KJS {
 
@@ -170,12 +168,7 @@ bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 
 ValueImp *Navigator::getValueProperty(ExecState *exec, int token) const
 {
-#if APPLE_CHANGES
   QString userAgent = KWQ(m_part)->userAgent();
-#else
-  KURL url = m_part->url();
-  QString userAgent = KProtocolManager::userAgentForHost(url.host());
-#endif
   switch (token) {
   case AppCodeName:
     return String("Mozilla");
@@ -193,44 +186,26 @@ ValueImp *Navigator::getValueProperty(ExecState *exec, int token) const
       //kdDebug() << "appName -> IE" << endl;
       return String("Microsoft Internet Explorer");
     }
-#if APPLE_CHANGES
     // FIXME: Should we define a fallback result here besides "Konqueror"?
     return Undefined();
-#else
-    //kdDebug() << "appName -> Konqueror" << endl;
-    return String("Konqueror");
-#endif
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
     return String(userAgent.mid(userAgent.find('/') + 1));
   case Product:
-#if APPLE_CHANGES
     // When acting normal, we pretend to be "Gecko".
     if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1) {
         return String("Gecko");
     }
     // When spoofing as IE, we use Undefined().
     return Undefined();
-#else
-    return String("Konqueror/khtml");
-#endif
   case ProductSub:
     return String("20030107");
   case Vendor:
-#if APPLE_CHANGES
     return String("Apple Computer, Inc.");
-#else
-    return String("KDE");
-#endif
   case Language:
-#if APPLE_CHANGES
     // We don't have an implementation of KGlobal::locale().  We do however
     // have a static method on KLocale to access the current language.
     return String(KLocale::language());
-#else
-    return String(KGlobal::locale()->language() == "C" ?
-                  QString::fromLatin1("en") : KGlobal::locale()->language());
-#endif
   case UserAgent:
     return String(userAgent);
   case Platform:
@@ -247,11 +222,7 @@ ValueImp *Navigator::getValueProperty(ExecState *exec, int token) const
   case _MimeTypes:
     return new MimeTypes(exec);
   case CookieEnabled:
-#if APPLE_CHANGES
     return Boolean(KWQKCookieJar::cookieEnabled());
-#else
-    return Boolean(true); /// ##### FIXME
-#endif
   default:
     kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
     return NULL;
@@ -346,9 +317,7 @@ void PluginBase::refresh(bool reload)
     delete mimes;
     plugins = 0;
     mimes = 0;
-#if APPLE_CHANGES
     RefreshPlugins(reload);
-#endif
 }
 
 

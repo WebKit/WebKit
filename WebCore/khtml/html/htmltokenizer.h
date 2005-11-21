@@ -38,10 +38,8 @@
 #include "html/html_elementimpl.h"
 #include "xml/dom_docimpl.h"
 
-#if APPLE_CHANGES
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
-#endif
 #endif
 
 class KCharsets;
@@ -384,8 +382,6 @@ void parseHTMLDocumentFragment(const DOM::DOMString &, DOM::DocumentFragmentImpl
 
 }
 
-#if APPLE_CHANGES
 #undef id
-#endif
 
 #endif // HTMLTOKENIZER

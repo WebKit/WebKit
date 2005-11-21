@@ -62,9 +62,7 @@
 #include <qpixmap.h>
 #include <qpainter.h>
 
-#if APPLE_CHANGES
 #include <ApplicationServices/ApplicationServices.h>
-#endif
 
 using namespace DOM::HTMLNames;
 using namespace DOM::EventNames;
@@ -1370,7 +1368,6 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             }
         }
     }
-#if APPLE_CHANGES
     else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) ||
              element.hasLocalName(appletTag)) {
         if (propertyName == "__apple_runtime_object") {
@@ -1386,7 +1383,6 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             }
 	}
     }
-#endif
 
     const HashTable* table = classInfo()->propHashTable; // get the right hashtable
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -2507,7 +2503,6 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             return Undefined();
         }
     }
-#if APPLE_CHANGES
     else if (element.hasLocalName(canvasTag)) {
         if (id == KJS::HTMLElement::GetContext) {
             if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).qstring().lower() == "2d")) {
@@ -2516,7 +2511,6 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             return Undefined();
         }
     }
-#endif
 
     return Undefined();
 }
@@ -2543,7 +2537,6 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, Valu
             return;
         }
     }
-#if APPLE_CHANGES
     else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
 	if (ValueImp *runtimeObject = getRuntimeObject(exec, &element)) {
 	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject);
@@ -2551,7 +2544,6 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, Valu
 		return imp->put(exec, propertyName, value);
 	}
     }
-#endif
 
     const HashTable* table = classInfo()->propHashTable; // get the right hashtable
     const HashEntry* entry = Lookup::findEntry(table, propertyName);

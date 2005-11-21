@@ -114,7 +114,6 @@ namespace khtml {
     class InlineFlowBox;
     class CollapsedBorderValue;
 
-#if APPLE_CHANGES
 struct DashboardRegionValue
 {
     QString label;
@@ -127,7 +126,6 @@ struct DashboardRegionValue
         return type == o.type && bounds == o.bounds && label == o.label;
     }
 };
-#endif
 
 
 /**
@@ -465,11 +463,9 @@ public:
 
     virtual void updateWidgetPosition();
     
-#if APPLE_CHANGES
     QValueList<DashboardRegionValue> RenderObject::computeDashboardRegions();
     void addDashboardRegions (QValueList<DashboardRegionValue>& regions);
     void collectDashboardRegions (QValueList<DashboardRegionValue>& regions);
-#endif
 
     // does a query on the rendertree and finds the innernode
     // and overURL for the given position
@@ -668,9 +664,7 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     QRect paintingRootRect(QRect& topLevelRect);
 
-#if APPLE_CHANGES
     virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);
-#endif
 
     virtual int minWidth() const { return 0; }
     virtual int maxWidth() const { return 0; }

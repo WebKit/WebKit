@@ -68,7 +68,6 @@ public:
 
     virtual bool isFormElement() const { return true; }
 
-#if APPLE_CHANGES
     // Aqua form controls never have border/padding.
     int borderTop() const { return 0; }
     int borderBottom() const { return 0; }
@@ -88,7 +87,6 @@ public:
     void addIntrinsicMarginsIfAllowed(RenderStyle* _style);
     virtual bool canHaveIntrinsicMargins() const { return false; }
     int intrinsicMargin() const { return 2; }
-#endif
 
     virtual void setStyle(RenderStyle *);
     virtual void updateFromElement();
@@ -103,10 +101,8 @@ public slots:
     virtual void slotClicked();
     virtual void slotSelectionChanged();
     
-#if APPLE_CHANGES
     // Hack to make KWQSlot code work.
     virtual void slotTextChanged(const QString &string);
-#endif
 
 protected:
     virtual bool isEditable() const { return false; }
@@ -134,10 +130,8 @@ public:
     RenderLineEdit(DOM::HTMLInputElementImpl *element);
 
     virtual void calcMinMaxWidth();
-#if APPLE_CHANGES
     int calcReplacedHeight() const { return intrinsicHeight(); }
     virtual bool canHaveIntrinsicMargins() const { return true; }
-#endif
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
     virtual void updateFromElement();
@@ -159,11 +153,9 @@ public slots:
     void slotReturnPressed();
     void slotTextChanged(const QString &string);
     void slotSelectionChanged();
-#if APPLE_CHANGES
     void slotPerformSearch();
 public:
     void addSearchResult();
-#endif
 
 protected:
     virtual void handleFocusOut();
@@ -278,11 +270,9 @@ public:
 
     virtual const char *renderName() const { return "RenderSelect"; }
 
-#if APPLE_CHANGES
     short baselinePosition( bool f, bool b ) const;
     int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
     virtual bool canHaveIntrinsicMargins() const { return true; }
-#endif
 
     virtual void calcMinMaxWidth();
     virtual void layout();
@@ -292,9 +282,7 @@ public:
     bool selectionChanged() { return m_selectionChanged; }
     void setSelectionChanged(bool _selectionChanged) { m_selectionChanged = _selectionChanged; }
     virtual void updateFromElement();
-#if APPLE_CHANGES
     virtual void setStyle(RenderStyle *);
-#endif
 
     void updateSelection();
 
@@ -304,9 +292,7 @@ public:
 protected:
     KListBox *createListBox();
     ComboBoxWidget *createComboBox();
-#if APPLE_CHANGES
     void setWidgetWritingDirection();
-#endif
 
     unsigned  m_size;
     bool m_multiple;
@@ -363,9 +349,7 @@ public:
     void select();
     void setSelectionRange(int, int);
     
-#if APPLE_CHANGES
     virtual bool canHaveIntrinsicMargins() const { return true; }
-#endif
 
 protected slots:
     void slotTextChanged();
@@ -381,7 +365,6 @@ protected:
 
 // -------------------------------------------------------------------------
 
-#if APPLE_CHANGES
 class RenderSlider : public RenderFormElement
 {
 public:
@@ -399,7 +382,6 @@ protected slots:
     void slotSliderValueChanged();
     void slotClicked();
 };
-#endif
 
 }; //namespace
 

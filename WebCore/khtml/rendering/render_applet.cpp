@@ -54,16 +54,8 @@ RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString>
         context = part->createJavaContext();
     }
 
-#if APPLE_CHANGES
     m_context = context;
     m_args = args;
-#else
-    if ( context ) {
-        //kdDebug(6100) << "RenderApplet::RenderApplet, setting QWidget" << endl;
-        setQWidget( new KJavaAppletWidget(context, _view->viewport()) );
-        processArguments(args);
-    }
-#endif
 }
 
 RenderApplet::~RenderApplet()
@@ -126,58 +118,12 @@ void RenderApplet::layout()
     calcHeight();
 
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
-#if APPLE_CHANGES
     // The applet's QWidget gets created lazily upon first layout.
     if (!tmp)
         createWidgetIfNecessary();
-#else 
-    if ( tmp ) {
-        NodeImpl *child = element()->firstChild();
-
-        while(child) {
-
-            if(child->id() == ID_PARAM) {
-                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                if(tmp->applet())
-                    tmp->applet()->setParameter( p->name(), p->value());
-            }
-            child = child->nextSibling();
-        }
-        //kdDebug(6100) << "setting applet widget to size: " << m_width << ", " << m_height << endl;
-        m_widget->resize(m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
-                         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom());
-        tmp->showApplet();
-    }
-#endif
     setNeedsLayout(false);
 }
 
-#if !APPLE_CHANGES
-void RenderApplet::processArguments(const QMap<QString, QString> &args)
-{
-    KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(m_widget);
-    KJavaApplet* applet = w ? w->applet() : 0;
-
-    if ( applet ) {
-        applet->setBaseURL( args[QString::fromLatin1("baseURL") ] );
-        applet->setAppletClass( args[QString::fromLatin1("code") ] );
-
-	QString str = args[QString::fromLatin1("codeBase") ];
-        if( !str.isEmpty() )
-            applet->setCodeBase( str );
-
-	str = args[QString::fromLatin1("name") ];
-        if( !str.isNull() )
-            applet->setAppletName( str );
-        else
-            applet->setAppletName( args[QString::fromLatin1("code") ] );
-
-	str = args[QString::fromLatin1("archive") ];
-        if( !str.isEmpty() ) 
-            applet->setArchives( args[QString::fromLatin1("archive") ] );
-    }
-}
-#endif
 
 RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
   : RenderWidget(node)
@@ -185,13 +131,7 @@ RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
     // init RenderObject attributes
     setInline(true);
 
-#if APPLE_CHANGES
     // FIXME: Figure out how to handle this.
-#else
-    QLabel* label = new QLabel(i18n("Java Applet is not loaded. (Java interpreter disabled)"), node->getDocument()->view()->viewport());
-    label->setAlignment( Qt::AlignCenter | Qt::WordBreak );
-    setQWidget(label);
-#endif
 }
 
 int RenderEmptyApplet::intrinsicWidth() const
@@ -213,14 +153,6 @@ void RenderEmptyApplet::layout()
     calcHeight();
 
     // updateWidgetPositions will size the widget, so we don't need to do that here.
-#if !APPLE_CHANGES
-    if(m_widget)
-    {
-        //kdDebug(6100) << "RenderEmptyApplet::layout, m_width = " << m_width << ", m_height = " << m_height << endl;
-        m_widget->resize(m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
-                         m_height-borderTop()-borderBottom()-paddingTop()-paddingBottom());
-    }
-#endif
     
     setNeedsLayout(false);
 }

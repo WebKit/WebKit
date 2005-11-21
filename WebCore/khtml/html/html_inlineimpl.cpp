@@ -96,11 +96,7 @@ bool HTMLAnchorElementImpl::isFocusable() const
 
 bool HTMLAnchorElementImpl::isMouseFocusable() const
 {
-#if APPLE_CHANGES
     return false;
-#else
-    return isFocusable();
-#endif
 }
 
 bool HTMLAnchorElementImpl::isKeyboardFocusable() const

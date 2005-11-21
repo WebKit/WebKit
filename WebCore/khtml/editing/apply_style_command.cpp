@@ -41,11 +41,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using namespace DOM::HTMLNames;
 

@@ -961,7 +961,6 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
             }
         }
             
-#if APPLE_CHANGES
         // Set up the appropriate text-shadow effect for the decoration.
         // FIXME: Support multiple shadow effects.  Need more from the CG API before we can do this.
         bool setShadow = false;
@@ -970,7 +969,6 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
                          styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
             setShadow = true;
         }
-#endif
         
         // We must have child boxes and have decorations defined.
         _tx += borderLeft() + paddingLeft();
@@ -996,10 +994,8 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
             p->drawLineForText(_tx, _ty, 2*m_baseline/3, w);
         }
 
-#if APPLE_CHANGES
         if (setShadow)
             p->clearShadow();
-#endif
     }
 }
 

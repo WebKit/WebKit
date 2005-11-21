@@ -34,11 +34,9 @@
 #include "rendering/render_style.h"
 #include "rendering/render_object.h"
 
-#if APPLE_CHANGES
 #import <kxmlcore/Assertions.h>
 #import "KWQFontFamily.h"
 #import "KWQLogging.h"
-#endif
 
 using khtml::EBackgroundBox;
 using khtml::EBorderStyle;
@@ -1189,30 +1187,6 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_PADDING:
         // FIXME: unimplemented
         break;
-#if !APPLE_CHANGES
-    case CSS_PROP_SCROLLBAR_FACE_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_SHADOW_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_TRACK_COLOR:
-        // FIXME: unimplemented
-        break;
-    case CSS_PROP_SCROLLBAR_ARROW_COLOR:
-        // FIXME: unimplemented
-        break;
-#endif
-#if APPLE_CHANGES
         case CSS_PROP__KHTML_DASHBOARD_REGION: {
             QValueList<StyleDashboardRegion> regions = style->dashboardRegions();
             uint i, count = regions.count();
@@ -1239,7 +1213,6 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
             }
             return new CSSPrimitiveValueImpl(firstRegion);
         }
-#endif
     }
 
     ERROR("unimplemented propertyID: %d", propertyID);

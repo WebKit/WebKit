@@ -168,18 +168,12 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
         }
     }
 
-#if APPLE_CHANGES
     // Stop the previous image, if it may be animating.
     pix.stopAnimations();
-#endif
     
-#if APPLE_CHANGES
     pix.decreaseUseCount();
-#endif
     pix = p;
-#if APPLE_CHANGES
     p.increaseUseCount();
-#endif
 
     if (needlayout) {
         if (!selfNeedsLayout())
@@ -188,42 +182,19 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
             setMinMaxKnown(false);
     }
     else {
-#if APPLE_CHANGES
         // FIXME: We always just do a complete repaint, since we always pass in the full pixmap
         // rect at the moment anyway.
         resizeCache = QPixmap();
         repaintRectangle(QRect(borderLeft()+paddingLeft(), borderTop()+paddingTop(), contentWidth(), contentHeight()));
-#else
-        // FIXME: This code doesn't handle scaling properly, since it doesn't scale |r|.
-        bool completeRepaint = !resizeCache.isNull();
-        int cHeight = contentHeight();
-        int scaledHeight = intrinsicHeight() ? ((o->valid_rect().height()*cHeight)/intrinsicHeight()) : 0;
-
-        // don't bog down X server doing xforms
-        if(completeRepaint && cHeight >= 5 &&  o->valid_rect().height() < intrinsicHeight() &&
-           (scaledHeight / (cHeight/5) == resizeCache.height() / (cHeight/5)))
-            return;
-
-        resizeCache = QPixmap(); // for resized animations
-        if(completeRepaint)
-            repaintRectangle(QRect(borderLeft()+paddingLeft(), borderTop()+paddingTop(), contentWidth(), contentHeight()));
-        else
-        {
-            repaintRectangle(QRect(r.x() + borderLeft() + paddingLeft(), r.y() + borderTop() + paddingTop(),
-                             r.width(), r.height()));
-        }
-#endif
     }
 }
 
-#if APPLE_CHANGES
 void RenderImage::resetAnimation()
 {
     pix.resetAnimation();
     if (!needsLayout())
         repaint();
 }
-#endif
 
 void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 {
@@ -246,7 +217,6 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i))
         return;
         
-#if APPLE_CHANGES
     bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
     bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
     if (i.phase == PaintActionSelection) {
@@ -255,7 +225,6 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         }
         drawSelectionTint = false;
     }
-#endif
         
     int cWidth = contentWidth();
     int cHeight = contentHeight();
@@ -275,7 +244,6 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 
         if(cWidth > 2 && cHeight > 2)
         {
-#if APPLE_CHANGES
             if ( !berrorPic ) {
                 p->setPen (Qt::lightGray);
                 p->setBrush (Qt::NoBrush);
@@ -320,39 +288,13 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 } else if (usableWidth >= textWidth && cHeight >= fm.height())
                     p->drawText(ax, ay+ascent, tabWidth(), 0, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
             }
-#else /* not APPLE_CHANGES */
-            if ( !berrorPic ) {
-                //qDebug("qDrawShadePanel %d/%d/%d/%d", _tx + leftBorder, _ty + topBorder, cWidth, cHeight);
-                qDrawShadePanel( p, _tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight,
-                                 KApplication::palette().inactive(), true, 1 );
-            }
-            if(berrorPic && !pix.isNull() && (cWidth >= pix.width()+4) && (cHeight >= pix.height()+4) )
-            {
-                QRect r(pix.rect());
-                r = r.intersect(QRect(0, 0, cWidth-4, cHeight-4));
-                p->drawPixmap( QPoint( _tx + leftBorder + leftPad+2, _ty + topBorder + topPad+2), pix, r );
-            }
-            if(!alt.isEmpty()) {
-                QString text = alt.qstring();
-                text.replace('\\', backslashAsCurrencySymbol());
-                p->setFont(style()->font());
-                p->setPen( style()->color() );
-                int ax = _tx + leftBorder + leftPad + 2;
-                int ay = _ty + topBorder + topPad + 2;
-                const QFontMetrics &fm = style()->fontMetrics();
-                if (cWidth>5 && cHeight>=fm.height())
-                    p->drawText(ax, ay+1, tabWidth(), 0, cWidth - 4, cHeight - 4, Qt::WordBreak, text );
-            }
-#endif /* APPLE_CHANGES not defined */
         }
     }
     else if (image && !image->isTransparent()) {
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
              pix.width() > 0 && pix.height() > 0 && image->valid_rect().isValid())
         {
-#if APPLE_CHANGES
             QSize tintSize;
-#endif
             if (resizeCache.isNull() && cWidth && cHeight)
             {
                 QRect scaledrect(image->valid_rect());
@@ -384,22 +326,16 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 
                 p->drawPixmap( QPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad),
                                resizeCache, scaledrect );
-#if APPLE_CHANGES
                 tintSize = s;
-#endif
             } else {
                 p->drawPixmap( QPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad), resizeCache );
-#if APPLE_CHANGES
                 tintSize = resizeCache.rect().size();
-#endif
             }
-#if APPLE_CHANGES
             if (drawSelectionTint) {
                 QBrush brush(selectionColor(p));
                 QRect selRect(selectionRect());
                 p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
             }
-#endif
         }
         else
         {
@@ -429,13 +365,11 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
              else {
                  p->drawPixmap(offs, pix, rect);
              }
-#if APPLE_CHANGES
              if (drawSelectionTint) {
                  QBrush brush(selectionColor(p));
                  QRect selRect(selectionRect());
                  p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
              }
-#endif
         }
     }
 }
@@ -469,14 +403,6 @@ void RenderImage::layout()
 // We don't want to impose a constraint on image size here. But there also
 // is a bug somewhere that causes the scaled height to be used with the
 // original width, causing the image to be compressed vertically.
-#if !APPLE_CHANGES
-    // limit total size to not run out of memory when doing the xform call.
-    if ( m_width * m_height > 2048*2048 ) {
-	float scale = sqrt( m_width*m_height / ( 2048.*2048. ) );
-	m_width = (int) (m_width/scale);
-	m_height = (int) (m_height/scale);
-    }
-#endif
 
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();

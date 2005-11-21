@@ -27,9 +27,7 @@
 #include <qguardedptr.h>
 #include "misc/loader_client.h"
 
-#if APPLE_CHANGES
 #include <ApplicationServices/ApplicationServices.h>
-#endif
 
 namespace DOM {
     class HTMLCollectionImpl;

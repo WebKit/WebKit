@@ -79,42 +79,6 @@ static int propertyID(const DOMString &s)
     return getPropertyID(buffer, len);
 }
 
-#if 0
-
-// Too risky to quote all legal identifiers right now.
-// Post-Tiger we should use this function or something like it.
-
-// Return true if this string qualifies as an identifier (from the point of view of CSS syntax).
-static bool isLegalIdentifier(const DOMString &string)
-{
-    int len = string.length();
-    if (len == 0) {
-        return false;
-    }
-    QChar *p = string.unicode();
-    int i = 0;
-    if (p[0] == '-') {
-        ++i;
-    }
-    if (i == len) {
-        return false;
-    }
-    ushort code = p[i].unicode();
-    if (!(code >= 0x80 || code == '_' || isalpha(code))) {
-        return false;
-    }
-    ++i;
-    while (i != len) {
-        code = p[i].unicode();
-        if (!(code >= 0x80 || code == '-' || code == '_' || isalnum(code))) {
-            return false;
-        }
-        ++i;
-    }
-    return true;
-}
-
-#endif
 
 // Quotes the string if it needs quoting.
 // We use single quotes for now beause markup.cpp uses double quotes.
@@ -448,10 +412,6 @@ bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const DOMString
     CSSParser parser(strictParsing);
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
-#if !APPLE_CHANGES
-        kdDebug( 6080 ) << "CSSMutableStyleDeclarationImpl::setProperty invalid property: [" << getPropertyName(id).qstring()
-                        << "] value: [" << value.qstring() << "]"<< endl;
-#endif
         exceptionCode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
     } else if (notifyChanged)
         setChanged();
@@ -838,13 +798,9 @@ void CSSPrimitiveValueImpl::cleanup()
 int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics )
 {
     double result = computeLengthFloat( style, devMetrics );
-#if APPLE_CHANGES
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
     int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
-#else
-    int intResult = (int)result;
-#endif
     return intResult;    
 }
 
@@ -852,13 +808,9 @@ int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDevic
                                           double multiplier )
 {
     double result = multiplier * computeLengthFloat( style, devMetrics );
-#if APPLE_CHANGES
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
     int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
-#else
-    int intResult = (int)result;
-#endif
     return intResult;    
 }
 
@@ -887,12 +839,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPa
         // our actual constructed rendering font.
         {
         QFontMetrics fm = style->fontMetrics();
-#if APPLE_CHANGES
         factor = fm.xHeight();
-#else
-        QRect b = fm.boundingRect('x');
-        factor = b.height();
-#endif
         break;
         }
     case CSSPrimitiveValue::CSS_PX:
@@ -1096,7 +1043,6 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
             text += m_value.pair->second()->cssText();
             break;
 
-#if APPLE_CHANGES        
         case CSSPrimitiveValue::CSS_DASHBOARD_REGION: {
             DashboardRegionImpl *region = getDashboardRegionValue();
             while (region) {
@@ -1119,7 +1065,6 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
             }
             break;
         }
-#endif
     }
     return text;
 }
@@ -1285,45 +1230,11 @@ FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
     static const QRegExp parenReg(" \\(.*\\)$");
     static const QRegExp braceReg(" \\[.*\\]$");
 
-#if APPLE_CHANGES
     parsedFontName = string;
     // a language tag is often added in braces at the end. Remove it.
     parsedFontName.replace(parenReg, "");
     // remove [Xft] qualifiers
     parsedFontName.replace(braceReg, "");
-#else
-    const QString &available = KHTMLSettings::availableFamilies();
-
-    QString face = string.lower();
-    // a languge tag is often added in braces at the end. Remove it.
-    face = face.replace(parenReg, "");
-    // remove [Xft] qualifiers
-    face = face.replace(braceReg, "");
-    //kdDebug(0) << "searching for face '" << face << "'" << endl;
-
-    int pos = available.find( face, 0, false );
-    if( pos == -1 ) {
-        QString str = face;
-        int p = face.find(' ');
-        // Arial Blk --> Arial
-        // MS Sans Serif --> Sans Serif
-        if ( p != -1 ) {
-            if(p > 0 && (int)str.length() - p > p + 1)
-                str = str.mid( p+1 );
-            else
-                str.truncate( p );
-            pos = available.find( str, 0, false);
-        }
-    }
-
-    if ( pos != -1 ) {
-        int pos1 = available.findRev( ',', pos ) + 1;
-        pos = available.find( ',', pos );
-        if ( pos == -1 )
-            pos = available.length();
-        parsedFontName = available.mid( pos1, pos - pos1 );
-    }
-#endif // !APPLE_CHANGES
 }
 
 DOM::DOMString FontFamilyValueImpl::cssText() const

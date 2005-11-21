@@ -44,11 +44,7 @@ private:
     
     TokenizerSubstring() : m_length(0), m_current(0) {}
     TokenizerSubstring(const QString &str) : m_string(str), m_length(str.length()) {
-#if APPLE_CHANGES
 	m_current = m_length == 0 ? 0 : m_string.stableUnicode();
-#else
-	m_current = m_length == 0 ? 0 : m_string.unicode();
-#endif
 
 
     }

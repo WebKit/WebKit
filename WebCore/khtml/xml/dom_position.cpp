@@ -47,13 +47,8 @@
 #include "editing/visible_text.h"
 #include "htmlnames.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
-#else
-#define ASSERT(assertion) assert(assertion)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#endif
 
 using khtml::EAffinity;
 using khtml::InlineBox;

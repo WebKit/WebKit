@@ -34,9 +34,7 @@
 #include "SelectionController.h"
 #include <kxmlcore/HashMap.h>
 
-#if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
-#endif
 
 using khtml::TypingCommand;
 

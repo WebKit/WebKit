@@ -102,11 +102,9 @@ void HTMLImageLoader::updateFromElement()
         if (oldImage)
             oldImage->deref(this);
     }
-#if APPLE_CHANGES
     khtml::RenderImage *renderer = static_cast<khtml::RenderImage*>(element()->renderer());
     if (renderer)
         renderer->resetAnimation();
-#endif
 }
 
 void HTMLImageLoader::dispatchLoadEvent()
@@ -228,10 +226,8 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         setHTMLEventListener(loadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     }
-#if APPLE_CHANGES
     else if (attr->name() == compositeAttr)
         _compositeOperator = attr->value().qstring();
-#endif
     else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {

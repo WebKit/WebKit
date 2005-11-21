@@ -89,9 +89,7 @@
 #include <stdlib.h>
 #include <qptrstack.h>
 
-#if APPLE_CHANGES
 #include "KWQKCookieJar.h"
-#endif
 
 
 // Turn off inlining to avoid warning with newer gcc.
@@ -137,13 +135,7 @@ ElementImpl* HTMLDocumentImpl::documentElement() const
 DOMString HTMLDocumentImpl::referrer() const
 {
     if ( part() )
-#if APPLE_CHANGES
         return KWQ(part())->incomingReferrer();
-#else
-        // This is broken; returns the referrer used for links within this page (basically
-        // the same as the URL), not the referrer used for loading this page itself.
-        return part()->referrer();
-#endif
     return DOMString();
 }
 
@@ -156,71 +148,12 @@ DOMString HTMLDocumentImpl::lastModified() const
 
 DOMString HTMLDocumentImpl::cookie() const
 {
-#if APPLE_CHANGES
     return KWQKCookieJar::cookie(URL());
-#else
-    long windowId = 0;
-    KHTMLView *v = view ();
-    
-    if ( v && v->topLevelWidget() )
-      windowId = v->topLevelWidget()->winId();
-
-    QCString replyType;
-    QByteArray params, reply;
-    QDataStream stream(params, IO_WriteOnly);
-    stream << URL() << windowId;
-    if (!kapp->dcopClient()->call("kcookiejar", "kcookiejar",
-                                  "findDOMCookies(QString, int)", params, 
-                                  replyType, reply)) {
-         // Maybe it wasn't running (e.g. we're opening local html files)
-         KApplication::startServiceByDesktopName( "kcookiejar");
-         if (!kapp->dcopClient()->call("kcookiejar", "kcookiejar",
-                                       "findDOMCookies(QString)", params, replyType, reply)) {
-           kdWarning(6010) << "Can't communicate with cookiejar!" << endl;
-           return DOMString();
-         }
-    }
-
-    QDataStream stream2(reply, IO_ReadOnly);
-    if(replyType != "QString") {
-         kdError(6010) << "DCOP function findDOMCookies(...) returns "
-                       << replyType << ", expected QString" << endl;
-         return DOMString();
-    }
-
-    QString result;
-    stream2 >> result;
-    return DOMString(result);
-#endif // APPLE_CHANGES
 }
 
 void HTMLDocumentImpl::setCookie( const DOMString & value )
 {
-#if APPLE_CHANGES
     return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.qstring(), value.qstring());
-#else
-    long windowId = 0;
-    KHTMLView *v = view ();
-    
-    if ( v && v->topLevelWidget() )
-      windowId = v->topLevelWidget()->winId();
-     
-    QByteArray params;
-    QDataStream stream(params, IO_WriteOnly);
-    QString fake_header("Set-Cookie: ");
-    fake_header.append(value.qstring());
-    fake_header.append("\n");
-    stream << URL() << fake_header.utf8() << windowId;
-    if (!kapp->dcopClient()->send("kcookiejar", "kcookiejar",
-                                  "addCookies(QString,QCString,long int)", params))
-    {
-         // Maybe it wasn't running (e.g. we're opening local html files)
-         KApplication::startServiceByDesktopName( "kcookiejar");
-         if (!kapp->dcopClient()->send("kcookiejar", "kcookiejar",
-                                       "addCookies(QString,QCString,long int)", params))
-             kdWarning(6010) << "Can't communicate with cookiejar!" << endl;
-    }
-#endif
 }
 
 void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)

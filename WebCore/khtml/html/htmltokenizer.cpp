@@ -488,10 +488,8 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State state, 
                                                     QString scriptURL, int baseLine)
 {
-#if APPLE_CHANGES
     if (!view || !view->part())
         return state;
-#endif
     bool oldscript = state.inScript();
     m_executingScript++;
     state.setInScript(false);

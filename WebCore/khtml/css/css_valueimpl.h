@@ -290,7 +290,6 @@ protected:
     CSSPrimitiveValueImpl *m_second;
 };
 
-#if APPLE_CHANGES
 
 class DashboardRegionImpl : public RectImpl {
 public:
@@ -315,7 +314,6 @@ public:
     unsigned int m_isRectangle:1;
 };
 
-#endif
 
 class CSSImageValueImpl : public CSSPrimitiveValueImpl, public khtml::CachedObjectClient
 {

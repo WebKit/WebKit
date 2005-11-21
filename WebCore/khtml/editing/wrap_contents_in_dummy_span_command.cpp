@@ -29,11 +29,7 @@
 #include "apply_style_command.h"
 #include "xml/dom_elementimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DocumentImpl;
 using DOM::ElementImpl;

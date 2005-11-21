@@ -84,19 +84,10 @@ using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
 #include "KWQKHTMLPart.h"
 #include "KWQRegExp.h"
-#else
-#define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
-#define ASSERT_NOT_REACHED() ((void)0)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#define ERROR(formatAndArgs...) ((void)0)
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 namespace khtml {
 

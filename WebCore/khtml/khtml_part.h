@@ -221,15 +221,6 @@ public:
   void stopLoading(bool sendUnload = false);
   virtual bool closeURL();
 
-#if !APPLE_CHANGES
-  /**
-   * is called when a certain error situation (i.e. connection timed out) occured.
-   * default implementation either shows a KIO error dialog or loads a more verbose
-   * error description a as page, depending on the users configuration.
-   * @p job is the job that signaled the error situation
-   */
-  virtual void showError(KIO::Job* job);
-#endif
 
 #if !KHTML_NO_CPLUSPLUS_DOM
 
@@ -773,26 +764,6 @@ public:
    */
   KParts::PartManager *partManager();
 
-#if !APPLE_CHANGES
-  /**
-   * Saves the KHTMLPart's complete state (including child frame
-   * objects) to the provided @ref QDataStream.
-   *
-   * This is called from the @ref saveState() method of the
-   *  @ref browserExtension().
-   */
-  virtual void saveState( QDataStream &stream );
-  /**
-   * Restores the KHTMLPart's previously saved state (including
-   * child frame objects) from the provided QDataStream.
-   *
-   * @see saveState()
-   *
-   * This is called from the @ref restoreState() method of the
-   * @ref browserExtension() .
-   **/
-  virtual void restoreState( QDataStream &stream );
-#endif
 
   virtual void tokenizerProcessedData() {};
 
@@ -1017,12 +988,6 @@ protected:
   
   void selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::NodeImpl *innerNode, int x, int y);
 
-#if !APPLE_CHANGES
-  /**
-   * Internal reimplementation of KParts::Part::guiActivateEvent .
-   */
-  virtual void guiActivateEvent( KParts::GUIActivateEvent *event );
-#endif
 
   /**
    * Internal empty reimplementation of @ref KParts::ReadOnlyPart::openFile .
@@ -1032,20 +997,6 @@ protected:
   virtual void urlSelected( const QString &url, int button, int state,
                             const QString &_target, KParts::URLArgs args = KParts::URLArgs());
 
-#if !APPLE_CHANGES
-  /**
-   * This method is called when a new embedded object (include html frames) is to be created.
-   * Reimplement it if you want to add support for certain embeddable objects without registering
-   * them in the KDE wide registry system (KSyCoCa) . Another reason for re-implementing this
-   * method could be if you want to derive from KTHMLPart and also want all html frame objects
-   * to be a object of your derived type, in which case you should return a new instance for
-   * the mimetype 'text/html' .
-   */
-  virtual KParts::ReadOnlyPart *createPart( QWidget *parentWidget, const char *widgetName,
-                                            QObject *parent, const char *name,
-                                            const QString &mimetype, QString &serviceName,
-                                            QStringList &serviceTypes, const QStringList &params);
-#endif
 
 public slots:
 
@@ -1110,52 +1061,11 @@ private slots:
    * @internal
    */
   void slotDebugRenderTree();
-#if !APPLE_CHANGES
-  /**
-   * @internal
-   */
-  virtual void slotViewDocumentSource();
-  /**
-   * @internal
-   */
-  virtual void slotViewFrameSource();
-  /**
-   * @internal
-   */
-  virtual void slotSaveBackground();
-  /**
-   * @internal
-   */
-  virtual void slotSaveDocument();
-  /**
-   * @internal
-   */
-  virtual void slotSaveFrame();
-  /**
-   * @internal
-   */
-  virtual void slotSecurity();
-  /**
-   * @internal
-   */
-  virtual void slotSetEncoding();
-
-  /**
-   * @internal
-   */
-  virtual void slotUseStylesheet();
-
-  virtual void slotFind();
-  virtual void slotFindDone();
-  virtual void slotFindDialogDestroyed();
-#endif
 
   void slotIncZoom();
   void slotDecZoom();
 
-#if APPLE_CHANGES
   void childBegin();
-#endif
 
   void slotLoadImages();
 
@@ -1351,16 +1261,12 @@ private:
 
   KJSProxy *jScript();
 
-#if APPLE_CHANGES
  public:
-#endif
   KHTMLPart *opener();
   void setOpener(KHTMLPart *_opener);
   bool openedByJS();
   void setOpenedByJS(bool _openedByJS);
-#if APPLE_CHANGES
  private:
-#endif
   int cacheId() const;
 
   void checkEmitLoadEvent();
@@ -1379,11 +1285,9 @@ private:
    */
   void gotoAnchor();
 
-#if APPLE_CHANGES
   void handleMousePressEventSingleClick(khtml::MousePressEvent *event);
   void handleMousePressEventDoubleClick(khtml::MousePressEvent *event);
   void handleMousePressEventTripleClick(khtml::MousePressEvent *event);
-#endif
 
   DOM::CSSComputedStyleDeclarationImpl *selectionComputedStyle(DOM::NodeImpl *&nodeToRemove) const;
 
@@ -1391,7 +1295,6 @@ private:
   friend class KHTMLPartPrivate;
   friend class khtml::SelectionController;
 
-#if APPLE_CHANGES
 public:  
   friend class KWQKHTMLPart;
 
@@ -1402,13 +1305,10 @@ public:
   void started(KIO::Job *);
   void frameDetached();
   virtual void didFirstLayout() {}
-#endif
 
   int frameCount;
 };
 
-#if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
-#endif
 
 #endif

@@ -32,10 +32,8 @@
 #include "css/css_valueimpl.h"
 #include "dom_qname.h"
 
-#if APPLE_CHANGES
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
-#endif
 #endif
 
 #include "dom_atomicstringlist.h"
@@ -479,8 +477,6 @@ protected:
 
 }; //namespace
 
-#if APPLE_CHANGES
 #undef id
-#endif
 
 #endif

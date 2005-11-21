@@ -559,70 +559,43 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     }
     
     else if (m_resizing || evt->type() == mouseupEvent) {
-#if APPLE_CHANGES
         KHTMLView *v = canvas()->view();
         QPainter paint;
         
         v->disableFlushDrawing();
         v->lockDrawingFocus();
-#else
-        QPainter paint( canvas()->view() );
-#endif
         paint.setPen( Qt::gray );
         paint.setBrush( Qt::gray );
         
-#if !APPLE_CHANGES
-        paint.setRasterOp( Qt::XorROP );
-#endif
         QRect r(xPos(), yPos(), width(), height());
         const int rBord = 3;
         int sw = element()->border();
         int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
         if (m_vSplit > -1) {
             if ( m_oldpos >= 0 )
-#if APPLE_CHANGES
                 v->updateContents( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height(), true );
-#else
-                paint.drawRect( m_oldpos + sw/2 - rBord , r.y(),
-                                2*rBord, r.height() );
-#endif
             if ( p >= 0 ){
-#if APPLE_CHANGES
                 paint.setPen( Qt::NoPen );
                 paint.setBrush( Qt::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
                 v->setDrawingAlpha((float)1.0);
-#else
-                paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
-#endif
             }
         } else {
             if ( m_oldpos >= 0 )
-#if APPLE_CHANGES
                 v->updateContents( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true );
-#else
-                paint.drawRect( r.x(), m_oldpos + sw/2 - rBord,
-                                r.width(), 2*rBord );
-#endif
             if ( p >= 0 ){
-#if APPLE_CHANGES
                 paint.setPen( Qt::NoPen );
                 paint.setBrush( Qt::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
                 v->setDrawingAlpha((float)1.0);
-#else
-                paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
-#endif
             }
         }
         m_oldpos = p;
 
-#if APPLE_CHANGES
         v->unlockDrawingFocus();
         v->enableFlushDrawing();
-#endif
     }
     
     return res;
@@ -736,15 +709,10 @@ void RenderFrame::slotViewCleared()
         QScrollView *view = static_cast<QScrollView *>(m_widget);
         if(!element()->m_frameBorder || !(static_cast<HTMLFrameSetElementImpl *>(element()->parentNode()))->frameBorder())
             view->setFrameStyle(QFrame::NoFrame);
-#if APPLE_CHANGES
         // Qt creates QScrollView w/ a default style of QFrame::StyledPanel | QFrame::Sunken.
         else
             view->setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
 
-#else
-        view->setHScrollBarMode(element()->scrolling );
-        view->setVScrollBarMode(element()->scrolling );
-#endif
 
         if(view->inherits("KHTMLView")) {
 #ifdef DEBUG_LAYOUT
@@ -987,10 +955,6 @@ void RenderPartObject::layout( )
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
 
-#if !APPLE_CHANGES
-    int m_oldwidth = m_width;
-    int m_oldheight = m_height;
-#endif
 
     calcWidth();
     calcHeight();
@@ -1021,10 +985,6 @@ void RenderPartObject::slotViewCleared()
       }
       view->setFrameStyle(frameStyle);
 
-#if !APPLE_CHANGES
-      view->setVScrollBarMode(scroll);
-      view->setHScrollBarMode(scroll);
-#endif
 
       if(view->inherits("KHTMLView")) {
 #ifdef DEBUG_LAYOUT

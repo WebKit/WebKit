@@ -1,3 +1,428 @@
+2005-11-20  eseidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove #if !APPLE_CHANGES and #if 0 blocks.  No functional changes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5711
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::setProperty):
+        (DOM::CSSPrimitiveValueImpl::computeLength):
+        (DOM::CSSPrimitiveValueImpl::computeLengthFloat):
+        (DOM::CSSPrimitiveValueImpl::cssText):
+        (DOM::FontFamilyValueImpl::FontFamilyValueImpl):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (qFatal):
+        (CSSParser::parseValue):
+        (CSSParser::parseDashboardRegions):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::):
+        (khtml::colorForCSSValue):
+        (khtml::CSSStyleSelector::applyDeclarations):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::checkForTextSizeAdjust):
+        * khtml/css/cssstyleselector.h:
+        * khtml/dom/dom_node.h:
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMStyleSheetList::getOwnPropertySlot):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::NodeConstructor::getValueProperty):
+        (KJS::DOMExceptionConstructor::getValueProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        (KJS::KJS::HTMLElement::put):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        (KJS::PluginBase::refresh):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::allowPopUp):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        (KJS::Window::resumeTimeouts):
+        (KJS::Window::scheduleClose):
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::WindowQObject::hasTimeouts):
+        (KJS::Location::put):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::BarInfo::getValueProperty):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestQObject::slotData):
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::processSyncLoadResults):
+        (KJS::XMLHttpRequest::slotData):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::debugPosition):
+        * khtml/editing/append_node_command.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_from_text_node_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/edit_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_into_text_node_command.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_node_before_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/insert_text_command.cpp:
+        * khtml/editing/join_text_nodes_command.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/merge_identical_elements_command.cpp:
+        * khtml/editing/move_selection_command.cpp:
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/remove_css_property_command.cpp:
+        * khtml/editing/remove_node_attribute_command.cpp:
+        * khtml/editing/remove_node_command.cpp:
+        * khtml/editing/remove_node_preserving_children_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/set_node_attribute_command.cpp:
+        * khtml/editing/split_element_command.cpp:
+        * khtml/editing/split_text_node_command.cpp:
+        * khtml/editing/split_text_node_containing_element.cpp:
+        * khtml/editing/typing_command.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::referrer):
+        (DOM::HTMLDocumentImpl::cookie):
+        (DOM::HTMLDocumentImpl::setCookie):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::attach):
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLGenericFormElementImpl::isMouseFocusable):
+        (DOM::HTMLGenericFormElementImpl::defaultEventHandler):
+        (DOM::HTMLInputElementImpl::setInputType):
+        (DOM::HTMLInputElementImpl::type):
+        (DOM::HTMLInputElementImpl::canHaveSelection):
+        (DOM::HTMLInputElementImpl::selectionStart):
+        (DOM::HTMLInputElementImpl::selectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionStart):
+        (DOM::HTMLInputElementImpl::setSelectionEnd):
+        (DOM::HTMLInputElementImpl::select):
+        (DOM::HTMLInputElementImpl::setSelectionRange):
+        (DOM::HTMLInputElementImpl::click):
+        (DOM::HTMLInputElementImpl::accessKeyAction):
+        (DOM::HTMLInputElementImpl::rendererIsNeeded):
+        (DOM::HTMLInputElementImpl::createRenderer):
+        (DOM::HTMLInputElementImpl::attach):
+        (DOM::HTMLInputElementImpl::altText):
+        (DOM::HTMLInputElementImpl::appendFormData):
+        (DOM::HTMLInputElementImpl::valueWithDefault):
+        (DOM::HTMLInputElementImpl::storesValueSeparateFromAttribute):
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        (DOM::HTMLSelectElementImpl::state):
+        (DOM::HTMLSelectElementImpl::restoreState):
+        (DOM::HTMLKeygenElementImpl::appendFormData):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::updateFromElement):
+        (HTMLImageElementImpl::parseMappedAttribute):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::isMouseFocusable):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::getMember):
+        (DOM::HTMLAppletElementImpl::callMember):
+        (DOM::HTMLAppletElementImpl::allParamsAvailable):
+        (DOM::HTMLEmbedElementImpl::getEmbedInstance):
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLObjectElementImpl::getObjectInstance):
+        (DOM::HTMLObjectElementImpl::rendererIsNeeded):
+        * khtml/html/html_objectimpl.h:
+        (DOM::HTMLObjectElementImpl::isDocNamedItem):
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::HTMLTableElementImpl):
+        (DOM::HTMLTableElementImpl::parseMappedAttribute):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleIsindex):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptExecution):
+        * khtml/html/htmltokenizer.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::KHTMLPart):
+        (KHTMLPart::init):
+        (KHTMLPart::~KHTMLPart):
+        (KHTMLPart::restoreURL):
+        (KHTMLPart::didOpenURL):
+        (KHTMLPart::stopLoading):
+        (KHTMLPart::createJavaContext):
+        (KHTMLPart::setAutoloadImages):
+        (KHTMLPart::clear):
+        (KHTMLPart::receivedFirstData):
+        (KHTMLPart::slotFinished):
+        (KHTMLPart::childBegin):
+        (KHTMLPart::begin):
+        (KHTMLPart::write):
+        (KHTMLPart::gotoAnchor):
+        (KHTMLPart::slotLoaderRequestStarted):
+        (KHTMLPart::slotLoaderRequestDone):
+        (KHTMLPart::checkCompleted):
+        (KHTMLPart::completeURL):
+        (KHTMLPart::scheduleHistoryNavigation):
+        (KHTMLPart::urlCursor):
+        (KHTMLPart::text):
+        (KHTMLPart::selectedText):
+        (KHTMLPart::hasSelection):
+        (KHTMLPart::setSelection):
+        (KHTMLPart::urlSelected):
+        (KHTMLPart::requestFrameName):
+        (KHTMLPart::requestObject):
+        (KHTMLPart::processObjectRequest):
+        (KHTMLPart::submitForm):
+        (KHTMLPart::slotChildStarted):
+        (KHTMLPart::slotChildCompleted):
+        (KHTMLPart::childFrame):
+        (KHTMLPart::findFrame):
+        (KHTMLPart::frameExists):
+        (KHTMLPart::parentPart):
+        (KHTMLPart::emitSelectionChanged):
+        (KHTMLPart::setZoomFactor):
+        (KHTMLPart::reparseConfiguration):
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::khtmlMouseMoveEvent):
+        (KHTMLPart::startAutoScroll):
+        (KHTMLPart::stopAutoScroll):
+        (KHTMLPart::shouldChangeSelection):
+        (KHTMLPart::appliedEditing):
+        (KHTMLPart::unappliedEditing):
+        (KHTMLPart::reappliedEditing):
+        (KHTMLPart::copyToPasteboard):
+        (KHTMLPart::cutToPasteboard):
+        (KHTMLPart::pasteFromPasteboard):
+        (KHTMLPart::pasteAndMatchStyle):
+        (KHTMLPart::transpose):
+        (KHTMLPart::redo):
+        (KHTMLPart::undo):
+        * khtml/khtml_part.h:
+        (KHTMLPart::didFirstLayout):
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate):
+        (KHTMLViewPrivate::~KHTMLViewPrivate):
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::KHTMLView):
+        (KHTMLView::~KHTMLView):
+        (KHTMLView::resetScrollBars):
+        (KHTMLView::init):
+        (KHTMLView::clear):
+        (KHTMLView::resizeEvent):
+        (KHTMLView::initScrollBars):
+        (KHTMLView::layout):
+        (KHTMLView::updateDashboardRegions):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseMoveEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::keyPressEvent):
+        (KHTMLView::contentsContextMenuEvent):
+        (KHTMLView::dispatchDragEvent):
+        (KHTMLView::focusNextPrevNode):
+        (KHTMLView::mediaType):
+        (KHTMLView::setScrollBarsMode):
+        (KHTMLView::restoreScrollBar):
+        (KHTMLView::viewportWheelEvent):
+        * khtml/khtmlview.h:
+        * khtml/misc/decoder.cpp:
+        (Decoder::setEncoding):
+        (Decoder::decode):
+        (Decoder::flush):
+        * khtml/misc/decoder.h:
+        * khtml/misc/helper.cpp:
+        (khtml::findWordBoundary):
+        (khtml::nextWordFromIndex):
+        (khtml::findSentenceBoundary):
+        (khtml::nextSentenceFromIndex):
+        * khtml/misc/helper.h:
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject):
+        (CachedImageCallback::clear):
+        (CachedImage::CachedImage):
+        (CachedImage::tiled_pixmap):
+        (CachedImage::pixmap):
+        (CachedImage::setShowAnimations):
+        (CachedImage::clear):
+        (CachedImage::data):
+        (CachedImage::error):
+        (DocLoader::DocLoader):
+        (DocLoader::requestImage):
+        (DocLoader::requestStyleSheet):
+        (DocLoader::requestScript):
+        (DocLoader::requestXSLStyleSheet):
+        (DocLoader::requestXBLDocument):
+        (Loader::Loader):
+        (Loader::~Loader):
+        (Loader::servePendingRequests):
+        (Loader::slotFinished):
+        (Loader::slotData):
+        (Loader::numRequests):
+        (Loader::cancelRequests):
+        (Loader::removeBackgroundDecodingRequest):
+        (Cache::init):
+        (Cache::requestImage):
+        (Cache::requestStyleSheet):
+        (Cache::requestScript):
+        (Cache::requestXSLStyleSheet):
+        (Cache::requestXBLDocument):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::CachedObject):
+        * khtml/misc/stringit.h:
+        (khtml::TokenizerSubstring::TokenizerSubstring):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::RenderApplet):
+        (RenderApplet::layout):
+        (RenderEmptyApplet::RenderEmptyApplet):
+        (RenderEmptyApplet::layout):
+        * khtml/rendering/render_applet.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::setBestTruncatedAt):
+        * khtml/rendering/render_canvas.h:
+        (khtml::RenderCanvas::printImages):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild):
+        (RenderContainer::removeChildNode):
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+        (RenderFlow::paintFocusRing):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::baselinePosition):
+        (RenderFormElement::setStyle):
+        (RenderFormElement::updateFromElement):
+        (RenderFormElement::layout):
+        (RenderLineEdit::RenderLineEdit):
+        (RenderLineEdit::slotReturnPressed):
+        (RenderLineEdit::addSearchResult):
+        (RenderLineEdit::calcMinMaxWidth):
+        (RenderLineEdit::setStyle):
+        (RenderLineEdit::updateFromElement):
+        (RenderFileButton::RenderFileButton):
+        (RenderFileButton::calcMinMaxWidth):
+        (RenderFileButton::slotClicked):
+        (RenderFileButton::updateFromElement):
+        (RenderFileButton::select):
+        (ComboBoxWidget::event):
+        (ComboBoxWidget::eventFilter):
+        (RenderSelect::updateFromElement):
+        (RenderSelect::layout):
+        (RenderTextArea::RenderTextArea):
+        (RenderTextArea::calcMinMaxWidth):
+        (RenderTextArea::setStyle):
+        (RenderTextArea::updateFromElement):
+        (RenderTextArea::text):
+        (RenderTextArea::selectionStart):
+        (RenderTextArea::selectionEnd):
+        (RenderTextArea::setSelectionStart):
+        (RenderTextArea::setSelectionEnd):
+        (RenderTextArea::setSelectionRange):
+        * khtml/rendering/render_form.h:
+        (khtml::RenderFormElement::intrinsicMargin):
+        (khtml::RenderLineEdit::canHaveIntrinsicMargins):
+        (khtml::RenderSelect::canHaveIntrinsicMargins):
+        (khtml::RenderTextArea::canHaveIntrinsicMargins):
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        (RenderFrame::slotViewCleared):
+        (RenderPartObject::layout):
+        (RenderPartObject::slotViewCleared):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setPixmap):
+        (RenderImage::resetAnimation):
+        (RenderImage::paint):
+        (RenderImage::layout):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollToOffset):
+        (khtml::RenderLayer::updateScrollInfoAfterLayout):
+        (khtml::RenderLayer::paintScrollbars):
+        (khtml::setClip):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::RenderLayer::hitTest):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::paintDecorations):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        * khtml/rendering/render_list.h:
+        (khtml::RenderListItem::markerStringValue):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::addFocusRingRects):
+        (RenderObject::paintOutline):
+        (RenderObject::setStyle):
+        (RenderObject::removeFromObjectLists):
+        (RenderObject::remove):
+        (RenderObject::backslashAsCurrencySymbol):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::resizeWidget):
+        (RenderWidget::sendConsumedMouseUp):
+        (RenderWidget::setStyle):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData):
+        (StyleCSS3NonInheritedData::operator==):
+        (textSizeAdjust):
+        (StyleCSS3InheritedData):
+        (StyleCSS3InheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::StyleVisualData::operator==):
+        (khtml::RenderStyle::textSizeAdjust):
+        (khtml::RenderStyle::setDashboardRegion):
+        (khtml::RenderStyle::setTextSizeAdjust):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::updateTitle):
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::updateRendering):
+        (DocumentImpl::attach):
+        (DocumentImpl::detach):
+        (DocumentImpl::getAccObjectCache):
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::implicitClose):
+        (DocumentImpl::processHttpEquiv):
+        (DocumentImpl::updateStyleSelector):
+        (DocumentImpl::setFocusNode):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchKeyEvent):
+        (DOM::NodeImpl::createRendererIfNeeded):
+        * khtml/xml/dom_position.cpp:
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::Tokenizer::Tokenizer):
+        (khtml::Tokenizer::finishedParsing):
+        (khtml::XMLTokenizer::error):
+        * khtml/xml/xml_tokenizer.h:
+
 2005-11-20  Eric Seidel  <eseidel@apple.com>
 
         No review, rollout only.

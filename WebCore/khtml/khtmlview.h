@@ -88,9 +88,7 @@ class KHTMLView : public QScrollView
     friend class khtml::RenderWidget;
     friend class khtml::CSSStyleSelector;
     friend void khtml::applyRule(DOM::CSSProperty *prop);
-#if APPLE_CHANGES
     friend class KWQKHTMLPart;
-#endif
 
 public:
     /**
@@ -161,9 +159,7 @@ public:
     
     void addRepaintInfo(khtml::RenderObject* o, const QRect& r);
 
-#if APPLE_CHANGES
     void resetScrollBars();
-#endif
 
      void clear();
 
@@ -171,18 +167,11 @@ signals:
         void cleared();
     
 protected:
-#if APPLE_CHANGES
 public:
         void clearPart();
-#endif
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void showEvent ( QShowEvent * );
     virtual void hideEvent ( QHideEvent *);
-#if !APPLE_CHANGES
-    virtual bool focusNextPrevChild( bool next );
-    virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
-    virtual void drawContents( QPainter* );
-#endif
     
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusInEvent( QFocusEvent * );
@@ -192,10 +181,6 @@ public:
     virtual void viewportMouseReleaseEvent(QMouseEvent *);
 #ifndef QT_NO_WHEELEVENT
     virtual void viewportWheelEvent(QWheelEvent*);
-#endif
-#if !APPLE_CHANGES
-    virtual void dragEnterEvent( QDragEnterEvent* );
-    virtual void dropEvent( QDropEvent* );
 #endif
 
     void keyPressEvent( QKeyEvent *_ke );
@@ -219,7 +204,6 @@ public:
     bool haveDelayedLayoutScheduled();
     bool layoutPending();
 
-#if APPLE_CHANGES
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
     // maps "viewport" (actually Cocoa window coords) to screen coords
@@ -228,7 +212,6 @@ public:
     void initScrollBars();
     
     void updateDashboardRegions();
-#endif
 
     void ref() { ++_refCount; }
     void deref() { if (!--_refCount) delete this; }
@@ -289,9 +272,7 @@ private:
 
     void applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
-#if APPLE_CHANGES
     virtual bool isKHTMLView() const;
-#endif
 
     // ------------------------------------- member variables ------------------------------------
  private:

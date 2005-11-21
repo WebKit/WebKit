@@ -38,9 +38,7 @@
 #include <qobject.h>
 #include <qregexp.h>
 
-#ifdef APPLE_CHANGES
 #include "KWQLoader.h"
-#endif
 
 #include "xmlhttprequest.lut.h"
 
@@ -74,17 +72,10 @@ XMLHttpRequestQObject::XMLHttpRequestQObject(XMLHttpRequest *_jsObject)
   jsObject = _jsObject; 
 }
 
-#if APPLE_CHANGES
 void XMLHttpRequestQObject::slotData( KIO::Job* job, const char *data, int size )
 {
   jsObject->slotData(job, data, size);
 }
-#else
-void XMLHttpRequestQObject::slotData( KIO::Job* job, const QByteArray &data )
-{
-  jsObject->slotData(job, data);
-}
-#endif
 
 void XMLHttpRequestQObject::slotFinished( KIO::Job* job )
 {
@@ -340,11 +331,6 @@ void XMLHttpRequest::send(const QString& _body)
 
   aborted = false;
 
-#if !APPLE_CHANGES
-  if (!async) {
-    return;
-  }
-#endif
 
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
       // FIXME: determine post encoding correctly by looking in headers for charset
@@ -358,7 +344,6 @@ void XMLHttpRequest::send(const QString& _body)
     job->addMetaData("customHTTPHeader", requestHeaders);
   }
 
-#if APPLE_CHANGES
   if (!async) {
     QByteArray data;
     KURL finalURL;
@@ -370,7 +355,6 @@ void XMLHttpRequest::send(const QString& _body)
     
     return;
   }
-#endif
 
   {
     InterpreterLock lock;
@@ -379,23 +363,14 @@ void XMLHttpRequest::send(const QString& _body)
   
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
-#if APPLE_CHANGES
   qObject->connect( job, SIGNAL( data( KIO::Job*, const char*, int ) ),
 		    SLOT( slotData( KIO::Job*, const char*, int ) ) );
-#else
-  qObject->connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
-		    SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
-#endif
   qObject->connect( job, SIGNAL(redirection(KIO::Job*, const KURL& ) ),
 		    SLOT( slotRedirection(KIO::Job*, const KURL&) ) );
 
   addToRequestsByDocument();
 
-#ifdef APPLE_CHANGES
   KWQServeRequest(khtml::Cache::loader(), doc->docLoader(), job);
-#else 
-  KIO::Scheduler::scheduleJob( job );
-#endif
 }
 
 void XMLHttpRequest::abort()
@@ -518,7 +493,6 @@ ValueImp *XMLHttpRequest::getStatusText() const
   return String(statusText);
 }
 
-#if APPLE_CHANGES   
 void XMLHttpRequest::processSyncLoadResults(const QByteArray &data, const KURL &finalURL, const QString &headers)
 {
   if (!urlMatchesDocumentDomain(finalURL)) {
@@ -543,7 +517,6 @@ void XMLHttpRequest::processSyncLoadResults(const QByteArray &data, const KURL &
 
   slotFinished(0);
 }
-#endif
 
 void XMLHttpRequest::slotFinished(KIO::Job *)
 {
@@ -572,11 +545,7 @@ void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
   }
 }
 
-#if APPLE_CHANGES
 void XMLHttpRequest::slotData( KIO::Job*, const char *data, int len )
-#else
-void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
-#endif
 {
   if (state < Loaded) {
     responseHeaders = job->queryMetaData("HTTP-Headers");
@@ -584,10 +553,6 @@ void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
     changeState(Loaded);
   }
   
-#if !APPLE_CHANGES
-  const char *data = (const char *)_data.data();
-  int len = (int)_data.size();
-#endif
 
   if ( decoder == NULL ) {
     decoder = new Decoder;

@@ -58,9 +58,7 @@
 #include <qscrollbar.h>
 #include <qptrvector.h>
 
-#if APPLE_CHANGES
 #include "KWQKHTMLPart.h" // For Dashboard.
-#endif
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
@@ -74,9 +72,7 @@ using namespace HTMLNames;
 
 namespace khtml {
 
-#ifdef APPLE_CHANGES
 QScrollBar* RenderLayer::gScrollBar = 0;
-#endif
 
 #ifndef NDEBUG
 static bool inRenderLayerDestroy;
@@ -533,11 +529,9 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     
     RenderCanvas *canvas = renderer()->canvas();
     if (canvas) {
-#if APPLE_CHANGES
         // Update dashboard regions, scrolling may change the clip of a
         // particular region.
         canvas->view()->updateDashboardRegions();
-#endif
 
         m_object->canvas()->updateWidgetPositions();
     }
@@ -852,11 +846,9 @@ RenderLayer::updateScrollInfoAfterLayout()
         setHasHorizontalScrollbar(needHorizontalBar);
         setHasVerticalScrollbar(needVerticalBar);
        
-#if APPLE_CHANGES
 	// Force an update since we know the scrollbars have changed things.
 	if (m_object->document()->hasDashboardRegions())
 	    m_object->document()->setDashboardRegionsDirty(true);
-#endif
 
         m_object->repaint();
 
@@ -876,40 +868,26 @@ RenderLayer::updateScrollInfoAfterLayout()
         int pageStep = (clientWidth-PAGE_KEEP);
         if (pageStep < 0) pageStep = clientWidth;
         m_hBar->setSteps(LINE_STEP, pageStep);
-#ifdef APPLE_CHANGES
         m_hBar->setKnobProportion(clientWidth, m_scrollWidth);
-#else
-        m_hBar->setRange(0, m_scrollWidth-clientWidth);
-        m_object->repaintRectangle(QRect(m_object->borderLeft(), m_object->borderTop() + clientHeight(),
-                                   horizontalScrollbarHeight(),
-                                   m_object->width() - m_object->borderLeft() - m_object->borderRight()));
-#endif
     }
     if (m_vBar) {
         int clientHeight = m_object->clientHeight();
         int pageStep = (clientHeight-PAGE_KEEP);
         if (pageStep < 0) pageStep = clientHeight;
         m_vBar->setSteps(LINE_STEP, pageStep);
-#ifdef APPLE_CHANGES
         m_vBar->setKnobProportion(clientHeight, m_scrollHeight);
-#else
-        m_vBar->setRange(0, m_scrollHeight-clientHeight);
-#endif
         m_object->repaintRectangle(QRect(m_object->borderLeft() + m_object->clientWidth(),
                                    m_object->borderTop(), verticalScrollbarWidth(), 
                                    m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
     
-#if APPLE_CHANGES
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
 	m_object->document()->setDashboardRegionsDirty(true);
-#endif
 
     m_object->repaint();
 }
 
-#if APPLE_CHANGES
 void
 RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
 {
@@ -930,7 +908,6 @@ RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
     if (m_vBar)
         m_vBar->paint(p, damageRect);
 }
-#endif
 
 bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
 {
@@ -966,16 +943,7 @@ static void setClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipR
 
     p->save();
     
-#if APPLE_CHANGES
     p->addClip(clipRect);
-#else
-    QRect clippedRect = p->xForm(clipRect);
-    QRegion creg(clippedRect);
-    QRegion old = p->clipRegion();
-    if (!old.isNull())
-        creg = old.intersect(creg);
-    p->setClipRegion(creg);
-#endif
     
 }
 
@@ -1026,12 +994,10 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         // Paint the background.
         RenderObject::PaintInfo info(p, damageRect, PaintActionBlockBackground, paintingRootForRenderer);
         renderer()->paint(info, x - renderer()->xPos(), y - renderer()->yPos() + renderer()->borderTopExtra());        
-#if APPLE_CHANGES
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
         // sit above the background/border.
         paintScrollbars(p, damageRect);
-#endif
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);
     }
@@ -1095,10 +1061,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
 bool
 RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
 {
-#if APPLE_CHANGES
     // Clear our our scrollbar variable
     RenderLayer::gScrollBar = 0;
-#endif
     
     QRect damageRect(m_x, m_y, width(), height());
     RenderLayer* insideLayer = hitTestLayer(this, info, x, y, damageRect);

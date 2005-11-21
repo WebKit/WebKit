@@ -48,9 +48,7 @@
 
 #include "html_objectimpl.h"
 
-#if APPLE_CHANGES
 #include <JavaScriptCore/runtime_object.h>
-#endif
 
 using namespace DOM::HTMLNames;
 
@@ -386,10 +384,8 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(resizeEvent);
   case OnScroll:
     return getListener(scrollEvent);
-#if APPLE_CHANGES
   case OnSearch:
     return getListener(searchEvent);
-#endif
   case OnSelect:
     return getListener(selectEvent);
   case OnSelectStart:
@@ -1791,37 +1787,6 @@ ValueImp *NodeConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
   return Number((unsigned int)token);
-#if 0
-  switch (token) {
-  case ELEMENT_NODE:
-    return Number((unsigned int)DOM::Node::ELEMENT_NODE);
-  case ATTRIBUTE_NODE:
-    return Number((unsigned int)DOM::Node::ATTRIBUTE_NODE);
-  case TEXT_NODE:
-    return Number((unsigned int)DOM::Node::TEXT_NODE);
-  case CDATA_SECTION_NODE:
-    return Number((unsigned int)DOM::Node::CDATA_SECTION_NODE);
-  case ENTITY_REFERENCE_NODE:
-    return Number((unsigned int)DOM::Node::ENTITY_REFERENCE_NODE);
-  case ENTITY_NODE:
-    return Number((unsigned int)DOM::Node::ENTITY_NODE);
-  case PROCESSING_INSTRUCTION_NODE:
-    return Number((unsigned int)DOM::Node::PROCESSING_INSTRUCTION_NODE);
-  case COMMENT_NODE:
-    return Number((unsigned int)DOM::Node::COMMENT_NODE);
-  case DOCUMENT_NODE:
-    return Number((unsigned int)DOM::Node::DOCUMENT_NODE);
-  case DOCUMENT_TYPE_NODE:
-    return Number((unsigned int)DOM::Node::DOCUMENT_TYPE_NODE);
-  case DOCUMENT_FRAGMENT_NODE:
-    return Number((unsigned int)DOM::Node::DOCUMENT_FRAGMENT_NODE);
-  case NOTATION_NODE:
-    return Number((unsigned int)DOM::Node::NOTATION_NODE);
-  default:
-    kdWarning() << "NodeConstructor::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-#endif
 }
 
 ObjectImp *getNodeConstructor(ExecState *exec)
@@ -1862,43 +1827,6 @@ ValueImp *DOMExceptionConstructor::getValueProperty(ExecState *, int token) cons
 {
   // We use the token as the value to return directly
   return Number((unsigned int)token);
-#if 0
-  switch (token) {
-  case INDEX_SIZE_ERR:
-    return Number((unsigned int)DOM::DOMException::INDEX_SIZE_ERR);
-  case DOMSTRING_SIZE_ERR:
-    return Number((unsigned int)DOM::DOMException::DOMSTRING_SIZE_ERR);
-  case HIERARCHY_REQUEST_ERR:
-    return Number((unsigned int)DOM::DOMException::HIERARCHY_REQUEST_ERR);
-  case WRONG_DOCUMENT_ERR:
-    return Number((unsigned int)DOM::DOMException::WRONG_DOCUMENT_ERR);
-  case INVALID_CHARACTER_ERR:
-    return Number((unsigned int)DOM::DOMException::INVALID_CHARACTER_ERR);
-  case NO_DATA_ALLOWED_ERR:
-    return Number((unsigned int)DOM::DOMException::NO_DATA_ALLOWED_ERR);
-  case NO_MODIFICATION_ALLOWED_ERR:
-    return Number((unsigned int)DOM::DOMException::NO_MODIFICATION_ALLOWED_ERR);
-  case NOT_FOUND_ERR:
-    return Number((unsigned int)DOM::DOMException::NOT_FOUND_ERR);
-  case NOT_SUPPORTED_ERR:
-    return Number((unsigned int)DOM::DOMException::NOT_SUPPORTED_ERR);
-  case INUSE_ATTRIBUTE_ERR:
-    return Number((unsigned int)DOM::DOMException::INUSE_ATTRIBUTE_ERR);
-  case INVALID_STATE_ERR:
-    return Number((unsigned int)DOM::DOMException::INVALID_STATE_ERR);
-  case SYNTAX_ERR:
-    return Number((unsigned int)DOM::DOMException::SYNTAX_ERR);
-  case INVALID_MODIFICATION_ERR:
-    return Number((unsigned int)DOM::DOMException::INVALID_MODIFICATION_ERR);
-  case NAMESPACE_ERR:
-    return Number((unsigned int)DOM::DOMException::NAMESPACE_ERR);
-  case INVALID_ACCESS_ERR:
-    return Number((unsigned int)DOM::DOMException::INVALID_ACCESS_ERR);
-  default:
-    kdWarning() << "DOMExceptionConstructor::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-#endif
 }
 
 ObjectImp *getDOMExceptionConstructor(ExecState *exec)

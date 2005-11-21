@@ -27,9 +27,7 @@
 #include "khtmlview.h"
 #include <kdebug.h>
 
-#if APPLE_CHANGES
 #include "khtml_part.h"
-#endif
 
 using namespace khtml;
 
@@ -623,7 +621,6 @@ int RenderCanvas::docWidth() const
     return w;
 }
 
-#if APPLE_CHANGES
 // The idea here is to take into account what object is moving the pagination point, and
 // thus choose the best place to chop it.
 void RenderCanvas::setBestTruncatedAt(int y, RenderObject *forRenderer, bool forcedBreak)
@@ -645,4 +642,3 @@ void RenderCanvas::setBestTruncatedAt(int y, RenderObject *forRenderer, bool for
         m_bestTruncatedAt = y;
     }
 }
-#endif

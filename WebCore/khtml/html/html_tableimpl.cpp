@@ -60,10 +60,6 @@ HTMLTableElementImpl::HTMLTableElementImpl(DocumentImpl *doc)
     foot = 0;
     firstBody = 0;
 
-#if 0
-    rules = None;
-    frame = Void;
-#endif
  
     padding = 1;
     
@@ -449,13 +445,6 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             DOMString v = QString::number( border );
             addCSSLength(attr, CSS_PROP_BORDER_WIDTH, v );
         }
-#if 0
-        // wanted by HTML4 specs
-        if (m_noBorder)
-            frame = Void, rules = None;
-        else
-            frame = Box, rules = All;
-#endif
     } else if (attr->name() == bgcolorAttr) {
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
     } else if (attr->name() == bordercolorAttr) {
@@ -473,39 +462,7 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == frameAttr) {
-#if 0
-        if ( strcasecmp( attr->value(), "void" ) == 0 )
-            frame = Void;
-        else if ( strcasecmp( attr->value(), "border" ) == 0 )
-            frame = Box;
-        else if ( strcasecmp( attr->value(), "box" ) == 0 )
-            frame = Box;
-        else if ( strcasecmp( attr->value(), "hsides" ) == 0 )
-            frame = Hsides;
-        else if ( strcasecmp( attr->value(), "vsides" ) == 0 )
-            frame = Vsides;
-        else if ( strcasecmp( attr->value(), "above" ) == 0 )
-            frame = Above;
-        else if ( strcasecmp( attr->value(), "below" ) == 0 )
-            frame = Below;
-        else if ( strcasecmp( attr->value(), "lhs" ) == 0 )
-            frame = Lhs;
-        else if ( strcasecmp( attr->value(), "rhs" ) == 0 )
-            frame = Rhs;
-#endif
     } else if (attr->name() == rulesAttr) {
-#if 0
-        if ( strcasecmp( attr->value(), "none" ) == 0 )
-            rules = None;
-        else if ( strcasecmp( attr->value(), "groups" ) == 0 )
-            rules = Groups;
-        else if ( strcasecmp( attr->value(), "rows" ) == 0 )
-            rules = Rows;
-        else if ( strcasecmp( attr->value(), "cols" ) == 0 )
-            rules = Cols;
-        else if ( strcasecmp( attr->value(), "all" ) == 0 )
-            rules = All;
-#endif
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
@@ -521,11 +478,6 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         }
     } else if (attr->name() == colsAttr) {
         // ###
-#if 0
-        int c;
-        c = attr->val()->toInt();
-        addColumns(c-totalCols);
-#endif
     } else if (attr->name() == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());

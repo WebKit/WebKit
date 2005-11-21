@@ -31,11 +31,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_textimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DOMString;
 using DOM::DocumentImpl;

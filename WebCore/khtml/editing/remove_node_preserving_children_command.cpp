@@ -28,11 +28,7 @@
 
 #include "xml/dom_nodeimpl.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DocumentImpl;
 using DOM::NodeImpl;

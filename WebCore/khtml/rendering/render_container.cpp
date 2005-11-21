@@ -37,10 +37,8 @@
 #include <kdebug.h>
 #include <assert.h>
 
-#if APPLE_CHANGES
 // For accessibility
 #include "KWQAccObjectCache.h" 
-#endif
 
 using DOM::Position;
 using namespace khtml;
@@ -120,14 +118,12 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
             //kdDebug( 6040 ) << "adding cell" << endl;
             if ( !isTableRow() )
                 needsTable = true;
-#if APPLE_CHANGES
             // I'm not 100% sure this is the best way to fix this, but without this
             // change we recurse infinitely when trying to render the CSS2 test page:
             // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
             // See Radar 2925291.
             if ( isTableCell() && !firstChild() && !newChild->isTableCell() )
                 needsTable = false;
-#endif
             break;
         case NONE:
             kdDebug( 6000 ) << "error in RenderObject::addChild()!!!!" << endl;
@@ -199,10 +195,8 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-#if APPLE_CHANGES
     if (KWQAccObjectCache::accessibilityEnabled())
         document()->getAccObjectCache()->childrenChanged(this);
-#endif
     
     return oldChild;
 }
@@ -354,10 +348,8 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     if (!newChild->isFloatingOrPositioned() && childrenInline())
         dirtyLinesFromChangedChild(newChild);
     
-#if APPLE_CHANGES
     if (KWQAccObjectCache::accessibilityEnabled())
         document()->getAccObjectCache()->childrenChanged(this);
-#endif
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -394,10 +386,8 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     if (!child->isFloatingOrPositioned() && childrenInline())
         dirtyLinesFromChangedChild(child);
     
-#if APPLE_CHANGES
     if (KWQAccObjectCache::accessibilityEnabled())
         document()->getAccObjectCache()->childrenChanged(this);
-#endif    
 }
 
 void RenderContainer::layout()

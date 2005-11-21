@@ -42,11 +42,7 @@
 #include "css/css_computedstyle.h"
 #include "css/cssproperties.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using namespace DOM::HTMLNames;
 

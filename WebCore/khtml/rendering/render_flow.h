@@ -83,10 +83,8 @@ public:
     
     virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
-#ifdef APPLE_CHANGES
     virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);
     void paintFocusRing(QPainter *p, int tx, int ty);
-#endif
     void paintOutlineForLine(QPainter *p, int tx, int ty, const QRect &prevLine, const QRect &thisLine, const QRect &nextLine);
     void paintOutlines(QPainter *p, int tx, int ty);
 

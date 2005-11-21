@@ -34,11 +34,7 @@
 #include "css/css_valueimpl.h"
 #include "css/css_computedstyle.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DocumentImpl;
 using DOM::Position;

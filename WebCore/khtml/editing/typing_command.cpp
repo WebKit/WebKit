@@ -36,11 +36,7 @@
 #include "visible_position.h"
 #include "visible_units.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DocumentImpl;
 using DOM::DOMString;

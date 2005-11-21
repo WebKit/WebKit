@@ -39,10 +39,8 @@
 
 #include <kurl.h>
 
-#if APPLE_CHANGES
 #include "KWQSignal.h"
 #include "decoder.h"
-#endif
 
 #include <kxmlcore/HashMap.h>
 
@@ -52,9 +50,7 @@ class KHTMLView;
 class KHTMLPart;
 class RenderArena;
 
-#if APPLE_CHANGES
 class KWQAccObjectCache;
-#endif
 
 namespace khtml {
     class CSSStyleSelector;
@@ -317,9 +313,7 @@ public:
 
     RenderArena* renderArena() { return m_renderArena; }
 
-#if APPLE_CHANGES
     KWQAccObjectCache* getAccObjectCache();
-#endif
     
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
@@ -701,9 +695,7 @@ protected:
 
     QPtrDict< QValueList<DocumentMarker> > m_markers;
 
-#if APPLE_CHANGES
     KWQAccObjectCache* m_accCache;
-#endif
     
     QPtrList<HTMLImageLoader> m_imageLoadEventDispatchSoonList;
     QPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;
@@ -732,7 +724,6 @@ protected:
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
-#if APPLE_CHANGES
 public:
     KWQSignal m_finishedParsing;
 
@@ -805,7 +796,6 @@ private:
     typedef HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> > NameToInputMap;
     typedef HashMap<HTMLFormElementImpl*, NameToInputMap*, PointerHash<HTMLFormElementImpl*> > FormToGroupMap;
     FormToGroupMap* m_selectedRadioButtons;
-#endif
 };
 
 class DocumentFragmentImpl : public ContainerNodeImpl

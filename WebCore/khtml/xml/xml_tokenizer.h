@@ -28,9 +28,7 @@
 #include <qmap.h>
 #include "misc/stringit.h"
 
-#if APPLE_CHANGES
 #include "KWQSignal.h"
-#endif
 
 class KHTMLView;
 
@@ -76,10 +74,8 @@ public:
 signals:
     void finishedParsing();
 
-#if APPLE_CHANGES
 private:
     KWQSignal m_finishedParsing;
-#endif
 };
 
 Tokenizer *newXMLTokenizer(DOM::DocumentImpl *, KHTMLView * = 0);

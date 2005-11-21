@@ -62,9 +62,6 @@ namespace khtml
 
       ChildFrame() { m_bCompleted = false; m_bPreloaded = false; m_type = Frame; m_bNotify = false; m_hasFallbackContent = false; }
 
-#if !APPLE_CHANGES
-      ~ChildFrame() { if (m_run) m_run->abort(); }
-#endif
 
     QGuardedPtr<khtml::RenderPart> m_frame;
     QGuardedPtr<KParts::ReadOnlyPart> m_part;
@@ -75,9 +72,6 @@ namespace khtml
     bool m_bCompleted;
     QString m_name;
     KParts::URLArgs m_args;
-#if !APPLE_CHANGES
-    QGuardedPtr<KHTMLRun> m_run;
-#endif
     bool m_bPreloaded;
     KURL m_workingURL;
     Type m_type;
@@ -123,31 +117,14 @@ public:
     m_bLoadEventEmitted = true;
     m_bUnloadEventEmitted = true;
     m_cachePolicy = KIO::CC_Verify;
-#if !APPLE_CHANGES
-    m_manager = 0L;
-    m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
-#endif
     m_bClearing = false;
     m_bCleared = true;
     m_zoomFactor = 100;
     m_bDnd = true;
-#if !APPLE_CHANGES
-    m_linkCursor = KCursor::handCursor();
-    m_loadedObjects = 0;
-    m_totalObjectCount = 0;
-    m_jobPercent = 0;
-#endif
     m_haveEncoding = false;
     m_activeFrame = 0L;
-#if !APPLE_CHANGES
-    m_findDialog = 0;
-    m_ssl_in_use = false;
-#endif
 #ifndef Q_WS_QWS
     m_javaContext = 0;
-#endif
-#if !APPLE_CHANGES
-    m_cacheId = 0;
 #endif
     m_frameNameId = 1;
 
@@ -197,9 +174,6 @@ public:
             m_bPluginsForce = part->d->m_bPluginsForce;
             m_bPluginsOverride = part->d->m_bPluginsOverride;
             // Same for SSL settings
-#if !APPLE_CHANGES
-            m_ssl_in_use = part->d->m_ssl_in_use;
-#endif
             m_onlyLocalReferences = part->d->m_onlyLocalReferences;
             m_zoomFactor = part->d->m_zoomFactor;
         }
@@ -218,9 +192,6 @@ public:
   {
     delete m_dcopobject;
     delete m_extension;
-#if !APPLE_CHANGES
-    delete m_settings;
-#endif
     delete m_jscript;
     if ( m_kjs_lib)
        m_kjs_lib->unload();
@@ -278,20 +249,6 @@ public:
   QString m_kjsDefaultStatusBarText;
   QString m_lastModified;
 
-#if !APPLE_CHANGES
-  // QStrings for SSL metadata
-  // Note: When adding new variables don't forget to update ::saveState()/::restoreState()!
-  bool m_ssl_in_use;
-  QString m_ssl_peer_certificate,
-          m_ssl_peer_chain,
-          m_ssl_peer_ip,
-          m_ssl_cipher,
-          m_ssl_cipher_desc,
-          m_ssl_cipher_version,
-          m_ssl_cipher_used_bits,
-          m_ssl_cipher_bits,
-          m_ssl_cert_state;
-#endif
 
   bool m_bComplete:1;
   bool m_bLoadingMainResource:1;
@@ -315,36 +272,9 @@ public:
   QString m_redirectReferrer;
   int m_scheduledHistoryNavigationSteps;
 
-#if !APPLE_CHANGES
-  KAction *m_paViewDocument;
-  KAction *m_paViewFrame;
-  KAction *m_paSaveBackground;
-  KAction *m_paSaveDocument;
-  KAction *m_paSaveFrame;
-  KAction *m_paSecurity;
-  KSelectAction *m_paSetEncoding;
-  KSelectAction *m_paUseStylesheet;
-  KHTMLZoomFactorAction *m_paIncZoomFactor;
-  KHTMLZoomFactorAction *m_paDecZoomFactor;
-  KAction *m_paLoadImages;
-  KAction *m_paFind;
-  KAction *m_paPrintFrame;
-  KAction *m_paSelectAll;
-  KAction *m_paDebugDOMTree;
-  KAction *m_paDebugRenderTree;
-
-  KParts::PartManager *m_manager;
-
-  QString m_popupMenuXML;
-  KHTMLPart::GUIProfile m_guiProfile;
-#endif
 
   int m_zoomFactor;
 
-#if !APPLE_CHANGES
-  int m_findPos;
-  DOM::NodeImpl *m_findNode;
-#endif
 
   QString m_strSelectedURL;
   QString m_strSelectedURLTarget;
@@ -367,10 +297,6 @@ public:
 
   khtml::ETextGranularity m_selectionGranularity;
   bool m_beganSelectingText;
-#if !APPLE_CHANGES
-  QString m_overURL;
-  QString m_overURLTarget;
-#endif
 
   khtml::SelectionController m_selection;
   khtml::SelectionController m_dragCaret;
@@ -399,27 +325,6 @@ public:
   QPoint m_dragLastPos;
 #endif
 
-#if !APPLE_CHANGES
-  QCursor m_linkCursor;
-  QTimer m_scrollTimer;
-
-  unsigned m_loadedObjects;
-  unsigned m_totalObjectCount;
-  unsigned int m_jobPercent;
-
-  KHTMLFind *m_findDialog;
-
-  struct findState
-  {
-    findState()
-    { caseSensitive = false; direction = false; }
-    QString text;
-    bool caseSensitive;
-    bool direction;
-  };
-
-  findState m_lastFindState;
-#endif
 
   //QGuardedPtr<KParts::Part> m_activeFrame;
   KParts::Part * m_activeFrame;

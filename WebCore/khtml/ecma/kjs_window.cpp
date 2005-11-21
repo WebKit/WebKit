@@ -38,10 +38,8 @@
 #include <qstyle.h>
 #include "rendering/render_canvas.h"
 
-#if APPLE_CHANGES
 #include "KWQLogging.h"
 #include "KWQKConfigBase.h"
-#endif
 #include <kjs/collector.h>
 #include "kjs_proxy.h"
 #include "kjs_navigator.h"
@@ -501,28 +499,9 @@ UString Window::toString(ExecState *) const
 
 static bool allowPopUp(ExecState *exec, Window *window)
 {
-#if APPLE_CHANGES
     return window->part()
         && (window->part()->settings()->JavaScriptCanOpenWindowsAutomatically()
             || static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture());
-#else    
-    KConfig config("konquerorrc");
-    config.setGroup("Java/JavaScript Settings");
-    switch (config.readUnsignedNumEntry("WindowOpenPolicy", 0)) { // 0=allow, 1=ask, 2=deny, 3=smart
-        default:
-        case 0: // allow
-            return true;
-        case 1: // ask
-            return KMessageBox::questionYesNo(widget,
-                i18n("This site is trying to open up a new browser window using Javascript.\n"
-                     "Do you want to allow this?"),
-                i18n("Confirmation: Javascript Popup")) == KMessageBox::Yes;
-        case 2: // deny
-            return false;
-        case 3: // smart
-            return static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-    }
-#endif
 }
 
 static QMap<QString, QString> parseFeatures(ExecState *exec, ValueImp *featuresArg)
@@ -803,29 +782,19 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
     case ScreenLeft:
     case ScreenX: {
       if (m_part->view()) {
-#if APPLE_CHANGES
         // We want to use frameGeometry here instead of mapToGlobal because it goes through
         // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
         // to do anything relative to the screen the window is on, so the code below is no
         // good of us anyway.
         return Number(m_part->view()->topLevelWidget()->frameGeometry().x());
-#else
-        QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
-        return Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
-#endif
       } else
         return Undefined();
     }
     case ScreenTop:
     case ScreenY: {
       if (m_part->view()) {
-#if APPLE_CHANGES
         // See comment above in ScreenX.
         return Number(m_part->view()->topLevelWidget()->frameGeometry().y());
-#else
-        QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
-        return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
-#endif
       } else 
         return Undefined();
     }
@@ -889,9 +858,7 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
    switch (token) {
    case Document:
      if (!m_part->xmlDocImpl()) {
-#if APPLE_CHANGES
        KWQ(m_part)->createEmptyDocument();
-#endif
        m_part->begin();
        m_part->write("<HTML><BODY>");
        m_part->end();
@@ -941,10 +908,8 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
      return getListener(exec,resizeEvent);
    case Onscroll:
      return getListener(exec,scrollEvent);
-#if APPLE_CHANGES
    case Onsearch:
      return getListener(exec,searchEvent);
-#endif
    case Onselect:
      return getListener(exec,selectEvent);
    case Onsubmit:
@@ -1126,12 +1091,8 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
         if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec))
         {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-#if APPLE_CHANGES
           // We want a new history item if this JS was called via a user gesture
           m_part->scheduleLocationChange(dstUrl, p->referrer(), !userGesture, userGesture);
-#else
-          m_part->scheduleLocationChange(dstUrl, p->referrer(), false /*don't lock history*/, userGesture);
-#endif
         }
       }
       return;
@@ -1224,12 +1185,10 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
       if (isSafeScript(exec))
         setListener(exec,scrollEvent,value);
       return;
-#if APPLE_CHANGES
     case Onsearch:
         if (isSafeScript(exec))
             setListener(exec,searchEvent,value);
         return;
-#endif
     case Onselect:
       if (isSafeScript(exec))
         setListener(exec,selectEvent,value);
@@ -1248,11 +1207,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
       return;
     case Name:
       if (isSafeScript(exec))
-#if APPLE_CHANGES
         m_part->setName( value->toString(exec).qstring() );
-#else
-        m_part->setName( value->toString(exec).qstring().local8Bit().data() );
-#endif
       return;
     default:
       break;
@@ -1283,7 +1238,6 @@ void Window::clearTimeout(int timerId)
   winq->clearTimeout(timerId);
 }
 
-#if APPLE_CHANGES
 bool Window::hasTimeouts()
 {
     return winq->hasTimeouts();
@@ -1298,17 +1252,12 @@ void Window::resumeTimeouts(QMap<int, ScheduledAction*> *sa, const void *key)
 {
     return winq->resumeTimeouts(sa, key);
 }
-#endif
 
 void Window::scheduleClose()
 {
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
   Q_ASSERT(winq);
-#if APPLE_CHANGES
   KWQ(m_part)->scheduleClose();
-#else
-  QTimer::singleShot( 0, winq, SLOT( timeoutClose() ) );
-#endif
 }
 
 static bool shouldLoadAsEmptyDocument(const KURL &url)
@@ -1426,7 +1375,6 @@ bool Window::isSafeScript(ExecState *exec) const
   if ( actDomain == thisDomain )
     return true;
 
-#if APPLE_CHANGES
   if (Interpreter::shouldPrintExceptions()) {
       printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
              thisDocument->URL().latin1(), actDocument->URL().latin1());
@@ -1435,7 +1383,6 @@ bool Window::isSafeScript(ExecState *exec) const
   message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                   thisDocument->URL().latin1(), actDocument->URL().latin1());
   KWQ(m_part)->addMessageToConsole(message, 1, QString());
-#endif
   
   kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.qstring() << "' to frame '" << thisDomain.qstring() << "'" << endl;
   return false;
@@ -1546,39 +1493,17 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
   case Window::Alert:
     if (part && part->xmlDocImpl())
       part->xmlDocImpl()->updateRendering();
-#if APPLE_CHANGES
     KWQ(part)->runJavaScriptAlert(str);
-#else
-    KMessageBox::error(widget, QStyleSheet::convertFromPlainText(str), "JavaScript");
-#endif
     return Undefined();
   case Window::Confirm:
     if (part && part->xmlDocImpl())
       part->xmlDocImpl()->updateRendering();
-#if APPLE_CHANGES
     return Boolean(KWQ(part)->runJavaScriptConfirm(str));
-#else
-    return Boolean((KMessageBox::warningYesNo(widget, QStyleSheet::convertFromPlainText(str), "JavaScript",
-                                                i18n("OK"), i18n("Cancel")) == KMessageBox::Yes));
-#endif
   case Window::Prompt:
     if (part && part->xmlDocImpl())
       part->xmlDocImpl()->updateRendering();
     bool ok;
-#if APPLE_CHANGES
     ok = KWQ(part)->runJavaScriptPrompt(str, args.size() >= 2 ? args[1]->toString(exec).qstring() : QString::null, str2);
-#else
-    if (args.size() >= 2)
-      str2 = QInputDialog::getText(i18n("Konqueror: Prompt"),
-                                   QStyleSheet::convertFromPlainText(str),
-                                   QLineEdit::Normal,
-                                   args[1]->toString(exec).qstring(), &ok);
-    else
-      str2 = QInputDialog::getText(i18n("Konqueror: Prompt"),
-                                   QStyleSheet::convertFromPlainText(str),
-                                   QLineEdit::Normal,
-                                   QString::null, &ok);
-#endif
     if ( ok )
         return String(str2);
     else
@@ -1587,35 +1512,20 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
   {
     KConfig *config = new KConfig("konquerorrc");
     config->setGroup("Java/JavaScript Settings");
-#if !APPLE_CHANGES
-    int policy = config->readUnsignedNumEntry( "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
-#else    
     int policy = config->readUnsignedNumEntry( part->settings(), "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
-#endif
     delete config;
     if ( policy == 1 ) {
-#if !APPLE_CHANGES
-      if ( KMessageBox::questionYesNo(widget,
-                                      i18n( "This site is trying to open up a new browser "
-                                            "window using Javascript.\n"
-                                            "Do you want to allow this?" ),
-                                      i18n( "Confirmation: Javascript Popup" ) ) == KMessageBox::Yes )
-#endif
         policy = 0;
     } else if ( policy == 3 ) // smart
     {
       // window.open disabled unless from a key/mouse event
       if (static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture())
-#if !APPLE_CHANGES
-        policy = 0;
-#else
       {
         policy = 0;
 	LOG(PopupBlocking, "Allowed JavaScript window open of %s", args[0]->toString(exec).qstring().ascii());
       } else {
 	LOG(PopupBlocking, "Blocked JavaScript window open of %s", args[0]->toString(exec).qstring().ascii());
       }
-#endif
     }
 
     QString frameName = args[1]->isUndefinedOrNull() ? QString("_blank") : args[1]->toString(exec).qstring();
@@ -1637,9 +1547,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
         winargs.menuBarVisible = false;
         winargs.toolBarsVisible = false;
         winargs.statusBarVisible = false;
-#if APPLE_CHANGES
 	winargs.scrollbarsVisible = true;
-#endif
         QStringList flist = QStringList::split(',', features);
         QStringList::ConstIterator it = flist.begin();
         while (it != flist.end()) {
@@ -1665,9 +1573,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
                 if (d < screen.x() || d > screen.right())
 		  d = screen.x(); // only safe choice until size is determined
                 winargs.x = (int)d;
-#if APPLE_CHANGES
 	        winargs.xSet = true;
-#endif
               }
             } else if (key == "top" || key == "screeny") {
               bool ok;
@@ -1677,41 +1583,29 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
                 if (d < screen.y() || d > screen.bottom())
 		  d = screen.y(); // only safe choice until size is determined
                 winargs.y = (int)d;
-#if APPLE_CHANGES
 	        winargs.ySet = true;
-#endif
               }
             } else if (key == "height") {
               bool ok;
               double d = val.toDouble(&ok);
               if ((d != 0 || ok) && !isnan(d)) {
-#if !APPLE_CHANGES
-                d += 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
-#endif
 	        if (d > screen.height())  // should actually check workspace
 		  d = screen.height();
                 if (d < 100)
 		  d = 100;
                 winargs.height = (int)d;
-#if APPLE_CHANGES
 	        winargs.heightSet = true;
-#endif
               }
             } else if (key == "width") {
               bool ok;
               double d = val.toDouble(&ok);
               if ((d != 0 || ok) && !isnan(d)) {
-#if !APPLE_CHANGES
-                d += 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
-#endif
 	        if (d > screen.width())    // should actually check workspace
 		  d = screen.width();
                 if (d < 100)
 		  d = 100;
                 winargs.width = (int)d;
-#if APPLE_CHANGES
 	        winargs.widthSet = true;
-#endif
               }
             } else {
               goto boolargs;
@@ -1735,10 +1629,8 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
             winargs.resizable = (val == "1" || val == "yes");
           else if (key == "fullscreen")
             winargs.fullscreen = (val == "1" || val == "yes");
-#if APPLE_CHANGES
           else if (key == "scrollbars")
             winargs.scrollbarsVisible = !(val == "0" || val == "no");
-#endif
         }
       }
 
@@ -1805,7 +1697,6 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
               khtmlpart->xmlDocImpl()->setBaseURL( oldDoc->baseURL() );
             }
         }
-#if APPLE_CHANGES
         if (!url.isEmpty()) {
           const Window* window = Window::retrieveWindow(khtmlpart);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
@@ -1813,25 +1704,14 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
             khtmlpart->scheduleLocationChange(url.url(), activePart->referrer(), false, userGesture);
           } 
 	}
-#else
-        uargs.serviceType = QString::null;
-        if (uargs.frameName == "_blank")
-          uargs.frameName = QString::null;
-        if (!url.isEmpty()) {
-          uargs.metaData()["referrer"] = activePart->referrer();
-          emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
-        }
-#endif
         return Window::retrieve(khtmlpart); // global object
       } else
         return Undefined();
     }
   }
-#if APPLE_CHANGES
   case Window::Print:
     part->print();
     return Undefined();
-#endif
   case Window::ScrollBy:
     window->updateLayout();
     if(args.size() >= 2 && widget)
@@ -1962,11 +1842,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
         return Undefined();
     return window->selection();
   case Window::Blur:
-#if APPLE_CHANGES
     KWQ(part)->unfocusWindow();
-#else
-    // TODO
-#endif
     return Undefined();
   case Window::Close:
     /* From http://developer.netscape.com/docs/manuals/js/client/jsref/window.htm :
@@ -1985,11 +1861,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
       // has more than one entry in the history (NS does that too).
       History history(exec,part);
       if ( history.get( exec, lengthPropertyName )->toInt32(exec) <= 1
-#if APPLE_CHANGES
            // FIXME: How are we going to handle this?
-#else
-           || KMessageBox::questionYesNo( window->part()->view(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes
-#endif
            )
         (const_cast<Window*>(window))->scheduleClose();
     }
@@ -2220,12 +2092,10 @@ void WindowQObject::timeoutClose()
   }
 }
 
-#if APPLE_CHANGES
 bool WindowQObject::hasTimeouts()
 {
     return scheduledActions.count();
 }
-#endif
 
 
 const ClassInfo FrameArray::info = { "FrameArray", 0, &FrameArrayTable, 0 };
@@ -2446,12 +2316,8 @@ void Location::put(ExecState *exec, const Identifier &p, ValueImp *v, int attr)
   KHTMLPart* activePart = Window::retrieveActive(exec)->part();
   if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
     bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-#if APPLE_CHANGES
     // We want a new history item if this JS was called via a user gesture
     m_part->scheduleLocationChange(url.url(), activePart->referrer(), !userGesture, userGesture);
-#else
-    m_part->scheduleLocationChange(url.url(), activePart->referrer(), false /*don't lock history*/, userGesture);
-#endif
   }
 }
 
@@ -2512,12 +2378,8 @@ ValueImp *LocationFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, cons
             QString dstUrl = p->xmlDocImpl()->completeURL(args[0]->toString(exec).qstring());
             if (!dstUrl.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
                 bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-#if APPLE_CHANGES
                 // We want a new history item if this JS was called via a user gesture
                 part->scheduleLocationChange(dstUrl, p->referrer(), !userGesture, userGesture);
-#else
-                part->scheduleLocationChange(dstUrl, p->referrer(), false /*don't lock history*/, userGesture);
-#endif
             }
         }
         break;
@@ -2711,7 +2573,6 @@ ValueImp *BarInfo::getValueProperty(ExecState *exec, int token) const
 {
     assert(token == Visible);
     switch (m_type) {
-#if APPLE_CHANGES
     case Locationbar:
         return Boolean(KWQ(m_part)->locationbarVisible());
     case Menubar: 
@@ -2724,7 +2585,6 @@ ValueImp *BarInfo::getValueProperty(ExecState *exec, int token) const
         return Boolean(KWQ(m_part)->statusbarVisible());
     case Toolbar:
         return Boolean(KWQ(m_part)->toolbarVisible());
-#endif
     default:
         return Boolean(false);
     }

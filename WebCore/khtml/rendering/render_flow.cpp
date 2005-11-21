@@ -412,11 +412,9 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
         // This means the paint order of outlines will be wrong, although this is a minor issue.
         QPtrDictIterator<RenderFlow> objects(*i.outlineObjects);
         for (objects.toFirst(); objects.current(); ++objects) {
-#ifdef APPLE_CHANGES
             if (objects.current()->style()->outlineStyleIsAuto())
                 objects.current()->paintFocusRing(i.p, _tx, _ty);
             else
-#endif
                 objects.current()->paintOutlines(i.p, _tx, _ty);
         }
         i.outlineObjects->clear();
@@ -658,7 +656,6 @@ QRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     return QRect(_x, _y, width, height);
 }
 
-#if APPLE_CHANGES
 void RenderFlow::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
     // Only paint focus ring around outermost contenteditable element.
@@ -699,7 +696,6 @@ void RenderFlow::paintFocusRing(QPainter *p, int tx, int ty)
     p->drawFocusRing();
     p->clearFocusRing();
 }
-#endif
 
 void RenderFlow::paintOutlines(QPainter *p, int _tx, int _ty)
 {

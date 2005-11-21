@@ -58,13 +58,8 @@
 #include "xbl/xbl_binding_manager.h"
 #endif
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
-#else
-#define ASSERT(assertion) assert(assertion)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#endif
 
 using namespace khtml;
 
@@ -914,16 +909,10 @@ bool NodeImpl::dispatchKeyEvent(QKeyEvent *key)
     keyboardEventImpl->ref();
     bool r = dispatchEvent(keyboardEventImpl,exceptioncode,true);
 
-#if APPLE_CHANGES
     // we want to return false if default is prevented (already taken care of)
     // or if the element is default-handled by the DOM. Otherwise we let it just
     // let it get handled by AppKit 
     if (keyboardEventImpl->defaultHandled())
-#else
-    // the default event handler should accept() the internal QKeyEvent
-    // to prevent the view from further evaluating it.
-    if (!keyboardEventImpl->defaultPrevented() && !keyboardEventImpl->qKeyEvent->isAccepted())
-#endif
       r = false;
 
     keyboardEventImpl->deref();
@@ -1421,10 +1410,8 @@ NodeImpl *NodeImpl::nextLeafNode() const
 void NodeImpl::createRendererIfNeeded()
 {
 
-#if APPLE_CHANGES
     if (!getDocument()->shouldCreateRenderers())
         return;
-#endif
         
     assert(!attached());
     assert(!m_render);

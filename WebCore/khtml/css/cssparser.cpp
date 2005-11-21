@@ -42,9 +42,7 @@ using namespace DOM;
 
 #include <stdlib.h>
 
-#if APPLE_CHANGES
 void qFatal ( const char * msg ) {}
-#endif
 
 ValueList::ValueList()
 {
@@ -514,12 +512,10 @@ bool CSSParser::parseValue( int propId, bool important )
 	    return parseShape( propId, important );
 	break;
 
-#if APPLE_CHANGES
     case CSS_PROP__KHTML_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
 	if ( value->unit == Value::Function || id == CSS_VAL_NONE)
 	    return parseDashboardRegions( propId, important );
 	break;
-#endif
 
     /* Start of supported CSS properties with validation. This is needed for parseShortHand to work
      * correctly and allows optimization in khtml::applyRule(..)
@@ -872,38 +868,6 @@ bool CSSParser::parseValue( int propId, bool important )
 	else
 	    valid_primitive = ( !id && validUnit( value, FNumber|FLength|FPercent, strict ) );
 	break;
-#if 0
-	// removed from CSS 2.1
-    case CSS_PROP_COUNTER_INCREMENT:    // [ <identifier> <integer>? ]+ | none | inherit
-    case CSS_PROP_COUNTER_RESET:        // [ <identifier> <integer>? ]+ | none | inherit
-	if ( id == CSS_VAL_NONE )
-	    valid_primitive = true;
-	else {
-            CSSValueListImpl *list = new CSSValueListImpl;
-            int pos=0, pos2;
-            while( 1 )
-	    {
-                pos2 = value.find(',', pos);
-                QString face = value.mid(pos, pos2-pos);
-                face = face.stripWhiteSpace();
-                if(face.length() == 0) break;
-                // ### single quoted is missing...
-                if(face[0] == '\"') face.remove(0, 1);
-                if(face[face.length()-1] == '\"') face = face.left(face.length()-1);
-                //kdDebug( 6080 ) << "found face '" << face << "'" << endl;
-                list->append(new CSSPrimitiveValueImpl(DOMString(face), CSSPrimitiveValue::CSS_STRING));
-                pos = pos2 + 1;
-                if(pos2 == -1) break;
-	    }
-            //kdDebug( 6080 ) << "got " << list->length() << " faces" << endl;
-            if(list->length()) {
-		parsedValue = list;
-		valueList->next();
-            } else
-		delete list;
-            break;
-	}
-#endif
     case CSS_PROP_FONT_FAMILY:
     	// [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
     {
@@ -1172,7 +1136,6 @@ bool CSSParser::parseValue( int propId, bool important )
     
     // End of CSS3 properties
 
-#if APPLE_CHANGES
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
     case CSS_PROP__KHTML_LINE_CLAMP:
@@ -1182,7 +1145,6 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
-#endif
 
 	/* shorthand properties */
     case CSS_PROP_BACKGROUND:
@@ -1824,7 +1786,6 @@ static Value *skipCommaInDashboardRegion (ValueList *args)
     return args->current();
 }
 
-#if APPLE_CHANGES
 bool CSSParser::parseDashboardRegions( int propId, bool important )
 {
     bool valid = true;
@@ -1948,7 +1909,6 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         
     return valid;
 }
-#endif
 
 bool CSSParser::parseShape( int propId, bool important )
 {

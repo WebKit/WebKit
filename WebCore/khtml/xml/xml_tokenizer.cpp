@@ -52,17 +52,13 @@ const int maxErrors = 25;
 typedef HashMap<DOMStringImpl *, DOMStringImpl *> PrefixForNamespaceMap;
 
 Tokenizer::Tokenizer() : m_parserStopped(false)
-#if APPLE_CHANGES
     , m_finishedParsing(this, SIGNAL(finishedParsing()))
-#endif
 {
 }
 
 void Tokenizer::finishedParsing()
 {
-#if APPLE_CHANGES
     m_finishedParsing.call();
-#endif
 }
 
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
@@ -430,25 +426,12 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
         QString format;
         switch (type) {
             case warning:
-#if APPLE_CHANGES
                 format = QString("warning on line %2 at column %3: %1");
-#else
-                format = i18n( "warning: %1 in line %2, column %3\n" );
-#endif
                 break;
             case fatal:
-#if APPLE_CHANGES
                 // fall through
-#else
-                format = i18n( "fatal error: %1 in line %2, column %3\n" );
-                break;
-#endif
             default:
-#if APPLE_CHANGES
                 format = QString("error on line %2 at column %3: %1");
-#else
-                format = i18n( "error: %1 in line %2, column %3\n" );
-#endif
         }
 
         char *m;

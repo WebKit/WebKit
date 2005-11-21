@@ -423,7 +423,6 @@ public:
 //------------------------------------------------
 // Dashboard region attributes. Not inherited.
 
-#if APPLE_CHANGES
 struct StyleDashboardRegion
 {
     QString label;
@@ -441,7 +440,6 @@ struct StyleDashboardRegion
         return type == o.type && offset == o.offset && label == o.label;
     }
 };
-#endif
 
 //------------------------------------------------
 // Random visual rendering model attributes. Not inherited.
@@ -480,9 +478,6 @@ public:
 		 colspan == o.colspan &&
 		 counter_increment == o.counter_increment &&
 		 counter_reset == o.counter_reset &&
-#if !APPLE_CHANGES
-		 palette == o.palette &&
-#endif
                  textDecoration == o.textDecoration);
     }
     bool operator!=( const StyleVisualData &o ) const {
@@ -498,9 +493,6 @@ public:
     short counter_increment; //ok, so these are not visual mode spesific
     short counter_reset;     //can't go to inherited, since these are not inherited
 
-#if !APPLE_CHANGES
-    QPalette palette;      //widget styling with IE attributes
-#endif
 };
 
 //------------------------------------------------
@@ -783,10 +775,8 @@ public:
         return !(*this == o);
     }
     
-#if APPLE_CHANGES
     int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
     QValueList<StyleDashboardRegion> m_dashboardRegions;
-#endif
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
@@ -825,9 +815,7 @@ public:
     EWordWrap wordWrap : 1;    // Flag used for word wrap
     ENBSPMode nbspMode : 1;    
     EKHTMLLineBreak khtmlLineBreak : 1;    
-#if APPLE_CHANGES
     bool textSizeAdjust : 1;    // An Apple extension.  Not really CSS3 but not worth making a new struct over.
-#endif
     
 private:
     StyleCSS3InheritedData &operator=(const StyleCSS3InheritedData &);
@@ -1402,11 +1390,9 @@ public:
     EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return css3NonInheritedData->matchNearestMailBlockquoteColor; }
     // End CSS3 Getters
 
-#if APPLE_CHANGES
     // Apple-specific property getter methods
     int lineClamp() const { return css3NonInheritedData->lineClamp; }
     bool textSizeAdjust() const { return css3InheritedData->textSizeAdjust; }
-#endif
 
 // attribute setter methods
 
@@ -1428,7 +1414,6 @@ public:
     void setMinHeight(Length v) { SET_VAR(box,min_height,v) }
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
-#if APPLE_CHANGES
     QValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
     void setDashboardRegions(QValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
     void setDashboardRegion (int type, QString label, Length t, Length r, Length b, Length l, bool append) {
@@ -1444,7 +1429,6 @@ public:
         }
         css3NonInheritedData.access()->m_dashboardRegions.append (region);
     }
-#endif
 
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
     void resetBorderTop() { SET_VAR(surround, border.top, BorderValue()) }
@@ -1625,20 +1609,10 @@ public:
     void setMatchNearestMailBlockquoteColor(EMatchNearestMailBlockquoteColor c)  { SET_VAR(css3NonInheritedData, matchNearestMailBlockquoteColor, c); }
     // End CSS3 Setters
    
-#if APPLE_CHANGES
     // Apple-specific property setters
     void setLineClamp(int c) { SET_VAR(css3NonInheritedData, lineClamp, c); }
     void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
-#endif
 
-#if !APPLE_CHANGES
-    QPalette palette() const { return visual->palette; }
-    void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);
-    void resetPalette() // Called when the desktop color scheme changes.
-    {
-        const_cast<StyleVisualData *>(visual.get())->palette = QApplication::palette();
-    }
-#endif
 
     ContentData* contentData() { return content; }
     bool contentDataEquivalent(RenderStyle* otherStyle);
@@ -1750,13 +1724,11 @@ public:
     static EMatchNearestMailBlockquoteColor initialMatchNearestMailBlockquoteColor() { return BCNORMAL; }
     static EAppearance initialAppearance() { return NoAppearance; }
 
-#if APPLE_CHANGES
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static const QValueList<StyleDashboardRegion>& initialDashboardRegions();
     static const QValueList<StyleDashboardRegion>& noneDashboardRegions();
-#endif
 };
 
 

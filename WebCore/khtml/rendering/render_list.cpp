@@ -473,14 +473,10 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         return;
     default:
         if (!m_item.isEmpty()) {
-#if APPLE_CHANGES
             // Text should be drawn on the baseline, so we add in the ascent of the font. 
             // For some inexplicable reason, this works in Konqueror.  I'm not sure why.
             // - dwh
        	    _ty += fm.ascent();
-#else
-       	    //_ty += fm.ascent() - fm.height()/2 + 1;
-#endif
 
             if (isInside()) {
             	if( style()->direction() == LTR) {

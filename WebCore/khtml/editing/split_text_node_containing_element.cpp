@@ -30,11 +30,7 @@
 #include "xml/dom_elementimpl.h"
 #include "rendering/render_object.h"
 
-#if APPLE_CHANGES
 #include <kxmlcore/Assertions.h>
-#else
-#define ASSERT(assertion) assert(assertion)
-#endif
 
 using DOM::DocumentImpl;
 using DOM::TextImpl;

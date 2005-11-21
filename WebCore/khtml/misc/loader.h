@@ -68,7 +68,6 @@ namespace DOM
     class DocumentImpl;
 };
 
-#if APPLE_CHANGES
 
 class KWQLoader;
 
@@ -80,7 +79,6 @@ class NSData;
 class NSURLResponse;
 #endif
 
-#endif
 
 namespace khtml
 {
@@ -141,10 +139,8 @@ namespace khtml
 	    m_free = false;
 	    m_cachePolicy = _cachePolicy;
 	    m_request = 0;
-#if APPLE_CHANGES
         m_response = 0;
         m_allData = 0;
-#endif            
 	    m_expireDate = _expireDate;
         m_deleted = false;
         m_expireDateChanged = false;
@@ -197,12 +193,10 @@ namespace khtml
 
         void setRequest(Request *_request);
 
-#if APPLE_CHANGES
         NSURLResponse *response() const { return m_response; }
         void setResponse(NSURLResponse *response);
         NSData *allData() const { return m_allData; }
         void setAllData (NSData *data);
-#endif
 
         bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
 
@@ -227,10 +221,8 @@ namespace khtml
 	DOM::DOMString m_url;
         QString m_accept;
         Request *m_request;
-#if APPLE_CHANGES
         NSURLResponse *m_response;
         NSData *m_allData;
-#endif
 	Type m_type;
 	Status m_status;
     private:
@@ -312,7 +304,6 @@ namespace khtml
 
     class ImageSource;
 
-#if APPLE_CHANGES    
     class CachedImage;
     
     class CachedImageCallback
@@ -334,7 +325,6 @@ namespace khtml
         uint refCount;
 	bool headerReceived;
     };
-#endif
         
     /**
      * a cached image
@@ -404,7 +394,6 @@ namespace khtml
 
         friend class Cache;
 
-#if APPLE_CHANGES
     public:
         int dataSize() const { return m_dataSize; }
 	CachedImageCallback *decoderCallback() const { return m_decoderCallback; }
@@ -413,7 +402,6 @@ namespace khtml
         
         int m_dataSize;
         CachedImageCallback *m_decoderCallback;
-#endif
     };
 
 #ifdef KHTML_XSLT
@@ -553,16 +541,12 @@ protected:
         int numRequests( DocLoader* dl ) const;
         void cancelRequests( DocLoader* dl );
 
-#if APPLE_CHANGES
 	void removeBackgroundDecodingRequest (Request *r);
-#endif
 	
         // may return 0L
         KIO::Job *jobForRequest( const DOM::DOMString &url ) const;
 
-#if APPLE_CHANGES
         KWQLoader *kwq;
-#endif
 
     signals:
 	friend class CachedImageCallback;
@@ -572,28 +556,19 @@ protected:
 	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
 
     protected slots:
-#if APPLE_CHANGES
         void slotFinished( KIO::Job * , NSData *allData);
 	void slotData( KIO::Job *, const char *data, int size );
         void slotReceivedResponse ( KIO::Job *, NSURLResponse *response );
-#else
-        void slotFinished( KIO::Job * );
-	void slotData( KIO::Job *, const QByteArray & );
-#endif
 
     private:
 	void servePendingRequests();
 
-#if APPLE_CHANGES
         virtual bool isKHTMLLoader() const;
-#endif
 
 	QPtrList<Request> m_requestsPending;
 	QPtrDict<Request> m_requestsLoading;
 
-#if APPLE_CHANGES
 	QPtrList<Request> m_requestsBackgroundDecoding;
-#endif
 
 #ifdef HAVE_LIBJPEG
         KJPEGFormatType m_jpegloader;
@@ -694,7 +669,6 @@ protected:
 
         static void removeCacheEntry( CachedObject *object );
 
-#if APPLE_CHANGES
         struct TypeStatistic {
             int count;
             int size;
@@ -718,7 +692,6 @@ protected:
         static Statistics getStatistics();
         static void flushAll();
         static void setCacheDisabled(bool);
-#endif
 
         static void insertInLRUList(CachedObject *);
         static void removeFromLRUList(CachedObject *);

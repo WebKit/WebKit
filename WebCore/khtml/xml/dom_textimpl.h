@@ -30,10 +30,8 @@
 namespace DOM {
 
     class DocumentImpl;
-#if APPLE_CHANGES
     class CharacterData;
     class Text;
-#endif
 
 class CharacterDataImpl : public NodeImpl
 {
