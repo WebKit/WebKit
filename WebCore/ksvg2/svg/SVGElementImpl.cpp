@@ -101,9 +101,6 @@ KDOM::AtomicString SVGElementImpl::tryGetAttributeNS(const KDOM::DOMString& name
 
 void SVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    const KDOM::DocumentImpl *doc = ownerDocument();
-    if(!doc)
-        return;
 
 //    if (attr->name() == SVGNames::onloadAttr)
 //            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("load"), value);

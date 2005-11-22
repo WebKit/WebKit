@@ -46,7 +46,7 @@ namespace KSVG
 
         bool hasExtension(KDOM::DOMStringImpl *extension) const;
 
-        bool isValid();
+        bool isValid() const;
         
         bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 

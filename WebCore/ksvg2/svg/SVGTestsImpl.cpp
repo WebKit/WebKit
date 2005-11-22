@@ -72,7 +72,7 @@ bool SVGTestsImpl::hasExtension(KDOM::DOMStringImpl *) const
     return false;
 }
 
-bool SVGTestsImpl::isValid()
+bool SVGTestsImpl::isValid() const
 {
     SVGStringListImpl *list = requiredFeatures();
     for(unsigned long i = 0;i < list->numberOfItems();i++)

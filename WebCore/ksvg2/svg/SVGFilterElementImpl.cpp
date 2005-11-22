@@ -221,8 +221,8 @@ KCanvasFilter *SVGFilterElementImpl::canvasResource()
     for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
         SVGElementImpl *element = svg_dynamic_cast(n);
-        if(element->isFilterEffect()) {
-            SVGFilterPrimitiveStandardAttributesImpl *fe = static_cast<SVGFilterPrimitiveStandardAttributesImpl *>(n);
+        if(element && element->isFilterEffect()) {
+            SVGFilterPrimitiveStandardAttributesImpl *fe = static_cast<SVGFilterPrimitiveStandardAttributesImpl *>(element);
             if (fe->filterEffect())
                 m_filter->addFilterEffect(fe->filterEffect());
         }

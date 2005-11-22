@@ -59,10 +59,10 @@ public:
     QString idInRegistry() const;
     void setIdInRegistry(const QString& newId);
     
-    virtual bool isPaintServer() { return false; }
-    virtual bool isFilter() { return false; }
-    virtual bool isClipper() { return false; }
-    virtual bool isMarker() { return false; }
+    virtual bool isPaintServer() const { return false; }
+    virtual bool isFilter() const { return false; }
+    virtual bool isClipper() const { return false; }
+    virtual bool isMarker() const { return false; }
     
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
@@ -75,6 +75,8 @@ class KCanvasClipper : public KCanvasResource
 public:
     KCanvasClipper();
     virtual ~KCanvasClipper();
+    
+    virtual bool isClipper() const { return true; }
 
     // Differentiate between viewport clipping and normal clipping data...
     bool viewportClipper() const;
@@ -96,6 +98,8 @@ class KCanvasMarker : public KCanvasResource
 public:
     KCanvasMarker(khtml::RenderObject *marker = 0);
     virtual ~KCanvasMarker();
+    
+    virtual bool isMarker() const { return true; }
 
     void setMarker(khtml::RenderObject *marker);
     

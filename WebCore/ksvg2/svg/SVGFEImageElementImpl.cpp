@@ -48,6 +48,7 @@ using namespace KSVG;
 SVGFEImageElementImpl::SVGFEImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGFilterPrimitiveStandardAttributesImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
+    m_filterEffect = 0;
     m_preserveAspectRatio = 0;
     m_cachedImage = 0;
 }
@@ -70,7 +71,14 @@ void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
         preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
     else
     {
-        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
+        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) {
+            if (m_cachedImage)
+                m_cachedImage->deref(this);
+            m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
+            if(m_cachedImage)
+                m_cachedImage->ref(this);
+            return;
+        }
         if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
         if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
 
@@ -82,38 +90,21 @@ void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
     if(finishedObj == m_cachedImage)
     {
-#if 0
         KCanvasImage *imageBuffer = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
         imageBuffer->init(m_cachedImage->pixmap());
-        //m_filterEffect->setImageBuffer(imageBuffer);
+        //filterEffect()->setImageBuffer(imageBuffer);
 
         m_cachedImage->deref(this);
         m_cachedImage = 0;
-#endif
     }
-}
-
-void SVGFEImageElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool /* needFillStrokeUpdate */)
-{
-#ifndef APPLE_CHANGES
-    KURL fullUrl(ownerDocument()->documentKURI(), KDOM::DOMString(href()->baseVal()).qstring());
-    kdDebug() << "REQUESTING LOAD OF " << fullUrl.prettyURL() << endl;
-#endif
-
-    m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
-    if(m_cachedImage)
-        m_cachedImage->ref(this);
-}
-
-khtml::RenderObject *SVGFEImageElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
-{
-    m_filterEffect = static_cast<KCanvasFEImage *>(canvas()->renderingDevice()->createFilterEffect(FE_IMAGE));
-    setStandardAttributes(m_filterEffect);
-    return 0;
 }
 
 KCanvasFilterEffect *SVGFEImageElementImpl::filterEffect() const
 {
+    if (!m_filterEffect) {
+        m_filterEffect = static_cast<KCanvasFEImage *>(canvas()->renderingDevice()->createFilterEffect(FE_IMAGE));
+        setStandardAttributes(m_filterEffect);
+    }
     return m_filterEffect;
 }
 

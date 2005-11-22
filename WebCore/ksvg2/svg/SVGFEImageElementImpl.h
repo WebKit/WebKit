@@ -51,15 +51,9 @@ namespace KSVG
         SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
     protected:
-        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
-
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
-
         virtual KCanvasFilterEffect *filterEffect() const;
 
     private:

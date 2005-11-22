@@ -43,7 +43,7 @@ namespace KSVG
     public:
         SVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGElementImpl();
-        virtual bool isSVGElement() { return true; }
+        virtual bool isSVGElement() const { return true; }
         virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
 
         SVGSVGElementImpl *ownerSVGElement() const;
@@ -64,17 +64,17 @@ namespace KSVG
         virtual bool isStyledTransformable() const { return false; }
         virtual bool isStyledLocatable() const { return false; }
         virtual bool isSVG() const { return false; }
-        virtual bool isFilterEffect() { return false; }
-        virtual bool isGradientStop() { return false; }
+        virtual bool isFilterEffect() const { return false; }
+        virtual bool isGradientStop() const { return false; }
         
         // For SVGTestsImpl
-        virtual bool isValid() { return false; }
+        virtual bool isValid() const { return false; }
         
         virtual void closeRenderer() { m_closed = true; }
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
         
         // helper:
-        bool isClosed() { return m_closed; }
+        bool isClosed() const { return m_closed; }
 
     private:
         bool m_closed;

@@ -233,8 +233,10 @@ void KCanvasMarker::draw(const QRect &rect, const KCanvasMatrix &objectMatrix, d
         if(m_useStrokeWidth)
             rotation.scale(strokeWidth, strokeWidth);
 
-        // FIXME: Need to figure out how this should be called... paint(...)
-        //m_marker->draw(QRect());
+        // FIXME: I'm not sure if this is right yet...
+        QPainter p;
+        khtml::RenderObject::PaintInfo info(&p, QRect(), PaintActionForeground, 0);
+        m_marker->paint(info, 0, 0);
     }
 }
 
@@ -252,10 +254,14 @@ QTextStream& KCanvasMarker::externalRepresentation(QTextStream &ts) const
 
 KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
 {
+    if (id.isEmpty())
+        return 0;
     KDOM::ElementImpl *element = document->getElementById(id);
     KSVG::SVGElementImpl *svgElement = KSVG::svg_dynamic_cast(element);
     if (svgElement && svgElement->isStyled())
         return static_cast<KSVG::SVGStyledElementImpl *>(svgElement)->canvasResource();
+    else
+        fprintf(stderr, "Failed to find resource with id: %s\n", id.ascii());
     return 0;
 }
 

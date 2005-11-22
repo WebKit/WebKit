@@ -1,5 +1,66 @@
 2005-11-21  eseidel  <eseidel@apple.com>
 
+        No review required, svg target only.
+
+        No additional test cases needed, this fixes 30 or so existing tests
+        
+        Standardized all isFoo() methods to use const, which actually
+        fixes svg_dynmaic_cast
+        Fixed crasher in SVGGradientElementImpl (missing 0 init)
+        Broke up SVGPatternElementImpl::notifyAttributeChange 
+
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFilter::addFilterEffect): now asserts !0
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFilter::isFilter): added
+        (KCanvasFEImage::image): now RenderObject *
+        (KCanvasFEImage::setImage): now RenderObject *
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasMarker::draw): now uses paint()
+        (getResourceById): added debug loggging
+        * kcanvas/KCanvasResources.h:
+        (KCanvasResource::isPaintServer): const
+        (KCanvasResource::isFilter): const
+        (KCanvasResource::isClipper): const
+        (KCanvasResource::isMarker): const
+        (KCanvasClipper::isClipper): added
+        (KCanvasMarker::isMarker): added
+        * kcanvas/device/KRenderingPaintServer.h:
+        (KRenderingPaintServer::isPaintServer): added
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::parseMappedAttribute): removed extra doc check
+        * ksvg2/svg/SVGElementImpl.h:
+        (KSVG::SVGElementImpl::isSVGElement): const
+        (KSVG::SVGElementImpl::isFilterEffect): const
+        (KSVG::SVGElementImpl::isGradientStop): const
+        (KSVG::SVGElementImpl::isValid): const
+        (KSVG::SVGElementImpl::isClosed): const
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::SVGFEImageElementImpl):
+        (SVGFEImageElementImpl::parseMappedAttribute): load image
+        (SVGFEImageElementImpl::notifyFinished): moved logic
+        (SVGFEImageElementImpl::filterEffect): lazy create
+        * ksvg2/svg/SVGFEImageElementImpl.h:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::canvasResource): added
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.h:
+        (KSVG::SVGFilterPrimitiveStandardAttributesImpl::isFilterEffect):
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::SVGGradientElementImpl): init to 0
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::fillAttributesFromReferencePattern):
+        (SVGPatternElementImpl::drawPatternContentIntoTile):
+        (SVGPatternElementImpl::notifyClientsToRepaint):
+        (SVGPatternElementImpl::notifyAttributeChange): split into pieces
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        * ksvg2/svg/SVGStopElementImpl.h:
+        (KSVG::SVGStopElementImpl::isGradientStop): const
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        (SVGTestsImpl::isValid): const
+        * ksvg2/svg/SVGTestsImpl.h:
+
+2005-11-21  eseidel  <eseidel@apple.com>
+
         No review required, SVG target only.
 
         Fix SVG from having duplicate entries (with khtml) in its

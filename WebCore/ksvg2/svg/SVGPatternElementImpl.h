@@ -97,6 +97,12 @@ namespace KSVG
         mutable KCanvasImage *m_tile;
         mutable bool m_ignoreAttributeChanges;
         mutable KRenderingPaintServerPattern *m_paintServer;
+        
+    private:
+        // notifyAttributeChange helpers:
+        void fillAttributesFromReferencePattern(const SVGPatternElementImpl *target, KCanvasMatrix &patternTransformMatrix) const;
+        void drawPatternContentIntoTile(const SVGPatternElementImpl *target, const QSize &newSize, KCanvasMatrix patternTransformMatrix) const;
+        void notifyClientsToRepaint() const;
     };
 };
 

@@ -62,6 +62,8 @@ public:
     KCanvasFilter() { };
     virtual ~KCanvasFilter() { };
     
+    virtual bool isFilter() const { return true; }
+    
     bool filterBoundingBoxMode() const { return m_filterBBoxMode; }
     void setFilterBoundingBoxMode(bool bboxMode) { m_filterBBoxMode = bboxMode; }
     
@@ -424,13 +426,13 @@ public:
     KCanvasFEImage() : m_image(0) {}
     virtual ~KCanvasFEImage();
 
-    RenderPath *image() const { return m_image; }
-    void setImage(RenderPath *image) { m_image = image; }
+    khtml::RenderObject *image() const { return m_image; }
+    void setImage(khtml::RenderObject *image) { m_image = image; }
 
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    RenderPath *m_image;
+    khtml::RenderObject *m_image;
 };
 
 class KCanvasFEMerge : public KCanvasFilterEffect
