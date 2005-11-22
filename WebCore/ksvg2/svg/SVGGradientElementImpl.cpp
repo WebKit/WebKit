@@ -155,13 +155,14 @@ void SVGGradientElementImpl::rebuildStops() const
     if (m_resource && !ownerDocument()->parsing()) {
         KCSortedGradientStopList &stops = m_resource->gradientStops();
         stops.clear();
+        khtml::RenderStyle *gradientStyle = const_cast<SVGGradientElementImpl *>(this)->styleForRenderer(parent()->renderer());
         for (KDOM::NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
             SVGElementImpl *element = svg_dynamic_cast(n);
             if (element && element->isGradientStop()) {
                 SVGStopElementImpl *stop = static_cast<SVGStopElementImpl *>(element);
                 float stopOffset = stop->offset()->baseVal();
                 
-                SVGRenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop)->svgStyle();
+                SVGRenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop, gradientStyle)->svgStyle();
                 QColor c = stopStyle->stopColor();
                 float opacity = stopStyle->stopOpacity();
                 

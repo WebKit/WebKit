@@ -96,7 +96,7 @@ KCanvasClipper *SVGClipPathElementImpl::canvasResource()
         if(e && e->isStyled())
         {
             SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(e);
-            SVGRenderStyle *style = getDocument()->styleSelector()->styleForElement(this)->svgStyle();
+            SVGRenderStyle *style = styleForRenderer(parentNode()->renderer())->svgStyle();
             m_clipper->addClipData(styled->toPathData(), (KCWindRule) style->clipRule(), bbox);
         }
     }

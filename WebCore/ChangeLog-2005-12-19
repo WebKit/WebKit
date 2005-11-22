@@ -2,6 +2,24 @@
 
         No review required, svg target only.
 
+        No additional test cases needed, this fixes 5 or so existing tests
+
+        Fixed (hacked?) gradient stop style inheritance since style is not
+        currently resolved for nodes which do not create renderers,
+        breaking style resolution across resource-creating nodes
+        such as gradients, patterns, use, filters, etc.
+        Also fixed SVG CSS values to be case-insensitive.
+
+        * WebCore.xcodeproj/project.pbxproj: case insensitivity
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::canvasResource): alternative style call
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::rebuildStops): manual style resolution
+
+2005-11-21  eseidel  <eseidel@apple.com>
+
+        No review required, svg target only.
+
         No additional test cases needed, this fixes 30 or so existing tests
         
         Standardized all isFoo() methods to use const, which actually

@@ -6561,7 +6561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"First checking for duplicate cssvalues between html and SVG...\"\ncat khtml/css/cssvalues.in ksvg2/css/cssvalues.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate value!\";\n\texit 1;\nfi\n\ncat ksvg2/css/cssvalues.in > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
+			shellScript = "echo \"First checking for duplicate cssvalues between html and SVG...\"\ncat khtml/css/cssvalues.in ksvg2/css/cssvalues.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate value!\";\n\texit 1;\nfi\n\n# Lower case all the values, as CSS values are case-insensitive\ncat ksvg2/css/cssvalues.in | perl -pe '$_ = lc;' > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
 		};
 		A83C867D0911AA19009BF4A7 /* XSLTProcessor.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
