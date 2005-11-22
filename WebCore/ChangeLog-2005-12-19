@@ -1,3 +1,12 @@
+2005-11-22  eseidel  <eseidel@apple.com>
+
+        SVG build fix only, no review.
+
+        I used debug-only method DOMString::ascii(), broke Deployment.
+
+        * kcanvas/KCanvasResources.cpp:
+        (getResourceById):
+ 
 2005-11-21  eseidel  <eseidel@apple.com>
 
         No review required, svg target only.

@@ -261,7 +261,7 @@ KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMSt
     if (svgElement && svgElement->isStyled())
         return static_cast<KSVG::SVGStyledElementImpl *>(svgElement)->canvasResource();
     else
-        fprintf(stderr, "Failed to find resource with id: %s\n", id.ascii());
+        fprintf(stderr, "Failed to find resource with id: %s\n", id.qstring().ascii());
     return 0;
 }
 
