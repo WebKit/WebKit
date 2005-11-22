@@ -423,16 +423,19 @@ private:
 class KCanvasFEImage : public KCanvasFilterEffect
 {
 public:
-    KCanvasFEImage() : m_image(0) {}
-    virtual ~KCanvasFEImage();
-
-    khtml::RenderObject *image() const { return m_image; }
-    void setImage(khtml::RenderObject *image) { m_image = image; }
+    KCanvasFEImage() { }
+    virtual ~KCanvasFEImage() { };
+    
+    // FIXME: Eventually we need to support <svg> (RenderObject *) as well as pixmap data.
+    
+    QPixmap pixmap() const { return m_pixmap; }
+    void setPixmap(const QPixmap& pixmap) { m_pixmap = pixmap; }
 
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    khtml::RenderObject *m_image;
+    khtml::RenderObject *m_renderObject;
+    QPixmap m_pixmap;
 };
 
 class KCanvasFEMerge : public KCanvasFilterEffect

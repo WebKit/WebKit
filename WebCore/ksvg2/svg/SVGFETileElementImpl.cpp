@@ -65,16 +65,14 @@ void SVGFETileElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFETileElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
-{
-    m_filterEffect = static_cast<KCanvasFETile *>(canvas()->renderingDevice()->createFilterEffect(FE_TILE));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
-    setStandardAttributes(m_filterEffect);
-    return 0;
-}
-
 KCanvasFilterEffect *SVGFETileElementImpl::filterEffect() const
 {
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFETile *>(canvas()->renderingDevice()->createFilterEffect(FE_TILE));
+    if (!m_filterEffect)
+        return 0;
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }
 

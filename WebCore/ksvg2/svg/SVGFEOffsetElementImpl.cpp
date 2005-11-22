@@ -90,18 +90,16 @@ void SVGFEOffsetElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *att
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFEOffsetElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+KCanvasFilterEffect *SVGFEOffsetElementImpl::filterEffect() const
 {
-    m_filterEffect = static_cast<KCanvasFEOffset *>(canvas()->renderingDevice()->createFilterEffect(FE_OFFSET));
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFEOffset *>(canvas()->renderingDevice()->createFilterEffect(FE_OFFSET));
+    if (!m_filterEffect)
+        return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setDx(dx()->baseVal());
     m_filterEffect->setDy(dy()->baseVal());
-    return 0;
-}
-
-KCanvasFilterEffect *SVGFEOffsetElementImpl::filterEffect() const
-{
     return m_filterEffect;
 }
 

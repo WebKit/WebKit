@@ -99,18 +99,16 @@ void SVGFEBlendElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFEBlendElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+KCanvasFilterEffect *SVGFEBlendElementImpl::filterEffect() const
 {
-    m_filterEffect = static_cast<KCanvasFEBlend *>(canvas()->renderingDevice()->createFilterEffect(FE_BLEND));
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFEBlend *>(canvas()->renderingDevice()->createFilterEffect(FE_BLEND));
+    if (!m_filterEffect)
+        return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
-    return 0;
-}
-
-KCanvasFilterEffect *SVGFEBlendElementImpl::filterEffect() const
-{
     return m_filterEffect;
 }
 

@@ -50,32 +50,27 @@ SVGFEMergeElementImpl::~SVGFEMergeElementImpl()
 {
 }
 
-khtml::RenderObject *SVGFEMergeElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *)
-{
-    m_filterEffect = static_cast<KCanvasFEMerge *>(canvas()->renderingDevice()->createFilterEffect(FE_MERGE));
-    setStandardAttributes(m_filterEffect);
-    return 0;
-}
-
 KCanvasFilterEffect *SVGFEMergeElementImpl::filterEffect() const
 {
-    return m_filterEffect;
-}
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFEMerge *>(canvas()->renderingDevice()->createFilterEffect(FE_MERGE));
+    if (!m_filterEffect)
+        return 0;
+    setStandardAttributes(m_filterEffect);
 
-void SVGFEMergeElementImpl::closeRenderer()
-{
     QStringList mergeInputs;
     for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
         if(n->hasTagName(SVGNames::feMergeNodeTag))
         {
-            SVGFEMergeNodeElementImpl *mergeNode = static_cast<SVGFEMergeNodeElementImpl *>(n);
-            mergeInputs.append(KDOM::DOMString(mergeNode->in1()->baseVal()).qstring());
+            KDOM::DOMString mergeInput = static_cast<SVGFEMergeNodeElementImpl *>(n)->in1()->baseVal();
+            mergeInputs.append(mergeInput.qstring());
         }
     }
 
-    if(m_filterEffect) // we may not be attached...
-        m_filterEffect->setMergeInputs(mergeInputs);
+    m_filterEffect->setMergeInputs(mergeInputs);
+
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

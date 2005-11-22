@@ -99,18 +99,16 @@ void SVGFEGaussianBlurElementImpl::parseMappedAttribute(KDOM::MappedAttributeImp
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFEGaussianBlurElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+KCanvasFilterEffect *SVGFEGaussianBlurElementImpl::filterEffect() const
 {
-    m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(canvas()->renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(canvas()->renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+    if (!m_filterEffect)
+        return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setStdDeviationX(stdDeviationX()->baseVal());
     m_filterEffect->setStdDeviationY(stdDeviationY()->baseVal());
-    return 0;
-}
-
-KCanvasFilterEffect *SVGFEGaussianBlurElementImpl::filterEffect() const
-{
     return m_filterEffect;
 }
 

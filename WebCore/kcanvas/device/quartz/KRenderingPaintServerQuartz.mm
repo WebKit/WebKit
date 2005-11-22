@@ -149,5 +149,10 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
 void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
-    // FIXME: NOT IMPLEMENTED
+    // FIXME: total hack
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();
+    CGRect objectBBox = CGContextGetPathBoundingBox(context);
+    QPainter p;
+    p.drawPixmap(QPoint(objectBBox.origin), image(), image().rect());
 }

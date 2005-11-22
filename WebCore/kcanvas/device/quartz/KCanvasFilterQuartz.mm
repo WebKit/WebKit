@@ -522,13 +522,11 @@ CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 
 CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	// FIXME: incomplete.
-//	KCanvasImage *item = image();
-//	// actually draw the item into an image...
-//	CIImage *ciImage = [CIImage imageWithCGLayer:cgLayer];
-//	quartzFilter->setOutputImage(this, ciImage);
-	
-	return nil;  // really want a noop filter... or better design.
+    // FIXME: This is just a hack for now, and only support pixmaps
+    CIImage *ciImage = [CIImage imageWithCGImage:pixmap().imageRef()];
+    quartzFilter->setOutputImage(this, ciImage);
+    
+    return nil;  // really want a noop filter... or better design.
 }
 
 CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const

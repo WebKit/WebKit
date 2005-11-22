@@ -95,7 +95,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::x() const
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
     if(!m_x)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
+        lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
         m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
         return m_x;
     }
@@ -108,7 +108,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::y() const
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
     if(!m_y)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
+        lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
         m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
         return m_y;
     }
@@ -121,7 +121,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::width() const
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
     if(!m_width)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
+        lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
         m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
         return m_width;
     }
@@ -134,7 +134,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::height() const
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
     if(!m_height)
     {
-         lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
+        lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
         m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
         return m_height;
     }
@@ -193,7 +193,7 @@ void SVGFilterElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 
 KCanvasFilter *SVGFilterElementImpl::canvasResource()
 {
-    if(!canvas())
+    if(!attached())
         return 0;
 
     if(!m_filter)

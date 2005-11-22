@@ -137,10 +137,10 @@ void SVGFETurbulenceElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl 
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFETurbulenceElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+KCanvasFilterEffect *SVGFETurbulenceElementImpl::filterEffect() const
 {
-
-    m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas()->renderingDevice()->createFilterEffect(FE_TURBULENCE));
+    if (!m_filterEffect)
+        m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas()->renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     
@@ -151,11 +151,6 @@ khtml::RenderObject *SVGFETurbulenceElementImpl::createRenderer(RenderArena *are
     m_filterEffect->setNumOctaves(numOctaves()->baseVal());
     m_filterEffect->setSeed(seed()->baseVal());
     m_filterEffect->setStitchTiles(stitchTiles()->baseVal() == SVG_STITCHTYPE_STITCH);
-    return 0;
-}
-
-KCanvasFilterEffect *SVGFETurbulenceElementImpl::filterEffect() const
-{
     return m_filterEffect;
 }
 

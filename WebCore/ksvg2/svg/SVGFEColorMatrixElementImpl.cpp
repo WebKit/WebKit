@@ -102,9 +102,13 @@ void SVGFEColorMatrixElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFEColorMatrixElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *)
+KCanvasFilterEffect *SVGFEColorMatrixElementImpl::filterEffect() const
 {
-    m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas()->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+    if (!m_filterEffect)
+          m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas()->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+    if (!m_filterEffect)
+        return 0;
+        
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     Q3ValueList<float> _values;
@@ -114,11 +118,7 @@ khtml::RenderObject *SVGFEColorMatrixElementImpl::createRenderer(RenderArena *ar
         _values.append(numbers->getItem(i)->value());
     m_filterEffect->setValues(_values);
     m_filterEffect->setType((KCColorMatrixType)(type()->baseVal() - 1));
-    return 0;
-}
-
-KCanvasFilterEffect *SVGFEColorMatrixElementImpl::filterEffect() const
-{
+    
     return m_filterEffect;
 }
 

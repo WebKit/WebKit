@@ -24,8 +24,7 @@
 #define KSVG_SVGComponentTransferFunctionElementImpl_H
 
 #include "SVGElementImpl.h"
-
-class KCanvasComponentTransferFunctionElement;
+#include "KCanvasFilters.h"
 
 namespace KSVG
 {
@@ -50,6 +49,8 @@ namespace KSVG
 
         // Derived from: 'ElementImpl'
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        
+        KCComponentTransferFunction transferFunction() const;
 
     private:
         mutable SVGAnimatedEnumerationImpl *m_type;

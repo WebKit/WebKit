@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
+#include <kxmlcore/Assertions.h>
 
 #include "ksvg.h"
 #include "SVGNames.h"
@@ -119,7 +120,9 @@ void SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(KDOM::Mapped
 
 void SVGFilterPrimitiveStandardAttributesImpl::setStandardAttributes(KCanvasFilterEffect *filterEffect) const
 {
-    if (!filterEffect) return;
+    ASSERT(filterEffect);
+    if (!filterEffect)
+        return;
     bool bbox = false;
     if(parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
         bbox = static_cast<SVGFilterElementImpl *>(parentNode())->primitiveUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;

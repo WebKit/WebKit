@@ -74,9 +74,6 @@ namespace KSVG
         virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
     protected:
-        friend class SVGDocumentImpl; // Needs renderStyle accesss...
-        friend class SVGClipPathElementImpl; // Needs renderStyle access..
-
         virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)

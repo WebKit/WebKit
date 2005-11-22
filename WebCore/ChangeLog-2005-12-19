@@ -1,5 +1,76 @@
 2005-11-22  eseidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        No additional test cases needed, this fixes 10+ existing tests.
+
+        Moved filter code off of createRenderer format, fixing filters.
+        Hacked in support for <image> and <feImage> (Pixmap only)
+        Simplified FEComponentTransfer function construction.
+
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEImage::KCanvasFEImage):
+        (KCanvasFEImage::~KCanvasFEImage):
+        (KCanvasFEImage::pixmap): added
+        (KCanvasFEImage::setPixmap): added
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEImageQuartz::getCIFilter): added
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerImageQuartz::draw): added
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        (SVGComponentTransferFunctionElementImpl::transferFunction):
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.h:
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEBlendElementImpl.h:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.h:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.h:
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::filterEffect):
+        * ksvg2/svg/SVGFECompositeElementImpl.h:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEFloodElementImpl.h:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.h:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        (SVGFEMergeElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEMergeElementImpl.h:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElementImpl.h:
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::filterEffect):
+        * ksvg2/svg/SVGFETileElementImpl.h:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElementImpl.h:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::x):
+        (SVGFilterElementImpl::y):
+        (SVGFilterElementImpl::width):
+        (SVGFilterElementImpl::height):
+        (SVGFilterElementImpl::canvasResource):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::setStandardAttributes):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::notifyFinished):
+        (SVGImageElementImpl::finalizeStyle):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGURIReferenceImpl.cpp:
+        (SVGURIReferenceImpl::parseMappedAttribute):
+
+2005-11-22  eseidel  <eseidel@apple.com>
+
         SVG build fix only, no review.
 
         I used debug-only method DOMString::ascii(), broke Deployment.

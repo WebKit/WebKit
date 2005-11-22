@@ -73,75 +73,28 @@ void SVGFEComponentTransferElementImpl::parseMappedAttribute(KDOM::MappedAttribu
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-khtml::RenderObject *SVGFEComponentTransferElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
-{
-    m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));
-    if (!m_filterEffect)
-        return 0;
-
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
-    setStandardAttributes(m_filterEffect);
-    return 0;
-}
-
 KCanvasFilterEffect *SVGFEComponentTransferElementImpl::filterEffect() const
 {
-    return m_filterEffect;
-}
-
-void SVGFEComponentTransferElementImpl::closeRenderer()
-{
     if (!m_filterEffect)
-        return;
-
-    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
-    {
-        KCComponentTransferFunction func;
-        if(n->hasTagName(SVGNames::feFuncRTag))
-        {
-            SVGFEFuncRElementImpl *funcR = static_cast<SVGFEFuncRElementImpl *>(n);
-            func.type = (KCComponentTransferType)(funcR->type()->baseVal() - 1);
-            func.slope = funcR->slope()->baseVal();
-            func.intercept = funcR->intercept()->baseVal();
-            func.amplitude = funcR->amplitude()->baseVal();
-            func.exponent = funcR->exponent()->baseVal();
-            func.offset = funcR->offset()->baseVal();
-            m_filterEffect->setRedFunction(func);
-        }
-        else if(n->hasTagName(SVGNames::feFuncGTag))
-        {
-            SVGFEFuncGElementImpl *funcG = static_cast<SVGFEFuncGElementImpl *>(n);
-            func.type = (KCComponentTransferType)(funcG->type()->baseVal() - 1);
-            func.slope = funcG->slope()->baseVal();
-            func.intercept = funcG->intercept()->baseVal();
-            func.amplitude = funcG->amplitude()->baseVal();
-            func.exponent = funcG->exponent()->baseVal();
-            func.offset = funcG->offset()->baseVal();
-            m_filterEffect->setGreenFunction(func);
-        }
-        else if(n->hasTagName(SVGNames::feFuncBTag))
-        {
-            SVGFEFuncBElementImpl *funcB = static_cast<SVGFEFuncBElementImpl *>(n);
-            func.type = (KCComponentTransferType)(funcB->type()->baseVal() - 1);
-            func.slope = funcB->slope()->baseVal();
-            func.intercept = funcB->intercept()->baseVal();
-            func.amplitude = funcB->amplitude()->baseVal();
-            func.exponent = funcB->exponent()->baseVal();
-            func.offset = funcB->offset()->baseVal();
-            m_filterEffect->setBlueFunction(func);
-        }
-        else if(n->hasTagName(SVGNames::feFuncATag))
-        {
-            SVGFEFuncAElementImpl *funcA = static_cast<SVGFEFuncAElementImpl *>(n);
-            func.type = (KCComponentTransferType)(funcA->type()->baseVal() - 1);
-            func.slope = funcA->slope()->baseVal();
-            func.intercept = funcA->intercept()->baseVal();
-            func.amplitude = funcA->amplitude()->baseVal();
-            func.exponent = funcA->exponent()->baseVal();
-            func.offset = funcA->offset()->baseVal();
-            m_filterEffect->setAlphaFunction(func);
-        }
+        m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));
+    if (!m_filterEffect)
+        return 0;
+    
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    setStandardAttributes(m_filterEffect);
+    
+    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
+        if (n->hasTagName(SVGNames::feFuncRTag))
+            m_filterEffect->setRedFunction(static_cast<SVGFEFuncRElementImpl *>(n)->transferFunction());
+        else if (n->hasTagName(SVGNames::feFuncGTag))
+            m_filterEffect->setGreenFunction(static_cast<SVGFEFuncGElementImpl *>(n)->transferFunction());
+        else if (n->hasTagName(SVGNames::feFuncBTag))
+            m_filterEffect->setBlueFunction(static_cast<SVGFEFuncBElementImpl *>(n)->transferFunction());
+        else if (n->hasTagName(SVGNames::feFuncATag))
+            m_filterEffect->setAlphaFunction(static_cast<SVGFEFuncAElementImpl *>(n)->transferFunction());
     }
+
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

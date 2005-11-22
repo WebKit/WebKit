@@ -101,10 +101,11 @@ void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 
 KCanvasFilterEffect *SVGFEImageElementImpl::filterEffect() const
 {
-    if (!m_filterEffect) {
+    if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEImage *>(canvas()->renderingDevice()->createFilterEffect(FE_IMAGE));
-        setStandardAttributes(m_filterEffect);
-    }
+    if (!m_filterEffect)
+        return 0;
+    setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }
 

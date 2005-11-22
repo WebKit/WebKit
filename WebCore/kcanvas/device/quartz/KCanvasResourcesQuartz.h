@@ -76,7 +76,7 @@ public:
 
     QSize size() { return m_size; }
     
-    private:
+private:
     QSize m_size;
     CGLayerRef m_cgLayer;
 };
