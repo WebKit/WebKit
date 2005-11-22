@@ -2,6 +2,16 @@
 
         Reviewed by mjs.
 
+        No additional tests needed, this fixes bbox printing for all tests.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h: removed space
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::bbox): added const (unbreaking bbox() calls)
+
+2005-11-22  eseidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         No additional test cases needed, this fixes 10+ existing tests.
 
         Moved filter code off of createRenderer format, fixing filters.

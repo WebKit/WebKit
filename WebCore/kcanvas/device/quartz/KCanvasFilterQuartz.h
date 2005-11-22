@@ -93,7 +93,6 @@ public:
     virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
-
 class KCanvasFEMergeQuartz : public KCanvasFEMerge {
 public:
     virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
