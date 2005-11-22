@@ -100,15 +100,11 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
         paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
     
-    if (paintInfo.phase != PaintActionForeground)
-        return;
-
-    if (!firstChild())
+    if (paintInfo.phase != PaintActionForeground || !firstChild())
         return;
     
-    KRenderingDevice *renderingDevice = canvas()->renderingDevice();
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(paintInfo.p->renderingDeviceContext());
-    renderingDevice->pushContext(quartzContext);
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
+    quartzDevice->pushContext(paintInfo.p->createRenderingDeviceContext());
     paintInfo.p->save();
     
     CGContextRef context = paintInfo.p->currentContext();
@@ -132,19 +128,19 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
 
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        filter->prepareFilter(renderingDevice->currentContext(), bbox());
+        filter->prepareFilter(quartzDevice, bbox());
     
     RenderContainer::paint(paintInfo, parentX, parentY);
     
     if (filter)
-        filter->applyFilter(renderingDevice->currentContext(), localTransform(), bbox()); // FIXME, I'm not sure if this should be "localTransform"
+        filter->applyFilter(quartzDevice, localTransform(), bbox()); // FIXME, I'm not sure if this should be "localTransform"
     
     if (opacity < 1.0f)
         paintInfo.p->endTransparencyLayer();
     
     // restore drawing state
     paintInfo.p->restore();
-    renderingDevice->popContext();
+    quartzDevice->popContext();
 }
 
 void KCanvasContainerQuartz::setViewport(const QRect &viewport)

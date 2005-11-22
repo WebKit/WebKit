@@ -29,9 +29,7 @@
 #include "SVGExternalResourcesRequiredImpl.h"
 #include <kdom/cache/KDOMCachedImage.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
-
-class KCanvasFEImage;
-class KCanvasFilterEffect;
+#include "KCanvasFilters.h"
 
 namespace KSVG
 {
@@ -54,7 +52,7 @@ namespace KSVG
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
     protected:
-        virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFEImage *filterEffect() const;
 
     private:
         mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;

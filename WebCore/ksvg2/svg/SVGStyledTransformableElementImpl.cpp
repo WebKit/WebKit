@@ -136,10 +136,8 @@ void SVGStyledTransformableElementImpl::attach()
 {
     SVGStyledElementImpl::attach();
 
-    if (renderer() && m_localMatrix) {
+    if (renderer() && m_localMatrix)
         renderer()->setLocalTransform(m_localMatrix->qmatrix());
-        renderer()->setNeedsLayout(true);
-    }
 }
 
 

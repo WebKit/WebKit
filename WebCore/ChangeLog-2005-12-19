@@ -1,5 +1,85 @@
 2005-11-22  eseidel  <eseidel@apple.com>
 
+        No review required, svg target only.
+
+        No additional test cases needed, this fixes 10+ existing tests.
+
+        Fixed filters by fixing how KCanvasDeviceContexts are pushed/poped
+        They now properly update the NSGrapicsContext currentContext, when
+        being pushed/poped which allows for QPainter to notice the change.
+        I also fixed <feImage> while there and updated all of the
+        subclassed filterEffect() methods to return to proper subclass.
+
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::KCanvasFilterQuartz):
+        (KCanvasFilterQuartz::~KCanvasFilterQuartz):
+        (KCanvasFilterQuartz::prepareFilter): fixed to push context
+        (KCanvasFilterQuartz::applyFilter): fixed to pop context
+        (KCanvasFEImageQuartz::getCIFilter): fixed :)
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): fixed to push/pop context
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): fixed to push/pop context
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        (KRenderingDeviceContextQuartz::cgContext):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz):
+        (KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz):
+        (KRenderingDeviceContextQuartz::nsGraphicsContext): added
+        (KRenderingDeviceQuartz::currentCGContext):
+        (KRenderingDeviceQuartz::pushContext): now updates NSGraphicsContext
+        (KRenderingDeviceQuartz::popContext): now updates NSGraphicsContext
+        (KRenderingDeviceQuartz::contextForImage): fixed spacing
+        (KRenderingDeviceQuartz::createPaintServer): removed comment
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEBlendElementImpl.h:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.h:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::filterEffect): returns sublcass
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.h:
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFECompositeElementImpl.h:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEFloodElementImpl.h:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.h:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::notifyFinished): updates filterEffect on load
+        (SVGFEImageElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEImageElementImpl.h:
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        (SVGFEMergeElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEMergeElementImpl.h:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFEOffsetElementImpl.h:
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFETileElementImpl.h:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::filterEffect): now returns subclass
+        * ksvg2/svg/SVGFETurbulenceElementImpl.h:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::canvasResource):
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        (SVGStyledTransformableElementImpl::attach): simplified
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainterPrivate::QPainterPrivate): removed cached quartz context
+        (QPainterPrivate::~QPainterPrivate): removed cached quartz context
+        (QPainter::createRenderingDeviceContext): changed method name
+
+2005-11-22  eseidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         No additional tests needed, this fixes bbox printing for all tests.

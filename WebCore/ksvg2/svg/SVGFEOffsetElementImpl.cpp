@@ -90,7 +90,7 @@ void SVGFEOffsetElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *att
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasFilterEffect *SVGFEOffsetElementImpl::filterEffect() const
+KCanvasFEOffset *SVGFEOffsetElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEOffset *>(canvas()->renderingDevice()->createFilterEffect(FE_OFFSET));

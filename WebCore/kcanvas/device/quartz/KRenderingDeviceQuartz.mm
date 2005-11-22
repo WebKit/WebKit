@@ -37,6 +37,8 @@
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
 
+#import <AppKit/NSGraphicsContext.h>
+
 #import "KWQLogging.h"
 
 
@@ -49,6 +51,17 @@ KCanvasQuartzPathData::KCanvasQuartzPathData()
 KCanvasQuartzPathData::~KCanvasQuartzPathData()
 {
 	CGPathRelease(path);
+}
+
+KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context) : m_cgContext(CGContextRetain(context)), m_nsGraphicsContext(0)
+{
+    ASSERT(m_cgContext);
+}
+
+KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz()
+{
+    CGContextRelease(m_cgContext);
+    [m_nsGraphicsContext release];
 }
 
 KCanvasMatrix KRenderingDeviceContextQuartz::concatCTM(const KCanvasMatrix &worldMatrix)
@@ -76,6 +89,13 @@ QRect KRenderingDeviceContextQuartz::mapToVisual(const QRect &rect)
 {
 	NSLog(@"mapToVisual not yet for Quartz");
 	return QRect();
+}
+
+NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
+{
+    if (!m_nsGraphicsContext && m_cgContext)
+        m_nsGraphicsContext = [[NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:NO] retain];
+    return m_nsGraphicsContext;
 }
 
 static bool __useFilters = true;
@@ -112,31 +132,45 @@ KRenderingDeviceContextQuartz *KRenderingDeviceQuartz::quartzContext() const
 
 CGContextRef KRenderingDeviceQuartz::currentCGContext() const
 {
-	KRenderingDeviceContextQuartz *deviceContext = static_cast<KRenderingDeviceContextQuartz *>(this->currentContext());
-	ASSERT(deviceContext);
-	return deviceContext->cgContext();
+    ASSERT(quartzContext());
+    return quartzContext()->cgContext();
 }
+
+void KRenderingDeviceQuartz::pushContext(KRenderingDeviceContext *context)
+{
+    ASSERT(context);
+    KRenderingDevice::pushContext(context);
+    [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext setCurrentContext:quartzContext()->nsGraphicsContext()];
+    ASSERT(quartzContext()->nsGraphicsContext() == [NSGraphicsContext currentContext]);
+    ASSERT(currentCGContext() == QPainter().currentContext());
+}
+
+KRenderingDeviceContext *KRenderingDeviceQuartz::popContext()
+{
+    [NSGraphicsContext restoreGraphicsState];
+    KRenderingDeviceContext *poppedContext = KRenderingDevice::popContext();
+    ASSERT(!currentContext() || (currentCGContext() == QPainter().currentContext()));
+    return poppedContext;
+}
+
 
 #pragma mark -
 #pragma mark Path Management
 
 KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const
 {
-	KCanvasImageQuartz *quartzImage = static_cast<KCanvasImageQuartz *>(image);
-	CGLayerRef cgLayer = quartzImage->cgLayer();
-	if (!cgLayer) {
-		// FIXME: we might not get back a layer if this is a loaded image
-		// maybe this logic should go into KCanvasImage?
-		cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + QSize(1,1)), NULL);  // FIXME + 1 is a hack
-		// FIXME: we should composite the original image onto the layer...
-		quartzImage->setCGLayer(cgLayer);
-		CGLayerRelease(cgLayer);
-	}
-	KRenderingDeviceContextQuartz *quartzContext = new KRenderingDeviceContextQuartz();
-	CGContextRef cgContext = CGLayerGetContext(cgLayer);
-	ASSERT(cgContext);
-	quartzContext->setCGContext(cgContext);
-	return quartzContext;
+    KCanvasImageQuartz *quartzImage = static_cast<KCanvasImageQuartz *>(image);
+    CGLayerRef cgLayer = quartzImage->cgLayer();
+    if (!cgLayer) {
+        // FIXME: we might not get back a layer if this is a loaded image
+        // maybe this logic should go into KCanvasImage?
+        cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + QSize(1,1)), NULL);  // FIXME + 1 is a hack
+        // FIXME: we should composite the original image onto the layer...
+        quartzImage->setCGLayer(cgLayer);
+        CGLayerRelease(cgLayer);
+    }
+    return new KRenderingDeviceContextQuartz(CGLayerGetContext(cgLayer));
 }
 
 void KRenderingDeviceQuartz::deletePath(KCanvasUserData pathData)
@@ -226,7 +260,6 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
 		case PS_LINEAR_GRADIENT: newServer = new KRenderingPaintServerLinearGradientQuartz(); break;
 		case PS_RADIAL_GRADIENT: newServer = new KRenderingPaintServerRadialGradientQuartz(); break;
 	}
-	//NSLog(@"createPaintserver type: %i server: %p", type, newServer);
 	return newServer;
 }
  

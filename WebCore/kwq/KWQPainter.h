@@ -141,7 +141,7 @@ public:
     CGContextRef currentContext();
     
 #if SVG_SUPPORT
-    KRenderingDeviceContext *renderingDeviceContext();
+    KRenderingDeviceContext *createRenderingDeviceContext();
 #endif
     
     static int compositeOperatorFromString (const QString &aString);

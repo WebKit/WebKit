@@ -24,9 +24,7 @@
 #define KSVG_SVGFETurbulenceElementImpl_H
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
-
-class KCanvasFETurbulence;
-class KCanvasFilterEffect;
+#include "KCanvasFilters.h"
 
 namespace KSVG
 {
@@ -51,7 +49,7 @@ namespace KSVG
         // Derived from: 'ElementImpl'
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFETurbulence *filterEffect() const;
 
     private:
         mutable SVGAnimatedNumberImpl *m_baseFrequencyX;

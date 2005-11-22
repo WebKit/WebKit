@@ -73,7 +73,7 @@ void SVGFEComponentTransferElementImpl::parseMappedAttribute(KDOM::MappedAttribu
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasFilterEffect *SVGFEComponentTransferElementImpl::filterEffect() const
+KCanvasFEComponentTransfer *SVGFEComponentTransferElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));

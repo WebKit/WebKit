@@ -26,20 +26,23 @@
 
 #import "KCanvasFilters.h"
 
+#if __OBJC__
 @class CIFilter;
 @class CIImage;
+#else
+class CIFilter;
+class CIImage;
+#endif
+
+class KRenderingDevice;
 
 class KCanvasFilterQuartz : public KCanvasFilter {
 public:
     KCanvasFilterQuartz();
     virtual ~KCanvasFilterQuartz();
     
-    virtual void prepareFilter(KRenderingDeviceContext *context, const QRect &bbox);
-    virtual void applyFilter(KRenderingDeviceContext *context, KCanvasMatrix objectMatrix, const QRect &bbox);
-    
-    // quartz only.
-    void prepareFilter(CGContextRef *context, const QRect &bbox);
-    void applyFilter(CGContextRef *context, const QRect &bbox, CGAffineTransform objectTransform);
+    virtual void prepareFilter(KRenderingDevice *device, const QRect &bbox);
+    virtual void applyFilter(KRenderingDevice *device, KCanvasMatrix objectMatrix, const QRect &bbox);
     
     CIImage *imageForName(const QString &name) const;
     void setImageForName(CIImage *image, const QString &name);
@@ -52,7 +55,6 @@ private:
     
     CGRect filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const;
 
-    CGContextRef m_storedCGContext;
     CIContext *m_filterCIContext;
     CGLayerRef m_filterCGLayer;
     NSMutableDictionary *m_imagesByName;

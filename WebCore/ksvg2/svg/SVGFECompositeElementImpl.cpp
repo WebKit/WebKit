@@ -138,7 +138,7 @@ void SVGFECompositeElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasFilterEffect *SVGFECompositeElementImpl::filterEffect() const
+KCanvasFEComposite *SVGFECompositeElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEComposite *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPOSITE));

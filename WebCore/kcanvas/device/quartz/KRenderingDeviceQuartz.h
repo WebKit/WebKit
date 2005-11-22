@@ -33,21 +33,30 @@
 typedef struct CGRect CGRect;
 typedef struct CGContext *CGContextRef;
 
+#if __OBJC__
+@class NSGraphicsContext;
+#else
+class NSGraphicsContext;
+#endif
+
 class KRenderingDeviceContextQuartz : public KRenderingDeviceContext
 {
 public:
-    KRenderingDeviceContextQuartz() : m_cgContext(0) { }
+    KRenderingDeviceContextQuartz(CGContextRef context);
+    virtual ~KRenderingDeviceContextQuartz();
+    
     virtual KCanvasMatrix concatCTM(const KCanvasMatrix &worldMatrix);
     virtual KCanvasMatrix ctm() const;
     
     virtual QRect mapFromVisual(const QRect &rect);
     virtual QRect mapToVisual(const QRect &rect);
     
-    CGContextRef cgContext() { return m_cgContext; };
-    void setCGContext(CGContextRef newContext) { m_cgContext = newContext; }
+    CGContextRef cgContext() const { return m_cgContext; };
+    NSGraphicsContext *nsGraphicsContext();
     
 private:
     CGContextRef m_cgContext;
+    NSGraphicsContext *m_nsGraphicsContext;
 };
 
 class KRenderingDeviceQuartz : public KRenderingDevice
@@ -58,6 +67,9 @@ public:
     virtual ~KRenderingDeviceQuartz() { }
 
     virtual bool isBuffered() const { return false; }
+    
+    virtual KRenderingDeviceContext *popContext();
+    virtual void pushContext(KRenderingDeviceContext *context);
 
     // context management.
     KRenderingDeviceContextQuartz *quartzContext() const;

@@ -71,11 +71,10 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground))
         return;
     
-    KRenderingDevice *renderingDevice = canvas()->renderingDevice();
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(paintInfo.p->renderingDeviceContext());
-    renderingDevice->pushContext(quartzContext);
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
+    quartzDevice->pushContext(paintInfo.p->createRenderingDeviceContext());
     paintInfo.p->save();
-    CGContextRef context = paintInfo.p->currentContext();
+    CGContextRef context = quartzDevice->currentCGContext();
 
     QRect dirtyRect = paintInfo.r;
     
@@ -93,8 +92,8 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if (filter) {
         // FIXME:: This should be fixed now that it has moved into RenderPath::draw()
         bboxForFilter = bboxPath(true, false); // FIXME: HACK! 30% of my time spent here!
-        filter->prepareFilter(quartzContext, bboxForFilter);
-        context = quartzContext->cgContext();
+        filter->prepareFilter(quartzDevice, bboxForFilter);
+        context = quartzDevice->currentCGContext();
     }
 
     QString clipname = style()->svgStyle()->clipPath().mid(1);
@@ -109,24 +108,24 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     // Fill and stroke as needed.
     if(canvasStyle()->isFilled()) {
         CGContextAddPath(context, cgPath);
-        canvasStyle()->fillPainter()->draw(quartzContext, args);
+        canvasStyle()->fillPainter()->draw(quartzDevice->currentContext(), args);
     }
     if(canvasStyle()->isStroked()) {
         CGContextAddPath(context, cgPath); // path is cleared when filled.
-        canvasStyle()->strokePainter()->draw(quartzContext, args);
+        canvasStyle()->strokePainter()->draw(quartzDevice->currentContext(), args);
     }
 
     drawMarkersIfNeeded(dirtyRect);
 
     // actually apply the filter
     if (filter) {
-        filter->applyFilter(quartzContext, localTransform(), bboxForFilter);
-        context = quartzContext->cgContext();
+        filter->applyFilter(quartzDevice, localTransform(), bboxForFilter);
+        context = quartzDevice->currentCGContext();
     }
     
     // restore drawing state
     paintInfo.p->restore();
-    renderingDevice->popContext();
+    quartzDevice->popContext();
 }
 
 #pragma mark -

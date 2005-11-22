@@ -24,9 +24,7 @@
 #define KSVG_SVGFEComponentTransferElementImpl_H
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
-
-class KCanvasFEComponentTransfer;
-class KCanvasFilterEffect;
+#include "KCanvasFilters.h"
 
 namespace KSVG
 {
@@ -44,7 +42,7 @@ namespace KSVG
         // Derived from: 'ElementImpl'
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
-        virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFEComponentTransfer *filterEffect() const;
 
     private:
         mutable SVGAnimatedStringImpl *m_in1;

@@ -48,74 +48,81 @@ static QString KCPreviousFilterOutputName = QString::fromLatin1("__previousOutpu
 //    return colorCI;
 //}
 
-KCanvasFilterQuartz::KCanvasFilterQuartz() : m_storedCGContext(0), m_filterCIContext(0), m_filterCGLayer(0), m_imagesByName(0)
+KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0), m_imagesByName(0)
 {
-	m_imagesByName = [[NSMutableDictionary alloc] init];
+    m_imagesByName = [[NSMutableDictionary alloc] init];
 }
 
 KCanvasFilterQuartz::~KCanvasFilterQuartz()
 {
-	[m_imagesByName release];
+    [m_imagesByName release];
 }
 
-void KCanvasFilterQuartz::prepareFilter(KRenderingDeviceContext *renderingContext, const QRect &bbox)
+void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &bbox)
 {
-    if (! bbox.isValid())
+    if (! bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
+        return;
+
+    if (m_effects.isEmpty()) {
+        NSLog(@"WARNING: No effects, ignoring filter (%p).", this);
+        return;
+    }
+    
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(device);
+    CGContextRef cgContext = quartzDevice->currentCGContext();
+    
+    // get a CIContext, and CGLayer for drawing in.
+    bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
+    NSDictionary *contextOptions = nil;
+    
+    if (useSoftware)
+        contextOptions = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
+    
+    m_filterCIContext = [[CIContext contextWithCGContext:cgContext options:contextOptions] retain];
+    
+    m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
+    
+    CGContext *filterCGContext = CGLayerGetContext(m_filterCGLayer);
+    device->pushContext(new KRenderingDeviceContextQuartz(filterCGContext));
+    
+    CGContextConcatCTM(filterCGContext, CGAffineTransformMakeTranslation(float(-1 * bbox.x()), float(-1 * bbox.y())));
+}
+
+void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, KCanvasMatrix objectMatrix, const QRect &bbox)
+{
+    if (! bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
     
-	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
-	ASSERT(quartzContext);
-	
-	CGContextRef filterContext = quartzContext->cgContext();
-	//NSLog(@"before: %p stored: %p", filterContext, m_storedCGContext);
-	prepareFilter(&filterContext, bbox);
-	//NSLog(@"after: %p stored: %p", filterContext, m_storedCGContext);
-	quartzContext->setCGContext(filterContext);
-}
+    // restore the previous context.
+    device->popContext();
 
-void KCanvasFilterQuartz::applyFilter(KRenderingDeviceContext *renderingContext, KCanvasMatrix objectMatrix, const QRect &bbox)
-{
-    if (! bbox.isValid())
-        return;
-    
-	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
-	ASSERT(quartzContext);
-	if (!KRenderingDeviceQuartz::filtersEnabled()) return;
-	
-	CGContextRef filterContext = quartzContext->cgContext();
-	//NSLog(@"2before: %p stored: %p", filterContext, m_storedCGContext);
-	applyFilter(&filterContext, bbox, CGAffineTransform(objectMatrix.qmatrix()));
-	//NSLog(@"2after: %p stored: %p", filterContext, m_storedCGContext);
-	quartzContext->setCGContext(filterContext);
-}
-
-void KCanvasFilterQuartz::prepareFilter(CGContextRef *context, const QRect &bbox)
-{
-	if (!KRenderingDeviceQuartz::filtersEnabled()) return;
-	if (m_effects.isEmpty()) {
-		NSLog(@"WARNING: No effects, ignoring filter (%p).", this);
-		return;
-	}
-	ASSERT(m_storedCGContext == NULL);
-	ASSERT(context != NULL);
-	m_storedCGContext = *context;
-		
-	// get a CIContext, and CGLayer for drawing in.
-        bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
-        NSDictionary *options = nil;
-        
-        if (useSoftware) {
-            options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
+    // actually apply the filter effects
+    CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
+    NSArray *filterStack = getCIFilterStack(inputImage);
+    if ([filterStack count]) {
+        CIImage *outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
+        if (!outputImage) {
+            NSLog(@"Failed to get ouputImage from filter stack, can't draw.");
+            return;
         }
         
-	m_filterCIContext = [[CIContext contextWithCGContext:m_storedCGContext options:options] retain];
+        // actually draw the result to the original context
         
-	m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
-	
-	// replace the current context with our new one.
-	*context = CGLayerGetContext(m_filterCGLayer);
-	
-	CGContextConcatCTM(*context,CGAffineTransformMakeTranslation(float(-1 * bbox.x()),float(-1 * bbox.y())));
+        CGRect filterRect = filterBBoxForItemBBox(CGRect(bbox), CGAffineTransform(objectMatrix.qmatrix()));
+        CGRect translated = filterRect;
+        CGPoint bboxOrigin = CGRect(bbox).origin;
+        CGRect sourceRect = CGRectIntersection(translated,[outputImage extent]);
+        
+        CGPoint destOrigin = sourceRect.origin;
+        destOrigin.x += bboxOrigin.x;
+        destOrigin.y += bboxOrigin.y;
+        
+        [m_filterCIContext drawImage:outputImage atPoint:destOrigin fromRect:sourceRect];
+    } else
+        NSLog(@"No filter stack, can't draw filter.");
+    
+    CGLayerRelease(m_filterCGLayer);
+    [m_filterCIContext release];
 }
 
 CGRect KCanvasFilterQuartz::filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const
@@ -135,56 +142,6 @@ CGRect KCanvasFilterQuartz::filterBBoxForItemBBox(CGRect itemBBox, CGAffineTrans
 		//filterBBox = CGRectApplyAffineTransform(filterBBox, currentCTM);
 	}
 	return filterBBox;
-}
-
-void KCanvasFilterQuartz::applyFilter(CGContextRef *context, const QRect &bbox, CGAffineTransform objectTransform)
-{
-	if (m_effects.isEmpty()) return; // We log during "prepare"
-	ASSERT(m_storedCGContext);
-	ASSERT(context);
-	//CGContextRef layerContext = *context;
-	
-	//NSLog(@"apply filter in context: %p to context: %p bbox: %@", *context,
-	//	m_storedCGContext, NSStringFromRect(NSRect(bbox)));
-	
-	// swap contexts back
-	*context = m_storedCGContext;
-	m_storedCGContext = NULL;
-
-	// actually apply the filter effects
-	CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
-	NSArray *filterStack = getCIFilterStack(inputImage);
-	if ([filterStack count]) {
-		CIImage *outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
-		if (!outputImage) {
-			NSLog(@"Failed to get ouputImage from filter stack, can't draw.");
-			return;
-		}
-		
-		// actually draw the result to the original context
-		
-		CGRect filterRect = filterBBoxForItemBBox(CGRect(bbox), objectTransform);
-		CGRect translated = filterRect;
-		CGPoint bboxOrigin = CGRect(bbox).origin;
-//		translated.origin.x += bboxOrigin.x;
-//		translated.origin.y += bboxOrigin.y;
-		CGRect sourceRect = CGRectIntersection(translated,[outputImage extent]);
-		// FIXME: objectTransform seems like a hack.
-		
-		CGPoint destOrigin = sourceRect.origin;
-		destOrigin.x += bboxOrigin.x;
-		destOrigin.y += bboxOrigin.y;
-		
-		//CGRect extent = [outputImage extent];
-		//NSLog(@"Drawing from rect: \n%@ \n at point: \n%@ \nextent: \n%@ \nmatrix: \n%@", NSStringFromRect(*(NSRect *)&sourceRect), NSStringFromPoint(*(NSPoint *)&destOrigin), NSStringFromRect(*(NSRect *)&extent), CFStringFromCGAffineTransform(objectTransform));
-		//outputImage = [outputImage imageByApplyingTransform:objectTransform];
-		[m_filterCIContext drawImage:outputImage atPoint:destOrigin fromRect:sourceRect];
-	} else
-		NSLog(@"No filter stack, can't draw filter.");
-	// cleanup
-	CGLayerRelease(m_filterCGLayer);
-	//CGContextRelease(layerContext); // I don't seem to need to do this...
-	[m_filterCIContext release];
 }
 
 NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage) {
@@ -526,7 +483,12 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     CIImage *ciImage = [CIImage imageWithCGImage:pixmap().imageRef()];
     quartzFilter->setOutputImage(this, ciImage);
     
-    return nil;  // really want a noop filter... or better design.
+    // FIXME: we really want a noop filter... or better design.
+    CIFilter *crop = [CIFilter filterWithName:@"CIExposureAdjust"];
+    [crop setDefaults];
+    [crop setValue:ciImage forKey:@"inputImage"];
+    [crop setValue:[NSNumber numberWithInt:0] forKey:@"inputEV"];
+    return crop;
 }
 
 CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const

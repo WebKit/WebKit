@@ -90,16 +90,14 @@ void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
     if(finishedObj == m_cachedImage)
     {
-        KCanvasImage *imageBuffer = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
-        imageBuffer->init(m_cachedImage->pixmap());
-        //filterEffect()->setImageBuffer(imageBuffer);
+        filterEffect()->setPixmap(m_cachedImage->pixmap());
 
         m_cachedImage->deref(this);
         m_cachedImage = 0;
     }
 }
 
-KCanvasFilterEffect *SVGFEImageElementImpl::filterEffect() const
+KCanvasFEImage *SVGFEImageElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEImage *>(canvas()->renderingDevice()->createFilterEffect(FE_IMAGE));

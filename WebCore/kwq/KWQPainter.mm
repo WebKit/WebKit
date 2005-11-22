@@ -72,16 +72,10 @@ struct QPainterPrivate {
     int focusRingOffset;
     bool hasFocusRingColor;
     QColor focusRingColor;
-#if SVG_SUPPORT
-    KRenderingDeviceContextQuartz *renderingDeviceContext;
-#endif
 };
 
 QPainterPrivate::QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
                         hasFocusRingColor(false)
-#if SVG_SUPPORT
-                        , renderingDeviceContext(0)
-#endif
 {
 
 }
@@ -90,9 +84,6 @@ QPainterPrivate::~QPainterPrivate()
 {
     KWQRelease(textRenderer);
     KWQRelease(focusRingPath);
-#if SVG_SUPPORT
-    delete renderingDeviceContext;
-#endif
 }
 
 static inline void _fillRectXX(float x, float y, float w, float h, const QColor& col);
@@ -888,13 +879,9 @@ CGContextRef QPainter::currentContext()
 }
 
 #if SVG_SUPPORT
-KRenderingDeviceContext *QPainter::renderingDeviceContext()
+KRenderingDeviceContext *QPainter::createRenderingDeviceContext()
 {
-    if (!data->renderingDeviceContext) {
-        data->renderingDeviceContext = new KRenderingDeviceContextQuartz();
-    }
-    data->renderingDeviceContext->setCGContext(currentContext());
-    return data->renderingDeviceContext;
+    return new KRenderingDeviceContextQuartz(currentContext());
 }
 #endif
 

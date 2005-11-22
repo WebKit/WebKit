@@ -99,7 +99,7 @@ void SVGFEBlendElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }
 
-KCanvasFilterEffect *SVGFEBlendElementImpl::filterEffect() const
+KCanvasFEBlend *SVGFEBlendElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
         m_filterEffect = static_cast<KCanvasFEBlend *>(canvas()->renderingDevice()->createFilterEffect(FE_BLEND));
