@@ -1,3 +1,7 @@
+2005-11-22  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebView.h: Fixed incorrect comment in public header.
+
 2005-11-18  Vicki Murley  <vicki@apple.com>
 
 	Changes by Tim H, reviewed by Vicki.

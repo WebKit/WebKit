@@ -59,7 +59,7 @@ extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of th
 extern NSString *WebElementImageURLKey;		// NSURL of the image element
 extern NSString *WebElementIsSelectedKey; 	// NSNumber of BOOL indicating whether the element is selected or not 
 extern NSString *WebElementLinkURLKey;		// NSURL of the link if the element is within an anchor
-extern NSString *WebElementLinkTargetFrameKey;	// NSString of the target of the anchor
+extern NSString *WebElementLinkTargetFrameKey;	// WebFrame of the target of the anchor
 extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
 extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
 
