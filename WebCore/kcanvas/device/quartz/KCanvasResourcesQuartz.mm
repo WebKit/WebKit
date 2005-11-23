@@ -82,8 +82,8 @@ void KCanvasContainerQuartz::layout()
 
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-    
-    setNeedsLayout(false);
+        
+    RenderContainer::layout();
 }
 
 void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
@@ -93,6 +93,9 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     
     int absoluteX = parentX + m_x;
     int absoluteY = parentY + m_y;
+    
+    ASSERT(absoluteX == 0 && absoluteY == 0);
+    // We ignore the khtml absolute transforms (for now)
         
     if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintActionOutline) 
         paintBoxDecorations(paintInfo, absoluteX, absoluteY);
@@ -100,7 +103,7 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
         paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
     
-    if (paintInfo.phase != PaintActionForeground || !firstChild())
+    if (paintInfo.phase != PaintActionForeground || !firstChild() || !drawsContents())
         return;
     
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
@@ -112,15 +115,12 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if(!localTransform().isIdentity())
         CGContextConcatCTM(context, CGAffineTransform(localTransform()));
     
-    if(!viewBox().isNull())
-        CGContextConcatCTM(context, CGAffineTransform(getAspectRatio(viewBox(), viewport()).qmatrix()));
-
     QRect dirtyRect = paintInfo.r;
     
     QString clipname = style()->svgStyle()->clipPath().mid(1);
     KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
     if (clipper)
-        clipper->applyClip(context, bbox());
+        clipper->applyClip(context, CGRect(relativeBBox(true)));
     
     float opacity = style()->opacity();
     if (opacity < 1.0f)
@@ -128,12 +128,15 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
 
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        filter->prepareFilter(quartzDevice, bbox());
+        filter->prepareFilter(quartzDevice, relativeBBox(true));
     
-    RenderContainer::paint(paintInfo, parentX, parentY);
+    if (!viewBox().isNull())
+        CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), QRect(viewport().x(), viewport().y(), width(), height())).qmatrix()));
+    
+    RenderContainer::paint(paintInfo, absoluteX, absoluteY);
     
     if (filter)
-        filter->applyFilter(quartzDevice, localTransform(), bbox()); // FIXME, I'm not sure if this should be "localTransform"
+        filter->applyFilter(quartzDevice, relativeBBox(true));
     
     if (opacity < 1.0f)
         paintInfo.p->endTransparencyLayer();
@@ -173,63 +176,65 @@ KCAlign KCanvasContainerQuartz::align() const
     return m_align;
 }
 
-void KCanvasClipperQuartz::applyClip(CGContextRef context, const QRect &bbox) const
+QMatrix KCanvasContainerQuartz::absoluteTransform() const
 {
-	// FIXME: until the path representation is fixed in
-	// KCanvas, we have to convert a KCPathDataList to a CGPath
-	
-	BOOL heterogenousClipRules = NO;
-	KCWindRule clipRule = RULE_NONZERO;
-	if (m_clipData.count()) clipRule = m_clipData[0].rule;
-	
-	CGContextBeginPath(context);
-	
-	CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1),CGRect(bbox)); // could be done lazily.
-	
-	for( unsigned int x = 0; x < m_clipData.count(); x++) {
-		KCClipData data = m_clipData[x];
-		if (data.rule != clipRule) heterogenousClipRules = YES;
-	
-		CGPathRef clipPath = CGPathFromKCPathDataList(data.path);
-		
-		if (CGPathIsEmpty(clipPath)) // FIXME: occasionally we get empty clip paths...
-			NSLog(@"WARNING: Asked to clip an empty path, ignoring.");
-		
-		if (data.bbox) {
-			CGPathRef transformedPath = CGPathApplyTransform(clipPath, bboxTransform);
-			CGPathRelease(clipPath);
-			clipPath = transformedPath;
-		}
-		
-		if (data.viewportClipped) {
-			NSLog(@"Viewport clip?");
-		}
-		
-		//NSLog(@"Applying clip path: %@ bbox: %@ (%@)", CFStringFromCGPath(clipPath), data.bbox ? @"YES" : @"NO", NSStringFromRect(NSRect(bbox)));
-		
-		CGContextAddPath(context, clipPath);
-		
-		CGPathRelease(clipPath);
-	}
-	
-	if (m_clipData.count()) {
-		// FIXME!
-		// We don't currently allow for heterogenous clip rules.
-		// we would have to detect such, draw to a mask, and then clip
-		// to that mask
-		if (heterogenousClipRules)
-			NSLog(@"WARNING: Quartz does not yet support heterogenous clip rules, clipping will be incorrect.");
-			
-		if (CGContextIsPathEmpty(context)) {
-			NSLog(@"ERROR: Final clip path empty, ignoring.");
-		} else {
-			if (m_clipData[0].rule == RULE_EVENODD) {
-				CGContextEOClip(context);
-			} else {
-				CGContextClip(context);
-			}
-		}
-	}
+    QMatrix transform = KCanvasContainer::absoluteTransform();
+    //transform *= getAspectRatio(viewBox(), bbox(true)).qmatrix();
+    return transform;
+}
+
+void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) const
+{
+    // FIXME: until the path representation is fixed in
+    // KCanvas, we have to convert a KCPathDataList to a CGPath
+
+    if (m_clipData.count() < 1) {
+        NSLog(@"WARNING: Applying empty clipper, ignoring.");
+        return;
+    }
+
+    BOOL heterogenousClipRules = NO;
+    KCWindRule clipRule = m_clipData[0].rule;
+
+    CGContextBeginPath(context);
+
+    CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), relativeBBox); // could be done lazily.
+
+    for (unsigned int x = 0; x < m_clipData.count(); x++) {
+        KCClipData data = m_clipData[x];
+        if (data.rule != clipRule)
+            heterogenousClipRules = YES;
+
+        CGPathRef clipPath = CGPathFromKCPathDataList(data.path);
+        
+        if (CGPathIsEmpty(clipPath)) // FIXME: occasionally we get empty clip paths...
+            NSLog(@"WARNING: Asked to clip an empty path, ignoring.");
+
+        if (data.bbox) {
+            CGPathRef transformedPath = CGPathApplyTransform(clipPath, bboxTransform);
+            CGPathRelease(clipPath);
+            clipPath = transformedPath;
+        }
+        CGContextAddPath(context, clipPath);
+        CGPathRelease(clipPath);
+    }
+
+    if (m_clipData.count()) {
+        // FIXME!
+        // We don't currently allow for heterogenous clip rules.
+        // we would have to detect such, draw to a mask, and then clip
+        // to that mask
+        if (heterogenousClipRules)
+            NSLog(@"WARNING: Quartz does not yet support heterogenous clip rules, clipping will be incorrect.");
+                
+        if (!CGContextIsPathEmpty(context)) {
+            if (m_clipData[0].rule == RULE_EVENODD)
+                CGContextEOClip(context);
+            else
+                CGContextClip(context);
+        } else
+            NSLog(@"ERROR: Final clip path empty, ignoring.");
+    }
 }
 
 

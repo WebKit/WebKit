@@ -152,7 +152,8 @@ void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingCo
     // FIXME: total hack
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    CGRect objectBBox = CGContextGetPathBoundingBox(context);
+    QRect bbox = QRect(CGContextGetPathBoundingBox(context));
     QPainter p;
-    p.drawPixmap(QPoint(objectBBox.origin), image(), image().rect());
+    QRect imageRect = image().rect();
+    p.drawScaledAndTiledPixmap(bbox.x(), bbox.y(), bbox.width(), bbox.height(), image(), imageRect.x(), imageRect.y(), imageRect.width(), imageRect.height());
 }

@@ -2564,3 +2564,15 @@ InlineBox *RenderObject::inlineBox(int offset, EAffinity affinity)
 {
     return inlineBoxWrapper();
 }
+
+#if SVG_SUPPORT
+QMatrix RenderObject::absoluteTransform() const
+{
+    if (parent()) {
+        QMatrix transform = parent()->absoluteTransform();
+        transform *= localTransform();
+        return transform;
+    } else
+        return localTransform();
+}
+#endif

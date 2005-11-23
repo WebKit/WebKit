@@ -53,14 +53,15 @@ public:
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG
-    void setDrawContents(bool drawContents);
+    void setDrawsContents(bool drawsContents);
+    bool drawsContents() const;
 
     virtual bool isKCanvasContainer() const { return true; }
     virtual const char *renderName() const { return "KCanvasContainer"; }
 
     virtual bool fillContains(const QPoint &p) const;
     virtual bool strokeContains(const QPoint &p) const;
-    virtual QRect bbox(bool includeStroke = true) const;
+    virtual QRect relativeBBox(bool includeStroke = true) const;
     
     virtual QMatrix localTransform() const;
     virtual void setLocalTransform(const QMatrix &matrix);

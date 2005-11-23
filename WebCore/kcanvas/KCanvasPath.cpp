@@ -85,9 +85,7 @@ QTextStream &operator<<(QTextStream &ts, const KCClipData &d)
 {
     ts << "[winding=" << d.rule  << "]";
     if (d.bbox)
-        ts << " [bounding box mode=" << d.bbox  << "]";
-    if (d.viewportClipped)
-        ts << " [viewport clipped=" << d.viewportClipped << "]";      
+        ts << " [bounding box mode=" << d.bbox  << "]";    
     ts << " [path=" << d.path << "]";
     return ts;
 }

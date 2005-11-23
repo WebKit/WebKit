@@ -42,6 +42,9 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
     
+    virtual QRect getAbsoluteRepaintRect() { return absoluteTransform().mapRect(relativeBBox(true)); }
+    virtual QMatrix absoluteTransform() const;
+
     virtual void setViewport(const QRect &viewport);
     virtual QRect viewport() const;
 
@@ -61,7 +64,7 @@ class KCanvasClipperQuartz : public KCanvasClipper {
 public:
     KCanvasClipperQuartz() {};
     
-    void applyClip(CGContextRef, const QRect &) const;
+    void applyClip(CGContextRef context, CGRect relativeBBox) const;
 };
 
 class KCanvasImageQuartz : public KCanvasImage {

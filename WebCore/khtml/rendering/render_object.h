@@ -281,10 +281,11 @@ public:
 #if SVG_SUPPORT
     virtual bool isKCanvasContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
-    virtual QRect bbox(bool includeStroke = true) const { return QRect(); }
+    virtual QRect relativeBBox(bool includeStroke = true) const { return QRect(); }
     // We may eventually want to make these non-virtual
-    virtual QMatrix localTransform() const { return QMatrix(); }
+    virtual QMatrix localTransform() const { return QMatrix(1,0,0,1,xPos(),xPos()); }
     virtual void setLocalTransform(const QMatrix&) { }
+    virtual QMatrix absoluteTransform() const;
 #endif
     
     virtual bool isEditable() const;

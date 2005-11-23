@@ -60,13 +60,12 @@ namespace KSVG
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
+        virtual void attach();
+
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
         virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
-
-    protected:
-        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
     private:
         mutable SVGAnimatedLengthImpl *m_x;

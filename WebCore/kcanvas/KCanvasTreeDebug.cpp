@@ -247,7 +247,7 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
 
 static QTextStream &operator<<(QTextStream &ts, const RenderPath &o)
 {
-    ts << " " << o.bbox();
+    ts << " " << o.relativeBBox();
     
     writeStyle(ts, o);
     
@@ -258,7 +258,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderPath &o)
 
 static QTextStream &operator<<(QTextStream &ts, const KCanvasContainer &o)
 {
-    ts << " " << o.bbox();
+    ts << " " << o.relativeBBox();
     
     writeStyle(ts, o);
     

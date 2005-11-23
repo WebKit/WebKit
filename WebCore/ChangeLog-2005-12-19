@@ -1,3 +1,88 @@
+ 2005-11-23  Eric Seidel  <eseidel@apple.com>
+ 
+         Reviewed by mjs.
+ 
+         No additional test cases needed, this fixes 15+ existing tests.
+ 
+         This latest set of changes fixes <image> loading (mostly)
+         (There still seems to be an image loading race condition.)
+         This also fixes viewBox support (for many tests)
+         Fixes a Safari crasher when using patterns
+         Fixes bbox() handling throughout code (for spec conformance)
+ 
+         * kcanvas/KCanvasContainer.cpp:
+         (KCanvasContainer::Private::Private): renamed drawContents
+         (KCanvasContainer::drawsContents): renamed drawContents
+         (KCanvasContainer::setDrawsContents): renamed drawContents
+         (KCanvasContainer::relativeBBox): renamed bbox(), fixed
+         * kcanvas/KCanvasContainer.h:
+         * kcanvas/KCanvasFilters.h:
+         * kcanvas/KCanvasItem.cpp:
+         (RenderPath::relativeBBox): renamed bbox()
+         * kcanvas/KCanvasItem.h:
+         * kcanvas/KCanvasPath.cpp:
+         (operator<<): removed deprecated "viewportClip" support
+         * kcanvas/KCanvasPath.h:
+         (KCClipDataList::addPath): removed "viewportClip" support
+         * kcanvas/KCanvasResources.cpp:
+         (KCanvasClipper::KCanvasClipper): removed "viewportClip" support
+         (KCanvasClipper::addClipData): removed "viewportClip" support
+         (KCanvasClipper::externalRepresentation): removed "viewportClip"
+         * kcanvas/KCanvasResources.h:
+         * kcanvas/KCanvasTreeDebug.cpp:
+         (operator<<): removed "viewportClip" support
+         * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+         * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+         (KCanvasFilterQuartz::prepareFilter): combined, simplified
+         (KCanvasFilterQuartz::applyFilter): combined, simplified
+         (KCanvasFilterQuartz::filterBBoxForItemBBox): simplified
+         * kcanvas/device/quartz/KCanvasItemQuartz.h:
+         (KCanvasItemQuartz::getAbsoluteRepaintRect): added
+         * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+         (KCanvasItemQuartz::paint): updated for bbox() changes
+         (getSharedContext): simplified
+         (KCanvasItemQuartz::bboxForPath): name change
+         (KCanvasItemQuartz::hitsPath): fixed for absoluteTransform()
+         * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+         (KCanvasContainerQuartz::getAbsoluteRepaintRect): added
+         * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+         (KCanvasContainerQuartz::layout): call RenderContainer::layout()
+         (KCanvasContainerQuartz::paint): drawsContents() && viewbox()
+         (KCanvasContainerQuartz::absoluteTransform): added
+         (KCanvasClipperQuartz::applyClip): simplified
+         * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+         (KRenderingPaintServerImageQuartz::draw): added stretch/scale
+         * khtml/rendering/render_object.cpp: added absoluteTransform()
+         (RenderObject::absoluteTransform):
+         * khtml/rendering/render_object.h: added absoluteTransform()
+         (khtml::RenderObject::relativeBBox): rename
+         (khtml::RenderObject::localTransform): better default behavior
+         * khtml/xml/dom_docimpl.cpp:
+         (DocumentImpl::createElementNS): simpler code
+         * ksvg2/svg/SVGElementImpl.cpp:
+         (SVGElementImpl::viewportElement): use isElementNode()
+         * ksvg2/svg/SVGImageElementImpl.cpp: removed finalizeStyle()
+         (SVGImageElementImpl::attach): 
+         (SVGImageElementImpl::notifyFinished):
+         * ksvg2/svg/SVGImageElementImpl.h:
+         * ksvg2/svg/SVGLengthImpl.cpp:
+         (SVGLengthImpl::value): bbox() rename
+         * ksvg2/svg/SVGLocatableImpl.cpp:
+         (SVGLocatableImpl::getBBox): fixed bbox() behavior
+         * ksvg2/svg/SVGMarkerElementImpl.cpp:
+         (SVGMarkerElementImpl::createRenderer): drawsContents rename
+         * ksvg2/svg/SVGPatternElementImpl.cpp:
+         (SVGPatternElementImpl::drawPatternContentIntoTile): fixed crash
+         (SVGPatternElementImpl::createRenderer): drawsContents rename
+         * ksvg2/svg/SVGSVGElementImpl.cpp:
+         (SVGSVGElementImpl::x): simplified code
+         (SVGSVGElementImpl::y): simplified code
+         (SVGSVGElementImpl::width): simplified code
+         (SVGSVGElementImpl::height): simplified code
+         (SVGSVGElementImpl::parseMappedAttribute): add width/height to DOM
+         * kwq/KWQWMatrix.mm:
+         (QWMatrix::mapRect): simplified code
+ 
 2005-11-23  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.

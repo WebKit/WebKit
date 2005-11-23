@@ -60,7 +60,7 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
 
 void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &bbox)
 {
-    if (! bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
+    if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
 
     if (m_effects.isEmpty()) {
@@ -88,9 +88,9 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &b
     CGContextConcatCTM(filterCGContext, CGAffineTransformMakeTranslation(float(-1 * bbox.x()), float(-1 * bbox.y())));
 }
 
-void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, KCanvasMatrix objectMatrix, const QRect &bbox)
+void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRect &bbox)
 {
-    if (! bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
+    if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
     
     // restore the previous context.
@@ -108,7 +108,7 @@ void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, KCanvasMatrix ob
         
         // actually draw the result to the original context
         
-        CGRect filterRect = filterBBoxForItemBBox(CGRect(bbox), CGAffineTransform(objectMatrix.qmatrix()));
+        CGRect filterRect = filterBBoxForItemBBox(CGRect(bbox));
         CGRect translated = filterRect;
         CGPoint bboxOrigin = CGRect(bbox).origin;
         CGRect sourceRect = CGRectIntersection(translated,[outputImage extent]);
@@ -125,22 +125,15 @@ void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, KCanvasMatrix ob
     [m_filterCIContext release];
 }
 
-CGRect KCanvasFilterQuartz::filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const
+CGRect KCanvasFilterQuartz::filterBBoxForItemBBox(CGRect itemBBox) const
 {
 	// FIXME: hack for now
 	CGRect filterBBox = CGRect(filterRect());
 	if(filterBoundingBoxMode())
-	{
-		//NSLog(@"relative bbox: %@", NSStringFromRect(*(NSRect *)&filterBBox));
-		filterBBox =
-			CGRectMake((filterBBox.origin.x/100.f * itemBBox.size.width), 
-						(filterBBox.origin.y/100.f * itemBBox.size.height), 
-					   (filterBBox.size.width/100.f * itemBBox.size.width), 
-					   (filterBBox.size.height/100.f * itemBBox.size.height));
-		//NSLog(@"scaled bbox: %@", NSStringFromRect(*(NSRect *)&filterBBox));
-	} else {
-		//filterBBox = CGRectApplyAffineTransform(filterBBox, currentCTM);
-	}
+            filterBBox = CGRectMake((filterBBox.origin.x/100.f * itemBBox.size.width), 
+                                    (filterBBox.origin.y/100.f * itemBBox.size.height), 
+                                    (filterBBox.size.width/100.f * itemBBox.size.width), 
+                                    (filterBBox.size.height/100.f * itemBBox.size.height));
 	return filterBBox;
 }
 

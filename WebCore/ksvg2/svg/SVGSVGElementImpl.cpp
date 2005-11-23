@@ -54,6 +54,8 @@
 #include "SVGPreserveAspectRatioImpl.h"
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
 
+#include "cssproperties.h"
+
 #include <q3paintdevicemetrics.h>
 #include <qtextstream.h>
 
@@ -84,12 +86,14 @@ SVGSVGElementImpl::~SVGSVGElementImpl()
 
 SVGAnimatedLengthImpl *SVGSVGElementImpl::x() const
 {
-    return lazy_create<SVGAnimatedLengthImpl>(m_x, static_cast<const SVGStyledElementImpl *>(0), LM_WIDTH, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
+    const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
+    return lazy_create<SVGAnimatedLengthImpl>(m_x, (SVGStyledElementImpl *)0, LM_WIDTH, viewport);
 }
 
 SVGAnimatedLengthImpl *SVGSVGElementImpl::y() const
 {
-    return lazy_create<SVGAnimatedLengthImpl>(m_y, static_cast<const SVGStyledElementImpl *>(0), LM_HEIGHT, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
+    const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
+    return lazy_create<SVGAnimatedLengthImpl>(m_y, (SVGStyledElementImpl *)0, LM_HEIGHT, viewport);
 }
 
 SVGAnimatedLengthImpl *SVGSVGElementImpl::width() const
@@ -97,7 +101,8 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::width() const
     if(!m_width)
     {
         KDOM::DOMString temp("100%");
-        lazy_create<SVGAnimatedLengthImpl>(m_width, static_cast<const SVGStyledElementImpl *>(0), LM_WIDTH, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
+        const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
+        lazy_create<SVGAnimatedLengthImpl>(m_width, (SVGStyledElementImpl *)0, LM_WIDTH, viewport);
         m_width->baseVal()->setValueAsString(temp.impl());
     }
 
@@ -109,7 +114,8 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::height() const
     if(!m_height)
     {
         KDOM::DOMString temp("100%");
-        lazy_create<SVGAnimatedLengthImpl>(m_height, static_cast<const SVGStyledElementImpl *>(0), LM_HEIGHT, ownerDocument()->documentElement() == static_cast<const KDOM::ElementImpl *>(this) ? this : viewportElement());
+        const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
+        lazy_create<SVGAnimatedLengthImpl>(m_height, (SVGStyledElementImpl *)0, LM_HEIGHT, viewport);
         m_height->baseVal()->setValueAsString(temp.impl());
     }
 
@@ -236,17 +242,18 @@ SVGPointImpl *SVGSVGElementImpl::currentTranslate() const
 
 void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-//    const KDOM::AtomicString& value = attr->value();
-// Try letting these fall through to CSS
-//    if (attr->name() == SVGNames::xAttr)
-//        x()->baseVal()->setValueAsString(value.impl());
-//    else if (attr->name() == SVGNames::yAttr)
-//        y()->baseVal()->setValueAsString(value.impl());
-//    else if (attr->name() == SVGNames::widthAttr)
-//        width()->baseVal()->setValueAsString(value.impl());
-//    else if (attr->name() == SVGNames::heightAttr)
-//        height()->baseVal()->setValueAsString(value.impl());
-//    else
+    const KDOM::AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::xAttr) {
+        x()->baseVal()->setValueAsString(value.impl());
+    } else if (attr->name() == SVGNames::yAttr) {
+        y()->baseVal()->setValueAsString(value.impl());
+    } else if (attr->name() == SVGNames::widthAttr) {
+        width()->baseVal()->setValueAsString(value.impl());
+        addCSSProperty(attr, CSS_PROP_WIDTH, value);
+    } else if (attr->name() == SVGNames::heightAttr) {
+        height()->baseVal()->setValueAsString(value.impl());
+        addCSSProperty(attr, CSS_PROP_HEIGHT, value);
+    } else
     {
         if(SVGTestsImpl::parseMappedAttribute(attr)) return;
         if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;

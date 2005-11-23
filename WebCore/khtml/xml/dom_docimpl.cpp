@@ -790,14 +790,8 @@ ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const
         }
     }
 #ifdef SVG_SUPPORT
-    else if (_namespaceURI == KSVG::SVGNames::svgNamespaceURI) {
+    else if (_namespaceURI == KSVG::SVGNames::svgNamespaceURI)
         e = KSVG::SVGElementFactory::createSVGElement(qName, this, false);
-        if (e && !prefix.isNull()) {
-            e->setPrefix(qName.prefix(), exceptioncode);
-            if (exceptioncode)
-                return 0;
-        }
-    }
 #endif
     
     if (!e)

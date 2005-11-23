@@ -88,18 +88,15 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     // setup to apply filters
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
-    QRect bboxForFilter;
     if (filter) {
-        // FIXME:: This should be fixed now that it has moved into RenderPath::draw()
-        bboxForFilter = bboxPath(true, false); // FIXME: HACK! 30% of my time spent here!
-        filter->prepareFilter(quartzDevice, bboxForFilter);
+        filter->prepareFilter(quartzDevice, relativeBBox(true));
         context = quartzDevice->currentCGContext();
     }
 
     QString clipname = style()->svgStyle()->clipPath().mid(1);
     KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
     if (clipper)
-        clipper->applyClip(context, bbox(true));
+        clipper->applyClip(context, CGRect(relativeBBox(true)));
 
     CGContextBeginPath(context);
 
@@ -119,7 +116,7 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     // actually apply the filter
     if (filter) {
-        filter->applyFilter(quartzDevice, localTransform(), bboxForFilter);
+        filter->applyFilter(quartzDevice, relativeBBox(true));
         context = quartzDevice->currentCGContext();
     }
     
@@ -145,90 +142,76 @@ bool KCanvasItemQuartz::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int
     return false;
 }
 
-CGContextRef getSharedContext() {
-	static CGContextRef sharedContext = NULL;
-	if (!sharedContext) {
-		CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
-		CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
-		sharedContext = CGPDFContextCreate(consumer, NULL, NULL);
+CGContextRef getSharedContext()
+{
+    static CGContextRef sharedContext = NULL;
+    if (!sharedContext) {
+        CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
+        CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
+        sharedContext = CGPDFContextCreate(consumer, NULL, NULL);
         CGDataConsumerRelease(consumer);
         CFRelease(empty);
 
-	//	CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-	//	CGContextRef context = CGGLContextCreate(NULL, CGSizeMake(canvas->canvasWidth(), canvas->canvasHeight()), colorspace);
-	//	CGColorSpaceRelease(colorspace);
-		float black[4] = {0,0,0,1};
-		CGContextSetFillColor(sharedContext,black);
-		CGContextSetStrokeColor(sharedContext,black);
-	}
-	return sharedContext;
+        float black[4] = {0,0,0,1};
+        CGContextSetFillColor(sharedContext,black);
+        CGContextSetStrokeColor(sharedContext,black);
+    }
+    return sharedContext;
 }
 
 
-QRect KCanvasItemQuartz::bboxPath(bool includeStroke, bool applyTransforms) const
+QRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 {
-	KCanvasQuartzPathData *pathData = static_cast<KCanvasQuartzPathData *>(path());
-	CGMutablePathRef cgPath = pathData->path;
-	ASSERT(cgPath != 0);
-	CGRect bbox;
-	
-	// the bbox might grow if the path is stroked.
-	// and CGPathGetBoundingBox doesn't support that, so we'll have
-	// to make an alternative call...
-	if(includeStroke && canvasStyle()->isStroked()) {
-		CGContextRef sharedContext = getSharedContext();
-		
-		CGContextSaveGState(sharedContext);
-		CGContextBeginPath(sharedContext);
-		CGContextAddPath(sharedContext, cgPath);
-		applyStrokeStyleToContext(sharedContext, canvasStyle());
-		CGContextReplacePathWithStrokedPath(sharedContext);
-		
-		bbox = CGContextGetPathBoundingBox(sharedContext);
-		
-		CGContextRestoreGState(sharedContext);
-	} else {
-		// the easy (and efficient) case:
-		bbox = CGPathGetBoundingBox(cgPath);
-	}
+    KCanvasQuartzPathData *pathData = static_cast<KCanvasQuartzPathData *>(path());
+    CGMutablePathRef cgPath = pathData->path;
+    ASSERT(cgPath != 0);
+    CGRect bbox;
 
-	// apply any local transforms
-	if (applyTransforms) {
-		CGAffineTransform transform = CGAffineTransform(localTransform());
-		CGRect tranformedBBox = CGRectApplyAffineTransform(bbox, transform);
-		return QRect(tranformedBBox);
-	}
-	return QRect(bbox);
+    // the bbox might grow if the path is stroked.
+    // and CGPathGetBoundingBox doesn't support that, so we'll have
+    // to make an alternative call...
+    if(includeStroke && canvasStyle()->isStroked()) {
+        CGContextRef sharedContext = getSharedContext();
+        
+        CGContextSaveGState(sharedContext);
+        CGContextBeginPath(sharedContext);
+        CGContextAddPath(sharedContext, cgPath);
+        applyStrokeStyleToContext(sharedContext, canvasStyle());
+        CGContextReplacePathWithStrokedPath(sharedContext);
+        
+        bbox = CGContextGetPathBoundingBox(sharedContext);
+        
+        CGContextRestoreGState(sharedContext);
+    } else
+        // the easy (and efficient) case:
+        bbox = CGPathGetBoundingBox(cgPath);
+    
+    return QRect(bbox);
 }
 
 bool KCanvasItemQuartz::hitsPath(const QPoint &hitPoint, bool fill) const
 {
-	CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path())->path;
-	ASSERT(cgPath != 0);
-	
-	bool hitSuccess = false;
-	CGContextRef sharedContext = getSharedContext();
-	CGContextSaveGState(sharedContext);
-	
-	CGContextBeginPath(sharedContext);
-	CGContextAddPath(sharedContext, cgPath);
-	
-	CGAffineTransform transform = CGAffineTransform(localTransform());
-	/* we transform the hit point locally, instead of translating the shape to the hit point. */
-	CGPoint localHitPoint = CGPointApplyAffineTransform(CGPoint(hitPoint), CGAffineTransformInvert(transform));
-	
-	if (fill && canvasStyle()->fillPainter()->paintServer()) {
-		CGPathDrawingMode drawMode = (canvasStyle()->fillPainter()->fillRule() == RULE_EVENODD) ? kCGPathEOFill : kCGPathFill;
-		hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, drawMode);
-//		if (!hitSuccess)
-//			NSLog(@"Point: %@ fails to hit path: %@ with bbox: %@",
-//				NSStringFromPoint(NSPoint(hitPoint)), CFStringFromCGPath(cgPath),
-//				NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(sharedContext)));
-	} else if (!fill && canvasStyle()->strokePainter()->paintServer()) {
-		hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, kCGPathStroke);
-	}
-	
-	CGContextRestoreGState(sharedContext);
-	
-	return hitSuccess;
+    CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path())->path;
+    ASSERT(cgPath != 0);
+
+    bool hitSuccess = false;
+    CGContextRef sharedContext = getSharedContext();
+    CGContextSaveGState(sharedContext);
+
+    CGContextBeginPath(sharedContext);
+    CGContextAddPath(sharedContext, cgPath);
+
+    CGAffineTransform transform = CGAffineTransform(absoluteTransform());
+    /* we transform the hit point locally, instead of translating the shape to the hit point. */
+    CGPoint localHitPoint = CGPointApplyAffineTransform(CGPoint(hitPoint), CGAffineTransformInvert(transform));
+
+    if (fill && canvasStyle()->fillPainter()->paintServer()) {
+        CGPathDrawingMode drawMode = (canvasStyle()->fillPainter()->fillRule() == RULE_EVENODD) ? kCGPathEOFill : kCGPathFill;
+        hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, drawMode);
+    } else if (!fill && canvasStyle()->strokePainter()->paintServer())
+        hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, kCGPathStroke);
+
+    CGContextRestoreGState(sharedContext);
+
+    return hitSuccess;
 }

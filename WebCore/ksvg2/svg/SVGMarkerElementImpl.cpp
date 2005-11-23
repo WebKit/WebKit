@@ -185,7 +185,7 @@ KCanvasMarker *SVGMarkerElementImpl::canvasResource()
 khtml::RenderObject *SVGMarkerElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
     KCanvasContainer *markerContainer = canvas()->renderingDevice()->createContainer(arena, style, this);
-    markerContainer->setDrawContents(false); // Marker contents will be explicitly drawn.
+    markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
 }
 

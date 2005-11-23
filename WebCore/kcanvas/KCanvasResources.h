@@ -78,10 +78,6 @@ public:
     
     virtual bool isClipper() const { return true; }
 
-    // Differentiate between viewport clipping and normal clipping data...
-    bool viewportClipper() const;
-    void setViewportClipper(bool viewport);
-
     void resetClipData();
     void addClipData(const KCPathDataList &path, KCWindRule rule, bool bbox);
 
@@ -89,7 +85,6 @@ public:
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
-    bool m_viewportMode : 1;
     KCClipDataList m_clipData;
 };
 

@@ -57,8 +57,9 @@
 #ifndef APPLE_CHANGES
 #include <kdom/parser/KDOMParserFactory.h>
 #endif
-//#include <kdom/DOMConfiguration.h>
 #include <kdom/core/DOMConfigurationImpl.h>
+
+#include <kxmlcore/Assertions.h>
 
 using namespace KSVG;
 
@@ -165,9 +166,33 @@ khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, kht
     return canvas()->renderingDevice()->createItem(arena, style, this, path);
 }
 
+void SVGImageElementImpl::attach()
+{
+    SVGStyledTransformableElementImpl::attach();
+    // if (!m_cachedDocument)
+    {
+        m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
+
+        if(m_cachedImage)
+            m_cachedImage->ref(this);
+    }
+}
 
 void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
+    if (!renderer() || !renderer()->isRenderPath())
+        return; // FIXME: I'm not sure why this would ever happen, but it does.
+    
+    RenderPath *imagePath = static_cast<RenderPath *>(renderer());
+    KCanvasRenderingStyle *canvasStyle = imagePath->canvasStyle();
+
+    // Set up image paint server
+    canvasStyle->disableFillPainter();
+    canvasStyle->disableStrokePainter();
+
+    KRenderingPaintServer *fillPaintServer = canvas()->renderingDevice()->createPaintServer(PS_IMAGE);
+    canvasStyle->fillPainter()->setPaintServer(fillPaintServer);
+
 #ifndef APPLE_COMPILE_HACK
     if(finishedObj == m_cachedDocument)
     {
@@ -204,50 +229,21 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 #endif
     if(finishedObj == m_cachedImage)
     {
-        if(renderer() && renderer()->isRenderPath() && renderer()->style())
-        {
-            RenderPath *item = static_cast<RenderPath *>(renderer());
-            KRenderingFillPainter *fillPainter = item->canvasStyle()->fillPainter();
-            if(!fillPainter)
-                return;
+        KRenderingFillPainter *fillPainter = canvasStyle->fillPainter();
+        ASSERT(fillPainter);
 
-            KRenderingPaintServer *fillPaintServer = fillPainter->paintServer();
-            if (fillPaintServer->type() != PS_IMAGE)
-                return;
-            KRenderingPaintServerImage *fillPaintServerImage = static_cast<KRenderingPaintServerImage *>(fillPaintServer);
-            fillPaintServerImage->setImage(m_cachedImage->pixmap());
-
-            item->setNeedsLayout(true);
-        }
+        KRenderingPaintServer *fillPaintServer = fillPainter->paintServer();
+        ASSERT(fillPaintServer->type() == PS_IMAGE);
+        
+        KRenderingPaintServerImage *fillPaintServerImage = static_cast<KRenderingPaintServerImage *>(fillPaintServer);
+        fillPaintServerImage->setImage(m_cachedImage->pixmap());
 
         m_cachedImage->deref(this);
         m_cachedImage = 0;
+        
+        imagePath->setNeedsLayout(true);
+        imagePath->repaint();
     }
-}
-
-void SVGImageElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool /* needFillStrokeUpdate */)
-{
-    SVGElementImpl *parentElement = svg_dynamic_cast(parentNode());
-    if (!parentElement || !parentElement->isStyled())
-        return;
-    SVGStyledElementImpl *parent = static_cast<SVGStyledElementImpl *>(parentElement);
-    if(!parent->allowAttachChildren(this))
-        return;
-
-    // Set up image paint server
-    style->disableFillPainter();
-    style->disableStrokePainter();
-
-    KRenderingPaintServer *fillPaintServer = canvas()->renderingDevice()->createPaintServer(PS_IMAGE);
-    style->fillPainter()->setPaintServer(fillPaintServer);
-
-//    if(!m_cachedDocument) // bitmap
-//    {
-        m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
-
-        if(m_cachedImage)
-            m_cachedImage->ref(this);
-//    }
 }
 
 // vim:ts=4:noet

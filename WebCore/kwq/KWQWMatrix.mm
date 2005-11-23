@@ -57,8 +57,7 @@ void QWMatrix::map(double x, double y, double *x2, double *y2) const
 
 QRect QWMatrix::mapRect(const QRect &rect) const
 {
-    CGRect result = CGRectApplyAffineTransform(CGRectMake(rect.left(), rect.bottom(), rect.width(), rect.height()),m_transform);
-    return QRect((int)result.origin.x, (int)result.origin.y + (int)result.size.height, (int)result.size.width, (int)result.size.height);
+    return QRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
 bool QWMatrix::isIdentity() const

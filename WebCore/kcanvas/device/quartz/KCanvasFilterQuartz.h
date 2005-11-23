@@ -42,7 +42,7 @@ public:
     virtual ~KCanvasFilterQuartz();
     
     virtual void prepareFilter(KRenderingDevice *device, const QRect &bbox);
-    virtual void applyFilter(KRenderingDevice *device, KCanvasMatrix objectMatrix, const QRect &bbox);
+    virtual void applyFilter(KRenderingDevice *device, const QRect &bbox);
     
     CIImage *imageForName(const QString &name) const;
     void setImageForName(CIImage *image, const QString &name);
@@ -53,7 +53,7 @@ public:
 private:
     NSArray *getCIFilterStack(CIImage *inputImage);
     
-    CGRect filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const;
+    CGRect filterBBoxForItemBBox(CGRect itemBBox) const;
 
     CIContext *m_filterCIContext;
     CGLayerRef m_filterCGLayer;

@@ -51,8 +51,8 @@ public:
     virtual bool fillContains(const QPoint &p) const;
     virtual bool strokeContains(const QPoint &p) const;
 
-    // Returns an unscaled bounding box for this vector path
-    virtual QRect bbox(bool includeStroke = true) const;
+    // Returns an unscaled bounding box (not even including localTransform()) for this vector path
+    virtual QRect relativeBBox(bool includeStroke = true) const;
 
     // Drawing
     void setupForDraw() const;
@@ -73,8 +73,8 @@ public:
 protected:
     // restricted set of args for passing to paint servers, etc.
     const KCanvasCommonArgs commonArgs() const;
-    virtual bool hitsPath(const QPoint &hitPoint, bool fill) const;
-    virtual QRect bboxPath(bool includeStroke, bool includeTransforms = true) const;
+    virtual bool hitsPath(const QPoint &hitPoint, bool fill) const = 0;
+    virtual QRect bboxForPath(bool includeStroke) const = 0;
 
 private:
     class Private;

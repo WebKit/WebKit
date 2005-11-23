@@ -71,9 +71,8 @@ SVGSVGElementImpl *SVGElementImpl::ownerSVGElement() const
 SVGElementImpl *SVGElementImpl::viewportElement() const
 {
     NodeImpl *n = parentNode();
-    while(n)
-    {
-        if(n->nodeType() == KDOM::ELEMENT_NODE &&
+    while (n) {
+        if (n->isElementNode() &&
             (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
             return static_cast<SVGElementImpl *>(n);
 
