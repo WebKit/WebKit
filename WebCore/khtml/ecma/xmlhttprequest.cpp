@@ -346,7 +346,13 @@ void XMLHttpRequest::send(const QString& _body)
     KURL finalURL;
     QString headers;
 
-    data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
+    { // scope
+        // avoid deadlock in case the loader wants to use JS on a background thread
+        InterpreterLock::DropAllLocks dropLocks;
+
+        data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
+    }
+
     job = 0;
     processSyncLoadResults(data, finalURL, headers);
     

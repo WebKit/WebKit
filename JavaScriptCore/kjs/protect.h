@@ -27,7 +27,7 @@
 #include "reference.h"
 #include "value.h"
 #include "protected_values.h"
-#include "interpreter.h"
+#include "JSLock.h"
 
 namespace KJS {
 

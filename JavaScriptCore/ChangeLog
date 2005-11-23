@@ -1,3 +1,31 @@
+2005-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	<rdar://problem/4139620> Seed: WebKit: hang when sending XMLHttpRequest if automatic proxy config is used
+
+	Also factored locking code completely into a separate class, and
+	added a convenient packaged way to temporarily drop locks.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSLock.cpp: Added.
+        (KJS::initializeInterpreterLock):
+        (KJS::InterpreterLock::lock):
+        (KJS::InterpreterLock::unlock):
+        (KJS::InterpreterLock::lockCount):
+        (KJS::InterpreterLock::DropAllLocks::DropAllLocks):
+        (KJS::InterpreterLock::DropAllLocks::~DropAllLocks):
+        * kjs/JSLock.h: Added.
+        (KJS::InterpreterLock::InterpreterLock):
+        (KJS::InterpreterLock::~InterpreterLock):
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        * kjs/interpreter.h:
+        * kjs/protect.h:
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+
 2005-11-21  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by hyatt.

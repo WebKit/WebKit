@@ -1,3 +1,15 @@
+2005-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	<rdar://problem/4139620> Seed: WebKit: hang when sending XMLHttpRequest if automatic proxy config is used
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        * kwq/WebCoreJavaScript.mm:
+
 2005-11-22  eseidel  <eseidel@apple.com>
 
         No review required, svg target only.

@@ -74,46 +74,6 @@ namespace KJS {
  
 #endif // APPLE_CHANGES
 
-#if defined(KJS_MULTIPLE_THREADS) && KJS_MULTIPLE_THREADS
-
-static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
-static pthread_mutex_t interpreterLock;
-static int interpreterLockCount = 0;
-
-static void initializeInterpreterLock()
-{
-  pthread_mutexattr_t attr;
-
-  pthread_mutexattr_init(&attr);
-  pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
-
-  pthread_mutex_init(&interpreterLock, &attr);
-}
-
-static inline void lockInterpreter()
-{
-  pthread_once(&interpreterLockOnce, initializeInterpreterLock);
-  pthread_mutex_lock(&interpreterLock);
-  interpreterLockCount++;
-  Collector::registerThread();
-}
-
-static inline void unlockInterpreter()
-{
-  interpreterLockCount--;
-  pthread_mutex_unlock(&interpreterLock);
-}
-
-#else
-
-static inline void initializeInterpreterLock() { }
-static inline void lockInterpreter() { }
-static inline void unlockInterpreter() { }
-
-const int interpreterLockCount = 1;
-
-#endif
-
 // ------------------------------ UndefinedImp ---------------------------------
 
 ValueImp *UndefinedImp::toPrimitive(ExecState *, Type) const
@@ -471,27 +431,6 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
   initGlobalObject();
 
   recursion = 0;
-}
-
-void InterpreterImp::lock()
-{
-  lockInterpreter();
-
-  // FIXME: Hack-o-rama. To prevent construction of a global object with a null prototype (4342216),
-  // we need to intialize our constants before the first object is constructed. InterpreterImp::lock()
-  // is a good place to do this because you have to call it before doing any allocations. Once we change our 
-  // implementation to use immediate values, we should remove this code.
-  ConstantValues::initIfNeeded();
-}
-
-int InterpreterImp::lockCount()
-{
-  return interpreterLockCount;
-}
-
-void InterpreterImp::unlock()
-{
-  unlockInterpreter();
 }
 
  void InterpreterImp::initGlobalObject()

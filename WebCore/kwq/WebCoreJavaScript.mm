@@ -28,6 +28,7 @@
 
 #import <JavaScriptCore/collector.h>
 #import <JavaScriptCore/interpreter.h>
+#import <JavaScriptCore/JSLock.h>
 
 using KJS::Collector;
 using KJS::Interpreter;

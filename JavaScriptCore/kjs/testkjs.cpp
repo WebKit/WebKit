@@ -31,6 +31,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "collector.h"
+#include "JSLock.h"
 
 using namespace KJS;
 
@@ -62,9 +63,10 @@ ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*
     exit(0);
     return Undefined();
   case GC:
-    Interpreter::lock();
+  {
+    InterpreterLock lock;
     Collector::collect();
-    Interpreter::unlock();
+  }
     break;
   default:
     break;

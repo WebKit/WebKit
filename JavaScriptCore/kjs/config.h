@@ -10,6 +10,8 @@
 #define HAVE_SYS_TIME_H 1
 #define HAVE_SYS_TIMEB_H 1
 
+#define KJS_MULTIPLE_THREADS 1
+
 #elif WIN32
 
 #define HAVE_FLOAT_H 1
