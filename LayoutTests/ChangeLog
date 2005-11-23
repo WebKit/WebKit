@@ -1,3 +1,53 @@
+2005-11-23  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        Update tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5805>
+        Implement adoptNode.
+
+        * dom/xhtml/level3/core/documentadoptnode01-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode02-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode03-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode04-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode05-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode06-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode07-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode08-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode09-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode10-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode11-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode12-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode13-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode14-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode15-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode16-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode21-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode23-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode24-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode25-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode26-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode27-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode28-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode30-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode31-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode32-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode33-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode34-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode35-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode36-expected.txt:
+        These tests pass now.
+
+        * dom/xhtml/level3/core/documentadoptnode22.xhtml: Removed.
+        * dom/xhtml/level3/core/documentadoptnode22.xhtml-disabled: Added.
+        Disable this test for now. It removes the entire document tree which
+        makes it hard to show the test result.
+
+        * dom/xhtml/level3/core/documentrenamenode09-expected.txt:
+        This now fails because renameNode is undefined.
+
+        * dom/xhtml/level3/core/nodeisequalnode18-expected.txt:
+        This now passes.
+
 2005-11-15  David Harrison  <harrison@apple.com>
 
         Layout tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5629>
