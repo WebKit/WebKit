@@ -72,19 +72,15 @@ ValueImp *UserObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
             }
         }
 
-        int lockCount = Interpreter::lockCount();
-        int i;
-        for (i = 0; i < lockCount; i++) {
-            Interpreter::unlock();
+        JSUserObject* jsResult;
+        { // scope
+            InterpreterLock::DropAllLocks dropLocks;
+
+            // implementsCall should have guarded against a NULL fJSUserObject.
+            assert(fJSUserObject);
+            jsResult = fJSUserObject->CallFunction(jsThisObj, jsArgs);
         }
 
-        // implementsCall should have guarded against a NULL fJSUserObject.
-        assert(fJSUserObject);
-        JSUserObject* jsResult = fJSUserObject->CallFunction(jsThisObj, jsArgs);
-
-        for (i = 0; i < lockCount; i++) {
-            Interpreter::lock();
-        }
         if (jsResult) {
             result = JSObjectKJSValue(jsResult);
             jsResult->Release();

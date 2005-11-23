@@ -615,11 +615,11 @@ CFMutableArrayRef JSCreateJSArrayFromCFArray(CFArrayRef array)
 
 void JSLockInterpreter()
 {
-    Interpreter::lock();
+    InterpreterLock::lock();
 }
 
 
 void JSUnlockInterpreter()
 {
-    Interpreter::unlock();
+    InterpreterLock::unlock();
 }
