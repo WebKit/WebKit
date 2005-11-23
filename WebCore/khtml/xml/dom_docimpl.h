@@ -207,6 +207,8 @@ public:
     ElementImpl *getElementById ( const DOMString &elementId ) const;
     ElementImpl *elementFromPoint ( const int _x, const int _y ) const;
 
+    NodeImpl *adoptNode(NodeImpl *source, int &exceptioncode);
+    
     SharedPtr<NameNodeListImpl> getElementsByName(const DOMString &elementName);
 
     // Actually part of HTMLDocument, but used for giving XML documents a window title as well

@@ -729,6 +729,45 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
     return 0;
 }
 
+
+NodeImpl *DocumentImpl::adoptNode(NodeImpl *source, int &exceptioncode)
+{
+    if (!source)
+        return 0;
+    
+    SharedPtr<NodeImpl> protect(source);
+
+    switch (source->nodeType()) {
+        case Node::ENTITY_NODE:
+        case Node::NOTATION_NODE:
+            return 0;
+        case Node::DOCUMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+            exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+            return 0;            
+        case Node::ATTRIBUTE_NODE: {                   
+            AttrImpl *attr = static_cast<AttrImpl *>(source);
+            
+            if (attr->ownerElement())
+                attr->ownerElement()->removeAttributeNode(attr, exceptioncode);
+
+            attr->m_specified = true;
+            break;
+        }       
+        default:
+            if (source->parentNode())
+                source->parentNode()->removeChild(source, exceptioncode);
+    }
+                
+    for (NodeImpl *node = source; node; node = node->traverseNextNode(source)) {
+        KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->getDocument(), this);
+        node->setDocument(this);
+    }
+
+    return source;
+
+}
+
 ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const DOMString &qualifiedName, int &exceptioncode)
 {
     // FIXME: We'd like a faster code path that skips this check for calls from inside the engine where the name is known to be valid.

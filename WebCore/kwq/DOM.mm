@@ -971,6 +971,14 @@ static ListenerMap *listenerMap;
 
 @implementation DOMDocument
 
+- (DOMNode *)adoptNode:(DOMNode *)source
+{
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], exceptionCode)];
+    raiseOnDOMError(exceptionCode);
+    return result;
+}
+
 - (DOMDocumentType *)doctype
 {
     return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:[self _documentImpl]->doctype()]);

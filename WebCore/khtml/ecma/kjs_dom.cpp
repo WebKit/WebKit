@@ -880,6 +880,7 @@ AttrImpl *toAttr(ValueImp *val)
 
 /* Source for DOMDocumentProtoTable. Use "make hashtables" to regenerate.
 @begin DOMDocumentProtoTable 29
+  adoptNode       DOMDocument::AdoptNode                       DontDelete|Function 1
   createElement   DOMDocument::CreateElement                   DontDelete|Function 1
   createDocumentFragment DOMDocument::CreateDocumentFragment   DontDelete|Function 1
   createTextNode  DOMDocument::CreateTextNode                  DontDelete|Function 1
@@ -1013,6 +1014,8 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   DOM::DOMString s = str.domString();
 
   switch(id) {
+  case DOMDocument::AdoptNode:
+    return getDOMNode(exec,doc.adoptNode(toNode(args[0]),exception));
   case DOMDocument::CreateElement:
     return getDOMNode(exec,doc.createElement(s, exception));
   case DOMDocument::CreateDocumentFragment:

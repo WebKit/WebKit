@@ -124,6 +124,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { DocType, Implementation, DocumentElement,
            // Functions
+           AdoptNode,
            CreateElement, CreateDocumentFragment, CreateTextNode, CreateComment,
            CreateCDATASection, CreateProcessingInstruction, CreateAttribute,
            CreateEntityReference, GetElementsByTagName, ImportNode, CreateElementNS,
