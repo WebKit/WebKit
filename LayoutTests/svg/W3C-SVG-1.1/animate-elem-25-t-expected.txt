@@ -1,11 +1,12 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (80,128) size 347x84 [fill={[type=SOLID] [color=#000000]}]
-    KCanvasContainer at (80,128) size 347x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}] [fill={[type=SOLID] [color=#000000]}]
-      KCanvasItem {line} at (80,208) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,160.00L200.00,160.00"]
-      KCanvasItem {line} at (80,168) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,120.00L200.00,120.00"]
-      KCanvasItem {rect} at (98,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M100.00,80.00L200.00,80.00L200.00,160.00L100.00,160.00"]
-      KCanvasItem {line} at (305,208) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,160.00L425.00,160.00"]
-      KCanvasItem {line} at (305,168) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,120.00L425.00,120.00"]
-      KCanvasItem {rect} at (323,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M325.00,80.00L425.00,80.00L425.00,160.00L325.00,160.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+layer at (0,0) size 480x360
+  RenderCanvas at (0,0) size 480x360
+    KCanvasContainer {svg} at (0,0) size 479x359
+      KCanvasContainer {g} at (80,128) size 347x84
+        KCanvasContainer {g} at (80,128) size 347x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+          KCanvasItem {line} at (80,208) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,160.00L200.00,160.00"]
+          KCanvasItem {line} at (80,168) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,120.00L200.00,120.00"]
+          KCanvasItem {rect} at (98,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M100.00,80.00L200.00,80.00L200.00,160.00L100.00,160.00"]
+          KCanvasItem {line} at (305,208) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,160.00L425.00,160.00"]
+          KCanvasItem {line} at (305,168) size 120x3 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,120.00L425.00,120.00"]
+          KCanvasItem {rect} at (323,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M325.00,80.00L425.00,80.00L425.00,160.00L325.00,160.00"]
+      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,2 +1,3 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 0x0
+layer at (0,0) size 480x360
+  RenderCanvas at (0,0) size 480x360
+    KCanvasContainer {svg} at (0,0) size 0x0

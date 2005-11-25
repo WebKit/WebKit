@@ -1,5 +1,6 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (72,182) size 261x23 [fill={[type=SOLID] [color=#000000]}]
-    KCanvasItem {rect} at (72,182) size 261x23 [stroke={[type=SOLID] [color=#000000]}] [data="M73.00,183.00L333.00,183.00L333.00,205.00L73.00,205.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+layer at (0,0) size 480x360
+  RenderCanvas at (0,0) size 480x360
+    KCanvasContainer {svg} at (0,0) size 479x359
+      KCanvasContainer {g} at (72,182) size 261x23
+        KCanvasItem {rect} at (72,182) size 261x23 [stroke={[type=SOLID] [color=#000000]}] [data="M73.00,183.00L333.00,183.00L333.00,205.00L73.00,205.00"]
+      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
