@@ -65,7 +65,7 @@
 		<text x="75" y="25" font-family="Arial" font-size="12" fill="blue">Test 'tref' element with an external referenced string.</text>
 		<!-- External tref reference, to another file -->
 		<text x="75" y="200" font-size="18" font-family="Arial" fill="green">
-			<tref xlink:href="../images/text-extTref-BE-18-targ.svg#tref-external-reference"/>
+			<tref xlink:href="Resources/text-extTref-BE-18-targ.svg#tref-external-reference"/>
 		</text>
 		<rect x="73" y="183" width="260" height="22" fill="none" stroke="black"/>
 		<text x="73" y="217" font-family="Arial" font-size="12" fill="black">'tref' to a string in another file</text>

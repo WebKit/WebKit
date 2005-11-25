@@ -36,7 +36,7 @@
 	<g id="test-body-content">
 		<defs>
 			<filter id="image">
-				<feImage x="145" y="50" width="190" height="190" xlink:href="../images/image1.jpg"/>
+				<feImage x="145" y="50" width="190" height="190" xlink:href="Resources/image1.jpg"/>
 			</filter>
 		</defs>
 		<text font-family="Arial" font-size="12" x="240" y="20" text-anchor="middle" >Basic test of feImage filter support.</text>

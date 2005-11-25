@@ -121,16 +121,16 @@
     	<text x="50" y="16" font-size="12" >Link test of the 'view' element and its attributes, 2 of 2, external.</text>
     	<g transform="translate(-150,75)">
     	    <rect x="300" y="55" width="125" height="85" fill="#aaa" />
-    	    <a xlink:href="../images/linking-uri-01-b.svg#rect-view">
+    	    <a xlink:href="Resources/linking-uri-01-b.svg#rect-view">
     	    	<text x="320" y="70" fill="red" >Go to Rectangle</text>
     	    </a>
-    	    <a xlink:href="../images/linking-uri-01-b.svg#ellipse-view">
+    	    <a xlink:href="Resources/linking-uri-01-b.svg#ellipse-view">
     	    	<text x="320" y="90" fill="blue" >Go to Ellipse</text>
     	    </a>
-    	    <a xlink:href="../images/linking-uri-01-b.svg#circle-view">
+    	    <a xlink:href="Resources/linking-uri-01-b.svg#circle-view">
     	    	<text x="320" y="110" fill="yellow" >Go to Circle</text>
     	    </a>
-    	    <a xlink:href="../images/linking-uri-01-b.svg#polygon-view">
+    	    <a xlink:href="Resources/linking-uri-01-b.svg#polygon-view">
     	    	<text x="320" y="130" fill="green" >Go to Polygon</text>
     	    </a>
     	    <text x="310" y="150" font-size="12" >Click element's line</text>

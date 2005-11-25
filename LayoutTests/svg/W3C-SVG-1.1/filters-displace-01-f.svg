@@ -75,27 +75,27 @@ reference blue rectangle uses fill, fill-opacity, and transform.
       <defs>
          <filter id="DispMapChecker" filterUnits="objectBoundingBox" 
                  x="0" y="0" width="1" height="1">
-	    <feImage xlink:href="../images/DisplaceChecker.png"/>
+	    <feImage xlink:href="Resources/DisplaceChecker.png"/>
 	 </filter>
 	 <filter id="RotateMap" filterUnits="objectBoundingBox" 
                  x="0" y="0" width="1" height="1">
-	    <feImage xlink:href="../images/rotate20.png"/>
+	    <feImage xlink:href="Resources/rotate20.png"/>
 	 </filter>
 	 <filter id="SphereMap" filterUnits="objectBoundingBox" 
                  x="0" y="0" width="1" height="1">
-	    <feImage xlink:href="../images/sphere.png"/>
+	    <feImage xlink:href="Resources/sphere.png"/>
 	 </filter>
 	 <filter id="RotateMapTest" filterUnits="objectBoundingBox" 
                  x="0" y="0" width="1" height="1">
-	    <feImage result="Map"     xlink:href="../images/rotate20.png"/>
-	    <feImage result="Texture" xlink:href="../images/DisplaceChecker.png"/>
+	    <feImage result="Map"     xlink:href="Resources/rotate20.png"/>
+	    <feImage result="Texture" xlink:href="Resources/DisplaceChecker.png"/>
 	    <feDisplacementMap in="Texture" in2="Map" scale="64" 
                      xChannelSelector="R" yChannelSelector="G"/>
 	 </filter>
 	 <filter id="SphereMapTest" filterUnits="objectBoundingBox" 
                  x="0" y="0" width="1" height="1">
-	    <feImage result="Map" xlink:href="../images/sphere.png"/>
-	    <feImage result="Texture" xlink:href="../images/DisplaceChecker.png"/>
+	    <feImage result="Map" xlink:href="Resources/sphere.png"/>
+	    <feImage result="Texture" xlink:href="Resources/DisplaceChecker.png"/>
 	    <feDisplacementMap in="Texture" in2="Map" scale="64" 
                      xChannelSelector="R" yChannelSelector="G"/>
 	 </filter>

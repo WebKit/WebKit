@@ -58,7 +58,7 @@
 		<g fill="#000" font-family="Arial" font-size="40">
 			<!-- Ensure that events get the event before the hyperlink which
               happens before text selection -->
-			<a xlink:href="../images/interact-order-03-b-targ.svg" font-size="40">
+			<a xlink:href="Resources/interact-order-03-b-targ.svg" font-size="40">
 				<text x="20" y="90" onclick="bubbleNo(evt, 'red')" onmouseout="bubbleNo(evt, 'inherit')">
              String turns red on click
            </text>

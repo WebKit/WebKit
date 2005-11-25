@@ -54,7 +54,7 @@
 	<!--======================================================================-->
 	<g id="test-body-content">
 		<text x="75" y="16" font-size="12">Simple exercise of xlink attributes on the 'a' element.</text>
-		<a xlink:type="simple" xlink:show="replace" xlink:actuate="onRequest" xlink:href="../images/linkingToc-t.svg" xlink:role="figure-out-a-role-value-and-associated-xmlns" xlink:title="TOC of Linking BE tests." target="_self">
+		<a xlink:type="simple" xlink:show="replace" xlink:actuate="onRequest" xlink:href="Resources/linkingToc-t.svg" xlink:role="figure-out-a-role-value-and-associated-xmlns" xlink:title="TOC of Linking BE tests." target="_self">
 			<path d="M 135 122 l 130 0 l -65 130 z" fill="lime" stroke="blue"/>
 		</a>
 		<text x="160" y="116" font-size="12">Click for TOC</text>

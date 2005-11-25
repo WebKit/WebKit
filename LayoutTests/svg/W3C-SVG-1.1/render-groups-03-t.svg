@@ -109,7 +109,7 @@
 				<!-- the image.                                                          -->
 				<text  font-family="larabie-anglepoise" font-size="120"  x="30" y="90">SVG</text>
 				<rect x="70" y="55" width="130" height="70" fill="rgb(130, 0, 50)"/>
-				<image x="162" y="75" width="80" height="80" xlink:href="../images/sign.png"/>
+				<image x="162" y="75" width="80" height="80" xlink:href="Resources/sign.png"/>
 		</g>
 	</g>
 	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>

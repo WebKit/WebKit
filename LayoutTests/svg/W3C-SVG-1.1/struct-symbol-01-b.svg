@@ -73,7 +73,7 @@
 	<!--======================================================================-->
 	<g id="test-body-content">
 		<symbol id="imageRef1" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-			<image id="image1" x="0" y="0" width="1000" height="1000" xlink:href="../images/struct-symbol-01.png"/>
+			<image id="image1" x="0" y="0" width="1000" height="1000" xlink:href="Resources/struct-symbol-01.png"/>
 		</symbol>
 		<symbol id="largeRect">
 			<rect x="0" y="0" width="1000" height="1000"/>

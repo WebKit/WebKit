@@ -63,7 +63,7 @@
 	<!--======================================================================-->
 	<g id="test-body-content">
 		<defs>
-			<cursor id="magglass" xlink:href="../images/magnify.png" x="10" y="11"/>
+			<cursor id="magglass" xlink:href="Resources/magnify.png" x="10" y="11"/>
 		</defs>
 		<text x="240" y="25" text-anchor="middle" font-size="26">Text Cursor
            <a xlink:href="http://www.w3.org/TR/SVG/interact#Cursors" fill="blue" xlink:show="new">Pointer Cursor</a>

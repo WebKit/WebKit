@@ -132,23 +132,23 @@
 		<!-- Various Surface Scales -->
 		<g transform="translate(0, 50)">
 			<text x="90" y="25">Various values for surfaceScale: 1, 10 and -10</text>
-			<image xlink:href="../images/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#surfaceScaleA)" />
-			<image xlink:href="../images/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#surfaceScaleB)" />
-			<image xlink:href="../images/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#surfaceScaleC)" />
+			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#surfaceScaleA)" />
+			<image xlink:href="Resources/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#surfaceScaleB)" />
+			<image xlink:href="Resources/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#surfaceScaleC)" />
 		</g>
 		<!-- Various Diffuse Constants -->
 		<g transform="translate(0, 120)">
 			<text x="90" y="25">Various values for diffuseConstants: 0, 1 and 2</text>
-			<image xlink:href="../images/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#diffuseConstantA)" />
-			<image xlink:href="../images/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#diffuseConstantB)" />
-			<image xlink:href="../images/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#diffuseConstantC)" />
+			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#diffuseConstantA)" />
+			<image xlink:href="Resources/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#diffuseConstantB)" />
+			<image xlink:href="Resources/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#diffuseConstantC)" />
 		</g>
 		<!-- Various Light Colors -->
 		<g transform="translate(0, 190)">
 			<text x="90" y="25">Various values for lighting color: red, yellow and blue</text>
-			<image xlink:href="../images/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#lightingColorA)" />
-			<image xlink:href="../images/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#lightingColorB)" />
-			<image xlink:href="../images/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#lightingColorC)" />
+			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#lightingColorA)" />
+			<image xlink:href="Resources/bumpMap2.png" x="160" y="30" width="50" height="30" filter="url(#lightingColorB)" />
+			<image xlink:href="Resources/bumpMap2.png" x="230" y="30" width="50" height="30" filter="url(#lightingColorC)" />
 		</g>
 		<!-- ===================================================== -->
 		<!-- Legends                                               -->
