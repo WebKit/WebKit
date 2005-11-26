@@ -39,6 +39,8 @@ namespace KSVG
     public:
         SVGEllipseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGEllipseElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGEllipseElement' functions
         SVGAnimatedLengthImpl *cx() const;

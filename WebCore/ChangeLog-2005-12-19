@@ -2,6 +2,84 @@
 
         Reviewed by mjs.
 
+        Fix support for <switch>:
+        (by fixing isValid and adding childShouldCreateRenderer)
+        Added remedial on* event support.
+        Added basic <script> processing support.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5810
+
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::implicitClose):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::createRendererIfNeeded):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::childShouldCreateRenderer):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::finish):
+        (khtml::XMLTokenizer::addScripts):
+        (khtml::xmlDocPtrForString):
+        * ksvg2/svg/SVGAElementImpl.h:
+        (KSVG::SVGAElementImpl::isValid):
+        (KSVG::SVGAElementImpl::rendererIsNeeded):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        (KSVG::SVGAnimationElementImpl::isValid):
+        * ksvg2/svg/SVGCircleElementImpl.h:
+        (KSVG::SVGCircleElementImpl::isValid):
+        * ksvg2/svg/SVGClipPathElementImpl.h:
+        (KSVG::SVGClipPathElementImpl::isValid):
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        (KSVG::SVGCursorElementImpl::isValid):
+        * ksvg2/svg/SVGDefsElementImpl.h:
+        (KSVG::SVGDefsElementImpl::isValid):
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGEllipseElementImpl.h:
+        (KSVG::SVGEllipseElementImpl::isValid):
+        * ksvg2/svg/SVGGElementImpl.h:
+        (KSVG::SVGGElementImpl::isValid):
+        * ksvg2/svg/SVGImageElementImpl.h:
+        (KSVG::SVGImageElementImpl::isValid):
+        * ksvg2/svg/SVGLineElementImpl.h:
+        (KSVG::SVGLineElementImpl::isValid):
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::nearestViewportElement):
+        (SVGLocatableImpl::farthestViewportElement):
+        * ksvg2/svg/SVGPathElementImpl.h:
+        (KSVG::SVGPathElementImpl::isValid):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::drawPatternContentIntoTile):
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        (KSVG::SVGPatternElementImpl::isValid):
+        * ksvg2/svg/SVGPolyElementImpl.h:
+        (KSVG::SVGPolyElementImpl::isValid):
+        * ksvg2/svg/SVGRectElementImpl.h:
+        (KSVG::SVGRectElementImpl::isValid):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        (KSVG::SVGSVGElementImpl::isValid):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::updateCanvasItem):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGSwitchElementImpl.cpp:
+        (SVGSwitchElementImpl::childShouldCreateRenderer):
+        * ksvg2/svg/SVGSwitchElementImpl.h:
+        (KSVG::SVGSwitchElementImpl::isValid):
+        * ksvg2/svg/SVGSymbolElementImpl.h:
+        (KSVG::SVGSymbolElementImpl::shouldAttachChild):
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        (SVGTestsImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElementImpl.h:
+        (KSVG::SVGTextContentElementImpl::isValid):
+        * ksvg2/svg/SVGUseElementImpl.h:
+        (KSVG::SVGUseElementImpl::isValid):
+
+2005-11-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         No additional test cases needed, this fixes 5 existing tests.
 
         This patch fixes feImage (to scale and flip).

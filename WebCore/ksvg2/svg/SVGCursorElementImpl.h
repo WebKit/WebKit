@@ -45,6 +45,8 @@ namespace KSVG
     public:
         SVGCursorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGCursorElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGCursorElement' functions
         SVGAnimatedLengthImpl *x() const;

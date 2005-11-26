@@ -39,6 +39,8 @@ namespace KSVG
     public:
         SVGRectElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGRectElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGRectElement' functions
         SVGAnimatedLengthImpl *x() const;

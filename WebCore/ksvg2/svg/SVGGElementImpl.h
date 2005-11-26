@@ -38,6 +38,8 @@ namespace KSVG
     public:
         SVGGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGGElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 

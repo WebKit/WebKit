@@ -42,6 +42,8 @@ namespace KSVG
     public:
         SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGUseElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // Derived from: 'ElementImpl'
         virtual bool hasChildNodes() const;

@@ -59,7 +59,12 @@
 #include <q3paintdevicemetrics.h>
 #include <qtextstream.h>
 
+#include "HTMLNames.h"
+#include "EventNames.h"
+
 using namespace KSVG;
+using namespace DOM::HTMLNames;
+using namespace DOM::EventNames;
 
 SVGSVGElementImpl::SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledLocatableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(),
@@ -230,6 +235,24 @@ SVGPointImpl *SVGSVGElementImpl::currentTranslate() const
 void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
     const KDOM::AtomicString& value = attr->value();
+    if (!nearestViewportElement()) {
+        // Only handle events if we're the outermost <svg> element
+        QString value = attr->value().qstring();
+        if (attr->name() == onloadAttr)
+            getDocument()->setHTMLWindowEventListener(loadEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == onunloadAttr)
+            getDocument()->setHTMLWindowEventListener(unloadEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == onabortAttr)
+            getDocument()->setHTMLWindowEventListener(abortEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == onerrorAttr)
+            getDocument()->setHTMLWindowEventListener(errorEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == onresizeAttr)
+            getDocument()->setHTMLWindowEventListener(resizeEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == onscrollAttr)
+            getDocument()->setHTMLWindowEventListener(scrollEvent, getDocument()->createHTMLEventListener(value, this));
+        else if (attr->name() == SVGNames::onzoomAttr)
+            getDocument()->setHTMLWindowEventListener(zoomEvent, getDocument()->createHTMLEventListener(value, this));
+    }
     if (attr->name() == SVGNames::xAttr) {
         x()->baseVal()->setValueAsString(value.impl());
     } else if (attr->name() == SVGNames::yAttr) {

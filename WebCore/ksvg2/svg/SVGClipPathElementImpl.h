@@ -41,6 +41,8 @@ namespace KSVG
     public:
         SVGClipPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGClipPathElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         virtual KCanvasClipper *canvasResource();
 
@@ -48,9 +50,6 @@ namespace KSVG
         SVGAnimatedEnumerationImpl *clipPathUnits() const;
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-
-        // Derived from: 'SVGStyledElementImpl'
-        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
 
     private:
         mutable SharedPtr<SVGAnimatedEnumerationImpl> m_clipPathUnits;

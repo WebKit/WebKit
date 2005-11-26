@@ -1420,7 +1420,11 @@ void NodeImpl::createRendererIfNeeded()
     assert(parent);
         
     RenderObject *parentRenderer = parent->renderer();
-    if (parentRenderer && parentRenderer->canHaveChildren()) {
+    if (parentRenderer && parentRenderer->canHaveChildren()
+#if SVG_SUPPORT
+        && parent->childShouldCreateRenderer(this)
+#endif
+        ) {
         RenderStyle *style = styleForRenderer(parentRenderer);
         style->ref();
 #ifndef KHTML_NO_XBL

@@ -64,6 +64,8 @@ namespace KSVG
     public:
         SVGPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPathElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         SVGAnimatedNumberImpl *pathLength() const;
         double getTotalLength();

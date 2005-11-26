@@ -44,10 +44,9 @@ SVGSwitchElementImpl::~SVGSwitchElementImpl()
 {
 }
 
-bool SVGSwitchElementImpl::allowAttachChildren(KDOM::ElementImpl *child) const
+bool SVGSwitchElementImpl::childShouldCreateRenderer(KDOM::NodeImpl *child) const
 {
-    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
-    {
+    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElementImpl *element = svg_dynamic_cast(n);
         if (element && element->isValid())
             return (n == child); // Only allow this child if it's the first valid child

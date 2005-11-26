@@ -68,7 +68,7 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect) const
 
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground))
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;
     
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());

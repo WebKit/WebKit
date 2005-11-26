@@ -48,6 +48,8 @@ namespace KSVG
     public:
         SVGImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGImageElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGImageElement' functions
         SVGAnimatedLengthImpl *x() const;

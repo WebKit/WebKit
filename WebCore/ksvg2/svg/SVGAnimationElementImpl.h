@@ -90,6 +90,8 @@ namespace KSVG
 
         // 'SVGAnimationElement' functions
         SVGElementImpl *targetElement() const;
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         double getEndTime() const;
         double getStartTime() const;

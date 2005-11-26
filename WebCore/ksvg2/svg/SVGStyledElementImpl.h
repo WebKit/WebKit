@@ -54,7 +54,6 @@ namespace KSVG
         virtual SVGAnimatedStringImpl *className() const;
 
         virtual void attach();
-        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return true; }
 
         // These need to be implemented.
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }

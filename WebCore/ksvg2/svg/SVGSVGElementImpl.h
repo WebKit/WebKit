@@ -60,6 +60,8 @@ namespace KSVG
         virtual ~SVGSVGElementImpl();
 
         virtual bool isSVG() const { return true; }
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGSVGElement' functions
         SVGAnimatedLengthImpl *x() const;

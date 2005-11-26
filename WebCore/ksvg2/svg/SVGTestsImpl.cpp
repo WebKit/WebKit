@@ -90,17 +90,17 @@ bool SVGTestsImpl::isValid() const
 
 bool SVGTestsImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-//    KDOM::DOMString value(attr->value());
-//    if (attr->name() == SVGNames::requiredfeaturesAttr) {
-//        requiredFeatures()->reset(value.qstring());
-//        return true;
-//    } else if (attr->name() == SVGNames::requiredextensionsAttr) {
-//        requiredExtensions()->reset(value.qstring());
-//        return true;
-//    } else if (attr->name() == SVGNames::systemlanguageAttr)
-//        systemLanguage()->reset(value.qstring());
-//        return true;
-//    }
+    KDOM::DOMString value(attr->value());
+    if (attr->name() == SVGNames::requiredFeaturesAttr) {
+        requiredFeatures()->reset(value.qstring());
+        return true;
+    } else if (attr->name() == SVGNames::requiredExtensionsAttr) {
+        requiredExtensions()->reset(value.qstring());
+        return true;
+    } else if (attr->name() == SVGNames::systemLanguageAttr) {
+        systemLanguage()->reset(value.qstring());
+        return true;
+    }
     
     return false;
 }

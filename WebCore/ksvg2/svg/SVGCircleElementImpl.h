@@ -39,6 +39,8 @@ namespace KSVG
     public:
         SVGCircleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGCircleElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGCircleElement' functions
         SVGAnimatedLengthImpl *cx() const;

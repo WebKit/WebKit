@@ -38,10 +38,11 @@ namespace KSVG
     public:
         SVGSwitchElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGSwitchElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
-        // Derived from: 'SVGStyledElementImpl'
-        virtual bool allowAttachChildren(KDOM::ElementImpl *child) const;
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual bool childShouldCreateRenderer(KDOM::NodeImpl *) const;
 
         virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 

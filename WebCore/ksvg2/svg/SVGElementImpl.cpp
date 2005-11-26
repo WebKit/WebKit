@@ -31,12 +31,15 @@
 
 #include "ksvg.h"
 #include "SVGNames.h"
-//#include "SVGException.h"
+#include "EventNames.h"
+#include "HTMLNames.h"
 #include "SVGElementImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
 using namespace KSVG;
+using namespace DOM::HTMLNames;
+using namespace DOM::EventNames;
 
 SVGElementImpl::SVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : KDOM::XMLElementImpl(tagName, doc), m_closed(false)
 {
@@ -100,22 +103,6 @@ KDOM::AtomicString SVGElementImpl::tryGetAttributeNS(const KDOM::DOMString& name
 
 void SVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-
-//    if (attr->name() == SVGNames::onloadAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("load"), value);
-//    else if (attr->name() == SVGNames::onunloadAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("unload"), value);
-//    else if (attr->name() == SVGNames::onabortAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("abort"), value);
-//    else if (attr->name() == SVGNames::onerrorAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("error"), value);
-//    else if (attr->name() == SVGNames::onresizeAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("resize"), value);
-//    else if (attr->name() == SVGNames::onscrollAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("scroll"), value);
-//    else if (attr->name() == SVGNames::onzoomAttr)
-//            addSVGEventListener(doc->ecmaEngine(), KDOM::DOMString("zoom"), value);
-//    else
 #ifndef APPLE_COMPILE_HACK
     // We don't yet know how to support setIsId/isId
     if (attr->name() == SVGNames::idAttr)

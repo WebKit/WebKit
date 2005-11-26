@@ -1432,10 +1432,14 @@ void DocumentImpl::implicitClose()
                 body = 0;
         }
     }
+    
+    NodeImpl *onloadTarget = body;
+    if (!isHTMLDocument())
+        onloadTarget = documentElement();
 
-    if (body) {
+    if (onloadTarget) {
         dispatchImageLoadEventsNow();
-        body->dispatchWindowEvent(loadEvent, false, false);
+        onloadTarget->dispatchWindowEvent(loadEvent, false, false);
         if (KHTMLPart *p = part())
             KWQ(p)->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING

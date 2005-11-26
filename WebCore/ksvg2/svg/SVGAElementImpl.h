@@ -44,12 +44,13 @@ namespace KSVG
 
         // 'SVGAElement' functions
         SVGAnimatedStringImpl *target() const;
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         // Derived from: 'SVGStyledElementImpl'
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-
         virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
 
         virtual void defaultEventHandler(KDOM::EventImpl *evt);

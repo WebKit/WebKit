@@ -40,9 +40,7 @@ namespace KSVG
         virtual ~SVGSymbolElementImpl();
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-
-        // Derived from: 'SVGStyledElementImpl'
-        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
+        virtual bool shouldAttachChild(KDOM::ElementImpl *) const { return false; }
     };
 };
 

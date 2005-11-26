@@ -142,7 +142,7 @@ void SVGStyledElementImpl::updateCanvasItem()
     
     SVGElementImpl *parentElement = svg_dynamic_cast(parentNode());
     if(parentElement && parentElement->renderer() && parentElement->isStyled()
-        && static_cast<SVGStyledElementImpl *>(parentElement)->allowAttachChildren(this))
+        && parentElement->childShouldCreateRenderer(this))
         renderSection = true;
 
     KCanvasUserData newPath = KCanvasCreator::self()->createCanvasPathData(canvas()->renderingDevice(), toPathData());

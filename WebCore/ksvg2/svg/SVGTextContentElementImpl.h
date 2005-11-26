@@ -43,6 +43,8 @@ namespace KSVG
     public:
         SVGTextContentElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGTextContentElementImpl();
+        
+        virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
         // 'SVGTextContentElement' functions
         SVGAnimatedLengthImpl *textLength() const;

@@ -239,6 +239,13 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
         khtml::RenderObject *item = e->renderer();
         if(!item)
             continue;
+#if 0
+        // FIXME: None of this code seems to be necessary
+        // to pass the w3c tests (and infact breaks them)
+        // However, I'm leaving it #if 0'd for now until
+        // I can quiz WildFox on the subject -- ecs 11/24/05
+        // It's possible that W3C-SVG-1.1/coords-units-01-b
+        // is failing due to lack of this code.
         KCanvasMatrix savedMatrix = item->localTransform();
 
         const SVGStyledElementImpl *savedContext = 0;
@@ -262,16 +269,17 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
 
             item->setLocalTransform(newMatrix.qmatrix());
         }
+#endif
 
-        // FIXME: I'm not sure if this is right yet...
         QPainter p;
         khtml::RenderObject::PaintInfo info(&p, QRect(), PaintActionForeground, 0);
         item->paint(info, 0, 0);
-
+#if 0
         if(savedContext)
             e->pushAttributeContext(savedContext);
 
         item->setLocalTransform(savedMatrix.qmatrix());
+#endif
     }
 
     if(savedContext)
