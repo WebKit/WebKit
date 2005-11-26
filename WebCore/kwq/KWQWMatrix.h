@@ -64,6 +64,7 @@ public:
     
     bool operator== (const QWMatrix &) const;
     QWMatrix &operator*= (const QWMatrix &);
+    QWMatrix operator* (const QWMatrix &m2);
     
 private:
     CGAffineTransform m_transform;

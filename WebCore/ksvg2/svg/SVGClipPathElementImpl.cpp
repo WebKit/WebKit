@@ -78,22 +78,22 @@ void SVGClipPathElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *att
 
 KCanvasClipper *SVGClipPathElementImpl::canvasResource()
 {
-    if(!canvas())
+    if (!canvas())
         return 0;
-    if(!m_clipper)
+    if (!m_clipper)
         m_clipper = static_cast<KCanvasClipper *>(canvas()->renderingDevice()->createResource(RS_CLIPPER));
     else
         m_clipper->resetClipData();
 
     bool bbox = clipPathUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
+    khtml::RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer());
+    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
         SVGElementImpl *e = svg_dynamic_cast(n);
-        if(e && e->isStyled())
-        {
+        if (e && e->isStyled()) {
             SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(e);
-            SVGRenderStyle *style = styleForRenderer(parentNode()->renderer())->svgStyle();
+            SVGRenderStyle *style = getDocument()->styleSelector()->styleForElement(styled, clipPathStyle)->svgStyle();
             m_clipper->addClipData(styled->toPathData(), (KCWindRule) style->clipRule(), bbox);
         }
     }

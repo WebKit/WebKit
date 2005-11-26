@@ -127,3 +127,8 @@ QWMatrix &QWMatrix::operator*= (const QWMatrix &m2)
     m_transform = CGAffineTransformConcat(m_transform, CGAffineTransform(m2));
     return *this;
 }
+
+QWMatrix QWMatrix::operator* (const QWMatrix &m2)
+{
+    return CGAffineTransformConcat(m_transform, CGAffineTransform(m2));
+}

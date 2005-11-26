@@ -1485,7 +1485,6 @@
 		A8C0FD76089701FA00BA5114 /* SVGSwitchElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8CD089701F400BA5114 /* SVGSwitchElementImpl.h */; };
 		A8C0FD77089701FA00BA5114 /* SVGSymbolElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F8CE089701F400BA5114 /* SVGSymbolElementImpl.cpp */; };
 		A8C0FD78089701FA00BA5114 /* SVGSymbolElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8CF089701F400BA5114 /* SVGSymbolElementImpl.h */; };
-		A8C0FD7A089701FA00BA5114 /* svgtags.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8D1089701F400BA5114 /* svgtags.h */; };
 		A8C0FD7C089701FA00BA5114 /* SVGTestsImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F8D3089701F400BA5114 /* SVGTestsImpl.cpp */; };
 		A8C0FD7D089701FA00BA5114 /* SVGTestsImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8D4089701F400BA5114 /* SVGTestsImpl.h */; };
 		A8C0FD7E089701FA00BA5114 /* SVGTextContentElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F8D5089701F400BA5114 /* SVGTextContentElementImpl.cpp */; };
@@ -2425,8 +2424,6 @@
 		A8C0F8CD089701F400BA5114 /* SVGSwitchElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGSwitchElementImpl.h; sourceTree = "<group>"; };
 		A8C0F8CE089701F400BA5114 /* SVGSymbolElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGSymbolElementImpl.cpp; sourceTree = "<group>"; };
 		A8C0F8CF089701F400BA5114 /* SVGSymbolElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGSymbolElementImpl.h; sourceTree = "<group>"; };
-		A8C0F8D0089701F400BA5114 /* svgtags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = svgtags.c; sourceTree = "<group>"; };
-		A8C0F8D1089701F400BA5114 /* svgtags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgtags.h; sourceTree = "<group>"; };
 		A8C0F8D2089701F400BA5114 /* svgtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svgtags.in; sourceTree = "<group>"; };
 		A8C0F8D3089701F400BA5114 /* SVGTestsImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTestsImpl.cpp; sourceTree = "<group>"; };
 		A8C0F8D4089701F400BA5114 /* SVGTestsImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTestsImpl.h; sourceTree = "<group>"; };
@@ -3823,8 +3820,6 @@
 				A8C0F8CD089701F400BA5114 /* SVGSwitchElementImpl.h */,
 				A8C0F8CE089701F400BA5114 /* SVGSymbolElementImpl.cpp */,
 				A8C0F8CF089701F400BA5114 /* SVGSymbolElementImpl.h */,
-				A8C0F8D0089701F400BA5114 /* svgtags.c */,
-				A8C0F8D1089701F400BA5114 /* svgtags.h */,
 				A8C0F8D2089701F400BA5114 /* svgtags.in */,
 				A8C0F8D3089701F400BA5114 /* SVGTestsImpl.cpp */,
 				A8C0F8D4089701F400BA5114 /* SVGTestsImpl.h */,
@@ -5494,7 +5489,6 @@
 				A8C0FD74089701FA00BA5114 /* SVGSVGElementImpl.h in Headers */,
 				A8C0FD76089701FA00BA5114 /* SVGSwitchElementImpl.h in Headers */,
 				A8C0FD78089701FA00BA5114 /* SVGSymbolElementImpl.h in Headers */,
-				A8C0FD7A089701FA00BA5114 /* svgtags.h in Headers */,
 				A8C0FD7D089701FA00BA5114 /* SVGTestsImpl.h in Headers */,
 				A8C0FD7F089701FA00BA5114 /* SVGTextContentElementImpl.h in Headers */,
 				A8C0FD81089701FA00BA5114 /* SVGTextElementImpl.h in Headers */,

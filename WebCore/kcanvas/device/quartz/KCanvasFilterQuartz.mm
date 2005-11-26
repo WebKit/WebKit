@@ -465,23 +465,42 @@ CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 	CGColorRelease(withAlpha);
 	[filter setValue:inputColor forKey:@"inputColor"];
 	
-	FE_QUARTZ_CROP_TO_RECT(CGRectMake(0,0,1000,1000)); // HACK
+        CGRect cropRect = CGRectMake(0,0,1000,1000); // HACK
+        if (subRegion().isValid())
+            cropRect = CGRect(subRegion());
+	FE_QUARTZ_CROP_TO_RECT(cropRect);
 	
 	FE_QUARTZ_OUTPUT_RETURN;
 }
 
 CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-    // FIXME: This is just a hack for now, and only support pixmaps
+    KWQ_BLOCK_EXCEPTIONS
+    // FIXME: This is only partially implemented (only supports pixmaps)
     CIImage *ciImage = [CIImage imageWithCGImage:pixmap().imageRef()];
-    quartzFilter->setOutputImage(this, ciImage);
     
-    // FIXME: we really want a noop filter... or better design.
-    CIFilter *crop = [CIFilter filterWithName:@"CIExposureAdjust"];
-    [crop setDefaults];
-    [crop setValue:ciImage forKey:@"inputImage"];
-    [crop setValue:[NSNumber numberWithInt:0] forKey:@"inputEV"];
-    return crop;
+    // FIXME: There is probably a nicer way to perform both of these transforms.
+    CIFilter *filter = [CIFilter filterWithName:@"CIAffineTransform"];
+    [filter setDefaults];
+    [filter setValue:ciImage forKey:@"inputImage"];
+    
+    CGAffineTransform cgTransform = CGAffineTransformMake(1,0,0,-1,0,pixmap().rect().bottom());
+    NSAffineTransform *nsTransform = [NSAffineTransform transform];
+    [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
+    [filter setValue:nsTransform forKey:@"inputTransform"];
+    
+    if (subRegion().isValid()) {
+        CIFilter *scaleImage = [CIFilter filterWithName:@"CIAffineTransform"];
+        [scaleImage setDefaults];
+        [scaleImage setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"];
+        
+        cgTransform = CGAffineTransformMakeMapBetweenRects(CGRect(pixmap().rect()), subRegion());
+        [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
+        [scaleImage setValue:nsTransform forKey:@"inputTransform"];
+        filter = scaleImage;
+    }
+    
+    FE_QUARTZ_OUTPUT_RETURN;
 }
 
 CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const

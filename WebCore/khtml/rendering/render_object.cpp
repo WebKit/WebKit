@@ -2568,11 +2568,9 @@ InlineBox *RenderObject::inlineBox(int offset, EAffinity affinity)
 #if SVG_SUPPORT
 QMatrix RenderObject::absoluteTransform() const
 {
-    if (parent()) {
-        QMatrix transform = parent()->absoluteTransform();
-        transform *= localTransform();
-        return transform;
-    } else
+    if (parent())
+        return parent()->absoluteTransform() * localTransform();
+    else
         return localTransform();
 }
 #endif

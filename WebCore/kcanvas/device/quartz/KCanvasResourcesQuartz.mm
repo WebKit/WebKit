@@ -39,25 +39,30 @@
 
 CGPathRef CGPathFromKCPathDataList(KCPathDataList pathData)
 {
-	CGMutablePathRef path = CGPathCreateMutable();
-	
-	KCPathDataList::ConstIterator it = pathData.begin();
-	KCPathDataList::ConstIterator end = pathData.end();
-	for(; it != end; ++it)
-	{
-		KCPathData data = *it;
+    CGMutablePathRef path = CGPathCreateMutable();
 
-		if(data.cmd == CMD_MOVE) {
-			CGPathMoveToPoint(path, NULL, data.x3, data.y3);
-		} else if(data.cmd == CMD_LINE) {
-			CGPathAddLineToPoint(path, NULL, data.x3, data.y3);
-		} else if(data.cmd == CMD_CLOSE_SUBPATH) {
-			CGPathCloseSubpath(path);
-		} else {
-			CGPathAddCurveToPoint(path, NULL, data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
-		}
-	}
-	return path;
+    KCPathDataList::ConstIterator it = pathData.begin();
+    KCPathDataList::ConstIterator end = pathData.end();
+    for(; it != end; ++it)
+    {
+        KCPathData data = *it;
+        
+        switch (data.cmd) {
+        case CMD_MOVE: 
+            CGPathMoveToPoint(path, NULL, data.x3, data.y3);
+            break;
+        case CMD_LINE:
+            CGPathAddLineToPoint(path, NULL, data.x3, data.y3);
+            break;
+        case CMD_CURVE:
+            CGPathAddCurveToPoint(path, NULL, data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
+            break;
+        case CMD_CLOSE_SUBPATH:
+            CGPathCloseSubpath(path);
+            break;
+        }
+    }
+    return path;
 }
 
 void KCanvasContainerQuartz::calcMinMaxWidth()
@@ -103,8 +108,12 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
         paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
     
-    if (paintInfo.phase != PaintActionForeground || !firstChild() || !drawsContents())
+    if (paintInfo.phase != PaintActionForeground || !drawsContents())
         return;
+    
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    if (!firstChild() && !filter)
+        return; // Spec: groups w/o children still may render filter content.
     
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
     quartzDevice->pushContext(paintInfo.p->createRenderingDeviceContext());
@@ -112,7 +121,10 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     
     CGContextRef context = paintInfo.p->currentContext();
     
-    if(!localTransform().isIdentity())
+    if (viewport().isValid())
+        CGContextConcatCTM(context, CGAffineTransformMakeTranslation(viewport().x(), viewport().y()));
+    
+    if (!localTransform().isIdentity())
         CGContextConcatCTM(context, CGAffineTransform(localTransform()));
     
     QRect dirtyRect = paintInfo.r;
@@ -126,12 +138,15 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (opacity < 1.0f)
         paintInfo.p->beginTransparencyLayer(opacity);
 
-    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
         filter->prepareFilter(quartzDevice, relativeBBox(true));
     
-    if (!viewBox().isNull())
-        CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), QRect(viewport().x(), viewport().y(), width(), height())).qmatrix()));
+    if (!viewBox().isNull()) {
+        QRect viewportRect = viewport();
+        if (!parent()->isKCanvasContainer())
+            viewportRect = QRect(viewport().x(), viewport().y(), width(), height());
+        CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), viewportRect).qmatrix()));
+    }
     
     RenderContainer::paint(paintInfo, absoluteX, absoluteY);
     

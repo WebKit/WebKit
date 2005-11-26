@@ -1,5 +1,34 @@
 2005-11-26  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        No additional test cases needed, this fixes 5 existing tests.
+
+        This patch fixes feImage (to scale and flip).
+        Also fixes feColorMatrix (previously inadvertently disabled)
+        Fixes <svg> in <svg> (sub-elements establishing viewports)
+        Fixes clip-rule, by fixing style resolution on <clipPath> children
+
+        * WebCore.xcodeproj/project.pbxproj: removed svgattr.[ch]
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEFloodQuartz::getCIFilter): respect subregion
+        (KCanvasFEImageQuartz::getCIFilter): respect subregion, scale, flip
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (CGPathFromKCPathDataList): style/spacing update
+        (KCanvasContainerQuartz::paint):  handle viewport, singular filters
+        * khtml/rendering/render_object.cpp: 
+        (RenderObject::absoluteTransform): use QMatrix operator *
+        * ksvg2/scripts/make_names.pl: allow FEColorMatrixElementImpl
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::canvasResource): resolve style manually
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::filterEffect): spacing fix
+        * kwq/KWQWMatrix.h:
+        * kwq/KWQWMatrix.mm:
+        (QWMatrix::operator* ): added
+
+2005-11-26  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Removed all usage of ref(), deref() from ksvg2

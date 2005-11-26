@@ -151,7 +151,7 @@ sub elementsForTags
 		next if /tref/i;
 		next if /textpath/i;
 		next if /foreign/i;
-		next if /matrix/i;
+		next if /convolve/i;
 		next if /map/i;
 		next if /morph/i;
 		push(@filtered, $_);
