@@ -36,19 +36,10 @@ using namespace KSVG;
 SVGLineElementImpl::SVGLineElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_x1 = m_y1 = m_x2 = m_y2 = 0;
 }
 
 SVGLineElementImpl::~SVGLineElementImpl()
 {
-    if(m_x1)
-        m_x1->deref();
-    if(m_y1)
-        m_y1->deref();
-    if(m_x2)
-        m_x2->deref();
-    if(m_y2)
-        m_y2->deref();
 }
 
 SVGAnimatedLengthImpl *SVGLineElementImpl::x1() const

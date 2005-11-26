@@ -31,26 +31,15 @@ SVGZoomEventImpl::SVGZoomEventImpl()
 {
     m_newScale = 0.0;
     m_previousScale = 0.0;
-
-    m_zoomRectScreen = 0;
-
-    m_newTranslate = 0;
-    m_previousTranslate = 0;
 }
 
 SVGZoomEventImpl::~SVGZoomEventImpl()
 {
-    if(m_newTranslate)
-        m_newTranslate->deref();
-    if(m_previousTranslate)
-        m_previousTranslate->deref();
-    if(m_zoomRectScreen)
-        m_zoomRectScreen->deref();
 }
 
 SVGRectImpl *SVGZoomEventImpl::zoomRectScreen() const
 {
-    return m_zoomRectScreen;
+    return m_zoomRectScreen.get();
 }
 
 float SVGZoomEventImpl::previousScale() const
@@ -65,7 +54,7 @@ void SVGZoomEventImpl::setPreviousScale(float scale)
 
 SVGPointImpl *SVGZoomEventImpl::previousTranslate() const
 {
-    return m_previousTranslate;
+    return m_previousTranslate.get();
 }
 
 float SVGZoomEventImpl::newScale() const
@@ -80,7 +69,7 @@ void SVGZoomEventImpl::setNewScale(float scale)
 
 SVGPointImpl *SVGZoomEventImpl::newTranslate() const
 {
-    return m_newTranslate;
+    return m_newTranslate.get();
 }
 
 // vim:ts=4:noet

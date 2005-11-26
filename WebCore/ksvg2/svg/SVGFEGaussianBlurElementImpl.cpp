@@ -44,20 +44,11 @@ using namespace KSVG;
 SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
-    m_stdDeviationX = 0;
-    m_stdDeviationY = 0;
     m_filterEffect = 0;
 }
 
 SVGFEGaussianBlurElementImpl::~SVGFEGaussianBlurElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
-    if(m_stdDeviationX)
-        m_stdDeviationX->deref();
-    if(m_stdDeviationY)
-        m_stdDeviationY->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEGaussianBlurElementImpl::in1() const

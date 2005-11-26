@@ -46,6 +46,7 @@
 #include "SVGDOMImplementationImpl.h"
 #include "ksvgcssproperties.h"
 #include "css_base.h"
+#include "SVGHelper.h"
 
 #include "SVGNames.h"
 #include "HTMLNames.h"
@@ -53,28 +54,18 @@
 using namespace KSVG;
 
 SVGStyledElementImpl::SVGStyledElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
-: SVGElementImpl(tagName, doc), m_pa(0), m_className(0)
+: SVGElementImpl(tagName, doc)
 {
     m_updateVectorial = false;
 }
 
 SVGStyledElementImpl::~SVGStyledElementImpl()
 {
-    if(m_className)
-        m_className->deref();
-    if(m_pa)
-        m_pa->deref();
 }
 
 SVGAnimatedStringImpl *SVGStyledElementImpl::className() const
 {
-    if(!m_className)
-    {
-        m_className = new SVGAnimatedStringImpl(0); // TODO: use notification context?
-        m_className->ref();
-    }
-
-    return m_className;
+    return lazy_create(m_className, (SVGStyledElementImpl *)0); // TODO: use notification context?
 }
 
 khtml::RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)

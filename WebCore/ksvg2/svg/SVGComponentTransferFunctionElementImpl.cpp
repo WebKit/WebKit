@@ -40,31 +40,10 @@ using namespace KSVG;
 SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGElementImpl(tagName, doc)
 {
-    m_type = 0;
-    m_tableValues = 0;
-    m_slope = 0;
-    m_intercept = 0;
-    m_amplitude = 0;
-    m_exponent = 0;
-    m_offset = 0;
 }
 
 SVGComponentTransferFunctionElementImpl::~SVGComponentTransferFunctionElementImpl()
 {
-    if(m_type)
-        m_type->deref();
-    if(m_tableValues)
-        m_tableValues->deref();
-    if(m_slope)
-        m_slope->deref();
-    if(m_intercept)
-        m_intercept->deref();
-    if(m_amplitude)
-        m_amplitude->deref();
-    if(m_exponent)
-        m_exponent->deref();
-    if(m_offset)
-        m_offset->deref();
 }
 
 SVGAnimatedEnumerationImpl *SVGComponentTransferFunctionElementImpl::type() const

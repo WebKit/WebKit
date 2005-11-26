@@ -40,23 +40,10 @@ using namespace KSVG;
 SVGRectElementImpl::SVGRectElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_x = m_y = m_rx = m_ry = m_width = m_height = 0;
 }
 
 SVGRectElementImpl::~SVGRectElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
-    if(m_rx)
-        m_rx->deref();
-    if(m_ry)
-        m_ry->deref();
 }
 
 SVGAnimatedLengthImpl *SVGRectElementImpl::x() const

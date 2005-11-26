@@ -35,16 +35,10 @@ using namespace KSVG;
 SVGTextContentElementImpl::SVGTextContentElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_textLength = 0;
-    m_lengthAdjust = 0;
 }
 
 SVGTextContentElementImpl::~SVGTextContentElementImpl()
 {
-    if(m_textLength)
-        m_textLength->deref();
-    if(m_lengthAdjust)
-        m_lengthAdjust->deref();
 }
 
 SVGAnimatedLengthImpl *SVGTextContentElementImpl::textLength() const

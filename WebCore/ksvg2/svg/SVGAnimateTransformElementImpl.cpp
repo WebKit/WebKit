@@ -350,22 +350,20 @@ void SVGAnimateTransformElementImpl::handleTimerEvent(double timePercentage)
     }
 }
 
-SVGTransformImpl *SVGAnimateTransformElementImpl::parseTransformValue(const QString &data) const
+SharedPtr<SVGTransformImpl> SVGAnimateTransformElementImpl::parseTransformValue(const QString &data) const
 {
-    SVGTransformImpl *ret = 0;
     QString parse = data.stripWhiteSpace();
     if(parse.isEmpty())
-        return ret;
+        return 0;
     
     int commaPos = parse.find(','); // In case two values are passed...
 
+    SharedPtr<SVGTransformImpl> parsedTransform = new SVGTransformImpl();
+    
     switch(m_type)
     {
         case SVG_TRANSFORM_TRANSLATE:
         {
-            ret = new SVGTransformImpl();
-            ret->ref();
-
             double tx = 0.0, ty = 0.0;
             if(commaPos != - 1)
             {
@@ -375,14 +373,11 @@ SVGTransformImpl *SVGAnimateTransformElementImpl::parseTransformValue(const QStr
             else 
                 tx = parse.toDouble();
 
-            ret->setTranslate(tx, ty);
+            parsedTransform->setTranslate(tx, ty);
             break;    
         }
         case SVG_TRANSFORM_SCALE:
         {
-            ret = new SVGTransformImpl();
-            ret->ref();
-
             double sx = 1.0, sy = 1.0;
             if(commaPos != - 1)
             {
@@ -395,14 +390,11 @@ SVGTransformImpl *SVGAnimateTransformElementImpl::parseTransformValue(const QStr
                 sy = sx;
             }
 
-            ret->setScale(sx, sy);
+            parsedTransform->setScale(sx, sy);
             break;
         }
         case SVG_TRANSFORM_ROTATE:
         {
-            ret = new SVGTransformImpl();
-            ret->ref();
-
             double angle = 0, cx = 0, cy = 0;
             if(commaPos != - 1)
             {
@@ -436,32 +428,26 @@ SVGTransformImpl *SVGAnimateTransformElementImpl::parseTransformValue(const QStr
                 m_rotateSpecialCase = true;
             }
             
-            ret->setRotate(angle, cx, cy);
+            parsedTransform->setRotate(angle, cx, cy);
             break;    
         }
         case SVG_TRANSFORM_SKEWX:
         case SVG_TRANSFORM_SKEWY:
         {
-            ret = new SVGTransformImpl();
-            ret->ref();
-            
             double angle = parse.toDouble(); // TODO: probably needs it's own 'angle' parser
             
             if(m_type == SVG_TRANSFORM_SKEWX)
-                ret->setSkewX(angle);
+                parsedTransform->setSkewX(angle);
             else
-                ret->setSkewY(angle);
+                parsedTransform->setSkewY(angle);
 
             break;
         }
         default:
-            break;
+            return 0;
     }
-
-    if(ret)
-        ret->ref();
-        
-    return ret;
+    
+    return parsedTransform;
 }
 
 void SVGAnimateTransformElementImpl::calculateRotationFromMatrix(const QWMatrix &matrix, double &angle, double &cx, double &cy) const

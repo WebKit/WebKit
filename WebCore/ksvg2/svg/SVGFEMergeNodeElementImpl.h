@@ -41,7 +41,7 @@ namespace KSVG
         SVGAnimatedStringImpl *in1() const;
 
     private:
-        mutable SVGAnimatedStringImpl *m_in1;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
     };
 };
 

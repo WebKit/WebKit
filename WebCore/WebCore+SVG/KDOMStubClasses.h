@@ -18,15 +18,6 @@
 namespace KDOM
 {
     typedef NodeImpl EventTargetImpl;
-    
-    // FIXME: should be replaced by SharedPtr use.
-    template<class T>
-    inline void KDOM_SAFE_SET(T *&a, T *b)
-    {
-        if (b) b->ref();
-        if (a) a->deref();
-        a = b;
-    }
 };
 
 #endif // KDOMStubClasses_h

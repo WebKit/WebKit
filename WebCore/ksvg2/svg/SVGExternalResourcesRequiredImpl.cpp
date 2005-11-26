@@ -33,13 +33,10 @@ using namespace KSVG;
 
 SVGExternalResourcesRequiredImpl::SVGExternalResourcesRequiredImpl()
 {
-    m_external = 0;
 }
 
 SVGExternalResourcesRequiredImpl::~SVGExternalResourcesRequiredImpl()
 {
-    if(m_external)
-        m_external->deref();
 }
 
 SVGAnimatedBooleanImpl *SVGExternalResourcesRequiredImpl::externalResourcesRequired() const

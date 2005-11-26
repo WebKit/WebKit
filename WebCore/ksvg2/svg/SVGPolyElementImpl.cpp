@@ -35,13 +35,10 @@ using namespace KSVG;
 SVGPolyElementImpl::SVGPolyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGAnimatedPointsImpl(), SVGPolyParser()
 {
-    m_points = 0;
 }
 
 SVGPolyElementImpl::~SVGPolyElementImpl()
 {
-    if(m_points)
-        m_points->deref();
 }
 
 SVGPointListImpl *SVGPolyElementImpl::points() const

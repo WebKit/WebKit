@@ -68,8 +68,8 @@ namespace KSVG
         virtual void attach();
 
     protected:
-        mutable SVGMatrixImpl *m_localMatrix;
-        mutable SVGAnimatedTransformListImpl *m_transform;
+        mutable SharedPtr<SVGMatrixImpl> m_localMatrix;
+        mutable SharedPtr<SVGAnimatedTransformListImpl> m_transform;
     };
 };
 

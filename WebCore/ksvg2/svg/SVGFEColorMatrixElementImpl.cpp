@@ -46,20 +46,11 @@ using namespace KSVG;
 SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
-    m_type = 0;
-    m_values = 0;
     m_filterEffect = 0;
 }
 
 SVGFEColorMatrixElementImpl::~SVGFEColorMatrixElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
-    if(m_type)
-        m_type->deref();
-    if(m_values)
-        m_values->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEColorMatrixElementImpl::in1() const

@@ -61,8 +61,8 @@ namespace KSVG
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
-        mutable SVGAnimatedLengthImpl *m_textLength;
-        mutable SVGAnimatedEnumerationImpl *m_lengthAdjust;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_textLength;
+        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_lengthAdjust;
     };
 };
 

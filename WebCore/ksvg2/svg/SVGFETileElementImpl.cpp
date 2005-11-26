@@ -40,14 +40,11 @@ using namespace KSVG;
 SVGFETileElementImpl::SVGFETileElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
     m_filterEffect = 0;
 }
 
 SVGFETileElementImpl::~SVGFETileElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
 }
 
 SVGAnimatedStringImpl *SVGFETileElementImpl::in1() const

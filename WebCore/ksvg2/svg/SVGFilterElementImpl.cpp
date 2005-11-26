@@ -42,104 +42,75 @@ using namespace KSVG;
 SVGFilterElementImpl::SVGFilterElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_filterUnits = m_primitiveUnits = 0;
-    m_x = m_y = m_width = m_height = 0;
-    m_filterResX = m_filterResY = 0;
     m_filter = 0;
 }
 
 SVGFilterElementImpl::~SVGFilterElementImpl()
 {
-    if(m_filterUnits)
-        m_filterUnits->deref();
-    if(m_primitiveUnits)
-        m_primitiveUnits->deref();
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
-    if(m_filterResX)
-        m_filterResX->deref();
-    if(m_filterResY)
-        m_filterResY->deref();
 }
 
 SVGAnimatedEnumerationImpl *SVGFilterElementImpl::filterUnits() const
 {
-    if(!m_filterUnits)
-    {
+    if (!m_filterUnits) {
         lazy_create<SVGAnimatedEnumerationImpl>(m_filterUnits, this);
         m_filterUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
 
-    return m_filterUnits;
+    return m_filterUnits.get();
 }
 
 SVGAnimatedEnumerationImpl *SVGFilterElementImpl::primitiveUnits() const
 {
-    if(!m_primitiveUnits)
-    {
+    if (!m_primitiveUnits) {
         lazy_create<SVGAnimatedEnumerationImpl>(m_primitiveUnits, this);
         m_primitiveUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
     }
 
-    return m_primitiveUnits;
+    return m_primitiveUnits.get();
 }
 
 SVGAnimatedLengthImpl *SVGFilterElementImpl::x() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
-    if(!m_x)
-    {
+    if (!m_x) {
         lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
         m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
-        return m_x;
     }
 
-    return m_x;
+    return m_x.get();
 }
 
 SVGAnimatedLengthImpl *SVGFilterElementImpl::y() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
-    if(!m_y)
-    {
+    if (!m_y) {
         lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
         m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
-        return m_y;
     }
 
-    return m_y;
+    return m_y.get();
 }
 
 SVGAnimatedLengthImpl *SVGFilterElementImpl::width() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
-    if(!m_width)
-    {
+    if (!m_width) {
         lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
         m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
-        return m_width;
     }
 
-    return m_width;
+    return m_width.get();
 }
 
 SVGAnimatedLengthImpl *SVGFilterElementImpl::height() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
-    if(!m_height)
-    {
+    if (!m_height) {
         lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
         m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
-        return m_height;
     }
 
-    return m_height;
+    return m_height.get();
 }
 
 SVGAnimatedIntegerImpl *SVGFilterElementImpl::filterResX() const

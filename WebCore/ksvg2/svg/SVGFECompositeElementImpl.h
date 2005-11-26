@@ -53,13 +53,13 @@ namespace KSVG
         virtual KCanvasFEComposite *filterEffect() const;
 
     private:
-        mutable SVGAnimatedStringImpl *m_in1;
-        mutable SVGAnimatedStringImpl *m_in2;
-        mutable SVGAnimatedEnumerationImpl *m_operator;
-        mutable SVGAnimatedNumberImpl *m_k1;
-        mutable SVGAnimatedNumberImpl *m_k2;
-        mutable SVGAnimatedNumberImpl *m_k3;
-        mutable SVGAnimatedNumberImpl *m_k4;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in2;
+        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_operator;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_k1;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_k2;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_k3;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_k4;
         mutable KCanvasFEComposite *m_filterEffect;
     };
 };

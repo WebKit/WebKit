@@ -49,7 +49,7 @@ namespace KSVG
 
     private:
         unsigned short m_paintType;
-        KDOM::DOMStringImpl *m_uri;
+        KDOM::DOMString m_uri;
     };
 };
 

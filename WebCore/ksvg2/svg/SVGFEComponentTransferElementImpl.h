@@ -45,7 +45,7 @@ namespace KSVG
         virtual KCanvasFEComponentTransfer *filterEffect() const;
 
     private:
-        mutable SVGAnimatedStringImpl *m_in1;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
         mutable KCanvasFEComponentTransfer *m_filterEffect;
     };
 };

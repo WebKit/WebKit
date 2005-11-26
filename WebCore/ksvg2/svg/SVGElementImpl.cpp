@@ -129,19 +129,5 @@ void SVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 #endif
     KDOM::StyledElementImpl::parseMappedAttribute(attr);
 }
-#if 0
-void SVGElementImpl::addSVGEventListener(KDOM::Ecma *ecmaEngine, KDOM::DOMStringImpl *type, KDOM::DOMStringImpl *value)
-{
-    if(!ecmaEngine)
-        return;
-
-    KDOM::EventListenerImpl *listener = ecmaEngine->createEventListener(type, value);
-    if(listener)
-    {
-        listener->ref();
-        addEventListener(type, listener, false);
-    }
-}
-#endif
 
 // vim:ts=4:noet

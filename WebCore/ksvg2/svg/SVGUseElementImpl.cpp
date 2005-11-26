@@ -47,19 +47,10 @@ using namespace KSVG;
 SVGUseElementImpl::SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl()
 {
-    m_x = m_y = m_width = m_height = 0;
 }
 
 SVGUseElementImpl::~SVGUseElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
 }
 
 SVGAnimatedLengthImpl *SVGUseElementImpl::x() const

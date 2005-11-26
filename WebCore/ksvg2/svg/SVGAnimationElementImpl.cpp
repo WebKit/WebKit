@@ -60,10 +60,6 @@ SVGAnimationElementImpl::SVGAnimationElementImpl(const KDOM::QualifiedName& tagN
     m_repeations = 0;
     m_repeatCount = 0;
 
-    m_values = 0;
-    m_keyTimes = 0;
-    m_keySplines = 0;
-
     m_fill = FILL_REMOVE;
     m_restart = RESTART_ALWAYS;
     m_calcMode = CALCMODE_LINEAR;
@@ -74,12 +70,6 @@ SVGAnimationElementImpl::SVGAnimationElementImpl(const KDOM::QualifiedName& tagN
 
 SVGAnimationElementImpl::~SVGAnimationElementImpl()
 {
-    if(m_values)
-        m_values->deref();
-    if(m_keyTimes)
-        m_keyTimes->deref();
-    if(m_keySplines)
-        m_keySplines->deref();
 }
 
 SVGElementImpl *SVGAnimationElementImpl::targetElement() const
@@ -148,11 +138,10 @@ void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *at
     else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr)
     {
         // Create list
-        SVGStringListImpl *temp = new SVGStringListImpl();
-        temp->ref();
+        SharedPtr<SVGStringListImpl> temp = new SVGStringListImpl();
 
         // Feed data into list
-        SVGHelper::ParseSeperatedList(temp, value.qstring(), ';');
+        SVGHelper::ParseSeperatedList(temp.get(), value.qstring(), ';');
 
         // Parse data
         for(unsigned int i = 0; i < temp->numberOfItems(); i++)
@@ -221,8 +210,6 @@ void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *at
                 }
             }
         }
-
-        temp->deref();
     }
     else if (attr->name() == SVGNames::durAttr)
     {
@@ -280,33 +267,18 @@ void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *at
     }
     else if (attr->name() == SVGNames::valuesAttr)
     {
-        if(m_values)
-            m_values->deref();
-
         m_values = new SVGStringListImpl();
-        m_values->ref();
-                    
-        SVGHelper::ParseSeperatedList(m_values, value.qstring(), ';');
+        SVGHelper::ParseSeperatedList(m_values.get(), value.qstring(), ';');
     }
     else if (attr->name() == SVGNames::keyTimesAttr)
     {
-        if(m_keyTimes)
-            m_keyTimes->deref();
-
         m_keyTimes = new SVGStringListImpl();
-        m_keyTimes->ref();
-                    
-        SVGHelper::ParseSeperatedList(m_keyTimes, value.qstring(), ';');
+        SVGHelper::ParseSeperatedList(m_keyTimes.get(), value.qstring(), ';');
     }
     else if (attr->name() == SVGNames::keySplinesAttr)
     {
-        if(m_keySplines)
-            m_keySplines->deref();
-
         m_keySplines = new SVGStringListImpl();
-        m_keySplines->ref();
-                    
-        SVGHelper::ParseSeperatedList(m_keySplines, value.qstring(), ';');
+        SVGHelper::ParseSeperatedList(m_keySplines.get(), value.qstring(), ';');
     }
     else if (attr->name() == SVGNames::fromAttr)
         m_from = value.qstring();

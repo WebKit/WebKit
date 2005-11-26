@@ -26,23 +26,23 @@
 
 using namespace KSVG;
 
-SVGPaintImpl::SVGPaintImpl() : SVGColorImpl(), m_uri(0)
+SVGPaintImpl::SVGPaintImpl() : SVGColorImpl()
 {
     m_paintType = SVG_PAINTTYPE_UNKNOWN;
 }
 
-SVGPaintImpl::SVGPaintImpl(KDOM::DOMStringImpl *uri) : SVGColorImpl(), m_uri(0)
+SVGPaintImpl::SVGPaintImpl(KDOM::DOMStringImpl *uri) : SVGColorImpl()
 {
     m_paintType = SVG_PAINTTYPE_URI;
     setUri(uri);
 }
 
-SVGPaintImpl::SVGPaintImpl(unsigned short paintType) : SVGColorImpl(), m_uri(0)
+SVGPaintImpl::SVGPaintImpl(unsigned short paintType) : SVGColorImpl()
 {
     m_paintType = paintType;
 }
 
-SVGPaintImpl::SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *) : SVGColorImpl(rgbPaint), m_uri(0)
+SVGPaintImpl::SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *) : SVGColorImpl(rgbPaint)
 {
     m_paintType = paintType;
     setUri(uri);
@@ -50,8 +50,6 @@ SVGPaintImpl::SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, K
 
 SVGPaintImpl::~SVGPaintImpl()
 {
-    if(m_uri)
-        m_uri->deref();
 }
 
 unsigned short SVGPaintImpl::paintType() const
@@ -61,12 +59,12 @@ unsigned short SVGPaintImpl::paintType() const
 
 KDOM::DOMStringImpl *SVGPaintImpl::uri() const
 {
-    return m_uri;
+    return m_uri.impl();
 }
 
 void SVGPaintImpl::setUri(KDOM::DOMStringImpl *uri)
 {
-    KDOM::KDOM_SAFE_SET(m_uri, uri);
+    m_uri = uri;
 }
 
 void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *)
@@ -86,7 +84,7 @@ KDOM::DOMString SVGPaintImpl::cssText() const
     else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
         return "currentColor";
     else if(m_paintType == SVG_PAINTTYPE_URI)
-        return KDOM::DOMString(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).qstring() + QString::fromLatin1(")"));
+        return KDOM::DOMString(QString::fromLatin1("url(") + m_uri.qstring() + QString::fromLatin1(")"));
 
     return SVGColorImpl::cssText();
 }

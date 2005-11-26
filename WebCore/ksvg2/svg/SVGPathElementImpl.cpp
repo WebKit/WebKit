@@ -51,17 +51,10 @@ namespace KSVG {
 SVGPathElementImpl::SVGPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGPathParser()
 {
-    m_pathLength = 0;
-    m_pathSegList = 0;
 }
 
 SVGPathElementImpl::~SVGPathElementImpl()
 {
-    if(m_pathSegList)
-        m_pathSegList->deref();
-
-    if(m_pathLength)
-        m_pathLength->deref();
 }
 
 SVGAnimatedNumberImpl *SVGPathElementImpl::pathLength() const
@@ -72,7 +65,7 @@ SVGAnimatedNumberImpl *SVGPathElementImpl::pathLength() const
         m_pathLength->setBaseVal(0);
     }
     
-    return m_pathLength;
+    return m_pathLength.get();
 }
 
 double SVGPathElementImpl::getTotalLength()

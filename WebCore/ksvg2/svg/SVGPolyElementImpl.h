@@ -54,7 +54,7 @@ namespace KSVG
         virtual void notifyAttributeChange() const;
 
     private:
-        mutable SVGPointListImpl *m_points;
+        mutable SharedPtr<SVGPointListImpl> m_points;
 
         virtual void svgPolyTo(double x1, double y1, int nr) const;
     };

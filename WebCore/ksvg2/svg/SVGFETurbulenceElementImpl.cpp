@@ -45,26 +45,11 @@ using namespace KSVG;
 SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_baseFrequencyX = m_baseFrequencyY = m_seed = 0;
-    m_numOctaves = 0;
-    m_stitchTiles = m_type = 0;
     m_filterEffect = 0;
 }
 
 SVGFETurbulenceElementImpl::~SVGFETurbulenceElementImpl()
 {
-    if(m_baseFrequencyX)
-        m_baseFrequencyX->deref();
-    if(m_baseFrequencyY)
-        m_baseFrequencyY->deref();
-    if(m_numOctaves)
-        m_numOctaves->deref();
-    if(m_seed)
-        m_seed->deref();
-    if(m_stitchTiles)
-        m_stitchTiles->deref();
-    if(m_type)
-        m_type->deref();
 }
 
 SVGAnimatedNumberImpl *SVGFETurbulenceElementImpl::baseFrequencyX() const

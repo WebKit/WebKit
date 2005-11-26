@@ -41,14 +41,11 @@ using namespace KSVG;
 SVGFEFloodElementImpl::SVGFEFloodElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
     m_filterEffect = 0;
 }
 
 SVGFEFloodElementImpl::~SVGFEFloodElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEFloodElementImpl::in1() const

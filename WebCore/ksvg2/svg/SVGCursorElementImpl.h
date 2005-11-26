@@ -57,8 +57,8 @@ namespace KSVG
         const QPixmap &pixmap() const { return m_image; }
 
     private:
-        mutable SVGAnimatedLengthImpl *m_x;
-        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
         KDOM::CachedImage *m_cachedImage;
         QPixmap m_image;
     };

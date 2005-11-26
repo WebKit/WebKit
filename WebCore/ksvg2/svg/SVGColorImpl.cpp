@@ -31,26 +31,24 @@
 
 using namespace KSVG;
 
-SVGColorImpl::SVGColorImpl() : KDOM::CSSValueImpl(), m_rgbColor(0)
+SVGColorImpl::SVGColorImpl() : KDOM::CSSValueImpl()
 {
     m_colorType = SVG_COLORTYPE_UNKNOWN;
 }
 
-SVGColorImpl::SVGColorImpl(KDOM::DOMStringImpl *rgbColor) : KDOM::CSSValueImpl(), m_rgbColor(0)
+SVGColorImpl::SVGColorImpl(KDOM::DOMStringImpl *rgbColor) : KDOM::CSSValueImpl()
 {
     m_colorType = SVG_COLORTYPE_RGBCOLOR;
     setRGBColor(rgbColor);
 }
 
-SVGColorImpl::SVGColorImpl(unsigned short colorType) : KDOM::CSSValueImpl(), m_rgbColor(0)
+SVGColorImpl::SVGColorImpl(unsigned short colorType) : KDOM::CSSValueImpl()
 {
     m_colorType = colorType;
 }
 
 SVGColorImpl::~SVGColorImpl()
 {
-    if(m_rgbColor)
-        m_rgbColor->deref();
 }
 
 unsigned short SVGColorImpl::colorType() const
@@ -216,12 +214,12 @@ static const QColor cmap[] =
 
 void SVGColorImpl::setRGBColor(KDOM::DOMStringImpl *rgbColor)
 {
-    KDOM_SAFE_SET(m_rgbColor, rgbColor);
+    m_rgbColor = rgbColor;
 
-    if(!m_rgbColor)
+    if(m_rgbColor.isNull())
         return;
 
-    QString parse = KDOM::DOMString(m_rgbColor).qstring().stripWhiteSpace();
+    QString parse = m_rgbColor.qstring().stripWhiteSpace();
     if(parse.startsWith(QString::fromLatin1("rgb(")))
     {
         QStringList colors = QStringList::split(',', parse);
@@ -251,7 +249,7 @@ void SVGColorImpl::setRGBColor(KDOM::DOMStringImpl *rgbColor)
     }
     else
     {
-        KDOM::DOMString colorName = m_rgbColor->lower();
+        KDOM::DOMString colorName = m_rgbColor.lower();
         QString name = colorName.qstring();
 //        int col = KSVG::getValueID(name.ascii(), name.length());
 //        if(col == 0)

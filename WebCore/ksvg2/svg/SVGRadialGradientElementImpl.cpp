@@ -46,45 +46,32 @@ using namespace KSVG;
 
 SVGRadialGradientElementImpl::SVGRadialGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGGradientElementImpl(tagName, doc)
 {
-    m_cx = m_cy = m_fx = m_fy = m_r = 0;
 }
 
 SVGRadialGradientElementImpl::~SVGRadialGradientElementImpl()
 {
-    if(m_cx)
-        m_cx->deref();
-    if(m_cy)
-        m_cy->deref();
-    if(m_fx)
-        m_fx->deref();
-    if(m_fy)
-        m_fy->deref();
-    if(m_r)
-        m_r->deref();
 }
 
 SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::cx() const
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if(!m_cx)
-    {
+    if (!m_cx) {
         lazy_create<SVGAnimatedLengthImpl>(m_cx, this, LM_WIDTH, viewportElement());
         m_cx->baseVal()->setValue(0.5);
     }
 
-    return m_cx;
+    return m_cx.get();
 }
 
 SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::cy() const
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if(!m_cy)
-    {
+    if (!m_cy) {
         lazy_create<SVGAnimatedLengthImpl>(m_cy, this, LM_HEIGHT, viewportElement());
         m_cy->baseVal()->setValue(0.5);
     }
 
-    return m_cy;
+    return m_cy.get();
 }
 
 SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::fx() const
@@ -100,13 +87,12 @@ SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::fy() const
 SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::r() const
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if(!m_r)
-    {
+    if (!m_r) {
         lazy_create<SVGAnimatedLengthImpl>(m_r, this, LM_OTHER, viewportElement());
         m_r->baseVal()->setValue(0.5);
     }
 
-    return m_r;
+    return m_r.get();
 }
 
 void SVGRadialGradientElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)

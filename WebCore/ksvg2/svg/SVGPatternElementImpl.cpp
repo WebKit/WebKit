@@ -50,11 +50,6 @@ using namespace KSVG;
 
 SVGPatternElementImpl::SVGPatternElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledLocatableElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl(), KCanvasResourceListener()
 {
-    m_patternUnits = 0;
-    m_patternTransform = 0;
-    m_patternContentUnits = 0;
-    m_x = m_y = m_width = m_height = 0;
-
     m_tile = 0;
     m_paintServer = 0;
     m_ignoreAttributeChanges = false;
@@ -62,42 +57,26 @@ SVGPatternElementImpl::SVGPatternElementImpl(const KDOM::QualifiedName& tagName,
 
 SVGPatternElementImpl::~SVGPatternElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
-    if(m_patternUnits)
-        m_patternUnits->deref();
-    if(m_patternContentUnits)
-        m_patternContentUnits->deref();
-    if(m_patternTransform)
-        m_patternTransform->deref();
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternUnits() const
 {
-    if(!m_patternUnits)
-    {
+    if (!m_patternUnits) {
         lazy_create<SVGAnimatedEnumerationImpl>(m_patternUnits, this);
         m_patternUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
 
-    return m_patternUnits;
+    return m_patternUnits.get();
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternContentUnits() const
 {
-    if(!m_patternContentUnits)
-    {
+    if (!m_patternContentUnits) {
         lazy_create<SVGAnimatedEnumerationImpl>(m_patternContentUnits, this);
         m_patternContentUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
     }
 
-    return m_patternContentUnits;
+    return m_patternContentUnits.get();
 }
 
 SVGAnimatedLengthImpl *SVGPatternElementImpl::x() const
@@ -392,12 +371,10 @@ SVGMatrixImpl *SVGPatternElementImpl::getCTM() const
     SVGMatrixImpl *mat = SVGSVGElementImpl::createSVGMatrix();
     if(mat)
     {
-        SVGMatrixImpl *viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
+        SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
                                                         height()->baseVal()->value());
 
-        viewBox->ref();
-        mat->multiply(viewBox);
-        viewBox->deref();
+        mat->multiply(viewBox.get());
     }
 
     return mat;

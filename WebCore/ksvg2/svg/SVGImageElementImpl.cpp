@@ -66,27 +66,12 @@ using namespace KSVG;
 SVGImageElementImpl::SVGImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()
 {
-    m_x = m_y = m_width = m_height = 0;
-    m_preserveAspectRatio = 0;
     //m_cachedDocument = 0;
     m_cachedImage = 0;
-    m_svgDoc = 0;
 }
 
 SVGImageElementImpl::~SVGImageElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
-    if(m_preserveAspectRatio)
-        m_preserveAspectRatio->deref();
-    if(m_svgDoc)
-        m_svgDoc->deref();
 }
 
 SVGAnimatedLengthImpl *SVGImageElementImpl::x() const

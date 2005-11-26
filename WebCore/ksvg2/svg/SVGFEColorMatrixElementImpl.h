@@ -49,9 +49,9 @@ namespace KSVG
         virtual KCanvasFEColorMatrix *filterEffect() const;
 
     private:
-        mutable SVGAnimatedStringImpl *m_in1;
-        mutable SVGAnimatedEnumerationImpl *m_type;
-        mutable SVGAnimatedNumberListImpl *m_values;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
+        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_type;
+        mutable SharedPtr<SVGAnimatedNumberListImpl> m_values;
         mutable KCanvasFEColorMatrix *m_filterEffect;
     };
 };

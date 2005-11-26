@@ -36,17 +36,10 @@ using namespace KSVG;
 SVGCircleElementImpl::SVGCircleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_cx = m_cy = m_r = 0;
 }
 
 SVGCircleElementImpl::~SVGCircleElementImpl()
 {
-    if(m_cx)
-        m_cx->deref();
-    if(m_cy)
-        m_cy->deref();
-    if(m_r)
-        m_r->deref();
 }
 
 SVGAnimatedLengthImpl *SVGCircleElementImpl::cx() const

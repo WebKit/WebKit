@@ -1,3 +1,266 @@
+2005-11-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Removed all usage of ref(), deref() from ksvg2
+        Instead everything uses SharedPtr now.
+        Also updated lazy_create to be SharedPtr aware.
+        And removed KDOM_SAFE_SET.
+
+        No additional test cases needed.
+
+        * WebCore+SVG/KDOMStubClasses.h:
+        * ksvg2/events/SVGZoomEventImpl.cpp:
+        (SVGZoomEventImpl::SVGZoomEventImpl):
+        (SVGZoomEventImpl::~SVGZoomEventImpl):
+        (SVGZoomEventImpl::zoomRectScreen):
+        (SVGZoomEventImpl::previousTranslate):
+        (SVGZoomEventImpl::newTranslate):
+        * ksvg2/events/SVGZoomEventImpl.h:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::notifyAll):
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::SVGAElementImpl):
+        (SVGAElementImpl::~SVGAElementImpl):
+        * ksvg2/svg/SVGAElementImpl.h:
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::SVGAnimateColorElementImpl):
+        (SVGAnimateColorElementImpl::~SVGAnimateColorElementImpl):
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateColorElementImpl.h:
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::parseTransformValue):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        (KSVG::SVGAnimatedTemplate::~SVGAnimatedTemplate):
+        (KSVG::SVGAnimatedTemplate::baseVal):
+        (KSVG::SVGAnimatedTemplate::setBaseVal):
+        (KSVG::SVGAnimatedTemplate::animVal):
+        (KSVG::SVGAnimatedTemplate::setAnimVal):
+        (KSVG::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::SVGAnimationElementImpl):
+        (SVGAnimationElementImpl::~SVGAnimationElementImpl):
+        (SVGAnimationElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        * ksvg2/svg/SVGCircleElementImpl.cpp:
+        (SVGCircleElementImpl::SVGCircleElementImpl):
+        (SVGCircleElementImpl::~SVGCircleElementImpl):
+        * ksvg2/svg/SVGCircleElementImpl.h:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::SVGClipPathElementImpl):
+        (SVGClipPathElementImpl::~SVGClipPathElementImpl):
+        (SVGClipPathElementImpl::clipPathUnits):
+        * ksvg2/svg/SVGClipPathElementImpl.h:
+        * ksvg2/svg/SVGColorImpl.cpp:
+        (SVGColorImpl::SVGColorImpl):
+        (SVGColorImpl::~SVGColorImpl):
+        (SVGColorImpl::setRGBColor):
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        (SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl):
+        (SVGComponentTransferFunctionElementImpl::~SVGComponentTransferFunctionElementImpl):
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.h:
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        (SVGCursorElementImpl::SVGCursorElementImpl):
+        (SVGCursorElementImpl::~SVGCursorElementImpl):
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::SVGDocumentImpl):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGElementImpl.h:
+        * ksvg2/svg/SVGEllipseElementImpl.cpp:
+        (KSVG::SVGEllipseElementImpl::SVGEllipseElementImpl):
+        (KSVG::SVGEllipseElementImpl::~SVGEllipseElementImpl):
+        * ksvg2/svg/SVGEllipseElementImpl.h:
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.cpp:
+        (SVGExternalResourcesRequiredImpl::SVGExternalResourcesRequiredImpl):
+        (SVGExternalResourcesRequiredImpl::~SVGExternalResourcesRequiredImpl):
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.h:
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::SVGFEBlendElementImpl):
+        (SVGFEBlendElementImpl::~SVGFEBlendElementImpl):
+        * ksvg2/svg/SVGFEBlendElementImpl.h:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl):
+        (SVGFEColorMatrixElementImpl::~SVGFEColorMatrixElementImpl):
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.h:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl):
+        (SVGFEComponentTransferElementImpl::~SVGFEComponentTransferElementImpl):
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.h:
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::SVGFECompositeElementImpl):
+        (SVGFECompositeElementImpl::~SVGFECompositeElementImpl):
+        * ksvg2/svg/SVGFECompositeElementImpl.h:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::SVGFEFloodElementImpl):
+        (SVGFEFloodElementImpl::~SVGFEFloodElementImpl):
+        * ksvg2/svg/SVGFEFloodElementImpl.h:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl):
+        (SVGFEGaussianBlurElementImpl::~SVGFEGaussianBlurElementImpl):
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.h:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::SVGFEImageElementImpl):
+        (SVGFEImageElementImpl::~SVGFEImageElementImpl):
+        * ksvg2/svg/SVGFEImageElementImpl.h:
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.cpp:
+        (SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl):
+        (SVGFEMergeNodeElementImpl::~SVGFEMergeNodeElementImpl):
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.h:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::SVGFEOffsetElementImpl):
+        (SVGFEOffsetElementImpl::~SVGFEOffsetElementImpl):
+        * ksvg2/svg/SVGFEOffsetElementImpl.h:
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::SVGFETileElementImpl):
+        (SVGFETileElementImpl::~SVGFETileElementImpl):
+        * ksvg2/svg/SVGFETileElementImpl.h:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl):
+        (SVGFETurbulenceElementImpl::~SVGFETurbulenceElementImpl):
+        * ksvg2/svg/SVGFETurbulenceElementImpl.h:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::SVGFilterElementImpl):
+        (SVGFilterElementImpl::~SVGFilterElementImpl):
+        (SVGFilterElementImpl::filterUnits):
+        (SVGFilterElementImpl::primitiveUnits):
+        (SVGFilterElementImpl::x):
+        (SVGFilterElementImpl::y):
+        (SVGFilterElementImpl::width):
+        (SVGFilterElementImpl::height):
+        * ksvg2/svg/SVGFilterElementImpl.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl):
+        (SVGFilterPrimitiveStandardAttributesImpl::~SVGFilterPrimitiveStandardAttributesImpl):
+        (SVGFilterPrimitiveStandardAttributesImpl::width):
+        (SVGFilterPrimitiveStandardAttributesImpl::height):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.h:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::SVGGradientElementImpl):
+        (SVGGradientElementImpl::~SVGGradientElementImpl):
+        (SVGGradientElementImpl::gradientUnits):
+        * ksvg2/svg/SVGGradientElementImpl.h:
+        * ksvg2/svg/SVGHelper.h:
+        (KSVG::lazy_create):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::SVGImageElementImpl):
+        (SVGImageElementImpl::~SVGImageElementImpl):
+        * ksvg2/svg/SVGImageElementImpl.h:
+        * ksvg2/svg/SVGLineElementImpl.cpp:
+        (SVGLineElementImpl::SVGLineElementImpl):
+        (SVGLineElementImpl::~SVGLineElementImpl):
+        * ksvg2/svg/SVGLineElementImpl.h:
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::SVGLinearGradientElementImpl):
+        (SVGLinearGradientElementImpl::~SVGLinearGradientElementImpl):
+        (SVGLinearGradientElementImpl::x2):
+        * ksvg2/svg/SVGLinearGradientElementImpl.h:
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::SVGMarkerElementImpl):
+        (SVGMarkerElementImpl::~SVGMarkerElementImpl):
+        (SVGMarkerElementImpl::markerUnits):
+        * ksvg2/svg/SVGMarkerElementImpl.h:
+        * ksvg2/svg/SVGPaintImpl.cpp:
+        (SVGPaintImpl::SVGPaintImpl):
+        (SVGPaintImpl::~SVGPaintImpl):
+        (SVGPaintImpl::uri):
+        (SVGPaintImpl::setUri):
+        (SVGPaintImpl::cssText):
+        * ksvg2/svg/SVGPaintImpl.h:
+        * ksvg2/svg/SVGPathElementImpl.cpp:
+        (KSVG::SVGPathElementImpl::SVGPathElementImpl):
+        (KSVG::SVGPathElementImpl::~SVGPathElementImpl):
+        (KSVG::SVGPathElementImpl::pathLength):
+        * ksvg2/svg/SVGPathElementImpl.h:
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::SVGPatternElementImpl):
+        (SVGPatternElementImpl::~SVGPatternElementImpl):
+        (SVGPatternElementImpl::patternUnits):
+        (SVGPatternElementImpl::patternContentUnits):
+        (SVGPatternElementImpl::getCTM):
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        (SVGPolyElementImpl::SVGPolyElementImpl):
+        (SVGPolyElementImpl::~SVGPolyElementImpl):
+        * ksvg2/svg/SVGPolyElementImpl.h:
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::SVGRadialGradientElementImpl):
+        (SVGRadialGradientElementImpl::~SVGRadialGradientElementImpl):
+        (SVGRadialGradientElementImpl::cx):
+        (SVGRadialGradientElementImpl::cy):
+        (SVGRadialGradientElementImpl::r):
+        * ksvg2/svg/SVGRadialGradientElementImpl.h:
+        * ksvg2/svg/SVGRectElementImpl.cpp:
+        (SVGRectElementImpl::SVGRectElementImpl):
+        (SVGRectElementImpl::~SVGRectElementImpl):
+        * ksvg2/svg/SVGRectElementImpl.h:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::SVGSVGElementImpl):
+        (SVGSVGElementImpl::~SVGSVGElementImpl):
+        (SVGSVGElementImpl::width):
+        (SVGSVGElementImpl::height):
+        (SVGSVGElementImpl::viewport):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::SVGScriptElementImpl):
+        (SVGScriptElementImpl::~SVGScriptElementImpl):
+        (SVGScriptElementImpl::type):
+        (SVGScriptElementImpl::setType):
+        (SVGScriptElementImpl::executeScript):
+        * ksvg2/svg/SVGScriptElementImpl.h:
+        * ksvg2/svg/SVGStopElementImpl.cpp:
+        (SVGStopElementImpl::SVGStopElementImpl):
+        (SVGStopElementImpl::~SVGStopElementImpl):
+        * ksvg2/svg/SVGStopElementImpl.h:
+        * ksvg2/svg/SVGStringListImpl.cpp:
+        (SVGStringListImpl::reset):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::SVGStyledElementImpl):
+        (SVGStyledElementImpl::~SVGStyledElementImpl):
+        (SVGStyledElementImpl::className):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        (SVGStyledTransformableElementImpl::SVGStyledTransformableElementImpl):
+        (SVGStyledTransformableElementImpl::~SVGStyledTransformableElementImpl):
+        (SVGStyledTransformableElementImpl::getCTM):
+        (SVGStyledTransformableElementImpl::getScreenCTM):
+        (SVGStyledTransformableElementImpl::updateLocalTransform):
+        * ksvg2/svg/SVGStyledTransformableElementImpl.h:
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        (SVGTestsImpl::SVGTestsImpl):
+        (SVGTestsImpl::~SVGTestsImpl):
+        * ksvg2/svg/SVGTestsImpl.h:
+        * ksvg2/svg/SVGTextContentElementImpl.cpp:
+        (SVGTextContentElementImpl::SVGTextContentElementImpl):
+        (SVGTextContentElementImpl::~SVGTextContentElementImpl):
+        * ksvg2/svg/SVGTextContentElementImpl.h:
+        * ksvg2/svg/SVGTextPositioningElementImpl.cpp:
+        (SVGTextPositioningElementImpl::SVGTextPositioningElementImpl):
+        (SVGTextPositioningElementImpl::~SVGTextPositioningElementImpl):
+        * ksvg2/svg/SVGTextPositioningElementImpl.h:
+        * ksvg2/svg/SVGTransformImpl.cpp:
+        (SVGTransformImpl::SVGTransformImpl):
+        (SVGTransformImpl::~SVGTransformImpl):
+        (SVGTransformImpl::matrix):
+        (SVGTransformImpl::setMatrix):
+        * ksvg2/svg/SVGTransformImpl.h:
+        * ksvg2/svg/SVGURIReferenceImpl.cpp:
+        (SVGURIReferenceImpl::SVGURIReferenceImpl):
+        (SVGURIReferenceImpl::~SVGURIReferenceImpl):
+        * ksvg2/svg/SVGURIReferenceImpl.h:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::SVGUseElementImpl):
+        (SVGUseElementImpl::~SVGUseElementImpl):
+        * ksvg2/svg/SVGUseElementImpl.h:
+        * ksvg2/svg/SVGViewElementImpl.cpp:
+        (SVGViewElementImpl::SVGViewElementImpl):
+        (SVGViewElementImpl::~SVGViewElementImpl):
+        * ksvg2/svg/SVGViewElementImpl.h:
+
  2005-11-23  Eric Seidel  <eseidel@apple.com>
  
          Reviewed by mjs.

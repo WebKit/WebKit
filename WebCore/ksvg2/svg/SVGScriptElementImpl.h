@@ -47,7 +47,7 @@ namespace KSVG
         static void executeScript(KDOM::DocumentImpl *document, KDOM::DOMStringImpl *jsCode);
 
     private:
-        KDOM::DOMStringImpl *m_type;
+        KDOM::DOMString m_type;
     };
 };
 

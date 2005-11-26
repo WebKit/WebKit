@@ -176,7 +176,7 @@ void SVGTimer::notifyAll()
         Q3PtrList<SVGAnimationElementImpl>::Iterator end = tit.data().end();
 
         QMap<QString, QColor> targetColor; // special <animateColor> case
-        SVGTransformListImpl *targetTransforms = 0; // special <animateTransform> case    
+        SharedPtr<SVGTransformListImpl> targetTransforms; // special <animateTransform> case    
 
         for(; it != end; ++it)
         {
@@ -207,54 +207,39 @@ void SVGTimer::notifyAll()
                 if(!animTransform)
                     continue;
 
-                SVGMatrixImpl *transformMatrix = animTransform->transformMatrix();
+                SharedPtr<SVGMatrixImpl> transformMatrix = animTransform->transformMatrix();
                 if(!transformMatrix)
                     continue;
 
-                SVGMatrixImpl *initialMatrix = animTransform->initialMatrix();
-    
-                if(initialMatrix)
-                    initialMatrix->ref();
-            
-                transformMatrix->ref();
-    
-                SVGTransformImpl *data = new SVGTransformImpl();
-                data->ref();
+                SharedPtr<SVGMatrixImpl> initialMatrix = animTransform->initialMatrix();
+                SharedPtr<SVGTransformImpl> data = new SVGTransformImpl();
 
                 if(!targetTransforms) // lazy creation, only if needed.
                 {
                     targetTransforms = new SVGTransformListImpl();
-                    targetTransforms->ref();
 
                     if(animation->isAdditive() && initialMatrix)
                     {
-                        SVGMatrixImpl *matrix = new SVGMatrixImpl(initialMatrix->qmatrix());
-                        matrix->ref();
-
-                        data->setMatrix(matrix);
-                        targetTransforms->appendItem(data);
+                        SharedPtr<SVGMatrixImpl> matrix = new SVGMatrixImpl(initialMatrix->qmatrix());
+                        
+                        data->setMatrix(matrix.get());
+                        targetTransforms->appendItem(data.get());
 
                         data = new SVGTransformImpl();
-                        data->ref();
                     }
                 }
 
                 if(targetTransforms->numberOfItems() <= 1)
-                    data->setMatrix(transformMatrix);
+                    data->setMatrix(transformMatrix.get());
                 else
                 {
                     if(!animation->isAdditive())
                         targetTransforms->clear();    
                     
-                    data->setMatrix(transformMatrix);
+                    data->setMatrix(transformMatrix.get());
                 }
 
-                targetTransforms->appendItem(data);
-
-                if(initialMatrix)
-                    initialMatrix->deref();
-
-                transformMatrix->deref();
+                targetTransforms->appendItem(data.get());
             }
             else if(animation->hasTagName(SVGNames::animateColorTag))
             {
@@ -301,7 +286,7 @@ void SVGTimer::notifyAll()
             if(key && key->isStyled() && key->isStyledTransformable())
             {
                 SVGStyledTransformableElementImpl *transform = static_cast<SVGStyledTransformableElementImpl *>(key);
-                transform->transform()->setAnimVal(targetTransforms);
+                transform->transform()->setAnimVal(targetTransforms.get());
                 transform->updateLocalTransform(transform->transform()->animVal());
             }
         }

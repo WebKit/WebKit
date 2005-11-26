@@ -53,7 +53,7 @@ namespace KSVG
         virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
 
     private:
-        mutable SVGAnimatedEnumerationImpl *m_clipPathUnits;
+        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_clipPathUnits;
         KCanvasClipper *m_clipper;
     };
 };

@@ -84,21 +84,6 @@ namespace KSVG
     };
 };
 
-// Same like KDOM_IMPL_DTOR_ASSIGN_OP, just uses 'impl' instead of 'd'.
-#define KSVG_IMPL_DTOR_ASSIGN_OP(T) \
-T::~T() { if(impl) impl->deref(); } \
-T &T::operator=(const T &other) { \
-    KDOM_SAFE_SET(impl, other.impl); \
-    return *this; \
-} \
-bool T::operator==(const T &other) const { \
-    return impl == other.impl; \
-} \
-bool T::operator!=(const T &other) const { \
-    return !operator==(other); \
-} \
-
-
 // Helper for DOMNode -> SVGElement conversion
 #include <kdom/kdom.h>
 #include <kdom/Namespace.h>

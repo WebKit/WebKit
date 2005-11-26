@@ -55,7 +55,7 @@ namespace KSVG
         virtual void defaultEventHandler(KDOM::EventImpl *evt);
 
     private:
-        mutable SVGAnimatedStringImpl *m_target;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_target;
     };
 };
 

@@ -43,20 +43,11 @@ using namespace KSVG;
 SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
-    m_dx = 0;
-    m_dy = 0;
     m_filterEffect = 0;
 }
 
 SVGFEOffsetElementImpl::~SVGFEOffsetElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
-    if(m_dx)
-        m_dx->deref();
-    if(m_dy)
-        m_dy->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEOffsetElementImpl::in1() const

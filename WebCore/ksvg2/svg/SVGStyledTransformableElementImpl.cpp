@@ -43,16 +43,10 @@ using namespace KSVG;
 SVGStyledTransformableElementImpl::SVGStyledTransformableElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledLocatableElementImpl(tagName, doc), SVGTransformableImpl()
 {
-    m_transform = 0;
-    m_localMatrix = 0;
 }
 
 SVGStyledTransformableElementImpl::~SVGStyledTransformableElementImpl()
 {
-    if(m_transform)
-        m_transform->deref();
-    if(m_localMatrix)
-        m_localMatrix->deref();
 }
 
 SVGAnimatedTransformListImpl *SVGStyledTransformableElementImpl::transform() const
@@ -70,7 +64,7 @@ SVGMatrixImpl *SVGStyledTransformableElementImpl::getCTM() const
     SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM(this);
 
     if(m_localMatrix)
-        ctm->multiply(m_localMatrix);
+        ctm->multiply(m_localMatrix.get());
 
     return ctm;
 }
@@ -80,7 +74,7 @@ SVGMatrixImpl *SVGStyledTransformableElementImpl::getScreenCTM() const
     SVGMatrixImpl *ctm = SVGLocatableImpl::getScreenCTM(this);
 
     if(m_localMatrix)
-        ctm->multiply(m_localMatrix);
+        ctm->multiply(m_localMatrix.get());
 
     return ctm;
 }
@@ -90,7 +84,7 @@ void SVGStyledTransformableElementImpl::updateLocalTransform(SVGTransformListImp
     // Update cached local matrix
     SharedPtr<SVGTransformImpl> localTransform = localTransforms->concatenate();
     if(localTransform) {
-        KDOM::KDOM_SAFE_SET(m_localMatrix, localTransform->matrix());
+        m_localMatrix = localTransform->matrix();
         if (renderer()) {
             renderer()->setLocalTransform(m_localMatrix->qmatrix());
             renderer()->setNeedsLayout(true);

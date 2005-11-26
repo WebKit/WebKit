@@ -34,13 +34,10 @@ using namespace KSVG;
 
 SVGURIReferenceImpl::SVGURIReferenceImpl()
 {
-    m_href = 0;
 }
 
 SVGURIReferenceImpl::~SVGURIReferenceImpl()
 {
-    if(m_href)
-        m_href->deref();
 }
 
 SVGAnimatedStringImpl *SVGURIReferenceImpl::href() const

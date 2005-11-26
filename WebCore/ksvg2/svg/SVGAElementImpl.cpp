@@ -41,13 +41,10 @@ using namespace KSVG;
 SVGAElementImpl::SVGAElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_target = 0;
 }
 
 SVGAElementImpl::~SVGAElementImpl()
 {
-    if(m_target)
-        m_target->deref();
 }
 
 SVGAnimatedStringImpl *SVGAElementImpl::target() const

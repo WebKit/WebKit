@@ -31,13 +31,10 @@ using namespace KSVG;
 
 SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGElementImpl(tagName, doc)
 {
-    m_in1 = 0;
 }
 
 SVGFEMergeNodeElementImpl::~SVGFEMergeNodeElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEMergeNodeElementImpl::in1() const

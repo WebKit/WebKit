@@ -38,13 +38,10 @@ SVGViewElementImpl::SVGViewElementImpl(const KDOM::QualifiedName& tagName, KDOM:
 : SVGStyledElementImpl(tagName, doc), SVGExternalResourcesRequiredImpl(),
 SVGFitToViewBoxImpl(), SVGZoomAndPanImpl()
 {
-    m_viewTarget = 0;
 }
 
 SVGViewElementImpl::~SVGViewElementImpl()
 {
-    if(m_viewTarget)
-        m_viewTarget->deref();
 }
 
 SVGStringListImpl *SVGViewElementImpl::viewTarget() const

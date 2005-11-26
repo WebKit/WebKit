@@ -46,11 +46,11 @@ namespace KSVG
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
-        mutable SVGAnimatedLengthListImpl *m_x;
-        mutable SVGAnimatedLengthListImpl *m_y;
-        mutable SVGAnimatedLengthListImpl *m_dx;
-        mutable SVGAnimatedLengthListImpl *m_dy;
-        mutable SVGAnimatedNumberListImpl *m_rotate;
+        mutable SharedPtr<SVGAnimatedLengthListImpl> m_x;
+        mutable SharedPtr<SVGAnimatedLengthListImpl> m_y;
+        mutable SharedPtr<SVGAnimatedLengthListImpl> m_dx;
+        mutable SharedPtr<SVGAnimatedLengthListImpl> m_dy;
+        mutable SharedPtr<SVGAnimatedNumberListImpl> m_rotate;
     };
 };
 

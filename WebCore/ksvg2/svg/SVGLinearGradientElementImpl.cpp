@@ -45,19 +45,10 @@ using namespace KSVG;
 
 SVGLinearGradientElementImpl::SVGLinearGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGGradientElementImpl(tagName, doc)
 {
-    m_x1 = m_y1 = m_x2 = m_y2 = 0;
 }
 
 SVGLinearGradientElementImpl::~SVGLinearGradientElementImpl()
 {
-    if(m_x1)
-        m_x1->deref();
-    if(m_y1)
-        m_y1->deref();
-    if(m_x2)
-        m_x2->deref();
-    if(m_y2)
-        m_y2->deref();
 }
 
 SVGAnimatedLengthImpl *SVGLinearGradientElementImpl::x1() const
@@ -75,14 +66,12 @@ SVGAnimatedLengthImpl *SVGLinearGradientElementImpl::y1() const
 SVGAnimatedLengthImpl *SVGLinearGradientElementImpl::x2() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    if(!m_x2)
-    {
+    if (!m_x2) {
         lazy_create<SVGAnimatedLengthImpl>(m_x2, this, LM_WIDTH, viewportElement());
         m_x2->baseVal()->setValue(1.0);
-        return m_x2;
     }
 
-    return m_x2;
+    return m_x2.get();
 }
 
 SVGAnimatedLengthImpl *SVGLinearGradientElementImpl::y2() const

@@ -34,23 +34,20 @@ using namespace KSVG;
 
 SVGScriptElementImpl::SVGScriptElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_type = 0;
 }
 
 SVGScriptElementImpl::~SVGScriptElementImpl()
 {
-    if(m_type)
-        m_type->deref();
 }
 
 KDOM::DOMStringImpl *SVGScriptElementImpl::type() const
 {
-    return m_type;
+    return m_type.impl();
 }
 
 void SVGScriptElementImpl::setType(KDOM::DOMStringImpl *type)
 {
-    KDOM_SAFE_SET(m_type, type);
+    m_type = type;
 }
 
 void SVGScriptElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
@@ -114,11 +111,9 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
     KJS::Interpreter::unlock();
 #endif
 #else
-    if (jsCode) {
+    if (jsCode)
         // Hack to close memory leak due to #if 0
-        jsCode->ref();
-        jsCode->deref();
-    }
+        KDOM::DOMString(jsCode);
 #endif
 }
 

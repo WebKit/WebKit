@@ -42,16 +42,11 @@ using namespace khtmlImLoad;
 SVGCursorElementImpl::SVGCursorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGElementImpl(tagName, doc), SVGTestsImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()
 {
-    m_x = m_y = 0;
     m_cachedImage = 0;
 }
 
 SVGCursorElementImpl::~SVGCursorElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
 }
 
 SVGAnimatedLengthImpl *SVGCursorElementImpl::x() const

@@ -36,19 +36,10 @@ namespace KSVG {
 SVGEllipseElementImpl::SVGEllipseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_cx = m_cy = m_rx = m_ry = 0;
 }
 
 SVGEllipseElementImpl::~SVGEllipseElementImpl()
 {
-    if(m_cx)
-        m_cx->deref();
-    if(m_cy)
-        m_cy->deref();
-    if(m_rx)
-        m_rx->deref();
-    if(m_ry)
-        m_ry->deref();
 }
 
 SVGAnimatedLengthImpl *SVGEllipseElementImpl::cx() const

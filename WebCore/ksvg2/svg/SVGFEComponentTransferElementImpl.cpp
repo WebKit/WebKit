@@ -48,14 +48,11 @@ using namespace KSVG;
 SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = 0;
     m_filterEffect = 0;
 }
 
 SVGFEComponentTransferElementImpl::~SVGFEComponentTransferElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEComponentTransferElementImpl::in1() const

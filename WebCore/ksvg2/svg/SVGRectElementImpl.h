@@ -58,12 +58,12 @@ namespace KSVG
         virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
     private:
-        mutable SVGAnimatedLengthImpl *m_x;
-        mutable SVGAnimatedLengthImpl *m_y;
-        mutable SVGAnimatedLengthImpl *m_width;
-        mutable SVGAnimatedLengthImpl *m_height;
-        mutable SVGAnimatedLengthImpl *m_rx;
-        mutable SVGAnimatedLengthImpl *m_ry;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_width;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_height;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_rx;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_ry;
     };
 };
 

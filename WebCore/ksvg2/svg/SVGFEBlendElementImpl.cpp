@@ -42,19 +42,11 @@ using namespace KSVG;
 SVGFEBlendElementImpl::SVGFEBlendElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = m_in2 = 0;
-    m_mode = 0;
     m_filterEffect = 0;
 }
 
 SVGFEBlendElementImpl::~SVGFEBlendElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
-    if(m_in2)
-        m_in2->deref();
-    if(m_mode)
-        m_mode->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEBlendElementImpl::in1() const

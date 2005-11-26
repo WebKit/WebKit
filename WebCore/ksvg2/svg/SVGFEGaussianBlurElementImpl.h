@@ -50,9 +50,9 @@ namespace KSVG
         virtual KCanvasFEGaussianBlur *filterEffect() const;
 
     private:
-        mutable SVGAnimatedStringImpl *m_in1;
-        mutable SVGAnimatedNumberImpl *m_stdDeviationX;
-        mutable SVGAnimatedNumberImpl *m_stdDeviationY;
+        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_stdDeviationX;
+        mutable SharedPtr<SVGAnimatedNumberImpl> m_stdDeviationY;
         mutable KCanvasFEGaussianBlur *m_filterEffect;
     };
 };

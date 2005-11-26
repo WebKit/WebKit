@@ -68,14 +68,14 @@ namespace KSVG
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
     private:
-        mutable SVGAnimatedLengthImpl *m_x;
-        mutable SVGAnimatedLengthImpl *m_y;
-        mutable SVGAnimatedLengthImpl *m_width;
-        mutable SVGAnimatedLengthImpl *m_height;
-        mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_width;
+        mutable SharedPtr<SVGAnimatedLengthImpl> m_height;
+        mutable SharedPtr<SVGAnimatedPreserveAspectRatioImpl> m_preserveAspectRatio;
         //mutable KDOM::CachedDocument *m_cachedDocument;
         KDOM::CachedImage *m_cachedImage;
-        SVGDocumentImpl *m_svgDoc;
+        SharedPtr<SVGDocumentImpl> m_svgDoc;
     };
 };
 

@@ -40,22 +40,10 @@ using namespace KSVG;
 SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc)
 {
-    m_x = m_y = m_width = m_height = 0;
-    m_result = 0;
 }
 
 SVGFilterPrimitiveStandardAttributesImpl::~SVGFilterPrimitiveStandardAttributesImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_width)
-        m_width->deref();
-    if(m_height)
-        m_height->deref();
-    if(m_result)
-        m_result->deref();
 }
 
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::x() const
@@ -73,27 +61,23 @@ SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::y() const
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::width() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    if(!m_width)
-    {
+    if (!m_width) {
         lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH);
         m_width->baseVal()->setValueAsString(KDOM::DOMString("100%").impl());
-        return m_width;
     }
 
-    return m_width;
+    return m_width.get();
 }
 
 SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::height() const
 {
     // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    if(!m_height)
-    {
+    if (!m_height) {
         lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT);
         m_height->baseVal()->setValueAsString(KDOM::DOMString("100%").impl());
-        return m_height;
     }
 
-    return m_height;
+    return m_height.get();
 }
 
 SVGAnimatedStringImpl *SVGFilterPrimitiveStandardAttributesImpl::result() const

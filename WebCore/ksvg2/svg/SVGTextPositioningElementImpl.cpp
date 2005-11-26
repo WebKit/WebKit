@@ -35,22 +35,10 @@ using namespace KSVG;
 SVGTextPositioningElementImpl::SVGTextPositioningElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGTextContentElementImpl(tagName, doc)
 {
-    m_x = m_y = m_dx = m_dy = 0;
-    m_rotate = 0;
 }
 
 SVGTextPositioningElementImpl::~SVGTextPositioningElementImpl()
 {
-    if(m_x)
-        m_x->deref();
-    if(m_y)
-        m_y->deref();
-    if(m_dx)
-        m_dx->deref();
-    if(m_dy)
-        m_dy->deref();
-    if(m_rotate)
-        m_rotate->deref();
 }
 
 SVGAnimatedLengthListImpl *SVGTextPositioningElementImpl::x() const

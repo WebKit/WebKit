@@ -42,7 +42,7 @@ namespace KSVG
         virtual void handleTimerEvent(double timePercentage);
 
         // Helpers
-        SVGTransformImpl *parseTransformValue(const QString &data) const;
+        SharedPtr<SVGTransformImpl> parseTransformValue(const QString &data) const;
         void calculateRotationFromMatrix(const QWMatrix &matrix, double &angle, double &cx, double &cy) const;
 
         SVGMatrixImpl *initialMatrix() const;

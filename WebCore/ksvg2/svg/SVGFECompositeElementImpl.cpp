@@ -46,28 +46,11 @@ using namespace KSVG;
 SVGFECompositeElementImpl::SVGFECompositeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
-    m_in1 = m_in2 = 0;
-    m_k1 = m_k2 = m_k3 = m_k4 = 0;
-    m_operator = 0;
     m_filterEffect = 0;
 }
 
 SVGFECompositeElementImpl::~SVGFECompositeElementImpl()
 {
-    if(m_in1)
-        m_in1->deref();
-    if(m_in2)
-        m_in2->deref();
-    if(m_operator)
-        m_operator->deref();
-    if(m_k1)
-        m_k1->deref();
-    if(m_k2)
-        m_k2->deref();
-    if(m_k3)
-        m_k3->deref();
-    if(m_k4)
-        m_k4->deref();
 }
 
 SVGAnimatedStringImpl *SVGFECompositeElementImpl::in1() const

@@ -39,14 +39,11 @@ using namespace KSVG;
 SVGClipPathElementImpl::SVGClipPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-    m_clipPathUnits = 0;
     m_clipper = 0;
 }
 
 SVGClipPathElementImpl::~SVGClipPathElementImpl()
 {
-    if(m_clipPathUnits)
-        m_clipPathUnits->deref();
 }
 
 SVGAnimatedEnumerationImpl *SVGClipPathElementImpl::clipPathUnits() const
@@ -57,7 +54,7 @@ SVGAnimatedEnumerationImpl *SVGClipPathElementImpl::clipPathUnits() const
         m_clipPathUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
     }
 
-    return m_clipPathUnits;
+    return m_clipPathUnits.get();
 }
 
 void SVGClipPathElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)

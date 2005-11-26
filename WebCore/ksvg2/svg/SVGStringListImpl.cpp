@@ -41,13 +41,13 @@ void SVGStringListImpl::reset(const QString &str)
     QStringList list = QStringList::split(' ', str);
     if(list.count() == 0)
     {
-        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl(str.ascii());
+        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl(str);
         item->ref();
         appendItem(item);
     }
     else for(QStringList::Iterator it = list.begin(); it != list.end(); ++it)
     {
-        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl((*it).ascii());
+        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl((*it));
         item->ref();
         appendItem(item);
     }

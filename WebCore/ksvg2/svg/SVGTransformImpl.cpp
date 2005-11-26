@@ -33,7 +33,6 @@ using namespace KSVG;
 SVGTransformImpl::SVGTransformImpl() : KDOM::Shared<SVGTransformImpl>()
 {
     m_matrix = SVGSVGElementImpl::createSVGMatrix();
-    m_matrix->ref();
 
     m_type = SVG_TRANSFORM_UNKNOWN;
     m_angle = 0;
@@ -41,8 +40,6 @@ SVGTransformImpl::SVGTransformImpl() : KDOM::Shared<SVGTransformImpl>()
 
 SVGTransformImpl::~SVGTransformImpl()
 {
-    if(m_matrix)
-        m_matrix->deref();
 }
 
 unsigned short SVGTransformImpl::type() const
@@ -52,7 +49,7 @@ unsigned short SVGTransformImpl::type() const
 
 SVGMatrixImpl *SVGTransformImpl::matrix() const
 {
-    return m_matrix;
+    return m_matrix.get();
 }
 
 double SVGTransformImpl::angle() const
@@ -65,7 +62,7 @@ void SVGTransformImpl::setMatrix(SVGMatrixImpl *matrix)
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;
     
-    KDOM::KDOM_SAFE_SET(m_matrix, matrix);
+    m_matrix = matrix;
 }
 
 void SVGTransformImpl::setTranslate(double tx, double ty)

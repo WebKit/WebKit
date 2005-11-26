@@ -68,8 +68,6 @@ SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *vi
 {
     setPaintDevice(svgView()); // Assign our KSVGView as document paint device
 
-    m_lastTarget = 0;
-
     m_scriptsIt = 0;
     m_cachedScript = 0;
 }
