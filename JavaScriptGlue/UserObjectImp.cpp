@@ -74,7 +74,7 @@ ValueImp *UserObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
 
         JSUserObject* jsResult;
         { // scope
-            InterpreterLock::DropAllLocks dropLocks;
+            JSLock::DropAllLocks dropLocks;
 
             // implementsCall should have guarded against a NULL fJSUserObject.
             assert(fJSUserObject);

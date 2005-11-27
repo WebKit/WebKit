@@ -26,7 +26,7 @@ static CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, Ob
 
 UString CFStringToUString(CFStringRef inCFString)
 {
-    InterpreterLock lock;
+    JSLock lock;
 
     UString result;
     if (inCFString) {
@@ -104,7 +104,7 @@ JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec)
 //--------------------------------------------------------------------------
 ValueImp *JSObjectKJSValue(JSUserObject* ptr)
 {
-    InterpreterLock lock;
+    JSLock lock;
 
     ValueImp *result = Undefined();
     if (ptr)
@@ -195,7 +195,7 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
 
     CFTypeRef result = 0;
 
-    InterpreterLock lock;
+    JSLock lock;
 
     switch (inValue->type())
     {
