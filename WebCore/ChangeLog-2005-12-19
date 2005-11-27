@@ -1,3 +1,13 @@
+2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5548
+        Allow <meta> to override encoding.
+
+        * khtml/misc/decoder.cpp:
+        (Decoder::decode):
+
 2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by ggaren.  Committed by eseidel.
