@@ -515,7 +515,9 @@ RenderTableCol *RenderTable::colElement(int col) {
 	    if (!next && child->parent()->isTableCol())
 		next = child->parent()->nextSibling();
 	    child = next;
-	} else
+	} else if (child == tCaption)
+            child = child->nextSibling();
+        else
 	    break;
     }
     return 0;
