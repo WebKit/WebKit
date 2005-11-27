@@ -1310,7 +1310,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     int extraWidthToEndOfLine = 0;
     QRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], UPSTREAM, &extraWidthToEndOfLine);
-    QRect endCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
+    QRect endCaretRect = [[range endContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
 
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
@@ -1681,9 +1681,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return TextIterator::rangeFromLocationAndLength(_part->xmlDocImpl(), nsrange.location, nsrange.length);
 }
 
-- (DOMRange *)convertToObjCDOMRange:(NSRange)nsrange
+- (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
 {
     return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange]];
+}
+
+- (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
+{
+    return [self convertToNSRange:[range _rangeImpl]];
 }
 
 - (void)selectNSRange:(NSRange)range
@@ -1984,6 +1989,31 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
     return position.isNull() ? nil : [DOMRange _rangeWithImpl:SelectionController(position).toRange().get()];
+}
+
+- (DOMRange *)characterRangeAtPoint:(NSPoint)point
+{
+    VisiblePosition position = [self _visiblePositionForPoint:point];
+    if (position.isNull())
+        return nil;
+    
+    VisiblePosition previous = position.previous();
+    if (previous.isNotNull()) {
+        DOMRange *previousCharacterRange = [DOMRange _rangeWithImpl:makeRange(previous, position).get()];
+        NSRect rect = [self firstRectForDOMRange:previousCharacterRange];
+        if (NSPointInRect(point, rect))
+            return previousCharacterRange;
+    }
+
+    VisiblePosition next = position.next();
+    if (next.isNotNull()) {
+        DOMRange *nextCharacterRange = [DOMRange _rangeWithImpl:makeRange(position, next).get()];
+        NSRect rect = [self firstRectForDOMRange:nextCharacterRange];
+        if (NSPointInRect(point, rect))
+            return nextCharacterRange;
+    }
+    
+    return nil;
 }
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete

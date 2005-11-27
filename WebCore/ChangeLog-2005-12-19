@@ -1,3 +1,17 @@
+2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by mjs.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5230
+        "characterIndexForPoint: not yet implemented"
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge firstRectForDOMRange:]):
+        (-[WebCoreBridge convertNSRangeToDOMRange:]):
+        (-[WebCoreBridge convertDOMRangeToNSRange:]):
+        (-[WebCoreBridge characterRangeAtPoint:]):
+
 2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Committed by eseidel.

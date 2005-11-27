@@ -395,7 +395,8 @@ typedef enum
 - (void)selectNSRange:(NSRange)range;
 - (NSRange)selectedNSRange;
 - (NSRange)markedTextNSRange;
-- (DOMRange *)convertToObjCDOMRange:(NSRange)range;
+- (DOMRange *)convertNSRangeToDOMRange:(NSRange)range;
+- (NSRange)convertDOMRangeToNSRange:(DOMRange *)range;
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text;
@@ -416,6 +417,7 @@ typedef enum
 - (void)removeDragCaret;
 - (DOMRange *)dragCaretDOMRange;
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
+- (DOMRange *)characterRangeAtPoint:(NSPoint)point;
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete;
 - (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete;
