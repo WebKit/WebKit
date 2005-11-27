@@ -1,3 +1,15 @@
+2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin, committed by eseidel.
+
+        <col> <colgroup> tests from mitz.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5822
+
+        * fast/table/colgroup-preceded-by-caption-expected.checksum: Added.
+        * fast/table/colgroup-preceded-by-caption-expected.png: Added.
+        * fast/table/colgroup-preceded-by-caption-expected.txt: Added.
+        * fast/table/colgroup-preceded-by-caption.html: Added.
+
 2005-11-25  eseidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.
