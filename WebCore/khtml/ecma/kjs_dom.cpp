@@ -698,7 +698,7 @@ ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
       // when the parameter is not a node? When the object is not an element?
       return Undefined();
     case DOMNode::Item:
-      return getDOMNode(exec, node.childNodes()->item(args[0]->toInt32(exec)));
+      return thisObj->get(exec, args[0]->toInt32(exec));
   }
 
   return Undefined();

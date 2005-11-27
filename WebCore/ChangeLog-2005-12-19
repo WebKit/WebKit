@@ -1,6 +1,16 @@
+2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ggaren.  Committed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5710
+        item(i) should work like item[i]
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+
 2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
 
-        Reviewed by mjs.
+        Reviewed by mjs.  Committed by eseidel.
 
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5230
         "characterIndexForPoint: not yet implemented"
