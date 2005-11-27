@@ -588,6 +588,9 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
 
 RenderStyle::~RenderStyle()
 {
+#if SVG_SUPPORT
+    delete m_svgStyle;
+#endif
 }
 
 bool RenderStyle::operator==(const RenderStyle& o) const

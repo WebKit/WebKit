@@ -46,10 +46,14 @@
 #include "KWQRenderTreeDebug.h"
 #endif
 
+#include <kxmlcore/Assertions.h>
+
 #include "SVGRenderStyle.h"
 #include <ksvg2/svg/SVGStyledElementImpl.h>
 
 #include <kdom/DOMString.h>
+#include "dom_atomicstring.h"
+#include "HTMLNames.h"
 
 #include <qtextstream.h>
 
@@ -247,18 +251,18 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
 
 static QTextStream &operator<<(QTextStream &ts, const RenderPath &o)
 {
-    ts << " " << o.relativeBBox();
+    ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
     
     writeStyle(ts, o);
     
-    ts << " [data=\"" << o.canvas()->renderingDevice()->stringForPath(o.path()) << "\"]";
+    ts << " [data=\"" << QPainter::renderingDevice()->stringForPath(o.path()) << "\"]";
     
     return ts;
 }
 
 static QTextStream &operator<<(QTextStream &ts, const KCanvasContainer &o)
 {
-    ts << " " << o.relativeBBox();
+    ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
     
     writeStyle(ts, o);
     
@@ -267,7 +271,7 @@ static QTextStream &operator<<(QTextStream &ts, const KCanvasContainer &o)
 
 static QString getTagName(void *node)
 {
-    KSVG::SVGStyledElementImpl *elem = static_cast<KSVG::SVGStyledElementImpl *>(node);
+    SVGStyledElementImpl *elem = static_cast<SVGStyledElementImpl *>(node);
     if (elem)
         return KDOM::DOMString(elem->nodeName()).qstring();
     return QString();
@@ -302,6 +306,30 @@ void write(QTextStream &ts, const RenderPath &path, int indent)
     }
     
     ts << path << endl;
+}
+
+void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent)
+{
+    ASSERT(parent);
+    KDOM::NodeImpl *node = parent;
+    do {
+        if (!node->isSVGElement())
+            continue;
+        SVGElementImpl *svgElement = static_cast<SVGElementImpl *>(node);
+        if (!svgElement->isStyled())
+            continue;
+
+        SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(svgElement);
+        KCanvasResource *resource = styled->canvasResource();
+        if (!resource)
+            continue;
+        
+        QString elementId = svgElement->getAttribute(DOM::HTMLNames::idAttr).qstring();
+        if (resource->isPaintServer())
+            ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *static_cast<KRenderingPaintServer *>(resource) << "}" << endl;
+        else
+            ts << "KCanvasResource {id=\"" << elementId << "\" " << *resource << "}" << endl;
+    } while ((node = node->traverseNextNode(parent)));
 }
 
 QTextStream &operator<<(QTextStream &ts, const QStringList &l)

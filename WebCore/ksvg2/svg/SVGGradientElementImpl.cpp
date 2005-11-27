@@ -48,6 +48,7 @@ SVGGradientElementImpl::SVGGradientElementImpl(const KDOM::QualifiedName& tagNam
 
 SVGGradientElementImpl::~SVGGradientElementImpl()
 {
+    delete m_resource;
 }
 
 SVGAnimatedEnumerationImpl *SVGGradientElementImpl::gradientUnits() const
@@ -126,7 +127,7 @@ void SVGGradientElementImpl::notifyAttributeChange() const
 KRenderingPaintServerGradient *SVGGradientElementImpl::canvasResource()
 {
     if (!m_resource) {
-        KRenderingPaintServer *temp = canvas()->renderingDevice()->createPaintServer(gradientType());
+        KRenderingPaintServer *temp = QPainter::renderingDevice()->createPaintServer(gradientType());
         m_resource = static_cast<KRenderingPaintServerGradient *>(temp);
         m_resource->setListener(this);
         buildGradient(m_resource);
@@ -145,6 +146,7 @@ void SVGGradientElementImpl::rebuildStops() const
     if (m_resource && !ownerDocument()->parsing()) {
         KCSortedGradientStopList &stops = m_resource->gradientStops();
         stops.clear();
+         // FIXME: Manual style resolution is a hack
         khtml::RenderStyle *gradientStyle = const_cast<SVGGradientElementImpl *>(this)->styleForRenderer(parent()->renderer());
         for (KDOM::NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
             SVGElementImpl *element = svg_dynamic_cast(n);
@@ -152,13 +154,15 @@ void SVGGradientElementImpl::rebuildStops() const
                 SVGStopElementImpl *stop = static_cast<SVGStopElementImpl *>(element);
                 float stopOffset = stop->offset()->baseVal();
                 
-                SVGRenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop, gradientStyle)->svgStyle();
-                QColor c = stopStyle->stopColor();
-                float opacity = stopStyle->stopOpacity();
+                khtml::RenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop, gradientStyle);
+                QColor c = stopStyle->svgStyle()->stopColor();
+                float opacity = stopStyle->svgStyle()->stopOpacity();
                 
                 stops.addStop(stopOffset, qRgba(c.red(), c.green(), c.blue(), int(opacity * 255.)));
+                stopStyle->deref(canvas()->renderArena());
             }
         }
+        gradientStyle->deref(canvas()->renderArena());
     }
 }
 

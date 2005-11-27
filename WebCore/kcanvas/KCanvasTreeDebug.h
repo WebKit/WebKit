@@ -38,9 +38,14 @@ class KCPathData;
 class RenderPath;
 class KCanvasContainer;
 
+namespace KDOM {
+    class NodeImpl;
+}
+
 // functions used by the main KWQRenderTreeDebug code
 void write(QTextStream &ts, const KCanvasContainer &container, int indent = 0);
 void write(QTextStream &ts, const RenderPath &path, int indent = 0);
+void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent);
 
 // helper operators defined used in various classes to dump the render tree. 
 QTextStream &operator<<(QTextStream &ts, const QMatrix &);

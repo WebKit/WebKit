@@ -50,6 +50,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFETurbulenceElementImpl::~SVGFETurbulenceElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedNumberImpl *SVGFETurbulenceElementImpl::baseFrequencyX() const
@@ -125,7 +126,7 @@ void SVGFETurbulenceElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl 
 KCanvasFETurbulence *SVGFETurbulenceElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas()->renderingDevice()->createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<KCanvasFETurbulence *>(QPainter::renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     

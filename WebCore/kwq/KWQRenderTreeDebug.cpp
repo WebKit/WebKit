@@ -442,6 +442,7 @@ QString externalRepresentation(RenderObject *o)
         QTextStream ts(&s);
 #if SVG_SUPPORT
         ts.precision(2);
+        writeRenderResources(ts, o->document());
 #endif
         if (o) {
             o->canvas()->view()->layout();

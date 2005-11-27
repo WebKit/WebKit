@@ -41,36 +41,35 @@
 
 void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
-	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
-	CGContextRef context = quartzContext->cgContext();
-	KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
-	
-        CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
-		
-	if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
-            CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->fillPainter()->opacity());
-		CGContextSetFillColorWithColor(context, withAlpha);
-		CGColorRelease(colorCG);
-		CGColorRelease(withAlpha);
-		if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD) {
-			CGContextEOFillPath(context);
-		} else {
-			CGContextFillPath(context);
-		}
-	}
-	
-	if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
-		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());		
-		CGContextSetStrokeColorWithColor(context, withAlpha);
-		CGColorRelease(colorCG);
-		CGColorRelease(withAlpha);
-		
-		applyStrokeStyleToContext(context, canvasStyle);
-		
-		CGContextStrokePath(context);
-	}
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();
+    KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
+
+    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
+        
+    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
+        CGColorRef colorCG = cgColor(color());
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->fillPainter()->opacity());
+        CGContextSetFillColorWithColor(context, withAlpha);
+        CGColorRelease(colorCG);
+        CGColorRelease(withAlpha);
+        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD)
+            CGContextEOFillPath(context);
+        else
+            CGContextFillPath(context);
+    }
+
+    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
+        CGColorRef colorCG = cgColor(color());
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());		
+        CGContextSetStrokeColorWithColor(context, withAlpha);
+        CGColorRelease(colorCG);
+        CGColorRelease(withAlpha);
+        
+        applyStrokeStyleToContext(context, canvasStyle);
+        
+        CGContextStrokePath(context);
+    }
 }
 
 

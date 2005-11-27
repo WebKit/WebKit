@@ -43,6 +43,7 @@ class QPainterPrivate;
 class QString;
 
 #if SVG_SUPPORT
+class KRenderingDevice;
 class KRenderingDeviceContext;
 #endif
 
@@ -142,6 +143,7 @@ public:
     
 #if SVG_SUPPORT
     KRenderingDeviceContext *createRenderingDeviceContext();
+    static KRenderingDevice *renderingDevice();
 #endif
     
     static int compositeOperatorFromString (const QString &aString);

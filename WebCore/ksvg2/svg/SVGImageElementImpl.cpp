@@ -130,7 +130,7 @@ khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, kht
     KMimeType::Ptr mimeType = KMimeType::findByURL(fullUrl);
     if(mimeType->is(QString::fromLatin1("image/svg+xml"))) // does it have svg content?
     {
-        RenderPath *ret = canvas()->renderingDevice()->createContainer(style, this);
+        RenderPath *ret = QPainter::renderingDevice()->createContainer(style, this);
         m_cachedDocument = ownerDocument()->docLoader()->requestDocument(fullUrl, QString());
 
         if(m_cachedDocument)
@@ -147,8 +147,8 @@ khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, kht
     if(pathData.isEmpty())
         return 0;
 
-    KCanvasUserData path = KCanvasCreator::self()->createCanvasPathData(canvas()->renderingDevice(), pathData);
-    return canvas()->renderingDevice()->createItem(arena, style, this, path);
+    KCanvasUserData path = KCanvasCreator::self()->createCanvasPathData(QPainter::renderingDevice(), pathData);
+    return QPainter::renderingDevice()->createItem(arena, style, this, path);
 }
 
 void SVGImageElementImpl::attach()
@@ -175,7 +175,7 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
     canvasStyle->disableFillPainter();
     canvasStyle->disableStrokePainter();
 
-    KRenderingPaintServer *fillPaintServer = canvas()->renderingDevice()->createPaintServer(PS_IMAGE);
+    KRenderingPaintServer *fillPaintServer = QPainter::renderingDevice()->createPaintServer(PS_IMAGE);
     canvasStyle->fillPainter()->setPaintServer(fillPaintServer);
 
 #ifndef APPLE_COMPILE_HACK

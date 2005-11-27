@@ -46,6 +46,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEFloodElementImpl::~SVGFEFloodElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFEFloodElementImpl::in1() const
@@ -66,15 +67,17 @@ void SVGFEFloodElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
 KCanvasFEFlood *SVGFEFloodElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEFlood *>(canvas()->renderingDevice()->createFilterEffect(FE_FLOOD));
+        m_filterEffect = static_cast<KCanvasFEFlood *>(QPainter::renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     // FIXME: I don't think this will work, the parent does not have a renderer
-    SVGRenderStyle *filterStyle = const_cast<SVGFEFloodElementImpl *>(this)->styleForRenderer(parentNode()->renderer())->svgStyle();
-    m_filterEffect->setFloodColor(filterStyle->floodColor());
-    m_filterEffect->setFloodOpacity(filterStyle->floodOpacity());
+    khtml::RenderStyle *filterStyle = const_cast<SVGFEFloodElementImpl *>(this)->styleForRenderer(parentNode()->renderer());
+    SVGRenderStyle *svgStyle = filterStyle->svgStyle();
+    m_filterEffect->setFloodColor(svgStyle->floodColor());
+    m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());
+    filterStyle->deref(canvas()->renderArena());
 
     return m_filterEffect;
 }

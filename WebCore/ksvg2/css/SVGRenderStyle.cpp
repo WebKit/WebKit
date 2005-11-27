@@ -73,6 +73,10 @@ SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other)
     svg_noninherited_flags = other.svg_noninherited_flags;
 }
 
+SVGRenderStyle::~SVGRenderStyle()
+{
+}
+
 bool SVGRenderStyle::equals(SVGRenderStyle *svgOther) const
 {
     if(!svgOther)

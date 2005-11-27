@@ -54,7 +54,7 @@ void SVGGElementImpl::setChanged(bool b, bool)
 
 khtml::RenderObject *SVGGElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return canvas()->renderingDevice()->createContainer(arena, style, this);
+    return QPainter::renderingDevice()->createContainer(arena, style, this);
 }
 
 // Helper class for <use> support

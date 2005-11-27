@@ -57,7 +57,7 @@ bool SVGSwitchElementImpl::childShouldCreateRenderer(KDOM::NodeImpl *child) cons
 
 khtml::RenderObject *SVGSwitchElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return canvas()->renderingDevice()->createContainer(arena, style, this);
+    return QPainter::renderingDevice()->createContainer(arena, style, this);
 }
 
 // vim:ts=4:noet

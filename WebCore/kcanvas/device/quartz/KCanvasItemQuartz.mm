@@ -71,8 +71,13 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;
     
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
-    quartzDevice->pushContext(paintInfo.p->createRenderingDeviceContext());
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
+    KRenderingDeviceContext *deviceContext = 0;
+    if (!parent()->isKCanvasContainer()) {
+        // I only need to setup for KCanvas rendering if it hasn't already been done.
+        deviceContext = paintInfo.p->createRenderingDeviceContext();
+        quartzDevice->pushContext(deviceContext);
+    }
     paintInfo.p->save();
     CGContextRef context = quartzDevice->currentCGContext();
 
@@ -122,7 +127,10 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     
     // restore drawing state
     paintInfo.p->restore();
-    quartzDevice->popContext();
+    if (!parent()->isKCanvasContainer()) {
+        quartzDevice->popContext();
+        delete deviceContext;
+    }
 }
 
 #pragma mark -

@@ -51,6 +51,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFECompositeElementImpl::~SVGFECompositeElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFECompositeElementImpl::in1() const
@@ -124,7 +125,7 @@ void SVGFECompositeElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *
 KCanvasFEComposite *SVGFECompositeElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEComposite *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPOSITE));
+        m_filterEffect = static_cast<KCanvasFEComposite *>(QPainter::renderingDevice()->createFilterEffect(FE_COMPOSITE));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setOperation((KCCompositeOperationType)(_operator()->baseVal() - 1));

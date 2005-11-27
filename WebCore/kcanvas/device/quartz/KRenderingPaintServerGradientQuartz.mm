@@ -42,7 +42,7 @@
 // Maybe this should be in a base class instead...
 static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, KSVG::KCanvasRenderingStyle *canvasStyle, KCPaintTargetType type)
 {
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(server->activeClient()->canvas()->renderingDevice());
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     ASSERT(context != NULL);
     

@@ -44,6 +44,7 @@ SVGClipPathElementImpl::SVGClipPathElementImpl(const KDOM::QualifiedName& tagNam
 
 SVGClipPathElementImpl::~SVGClipPathElementImpl()
 {
+    delete m_clipper;
 }
 
 SVGAnimatedEnumerationImpl *SVGClipPathElementImpl::clipPathUnits() const
@@ -81,22 +82,24 @@ KCanvasClipper *SVGClipPathElementImpl::canvasResource()
     if (!canvas())
         return 0;
     if (!m_clipper)
-        m_clipper = static_cast<KCanvasClipper *>(canvas()->renderingDevice()->createResource(RS_CLIPPER));
+        m_clipper = static_cast<KCanvasClipper *>(QPainter::renderingDevice()->createResource(RS_CLIPPER));
     else
         m_clipper->resetClipData();
 
     bool bbox = clipPathUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    khtml::RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer());
+    khtml::RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
     for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
         SVGElementImpl *e = svg_dynamic_cast(n);
         if (e && e->isStyled()) {
             SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(e);
-            SVGRenderStyle *style = getDocument()->styleSelector()->styleForElement(styled, clipPathStyle)->svgStyle();
-            m_clipper->addClipData(styled->toPathData(), (KCWindRule) style->clipRule(), bbox);
+            khtml::RenderStyle *pathStyle = getDocument()->styleSelector()->styleForElement(styled, clipPathStyle);
+            m_clipper->addClipData(styled->toPathData(), (KCWindRule) pathStyle->svgStyle()->clipRule(), bbox);
+            pathStyle->deref(canvas()->renderArena());
         }
     }
+    clipPathStyle->deref(canvas()->renderArena());
     return m_clipper;
 }
 

@@ -93,8 +93,8 @@ void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRect &bbo
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
     
-    // restore the previous context.
-    device->popContext();
+    // restore the previous context, delete the filter context.
+    delete (device->popContext());
 
     // actually apply the filter effects
     CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];

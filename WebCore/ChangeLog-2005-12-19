@@ -1,3 +1,129 @@
+2005-11-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        No additional test cases necessary, fixes text dumps for all tests.
+
+        Fixes included in this patch:
+        - Closes all known leaks in WebKit+SVG
+        - adds static KRenderingDevice *QPainter::renderingDevice()
+        - removes RenderCanvas::renderingDevice()
+        - removed RenderCanvas usage from KCanvasRenderingStyle
+        Bug: http://bugzilla.opendarwin.org/show_bug.cgi?id=5839
+
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::RenderPath): remove canvas from KCanvasRenderingStyle
+        (RenderPath::~RenderPath): use QPainter::renderingDevice()
+        (RenderPath::fillContains): remove unnecessary code.
+        (RenderPath::strokeContains): remove unnecessary code.
+        (RenderPath::relativeBBox): remove unnecessary code.
+        (RenderPath::setupForDraw): remove unnecessary code.
+        (RenderPath::changePath): added ASSERT
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<): print absolute bbox instead of relative
+        (getTagName): removed KSVG::
+        (writeRenderResources): added
+        * kcanvas/KCanvasTreeDebug.h: added writeRenderResources
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (operator<<): style update
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::applyFilter): delete filter context
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): only push context if necessary
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): only push context if necessary
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (drawShadingWithStyle): use QPainter
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw): spacing cleanup
+        * khtml/rendering/render_canvas.cpp: remove renderingDevice()
+        (RenderCanvas::RenderCanvas): remove m_renderingDevice
+        (RenderCanvas::~RenderCanvas): remove m_renderingDevice
+        * khtml/rendering/render_canvas.h:
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::~RenderStyle): delete SVGRenderStyle
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::~SVGRenderStyle): added
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::KCanvasRenderingStyle): remove canvas arg
+        (KCanvasRenderingStyle::updateFill): use QPainter
+        (KCanvasRenderingStyle::updateStroke): use QPainter
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::createRenderer): use QPainter
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::~SVGClipPathElementImpl): delete resource
+        (SVGClipPathElementImpl::canvasResource): use QPainter
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::~SVGFEBlendElementImpl): delete resource
+        (SVGFEBlendElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::~SVGFEColorMatrixElementImpl):
+        (SVGFEColorMatrixElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::~SVGFEComponentTransferElementImpl):
+        (SVGFEComponentTransferElementImpl::filterEffect):  use QPainter
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::~SVGFECompositeElementImpl): delete rsc
+        (SVGFECompositeElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::~SVGFEFloodElementImpl): delete resource
+        (SVGFEFloodElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::~SVGFEGaussianBlurElementImpl):
+        (SVGFEGaussianBlurElementImpl::filterEffect):  use QPainter
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::~SVGFEImageElementImpl): delete resource
+        (SVGFEImageElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        (SVGFEMergeElementImpl::~SVGFEMergeElementImpl): delete resource
+        (SVGFEMergeElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::~SVGFEOffsetElementImpl): delete resource
+        (SVGFEOffsetElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::~SVGFETileElementImpl): delete resource
+        (SVGFETileElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::~SVGFETurbulenceElementImpl):
+        (SVGFETurbulenceElementImpl::filterEffect): use QPainter
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::~SVGFilterElementImpl): delete resource
+        (SVGFilterElementImpl::canvasResource): use QPainter
+        * ksvg2/svg/SVGGElementImpl.cpp:
+        (SVGGElementImpl::createRenderer): use QPainter
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::~SVGGradientElementImpl): delete resource
+        (SVGGradientElementImpl::canvasResource): use QPainter
+        (SVGGradientElementImpl::rebuildStops): deref style
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::createRenderer): use QPainter
+        (SVGImageElementImpl::notifyFinished): use QPainter
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::~SVGMarkerElementImpl): delete resource
+        (SVGMarkerElementImpl::canvasResource): use QPainter
+        (SVGMarkerElementImpl::createRenderer): use QPainter
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::~SVGPatternElementImpl): delete resource
+        (SVGPatternElementImpl::drawPatternContentIntoTile): use QPainter
+        (SVGPatternElementImpl::createRenderer): use QPainter
+        (SVGPatternElementImpl::canvasResource): use QPainter
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::createRenderer): use QPainter
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::createRenderer): use QPainter
+        (SVGStyledElementImpl::updateCanvasItem): use QPainter
+        (SVGStyledElementImpl::pushAttributeContext): use QPainter
+        * ksvg2/svg/SVGSwitchElementImpl.cpp:
+        (SVGSwitchElementImpl::createRenderer): use QPainter
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::createRenderer): use QPainter
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::renderingDevice): added
+        * kwq/KWQRenderTreeDebug.cpp:
+        (externalRepresentation): call writeRenderResources
+
 2005-11-26  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

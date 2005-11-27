@@ -81,7 +81,8 @@ QTextStream &operator<<(QTextStream &ts, const KCSortedGradientStopList &l)
     {
         ts << "(" << (*it)->offset << "," << (*it)->color << ")";
         ++it;
-        if (*it) ts << ", ";
+        if (*it)
+            ts << ", ";
     }
     ts << "]";
     return ts;

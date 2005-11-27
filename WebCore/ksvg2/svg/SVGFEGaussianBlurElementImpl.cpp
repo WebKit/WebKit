@@ -49,6 +49,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEGaussianBlurElementImpl::~SVGFEGaussianBlurElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFEGaussianBlurElementImpl::in1() const
@@ -93,7 +94,7 @@ void SVGFEGaussianBlurElementImpl::parseMappedAttribute(KDOM::MappedAttributeImp
 KCanvasFEGaussianBlur *SVGFEGaussianBlurElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(canvas()->renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(QPainter::renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());

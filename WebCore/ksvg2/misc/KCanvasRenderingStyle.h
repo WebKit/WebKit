@@ -62,7 +62,7 @@ namespace KSVG
     class KCanvasRenderingStyle
     {
     public:
-        KCanvasRenderingStyle(khtml::RenderCanvas *canvas, const khtml::RenderStyle *style);
+        KCanvasRenderingStyle(const khtml::RenderStyle *style);
         ~KCanvasRenderingStyle();
 
         void updateFill(RenderPath *item);
@@ -92,7 +92,6 @@ namespace KSVG
         const khtml::RenderStyle *m_style;
 
         // KCanvas stuff
-        khtml::RenderCanvas *m_canvas;
         KRenderingFillPainter *m_fillPainter;
         KRenderingStrokePainter *m_strokePainter;
     };

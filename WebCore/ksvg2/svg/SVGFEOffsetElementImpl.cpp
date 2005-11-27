@@ -48,6 +48,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEOffsetElementImpl::~SVGFEOffsetElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFEOffsetElementImpl::in1() const
@@ -84,7 +85,7 @@ void SVGFEOffsetElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *att
 KCanvasFEOffset *SVGFEOffsetElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEOffset *>(canvas()->renderingDevice()->createFilterEffect(FE_OFFSET));
+        m_filterEffect = static_cast<KCanvasFEOffset *>(QPainter::renderingDevice()->createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());

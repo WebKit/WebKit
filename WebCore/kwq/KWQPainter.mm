@@ -72,6 +72,9 @@ struct QPainterPrivate {
     int focusRingOffset;
     bool hasFocusRingColor;
     QColor focusRingColor;
+#if SVG_SUPPORT
+    KRenderingDevice *renderingDevice;
+#endif
 };
 
 QPainterPrivate::QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
@@ -882,6 +885,12 @@ CGContextRef QPainter::currentContext()
 KRenderingDeviceContext *QPainter::createRenderingDeviceContext()
 {
     return new KRenderingDeviceContextQuartz(currentContext());
+}
+
+KRenderingDevice *QPainter::renderingDevice()
+{
+    static KRenderingDevice *sharedRenderingDevice = new KRenderingDeviceQuartz();
+    return sharedRenderingDevice;
 }
 #endif
 

@@ -72,7 +72,7 @@ void SVGAElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 
 khtml::RenderObject *SVGAElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return canvas()->renderingDevice()->createContainer(arena, style, this);
+    return QPainter::renderingDevice()->createContainer(arena, style, this);
 }
 
 void SVGAElementImpl::defaultEventHandler(KDOM::EventImpl *evt)

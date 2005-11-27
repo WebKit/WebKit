@@ -47,6 +47,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEBlendElementImpl::~SVGFEBlendElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFEBlendElementImpl::in1() const
@@ -94,7 +95,7 @@ void SVGFEBlendElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
 KCanvasFEBlend *SVGFEBlendElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEBlend *>(canvas()->renderingDevice()->createFilterEffect(FE_BLEND));
+        m_filterEffect = static_cast<KCanvasFEBlend *>(QPainter::renderingDevice()->createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));

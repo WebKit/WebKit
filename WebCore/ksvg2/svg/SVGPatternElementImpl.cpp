@@ -57,6 +57,7 @@ SVGPatternElementImpl::SVGPatternElementImpl(const KDOM::QualifiedName& tagName,
 
 SVGPatternElementImpl::~SVGPatternElementImpl()
 {
+    delete m_paintServer;
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternUnits() const
@@ -199,7 +200,7 @@ void SVGPatternElementImpl::fillAttributesFromReferencePattern(const SVGPatternE
 
 void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementImpl *target, const QSize &newSize, KCanvasMatrix patternTransformMatrix) const
 {
-    KRenderingDevice *device = canvas()->renderingDevice();
+    KRenderingDevice *device = QPainter::renderingDevice();
     
     SVGStyledElementImpl *activeElement = static_cast<SVGStyledElementImpl *>(m_paintServer->activeClient()->element());
 
@@ -359,7 +360,7 @@ void SVGPatternElementImpl::notifyAttributeChange() const
 
 khtml::RenderObject *SVGPatternElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    KCanvasContainer *patternContainer = canvas()->renderingDevice()->createContainer(arena, style, this);
+    KCanvasContainer *patternContainer = QPainter::renderingDevice()->createContainer(arena, style, this);
     patternContainer->setDrawsContents(false);
     return patternContainer;
 }
@@ -367,7 +368,7 @@ khtml::RenderObject *SVGPatternElementImpl::createRenderer(RenderArena *arena, k
 KRenderingPaintServerPattern *SVGPatternElementImpl::canvasResource()
 {
     if (!m_paintServer) {
-        KRenderingPaintServer *pserver = canvas()->renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
+        KRenderingPaintServer *pserver = QPainter::renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
         m_paintServer = static_cast<KRenderingPaintServerPattern *>(pserver);
         m_paintServer->setListener(const_cast<SVGPatternElementImpl *>(this));
     }

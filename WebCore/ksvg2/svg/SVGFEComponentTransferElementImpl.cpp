@@ -53,6 +53,7 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEComponentTransferElementImpl::~SVGFEComponentTransferElementImpl()
 {
+    delete m_filterEffect;
 }
 
 SVGAnimatedStringImpl *SVGFEComponentTransferElementImpl::in1() const
@@ -73,7 +74,7 @@ void SVGFEComponentTransferElementImpl::parseMappedAttribute(KDOM::MappedAttribu
 KCanvasFEComponentTransfer *SVGFEComponentTransferElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(canvas()->renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));
+        m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(QPainter::renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));
     if (!m_filterEffect)
         return 0;
     

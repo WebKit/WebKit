@@ -48,12 +48,13 @@ SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 
 SVGFEMergeElementImpl::~SVGFEMergeElementImpl()
 {
+    delete m_filterEffect;
 }
 
 KCanvasFEMerge *SVGFEMergeElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEMerge *>(canvas()->renderingDevice()->createFilterEffect(FE_MERGE));
+        m_filterEffect = static_cast<KCanvasFEMerge *>(QPainter::renderingDevice()->createFilterEffect(FE_MERGE));
     if (!m_filterEffect)
         return 0;
     setStandardAttributes(m_filterEffect);

@@ -171,7 +171,7 @@ bool SVGUseElementImpl::hasChildNodes() const
 
 khtml::RenderObject *SVGUseElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    return canvas()->renderingDevice()->createContainer(arena, style, this);
+    return QPainter::renderingDevice()->createContainer(arena, style, this);
 }
 
 // vim:ts=4:noet

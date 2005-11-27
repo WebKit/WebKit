@@ -108,15 +108,20 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
         paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
     
-    if (paintInfo.phase != PaintActionForeground || !drawsContents())
+    if (paintInfo.phase != PaintActionForeground || !drawsContents() || style()->visibility() == khtml::HIDDEN)
         return;
     
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (!firstChild() && !filter)
         return; // Spec: groups w/o children still may render filter content.
     
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
-    quartzDevice->pushContext(paintInfo.p->createRenderingDeviceContext());
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
+    KRenderingDeviceContext *deviceContext = 0;
+    if (!parent()->isKCanvasContainer()) {
+        // I only need to setup for KCanvas rendering if it hasn't already been done.
+        deviceContext = paintInfo.p->createRenderingDeviceContext();
+        quartzDevice->pushContext(deviceContext);
+    }
     paintInfo.p->save();
     
     CGContextRef context = paintInfo.p->currentContext();
@@ -158,7 +163,10 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     
     // restore drawing state
     paintInfo.p->restore();
-    quartzDevice->popContext();
+    if (!parent()->isKCanvasContainer()) {
+        quartzDevice->popContext();
+        delete deviceContext;
+    }
 }
 
 void KCanvasContainerQuartz::setViewport(const QRect &viewport)
