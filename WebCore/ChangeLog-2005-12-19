@@ -1,3 +1,40 @@
+2005-11-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Committed by eseidel.
+
+        One test case added:
+        fast/text/international/bidi-layout-across-linebreak.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5172
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiState::BidiState):
+        (khtml::operator==):
+        (khtml::operator!=):
+        (khtml::BidiIterator::increment):
+        (khtml::appendRunsForObject):
+        (khtml::appendRun):
+        (khtml::embed):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::computeVerticalPositionsForLine):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::buildCompactRuns):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::determineStartPosition):
+        (khtml::RenderBlock::determineEndPosition):
+        (khtml::RenderBlock::matchedEndLine):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/bidi.h:
+        (khtml::BidiStatus::BidiStatus):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::RootInlineBox::childRemoved):
+        (khtml::RootInlineBox::setLineBreakInfo):
+        * khtml/rendering/render_line.h:
+        (khtml::RootInlineBox::RootInlineBox):
+        (khtml::RootInlineBox::lineBreakBidiStatus):
+        (khtml::RootInlineBox::lineBreakBidiContext):
+
 2005-11-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

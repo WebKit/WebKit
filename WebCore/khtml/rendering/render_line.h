@@ -23,6 +23,8 @@
 #define RENDER_LINE_H
 
 #include "rendering/render_object.h"
+#include "bidi.h"
+#include "misc/shared.h"
 
 namespace DOM {
 class AtomicString;
@@ -302,10 +304,10 @@ class RootInlineBox : public InlineFlowBox
 public:
     RootInlineBox(RenderObject* obj)
     : InlineFlowBox(obj), m_topOverflow(0), m_bottomOverflow(0), m_leftOverflow(0), m_rightOverflow(0),
-      m_lineBreakObj(0), m_lineBreakPos(0), 
+      m_lineBreakObj(0), m_lineBreakPos(0), m_lineBreakContext(0),
       m_blockHeight(0), m_endsWithBreak(false), m_hasSelectedChildren(false), m_ellipsisBox(0)
     {}
-    
+        
     virtual void destroy(RenderArena* renderArena);
     void detachEllipsisBox(RenderArena* renderArena);
 
@@ -321,8 +323,7 @@ public:
     virtual int rightOverflow() { return m_rightOverflow; }
     virtual void setVerticalOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
     void setHorizontalOverflowPositions(int left, int right) { m_leftOverflow = left; m_rightOverflow = right; }
-    void setLineBreakInfo(RenderObject* obj, uint breakPos)
-    { m_lineBreakObj = obj; m_lineBreakPos = breakPos; }
+    void setLineBreakInfo(RenderObject* obj, uint breakPos, BidiStatus* status, BidiContext* context);
     void setLineBreakPos(int p) { m_lineBreakPos = p; }
 
     void setBlockHeight(int h) { m_blockHeight = h; }
@@ -332,6 +333,8 @@ public:
     bool endsWithBreak() const { return m_endsWithBreak; }
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
     uint lineBreakPos() const { return m_lineBreakPos; }
+    BidiStatus lineBreakBidiStatus() const { return m_lineBreakBidiStatus; }
+    BidiContext* lineBreakBidiContext() const { return m_lineBreakContext.get(); }
 
     void childRemoved(InlineBox* box);
 
@@ -379,6 +382,9 @@ protected:
     // we can create a BidiIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     uint m_lineBreakPos;
+    
+    BidiStatus m_lineBreakBidiStatus;
+    SharedPtr<BidiContext> m_lineBreakContext;
     
     // The height of the block at the end of this line.  This is where the next line starts.
     int m_blockHeight;

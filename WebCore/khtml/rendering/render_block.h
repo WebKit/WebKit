@@ -124,9 +124,12 @@ public:
     // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end, BidiState &bidi );
     RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator &start, BidiState &bidi);
-    RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart, int& yPos);
-    bool matchedEndLine(const BidiIterator& start, const BidiIterator& endLineStart, 
-                        RootInlineBox*& endLine, int& endYPos);
+    RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
+                                        BidiStatus& cleanLineBidiStatus, BidiContext*& cleanLineBidiContext,
+                                        int& yPos);
+    bool matchedEndLine(const BidiIterator& start, const BidiStatus& status, BidiContext* context,
+                        const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
+                        BidiContext* endLineContext, RootInlineBox*& endLine, int& endYPos);
     int skipWhitespace(BidiIterator &, BidiState &);
     BidiIterator findNextLineBreak(BidiIterator &start, BidiState &info );
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);

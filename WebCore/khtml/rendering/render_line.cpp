@@ -1216,11 +1216,11 @@ void RootInlineBox::adjustPosition(int dx, int dy)
 void RootInlineBox::childRemoved(InlineBox* box)
 {
     if (box->object() == m_lineBreakObj)
-        setLineBreakInfo(0,0);
+        setLineBreakInfo(0, 0, 0, 0);
 
     RootInlineBox* prev = prevRootBox();
     if (prev && prev->lineBreakObj() == box->object()) {
-        prev->setLineBreakInfo(0,0);
+        prev->setLineBreakInfo(0, 0, 0, 0);
         prev->markDirty();
     }
 }
@@ -1363,5 +1363,13 @@ InlineBox* RootInlineBox::closestLeafChildForXPos(int _x, int _tx)
     return lastLeaf;
 }
 
+void RootInlineBox::setLineBreakInfo(RenderObject* obj, uint breakPos, BidiStatus* status, BidiContext* context)
+{
+    m_lineBreakObj = obj;
+    m_lineBreakPos = breakPos;
+    m_lineBreakContext = context;
+    if (status)
+        m_lineBreakBidiStatus = *status;
+}
 }
 

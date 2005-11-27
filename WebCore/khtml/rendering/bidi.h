@@ -32,6 +32,14 @@ namespace khtml {
     class RenderObject;
     class InlineBox;
 
+    struct BidiStatus {
+        BidiStatus() : eor(QChar::DirON), lastStrong(QChar::DirON), last(QChar::DirON) {}
+        
+        QChar::Direction eor;
+        QChar::Direction lastStrong;
+        QChar::Direction last;
+    };
+        
     class BidiContext {
     public:
 	BidiContext(unsigned char level, QChar::Direction embedding, BidiContext *parent = 0, bool override = false);
