@@ -134,7 +134,7 @@ using khtml::VisiblePosition;
 
 using KJS::ExecState;
 using KJS::Interpreter;
-using KJS::InterpreterLock;
+using KJS::JSLock;
 using KJS::ObjectImp;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
@@ -485,7 +485,7 @@ static bool initializedKJS = FALSE;
     }
     _part->clearTimers();
 
-    InterpreterLock lock;
+    JSLock lock;
 
     SavedProperties *windowProperties = new SavedProperties;
     _part->saveWindowProperties(windowProperties);

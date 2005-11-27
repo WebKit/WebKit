@@ -348,7 +348,7 @@ void XMLHttpRequest::send(const QString& _body)
 
     { // scope
         // avoid deadlock in case the loader wants to use JS on a background thread
-        InterpreterLock::DropAllLocks dropLocks;
+        JSLock::DropAllLocks dropLocks;
 
         data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
     }
@@ -360,7 +360,7 @@ void XMLHttpRequest::send(const QString& _body)
   }
 
   {
-    InterpreterLock lock;
+    JSLock lock;
     gcProtect(this);
   }
   
@@ -392,7 +392,7 @@ void XMLHttpRequest::abort()
   aborted = true;
 
   if (hadJob) {
-    InterpreterLock lock;
+    JSLock lock;
     gcUnprotect(this);
   }
 }
@@ -537,7 +537,7 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
     decoder = 0;
   }
 
-  InterpreterLock lock;
+  JSLock lock;
   gcUnprotect(this);
 }
 

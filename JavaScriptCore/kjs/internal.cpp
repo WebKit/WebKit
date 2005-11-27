@@ -408,7 +408,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
 {
   // add this interpreter to the global chain
   // as a root set for garbage collection
-  InterpreterLock lock;
+  JSLock lock;
 
   m_interpreter = interp;
   if (s_hook) {
@@ -563,7 +563,7 @@ void InterpreterImp::clear()
 {
   //fprintf(stderr,"InterpreterImp::clear\n");
   // remove from global chain (see init())
-  InterpreterLock lock;
+  JSLock lock;
 
   next->prev = prev;
   prev->next = next;
@@ -590,7 +590,7 @@ void InterpreterImp::mark()
 
 bool InterpreterImp::checkSyntax(const UString &code)
 {
-  InterpreterLock lock;
+  JSLock lock;
 
   // Parser::parse() returns 0 in a syntax error occurs, so we just check for that
   SharedPtr<ProgramNode> progNode = Parser::parse(UString(), 0, code.data(),code.size(),0,0,0);
@@ -599,7 +599,7 @@ bool InterpreterImp::checkSyntax(const UString &code)
 
 Completion InterpreterImp::evaluate(const UString &code, ValueImp *thisV, const UString &sourceURL, int startingLineNumber)
 {
-  InterpreterLock lock;
+  JSLock lock;
 
   // prevent against infinite recursion
   if (recursion >= 20) {

@@ -1,3 +1,87 @@
+2005-11-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- renamed InterpreterLock to JSLock
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::call):
+        (JSObject::eval):
+        (JSObject::getMember):
+        (JSObject::setMember):
+        (JSObject::removeMember):
+        (JSObject::getSlot):
+        (JSObject::setSlot):
+        (JSObject::toString):
+        (JSObject::convertJObjectToValue):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+        * bindings/runtime.cpp:
+        (Instance::createRuntimeObject):
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::addNativeReference):
+        (KJS::Bindings::removeNativeReference):
+        (RootObject::removeAllNativeReferences):
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::~RootObject):
+        (KJS::Bindings::RootObject::setRootObjectImp):
+        * bindings/testbindings.cpp:
+        (main):
+        * bindings/testbindings.mm:
+        (main):
+        * kjs/JSLock.cpp:
+        (KJS::initializeJSLock):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::JSLock::lockCount):
+        (KJS::JSLock::DropAllLocks::DropAllLocks):
+        (KJS::JSLock::DropAllLocks::~DropAllLocks):
+        * kjs/JSLock.h:
+        (KJS::JSLock::JSLock):
+        (KJS::JSLock::~JSLock):
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::InterpreterImp):
+        (KJS::InterpreterImp::clear):
+        (KJS::InterpreterImp::checkSyntax):
+        (KJS::InterpreterImp::evaluate):
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate):
+        * kjs/protect.h:
+        (KJS::::ProtectedPtr):
+        (KJS::::~ProtectedPtr):
+        (KJS::::operator):
+        * kjs/protected_reference.h:
+        (KJS::ProtectedReference::ProtectedReference):
+        (KJS::ProtectedReference::~ProtectedReference):
+        (KJS::ProtectedReference::operator=):
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::getProtectCount):
+        (KJS::ProtectedValues::increaseProtectCount):
+        (KJS::ProtectedValues::decreaseProtectCount):
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+        (main):
+
 2005-11-26  Darin Adler  <darin@apple.com>
 
         Reviewed by eseidel.  Committed by eseidel.

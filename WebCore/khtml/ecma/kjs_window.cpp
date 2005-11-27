@@ -1450,7 +1450,7 @@ JSLazyEventListener *Window::getJSLazyEventListener(const QString& code, DOM::No
 
 void Window::clear( ExecState *exec )
 {
-  InterpreterLock lock;
+  JSLock lock;
   if (m_returnValueSlot)
     if (ValueImp *returnValue = getDirect("returnValue"))
       *m_returnValueSlot = returnValue;
@@ -1944,7 +1944,7 @@ void ScheduledAction::execute(Window *window)
         ExecState *exec = interpreter->globalExec();
         Q_ASSERT(window == interpreter->globalObject());
         ObjectImp *obj(window);
-	InterpreterLock lock;
+	JSLock lock;
         func->call(exec, obj, args); // note that call() creates its own execution state for the func call
 	if (exec->hadException()) {
           char *message = exec->exception()->toObject(exec)->get(exec, messagePropertyName)->toString(exec).ascii();

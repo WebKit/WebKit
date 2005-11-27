@@ -77,7 +77,7 @@ KJSProxyImpl::KJSProxyImpl(KHTMLPart *part)
 
 KJSProxyImpl::~KJSProxyImpl()
 {
-  InterpreterLock lock;
+  JSLock lock;
   delete m_script;
 
 #ifndef NDEBUG
@@ -112,7 +112,7 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
 
   m_script->setInlineCode(inlineCode);
 
-  InterpreterLock lock;
+  JSLock lock;
 
   KJS::ValueImp *thisNode = n ? Window::retrieve(m_part) : getDOMNode(m_script->globalExec(), n);
   UString code(str);
@@ -161,7 +161,7 @@ DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QStr
 #endif
 
   initScript();
-  InterpreterLock lock;
+  JSLock lock;
   return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code,node,m_handlerLineno);
 }
 
@@ -255,7 +255,7 @@ void KJSProxyImpl::initScript()
     return;
 
   // Build the global object - which is a Window instance
-  KJS::InterpreterLock lock;
+  KJS::JSLock lock;
   ObjectImp *globalObject( new Window(m_part) );
 
   // Create a KJS interpreter for this part

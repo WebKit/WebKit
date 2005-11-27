@@ -42,7 +42,7 @@ using DOM::DocumentImpl;
 using khtml::RenderObject;
 
 using KJS::Interpreter;
-using KJS::InterpreterLock;
+using KJS::JSLock;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 
@@ -101,7 +101,7 @@ using KJS::SavedBuiltins;
     delete URL;
     URL = 0;
 
-    InterpreterLock lock;
+    JSLock lock;
 
     delete windowProperties;
     windowProperties = 0;

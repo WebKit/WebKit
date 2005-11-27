@@ -64,7 +64,7 @@ ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*
     return Undefined();
   case GC:
   {
-    InterpreterLock lock;
+    JSLock lock;
     Collector::collect();
   }
     break;
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 
   bool ret = true;
   {
-    InterpreterLock lock;
+    JSLock lock;
 
     ObjectImp *global(new GlobalImp());
 

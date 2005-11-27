@@ -336,7 +336,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     // evaluate
     ValueImp *result;
     if (eval) {
-        InterpreterLock lock;
+        JSLock lock;
         List args;
         args.append(String(code));
         result = eval->call(state, NULL, args);

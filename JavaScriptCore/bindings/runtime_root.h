@@ -51,12 +51,12 @@ friend class JSObject;
 public:
     RootObject (const void *nativeHandle) : _nativeHandle(nativeHandle), _imp(0), _interpreter(0) {}
     ~RootObject () {
-        InterpreterLock lock;
+        JSLock lock;
         gcUnprotect(_imp);
     }
     
     void setRootObjectImp (ObjectImp *i) { 
-        InterpreterLock lock;
+        JSLock lock;
         _imp = i;
         gcProtect(_imp);
     }

@@ -106,7 +106,7 @@ bool Collector::memoryFull = false;
 
 void* Collector::allocate(size_t s)
 {
-  assert(InterpreterLock::lockCount() > 0);
+  assert(JSLock::lockCount() > 0);
 
   // collect if needed
   size_t numLiveObjects = heap.numLiveObjects;
@@ -393,7 +393,7 @@ void Collector::markProtectedObjects()
 
 bool Collector::collect()
 {
-  assert(InterpreterLock::lockCount() > 0);
+  assert(JSLock::lockCount() > 0);
 
   if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;

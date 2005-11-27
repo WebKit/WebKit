@@ -1,3 +1,44 @@
+2005-11-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- renamed InterpreterLock to JSLock
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::parseCode):
+        (KJS::getDOMEvent):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::~KJSProxyImpl):
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::createHTMLEventHandler):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::clear):
+        (KJS::ScheduledAction::execute):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequest::slotFinished):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bindingRootObject):
+        (KWQKHTMLPart::windowScriptObject):
+        (KWQKHTMLPart::saveLocationProperties):
+        (KWQKHTMLPart::restoreLocationProperties):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::cleanupPluginRootObjects):
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState clear]):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]):
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript rootObjectClasses]):
+        (+[WebCoreJavaScript garbageCollect]):
+        * kwq/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
 2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by darin.
@@ -409,7 +450,7 @@
         (SVGViewElementImpl::~SVGViewElementImpl):
         * ksvg2/svg/SVGViewElementImpl.h:
 
- 2005-11-23  Eric Seidel  <eseidel@apple.com>
+2005-11-23  Eric Seidel  <eseidel@apple.com>
  
          Reviewed by mjs.
  

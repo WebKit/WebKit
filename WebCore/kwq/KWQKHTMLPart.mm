@@ -138,7 +138,7 @@ using khtml::WordAwareIterator;
 using KIO::Job;
 
 using KJS::Interpreter;
-using KJS::InterpreterLock;
+using KJS::JSLock;
 using KJS::Location;
 using KJS::SavedBuiltins;
 using KJS::SavedProperties;
@@ -1416,7 +1416,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::executionContextForDOM()
 KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 {
     if (!_bindingRoot) {
-        InterpreterLock lock;
+        JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
@@ -1429,7 +1429,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
-        KJS::InterpreterLock lock;
+        KJS::JSLock lock;
         KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
@@ -1503,7 +1503,7 @@ void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
     Window *window = Window::retrieveWindow(this);
     if (window) {
-        InterpreterLock lock;
+        JSLock lock;
         Location *location = window->location();
         location->saveProperties(*locationProperties);
     }
@@ -1520,7 +1520,7 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
 {
     Window *window = Window::retrieveWindow(this);
     if (window) {
-        InterpreterLock lock;
+        JSLock lock;
         Location *location = window->location();
         location->restoreProperties(*locationProperties);
     }
@@ -1620,7 +1620,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     updatePolicyBaseURL();
 
     { // scope the lock
-        InterpreterLock lock;
+        JSLock lock;
         restoreWindowProperties (windowProperties);
         restoreLocationProperties (locationProperties);
         restoreInterpreterBuiltins (*interpreterBuiltins);
@@ -3961,7 +3961,7 @@ void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)
 
 void KWQKHTMLPart::cleanupPluginRootObjects()
 {
-    InterpreterLock lock;
+    JSLock lock;
 
     KJS::Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {

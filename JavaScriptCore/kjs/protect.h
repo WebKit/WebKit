@@ -81,7 +81,7 @@ namespace KJS {
         : m_ptr(ptr)
     {
         if (ptr) {
-            InterpreterLock lock;
+            JSLock lock;
             gcProtect(ptr);
         }
     }
@@ -90,7 +90,7 @@ namespace KJS {
         : m_ptr(o.get())
     {
         if (T *ptr = m_ptr) {
-            InterpreterLock lock;
+            JSLock lock;
             gcProtect(ptr);
         }
     }
@@ -98,7 +98,7 @@ namespace KJS {
     template <class T> ProtectedPtr<T>::~ProtectedPtr()
     {
         if (T *ptr = m_ptr) {
-            InterpreterLock lock;
+            JSLock lock;
             gcUnprotect(ptr);
         }
     }
@@ -107,14 +107,14 @@ namespace KJS {
         : m_ptr(o.get())
     {
         if (T *ptr = m_ptr) {
-            InterpreterLock lock;
+            JSLock lock;
             gcProtect(ptr);
         }
     }
 
     template <class T> ProtectedPtr<T> &ProtectedPtr<T>::operator=(const ProtectedPtr<T> &o) 
     {
-        InterpreterLock lock;
+        JSLock lock;
         T *optr = o.m_ptr;
         gcProtectNullTolerant(optr);
         gcUnprotectNullTolerant(m_ptr);
@@ -124,7 +124,7 @@ namespace KJS {
 
     template <class T> inline ProtectedPtr<T> &ProtectedPtr<T>::operator=(T *optr)
     {
-        InterpreterLock lock;
+        JSLock lock;
         gcProtectNullTolerant(optr);
         gcUnprotectNullTolerant(m_ptr);
         m_ptr = optr;

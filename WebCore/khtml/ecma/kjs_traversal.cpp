@@ -324,7 +324,7 @@ short JSNodeFilterCondition::acceptNode(FilterNode filterNode) const
     KHTMLPart *part = node->getDocument()->part();
     KJSProxy *proxy = KJSProxy::proxy(part);
     if (proxy && filter->implementsCall()) {
-        InterpreterLock lock;
+        JSLock lock;
         ExecState *exec = proxy->interpreter()->globalExec();
         List args;
         args.append(getDOMNode(exec, node));

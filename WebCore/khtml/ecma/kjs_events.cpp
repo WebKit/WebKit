@@ -90,7 +90,7 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
   if (!proxy)
     return;
 
-  InterpreterLock lock;
+  JSLock lock;
   
   ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
   ExecState *exec = interpreter->globalExec();
@@ -300,7 +300,7 @@ void JSLazyEventListener::parseCode() const
       ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
       ExecState *exec = interpreter->globalExec();
 
-      InterpreterLock lock;
+      JSLock lock;
       ObjectImp *constr = interpreter->builtinFunction();
       List args;
 
@@ -322,7 +322,7 @@ void JSLazyEventListener::parseCode() const
 
         ObjectImp *thisObj;
         { // scope
-            InterpreterLock lock;
+            JSLock lock;
             thisObj = static_cast<ObjectImp *>(getDOMNode(exec, originalNode));
         }
 
@@ -550,7 +550,7 @@ ValueImp *getDOMEvent(ExecState *exec, EventImpl *e)
     return Null();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
-  InterpreterLock lock;
+  JSLock lock;
 
   DOMObject *ret = interp->getDOMObject(e);
   if (!ret) {

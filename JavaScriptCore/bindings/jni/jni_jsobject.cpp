@@ -171,7 +171,7 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
 
     // Lookup the function object.
     ExecState *exec = _root->interpreter()->globalExec();
-    InterpreterLock lock;
+    JSLock lock;
     
     Identifier identifier(JavaString(methodName).ustring());
     ValueImp *func = _imp->get (exec, identifier);
@@ -196,7 +196,7 @@ jobject JSObject::eval(jstring script) const
     ObjectImp *thisObj = const_cast<ObjectImp*>(_imp);
     ValueImp *result;
     
-    InterpreterLock lock;
+    JSLock lock;
     
     Completion completion = _root->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
     ComplType type = completion.complType();
@@ -217,7 +217,7 @@ jobject JSObject::getMember(jstring memberName) const
 
     ExecState *exec = _root->interpreter()->globalExec();
     
-    InterpreterLock lock;
+    JSLock lock;
     ValueImp *result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
 
     return convertValueToJObject(result);
@@ -227,7 +227,7 @@ void JSObject::setMember(jstring memberName, jobject value) const
 {
     JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).UTF8String(), value);
     ExecState *exec = _root->interpreter()->globalExec();
-    InterpreterLock lock;
+    JSLock lock;
     _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
 
@@ -237,7 +237,7 @@ void JSObject::removeMember(jstring memberName) const
     JS_LOG ("memberName = %s\n", JavaString(memberName).UTF8String());
 
     ExecState *exec = _root->interpreter()->globalExec();
-    InterpreterLock lock;
+    JSLock lock;
     _imp->deleteProperty(exec, Identifier (JavaString(memberName).ustring()));
 }
 
@@ -248,7 +248,7 @@ jobject JSObject::getSlot(jint index) const
 
     ExecState *exec = _root->interpreter()->globalExec();
 
-    InterpreterLock lock;
+    JSLock lock;
     ValueImp *result = _imp->get (exec, (unsigned)index);
 
     return convertValueToJObject(result);
@@ -260,7 +260,7 @@ void JSObject::setSlot(jint index, jobject value) const
     JS_LOG ("index = %ld, value = %p\n", index, value);
 
     ExecState *exec = _root->interpreter()->globalExec();
-    InterpreterLock lock;
+    JSLock lock;
     _imp->put(exec, (unsigned)index, convertJObjectToValue(value));
 }
 
@@ -269,7 +269,7 @@ jstring JSObject::toString() const
 {
     JS_LOG ("\n");
     
-    InterpreterLock lock;
+    JSLock lock;
     ObjectImp *thisObj = const_cast<ObjectImp*>(_imp);
     ExecState *exec = _root->interpreter()->globalExec();
     
@@ -422,7 +422,7 @@ ValueImp *JSObject::convertJObjectToValue (jobject theObject) const
         return imp;
     }
 
-    InterpreterLock lock;
+    JSLock lock;
     RuntimeObjectImp *newImp = new RuntimeObjectImp(new Bindings::JavaInstance (theObject, _root));
 
     return newImp;

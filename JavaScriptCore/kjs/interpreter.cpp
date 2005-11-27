@@ -120,7 +120,7 @@ Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumbe
 
 #if APPLE_CHANGES
   if (shouldPrintExceptions() && comp.complType() == Throw) {
-    InterpreterLock lock;
+    JSLock lock;
     ExecState *exec = rep->globalExec();
     char *f = strdup(sourceURL.ascii());
     const char *message = comp.value()->toObject(exec)->toString(exec).ascii();

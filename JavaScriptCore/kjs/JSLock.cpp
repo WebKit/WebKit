@@ -33,7 +33,7 @@ static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
 static int interpreterLockCount = 0;
 
-static void initializeInterpreterLock()
+static void initializeJSLock()
 {
   pthread_mutexattr_t attr;
 
@@ -43,9 +43,9 @@ static void initializeInterpreterLock()
   pthread_mutex_init(&interpreterLock, &attr);
 }
 
-void InterpreterLock::lock()
+void JSLock::lock()
 {
-  pthread_once(&interpreterLockOnce, initializeInterpreterLock);
+  pthread_once(&interpreterLockOnce, initializeJSLock);
   pthread_mutex_lock(&interpreterLock);
   interpreterLockCount++;
   Collector::registerThread();
@@ -57,7 +57,7 @@ void InterpreterLock::lock()
   ConstantValues::initIfNeeded();
 }
 
-void InterpreterLock::unlock()
+void JSLock::unlock()
 {
   interpreterLockCount--;
   pthread_mutex_unlock(&interpreterLock);
@@ -69,35 +69,35 @@ void InterpreterLock::unlock()
 // that the lock is held don't fail
 const int interpreterLockCount = 1;
 
-void InterpreterLock::lock()
+void JSLock::lock()
 {
 }
 
-void InterpreterLock::unlock()
+void JSLock::unlock()
 {
 }
 
 #endif
 
-int InterpreterLock::lockCount()
+int JSLock::lockCount()
 {
     return interpreterLockCount;
 }
         
-InterpreterLock::DropAllLocks::DropAllLocks()
+JSLock::DropAllLocks::DropAllLocks()
 {
-    int lockCount = InterpreterLock::lockCount();
+    int lockCount = JSLock::lockCount();
     for (int i = 0; i < lockCount; i++) {
-        InterpreterLock::unlock();
+        JSLock::unlock();
     }
     m_lockCount = lockCount;
 }
 
-InterpreterLock::DropAllLocks::~DropAllLocks()
+JSLock::DropAllLocks::~DropAllLocks()
 {
     int lockCount = m_lockCount;
     for (int i = 0; i < lockCount; i++) {
-        InterpreterLock::lock();
+        JSLock::lock();
     }
 }
 
