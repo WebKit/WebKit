@@ -1,3 +1,13 @@
+2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ggaren.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5710
+        item(i) should return the same result as [i]
+
+        * fast/js/array-special-accessors-should-ignore-items-expected.txt: Added.
+        * fast/js/array-special-accessors-should-ignore-items.html: Added.
+
 2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by mjs.
