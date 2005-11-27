@@ -1,3 +1,20 @@
+2005-11-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        Inline ScopeChain functions for speed.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5687
+
+        * kjs/object.h:
+        (KJS::ScopeChain::mark):
+        * kjs/scope_chain.cpp:
+        * kjs/scope_chain.h:
+        (KJS::ScopeChain::ref):
+        (KJS::ScopeChain::operator=):
+        (KJS::ScopeChain::bottom):
+        (KJS::ScopeChain::push):
+        (KJS::ScopeChain::pop):
+
 2005-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

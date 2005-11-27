@@ -22,31 +22,7 @@
 #include "config.h"
 #include "scope_chain.h"
 
-#include "object.h"
-
 namespace KJS {
-
-inline void ScopeChain::ref() const
-{
-    for (ScopeChainNode *n = _node; n; n = n->next) {
-        if (n->refCount++ != 0)
-            break;
-    }
-}
-
-ScopeChain &ScopeChain::operator=(const ScopeChain &c)
-{
-    c.ref();
-    deref();
-    _node = c._node;
-    return *this;
-}
-
-void ScopeChain::push(ObjectImp *o)
-{
-    assert(o);
-    _node = new ScopeChainNode(_node, o);
-}
 
 void ScopeChain::push(const ScopeChain &c)
 {
@@ -55,21 +31,6 @@ void ScopeChain::push(const ScopeChain &c)
         ScopeChainNode *newNode = new ScopeChainNode(*tail, n->object);
         *tail = newNode;
         tail = &newNode->next;
-    }
-}
-
-void ScopeChain::pop()
-{
-    ScopeChainNode *oldNode = _node;
-    assert(oldNode);
-    ScopeChainNode *newNode = oldNode->next;
-    _node = newNode;
-    
-    if (--oldNode->refCount != 0) {
-        if (newNode)
-            ++newNode->refCount;
-    } else {
-        delete oldNode;
     }
 }
 
@@ -84,30 +45,6 @@ void ScopeChain::release()
         delete n;
         n = next;
     } while (n && --n->refCount == 0);
-}
-
-void ScopeChain::mark()
-{
-    for (ScopeChainNode *n = _node; n; n = n->next) {
-        ObjectImp *o = n->object;
-        if (!o->marked())
-            o->mark();
-    }
-}
-
-ObjectImp *ScopeChain::bottom() const
-{
-    ScopeChainNode *last = 0;
-    for (ScopeChainNode *n = _node; n; n = n->next) {
-	if (!n->next) {
-	    last = n;
-	}
-    }
-    if (!last) {
-	return 0;
-    }
-
-    return last->object;
 }
 
 } // namespace KJS

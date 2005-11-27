@@ -22,6 +22,8 @@
 #ifndef KJS_SCOPE_CHAIN_H
 #define KJS_SCOPE_CHAIN_H
 
+#include <assert.h>
+
 namespace KJS {
 
     class ObjectImp;
@@ -86,6 +88,53 @@ namespace KJS {
         
         void release();
     };
+
+inline void ScopeChain::ref() const
+{
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        if (n->refCount++ != 0)
+            break;
+    }
+}
+
+inline ScopeChain &ScopeChain::operator=(const ScopeChain &c)
+{
+    c.ref();
+    deref();
+    _node = c._node;
+    return *this;
+}
+
+inline ObjectImp *ScopeChain::bottom() const
+{
+    ScopeChainNode *last = 0;
+    for (ScopeChainNode *n = _node; n; n = n->next)
+        last = n;
+    if (!last)
+	return 0;
+    return last->object;
+}
+
+inline void ScopeChain::push(ObjectImp *o)
+{
+    assert(o);
+    _node = new ScopeChainNode(_node, o);
+}
+
+inline void ScopeChain::pop()
+{
+    ScopeChainNode *oldNode = _node;
+    assert(oldNode);
+    ScopeChainNode *newNode = oldNode->next;
+    _node = newNode;
+    
+    if (--oldNode->refCount != 0) {
+        if (newNode)
+            ++newNode->refCount;
+    } else {
+        delete oldNode;
+    }
+}
 
 } // namespace KJS
 

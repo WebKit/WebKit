@@ -606,6 +606,17 @@ inline bool ObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
+// FIXME: Put this function in a separate file named something like scope_chain_mark.h -- can't put it in scope_chain.h since it depends on ObjectImp.
+
+inline void ScopeChain::mark()
+{
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        ObjectImp *o = n->object;
+        if (!o->marked())
+            o->mark();
+    }
+}
+
 } // namespace
 
 #endif // KJS_OBJECT_H
