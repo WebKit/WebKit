@@ -1,3 +1,10 @@
+2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Committed by eseidel.
+
+        * khtml/rendering/render_table.cpp: <col>, <colgroup> <caption> fix
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5829
+
 2005-11-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
