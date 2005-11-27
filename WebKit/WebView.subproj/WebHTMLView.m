@@ -4905,8 +4905,18 @@ static NSArray *validAttributes = nil;
 
 - (unsigned int)characterIndexForPoint:(NSPoint)thePoint
 {
-    ERROR("TEXTINPUT: characterIndexForPoint: not yet implemented");
-    return 0;
+    NSWindow *window = [self window];
+    WebBridge *bridge = [self _bridge];
+
+    if (window)
+        thePoint = [window convertScreenToBase:thePoint];
+    thePoint = [self convertPoint:thePoint fromView:nil];
+
+    DOMRange *range = [bridge characterRangeAtPoint:thePoint];
+    if (!range)
+        return NSNotFound;
+    
+    return [bridge convertDOMRangeToNSRange:range].location;
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
@@ -4916,7 +4926,7 @@ static NSArray *validAttributes = nil;
     DOMRange *range;
     
     if ([self hasMarkedText]) {
-        range = [bridge convertToObjCDOMRange:theRange];
+        range = [bridge convertNSRangeToDOMRange:theRange];
     }
     else {
         range = [self _selectedRange];

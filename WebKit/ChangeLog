@@ -1,3 +1,14 @@
+2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by mjs.  Committed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5230
+        "characterIndexForPoint: not yet implemented"
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+
 2005-11-22  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebView.h: Fixed incorrect comment in public header.
