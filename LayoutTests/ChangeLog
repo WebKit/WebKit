@@ -1,6 +1,17 @@
+2005-11-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Committed by eseidel.
+
+        Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=5172
+
+        * fast/text/international/bidi-layout-across-linebreak-expected.checksum: Added.
+        * fast/text/international/bidi-layout-across-linebreak-expected.png: Added.
+        * fast/text/international/bidi-layout-across-linebreak-expected.txt: Added.
+        * fast/text/international/bidi-layout-across-linebreak.html: Added.
+
 2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
 
-        Reviewed by darin.
+        Reviewed by darin.  Committed by eseidel.
 
         Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=5548
 
@@ -13,7 +24,7 @@
 
 2005-11-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
-        Reviewed by ggaren.
+        Reviewed by ggaren.  Committed by eseidel.
 
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5710
         item(i) should return the same result as [i]
