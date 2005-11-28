@@ -28,7 +28,7 @@
 #include "xml/dom_xmlimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_tableimpl.h"
-#include "HTMLNames.h"
+#include "htmlnames.h"
 #include "misc/loader.h"
 #include <kxmlcore/HashMap.h>
 
