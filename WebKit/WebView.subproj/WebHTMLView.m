@@ -5321,7 +5321,7 @@ static NSArray *validAttributes = nil;
         // Get preceeding word stem
         WebBridge *bridge = [_view _bridge];
         DOMRange *selection = [bridge selectedDOMRange];
-        DOMRange *wholeWord = [bridge rangeByExpandingSelectionWithGranularity:WebBridgeSelectByWord];
+        DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] :[selection startOffset]];
 

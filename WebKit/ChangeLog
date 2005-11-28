@@ -1,3 +1,13 @@
+2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin. Committed by Maciej.
+
+	- fixed "Word completion doesn't work at end of word (unless last word)"
+	(http://bugzilla.opendarwin.org/show_bug.cgi?id=4062)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebTextCompleteController doCompletion]):
+
 2005-11-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
