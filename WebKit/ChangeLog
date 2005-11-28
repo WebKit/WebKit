@@ -1,3 +1,18 @@
+2005-11-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        Probable fix for <rdar://problem/4356060> crash in -[WebHistoryItem _mergeAutoCompleteHints:]
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate addItem:]):
+        retain/release oldEntry until we're done with it, since removing it from dictionary might
+        cause it to be dealloc'ed otherwise.
+        
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _mergeAutoCompleteHints:]):
+        added an assert
+
 2005-11-26  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by mjs.  Committed by eseidel.

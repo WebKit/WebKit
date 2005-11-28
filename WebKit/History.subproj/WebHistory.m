@@ -199,11 +199,15 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     WebHistoryItem *oldEntry = [_entriesByURL objectForKey:URLString];
     if (oldEntry) {
+        // The last reference to oldEntry might be this dictionary, so we hold onto a reference
+        // until we're done with oldEntry.
+        [oldEntry retain];
         [self removeItemForURLString:URLString];
 
         // If we already have an item with this URL, we need to merge info that drives the
         // URL autocomplete heuristics from that item into the new one.
         [entry _mergeAutoCompleteHints:oldEntry];
+        [oldEntry release];
     }
 
     [self _addItemToDateCaches:entry];

@@ -544,6 +544,8 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem
 {
+    ASSERT_ARG(otherItem, otherItem);
+    
     if (otherItem != self) {
         _private->visitCount += otherItem->_private->visitCount;
     }
