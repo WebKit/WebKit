@@ -1,3 +1,9 @@
+2005-11-28  Justin Garcia  <justin.garcia@apple.com>
+        
+        I overlooked this layout test when fixing 4108909.
+
+        * fast/forms/attributed-strings-expected.txt:
+
 2005-11-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin. Committed by Maciej.
