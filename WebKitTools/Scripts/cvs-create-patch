@@ -141,9 +141,9 @@ sub diff
             my $unknown = $1;
             if ($includeUnknowns && $unknown !~ /^\./) {
                 if (-d $unknown) {
-                    addNewDirectory($indexPath, $unknown);
+                    addNewDirectory($dir, $unknown);
                 } else {
-                    addNewFile($indexPath, $unknown);
+                    addNewFile($dir, $unknown);
                 }
             }
         } else {
