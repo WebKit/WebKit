@@ -143,6 +143,11 @@ int main(int argc, const char *argv[])
                 break;
         }
     
+    if ([[[NSFontManager sharedFontManager] availableMembersOfFontFamily:@"Ahem"] count] == 0) {
+		fprintf(stderr, "\nAhem font is not available. This special simple font is used to construct certain types of predictable tests.\n\nTo run regression tests, please get it from <http://webkit.opendarwin.org/quality/Ahem.ttf>.\n");
+		exit(1);
+    }
+    
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];

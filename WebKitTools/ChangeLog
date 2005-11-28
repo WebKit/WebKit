@@ -1,3 +1,13 @@
+2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin. Committed by Maciej.
+
+	- fixed "DumpRenderTree should test for Ahem before doing anything else"
+	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5838)
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+
 2005-11-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by sullivan and GGAREN.
