@@ -1,5 +1,15 @@
 2005-11-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin. Committed by Maciej.
+
+	- fixed Bidi algorithm: AN after L has incorrect resolved level
+	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5573)
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::bidiReorderLine):
+
+2005-11-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by hyatt.  Committed by eseidel.
 
         One test case added:
