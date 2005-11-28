@@ -113,11 +113,11 @@ sub patch
         # Either a deletion or an addition.
 
         # Change directory down into the directory in question.
-        $patch =~ m|^Index: (([^/\n]*/)*)([^/\n]+)| or die;
+        $patch =~ m|^Index: (([^/\n]*/)*)([^/\n]+)| or die "Failed to find Index: in \"$patch\"\n";
         my $prefix = $1;
         my $base = $3;
         if ($prefix) {
-            chdir $prefix or die;
+            chdir $prefix or die "Failed to chdir to $prefix";
         }
 
         if ($patch =~ /\n@@ .* \+0,0 @@/) {

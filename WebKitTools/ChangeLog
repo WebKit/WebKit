@@ -1,3 +1,11 @@
+2005-11-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by sullivan and GGAREN.
+
+        Minor additions to make error messages more clear from cvs-apply.
+
+        * Scripts/cvs-apply: make errors more clear
+
 2005-11-27  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
 	Reviewed and committed by Maciej.
