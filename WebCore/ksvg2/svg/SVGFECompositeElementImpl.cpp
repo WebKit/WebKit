@@ -111,13 +111,21 @@ void SVGFECompositeElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *
             _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_ATOP);
         else if(value == "xor")
             _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_XOR);
-        else if(value == "arithmatic")
+        else if(value == "arithmetic")
             _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
     }
     else if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else if (attr->name() == SVGNames::in2Attr)
         in2()->setBaseVal(value.impl());
+    else if (attr->name() == SVGNames::k1Attr)
+        k1()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::k2Attr)
+        k2()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::k3Attr)
+        k3()->setBaseVal(value.qstring().toDouble());
+    else if (attr->name() == SVGNames::k4Attr)
+        k4()->setBaseVal(value.qstring().toDouble());
     else
         SVGFilterPrimitiveStandardAttributesImpl::parseMappedAttribute(attr);
 }

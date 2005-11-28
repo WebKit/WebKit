@@ -144,7 +144,6 @@ sub elementsForTags
 		next if /glyph/i;
 		next if /kern/i;
 		next if /motion/i;
-		next if /light/i;
 		next if /mask/i;
 		next if /meta/i;
 		next if /mpath/i;

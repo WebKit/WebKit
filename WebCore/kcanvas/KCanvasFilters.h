@@ -53,6 +53,61 @@ typedef enum
 #include <qcolor.h>
 #include <qstringlist.h>
 
+class KCanvasPoint3F {
+public:
+    KCanvasPoint3F() : m_x(0), m_y(0), m_z(0) { }
+    KCanvasPoint3F(float x, float y, float z) : m_x(x), m_y(y), m_z(z) { }
+    
+    float x() const { return m_x; }
+    void setX(float x) { m_x = x; }
+    
+    float y() const { return m_y; }
+    void setY(float y) { m_y = y; }
+    
+    float z() const { return m_z; }
+    void setZ(float z) { m_z = z; }
+    
+    void normalize();
+    
+private:
+    float m_x;
+    float m_y;
+    float m_z;
+};
+
+// FIXME: QPointF and QSizeF will be removed from this file when
+// http://bugzilla.opendarwin.org/show_bug.cgi?id=4462 is resolved.
+
+class QPointF {
+public:
+    QPointF(float x, float y) : m_x(x), m_y(y) { }
+
+    float x() const { return m_x; }
+    void setX(float x) { m_x = x; }
+    
+    float y() const { return m_y; }
+    void setY(float y) { m_y = y; }
+    
+private:
+    float m_x;
+    float m_y;
+};
+
+class QSizeF {
+public:
+    QPointF(float width, float height) : m_width(x), m_height(y) { }
+
+    float width() const { return m_width; }
+    void setWidth(float width) { m_width = width; }
+    
+    float height() const { return m_height; }
+    void setHeight(float height) { m_height = height; }
+    
+private:
+    float m_width;
+    float m_height;
+};
+
 class KCanvasFilterEffect;
 class KRenderingDevice;
 
@@ -129,51 +184,6 @@ private:
 };
 
 QTextStream &operator<<(QTextStream &, const KCanvasFilterEffect &);
-
-class KCanvasFEDistantLight : public KCanvasFilterEffect
-{
-public:
-    float azimuth() const { return m_azimuth; }
-    void setAzimuth(float azimuth) { m_azimuth = azimuth; }
-
-    float elevation() const { return m_elevation; }
-    void setElevation(float elevation) { m_elevation = elevation; }
-    
-    // FIXME, more here...
-     QTextStream &externalRepresentation(QTextStream &) const;
-private:
-    float m_azimuth;
-    float m_elevation;
-};
-
-class KCanvasFEPointLight : public KCanvasFilterEffect
-{
-public:
-
-    QTextStream &externalRepresentation(QTextStream &) const;
-
-private:
-    float m_x;
-    float m_y;
-    float m_z;
-};
-
-class KCanvasFESpotLight : public KCanvasFilterEffect
-{
-public:
-
-    QTextStream &externalRepresentation(QTextStream &) const;
-
-private:
-    float m_x;
-    float m_y;
-    float m_z;
-    float m_pointsAtX;
-    float m_pointsAtY;
-    float m_pointsAtZ;
-    float m_specularExponent;
-    float m_limitingConeAngle;
-};
 
 typedef enum {
     BM_NORMAL = 0,
@@ -335,34 +345,144 @@ typedef enum {
 class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
 {
 public:
+    QSize kernelSize() const { return m_kernelSize; }
+    void setKernelSize(QSize kernelSize) { m_kernelSize = kernelSize; }
+    
+    Q3ValueList<float> kernel() const { return m_kernelMatrix; }
+    void setKernel(Q3ValueList<float> kernel) { m_kernelMatrix = kernel; }
+    
+    float divisor() const { return m_divisor; }
+    void setDivisor(float divisor) { m_divisor = divisor; }
+    
+    float bias() const { return m_bias; }
+    void setBias(float bias) { m_bias = bias; }
+    
+    QSize targetOffset() const { return m_targetOffset; }
+    void setTargetOffset(QSize targetOffset) { m_targetOffset = targetOffset; }
+    
+    KCEdgeModeType edgeMode() const { return m_edgeMode; }
+    void setEdgeMode(KCEdgeModeType edgeMode) { m_edgeMode = edgeMode; }
+    
+    QPointF kernelUnitLength() const {return m_kernelUnitLength; }
+    void setKernelUnitLength(QPointF kernelUnitLength) { m_kernelUnitLength = kernelUnitLength; }
+    
+    bool preserveAlpha() const { return m_preserveAlpha; }
+    void setPreserveAlpha(bool preserveAlpha) { m_preserveAlpha = preserveAlpha; }
 
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-    int m_orderX;
-    int m_orderY;
+    QSize m_kernelSize;
     Q3ValueList<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
-    int m_targetX;
-    int m_targetY;
+    QSize m_targetOffset;
     KCEdgeModeType m_edgeMode;
-    float m_kernelUnitLengthX;
-    float m_kernelUnitLengthY;
+    QPointF m_kernelUnitLength;
     bool m_preserveAlpha;
+};
+
+typedef enum{
+    LS_DISTANT,
+    LS_POINT,
+    LS_SPOT
+} KCLightType;
+
+//The light source for Diffuse/SpecularLighting
+class KCLightSource
+{
+public:
+    KCLightSource(KCLightType a_type) : m_type(a_type) { }
+    
+    virtual ~KCLightSource() { }
+    
+    KCLightType type() const { return m_type; }
+    
+    virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
+    
+private:
+    KCLightType m_type;
+};
+
+class KCDistantLightSource : public KCLightSource
+{
+public:
+    KCDistantLightSource(float azimuth, float elevation) :
+        KCLightSource(LS_DISTANT), m_azimuth(azimuth), m_elevation(elevation) { }
+    
+    float azimuth() const{ return m_azimuth; }
+    float elevation() const{ return m_elevation; }
+    
+    virtual QTextStream &externalRepresentation(QTextStream &) const;
+    
+private:
+    float m_azimuth;
+    float m_elevation;
+};
+
+class KCPointLightSource : public KCLightSource
+{
+public:
+    KCPointLightSource(KCanvasPoint3F& position) : KCLightSource(LS_POINT), m_position(position) { }
+    
+    const KCanvasPoint3F& position() const { return m_position; }
+    
+    virtual QTextStream &externalRepresentation(QTextStream &) const;
+
+private:
+    KCanvasPoint3F m_position;
+};
+
+class KCSpotLightSource : public KCLightSource
+{
+public:
+    KCSpotLightSource(KCanvasPoint3F& position, KCanvasPoint3F& direction, 
+        float specularExponent, float limitingConeAngle) : KCLightSource(LS_SPOT), 
+        m_position(position), m_direction(direction), m_specularExponent(specularExponent), m_limitingConeAngle(limitingConeAngle) { }
+    
+    const KCanvasPoint3F& position() const { return m_position; }
+    const KCanvasPoint3F& direction() const { return m_direction; }
+    float specularExponent() const { return m_specularExponent; }
+    float limitingConeAngle() const { return m_limitingConeAngle; }
+    
+    virtual QTextStream &externalRepresentation(QTextStream &) const;
+private:
+    KCanvasPoint3F m_position;
+    KCanvasPoint3F m_direction;
+    float          m_specularExponent;
+    float          m_limitingConeAngle;
 };
 
 class KCanvasFEDiffuseLighting : public KCanvasFilterEffect
 {
 public:
+    QColor lightingColor() const { return m_lightingColor; }
+    void setLightingColor(const QColor &lightingColor) { m_lightingColor = lightingColor; }
 
+    float surfaceScale() const { return m_surfaceScale; }
+    void setSurfaceScale(float surfaceScale) { m_surfaceScale = surfaceScale; }
+    
+    float diffuseConstant() const { return m_diffuseConstant; }
+    void setDiffuseConstant(float diffuseConstant) { m_diffuseConstant = diffuseConstant; }
+    
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX; }
+    void setKernelUnitLengthX(float kernelUnitLengthX) { m_kernelUnitLengthX = kernelUnitLengthX; }
+    
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
+    void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
+
+    const KCLightSource * lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource * lightSource) { m_lightSource = lightSource; }
+    
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
+    QColor m_lightingColor;
     float m_surfaceScale;
     float m_diffuseConstant;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
+    KCLightSource *m_lightSource;
 };
 
 typedef enum {
@@ -392,7 +512,6 @@ class KCanvasFEFlood : public KCanvasFilterEffect
 public:
     QColor floodColor() const { return m_floodColor; }
     void setFloodColor(const QColor &color) { m_floodColor = color; }
-
 
     float floodOpacity() const { return m_floodOpacity; }
     void setFloodOpacity(float floodOpacity) { m_floodOpacity = floodOpacity; }
@@ -494,16 +613,40 @@ private:
 class KCanvasFESpecularLighting : public KCanvasFilterEffect
 {
 public:
+    QColor lightingColor() const { return m_lightingColor; }
+    void setLightingColor(const QColor &lightingColor) { m_lightingColor = lightingColor; }
 
+    float surfaceScale() const { return m_surfaceScale; }
+    void setSurfaceScale(float surfaceScale) { m_surfaceScale = surfaceScale; }
+    
+    float specularConstant() const { return m_specularConstant; }
+    void setSpecularConstant(float specularConstant) { m_specularConstant = specularConstant; }
+    
+    float specularExponent() const { return m_specularExponent; }
+    void setSpecularExponent(float specularExponent) { m_specularExponent = specularExponent; }
+    
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX; }
+    void setKernelUnitLengthX(float kernelUnitLengthX) { m_kernelUnitLengthX = kernelUnitLengthX; }
+    
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
+    void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
+    
+    const KCLightSource * lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource * lightSource) { m_lightSource = lightSource; }
+    
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
+    QColor m_lightingColor;
     float m_surfaceScale;
     float m_specularConstant;
     float m_specularExponent;
+    float m_kernelUnitLengthX;
+    float m_kernelUnitLengthY;
+    KCLightSource *m_lightSource;
 };
 
-class KCanvasFETile : public KCanvasFilterEffect {};
+class KCanvasFETile : public KCanvasFilterEffect { };
 
 typedef enum {
     TT_TURBULANCE = 0,

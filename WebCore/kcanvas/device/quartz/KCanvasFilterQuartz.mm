@@ -31,6 +31,13 @@
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 #import "KWQExceptions.h"
+#import "WKDiffuseLightingFilter.h"
+#import "WKSpecularLightingFilter.h"
+#import "WKSpotLightFilter.h"
+#import "WKPointLightFilter.h"
+#import "WKDistantLightFilter.h"
+#import "WKNormalMapFilter.h"
+#import "WKArithmeticFilter.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -40,13 +47,22 @@
 
 static QString KCPreviousFilterOutputName = QString::fromLatin1("__previousOutput__");
 
-//static CIColor *ciColor(const QColor &c)
-//{
-//    CGColorRef colorCG = cgColor(c);
-//    CIColor *colorCI = [CIColor colorWithCGColor:colorCG];
-//    CGColorRelease(colorCG);
-//    return colorCI;
-//}
+static inline CIColor *ciColor(const QColor &c)
+{
+    CGColorRef colorCG = cgColor(c);
+    CIColor *colorCI = [CIColor colorWithCGColor:colorCG];
+    CGColorRelease(colorCG);
+    return colorCI;
+}
+
+static inline CIVector *ciVector(KCanvasPoint3F point) {
+    return [CIVector vectorWithX:point.x() Y:point.y() Z:point.z()];
+}
+
+static inline CIVector *ciVector(QPointF point) {
+    return [CIVector vectorWithX:point.x() Y:point.y()];
+}
+
 
 KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0), m_imagesByName(0)
 {
@@ -223,7 +239,6 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 
 #pragma mark -
 #pragma mark Filter Elements
-
 
 #define FE_QUARTZ_SETUP_INPUT(name) \
     CIImage *inputImage = quartzFilter->inputImage(this); \
@@ -421,24 +436,25 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
 	KWQ_BLOCK_EXCEPTIONS
 	switch(operation()) {
 	case CO_OVER:
-		filter = [CIFilter filterWithName:@"CISourceOverCompositing"];
-		break;
+            filter = [CIFilter filterWithName:@"CISourceOverCompositing"];
+            break;
 	case CO_IN:
-		filter = [CIFilter filterWithName:@"CISourceInCompositing"];
-		break;
+            filter = [CIFilter filterWithName:@"CISourceInCompositing"];
+            break;
 	case CO_OUT:
-		filter = [CIFilter filterWithName:@"CISourceOutCompositing"];
-		break;
+            filter = [CIFilter filterWithName:@"CISourceOutCompositing"];
+            break;
 	case CO_ATOP:
-		filter = [CIFilter filterWithName:@"CISourceAtopCompositing"];
-		break;
+            filter = [CIFilter filterWithName:@"CISourceAtopCompositing"];
+            break;
 	case CO_XOR:
-		//FIXME: I'm not sure this is right...
-		filter = [CIFilter filterWithName:@"CIExclusionBlendMode"];
+            //FIXME: I'm not sure this is right...
+            filter = [CIFilter filterWithName:@"CIExclusionBlendMode"];
+            break;
 	case CO_ARITHMETIC:
-		NSLog(@"Warning: arithmetic compositing mode not yet supported in Quartz.");
-		// this would be where we use the k values...
-		return nil;
+            [WKArithmeticFilter class];
+            filter = [CIFilter filterWithName:@"WKArithmeticFilter"];
+            break;
 	}
 	
 	[filter setDefaults];
@@ -448,8 +464,139 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
 	FE_QUARTZ_CHECK_INPUT(backgroundImage);
 	[filter setValue:inputImage forKey:@"inputImage"];
 	[filter setValue:backgroundImage forKey:@"inputBackgroundImage"];
-	
+	//FIXME: this seems ugly
+	if (operation() == CO_ARITHMETIC) {
+            [filter setValue:[NSNumber numberWithFloat:k1()] forKey:@"inputK1"];
+            [filter setValue:[NSNumber numberWithFloat:k2()] forKey:@"inputK2"];
+            [filter setValue:[NSNumber numberWithFloat:k3()] forKey:@"inputK3"];
+            [filter setValue:[NSNumber numberWithFloat:k4()] forKey:@"inputK4"];
+        }
 	FE_QUARTZ_OUTPUT_RETURN;
+}
+
+static inline CIFilter *getPointLightVectors(CIFilter * normals, CIVector * lightPosition, float surfaceScale)
+{
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS
+    filter = [CIFilter filterWithName:@"WKPointLight"];
+    if (!filter)
+        return nil;
+    [filter setDefaults];
+    [filter setValue:[normals valueForKey:@"outputImage"] forKey:@"inputNormalMap"];
+    [filter setValue:lightPosition forKey:@"inputLightPosition"];    
+    [filter setValue:[NSNumber numberWithFloat:surfaceScale] forKey:@"inputSurfaceScale"];
+    return filter; 
+    KWQ_UNBLOCK_EXCEPTIONS 
+    return nil;
+}
+static CIFilter *getLightVectors(CIFilter * normals, const KCLightSource * light, float surfaceScale)
+{
+    //FIXME: there has to be a better way of making sure these get initialised
+    [WKDistantLightFilter class];
+    [WKPointLightFilter class];
+    [WKSpotLightFilter class];
+    
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS
+    
+    switch (light->type()) {
+        case LS_DISTANT:
+        {
+            const KCDistantLightSource *dlight = static_cast<const KCDistantLightSource *>(light);
+            
+            filter = [CIFilter filterWithName:@"WKDistantLight"];
+            if (!filter)
+                return nil;
+            [filter setDefaults];
+            
+            float azimuth = dlight->azimuth();
+            float elevation = dlight->elevation();
+            azimuth=deg2rad(azimuth);
+            elevation=deg2rad(elevation);
+            float Lx = cos(azimuth)*cos(elevation);
+            float Ly = sin(azimuth)*cos(elevation);
+            float Lz = sin(elevation);
+            
+            [filter setValue:[normals valueForKey:@"outputImage"] forKey:@"inputNormalMap"];
+            [filter setValue:[CIVector vectorWithX:Lx Y:Ly Z:Lz] forKey:@"inputLightDirection"];
+            return filter;
+        }
+        case LS_POINT:
+        {
+            const KCPointLightSource *plight = static_cast<const KCPointLightSource *>(light);
+            return getPointLightVectors(normals, [CIVector vectorWithX:plight->position().x() Y:plight->position().y() Z:plight->position().z()], surfaceScale);
+        }
+        case LS_SPOT:
+        {
+            const KCSpotLightSource *slight = static_cast<const KCSpotLightSource *>(light);
+            filter = [CIFilter filterWithName:@"WKSpotLight"];
+            if (!filter)
+                return nil;
+            
+            CIFilter * pointLightFilter = getPointLightVectors(normals, [CIVector vectorWithX:slight->position().x() Y:slight->position().y() Z:slight->position().z()], surfaceScale);
+            if (!pointLightFilter)
+                return nil;
+            [filter setDefaults];
+            
+            [filter setValue:[pointLightFilter valueForKey:@"outputImage"] forKey:@"inputLightVectors"];
+            [filter setValue:[CIVector vectorWithX:slight->direction().x() Y:slight->direction().y() Z:slight->direction().z()] forKey:@"inputLightDirection"];
+            [filter setValue:[NSNumber numberWithFloat:slight->specularExponent()] forKey:@"inputSpecularExponent"];
+            [filter setValue:[NSNumber numberWithFloat:deg2rad(slight->limitingConeAngle())] forKey:@"inputLimitingConeAngle"];
+            return filter;
+        }
+    }
+    KWQ_UNBLOCK_EXCEPTIONS 
+    return nil;
+}
+
+
+static CIFilter *getNormalMap(CIImage *bumpMap, float scale)
+{
+    [WKNormalMapFilter class];
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS
+    filter = [CIFilter filterWithName:@"WKNormalMap"];   
+    [filter setDefaults];
+    
+    [filter setValue:bumpMap forKey:@"inputImage"];    
+    [filter setValue:[NSNumber numberWithFloat:scale] forKey:@"inputSurfaceScale"];
+    return filter;
+    KWQ_UNBLOCK_EXCEPTIONS 
+    return nil;
+}
+
+CIFilter *KCanvasFEDiffuseLightingQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+{
+    const KCLightSource *light = lightSource();
+    if(!light)
+        return nil;
+    
+    [WKDiffuseLightingFilter class];
+    
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS
+    filter = [CIFilter filterWithName:@"WKDiffuseLighting"];
+    if (!filter)
+        return nil;
+    
+    [filter setDefaults];
+    CIFilter *normals = getNormalMap(quartzFilter->inputImage(this), surfaceScale());
+    if (!normals) 
+        return nil;
+    
+    CIFilter *lightVectors = getLightVectors(normals, light, surfaceScale());
+    if (!lightVectors) 
+        return nil;
+    
+    [filter setValue:[normals valueForKey:@"outputImage"] forKey:@"inputNormalMap"];
+    [filter setValue:[lightVectors valueForKey:@"outputImage"] forKey:@"inputLightVectors"];
+    [filter setValue:ciColor(lightingColor()) forKey:@"inputLightingColor"];
+    [filter setValue:[NSNumber numberWithFloat:surfaceScale()] forKey:@"inputSurfaceScale"];
+    [filter setValue:[NSNumber numberWithFloat:diffuseConstant()] forKey:@"inputDiffuseConstant"];
+    [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthX()] forKey:@"inputKernelUnitLengthX"];
+    [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthY()] forKey:@"inputKernelUnitLengthY"];
+    
+    FE_QUARTZ_OUTPUT_RETURN;
 }
 
 CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
@@ -505,7 +652,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 
 CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	FE_QUARTZ_SETUP_INPUT(@"CIGaussianPyramid");
+	FE_QUARTZ_SETUP_INPUT(@"CIGaussianBlur");
 	
 	float inputRadius = stdDeviationX();
 	if (inputRadius != stdDeviationY()) {
@@ -551,13 +698,41 @@ CIFilter *KCanvasFEOffsetQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) 
 	FE_QUARTZ_OUTPUT_RETURN;
 }
 
+CIFilter *KCanvasFESpecularLightingQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+{  
+    const KCLightSource *light = lightSource();
+    if(!light)
+        return nil;
+    
+    [WKSpecularLightingFilter class];  
+    
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS
+    filter = [CIFilter filterWithName:@"WKSpecularLighting"];
+    [filter setDefaults];
+    CIFilter *normals = getNormalMap(quartzFilter->inputImage(this), surfaceScale());
+    if (!normals) 
+        return nil;
+    CIFilter *lightVectors = getLightVectors(normals, light, surfaceScale());
+    if (!lightVectors) 
+        return nil;
+    [filter setValue:[normals valueForKey:@"outputImage"] forKey:@"inputNormalMap"];
+    [filter setValue:[lightVectors valueForKey:@"outputImage"] forKey:@"inputLightVectors"];
+    [filter setValue:ciColor(lightingColor()) forKey:@"inputLightingColor"];
+    [filter setValue:[NSNumber numberWithFloat:surfaceScale()] forKey:@"inputSurfaceScale"];
+    [filter setValue:[NSNumber numberWithFloat:specularConstant()] forKey:@"inputSpecularConstant"];
+    [filter setValue:[NSNumber numberWithFloat:specularExponent()] forKey:@"inputSpecularExponent"];
+    [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthX()] forKey:@"inputKernelUnitLengthX"];
+    [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthY()] forKey:@"inputKernelUnitLengthY"];
+    
+    FE_QUARTZ_OUTPUT_RETURN;
+}
+
+
 CIFilter *KCanvasFETileQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
 	FE_QUARTZ_SETUP_INPUT(@"CIAffineTile");
 	// no interesting parameters...
 	FE_QUARTZ_OUTPUT_RETURN;
 }
-
-
-
 

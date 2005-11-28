@@ -1,0 +1,7 @@
+kernel vec4 arithmeticComposite(sampler in1, sampler in2, float k1, float k2, float k3, float k4)
+{
+    vec4 vin1 = sample(in1, samplerCoord(in1));
+    vec4 vin2 = sample(in2, samplerCoord(in2));
+    vec4 res = k1*vin1*vin2 + k2*vin1 + k3*vin2 + vec4(k4);
+    return res;
+}

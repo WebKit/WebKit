@@ -1541,6 +1541,41 @@
 		A8C0FFFD089701FC00BA5114 /* KRenderingPaintServerQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */; };
 		A8C0FFFE089701FC00BA5114 /* QuartzSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB76089701F800BA5114 /* QuartzSupport.h */; };
 		A8C0FFFF089701FC00BA5114 /* QuartzSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.mm */; };
+		A8C32935093BB732000B9CAC /* WKArithmeticFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */; };
+		A8C32936093BB732000B9CAC /* WKArithmeticFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */; };
+		A8C32937093BB732000B9CAC /* WKArithmeticFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */; };
+		A8C32938093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */; };
+		A8C32939093BB732000B9CAC /* WKDiffuseLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */; };
+		A8C3293A093BB732000B9CAC /* WKDiffuseLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */; };
+		A8C3293B093BB732000B9CAC /* WKDistantLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */; };
+		A8C3293C093BB732000B9CAC /* WKDistantLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */; };
+		A8C3293D093BB732000B9CAC /* WKDistantLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */; };
+		A8C3293E093BB732000B9CAC /* WKNormalMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */; };
+		A8C3293F093BB732000B9CAC /* WKNormalMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */; };
+		A8C32940093BB732000B9CAC /* WKNormalMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */; };
+		A8C32941093BB732000B9CAC /* WKPointLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */; };
+		A8C32942093BB732000B9CAC /* WKPointLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */; };
+		A8C32943093BB732000B9CAC /* WKPointLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */; };
+		A8C32944093BB732000B9CAC /* WKSpecularLightingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */; };
+		A8C32945093BB732000B9CAC /* WKSpecularLightingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */; };
+		A8C32946093BB732000B9CAC /* WKSpecularLightingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */; };
+		A8C32947093BB732000B9CAC /* WKSpotLightFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */; };
+		A8C32948093BB732000B9CAC /* WKSpotLightFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */; };
+		A8C32949093BB732000B9CAC /* WKSpotLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */; };
+		A8C3294C093BB78C000B9CAC /* SVGAnimatedColorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3294A093BB78C000B9CAC /* SVGAnimatedColorImpl.h */; };
+		A8C3294D093BB78C000B9CAC /* SVGAnimatedColorImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C3294B093BB78C000B9CAC /* SVGAnimatedColorImpl.cpp */; };
+		A8C32968093BB7B2000B9CAC /* SVGFELightElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3295C093BB7B2000B9CAC /* SVGFELightElementImpl.h */; };
+		A8C32969093BB7B2000B9CAC /* SVGFELightElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C3295D093BB7B2000B9CAC /* SVGFELightElementImpl.cpp */; };
+		A8C3296A093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h */; };
+		A8C3296B093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C3295F093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp */; };
+		A8C3296C093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32960093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h */; };
+		A8C3296D093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C32961093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp */; };
+		A8C3296E093BB7B2000B9CAC /* SVGFESpotLightElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32962093BB7B2000B9CAC /* SVGFESpotLightElementImpl.h */; };
+		A8C3296F093BB7B2000B9CAC /* SVGFESpotLightElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C32963093BB7B2000B9CAC /* SVGFESpotLightElementImpl.cpp */; };
+		A8C32970093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32964093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.h */; };
+		A8C32971093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C32965093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.cpp */; };
+		A8C32972093BB7B2000B9CAC /* SVGFEPointLightElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C32966093BB7B2000B9CAC /* SVGFEPointLightElementImpl.h */; };
+		A8C32973093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C32967093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.mm in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
 		BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC17988F088D975F006068A5 /* render_theme_mac.mm */; };
@@ -2499,6 +2534,41 @@
 		A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasResources.cpp; sourceTree = "<group>"; };
 		A8C0FB8B089701F800BA5114 /* KCanvasResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasResources.h; sourceTree = "<group>"; };
 		A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTypes.h; sourceTree = "<group>"; };
+		A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKArithmeticFilter.cikernel; sourceTree = "<group>"; };
+		A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKArithmeticFilter.h; sourceTree = "<group>"; };
+		A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKArithmeticFilter.m; sourceTree = "<group>"; };
+		A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDiffuseLightingFilter.cikernel; sourceTree = "<group>"; };
+		A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDiffuseLightingFilter.h; sourceTree = "<group>"; };
+		A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKDiffuseLightingFilter.m; sourceTree = "<group>"; };
+		A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDistantLightFilter.cikernel; sourceTree = "<group>"; };
+		A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDistantLightFilter.h; sourceTree = "<group>"; };
+		A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKDistantLightFilter.m; sourceTree = "<group>"; };
+		A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKNormalMapFilter.cikernel; sourceTree = "<group>"; };
+		A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNormalMapFilter.h; sourceTree = "<group>"; };
+		A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKNormalMapFilter.m; sourceTree = "<group>"; };
+		A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKPointLightFilter.cikernel; sourceTree = "<group>"; };
+		A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPointLightFilter.h; sourceTree = "<group>"; };
+		A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKPointLightFilter.m; sourceTree = "<group>"; };
+		A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKSpecularLightingFilter.cikernel; sourceTree = "<group>"; };
+		A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSpecularLightingFilter.h; sourceTree = "<group>"; };
+		A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKSpecularLightingFilter.m; sourceTree = "<group>"; };
+		A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKSpotLightFilter.cikernel; sourceTree = "<group>"; };
+		A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSpotLightFilter.h; sourceTree = "<group>"; };
+		A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKSpotLightFilter.m; sourceTree = "<group>"; };
+		A8C3294A093BB78C000B9CAC /* SVGAnimatedColorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedColorImpl.h; sourceTree = "<group>"; };
+		A8C3294B093BB78C000B9CAC /* SVGAnimatedColorImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedColorImpl.cpp; sourceTree = "<group>"; };
+		A8C3295C093BB7B2000B9CAC /* SVGFELightElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFELightElementImpl.h; sourceTree = "<group>"; };
+		A8C3295D093BB7B2000B9CAC /* SVGFELightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFELightElementImpl.cpp; sourceTree = "<group>"; };
+		A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDistantLightElementImpl.h; sourceTree = "<group>"; };
+		A8C3295F093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDistantLightElementImpl.cpp; sourceTree = "<group>"; };
+		A8C32960093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDiffuseLightingElementImpl.h; sourceTree = "<group>"; };
+		A8C32961093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDiffuseLightingElementImpl.cpp; sourceTree = "<group>"; };
+		A8C32962093BB7B2000B9CAC /* SVGFESpotLightElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFESpotLightElementImpl.h; sourceTree = "<group>"; };
+		A8C32963093BB7B2000B9CAC /* SVGFESpotLightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFESpotLightElementImpl.cpp; sourceTree = "<group>"; };
+		A8C32964093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFESpecularLightingElementImpl.h; sourceTree = "<group>"; };
+		A8C32965093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFESpecularLightingElementImpl.cpp; sourceTree = "<group>"; };
+		A8C32966093BB7B2000B9CAC /* SVGFEPointLightElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEPointLightElementImpl.h; sourceTree = "<group>"; };
+		A8C32967093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEPointLightElementImpl.cpp; sourceTree = "<group>"; };
 		A8DC63EB08E0DD2A004507F7 /* EcmaInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EcmaInterface.cpp; path = ksvg2/ecma/EcmaInterface.cpp; sourceTree = DERIVED_FILE_DIR; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; };
 		BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = xsl_stylesheetimpl.h; path = xsl/xsl_stylesheetimpl.h; sourceTree = "<group>"; };
@@ -3619,6 +3689,8 @@
 				A8C0F806089701F300BA5114 /* SVGAnimatedAngleImpl.h */,
 				A8C0F807089701F300BA5114 /* SVGAnimatedBooleanImpl.cpp */,
 				A8C0F808089701F300BA5114 /* SVGAnimatedBooleanImpl.h */,
+				A8C3294B093BB78C000B9CAC /* SVGAnimatedColorImpl.cpp */,
+				A8C3294A093BB78C000B9CAC /* SVGAnimatedColorImpl.h */,
 				A8C0F809089701F300BA5114 /* SVGAnimatedEnumerationImpl.cpp */,
 				A8C0F80A089701F300BA5114 /* SVGAnimatedEnumerationImpl.h */,
 				A8C0F80B089701F300BA5114 /* SVGAnimatedIntegerImpl.cpp */,
@@ -3687,6 +3759,10 @@
 				A8C0F84C089701F300BA5114 /* SVGFEComponentTransferElementImpl.h */,
 				A8C0F84D089701F300BA5114 /* SVGFECompositeElementImpl.cpp */,
 				A8C0F84E089701F300BA5114 /* SVGFECompositeElementImpl.h */,
+				A8C32961093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp */,
+				A8C32960093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h */,
+				A8C3295F093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp */,
+				A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h */,
 				A8C0F84F089701F300BA5114 /* SVGFEFloodElementImpl.cpp */,
 				A8C0F850089701F300BA5114 /* SVGFEFloodElementImpl.h */,
 				A8C0F851089701F300BA5114 /* SVGFEFuncAElementImpl.cpp */,
@@ -3701,12 +3777,20 @@
 				A8C0F85A089701F300BA5114 /* SVGFEGaussianBlurElementImpl.h */,
 				A8C0F85B089701F300BA5114 /* SVGFEImageElementImpl.cpp */,
 				A8C0F85C089701F300BA5114 /* SVGFEImageElementImpl.h */,
+				A8C3295D093BB7B2000B9CAC /* SVGFELightElementImpl.cpp */,
+				A8C3295C093BB7B2000B9CAC /* SVGFELightElementImpl.h */,
 				A8C0F85D089701F300BA5114 /* SVGFEMergeElementImpl.cpp */,
 				A8C0F85E089701F300BA5114 /* SVGFEMergeElementImpl.h */,
 				A8C0F85F089701F300BA5114 /* SVGFEMergeNodeElementImpl.cpp */,
 				A8C0F860089701F300BA5114 /* SVGFEMergeNodeElementImpl.h */,
 				A8C0F861089701F300BA5114 /* SVGFEOffsetElementImpl.cpp */,
 				A8C0F862089701F300BA5114 /* SVGFEOffsetElementImpl.h */,
+				A8C32967093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp */,
+				A8C32966093BB7B2000B9CAC /* SVGFEPointLightElementImpl.h */,
+				A8C32965093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.cpp */,
+				A8C32964093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.h */,
+				A8C32963093BB7B2000B9CAC /* SVGFESpotLightElementImpl.cpp */,
+				A8C32962093BB7B2000B9CAC /* SVGFESpotLightElementImpl.h */,
 				A8C0F863089701F300BA5114 /* SVGFETileElementImpl.cpp */,
 				A8C0F864089701F300BA5114 /* SVGFETileElementImpl.h */,
 				A8C0F865089701F300BA5114 /* SVGFETurbulenceElementImpl.cpp */,
@@ -3906,6 +3990,7 @@
 		A8C0FB68089701F800BA5114 /* quartz */ = {
 			isa = PBXGroup;
 			children = (
+				A8C3291F093BB732000B9CAC /* filters */,
 				A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */,
 				A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */,
 				A8C0FB6B089701F800BA5114 /* KCanvasItemQuartz.h */,
@@ -3921,6 +4006,34 @@
 				A8C0FB77089701F800BA5114 /* QuartzSupport.mm */,
 			);
 			path = quartz;
+			sourceTree = "<group>";
+		};
+		A8C3291F093BB732000B9CAC /* filters */ = {
+			isa = PBXGroup;
+			children = (
+				A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */,
+				A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */,
+				A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */,
+				A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */,
+				A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */,
+				A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */,
+				A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */,
+				A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */,
+				A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */,
+				A8C32929093BB732000B9CAC /* WKNormalMapFilter.cikernel */,
+				A8C3292A093BB732000B9CAC /* WKNormalMapFilter.h */,
+				A8C3292B093BB732000B9CAC /* WKNormalMapFilter.m */,
+				A8C3292C093BB732000B9CAC /* WKPointLightFilter.cikernel */,
+				A8C3292D093BB732000B9CAC /* WKPointLightFilter.h */,
+				A8C3292E093BB732000B9CAC /* WKPointLightFilter.m */,
+				A8C3292F093BB732000B9CAC /* WKSpecularLightingFilter.cikernel */,
+				A8C32930093BB732000B9CAC /* WKSpecularLightingFilter.h */,
+				A8C32931093BB732000B9CAC /* WKSpecularLightingFilter.m */,
+				A8C32932093BB732000B9CAC /* WKSpotLightFilter.cikernel */,
+				A8C32933093BB732000B9CAC /* WKSpotLightFilter.h */,
+				A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */,
+			);
+			path = filters;
 			sourceTree = "<group>";
 		};
 		BC06F24406D18A35004A6FA3 /* xsl */ = {
@@ -5553,6 +5666,20 @@
 				A884285509308C1C00B6D461 /* KDOMHeaders.h in Headers */,
 				A890DF1F0930974800513F88 /* SVGStyledTransformableElementImpl.h in Headers */,
 				A890DF210930974800513F88 /* SVGStyledLocatableElementImpl.h in Headers */,
+				A8C32936093BB732000B9CAC /* WKArithmeticFilter.h in Headers */,
+				A8C32939093BB732000B9CAC /* WKDiffuseLightingFilter.h in Headers */,
+				A8C3293C093BB732000B9CAC /* WKDistantLightFilter.h in Headers */,
+				A8C3293F093BB732000B9CAC /* WKNormalMapFilter.h in Headers */,
+				A8C32942093BB732000B9CAC /* WKPointLightFilter.h in Headers */,
+				A8C32945093BB732000B9CAC /* WKSpecularLightingFilter.h in Headers */,
+				A8C32948093BB732000B9CAC /* WKSpotLightFilter.h in Headers */,
+				A8C3294C093BB78C000B9CAC /* SVGAnimatedColorImpl.h in Headers */,
+				A8C32968093BB7B2000B9CAC /* SVGFELightElementImpl.h in Headers */,
+				A8C3296A093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h in Headers */,
+				A8C3296C093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h in Headers */,
+				A8C3296E093BB7B2000B9CAC /* SVGFESpotLightElementImpl.h in Headers */,
+				A8C32970093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.h in Headers */,
+				A8C32972093BB7B2000B9CAC /* SVGFEPointLightElementImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5837,6 +5964,13 @@
 				A8212BF108794A2300677359 /* westResizeCursor.tiff in Resources */,
 				A8212BF208794A2300677359 /* textAreaResizeCorner.tiff in Resources */,
 				A8C0FBA7089701F900BA5114 /* svg.css in Resources */,
+				A8C32935093BB732000B9CAC /* WKArithmeticFilter.cikernel in Resources */,
+				A8C32938093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel in Resources */,
+				A8C3293B093BB732000B9CAC /* WKDistantLightFilter.cikernel in Resources */,
+				A8C3293E093BB732000B9CAC /* WKNormalMapFilter.cikernel in Resources */,
+				A8C32941093BB732000B9CAC /* WKPointLightFilter.cikernel in Resources */,
+				A8C32944093BB732000B9CAC /* WKSpecularLightingFilter.cikernel in Resources */,
+				A8C32947093BB732000B9CAC /* WKSpotLightFilter.cikernel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7318,6 +7452,20 @@
 				A884284E09308C1C00B6D461 /* RGBColorImpl.cpp in Sources */,
 				A890DF200930974800513F88 /* SVGStyledTransformableElementImpl.cpp in Sources */,
 				A890DF220930974800513F88 /* SVGStyledLocatableElementImpl.cpp in Sources */,
+				A8C32937093BB732000B9CAC /* WKArithmeticFilter.m in Sources */,
+				A8C3293A093BB732000B9CAC /* WKDiffuseLightingFilter.m in Sources */,
+				A8C3293D093BB732000B9CAC /* WKDistantLightFilter.m in Sources */,
+				A8C32940093BB732000B9CAC /* WKNormalMapFilter.m in Sources */,
+				A8C32943093BB732000B9CAC /* WKPointLightFilter.m in Sources */,
+				A8C32946093BB732000B9CAC /* WKSpecularLightingFilter.m in Sources */,
+				A8C32949093BB732000B9CAC /* WKSpotLightFilter.m in Sources */,
+				A8C3294D093BB78C000B9CAC /* SVGAnimatedColorImpl.cpp in Sources */,
+				A8C32969093BB7B2000B9CAC /* SVGFELightElementImpl.cpp in Sources */,
+				A8C3296B093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp in Sources */,
+				A8C3296D093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp in Sources */,
+				A8C3296F093BB7B2000B9CAC /* SVGFESpotLightElementImpl.cpp in Sources */,
+				A8C32971093BB7B2000B9CAC /* SVGFESpecularLightingElementImpl.cpp in Sources */,
+				A8C32973093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

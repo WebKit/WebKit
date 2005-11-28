@@ -53,7 +53,7 @@
 
 #include <kdom/DOMString.h>
 #include "dom_atomicstring.h"
-#include "HTMLNames.h"
+#include "htmlnames.h"
 
 #include <qtextstream.h>
 

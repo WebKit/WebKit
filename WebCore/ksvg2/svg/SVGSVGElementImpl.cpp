@@ -59,7 +59,7 @@
 #include <q3paintdevicemetrics.h>
 #include <qtextstream.h>
 
-#include "HTMLNames.h"
+#include "htmlnames.h"
 #include "EventNames.h"
 
 using namespace KSVG;

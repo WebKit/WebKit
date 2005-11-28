@@ -1,0 +1,8 @@
+kernel vec4 genPointLight(sampler normalMap, vec3 lightPos, float surfaceScale)
+{
+	vec2 pos = samplerCoord(normalMap);
+	vec3 P = vec3(pos.x, pos.y, surfaceScale * sample(normalMap, pos).a);
+	vec3 L = lightPos - P;
+	L = normalize(L);
+	return vec4(L.x, L.y, L.z, 1.0);
+}

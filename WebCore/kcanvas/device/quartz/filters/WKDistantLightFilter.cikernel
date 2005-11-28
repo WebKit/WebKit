@@ -1,0 +1,4 @@
+kernel vec4 distantLightGenerator(sampler image, vec3 direction)
+{
+    return vec4(direction.x, direction.y, direction.z, 1.0);
+}

@@ -32,7 +32,7 @@
 #include "ksvg.h"
 #include "SVGNames.h"
 #include "EventNames.h"
-#include "HTMLNames.h"
+#include "htmlnames.h"
 #include "SVGElementImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "SVGDOMImplementationImpl.h"

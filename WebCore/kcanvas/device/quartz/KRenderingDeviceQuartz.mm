@@ -292,15 +292,17 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
 {
 	switch(type)
 	{
-//	case FE_DISTANT_LIGHT: 
-//	case FE_POINT_LIGHT: 
-//	case FE_SPOT_LIGHT: 
+        /* Light sources are contained by the diffuse/specular light blocks 
+        case FE_DISTANT_LIGHT: 
+        case FE_POINT_LIGHT: 
+        case FE_SPOT_LIGHT: 
+        */
 	case FE_BLEND: return new KCanvasFEBlendQuartz();
 	case FE_COLOR_MATRIX: return new KCanvasFEColorMatrixQuartz();
 //	case FE_COMPONENT_TRANSFER: 
 	case FE_COMPOSITE: return new KCanvasFECompositeQuartz();
 //	case FE_CONVOLVE_MATRIX: 
-//	case FE_DIFFUSE_LIGHTING: 
+	case FE_DIFFUSE_LIGHTING: return new KCanvasFEDiffuseLightingQuartz();
 //	case FE_DISPLACEMENT_MAP: 
 	case FE_FLOOD: return new KCanvasFEFloodQuartz();
 	case FE_GAUSSIAN_BLUR: return new KCanvasFEGaussianBlurQuartz();
@@ -308,7 +310,7 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
 	case FE_MERGE: return new KCanvasFEMergeQuartz();
 //	case FE_MORPHOLOGY: 
 	case FE_OFFSET: return new KCanvasFEOffsetQuartz();
-//	case FE_SPECULAR_LIGHTING: 
+	case FE_SPECULAR_LIGHTING: return new KCanvasFESpecularLightingQuartz();
 	case FE_TILE: return new KCanvasFETileQuartz();
 //	case FE_TURBULENCE: 
 	default:

@@ -1,3 +1,229 @@
+2005-11-28  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        Fixes 2 lighting test cases.
+
+        First-pass lighting filter implementation from Oliver.
+        Also incomplete first-pass feConvolveMatrix
+        Adding temporary QPointF, QSizeF for filter use.
+
+        * WebCore.xcodeproj/project.pbxproj: added lighting classes
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasPoint3F::normalize): added
+        (operator<<):
+        (KCPointLightSource::externalRepresentation): added
+        (KCSpotLightSource::externalRepresentation): added
+        (KCDistantLightSource::externalRepresentation): added
+        (KCanvasFEConvolveMatrix::externalRepresentation): added
+        (KCanvasFEDiffuseLighting::externalRepresentation): added
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasPoint3F::KCanvasPoint3F): added
+        (KCanvasPoint3F::x): added
+        (KCanvasPoint3F::setX): added
+        (KCanvasPoint3F::y): added
+        (KCanvasPoint3F::setY): added
+        (KCanvasPoint3F::z): added
+        (KCanvasPoint3F::setZ): added
+        (QPointF::QPointF): added
+        (QPointF::x): added
+        (QPointF::setX): added
+        (QPointF::y): added
+        (QPointF::setY): added
+        (QSizeF::QPointF): added
+        (QSizeF::width): added
+        (QSizeF::setWidth): added
+        (QSizeF::height): added
+        (QSizeF::setHeight): added
+        (KCanvasFEConvolveMatrix::kernelSize): added
+        (KCanvasFEConvolveMatrix::setKernelSize): added
+        (KCanvasFEConvolveMatrix::kernel): added
+        (KCanvasFEConvolveMatrix::setKernel): added
+        (KCanvasFEConvolveMatrix::divisor): added
+        (KCanvasFEConvolveMatrix::setDivisor): added
+        (KCanvasFEConvolveMatrix::bias): added
+        (KCanvasFEConvolveMatrix::setBias): added
+        (KCanvasFEConvolveMatrix::targetOffset): added
+        (KCanvasFEConvolveMatrix::setTargetOffset): added
+        (KCanvasFEConvolveMatrix::edgeMode): added
+        (KCanvasFEConvolveMatrix::setEdgeMode): added
+        (KCanvasFEConvolveMatrix::kernelUnitLength): added
+        (KCanvasFEConvolveMatrix::setKernelUnitLength): added
+        (KCanvasFEConvolveMatrix::preserveAlpha): added
+        (KCanvasFEConvolveMatrix::setPreserveAlpha): added
+        (KCLightSource::KCLightSource): added
+        (KCLightSource::~KCLightSource): added
+        (KCLightSource::type): added
+        (KCDistantLightSource::KCDistantLightSource): added
+        (KCDistantLightSource::azimuth): added
+        (KCDistantLightSource::elevation): added
+        (KCPointLightSource::KCPointLightSource) added:
+        (KCPointLightSource::position): added
+        (KCSpotLightSource::KCSpotLightSource): added
+        (KCSpotLightSource::position): added
+        (KCSpotLightSource::direction): added
+        (KCSpotLightSource::specularExponent): added
+        (KCSpotLightSource::limitingConeAngle): added
+        (KCanvasFEDiffuseLighting::lightingColor): added
+        (KCanvasFEDiffuseLighting::setLightingColor): added
+        (KCanvasFEDiffuseLighting::surfaceScale): added
+        (KCanvasFEDiffuseLighting::setSurfaceScale): added
+        (KCanvasFEDiffuseLighting::diffuseConstant): added
+        (KCanvasFEDiffuseLighting::setDiffuseConstant): added
+        (KCanvasFEDiffuseLighting::kernelUnitLengthX): added
+        (KCanvasFEDiffuseLighting::setKernelUnitLengthX): added
+        (KCanvasFEDiffuseLighting::kernelUnitLengthY): added
+        (KCanvasFEDiffuseLighting::setKernelUnitLengthY): added
+        (KCanvasFEDiffuseLighting::lightSource): added
+        (KCanvasFEDiffuseLighting::setLightSource): added
+        (KCanvasFESpecularLighting::lightingColor): added
+        (KCanvasFESpecularLighting::setLightingColor): added
+        (KCanvasFESpecularLighting::surfaceScale): added
+        (KCanvasFESpecularLighting::setSurfaceScale): added
+        (KCanvasFESpecularLighting::specularConstant): added
+        (KCanvasFESpecularLighting::setSpecularConstant): added
+        (KCanvasFESpecularLighting::specularExponent): added
+        (KCanvasFESpecularLighting::setSpecularExponent): added
+        (KCanvasFESpecularLighting::kernelUnitLengthX): added
+        (KCanvasFESpecularLighting::setKernelUnitLengthX): added
+        (KCanvasFESpecularLighting::kernelUnitLengthY): added
+        (KCanvasFESpecularLighting::setKernelUnitLengthY): added
+        (KCanvasFESpecularLighting::lightSource): added
+        (KCanvasFESpecularLighting::setLightSource): added
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (ciColor): uncommented
+        (ciVector): added
+        (KCanvasFECompositeQuartz::getCIFilter): spacing fix
+        (getPointLightVectors): added
+        (getLightVectors): added
+        (getNormalMap): added
+        (KCanvasFEDiffuseLightingQuartz::getCIFilter): added
+        (KCanvasFEGaussianBlurQuartz::getCIFilter): changed CI filter
+        (KCanvasFESpecularLightingQuartz::getCIFilter): added
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::createFilterEffect): added lighting
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.m: Added.
+        (+[WKArithmeticFilter initialize]): added
+        (+[WKArithmeticFilter filterWithName:]): added
+        (-[WKArithmeticFilter init]): added
+        (-[WKArithmeticFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.m: Added.
+        (+[WKDiffuseLightingFilter initialize]): added
+        (+[WKDiffuseLightingFilter filterWithName:]): added
+        (-[WKDiffuseLightingFilter init]): added
+        (-[WKDiffuseLightingFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.m: Added.
+        (+[WKDistantLightFilter initialize]): added
+        (+[WKDistantLightFilter filterWithName:]): added
+        (-[WKDistantLightFilter init]): added
+        (-[WKDistantLightFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKNormalMapFilter.m: Added.
+        (+[WKNormalMapFilter initialize]): added
+        (+[WKNormalMapFilter filterWithName:]): added
+        (-[WKNormalMapFilter init]): added
+        (-[WKNormalMapFilter xConvolveArgsWithBumpMap:]): added
+        (-[WKNormalMapFilter yConvolveArgsWithBumpMap:]): added
+        (-[WKNormalMapFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKPointLightFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKPointLightFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKPointLightFilter.m: Added.
+        (+[WKPointLightFilter initialize]): added
+        (+[WKPointLightFilter filterWithName:]): added
+        (-[WKPointLightFilter init]): added
+        (-[WKPointLightFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.m: Added.
+        (+[WKSpecularLightingFilter initialize]): added
+        (+[WKSpecularLightingFilter filterWithName:]): added
+        (-[WKSpecularLightingFilter init]): added
+        (-[WKSpecularLightingFilter outputImage]): added
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.m: Added.
+        (+[WKSpotLightFilter initialize]): added
+        (+[WKSpotLightFilter filterWithName:]): added
+        (-[WKSpotLightFilter init]): added
+        (-[WKSpotLightFilter outputImage]): added
+        * ksvg2/scripts/make_names.pl: now creates lighting elements
+        * ksvg2/svg/SVGAnimatedColorImpl.cpp: Added.
+        (SVGAnimatedColorImpl::SVGAnimatedColorImpl): added
+        (SVGAnimatedColorImpl::~SVGAnimatedColorImpl): added
+        (SVGAnimatedColorImpl::create): added
+        (SVGAnimatedColorImpl::assign): added
+        * ksvg2/svg/SVGAnimatedColorImpl.h: Added.
+        * ksvg2/svg/SVGElementImpl.cpp: HTMLNames -> htmlnames
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::parseMappedAttribute): spelling fix
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.cpp: Added.
+        (SVGFEDiffuseLightingElementImpl::SVGFEDiffuseLightingElementImpl):
+        (SVGFEDiffuseLightingElementImpl::~SVGFEDiffuseLightingElementImpl):
+        (SVGFEDiffuseLightingElementImpl::in1): added
+        (SVGFEDiffuseLightingElementImpl::diffuseConstant): added
+        (SVGFEDiffuseLightingElementImpl::surfaceScale): added
+        (SVGFEDiffuseLightingElementImpl::kernelUnitLengthX): added
+        (SVGFEDiffuseLightingElementImpl::kernelUnitLengthY): added
+        (SVGFEDiffuseLightingElementImpl::lightingColor): added
+        (SVGFEDiffuseLightingElementImpl::parseMappedAttribute): added
+        (SVGFEDiffuseLightingElementImpl::filterEffect): added
+        (SVGFEDiffuseLightingElementImpl::updateLights): added
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.h: Added.
+        * ksvg2/svg/SVGFEDistantLightElementImpl.cpp: Added.
+        (SVGFEDistantLightElementImpl::SVGFEDistantLightElementImpl):
+        (SVGFEDistantLightElementImpl::~SVGFEDistantLightElementImpl):
+        (SVGFEDistantLightElementImpl::lightSource): added
+        * ksvg2/svg/SVGFEDistantLightElementImpl.h: Added.
+        * ksvg2/svg/SVGFELightElementImpl.cpp: Added.
+        (SVGFELightElementImpl::SVGFELightElementImpl): added
+        (SVGFELightElementImpl::~SVGFELightElementImpl): added
+        (SVGFELightElementImpl::azimuth): added
+        (SVGFELightElementImpl::elevation): added
+        (SVGFELightElementImpl::x): added
+        (SVGFELightElementImpl::y): added
+        (SVGFELightElementImpl::z): added
+        (SVGFELightElementImpl::pointsAtX): added
+        (SVGFELightElementImpl::pointsAtY): added
+        (SVGFELightElementImpl::pointsAtZ): added
+        (SVGFELightElementImpl::specularExponent): added
+        (SVGFELightElementImpl::limitingConeAngle): added
+        (SVGFELightElementImpl::parseMappedAttribute): added
+        * ksvg2/svg/SVGFELightElementImpl.h: Added.
+        * ksvg2/svg/SVGFEPointLightElementImpl.cpp: Added.
+        (SVGFEPointLightElementImpl::SVGFEPointLightElementImpl): added
+        (SVGFEPointLightElementImpl::~SVGFEPointLightElementImpl): added
+        (SVGFEPointLightElementImpl::lightSource): added
+        * ksvg2/svg/SVGFEPointLightElementImpl.h: Added.
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.cpp: Added.
+        (SVGFESpecularLightingElementImpl::SVGFESpecularLightingElementImpl):
+        (SVGFESpecularLightingElementImpl::~SVGFESpecularLightingElementImpl):
+        (SVGFESpecularLightingElementImpl::in1): added
+        (SVGFESpecularLightingElementImpl::specularConstant): added
+        (SVGFESpecularLightingElementImpl::specularExponent): added
+        (SVGFESpecularLightingElementImpl::surfaceScale): added
+        (SVGFESpecularLightingElementImpl::kernelUnitLengthX): added
+        (SVGFESpecularLightingElementImpl::kernelUnitLengthY): added
+        (SVGFESpecularLightingElementImpl::lightingColor): added
+        (SVGFESpecularLightingElementImpl::parseMappedAttribute): added
+        (SVGFESpecularLightingElementImpl::filterEffect): added
+        (SVGFESpecularLightingElementImpl::updateLights): added
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.h: Added.
+        * ksvg2/svg/SVGFESpotLightElementImpl.cpp: Added.
+        (SVGFESpotLightElementImpl::SVGFESpotLightElementImpl): added
+        (SVGFESpotLightElementImpl::~SVGFESpotLightElementImpl): added
+        (SVGFESpotLightElementImpl::lightSource): added
+        * ksvg2/svg/SVGFESpotLightElementImpl.h: Added.
+        * ksvg2/svg/SVGSVGElementImpl.cpp: HTMLNames -> htmlnames
+
 2005-11-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff

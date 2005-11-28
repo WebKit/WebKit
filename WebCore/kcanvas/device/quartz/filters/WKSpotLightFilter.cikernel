@@ -1,0 +1,9 @@
+kernel vec4 spotLightFilter(sampler lightVectors, vec3 lightDirection, float specularExponent, float cosCutoffAngle)
+{
+    vec2 pos = samplerCoord(lightVectors);
+    vec3 l = sample(lightVectors, pos).xyz;
+    float sl = -dot(lightDirection, l);
+    sl = max(sl, 0.0);
+    sl = pow(sl, specularExponent) * sign(sl - cosCutoffAngle);
+    return vec4(l.x, l.y, l.z, sl);
+}
