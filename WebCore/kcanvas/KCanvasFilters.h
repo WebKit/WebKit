@@ -95,7 +95,7 @@ private:
 
 class QSizeF {
 public:
-    QPointF(float width, float height) : m_width(x), m_height(y) { }
+    QSizeF(float w, float h) : m_width(w), m_height(h) { }
 
     float width() const { return m_width; }
     void setWidth(float width) { m_width = width; }
