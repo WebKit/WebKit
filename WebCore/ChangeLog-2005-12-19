@@ -1,5 +1,16 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4089752> Duplicate method implementation for -[DOMDocument getComputedStyle::]
+          also http://bugzilla.opendarwin.org/show_bug.cgi?5682
+
+        * kwq/DOM.mm: Removed extra implementation of -[DOMDocument getComputedStyle::].
+        * kwq/DOM-CSS.mm: (-[DOMDocument getComputedStyle::]): Copied slightly better implementation from
+        DOM.mm in here.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5681

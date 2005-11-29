@@ -1122,13 +1122,6 @@ static ListenerMap *listenerMap;
 
 @implementation DOMDocument (DOMDocumentCSS)
 
-- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
-{
-    ElementImpl *elementImpl = [elt _elementImpl];
-    DOMString pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.impl())];
-}
-
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
     ElementImpl *elementImpl = [elt _elementImpl];
