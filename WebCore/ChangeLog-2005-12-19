@@ -1,3 +1,7 @@
+2005-11-28  Eric Seidel  <eseidel@apple.com>
+
+        * ChangeLog: added bug numbers for last two commits.
+
 2005-11-28  Julien Palmas <julien.palmas@gmail.com>
 
         Reviewed by eseidel.  Committed by eseidel.
@@ -6,6 +10,7 @@
 
         This patch makes WebCore+SVG's marker support 90% complete
         This fixes marker drawing as well as auto-orientation & scaling.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5359
 
         * kcanvas/KCanvasResources.cpp:
         (KCanvasMarker::setRef): combined setRefX and setRefY
@@ -83,6 +88,7 @@
         First-pass lighting filter implementation from Oliver.
         Also incomplete first-pass feConvolveMatrix
         Adding temporary QPointF, QSizeF for filter use.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5192
 
         * WebCore.xcodeproj/project.pbxproj: added lighting classes
         * kcanvas/KCanvasFilters.cpp:
