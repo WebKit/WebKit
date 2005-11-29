@@ -2983,7 +2983,7 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5774
         Failed assertion `!eventDispatchForbidden()' in dom_nodeimpl.cpp:892
         
-        Tests added: None, becaause it keeps some existing ones from crashing.
+        Tests added: None, because it keeps some existing ones from crashing.
         
         * khtml/xml/dom_nodeimpl.cpp:
         (DOM::ContainerNodeImpl::insertBefore):
