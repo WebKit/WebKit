@@ -122,7 +122,8 @@ namespace KJS {
     void putValueProperty(ExecState *exec, int token, ValueImp *value, int attr);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { DocType, Implementation, DocumentElement,
+    enum { DocType, Implementation, DocumentElement, 
+           Charset, DefaultCharset, CharacterSet, ActualEncoding, InputEncoding,
            // Functions
            AdoptNode,
            CreateElement, CreateDocumentFragment, CreateTextNode, CreateComment,

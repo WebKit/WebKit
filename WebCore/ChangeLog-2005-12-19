@@ -1,3 +1,16 @@
+2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin. Commited by Maciej.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5715
+	(document.charset, document.defaultCharset, and document.characterSet are not supported)
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::DOMDocument::putValueProperty):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMDocument::):
+
 2005-11-28  Eric Seidel  <eseidel@apple.com>
 
         * ChangeLog: added bug numbers for last two commits.

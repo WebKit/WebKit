@@ -1,3 +1,13 @@
+2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin. Commited by Maciej.
+
+	- test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=5715
+	(document.charset, document.defaultCharset, and document.characterSet are not supported)
+
+        * fast/dom/Document/document-charset-expected.txt: Added.
+        * fast/dom/Document/document-charset.html: Added.
+
 2005-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Fixed/added layout tests for:
