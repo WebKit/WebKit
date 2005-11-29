@@ -1,3 +1,10 @@
+2005-11-29  Darin Adler  <darin@apple.com>
+
+        - fixed deployment builds
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::DOMDocument::getValueProperty):
+        Put decoder local variable inside if statement.
+
 2005-11-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
@@ -69,10 +76,6 @@
         * khtml/ecma/kjs_dom.h:
         (KJS::DOMDocument::):
 
-2005-11-28  Eric Seidel  <eseidel@apple.com>
-
-        * ChangeLog: added bug numbers for last two commits.
-
 2005-11-28  Julien Palmas <julien.palmas@gmail.com>
 
         Reviewed by eseidel.  Committed by eseidel.
@@ -126,7 +129,7 @@
         
         * khtml/editing/visible_position.cpp:
         (khtml::VisiblePosition::init):
-        It's ok to do some hunting to find a valid VisblePosition given a position 
+        It's ok to do some hunting to find a valid VisiblePosition given a position 
         that is not somewhere visible, like inside an empty div, but only leave the 
         block containing the position used to construct the VisiblePosition if we 
         can't find a VisiblePosition inside that block.

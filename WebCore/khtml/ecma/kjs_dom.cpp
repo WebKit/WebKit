@@ -78,7 +78,7 @@ using DOM::NotationImpl;
 using DOM::ProcessingInstructionImpl;
 using DOM::TextImpl;
 
-using khtml::RenderObject;
+using namespace khtml;
 
 #include "kjs_dom.lut.h"
 
@@ -403,7 +403,7 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
       docimpl->updateLayoutIgnorePendingStylesheets();
     }
 
-    khtml::RenderObject *rend = node.renderer();
+    RenderObject *rend = node.renderer();
 
     switch (token) {
     case OffsetLeft:
@@ -415,7 +415,7 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
     case OffsetHeight:
       return rend ? jsNumber(rend->offsetHeight()) : static_cast<ValueImp *>(jsUndefined());
     case OffsetParent: {
-      khtml::RenderObject* par = rend ? rend->offsetParent() : 0;
+      RenderObject* par = rend ? rend->offsetParent() : 0;
       return getDOMNode(exec, par ? par->element() : 0);
     }
     case ClientWidth:
@@ -589,13 +589,13 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     setListener(exec,scrollEvent,value);
     break;
   case ScrollTop: {
-    khtml::RenderObject *rend = node.renderer();
+    RenderObject *rend = node.renderer();
     if (rend && rend->hasOverflowClip())
         rend->layer()->scrollToYOffset(value->toInt32(exec));
     break;
   }
   case ScrollLeft: {
-    khtml::RenderObject *rend = node.renderer();
+    RenderObject *rend = node.renderer();
     if (rend && rend->hasOverflowClip())
       rend->layer()->scrollToXOffset(value->toInt32(exec));
     break;
@@ -969,9 +969,8 @@ ValueImp *DOMDocument::getValueProperty(ExecState *exec, int token) const
   case CharacterSet:
   case ActualEncoding:
   case InputEncoding:
-    khtml::Decoder* decoder = doc.decoder();
-    if (decoder)
-      return String(doc.decoder()->encoding());
+    if (Decoder* decoder = doc.decoder())
+      return String(decoder->encoding());
     return Null();
   case DefaultCharset:
     if (KHTMLPart* part = doc.part())
@@ -1017,7 +1016,7 @@ void DOMDocument::putValueProperty(ExecState *exec, int token, ValueImp *value, 
       doc.setSelectedStylesheetSet(value->toString(exec).domString());
       break;
     case Charset:
-      doc.decoder()->setEncoding(value->toString(exec).cstring().c_str(), khtml::Decoder::UserChosenEncoding);
+      doc.decoder()->setEncoding(value->toString(exec).cstring().c_str(), Decoder::UserChosenEncoding);
       break;
   }
 }
