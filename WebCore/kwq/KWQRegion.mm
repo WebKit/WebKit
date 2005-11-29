@@ -27,42 +27,37 @@
 #import "KWQRegion.h"
 #import "KWQFoundationExtras.h"
 
-// None of the NSBezierPath calls here can possibly throw an NSException.
-// Some path calls do this when the path is empty, but we always make
-// those when the path is guaranteed non-empty.
-
 QRegion::QRegion(const QRect &rect)
-    : path(KWQRetain([NSBezierPath bezierPathWithRect:rect]))
 {
+    path = CGPathCreateMutable();
+    CGPathAddRect(path, 0, rect);
 }
 
 QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 {
-    if (t == Rectangle) {
-        path = KWQRetain([NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)]);
-    } else { // Ellipse
-        path = KWQRetain([NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)]);
-    }
+    path = CGPathCreateMutable();
+    if (t == Rectangle)
+        CGPathAddRect(path, 0, CGRectMake(x, y, w, h));
+    else // Ellipse
+        CGPathAddEllipseInRect(path, 0, CGRectMake(x, y, w, h));
 }
 
 QRegion::QRegion(const QPointArray &arr)
 {
-    path = KWQRetainNSRelease([[NSBezierPath alloc] init]);
-    [path moveToPoint:arr[0]];
-    // the moveToPoint: guarantees the path is not empty, which means lineToPoint:
-    // can't throw.
-    for (uint i = 1; i < arr.count(); ++i) {
-        [path lineToPoint:arr[i]];
-    }
+    path = CGPathCreateMutable();
+    CGPathMoveToPoint(path, 0, arr[0].x(), arr[0].y());
+    for (uint i = 1; i < arr.count(); ++i)
+        CGPathAddLineToPoint(path, 0, arr[i].x(), arr[i].y());
+    CGPathCloseSubpath(path);
 }
 
 QRegion::~QRegion()
 {
-    KWQRelease(path);
+    CGPathRelease(path);
 }
 
 QRegion::QRegion(const QRegion &other)
-    : path(KWQRetainNSRelease([other.path copy]))
+    : path(CGPathCreateMutableCopy(other.path))
 {
 }
 
@@ -71,25 +66,26 @@ QRegion &QRegion::operator=(const QRegion &other)
     if (path == other.path) {
         return *this;
     }
-    KWQRelease(path);
-    path = KWQRetainNSRelease([other.path copy]);
+    CGPathRelease(path);
+    path = CGPathCreateMutableCopy(other.path);
     return *this;
 }
 
 bool QRegion::contains(const QPoint &point) const
 {
-    return [path containsPoint:point];
+    return CGPathContainsPoint(path, 0, point, false);
 }
 
 void QRegion::translate(int deltaX, int deltaY)
 {
-    NSAffineTransform *translation = [[NSAffineTransform alloc] init];
-    [translation translateXBy:deltaX yBy:deltaY];
-    [path transformUsingAffineTransform:translation];    
-    [translation release];
+    CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, deltaX, deltaY);
+    CGMutablePathRef newPath = CGPathCreateMutable();
+    CGPathAddPath(newPath, &translation, path);
+    CGPathRelease(path);
+    path = newPath;
 }
 
 QRect QRegion::boundingRect() const
 {
-    return path ? QRect([path bounds]) : QRect();
+    return path ? QRect(CGPathGetBoundingBox(path)) : QRect();
 }

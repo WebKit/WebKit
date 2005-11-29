@@ -1,3 +1,21 @@
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Committed by eseidel.
+
+        Not possible to test (functionality shouldn't change).
+
+        Switch QRegion from using NSBezierPath to CGPath
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5310
+
+        * kwq/KWQRegion.h:
+        * kwq/KWQRegion.mm:
+        (QRegion::QRegion):
+        (QRegion::~QRegion):
+        (QRegion::operator=):
+        (QRegion::contains):
+        (QRegion::translate):
+        (QRegion::boundingRect):
+
 2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin. Commited by Maciej.

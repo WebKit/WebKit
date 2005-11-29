@@ -30,11 +30,7 @@
 #include "KWQImage.h"
 #include "KWQRect.h"
 
-#ifdef __OBJC__
-@class NSBezierPath;
-#else
-class NSBezierPath;
-#endif
+typedef struct CGPath *CGMutablePathRef;
 
 class QRegion {
 public:
@@ -55,7 +51,7 @@ public:
     void translate(int deltaX, int deltaY);
 
 private:
-    NSBezierPath *path;    
+    CGMutablePathRef path;    
 };
 
 #endif
