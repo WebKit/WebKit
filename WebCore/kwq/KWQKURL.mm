@@ -1475,31 +1475,22 @@ QString KURL::encode_string(const QString& notEncodedString)
     return result;
 }
 
-NSURL *KURL::getNSURL() const
+CFURLRef KURL::createCFURL() const
 {
-    const UInt8 *bytes = (const UInt8 *)(urlString.latin1());
-    NSURL *result = nil;
-    if (urlString.length() > 0) {
-        // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
-        // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
-        // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
-        // onto using ISO Latin 1 in those cases.
-        result = KWQCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingUTF8, NULL, TRUE));
-        if (!result) {
-            result = KWQCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE));
-        }
-    }
-    else {
-        result = [NSURL URLWithString:@""];
-    }
-    
+    const UInt8 *bytes = (const UInt8 *)urlString.latin1();
+    // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
+    // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
+    // could either be a malformed string or bytes in a different encoding, like Shift-JIS, so we fall back
+    // onto using ISO Latin-1 in those cases.
+    CFURLRef result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingUTF8, 0, TRUE);
+    if (!result)
+        result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, TRUE);
     return result;
 }
 
-NSData *KURL::getNSData() const
+NSURL *KURL::getNSURL() const
 {
-    const UInt8 *bytes = (const UInt8 *)(urlString.latin1());
-    return [NSData dataWithBytes:bytes length:urlString.length()];
+    return KWQCFAutorelease(createCFURL());
 }
 
 static QString encodeHostname(const QString &s)

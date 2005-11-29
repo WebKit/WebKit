@@ -1,5 +1,17 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?5683
+          add code so we can use CFURL instead of NSURL for speed
+
+        * kwq/KWQKURL.h: Added declaration of createCFURL function.
+        * kwq/KWQKURL.mm:
+        (KURL::createCFURL): Moved body of getNSURL in here.
+        (KURL::getNSURL): Changed to createCFURL.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         - fixed broken tree (from my last check-in)
 
         * kwq/DOM-CSS.mm: Added "using namespace DOM" and an import of "dom_docimpl.h".
