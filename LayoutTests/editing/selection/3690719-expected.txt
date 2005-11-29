@@ -1,5 +1,5 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document toDOMRange:range from 0 of #text > B > FONT > TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document to 6 of CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document toDOMRange:range from 0 of #text > B > FONT > TD > TR > TBODY > TABLE > DIV > CENTER > BODY > HTML > #document to 1 of #text > FONT > DIV > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
@@ -139,4 +139,4 @@ layer at (0,0) size 800x600
             RenderText {TEXT} at (362,0) size 60x13
               text run at (362,0) width 60: "\x{A9}2005 Google"
 selection start: position 0 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 6 {BR} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 3 {TEXT} of child 4 {FONT} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document

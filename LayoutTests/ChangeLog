@@ -1,4 +1,23 @@
 2005-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Fixed/added layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5354>
+        Corner case where you can select outside the bounds of an editable block.
+
+        Reviewed by darin
+
+        * editing/inserting/insert-div-023-expected.txt:
+        * editing/pasteboard/paste-4035648-fix-expected.txt:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/3690719-expected.png:
+        * editing/selection/3690719-expected.txt:
+        * editing/selection/leave-requested-block-expected.checksum: Added.
+        * editing/selection/leave-requested-block-expected.png: Added.
+        * editing/selection/leave-requested-block-expected.txt: Added.
+        * editing/selection/leave-requested-block.html: Added.
+        * editing/style/block-style-004-expected.txt:
+
+2005-11-28  Justin Garcia  <justin.garcia@apple.com>
         
         I overlooked this layout test when fixing 4108909.
 
