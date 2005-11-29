@@ -1,3 +1,14 @@
+2005-11-29  Vicki Murley  <vicki@apple.com>
+
+	Changes by Mitz Pettel, reviewed by Maciej.
+
+	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5829 (REGRESSION: cursor tracking and hit 
+	testing in scrollable block don't take borders into account)
+
+	* khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::hitTestLayer): don't add left and bottom borders when hit testing
+	* manual-tests/scrollbar-hittest.html: Added.
+
 2005-11-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

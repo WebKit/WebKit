@@ -1114,8 +1114,8 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
     if (containsPoint(xMousePos, yMousePos, fgRect) && 
         renderer()->hitTest(info, xMousePos, yMousePos,
-                            layerBounds.x() - renderer()->xPos() + m_object->borderLeft(),
-                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra() - m_object->borderBottom(), HitTestDescendants)) {
+                            layerBounds.x() - renderer()->xPos(),
+                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(), HitTestDescendants)) {
         // for positioned generated content, we might still not have a
         // node by the time we get to the layer level, since none of
         // the content in the layer has an element. So just walk up
@@ -1154,8 +1154,8 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     // Next we want to see if the mouse pos is inside this layer but not any of its children.
     if (containsPoint(xMousePos, yMousePos, bgRect) &&
         renderer()->hitTest(info, xMousePos, yMousePos,
-                            layerBounds.x() - renderer()->xPos() + m_object->borderLeft(),
-                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra() - m_object->borderBottom(),
+                            layerBounds.x() - renderer()->xPos(),
+                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(),
                             HitTestSelf))
         return this;
 
