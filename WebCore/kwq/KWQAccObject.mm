@@ -118,19 +118,35 @@ using khtml::VisiblePosition;
     return !m_renderer;
 }
 
+// accessibilityShouldUseUniqueId is an AppKit method we override so that the canvas
+// objects will be given a unique ID, and therefore allow AppKit to know when they
+// become obsolete (e.g. when the user navigates to a new web page, making this one
+// unrendered but not deallocated because it is in the back/forward cache).
+// It is important to call NSAccessibilityUnregisterUniqueIdForUIElement in the
+// appropriate place (e.g. dealloc) to remove these non-retained references from
+// AppKit's id mapping tables.
 - (BOOL)accessibilityShouldUseUniqueId {
     return m_renderer && m_renderer->isCanvas();
 }
 
 -(void)detach
 {
-    if ([self accessibilityShouldUseUniqueId])
-        [[WebCoreViewFactory sharedFactory] unregisterUniqueIdForUIElement:self];
+    // Send unregisterUniqueIdForUIElement unconditionally because if it is
+    // ever accidently not done (via other bugs in our AX implementation) you
+    // end up with a crash like <rdar://problem/4273149>.  It is safe and not
+    // expensive to send even if the object is not registered.
+    [[WebCoreViewFactory sharedFactory] unregisterUniqueIdForUIElement:self];
     [m_data release];
     m_data = 0;
     [self removeAccObjectID];
     m_renderer = 0;
     [self clearChildren];
+}
+
+- (void)dealloc
+{
+    [self detach];
+    [super dealloc];
 }
 
 -(id)data
@@ -1184,9 +1200,8 @@ static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existing
 {
     // get color information assuming NSDeviceRGBColorSpace 
     NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    if (rgbColor == nil) {
+    if (rgbColor == nil)
 	rgbColor = [NSColor blackColor];
-    }
     float components[4];
     [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
     
@@ -1975,6 +1990,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (void)removeAccObjectID
 {
+    if (!m_accObjectID)
+        return;
+
     m_renderer->document()->getAccObjectCache()->removeAccObjectID(self);
 }
 

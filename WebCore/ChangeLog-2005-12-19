@@ -1,3 +1,24 @@
+2005-11-29  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Test cases added: None.  Manual testing is way to awkward, and automated testing
+        is not possible.  See following bug...
+        <rdar://problem/4256882> Need automated testing support for accessibility APIs
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLGenericFormElementImpl::removedFromTree):
+	Replace tab with spaces.  Remove braces from one line "if".
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject detach]):
+	Send unregisterUniqueIdForUIElement unconditionally, for safety.
+        (-[KWQAccObject dealloc]):
+	New.  Send [self detach] so KWQObject gets unregistered and other cleanup happens as well.
+        (CreateCGColorIfDifferent):
+	Replace tab with spaces.
+        (-[KWQAccObject removeAccObjectID]):
+	Early to prevent a crash if called on a detached KWQAccObject (i.e. m_renderer == 0).
+
 2005-11-29  Vicki Murley  <vicki@apple.com>
 
 	Changes by Mitz Pettel, reviewed by Maciej.
