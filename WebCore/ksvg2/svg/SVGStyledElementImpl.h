@@ -65,6 +65,7 @@ namespace KSVG
 
         khtml::RenderCanvas *canvas() const;
         virtual void notifyAttributeChange() const;
+        virtual void attributeChanged(KDOM::AttributeImpl *attr, bool preserveDecls = false);
 
         // Imagine we're a <rect> inside of a <pattern> section with patternContentUnits="objectBoundingBox"
         // and our 'width' attribute is set to 50%. When the pattern gets referenced it knows the "bbox"

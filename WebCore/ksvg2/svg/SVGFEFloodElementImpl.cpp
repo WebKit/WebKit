@@ -72,7 +72,6 @@ KCanvasFEFlood *SVGFEFloodElementImpl::filterEffect() const
         return 0;
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
-    // FIXME: I don't think this will work, the parent does not have a renderer
     khtml::RenderStyle *filterStyle = const_cast<SVGFEFloodElementImpl *>(this)->styleForRenderer(parentNode()->renderer());
     SVGRenderStyle *svgStyle = filterStyle->svgStyle();
     m_filterEffect->setFloodColor(svgStyle->floodColor());

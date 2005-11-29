@@ -344,10 +344,10 @@ void SVGPathElementImpl::svgClosePath()
 
 void SVGPathElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    if (attr->name() == SVGNames::dAttr)
+    if (attr->name() == SVGNames::dAttr) {
+        pathSegList()->clear();
         parseSVG(attr->value().qstring(), true);
-    else
-    {
+    } else {
         if(SVGTestsImpl::parseMappedAttribute(attr)) return;
         if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
         if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;

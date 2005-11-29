@@ -613,8 +613,8 @@ const int siblingThreshold = 10;
 
 NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
 {
-    if (parent && parent->isHTMLElement()) {
-        HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parent);
+    if (parent && parent->isStyledElement()) {
+        StyledElementImpl* p = static_cast<StyledElementImpl *>(parent);
         if (p->renderer() && !p->inlineStyleDecl() && !p->hasID()) {
             NodeImpl* r = p->previousSibling();
             int subcount = 0;

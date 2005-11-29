@@ -96,17 +96,15 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (paintInfo.p->paintingDisabled())
         return;
     
-    int absoluteX = parentX + m_x;
-    int absoluteY = parentY + m_y;
-    
-    ASSERT(absoluteX == 0 && absoluteY == 0);
-    // We ignore the khtml absolute transforms (for now)
+    // No one should be transforming us via these.
+    ASSERT(m_x == 0);
+    ASSERT(m_y == 0);
         
     if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintActionOutline) 
-        paintBoxDecorations(paintInfo, absoluteX, absoluteY);
+        paintBoxDecorations(paintInfo, parentX, parentY);
     
     if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
-        paintOutline(paintInfo.p, absoluteX, absoluteY, width(), height(), style());
+        paintOutline(paintInfo.p, parentX, parentY, width(), height(), style());
     
     if (paintInfo.phase != PaintActionForeground || !drawsContents() || style()->visibility() == khtml::HIDDEN)
         return;
@@ -125,6 +123,12 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     paintInfo.p->save();
     
     CGContextRef context = paintInfo.p->currentContext();
+    
+    if (parentX != 0 || parentY != 0) {
+        // Translate from parent offsets (khtml) to a relative transform (ksvg2/kcanvas)
+        CGContextConcatCTM(context, CGAffineTransformMakeTranslation(parentX, parentY));
+        parentX = parentY = 0;
+    }
     
     if (viewport().isValid())
         CGContextConcatCTM(context, CGAffineTransformMakeTranslation(viewport().x(), viewport().y()));
@@ -153,7 +157,7 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), viewportRect).qmatrix()));
     }
     
-    RenderContainer::paint(paintInfo, absoluteX, absoluteY);
+    RenderContainer::paint(paintInfo, 0, 0);
     
     if (filter)
         filter->applyFilter(quartzDevice, relativeBBox(true));
@@ -202,7 +206,12 @@ KCAlign KCanvasContainerQuartz::align() const
 QMatrix KCanvasContainerQuartz::absoluteTransform() const
 {
     QMatrix transform = KCanvasContainer::absoluteTransform();
-    //transform *= getAspectRatio(viewBox(), bbox(true)).qmatrix();
+    if (!viewBox().isNull()) {
+        QRect viewportRect = viewport();
+        if (!parent()->isKCanvasContainer())
+            viewportRect = QRect(viewport().x(), viewport().y(), width(), height());
+        transform *= getAspectRatio(viewBox(), viewportRect).qmatrix();
+    }
     return transform;
 }
 

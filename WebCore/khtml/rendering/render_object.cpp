@@ -727,7 +727,11 @@ RenderBlock* RenderObject::containingBlock() const
         }
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
-                     || o->isTableCol() || o->isFrameSet()))
+                     || o->isTableCol() || o->isFrameSet()
+#if SVG_SUPPORT
+                     || o->isKCanvasContainer()
+#endif
+                     ))
             o = o->parent();
     }
 

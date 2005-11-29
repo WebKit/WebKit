@@ -49,9 +49,9 @@
 #include "SVGHelper.h"
 
 #include "SVGNames.h"
-#include "HTMLNames.h"
 
 using namespace KSVG;
+using namespace KSVG::SVGNames;
 
 SVGStyledElementImpl::SVGStyledElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGElementImpl(tagName, doc)
@@ -103,6 +103,16 @@ void SVGStyledElementImpl::notifyAttributeChange() const
         const_cast<SVGStyledElementImpl *>(this)->m_updateVectorial = true;
         const_cast<SVGStyledElementImpl *>(this)->updateCanvasItem();
     }
+}
+
+void SVGStyledElementImpl::attributeChanged(KDOM::AttributeImpl *attr, bool preserveDecls)
+{
+    // FIXME: Eventually subclasses from SVGElementImpl should implement
+    // attributeChanged() instead of notifyAttributeChange()
+    // This is a quick fix to allow dynamic updates of SVG elements
+    // but will result in slower dynamic-update performance than necessary.
+    SVGElementImpl::attributeChanged(attr, preserveDecls);
+    notifyAttributeChange();
 }
 
 void SVGStyledElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate)

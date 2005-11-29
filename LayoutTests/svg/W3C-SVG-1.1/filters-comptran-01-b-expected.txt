@@ -7,12 +7,12 @@ layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 629x419
       KCanvasContainer {g} at (0,0) size 629x419
-        KCanvasContainer {svg} at (0,0) size 629x419
-          KCanvasItem {rect} at (0,0) size 629x419 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
-          KCanvasContainer {g} at (0,0) size 629x419
-            KCanvasItem {rect} at (0,0) size 629x419 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
-            KCanvasItem {rect} at (10,10) size 580x40 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M10.00,10.00L590.00,10.00L590.00,50.00L10.00,50.00"]
-            KCanvasItem {rect} at (10,110) size 580x40 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Table] [data="M10.00,110.00L590.00,110.00L590.00,150.00L10.00,150.00"]
-            KCanvasItem {rect} at (10,210) size 580x40 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Linear] [data="M10.00,210.00L590.00,210.00L590.00,250.00L10.00,250.00"]
-            KCanvasItem {rect} at (10,310) size 580x40 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Gamma] [data="M10.00,310.00L590.00,310.00L590.00,350.00L10.00,350.00"]
+        KCanvasContainer {svg} at (0,0) size 449x299
+          KCanvasItem {rect} at (0,0) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
+          KCanvasContainer {g} at (0,0) size 449x299
+            KCanvasItem {rect} at (0,0) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
+            KCanvasItem {rect} at (7,7) size 414x28 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M10.00,10.00L590.00,10.00L590.00,50.00L10.00,50.00"]
+            KCanvasItem {rect} at (7,78) size 414x28 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Table] [data="M10.00,110.00L590.00,110.00L590.00,150.00L10.00,150.00"]
+            KCanvasItem {rect} at (7,150) size 414x28 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Linear] [data="M10.00,210.00L590.00,210.00L590.00,250.00L10.00,250.00"]
+            KCanvasItem {rect} at (7,221) size 414x28 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Gamma] [data="M10.00,310.00L590.00,310.00L590.00,350.00L10.00,350.00"]
       KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

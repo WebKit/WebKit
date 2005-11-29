@@ -1,18 +1,18 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 2000x2000
-  KCanvasContainer at (0,0) size 2000x2000 [fill={[type=SOLID] [color=#000000]}]
-    KCanvasContainer at (0,0) size 2000x2000 [fill={[type=SOLID] [color=#000000]}]
-      KCanvasItem {rect} at (0,0) size 2000x2000 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L2000.00,0.00L2000.00,2000.00L0.00,2000.00"]
-      KCanvasItem {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
-    KCanvasContainer at (20,80) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}] [fill={[type=SOLID] [color=#000000]}]
-      KCanvasItem {rect} at (20,80) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,20.00L220.00,20.00L220.00,21.00L20.00,21.00"]
-      KCanvasItem {rect} at (20,100) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,40.00L220.00,40.00L220.00,41.00L20.00,41.00"]
-      KCanvasContainer at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}]
-      KCanvasContainer at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}]
-      KCanvasItem {rect} at (20,160) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,100.00L220.02,100.00L220.02,101.00L20.00,101.00"]
-      KCanvasItem {rect} at (20,180) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,120.00L110.00,120.00L110.00,121.00L20.00,121.00"]
-      KCanvasItem {rect} at (20,200) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,140.00L110.00,140.00L110.00,141.00L20.00,141.00"]
-      KCanvasItem {rect} at (20,220) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L110.00,160.00L110.00,161.00L20.00,161.00"]
-      KCanvasItem {rect} at (20,240) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L110.00,180.00L110.00,181.00L20.00,181.00"]
-      KCanvasItem {rect} at (20,260) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L110.00,200.00L110.00,201.00L20.00,201.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+layer at (0,0) size 480x360
+  RenderCanvas at (0,0) size 480x360
+    KCanvasContainer {svg} at (0,0) size 2000x2000
+      KCanvasContainer {g} at (0,0) size 2000x2000
+        KCanvasContainer {g} at (0,0) size 2000x2000
+          KCanvasItem {rect} at (0,0) size 2000x2000 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L2000.00,0.00L2000.00,2000.00L0.00,2000.00"]
+          KCanvasItem {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
+        KCanvasContainer {g} at (20,80) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+          KCanvasItem {rect} at (20,80) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,20.00L220.00,20.00L220.00,21.00L20.00,21.00"]
+          KCanvasItem {rect} at (20,100) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,40.00L220.00,40.00L220.00,41.00L20.00,41.00"]
+          KCanvasContainer {g} at (0,60) size 0x0
+          KCanvasContainer {g} at (0,60) size 0x0
+          KCanvasItem {rect} at (20,180) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,120.00L110.00,120.00L110.00,121.00L20.00,121.00"]
+          KCanvasItem {rect} at (20,200) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,140.00L110.00,140.00L110.00,141.00L20.00,141.00"]
+          KCanvasItem {rect} at (20,220) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L110.00,160.00L110.00,161.00L20.00,161.00"]
+          KCanvasItem {rect} at (20,240) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L110.00,180.00L110.00,181.00L20.00,181.00"]
+          KCanvasItem {rect} at (20,260) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L110.00,200.00L110.00,201.00L20.00,201.00"]
+      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

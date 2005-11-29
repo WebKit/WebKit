@@ -182,6 +182,10 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect, CGPathRef path) c
 
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 {
+    // No one should be transforming us via these.
+    ASSERT(parentX == 0);
+    ASSERT(parentY == 0);
+
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;
     

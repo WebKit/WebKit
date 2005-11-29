@@ -606,7 +606,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             css3InheritedData == o.css3InheritedData &&
             inherited == o.inherited
 #if SVG_SUPPORT
-            && (svgStyle() &&  o.svgStyle()->equals(o.svgStyle()))
+            && *svgStyle() == *o.svgStyle()
 #endif
             );
 }
@@ -679,6 +679,9 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 {
     return inherited_flags != other->inherited_flags ||
            inherited != other->inherited ||
+#if SVG_SUPPORT
+           svgStyle()->inheritedNotEqual(other->svgStyle()) ||
+#endif
            css3InheritedData != other->css3InheritedData;
 }
 
@@ -699,6 +702,14 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 */
 RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 {
+#if SVG_SUPPORT
+    // This is horribly inefficient.  Eventually we'll have to integrate
+    // this more directly by caling: Diff svgDiff = svgStyle->diff(other)
+    // and then checking svgDiff and returning from the appropraite places below.
+    if (!(*svgStyle() == *(other->svgStyle())))
+        return Layout;
+#endif
+
     // we anyway assume they are the same
 // 	EDisplay _effectiveDisplay : 5;
 

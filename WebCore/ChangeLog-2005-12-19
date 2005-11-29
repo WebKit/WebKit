@@ -1,3 +1,43 @@
+2005-11-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        3 test cases added to cover CSS updates and CDF support.
+        Updated all test results for absolute bbox change.
+
+        Fixed in this patch:
+        - CSS dynamic updates
+        - dynamic path data updates
+        - first pass at CDF support
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5842
+
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::KCanvasContainer): make "replaced" element
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): added parent offset ASSERT
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): account for parent offset
+        (KCanvasContainerQuartz::absoluteTransform): reflect viewport
+        * khtml/css/css_valueimpl.cpp: remove HTML special case
+        (DOM::CSSMutableStyleDeclarationImpl::setChanged):
+        * khtml/css/cssstyleselector.cpp: remove HTML special case
+        (khtml::CSSStyleSelector::locateCousinList):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::containingBlock): special case KCanvasContainer
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::operator==): fix call into SVGRenderStyle
+        (RenderStyle::inheritedNotEqual): calls into SVGRenderStyle
+        (RenderStyle::diff): calls into SVGRenderStyle
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::equals): include flags in comparison
+        (SVGRenderStyle::inheritedNotEqual): added
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/svg/SVGPathElementImpl.cpp:
+        (KSVG::SVGPathElementImpl::parseMappedAttribute): clear path first
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::attributeChanged): map to ksvg2 attributes
+        * ksvg2/svg/SVGStyledElementImpl.h:
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.  Committed by eseidel.
