@@ -360,6 +360,9 @@ static bool isKeypadEvent(NSEvent *event)
 static int WindowsKeyCodeForKeyEvent(NSEvent *event)
 {
     switch ([event keyCode]) {
+        // VK_TAB (09) TAB key
+        case 48: return 0x09;
+
         // VK_CLEAR (0C) CLEAR key
         case 71: return 0x0C;
 
@@ -897,12 +900,15 @@ QKeyEvent::QKeyEvent(NSEvent *event, bool forceAutoRepeat)
       _isAccepted(false),
       _WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
 {
-    // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
-    if (_text == "\x7F") {
+    // Turn 0x7F into 8, because backspace needs to always be 8.
+    if (_text == "\x7F")
         _text = "\x8";
-    }
-    if (_unmodifiedText == "\x7F") {
+    if (_unmodifiedText == "\x7F")
         _unmodifiedText = "\x8";
+    // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
+    if (_WindowsKeyCode == 9) {
+        _text = "\x9";
+        _unmodifiedText = "\x9";
     }
 }
 

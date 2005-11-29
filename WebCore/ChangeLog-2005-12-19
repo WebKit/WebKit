@@ -1,5 +1,18 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fixed <rdar://problem/4300202> JavaScript event keyCode/charCode/which is 25 for shift+tab, should be 9 (5678)
+          also http://bugzilla.opendarwin.org/show_bug.cgi?id=5678
+
+        * kwq/KWQEvent.mm:
+        (WindowsKeyCodeForKeyEvent): Add case for tab key.
+        (QKeyEvent::QKeyEvent): Force use of character code 9 for tab key regardless of
+        what AppKit returns.
+        * manual-tests/log-keypress-events.html: Added.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4925
