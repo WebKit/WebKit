@@ -1,5 +1,21 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4925
+          HTMLMapElementImpl::mapMouseEvent can be implemented without a stack
+        - did some other cleanup in this file
+
+        * khtml/html/html_imageimpl.h: Removed unused currentImage function.
+        * khtml/html/html_imageimpl.cpp: Bits of cleanup in many functins, and:
+        (DOM::HTMLMapElementImpl::mapMouseEvent): Simplified by using traverseNextNode.
+        (DOM::HTMLMapElementImpl::parseMappedAttribute): Fixed bug where parsing a
+        name or attribute value with a "#" prefix would actually modify the value itself
+        by changing the DOMString. Changed the code to make a copy in this case.
+        (DOM::HTMLAreaElementImpl::getRegion): Rearranged to be more readable.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         - fixed deployment builds
 
         * khtml/ecma/kjs_dom.cpp: (KJS::DOMDocument::getValueProperty):

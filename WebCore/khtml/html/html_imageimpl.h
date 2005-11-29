@@ -69,8 +69,7 @@ private:
     bool m_imageComplete : 1;
 };
 
-class HTMLImageElementImpl
-    : public HTMLElementImpl
+class HTMLImageElementImpl : public HTMLElementImpl
 {
     friend class HTMLFormElementImpl;
 public:
@@ -93,7 +92,6 @@ public:
     int height(bool ignorePendingStylesheets = false) const;
 
     bool isServerMap() const { return ( ismap && !usemap.length() );  }
-    QImage currentImage() const;
 
     DOMString altText() const;
 
