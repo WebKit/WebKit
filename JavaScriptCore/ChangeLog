@@ -1,3 +1,14 @@
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ggaren.  Committed by eseidel.
+
+        Date conversion to local time gets the DST flag wrong sometimes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5514
+
+        * kjs/date_object.cpp:
+        (KJS::isTime_tSigned):
+        (KJS::DateProtoFuncImp::callAsFunction):
+
 2005-11-26  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
