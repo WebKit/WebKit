@@ -1,6 +1,15 @@
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ggaren.  Committed by eseidel.
+
+        Tests for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5514
+
+        * fast/js/date-DST-pre-1970-expected.txt: Added.
+        * fast/js/date-DST-pre-1970.html: Added.
+
 2005-11-29  Darin Adler  <darin@apple.com>
 
-        Reviewed by eseidel.  Landed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Re-enabling hc_noderemovechild.xhtml and fixing bug (hang).
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5316
