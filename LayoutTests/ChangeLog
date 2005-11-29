@@ -1,3 +1,9 @@
+2005-11-29  Darin Adler  <darin@apple.com>
+
+        * dom/xhtml/level3/core/documentgetinputencoding01-expected.txt:
+        Updated result to reflect the fact that this test now succeeds
+        due to the fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5715>.
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by ggaren.  Committed by eseidel.
