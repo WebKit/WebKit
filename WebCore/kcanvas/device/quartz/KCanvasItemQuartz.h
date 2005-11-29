@@ -42,5 +42,5 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                             HitTestAction hitTestAction);
 private:
-    void drawMarkersIfNeeded(const QRect &rect) const;
+    void drawMarkersIfNeeded(const QRect &rect, CGPathRef path) const;
 };

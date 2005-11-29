@@ -133,7 +133,7 @@ void KCanvasRenderingStyle::updateStroke(RenderPath *item)
     }
 
     strokePainter()->setOpacity(m_style->svgStyle()->strokeOpacity());
-    strokePainter()->setStrokeWidth(cssPrimitiveToLength(item, m_style->svgStyle()->strokeWidth(), 1.0));
+    strokePainter()->setStrokeWidth(KCanvasRenderingStyle::cssPrimitiveToLength(item, m_style->svgStyle()->strokeWidth(), 1.0));
 
     KDOM::CSSValueListImpl *dashes = m_style->svgStyle()->strokeDashArray();
     if(dashes)
@@ -155,7 +155,7 @@ void KCanvasRenderingStyle::updateStroke(RenderPath *item)
         }
 
         strokePainter()->setDashArray(array);
-        strokePainter()->setDashOffset(cssPrimitiveToLength(item, m_style->svgStyle()->strokeDashOffset(), 0.0));
+        strokePainter()->setDashOffset(KCanvasRenderingStyle::cssPrimitiveToLength(item, m_style->svgStyle()->strokeDashOffset(), 0.0));
     }
 
     strokePainter()->setStrokeMiterLimit(m_style->svgStyle()->strokeMiterLimit());
@@ -183,7 +183,7 @@ void KCanvasRenderingStyle::disableFillPainter()
     }
 }
 
-double KCanvasRenderingStyle::cssPrimitiveToLength(RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue) const
+double KCanvasRenderingStyle::cssPrimitiveToLength(const RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue)
 {
     KDOM::CSSPrimitiveValueImpl *primitive = static_cast<KDOM::CSSPrimitiveValueImpl *>(value);
 
@@ -207,7 +207,7 @@ double KCanvasRenderingStyle::cssPrimitiveToLength(RenderPath *item, KDOM::CSSVa
         }
     }
 
-    return primitive->computeLengthFloat(const_cast<khtml::RenderStyle *>(m_style), paintDeviceMetrics);
+    return primitive->computeLengthFloat(const_cast<khtml::RenderStyle *>(item->style()), paintDeviceMetrics);
 }
 
 // Stroke (aka Pen) properties

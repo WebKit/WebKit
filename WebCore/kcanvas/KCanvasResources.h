@@ -98,10 +98,8 @@ public:
 
     void setMarker(khtml::RenderObject *marker);
     
-    void setRefX(double refX);
-    double refX() const;
-    
-    void setRefY(double refY);
+    void setRef(double refX, double refY);
+    double refX() const;    
     double refY() const;
     
     void setAngle(float angle);
@@ -111,14 +109,12 @@ public:
     void setUseStrokeWidth(bool useStrokeWidth = true);
     bool useStrokeWidth() const;
 
-    void setScaleX(float scaleX);
+    void setScale(float scaleX, float scaleY);
     float scaleX() const;
-
-    void setScaleY(float scaleY);
     float scaleY() const;
 
      // Draw onto the canvas
-    void draw(const QRect &rect, const KCanvasMatrix &objectMatrix, double x, double y, double strokeWidth = 1., double angle = 0.0);
+    void draw(const QRect &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 private:

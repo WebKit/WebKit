@@ -1,3 +1,35 @@
+2005-11-28  Julien Palmas <julien.palmas@gmail.com>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        Fixes 2 marker test cases.
+
+        This patch makes WebCore+SVG's marker support 90% complete
+        This fixes marker drawing as well as auto-orientation & scaling.
+
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasMarker::setRef): combined setRefX and setRefY
+        (KCanvasMarker::setScale): combined setScaleX and setScaleY
+        (KCanvasMarker::draw): updated post-merger
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (DrawMarkersData::DrawMarkersData): new struct
+        (drawMarkerWithData): added, draws one marker
+        (updateMarkerDataForElement): added, helper function during draw
+        (DrawStartAndMidMarkers): added, CGPathApply helper function
+        (KCanvasItemQuartz::drawMarkersIfNeeded): updated
+        (KCanvasItemQuartz::paint): updated.
+        * kcanvas/device/quartz/QuartzSupport.h:
+        (CGPointSubtractPoints): added
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::updateStroke): updated to use static method
+        (KCanvasRenderingStyle::cssPrimitiveToLength): now static
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::parseMappedAttribute): updated
+        (SVGMarkerElementImpl::canvasResource): fixed
+
 2005-11-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.
@@ -37,7 +69,7 @@
 
         No review, build fix only.
 
-        Corrected typo in last commit causing build failure.
+        Corrected typo in last commit causing WebKit+SVG build failure.
 
         * kcanvas/KCanvasFilters.h:
         (QSizeF::QSizeF): fixed typo.

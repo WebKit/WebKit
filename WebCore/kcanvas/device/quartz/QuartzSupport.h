@@ -59,3 +59,5 @@ static inline CGLineJoin CGLineJoinFromKC( KCJoinStyle join) {
     
     return kCGLineJoinMiter;
 }
+
+static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b) { return CGPointMake(a.x - b.x, a.y - b.y); }

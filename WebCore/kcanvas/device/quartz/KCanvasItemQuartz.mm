@@ -41,6 +41,7 @@
 #import "QuartzSupport.h"
 
 #import "SVGRenderStyle.h"
+#import "KCanvasRenderingStyle.h"
 
 
 KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderPath(style, node)
@@ -48,22 +49,135 @@ KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledE
 	
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect) const
+typedef enum {
+    Start,
+    Mid,
+    End
+} MarkerType;
+
+struct MarkerData {
+    CGPoint origin;
+    double strokeWidth;
+    CGPoint inslopePoints[2];
+    CGPoint outslopePoints[2];
+    MarkerType type;
+    KCanvasMarker *marker;
+};
+
+struct DrawMarkersData {
+    DrawMarkersData(KCanvasMarker *startMarker, KCanvasMarker *midMarker, double strokeWidth);
+    
+    int elementIndex;
+    MarkerData previousMarkerData;
+    KCanvasMarker *midMarker;
+};
+
+DrawMarkersData::DrawMarkersData(KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
+{
+    elementIndex = 0;
+    midMarker = mid;
+    
+    previousMarkerData.origin = CGPointZero;
+    previousMarkerData.strokeWidth = strokeWidth;
+    previousMarkerData.marker = start;
+    previousMarkerData.type = Start;
+}
+
+void drawMarkerWithData(MarkerData &data)
+{
+    if (!data.marker)
+        return;
+    
+    CGPoint inslopeChange = CGPointSubtractPoints(data.inslopePoints[1], data.inslopePoints[0]);
+    CGPoint outslopeChange = CGPointSubtractPoints(data.outslopePoints[1], data.outslopePoints[0]);
+    
+    static const double deg2rad = M_PI/180.0;
+    double inslope = atan2(inslopeChange.y, inslopeChange.x) / deg2rad;
+    double outslope = atan2(outslopeChange.y, outslopeChange.x) / deg2rad;
+    
+    double angle;
+    if (data.type == Start)
+        angle = outslope;
+    else if (data.type == Mid)
+        angle = (inslope + outslope) / 2;
+    else // (data.type == End)
+        angle = inslope;
+    
+    data.marker->draw(QRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
+}
+
+static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const CGPathElement *element)
+{
+    CGPoint *points = element->points;
+    
+    switch (element->type) {
+    case kCGPathElementAddQuadCurveToPoint:
+        // TODO
+        previousMarkerData.origin = points[1];
+        break;
+    case kCGPathElementAddCurveToPoint:
+        previousMarkerData.inslopePoints[0] = points[1];
+        previousMarkerData.inslopePoints[1] = points[2];
+        previousMarkerData.origin = points[2];
+        break;
+    default:
+        previousMarkerData.inslopePoints[0] = previousMarkerData.origin;
+        previousMarkerData.inslopePoints[1] = points[0];
+        previousMarkerData.origin = points[0];
+        break;
+    }
+}
+
+void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
+{
+    DrawMarkersData &data = *(DrawMarkersData *)info;
+
+    int elementIndex = data.elementIndex;
+    MarkerData &previousMarkerData = data.previousMarkerData;
+
+    CGPoint *points = element->points;
+
+    // First update the outslope for the previous element
+    previousMarkerData.outslopePoints[0] = previousMarkerData.origin;
+    previousMarkerData.outslopePoints[1] = points[0];
+
+    // Draw the marker for the previous element
+    if (elementIndex != 0)
+        drawMarkerWithData(previousMarkerData);
+
+    // Update our marker data for this element
+    updateMarkerDataForElement(previousMarkerData, element);
+
+    if (elementIndex == 1) {
+        // After drawing the start marker, switch to drawing mid markers
+        previousMarkerData.marker = data.midMarker;
+        previousMarkerData.type = Mid;
+    }
+
+    data.elementIndex++;
+}
+
+void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect, CGPathRef path) const
 {
     KDOM::DocumentImpl *doc = document();
     KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
 
-    // find the start verticies...
-    if(KCanvasMarker *marker = getMarkerById(doc, svgStyle->startMarker().mid(1)))
-        marker->draw(rect, localTransform(), 0, 0, 0);
-
-    // find the middle verticies... 
-    if(KCanvasMarker *marker = getMarkerById(doc, svgStyle->midMarker().mid(1)))
-        marker->draw(rect, localTransform(), 0, 0, 0);
+    KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));
+    KCanvasMarker *midMarker = getMarkerById(doc, svgStyle->midMarker().mid(1));
+    KCanvasMarker *endMarker = getMarkerById(doc, svgStyle->endMarker().mid(1));
     
-    // find the end verticies...
-    if(KCanvasMarker *marker = getMarkerById(doc, svgStyle->endMarker().mid(1)))
-        marker->draw(rect, localTransform(), 0, 0, 0);
+    if (!startMarker && !midMarker && !endMarker)
+        return;
+
+    double strokeWidth = KSVG::KCanvasRenderingStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
+
+    DrawMarkersData data(startMarker, midMarker, strokeWidth);
+
+    CGPathApply(path, &data, DrawStartAndMidMarkers);
+
+    data.previousMarkerData.marker = endMarker;
+    data.previousMarkerData.type = End;
+    drawMarkerWithData(data.previousMarkerData);
 }
 
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
@@ -117,14 +231,14 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
         canvasStyle()->strokePainter()->draw(quartzDevice->currentContext(), args);
     }
 
-    drawMarkersIfNeeded(dirtyRect);
+    drawMarkersIfNeeded(dirtyRect, cgPath);
 
     // actually apply the filter
     if (filter) {
         filter->applyFilter(quartzDevice, relativeBBox(true));
         context = quartzDevice->currentCGContext();
     }
-    
+
     // restore drawing state
     paintInfo.p->restore();
     if (!parent()->isKCanvasContainer()) {

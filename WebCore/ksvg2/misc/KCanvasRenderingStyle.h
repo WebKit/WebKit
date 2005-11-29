@@ -76,7 +76,7 @@ namespace KSVG
         KRenderingStrokePainter *strokePainter();
         void disableStrokePainter();
 
-        double cssPrimitiveToLength(RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0) const;
+        static double cssPrimitiveToLength(const RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0);
 
         // Fill (aka Brush) properties
         bool isFilled() const;
