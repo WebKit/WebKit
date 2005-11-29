@@ -611,8 +611,11 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         if (style->visibility() != VISIBLE)
             continue;
         if (r->isBR()) {
-            if (includeLineBreak)
-                return VisiblePosition(n, 1, DOWNSTREAM);
+            if (includeLineBreak) {
+                VisiblePosition beforeBreak(n, 0, DOWNSTREAM);
+                VisiblePosition next = beforeBreak.next();
+                return next.isNotNull() ? next : beforeBreak;
+            }
             break;
         }
         if (r->isBlockFlow()) {

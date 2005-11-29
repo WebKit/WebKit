@@ -70,63 +70,7 @@ VisiblePosition::VisiblePosition(const VisiblePosition &other)
 void VisiblePosition::init(const Position &pos, EAffinity affinity)
 {
     m_affinity = affinity;
-
-    // For <br> 0, it's important not to move past the <br>.
-    if (pos.node() && pos.node()->hasTagName(brTag) && pos.offset() == 0)
-        initUpstream(pos);
-    else
-        initDownstream(pos);
-
-    // when not at line break, make sure to end up with DOWNSTREAM affinity.  
-    if (m_affinity == UPSTREAM && (isNull() || inSameLine(VisiblePosition(pos, DOWNSTREAM), *this)))
-        m_affinity = DOWNSTREAM;
-}
-
-void VisiblePosition::initUpstream(const Position &pos)
-{
-    Position deepPos = deepEquivalent(pos);
-
-    if (isCandidate(deepPos)) {
-        m_deepPosition = deepPos;
-        Position next = nextVisiblePosition(deepPos);
-        if (next.isNotNull()) {
-            Position previous = previousVisiblePosition(next);
-            if (previous.isNotNull())
-                m_deepPosition = previous;
-        }
-    }
-    else {
-        Position previous = previousVisiblePosition(deepPos);
-        if (previous.isNotNull()) {
-            m_deepPosition = previous;
-        } else {
-            Position next = nextVisiblePosition(deepPos);
-            if (next.isNotNull())
-                m_deepPosition = next;
-        }
-    }
-}
-
-static bool isRenderedBR(NodeImpl *node)
-{
-    if (!node)
-        return false;
-
-    RenderObject *renderer = node->renderer();
-    if (!renderer)
-        return false;
     
-    if (renderer->style()->visibility() != VISIBLE)
-        return false;
-
-    if (renderer->isBR())
-        return true;
-
-    return false;
-}
-
-void VisiblePosition::initDownstream(const Position &pos)
-{
     Position deepPos = deepEquivalent(pos);
 
     if (isCandidate(deepPos)) {
@@ -139,16 +83,30 @@ void VisiblePosition::initDownstream(const Position &pos)
         }
     } else {
         Position next = nextVisiblePosition(deepPos);
-        if (next.isNotNull()) {
+        Position prev = previousVisiblePosition(deepPos);
+        
+        if (next.isNull() && prev.isNull())
+            m_deepPosition = Position();
+        else if (next.isNull())
+            m_deepPosition = prev;
+        else if (prev.isNull())
             m_deepPosition = next;
-        } else if (isRenderedBR(deepPos.node()) && deepPos.offset() == 1) {
-            m_deepPosition = Position(deepPos.node(), 0);
-        } else {
-            Position previous = previousVisiblePosition(deepPos);
-            if (previous.isNotNull())
-                m_deepPosition = previous;
+        else {
+            NodeImpl *originalBlock = pos.node() ? pos.node()->enclosingBlockFlowElement() : 0;
+            bool nextIsInOriginalBlock = next.node()->isAncestor(originalBlock);
+            bool prevIsInOriginalBlock = prev.node()->isAncestor(originalBlock);
+            
+            if (!nextIsInOriginalBlock && prevIsInOriginalBlock || 
+                (deepPos.node()->hasTagName(brTag) && deepPos.offset() == 0))
+                m_deepPosition = prev;
+            else
+                m_deepPosition = next;
         }
     }
+
+    // When not at a line wrap, make sure to end up with DOWNSTREAM affinity.
+    if (m_affinity == UPSTREAM && (isNull() || inSameLine(VisiblePosition(pos, DOWNSTREAM), *this)))
+        m_affinity = DOWNSTREAM;
 }
 
 VisiblePosition VisiblePosition::next() const

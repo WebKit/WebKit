@@ -1,3 +1,29 @@
+2005-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5354>
+        Corner case where you can select outside the bounds of an editable block.
+        
+        Reviewed by darin
+        
+        Updated/added editing test cases to reflect fix.
+        
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        It's ok to do some hunting to find a valid VisblePosition given a position 
+        that is not somewhere visible, like inside an empty div, but only leave the 
+        block containing the position used to construct the VisiblePosition if we 
+        can't find a VisiblePosition inside that block.
+        We weren't using the equivalentDeepPosition of the input position to make 
+        the initUpstream/initDownstream decision, so we were sometimes moving 
+        past [br, 0], which is what having initUpstream around is supposed to prevent.  
+        I got rid of initUpstream and included the check to prevent moving 
+        past [br, 0] inside the now generalized init().
+        
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfParagraph):
+        After the changes to VisiblePosition::init(), asking for the visible position 
+        at  [br, 1] isn't the right way to include a line break.
+
 2005-11-28  Eric Seidel  <eseidel@apple.com>
 
         No review, build fix only.
