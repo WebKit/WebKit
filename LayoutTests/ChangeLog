@@ -1,3 +1,15 @@
+2005-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Re-enabling hc_noderemovechild.xhtml and fixing bug (hang).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5316
+
+        * dom/xhtml/level1/core/hc_noderemovechild-expected.txt: Added.
+        * dom/xhtml/level1/core/hc_noderemovechild.js: hang workaround.
+        * dom/xhtml/level1/core/hc_noderemovechild.xhtml: Added.
+        * dom/xhtml/level1/core/hc_noderemovechild.xhtml-disabled: Removed.
+
 2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin. Commited by Maciej.

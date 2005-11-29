@@ -107,6 +107,16 @@ function hc_noderemovechild() {
 
       childList = rootNode.childNodes;
 
+//
+//  WebKit modification: 9-October-2005
+//
+//  Added the next two lines of code to remove first employee as
+//  documented rather than removing the body element.
+//  Workaround while waiting for <http://www.w3.org/Bugs/Public/show_bug.cgi?id=2334>.
+//
+      rootNode = childList.item(1);
+      childList = rootNode.childNodes;
+
       childToRemove = childList.item(1);
       removedChild = rootNode.removeChild(childToRemove);
       parentNode = removedChild.parentNode;
