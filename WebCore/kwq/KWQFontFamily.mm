@@ -33,7 +33,7 @@ using DOM::DOMStringImpl;
 KWQFontFamily::KWQFontFamily()
     : _next(0)
     , _refCnt(0)
-    , _NSFamily(0)
+    , _CFFamily(0)
 {
 }
 
@@ -41,7 +41,7 @@ KWQFontFamily::KWQFontFamily(const KWQFontFamily& other)
     : _family(other._family)
     , _next(other._next)
     , _refCnt(0)
-    , _NSFamily(other._NSFamily)
+    , _CFFamily(other._CFFamily)
 {
     if (_next)
         _next->ref();
@@ -55,7 +55,7 @@ KWQFontFamily& KWQFontFamily::operator=(const KWQFontFamily& other)
         _next->deref();
     _family = other._family;
     _next = other._next;
-    _NSFamily = other._NSFamily;
+    _CFFamily = other._CFFamily;
     return *this;
 }
 
@@ -74,29 +74,30 @@ const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMSt
 
 NSString *KWQFontFamily::getNSFamily() const
 {
-    if (!_NSFamily) {
+    if (!_CFFamily) {
         if (_family.isEmpty())
-            _NSFamily = @"";
+            _CFFamily = CFSTR("");
         else {
             // Use an immutable copy of the name, but keep a set of
             // all family names so we don't end up with too many objects.
             static CFMutableDictionaryRef families;
             if (families == NULL)
                 families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-            _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.impl());
-            if (!_NSFamily) {
-                _NSFamily = [NSString stringWithCharacters:(const unichar *)_family.unicode() length:_family.length()];
-                CFDictionarySetValue(families, _family.impl(), _NSFamily);
+            _CFFamily = (CFStringRef)CFDictionaryGetValue(families, _family.impl());
+            if (!_CFFamily) {
+                _CFFamily = CFStringCreateWithCharacters(0, (const UniChar *)_family.unicode(), _family.length());
+                CFDictionarySetValue(families, _family.impl(), _CFFamily);
+                CFRelease(_CFFamily);
             }
         }
     }
-    return _NSFamily;
+    return (NSString *)_CFFamily;
 }
 
 void KWQFontFamily::setFamily(const AtomicString &family)
 {
     _family = family;
-    _NSFamily = nil;
+    _CFFamily = 0;
 }
 
 bool KWQFontFamily::operator==(const KWQFontFamily &compareFontFamily) const

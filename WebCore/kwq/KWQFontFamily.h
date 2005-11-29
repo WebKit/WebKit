@@ -69,7 +69,7 @@ private:
     DOM::AtomicString _family;
     KWQFontFamily *_next;
     int _refCnt;
-    mutable NSString *_NSFamily;
+    mutable CFStringRef _CFFamily;
 };
 
 

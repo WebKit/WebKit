@@ -1,5 +1,19 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5681
+          font family management can be faster by avoiding NSString/autorelease
+
+        * kwq/KWQFontFamily.h: Replace _NSFamily with _CFFamily.
+        * kwq/KWQFontFamily.mm:
+        (KWQFontFamily::KWQFontFamily): Ditto.
+        (KWQFontFamily::operator=): Ditto.
+        (KWQFontFamily::getNSFamily): More of the same.
+        (KWQFontFamily::setFamily): Ditto.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5679
