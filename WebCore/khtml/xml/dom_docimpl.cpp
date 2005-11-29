@@ -2344,10 +2344,11 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
                 focusWidget->setFocus();
             else {
                 view()->setFocus();
-                if (m_focusNode->renderer()) {
-                    updateLayout();
+                // updateLayout in case this comes before a renderer is set up.
+                updateLayout();
+                // Check that there's still a renderer after updating the layout.
+                if (m_focusNode->renderer())
                     m_focusNode->renderer()->enclosingLayer()->scrollRectToVisible(m_focusNode->getRect());
-                }
             }
         }
    }

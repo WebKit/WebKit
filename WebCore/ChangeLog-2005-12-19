@@ -1,3 +1,12 @@
+2005-11-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - <rdar://problem/4356593> Regression: Crash in scrollRectToVisible
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::setFocusNode): 
+        Make sure there's still a renderer after updating the layout.
+
 2005-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=5354>
