@@ -2,6 +2,18 @@
 
         Reviewed by Geoff.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5679
+          speed up QTime by removing unnecessary CFAbsoluteTimeGetGregorianDate
+
+        * kwq/KWQDateTime.mm:
+        (QTime::msec): Just multiply and mod the time in seconds, don't bother converting to
+        a Gregorian date first, since that won't affect fractional seconds.
+        (QTime::addMSecs): Multiply by 1/1000 instead of dividing by 1000.
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - fixed <rdar://problem/4300202> JavaScript event keyCode/charCode/which is 25 for shift+tab, should be 9 (5678)
           also http://bugzilla.opendarwin.org/show_bug.cgi?id=5678
 

@@ -49,14 +49,13 @@ QTime::QTime(int hours, int minutes)
 
 int QTime::msec() const
 {
-    CFAbsoluteTime seconds = CFAbsoluteTimeGetGregorianDate(timeInSeconds, systemTimeZone()).second;
-    return (int)(seconds * 1000) % 1000;
+    return (int)(timeInSeconds * 1000) % 1000;
 }
 
 QTime QTime::addMSecs(int msecs) const
 {
     QTime newTime(*this);
-    newTime.timeInSeconds += ((double)msecs)/1000.0;
+    newTime.timeInSeconds += msecs * 0.001;
     return newTime;
 }
 
