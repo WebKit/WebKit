@@ -1,5 +1,11 @@
 2005-11-29  Darin Adler  <darin@apple.com>
 
+        - fixed broken tree (from my last check-in)
+
+        * kwq/DOM-CSS.mm: Added "using namespace DOM" and an import of "dom_docimpl.h".
+
+2005-11-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/4089752> Duplicate method implementation for -[DOMDocument getComputedStyle::]

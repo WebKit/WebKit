@@ -26,48 +26,25 @@
 #include "config.h"
 #import "DOMCSS.h"
 
-#include <objc/objc-class.h>
-
+#import "DOMInternal.h"
+#import "KWQColor.h"
+#import "KWQFoundationExtras.h"
 #import "css_base.h"
 #import "css_ruleimpl.h"
 #import "css_stylesheetimpl.h"
-#import "css_valueimpl.h"
 #import "css_value.h"
-#import "dom_string.h"
-#import "dom_xmlimpl.h"
-#import "KWQColor.h"
-#import "shared.h"
-#import "dom_stringimpl.h"
+#import "css_valueimpl.h"
 #import "dom2_viewsimpl.h"
+#import "dom_docimpl.h"
+#import "dom_string.h"
+#import "dom_stringimpl.h"
+#import "dom_xmlimpl.h"
 #import "html_headimpl.h"
-
-#import "DOMInternal.h"
+#import "shared.h"
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
+#import <objc/objc-class.h>
 
-using DOM::AbstractViewImpl;
-using DOM::CounterImpl;
-using DOM::CSSCharsetRuleImpl;
-using DOM::CSSFontFaceRuleImpl;
-using DOM::CSSImportRuleImpl;
-using DOM::CSSMediaRuleImpl;
-using DOM::CSSPageRuleImpl;
-using DOM::CSSPrimitiveValueImpl;
-using DOM::CSSRuleImpl;
-using DOM::CSSRuleListImpl;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::CSSStyleRuleImpl;
-using DOM::CSSStyleSheetImpl;
-using DOM::CSSValueImpl;
-using DOM::CSSValueListImpl;
-using DOM::DOMString;
-using DOM::HTMLLinkElementImpl;
-using DOM::HTMLStyleElementImpl;
-using DOM::MediaListImpl;
-using DOM::ProcessingInstructionImpl;
-using DOM::RectImpl;
-using DOM::StyleSheetImpl;
-using DOM::StyleSheetListImpl;
+using namespace DOM;
 
 @interface DOMStyleSheet (WebCoreInternal)
 + (DOMStyleSheet *)_DOMStyleSheetWithImpl:(StyleSheetImpl *)impl;
