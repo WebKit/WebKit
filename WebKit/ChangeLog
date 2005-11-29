@@ -1,3 +1,22 @@
+2005-11-29  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan, Eric Seidel
+
+	<rdar://problem/4340787> Safari & Dashcode create 2 instances of the QC plug-in
+	
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+	Instead of creating a new WebDocumentView, use the WebDataSource's representation if it is a WebDocumentView
+	of the appropriate class.  Right now, this can only happen when the loading document is a standalone WebKit
+	plugin, because WebPluginDocumentView is both the WebDocumentView and the WebDocumentRepresentation for that
+	kind of page load.
+	
+	I have verified that this does not affect other kinds of page loads; in all other cases, the representation
+	class is distinct from the document view class.
+
+	I talked with Chris Blumenberg about this change (he knows this code), and he agreed that this is the right
+	approach.
+
 2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin. Committed by Maciej.

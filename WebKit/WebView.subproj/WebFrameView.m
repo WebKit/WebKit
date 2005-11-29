@@ -203,7 +203,19 @@ enum {
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {    
     Class viewClass = [[self class] _viewClassForMIMEType:[[dataSource response] MIMEType]];
-    NSView <WebDocumentView> *documentView = viewClass ? [[viewClass alloc] init] : nil;
+    NSView <WebDocumentView> *documentView;
+    if (viewClass) {
+        // If the dataSource's representation has already been created, and it is also the
+        // same class as the desired documentView, then use it as the documentView instead
+        // of creating another one (Radar 4340787).
+        id <WebDocumentRepresentation> dataSourceRepresentation = [dataSource representation];
+        if (dataSourceRepresentation && [dataSourceRepresentation class] == viewClass)
+            documentView = (NSView <WebDocumentView> *)[dataSourceRepresentation retain];
+        else
+            documentView = [[viewClass alloc] init];
+    } else
+        documentView = nil;
+    
     [self _setDocumentView:documentView];
     [documentView release];
     
