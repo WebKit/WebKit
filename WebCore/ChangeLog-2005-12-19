@@ -1,3 +1,19 @@
+2005-11-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://problem/4098083> REGRESSION (125-312): crash 
+	in [KWQTableView resignFirstResponder] selecting from JS menu 
+	(car4you.at, etc.)
+
+	Though this crash is only currently reproducible on the branch
+	and not on TOT, the fix should be in both. 
+
+        * kwq/KWQWidget.mm:
+        (QWidget::removeFromSuperview): The call to removeFromSuperview
+	could destroy data, so we should only reference it before the 
+	call.
+
 2005-11-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by eseidel.  Committed by eseidel.

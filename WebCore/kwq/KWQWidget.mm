@@ -569,10 +569,10 @@ void QWidget::removeFromSuperview()
     if (data->mustStayInWindow)
         data->removeFromSuperviewSoon = true;
     else {
+        data->removeFromSuperviewSoon = false;
         KWQ_BLOCK_EXCEPTIONS;
         [getOuterView() removeFromSuperview];
         KWQ_UNBLOCK_EXCEPTIONS;
-        data->removeFromSuperviewSoon = false;
     }
 }
 
