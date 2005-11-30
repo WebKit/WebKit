@@ -1,4 +1,26 @@
-2005-11-29  Eric Seidel  <eseidel@apple.com>
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Committed by eseidel.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4403
+        Script element doesn't load if on set src if already in document
+
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p1fail.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p2fail.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p3pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p4pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p5fail.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p5pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p6pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p7pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p8pass.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p9failAfter.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p9failBefore.js: Added.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p9pass.js: Added.
+        * fast/dom/HTMLScriptElement/script-set-src-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-set-src.html: Added.
+
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Committed by eseidel
 
