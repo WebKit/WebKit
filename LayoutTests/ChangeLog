@@ -1,6 +1,21 @@
-2005-11-29  Eric Seidel  <eseidel@apple.com>
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
-        Reviewed by darin.
+        Reviewed by hyatt.  Committed by eseidel.
+
+        Updated results for word space fix:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4695
+
+        * fast/css/word-space-extra-expected.checksum:
+        * fast/css/word-space-extra-expected.png:
+        * fast/css/word-space-extra-expected.txt:
+        * fast/text/whitespace/span-in-word-space-causes-overflow-expected.checksum: Added.
+        * fast/text/whitespace/span-in-word-space-causes-overflow-expected.png: Added.
+        * fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt: Added.
+        * fast/text/whitespace/span-in-word-space-causes-overflow.html: Added.
+
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Committed by eseidel.
 
         Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=5800
 
