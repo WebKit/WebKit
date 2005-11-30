@@ -273,10 +273,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 - (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
 {
-    DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
+    DOMDocumentFragment *fragment;
     NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     WebDataSource *dataSource = [self _dataSource];
+    NSMutableArray *domNodes = [[NSMutableArray alloc] init];
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
@@ -288,11 +289,19 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
                                                      textEncodingName:nil
                                                             frameName:nil];
             if (resource) {
-                [fragment appendChild:[dataSource _imageElementWithImageResource:resource]];
+                [domNodes addObject:[dataSource _imageElementWithImageResource:resource]];
                 [resource release];
             }
+        } else {
+            // Non-image file types
+            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
+            [domNodes addObject:[[[self _bridge] DOMDocument] createTextNode: url]];
         }
     }
+    
+    fragment = [[self _bridge] documentFragmentWithNodesAsParagraphs:domNodes]; 
+    
+    [domNodes release];
     
     return [fragment firstChild] != nil ? fragment : nil;
 }

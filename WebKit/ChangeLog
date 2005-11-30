@@ -1,3 +1,13 @@
+2005-11-29  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by darin.  Committed by eseidel.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4726
+        Drop of multiple non-image file URLs only yields one item
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+
 2005-11-29  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan, Eric Seidel
