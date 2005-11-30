@@ -218,10 +218,14 @@ sub removeLibraryDependingOnSVG
 
 sub checkWebCoreSVGSupport
 {
+	my $required = shift;
     my $framework = "WebCore";
     my $path = builtDylibPathForName($framework);
     my $hasSVG = hasSVGSupport($path);
-    die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n" unless $hasSVG;
+    if ($required && !$hasSVG) {
+    	die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n";
+    }
+    return $hasSVG;
 }
 
 sub checkRequiredSystemConfig

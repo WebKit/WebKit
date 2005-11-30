@@ -92,7 +92,7 @@ die "can't find executable $dumpToolName (looked in $productDir)\n" if !-x $tool
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks();
-checkWebCoreSVGSupport() if $testSVGs;
+my $haveSVGSupport = checkWebCoreSVGSupport($testSVGs);
 
 my $layoutTestsName = "LayoutTests";
 if ($testSVGs) {
@@ -108,7 +108,9 @@ my @tests = ();
 
 my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
-    $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.svg'";
+    $findArguments = "\\( -name Resources \\! -prune \\) -or -name '*.svg' -or -name '*.xml'";
+} elsif ($haveSVGSupport) {
+	$findArguments .= " -or -name '*.svg'";
 }
 my $foundTestName = 0;
 for my $test (@ARGV) {

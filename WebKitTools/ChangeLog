@@ -1,3 +1,16 @@
+2005-11-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Update scripts to run SVG tests automatically (w/o --svg) if
+        WebCore is built with SVG support.
+
+        * Scripts/build-drawtest: SVG support required
+        * Scripts/build-dumpkcanvastree: Removed.
+        * Scripts/run-drawtest: SVG support required to run
+        * Scripts/run-webkit-tests: pass *.svg files if WebCore has support
+        * Scripts/webkitdirs.pm: changed CheckWebCoreSVGSupport
+
 2005-11-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin. Committed by Maciej.

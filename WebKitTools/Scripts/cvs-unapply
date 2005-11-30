@@ -88,7 +88,7 @@ sub patch
         my $prefix = $1;
         my $base = $3;
         if ($prefix) {
-            chdir $prefix or die;
+            chdir $prefix or die "Failed to chdir to $prefix";
         }
 
         if ($patch =~ /\n@@ .* \+0,0 @@/) {

@@ -41,7 +41,7 @@ my @options = XcodeOptions();
 
 # Check to see that all the frameworks are built (w/ SVG support).
 checkFrameworks();
-checkWebCoreSVGSupport();
+checkWebCoreSVGSupport(true);
 
 # Build
 chdir "WebKitTools/DrawTest" or die;
