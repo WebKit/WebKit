@@ -35,6 +35,7 @@ enum EChildrenOnly { IncludeNode, ChildrenOnly };
 
 DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, const QString &text);
 DOM::DocumentFragmentImpl *createFragmentFromMarkup(DOM::DocumentImpl *document, const QString &markup, const QString &baseURL);
+DOM::DocumentFragmentImpl *createFragmentFromNodeList(DOM::DocumentImpl *document, const QPtrList<DOM::NodeImpl> &nodeList);
 
 QString createMarkup(const DOM::RangeImpl *range,
     QPtrList<DOM::NodeImpl> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);

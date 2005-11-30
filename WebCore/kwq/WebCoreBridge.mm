@@ -1879,6 +1879,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text))];
 }
 
+- (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
+{
+    NSEnumerator *nodeEnum = [nodes objectEnumerator];
+    DOMNode *node;
+    QPtrList<DOM::NodeImpl> nodeList;
+    
+    if (!_part || !_part->xmlDocImpl())
+        return 0;
+    
+    while ((node = [nodeEnum nextObject])) {
+        nodeList.append([node _nodeImpl]);
+    }
+    
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(_part->xmlDocImpl(), nodeList)];
+}
+
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (!partHasSelection(self) || !fragment)

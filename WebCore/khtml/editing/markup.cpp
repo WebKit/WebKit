@@ -600,4 +600,33 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
     return fragment;
 }
 
+DOM::DocumentFragmentImpl *createFragmentFromNodeList(DOM::DocumentImpl *document, const QPtrList<DOM::NodeImpl> &nodeList)
+{
+    if (!document)
+        return 0;
+    
+    DocumentFragmentImpl *fragment = document->createDocumentFragment();
+    fragment->ref();
+    
+    ElementImpl *element;
+    int exceptionCode = 0;
+    for (QPtrListIterator<NodeImpl> i(nodeList); i.current(); ++i) {
+        element = createDefaultParagraphElement(document);
+        element->ref();
+        element->appendChild(i.current(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+        fragment->appendChild(element, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        element->deref();
+    }
+    
+    // Trick to get the fragment back to the floating state, with 0
+    // refs but not destroyed.
+    fragment->setParent(document);
+    fragment->deref();
+    fragment->setParent(0);
+    
+    return fragment;
+}
+
 }

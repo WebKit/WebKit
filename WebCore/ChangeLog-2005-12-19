@@ -1,3 +1,19 @@
+2005-11-29  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by darin.  Committed by eseidel.
+
+        No automated test possible.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4726
+        Drop of multiple non-image file URLs only yields one item
+
+        * khtml/editing/markup.cpp:
+        (khtml::createFragmentFromNodeList):
+        * khtml/editing/markup.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithNodesAsParagraphs:]):
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Committed by eseidel.
