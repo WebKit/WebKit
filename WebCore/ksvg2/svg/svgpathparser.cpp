@@ -326,8 +326,8 @@ SVGPathParser::parseSVG( const QString &s, bool process )
 
                         svgCurveToCubic( px1, py1, px2, py2, px3, py3 );
 
-                        contrlx = relative ? curx + x1 : (tox + 2 * x1) * (1.0 / 3.0);
-                        contrly = relative ? cury + y1 : (toy + 2 * y1) * (1.0 / 3.0);
+                        contrlx = relative ? curx + x1 : x1;
+                        contrly = relative ? cury + y1 : y1;
                         curx = relative ? curx + tox : tox;
                         cury = relative ? cury + toy : toy;
                     }

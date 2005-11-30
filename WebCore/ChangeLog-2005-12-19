@@ -1,3 +1,20 @@
+2005-11-30  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.
+
+        Fixes 5 test cases:
+        - paths-data-02-t.svg (most noticeable)
+        - fonts-elem-01-t.svg
+        - fonts-elem-02-t.svg
+        - fonts-elem-03-t.svg
+        - fonts-elem-04-t.svg
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5881
+        Quadratic bezier path render error
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (SVGPathParser::parseSVG):
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.
