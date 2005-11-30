@@ -1,3 +1,14 @@
+2005-11-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.  Committed by eseidel
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5820
+
+        * fast/table/cell-width-auto-expected.checksum: Added.
+        * fast/table/cell-width-auto-expected.png: Added.
+        * fast/table/cell-width-auto-expected.txt: Added.
+        * fast/table/cell-width-auto.html: Added.
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.  Committed by eseidel.
