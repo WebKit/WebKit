@@ -1,5 +1,0 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 450x450
-  KCanvasContainer at (0,0) size 450x450 [fill={[type=SOLID] [color=#000000]}]
-    KCanvasItem {rect} at (225,0) size 225x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M225.00,0.00L450.00,0.00L450.00,225.00L225.00,225.00"]
-    KCanvasItem {rect} at (0,225) size 225x225 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,225.00L225.00,225.00L225.00,450.00L0.00,450.00"]

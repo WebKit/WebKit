@@ -1,7 +1,0 @@
-KCanvasRegistry: empty
-KCanvasContainer at (1,9) size 242x102
-  KCanvasContainer at (1,9) size 242x102 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}]
-    KCanvasItem {rect} at (1,9) size 122x22 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M2.00,10.00L122.00,10.00L122.00,30.00L2.00,30.00"]
-    KCanvasItem {rect} at (1,49) size 242x22 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M2.00,50.00L242.00,50.00L242.00,70.00L2.00,70.00"]
-    KCanvasItem {rect} at (1,89) size 242x22 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M2.00,90.00L242.00,90.00L242.00,110.00L2.00,110.00"]
-  KCanvasContainer at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}]

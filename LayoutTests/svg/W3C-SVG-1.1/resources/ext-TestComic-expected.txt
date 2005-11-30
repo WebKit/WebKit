@@ -1,2 +1,0 @@
-KCanvasRegistry: empty
-KCanvasContainer at (0,0) size 0x0
