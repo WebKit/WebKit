@@ -504,6 +504,35 @@ void HTMLScriptElementImpl::childrenChanged()
         evaluateScript(getDocument()->URL(), text());
 }
 
+void HTMLScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+{
+    if (attr->name() == srcAttr) {
+        if (m_evaluated || m_cachedScript || m_createdByParser || !inDocument())
+            return;
+
+        // FIXME: Evaluate scripts in viewless documents.
+        // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
+        if (!getDocument()->part())
+            return;
+    
+        QString url = attr->value().qstring();
+        if (!url.isEmpty()) {
+            QString charset = getAttribute(charsetAttr).qstring();
+            m_cachedScript = getDocument()->docLoader()->requestScript(DOMString(url), charset);
+            m_cachedScript->ref(this);
+        }
+    } else
+        HTMLElementImpl::parseMappedAttribute(attr);
+}
+
+void HTMLScriptElementImpl::closeRenderer()
+{
+    // The parser just reached </script>. If we have no src and no text,
+    // allow dynamic loading later.
+    if (getAttribute(srcAttr).isEmpty() && text().isEmpty())
+        setCreatedByParser(false);
+}
+
 void HTMLScriptElementImpl::insertedIntoDocument()
 {
     HTMLElementImpl::insertedIntoDocument();

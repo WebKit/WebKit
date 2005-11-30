@@ -194,6 +194,7 @@ public:
     virtual int tagPriority() const { return 1; }
     virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
 
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void notifyFinished(khtml::CachedObject *finishedObj);
@@ -203,6 +204,7 @@ public:
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+    virtual void closeRenderer();
 
     void evaluateScript(const QString &, const DOMString &);
 

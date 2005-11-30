@@ -1,5 +1,19 @@
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by darin.
+
+        Test: fast/dom/HTMLScriptElement/script-set-src.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4403
+        Script element doesn't load if on set src if already in document
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::parseMappedAttribute):
+        (HTMLScriptElementImpl::closeRenderer):
+        * khtml/html/html_headimpl.h:
+
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by darin.  Committed by eseidel.
 
         Test: fast/table/cell-width-auto.html
