@@ -1,3 +1,14 @@
+2005-11-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=5800
+
+        * fast/css/absolute-poition-in-rtl-parent-expected.checksum: Added.
+        * fast/css/absolute-poition-in-rtl-parent-expected.png: Added.
+        * fast/css/absolute-poition-in-rtl-parent-expected.txt: Added.
+        * fast/css/absolute-poition-in-rtl-parent.html: Added.
+
 2005-11-29  Darin Adler  <darin@apple.com>
 
         * dom/xhtml/level3/core/documentgetinputencoding01-expected.txt:

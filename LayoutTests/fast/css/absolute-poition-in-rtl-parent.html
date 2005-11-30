@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>
+On the left, you should see three blocks that are aligned left within a black box.  They should
+be stacked vertically with the green box in between two olive boxes.  The olive boxes and the green box
+should be 100x100, and there should be 100 pixels of padding on the right side of the box stack.
+</p>
+<p>
+On the right, you should see two blocks that are centered within a black box.  They should be
+stacked vertically with the green box below the olive box. The olive box and the green box should
+be 100x100, and there should be 100 pixels of padding on either side of the box stack.
+</p>
+<div style="position:fixed;width:200px;height:300px;border:20px solid black;">
+<table style="direction:rtl; width:100px;" cellspacing="0" cellpadding="0">
+<tr> 
+<td>
+<div style="width:100px; height:100px; background:olive;"></div>
+<div style="position:absolute; width:100px; height:100px; background:green;"></div>
+<div style="position:absolute; width:100px; height:100px; background:olive; bottom:0; right:100px;"></div>
+</td>
+</tr>
+</table>
+</div>
+<div style="position:fixed;width:300px;height:200px;border:20px solid black; left:300px;">
+<div style="direction:rtl; width:200px;">
+<div style="width:100px; height:100px; background:olive;"></div>
+<div style="position:absolute; width:100px; height:100px; background:green;"></div>
+</div>
+</div>
+
+</body>
+</html>
