@@ -1,3 +1,15 @@
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Committed by eseidel.
+
+        Test: fast/text/span-in-word-space-causes-overflow.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4695
+        <span> in word-spaced text breaks width calc, causes overflow
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2005-11-29  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by darin.  Committed by eseidel.
