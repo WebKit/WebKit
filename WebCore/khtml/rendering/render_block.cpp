@@ -2674,12 +2674,12 @@ void RenderBlock::calcMinMaxWidth()
             m_minWidth = 0;
     }
 
-    if (style()->width().isFixed() && style()->width().value > 0) {
-        if (isTableCell())
-            m_maxWidth = kMax(m_minWidth, calcContentBoxWidth(style()->width().value));
-        else
-            m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value);
-    }
+    if (isTableCell()) {
+        Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
+        if (w.isFixed() && w.value > 0)
+            m_maxWidth = kMax(m_minWidth, calcContentBoxWidth(w.value));
+    } else if (style()->width().isFixed() && style()->width().value > 0)
+        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value);
     
     if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
         m_maxWidth = kMax(m_maxWidth, calcContentBoxWidth(style()->minWidth().value));

@@ -1,5 +1,25 @@
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by darin.  Committed by eseidel.
+
+        Test: fast/table/cell-width-auto.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5820
+        Table cells with width:auto should use width from their <col>
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcMinMaxWidth):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::styleOrColWidth):
+        (RenderTableCell::calcMinMaxWidth):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcWidthArray):
+        (AutoTableLayout::recalcColumn):
+        (AutoTableLayout::calcEffectiveWidth):
+
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by hyatt.  Committed by eseidel.
 
         Test: fast/text/span-in-word-space-causes-overflow.html

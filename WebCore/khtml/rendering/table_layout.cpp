@@ -181,7 +181,7 @@ int FixedTableLayout::calcWidthArray(int tableWidth)
 	while ( child ) {
 	    if ( child->isTableCell() ) {
 		RenderTableCell *cell = static_cast<RenderTableCell *>(child);
-		Length w = cell->style()->width();
+		Length w = cell->styleOrColWidth();
 		int span = cell->colSpan();
 		int effWidth = 0;
 		if ( (w.type == Fixed || w.type == Percent) && w.value > 0 )
@@ -395,7 +395,7 @@ void AutoTableLayout::recalcColumn( int effCol )
 			maxContributor = cell;
 		    }
 
-		    Length w = cell->style()->width();
+		    Length w = cell->styleOrColWidth();
 		    if (w.value > 32760)
 			w.value = 32760;
 		    if (w.value < 0)
@@ -632,7 +632,7 @@ int AutoTableLayout::calcEffectiveWidth()
 	    break;
 	int span = cell->colSpan();
 
-	Length w = cell->style()->width();
+	Length w = cell->styleOrColWidth();
 	if ( !(w.type == Relative) && w.value == 0 )
 	    w = Length(); // make it Auto
 

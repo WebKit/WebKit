@@ -1505,20 +1505,32 @@ void RenderTableCell::updateFromElement()
         setNeedsLayoutAndMinMaxRecalc();
 }
     
+Length RenderTableCell::styleOrColWidth()
+{
+    Length w = style()->width();
+    if (colSpan() > 1 || !w.isAuto())
+        return w;
+    RenderTableCol* col = table()->colElement(_col);
+    if (col)
+        w = col->style()->width();
+    return w;
+}
+
 void RenderTableCell::calcMinMaxWidth()
 {
     RenderBlock::calcMinMaxWidth();
     if (element() && style()->autoWrap()) {
         // See if nowrap was set.
+        Length w = styleOrColWidth();
         DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(nowrapAttr);
-        if (!nowrap.isNull() && style()->width().isFixed())
+        if (!nowrap.isNull() && w.isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            if (m_minWidth < style()->width().value)
-                m_minWidth = style()->width().value;
+            if (m_minWidth < w.value)
+                m_minWidth = w.value;
     }
 }
 
