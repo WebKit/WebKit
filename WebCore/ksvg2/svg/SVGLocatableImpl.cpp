@@ -43,11 +43,9 @@ SVGLocatableImpl::~SVGLocatableImpl()
 SVGElementImpl *SVGLocatableImpl::nearestViewportElement(const SVGStyledElementImpl *e)
 {
     KDOM::NodeImpl *n = e->parentNode();
-    while(n && n->isDocumentNode())
-    {
-        if(n->isElementNode() &&
-            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-             n->hasTagName(SVGNames::foreignObjectTag) || n->hasTagName(SVGNames::imageTag)))
+    while (n && !n->isDocumentNode()) {
+        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
+            n->hasTagName(SVGNames::imageTag)) // FIXME: || n->hasTagName(SVGNames::foreignObjectTag)
             return static_cast<SVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -64,11 +62,9 @@ SVGElementImpl *SVGLocatableImpl::farthestViewportElement(const SVGStyledElement
     // used instead. This depends on cdf demands though(Rob.)
     SVGElementImpl *farthest = 0;
     KDOM::NodeImpl *n = e->parentNode();
-    while(n && !n->isDocumentNode())
-    {
-        if(n->isElementNode() &&
-            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-             n->hasTagName(SVGNames::foreignObjectTag) || n->hasTagName(SVGNames::imageTag)))
+    while (n && !n->isDocumentNode()) {
+        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
+            n->hasTagName(SVGNames::imageTag)) // FIXME: || n->hasTagName(SVGNames::foreignObjectTag)
             farthest = static_cast<SVGElementImpl *>(n);
 
         n = n->parentNode();

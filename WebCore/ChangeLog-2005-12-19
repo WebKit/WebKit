@@ -1,3 +1,27 @@
+2005-11-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        No functionality change, no tests needed.
+
+        Make make_names.pl namespace agnostic and add XLinkNames.* for SVG
+
+        * WebCore+SVG/XLinkNamesWrapper.cpp: Added.
+        * WebCore.xcodeproj/project.pbxproj: added files, build rule.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): init XLinkNames
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::rendererIsNeeded): remove foreignObjectTag (temp.)
+        * ksvg2/misc/xlinkattrs.in: Added.
+        * ksvg2/scripts/make_names.pl: make namespace agnostic
+        * ksvg2/svg/SVGLocatableImpl.cpp: remove foreignObjectTag (temp.)
+        (SVGLocatableImpl::nearestViewportElement):
+        (SVGLocatableImpl::farthestViewportElement):
+        * ksvg2/svg/SVGURIReferenceImpl.cpp: use XLinkNames
+        (SVGURIReferenceImpl::parseMappedAttribute):
+        * ksvg2/svg/svgattrs.in: remove href
+        * ksvg2/svg/svgtags.in: comment out unused tags
+
 2005-11-30  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.

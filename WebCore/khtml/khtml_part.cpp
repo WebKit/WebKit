@@ -60,6 +60,7 @@
 #include "xml/xml_tokenizer.h"
 #if SVG_SUPPORT
 #include "SVGNames.h"
+#include "XLinkNames.h"
 #endif
 
 using namespace DOM;
@@ -200,6 +201,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
 #if SVG_SUPPORT
   KSVG::SVGNames::init();
+  XLinkNames::init();
 #endif
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
