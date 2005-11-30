@@ -1,3 +1,12 @@
+2005-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Added layout test for <rdar://problem/4344760> REGRESSION 
+        (Safari 416.12-417.2) gmail 'reply' does not fill in to: field or 
+        quoted message (3751)
+
+        * fast/forms/textarea-setvalue-without-renderer-expected.txt: Added.
+        * fast/forms/textarea-setvalue-without-renderer.html: Added.
+
 2005-11-30  Eric Seidel  <eseidel@apple.com>
 
         No review necessary, removing unused files.
