@@ -1383,22 +1383,20 @@ void RenderBox::calcAbsoluteHorizontal()
         for (; po && po != cb; po = po->parent())
             static_distance += po->xPos();
 
-        if (l == AUTO || style()->left().isStatic())
-            l = static_distance;
+        l = static_distance;
     }
 
     else if ((parent()->style()->direction()==RTL && (l==AUTO && r==AUTO ))
             || style()->right().isStatic())
     {
         RenderObject* po = parent();
-        static_distance = m_staticX - cb->borderLeft(); // Should already have been set through layout of the parent().
+        static_distance = m_staticX + cw + cb->borderRight() - po->width(); // Should already have been set through layout of the parent().
         while (po && po!=containingBlock()) {
-            static_distance+=po->xPos();
+            static_distance -= po->xPos();
             po=po->parent();
         }
 
-        if (r==AUTO || style()->right().isStatic())
-            r = static_distance;
+        r = static_distance;
     }
 
     calcAbsoluteHorizontalValues(Width, cb, cw, pab, static_distance, l, r, m_width, m_marginLeft, m_marginRight, m_x);

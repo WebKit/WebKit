@@ -1,3 +1,13 @@
+2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Committed by eseidel.
+
+        Test case: fast/css/absolute-poition-in-rtl-parent.html
+        Fix for bug: http://bugzilla.opendarwin.org/show_bug.cgi?id=5800
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontal):
+
 2005-11-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin
