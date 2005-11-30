@@ -1,5 +1,14 @@
 2005-11-30  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        No additional tests needed, acid2 covers this case.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::rendererIsNeeded): call down into NodeImpl if needed.
+
+2005-11-30  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         No functionality change, no tests needed.
