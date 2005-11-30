@@ -1,3 +1,13 @@
+2005-11-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5879
+        REGRESSION: Buttons go into pushed state when moused over when text field has focus
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::NodeImpl): Initialize m_inActiveChain to false.
+
 2005-11-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
