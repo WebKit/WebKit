@@ -157,7 +157,11 @@ typedef enum {
     forwardDeleteKeyAction
 } WebDeletionAction;
 
-static BOOL forceRealHitTest = NO;
+// if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
+static BOOL forceNSViewHitTest = NO;
+
+// if YES, do the "top WebHTMLView" it test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
+static BOOL forceWebHTMLViewHitTest = NO;
 
 // Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
 void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
@@ -570,9 +574,9 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     // Usually, we hack AK's hitTest method to catch all events at the topmost WebHTMLView.  
     // Callers of this method, however, want to query the deepest view instead.
-    forceRealHitTest = YES;
+    forceNSViewHitTest = YES;
     NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
-    forceRealHitTest = NO;    
+    forceNSViewHitTest = NO;    
     return hitView;
 }
 
@@ -855,15 +859,37 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 - (NSView *)hitTest:(NSPoint)point
 {
-    // WebHTMLView objects handle all left mouse clicks for objects inside them.
-    // That does not include left mouse clicks with the control key held down.
+    // WebHTMLView objects handle all events for objects inside them.
+    // To get those events, we prevent hit testing from AppKit.
+
+    // But there are three exceptions to this:
+    //   1) For right mouse clicks and control clicks we don't yet have an implementation
+    //      that works for nested views, so we let the hit testing go through the
+    //      standard NSView code path (needs to be fixed, see bug 4361618).
+    //   2) Java depends on doing a hit test inside it's mouse moved handling,
+    //      so we let the hit testing go through the standard NSView code path
+    //      when the current event is a mouse move (except when we are calling
+    //      from _updateMouseoverWithEvent, so we have to use a global,
+    //      forceWebHTMLViewHitTest, for that)
+    //   3) The acceptsFirstMouse: and shouldDelayWindowOrderingForEvent: methods
+    //      both need to figure out which view to check with inside the WebHTMLView.
+    //      They use a global to change the behavior of hitTest: so they can get the
+    //      right view. The global is forceNSViewHitTest and the method they use to
+    //      do the hit testing is _hitViewForEvent:. (But this does not work correctly
+    //      when there is HTML overlapping the view, see bug 4361626)
+
     BOOL captureHitsOnSubviews;
-    if (forceRealHitTest) {
+    if (forceNSViewHitTest)
         captureHitsOnSubviews = NO;
-    } else {
+    else if (forceWebHTMLViewHitTest)
+        captureHitsOnSubviews = YES;
+    else {
         NSEvent *event = [[self window] currentEvent];
-        captureHitsOnSubviews = !([event type] == NSRightMouseDown || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0));
+        captureHitsOnSubviews = !([event type] == NSMouseMoved
+            || [event type] == NSRightMouseDown
+            || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0));
     }
+
     if (!captureHitsOnSubviews)
         return [super hitTest:point];
     if ([[self superview] mouse:point inRect:[self frame]])
@@ -989,7 +1015,9 @@ static WebHTMLView *lastHitView = nil;
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
     WebHTMLView *view = nil;
+    forceWebHTMLViewHitTest = YES;
     NSView *hitView = [[[event window] contentView] hitTest:[event locationInWindow]];
+    forceWebHTMLViewHitTest = NO;
     if ([hitView isKindOfClass:[WebHTMLView class]]) 
         view = (WebHTMLView *)hitView; 
 

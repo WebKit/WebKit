@@ -1,3 +1,19 @@
+2005-12-01  Darin Adler <darin@apple.com>
+
+        Reviewed by Vicki.
+	
+	- fix <rdar://problem/4349721> Regression: Hovering over menu item doesn't highlight menu item or 
+	mousing up on menu item in applet does not open URL in new window at smartmoney.com
+
+	Since Java depends on doing a hit test inside it's mouse moved handling, let hit testing on Java 
+	applets go through the standard NSView code path. Since this should only happen for Java, add a global
+	so that we can Use our own WebHTMLView hit testing when calling from _updateMouseoverWithEvent.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _hitViewForEvent:]): rename forceRealHitTest to forceNSViewHitTest
+        (-[WebHTMLView _updateMouseoverWithEvent:]): set global variable  to force a WebHTMLView-style hit test from here
+        (-[WebHTMLView hitTest:]): perform the appropriate hit test based on global variables 
+
 2005-11-29  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by darin.  Committed by eseidel.
