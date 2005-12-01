@@ -2685,27 +2685,23 @@ bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
 
 QRect ContainerNodeImpl::getRect() const
 {
-    int xPos, yPos;
-    if (!getUpperLeftCorner(xPos,yPos))
+    int xPos = 0, yPos = 0, xEnd = 0, yEnd = 0;
+    bool foundUpperLeft = getUpperLeftCorner(xPos,yPos);
+    bool foundLowerRight = getLowerRightCorner(xEnd,yEnd);
+    
+    // If we've found one corner, but not the other,
+    // then we should just return a point at the corner that we did find.
+    if (foundUpperLeft != foundLowerRight)
     {
-        xPos=0;
-        yPos=0;
-    }
-    int xEnd, yEnd;
-    if (!getLowerRightCorner(xEnd,yEnd))
-    {
-        if (xPos)
+        if (foundUpperLeft) {
             xEnd = xPos;
-        if (yPos)
             yEnd = yPos;
-    }
-    else
-    {
-        if (xPos==0)
+        } else {
             xPos = xEnd;
-        if (yPos==0)
             yPos = yEnd;
-    }
+        }
+    } 
+
     if (xEnd < xPos)
         xEnd = xPos;
     if (yEnd < yPos)

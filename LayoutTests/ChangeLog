@@ -1,3 +1,12 @@
+2005-12-01  Adele Peterson  <adele@apple.com>
+
+        Added test for <rdar://problem/4356771> Regression: Mail always scrolls to the bottom of a message when replying/forwarding
+
+        * editing/selection/focus_editable_html-expected.checksum: Added.
+        * editing/selection/focus_editable_html-expected.png: Added.
+        * editing/selection/focus_editable_html-expected.txt: Added.
+        * editing/selection/focus_editable_html.html: Added.
+
 2005-12-01  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Geoffrey.

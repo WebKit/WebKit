@@ -1,3 +1,19 @@
+2005-12-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Vicki and Dave Harrsion.
+
+        - fixed <rdar://problem/4356771> Regression: Mail always scrolls to the bottom of a message when replying/forwarding
+
+        Fixed a bug in getRect where the code would return a zero sized rect at the 
+        lower right corner if the origin was 0,0.  This was causing the scrolling code to
+        attempt to scroll to the lower left corner of the editable html element in Mail.
+
+        Added test: 
+        * editing/selection/focus_editable_html.html
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::getRect):
+
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
