@@ -581,6 +581,9 @@ void ForInNode::streamTo(SourceStream &s) const
   s << SourceStream::Endl << "for (";
   if (varDecl)
     s << "var " << varDecl;
+  else
+    s << lexpr;
+  
   if (init)
     s << " = " << init;
   s << " in " << expr << ")" << SourceStream::Indent

@@ -1,3 +1,15 @@
+2005-12-01  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3382>
+
+        Patch by Mark Rowe.
+
+        * kjs/nodes2string.cpp:
+        (ForInNode::streamTo):
+        Add lexpr if there's no varDecl.
+
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
