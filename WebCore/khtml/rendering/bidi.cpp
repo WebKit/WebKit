@@ -65,7 +65,7 @@ struct BidiState {
     BidiIterator eor;
     BidiIterator last;
     BidiIterator current;
-    SharedPtr<BidiContext> context;
+    RefPtr<BidiContext> context;
     BidiStatus status;
     QChar::Direction dir;
     bool adjustEmbedding;

@@ -165,7 +165,7 @@ protected:
     DOMStringImpl *m_data;
     DOMStringImpl *m_localHref;
     khtml::CachedObject *m_cachedSheet;
-    SharedPtr<StyleSheetImpl> m_sheet;
+    RefPtr<StyleSheetImpl> m_sheet;
     bool m_loading;
 #ifdef KHTML_XSLT
     bool m_isXSL;

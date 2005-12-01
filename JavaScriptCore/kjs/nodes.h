@@ -25,7 +25,7 @@
 #ifndef _NODES_H_
 #define _NODES_H_
 
-#include <kxmlcore/SharedPtr.h>
+#include <kxmlcore/RefPtr.h>
 
 #include "internal.h"
 
@@ -213,7 +213,7 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
     virtual bool isGroupNode() const { return true; }
   private:
-    SharedPtr<Node> group;
+    RefPtr<Node> group;
   };
 
   class ElementNode : public Node {
@@ -226,9 +226,9 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class ArrayNode;
-    SharedPtr<ElementNode> list;
+    RefPtr<ElementNode> list;
     int elision;
-    SharedPtr<Node> node;
+    RefPtr<Node> node;
   };
 
   class ArrayNode : public Node {
@@ -241,7 +241,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<ElementNode> element;
+    RefPtr<ElementNode> element;
     int elision;
     bool opt;
   };
@@ -257,9 +257,9 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class ObjectLiteralNode;
-    SharedPtr<PropertyNode> name;
-    SharedPtr<Node> assign;
-    SharedPtr<PropertyValueNode> list;
+    RefPtr<PropertyNode> name;
+    RefPtr<Node> assign;
+    RefPtr<PropertyValueNode> list;
   };
 
   class ObjectLiteralNode : public Node {
@@ -269,7 +269,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<PropertyValueNode> list;
+    RefPtr<PropertyValueNode> list;
   };
 
   class PropertyNode : public Node {
@@ -295,8 +295,8 @@ namespace KJS {
     Node *subscript() { return expr2.get(); }
 
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   class DotAccessorNode : public Node {
@@ -311,7 +311,7 @@ namespace KJS {
     const Identifier& identifier() const { return ident; }
 
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
     Identifier ident;
   };
 
@@ -326,8 +326,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class ArgumentsNode;
-    SharedPtr<ArgumentListNode> list;
-    SharedPtr<Node> expr;
+    RefPtr<ArgumentListNode> list;
+    RefPtr<Node> expr;
   };
 
   class ArgumentsNode : public Node {
@@ -339,7 +339,7 @@ namespace KJS {
     List evaluateList(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<ArgumentListNode> list;
+    RefPtr<ArgumentListNode> list;
   };
 
   class NewExprNode : public Node {
@@ -349,8 +349,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<ArgumentsNode> args;
+    RefPtr<Node> expr;
+    RefPtr<ArgumentsNode> args;
   };
 
   class FunctionCallValueNode : public Node {
@@ -359,8 +359,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<ArgumentsNode> args;
+    RefPtr<Node> expr;
+    RefPtr<ArgumentsNode> args;
   };
 
   class FunctionCallResolveNode : public Node {
@@ -370,7 +370,7 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     Identifier ident;
-    SharedPtr<ArgumentsNode> args;
+    RefPtr<ArgumentsNode> args;
   };
 
   class FunctionCallBracketNode : public Node {
@@ -379,9 +379,9 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
-    SharedPtr<Node> base;
-    SharedPtr<Node> subscript;
-    SharedPtr<ArgumentsNode> args;
+    RefPtr<Node> base;
+    RefPtr<Node> subscript;
+    RefPtr<ArgumentsNode> args;
   };
 
   class FunctionCallParenBracketNode : public FunctionCallBracketNode {
@@ -396,9 +396,9 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
-    SharedPtr<Node> base;
+    RefPtr<Node> base;
     Identifier ident;
-    SharedPtr<ArgumentsNode> args;
+    RefPtr<ArgumentsNode> args;
   };
 
   class FunctionCallParenDotNode : public FunctionCallDotNode {
@@ -423,8 +423,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
-    SharedPtr<Node> m_subscript;
+    RefPtr<Node> m_base;
+    RefPtr<Node> m_subscript;
     Operator m_oper;
   };
 
@@ -434,7 +434,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
+    RefPtr<Node> m_base;
     Identifier m_ident;
     Operator m_oper;
   };
@@ -454,8 +454,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
-    SharedPtr<Node> m_subscript;
+    RefPtr<Node> m_base;
+    RefPtr<Node> m_subscript;
   };
 
   class DeleteDotNode : public Node {
@@ -464,7 +464,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
+    RefPtr<Node> m_base;
     Identifier m_ident;
   };
 
@@ -474,7 +474,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_expr;
+    RefPtr<Node> m_expr;
   };
 
   class VoidNode : public Node {
@@ -483,7 +483,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class TypeOfResolveNode : public Node {
@@ -501,7 +501,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_expr;
+    RefPtr<Node> m_expr;
   };
 
   class PrefixResolveNode : public Node {
@@ -520,8 +520,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
-    SharedPtr<Node> m_subscript;
+    RefPtr<Node> m_base;
+    RefPtr<Node> m_subscript;
     Operator m_oper;
   };
 
@@ -531,7 +531,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> m_base;
+    RefPtr<Node> m_base;
     Identifier m_ident;
     Operator m_oper;
   };
@@ -542,7 +542,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class NegateNode : public Node {
@@ -551,7 +551,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class BitwiseNotNode : public Node {
@@ -560,7 +560,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class LogicalNotNode : public Node {
@@ -569,7 +569,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class MultNode : public Node {
@@ -578,8 +578,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> term1;
-    SharedPtr<Node> term2;
+    RefPtr<Node> term1;
+    RefPtr<Node> term2;
     char oper;
   };
 
@@ -589,8 +589,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> term1;
-    SharedPtr<Node> term2;
+    RefPtr<Node> term1;
+    RefPtr<Node> term2;
     char oper;
   };
 
@@ -601,8 +601,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> term1;
-    SharedPtr<Node> term2;
+    RefPtr<Node> term1;
+    RefPtr<Node> term2;
     Operator oper;
   };
 
@@ -613,8 +613,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
     Operator oper;
   };
 
@@ -625,8 +625,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
     Operator oper;
   };
 
@@ -637,8 +637,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
     Operator oper;
   };
 
@@ -652,8 +652,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
     Operator oper;
   };
 
@@ -667,9 +667,9 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> logical;
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> logical;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   class AssignResolveNode : public Node {
@@ -681,7 +681,7 @@ namespace KJS {
   protected:
     Identifier m_ident;
     Operator m_oper;
-    SharedPtr<Node> m_right;
+    RefPtr<Node> m_right;
   };
 
   class AssignBracketNode : public Node {
@@ -691,10 +691,10 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
-    SharedPtr<Node> m_base;
-    SharedPtr<Node> m_subscript;
+    RefPtr<Node> m_base;
+    RefPtr<Node> m_subscript;
     Operator m_oper;
-    SharedPtr<Node> m_right;
+    RefPtr<Node> m_right;
   };
 
   class AssignDotNode : public Node {
@@ -704,10 +704,10 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
-    SharedPtr<Node> m_base;
+    RefPtr<Node> m_base;
     Identifier m_ident;
     Operator m_oper;
-    SharedPtr<Node> m_right;
+    RefPtr<Node> m_right;
   };
 
   class CommaNode : public Node {
@@ -716,8 +716,8 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   class StatListNode : public StatementNode {
@@ -730,8 +730,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class CaseClauseNode;
-    SharedPtr<StatementNode> statement;
-    SharedPtr<StatListNode> list;
+    RefPtr<StatementNode> statement;
+    RefPtr<StatListNode> list;
   };
 
   class AssignExprNode : public Node {
@@ -740,7 +740,7 @@ namespace KJS {
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class VarDeclNode : public Node {
@@ -753,7 +753,7 @@ namespace KJS {
   private:
     Type varType;
     Identifier ident;
-    SharedPtr<AssignExprNode> init;
+    RefPtr<AssignExprNode> init;
   };
 
   class VarDeclListNode : public Node {
@@ -768,8 +768,8 @@ namespace KJS {
   private:
     friend class ForNode;
     friend class VarStatementNode;
-    SharedPtr<VarDeclListNode> list;
-    SharedPtr<VarDeclNode> var;
+    RefPtr<VarDeclListNode> list;
+    RefPtr<VarDeclNode> var;
   };
 
   class VarStatementNode : public StatementNode {
@@ -779,7 +779,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<VarDeclListNode> list;
+    RefPtr<VarDeclListNode> list;
   };
 
   class BlockNode : public StatementNode {
@@ -789,7 +789,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
-    SharedPtr<SourceElementsNode> source;
+    RefPtr<SourceElementsNode> source;
   };
 
   class EmptyStatementNode : public StatementNode {
@@ -805,7 +805,7 @@ namespace KJS {
     virtual Completion execute(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class IfNode : public StatementNode {
@@ -816,9 +816,9 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<StatementNode> statement1;
-    SharedPtr<StatementNode> statement2;
+    RefPtr<Node> expr;
+    RefPtr<StatementNode> statement1;
+    RefPtr<StatementNode> statement2;
   };
 
   class DoWhileNode : public StatementNode {
@@ -828,8 +828,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<StatementNode> statement;
-    SharedPtr<Node> expr;
+    RefPtr<StatementNode> statement;
+    RefPtr<Node> expr;
   };
 
   class WhileNode : public StatementNode {
@@ -839,8 +839,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<StatementNode> statement;
+    RefPtr<Node> expr;
+    RefPtr<StatementNode> statement;
   };
 
   class ForNode : public StatementNode {
@@ -853,10 +853,10 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr1;
-    SharedPtr<Node> expr2;
-    SharedPtr<Node> expr3;
-    SharedPtr<StatementNode> statement;
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+    RefPtr<Node> expr3;
+    RefPtr<StatementNode> statement;
   };
 
   class ForInNode : public StatementNode {
@@ -868,11 +868,11 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     Identifier ident;
-    SharedPtr<AssignExprNode> init;
-    SharedPtr<Node> lexpr;
-    SharedPtr<Node> expr;
-    SharedPtr<VarDeclNode> varDecl;
-    SharedPtr<StatementNode> statement;
+    RefPtr<AssignExprNode> init;
+    RefPtr<Node> lexpr;
+    RefPtr<Node> expr;
+    RefPtr<VarDeclNode> varDecl;
+    RefPtr<StatementNode> statement;
   };
 
   class ContinueNode : public StatementNode {
@@ -901,7 +901,7 @@ namespace KJS {
     virtual Completion execute(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> value;
+    RefPtr<Node> value;
   };
 
   class WithNode : public StatementNode {
@@ -911,8 +911,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<StatementNode> statement;
+    RefPtr<Node> expr;
+    RefPtr<StatementNode> statement;
   };
 
   class CaseClauseNode : public Node {
@@ -925,8 +925,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<StatListNode> list;
+    RefPtr<Node> expr;
+    RefPtr<StatListNode> list;
   };
 
   class ClauseListNode : public Node {
@@ -942,8 +942,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class CaseBlockNode;
-    SharedPtr<CaseClauseNode> cl;
-    SharedPtr<ClauseListNode> nx;
+    RefPtr<CaseClauseNode> cl;
+    RefPtr<ClauseListNode> nx;
   };
 
   class CaseBlockNode : public Node {
@@ -954,9 +954,9 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<ClauseListNode> list1;
-    SharedPtr<CaseClauseNode> def;
-    SharedPtr<ClauseListNode> list2;
+    RefPtr<ClauseListNode> list1;
+    RefPtr<CaseClauseNode> def;
+    RefPtr<ClauseListNode> list2;
   };
 
   class SwitchNode : public StatementNode {
@@ -966,8 +966,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
-    SharedPtr<CaseBlockNode> block;
+    RefPtr<Node> expr;
+    RefPtr<CaseBlockNode> block;
   };
 
   class LabelNode : public StatementNode {
@@ -978,7 +978,7 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     Identifier label;
-    SharedPtr<StatementNode> statement;
+    RefPtr<StatementNode> statement;
   };
 
   class ThrowNode : public StatementNode {
@@ -987,7 +987,7 @@ namespace KJS {
     virtual Completion execute(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<Node> expr;
+    RefPtr<Node> expr;
   };
 
   class TryNode : public StatementNode {
@@ -998,10 +998,10 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SharedPtr<StatementNode> tryBlock;
+    RefPtr<StatementNode> tryBlock;
     Identifier exceptionIdent;
-    SharedPtr<StatementNode> catchBlock;
-    SharedPtr<StatementNode> finallyBlock;
+    RefPtr<StatementNode> catchBlock;
+    RefPtr<StatementNode> finallyBlock;
   };
 
   class ParameterNode : public Node {
@@ -1018,7 +1018,7 @@ namespace KJS {
     friend class FuncDeclNode;
     friend class FuncExprNode;
     Identifier id;
-    SharedPtr<ParameterNode> next;
+    RefPtr<ParameterNode> next;
   };
 
   // inherited by ProgramNode
@@ -1038,8 +1038,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &) const;
   private:
     Identifier ident;
-    SharedPtr<ParameterNode> param;
-    SharedPtr<FunctionBodyNode> body;
+    RefPtr<ParameterNode> param;
+    RefPtr<FunctionBodyNode> body;
   };
 
   class FuncDeclNode : public StatementNode {
@@ -1053,8 +1053,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &) const;
   private:
     Identifier ident;
-    SharedPtr<ParameterNode> param;
-    SharedPtr<FunctionBodyNode> body;
+    RefPtr<ParameterNode> param;
+    RefPtr<FunctionBodyNode> body;
   };
 
   // A linked list of source element nodes
@@ -1070,8 +1070,8 @@ namespace KJS {
     virtual void streamTo(SourceStream &s) const;
   private:
     friend class BlockNode;
-    SharedPtr<StatementNode> element; // 'this' element
-    SharedPtr<SourceElementsNode> elements; // pointer to next
+    RefPtr<StatementNode> element; // 'this' element
+    RefPtr<SourceElementsNode> elements; // pointer to next
   };
 
   class ProgramNode : public FunctionBodyNode {

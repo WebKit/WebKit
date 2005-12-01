@@ -598,7 +598,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     }
     
     // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
-    SharedPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
+    RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     if (selectionStart()) {
         if (forward) {
             setStart(searchRange.get(), VisiblePosition(selection().start(), selection().endAffinity()));
@@ -606,7 +606,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
             setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().startAffinity()));
         }
     }
-    SharedPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
+    RefPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
     
     // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
     if (selectionStart() && *resultRange == *selection().toRange()) {
@@ -932,7 +932,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
-    SharedPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
+    RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     bool startedWithSelection = false;
     if (selectionStart()) {
         startedWithSelection = true;
@@ -999,7 +999,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                 if (misspelling.length > 0) {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    SharedPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
                     CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
                     misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
@@ -3571,7 +3571,7 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 
     NSFont *font = nil;
 
-    SharedPtr<RangeImpl> range = d->m_selection.toRange();
+    RefPtr<RangeImpl> range = d->m_selection.toRange();
     NodeImpl *startNode = range->editingStartPosition().node();
     if (startNode != nil) {
         NodeImpl *pastEnd = range->pastEndNode();
@@ -4068,7 +4068,7 @@ void KWQKHTMLPart::markMisspellings(const SelectionController &selection)
     if (![_bridge isContinuousSpellCheckingEnabled])
         return;
 
-    SharedPtr<RangeImpl> searchRange(selection.toRange());
+    RefPtr<RangeImpl> searchRange(selection.toRange());
     if (searchRange.isNull() || searchRange->isDetached())
         return;
     
@@ -4100,7 +4100,7 @@ void KWQKHTMLPart::markMisspellings(const SelectionController &selection)
                 else {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    SharedPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
                     CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
                     misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
@@ -4366,14 +4366,14 @@ bool KWQKHTMLPart::shouldClose()
     if (![_bridge canRunBeforeUnloadConfirmPanel])
         return true;
 
-    SharedPtr<DocumentImpl> document = xmlDocImpl();
+    RefPtr<DocumentImpl> document = xmlDocImpl();
     if (!document)
         return true;
     HTMLElementImpl* body = document->body();
     if (!body)
         return true;
 
-    SharedPtr<BeforeUnloadEventImpl> event = new BeforeUnloadEventImpl;
+    RefPtr<BeforeUnloadEventImpl> event = new BeforeUnloadEventImpl;
     event->setTarget(document.get());
     int exception = 0;
     body->dispatchGenericEvent(event.get(), exception);

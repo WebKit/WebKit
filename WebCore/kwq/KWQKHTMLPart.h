@@ -476,7 +476,7 @@ private:
     WebScriptObject *_windowScriptObject;
     NPObject *_windowScriptNPObject;
     
-    SharedPtr<DOM::NodeImpl> _dragSrc;     // element that may be a drag source, for the current mouse gesture
+    RefPtr<DOM::NodeImpl> _dragSrc;     // element that may be a drag source, for the current mouse gesture
     bool _dragSrcIsLink;
     bool _dragSrcIsImage;
     bool _dragSrcInSelection;
@@ -484,9 +484,9 @@ private:
     bool _dragSrcIsDHTML;
     KWQClipboard *_dragClipboard;   // used on only the source side of dragging
     
-    mutable SharedPtr<DOM::NodeImpl> _elementToDraw;
+    mutable RefPtr<DOM::NodeImpl> _elementToDraw;
 
-    SharedPtr<DOM::RangeImpl> m_markedTextRange;
+    RefPtr<DOM::RangeImpl> m_markedTextRange;
     bool m_markedTextUsesUnderlines;
     QValueList<MarkedTextUnderline> m_markedTextUnderlines;
 

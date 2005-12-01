@@ -601,10 +601,10 @@ void SelectionController::setNeedsLayout(bool flag)
     m_needsLayout = flag;
 }
 
-SharedPtr<RangeImpl> SelectionController::toRange() const
+RefPtr<RangeImpl> SelectionController::toRange() const
 {
     if (isNone())
-        return SharedPtr<RangeImpl>();
+        return RefPtr<RangeImpl>();
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -647,16 +647,16 @@ SharedPtr<RangeImpl> SelectionController::toRange() const
     }
 
     int exceptionCode = 0;
-    SharedPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
+    RefPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
     result->setStart(s.node(), s.offset(), exceptionCode);
     if (exceptionCode) {
         ERROR("Exception setting Range start from SelectionController: %d", exceptionCode);
-        return SharedPtr<RangeImpl>();
+        return RefPtr<RangeImpl>();
     }
     result->setEnd(e.node(), e.offset(), exceptionCode);
     if (exceptionCode) {
         ERROR("Exception setting Range end from SelectionController: %d", exceptionCode);
-        return SharedPtr<RangeImpl>();
+        return RefPtr<RangeImpl>();
     }
     return result;
 }

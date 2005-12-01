@@ -51,7 +51,7 @@ inline bool isCollapsibleWhitespace(const QChar &c)
 }
 
 QString plainText(const DOM::RangeImpl *);
-SharedPtr<DOM::RangeImpl> findPlainText(const DOM::RangeImpl *, const QString &, bool forward, bool caseSensitive);
+RefPtr<DOM::RangeImpl> findPlainText(const DOM::RangeImpl *, const QString &, bool forward, bool caseSensitive);
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in
@@ -71,7 +71,7 @@ public:
     int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    SharedPtr<DOM::RangeImpl> range() const;
+    RefPtr<DOM::RangeImpl> range() const;
      
     static int TextIterator::rangeLength(const DOM::RangeImpl *r);
     static DOM::RangeImpl *TextIterator::rangeFromLocationAndLength(DOM::DocumentImpl *doc, int rangeLocation, int rangeLength);
@@ -136,7 +136,7 @@ public:
     int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    SharedPtr<DOM::RangeImpl> range() const;
+    RefPtr<DOM::RangeImpl> range() const;
         
 private:
     void exitNode();
@@ -189,7 +189,7 @@ public:
     QString string(int numChars);
     
     int characterOffset() const { return m_offset; }
-    SharedPtr<DOM::RangeImpl> range() const;
+    RefPtr<DOM::RangeImpl> range() const;
         
 private:
     int m_offset;
@@ -213,7 +213,7 @@ public:
     const QChar *characters() const;
     
     // Range of the text we're currently returning
-    SharedPtr<DOM::RangeImpl> range() const { return m_range; }
+    RefPtr<DOM::RangeImpl> range() const { return m_range; }
 
 private:
     // text from the previous chunk from the textIterator
@@ -226,7 +226,7 @@ private:
     // Did we have to look ahead in the textIterator to confirm the current chunk?
     bool m_didLookAhead;
 
-    SharedPtr<DOM::RangeImpl> m_range;
+    RefPtr<DOM::RangeImpl> m_range;
 
     TextIterator m_textIterator;
 };

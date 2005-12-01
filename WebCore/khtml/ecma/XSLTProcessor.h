@@ -28,7 +28,7 @@
 #ifndef XSLTProcessor_H
 #define XSLTProcessor_H
 
-#include <kxmlcore/SharedPtr.h>
+#include <kxmlcore/RefPtr.h>
 #include "kjs_binding.h"
 
 namespace DOM {
@@ -54,7 +54,7 @@ public:
     
     DOM::XSLTProcessorImpl *impl() const { return m_impl.get(); }
 private:
-    SharedPtr<DOM::XSLTProcessorImpl> m_impl;
+    RefPtr<DOM::XSLTProcessorImpl> m_impl;
 };
 
 class XSLTProcessorConstructorImp : public ObjectImp {

@@ -1860,7 +1860,7 @@ ObjectImp *getDOMExceptionConstructor(ExecState *exec)
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const QValueList< SharedPtr<NodeImpl> >& nodes )
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const QValueList< RefPtr<NodeImpl> >& nodes )
   : m_nodes(nodes)
 {
 }
@@ -1895,9 +1895,9 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
   // For IE compatibility, we need to be able to look up elements in a
   // document.formName.name result by id as well as be index.
 
-  QValueListConstIterator< SharedPtr<NodeImpl> > end = m_nodes.end();
+  QValueListConstIterator< RefPtr<NodeImpl> > end = m_nodes.end();
   int i = 0;
-  for (QValueListConstIterator< SharedPtr<NodeImpl> > it = m_nodes.begin(); it != end; ++it, ++i) {
+  for (QValueListConstIterator< RefPtr<NodeImpl> > it = m_nodes.begin(); it != end; ++it, ++i) {
     NodeImpl *node = (*it).get();
     if (node->hasAttributes() &&
         node->attributes()->id() == propertyName.domString()) {

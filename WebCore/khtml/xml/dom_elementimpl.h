@@ -198,9 +198,9 @@ public:
 
     AttrImpl *getAttributeNode(const DOMString &name) { return getAttributeNodeNS(DOMString(), name); }
     AttrImpl *getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName);
-    SharedPtr<AttrImpl> setAttributeNode(AttrImpl *newAttr, int &exception);
-    SharedPtr<AttrImpl> setAttributeNodeNS(AttrImpl *newAttr, int &exception) { return setAttributeNode(newAttr, exception); }
-    SharedPtr<AttrImpl> removeAttributeNode(AttrImpl *oldAttr, int &exception);
+    RefPtr<AttrImpl> setAttributeNode(AttrImpl *newAttr, int &exception);
+    RefPtr<AttrImpl> setAttributeNodeNS(AttrImpl *newAttr, int &exception) { return setAttributeNode(newAttr, exception); }
+    RefPtr<AttrImpl> removeAttributeNode(AttrImpl *oldAttr, int &exception);
     
     virtual CSSStyleDeclarationImpl *style();
 
@@ -298,12 +298,12 @@ public:
 
     // DOM methods & attributes for NamedNodeMap
     virtual NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const;
-    virtual SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
+    virtual RefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
 
     virtual AttrImpl* getNamedItem(const QualifiedName& name) const;
 
-    virtual SharedPtr<NodeImpl> removeNamedItem(const QualifiedName& name, int &exceptioncode);
-    virtual SharedPtr<NodeImpl> setNamedItem(NodeImpl* arg, int &exceptioncode);
+    virtual RefPtr<NodeImpl> removeNamedItem(const QualifiedName& name, int &exceptioncode);
+    virtual RefPtr<NodeImpl> setNamedItem(NodeImpl* arg, int &exceptioncode);
 
     virtual AttrImpl *item ( unsigned index ) const;
     unsigned length() const { return len; }

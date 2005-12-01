@@ -202,7 +202,7 @@ public:
     // after all layout has been completed.
     QPtrList<RenderObject::RepaintInfo>* repaintRects;
     
-    SharedPtr<NodeImpl> dragTarget;
+    RefPtr<NodeImpl> dragTarget;
 };
 
 #ifndef QT_NO_TOOLTIP
@@ -614,7 +614,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
     if(!m_part->xmlDocImpl()) return;
 
-    SharedPtr<KHTMLView> protector(this);
+    RefPtr<KHTMLView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -662,7 +662,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
     if(!m_part->xmlDocImpl()) return;
 
-    SharedPtr<KHTMLView> protector(this);
+    RefPtr<KHTMLView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -838,7 +838,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
     if ( !m_part->xmlDocImpl() ) return;
 
-    SharedPtr<KHTMLView> protector(this);
+    RefPtr<KHTMLView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -1224,7 +1224,7 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, DOM::NodeImpl 
             // it again. calculating is expensive! (Dirk)
             // Also, there's no guarantee that the old under node is even around any more,
             // so we could be sending a mouseout to a node that never got a mouseover.
-            SharedPtr<NodeImpl> oldUnder;
+            RefPtr<NodeImpl> oldUnder;
             if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
                 NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
                 m_part->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );

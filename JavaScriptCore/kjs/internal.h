@@ -31,7 +31,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "scope_chain.h"
-#include <kxmlcore/SharedPtr.h>
+#include <kxmlcore/RefPtr.h>
 
 #define I18N_NOOP(s) s
 
@@ -191,7 +191,7 @@ namespace KJS {
    */
   class Parser {
   public:
-    static SharedPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
+    static RefPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
                                         const UChar *code, unsigned int length, int *sourceId = 0,
                                         int *errLine = 0, UString *errMsg = 0);
     static void accept(ProgramNode *prog);

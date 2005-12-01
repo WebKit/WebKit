@@ -90,7 +90,7 @@ public:
     AtomicString tagName;
     int level;
     bool strayTableContent;
-    SharedPtr<NodeImpl> node;
+    RefPtr<NodeImpl> node;
     HTMLStackElem* next;
 };
 
@@ -215,7 +215,7 @@ void HTMLParser::parseToken(Token *t)
     if (!n)
         return;
 
-    SharedPtr<NodeImpl> protectNode(n);
+    RefPtr<NodeImpl> protectNode(n);
 
     // set attributes
     if (n->isHTMLElement()) {
@@ -264,7 +264,7 @@ static bool isTableRelated(NodeImpl* n)
 
 bool HTMLParser::insertNode(NodeImpl *n, bool flat)
 {
-    SharedPtr<NodeImpl> protectNode(n);
+    RefPtr<NodeImpl> protectNode(n);
 
     const AtomicString& localName = n->localName();
     int tagPriority = n->isHTMLElement() ? static_cast<HTMLElementImpl*>(n)->tagPriority() : 0;

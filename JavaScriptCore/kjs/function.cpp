@@ -781,7 +781,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         int sid;
         int errLine;
         UString errMsg;
-        SharedPtr<ProgramNode> progNode(Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg));
+        RefPtr<ProgramNode> progNode(Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg));
 
         Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
         if (dbg) {

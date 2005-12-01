@@ -46,7 +46,7 @@ namespace KJS {
            NextNode, PreviousNode, Detach };
     DOM::NodeIteratorImpl *impl() const { return m_impl.get(); }
   private:
-    SharedPtr<DOM::NodeIteratorImpl> m_impl;
+    RefPtr<DOM::NodeIteratorImpl> m_impl;
   };
 
   // Constructor object NodeFilter
@@ -70,7 +70,7 @@ namespace KJS {
     DOM::NodeFilterImpl *impl() const { return m_impl.get(); }
     enum { AcceptNode };
   private:
-    SharedPtr<DOM::NodeFilterImpl> m_impl;
+    RefPtr<DOM::NodeFilterImpl> m_impl;
   };
 
   class DOMTreeWalker : public DOMObject {
@@ -87,7 +87,7 @@ namespace KJS {
            PreviousNode, NextNode };
     DOM::TreeWalkerImpl *impl() const { return m_impl.get(); }
   private:
-    SharedPtr<DOM::TreeWalkerImpl> m_impl;
+    RefPtr<DOM::TreeWalkerImpl> m_impl;
   };
 
   ValueImp *getDOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);

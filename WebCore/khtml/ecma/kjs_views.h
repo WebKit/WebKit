@@ -41,7 +41,7 @@ namespace KJS {
     DOM::AbstractViewImpl *impl() const { return m_impl.get(); }
     enum { Document, GetComputedStyle };
   private:
-    SharedPtr<DOM::AbstractViewImpl> m_impl;
+    RefPtr<DOM::AbstractViewImpl> m_impl;
   };
 
   ValueImp *getDOMAbstractView(ExecState *exec, DOM::AbstractViewImpl *av);

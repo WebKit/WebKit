@@ -73,7 +73,7 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
  
-    SharedPtr<HTMLCollectionImpl> elements();
+    RefPtr<HTMLCollectionImpl> elements();
     int length() const;
 
     DOMString enctype() const { return m_enctype; }
@@ -568,7 +568,7 @@ public:
     void setValue(const DOMString &);
     
     HTMLOptionsCollectionImpl *options();
-    SharedPtr<HTMLCollectionImpl> optionsHTMLCollection(); // FIXME: Remove this and migrate to options().
+    RefPtr<HTMLCollectionImpl> optionsHTMLCollection(); // FIXME: Remove this and migrate to options().
 
     virtual bool maintainsState() { return true; }
     virtual QString state();

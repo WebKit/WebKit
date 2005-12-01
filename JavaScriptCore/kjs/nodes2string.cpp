@@ -40,7 +40,7 @@ namespace KJS {
     SourceStream& operator<<(char);
     SourceStream& operator<<(Format f);
     SourceStream& operator<<(const Node *);
-    template <typename T> SourceStream& operator<<(SharedPtr<T> n) { return this->operator<<(n.get()); }
+    template <typename T> SourceStream& operator<<(RefPtr<T> n) { return this->operator<<(n.get()); }
   private:
     UString str; /* TODO: buffer */
     UString ind;

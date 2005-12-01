@@ -63,7 +63,7 @@ private:
     virtual DOMString removeProperty(int propertyID, int &exceptionCode);
     virtual void setProperty(int propertyId, const DOMString &value, bool important, int &exceptionCode);
 
-    SharedPtr<NodeImpl> m_node;
+    RefPtr<NodeImpl> m_node;
 };
 
 }

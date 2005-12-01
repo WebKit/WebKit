@@ -1409,12 +1409,12 @@ bool operator==(const RangeImpl &a, const RangeImpl &b)
         && a.endOffset(exception) == b.endOffset(exception);
 }
 
-SharedPtr<RangeImpl> rangeOfContents(NodeImpl *node)
+RefPtr<RangeImpl> rangeOfContents(NodeImpl *node)
 {
     RangeImpl *range = new RangeImpl(node->getDocument());
     int exception = 0;
     range->selectNodeContents(node, exception);
-    return SharedPtr<RangeImpl>(range);
+    return RefPtr<RangeImpl>(range);
 }
 
 }

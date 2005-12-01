@@ -120,7 +120,7 @@ StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &positio
 void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 {
     style->ref();
-    SharedPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
+    RefPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
     style->deref();
     
     QString styleText("");
@@ -220,8 +220,8 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
 bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
 {
     ASSERT(pos.isNotNull());
-    SharedPtr<CSSComputedStyleDeclarationImpl> style = pos.computedStyle();
-    SharedPtr<CSSValueImpl> value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
+    RefPtr<CSSComputedStyleDeclarationImpl> style = pos.computedStyle();
+    RefPtr<CSSValueImpl> value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
     if (!value)
         return false;
     return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
@@ -295,12 +295,12 @@ void ApplyStyleCommand::doApply()
     switch (m_propertyLevel) {
         case PropertyDefault: {
             // apply the block-centric properties of the style
-            SharedPtr<CSSMutableStyleDeclarationImpl> blockStyle = m_style->copyBlockProperties();
+            RefPtr<CSSMutableStyleDeclarationImpl> blockStyle = m_style->copyBlockProperties();
             applyBlockStyle(blockStyle.get());
             // apply any remaining styles to the inline elements
             // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
             if (blockStyle->length() < m_style->length()) {
-                SharedPtr<CSSMutableStyleDeclarationImpl> inlineStyle = m_style->copy();
+                RefPtr<CSSMutableStyleDeclarationImpl> inlineStyle = m_style->copy();
                 applyRelativeFontStyleChange(inlineStyle.get());
                 blockStyle->diff(inlineStyle.get());
                 applyInlineStyle(inlineStyle.get());
@@ -370,7 +370,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
 
 void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationImpl *style)
 {
-    SharedPtr<CSSValueImpl> value = style->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
+    RefPtr<CSSValueImpl> value = style->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
     if (value) {
         // Explicit font size overrides any delta.
         style->removeProperty(CSS_PROP__KHTML_FONT_SIZE_DELTA);
@@ -470,7 +470,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
         CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->getInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
         float desiredFontSize = kMax(MinimumFontSize, startingFontSizes[node] + adjustment);
-        SharedPtr<CSSValueImpl> value = inlineStyleDecl->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
+        RefPtr<CSSValueImpl> value = inlineStyleDecl->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
         if (value) {
             inlineStyleDecl->removeProperty(CSS_PROP_FONT_SIZE, true);
             currentFontSize = computedFontSize(node);
@@ -660,7 +660,7 @@ void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclarationImpl *style, HT
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         int propertyID = (*it).id();
-        SharedPtr<CSSValueImpl> value = decl->getPropertyCSSValue(propertyID);
+        RefPtr<CSSValueImpl> value = decl->getPropertyCSSValue(propertyID);
         if (value && (propertyID != CSS_PROP_WHITE_SPACE || !isTabSpanNode(elem)))
             removeCSSProperty(decl, propertyID);
     }
@@ -686,7 +686,7 @@ static bool hasTextDecorationProperty(NodeImpl *node)
 
     ElementImpl *element = static_cast<ElementImpl *>(node);
     CSSComputedStyleDeclarationImpl style(element);
-    SharedPtr<CSSValueImpl> value = style.getPropertyCSSValue(CSS_PROP_TEXT_DECORATION, DoNotUpdateLayout);
+    RefPtr<CSSValueImpl> value = style.getPropertyCSSValue(CSS_PROP_TEXT_DECORATION, DoNotUpdateLayout);
     return value && strcasecmp(value->cssText(), "none") != 0;
 }
 
@@ -712,14 +712,14 @@ CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractTextDecorationStyle(No
         return 0;
 
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
-    SharedPtr<CSSMutableStyleDeclarationImpl> style = element->inlineStyleDecl();
+    RefPtr<CSSMutableStyleDeclarationImpl> style = element->inlineStyleDecl();
     if (!style)
         return 0;
 
     int properties[1] = { CSS_PROP_TEXT_DECORATION };
     CSSMutableStyleDeclarationImpl *textDecorationStyle = style->copyPropertiesInSet(properties, 1);
 
-    SharedPtr<CSSValueImpl> property = style->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
+    RefPtr<CSSValueImpl> property = style->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
     if (property && strcasecmp(property->cssText(), "none") != 0)
         removeCSSProperty(style.get(), CSS_PROP_TEXT_DECORATION);
 
@@ -736,15 +736,15 @@ CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractAndNegateTextDecoratio
         return 0;
 
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
-    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = new CSSComputedStyleDeclarationImpl(element);
+    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = new CSSComputedStyleDeclarationImpl(element);
     ASSERT(computedStyle);
 
     int properties[1] = { CSS_PROP_TEXT_DECORATION };
     CSSMutableStyleDeclarationImpl *textDecorationStyle = computedStyle->copyPropertiesInSet(properties, 1);
 
-    SharedPtr<CSSValueImpl> property = computedStyle->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
+    RefPtr<CSSValueImpl> property = computedStyle->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
     if (property && strcasecmp(property->cssText(), "none") != 0) {
-        SharedPtr<CSSMutableStyleDeclarationImpl> newStyle = textDecorationStyle->copy();
+        RefPtr<CSSMutableStyleDeclarationImpl> newStyle = textDecorationStyle->copy();
         newStyle->setProperty(CSS_PROP_TEXT_DECORATION, "none");
         applyTextDecorationStyle(node, newStyle.get());
     }
@@ -793,7 +793,7 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(NodeImpl *node, co
             
             nextCurrent = NULL;
             
-            SharedPtr<CSSMutableStyleDeclarationImpl> decoration = force ? extractAndNegateTextDecorationStyle(current) : extractTextDecorationStyle(current);
+            RefPtr<CSSMutableStyleDeclarationImpl> decoration = force ? extractAndNegateTextDecorationStyle(current) : extractTextDecorationStyle(current);
 
             for (NodeImpl *child = current->firstChild(); child; child = nextChild) {
                 nextChild = child->nextSibling();
@@ -846,7 +846,7 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
     ASSERT(end.node()->inDocument());
     ASSERT(RangeImpl::compareBoundaryPoints(start, end) < 0);
     
-    SharedPtr<CSSValueImpl> textDecorationSpecialProperty = style->getPropertyCSSValue(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT);
+    RefPtr<CSSValueImpl> textDecorationSpecialProperty = style->getPropertyCSSValue(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT);
 
     if (textDecorationSpecialProperty) {
         pushDownTextDecorationStyleAtBoundaries(start.downstream(), end.upstream());
@@ -1220,7 +1220,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     }
 
     if (styleChange.cssStyle().length() > 0) {
-        SharedPtr<ElementImpl> styleElement = createStyleSpanElement(document());
+        RefPtr<ElementImpl> styleElement = createStyleSpanElement(document());
         styleElement->setAttribute(styleAttr, styleChange.cssStyle());
         insertNodeBefore(styleElement.get(), startNode);
         surroundNodeRangeWithElement(startNode, endNode, styleElement.get());
@@ -1247,11 +1247,11 @@ float ApplyStyleCommand::computedFontSize(const NodeImpl *node)
         return 0;
     
     Position pos(const_cast<NodeImpl *>(node), 0);
-    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = pos.computedStyle();
+    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = pos.computedStyle();
     if (!computedStyle)
         return 0;
 
-    SharedPtr<CSSPrimitiveValueImpl> value = static_cast<CSSPrimitiveValueImpl *>(computedStyle->getPropertyCSSValue(CSS_PROP_FONT_SIZE));
+    RefPtr<CSSPrimitiveValueImpl> value = static_cast<CSSPrimitiveValueImpl *>(computedStyle->getPropertyCSSValue(CSS_PROP_FONT_SIZE));
     if (!value)
         return 0;
 

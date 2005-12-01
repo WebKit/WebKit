@@ -460,9 +460,9 @@ void HTMLCollectionImpl::updateNameCache() const
     info->hasNameCache = true;
 }
 
-QValueList< SharedPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const DOMString &name) const
+QValueList< RefPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const DOMString &name) const
 {
-    QValueList< SharedPtr<NodeImpl> > result;
+    QValueList< RefPtr<NodeImpl> > result;
 
     if (name.isEmpty())
         return result;
@@ -474,11 +474,11 @@ QValueList< SharedPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const DOMString
     QPtrVector<NodeImpl> *nameResults = info->nameCache.find(name.qstring());
     
     for (unsigned i = 0; idResults && i < idResults->count(); ++i) {
-        result.append(SharedPtr<NodeImpl>(idResults->at(i)));
+        result.append(RefPtr<NodeImpl>(idResults->at(i)));
     }
 
     for (unsigned i = 0; nameResults && i < nameResults->count(); ++i) {
-        result.append(SharedPtr<NodeImpl>(nameResults->at(i)));
+        result.append(RefPtr<NodeImpl>(nameResults->at(i)));
     }
 
     return result;

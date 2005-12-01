@@ -384,7 +384,7 @@ protected:
     uint m_lineBreakPos;
     
     BidiStatus m_lineBreakBidiStatus;
-    SharedPtr<BidiContext> m_lineBreakContext;
+    RefPtr<BidiContext> m_lineBreakContext;
     
     // The height of the block at the end of this line.  This is where the next line starts.
     int m_blockHeight;

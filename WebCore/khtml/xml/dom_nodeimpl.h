@@ -78,7 +78,7 @@ public:
     NodeImpl *parentNode() const { return parent(); }
     NodeImpl *previousSibling() const { return m_previous; }
     NodeImpl *nextSibling() const { return m_next; }
-    virtual SharedPtr<NodeListImpl> childNodes();
+    virtual RefPtr<NodeListImpl> childNodes();
     virtual NodeImpl *firstChild() const;
     virtual NodeImpl *lastChild() const;
     virtual bool hasAttributes() const;
@@ -205,7 +205,7 @@ public:
         MouseEventType type;
         DOMString url; // url under mouse or empty
         DOMString target;
-        SharedPtr<NodeImpl> innerNode;
+        RefPtr<NodeImpl> innerNode;
     };
 
     // for LINK and STYLE
@@ -472,8 +472,8 @@ public:
     void notifyNodeListsAttributeChanged();
     void notifyLocalNodeListsAttributeChanged();
     
-    SharedPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS("*", name); }
-    SharedPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
+    RefPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS("*", name); }
+    RefPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
 
 private: // members
     DocPtr<DocumentImpl> document;
@@ -650,16 +650,16 @@ public:
     virtual ~NamedNodeMapImpl() {}
 
     NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
-    SharedPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
+    RefPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
 
     virtual NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
-    SharedPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
-    virtual SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
+    RefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
+    virtual RefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
 
     // DOM methods & attributes for NamedNodeMap
     virtual NodeImpl *getNamedItem(const QualifiedName& attrName) const = 0;
-    virtual SharedPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
-    virtual SharedPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
+    virtual RefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
+    virtual RefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
 
     virtual NodeImpl *item ( unsigned index ) const = 0;
     virtual unsigned length(  ) const = 0;

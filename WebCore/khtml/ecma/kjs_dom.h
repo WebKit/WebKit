@@ -83,7 +83,7 @@ namespace KJS {
   protected:
     // Constructor for inherited classes; doesn't set up a prototype.
     DOMNode(DOM::NodeImpl *n);
-    SharedPtr<DOM::NodeImpl> m_impl;
+    RefPtr<DOM::NodeImpl> m_impl;
   };
 
   DOM::NodeImpl *toNode(ValueImp *); // returns 0 if passed-in value is not a DOMNode object
@@ -109,7 +109,7 @@ namespace KJS {
     static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
     static ValueImp *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
-    SharedPtr<DOM::NodeListImpl> m_impl;
+    RefPtr<DOM::NodeListImpl> m_impl;
   };
 
   class DOMDocument : public DOMNode {
@@ -190,7 +190,7 @@ namespace KJS {
     enum { HasFeature, CreateDocumentType, CreateDocument, CreateCSSStyleSheet, CreateHTMLDocument };
     DOM::DOMImplementationImpl *impl() const { return m_impl.get(); }
   private:
-    SharedPtr<DOM::DOMImplementationImpl> m_impl;
+    RefPtr<DOM::DOMImplementationImpl> m_impl;
   };
 
   class DOMDocumentType : public DOMNode {
@@ -223,7 +223,7 @@ namespace KJS {
     static ValueImp *indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
     static ValueImp *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
-    SharedPtr<DOM::NamedNodeMapImpl> m_impl;
+    RefPtr<DOM::NamedNodeMapImpl> m_impl;
   };
 
   class DOMProcessingInstruction : public DOMNode {
@@ -295,13 +295,13 @@ namespace KJS {
   // when multiple nodes have the same name.
   class DOMNamedNodesCollection : public DOMObject {
   public:
-    DOMNamedNodesCollection(ExecState *exec, const QValueList< SharedPtr<DOM::NodeImpl> >& nodes );
+    DOMNamedNodesCollection(ExecState *exec, const QValueList< RefPtr<DOM::NodeImpl> >& nodes );
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
   private:
     static ValueImp *lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
     static ValueImp *indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
 
-    QValueList< SharedPtr<DOM::NodeImpl> > m_nodes;
+    QValueList< RefPtr<DOM::NodeImpl> > m_nodes;
   };
 
   class DOMCharacterData : public DOMNode {

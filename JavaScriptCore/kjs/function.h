@@ -81,7 +81,7 @@ namespace KJS {
 
     virtual Completion execute(ExecState *exec);
     CodeType codeType() const { return FunctionCode; }
-    SharedPtr<FunctionBodyNode> body;
+    RefPtr<FunctionBodyNode> body;
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

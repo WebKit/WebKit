@@ -374,11 +374,11 @@ void VisiblePosition::showTree() const
 }
 #endif
 
-SharedPtr<RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end)
+RefPtr<RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end)
 {
     Position s = start.position();
     Position e = end.position();
-    return SharedPtr<RangeImpl>(new RangeImpl(s.node()->getDocument(), s.node(), s.offset(), e.node(), e.offset()));
+    return RefPtr<RangeImpl>(new RangeImpl(s.node()->getDocument(), s.node(), s.offset(), e.node(), e.offset()));
 }
 
 VisiblePosition startVisiblePosition(const RangeImpl *r, EAffinity affinity)

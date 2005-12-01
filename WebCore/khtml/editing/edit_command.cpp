@@ -55,11 +55,11 @@ EditCommandPtr::EditCommandPtr()
 {
 }
 
-EditCommandPtr::EditCommandPtr(EditCommand *impl) : SharedPtr<EditCommand>(impl)
+EditCommandPtr::EditCommandPtr(EditCommand *impl) : RefPtr<EditCommand>(impl)
 {
 }
 
-EditCommandPtr::EditCommandPtr(const EditCommandPtr &o) : SharedPtr<EditCommand>(o)
+EditCommandPtr::EditCommandPtr(const EditCommandPtr &o) : RefPtr<EditCommand>(o)
 {
 }
 
@@ -69,7 +69,7 @@ EditCommandPtr::~EditCommandPtr()
 
 EditCommandPtr &EditCommandPtr::operator=(const EditCommandPtr &c)
 {
-    static_cast<SharedPtr<EditCommand> &>(*this) = c;
+    static_cast<RefPtr<EditCommand> &>(*this) = c;
     return *this;
 }
 

@@ -269,7 +269,7 @@ ValueImp *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& prope
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(thisObj->impl());
 
   DOMString name = propertyName.domString();
-  SharedPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
+  RefPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
 
   if (collection->length() == 1) {
     NodeImpl *node = collection->firstItem();
@@ -3405,7 +3405,7 @@ ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &
 #endif
   DOM::DOMString pstr = propertyName.domString();
 
-  QValueList< SharedPtr<NodeImpl> > namedItems = m_impl->namedItems(pstr);
+  QValueList< RefPtr<NodeImpl> > namedItems = m_impl->namedItems(pstr);
 
   if (namedItems.isEmpty()) {
 #ifdef KJS_VERBOSE
@@ -3564,7 +3564,7 @@ bool OptionConstructorImp::implementsConstruct() const
 ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
 {
   int exception = 0;
-  SharedPtr<ElementImpl> el(m_doc->createElement("option", exception));
+  RefPtr<ElementImpl> el(m_doc->createElement("option", exception));
   HTMLOptionElementImpl *opt = 0;
   if (el.notNull()) {
     opt = static_cast<HTMLOptionElementImpl *>(el.get());

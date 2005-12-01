@@ -810,7 +810,7 @@ void RenderText::setStyle(RenderStyle *_style)
         RenderObject::setStyle( _style );
 
         if (needToTransformText) {
-            SharedPtr<DOMStringImpl> textToTransform = originalString();
+            RefPtr<DOMStringImpl> textToTransform = originalString();
             if (textToTransform.notNull())
                 setText(textToTransform.get(), true);
         }
@@ -903,9 +903,9 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
-SharedPtr<DOMStringImpl> RenderText::originalString() const
+RefPtr<DOMStringImpl> RenderText::originalString() const
 {
-    return element() ? SharedPtr<DOMStringImpl>(element()->string()) : SharedPtr<DOMStringImpl>();
+    return element() ? RefPtr<DOMStringImpl>(element()->string()) : RefPtr<DOMStringImpl>();
 }
 
 void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
@@ -1860,7 +1860,7 @@ bool RenderTextFragment::isTextFragment() const
     return true;
 }
 
-SharedPtr<DOMStringImpl> RenderTextFragment::originalString() const
+RefPtr<DOMStringImpl> RenderTextFragment::originalString() const
 {
     DOM::DOMStringImpl* result = 0;
     if (element())
@@ -1869,5 +1869,5 @@ SharedPtr<DOMStringImpl> RenderTextFragment::originalString() const
         result = contentString();
     if (result && (start() > 0 || start() < result->l))
         result = result->substring(start(), end());
-    return SharedPtr<DOMStringImpl>(result);
+    return RefPtr<DOMStringImpl>(result);
 }

@@ -692,9 +692,9 @@ void HTMLFormElementImpl::removeImgElement(HTMLImageElementImpl *e)
     removeFromVector(imgElements, e);
 }
 
-SharedPtr<HTMLCollectionImpl> HTMLFormElementImpl::elements()
+RefPtr<HTMLCollectionImpl> HTMLFormElementImpl::elements()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLFormCollectionImpl(this));
+    return RefPtr<HTMLCollectionImpl>(new HTMLFormCollectionImpl(this));
 }
 
 DOMString HTMLFormElementImpl::name() const
@@ -2671,7 +2671,7 @@ int HTMLSelectElementImpl::length() const
 
 void HTMLSelectElementImpl::add( HTMLElementImpl *element, HTMLElementImpl *before, int &exceptioncode )
 {
-    SharedPtr<HTMLElementImpl> protectNewChild(element); // make sure the element is ref'd and deref'd so we don't leak it
+    RefPtr<HTMLElementImpl> protectNewChild(element); // make sure the element is ref'd and deref'd so we don't leak it
 
     if (!element || !(element->hasLocalName(optionTag) || element->hasLocalName(hrTag)))
         return;
@@ -2922,9 +2922,9 @@ HTMLOptionsCollectionImpl *HTMLSelectElementImpl::options()
 }
 
 // FIXME: Delete once the above function is working well enough to use for real.
-SharedPtr<HTMLCollectionImpl> HTMLSelectElementImpl::optionsHTMLCollection()
+RefPtr<HTMLCollectionImpl> HTMLSelectElementImpl::optionsHTMLCollection()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::SELECT_OPTIONS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::SELECT_OPTIONS));
 }
 
 void HTMLSelectElementImpl::recalcListItems()

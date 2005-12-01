@@ -735,7 +735,7 @@ NodeImpl *DocumentImpl::adoptNode(NodeImpl *source, int &exceptioncode)
     if (!source)
         return 0;
     
-    SharedPtr<NodeImpl> protect(source);
+    RefPtr<NodeImpl> protect(source);
 
     switch (source->nodeType()) {
         case Node::ENTITY_NODE:
@@ -2279,7 +2279,7 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         return false;
        
     bool focusChangeBlocked = false;
-    SharedPtr<NodeImpl> oldFocusNode = m_focusNode;
+    RefPtr<NodeImpl> oldFocusNode = m_focusNode;
     m_focusNode = 0;
     clearSelectionIfNeeded(newFocusNode);
 
@@ -2900,7 +2900,7 @@ void DocumentImpl::addMarker(RangeImpl *range, DocumentMarker::MarkerType type)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
-        SharedPtr<RangeImpl> textPiece = markedText.range();
+        RefPtr<RangeImpl> textPiece = markedText.range();
         int exception = 0;
         DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception)};
         addMarker(textPiece->startContainer(exception), marker);
@@ -2911,7 +2911,7 @@ void DocumentImpl::removeMarkers(RangeImpl *range, DocumentMarker::MarkerType ma
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
-        SharedPtr<RangeImpl> textPiece = markedText.range();
+        RefPtr<RangeImpl> textPiece = markedText.range();
         int exception = 0;
         unsigned startOffset = textPiece->startOffset(exception);
         unsigned length = textPiece->endOffset(exception) - startOffset + 1;
@@ -3142,7 +3142,7 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, unsigned startOffset, int delta,
 
 void DocumentImpl::applyXSLTransform(ProcessingInstructionImpl* pi)
 {
-    SharedPtr<XSLTProcessorImpl> processor = new XSLTProcessorImpl;
+    RefPtr<XSLTProcessorImpl> processor = new XSLTProcessorImpl;
     processor->setXSLStylesheet(static_cast<XSLStyleSheetImpl*>(pi->sheet()));
     
     QString resultMIMEType;
@@ -3275,59 +3275,59 @@ void DocumentImpl::removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementIm
     }
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::images()
+RefPtr<HTMLCollectionImpl> DocumentImpl::images()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_IMAGES));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_IMAGES));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::applets()
+RefPtr<HTMLCollectionImpl> DocumentImpl::applets()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_APPLETS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_APPLETS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::embeds()
+RefPtr<HTMLCollectionImpl> DocumentImpl::embeds()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_EMBEDS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_EMBEDS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::objects()
+RefPtr<HTMLCollectionImpl> DocumentImpl::objects()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_OBJECTS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_OBJECTS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::links()
+RefPtr<HTMLCollectionImpl> DocumentImpl::links()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_LINKS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_LINKS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::forms()
+RefPtr<HTMLCollectionImpl> DocumentImpl::forms()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_FORMS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_FORMS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::anchors()
+RefPtr<HTMLCollectionImpl> DocumentImpl::anchors()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ANCHORS));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ANCHORS));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::all()
+RefPtr<HTMLCollectionImpl> DocumentImpl::all()
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ALL));
+    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ALL));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::windowNamedItems(DOMString &name)
+RefPtr<HTMLCollectionImpl> DocumentImpl::windowNamedItems(DOMString &name)
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLNameCollectionImpl(this, HTMLCollectionImpl::WINDOW_NAMED_ITEMS, name));
+    return RefPtr<HTMLCollectionImpl>(new HTMLNameCollectionImpl(this, HTMLCollectionImpl::WINDOW_NAMED_ITEMS, name));
 }
 
-SharedPtr<HTMLCollectionImpl> DocumentImpl::documentNamedItems(DOMString &name)
+RefPtr<HTMLCollectionImpl> DocumentImpl::documentNamedItems(DOMString &name)
 {
-    return SharedPtr<HTMLCollectionImpl>(new HTMLNameCollectionImpl(this, HTMLCollectionImpl::DOCUMENT_NAMED_ITEMS, name));
+    return RefPtr<HTMLCollectionImpl>(new HTMLNameCollectionImpl(this, HTMLCollectionImpl::DOCUMENT_NAMED_ITEMS, name));
 }
 
-SharedPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
+RefPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
 {
-    return SharedPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));
+    return RefPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));
 }
 
 // ----------------------------------------------------------------------------

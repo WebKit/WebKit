@@ -1,3 +1,187 @@
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- renamed SharedPtr to RefPtr via script
+
+        * ForwardingHeaders/kxmlcore/RefPtr.h: Added.
+        * ForwardingHeaders/kxmlcore/SharedPtr.h: Removed.
+        * khtml/css/css_computedstyle.h:
+        * khtml/ecma/XSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/XSLTProcessor.h:
+        * khtml/ecma/domparser.h:
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::KJS::HTMLCollection::getNamedItems):
+        (KJS::OptionConstructorImp::construct):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::namedItemGetter):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::toRange):
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::StyleChange::init):
+        (khtml::StyleChange::currentlyHasStyle):
+        (khtml::ApplyStyleCommand::doApply):
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (khtml::ApplyStyleCommand::removeCSSStyle):
+        (khtml::hasTextDecorationProperty):
+        (khtml::ApplyStyleCommand::extractTextDecorationStyle):
+        (khtml::ApplyStyleCommand::extractAndNegateTextDecorationStyle):
+        (khtml::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode):
+        (khtml::ApplyStyleCommand::removeInlineStyle):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (khtml::ApplyStyleCommand::computedFontSize):
+        * khtml/editing/apply_style_command.h:
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommandPtr::EditCommandPtr):
+        (khtml::EditCommandPtr::operator=):
+        * khtml/editing/edit_command.h:
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        * khtml/editing/visible_position.cpp:
+        (khtml::makeRange):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_range.h:
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::range):
+        (khtml::SimplifiedBackwardsTextIterator::range):
+        (khtml::CharacterIterator::range):
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        (khtml::findPlainText):
+        * khtml/editing/visible_text.h:
+        (khtml::WordAwareIterator::range):
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::children):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::elements):
+        (DOM::HTMLSelectElementImpl::add):
+        (DOM::HTMLSelectElementImpl::optionsHTMLCollection):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLMapElementImpl::areas):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::namedItems):
+        * khtml/html/html_miscimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::rows):
+        (DOM::HTMLTableElementImpl::tBodies):
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        (DOM::HTMLTableSectionElementImpl::deleteRow):
+        (DOM::HTMLTableSectionElementImpl::rows):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableRowElementImpl::deleteCell):
+        (DOM::HTMLTableRowElementImpl::cells):
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken):
+        (HTMLParser::insertNode):
+        * khtml/khtml_events.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionHasStyle):
+        (KHTMLPart::selectionStartHasStyle):
+        (KHTMLPart::selectionComputedStyle):
+        (KHTMLPart::applyEditingStyleToBodyElement):
+        (KHTMLPart::removeEditingStyleFromBodyElement):
+        * khtml/khtmlpart_p.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::dispatchMouseEvent):
+        * khtml/misc/shared.h:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        (RenderText::originalString):
+        (RenderTextFragment::originalString):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::rangeOfContents):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::adoptNode):
+        (DocumentImpl::setFocusNode):
+        (DocumentImpl::addMarker):
+        (DocumentImpl::removeMarkers):
+        (DocumentImpl::applyXSLTransform):
+        (DocumentImpl::images):
+        (DocumentImpl::applets):
+        (DocumentImpl::embeds):
+        (DocumentImpl::objects):
+        (DocumentImpl::links):
+        (DocumentImpl::forms):
+        (DocumentImpl::anchors):
+        (DocumentImpl::all):
+        (DocumentImpl::windowNamedItems):
+        (DocumentImpl::documentNamedItems):
+        (DocumentImpl::getElementsByName):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::transformSourceDocument):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::setAttributeNode):
+        (ElementImpl::removeAttributeNode):
+        (NamedAttrMapImpl::removeNamedItemNS):
+        (NamedAttrMapImpl::setNamedItem):
+        (NamedAttrMapImpl::removeNamedItem):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::setAttributeNodeNS):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::childNodes):
+        (DOM::NodeImpl::dispatchWindowEvent):
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::getElementsByTagNameNS):
+        (DOM::ContainerNodeImpl::insertBefore):
+        (DOM::ContainerNodeImpl::replaceChild):
+        (DOM::ContainerNodeImpl::appendChild):
+        (DOM::ContainerNodeImpl::addChild):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::getElementsByTagName):
+        (DOM::NamedNodeMapImpl::removeNamedItem):
+        (DOM::NamedNodeMapImpl::setNamedItemNS):
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+        (DOM::createFragmentFromSource):
+        (DOM::xsltStylesheetPointer):
+        (DOM::xmlDocPtrFromNode):
+        (DOM::XSLTProcessorImpl::transformToString):
+        (DOM::XSLTProcessorImpl::transformToDocument):
+        (DOM::XSLTProcessorImpl::transformToFragment):
+        (DOM::XSLTProcessorImpl::getParameter):
+        * khtml/xsl/xslt_processorimpl.h:
+        * kwq/KWQClipboard.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::fontForSelection):
+        (KWQKHTMLPart::markMisspellings):
+        (KWQKHTMLPart::shouldClose):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge convertToNSRange:DOM::]):
+
 2005-11-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by Dave Hyatt.

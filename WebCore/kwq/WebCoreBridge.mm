@@ -1664,7 +1664,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return NSMakeRange(NSNotFound, 0);
     }
 
-    SharedPtr<RangeImpl> fromStartRange(_part->xmlDocImpl()->createRange());
+    RefPtr<RangeImpl> fromStartRange(_part->xmlDocImpl()->createRange());
     int exception = 0;
 
     fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);

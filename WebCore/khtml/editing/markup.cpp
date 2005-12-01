@@ -184,8 +184,8 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             if (defaultStyle) {
                 NodeImpl *element = node->parentNode();
                 if (element) {
-                    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(element, 0).computedStyle();
-                    SharedPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(element, 0).computedStyle();
+                    RefPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
                     defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         // FIXME: Handle case where style->cssText() has illegal characters in it, like "
@@ -208,8 +208,8 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                 const ElementImpl *el = static_cast<const ElementImpl *>(node);
                 DOMString additionalStyle;
                 if (defaultStyle && el->isHTMLElement()) {
-                    SharedPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(const_cast<ElementImpl *>(el), 0).computedStyle();
-                    SharedPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(const_cast<ElementImpl *>(el), 0).computedStyle();
+                    RefPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
                     defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         CSSMutableStyleDeclarationImpl *inlineStyleDecl = static_cast<const HTMLElementImpl *>(el)->inlineStyleDecl();

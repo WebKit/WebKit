@@ -86,8 +86,8 @@ public:
     HTMLElementImpl *insertRow ( int index, int &exceptioncode );
     void deleteRow ( int index, int &exceptioncode );
 
-    SharedPtr<HTMLCollectionImpl> rows();
-    SharedPtr<HTMLCollectionImpl> tBodies();
+    RefPtr<HTMLCollectionImpl> rows();
+    RefPtr<HTMLCollectionImpl> tBodies();
 
     DOMString align() const;
     void setAlign( const DOMString & );
@@ -188,7 +188,7 @@ public:
     DOMString vAlign() const;
     void setVAlign( const DOMString & );
 
-    SharedPtr<HTMLCollectionImpl> rows();
+    RefPtr<HTMLCollectionImpl> rows();
 };
 
 // -------------------------------------------------------------------------
@@ -215,7 +215,7 @@ public:
 
     void setSectionRowIndex( int  );
 
-    SharedPtr<HTMLCollectionImpl> cells();
+    RefPtr<HTMLCollectionImpl> cells();
     void setCells(HTMLCollectionImpl *, int &exception);
 
     DOMString align() const;

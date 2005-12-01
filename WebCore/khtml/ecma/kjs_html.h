@@ -312,7 +312,7 @@ namespace KJS {
     static const ClassInfo info;
     DOM::HTMLCollectionImpl *impl() const { return m_impl.get(); }
   protected:
-    SharedPtr<DOM::HTMLCollectionImpl> m_impl;
+    RefPtr<DOM::HTMLCollectionImpl> m_impl;
   private:
     static ValueImp *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
     static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
@@ -327,7 +327,7 @@ namespace KJS {
   private:
     static ValueImp *selectedIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
-    SharedPtr<DOM::HTMLSelectElementImpl> m_element;
+    RefPtr<DOM::HTMLSelectElementImpl> m_element;
   };
 
   ////////////////////// Option Object ////////////////////////
@@ -338,7 +338,7 @@ namespace KJS {
     virtual bool implementsConstruct() const;
     virtual ObjectImp *construct(ExecState *exec, const List &args);
   private:
-    SharedPtr<DOM::DocumentImpl> m_doc;
+    RefPtr<DOM::DocumentImpl> m_doc;
   };
 
   ////////////////////// Image Object ////////////////////////
@@ -349,7 +349,7 @@ namespace KJS {
     virtual bool implementsConstruct() const;
     virtual ObjectImp *construct(ExecState *exec, const List &args);
   private:
-    SharedPtr<DOM::DocumentImpl> m_doc;
+    RefPtr<DOM::DocumentImpl> m_doc;
   };
 
   class Image : public DOMObject, public khtml::CachedObjectClient {
@@ -438,7 +438,7 @@ private:
     
     void setShadow(ExecState *exec);
 
-    SharedPtr<DOM::HTMLElementImpl> _element;
+    RefPtr<DOM::HTMLElementImpl> _element;
     bool _needsFlushRasterCache;
     
     QPtrList<List> stateStack;

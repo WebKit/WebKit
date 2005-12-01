@@ -49,15 +49,15 @@ public:
 
     void setXSLStylesheet(XSLStyleSheetImpl *styleSheet) { m_stylesheet = styleSheet; }
     bool transformToString(NodeImpl *source, QString &resultMIMEType, QString &resultString);
-    SharedPtr<DocumentImpl> createDocumentFromSource(const QString &source, const QString &sourceMIMEType, NodeImpl *sourceNode, KHTMLView *view = 0);
+    RefPtr<DocumentImpl> createDocumentFromSource(const QString &source, const QString &sourceMIMEType, NodeImpl *sourceNode, KHTMLView *view = 0);
     
     // DOM methods
     void importStylesheet(NodeImpl *style) { m_stylesheetRootNode = style; }
-    SharedPtr<DocumentFragmentImpl> transformToFragment(NodeImpl *source, DocumentImpl *ouputDoc);
-    SharedPtr<DocumentImpl> transformToDocument(NodeImpl *source);
+    RefPtr<DocumentFragmentImpl> transformToFragment(NodeImpl *source, DocumentImpl *ouputDoc);
+    RefPtr<DocumentImpl> transformToDocument(NodeImpl *source);
     
     void setParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName, DOMStringImpl *value);
-    SharedPtr<DOMStringImpl> getParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
+    RefPtr<DOMStringImpl> getParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
     void removeParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
     void clearParameters() { m_parameters.clear(); }
 
@@ -69,10 +69,10 @@ public:
     
 private:
     // Convert a libxml doc ptr to a KHTML DOM Document
-    SharedPtr<DocumentImpl> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, DocumentImpl *ownerDocument, bool sourceIsDocument);
+    RefPtr<DocumentImpl> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, DocumentImpl *ownerDocument, bool sourceIsDocument);
 
-    SharedPtr<XSLStyleSheetImpl> m_stylesheet;
-    SharedPtr<NodeImpl> m_stylesheetRootNode;
+    RefPtr<XSLStyleSheetImpl> m_stylesheet;
+    RefPtr<NodeImpl> m_stylesheetRootNode;
     QDict<DOMString> m_parameters;
 };
 

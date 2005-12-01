@@ -454,7 +454,7 @@ void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, NodeImpl *offsetBa
     m_lastCharacter = c;
 }
 
-SharedPtr<RangeImpl> TextIterator::range() const
+RefPtr<RangeImpl> TextIterator::range() const
 {
     // use the current run information, if we have it
     if (m_positionNode) {
@@ -464,16 +464,16 @@ SharedPtr<RangeImpl> TextIterator::range() const
             m_positionEndOffset += index;
             m_positionOffsetBaseNode = 0;
         }
-        return SharedPtr<RangeImpl>(new RangeImpl(m_positionNode->getDocument(),
+        return RefPtr<RangeImpl>(new RangeImpl(m_positionNode->getDocument(),
             m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset));
     }
 
     // otherwise, return the end of the overall range we were given
     if (m_endContainer)
-        return SharedPtr<RangeImpl>(new RangeImpl(m_endContainer->getDocument(), 
+        return RefPtr<RangeImpl>(new RangeImpl(m_endContainer->getDocument(), 
             m_endContainer, m_endOffset, m_endContainer, m_endOffset));
         
-    return SharedPtr<RangeImpl>();
+    return RefPtr<RangeImpl>();
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
@@ -707,12 +707,12 @@ void SimplifiedBackwardsTextIterator::emitNewlineForBROrText()
     }
 }
 
-SharedPtr<RangeImpl> SimplifiedBackwardsTextIterator::range() const
+RefPtr<RangeImpl> SimplifiedBackwardsTextIterator::range() const
 {
     if (m_positionNode) {
-        return SharedPtr<RangeImpl>(new RangeImpl(m_positionNode->getDocument(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset));
+        return RefPtr<RangeImpl>(new RangeImpl(m_positionNode->getDocument(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset));
     } else {
-        return SharedPtr<RangeImpl>(new RangeImpl(m_startNode->getDocument(), m_startNode, m_startOffset, m_startNode, m_startOffset));
+        return RefPtr<RangeImpl>(new RangeImpl(m_startNode->getDocument(), m_startNode, m_startOffset, m_startNode, m_startOffset));
     }
 }
 
@@ -729,9 +729,9 @@ CharacterIterator::CharacterIterator(const RangeImpl *r)
     }
 }
 
-SharedPtr<RangeImpl> CharacterIterator::range() const
+RefPtr<RangeImpl> CharacterIterator::range() const
 {
-    SharedPtr<RangeImpl> r = m_textIterator.range();
+    RefPtr<RangeImpl> r = m_textIterator.range();
     if (!m_textIterator.atEnd()) {
         if (m_textIterator.length() <= 1) {
             assert(m_runOffset == 0);
@@ -990,7 +990,7 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
     for (TextIterator it(rangeOfContents(doc).get()); !it.atEnd(); it.advance()) {
         int len = it.length();
         if (rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len) {
-            SharedPtr<RangeImpl> textRunRange = it.range();
+            RefPtr<RangeImpl> textRunRange = it.range();
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeLocation - docTextPosition;
@@ -1004,7 +1004,7 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
             }
         }
         if (rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len) {
-            SharedPtr<RangeImpl> textRunRange = it.range();
+            RefPtr<RangeImpl> textRunRange = it.range();
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeEnd - docTextPosition;
@@ -1035,7 +1035,7 @@ QString plainText(const RangeImpl *r)
     return result;
 }
 
-SharedPtr<RangeImpl> findPlainText(const RangeImpl *r, const QString &s, bool forward, bool caseSensitive)
+RefPtr<RangeImpl> findPlainText(const RangeImpl *r, const QString &s, bool forward, bool caseSensitive)
 {
     // FIXME: Can we do Boyer-Moore or equivalent instead for speed?
 
@@ -1045,7 +1045,7 @@ SharedPtr<RangeImpl> findPlainText(const RangeImpl *r, const QString &s, bool fo
         int exception = 0;
         RangeImpl *result = r->cloneRange(exception);
         result->collapse(forward, exception);
-        return SharedPtr<RangeImpl>(result);
+        return RefPtr<RangeImpl>(result);
     }
 
     CircularSearchBuffer buffer(s, caseSensitive);
@@ -1103,7 +1103,7 @@ done:
         it.advance(buffer.length() - 1);
         result->setEnd(it.range()->endContainer(exception), it.range()->endOffset(exception), exception);
     }
-    return SharedPtr<RangeImpl>(result);
+    return RefPtr<RangeImpl>(result);
 }
 
 }

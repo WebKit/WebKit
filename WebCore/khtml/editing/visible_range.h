@@ -52,7 +52,7 @@ public:
     VisiblePosition start() const { return m_start; }
     VisiblePosition end() const { return m_end; }
 
-    SharedPtr<RangeImpl> range() const;
+    RefPtr<RangeImpl> range() const;
 
     void clear() { m_start.clear(); m_end.clear(); }
 

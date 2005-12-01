@@ -99,7 +99,7 @@ private:
 
     NodeImpl *m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
-    SharedPtr<NodeImpl> m_target;
+    RefPtr<NodeImpl> m_target;
     DOMTimeStamp m_createTime;
 };
 
@@ -133,7 +133,7 @@ public:
     virtual int which() const;
 
 private:
-    SharedPtr<AbstractViewImpl> m_view;
+    RefPtr<AbstractViewImpl> m_view;
     int m_detail;
 };
 
@@ -237,8 +237,8 @@ public:
     virtual int which() const;
 private:
     unsigned short m_button;
-    SharedPtr<NodeImpl> m_relatedTarget;
-    SharedPtr<ClipboardImpl> m_clipboard;
+    RefPtr<NodeImpl> m_relatedTarget;
+    RefPtr<ClipboardImpl> m_clipboard;
 };
 
 
@@ -287,7 +287,7 @@ public:
 
 private:
     QKeyEvent *m_keyEvent;
-    SharedPtr<DOMStringImpl> m_keyIdentifier;
+    RefPtr<DOMStringImpl> m_keyIdentifier;
     unsigned m_keyLocation;
     bool m_altGraphKey : 1;
 };
@@ -320,10 +320,10 @@ public:
 			   unsigned short attrChangeArg);
     virtual bool isMutationEvent() const;
 private:
-    SharedPtr<NodeImpl> m_relatedNode;
-    SharedPtr<DOMStringImpl> m_prevValue;
-    SharedPtr<DOMStringImpl> m_newValue;
-    SharedPtr<DOMStringImpl> m_attrName;
+    RefPtr<NodeImpl> m_relatedNode;
+    RefPtr<DOMStringImpl> m_prevValue;
+    RefPtr<DOMStringImpl> m_newValue;
+    RefPtr<DOMStringImpl> m_attrName;
     unsigned short m_attrChange;
 };
 
@@ -335,7 +335,7 @@ public:
     ClipboardImpl *clipboard() const { return m_clipboard.get(); }
     virtual bool isClipboardEvent() const;
 private:
-    SharedPtr<ClipboardImpl> m_clipboard;
+    RefPtr<ClipboardImpl> m_clipboard;
 };
 
 // extension: mouse wheel event
@@ -367,7 +367,7 @@ public:
 
 private:
     AtomicString m_eventType;
-    SharedPtr<EventListener> m_listener;
+    RefPtr<EventListener> m_listener;
     bool m_useCapture;
 };
 
@@ -414,7 +414,7 @@ public:
     DOMString result() const { return m_result.get(); }
 
 private:
-    SharedPtr<DOMStringImpl> m_result;
+    RefPtr<DOMStringImpl> m_result;
 };
 
 } // namespace

@@ -47,7 +47,7 @@ namespace KJS {
            Detach, CreateContextualFragment };
     DOM::RangeImpl *impl() const { return m_impl.get(); }
   private:
-    SharedPtr<DOM::RangeImpl> m_impl;
+    RefPtr<DOM::RangeImpl> m_impl;
 };
 
   // Constructor object Range

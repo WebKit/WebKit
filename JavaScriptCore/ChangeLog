@@ -1,3 +1,42 @@
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- renamed SharedPtr to RefPtr via script
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (KJS::Parser::parse):
+        (KJS::InterpreterImp::checkSyntax):
+        (KJS::InterpreterImp::evaluate):
+        * kjs/internal.h:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        (KJS::SourceStream::operator<<):
+        * kjs/protect.h:
+        * kxmlcore/RefPtr.h: Added.
+        (KXMLCore::RefPtr::RefPtr):
+        (KXMLCore::RefPtr::~RefPtr):
+        (KXMLCore::RefPtr::isNull):
+        (KXMLCore::RefPtr::notNull):
+        (KXMLCore::RefPtr::reset):
+        (KXMLCore::RefPtr::get):
+        (KXMLCore::RefPtr::operator*):
+        (KXMLCore::RefPtr::operator->):
+        (KXMLCore::RefPtr::operator!):
+        (KXMLCore::RefPtr::operator UnspecifiedBoolType):
+        (KXMLCore::::operator):
+        (KXMLCore::operator==):
+        (KXMLCore::operator!=):
+        (KXMLCore::static_pointer_cast):
+        (KXMLCore::const_pointer_cast):
+        * kxmlcore/SharedPtr.h: Removed.
+
 2005-11-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by Dave Hyatt.
