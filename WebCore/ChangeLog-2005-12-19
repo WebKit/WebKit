@@ -1,3 +1,22 @@
+2005-12-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Beth.
+        
+        Another fix for 4098083 to apply to sliders.
+
+        <rdar://problem/4098083> REGRESSION (125-312): crash 
+        in [KWQTableView resignFirstResponder] selecting from JS menu 
+        (car4you.at, etc.)
+
+        Since it is possible that a render widget's eventFilterObject
+        has been destroyed even though the render widget is still ref-ed,
+        we need to nil-check the eventFilterObject before we use it to get
+        the eventFilter.
+
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]): Added nil check.
+        (-[KWQSlider resignFirstResponder]): Added nil check.
+
 2005-12-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Vicki and Dave Harrsion.

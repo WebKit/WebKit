@@ -111,7 +111,8 @@ using khtml::RenderLayer;
 
         if (slider) {
             QFocusEvent event(QEvent::FocusIn);
-            const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+            if (slider->eventFilterObject())
+                const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
         }
     }
     return become;
@@ -122,8 +123,10 @@ using khtml::RenderLayer;
     BOOL resign = [super resignFirstResponder];
     if (resign && slider) {
         QFocusEvent event(QEvent::FocusOut);
-        const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
-        [KWQKHTMLPart::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
+        if (slider->eventFilterObject()) {
+            const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+            [KWQKHTMLPart::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
+        }
     }
     return resign;
 }
