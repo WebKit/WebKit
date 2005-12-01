@@ -50,15 +50,21 @@ template <class T> class DocPtr
     T *operator->() const { return m_ptr; }
     
     bool operator!() const { return m_ptr == NULL; }
-    operator bool() const { return m_ptr != NULL; }
+
+    // this type conversion operator allows implicit conversion to
+    // bool but not to other integer types
+    
+    typedef T * (DocPtr::*UnspecifiedBoolType)() const;
+    operator UnspecifiedBoolType() const
+    {
+        return m_ptr ? &DocPtr::get : 0;
+    }
     
     DocPtr &operator=(const DocPtr &);
     DocPtr &operator=(T *);
     
  private:
     T *m_ptr;
-    
-    operator int() const; // deliberately not implemented; helps prevent operator bool from converting to int accidentally
 };
 
 template <class T> DocPtr<T> &DocPtr<T>::operator=(const DocPtr<T> &o) 

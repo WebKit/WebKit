@@ -1,3 +1,14 @@
+2005-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by Dave Hyatt.
+
+        - change idiom used for implicit bool conversion of smart pointers, because the old one gives weird error messages sometimes
+
+        * kjs/protect.h:
+        (KJS::ProtectedPtr::operator UnspecifiedBoolType):
+        * kxmlcore/SharedPtr.h:
+        (KXMLCore::SharedPtr::operator UnspecifiedBoolType):
+
 2005-11-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by ggaren.  Committed by eseidel.

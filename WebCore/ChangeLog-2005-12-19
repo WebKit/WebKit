@@ -1,3 +1,12 @@
+2005-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by Dave Hyatt.
+	
+        - change idiom used for implicit bool conversion of smart pointers, because the old one gives weird error messages sometimes
+
+        * khtml/xml/DocPtr.h:
+        (DOM::DocPtr::operator UnspecifiedBoolType):
+
 2005-11-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

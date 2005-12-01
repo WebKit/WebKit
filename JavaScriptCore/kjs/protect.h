@@ -66,15 +66,21 @@ namespace KJS {
         T *operator->() const { return m_ptr; }
         
         bool operator!() const { return m_ptr == NULL; }
-        operator bool() const { return m_ptr != NULL; }
+
+        // this type conversion operator allows implicit conversion to
+        // bool but not to other integer types
+
+        typedef T * (ProtectedPtr::*UnspecifiedBoolType)() const;
+        operator UnspecifiedBoolType() const
+        {
+            return m_ptr ? &ProtectedPtr::get : 0;
+        }
         
         ProtectedPtr &operator=(const ProtectedPtr &);
         ProtectedPtr &operator=(T *);
         
     private:
         T *m_ptr;
-        
-        operator int() const; // deliberately not implemented; helps prevent operator bool from converting to int accidentally
     };
 
     template <class T> ProtectedPtr<T>::ProtectedPtr(T *ptr)
