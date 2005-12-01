@@ -1,0 +1,9 @@
+This tests that JavaScriptCore ForInNodes are converted correctly to text. If this test is successful, part of the text below should say "for (j in index)".
+function test() 
+{
+  for (j in index)
+    {
+      testProperty(index[j]);
+    }
+}
+
