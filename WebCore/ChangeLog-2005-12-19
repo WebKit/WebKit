@@ -1,3 +1,16 @@
+2005-12-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for overflow clipping bug when a positioned element is
+	inserted in between two overflow:hidden elements in a 
+	document.
+	
+        Reviewed by beth
+
+        fast/clip/018.html
+
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::calculateClipRects):
+
 2005-12-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Timothy.

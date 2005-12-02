@@ -1191,6 +1191,8 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     }
     else if (m_object->style()->position() == RELATIVE)
         posClipRect = overflowClipRect;
+    else if (m_object->style()->position() == ABSOLUTE)
+        overflowClipRect = posClipRect;
     
     // Update the clip rects that will be passed to child layers.
     if (m_object->hasOverflowClip() || m_object->hasClip()) {
