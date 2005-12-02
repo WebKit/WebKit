@@ -1,3 +1,20 @@
+2005-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Fixed <rdar://problem/4344954> Glendale REGRESSION (Safari 416.12-417.2)
+        cannot tab to next input field after tab-completing an email address in
+        gmail.
+
+        Implemented work-around to conceal the selectionEnd property if the
+        document is on the gmail domain. We'll remove this code once Google
+        fixes its site.
+
+        No testcase because this is a domain-specific work-around.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::textAreaGetter):
+
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 
         SVG build fix, not reviewed.

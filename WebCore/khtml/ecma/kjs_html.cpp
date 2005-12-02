@@ -1682,7 +1682,14 @@ ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
         case TextAreaReadOnly:        return Boolean(textarea.readOnly());
         case TextAreaRows:            return Number(textarea.rows());
         case TextAreaSelectionStart:  return Number(textarea.selectionStart());
-        case TextAreaSelectionEnd:    return Number(textarea.selectionEnd());
+        case TextAreaSelectionEnd:
+            // FIXME (4363497): Work-around to prevent regression caused by GMail bug (4344954).
+            // For the love of all that is holy, let's remove this code as soon as
+            // Google fixes its bug.
+            if (impl() && impl()->getDocument() && (impl()->getDocument()->domain() == "mail.google.com"))
+                    return jsUndefined();
+            
+            return Number(textarea.selectionEnd());
         case TextAreaTabIndex:        return Number(textarea.tabIndex());
         case TextAreaType:            return String(textarea.type());
         case TextAreaValue:           return String(textarea.value());
