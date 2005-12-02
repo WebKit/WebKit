@@ -23,6 +23,9 @@
 
 2005-12-02  David Hyatt  <hyatt@apple.com>
 
+        <rdar://problem/4356387> Glendale Regression: Some text
+        does not render in the CIFilterBrowser widget anymore (tables overflow)
+
 	Fix for overflow clipping bug when a positioned element is
 	inserted in between two overflow:hidden elements in a 
 	document.
