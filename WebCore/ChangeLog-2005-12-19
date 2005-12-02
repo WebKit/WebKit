@@ -1,3 +1,18 @@
+2005-12-01  Graham Dennis  <Graham.Dennis@gmail.com>
+    
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4003>
+        contentEditable div cannot be edited if it starts out with empty or <p/>
+        
+        Reviewed/tweaked/landed by justin
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init): A position at the original block
+        shouldn't be considered 'outside' the original block.
+        (khtml::hasRenderedChildrenWithHeight): Added.
+        (khtml::VisiblePosition::isCandidate): A block flow element with 
+        rendered children may be considered a candidate for a visible 
+        position, as long as its children do not have a positive height.
+
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Hatcher.

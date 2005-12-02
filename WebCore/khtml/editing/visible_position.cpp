@@ -93,10 +93,10 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
             m_deepPosition = next;
         else {
             NodeImpl *originalBlock = pos.node() ? pos.node()->enclosingBlockFlowElement() : 0;
-            bool nextIsInOriginalBlock = next.node()->isAncestor(originalBlock);
-            bool prevIsInOriginalBlock = prev.node()->isAncestor(originalBlock);
+            bool nextIsOutsideOriginalBlock = !next.node()->isAncestor(originalBlock) && next.node() != originalBlock;
+            bool prevIsOutsideOriginalBlock = !prev.node()->isAncestor(originalBlock) && prev.node() != originalBlock;
             
-            if (!nextIsInOriginalBlock && prevIsInOriginalBlock || 
+            if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock || 
                 (deepPos.node()->hasTagName(brTag) && deepPos.offset() == 0))
                 m_deepPosition = prev;
             else
@@ -192,6 +192,18 @@ Position VisiblePosition::nextVisiblePosition(const Position &pos)
     return Position();
 }
 
+bool hasRenderedChildrenWithHeight(RenderObject *renderer)
+{
+    if (!renderer->firstChild())
+        return false;
+
+    for (RenderObject *child = renderer->firstChild(); child; child = child->nextSibling())
+        if (child->height())
+            return true;
+    
+    return false;
+}
+
 bool VisiblePosition::isCandidate(const Position &pos)
 {
     if (pos.isNull())
@@ -231,7 +243,8 @@ bool VisiblePosition::isCandidate(const Position &pos)
         }
     }
     
-    if (renderer->isBlockFlow() && (!renderer->firstChild() || !pos.node()->firstChild()) && 
+    if (renderer->isBlockFlow() &&
+       !hasRenderedChildrenWithHeight(renderer) &&
        (renderer->height() || pos.node()->hasTagName(bodyTag))) {
         // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
         return pos.offset() == 0;
