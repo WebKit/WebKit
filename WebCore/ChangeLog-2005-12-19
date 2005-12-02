@@ -1,3 +1,13 @@
+2005-12-02  Andre Boule  <aboule@apple.com>
+
+        Reviewed by rjw.
+
+        Added #else for XSLT ifdef to make sure switch case 
+        doesn't fall through when feature turned off.
+        
+	* khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+
 2005-12-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for overflow clipping bug when a positioned element is

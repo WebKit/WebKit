@@ -842,6 +842,9 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
 #ifdef KHTML_XSLT
     case XSLTProcessor:
       return new XSLTProcessorConstructorImp(exec);
+#else
+    case XSLTProcessor:
+      return Undefined();
 #endif
     case FrameElement:
       if (DocumentImpl *doc = m_part->xmlDocImpl())
