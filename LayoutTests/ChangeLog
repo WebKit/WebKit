@@ -1,3 +1,17 @@
+2005-12-01  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by justin
+        
+        Updated/added tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4003>
+        contentEditable div cannot be edited if it starts out with empty or <p/>
+
+        * editing/deleting/delete-3775172-fix-expected.txt: Fixed.
+        * editing/inserting/editing-empty-divs-expected.checksum: Added.
+        * editing/inserting/editing-empty-divs-expected.png: Added.
+        * editing/inserting/editing-empty-divs-expected.txt: Added.
+        * editing/inserting/editing-empty-divs.html: Added.
+
 2005-12-01  Adele Peterson  <adele@apple.com>
 
         Added test for <rdar://problem/4356771> Regression: Mail always scrolls to the bottom of a message when replying/forwarding
