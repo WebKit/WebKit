@@ -1,3 +1,16 @@
+2005-12-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Cache the lastItem and lastItemOffset for fast retrieval of the
+        same index or indeicies greater than lastItemOffset. Also cache
+        the length. Like other node lists these cached values rest when the
+        subtree under the root node changes.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (ChildNodeListImpl::length): Use cachedLength when possible.
+        (ChildNodeListImpl::item): Use lastItemOffset and lastItem if we can.
+
 2005-12-01  Graham Dennis  <Graham.Dennis@gmail.com>
     
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=4003>
