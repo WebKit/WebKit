@@ -1,3 +1,14 @@
+2005-12-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Timothy.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove KWQRefPtr.h
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+        Remove a call to notNull here.
+
 2005-12-02  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

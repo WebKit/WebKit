@@ -257,7 +257,6 @@
 		93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
 		93F1998808245E59001E9ABC /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
-		93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
 		93F1998B08245E59001E9ABC /* KWQRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B402DE3B8601EA4122 /* KWQRegion.h */; };
 		93F1998C08245E59001E9ABC /* KWQRenderTreeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 93955A4103D72932008635CE /* KWQRenderTreeDebug.h */; };
@@ -796,7 +795,6 @@
 		A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
 		A8212B5308794A2300677359 /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
-		A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		A8212B5508794A2300677359 /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
 		A8212B5608794A2300677359 /* KWQRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B402DE3B8601EA4122 /* KWQRegion.h */; };
 		A8212B5708794A2300677359 /* KWQRenderTreeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 93955A4103D72932008635CE /* KWQRenderTreeDebug.h */; };
@@ -2887,7 +2885,6 @@
 		F587852502DE375901EA4122 /* KWQPtrDictImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrDictImpl.h; sourceTree = "<group>"; };
 		F587852602DE375901EA4122 /* KWQPtrDictImpl.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPtrDictImpl.mm; sourceTree = "<group>"; };
 		F587852902DE375901EA4122 /* KWQRect.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRect.mm; sourceTree = "<group>"; };
-		F587852A02DE375901EA4122 /* KWQRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRefPtr.h; sourceTree = "<group>"; };
 		F587852B02DE375901EA4122 /* KWQRegExp.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRegExp.mm; sourceTree = "<group>"; };
 		F587852C02DE375901EA4122 /* KWQRegion.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRegion.mm; sourceTree = "<group>"; };
 		F587852E02DE375901EA4122 /* KWQScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollView.mm; sourceTree = "<group>"; };
@@ -4189,7 +4186,6 @@
 				93861DE0032C2E52008635CE /* KWQLogging.m */,
 				9394E0A403AA5BBE008635CE /* KWQPageState.h */,
 				9394E0A503AA5BBE008635CE /* KWQPageState.mm */,
-				F587852A02DE375901EA4122 /* KWQRefPtr.h */,
 				93955A4103D72932008635CE /* KWQRenderTreeDebug.h */,
 				93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */,
 				93386B90037045B3008635CE /* KWQResourceLoader.h */,
@@ -5006,7 +5002,6 @@
 				93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */,
 				93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */,
 				93F1998808245E59001E9ABC /* KWQRect.h in Headers */,
-				93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */,
 				93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */,
 				93F1998B08245E59001E9ABC /* KWQRegion.h in Headers */,
 				93F1998C08245E59001E9ABC /* KWQRenderTreeDebug.h in Headers */,
@@ -5349,7 +5344,6 @@
 				A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */,
 				A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */,
 				A8212B5308794A2300677359 /* KWQRect.h in Headers */,
-				A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */,
 				A8212B5508794A2300677359 /* KWQRegExp.h in Headers */,
 				A8212B5608794A2300677359 /* KWQRegion.h in Headers */,
 				A8212B5708794A2300677359 /* KWQRenderTreeDebug.h in Headers */,

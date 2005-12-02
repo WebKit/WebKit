@@ -1150,7 +1150,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
         fillWithRed = false; // Transparent, don't fill with red.
     else if (_drawSelectionOnly)
         fillWithRed = false; // Selections are transparent, don't fill with red.
-    else if (_elementToDraw.notNull())
+    else if (_elementToDraw)
         fillWithRed = false; // Element images are transparent, don't fill with red.
     else
         fillWithRed = true;
