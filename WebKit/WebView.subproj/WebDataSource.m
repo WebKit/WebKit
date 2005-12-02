@@ -397,7 +397,8 @@
             identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
             
         _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
-        [_private->mainResourceLoader setSupportsMultipartContent:WKSupportsMultipartXMixedReplace(_private->request)];
+        [_private->mainResourceLoader setSupportsMultipartContent:_private->supportsMultipartContent];
+        
         [_private->mainResourceLoader setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
@@ -1090,6 +1091,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     LOG(Loading, "creating datasource for %@", [request URL]);
     _private->request = [_private->originalRequest mutableCopy];
+    _private->supportsMultipartContent = WKSupportsMultipartXMixedReplace(_private->request);
 
     ++WebDataSourceCount;
     

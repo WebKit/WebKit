@@ -130,6 +130,8 @@
     
     NSMutableDictionary *subresources;
     NSMutableDictionary *pendingSubframeArchives;
+    
+    BOOL supportsMultipartContent;
 }
 
 @end

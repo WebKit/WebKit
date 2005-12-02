@@ -1,3 +1,24 @@
+2005-12-02  Justin Garcia <justin.garcia@apple.com>
+
+        <rdar://problem/4345030>
+        Denver REGRESSION (10.4.2-10.4.3): Two identical warnings on "Back" from Amazon's package tracker
+        
+        Before checking the navigation policy for a request, the request is compared
+        against the last checked request.  If the two are the same, no check is done.
+        In the bug, the two requests are identical except for the boolean on
+        NSURLRequests that tells Foundation to support multipart loads for that request.
+        One request was the one that was used to start servicing "Back" operation, and
+        the second was being used to start loading the page (it needed to be reloaded 
+        because it was the result of a form submission). Set the boolean on all 
+        NSURLRequests, not just one's that are about to be used to start a load.   
+
+        Reviewed by harrison
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource initWithRequest:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+
 2005-12-01  Darin Adler <darin@apple.com>
 
         Reviewed by Vicki.
