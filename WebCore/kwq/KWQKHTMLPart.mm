@@ -2651,7 +2651,11 @@ bool KWQKHTMLPart::passWheelEventToChildWidget(DOM::NodeImpl *node)
         if (!widget)
             return false;
             
-        NSView *view = widget->getView();
+        NSView *nodeView = widget->getView();
+        ASSERT(nodeView);
+        ASSERT([nodeView superview]);
+        NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:nil]];
+    
         ASSERT(view);
         _sendingEventToSubview = true;
         [view scrollWheel:_currentEvent];
