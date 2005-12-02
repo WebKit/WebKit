@@ -3350,7 +3350,7 @@ void RenderBlock::updateFirstLetter()
         RefPtr<DOMStringImpl> oldText = textObj->originalString();
         KHTMLAssert(oldText);
         
-        if (oldText.notNull() && oldText->l > 0) {
+        if (oldText && oldText->l > 0) {
             unsigned int length = 0;
             
             // account for leading spaces and punctuation

@@ -27,7 +27,7 @@
 #define QVARIANT_H_
 
 #include "KWQDef.h"
-#include "KWQRefPtr.h"
+#include "kxmlcore/RefPtr.h"
 
 class QString;
 
@@ -65,7 +65,7 @@ public:
 private:
     class QVariantPrivate;
     
-    KWQRefPtr<QVariantPrivate> d;
+    RefPtr<QVariantPrivate> d;
 
 };
 

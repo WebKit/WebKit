@@ -28,7 +28,7 @@
 
 #include "KWQString.h"
 
-#include "KWQRefPtr.h"
+#include "kxmlcore/RefPtr.h"
 
 class QRegExp {
 public:
@@ -53,7 +53,7 @@ public:
     
 private:
     class KWQRegExpPrivate;    
-    KWQRefPtr<KWQRegExpPrivate> d;
+    RefPtr<KWQRegExpPrivate> d;
 };
 
 #endif

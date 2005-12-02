@@ -645,7 +645,7 @@ bool KHTMLPart::scheduleScript(DOM::NodeImpl *n, const QString& script)
     //kdDebug(6050) << "KHTMLPart::scheduleScript "<< script << endl;
 
     d->scheduledScript = script;
-    d->scheduledScriptNode.reset(n);
+    d->scheduledScriptNode = n;
 
     return true;
 }
@@ -659,7 +659,7 @@ QVariant KHTMLPart::executeScheduledScript()
 
   QVariant ret = executeScript( d->scheduledScriptNode.get(), d->scheduledScript );
   d->scheduledScript = QString();
-  d->scheduledScriptNode.reset();
+  d->scheduledScriptNode = 0;
 
   return ret;
 }
@@ -758,7 +758,7 @@ void KHTMLPart::clear()
   d->m_bClearing = true;
 
 
-  d->m_mousePressNode.reset();
+  d->m_mousePressNode = 0;
 
 
   if ( d->m_doc )
@@ -2655,7 +2655,7 @@ void KHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
     QMouseEvent *mouse = event->qmouseEvent();
     NodeImpl *innerNode = event->innerNode();
 
-    d->m_mousePressNode.reset(innerNode);
+    d->m_mousePressNode = innerNode;
     d->m_dragStartPos = mouse->pos();
 
     if (!event->url().isNull()) {

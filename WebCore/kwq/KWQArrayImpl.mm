@@ -36,8 +36,7 @@ using std::nothrow;
 KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
-    data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL), 
-    refCount(0)
+    data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL)
 {
 }
 
@@ -100,9 +99,8 @@ void KWQArrayImpl::duplicate(const void *data, size_t newSize)
 	newSize = 0;
     }
 
-    if (d->refCount > 1) {
-        d = KWQRefPtr<KWQArrayPrivate>(new KWQArrayPrivate(d->itemSize, newSize));
-    }
+    if (!d->hasOneRef())
+        d = new KWQArrayPrivate(d->itemSize, newSize);
 
     if (d->numItems != newSize) {
 	resize(newSize);
@@ -113,9 +111,8 @@ void KWQArrayImpl::duplicate(const void *data, size_t newSize)
 
 void KWQArrayImpl::detach()
 {
-    if (d->refCount > 1) {
+    if (!d->hasOneRef())
         duplicate(d->data, d->numItems);
-    }
 }
 
 bool KWQArrayImpl::fill(const void *item, int numItems)

@@ -313,7 +313,7 @@ void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const QPoint 
     if (m_policy == ImageWritable || m_policy == Writable) {
         m_dragImage = pm;
         m_dragLoc = loc;
-        m_dragImageElement.reset(node);
+        m_dragImageElement = node;
         
         if (m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
             NSPoint cocoaLoc;
@@ -331,7 +331,7 @@ void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const QPoint 
 NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
 {
     NSImage *result = nil;
-    if (!m_dragImageElement.isNull()) {
+    if (m_dragImageElement) {
         if (m_part) {
             NSRect imageRect;
             NSRect elementRect;

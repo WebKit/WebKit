@@ -25,10 +25,11 @@
 
 #include "config.h"
 #import "KWQValueListImpl.h"
+#import "misc/shared.h"
 
 #import <stdlib.h>
 
-class KWQValueListImpl::KWQValueListPrivate
+class KWQValueListImpl::KWQValueListPrivate : public khtml::Shared<KWQValueListImpl::KWQValueListPrivate>
 {
 public:
     KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *));
@@ -45,8 +46,6 @@ public:
     void (*deleteNode)(KWQValueListNodeImpl *);
     KWQValueListNodeImpl *(*copyNode)(KWQValueListNodeImpl *);
     uint count;
-
-    uint refCount;
 };
 
 inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), 
@@ -55,16 +54,15 @@ inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteF
     tail(NULL),
     deleteNode(deleteFunc),
     copyNode(copyFunc),
-    count(0),
-    refCount(0)
+    count(0)
 {
 }
 
 inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
+    khtml::Shared<KWQValueListImpl::KWQValueListPrivate>(),
     deleteNode(other.deleteNode),
     copyNode(other.copyNode),
-    count(other.count),
-    refCount(0)
+    count(other.count)
 {
     other.copyList(other.head, head, tail);
 }
@@ -379,7 +377,7 @@ KWQValueListNodeImpl *KWQValueListImpl::nodeAt(uint index) const
 KWQValueListImpl& KWQValueListImpl::operator=(const KWQValueListImpl &other)
 {
     KWQValueListImpl tmp(other);
-    KWQRefPtr<KWQValueListPrivate> tmpD = tmp.d;
+    RefPtr<KWQValueListPrivate> tmpD = tmp.d;
 
     tmp.d = d;
     d = tmpD;
@@ -389,9 +387,8 @@ KWQValueListImpl& KWQValueListImpl::operator=(const KWQValueListImpl &other)
 
 void KWQValueListImpl::copyOnWrite()
 {
-    if (d->refCount > 1) {
-	d = KWQRefPtr<KWQValueListPrivate>(new KWQValueListPrivate(*d));
-    }
+    if (!d->hasOneRef())
+	d = new KWQValueListPrivate(*d);
 }
 
 bool KWQValueListImpl::isEqual(const KWQValueListImpl &other, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const

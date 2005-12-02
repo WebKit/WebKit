@@ -26,10 +26,11 @@
 #ifndef KWQ_ARRAY_IMPL_H
 #define KWQ_ARRAY_IMPL_H
 
-#include "KWQRefPtr.h"
 #include "KWQDef.h"
 #include <stddef.h>
+#include "kxmlcore/RefPtr.h"
 #include "kxmlcore/FastMalloc.h"
+#include "misc/shared.h"
 
 class KWQArrayImpl
 {
@@ -52,7 +53,7 @@ class KWQArrayImpl
     bool operator==(const KWQArrayImpl &) const;
 
  private:
-    class KWQArrayPrivate
+    class KWQArrayPrivate : public khtml::Shared<KWQArrayPrivate>
     {
     public:	
 	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
@@ -61,10 +62,9 @@ class KWQArrayImpl
 	size_t numItems;
 	size_t itemSize;
 	char *data;
-	int refCount;
     };
 
-    KWQRefPtr<KWQArrayPrivate> d;
+    RefPtr<KWQArrayPrivate> d;
 };
 
 inline uint KWQArrayImpl::size() const

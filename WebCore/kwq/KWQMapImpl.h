@@ -28,8 +28,8 @@
 
 #include <new>
 
-#include "KWQRefPtr.h"
 #include "kxmlcore/FastMalloc.h"
+#include "kxmlcore/RefPtr.h"
 
 class KWQMapImpl;
 
@@ -113,7 +113,7 @@ class KWQMapImpl {
 
     class KWQMapPrivate;
 
-    KWQRefPtr<KWQMapPrivate> d;
+    RefPtr<KWQMapPrivate> d;
 
 #ifdef QMAP_TESTING
     friend bool CheckRedBlackRules(KWQMapImpl *impl);

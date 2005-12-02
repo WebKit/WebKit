@@ -1162,7 +1162,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 
     if (renderer()) {
         // _elementToDraw is used to draw only one element
-        RenderObject *eltRenderer = _elementToDraw.notNull() ? _elementToDraw->renderer() : 0;
+        RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
         renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
 
 #if APPLE_CHANGES
@@ -1604,7 +1604,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_doc = doc;
     d->m_doc->ref();
     
-    d->m_mousePressNode.reset(mousePressNode);
+    d->m_mousePressNode = mousePressNode;
     
     Decoder *decoder = doc->decoder();
     if (decoder) {
@@ -2032,7 +2032,7 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
-    d->m_mousePressNode.reset(event->innerNode());
+    d->m_mousePressNode = event->innerNode();
     
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -2296,7 +2296,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
-	if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
+	if (_mouseDownMayStartDrag && !_dragSrc) {
             BOOL tempFlag1, tempFlag2;
             [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
             _dragSrcMayBeDHTML = tempFlag1;
@@ -2306,7 +2306,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             }
         }
         
-        if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
+        if (_mouseDownMayStartDrag && !_dragSrc) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->hitTest(nodeInfo, _mouseDownX, _mouseDownY);
@@ -2404,7 +2404,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                 if (!_mouseDownMayStartDrag) {
                     // something failed to start the drag, cleanup
                     freeClipboard();
-                    _dragSrc.reset();
+                    _dragSrc = 0;
                 }
             }
 
@@ -2436,7 +2436,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
 void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 {
-    if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
+    if (_dragSrc && _dragSrcMayBeDHTML) {
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragEvent, loc);
     }
@@ -2444,13 +2444,13 @@ void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 
 void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
 {
-    if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
+    if (_dragSrc && _dragSrcMayBeDHTML) {
         _dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragendEvent, loc);
     }
     freeClipboard();
-    _dragSrc.reset();
+    _dragSrc = 0;
 }
 
 // Returns whether caller should continue with "the default processing", which is the same as 
@@ -2675,7 +2675,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     prepareForUserAction();
 
     _mouseDownView = nil;
-    _dragSrc.reset();
+    _dragSrc = 0;
     
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
@@ -3491,11 +3491,11 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect,
     QRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    _elementToDraw.reset(node);              // invoke special sub-tree drawing mode
+    _elementToDraw = node;              // invoke special sub-tree drawing mode
     NSImage *result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
     d->m_doc->updateLayout();
-    _elementToDraw.reset();
+    _elementToDraw = 0;
 
     if (elementRect) {
         *elementRect = topLevelRect;
@@ -4069,7 +4069,7 @@ void KWQKHTMLPart::markMisspellings(const SelectionController &selection)
         return;
 
     RefPtr<RangeImpl> searchRange(selection.toRange());
-    if (searchRange.isNull() || searchRange->isDetached())
+    if (!searchRange || searchRange->isDetached())
         return;
     
     // If we're not in an editable node, bail.
@@ -4249,9 +4249,9 @@ void KWQKHTMLPart::setMarkedTextRange(const DOM::RangeImpl *range, NSArray *attr
     }
 
     if ( range && range->collapsed(exception) ) {
-        m_markedTextRange.reset();
+        m_markedTextRange = 0;
     } else {
-        m_markedTextRange.reset(const_cast<RangeImpl *>(range));
+        m_markedTextRange = const_cast<RangeImpl *>(range);
     }
 
     if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {

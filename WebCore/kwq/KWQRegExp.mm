@@ -29,11 +29,12 @@
 
 #import <sys/types.h>
 #import <JavaScriptCore/pcre.h>
+#import "misc/shared.h"
 
 #define MAX_SUBSTRINGS  10
 #define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)
 
-class QRegExp::KWQRegExpPrivate
+class QRegExp::KWQRegExpPrivate : public khtml::Shared<QRegExp::KWQRegExpPrivate>
 {
 public:
     KWQRegExpPrivate();
@@ -44,8 +45,6 @@ public:
 
     QString pattern;
     pcre *regex;
-    
-    uint refCount;
 
     QString lastMatchString;
     int lastMatchOffsets[MAX_OFFSETS];
@@ -54,12 +53,12 @@ public:
     int lastMatchLength;
 };
 
-QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(""), refCount(0)
+QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern("")
 {
     compile(true, false);
 }
 
-QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p, bool caseSensitive, bool glob) : pattern(p), refCount(0), lastMatchPos(-1), lastMatchLength(-1)
+QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p, bool caseSensitive, bool glob) : pattern(p), lastMatchPos(-1), lastMatchLength(-1)
 {
     compile(caseSensitive, glob);
 }
@@ -140,7 +139,7 @@ QRegExp::~QRegExp()
 QRegExp &QRegExp::operator=(const QRegExp &re)
 {
     QRegExp tmp(re);
-    KWQRefPtr<QRegExp::KWQRegExpPrivate> tmpD = tmp.d;
+    RefPtr<QRegExp::KWQRegExpPrivate> tmpD = tmp.d;
     
     tmp.d = d;
     d = tmpD;

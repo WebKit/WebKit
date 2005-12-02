@@ -32,6 +32,8 @@
 #import "KWQLogging.h"
 #import "KWQFoundationExtras.h"
 
+#import "misc/shared.h"
+
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
@@ -39,10 +41,10 @@
 // because they are all calls to WebCoreTextRenderer, which has a
 // contract of not raising.
 
-struct QFontMetricsPrivate
+struct QFontMetricsPrivate : public khtml::Shared<QFontMetricsPrivate>
 {
     QFontMetricsPrivate(const QFont &font)
-        : refCount(0), _font(font), _renderer(nil)
+        : _font(font), _renderer(nil)
     {
     }
     ~QFontMetricsPrivate()
@@ -66,9 +68,7 @@ struct QFontMetricsPrivate
         KWQRelease(_renderer);
         _renderer = nil;
     }
-    
-    int refCount;
-    
+
 private:
     QFont _font;
     id <WebCoreTextRenderer> _renderer;
@@ -103,8 +103,8 @@ QFontMetrics &QFontMetrics::operator=(const QFontMetrics &other)
 
 void QFontMetrics::setFont(const QFont &font)
 {
-    if (data.isNull()) {
-        data = KWQRefPtr<QFontMetricsPrivate>(new QFontMetricsPrivate(font));
+    if (!data) {
+        data = new QFontMetricsPrivate(font);
     } else {
         data->setFont(font);
     }
@@ -112,7 +112,7 @@ void QFontMetrics::setFont(const QFont &font)
 
 int QFontMetrics::ascent() const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called ascent on an empty QFontMetrics");
         return 0;
     }
@@ -122,7 +122,7 @@ int QFontMetrics::ascent() const
 
 int QFontMetrics::descent() const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called descent on an empty QFontMetrics");
         return 0;
     }
@@ -140,7 +140,7 @@ int QFontMetrics::height() const
 
 int QFontMetrics::lineSpacing() const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called lineSpacing on an empty QFontMetrics");
         return 0;
     }
@@ -149,7 +149,7 @@ int QFontMetrics::lineSpacing() const
 
 float QFontMetrics::xHeight() const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called xHeight on an empty QFontMetrics");
         return 0;
     }
@@ -158,7 +158,7 @@ float QFontMetrics::xHeight() const
 
 int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len) const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called width on an empty QFontMetrics");
         return 0;
     }
@@ -181,7 +181,7 @@ int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len)
 
 int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called width on an empty QFontMetrics");
         return 0;
     }
@@ -202,7 +202,7 @@ int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) co
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called floatWidth on an empty QFontMetrics");
         return 0;
     }
@@ -226,7 +226,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
 
 int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
 {
-    if (data.isNull()) {
+    if (!data) {
         ERROR("called checkSelectionPoint on an empty QFontMetrics");
         return 0;
     }

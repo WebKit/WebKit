@@ -811,7 +811,7 @@ void RenderText::setStyle(RenderStyle *_style)
 
         if (needToTransformText) {
             RefPtr<DOMStringImpl> textToTransform = originalString();
-            if (textToTransform.notNull())
+            if (textToTransform)
                 setText(textToTransform.get(), true);
         }
         // setText also calls cacheWidths(), so there is no need to call it again in that case.

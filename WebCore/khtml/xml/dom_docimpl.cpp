@@ -1919,7 +1919,7 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y,
         assert(m_render->isCanvas());
         RenderObject::NodeInfo renderInfo(readonly, active, ev->type == MouseMove);
         bool isInside = m_render->layer()->hitTest(renderInfo, _x, _y);
-        ev->innerNode.reset(renderInfo.innerNode());
+        ev->innerNode = renderInfo.innerNode();
 
         if (renderInfo.URLElement()) {
             assert(renderInfo.URLElement()->isElementNode());

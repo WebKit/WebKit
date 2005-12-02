@@ -1,3 +1,11 @@
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+	- removed deprecated reset, isNull and nonNull methods
+
+        * kxmlcore/RefPtr.h:
+
 2005-12-01  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

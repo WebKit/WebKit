@@ -1,3 +1,99 @@
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+	- removed deprecated reset, isNull and nonNull methods
+	- replaced use of KWQRefPtr with RefPtr
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::toBoolean):
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNode::toString):
+        (KJS::DOMNodeList::toPrimitive):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::OptionConstructorImp::construct):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+        (KJS::XMLHttpRequest::putValueProperty):
+        (KJS::XMLHttpRequest::mark):
+        (KJS::XMLHttpRequest::changeState):
+        (KJS::XMLHttpRequest::open):
+        * khtml/editing/edit_command.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        (DOM::HTMLTableSectionElementImpl::deleteRow):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableRowElementImpl::deleteCell):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleScript):
+        (KHTMLPart::executeScheduledScript):
+        (KHTMLPart::clear):
+        (KHTMLPart::khtmlMousePressEvent):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::cancelDragAndDrop):
+        (KHTMLView::performDragAndDrop):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::prepareMouseEvent):
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::setNamedItem):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::MouseEvent::MouseEvent):
+        * kwq/KWQArrayImpl.h:
+        * kwq/KWQArrayImpl.mm:
+        (KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate):
+        (KWQArrayImpl::duplicate):
+        (KWQArrayImpl::detach):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::setDragImage):
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetricsPrivate::QFontMetricsPrivate):
+        (QFontMetrics::setFont):
+        (QFontMetrics::ascent):
+        (QFontMetrics::descent):
+        (QFontMetrics::lineSpacing):
+        (QFontMetrics::xHeight):
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::khtmlMousePressEvent):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::dragSourceMovedTo):
+        (KWQKHTMLPart::dragSourceEndedAt):
+        (KWQKHTMLPart::mouseDown):
+        (KWQKHTMLPart::snapshotDragImage):
+        (KWQKHTMLPart::markMisspellings):
+        (KWQKHTMLPart::setMarkedTextRange):
+        * kwq/KWQMapImpl.h:
+        * kwq/KWQMapImpl.mm:
+        (KWQMapImpl::KWQMapPrivate::KWQMapPrivate):
+        (KWQMapImpl::copyOnWrite):
+        (KWQMapImpl::swap):
+        * kwq/KWQRefPtr.h: Removed.
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRegExp.mm:
+        (QRegExp::KWQRegExpPrivate::KWQRegExpPrivate):
+        (QRegExp::operator=):
+        * kwq/KWQValueListImpl.h:
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate):
+        (KWQValueListImpl::operator=):
+        (KWQValueListImpl::copyOnWrite):
+        * kwq/KWQVariant.h:
+        * kwq/KWQVariant.mm:
+        (QVariant::QVariantPrivate::):
+        (QVariant::QVariantPrivate::QVariantPrivate):
+
 2005-12-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Beth.
@@ -32,6 +128,101 @@
 
         * khtml/xml/dom_nodeimpl.cpp:
         (DOM::ContainerNodeImpl::getRect):
+
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        WARNING: NO TEST CASES ADDED
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::toBoolean):
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNode::toString):
+        (KJS::DOMNodeList::toPrimitive):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::OptionConstructorImp::construct):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+        (KJS::XMLHttpRequest::putValueProperty):
+        (KJS::XMLHttpRequest::mark):
+        (KJS::XMLHttpRequest::changeState):
+        (KJS::XMLHttpRequest::open):
+        * khtml/editing/edit_command.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        (DOM::HTMLTableSectionElementImpl::deleteRow):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableRowElementImpl::deleteCell):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleScript):
+        (KHTMLPart::executeScheduledScript):
+        (KHTMLPart::clear):
+        (KHTMLPart::khtmlMousePressEvent):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::cancelDragAndDrop):
+        (KHTMLView::performDragAndDrop):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::prepareMouseEvent):
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::setNamedItem):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::MouseEvent::MouseEvent):
+        * kwq/KWQArrayImpl.h:
+        * kwq/KWQArrayImpl.mm:
+        (KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate):
+        (KWQArrayImpl::duplicate):
+        (KWQArrayImpl::detach):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::setDragImage):
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetricsPrivate::QFontMetricsPrivate):
+        (QFontMetrics::setFont):
+        (QFontMetrics::ascent):
+        (QFontMetrics::descent):
+        (QFontMetrics::lineSpacing):
+        (QFontMetrics::xHeight):
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::khtmlMousePressEvent):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::dragSourceMovedTo):
+        (KWQKHTMLPart::dragSourceEndedAt):
+        (KWQKHTMLPart::mouseDown):
+        (KWQKHTMLPart::snapshotDragImage):
+        (KWQKHTMLPart::markMisspellings):
+        (KWQKHTMLPart::setMarkedTextRange):
+        * kwq/KWQMapImpl.h:
+        * kwq/KWQMapImpl.mm:
+        (KWQMapImpl::KWQMapPrivate::KWQMapPrivate):
+        (KWQMapImpl::copyOnWrite):
+        (KWQMapImpl::swap):
+        * kwq/KWQRefPtr.h: Removed.
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRegExp.mm:
+        (QRegExp::KWQRegExpPrivate::KWQRegExpPrivate):
+        (QRegExp::operator=):
+        * kwq/KWQValueListImpl.h:
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate):
+        (KWQValueListImpl::operator=):
+        (KWQValueListImpl::copyOnWrite):
+        * kwq/KWQVariant.h:
+        * kwq/KWQVariant.mm:
+        (QVariant::QVariantPrivate::):
+        (QVariant::QVariantPrivate::QVariantPrivate):
 
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 

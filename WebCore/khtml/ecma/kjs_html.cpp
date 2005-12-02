@@ -3566,7 +3566,7 @@ ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
   int exception = 0;
   RefPtr<ElementImpl> el(m_doc->createElement("option", exception));
   HTMLOptionElementImpl *opt = 0;
-  if (el.notNull()) {
+  if (el) {
     opt = static_cast<HTMLOptionElementImpl *>(el.get());
     int sz = args.size();
     TextImpl *t = m_doc->createTextNode("");

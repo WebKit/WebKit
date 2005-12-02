@@ -36,14 +36,6 @@ namespace KXMLCore {
         
         template <class U> RefPtr(const RefPtr<U> &o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
         
-        // FIXME: Deprecate in favor of operators below, then remove?
-        bool isNull() const { return m_ptr == NULL; }
-        bool notNull() const { return m_ptr != NULL; }
-        
-        // FIXME: Deprecate in favor of operator=, then remove?
-        void reset() { if (T *ptr = m_ptr) ptr->deref(); m_ptr = NULL; }
-        void reset(T *o) { if (o) o->ref(); if (T *ptr = m_ptr) ptr->deref(); m_ptr = o; }
-        
         T *get() const { return m_ptr; }
         
         T &operator*() const { return *m_ptr; }

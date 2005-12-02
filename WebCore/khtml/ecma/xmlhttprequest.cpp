@@ -152,7 +152,7 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
       }
       
       if (typeIsXML = DOMImplementationImpl::isXMLMIMEType(mimeType)) {
-	responseXML.reset(doc->implementation()->createDocument());
+	responseXML = doc->implementation()->createDocument();
 
 	DocumentImpl *docImpl = responseXML.get();
 	
@@ -174,13 +174,13 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
   case StatusText:
     return getStatusText();
   case Onreadystatechange:
-   if (onReadyStateChangeListener.notNull() && onReadyStateChangeListener->listenerObjImp()) {
+   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObjImp()) {
      return onReadyStateChangeListener->listenerObj();
    } else {
      return Null();
    }
   case Onload:
-   if (onLoadListener.notNull() && onLoadListener->listenerObjImp()) {
+   if (onLoadListener && onLoadListener->listenerObjImp()) {
      return onLoadListener->listenerObj();
    } else {
      return Null();
@@ -200,10 +200,10 @@ void XMLHttpRequest::putValueProperty(ExecState *exec, int token, ValueImp *valu
 {
   switch(token) {
   case Onreadystatechange:
-    onReadyStateChangeListener.reset(Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true));
+    onReadyStateChangeListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
     break;
   case Onload:
-    onLoadListener.reset(Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true));
+    onLoadListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
     break;
   default:
     kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
@@ -214,10 +214,10 @@ void XMLHttpRequest::mark()
 {
   DOMObject::mark();
 
-  if (onReadyStateChangeListener.notNull())
+  if (onReadyStateChangeListener)
     onReadyStateChangeListener->mark();
 
-  if (onLoadListener.notNull())
+  if (onLoadListener)
     onLoadListener->mark();
 }
 
@@ -248,7 +248,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   if (state != newState) {
     state = newState;
     
-    if (doc && doc->part() && onReadyStateChangeListener.notNull()) {
+    if (doc && doc->part() && onReadyStateChangeListener) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
@@ -257,7 +257,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       ev->deref();
     }
     
-    if (doc && doc->part() && state == Completed && onLoadListener.notNull()) {
+    if (doc && doc->part() && state == Completed && onLoadListener) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
@@ -297,7 +297,7 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
   responseHeaders = QString();
   response = QString();
   createdDocument = false;
-  responseXML.reset();
+  responseXML = 0;
 
   changeState(Uninitialized);
 

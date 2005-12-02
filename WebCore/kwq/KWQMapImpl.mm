@@ -25,6 +25,7 @@
 
 #include "config.h"
 #import "KWQMapImpl.h"
+#import "misc/shared.h"
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
     prev(NULL),
@@ -116,7 +117,7 @@ void KWQMapIteratorImpl::incrementInternal()
 
 // KWQMapImplPrivate
 
-class KWQMapImpl::KWQMapPrivate
+class KWQMapImpl::KWQMapPrivate : public khtml::Shared<KWQMapImpl::KWQMapPrivate>
 {
 public:
     KWQMapPrivate(KWQMapNodeImpl *node,
@@ -127,9 +128,7 @@ public:
 
     KWQMapNodeImpl *guard;
     uint numNodes;
-    int refCount;
     void (*deleteNode)(KWQMapNodeImpl *);
-    friend class KWQRefPtr<KWQMapImpl::KWQMapPrivate>;
 };
 
 KWQMapImpl::KWQMapPrivate::KWQMapPrivate(KWQMapNodeImpl *node,
@@ -137,7 +136,6 @@ KWQMapImpl::KWQMapPrivate::KWQMapPrivate(KWQMapNodeImpl *node,
 					 void (*deleteFunc)(KWQMapNodeImpl *)) :
     guard(node),
     numNodes(count),
-    refCount(0),
     deleteNode(deleteFunc)
 {
 }
@@ -165,9 +163,8 @@ KWQMapImpl::~KWQMapImpl()
 
 void KWQMapImpl::copyOnWrite()
 {
-    if (d->refCount > 1) {
-	d = KWQRefPtr<KWQMapPrivate>(new KWQMapPrivate(copyTree(d->guard, NULL, NULL), d->numNodes, d->deleteNode));
-    }
+    if (!d->hasOneRef())
+	d = new KWQMapPrivate(copyTree(d->guard, NULL, NULL), d->numNodes, d->deleteNode);
 }
 
 KWQMapNodeImpl *KWQMapImpl::copyTree(const KWQMapNodeImpl *node, 
@@ -590,7 +587,7 @@ void KWQMapImpl::removeEqualInternal(KWQMapNodeImpl *nodeToDelete, bool samePoin
 
 void KWQMapImpl::swap(KWQMapImpl &map)
 {
-    KWQRefPtr<KWQMapPrivate> tmp = d;
+    RefPtr<KWQMapPrivate> tmp = d;
     d = map.d;
     map.d = d;
 }

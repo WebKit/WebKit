@@ -42,11 +42,11 @@ using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
 
 #define IF_IMPL_NULL_RETURN_ARG(arg) do { \
-        if (isNull()) { return arg; } \
+        if (*this == 0) { return arg; } \
     } while (0)
         
 #define IF_IMPL_NULL_RETURN do { \
-        if (isNull()) { return; } \
+        if (*this == 0) { return; } \
     } while (0)
 
 namespace khtml {

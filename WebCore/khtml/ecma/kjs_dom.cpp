@@ -190,7 +190,7 @@ void DOMNode::mark()
 
 bool DOMNode::toBoolean(ExecState *) const
 {
-    return m_impl.notNull();
+    return m_impl;
 }
 
 /* Source for DOMNodeTable. Use "make hashtables" to regenerate.
@@ -607,7 +607,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
 
 ValueImp *DOMNode::toPrimitive(ExecState *exec, Type /*preferred*/) const
 {
-  if (m_impl.isNull())
+  if (!m_impl)
     return Null();
 
   return String(toString(exec));
@@ -615,7 +615,7 @@ ValueImp *DOMNode::toPrimitive(ExecState *exec, Type /*preferred*/) const
 
 UString DOMNode::toString(ExecState *) const
 {
-  if (m_impl.isNull())
+  if (!m_impl)
     return "null";
   return "[object " + (m_impl->isElementNode() ? m_impl->nodeName() : className()) + "]";
 }
@@ -731,7 +731,7 @@ DOMNodeList::~DOMNodeList()
 
 ValueImp *DOMNodeList::toPrimitive(ExecState *exec, Type /*preferred*/) const
 {
-  if (m_impl.isNull())
+  if (!m_impl)
     return Null();
 
   return String(toString(exec));

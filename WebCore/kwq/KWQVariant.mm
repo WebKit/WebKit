@@ -25,10 +25,11 @@
 
 #include "config.h"
 #import "KWQVariant.h"
-
 #import "KWQString.h"
+#import "misc/shared.h"
 
-class QVariant::QVariantPrivate {
+class QVariant::QVariantPrivate : public khtml::Shared<QVariant::QVariantPrivate>
+{
 public:
     QVariantPrivate(QVariant::Type type = QVariant::Invalid);
     ~QVariantPrivate();
@@ -42,12 +43,10 @@ public:
         void *p;
         int i;
     } value;
-
-    int refCount;
 };
 
 QVariant::QVariantPrivate::QVariantPrivate(QVariant::Type type)
-    : t(type), refCount(0)
+    : t(type)
 {
 }
 
