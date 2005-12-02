@@ -82,7 +82,7 @@ SVGMatrixImpl *SVGStyledTransformableElementImpl::getScreenCTM() const
 void SVGStyledTransformableElementImpl::updateLocalTransform(SVGTransformListImpl *localTransforms)
 {
     // Update cached local matrix
-    SharedPtr<SVGTransformImpl> localTransform = localTransforms->concatenate();
+    RefPtr<SVGTransformImpl> localTransform = localTransforms->concatenate();
     if(localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {

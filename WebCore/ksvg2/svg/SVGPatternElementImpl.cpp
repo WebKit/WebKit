@@ -261,8 +261,8 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
         {
             SVGSVGElementImpl *svgElement = static_cast<SVGSVGElementImpl *>(viewportElement());
 
-            SharedPtr<SVGMatrixImpl> svgCTM = svgElement->getCTM();
-            SharedPtr<SVGMatrixImpl> ctm = getCTM();
+            RefPtr<SVGMatrixImpl> svgCTM = svgElement->getCTM();
+            RefPtr<SVGMatrixImpl> ctm = getCTM();
 
             KCanvasMatrix newMatrix(svgCTM->qmatrix());
             newMatrix.multiply(savedMatrix);
@@ -380,7 +380,7 @@ SVGMatrixImpl *SVGPatternElementImpl::getCTM() const
     SVGMatrixImpl *mat = SVGSVGElementImpl::createSVGMatrix();
     if(mat)
     {
-        SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
+        RefPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
                                                         height()->baseVal()->value());
 
         mat->multiply(viewBox.get());

@@ -105,7 +105,7 @@ SVGMatrixImpl *SVGLocatableImpl::getCTM(const SVGElementImpl *element)
         SVGElementImpl *parentElement = svg_dynamic_cast(parent);
         if(parentElement && parentElement->isStyledLocatable())
         {
-            SharedPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getCTM();
+            RefPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getCTM();
             ctm->multiply(parentCTM.get());
         }
     }
@@ -126,7 +126,7 @@ SVGMatrixImpl *SVGLocatableImpl::getScreenCTM(const SVGElementImpl *element)
         SVGElementImpl *parentElement = static_cast<SVGElementImpl *>(parent);
         if(parentElement->isStyledLocatable())
         {
-            SharedPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getScreenCTM();
+            RefPtr<SVGMatrixImpl> parentCTM = static_cast<SVGStyledLocatableElementImpl *>(parentElement)->getScreenCTM();
             ctm->multiply(parentCTM.get());
         }
     }

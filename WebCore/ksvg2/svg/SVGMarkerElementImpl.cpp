@@ -169,7 +169,7 @@ KCanvasMarker *SVGMarkerElementImpl::canvasResource()
     m_marker->setUseStrokeWidth(markerUnits()->baseVal() == SVG_MARKERUNITS_STROKEWIDTH);
     double w = markerWidth()->baseVal()->value();
     double h = markerHeight()->baseVal()->value();
-    SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(w, h);
+    RefPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(w, h);
     m_marker->setScale(viewBox->qmatrix().m11(), viewBox->qmatrix().m22());
     
     return m_marker;

@@ -95,7 +95,7 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
         SVGDocumentImpl *svgDocument = static_cast<SVGDocumentImpl *>(document);
         if(svgDocument && document->hasListenerType(KDOM::ERROR_EVENT))
         {
-            SharedPtr<KDOM::EventImpl> event = svgDocument->createEvent("SVGEvents");
+            RefPtr<KDOM::EventImpl> event = svgDocument->createEvent("SVGEvents");
             event->initEvent(KDOM::EventNames::errorEvent, false, false);
             svgDocument->dispatchRecursiveEvent(event.get(), svgDocument->lastChild());
         }

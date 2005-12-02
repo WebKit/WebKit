@@ -89,7 +89,7 @@ void SVGAnimateTransformElementImpl::handleTimerEvent(double timePercentage)
         if(targetElement()->isStyledTransformable())
         {
             SVGStyledTransformableElementImpl *transform = static_cast<SVGStyledTransformableElementImpl *>(targetElement());
-            SharedPtr<SVGTransformListImpl> transformList = transform->transform()->baseVal();
+            RefPtr<SVGTransformListImpl> transformList = transform->transform()->baseVal();
             if (transformList)
             {
                 for(unsigned long i = 0; i < transformList->numberOfItems(); i++)
@@ -350,7 +350,7 @@ void SVGAnimateTransformElementImpl::handleTimerEvent(double timePercentage)
     }
 }
 
-SharedPtr<SVGTransformImpl> SVGAnimateTransformElementImpl::parseTransformValue(const QString &data) const
+RefPtr<SVGTransformImpl> SVGAnimateTransformElementImpl::parseTransformValue(const QString &data) const
 {
     QString parse = data.stripWhiteSpace();
     if(parse.isEmpty())
@@ -358,7 +358,7 @@ SharedPtr<SVGTransformImpl> SVGAnimateTransformElementImpl::parseTransformValue(
     
     int commaPos = parse.find(','); // In case two values are passed...
 
-    SharedPtr<SVGTransformImpl> parsedTransform = new SVGTransformImpl();
+    RefPtr<SVGTransformImpl> parsedTransform = new SVGTransformImpl();
     
     switch(m_type)
     {
@@ -485,7 +485,7 @@ SVGMatrixImpl *SVGAnimateTransformElementImpl::initialMatrix() const
     if(!transformList)
         return 0;
     
-    SharedPtr<SVGTransformImpl> result = transformList->concatenate();
+    RefPtr<SVGTransformImpl> result = transformList->concatenate();
     if(!result)
         return 0;
 

@@ -176,7 +176,7 @@ void SVGTimer::notifyAll()
         Q3PtrList<SVGAnimationElementImpl>::Iterator end = tit.data().end();
 
         QMap<QString, QColor> targetColor; // special <animateColor> case
-        SharedPtr<SVGTransformListImpl> targetTransforms; // special <animateTransform> case    
+        RefPtr<SVGTransformListImpl> targetTransforms; // special <animateTransform> case    
 
         for(; it != end; ++it)
         {
@@ -207,12 +207,12 @@ void SVGTimer::notifyAll()
                 if(!animTransform)
                     continue;
 
-                SharedPtr<SVGMatrixImpl> transformMatrix = animTransform->transformMatrix();
+                RefPtr<SVGMatrixImpl> transformMatrix = animTransform->transformMatrix();
                 if(!transformMatrix)
                     continue;
 
-                SharedPtr<SVGMatrixImpl> initialMatrix = animTransform->initialMatrix();
-                SharedPtr<SVGTransformImpl> data = new SVGTransformImpl();
+                RefPtr<SVGMatrixImpl> initialMatrix = animTransform->initialMatrix();
+                RefPtr<SVGTransformImpl> data = new SVGTransformImpl();
 
                 if(!targetTransforms) // lazy creation, only if needed.
                 {
@@ -220,7 +220,7 @@ void SVGTimer::notifyAll()
 
                     if(animation->isAdditive() && initialMatrix)
                     {
-                        SharedPtr<SVGMatrixImpl> matrix = new SVGMatrixImpl(initialMatrix->qmatrix());
+                        RefPtr<SVGMatrixImpl> matrix = new SVGMatrixImpl(initialMatrix->qmatrix());
                         
                         data->setMatrix(matrix.get());
                         targetTransforms->appendItem(data.get());

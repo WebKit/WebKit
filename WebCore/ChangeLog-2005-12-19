@@ -1,3 +1,47 @@
+2005-12-01  Maciej Stachowiak  <mjs@apple.com>
+
+        SVG build fix, not reviewed.
+
+	- land the ksvg2 part of my SharedPtr --> RefPtr change, which I
+	forgot about before.
+
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::notifyAll):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::handleTimerEvent):
+        (SVGAnimateTransformElementImpl::parseTransformValue):
+        (SVGAnimateTransformElementImpl::initialMatrix):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::~SVGDocumentImpl):
+        (SVGDocumentImpl::dispatchZoomEvent):
+        (SVGDocumentImpl::dispatchScrollEvent):
+        (SVGDocumentImpl::dispatchKeyEvent):
+        (SVGDocumentImpl::executeScripts):
+        (SVGDocumentImpl::dispatchUIEvent):
+        (SVGDocumentImpl::dispatchMouseEvent):
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::getCTM):
+        (SVGLocatableImpl::getScreenCTM):
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::canvasResource):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::drawPatternContentIntoTile):
+        (SVGPatternElementImpl::getCTM):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::viewport):
+        (SVGSVGElementImpl::checkIntersection):
+        (SVGSVGElementImpl::checkEnclosure):
+        (SVGSVGElementImpl::getCTM):
+        (SVGSVGElementImpl::getScreenCTM):
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::executeScript):
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        (SVGStyledTransformableElementImpl::updateLocalTransform):
+
 2005-12-02  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.

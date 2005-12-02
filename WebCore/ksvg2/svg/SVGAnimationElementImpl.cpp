@@ -138,7 +138,7 @@ void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *at
     else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr)
     {
         // Create list
-        SharedPtr<SVGStringListImpl> temp = new SVGStringListImpl();
+        RefPtr<SVGStringListImpl> temp = new SVGStringListImpl();
 
         // Feed data into list
         SVGHelper::ParseSeperatedList(temp.get(), value.qstring(), ';');

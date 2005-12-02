@@ -143,7 +143,7 @@ SVGRectImpl *SVGSVGElementImpl::viewport() const
     double _y = y()->baseVal()->value();
     double w = width()->baseVal()->value();
     double h = height()->baseVal()->value();
-    SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(w, h);
+    RefPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(w, h);
     viewBox->qmatrix().map(_x, _y, &_x, &_y);
     viewBox->qmatrix().map(w, h, &w, &h);
     ret->setX(_x);
@@ -339,7 +339,7 @@ KDOM::NodeListImpl *SVGSVGElementImpl::getEnclosureList(SVGRectImpl *rect, SVGEl
 bool SVGSVGElementImpl::checkIntersection(SVGElementImpl *element, SVGRectImpl *rect)
 {
     // TODO : take into account pointer-events?
-    SharedPtr<SVGRectImpl> bbox = getBBox();
+    RefPtr<SVGRectImpl> bbox = getBBox();
     
     QRect r(int(rect->x()), int(rect->y()), int(rect->width()), int(rect->height()));
     QRect r2(int(bbox->x()), int(bbox->y()), int(bbox->width()), int(bbox->height()));
@@ -350,7 +350,7 @@ bool SVGSVGElementImpl::checkIntersection(SVGElementImpl *element, SVGRectImpl *
 bool SVGSVGElementImpl::checkEnclosure(SVGElementImpl *element, SVGRectImpl *rect)
 {
     // TODO : take into account pointer-events?
-    SharedPtr<SVGRectImpl> bbox = getBBox();
+    RefPtr<SVGRectImpl> bbox = getBBox();
     
     QRect r(int(rect->x()), int(rect->y()), int(rect->width()), int(rect->height()));
     QRect r2(int(bbox->x()), int(bbox->y()), int(bbox->width()), int(bbox->height()));
@@ -417,7 +417,7 @@ SVGMatrixImpl *SVGSVGElementImpl::getCTM() const
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            RefPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
             mat->multiply(viewBox.get());
         }
     }
@@ -434,7 +434,7 @@ SVGMatrixImpl *SVGSVGElementImpl::getScreenCTM() const
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            SharedPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            RefPtr<SVGMatrixImpl> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
             mat->multiply(viewBox.get());
         }
     }

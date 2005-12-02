@@ -78,7 +78,7 @@ SVGDocumentImpl::~SVGDocumentImpl()
     //if(KDOM::DocumentImpl::hasListenerType(KDOM::UNLOAD_EVENT))
     {
         int exceptioncode;
-        SharedPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
         event->initEvent(KDOM::EventNames::unloadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
@@ -184,7 +184,7 @@ void SVGDocumentImpl::dispatchZoomEvent(float prevScale, float newScale)
 {
     // dispatch zoom event
     int exceptioncode;
-    SharedPtr<SVGZoomEventImpl> event = static_cast<SVGZoomEventImpl *>(createEvent("SVGZoomEvents", exceptioncode));
+    RefPtr<SVGZoomEventImpl> event = static_cast<SVGZoomEventImpl *>(createEvent("SVGZoomEvents", exceptioncode));
     event->initEvent(KDOM::EventNames::zoomEvent, true, false);
     event->setPreviousScale(prevScale);
     event->setNewScale(newScale);
@@ -195,7 +195,7 @@ void SVGDocumentImpl::dispatchScrollEvent()
 {
     // dispatch zoom event
     int exceptioncode;
-    SharedPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
+    RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
     event->initEvent(KDOM::EventNames::scrollEvent, true, false);
     rootElement()->dispatchEvent(event.get(), exceptioncode);
 }
@@ -204,7 +204,7 @@ bool SVGDocumentImpl::dispatchKeyEvent(KDOM::EventTargetImpl *target, QKeyEvent 
 {
     // dispatch key event
     int exceptioncode;
-    SharedPtr<KDOM::KeyboardEventImpl> keyEventImpl = static_cast<KDOM::KeyboardEventImpl *>(createEvent("KeyboardEvents", exceptioncode));
+    RefPtr<KDOM::KeyboardEventImpl> keyEventImpl = static_cast<KDOM::KeyboardEventImpl *>(createEvent("KeyboardEvents", exceptioncode));
     //keyEventImpl->initKeyboardEvent(key);
     target->dispatchEvent(keyEventImpl.get(), exceptioncode);
 
@@ -264,7 +264,7 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
     if(!m_scriptsIt->current())
     {
         int exceptioncode;
-        SharedPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
         event->initEvent(KDOM::EventNames::loadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
@@ -301,7 +301,7 @@ void SVGDocumentImpl::dispatchUIEvent(KDOM::EventTargetImpl *target, const KDOM:
 {
     // Setup kdom 'UIEvent'...
     int exceptioncode;
-    SharedPtr<KDOM::UIEventImpl> event = static_cast<KDOM::UIEventImpl *>(createEvent("UIEvents", exceptioncode));
+    RefPtr<KDOM::UIEventImpl> event = static_cast<KDOM::UIEventImpl *>(createEvent("UIEvents", exceptioncode));
     event->initUIEvent(type, true, true, 0, 0);
     target->dispatchEvent(event.get(), exceptioncode);
 }
@@ -310,7 +310,7 @@ void SVGDocumentImpl::dispatchMouseEvent(KDOM::EventTargetImpl *target, const KD
 {
     // Setup kdom 'MouseEvent'...
     int exceptioncode;
-    SharedPtr<KDOM::MouseEventImpl> event = static_cast<KDOM::MouseEventImpl *>(createEvent("MouseEvents", exceptioncode));
+    RefPtr<KDOM::MouseEventImpl> event = static_cast<KDOM::MouseEventImpl *>(createEvent("MouseEvents", exceptioncode));
     event->initEvent(type, true, true);
     target->dispatchEvent(event.get(), exceptioncode);
 }
