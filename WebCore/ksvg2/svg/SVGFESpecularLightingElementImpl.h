@@ -51,13 +51,13 @@ namespace KSVG
         
         virtual KCanvasFESpecularLighting *filterEffect() const;
     private:
-        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_specularConstant;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_specularExponent;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_surfaceScale;
-        mutable SharedPtr<SVGAnimatedColorImpl>  m_lightingColor;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthX;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthY;
+        mutable RefPtr<SVGAnimatedStringImpl> m_in1;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_specularConstant;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_specularExponent;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_surfaceScale;
+        mutable RefPtr<SVGAnimatedColorImpl>  m_lightingColor;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthX;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthY;
         //need other properties here...
         mutable KCanvasFESpecularLighting *m_filterEffect;
         

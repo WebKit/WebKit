@@ -24,7 +24,7 @@
 #define KSVG_SVGHelper_H
 
 #include <qstring.h>
-#include <kxmlcore/SharedPtr.h>
+#include <kxmlcore/RefPtr.h>
 
 namespace KSVG
 {
@@ -50,7 +50,7 @@ namespace KSVG
 
     // Lazy creation, template-based
     template<class T>
-    T *lazy_create(SharedPtr<T> &variable)
+    T *lazy_create(RefPtr<T> &variable)
     { 
         if(!variable)
             variable = new T();
@@ -59,7 +59,7 @@ namespace KSVG
     }
 
     template<class T, class Arg1>
-    T *lazy_create(SharedPtr<T> &variable, Arg1 arg1)
+    T *lazy_create(RefPtr<T> &variable, Arg1 arg1)
     { 
         if(!variable)
             variable = new T(arg1);
@@ -68,7 +68,7 @@ namespace KSVG
     }
 
     template<class T, class Arg1, class Arg2>
-    T *lazy_create(SharedPtr<T> &variable, Arg1 arg1, Arg2 arg2)
+    T *lazy_create(RefPtr<T> &variable, Arg1 arg1, Arg2 arg2)
     { 
         if(!variable)
             variable = new T(arg1, arg2);
@@ -77,7 +77,7 @@ namespace KSVG
     }
 
     template<class T, class Arg1, class Arg2, class Arg3>
-    T *lazy_create(SharedPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3)
+    T *lazy_create(RefPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3)
     { 
         if(!variable)
             variable = new T(arg1, arg2, arg3);
@@ -86,7 +86,7 @@ namespace KSVG
     }
 
     template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
-    T *lazy_create(SharedPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+    T *lazy_create(RefPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
     { 
         if(!variable)
             variable = new T(arg1, arg2, arg3, arg4);
@@ -95,7 +95,7 @@ namespace KSVG
     }
 
     template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
-    T *lazy_create(SharedPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+    T *lazy_create(RefPtr<T> &variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
     { 
         if(!variable)
             variable = new T(arg1, arg2, arg3, arg4, arg5);

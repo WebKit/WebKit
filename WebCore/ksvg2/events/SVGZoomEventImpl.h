@@ -52,10 +52,10 @@ namespace KSVG
         float m_newScale;
         float m_previousScale;
         
-        SharedPtr<SVGRectImpl> m_zoomRectScreen;
+        RefPtr<SVGRectImpl> m_zoomRectScreen;
         
-        SharedPtr<SVGPointImpl> m_newTranslate;
-        SharedPtr<SVGPointImpl> m_previousTranslate;
+        RefPtr<SVGPointImpl> m_newTranslate;
+        RefPtr<SVGPointImpl> m_previousTranslate;
     };
 };
 

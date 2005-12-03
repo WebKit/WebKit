@@ -36,6 +36,8 @@
 #include "SVGSVGElementImpl.h"
 #include "KSVGTimeScheduler.h"
 
+#include "XLinkNames.h"
+
 #include <cmath>
 
 using namespace KSVG;
@@ -122,7 +124,7 @@ double SVGAnimationElementImpl::getSimpleDuration() const
 void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
     KDOM::DOMString value(attr->value());
-    if (attr->name() == SVGNames::hrefAttr)
+    if (attr->name().matches(KDOM::XLinkNames::hrefAttr))
             m_href = value.qstring();
     else if (attr->name() == SVGNames::attributeNameAttr)
             m_attributeName = value.qstring();

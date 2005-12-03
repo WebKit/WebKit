@@ -52,12 +52,12 @@ namespace KSVG
         virtual KCanvasFETurbulence *filterEffect() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_baseFrequencyX;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_baseFrequencyY;
-        mutable SharedPtr<SVGAnimatedIntegerImpl> m_numOctaves;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_seed;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_stitchTiles;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_type;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_baseFrequencyX;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_baseFrequencyY;
+        mutable RefPtr<SVGAnimatedIntegerImpl> m_numOctaves;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_seed;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_stitchTiles;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_type;
         mutable KCanvasFETurbulence *m_filterEffect;
     };
 };

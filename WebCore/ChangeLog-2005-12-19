@@ -1,5 +1,67 @@
 2005-12-02  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, SVG build fix only.
+
+        SVG Build fix after SharedPtr -> RefPtr changes.
+
+        * ksvg2/events/SVGZoomEventImpl.h:
+        * ksvg2/svg/SVGAElementImpl.h:
+        * ksvg2/svg/SVGAnimateColorElementImpl.h:
+        * ksvg2/svg/SVGAnimateTransformElementImpl.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        * ksvg2/svg/SVGCircleElementImpl.h:
+        * ksvg2/svg/SVGClipPathElementImpl.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.h:
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        * ksvg2/svg/SVGEllipseElementImpl.h:
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.h:
+        * ksvg2/svg/SVGFEBlendElementImpl.h:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.h:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.h:
+        * ksvg2/svg/SVGFECompositeElementImpl.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.h:
+        * ksvg2/svg/SVGFEFloodElementImpl.h:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.h:
+        * ksvg2/svg/SVGFEImageElementImpl.h:
+        * ksvg2/svg/SVGFELightElementImpl.h:
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.h:
+        * ksvg2/svg/SVGFEOffsetElementImpl.h:
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.h:
+        * ksvg2/svg/SVGFETileElementImpl.h:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.h:
+        * ksvg2/svg/SVGFilterElementImpl.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.h:
+        * ksvg2/svg/SVGFitToViewBoxImpl.h:
+        * ksvg2/svg/SVGGradientElementImpl.h:
+        * ksvg2/svg/SVGHelper.h:
+        (KSVG::lazy_create):
+        * ksvg2/svg/SVGImageElementImpl.h:
+        * ksvg2/svg/SVGLineElementImpl.h:
+        * ksvg2/svg/SVGLinearGradientElementImpl.h:
+        * ksvg2/svg/SVGMarkerElementImpl.h:
+        * ksvg2/svg/SVGPathElementImpl.h:
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        * ksvg2/svg/SVGPolyElementImpl.h:
+        * ksvg2/svg/SVGRadialGradientElementImpl.h:
+        * ksvg2/svg/SVGRectElementImpl.h:
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * ksvg2/svg/SVGStopElementImpl.h:
+        * ksvg2/svg/SVGStyleElementImpl.h:
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGStyledTransformableElementImpl.h:
+        * ksvg2/svg/SVGTestsImpl.h:
+        * ksvg2/svg/SVGTextContentElementImpl.h:
+        * ksvg2/svg/SVGTextPositioningElementImpl.h:
+        * ksvg2/svg/SVGTransformImpl.h:
+        * ksvg2/svg/SVGURIReferenceImpl.h:
+        * ksvg2/svg/SVGUseElementImpl.h:
+        * ksvg2/svg/SVGViewElementImpl.h:
+
+2005-12-02  Eric Seidel  <eseidel@apple.com>
+
         No review needed.
 
         * ksvg2/scripts/make_names.pl: Add standard license header.

@@ -66,10 +66,10 @@ namespace KSVG
         // SVGElementInstanceImpl *instanceRoot() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_width;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_height;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_x;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_y;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_width;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_height;
     };
 };
 

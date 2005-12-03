@@ -83,15 +83,15 @@ namespace KSVG
         virtual SVGMatrixImpl *getCTM() const;
 
     protected:
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_width;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_height;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_x;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_y;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_width;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_height;
         
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_patternUnits;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_patternContentUnits;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_patternUnits;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_patternContentUnits;
 
-        mutable SharedPtr<SVGAnimatedTransformListImpl> m_patternTransform;
+        mutable RefPtr<SVGAnimatedTransformListImpl> m_patternTransform;
 
         mutable KCanvasImage *m_tile;
         mutable bool m_ignoreAttributeChanges;

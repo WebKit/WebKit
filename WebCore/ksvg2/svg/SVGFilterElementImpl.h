@@ -65,14 +65,14 @@ namespace KSVG
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_filterUnits;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_primitiveUnits;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_x;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_y;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_width;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_height;
-        mutable SharedPtr<SVGAnimatedIntegerImpl> m_filterResX;
-        mutable SharedPtr<SVGAnimatedIntegerImpl> m_filterResY;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_filterUnits;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_primitiveUnits;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_x;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_y;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_width;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_height;
+        mutable RefPtr<SVGAnimatedIntegerImpl> m_filterResX;
+        mutable RefPtr<SVGAnimatedIntegerImpl> m_filterResY;
         KCanvasFilter *m_filter;
     };
 };

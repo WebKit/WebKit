@@ -104,8 +104,8 @@ namespace KSVG
         virtual KCPathDataList toPathData() const;
 
     private:
-        mutable SharedPtr<SVGPathSegListImpl> m_pathSegList;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_pathLength;
+        mutable RefPtr<SVGPathSegListImpl> m_pathSegList;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_pathLength;
 
         virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true);
         virtual void svgLineTo(double x1, double y1, bool abs = true);

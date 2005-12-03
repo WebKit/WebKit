@@ -79,8 +79,8 @@ namespace KSVG
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
 
     private:
-        mutable SharedPtr<KDOM::CSSStyleDeclarationImpl> m_pa;
-        mutable SharedPtr<SVGAnimatedStringImpl> m_className;
+        mutable RefPtr<KDOM::CSSStyleDeclarationImpl> m_pa;
+        mutable RefPtr<SVGAnimatedStringImpl> m_className;
 
         // Optimized updating logic
         bool m_updateVectorial : 1;

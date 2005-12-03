@@ -69,13 +69,13 @@ namespace KSVG
         virtual KCanvasMarker *canvasResource();
 
     private:
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_refX;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_refY;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_markerWidth;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_markerHeight;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_markerUnits;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_orientType;
-        mutable SharedPtr<SVGAnimatedAngleImpl> m_orientAngle;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_refX;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_refY;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_markerWidth;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_markerHeight;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_markerUnits;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_orientType;
+        mutable RefPtr<SVGAnimatedAngleImpl> m_orientAngle;
         KCanvasMarker *m_marker;
     };
 };

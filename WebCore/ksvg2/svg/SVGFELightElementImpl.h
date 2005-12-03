@@ -54,16 +54,16 @@ namespace KSVG
         // Derived from: 'ElementImpl'
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);        
     private:
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_azimuth;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_elevation;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_x;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_y;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_z;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_pointsAtX;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_pointsAtY;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_pointsAtZ;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_specularExponent;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_limitingConeAngle;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_azimuth;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_elevation;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_x;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_y;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_z;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_pointsAtX;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_pointsAtY;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_pointsAtZ;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_specularExponent;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_limitingConeAngle;
         
     };
 };

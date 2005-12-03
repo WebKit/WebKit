@@ -48,8 +48,8 @@ namespace KSVG
         QColor m_currentColor;
         QColor m_initialColor;
 
-        SharedPtr<SVGColorImpl> m_toColor;
-        SharedPtr<SVGColorImpl> m_fromColor;
+        RefPtr<SVGColorImpl> m_toColor;
+        RefPtr<SVGColorImpl> m_fromColor;
 
         int m_currentItem;
         int m_redDiff, m_greenDiff, m_blueDiff;

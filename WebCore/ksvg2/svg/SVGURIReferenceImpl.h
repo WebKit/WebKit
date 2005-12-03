@@ -49,7 +49,7 @@ namespace KSVG
         static QString getTarget(const QString &url);
 
     private:
-        mutable SharedPtr<SVGAnimatedStringImpl> m_href;
+        mutable RefPtr<SVGAnimatedStringImpl> m_href;
     };
 };
 

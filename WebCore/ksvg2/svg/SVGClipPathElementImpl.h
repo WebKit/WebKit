@@ -52,7 +52,7 @@ namespace KSVG
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
     private:
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_clipPathUnits;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_clipPathUnits;
         KCanvasClipper *m_clipper;
     };
 };

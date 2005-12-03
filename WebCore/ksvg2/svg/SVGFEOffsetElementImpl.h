@@ -48,9 +48,9 @@ namespace KSVG
         virtual KCanvasFEOffset *filterEffect() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_dx;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_dy;
+        mutable RefPtr<SVGAnimatedStringImpl> m_in1;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_dx;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_dy;
         mutable KCanvasFEOffset *m_filterEffect;
     };
 };

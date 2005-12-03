@@ -48,11 +48,11 @@ namespace KSVG
         virtual KCPaintServerType gradientType() const { return PS_RADIAL_GRADIENT; }
 
     private:
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_cx;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_cy;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_r;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_fx;
-        mutable SharedPtr<SVGAnimatedLengthImpl> m_fy;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_cx;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_cy;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_r;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_fx;
+        mutable RefPtr<SVGAnimatedLengthImpl> m_fy;
     };
 };
 

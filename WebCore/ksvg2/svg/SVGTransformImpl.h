@@ -50,7 +50,7 @@ namespace KSVG
     private:
         double m_angle;
         unsigned short m_type;
-        SharedPtr<SVGMatrixImpl> m_matrix;
+        RefPtr<SVGMatrixImpl> m_matrix;
     };
 };
 

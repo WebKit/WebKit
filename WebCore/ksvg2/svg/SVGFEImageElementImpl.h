@@ -55,7 +55,7 @@ namespace KSVG
         virtual KCanvasFEImage *filterEffect() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedPreserveAspectRatioImpl> m_preserveAspectRatio;
+        mutable RefPtr<SVGAnimatedPreserveAspectRatioImpl> m_preserveAspectRatio;
         KDOM::CachedImage *m_cachedImage;
         mutable KCanvasFEImage *m_filterEffect;
     };

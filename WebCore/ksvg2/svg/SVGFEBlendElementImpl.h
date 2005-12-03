@@ -48,9 +48,9 @@ namespace KSVG
         virtual KCanvasFEBlend *filterEffect() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
-        mutable SharedPtr<SVGAnimatedStringImpl> m_in2;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_mode;
+        mutable RefPtr<SVGAnimatedStringImpl> m_in1;
+        mutable RefPtr<SVGAnimatedStringImpl> m_in2;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_mode;
         mutable KCanvasFEBlend *m_filterEffect;
     };
 };

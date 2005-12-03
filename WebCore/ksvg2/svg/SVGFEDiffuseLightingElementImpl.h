@@ -52,12 +52,12 @@ namespace KSVG
         virtual KCanvasFEDiffuseLighting *filterEffect() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedStringImpl> m_in1;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_diffuseConstant;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_surfaceScale;
-        mutable SharedPtr<SVGAnimatedColorImpl>  m_lightingColor;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthX;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthY;
+        mutable RefPtr<SVGAnimatedStringImpl> m_in1;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_diffuseConstant;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_surfaceScale;
+        mutable RefPtr<SVGAnimatedColorImpl>  m_lightingColor;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthX;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_kernelUnitLengthY;
         //need other properties here...
         mutable KCanvasFEDiffuseLighting *m_filterEffect;
         

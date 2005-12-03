@@ -53,13 +53,13 @@ namespace KSVG
         KCComponentTransferFunction transferFunction() const;
 
     private:
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_type;
-        mutable SharedPtr<SVGAnimatedNumberListImpl> m_tableValues;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_slope;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_intercept;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_amplitude;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_exponent;
-        mutable SharedPtr<SVGAnimatedNumberImpl> m_offset;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_type;
+        mutable RefPtr<SVGAnimatedNumberListImpl> m_tableValues;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_slope;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_intercept;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_amplitude;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_exponent;
+        mutable RefPtr<SVGAnimatedNumberImpl> m_offset;
     };
 };
 

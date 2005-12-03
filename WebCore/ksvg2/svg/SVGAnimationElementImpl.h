@@ -163,9 +163,9 @@ namespace KSVG
         double m_repeations;
         double m_repeatCount;
 
-        SharedPtr<SVGStringListImpl> m_values;
-        SharedPtr<SVGStringListImpl> m_keyTimes;
-        SharedPtr<SVGStringListImpl> m_keySplines;
+        RefPtr<SVGStringListImpl> m_values;
+        RefPtr<SVGStringListImpl> m_keyTimes;
+        RefPtr<SVGStringListImpl> m_keySplines;
     };
 };
 

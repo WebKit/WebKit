@@ -42,7 +42,7 @@ namespace KSVG
         virtual void handleTimerEvent(double timePercentage);
 
         // Helpers
-        SharedPtr<SVGTransformImpl> parseTransformValue(const QString &data) const;
+        RefPtr<SVGTransformImpl> parseTransformValue(const QString &data) const;
         void calculateRotationFromMatrix(const QWMatrix &matrix, double &angle, double &cx, double &cy) const;
 
         SVGMatrixImpl *initialMatrix() const;
@@ -52,12 +52,12 @@ namespace KSVG
         int m_currentItem;
         SVGTransformType m_type;
 
-        SharedPtr<SVGTransformImpl> m_toTransform;
-        SharedPtr<SVGTransformImpl> m_fromTransform;
-        SharedPtr<SVGTransformImpl> m_initialTransform;
+        RefPtr<SVGTransformImpl> m_toTransform;
+        RefPtr<SVGTransformImpl> m_fromTransform;
+        RefPtr<SVGTransformImpl> m_initialTransform;
 
-        SharedPtr<SVGMatrixImpl> m_lastMatrix;
-        SharedPtr<SVGMatrixImpl> m_transformMatrix;
+        RefPtr<SVGMatrixImpl> m_lastMatrix;
+        RefPtr<SVGMatrixImpl> m_transformMatrix;
 
         mutable bool m_rotateSpecialCase : 1;
         bool m_toRotateSpecialCase : 1, m_fromRotateSpecialCase : 1;

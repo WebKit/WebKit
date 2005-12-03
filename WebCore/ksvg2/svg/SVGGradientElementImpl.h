@@ -60,9 +60,9 @@ namespace KSVG
         void rebuildStops() const;
 
     protected:
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_spreadMethod;
-        mutable SharedPtr<SVGAnimatedEnumerationImpl> m_gradientUnits;
-        mutable SharedPtr<SVGAnimatedTransformListImpl> m_gradientTransform;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_spreadMethod;
+        mutable RefPtr<SVGAnimatedEnumerationImpl> m_gradientUnits;
+        mutable RefPtr<SVGAnimatedTransformListImpl> m_gradientTransform;
         mutable KRenderingPaintServerGradient *m_resource;
     };
 };
