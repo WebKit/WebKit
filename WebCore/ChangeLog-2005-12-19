@@ -1,3 +1,9 @@
+2005-12-02  Eric Seidel  <eseidel@apple.com>
+
+        No review needed.
+
+        * ksvg2/scripts/make_names.pl: Add standard license header.
+
 2005-12-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
