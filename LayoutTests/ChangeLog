@@ -1,3 +1,13 @@
+2005-12-02  Adele Peterson  <adele@apple.com>
+
+        Updating test for latest changes in:
+        <rdar://problem/4360657> Regression: Seed: WebKit image scaling broken
+
+        * fast/replaced/width100percent-expected.checksum:
+        * fast/replaced/width100percent-expected.png:
+        * fast/replaced/width100percent-expected.txt:
+        * fast/replaced/width100percent.html:
+
 2005-12-01  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by justin

@@ -1,3 +1,20 @@
+2005-12-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix for <rdar://problem/4360657> Regression: Seed: WebKit image scaling broken
+
+        We're backing out the fix for <rdar://problem/3952698>.
+        With the new button implementation, the buttons will
+        not overlap for the telia webmail case.  We may need to address
+        the minWidth behavior for other elements at a later time.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::calcMinMaxWidth):
+        (RenderTextArea::calcMinMaxWidth):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+
 2005-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by NOBODY (OOPS!).
