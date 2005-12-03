@@ -1,3 +1,13 @@
+2005-12-02  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for <rdar://problem/4358898> TOT/GLENDALE REGRESSION: 
+	Table layout issue occurs at http://www.pixar.com/shorts/index.html
+
+        * fast/table/colspanMinWidth-expected.checksum: Added.
+        * fast/table/colspanMinWidth-expected.png: Added.
+        * fast/table/colspanMinWidth-expected.txt: Added.
+        * fast/table/colspanMinWidth.html: Added.
+
 2005-12-02  Adele Peterson  <adele@apple.com>
 
         Updating test for latest changes in:

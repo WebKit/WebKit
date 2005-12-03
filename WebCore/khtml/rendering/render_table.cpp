@@ -880,7 +880,7 @@ void RenderTableSection::addCell(RenderTableCell *cell)
     // <TR><TD colspan="2">5
     // </TABLE>
 
-    while (cCol < nCols && cellAt(cRow, cCol).cell)
+    while (cCol < nCols && (cellAt(cRow, cCol).cell || cellAt(cRow, cCol).inColSpan))
 	cCol++;
 
     if (rSpan == 1) {

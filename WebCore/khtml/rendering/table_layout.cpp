@@ -757,7 +757,7 @@ int AutoTableLayout::calcEffectiveWidth()
                 int minw = minWidth;
                 
                 // Give min to variable first, to fixed second, and to others third.
-                for ( unsigned int pos = col; maxw > 0 && pos < lastCol; pos++ ) {
+                for ( unsigned int pos = col; maxw >= 0 && pos < lastCol; pos++ ) {
 		    if ( layoutStruct[pos].width.type == Fixed && haveAuto && fixedWidth <= cMinWidth ) {
 			int w = kMax( layoutStruct[pos].effMinWidth, layoutStruct[pos].width.value );
 			fixedWidth -= layoutStruct[pos].width.value;
@@ -771,9 +771,9 @@ int AutoTableLayout::calcEffectiveWidth()
                     }
 		}
 
-                for ( unsigned int pos = col; maxw > 0 && pos < lastCol && minw < cMinWidth; pos++ ) {
+                for ( unsigned int pos = col; maxw >= 0 && pos < lastCol && minw < cMinWidth; pos++ ) {
 		    if ( !(layoutStruct[pos].width.type == Fixed && haveAuto && fixedWidth <= cMinWidth) ) {
-                        int w = kMax( layoutStruct[pos].effMinWidth, cMinWidth * layoutStruct[pos].effMaxWidth / maxw );
+                        int w = kMax( layoutStruct[pos].effMinWidth, maxw ? (cMinWidth * layoutStruct[pos].effMaxWidth / maxw) : cMinWidth );
                         w = kMin(layoutStruct[pos].effMinWidth+(cMinWidth-minw), w);
                                                 
 #ifdef DEBUG_LAYOUT
@@ -792,8 +792,8 @@ int AutoTableLayout::calcEffectiveWidth()
 #ifdef DEBUG_LAYOUT
 		qDebug("extending maxWidth of cols %d-%d to %dpx", col, lastCol-1, cMaxWidth );
 #endif
-		for ( unsigned int pos = col; maxWidth > 0 && pos < lastCol; pos++ ) {
-		    int w = kMax( layoutStruct[pos].effMaxWidth, cMaxWidth * layoutStruct[pos].effMaxWidth / maxWidth );
+		for ( unsigned int pos = col; maxWidth >= 0 && pos < lastCol; pos++ ) {
+		    int w = kMax( layoutStruct[pos].effMaxWidth, maxWidth ? (cMaxWidth * layoutStruct[pos].effMaxWidth / maxWidth) : cMaxWidth );
 #ifdef DEBUG_LAYOUT
 		    qDebug("   col %d: max=%d, effMax=%d, new=%d", pos, layoutStruct[pos].effMaxWidth, layoutStruct[pos].effMaxWidth, w );
 #endif
