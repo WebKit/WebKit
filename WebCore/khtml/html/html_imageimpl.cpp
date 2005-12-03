@@ -280,10 +280,6 @@ int HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
         int width = getAttribute(widthAttr).qstring().toInt(&ok);
         if (ok)
             return width;
-        
-        // if the image has been loaded, use its width
-        if (m_imageLoader.imageComplete())
-            return m_imageLoader.image()->valid_rect().width();
     }
 
     if (DocumentImpl* doc = getDocument()) {
@@ -304,10 +300,6 @@ int HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
         int height = getAttribute(heightAttr).qstring().toInt(&ok);
         if (ok)
             return height;
-        
-        // if the image has been loaded, use its height
-        if (m_imageLoader.imageComplete())
-            return m_imageLoader.image()->valid_rect().height();        
     }
 
     if (DocumentImpl* doc = getDocument()) {
@@ -456,13 +448,6 @@ int HTMLImageElementImpl::y() const
     int x, y;
     r->absolutePosition(x, y);
     return y;
-}
-
-bool HTMLImageElementImpl::complete() const
-{
-    CachedImage *img = m_imageLoader.image();
-    
-    return !img || img->status() >= khtml::CachedObject::Persistent;
 }
 
 // -------------------------------------------------------------------------

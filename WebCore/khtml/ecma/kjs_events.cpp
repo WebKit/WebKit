@@ -26,7 +26,6 @@
 #include "kjs_window.h"
 #include "kjs_views.h"
 #include "kjs_proxy.h"
-#include "html/html_imageimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
@@ -43,11 +42,8 @@ using DOM::AtomicString;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
-using DOM::ElementImpl;
 using DOM::EventImpl;
 using DOM::EventListenerEvent;
-using DOM::HTMLImageElementImpl;
-using DOM::HTMLNames::imgTag;
 using DOM::KeyboardEventImpl;
 using DOM::MouseEventImpl;
 using DOM::UIEventImpl;
@@ -1250,18 +1246,21 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
             NodeImpl *node = toNode(args[0]);
             if (node) {
                 if (node->isElementNode()) {
-                    if (static_cast<ElementImpl*>(node)->hasLocalName(imgTag) && 
-                        !node->inDocument()) {
-                        HTMLImageElementImpl *image = static_cast<HTMLImageElementImpl*>(node);
-                        
-                        cb->clipboard->setDragImage(image->pixmap(), QPoint(x, y));
-                    } else {
-                        cb->clipboard->setDragImageElement(node, QPoint(x,y));
-                    }
+                    cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
                     return Undefined();
                 } else {
                     return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
                 }
+            }
+
+            // See if they passed us an Image object
+            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            if (o->isObject() && o->inherits(&Image::info)) {
+                Image *JSImage = static_cast<Image*>(o);
+                cb->clipboard->setDragImage(JSImage->image()->pixmap(), QPoint(x,y));                
+                return Undefined();
+            } else {
+                return throwError(exec, TypeError);
             }
         }
     }
