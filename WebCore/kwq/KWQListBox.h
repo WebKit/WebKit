@@ -39,8 +39,9 @@ struct KWQListBoxItem
 {
     QString string;
     KWQListBoxItemType type;
+    bool enabled;
     
-    KWQListBoxItem(const QString &s, KWQListBoxItemType t) : string(s), type(t) { }
+    KWQListBoxItem(const QString &s, KWQListBoxItemType t, bool e) : string(s), type(t), enabled(e) { }
 };
 
 class QListBox : public QScrollView {
@@ -57,8 +58,8 @@ public:
     void setSelectionMode(SelectionMode);
 
     void clear();
-    void appendItem(const QString &s) { appendItem(s, KWQListBoxOption); }
-    void appendGroupLabel(const QString &s) { appendItem(s, KWQListBoxGroupLabel); }
+    void appendItem(const QString &s, bool enabled) { appendItem(s, KWQListBoxOption, enabled); }
+    void appendGroupLabel(const QString &s, bool enabled) { appendItem(s, KWQListBoxGroupLabel, enabled); }
     void doneAppendingItems();
 
     void setSelected(int, bool);
@@ -82,7 +83,7 @@ public:
     void setFont(const QFont &font);
 
 private:
-    void appendItem(const QString &, KWQListBoxItemType);
+    void appendItem(const QString &, KWQListBoxItemType, bool);
 
     // A vector<KWQListBoxItem> or QValueVector<KWQListBoxItem> might be more efficient for large lists.
     QValueList<KWQListBoxItem> _items;

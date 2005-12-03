@@ -703,24 +703,29 @@ void RenderSelect::updateFromElement()
         else
             static_cast<KComboBox*>(m_widget)->clear();
 
+        bool groupEnabled = true;
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->hasTagName(optgroupTag)) {
-                QString label = listItems[listIndex]->getAttribute(labelAttr).qstring();
+                HTMLOptGroupElementImpl *optgroupElement = static_cast<HTMLOptGroupElementImpl*>(listItems[listIndex]);
+                QString label = optgroupElement->getAttribute(labelAttr).qstring();
                 label.replace(QChar('\\'), backslashAsCurrencySymbol());
-
+                
                 // In WinIE, an optgroup can't start or end with whitespace (other than the indent
                 // we give it).  We match this behavior.
                 label = label.stripWhiteSpace();
                 // We want to collapse our whitespace too.  This will match other browsers.
                 label = label.simplifyWhiteSpace();
+
+                groupEnabled = optgroupElement->isEnabled();
                 
                 if (m_useListBox)
-                    static_cast<KListBox*>(m_widget)->appendGroupLabel(label);
+                    static_cast<KListBox*>(m_widget)->appendGroupLabel(label, groupEnabled);
                 else
                     static_cast<KComboBox*>(m_widget)->appendGroupLabel(label);
             }
             else if (listItems[listIndex]->hasTagName(optionTag)) {
-                QString itemText = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text().qstring();
+                HTMLOptionElementImpl *optionElement = static_cast<HTMLOptionElementImpl*>(listItems[listIndex]);
+                QString itemText = optionElement->text().qstring();
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.
@@ -732,9 +737,9 @@ void RenderSelect::updateFromElement()
                     itemText.prepend("    ");
 
                 if (m_useListBox)
-                    static_cast<KListBox*>(m_widget)->appendItem(itemText);
+                    static_cast<KListBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
                 else
-                    static_cast<KComboBox*>(m_widget)->appendItem(itemText);
+                    static_cast<KComboBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
             }
             else if (listItems[listIndex]->hasTagName(hrTag)) {
                 if (!m_useListBox) {

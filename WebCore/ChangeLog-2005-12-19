@@ -1,3 +1,51 @@
+2005-12-01  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=4340>
+        Safari not supporting disabled in multi select option tag.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSelect::updateFromElement):
+        Update calls to append functions to set the enabled state of items.
+
+        * kwq/KWQComboBox.h:
+        (QComboBox::appendItem):
+        (QComboBox::appendGroupLabel):
+        (QComboBox::appendSeparator):
+        Add enabled parameter to append functions.
+       
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox):
+        Don't autoenable menu items on the popup button since that's handled
+        manually now.
+
+        (QComboBox::setTitle):
+        Set enabled state on menu items.
+
+        (QComboBox::appendItem):
+        Add enabled parameter.
+
+        * kwq/KWQListBox.h:
+        (KWQListBoxItem::KWQListBoxItem):
+        Add enabled variable to item struct.
+
+        (QListBox::appendItem):
+        (QListBox::appendGroupLabel):
+        Add enabled parameter to append functions.
+
+        * kwq/KWQListBox.mm:
+        (QListBox::appendItem):
+        Add enabled parameter.
+
+        (-[KWQTableView tableView:shouldSelectRow:]):
+        Only select the row if the item is enabled.
+
+        (-[KWQTableView drawRow:clipRect:]):
+        Draw using the disabled color if the row is disabled.
+
+        * manual-tests/disabled-option-elements.html: Added.
+
 2005-12-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth

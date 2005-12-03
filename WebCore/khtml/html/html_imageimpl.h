@@ -140,6 +140,8 @@ public:
     int x() const;
     int y() const;
 
+    bool complete() const;
+    
 protected:
     HTMLImageLoader m_imageLoader;
     DOMString usemap;

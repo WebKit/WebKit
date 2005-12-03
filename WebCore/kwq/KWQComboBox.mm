@@ -100,7 +100,8 @@ QComboBox::QComboBox()
 
     [[button cell] setControlSize:NSSmallControlSize];
     [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
-
+    [button setAutoenablesItems:NO];
+    
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -124,15 +125,16 @@ void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
         [menuItem setAttributedTitle:string];
         [string release];
         [attributes release];
-        [menuItem setAction:NULL /*@selector(fakeSelectorForDisabledItem)*/];
+        [menuItem setEnabled:NO];
     } else {
         [menuItem setTitle:title.string.getNSString()];
-    }
+        [menuItem setEnabled:title.enabled];
+    }    
 }
 
-void QComboBox::appendItem(const QString &text, KWQListBoxItemType type)
+void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool enabled)
 {
-    const KWQListBoxItem listItem(text, type);
+    const KWQListBoxItem listItem(text, type, enabled);
     _items.append(listItem);
     if (_menuPopulated) {
         KWQPopUpButton *button = (KWQPopUpButton *)getView();

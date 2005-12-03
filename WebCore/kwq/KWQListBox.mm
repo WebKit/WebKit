@@ -192,9 +192,9 @@ void QListBox::setSelectionMode(SelectionMode mode)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QListBox::appendItem(const QString &text, KWQListBoxItemType type)
+void QListBox::appendItem(const QString &text, KWQListBoxItemType type, bool enabled)
 {
-    _items.append(KWQListBoxItem(text, type));
+    _items.append(KWQListBoxItem(text, type, enabled));
     _widthGood = false;
 }
 
@@ -666,7 +666,12 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row
 {
-    return _box && _box->itemAtIndex(row).type == KWQListBoxOption;
+    if (!_box)
+        return NO;
+    
+    const KWQListBoxItem &item = _box->itemAtIndex(row);
+    
+    return item.type == KWQListBoxOption && item.enabled;
 }
 
 - (BOOL)selectionShouldChangeInTableView:(NSTableView *)aTableView
@@ -683,7 +688,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     const KWQListBoxItem &item = _box->itemAtIndex(row);
 
     NSColor *color;
-    if (_box->isEnabled()) {
+    if (_box->isEnabled() && item.enabled) {
         if ([self isRowSelected:row] && [[self window] firstResponder] == self && ([[self window] isKeyWindow] || ![[self window] canBecomeKeyWindow])) {
             color = [NSColor alternateSelectedControlTextColor];
         } else {
