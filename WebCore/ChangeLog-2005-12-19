@@ -6,19 +6,19 @@
 	layout issue occurs at http://www.pixar.com/shorts/index.html and
 	http://www.mitzpettel.com. 
 
-	This fix rolls a line from the fix for <rdar://problem/3871165> 
+	This fix rolls out a line from the fix for <rdar://problem/3871165> 
 	text box in nested table disappears when you click on it (3452) 
 	(Safari PSOFT: US EDU PS8: Lead List searches). This line causes
 	the above regressions. To fix the original problem, we realized 
 	that TableLayout::calcEffectiveWidth() essentially ignored setting
 	the minimum and maximum widths of cells of width 0 (thereby ignoring 
-	cells in colspans). 
+	cells in colspans when every cell in a column was part of a colspan). 
 
         * khtml/rendering/render_table.cpp:
         (RenderTableSection::addCell): Roll out from the original fix.
         * khtml/rendering/table_layout.cpp:
         (AutoTableLayout::calcEffectiveWidth): Set effMinWidth and effMaxWidth 
-			of a cell even when maxw or maxWidth is 0.
+        of a cell even when maxw or maxWidth is 0.
 
 2005-12-02  Eric Seidel  <eseidel@apple.com>
 
