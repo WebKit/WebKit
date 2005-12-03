@@ -1,5 +1,20 @@
 2005-12-02  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Tim H.
+
+        Added ending newlines to files missing them.
+
+        * ForwardingHeaders/kjs/property_map.h:
+        * khtml/rendering/break_lines.cpp:
+        * khtml/xbl/xbl_binding.h:
+        * khtml/xbl/xbl_protobinding.h:
+        * khtml/xbl/xbl_protohandler.h:
+        * kwq/DOM-compat.h:
+        * kwq/KWQTextUtilities.h:
+        * kwq/WebCoreKeyboardAccess.h:
+
+2005-12-02  Eric Seidel  <eseidel@apple.com>
+
         No review needed, SVG build fix only.
 
         SVG Build fix after SharedPtr -> RefPtr changes.
