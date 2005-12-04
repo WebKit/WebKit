@@ -1,3 +1,20 @@
+2005-12-03  Justin Garcia  <justin.garcia@apple.com>
+
+        New layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5856>
+        Selection based in an editable block can extend outside
+
+        Reviewed by darin
+
+        * editing/selection/expanding-selections-expected.checksum: Added.
+        * editing/selection/expanding-selections-expected.png: Added.
+        * editing/selection/expanding-selections-expected.txt: Added.
+        * editing/selection/expanding-selections.html: Added.
+        * editing/selection/expanding-selections2-expected.checksum: Added.
+        * editing/selection/expanding-selections2-expected.png: Added.
+        * editing/selection/expanding-selections2-expected.txt: Added.
+        * editing/selection/expanding-selections2.html: Added.
+
 2005-12-02  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4358898> TOT/GLENDALE REGRESSION: 

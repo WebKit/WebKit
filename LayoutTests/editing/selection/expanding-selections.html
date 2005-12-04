@@ -1,0 +1,27 @@
+<html> 
+<head>
+
+<script>
+
+function editingTest() {
+    var elem = document.getElementById("end");
+    x = elem.offsetLeft + elem.offsetWidth + 10;
+    y = elem.offsetTop + 10;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+}
+
+</script>
+</head>
+<body>
+<p>This tests double clicking inside and at the end of an editable div.  The selection that is created should not extend outside the editable region.</p>
+<div id="editablediv" contenteditable="true">This text is inside an editable div<span id="end">&nbsp;</span></div>
+<p style="overflow: hidden;">This text is not editable.</p>
+</body>
+<script>
+editingTest();
+</script>
+</html>
