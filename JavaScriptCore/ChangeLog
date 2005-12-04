@@ -1,3 +1,9 @@
+2005-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Update test results to match Anders's last checkin.
+
+        * tests/mozilla/expected.html:
+
 2005-12-04  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Geoffrey.
