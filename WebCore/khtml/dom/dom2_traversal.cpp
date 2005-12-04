@@ -27,7 +27,7 @@ namespace DOM {
 
 // --------------------------------------------------------------
 
-short NodeFilterCondition::acceptNode(FilterNode) const
+short NodeFilterCondition::acceptNode(NodeImpl*) const
 {
     return NodeFilter::FILTER_ACCEPT;
 }

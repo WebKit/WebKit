@@ -25,7 +25,6 @@
 #define CSS_BASE_H
 
 #include "dom/dom_string.h"
-#include "dom/dom_misc.h"
 #include "xml/dom_nodeimpl.h"
 #include "dom_qname.h"
 #include "misc/shared.h"

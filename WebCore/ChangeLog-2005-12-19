@@ -1,5 +1,30 @@
 2005-12-04  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        No functionality changes, no test cases possible or necessary.
+
+        Removed dom_misc.* and changed to use Shared instead of DOMShared.
+        Also removed FilterNode typedef, now using NodeImpl* directly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5929
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/css_base.h:
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_traversal.cpp:
+        (DOM::NodeFilterCondition::acceptNode):
+        * khtml/dom/dom2_traversal.h:
+        * khtml/dom/dom_exception.h:
+        * khtml/dom/dom_misc.cpp: Removed.
+        * khtml/dom/dom_misc.h: Removed.
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_traversal.h:
+        * kwq/DOM.mm:
+        (ObjCNodeFilterCondition::acceptNode):
+
+2005-12-04  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         No test cases possible, no function changes.

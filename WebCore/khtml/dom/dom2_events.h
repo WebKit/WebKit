@@ -24,7 +24,7 @@
 #ifndef _DOM_Events_h_
 #define _DOM_Events_h_
 
-#include <dom/dom_misc.h>
+#include "misc/shared.h"
 #include <dom/dom_string.h>
 
 namespace DOM {
@@ -49,7 +49,7 @@ typedef EventImpl *EventListenerEvent;
  * add them manually.
  *
  */
-class EventListener : public DomShared {
+class EventListener : public khtml::Shared<EventListener> {
 public:
     EventListener();
     virtual ~EventListener();

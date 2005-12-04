@@ -76,7 +76,6 @@ using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::EventImpl;
 using DOM::EventListener;
-using DOM::FilterNode;
 using DOM::HTMLElementImpl;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -2218,7 +2217,7 @@ class ObjCNodeFilterCondition : public NodeFilterCondition
 public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
     virtual ~ObjCNodeFilterCondition();
-    virtual short acceptNode(FilterNode) const;
+    virtual short acceptNode(NodeImpl*) const;
 
 private:
     ObjCNodeFilterCondition(const ObjCNodeFilterCondition &);
@@ -2239,7 +2238,7 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
     CFRelease(m_filter);
 }
 
-short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
+short ObjCNodeFilterCondition::acceptNode(NodeImpl* n) const
 {
 #if KHTML_NO_CPLUSPLUS_DOM
     NodeImpl *node = n;

@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <kjs/protect.h>
 
-using DOM::FilterNode;
 using DOM::NodeFilterImpl;
 using DOM::NodeImpl;
 using DOM::NodeIteratorImpl;
@@ -314,7 +313,7 @@ JSNodeFilterCondition::JSNodeFilterCondition(ObjectImp * _filter) : filter( _fil
 {
 }
 
-short JSNodeFilterCondition::acceptNode(FilterNode filterNode) const
+short JSNodeFilterCondition::acceptNode(NodeImpl* filterNode) const
 {
     NodeImpl *node = filterNode;
     KHTMLPart *part = node->getDocument()->part();

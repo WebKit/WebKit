@@ -27,22 +27,17 @@
 #ifndef _dom2_traversal_h_
 #define _dom2_traversal_h_
 
-#include <dom/dom_misc.h>
+#include "misc/shared.h"
 
 namespace DOM {
 
 class NodeImpl;
-class NodeFilterImpl;
-class NodeIteratorImpl;
-class TreeWalkerImpl;
 
-typedef NodeImpl *FilterNode;
-
-
-class NodeFilterCondition : public DomShared
+class NodeFilterCondition : public khtml::Shared<NodeFilterCondition>
 {
 public:
-    virtual short acceptNode(FilterNode) const;
+    virtual ~NodeFilterCondition() { }
+    virtual short acceptNode(NodeImpl*) const;
 };
 
 /**
