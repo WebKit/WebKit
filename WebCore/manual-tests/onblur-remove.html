@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script>
+        var numBlurs = 0;
+        
+        function debug(str) {
+            var c = document.getElementById('console')
+            c.innerHTML += str + "<br>"
+
+        }
+        
+        function doSubmit () {            
+            var f = document.getElementById('f')
+
+            f.innerHTML = '';
+            
+            if (numBlurs)
+                debug('FAILURE: Onblur handler called!')
+            else
+                debug('SUCCESS!')
+                
+        }
+    </script>
+  </head>
+<body onload="runTests();">
+    <p>This tests that elements shouldn't emit any onblur events when they are being removed from the document. To test this, click inside the input field and press enter. If If this test is successful, "SUCCESS" should be shown below, otherwise "FAILURE" is shown.</p>
+    <form id='f' onsubmit="doSubmit(this); return false">
+      <input onblur="numBlurs++">
+    </form>
+    <pre id="console"></pre>
+  </body>
+</html>

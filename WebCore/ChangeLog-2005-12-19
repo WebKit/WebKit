@@ -1,3 +1,22 @@
+2005-12-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin and Geoffrey.
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4194>
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode):
+        Don't send onblur to a node if m_inDetach is true.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::detach):
+        Set m_inDetach to true while calling RenderObject::destroy.
+
+        * khtml/xml/dom_nodeimpl.h:
+		  Add m_inDetach flag.
+
+        * manual-tests/onblur-remove.html: Added.
+
 2005-12-04  Eric Seidel  <eseidel@apple.com>
 
         No review needed, WebCore+SVG build fix only.

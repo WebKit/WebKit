@@ -2284,7 +2284,7 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
     clearSelectionIfNeeded(newFocusNode);
 
     // Remove focus from the existing focus node (if any)
-    if (oldFocusNode) {
+    if (oldFocusNode && !oldFocusNode->m_inDetach) { 
         if (oldFocusNode->active())
             oldFocusNode->setActive(false);
 
