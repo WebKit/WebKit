@@ -1,3 +1,13 @@
+2005-12-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Geoffrey.
+
+        Add new tests for
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3999>
+
+        * fast/js/test-propertyIsEnumerable-expected.txt: Added.
+        * fast/js/test-propertyIsEnumerable.html: Added.
+
 2005-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for <rdar://problem/4364302> leftmargin and topmargin 
