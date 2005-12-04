@@ -1,3 +1,18 @@
+2005-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/4364302> leftmargin and topmargin should match 
+        marginwidth and marginheight respectively
+
+        Layout test added:
+        positioning/leftmargin-topmargin-expected.txt
+        positioning/leftmargin-topmargin.html
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute): Merged
+        leftmargin/marginwidth, topmargin/marginheight
+
 2005-12-03  Justin Garcia  <justin.garcia@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=5856>

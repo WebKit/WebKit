@@ -101,15 +101,11 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         QString url = khtml::parseURL(attr->value()).qstring();
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
-    } else if (attr->name() == marginwidthAttr) {
+    } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-    } else if (attr->name() == leftmarginAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-    } else if (attr->name() == marginheightAttr) {
+    } else if (attr->name() == marginheightAttr || attr->name() == topmarginAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-    } else if (attr->name() == topmarginAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
     } else if (attr->name() == bgcolorAttr) {
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
