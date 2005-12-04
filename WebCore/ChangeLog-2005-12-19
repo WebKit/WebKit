@@ -1,3 +1,24 @@
+2005-12-03  Justin Garcia  <justin.garcia@apple.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5856>
+        Selection based in an editable block can extend outside
+        
+        validate() used to do expansion of the selection.  The expansion 
+        itself wasn't validated, so it could create a selection
+        that extended outside an editable area.  Also m_base and 
+        m_extent weren't updated with the results of the expansion.
+
+        Reviewed by darin
+
+        Layout tests added: 
+        * editing/selection/expanding-selections
+        * editing/selection/expanding-selections2
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::expandUsingGranularity): Does the expansion.
+        (khtml::SelectionController::validate): Removed the granularity parameter.
+        * khtml/editing/SelectionController.h:
+
 2005-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin.

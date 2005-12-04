@@ -121,7 +121,7 @@ private:
     enum EPositionType { START, END, BASE, EXTENT };
 
     void init(EAffinity affinity);
-    void validate(ETextGranularity granularity = CHARACTER);
+    void validate();
     void adjustExtentForEditableContent();
 
     VisiblePosition modifyExtendingRightForward(ETextGranularity);
