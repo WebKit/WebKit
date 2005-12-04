@@ -1541,16 +1541,14 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
 
       KParts::WindowArgs winargs;
 
-      // scan feature argument
-      v = args[2];
-      QString features;
-      if (!v->isUndefinedOrNull() && v->toString(exec).size() > 0) {
-        features = v->toString(exec).qstring();
-        // specifying window params means false defaults
+      QString features = args[2]->toString(exec).qstring();
+      if (features.length() > 0) {
+        // when features is specified, all features default to false
         winargs.menuBarVisible = false;
         winargs.toolBarsVisible = false;
         winargs.statusBarVisible = false;
-	winargs.scrollbarsVisible = true;
+        winargs.scrollbarsVisible = false;
+        winargs.resizable = false;
         QStringList flist = QStringList::split(',', features);
         QStringList::ConstIterator it = flist.begin();
         while (it != flist.end()) {
