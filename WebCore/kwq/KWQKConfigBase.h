@@ -27,9 +27,7 @@
 #define KCONFIG_H_
 
 #include "KWQString.h"
-#if APPLE_CHANGES
 #include "KWQKHTMLSettings.h"
-#endif
 
 class QColor;
 class QStringList;

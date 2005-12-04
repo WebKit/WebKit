@@ -107,10 +107,6 @@ using namespace HTMLNames;
 
 #include "khtmlpart_p.h"
 
-#if !KHTML_NO_CPLUSPLUS_DOM
-#include "dom/html_document.h"
-#endif
-
 #include <CoreServices/CoreServices.h>
 
 using namespace DOM::EventNames;
@@ -490,11 +486,6 @@ void KHTMLPart::stopLoading(bool sendUnload)
 
   // Stop any started redirections as well!! (DA)
   cancelRedirection();
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-  // null node activated.
-  emit nodeActivated(Node());
-#endif
 }
 
 bool KHTMLPart::closeURL()
@@ -605,15 +596,6 @@ QVariant KHTMLPart::executeScript( const QString &script, bool forceUserGesture 
 
 //Enable this to see all JS scripts being executed
 //#define KJS_VERBOSE
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script, bool forceUserGesture )
-{
-    return executeScript(n.handle(), script, forceUserGesture);
-}
-
-#endif
 
 QVariant KHTMLPart::executeScript( DOM::NodeImpl *n, const QString &script, bool forceUserGesture )
 {
@@ -1593,16 +1575,6 @@ void KHTMLPart::setOnlyLocalReferences(bool enable)
   d->m_onlyLocalReferences = enable;
 }
 
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-QString KHTMLPart::text(const DOM::Range &r) const
-{
-    return plainText(r.handle());
-}
-
-#endif
-
 QString KHTMLPart::selectedText() const
 {
     return plainText(selection().toRange().get());
@@ -2277,16 +2249,6 @@ KHTMLPart *KHTMLPart::parentPart() const
 
   return (KHTMLPart *)parent();
 }
-
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-DOM::Node KHTMLPart::nodeUnderMouse() const
-{
-    return d->m_view->nodeUnderMouse();
-}
-
-#endif
 
 void KHTMLPart::emitSelectionChanged()
 {
@@ -2980,25 +2942,6 @@ void KHTMLPart::slotPartRemoved( KParts::Part *part )
     if ( part == d->m_activeFrame )
         d->m_activeFrame = 0L;
 }
-
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-void KHTMLPart::setActiveNode(const DOM::Node &node)
-{
-    if (!d->m_doc || !d->m_view)
-        return;
-
-    // Set the document's active node
-    d->m_doc->setFocusNode(node.handle());
-}
-
-DOM::Node KHTMLPart::activeNode() const
-{
-    return DOM::Node(d->m_doc?d->m_doc->focusNode():0);
-}
-
-#endif
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code, NodeImpl *node )
 {

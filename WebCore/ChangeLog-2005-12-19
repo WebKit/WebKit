@@ -1,3 +1,53 @@
+2005-12-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        No test cases possible, no function changes.
+
+        Remove rotten #ifdef'd code from the source:
+        APPLE_CHANGES & KHTML_NO_CPLUSPLUS_DOM
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5877
+
+        * khtml/dom/css_rule.h:
+        (DOM::CSSRule::):
+        * khtml/dom/css_stylesheet.h:
+        * khtml/dom/css_value.h:
+        (DOM::CSSValue::):
+        (DOM::CSSPrimitiveValue::):
+        * khtml/dom/dom2_events.cpp:
+        (DOM::EventListener::handleEventImpl):
+        * khtml/dom/dom2_events.h:
+        (DOM::Event::):
+        (DOM::EventException::):
+        (DOM::MutationEvent::):
+        * khtml/dom/dom2_range.h:
+        (DOM::RangeException::):
+        (DOM::Range::):
+        * khtml/dom/dom2_traversal.cpp:
+        * khtml/dom/dom2_traversal.h:
+        (DOM::NodeFilter::):
+        * khtml/dom/dom_exception.h:
+        (DOM::DOMException::):
+        * khtml/dom/dom_misc.cpp:
+        (DOM::DomShared::~DomShared):
+        * khtml/dom/dom_misc.h:
+        (DOM::DomShared::deleteMe):
+        * khtml/dom/dom_node.h:
+        (DOM::Node::):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::stopLoading):
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::focusNextPrevNode):
+        * kwq/KWQKConfigBase.h:
+        * kwq/KWQKHTMLPageCache.h:
+        * kwq/KWQPointArray.h:
+
 2005-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

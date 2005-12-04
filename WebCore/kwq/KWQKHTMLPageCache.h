@@ -30,12 +30,10 @@
 
 class QObject;
 
-#ifdef APPLE_CHANGES
 /*
     This class is not used by WebCore.  The WebCore/WebKit page cache is
     a cache of a fully constructed DOM and associated render objects.
 */
-#endif
 class KHTMLPageCache
 {
 public:

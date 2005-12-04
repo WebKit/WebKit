@@ -316,11 +316,7 @@ JSNodeFilterCondition::JSNodeFilterCondition(ObjectImp * _filter) : filter( _fil
 
 short JSNodeFilterCondition::acceptNode(FilterNode filterNode) const
 {
-#if !KHTML_NO_CPLUSPLUS_DOM
-    NodeImpl *node = filterNode.handle();
-#else
     NodeImpl *node = filterNode;
-#endif
     KHTMLPart *part = node->getDocument()->part();
     KJSProxy *proxy = KJSProxy::proxy(part);
     if (proxy && filter->implementsCall()) {

@@ -652,9 +652,6 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
         if (KWQ(m_part)->lastEventIsMouseUp()) {
             d->mousePressed = false;
         }
-#if !KHTML_NO_CPLUSPLUS_DOM
-	emit m_part->nodeActivated(mev.innerNode.get());
-#endif
     }
 }
 
@@ -1136,10 +1133,6 @@ void KHTMLView::focusNextPrevNode(bool next)
     }
     // Set focus node on the document
     m_part->xmlDocImpl()->setFocusNode(newFocusNode);
-#if !KHTML_NO_CPLUSPLUS_DOM
-    emit m_part->nodeActivated(newFocusNode);
-#endif
-
 }
 
 void KHTMLView::setMediaType( const QString &medium )

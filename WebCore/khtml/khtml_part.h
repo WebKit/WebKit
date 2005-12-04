@@ -230,26 +230,6 @@ public:
   void stopLoading(bool sendUnload = false);
   virtual bool closeURL();
 
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-  /**
-   * Returns a reference to the DOM HTML document (for non-HTML documents, returns null)
-   */
-  DOM::HTMLDocument htmlDocument() const;
-
-  /**
-   * Returns a reference to the DOM document.
-   */
-  DOM::Document document() const;
-
-  /**
-   * Returns the node that has the keyboard focus.
-   */
-  DOM::Node activeNode() const;
-
-#endif
-
   /**
    * Returns a pointer to the @ref KParts::BrowserExtension.
    */
@@ -296,9 +276,6 @@ public:
   /**
    * Same as above except the Node parameter specifying the 'this' value.
    */
-#if !KHTML_NO_CPLUSPLUS_DOM
-  QVariant executeScript( const DOM::Node &n, const QString &script, bool forceUserGesture = false );
-#endif
   QVariant executeScript( DOM::NodeImpl *n, const QString &script, bool forceUserGesture = false );
 
   /**
@@ -681,13 +658,6 @@ public:
    */
   int xPosForVerticalArrowNavigation() const;
 
-#if !KHTML_NO_CPLUSPLUS_DOM
-  /**
-   * Returns the text for a part of the document.
-   */
-  QString text(const DOM::Range &) const;
-#endif
-
   /**
    * Has the user selected anything?
    *
@@ -775,15 +745,6 @@ public:
 
 
   virtual void tokenizerProcessedData() {};
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-  /**
-   * Returns the @p Node currently under the mouse
-   */
-  DOM::Node nodeUnderMouse() const;
-
-#endif
 
   /**
    * @internal
@@ -940,19 +901,6 @@ signals:
    */
   void selectionChanged();
 
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-  /**
-   * This signal is emitted when an element retrieves the
-   * keyboard focus. Note that the signal argument can be
-   * a null node if no element is active, meaning a node
-   * has explicitly been deactivated without a new one
-   * becoming active.
-   */
-  void nodeActivated(const DOM::Node &);
-
-#endif
-
 public:
 
   /**
@@ -1008,21 +956,6 @@ protected:
 
 
 public slots:
-
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-  /**
-   * Sets the focussed node of the document to the specified node. If the node is a form control, the control will
-   * receive focus in the same way that it would if the user had clicked on it or tabbed to it with the keyboard. For
-   * most other types of elements, there is no visul indiction of whether or not they are focussed.
-   *
-   * See @ref activeNode
-   *
-   * @param node The node to focus
-   */
-  void setActiveNode(const DOM::Node &node);
-
-#endif
 
   /**
    * Stops all animated images on the current and child pages
