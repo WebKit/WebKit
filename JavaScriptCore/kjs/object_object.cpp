@@ -38,10 +38,11 @@ ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
                                        FunctionPrototypeImp *funcProto)
   : ObjectImp() // [[Prototype]] is Null()
 {
-    putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToString,            0), DontEnum);
-    putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToLocaleString,0), DontEnum);
-    putDirect(valueOfPropertyName,  new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ValueOf,             0), DontEnum);
-    putDirect("hasOwnProperty", new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::HasOwnProperty,          1), DontEnum);
+    putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToString,               0), DontEnum);
+    putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToLocaleString,   0), DontEnum);
+    putDirect(valueOfPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ValueOf,                 0), DontEnum);
+    putDirect("hasOwnProperty", new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::HasOwnProperty,             1), DontEnum);
+    putDirect("propertyIsEnumerable", new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::PropertyIsEnumerable, 1), DontEnum);
 }
 
 
@@ -61,7 +62,7 @@ bool ObjectProtoFuncImp::implementsCall() const
   return true;
 }
 
-// ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5
+// ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
 ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
@@ -72,6 +73,8 @@ ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
             PropertySlot slot;
             return jsBoolean(thisObj->getOwnPropertySlot(exec, Identifier(args[0]->toString(exec)), slot));
         }
+        case PropertyIsEnumerable:
+            return jsBoolean(thisObj->propertyIsEnumerable(exec, Identifier(args[0]->toString(exec))));
         case ToLocaleString:
             return jsString(thisObj->toString(exec));
         case ToString:

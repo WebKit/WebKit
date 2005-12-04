@@ -246,6 +246,17 @@ namespace KJS {
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
 
     /**
+     * Checks if a property is enumerable, that is if it doesn't have the DontEnum
+     * flag set
+     *
+     * See ECMA 15.2.4
+     * @param exec The current execution state
+     * @param propertyName The name of the property
+     * @return true if the property is enumerable, otherwise false
+     */
+    bool propertyIsEnumerable(ExecState *exec, const Identifier &propertyName) const;
+
+    /**
      * Checks to see whether the object (or any object in it's prototype chain)
      * has a property with the specified name.
      *
@@ -454,6 +465,8 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     ObjectImp *toObject(ExecState *exec) const;
 
+    bool getPropertyAttributes(const Identifier& propertyName, int& attributes) const;
+    
     // This get function only looks at the property map.
     // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
     // to look up in the prototype, it might already exist there)

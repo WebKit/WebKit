@@ -226,18 +226,14 @@ void ObjectImp::put(ExecState *exec, unsigned propertyName,
 bool ObjectImp::canPut(ExecState *, const Identifier &propertyName) const
 {
   int attributes;
-  ValueImp *v = _prop.get(propertyName, attributes);
-  if (v)
-    return!(attributes & ReadOnly);
-
-  // Look in the static hashtable of properties
-  const HashEntry* e = findPropertyHashEntry(propertyName);
-  if (e)
-    return !(e->attr & ReadOnly);
-
+    
   // Don't look in the prototype here. We can always put an override
   // in the object, even if the prototype has a ReadOnly property.
-  return true;
+
+  if (!getPropertyAttributes(propertyName, attributes))
+    return true;
+  else
+    return !(attributes & ReadOnly);
 }
 
 // ECMA 8.6.2.4
@@ -371,6 +367,31 @@ bool ObjectImp::implementsHasInstance() const
 bool ObjectImp::hasInstance(ExecState */*exec*/, ValueImp */*value*/)
 {
   assert(false);
+  return false;
+}
+
+bool ObjectImp::propertyIsEnumerable(ExecState *exec, const Identifier &propertyName) const
+{
+  int attributes;
+ 
+  if (!getPropertyAttributes(propertyName, attributes))
+    return false;
+  else
+    return !(attributes & DontEnum);
+}
+
+bool ObjectImp::getPropertyAttributes(const Identifier& propertyName, int& attributes) const
+{
+  if (_prop.get(propertyName, attributes))
+    return true;
+    
+  // Look in the static hashtable of properties
+  const HashEntry* e = findPropertyHashEntry(propertyName);
+  if (e) {
+    attributes = e->attr;
+    return true;
+  }
+    
   return false;
 }
 

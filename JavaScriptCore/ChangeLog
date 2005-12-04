@@ -1,3 +1,27 @@
+2005-12-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Geoffrey.
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3999>
+
+        * kjs/object.cpp:
+        (KJS::ObjectImp::canPut):
+        Refactor to use getPropertyAttributes.
+
+        (KJS::ObjectImp::propertyIsEnumerable):
+        New function which checks if a property is enumerable.
+
+        (KJS::ObjectImp::getPropertyAttributes):
+        * kjs/object.h:
+        Add getPropertyAttributes and propertyIsEnumerable.
+
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::callAsFunction):
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFuncImp::):
+        Add propertyIsEnumerable to the Object prototype.
+
 2005-12-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Hatcher.
