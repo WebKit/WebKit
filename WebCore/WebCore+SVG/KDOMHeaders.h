@@ -42,7 +42,6 @@ typedef khtml::RenderCanvas KCanvas;
 #include "khtml/dom/dom2_range.h"
 #include "khtml/dom/dom2_traversal.h"
 #include "khtml/dom/dom_exception.h"
-#include "khtml/dom/dom_misc.h"
 #include "khtml/dom/dom_string.h"
 #include "khtml/khtml_events.h"
 #include "khtml/khtmlpart_p.h"

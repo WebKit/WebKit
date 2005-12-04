@@ -1,5 +1,13 @@
 2005-12-04  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, WebCore+SVG build fix only.
+
+        I broke the WebCore+SVG build when removing dom_misc.h, fixing.
+
+        * WebCore+SVG/KDOMHeaders.h: remove reference to dom_misc.h
+
+2005-12-04  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         No functionality changes, no test cases possible or necessary.
