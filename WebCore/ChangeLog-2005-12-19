@@ -1,3 +1,83 @@
+2005-12-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        No additional test cases needed (or possible).
+
+        Further dom/* cleanup, also removing extra forwarding headers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5930
+
+        * ForwardingHeaders/dom/dom2_views.h: Removed.
+        * ForwardingHeaders/dom/dom_core.h: Removed.
+        * ForwardingHeaders/dom/dom_doc.h: Removed.
+        * ForwardingHeaders/dom/dom_element.h: Removed.
+        * ForwardingHeaders/dom/dom_misc.h: Removed.
+        * ForwardingHeaders/dom/dom_text.h: Removed.
+        * ForwardingHeaders/dom/dom_xml.h: Removed.
+        * ForwardingHeaders/dom/html_base.h: Removed.
+        * ForwardingHeaders/dom/html_block.h: Removed.
+        * ForwardingHeaders/dom/html_document.h: Removed.
+        * ForwardingHeaders/dom/html_element.h: Removed.
+        * ForwardingHeaders/dom/html_form.h: Removed.
+        * ForwardingHeaders/dom/html_head.h: Removed.
+        * ForwardingHeaders/dom/html_image.h: Removed.
+        * ForwardingHeaders/dom/html_inline.h: Removed.
+        * ForwardingHeaders/dom/html_list.h: Removed.
+        * ForwardingHeaders/dom/html_misc.h: Removed.
+        * ForwardingHeaders/dom/html_object.h: Removed.
+        * ForwardingHeaders/dom/html_table.h: Removed.
+        * ForwardingHeaders/ecma/kjs_css.h: Removed.
+        * ForwardingHeaders/ecma/kjs_html.h: Removed.
+        * ForwardingHeaders/ecma/kjs_html.lut.h: Removed.
+        * ForwardingHeaders/ecma/kjs_views.h: Removed.
+        * ForwardingHeaders/ecma/kjs_views.lut.h: Removed.
+        * ForwardingHeaders/ecma/kjs_window.h: Removed.
+        * ForwardingHeaders/html/dtd.h: Removed.
+        * ForwardingHeaders/kdom/KDOMPart.h: Removed.
+        * ForwardingHeaders/kdom/KDOMView.h: Removed.
+        * ForwardingHeaders/kdom/core/NodeListImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSMediaRuleImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSRuleImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSRuleListImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/cssproperties.h: Removed.
+        * ForwardingHeaders/kdom/css/cssvalues.h: Removed.
+        * ForwardingHeaders/kdom/events/DocumentEventImpl.h: Removed.
+        * ForwardingHeaders/kdom/parser/KDOMDocumentBuilder.h: Removed.
+        * ForwardingHeaders/kdomcssproperties.h: Removed.
+        * ForwardingHeaders/kdomcssvalues.h: Removed.
+        * ForwardingHeaders/kinstance.h: Removed.
+        * ForwardingHeaders/kjs/identifier.h: Removed.
+        * ForwardingHeaders/kjs/property_map.h: Removed.
+        * ForwardingHeaders/kjs/protected_object.h: Removed.
+        * ForwardingHeaders/kjs/scope_chain.h: Removed.
+        * ForwardingHeaders/kjs/ustring.h: Removed.
+        * ForwardingHeaders/kjs/value.h: Removed.
+        * ForwardingHeaders/ksvg2/svg/svgtags.h: Removed.
+        * ForwardingHeaders/q3intdict.h: Removed.
+        * ForwardingHeaders/q3memarray.h: Removed.
+        * ForwardingHeaders/q3ptrcollection.h: Removed.
+        * ForwardingHeaders/q3ptrdict.h: Removed.
+        * ForwardingHeaders/qcstring.h: Removed.
+        * ForwardingHeaders/qcursor.h: Removed.
+        * ForwardingHeaders/qintdict.h: Removed.
+        * ForwardingHeaders/qpair.h: Removed.
+        * ForwardingHeaders/qprinter.h: Removed.
+        * ForwardingHeaders/qptrcollection.h: Removed.
+        * ForwardingHeaders/qsize.h: Removed.
+        * ForwardingHeaders/qsortedlist.h: Removed.
+        * ForwardingHeaders/qvaluevector.h: Removed.
+        * ForwardingHeaders/xml/dom_positioniterator.h: Removed.
+        * khtml/css/css_ruleimpl.cpp:
+        * khtml/dom/css_value.h:
+        * khtml/dom/dom2_events.cpp:
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_range.h:
+        * khtml/dom/dom2_traversal.cpp:
+        * khtml/dom/dom_exception.h:
+        * khtml/dom/dom_node.h:
+        * khtml/dom/dom_string.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+
 2005-12-04  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin and Geoffrey.

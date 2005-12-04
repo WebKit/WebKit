@@ -31,7 +31,7 @@
 #ifndef _dom2_range_h_
 #define _dom2_range_h_
 
-#include <dom/dom_node.h>
+#include "dom_node.h"
 
 namespace DOM {
 

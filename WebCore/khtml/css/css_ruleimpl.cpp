@@ -23,7 +23,6 @@
 #include "config.h"
 #include "dom/css_rule.h"
 #include "dom/css_stylesheet.h"
-#include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 
 #include "css/css_stylesheetimpl.h"

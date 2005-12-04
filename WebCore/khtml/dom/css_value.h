@@ -27,15 +27,7 @@
 #ifndef _CSS_css_value_h_
 #define _CSS_css_value_h_
 
-#include <dom/dom_string.h>
-
-#include <qcolor.h>
-
 namespace DOM {
-
-class CSSStyleDeclarationImpl;
-class CSSRule;
-class CSSValue;
 
 /**
  * The <code> CSSValue </code> interface represents a simple or a

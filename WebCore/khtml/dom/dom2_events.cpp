@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "dom/dom2_events.h"
+#include "dom2_events.h"
 
 #include "xml/dom2_eventsimpl.h"
 
@@ -33,8 +33,6 @@ const unsigned KeyboardEvent::DOM_KEY_LOCATION_LEFT;
 const unsigned KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
 const unsigned KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
 const unsigned KeyboardEvent::DOM_KEY_LOCATION_UNKNOWN;
-
-// -----------------------------------------------------------------------------
 
 EventListener::EventListener()
 {
@@ -58,5 +56,4 @@ DOMString EventListener::eventListenerType()
     return "";
 }
 
-// -----------------------------------------------------------------------------
 } // namespace

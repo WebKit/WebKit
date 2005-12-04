@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "dom/dom2_traversal.h"
+#include "dom2_traversal.h"
 
 namespace DOM {
 

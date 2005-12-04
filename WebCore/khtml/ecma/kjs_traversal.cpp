@@ -22,7 +22,6 @@
 #include "kjs_traversal.lut.h"
 
 #include "kjs_proxy.h"
-#include <dom/dom_node.h>
 #include <xml/dom_nodeimpl.h>
 #include <xml/dom_docimpl.h>
 #include <khtmlview.h>

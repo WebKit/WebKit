@@ -25,7 +25,7 @@
 #define _DOM_Events_h_
 
 #include "misc/shared.h"
-#include <dom/dom_string.h>
+#include "dom_string.h"
 
 namespace DOM {
 
