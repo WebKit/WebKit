@@ -1,3 +1,23 @@
+2005-12-04  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Dave Harrison, John Sullivan.
+
+	<rdar://problem/4364847> REGRESSION: QuickTime movies open without controller or don't open at all (5928)
+
+	I changed WebFrameView on 2005-11-29 so that it avoids creating duplicate WebPluginDocumentViews.
+	Unfortunately, this change caused a regression due to the fact that it subtly changed when plugins are
+	initialized.  Certain plugins (e.g. QuickTime) expect to be initialized after the WebPluginDocumentView
+	has been "committed" (inserted into the view hierarchy).
+
+	My fix is to ensure that the plugin is initialized where we previously would have created that second
+	WebPluginDocumentView -- that is, the plugin is created after the WebPluginDocumentView has been committed.
+	
+        * Plugins.subproj/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView setDataSource:]):
+	Don't initialize the plugin if the WebPluginDocumentView has not been inserted into the view hierarchy.
+	We assume here that a later call to -setDataSource: will pass this conditional, once the WebDocumentView
+	has been committed.
+	
 2005-12-02  Justin Garcia <justin.garcia@apple.com>
 
         <rdar://problem/4345030>

@@ -70,9 +70,16 @@
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     // Since this class is a WebDocumentView and WebDocumentRepresentation, setDataSource: will be called twice. Do work only once.
-    if (dataSourceHasBeenSet) {
+    if (dataSourceHasBeenSet)
         return;
-    }
+    
+    // As noted above, -setDataSource: will be called twice -- once for the WebDocumentRepresentation, once for the WebDocumentView.
+    // We don't want to make the plugin until we know we're being committed as the WebDocumentView for the WebFrame.  This check is
+    // to ensure that we've been added to the view hierarchy before attempting to create the plugin, as some plugins currently work
+    // under this assumption.
+    if (![self superview])
+        return;
+        
     dataSourceHasBeenSet = YES;
     
     NSURLResponse *response = [dataSource response];
