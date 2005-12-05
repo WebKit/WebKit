@@ -1170,11 +1170,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->findString(string, forward, caseFlag, wrapFlag);
 }
 
-- (void)jumpToSelection
-{
-    _part->jumpToSelection();
-}
-
 - (NSString *)advanceToNextMisspelling
 {
     return _part->advanceToNextMisspelling().getNSString();

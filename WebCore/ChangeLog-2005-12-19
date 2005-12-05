@@ -1,3 +1,30 @@
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - WebCore part of fix for 
+        <rdar://problem/4365690> Find > Jump to Selection does nothing on plain-text documents (inc. source HTML)
+        
+        No behavioral changes here. This patch just eliminates the name "jumpToSelection" in favor of
+        "centerSelectionInVisibleArea" to match WebKit and AppKit.
+
+        * kwq/KWQKHTMLPart.h:
+        eliminate jumpToSelection(); add centerSelectionInVisibleArea()
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        use centerSelectionInVisibleArea() instead of jumpToSelection()
+        (KWQKHTMLPart::centerSelectionInVisibleArea):
+        renamed from jumpToSelection
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        use centerSelectionInVisibleArea() instead of jumpToSelection()
+
+        * kwq/WebCoreBridge.h:
+        eliminate jumpToSelection; add centerSelectionInVisibleArea
+        * kwq/WebCoreBridge.mm:
+        eliminate jumpToSelection. We had been implementing both jumpToSelection and
+        centerSelectionInVisibleArea here, but jumpToSelection now has no more callers.
+
 2005-12-05  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John.
