@@ -1,3 +1,14 @@
+2005-12-05  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John.
+ 
+	- fix <rdar://problem/4363132> Regression: status bar shows wrong text when mousing over links 
+	in wacky frameset at directory.apple.com
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): reuse point to work with nested frames; add the overflow clip to 
+	accommodate any scrolling
+
 2005-12-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

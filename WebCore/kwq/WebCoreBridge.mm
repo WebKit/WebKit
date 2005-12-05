@@ -1032,6 +1032,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     NodeImpl *n;
     QWidget *widget = 0;
+    QPoint widgetPoint(point);
     
     while (true) {
         n = nodeInfo.innerNode();
@@ -1043,12 +1044,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         KHTMLPart *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
         if (!kpart || !static_cast<KWQKHTMLPart *>(kpart)->renderer())
             break;
-        int _x, _y;
-        n->renderer()->absolutePosition(_x, _y, true);
-        _x = (int)point.x - _x;
-        _y = (int)point.y - _y;
+        int absX, absY;
+        n->renderer()->absolutePosition(absX, absY, true);
+        KHTMLView *view = static_cast<KHTMLView *>(widget);
+        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
+        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
+
         RenderObject::NodeInfo widgetNodeInfo(true, true);
-        static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, _x, _y);
+        static_cast<KWQKHTMLPart *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
         nodeInfo = widgetNodeInfo;
     }
     
