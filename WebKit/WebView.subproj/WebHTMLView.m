@@ -1817,9 +1817,14 @@ static WebHTMLView *lastHitView = nil;
     [self selectAll];
 }
 
+// jumpToSelection is the old name for what AppKit now calls centerSelectionInVisibleArea. Safari
+// was using the old jumpToSelection selector in its menu. Newer versions of Safari will us the
+// selector centerSelectionInVisibleArea. We'll leave this old selector in place for two reasons:
+// (1) compatibility between older Safari and newer WebKit; (2) other WebKit-based applications
+// might be using the jumpToSelection: selector, and we don't want to break them.
 - (void)jumpToSelection:(id)sender
 {
-    [[self _bridge] jumpToSelection];
+    [self centerSelectionInVisibleArea:sender];
 }
 
 - (NSRect)selectionRect
@@ -1923,6 +1928,7 @@ static WebHTMLView *lastHitView = nil;
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(_ignoreSpellingFromMenu:)
+            || action == @selector(centerSelectionInVisibleArea:)
             || action == @selector(jumpToSelection:)
             || action == @selector(_learnSpellingFromMenu:)
             || action == @selector(takeFindStringFromSelection:)) {

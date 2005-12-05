@@ -1,3 +1,28 @@
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - WebKit part of fix for 
+        <rdar://problem/4365690> Find > Jump to Selection does nothing on plain-text documents (inc. source HTML)        
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView jumpToSelection:]):
+        Reimplement jumpToSelection: to call centerSelectionInVisibleArea:, and added a comment explaining why
+        jumpToSelection: exists at all. Note that centerSelectionInVisibleArea: was already implemented here; it
+        was added as part of HTML editing implementation without us realizing that it was the API replacement
+        for jumpToSelection:.
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        validate centerSelectionInVisibleArea: the same way we validate jumpToSelection: (we should have done
+        this when centerSelectionInVisibleArea: was implemented)
+        
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView centerSelectionInVisibleArea:]):
+        new method, same code that jumpToSelection: used to have
+        (-[WebPDFView jumpToSelection:]):
+        now calls centerSelectionInVisibleArea:, and there's now a comment about why it exists at all.
+        (-[WebPDFView validateUserInterfaceItem:]):
+        validate centerSelectionInVisibleArea: the same way we validate jumpToSelection:
+
 2005-12-04  Tim Omernick  <timo@apple.com>
 
         Reviewed by Dave Harrison, John Sullivan.

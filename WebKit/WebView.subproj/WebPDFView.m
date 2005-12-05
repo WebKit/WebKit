@@ -494,15 +494,25 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     [NSPasteboard _web_setFindPasteboardString:[[PDFSubview currentSelection] string] withOwner:self];
 }
 
-- (void)jumpToSelection:(id)sender
+- (void)centerSelectionInVisibleArea:(id)sender
 {
     [PDFSubview scrollSelectionToVisible:nil];
+}
+
+// jumpToSelection is the old name for what AppKit now calls centerSelectionInVisibleArea. Safari
+// was using the old jumpToSelection selector in its menu. Newer versions of Safari will us the
+// selector centerSelectionInVisibleArea. We'll leave this old selector in place for two reasons:
+// (1) compatibility between older Safari and newer WebKit; (2) other WebKit-based applications
+// might be using the jumpToSelection: selector, and we don't want to break them.
+- (void)jumpToSelection:(id)sender
+{
+    [self centerSelectionInVisibleArea:nil];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];    
-    if (action == @selector(takeFindStringFromSelection:) || action == @selector(jumpToSelection:)) {
+    if (action == @selector(takeFindStringFromSelection:) || action == @selector(centerSelectionInVisibleArea:) || action == @selector(jumpToSelection:)) {
         return [PDFSubview currentSelection] != nil;
     }
     return YES;
