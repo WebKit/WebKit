@@ -47,8 +47,6 @@ public:
     
     static void singleShot(int msec, QObject *receiver, const char *member);
     
-    static void immediateSingleShotOnMainThread(void (*func)());
-
     // This is just a hack used by KWQKHTMLPart. The monitor function
     // gets called when the timer starts and when it is stopped before firing,
     // but not when the timer fires.

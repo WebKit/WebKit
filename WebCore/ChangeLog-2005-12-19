@@ -1,6 +1,18 @@
 2005-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
+        
+        Removed some dead code I happened to stumble across. No test cases added.
+
+        * kwq/KWQTimer.h:
+        removed unused immediateSingleShotOnMainThread()
+        * kwq/KWQTimer.mm:
+        removed unused immediateSingleShotOnMainThread() and the class KWQMainThreadPerformTarget
+        that was used to implement it.
+
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
 
         - WebCore part of fix for 
         <rdar://problem/4365690> Find > Jump to Selection does nothing on plain-text documents (inc. source HTML)
