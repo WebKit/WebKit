@@ -1,3 +1,16 @@
+2005-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        - added new forwarding headers
+
+        * kxmlcore/PassRefPtr.h: Added.
+        * kxmlcore/RefPtr.h: Added.
+
+2005-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * kxmlcore/PassRefPtr.h: Added.
+
 2005-11-26  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
