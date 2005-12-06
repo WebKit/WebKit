@@ -82,7 +82,7 @@ void SVGEllipseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
     }
 }
 
-KCPathDataList SVGEllipseElementImpl::toPathData() const
+KCanvasPath* SVGEllipseElementImpl::toPathData() const
 {
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _rx = rx()->baseVal()->value(), _ry = ry()->baseVal()->value();

@@ -31,39 +31,12 @@
 #import "SVGRenderStyle.h"
 #import "KCanvasMatrix.h"
 
+#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "QuartzSupport.h"
 
 #import <kxmlcore/Assertions.h>
-
-CGPathRef CGPathFromKCPathDataList(KCPathDataList pathData)
-{
-    CGMutablePathRef path = CGPathCreateMutable();
-
-    KCPathDataList::ConstIterator it = pathData.begin();
-    KCPathDataList::ConstIterator end = pathData.end();
-    for(; it != end; ++it)
-    {
-        KCPathData data = *it;
-        
-        switch (data.cmd) {
-        case CMD_MOVE: 
-            CGPathMoveToPoint(path, NULL, data.x3, data.y3);
-            break;
-        case CMD_LINE:
-            CGPathAddLineToPoint(path, NULL, data.x3, data.y3);
-            break;
-        case CMD_CURVE:
-            CGPathAddCurveToPoint(path, NULL, data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
-            break;
-        case CMD_CLOSE_SUBPATH:
-            CGPathCloseSubpath(path);
-            break;
-        }
-    }
-    return path;
-}
 
 void KCanvasContainerQuartz::calcMinMaxWidth()
 {
@@ -217,16 +190,13 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
 
 void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) const
 {
-    // FIXME: until the path representation is fixed in
-    // KCanvas, we have to convert a KCPathDataList to a CGPath
-
     if (m_clipData.count() < 1) {
         NSLog(@"WARNING: Applying empty clipper, ignoring.");
         return;
     }
 
     BOOL heterogenousClipRules = NO;
-    KCWindRule clipRule = m_clipData[0].rule;
+    KCWindRule clipRule = m_clipData[0].windRule;
 
     CGContextBeginPath(context);
 
@@ -234,21 +204,21 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
 
     for (unsigned int x = 0; x < m_clipData.count(); x++) {
         KCClipData data = m_clipData[x];
-        if (data.rule != clipRule)
+        if (data.windRule != clipRule)
             heterogenousClipRules = YES;
-
-        CGPathRef clipPath = CGPathFromKCPathDataList(data.path);
         
+        KCanvasPathQuartz *path = static_cast<KCanvasPathQuartz*>(data.path.get());        
+        CGPathRef clipPath = static_cast<KCanvasPathQuartz*>(path)->cgPath();
         if (CGPathIsEmpty(clipPath)) // FIXME: occasionally we get empty clip paths...
             NSLog(@"WARNING: Asked to clip an empty path, ignoring.");
 
-        if (data.bbox) {
-            CGPathRef transformedPath = CGPathApplyTransform(clipPath, bboxTransform);
-            CGPathRelease(clipPath);
-            clipPath = transformedPath;
-        }
-        CGContextAddPath(context, clipPath);
-        CGPathRelease(clipPath);
+        if (data.bboxUnits) {
+            CGMutablePathRef transformedPath = CGPathCreateMutable();
+            CGPathAddPath(transformedPath, &bboxTransform, clipPath);
+            CGContextAddPath(context, transformedPath);
+            CGPathRelease(transformedPath);
+        } else
+            CGContextAddPath(context, clipPath);
     }
 
     if (m_clipData.count()) {
@@ -260,7 +230,7 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
             NSLog(@"WARNING: Quartz does not yet support heterogenous clip rules, clipping will be incorrect.");
                 
         if (!CGContextIsPathEmpty(context)) {
-            if (m_clipData[0].rule == RULE_EVENODD)
+            if (clipRule == RULE_EVENODD)
                 CGContextEOClip(context);
             else
                 CGContextClip(context);

@@ -42,7 +42,6 @@ class RenderPath::Private
 public:
     Private()
     {
-        path = 0;
         style = 0;
     }
 
@@ -52,7 +51,7 @@ public:
     }
 
     KSVG::KCanvasRenderingStyle *style;
-    KCanvasUserData path;
+    RefPtr<KCanvasPath> path;
 
     QRect fillBBox, strokeBbox;
     QMatrix matrix;
@@ -67,8 +66,6 @@ RenderPath::RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *no
 
 RenderPath::~RenderPath()
 {
-    if(d->path)
-        QPainter::renderingDevice()->deletePath(d->path);
     delete d;
 }
 
@@ -136,19 +133,14 @@ void RenderPath::setupForDraw() const
     }
 }
 
-void RenderPath::changePath(KCanvasUserData newPath)
+void RenderPath::changePath(KCanvasPath* newPath)
 {
-    ASSERT(newPath);
-    QPainter::renderingDevice()->setCurrentPath(newPath);
-    if (d->path)
-        QPainter::renderingDevice()->deletePath(d->path);
-
     d->path = newPath;
 }
 
-KCanvasUserData RenderPath::path() const
+KCanvasPath* RenderPath::path() const
 {
-    return d->path;
+    return d->path.get();
 }
 
 KSVG::KCanvasRenderingStyle *RenderPath::canvasStyle() const

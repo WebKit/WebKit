@@ -280,31 +280,6 @@ void KCanvasMatrix::removeScale(double *xScale, double *yScale)
     *xScale = sx; *yScale = sy;
 }
 
-KCPathDataList KCanvasMatrix::map(const KCPathDataList &pathData) const
-{
-    KCPathDataList mapped;
-    for(unsigned int i = 0; i < pathData.count(); i++)
-    {
-        KCPathDataList::ConstIterator it;
-        KCPathDataList::ConstIterator end = pathData.end();
-
-        for(it = pathData.begin(); it != end; ++it)
-        {
-            KCPathData data = *it;
-
-            double x = 0.0, y = 0.0;
-            m_matrix.map(data.x3, data.y3, &x, &y);
-
-            if(data.cmd == CMD_MOVE)
-                mapped.moveTo(x, y);
-            else if(data.cmd == CMD_LINE)
-                mapped.lineTo(x, y);
-        }
-    }
-
-    return mapped;
-}
-
 QMatrix KCanvasMatrix::qmatrix() const
 {
     return m_matrix;

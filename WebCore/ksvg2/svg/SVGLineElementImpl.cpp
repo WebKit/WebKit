@@ -82,7 +82,7 @@ void SVGLineElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
     }
 }
 
-KCPathDataList SVGLineElementImpl::toPathData() const
+KCanvasPath* SVGLineElementImpl::toPathData() const
 {
     float _x1 = x1()->baseVal()->value(), _y1 = y1()->baseVal()->value();
     float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();

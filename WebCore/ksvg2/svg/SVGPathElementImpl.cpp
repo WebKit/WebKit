@@ -45,6 +45,7 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
+#include <kcanvas/device/KRenderingDevice.h>
 
 namespace KSVG {
 
@@ -378,14 +379,15 @@ SVGPathSegListImpl *SVGPathElementImpl::animatedNormalizedPathSegList() const
     return 0;
 }
 
-KCPathDataList SVGPathElementImpl::toPathData() const
+// FIXME: This probably belongs on SVGPathSegListImpl instead. -- ecs 12/5/05
+KCanvasPath* SVGPathElementImpl::toPathData() const
 {
     // TODO : also support non-normalized mode, at least in dom structure
-    KCPathDataList pathData;
     int len = pathSegList()->numberOfItems();
     if(len < 1)
-        return pathData;
+        return 0;
 
+    KCanvasPath* pathData = QPainter::renderingDevice()->createPath();
     for(int i = 0; i < len; ++i)
     {
         SVGPathSegImpl *p = pathSegList()->getItem(i);
@@ -394,25 +396,25 @@ KCPathDataList SVGPathElementImpl::toPathData() const
             case PATHSEG_MOVETO_ABS:
             {
                 SVGPathSegMovetoAbsImpl *moveTo = static_cast<SVGPathSegMovetoAbsImpl *>(p);
-                pathData.moveTo(moveTo->x(), moveTo->y());
+                pathData->moveTo(moveTo->x(), moveTo->y());
                 break;
             }
             case PATHSEG_LINETO_ABS:
             {
                 SVGPathSegLinetoAbsImpl *lineTo = static_cast<SVGPathSegLinetoAbsImpl *>(p);
-                pathData.lineTo(lineTo->x(), lineTo->y());
+                pathData->lineTo(lineTo->x(), lineTo->y());
                 break;
             }
             case PATHSEG_CURVETO_CUBIC_ABS:
             {
                 SVGPathSegCurvetoCubicAbsImpl *curveTo = static_cast<SVGPathSegCurvetoCubicAbsImpl *>(p);
-                pathData.curveTo(curveTo->x1(), curveTo->y1(),
+                pathData->curveTo(curveTo->x1(), curveTo->y1(),
                                  curveTo->x2(), curveTo->y2(),
                                  curveTo->x(), curveTo->y());
                 break;
             }
             case PATHSEG_CLOSEPATH:
-                pathData.closeSubpath();
+                pathData->closeSubpath();
             default:
                 break;
         }

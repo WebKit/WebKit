@@ -26,12 +26,6 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasTypes.h>
 
-class RenderPath;
-namespace KSVG {
-    class KCanvasRenderingStyle;
-}
-class KCanvasContainer;
-class KRenderingDevice;
 class KCanvasCreator
 {
 public:
@@ -41,14 +35,12 @@ public:
     static KCanvasCreator *self();
 
     // Canvas path creation
-    KCPathDataList createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const;
-    KCPathDataList createRectangle(float x, float y, float width, float height) const;
-    KCPathDataList createEllipse(float cx, float cy, float rx, float ry) const;
-    KCPathDataList createCircle(float cx, float cy, float r) const;
-    KCPathDataList createLine(float x1, float y1, float x2, float y2) const;
+    KCanvasPath* createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const;
+    KCanvasPath* createRectangle(float x, float y, float width, float height) const;
+    KCanvasPath* createEllipse(float cx, float cy, float rx, float ry) const;
+    KCanvasPath* createCircle(float cx, float cy, float r) const;
+    KCanvasPath* createLine(float x1, float y1, float x2, float y2) const;
 
-    // Canvas item creation
-    KCanvasUserData createCanvasPathData(KRenderingDevice *device, const KCPathDataList &pathData) const;
 private:
     static KCanvasCreator *s_creator;
 };

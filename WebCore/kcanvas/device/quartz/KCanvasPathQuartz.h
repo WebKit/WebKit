@@ -23,40 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kcanvas/KCanvasPath.h>
 
-#import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
-class QRect;
+typedef struct CGPath *CGMutablePathRef;
+typedef const struct CGPath *CGPathRef;
 
-namespace KSVG {
-    class SVGRenderStyle;
-}
-
-CFStringRef CFStringFromCGPath(CGPathRef path);
-CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
-CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
-
-void applyStrokeStyleToContext(CGContextRef context, KSVG::KCanvasRenderingStyle *style);
-
-static inline CGLineCap CGLineCapFromKC( KCCapStyle cap) {
-    if (cap == CAP_BUTT)
-        return kCGLineCapButt;
-    else if (cap == CAP_ROUND)
-        return kCGLineCapRound;
-    else if (cap == CAP_SQUARE)
-        return kCGLineCapSquare;
+class KCanvasPathQuartz : public KCanvasPath {
+public:
+    KCanvasPathQuartz();
+    virtual ~KCanvasPathQuartz();
     
-    return kCGLineCapButt;
-}
+    virtual bool isEmpty() const;
 
-static inline CGLineJoin CGLineJoinFromKC( KCJoinStyle join) {
-    if (join == JOIN_MITER)
-        return kCGLineJoinMiter;
-    else if (join == JOIN_ROUND)
-        return kCGLineJoinRound;
-    else if (join == JOIN_BEVEL)
-        return kCGLineJoinBevel;
+    virtual void moveTo(float x, float y);
+    virtual void lineTo(float x, float y);
+    virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3);
+    virtual void closeSubpath();
     
-    return kCGLineJoinMiter;
-}
-
-static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b) { return CGPointMake(a.x - b.x, a.y - b.y); }
+    CGPathRef cgPath() const { return m_cgPath; }
+    
+private:
+    CGMutablePathRef m_cgPath;
+};

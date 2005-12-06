@@ -1,3 +1,100 @@
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by timo.
+
+        5 test cases updated, no additional tests needed.
+
+        Removed KCPathData, KCPathDataList and KCanvasUserData.
+        Added KCanvasPath and KCanvasPathQuartz instead.
+        Updated methods to expect KCanvasPath* types and use RefPtr.
+        Removed no longer needed KCPathDataList -> KCanvasUserData routines
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5747
+
+        * WebCore.xcodeproj/project.pbxproj: added KCanvasPath(Quartz)
+        * kcanvas/KCanvasCreator.cpp:
+        (KCanvasCreator::createRoundedRectangle): updated to KCanvasPath*
+        (KCanvasCreator::createRectangle): updated to KCanvasPath*
+        (KCanvasCreator::createEllipse): updated to KCanvasPath*
+        (KCanvasCreator::createCircle): updated to KCanvasPath*
+        (KCanvasCreator::createLine): updated to KCanvasPath*
+        * kcanvas/KCanvasCreator.h:
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::Private::Private): updated to KCanvasPath*
+        (RenderPath::~RenderPath):
+        (RenderPath::changePath):
+        (RenderPath::path): updated to KCanvasPath*
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasMatrix.cpp:
+        * kcanvas/KCanvasMatrix.h:
+        * kcanvas/KCanvasPath.cpp:
+        (operator<<): updated to call device->stringForPath()
+        * kcanvas/KCanvasPath.h:
+        (KCanvasPath::~KCanvasPath):
+        (KCClipDataList::addPath): updated to KCanvasPath*
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasClipper::addClipData): updated to KCanvasPath*
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTypes.h:
+        * kcanvas/device/KRenderingDevice.cpp:
+        (KCanvasCommonArgs::path): updated to KCanvasPath*
+        (KCanvasCommonArgs::setPath): updated to KCanvasPath*
+        (KRenderingDevice::KRenderingDevice):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): updated to KCanvasPath*
+        (KCanvasItemQuartz::bboxForPath): updated to KCanvasPath*
+        (KCanvasItemQuartz::hitsPath): updated to KCanvasPath*
+        * kcanvas/device/quartz/KCanvasPathQuartz.h: Added.
+        (KCanvasPathQuartz::cgPath): updated to KCanvasPath*
+        * kcanvas/device/quartz/KCanvasPathQuartz.mm: Added.
+        (KCanvasPathQuartz::KCanvasPathQuartz): added
+        (KCanvasPathQuartz::~KCanvasPathQuartz): added
+        (KCanvasPathQuartz::isEmpty): added
+        (KCanvasPathQuartz::moveTo): added
+        (KCanvasPathQuartz::lineTo): added
+        (KCanvasPathQuartz::curveTo): added
+        (KCanvasPathQuartz::closeSubpath): added
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasClipperQuartz::applyClip): updated to KCanvasPath*
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::createPath): added
+        (KRenderingDeviceQuartz::stringForPath): updated to KCanvasPath*
+        (KRenderingDeviceQuartz::createItem): updated to KCanvasPath*
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        * ksvg2/svg/SVGCircleElementImpl.cpp:
+        (SVGCircleElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGCircleElementImpl.h:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::canvasResource): updated to KCanvasPath*
+        * ksvg2/svg/SVGEllipseElementImpl.cpp:
+        (KSVG::SVGEllipseElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGEllipseElementImpl.h:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::createRenderer): updated to KCanvasPath*
+        * ksvg2/svg/SVGLineElementImpl.cpp:
+        (SVGLineElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGLineElementImpl.h:
+        * ksvg2/svg/SVGPathElementImpl.cpp:
+        (KSVG::SVGPathElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGPathElementImpl.h:
+        * ksvg2/svg/SVGPolygonElementImpl.cpp:
+        (SVGPolygonElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGPolygonElementImpl.h:
+        * ksvg2/svg/SVGPolylineElementImpl.cpp:
+        (SVGPolylineElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGPolylineElementImpl.h:
+        * ksvg2/svg/SVGRectElementImpl.cpp:
+        (SVGRectElementImpl::toPathData): updated to KCanvasPath*
+        * ksvg2/svg/SVGRectElementImpl.h:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::createRenderer): updated to KCanvasPath*
+        (SVGStyledElementImpl::updateCanvasItem): updated to KCanvasPath*
+        (SVGStyledElementImpl::pushAttributeContext):
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        (KSVG::SVGStyledElementImpl::toPathData): updated to KCanvasPath*
+
 2005-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

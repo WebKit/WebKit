@@ -25,6 +25,7 @@
 
 
 #include "config.h"
+#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KCanvasFilterQuartz.h"
@@ -40,18 +41,6 @@
 #import <AppKit/NSGraphicsContext.h>
 
 #import "KWQLogging.h"
-
-
-KCanvasQuartzPathData::KCanvasQuartzPathData()
-{
-	path = CGPathCreateMutable();
-	hasValidBBox = false;
-}
-
-KCanvasQuartzPathData::~KCanvasQuartzPathData()
-{
-	CGPathRelease(path);
-}
 
 KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context) : m_cgContext(CGContextRetain(context)), m_nsGraphicsContext(0)
 {
@@ -154,10 +143,6 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::popContext()
     return poppedContext;
 }
 
-
-#pragma mark -
-#pragma mark Path Management
-
 KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const
 {
     KCanvasImageQuartz *quartzImage = static_cast<KCanvasImageQuartz *>(image);
@@ -173,75 +158,21 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
     return new KRenderingDeviceContextQuartz(CGLayerGetContext(cgLayer));
 }
 
-void KRenderingDeviceQuartz::deletePath(KCanvasUserData pathData)
+#pragma mark -
+#pragma mark Path Management
+
+KCanvasPath* KRenderingDeviceQuartz::createPath() const
 {
-	KCanvasQuartzPathData *data = static_cast<KCanvasQuartzPathData *>(pathData);
-	ASSERT(data != 0);
-	
-	delete data;
+    return new KCanvasPathQuartz();
 }
 
-void KRenderingDeviceQuartz::startPath()
-{
-	setCurrentPath(new KCanvasQuartzPathData());
-}
-
-void KRenderingDeviceQuartz::endPath()
-{
-	// NOOP for Quartz.
-}
-
-void KRenderingDeviceQuartz::moveTo(double x, double y)
-{
-	CGMutablePathRef path = static_cast<KCanvasQuartzPathData *>(currentPath())->path;
-	ASSERT(path != 0);
-
-	CGPathMoveToPoint(path,NULL,x, y);
-}
-
-void KRenderingDeviceQuartz::lineTo(double x, double y)
-{
-	KCanvasQuartzPathData *pathData = static_cast<KCanvasQuartzPathData *>(currentPath());
-	CGMutablePathRef path = pathData->path;
-	ASSERT(path != 0);
-
-	CGPathAddLineToPoint(path,NULL,x, y);
-	pathData->hasValidBBox = false;
-}
-
-void KRenderingDeviceQuartz::curveTo(double x1, double y1, double x2, double y2, double endX, double endY)
-{
-	KCanvasQuartzPathData *pathData = static_cast<KCanvasQuartzPathData *>(currentPath());
-	CGMutablePathRef path = pathData->path;
-	ASSERT(path != 0);
-
-	CGPathAddCurveToPoint(path, NULL, x1, y1, x2, y2, endX, endY);
-	pathData->hasValidBBox = false;
-}
-
-void KRenderingDeviceQuartz::closeSubpath()
-{
-	CGMutablePathRef path = static_cast<KCanvasQuartzPathData *>(currentPath())->path;
-	ASSERT(path != 0);
-
-	CGPathCloseSubpath(path);
-}
-
-KCanvasUserData KRenderingDeviceQuartz::pathForRect(const QRect &rect) const
-{
-	KCanvasQuartzPathData *data = new KCanvasQuartzPathData();
-	CGPathAddRect(data->path, NULL, CGRectMake(rect.x(),rect.y(),rect.width(),rect.height()));
-	return data;
-}
-
-QString KRenderingDeviceQuartz::stringForPath(KCanvasUserData path)
+QString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
 {
     QString result;
     if (path) {
-        CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path)->path;
+        CGPathRef cgPath = static_cast<const KCanvasPathQuartz *>(path)->cgPath();
         CFStringRef pathString = CFStringFromCGPath(cgPath);
         result = QString::fromCFString(pathString);
-        CFRelease(pathString);
     }
     return result;
 }
@@ -268,7 +199,7 @@ KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, kh
     return new (arena) KCanvasContainerQuartz(node);
 }
 
-RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasUserData path) const
+RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const
 {
     RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
     item->changePath(path);

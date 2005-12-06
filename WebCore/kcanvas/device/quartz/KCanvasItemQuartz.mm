@@ -35,6 +35,7 @@
 #import "KRenderingStrokePainter.h"
 #import "KCanvasMatrix.h"
 
+#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasResourcesQuartz.h"
@@ -203,7 +204,7 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     
     RenderPath::setupForDraw();
 
-    CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path())->path;
+    CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
 
     CGAffineTransform transform = CGAffineTransform(localTransform());
@@ -288,8 +289,7 @@ CGContextRef getSharedContext()
 
 QRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 {
-    KCanvasQuartzPathData *pathData = static_cast<KCanvasQuartzPathData *>(path());
-    CGMutablePathRef cgPath = pathData->path;
+    CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
     CGRect bbox;
 
@@ -317,7 +317,7 @@ QRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 
 bool KCanvasItemQuartz::hitsPath(const QPoint &hitPoint, bool fill) const
 {
-    CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(path())->path;
+    CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
 
     bool hitSuccess = false;

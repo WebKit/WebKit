@@ -51,12 +51,12 @@ KCanvasCreator *KCanvasCreator::self()
     return s_creator;
 }
 
-KCPathDataList KCanvasCreator::createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const
+KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const
 {
-    KCPathDataList list;
+    KCanvasPath* path = QPainter::renderingDevice()->createPath();
 
-    if (width <= 0.0f || height <= 0.0f)
-        return list;
+    if (width <= 0.0f || height <= 0.0f || !path)
+        return path;
 
     double nrx = rx, nry = ry;
     // If rx is greater than half of the width of the rectangle
@@ -69,52 +69,52 @@ KCPathDataList KCanvasCreator::createRoundedRectangle(float x, float y, float wi
     if(nry > height / 2)
         nry = height / 2;
 
-    list.moveTo(x + nrx, y);
-    list.curveTo(x + nrx * (1 - 0.552), y, x, y + nry * (1 - 0.552), x, y + nry);
+    path->moveTo(x + nrx, y);
+    path->curveTo(x + nrx * (1 - 0.552), y, x, y + nry * (1 - 0.552), x, y + nry);
 
     if(nry < height / 2)
-        list.lineTo(x, y + height - nry);
+        path->lineTo(x, y + height - nry);
 
-    list.curveTo(x, y + height - nry * (1 - 0.552), x + nrx * (1 - 0.552), y + height, x + nrx, y + height);
+    path->curveTo(x, y + height - nry * (1 - 0.552), x + nrx * (1 - 0.552), y + height, x + nrx, y + height);
 
     if(nrx < width / 2)
-        list.lineTo(x + width - nrx, y + height);
+        path->lineTo(x + width - nrx, y + height);
 
-    list.curveTo(x + width - nrx * (1 - 0.552), y + height, x + width, y + height - nry * (1 - 0.552), x + width, y + height - nry);
+    path->curveTo(x + width - nrx * (1 - 0.552), y + height, x + width, y + height - nry * (1 - 0.552), x + width, y + height - nry);
 
     if(nry < height / 2)
-        list.lineTo(x + width, y + nry);
+        path->lineTo(x + width, y + nry);
 
-    list.curveTo(x + width, y + nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y, x + width - nrx, y);
+    path->curveTo(x + width, y + nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y, x + width - nrx, y);
 
     if(nrx < width / 2)
-        list.lineTo(x + nrx, y);
+        path->lineTo(x + nrx, y);
 
-    list.closeSubpath();
-    return list;
+    path->closeSubpath();
+    return path;
 }
 
-KCPathDataList KCanvasCreator::createRectangle(float x, float y, float width, float height) const
+KCanvasPath* KCanvasCreator::createRectangle(float x, float y, float width, float height) const
 {
-    KCPathDataList list;
+    KCanvasPath* path = QPainter::renderingDevice()->createPath();
     
-    if (width <= 0.0f || height <= 0.0f)
-        return list;
+    if (width <= 0.0f || height <= 0.0f || !path)
+        return path;
     
-    list.moveTo(x, y);
-    list.lineTo(x + width, y);
-    list.lineTo(x + width, y + height);
-    list.lineTo(x, y + height);
-    list.closeSubpath();
-    return list;
+    path->moveTo(x, y);
+    path->lineTo(x + width, y);
+    path->lineTo(x + width, y + height);
+    path->lineTo(x, y + height);
+    path->closeSubpath();
+    return path;
 }
 
-KCPathDataList KCanvasCreator::createEllipse(float cx, float cy, float rx, float ry) const
+KCanvasPath* KCanvasCreator::createEllipse(float cx, float cy, float rx, float ry) const
 {
-    KCPathDataList list;
+    KCanvasPath* path = QPainter::renderingDevice()->createPath();
 
-    if (rx <= 0.0f || ry <= 0.0f)
-        return list;
+    if (rx <= 0.0f || ry <= 0.0f || !path)
+        return path;
 
     // Ellipse creation - nice & clean agg2 code
     double x = cx, y = cy;
@@ -135,78 +135,30 @@ KCPathDataList KCanvasCreator::createEllipse(float cx, float cy, float rx, float
 
         step++;
         if(step == 1)
-            list.moveTo(x, y);
+            path->moveTo(x, y);
         else
-            list.lineTo(x, y);
+            path->lineTo(x, y);
     }
 
-    list.closeSubpath();
-    return list;
+    path->closeSubpath();
+    return path;
 }
 
-KCPathDataList KCanvasCreator::createCircle(float cx, float cy, float r) const
+KCanvasPath* KCanvasCreator::createCircle(float cx, float cy, float r) const
 {
     return createEllipse(cx, cy, r, r);
 }
 
-KCPathDataList KCanvasCreator::createLine(float x1, float y1, float x2, float y2) const
+KCanvasPath* KCanvasCreator::createLine(float x1, float y1, float x2, float y2) const
 {
-    KCPathDataList list;
+    KCanvasPath* path = QPainter::renderingDevice()->createPath();
     
-    if (x1 == x2 && y1 == y2)
-        return list;
+    if ((x1 == x2 && y1 == y2) || !path)
+        return path;
 
-    list.moveTo(x1, y1);
-    list.lineTo(x2, y2);
-    return list;
-}
-
-KCanvasUserData KCanvasCreator::createCanvasPathData(KRenderingDevice *device, const KCPathDataList &pathData) const
-{
-    device->startPath();
-
-    int dataLength = pathData.count();
-    if(dataLength == 0)
-    {
-        device->endPath();
-        return device->currentPath();
-    }
-
-    KCPathDataList::ConstIterator it;
-    KCPathDataList::ConstIterator end = pathData.end();
-
-    // There are pure-moveto paths which reference
-    // paint servers *bah* -> Do NOT render them!
-    bool valid = false;
-    for(it = pathData.begin(); it != end; ++it)
-    {
-        KCPathData data = *it;        
-
-        if(data.cmd == CMD_MOVE)
-            device->moveTo(data.x3, data.y3);
-        else if(data.cmd == CMD_LINE)
-        {
-            device->lineTo(data.x3, data.y3);
-            valid = true;
-        }
-        else if(data.cmd == CMD_CLOSE_SUBPATH)
-            device->closeSubpath();
-        else
-        {
-            device->curveTo(data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
-            valid = true;
-        }
-    }
-
-    if(!valid)
-    {
-        device->endPath();
-        device->deletePath(device->currentPath());
-        device->startPath();
-    }
-
-    device->endPath();
-    return device->currentPath();
+    path->moveTo(x1, y1);
+    path->lineTo(x2, y2);
+    return path;
 }
 
 // vim:ts=4:noet

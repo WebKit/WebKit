@@ -75,7 +75,7 @@ void SVGCircleElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
     }
 }
 
-KCPathDataList SVGCircleElementImpl::toPathData() const
+KCanvasPath* SVGCircleElementImpl::toPathData() const
 {
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _r = r()->baseVal()->value();

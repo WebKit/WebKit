@@ -33,7 +33,7 @@ namespace KSVG
         SVGPolygonElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
         virtual ~SVGPolygonElementImpl();
 
-        virtual KCPathDataList toPathData() const;
+        virtual KCanvasPath* toPathData() const;
     };
 };
 

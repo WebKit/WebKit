@@ -48,47 +48,6 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-typedef struct {
-    CGAffineTransform transform;
-    CGMutablePathRef resultPath;
-} CGPathTransformCallbackData;
-
-void CGPathTransformCallback(void *info, const CGPathElement *element)
-{
-    CGPathTransformCallbackData *data = (CGPathTransformCallbackData *)info;
-    CGAffineTransform transform = data->transform;
-    CGMutablePathRef resultPath = data->resultPath;
-
-    CGPoint *points = element->points;
-
-    switch (element->type) {
-    case kCGPathElementMoveToPoint:
-        CGPathMoveToPoint(resultPath, &transform, points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddLineToPoint:
-        CGPathAddLineToPoint(resultPath, &transform, points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddQuadCurveToPoint:
-        CGPathAddQuadCurveToPoint(resultPath, &transform, points[0].x, points[0].y, points[1].x, points[1].y);
-        break;
-    case kCGPathElementAddCurveToPoint:
-        CGPathAddCurveToPoint(resultPath, &transform, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y);
-    case kCGPathElementCloseSubpath:
-        CGPathCloseSubpath(resultPath);
-    }
-}
-
-// FIXME: HACK this should be replace by a call to
-// CGPathAddPath(<#CGMutablePathRef path1#>,<#const CGAffineTransform * m#>,<#CGPathRef path2#>)
-CGPathRef CGPathApplyTransform(CGPathRef path, CGAffineTransform transform)
-{
-    CGPathTransformCallbackData data;
-    data.transform = transform;
-    data.resultPath = CGPathCreateMutable();
-    CGPathApply(path, &data, CGPathTransformCallback);
-    return data.resultPath;
-}
-
 void applyStrokeStyleToContext(CGContextRef context, KSVG::KCanvasRenderingStyle *style)
 {
     /* Shouldn't all these be in the stroke painter? */

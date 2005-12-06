@@ -79,7 +79,7 @@ public:
     virtual bool isClipper() const { return true; }
 
     void resetClipData();
-    void addClipData(const KCPathDataList &path, KCWindRule rule, bool bbox);
+    void addClipData(KCanvasPath *path, KCWindRule rule, bool bboxUnits);
 
     KCClipDataList clipData() const;
 

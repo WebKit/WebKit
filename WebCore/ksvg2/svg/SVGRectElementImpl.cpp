@@ -100,7 +100,7 @@ void SVGRectElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
     }
 }
 
-KCPathDataList SVGRectElementImpl::toPathData() const
+KCanvasPath* SVGRectElementImpl::toPathData() const
 {
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();

@@ -23,44 +23,30 @@
 #ifndef KCanvasTypes_H
 #define KCanvasTypes_H
 
-#include <q3ptrlist.h>
-
-// Some default constants
-
-// Holds any ptr under a nice synonym :)
-typedef void *KCanvasUserData;
-
-#ifdef APPLE_CHANGES
-class KCanvasPrivateUserData {
-
-};
-
-typedef Q3PtrList<KCanvasPrivateUserData> KCanvasUserDataList;
-#else
-typedef Q3PtrList<void> KCanvasUserDataList;
-#endif
+#include <kxmlcore/RefPtr.h>
 
 // aka "what to draw"
 namespace KSVG {
     class KCanvasRenderingStyle;
 }
+
+class KCanvasPath;
 class KCanvasCommonArgs
 {
 public:
     KCanvasCommonArgs();
     ~KCanvasCommonArgs();
 
-    KCanvasUserData path() const;
-    void setPath(KCanvasUserData path);
+    KCanvasPath* path() const;
+    void setPath(KCanvasPath* path);
 
     KSVG::KCanvasRenderingStyle *canvasStyle() const;
     void setStyle(KSVG::KCanvasRenderingStyle *style);
     
 private:
-    KCanvasUserData m_path;
+    RefPtr<KCanvasPath> m_path;
     KSVG::KCanvasRenderingStyle *m_style;
 };
-
 
 #endif
 

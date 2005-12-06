@@ -23,40 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#include "KCanvasPathQuartz.h"
 
-#import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
-class QRect;
-
-namespace KSVG {
-    class SVGRenderStyle;
+KCanvasPathQuartz::KCanvasPathQuartz()
+{
+    m_cgPath = CGPathCreateMutable();
 }
 
-CFStringRef CFStringFromCGPath(CGPathRef path);
-CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
-CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
-
-void applyStrokeStyleToContext(CGContextRef context, KSVG::KCanvasRenderingStyle *style);
-
-static inline CGLineCap CGLineCapFromKC( KCCapStyle cap) {
-    if (cap == CAP_BUTT)
-        return kCGLineCapButt;
-    else if (cap == CAP_ROUND)
-        return kCGLineCapRound;
-    else if (cap == CAP_SQUARE)
-        return kCGLineCapSquare;
-    
-    return kCGLineCapButt;
+KCanvasPathQuartz::~KCanvasPathQuartz()
+{
+    CGPathRelease(m_cgPath);
 }
 
-static inline CGLineJoin CGLineJoinFromKC( KCJoinStyle join) {
-    if (join == JOIN_MITER)
-        return kCGLineJoinMiter;
-    else if (join == JOIN_ROUND)
-        return kCGLineJoinRound;
-    else if (join == JOIN_BEVEL)
-        return kCGLineJoinBevel;
-    
-    return kCGLineJoinMiter;
+bool KCanvasPathQuartz::isEmpty() const
+{
+    return CGPathIsEmpty(m_cgPath);
 }
 
-static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b) { return CGPointMake(a.x - b.x, a.y - b.y); }
+void KCanvasPathQuartz::moveTo(float x, float y)
+{
+    CGPathMoveToPoint(m_cgPath, 0, x, y);
+}
+
+void KCanvasPathQuartz::lineTo(float x, float y)
+{
+    CGPathAddLineToPoint(m_cgPath, 0, x, y);
+}
+
+void KCanvasPathQuartz::curveTo(float x1, float y1, float x2, float y2, float x3, float y3)
+{
+    CGPathAddCurveToPoint(m_cgPath, 0, x1, y1, x2, y2, x3, y3);
+}
+
+void KCanvasPathQuartz::closeSubpath()
+{
+    CGPathCloseSubpath(m_cgPath);
+}

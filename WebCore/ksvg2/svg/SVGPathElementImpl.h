@@ -101,7 +101,7 @@ namespace KSVG
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
 
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual KCPathDataList toPathData() const;
+        virtual KCanvasPath* toPathData() const;
 
     private:
         mutable RefPtr<SVGPathSegListImpl> m_pathSegList;

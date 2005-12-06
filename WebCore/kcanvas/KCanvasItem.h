@@ -58,9 +58,9 @@ public:
     void setupForDraw() const;
 
     // Update
-    void changePath(KCanvasUserData newPath);
+    void changePath(KCanvasPath* newPath);
 
-    KCanvasUserData path() const;
+    KCanvasPath* path() const;
     virtual void setStyle(khtml::RenderStyle *style);
     KSVG::KCanvasRenderingStyle *canvasStyle() const;
 

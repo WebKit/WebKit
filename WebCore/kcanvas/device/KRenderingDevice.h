@@ -60,10 +60,6 @@ public:
     // after the canvas target, it may be overwritten.
     virtual bool isBuffered() const = 0;
 
-    // Returns a pointer to the last constructed vector path
-    // Call it after startPath()....endPath() to get the result!
-    KCanvasUserData currentPath() const;
-
     // Global rendering device context
     KRenderingDeviceContext *currentContext() const;
 
@@ -71,35 +67,19 @@ public:
     virtual void pushContext(KRenderingDeviceContext *context);
     
     virtual KRenderingDeviceContext *contextForImage(KCanvasImage *image) const = 0;
-
-    // Vector path creation
-    virtual void deletePath(KCanvasUserData path) = 0;
-    virtual void startPath() = 0;
-    virtual void endPath() = 0;
-
-    virtual void moveTo(double x, double y) = 0;
-    virtual void lineTo(double x, double y) = 0;
-    virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) = 0;
-    virtual void closeSubpath() = 0;
     
-    virtual QString stringForPath(KCanvasUserData path) = 0;
+    virtual QString stringForPath(const KCanvasPath* path) = 0;
 
     // Creation tools
     virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasUserData path) const = 0;
+    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const = 0;
     virtual KCanvasContainer *createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const = 0;
-
-
-protected: // To be used by from inherited endPath()
-    friend class RenderPath;
-
-    void setCurrentPath(KCanvasUserData path);
+    virtual KCanvasPath* createPath() const = 0;
 
 private:
-    KCanvasUserData m_currentPath;
     Q3PtrStack<KRenderingDeviceContext> m_contextStack;
 };
 

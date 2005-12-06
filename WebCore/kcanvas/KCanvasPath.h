@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2005 Apple Computer, Inc.
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
@@ -24,6 +25,9 @@
 #define KCanvasPath_H
 
 #include <q3valuelist.h>
+#include <kxmlcore/RefPtr.h>
+#include <kxmlcore/Assertions.h>
+#include "misc/shared.h"
 
 class QTextStream;
 
@@ -44,59 +48,25 @@ typedef enum
     CMD_CLOSE_SUBPATH = 3
 } KCPathCommand;
 
-QTextStream &operator<<(QTextStream &ts, KCPathCommand cmd);
-
-struct KCPathData
-{
-    KCPathCommand cmd : 2;
-
-    double x1, x2, x3;
-    double y1, y2, y3;
-};
-
-QTextStream &operator<<(QTextStream &ts, const KCPathData &d);
-
-class KCPathDataList : public Q3ValueList<KCPathData>
+class KCanvasPath : public khtml::Shared<KCanvasPath>
 {
 public:
-    KCPathDataList() { }
+    virtual ~KCanvasPath() { }
+    
+    virtual bool isEmpty() const = 0;
 
-    inline void moveTo(double x, double y)
-    {
-        KCPathData data; data.cmd = CMD_MOVE;
-        data.x3 = x; data.y3 = y;
-        append(data);
-    }
-
-    inline void lineTo(double x, double y)
-    {
-        KCPathData data; data.cmd = CMD_LINE;
-        data.x3 = x; data.y3 = y;
-        append(data);
-    }
-
-    inline void curveTo(double x1, double y1, double x2, double y2, double x3, double y3)
-    {
-        KCPathData data; data.cmd = CMD_CURVE;
-        data.x1 = x1; data.y1 = y1;
-        data.x2 = x2; data.y2 = y2;
-        data.x3 = x3; data.y3 = y3;
-        append(data);
-    }
-
-    inline void closeSubpath()
-    {
-         KCPathData data; data.cmd = CMD_CLOSE_SUBPATH;
-         append(data);
-    }
+    virtual void moveTo(float x, float y) = 0;
+    virtual void lineTo(float x, float y) = 0;
+    virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
+    virtual void closeSubpath() = 0;
 };
 
 // Clipping paths
 struct KCClipData
 {
-    KCWindRule rule : 1;
-    bool bbox : 1;
-    KCPathDataList path;
+    KCWindRule windRule : 1;
+    bool bboxUnits : 1;
+    RefPtr<KCanvasPath> path;
 };
 
 QTextStream &operator<<(QTextStream &ts, const KCClipData &d);
@@ -106,13 +76,14 @@ class KCClipDataList : public Q3ValueList<KCClipData>
 public:
     KCClipDataList() { }
 
-    inline void addPath(const KCPathDataList &pathData, KCWindRule rule, bool bbox)
+    inline void addPath(KCanvasPath *pathData, KCWindRule windRule, bool bboxUnits)
     {
-        KCClipData data;
-        data.rule = rule;
-        data.bbox = bbox;
-        data.path = pathData;
-        append(data);
+        ASSERT(pathData);
+        KCClipData clipData;
+        clipData.windRule = windRule;
+        clipData.bboxUnits = bboxUnits;
+        clipData.path = pathData;
+        append(clipData);
     }
 };
 

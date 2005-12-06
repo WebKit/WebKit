@@ -48,7 +48,7 @@
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasImage.h>
-#include "KCanvasRenderingStyle.h"
+#include <kcanvas/KCanvasPath.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerImage.h>
@@ -143,12 +143,11 @@ khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, kht
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
 
     // Use dummy rect
-    KCPathDataList pathData = KCanvasCreator::self()->createRectangle(_x, _y, _width, _height);
-    if(pathData.isEmpty())
+    RefPtr<KCanvasPath> pathData = KCanvasCreator::self()->createRectangle(_x, _y, _width, _height);
+    if (!pathData || pathData->isEmpty())
         return 0;
-
-    KCanvasUserData path = KCanvasCreator::self()->createCanvasPathData(QPainter::renderingDevice(), pathData);
-    return QPainter::renderingDevice()->createItem(arena, style, this, path);
+    
+    return QPainter::renderingDevice()->createItem(arena, style, this, pathData.get());
 }
 
 void SVGImageElementImpl::attach()
