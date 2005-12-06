@@ -1,5 +1,29 @@
 2005-12-05  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Fixed a problem from the patch to fix <rdar://problem/4365690>. After that checkin, KWQKHTMLPart was
+        inadvertently left with both centerSelectionInVisibleArea() and centerSelectionInVisibleArea() const.
+
+        * kwq/KWQKHTMLPart.h:
+        renamed centerSelectionInVisibleArea() to revealSelection(). This is the method that
+        was named jumpToSelection() before my recent checkin.
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        call revealSelection() rather than centerSelectionInVisibleArea(); this restores the
+        behavior from before my recent checkin.
+        (KWQKHTMLPart::revealSelection):
+        renamed from centerSelectionInVisibleArea()
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        call revealSelection() rather than centerSelectionInVisibleArea(); this restores the
+        behavior from before my recent checkin.
+
+        * kwq/WebCoreBridge.h:
+        removed one of the two declarations of centerSelectionInVisibleArea()
+
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim Omernick.
         
         Removed some dead code I happened to stumble across. No test cases added.

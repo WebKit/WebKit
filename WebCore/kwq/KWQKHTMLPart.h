@@ -143,7 +143,6 @@ public:
     void scheduleHistoryNavigation( int steps );
     
     void scrollToAnchor(const KURL &);
-    void centerSelectionInVisibleArea();
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     bool scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity);
     
@@ -235,6 +234,9 @@ public:
 
     QRect selectionRect() const;
     NSRect visibleSelectionRect() const;
+    // Scrolls as necessary to reveal the selection
+    void revealSelection();
+    // Centers the selection regardless of whether it was already visible
     void centerSelectionInVisibleArea() const;
     NSImage *selectionImage() const;
     NSImage *snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const;

@@ -636,7 +636,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     }
 
     setSelection(SelectionController(resultRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
-    centerSelectionInVisibleArea();
+    revealSelection();
     return true;
 }
 
@@ -910,7 +910,7 @@ void KWQKHTMLPart::unfocusWindow()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void KWQKHTMLPart::centerSelectionInVisibleArea()
+void KWQKHTMLPart::revealSelection()
 {
     if (d->m_selection.start().isNotNull()) {
         if (selectionStart() && selectionStart()->renderer()) {
@@ -1007,7 +1007,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
                     setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
-                    centerSelectionInVisibleArea();
+                    revealSelection();
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
                     return result;
