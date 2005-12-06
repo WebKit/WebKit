@@ -4,6 +4,16 @@
 
         * WebView.subproj/WebHTMLView.m:
         (-[NSArray validateUserInterfaceItem:]):
+        one more tweak: moved jumpToSelection: to be validated the same way as
+        centerSelectionInVisibleArea:, since it now calls the same code. Might not
+        make a difference in any real code, but you never know.
+
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
         removed double handling of centerSelectionInVisibleArea
 
 2005-12-05  John Sullivan  <sullivan@apple.com>

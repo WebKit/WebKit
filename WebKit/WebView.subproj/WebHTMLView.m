@@ -1916,6 +1916,7 @@ static WebHTMLView *lastHitView = nil;
                || action == @selector(uppercaseWord:)) {
         return [self _hasSelection] && [self _isEditable];
     } else if (action == @selector(centerSelectionInVisibleArea:)
+            || action == @selector(jumpToSelection:)
             || action == @selector(copyFont:)
             || action == @selector(setMark:)) {
         return [self _hasSelectionOrInsertionPoint];
@@ -1928,7 +1929,6 @@ static WebHTMLView *lastHitView = nil;
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(_ignoreSpellingFromMenu:)
-            || action == @selector(jumpToSelection:)
             || action == @selector(_learnSpellingFromMenu:)
             || action == @selector(takeFindStringFromSelection:)) {
         return [self _hasSelection];
