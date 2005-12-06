@@ -47,10 +47,6 @@ my @options = XcodeOptions();
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
 my @otherDirs = ("WebKitLibraries");
 my $checkoutScript = "WebKitTools/checkout";
-if ($svgSupport) {
-    $checkoutScript .= " --svg";
-    push(@otherDirs, "SVGSupport");
-}
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
         die "Error: No $dir directory found. Please run \"$checkoutScript\" first.\n";

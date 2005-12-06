@@ -1,5 +1,15 @@
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Script updates for SVG files move (remove references to SVGSupport)
+
+        * Scripts/build-webkit: remove SVGSupport
+        * Scripts/run-webkit-tests: Resources -> resources for --svg
+        * Scripts/update-webkit: remove SVGSupport
+
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
         Reviewed mjs.
 
         * checkout: remove --svg support, SVG is now checked out by default

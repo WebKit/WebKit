@@ -96,7 +96,7 @@ my $haveSVGSupport = checkWebCoreSVGSupport($testSVGs);
 
 my $layoutTestsName = "LayoutTests";
 if ($testSVGs) {
-    $layoutTestsName = "SVGSupport/layout-tests";
+    $layoutTestsName = "LayoutTests/svg";
 }
 
 my $workingDir = getcwd();
@@ -108,7 +108,7 @@ my @tests = ();
 
 my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
-    $findArguments = "\\( -name Resources \\! -prune \\) -or -name '*.svg' -or -name '*.xml'";
+    $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.svg' -or -name '*.xml'";
 } elsif ($haveSVGSupport) {
 	$findArguments .= " -or -name '*.svg'";
 }

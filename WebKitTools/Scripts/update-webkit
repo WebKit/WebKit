@@ -52,7 +52,6 @@ close ROOT;
 
 my @sources = ("WebKitTools", "JavaScriptCore", "WebCore", "WebKitLibraries", "WebKit");
 push @sources, "LayoutTests" if $includeTests;
-push @sources, "SVGSupport" if -d "SVGSupport";
 
 # Check out all the sources.
 print "CVS root is $root\n" unless $quiet;
