@@ -161,7 +161,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
 void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect, CGPathRef path) const
 {
     KDOM::DocumentImpl *doc = document();
-    KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
+    const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
 
     KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));
     KCanvasMarker *midMarker = getMarkerById(doc, svgStyle->midMarker().mid(1));

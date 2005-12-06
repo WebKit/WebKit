@@ -26,17 +26,20 @@
 #include <kdom/core/DOMImplementationImpl.h>
 #include <qstringlist.h>
 
+class KHTMLView;
+
 namespace KDOM
 {
     class DOMString;
-    class CDFInterface;
     class DocumentImpl;
     class DocumentTypeImpl;
+    class CSSStyleSheetImpl;
+    using ::KHTMLView;
 };
 
 namespace KSVG
 {
-    class SVGDOMImplementationImpl : public KDOM::DOMImplementationImpl
+    class SVGDOMImplementationImpl : public DOM::DOMImplementationImpl
     {
     public:
         SVGDOMImplementationImpl();

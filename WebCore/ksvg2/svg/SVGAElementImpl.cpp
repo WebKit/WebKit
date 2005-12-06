@@ -25,11 +25,13 @@
 #include <kdom/events/MouseEventImpl.h>
 #include <kdom/events/kdomevents.h>
 #include <kdom/Helper.h>
+#include "csshelper.h"
 
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
+#include "EventNames.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include <ksvg2/KSVGPart.h>
@@ -91,7 +93,7 @@ void SVGAElementImpl::defaultEventHandler(KDOM::EventImpl *evt)
             return;
         }
 #if APPLE_CHANGES
-        url = KDOM::parseURL(href()->baseVal()).qstring();
+        url = khtml::parseURL(href()->baseVal()).qstring();
 #else
         url = KDOM::DOMString(KDOM::Helper::parseURL(href()->baseVal())).qstring();
 #endif

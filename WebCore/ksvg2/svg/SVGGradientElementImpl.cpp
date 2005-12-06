@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
+#include <kdom/css/CSSStyleSelector.h>
 
 #include "ksvg.h"
 #include "SVGNames.h"
@@ -36,6 +37,7 @@
 #include "SVGStopElementImpl.h"
 #include "SVGRenderStyle.h"
 
+#include <kcanvas/KCanvas.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 #include <kcanvas/device/KRenderingDevice.h>
 

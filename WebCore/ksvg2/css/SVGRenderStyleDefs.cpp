@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "ksvg.h"
+#include "render_style.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 

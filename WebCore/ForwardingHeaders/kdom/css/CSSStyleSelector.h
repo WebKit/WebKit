@@ -1,1 +1,1 @@
-#include "KDOMHeaders.h"
+#include "khtml/css/cssstyleselector.h"

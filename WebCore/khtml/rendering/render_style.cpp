@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -530,7 +530,7 @@ RenderStyle::RenderStyle()
     inherited = _default->inherited;
 
 #if SVG_SUPPORT
-    m_svgStyle = new KSVG::SVGRenderStyle();
+    m_svgStyle = _default->m_svgStyle;
 #endif
 
     setBitDefaults();
@@ -555,7 +555,7 @@ RenderStyle::RenderStyle(bool)
     inherited.init();
     
 #if SVG_SUPPORT
-    m_svgStyle = new KSVG::SVGRenderStyle(true);
+    m_svgStyle.init();
 #endif
 
     pseudoStyle = 0;
@@ -571,7 +571,7 @@ RenderStyle::RenderStyle(const RenderStyle& o)
       m_affectedByAttributeSelectors(false)
 {
 #if SVG_SUPPORT
-    m_svgStyle = new KSVG::SVGRenderStyle(*o.svgStyle());
+    m_svgStyle = o.m_svgStyle;
 #endif
     m_ref = 0;
 }
@@ -582,15 +582,13 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
     inherited = inheritParent->inherited;
     inherited_flags = inheritParent->inherited_flags;
 #if SVG_SUPPORT
-    svgStyle()->inheritFrom(inheritParent->svgStyle());
+    if (m_svgStyle != inheritParent->m_svgStyle)
+        m_svgStyle.access()->inheritFrom(inheritParent->m_svgStyle.get());
 #endif
 }
 
 RenderStyle::~RenderStyle()
 {
-#if SVG_SUPPORT
-    delete m_svgStyle;
-#endif
 }
 
 bool RenderStyle::operator==(const RenderStyle& o) const
@@ -606,7 +604,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             css3InheritedData == o.css3InheritedData &&
             inherited == o.inherited
 #if SVG_SUPPORT
-            && *svgStyle() == *o.svgStyle()
+            && m_svgStyle == o.m_svgStyle
 #endif
             );
 }
@@ -680,7 +678,7 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
     return inherited_flags != other->inherited_flags ||
            inherited != other->inherited ||
 #if SVG_SUPPORT
-           svgStyle()->inheritedNotEqual(other->svgStyle()) ||
+           m_svgStyle->inheritedNotEqual(other->m_svgStyle.get()) ||
 #endif
            css3InheritedData != other->css3InheritedData;
 }
@@ -706,7 +704,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
     // This is horribly inefficient.  Eventually we'll have to integrate
     // this more directly by caling: Diff svgDiff = svgStyle->diff(other)
     // and then checking svgDiff and returning from the appropraite places below.
-    if (!(*svgStyle() == *(other->svgStyle())))
+    if (m_svgStyle != other->m_svgStyle)
         return Layout;
 #endif
 

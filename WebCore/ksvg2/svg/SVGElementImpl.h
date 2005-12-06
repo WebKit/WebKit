@@ -30,6 +30,7 @@ namespace KDOM
 {
     class Ecma;
     class DocumentPtr;
+    typedef StyledElementImpl XMLElementImpl;
 };
 
 namespace KSVG

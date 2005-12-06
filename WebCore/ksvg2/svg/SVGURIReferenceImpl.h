@@ -27,7 +27,7 @@
 
 namespace KDOM
 {
-    class AttributeImpl;
+    class MappedAttributeImpl;
 };
 
 namespace KSVG

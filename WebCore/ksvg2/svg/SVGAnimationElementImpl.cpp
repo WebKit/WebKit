@@ -25,6 +25,7 @@
 
 #include <kdom/kdom.h>
 #include <kdom/core/AttrImpl.h>
+#include <kdom/core/DocumentImpl.h>
 #include <kdom/core/DOMImplementationImpl.h>
 #include <kdom/css/CSSStyleDeclarationImpl.h>
 #include <kdom/DOMString.h>

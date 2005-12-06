@@ -33,6 +33,9 @@
 
 #ifdef APPLE_CHANGES
 class KHTMLView;
+namespace KDOM {
+    using ::KHTMLView;
+}
 #endif
 
 namespace KSVG

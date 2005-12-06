@@ -1,5 +1,108 @@
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        No test cases possible/necessary.
+
+        Removing unused ForwardingHeaders, as well as header cleanup in SVG
+        Fixed KSVG2 files to include proper KDOM headers.
+        Fixed KDOM forwarding headers to point to correct khtml headers.
+        Added DataRef.h to hold khtml::DataRef.
+        Made SVGRenderStyle a DataRef on RenderStyle.
+        (Landing two bugs at once as their project file changes intertwine)
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5942
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5943
+
+        * ForwardingHeaders/kdom/DOMString.h:
+        * ForwardingHeaders/kdom/KDOMSettings.h:
+        * ForwardingHeaders/kdom/cache/KDOMCachedDocument.h:
+        * ForwardingHeaders/kdom/cache/KDOMCachedImage.h:
+        * ForwardingHeaders/kdom/cache/KDOMCachedObject.h:
+        * ForwardingHeaders/kdom/cache/KDOMCachedObjectClient.h:
+        * ForwardingHeaders/kdom/cache/KDOMCachedScript.h:
+        * ForwardingHeaders/kdom/cache/KDOMLoader.h:
+        * ForwardingHeaders/kdom/core/AttrImpl.h:
+        * ForwardingHeaders/kdom/core/CDFInterface.h: Removed.
+        * ForwardingHeaders/kdom/core/DOMImplementationImpl.h:
+        * ForwardingHeaders/kdom/core/DOMStringImpl.h:
+        * ForwardingHeaders/kdom/core/DocumentImpl.h:
+        * ForwardingHeaders/kdom/core/ElementImpl.h:
+        * ForwardingHeaders/kdom/core/NodeImpl.h:
+        * ForwardingHeaders/kdom/core/XMLElementImpl.h:
+        * ForwardingHeaders/kdom/css/CSSPrimitiveValueImpl.h:
+        * ForwardingHeaders/kdom/css/CSSStyleRuleImpl.h:
+        * ForwardingHeaders/kdom/css/CSSStyleSelector.h:
+        * ForwardingHeaders/kdom/css/CSSStyleSheetImpl.h:
+        * ForwardingHeaders/kdom/css/CSSValueImpl.h:
+        * ForwardingHeaders/kdom/css/KDOMCSSParser.h:
+        * ForwardingHeaders/kdom/css/RGBColorImpl.h:
+        * ForwardingHeaders/kdom/events/UIEventImpl.h:
+        * ForwardingHeaders/kdom/events/kdomevents.h:
+        * ForwardingHeaders/kdom/kdom.h:
+        * ForwardingHeaders/ksvg2/KSVGPart.h:
+        * ForwardingHeaders/ksvg2/KSVGView.h:
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore+SVG/KDOMStubClasses.h: Removed.
+        * WebCore+SVG/kdomcss.h: Removed.
+        * WebCore+SVG/kdomls.h: Removed.
+        * WebCore+SVG/kdomrange.h: Removed.
+        * WebCore+SVG/kdomtraversal.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (writeStyle):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::drawMarkersIfNeeded):
+        * khtml/rendering/DataRef.h: Added.
+        (khtml::DataRef::DataRef):
+        (khtml::DataRef::~DataRef):
+        (khtml::DataRef::operator->):
+        (khtml::DataRef::get):
+        (khtml::DataRef::access):
+        (khtml::DataRef::init):
+        (khtml::DataRef::operator=):
+        (khtml::DataRef::operator == ):
+        (khtml::DataRef::operator != ):
+        * khtml/rendering/render_style.cpp:
+        (m_affectedByAttributeSelectors):
+        (RenderStyle::RenderStyle):
+        (RenderStyle::inheritFrom):
+        (RenderStyle::~RenderStyle):
+        (RenderStyle::operator==):
+        (RenderStyle::inheritedNotEqual):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::svgStyle):
+        (khtml::RenderStyle::accessSVGStyle):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::SVGRenderStyle):
+        (SVGRenderStyle::inheritedNotEqual):
+        * ksvg2/css/SVGRenderStyle.h:
+        (KSVG::SVGRenderStyle::operator!=):
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::defaultEventHandler):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.h:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::filterEffect):
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        * ksvg2/svg/SVGURIReferenceImpl.h:
+        * ksvg2/svg/SVGZoomAndPanImpl.h:
+
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by timo.
 
         5 test cases updated, no additional tests needed.

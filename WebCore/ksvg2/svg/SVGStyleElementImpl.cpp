@@ -24,6 +24,8 @@
 #include <kdom/kdom.h>
 #include <kdom/DOMString.h>
 #include <kdom/css/MediaListImpl.h>
+#include <kdom/core/DocumentImpl.h>
+#include <kdom/css/CSSStyleSheetImpl.h>
 
 #include "SVGStyleElementImpl.h"
 

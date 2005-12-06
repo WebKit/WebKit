@@ -24,7 +24,6 @@
 #include <kdom/kdom.h>
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/domattrs.h>
-#include <kdom/core/CDFInterface.h>
 #include <kdom/DOMString.h>
 
 #include <kxmlcore/Assertions.h>

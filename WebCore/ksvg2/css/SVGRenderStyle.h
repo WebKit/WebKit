@@ -25,13 +25,43 @@
 
 #include <qrect.h>
 
+#include "misc/shared.h"
+#include "DataRef.h"
+
+// KSVG compatibility: Allow us to use KDOM:: as though it were khtml::
+namespace KDOM {
+    using namespace khtml;
+};
+
 #include <ksvg2/svg/SVGPaintImpl.h>
-#include <kdom/css/RenderStyle.h>
 #include <ksvg2/css/SVGRenderStyleDefs.h>
+
+// Helper macros for SVG's 'RenderStyle' properties
+#define RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
+    void set##Type(Data val) { noninherited_flags.f._##Name = val; } \
+    Data Name() const { return (Data) noninherited_flags.f._##Name; } \
+    static Data initial##Type() { return Initial; }
+
+#define RS_DEFINE_ATTRIBUTE_INHERITED(Data, Type, Name, Initial) \
+    void set##Type(Data val) { inherited_flags.f._##Name = val; } \
+    Data Name() const { return (Data) inherited_flags.f._##Name; } \
+    static Data initial##Type() { return Initial; }
+
+#define RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    Data Name() const { return Group->Variable; } \
+    void set##Type(Data obj) { RS_SET_VARIABLE(Group, Variable, obj) }
+
+#define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Data, Group, Variable, Type, Name, Initial) \
+    RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    static Data initial##Type() { return Initial; }
+
+#define RS_SET_VARIABLE(Group, Variable, Value) \
+    if(!(Group->Variable == Value)) \
+        Group.access()->Variable = Value;
 
 namespace KSVG
 {
-    class SVGRenderStyle
+    class SVGRenderStyle : public KDOM::Shared<SVGRenderStyle>
     {    
     public:
         SVGRenderStyle();
@@ -39,11 +69,12 @@ namespace KSVG
         SVGRenderStyle(const SVGRenderStyle &other);
         ~SVGRenderStyle();
 
-        bool inheritedNotEqual(SVGRenderStyle *other) const;
+        bool inheritedNotEqual(const SVGRenderStyle *other) const;
 
         void inheritFrom(const SVGRenderStyle *inheritParent);
         
         bool operator==(const SVGRenderStyle& o) const;
+        bool operator!=(const SVGRenderStyle& o) const { return !(*this == o); }
 
         // SVG CSS Properties
         SVG_RS_DEFINE_ATTRIBUTE(EAlignmentBaseline, AlignmentBaseline, alignmentBaseline, AB_AUTO)

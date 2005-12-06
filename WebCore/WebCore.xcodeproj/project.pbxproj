@@ -1220,17 +1220,12 @@
 		A884284709308C1C00B6D461 /* SVGNamesWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */; };
 		A884284809308C1C00B6D461 /* SVGElementFactoryWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */; };
 		A884284909308C1C00B6D461 /* kdomevents.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283A09308C1C00B6D461 /* kdomevents.h */; };
-		A884284A09308C1C00B6D461 /* kdomcss.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283B09308C1C00B6D461 /* kdomcss.h */; };
 		A884284B09308C1C00B6D461 /* kdom.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283C09308C1C00B6D461 /* kdom.h */; };
 		A884284C09308C1C00B6D461 /* DOMList.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283D09308C1C00B6D461 /* DOMList.h */; };
 		A884284D09308C1C00B6D461 /* RGBColorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283E09308C1C00B6D461 /* RGBColorImpl.h */; };
 		A884284E09308C1C00B6D461 /* RGBColorImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */; };
 		A884284F09308C1C00B6D461 /* Namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284009308C1C00B6D461 /* Namespace.h */; };
-		A884285009308C1C00B6D461 /* kdomtraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284109308C1C00B6D461 /* kdomtraversal.h */; };
-		A884285109308C1C00B6D461 /* KDOMStubClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284209308C1C00B6D461 /* KDOMStubClasses.h */; };
 		A884285209308C1C00B6D461 /* KDOMSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284309308C1C00B6D461 /* KDOMSettings.h */; };
-		A884285309308C1C00B6D461 /* kdomrange.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284409308C1C00B6D461 /* kdomrange.h */; };
-		A884285409308C1C00B6D461 /* kdomls.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284509308C1C00B6D461 /* kdomls.h */; };
 		A884285509308C1C00B6D461 /* KDOMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284609308C1C00B6D461 /* KDOMHeaders.h */; };
 		A890DF1F0930974800513F88 /* SVGStyledTransformableElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A890DF1B0930974800513F88 /* SVGStyledTransformableElementImpl.h */; };
 		A890DF200930974800513F88 /* SVGStyledTransformableElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A890DF1C0930974800513F88 /* SVGStyledTransformableElementImpl.cpp */; };
@@ -2200,17 +2195,12 @@
 		A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNamesWrapper.cpp; sourceTree = "<group>"; };
 		A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactoryWrapper.cpp; sourceTree = "<group>"; };
 		A884283A09308C1C00B6D461 /* kdomevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdomevents.h; sourceTree = "<group>"; };
-		A884283B09308C1C00B6D461 /* kdomcss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdomcss.h; sourceTree = "<group>"; };
 		A884283C09308C1C00B6D461 /* kdom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdom.h; sourceTree = "<group>"; };
 		A884283D09308C1C00B6D461 /* DOMList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMList.h; sourceTree = "<group>"; };
 		A884283E09308C1C00B6D461 /* RGBColorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGBColorImpl.h; sourceTree = "<group>"; };
 		A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBColorImpl.cpp; sourceTree = "<group>"; };
 		A884284009308C1C00B6D461 /* Namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Namespace.h; sourceTree = "<group>"; };
-		A884284109308C1C00B6D461 /* kdomtraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdomtraversal.h; sourceTree = "<group>"; };
-		A884284209308C1C00B6D461 /* KDOMStubClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDOMStubClasses.h; sourceTree = "<group>"; };
 		A884284309308C1C00B6D461 /* KDOMSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDOMSettings.h; sourceTree = "<group>"; };
-		A884284409308C1C00B6D461 /* kdomrange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdomrange.h; sourceTree = "<group>"; };
-		A884284509308C1C00B6D461 /* kdomls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdomls.h; sourceTree = "<group>"; };
 		A884284609308C1C00B6D461 /* KDOMHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDOMHeaders.h; sourceTree = "<group>"; };
 		A890DF1B0930974800513F88 /* SVGStyledTransformableElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledTransformableElementImpl.h; sourceTree = "<group>"; };
 		A890DF1C0930974800513F88 /* SVGStyledTransformableElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledTransformableElementImpl.cpp; sourceTree = "<group>"; };
@@ -3564,7 +3554,6 @@
 		A88427FC093081AD00B6D461 /* KDOM Support */ = {
 			isa = PBXGroup;
 			children = (
-				A884284209308C1C00B6D461 /* KDOMStubClasses.h */,
 				A884284609308C1C00B6D461 /* KDOMHeaders.h */,
 				A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */,
 				A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */,
@@ -3575,11 +3564,7 @@
 				A884283D09308C1C00B6D461 /* DOMList.h */,
 				A884284309308C1C00B6D461 /* KDOMSettings.h */,
 				A884283A09308C1C00B6D461 /* kdomevents.h */,
-				A884283B09308C1C00B6D461 /* kdomcss.h */,
 				A884283C09308C1C00B6D461 /* kdom.h */,
-				A884284109308C1C00B6D461 /* kdomtraversal.h */,
-				A884284409308C1C00B6D461 /* kdomrange.h */,
-				A884284509308C1C00B6D461 /* kdomls.h */,
 			);
 			name = "KDOM Support";
 			sourceTree = "<group>";
@@ -5644,16 +5629,11 @@
 				A8BA5C72090CB07A004D1180 /* render_button.h in Headers */,
 				A83C81A1091189B9009BF4A7 /* XSLTProcessor.h in Headers */,
 				A884284909308C1C00B6D461 /* kdomevents.h in Headers */,
-				A884284A09308C1C00B6D461 /* kdomcss.h in Headers */,
 				A884284B09308C1C00B6D461 /* kdom.h in Headers */,
 				A884284C09308C1C00B6D461 /* DOMList.h in Headers */,
 				A884284D09308C1C00B6D461 /* RGBColorImpl.h in Headers */,
 				A884284F09308C1C00B6D461 /* Namespace.h in Headers */,
-				A884285009308C1C00B6D461 /* kdomtraversal.h in Headers */,
-				A884285109308C1C00B6D461 /* KDOMStubClasses.h in Headers */,
 				A884285209308C1C00B6D461 /* KDOMSettings.h in Headers */,
-				A884285309308C1C00B6D461 /* kdomrange.h in Headers */,
-				A884285409308C1C00B6D461 /* kdomls.h in Headers */,
 				A884285509308C1C00B6D461 /* KDOMHeaders.h in Headers */,
 				A890DF1F0930974800513F88 /* SVGStyledTransformableElementImpl.h in Headers */,
 				A890DF210930974800513F88 /* SVGStyledLocatableElementImpl.h in Headers */,
