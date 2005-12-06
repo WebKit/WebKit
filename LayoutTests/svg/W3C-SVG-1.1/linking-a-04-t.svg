@@ -99,7 +99,7 @@
 	<g id="test-body-content">
 		<text x="90" y="16" font-size="12" >Basic out-bound links and the 'a' element.</text>
 		<!-- First linking test:  link to another SVG file in same location. -->
-		<a xlink:href="Resources/linkingToc-t.svg">
+		<a xlink:href="resources/linkingToc-t.svg">
 			<path fill="yellow" stroke="blue"  d="M 165,40 h 100 v -12 l 45 36 l -45 36 v -12 h -100 z"/>
 		</a>
 		<!-- Second linking test:  link to another object in this file. -->

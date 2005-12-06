@@ -128,10 +128,10 @@
 			<text x="165" y="25">(45, 0)</text>
 			<text x="260" y="25">(0, 45)</text>
 			<text x="355" y="25">(45, 45)</text>
-			<image xlink:href="Resources/bumpMap2.png" x="70" y="30" width="50" height="30" filter="url(#distantLightA)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="165" y="30" width="50" height="30" filter="url(#distantLightB)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="260" y="30" width="50" height="30" filter="url(#distantLightC)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="355" y="30" width="50" height="30" filter="url(#distantLightD)"/>
+			<image xlink:href="resources/bumpMap2.png" x="70" y="30" width="50" height="30" filter="url(#distantLightA)"/>
+			<image xlink:href="resources/bumpMap2.png" x="165" y="30" width="50" height="30" filter="url(#distantLightB)"/>
+			<image xlink:href="resources/bumpMap2.png" x="260" y="30" width="50" height="30" filter="url(#distantLightC)"/>
+			<image xlink:href="resources/bumpMap2.png" x="355" y="30" width="50" height="30" filter="url(#distantLightD)"/>
 		</g>
 		<!-- Various fePointLights -->
 		<g transform="translate(0, 120)">
@@ -142,10 +142,10 @@
 			<text x="355" y="25">(50, 30, 10)</text>
 		</g>
 		<g>
-			<image transform="translate(70, 150)" xlink:href="Resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightA)"/>
-			<image transform="translate(165, 150)" xlink:href="Resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightB)"/>
-			<image transform="translate(260, 150)" xlink:href="Resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightC)"/>
-			<image transform="translate(355, 150)" xlink:href="Resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightD)"/>
+			<image transform="translate(70, 150)" xlink:href="resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightA)"/>
+			<image transform="translate(165, 150)" xlink:href="resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightB)"/>
+			<image transform="translate(260, 150)" xlink:href="resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightC)"/>
+			<image transform="translate(355, 150)" xlink:href="resources/bumpMap2.png" width="50" height="30" filter="url(#pointLightD)"/>
 		</g>
 		<!-- feSpotLight -->
 		<g transform="translate(0, 210)">

@@ -44,7 +44,7 @@
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
 	<g id="test-body-content" transform="scale(2)">
-		<a xlink:href="Resources/linkingCircle-f.svg#circle-2">
+		<a xlink:href="resources/linkingCircle-f.svg#circle-2">
 			<path fill="aqua" stroke="blue" d="M 185,40 h -100 v -12 l -45 36 l 45 36 v -12 h 100 z"/>
 		</a>
 		<!-- Code from target file, linkingCircle-f.svg...

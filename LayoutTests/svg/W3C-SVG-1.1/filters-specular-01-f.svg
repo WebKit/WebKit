@@ -128,9 +128,9 @@
 				<rect x="205" y="30" width="50" height="30"/>
 				<rect x="320" y="30" width="50" height="30"/>
 			</g>
-			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#surfaceScaleA)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#surfaceScaleB)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#surfaceScaleC)"/>
+			<image xlink:href="resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#surfaceScaleA)"/>
+			<image xlink:href="resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#surfaceScaleB)"/>
+			<image xlink:href="resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#surfaceScaleC)"/>
 		</g>
 		<!-- Various Specular Constants -->
 		<g transform="translate(0, 90)">
@@ -140,9 +140,9 @@
 				<rect x="205" y="30" width="50" height="30"/>
 				<rect x="320" y="30" width="50" height="30"/>
 			</g>
-			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#specularConstantA)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#specularConstantB)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#specularConstantC)"/>
+			<image xlink:href="resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#specularConstantA)"/>
+			<image xlink:href="resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#specularConstantB)"/>
+			<image xlink:href="resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#specularConstantC)"/>
 		</g>
 		<!-- Various Specular Exponents -->
 		<g transform="translate(0, 160)">
@@ -152,9 +152,9 @@
 				<rect x="205" y="30" width="50" height="30"/>
 				<rect x="320" y="30" width="50" height="30"/>
 			</g>
-			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#specularExponentA)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#specularExponentB)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#specularExponentC)"/>
+			<image xlink:href="resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#specularExponentA)"/>
+			<image xlink:href="resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#specularExponentB)"/>
+			<image xlink:href="resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#specularExponentC)"/>
 		</g>
 		<!-- Various Light Colors -->
 		<g transform="translate(0, 230)">
@@ -164,9 +164,9 @@
 				<rect x="205" y="30" width="50" height="30"/>
 				<rect x="320" y="30" width="50" height="30"/>
 			</g>
-			<image xlink:href="Resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#lightingColorA)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#lightingColorB)"/>
-			<image xlink:href="Resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#lightingColorC)"/>
+			<image xlink:href="resources/bumpMap2.png" x="90" y="30" width="50" height="30" filter="url(#lightingColorA)"/>
+			<image xlink:href="resources/bumpMap2.png" x="205" y="30" width="50" height="30" filter="url(#lightingColorB)"/>
+			<image xlink:href="resources/bumpMap2.png" x="320" y="30" width="50" height="30" filter="url(#lightingColorC)"/>
 		</g>
 		<!-- ===================================================== -->
 		<!-- Legends                                               -->

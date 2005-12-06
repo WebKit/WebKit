@@ -79,27 +79,27 @@
 			<g shape-rendering="geometricPrecision" text-rendering="geometricPrecision" >
 				<text x="10" y="20" stroke="none" opacity="1" filter="none" >Blur (3x3)</text>
 				<g opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve1)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve1)" />
 				</g>
 				<text x="10" y="20" transform="translate(150,0)" stroke="none" opacity="1" filter="none" >Edge Detection (3x3)</text>
 				<g transform="translate(150,0)" opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve2)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve2)" />
 				</g>
 				<text x="10" y="20" transform="translate(300,0)" stroke="none" opacity="1" filter="none" >Sharpening (3x3)</text>
 				<g transform="translate(300,0)" opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve3)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve3)" />
 				</g>
 				<text x="10" y="20" transform="translate(0,93)" stroke="none" opacity="1" filter="none" >Embossing (3x3)</text>
 				<g transform="translate(0,93)" opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve4)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve4)" />
 				</g>
 				<text x="10" y="20" transform="translate(150,93)" stroke="none" opacity="1" filter="none" >Horizontal blur (3x1)</text>
 				<g transform="translate(150,93)" opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve5)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve5)" />
 				</g>
 				<text x="10" y="20" transform="translate(300,93)" stroke="none" opacity="1" filter="none" >Vertical blur (1x3)</text>
 				<g transform="translate(300,93)" opacity="1" filter="none" >
-					<image width="50" height="63" xlink:href="Resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve6)" />
+					<image width="50" height="63" xlink:href="resources/filters-conv-01-f.includeimage.png" x="10" y="30" filter="url(#convolve6)" />
 				</g>
 			</g>
 		</g>

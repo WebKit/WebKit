@@ -58,7 +58,7 @@
 		<g fill="#000" font-family="Arial" font-size="40">
 			<!-- Test the order of events -->
 			<!-- Ensure that events get the event before the hyperlink. -->
-			<a xlink:href="Resources/interact-order-02-b-targ.svg">
+			<a xlink:href="resources/interact-order-02-b-targ.svg">
 				<circle onclick="bubbleNo(evt, 'red')" onmouseout="bubbleNo(evt, 'inherit')" cx="70" cy="120" r="50"/>
 				<circle onclick="bubbleYes(evt, 'blue')" onmouseout="bubbleNo(evt, 'inherit')" cx="70" cy="240" r="50"/>
 			</a>

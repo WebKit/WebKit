@@ -49,13 +49,13 @@
 	<!--======================================================================-->
 	<g id="test-body-content">
 		<defs>
-			<color-profile id="changeColor" name="changeColor" xlink:href="Resources/changeColor.ICM"/>
+			<color-profile id="changeColor" name="changeColor" xlink:href="resources/changeColor.ICM"/>
 		</defs>
 		<g>
-			<image id="image1PNG" x="30" y="0" width="190" height="190" xlink:href="Resources/colorprof.png"/>
+			<image id="image1PNG" x="30" y="0" width="190" height="190" xlink:href="resources/colorprof.png"/>
 		</g>
 		<g>
-			<image color-profile="changeColor" id="image2" x="260" y="90" width="190" height="190" xlink:href="Resources/colorprof.png"/>
+			<image color-profile="changeColor" id="image2" x="260" y="90" width="190" height="190" xlink:href="resources/colorprof.png"/>
 		</g>
 		<text font-family="Arial" font-size="12" x="250" y="20">
                     Basic test of ICC profile with an image.

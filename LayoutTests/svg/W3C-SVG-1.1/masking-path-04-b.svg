@@ -65,11 +65,11 @@
       </defs>
 
       <g>
-        <image xlink:href="Resources/bluesquidj.png" preserveAspectRatio="none" x="30" y="20" width="410" height="140"/>
+        <image xlink:href="resources/bluesquidj.png" preserveAspectRatio="none" x="30" y="20" width="410" height="140"/>
         <text x="55" y="130" font-size="100" font-family="Impact" fill="yellow">Clip Test</text>
      </g>
      <g>
-         <image xlink:href="Resources/bluesquidj.png" preserveAspectRatio="none" x="20" y="170" width="410" height="160" clip-path="url(#sample)"/>
+         <image xlink:href="resources/bluesquidj.png" preserveAspectRatio="none" x="20" y="170" width="410" height="160" clip-path="url(#sample)"/>
      </g>
    </g>
    <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>

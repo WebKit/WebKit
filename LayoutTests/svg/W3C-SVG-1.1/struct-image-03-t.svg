@@ -41,11 +41,11 @@
 	<!-- ====================================================================== -->
 	<g id="test-body-content">
 	    <rect x="23" y="13" width="434" height="224" stroke="none" fill="black" />
-		<image x="25" y="15" width="430" height="48" xlink:href="Resources/gam030.png"/>
-		<image x="25" y="43" width="430" height="48" xlink:href="Resources/gam045.png"/>
-		<image x="25" y="91" width="430" height="48" xlink:href="Resources/gam056.png"/>
-		<image x="25" y="139" width="430" height="48" xlink:href="Resources/gam100.png"/>
-		<image x="25" y="187" width="430" height="48" xlink:href="Resources/gam200.png"/>
+		<image x="25" y="15" width="430" height="48" xlink:href="resources/gam030.png"/>
+		<image x="25" y="43" width="430" height="48" xlink:href="resources/gam045.png"/>
+		<image x="25" y="91" width="430" height="48" xlink:href="resources/gam056.png"/>
+		<image x="25" y="139" width="430" height="48" xlink:href="resources/gam100.png"/>
+		<image x="25" y="187" width="430" height="48" xlink:href="resources/gam200.png"/>
 		<text x="25" y="285" font-size="40">Gamma correction</text>
 	</g>
 	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
