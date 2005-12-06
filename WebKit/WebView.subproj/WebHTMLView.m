@@ -1928,7 +1928,6 @@ static WebHTMLView *lastHitView = nil;
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(_ignoreSpellingFromMenu:)
-            || action == @selector(centerSelectionInVisibleArea:)
             || action == @selector(jumpToSelection:)
             || action == @selector(_learnSpellingFromMenu:)
             || action == @selector(takeFindStringFromSelection:)) {

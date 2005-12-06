@@ -1,5 +1,13 @@
 2005-12-05  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin Adler.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
+        removed double handling of centerSelectionInVisibleArea
+
+2005-12-05  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim Omernick.
         
         - WebKit part of fix for 
