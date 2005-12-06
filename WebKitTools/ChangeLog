@@ -1,3 +1,9 @@
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed mjs.
+
+        * checkout: remove --svg support, SVG is now checked out by default
+
 2005-11-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

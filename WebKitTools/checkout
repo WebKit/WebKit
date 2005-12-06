@@ -31,10 +31,8 @@
 use strict;
 use Getopt::Long;
 
-my $includeSVG = 0;
 my $includeTests = 1;
-GetOptions('svg' => \$includeSVG,
-           'tests!' => \$includeTests);
+GetOptions('tests!' => \$includeTests);
 
 # Check that we're in the right directory.
 if (! -d "WebKitTools") {
@@ -56,28 +54,15 @@ close ROOT;
 print "CVS root is $root\n";
 print "Checking out WebKitTools (again), JavaScriptCore, WebCore, WebKitLibraries";
 print ", LayoutTests" if $includeTests;
-if ($includeSVG) {
-    print ", WebKit and SVGSupport\n";
-} else {
-    print " and WebKit\n";
-}
+print " and WebKit\n";
+
 my $directories = "WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit";
 $directories .= " LayoutTests" if $includeTests;
-$directories .= " SVGSupport" if $includeSVG;
 open CVS, "cvs -d '$root' co -P $directories |" or die;
 while (<CVS>) {
     print;
 }
 close CVS;
-
-if ($includeSVG) {
-    # Make the necessary symlinks
-    print "\nCreating symlinks (kdom, kcanvas, ksvg2, WebCore+SVG, svg-tests) from WebCore into SVGSupport\n";
-    symlink("../SVGSupport/kcanvas", "WebCore/kcanvas");
-    symlink("../SVGSupport/ksvg2", "WebCore/ksvg2");
-    symlink("../SVGSupport/WebCore+SVG", "WebCore/WebCore+SVG");
-    symlink("../SVGSupport/layout-tests", "WebCore/svg-tests");
-}
 
 # Ready to build.
 print "\n";
