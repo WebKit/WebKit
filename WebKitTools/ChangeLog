@@ -1,3 +1,13 @@
+2005-12-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        Remove special-case handling for nib files. This avoided trouble with cvs diff
+        when we were using wrappers for nib files. Now that we aren't using wrappers,
+        there's no reason to avoid adding the modified nib files to the file list that
+        gets diffed.
+
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

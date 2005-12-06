@@ -79,7 +79,7 @@ while (<UPDATE>)
       {
         my $file = $1;
         $function_lists{$file} = "";
-        push @changed_files, $file if $file ne "ChangeLog" && $file !~ /\.nib$/;
+        push @changed_files, $file if $file ne "ChangeLog";
       }
 
     push @conflict_files, $1 if /^[C] (.+)$/;
