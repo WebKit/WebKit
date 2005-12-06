@@ -1,3 +1,92 @@
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
+        Updating all the SVG tests with their latest post-merger results.
+        There are still issues which will prevent these from passing on
+        all machines:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4515
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5962
+
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-22-b-expected.checksum:
+        * svg/W3C-SVG-1.1/color-prof-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * svg/W3C-SVG-1.1/interact-zoom-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-opacity-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-frag-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-spacing-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * svg/custom/fill-update-expected.checksum:
+        * svg/custom/fill-update-expected.png:
+        * svg/custom/path-bad-data-expected.checksum:
+        * svg/custom/path-bad-data-expected.png:
+        * svg/custom/path-update-expected.checksum:
+        * svg/custom/path-update-expected.png:
+        * svg/custom/simpleCDF-expected.checksum:
+        * svg/custom/simpleCDF-expected.png:
+        * svg/custom/use-forward-refs-expected.checksum:
+        * svg/custom/use-forward-refs-expected.png:
+        * svg/custom/use-forward-refs-expected.txt:
+
 2005-12-05  Justin Garcia  <justin.garcia@apple.com>
 
         New layout tests for:
