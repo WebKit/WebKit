@@ -1,5 +1,11 @@
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
+        Rubber-stamped by mjs.
+
+        * WebCore.xcodeproj/project.pbxproj: updated paths for SVG move.
+
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         No test cases possible/necessary.
