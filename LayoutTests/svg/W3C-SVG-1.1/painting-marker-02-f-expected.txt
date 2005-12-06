@@ -1,5 +1,5 @@
-KCanvasResource {id="overflowHiddenClip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=[{cmd=MOVE x3=0.00 y3=0.00}, {cmd=LINE x3=2.00 y3=0.00}, {cmd=LINE x3=2.00 y3=2.00}, {cmd=LINE x3=0.00 y3=2.00}, {cmd=CLOSE_SUBPATH}]]]]}
-KCanvasResource {id="overflowHiddenClip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=[{cmd=MOVE x3=0.00 y3=0.00}, {cmd=LINE x3=4.00 y3=0.00}, {cmd=LINE x3=4.00 y3=4.00}, {cmd=LINE x3=0.00 y3=4.00}, {cmd=CLOSE_SUBPATH}]]]]}
+KCanvasResource {id="overflowHiddenClip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00L2.00,0.00L2.00,2.00L0.00,2.00]]]}
+KCanvasResource {id="overflowHiddenClip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00L4.00,0.00L4.00,4.00L0.00,4.00]]]}
 KCanvasResource {id="marker1" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
 KCanvasResource {id="marker2" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}
 KCanvasResource {id="marker3" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}

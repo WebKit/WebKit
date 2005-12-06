@@ -1,3 +1,16 @@
+2005-12-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by timo.
+
+        Updated results for KCanvaPath changes:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5747
+
+        * svg/W3C-SVG-1.1/masking-path-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-05-f-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+
 2005-12-04  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Geoffrey.

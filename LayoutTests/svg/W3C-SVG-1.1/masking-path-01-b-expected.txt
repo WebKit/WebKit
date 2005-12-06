@@ -1,5 +1,5 @@
-KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=[{cmd=MOVE x3=200.00 y3=10.00}, {cmd=LINE x3=260.00 y3=10.00}, {cmd=LINE x3=260.00 y3=110.00}, {cmd=LINE x3=200.00 y3=110.00}, {cmd=CLOSE_SUBPATH}]]]]}
-KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=[{cmd=MOVE x3=90.00 y3=150.00}, {cmd=LINE x3=165.00 y3=150.00}, {cmd=LINE x3=165.00 y3=225.00}, {cmd=LINE x3=90.00 y3=225.00}, {cmd=CLOSE_SUBPATH}]], [winding=NON-ZERO] [path=[{cmd=MOVE x3=225.00 y3=160.00}, {cmd=LINE x3=290.00 y3=160.00}, {cmd=LINE x3=290.00 y3=225.00}, {cmd=LINE x3=225.00 y3=225.00}, {cmd=CLOSE_SUBPATH}]]]]}
+KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,10.00L260.00,10.00L260.00,110.00L200.00,110.00]]]}
+KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M90.00,150.00L165.00,150.00L165.00,225.00L90.00,225.00], [winding=NON-ZERO] [path=M225.00,160.00L290.00,160.00L290.00,225.00L225.00,225.00]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 479x359
