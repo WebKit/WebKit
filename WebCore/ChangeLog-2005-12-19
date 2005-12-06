@@ -1,3 +1,13 @@
+2005-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed <rdar://problem/4364374> Denver Regression: ModBlog.com user menus don't stay visible due to extra mouseout events (5668)
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5668
+
+        * khtml/khtmlview.cpp: (KHTMLView::dispatchMouseEvent): Do the same "skip text node"
+        logic for the "oldUnder" variable as for the "targetNode" variable.
+
 2005-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
