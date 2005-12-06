@@ -2693,26 +2693,24 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     // done in khtmlMousePressEvent, but not if the mouse press was on an existing selection.
     SelectionController sel = selection();
     sel.clearModifyBias();
+    
     if (!d->m_beganSelectingText) {
         d->m_beganSelectingText = true;
         sel.moveTo(pos);
     }
 
     sel.setExtent(pos);
-    if (d->m_selectionGranularity != CHARACTER) {
+    if (d->m_selectionGranularity != CHARACTER)
         sel.expandUsingGranularity(d->m_selectionGranularity);
-    }
 
-    if (shouldChangeSelection(sel)) {
+    if (shouldChangeSelection(sel))
         setSelection(sel);
-    }
 
 #endif // KHTML_NO_SELECTION
 }
 
 void KHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 {
-
     handleMouseMoveEventSelection(event);		
 }
 

@@ -102,7 +102,7 @@ SelectionController::SelectionController(const SelectionController &o)
     : m_base(o.m_base), m_extent(o.m_extent)
     , m_start(o.m_start), m_end(o.m_end)
     , m_state(o.m_state), m_affinity(o.m_affinity)
-    , m_baseIsStart(o.m_baseIsStart)
+    , m_baseIsFirst(o.m_baseIsFirst)
     , m_needsLayout(o.m_needsLayout)
     , m_modifyBiasSet(o.m_modifyBiasSet)
 {
@@ -121,7 +121,7 @@ void SelectionController::init(EAffinity affinity)
 {
     // FIXME: set extentAffinity
     m_state = NONE; 
-    m_baseIsStart = true;
+    m_baseIsFirst = true;
     m_affinity = affinity;
     m_needsLayout = true;
     m_modifyBiasSet = false;
@@ -137,7 +137,7 @@ SelectionController &SelectionController::operator=(const SelectionController &o
     m_state = o.m_state;
     m_affinity = o.m_affinity;
 
-    m_baseIsStart = o.m_baseIsStart;
+    m_baseIsFirst = o.m_baseIsFirst;
     m_needsLayout = o.m_needsLayout;
     m_modifyBiasSet = o.m_modifyBiasSet;
     
@@ -491,61 +491,8 @@ bool SelectionController::expandUsingGranularity(ETextGranularity granularity)
 {
     if (isNone())
         return false;
-
-    switch (granularity) {
-        case CHARACTER:
-            break;
-        case WORD: {
-            // General case: Select the word the caret is positioned inside of, or at the start of (RightWordIfOnBoundary).
-            // Edge case: If the caret is after the last word in a soft-wrapped line or the last word in
-            // the document, select that last word (LeftWordIfOnBoundary).
-            // Edge case: If the caret is after the last word in a paragraph, select from the the end of the
-            // last word to the line break (also RightWordIfOnBoundary);
-            VisiblePosition start = VisiblePosition(m_start, m_affinity);
-            VisiblePosition end   = VisiblePosition(m_end, m_affinity);
-            EWordSide side = RightWordIfOnBoundary;
-            if (isEndOfDocument(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
-                side = LeftWordIfOnBoundary;
-            m_start = startOfWord(start, side).deepEquivalent();
-            side = RightWordIfOnBoundary;
-            if (isEndOfDocument(end) || (isEndOfLine(end) && !isStartOfLine(end) && !isEndOfParagraph(end)))
-                side = LeftWordIfOnBoundary;
-            m_end = endOfWord(end, side).deepEquivalent();
-            
-            break;
-            }
-        case LINE:
-        case LINE_BOUNDARY:
-            m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
-            m_end = endOfLine(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
-            break;
-        case PARAGRAPH: {
-            VisiblePosition pos(m_start, m_affinity);
-            if (isStartOfLine(pos) && isEndOfDocument(pos))
-                pos = pos.previous();
-            m_start = startOfParagraph(pos).deepEquivalent();
-            m_end = endOfParagraph(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
-            break;
-        }
-        case DOCUMENT_BOUNDARY:
-            m_start = startOfDocument(VisiblePosition(m_start, m_affinity)).deepEquivalent();
-            m_end = endOfDocument(VisiblePosition(m_end, m_affinity)).deepEquivalent();
-            break;
-        case PARAGRAPH_BOUNDARY:
-            m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();
-            m_end = endOfParagraph(VisiblePosition(m_end, m_affinity)).deepEquivalent();
-            break;
-    }
     
-    if (m_baseIsStart) {
-        m_base = m_start;
-        m_extent = m_end;
-    } else {
-        m_base = m_end;
-        m_extent = m_start;
-    }
-    
-    validate();
+    validate(granularity);
     return true;
 }
 
@@ -824,59 +771,64 @@ void SelectionController::paintCaret(QPainter *p, const QRect &rect)
         p->fillRect(caret & rect, QBrush());
 }
 
-void SelectionController::adjustExtentForEditableContent()
+void SelectionController::adjustForEditableContent()
 {
-    Position base = this->base();
-    Position extent = this->extent();
+    if (m_base.isNull())
+        return;
+
+    NodeImpl *baseRoot = m_base.node()->rootEditableElement();
+    NodeImpl *startRoot = m_start.node()->rootEditableElement();
+    NodeImpl *endRoot = m_end.node()->rootEditableElement();
     
-    if (!base.node() || !extent.node())
+    // The base, start and end are all in the same region.  No adjustment necessary.
+    if (baseRoot == startRoot && baseRoot == endRoot)
         return;
     
-    NodeImpl *baseRoot = base.node()->rootEditableElement();
-    NodeImpl *extentRoot = extent.node()->rootEditableElement();
-    
-    if (baseRoot == extentRoot)
-        return;
-    
-    bool baseIsStart = RangeImpl::compareBoundaryPoints(base, extent) <= 0;
-    
-    // base is in an editable region, but extent is not.
+    // The selection is based in an editable area.  Keep both sides from reaching outside that area.
     if (baseRoot) {
-        Position first(Position(baseRoot, 0));
-        Position last(Position(baseRoot, baseRoot->maxDeepOffset()));
-        
-        m_extent = baseIsStart ? last : first;
-    // extent is in an editable region, but base is not.
+        // If the start is outside the base's editable root, cap it at the start of that editable root.
+        if (baseRoot != startRoot) {
+            VisiblePosition first(Position(baseRoot, 0));
+            m_start = first.deepEquivalent();
+        }
+        // If the end is outside the base's editable root, cap it at the end of that editable root.
+        if (baseRoot != endRoot) {
+            VisiblePosition last(Position(baseRoot, baseRoot->maxDeepOffset()));
+            m_end = last.deepEquivalent();
+        }
+    // The selection is based outside editable content.  Keep both sides from reaching into editable content.
     } else {
-        if (baseIsStart) {
+        // The selection ends in editable content, move backward until non-editable content is reached.
+        if (endRoot) {
             VisiblePosition previous;
             do {
-                previous = VisiblePosition(Position(extentRoot, 0)).previous();
-                extentRoot = previous.deepEquivalent().node()->rootEditableElement();
-            } while (extentRoot);
+                previous = VisiblePosition(Position(endRoot, 0)).previous();
+                endRoot = previous.deepEquivalent().node()->rootEditableElement();
+            } while (endRoot);
             
-            // Since we know that base is before extent, and since we know that base is not in a content editable element,
-            // we know that we must have reached non editable content.
             ASSERT(!previous.isNull());
-            m_extent = previous.deepEquivalent();
-        } else {
+            m_end = previous.deepEquivalent();
+        }
+        // The selection starts in editable content, move forward until non-editable content is reached.
+        if (startRoot) {
             VisiblePosition next;
             do {
-                next = VisiblePosition(Position(extentRoot, extentRoot->maxDeepOffset())).next();
-                extentRoot = next.deepEquivalent().node()->rootEditableElement();
-            } while (extentRoot);
+                next = VisiblePosition(Position(startRoot, startRoot->maxDeepOffset())).next();
+                startRoot = next.deepEquivalent().node()->rootEditableElement();
+            } while (startRoot);
             
-            // Since we know that extent is before base, and since we know that extent is not in a content editable element,
-            // we know that we must have reached non editable content.
             ASSERT(!next.isNull());
-            m_extent = next.deepEquivalent();
+            m_start = next.deepEquivalent();
         }
     }
+    
+    // Correct the extent if necessary.
+    if (baseRoot != m_extent.node()->rootEditableElement())
+        m_extent = m_baseIsFirst ? m_end : m_start;
 }
 
-void SelectionController::validate()
+void SelectionController::validate(ETextGranularity granularity)
 {
-    adjustExtentForEditableContent();
     // Move the selection to rendered positions, if possible.
     Position originalBase(m_base);
     bool baseAndExtentEqual = m_base == m_extent;
@@ -911,37 +863,81 @@ void SelectionController::validate()
             m_start.clear();
             m_end.clear();
         }
-        m_baseIsStart = true;
-    }
-    else if (m_base.isNull()) {
+        m_baseIsFirst = true;
+    } else if (m_base.isNull()) {
         m_base = m_extent;
-        m_baseIsStart = true;
-    }
-    else if (m_extent.isNull()) {
+        m_baseIsFirst = true;
+    } else if (m_extent.isNull()) {
         m_extent = m_base;
-        m_baseIsStart = true;
-    }
-    else {
-        m_baseIsStart = RangeImpl::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
+        m_baseIsFirst = true;
+    } else {
+        m_baseIsFirst = RangeImpl::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
     }
 
-    if (m_baseIsStart) {
+    if (m_baseIsFirst) {
         m_start = m_base;
         m_end = m_extent;
     } else {
         m_start = m_extent;
         m_end = m_base;
     }
+    
+    // Expand the selection if requested.
+    switch (granularity) {
+        case CHARACTER:
+            // Don't do any expansion.
+            break;
+        case WORD: {
+            // General case: Select the word the caret is positioned inside of, or at the start of (RightWordIfOnBoundary).
+            // Edge case: If the caret is after the last word in a soft-wrapped line or the last word in
+            // the document, select that last word (LeftWordIfOnBoundary).
+            // Edge case: If the caret is after the last word in a paragraph, select from the the end of the
+            // last word to the line break (also RightWordIfOnBoundary);
+            VisiblePosition start = VisiblePosition(m_start, m_affinity);
+            VisiblePosition end   = VisiblePosition(m_end, m_affinity);
+            EWordSide side = RightWordIfOnBoundary;
+            if (isEndOfDocument(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
+                side = LeftWordIfOnBoundary;
+            m_start = startOfWord(start, side).deepEquivalent();
+            side = RightWordIfOnBoundary;
+            if (isEndOfDocument(end) || (isEndOfLine(end) && !isStartOfLine(end) && !isEndOfParagraph(end)))
+                side = LeftWordIfOnBoundary;
+            m_end = endOfWord(end, side).deepEquivalent();
+            
+            break;
+            }
+        case LINE:
+        case LINE_BOUNDARY:
+            m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
+            m_end = endOfLine(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
+            break;
+        case PARAGRAPH: {
+            VisiblePosition pos(m_start, m_affinity);
+            if (isStartOfLine(pos) && isEndOfDocument(pos))
+                pos = pos.previous();
+            m_start = startOfParagraph(pos).deepEquivalent();
+            m_end = endOfParagraph(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
+            break;
+        }
+        case DOCUMENT_BOUNDARY:
+            m_start = startOfDocument(VisiblePosition(m_start, m_affinity)).deepEquivalent();
+            m_end = endOfDocument(VisiblePosition(m_end, m_affinity)).deepEquivalent();
+            break;
+        case PARAGRAPH_BOUNDARY:
+            m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();
+            m_end = endOfParagraph(VisiblePosition(m_end, m_affinity)).deepEquivalent();
+            break;
+    }
+    
+    adjustForEditableContent();
 
     // adjust the state
     if (m_start.isNull()) {
         ASSERT(m_end.isNull());
         m_state = NONE;
-    }
-    else if (m_start == m_end || m_start.upstream() == m_end.upstream()) {
+    } else if (m_start == m_end || m_start.upstream() == m_end.upstream()) {
         m_state = CARET;
-    }
-    else {
+    } else {
         m_state = RANGE;
         // "Constrain" the selection to be the smallest equivalent range of nodes.
         // This is a somewhat arbitrary choice, but experience shows that it is

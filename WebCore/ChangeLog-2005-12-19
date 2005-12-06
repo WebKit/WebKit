@@ -1,3 +1,30 @@
+2005-12-05  Justin Garcia  <justin.garcia@apple.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5936>
+        REGRESSION: selection keeps growing after double-click
+        Also filed as <rdar://problem/4364425>
+
+        Reviewed by darin, harrison
+        
+        Rolled back previous change, simplified expansion, fixed 
+        adjustForEditableContent to work in cases where start/end are 
+        distinct from base/extent, renamed m_baseIsStart to m_baseIsFirst.
+        
+        Added two new layout tests in editing/selection to test
+        modifying selections created with double and triple clicks.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::SelectionController):
+        (khtml::SelectionController::init):
+        (khtml::SelectionController::operator=):
+        (khtml::SelectionController::expandUsingGranularity):
+        (khtml::SelectionController::adjustForEditableContent):
+        (khtml::SelectionController::validate):
+        * khtml/editing/SelectionController.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseMoveEvent):
+
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.

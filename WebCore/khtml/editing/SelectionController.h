@@ -121,8 +121,8 @@ private:
     enum EPositionType { START, END, BASE, EXTENT };
 
     void init(EAffinity affinity);
-    void validate();
-    void adjustExtentForEditableContent();
+    void validate(ETextGranularity granularity = CHARACTER);
+    void adjustForEditableContent();
 
     VisiblePosition modifyExtendingRightForward(ETextGranularity);
     VisiblePosition modifyMovingRightForward(ETextGranularity);
@@ -151,7 +151,7 @@ private:
     // This is faster than doing another layout().
     QPoint m_caretPositionOnLayout;
     
-    bool m_baseIsStart : 1;       // true if base node is before the extent node
+    bool m_baseIsFirst : 1;       // true if base is before the extent
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
