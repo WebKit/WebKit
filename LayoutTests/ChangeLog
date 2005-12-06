@@ -1,3 +1,21 @@
+2005-12-05  Justin Garcia  <justin.garcia@apple.com>
+
+        New layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5936>
+        REGRESSION: selection keeps growing after double-click
+        Also filed as <rdar://problem/4364425>
+
+        Reviewed by darin, harrsion
+
+        * editing/selection/paragraph-granularity-expected.checksum: Added.
+        * editing/selection/paragraph-granularity-expected.png: Added.
+        * editing/selection/paragraph-granularity-expected.txt: Added.
+        * editing/selection/paragraph-granularity.html: Added.
+        * editing/selection/word-granularity-expected.checksum: Added.
+        * editing/selection/word-granularity-expected.png: Added.
+        * editing/selection/word-granularity-expected.txt: Added.
+        * editing/selection/word-granularity.html: Added.
+
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by timo.
