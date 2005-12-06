@@ -877,6 +877,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     //      right view. The global is forceNSViewHitTest and the method they use to
     //      do the hit testing is _hitViewForEvent:. (But this does not work correctly
     //      when there is HTML overlapping the view, see bug 4361626)
+    //   4) NSAccessibilityHitTest relies on this for checking the cursor position.
+    //      Our check for that is whether the event is NSFlagsChanged.  This works
+    //      for VoiceOver's cntl-opt-f5 command (move focus to item under cursor)
+    //      and Dictionary's cmd-cntl-D (open dictionary popup for item under cursor).
+    //      This is of course a hack.
 
     BOOL captureHitsOnSubviews;
     if (forceNSViewHitTest)
@@ -887,7 +892,8 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         NSEvent *event = [[self window] currentEvent];
         captureHitsOnSubviews = !([event type] == NSMouseMoved
             || [event type] == NSRightMouseDown
-            || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0));
+            || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0)
+	    || [event type] == NSFlagsChanged);
     }
 
     if (!captureHitsOnSubviews)
