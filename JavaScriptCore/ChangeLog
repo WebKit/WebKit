@@ -1,3 +1,16 @@
+2005-12-06  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - fix build when using gcc 4
+		
+        * kjs/ustring.h:
+        Make Rep public.
+
+        * kxmlcore/PassRefPtr.h:
+        (KXMLCore::::operator):
+        Fix a typo.
+
 2005-12-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

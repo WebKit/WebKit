@@ -128,7 +128,7 @@ namespace KXMLCore {
 
     template <class T> PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<T>& ref)
     {
-        T *optr = o.release();
+        T *optr = ref.release();
         if (T *ptr = m_ptr)
             ptr->deref();
         m_ptr = optr;

@@ -199,9 +199,6 @@ namespace KJS {
     friend bool operator==(const UString&, const UString&);
 
   public:
-      struct Rep;
-
-  private:
     /**
      * @internal
      */
