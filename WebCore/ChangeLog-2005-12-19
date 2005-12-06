@@ -1,3 +1,14 @@
+2005-12-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- add PassRefPtr, a smart pointer class that works in conjunction
+	with RefPtr but has transfer-of-ownership semantics
+	- apply RefPtr and PassRefPtr to UString
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::UString::UString):
+
 2005-12-05  Justin Garcia  <justin.garcia@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=5936>

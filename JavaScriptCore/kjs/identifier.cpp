@@ -131,7 +131,7 @@ UString::Rep *Identifier::add(const char *c)
     for (int j = 0; j != length; j++)
         d[j] = c[j];
     
-    UString::Rep *r = UString::Rep::create(d, length);
+    UString::Rep *r = UString::Rep::create(d, length).release();
     r->isIdentifier = 1;
     r->rc = 0;
     r->_hash = hash;
@@ -170,7 +170,7 @@ UString::Rep *Identifier::add(const UChar *s, int length)
     for (int j = 0; j != length; j++)
         d[j] = s[j];
     
-    UString::Rep *r = UString::Rep::create(d, length);
+    UString::Rep *r = UString::Rep::create(d, length).release();
     r->isIdentifier = 1;
     r->rc = 0;
     r->_hash = hash;

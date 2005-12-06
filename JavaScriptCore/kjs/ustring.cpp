@@ -158,24 +158,24 @@ UChar UChar::toUpper() const
 
 UCharReference& UCharReference::operator=(UChar c)
 {
-  str->detach();
-  if (offset < str->rep->len)
-    *(str->rep->data() + offset) = c;
+  str->copyForWriting();
+  if (offset < str->rep()->len)
+    *(str->rep()->data() + offset) = c;
   /* TODO: lengthen string ? */
   return *this;
 }
 
 UChar& UCharReference::ref() const
 {
-  if (offset < str->rep->len)
-    return *(str->rep->data() + offset);
+  if (offset < str->rep()->len)
+    return *(str->rep()->data() + offset);
   else {
     static UChar callerBetterNotModifyThis('\0');
     return callerBetterNotModifyThis;
   }
 }
 
-UString::Rep *UString::Rep::createCopying(const UChar *d, int l)
+PassRefPtr<UString::Rep> UString::Rep::createCopying(const UChar *d, int l)
 {
   int sizeInBytes = l * sizeof(UChar);
   UChar *copyD = static_cast<UChar *>(fastMalloc(sizeInBytes));
@@ -184,12 +184,12 @@ UString::Rep *UString::Rep::createCopying(const UChar *d, int l)
   return create(copyD, l);
 }
 
-UString::Rep *UString::Rep::create(UChar *d, int l)
+PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
 {
   Rep *r = new Rep;
   r->offset = 0;
   r->len = l;
-  r->rc = 1;
+  r->rc = 0;
   r->_hash = 0;
   r->isIdentifier = 0;
   r->baseString = 0;
@@ -201,7 +201,7 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   return r;
 }
 
-UString::Rep *UString::Rep::create(Rep *base, int offset, int length)
+PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, int length)
 {
   assert(base);
 
@@ -220,8 +220,7 @@ UString::Rep *UString::Rep::create(Rep *base, int offset, int length)
   r->rc = 1;
   r->_hash = 0;
   r->isIdentifier = 0;
-  r->baseString = base;
-  base->ref();
+  r->baseString = base.release();
   r->buf = 0;
   r->usedCapacity = 0;
   r->capacity = 0;
@@ -345,17 +344,17 @@ inline int UString::expandedSize(int size, int otherSize) const
 
 inline int UString::usedCapacity() const
 {
-  return rep->baseString ? rep->baseString->usedCapacity : rep->usedCapacity;
+  return m_rep->baseString ? m_rep->baseString->usedCapacity : m_rep->usedCapacity;
 }
 
 inline int UString::usedPreCapacity() const
 {
-  return rep->baseString ? rep->baseString->usedPreCapacity : rep->usedPreCapacity;
+  return m_rep->baseString ? m_rep->baseString->usedPreCapacity : m_rep->usedPreCapacity;
 }
 
 void UString::expandCapacity(int requiredLength)
 {
-  Rep *r = rep->baseString ? rep->baseString : rep;
+  Rep *r = m_rep->baseString ? m_rep->baseString : rep();
 
   if (requiredLength > r->capacity) {
     int newCapacity = expandedSize(requiredLength, r->preCapacity);
@@ -369,7 +368,7 @@ void UString::expandCapacity(int requiredLength)
 
 void UString::expandPreCapacity(int requiredPreCap)
 {
-  Rep *r = rep->baseString ? rep->baseString : rep;
+  Rep *r = m_rep->baseString ? m_rep->baseString : rep();
 
   if (requiredPreCap > r->preCapacity) {
     int newCapacity = expandedSize(requiredPreCap, r->capacity);
@@ -392,64 +391,60 @@ UString::UString(char c)
 {
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar)));
     d[0] = c;
-    rep = Rep::create(d, 1);
+    m_rep = Rep::create(d, 1);
 }
 
 UString::UString(const char *c)
 {
   if (!c) {
-    attach(&Rep::null);
+    m_rep = &Rep::null;
     return;
   }
   int length = strlen(c);
   if (length == 0) {
-    attach(&Rep::empty);
+    m_rep = &Rep::empty;
     return;
   }
   UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
   for (int i = 0; i < length; i++)
     d[i].uc = c[i];
-  rep = Rep::create(d, length);
+  m_rep = Rep::create(d, length);
 }
 
 UString::UString(const UChar *c, int length)
 {
-  if (length == 0) {
-    attach(&Rep::empty);
-    return;
-  }
-  rep = Rep::createCopying(c, length);
+  if (length == 0) 
+    m_rep = &Rep::empty;
+  else
+    m_rep = Rep::createCopying(c, length);
 }
 
 UString::UString(UChar *c, int length, bool copy)
 {
-  if (length == 0) {
-    attach(&Rep::empty);
-    return;
-  }
-  if (copy) {
-    rep = Rep::createCopying(c, length);
-  } else {
-    rep = Rep::create(c, length);
-  }
+  if (length == 0)
+    m_rep = &Rep::empty;
+  else if (copy)
+    m_rep = Rep::createCopying(c, length);
+  else
+    m_rep = Rep::create(c, length);
 }
 
 UString::UString(const UString &a, const UString &b)
 {
   int aSize = a.size();
-  int aOffset = a.rep->offset;
+  int aOffset = a.m_rep->offset;
   int bSize = b.size();
-  int bOffset = b.rep->offset;
+  int bOffset = b.m_rep->offset;
   int length = aSize + bSize;
 
   // possible cases:
  
   if (aSize == 0) {
     // a is empty
-    attach(b.rep);
+    m_rep = b.m_rep;
   } else if (bSize == 0) {
     // b is empty
-    attach(a.rep);
+    m_rep = a.m_rep;
   } else if (aOffset + aSize == a.usedCapacity() && 4 * aSize >= bSize &&
 	     (-bOffset != b.usedPreCapacity() || aSize >= bSize)) {
     // - a reaches the end of its buffer so it qualifies for shared append
@@ -459,7 +454,7 @@ UString::UString(const UString &a, const UString &b)
     UString x(a);
     x.expandCapacity(aOffset + length);
     memcpy(const_cast<UChar *>(a.data() + aSize), b.data(), bSize * sizeof(UChar));
-    rep = Rep::create(a.rep, 0, length);
+    m_rep = Rep::create(a.m_rep, 0, length);
   } else if (-bOffset == b.usedPreCapacity() && 4 * bSize >= aSize) {
     // - b reaches the beginning of its buffer so it qualifies for shared prepend
     // - also, it's at least a quarter the length of a - prepending to a much shorter
@@ -467,15 +462,15 @@ UString::UString(const UString &a, const UString &b)
     UString y(b);
     y.expandPreCapacity(-bOffset + aSize);
     memcpy(const_cast<UChar *>(b.data() - aSize), a.data(), aSize * sizeof(UChar));
-    rep = Rep::create(b.rep, -aSize, length);
+    m_rep = Rep::create(b.m_rep, -aSize, length);
   } else {
     // a does not qualify for append, and b does not qualify for prepend, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, a.data(), aSize * sizeof(UChar));
     memcpy(d + aSize, b.data(), bSize * sizeof(UChar));
-    rep = Rep::create(d, length);
-    rep->capacity = newCapacity;
+    m_rep = Rep::create(d, length);
+    m_rep->capacity = newCapacity;
   }
 }
 
@@ -657,11 +652,7 @@ UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, in
     }
   }
 
-  UString::Rep *rep = UString::Rep::create(buffer, totalLength);
-  UString result = UString(rep);
-  rep->deref();
-
-  return result;
+  return UString(UString::Rep::create(buffer, totalLength));
 }
 
 
@@ -669,7 +660,7 @@ UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, in
 UString &UString::append(const UString &t)
 {
   int thisSize = size();
-  int thisOffset = rep->offset;
+  int thisOffset = m_rep->offset;
   int tSize = t.size();
   int length = thisSize + tSize;
 
@@ -679,28 +670,25 @@ UString &UString::append(const UString &t)
     *this = t;
   } else if (tSize == 0) {
     // t is empty
-  } else if (!rep->baseString && rep->rc == 1) {
+  } else if (!m_rep->baseString && m_rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
     expandCapacity(thisOffset + length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
-    rep->len = length;
-    rep->_hash = 0;
+    m_rep->len = length;
+    m_rep->_hash = 0;
   } else if (thisOffset + thisSize == usedCapacity()) {
     // this reaches the end of the buffer - extend it
     expandCapacity(thisOffset + length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
-    Rep *newRep = Rep::create(rep, 0, length);
-    release();
-    rep = newRep;
+    m_rep = Rep::create(m_rep, 0, length);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), thisSize * sizeof(UChar));
     memcpy(const_cast<UChar *>(d + thisSize), t.data(), tSize * sizeof(UChar));
-    release();
-    rep = Rep::create(d, length);
-    rep->capacity = newCapacity;
+    m_rep = Rep::create(d, length);
+    m_rep->capacity = newCapacity;
   }
 
   return *this;
@@ -709,7 +697,7 @@ UString &UString::append(const UString &t)
 UString &UString::append(const char *t)
 {
   int thisSize = size();
-  int thisOffset = rep->offset;
+  int thisOffset = m_rep->offset;
   int tSize = strlen(t);
   int length = thisSize + tSize;
 
@@ -719,23 +707,21 @@ UString &UString::append(const char *t)
     *this = t;
   } else if (tSize == 0) {
     // t is empty, we'll just return *this below.
-  } else if (!rep->baseString && rep->rc == 1) {
+  } else if (!m_rep->baseString && m_rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
     expandCapacity(thisOffset + length);
     UChar *d = const_cast<UChar *>(data());
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
-    rep->len = length;
-    rep->_hash = 0;
+    m_rep->len = length;
+    m_rep->_hash = 0;
   } else if (thisOffset + thisSize == usedCapacity()) {
     // this string reaches the end of the buffer - extend it
     expandCapacity(thisOffset + length);
     UChar *d = const_cast<UChar *>(data());
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
-    Rep *newRep = Rep::create(rep, 0, length);
-    release();
-    rep = newRep;
+    m_rep = Rep::create(m_rep, 0, length);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
@@ -743,9 +729,8 @@ UString &UString::append(const char *t)
     memcpy(d, data(), thisSize * sizeof(UChar));
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
-    release();
-    rep = Rep::create(d, length);
-    rep->capacity = newCapacity;
+    m_rep = Rep::create(d, length);
+    m_rep->capacity = newCapacity;
   }
 
   return *this;
@@ -753,42 +738,38 @@ UString &UString::append(const char *t)
 
 UString &UString::append(unsigned short c)
 {
-  int thisOffset = rep->offset;
+  int thisOffset = m_rep->offset;
   int length = size();
 
   // possible cases:
   if (length == 0) {
-    // this is empty - must make a new rep because we don't want to pollute the shared empty one 
+    // this is empty - must make a new m_rep because we don't want to pollute the shared empty one 
     int newCapacity = expandedSize(1, 0);
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     d[0] = c;
-    release();
-    rep = Rep::create(d, 1);
-    rep->capacity = newCapacity;
-  } else if (!rep->baseString && rep->rc == 1) {
+    m_rep = Rep::create(d, 1);
+    m_rep->capacity = newCapacity;
+  } else if (!m_rep->baseString && m_rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
     expandCapacity(thisOffset + length + 1);
     UChar *d = const_cast<UChar *>(data());
     d[length] = c;
-    rep->len = length + 1;
-    rep->_hash = 0;
+    m_rep->len = length + 1;
+    m_rep->_hash = 0;
   } else if (thisOffset + length == usedCapacity()) {
     // this reaches the end of the string - extend it and share
     expandCapacity(thisOffset + length + 1);
     UChar *d = const_cast<UChar *>(data());
     d[length] = c;
-    Rep *newRep = Rep::create(rep, 0, length + 1);
-    release();
-    rep = newRep;
+    m_rep = Rep::create(m_rep, 0, length + 1);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize((length + 1), 0);
     UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), length * sizeof(UChar));
     d[length] = c;
-    release();
-    rep = Rep::create(d, length);
-    rep->capacity = newCapacity;
+    m_rep = Rep::create(d, length);
+    m_rep->capacity = newCapacity;
   }
 
   return *this;
@@ -840,13 +821,12 @@ UString &UString::operator=(const char *c)
 {
   int l = c ? strlen(c) : 0;
   UChar *d;
-  if (rep->rc == 1 && l <= rep->capacity && !rep->baseString && rep->offset == 0 && rep->preCapacity == 0) {
-    d = rep->buf;
-    rep->_hash = 0;
+  if (m_rep->rc == 1 && l <= m_rep->capacity && !m_rep->baseString && m_rep->offset == 0 && m_rep->preCapacity == 0) {
+    d = m_rep->buf;
+    m_rep->_hash = 0;
   } else {
-    release();
     d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * l));
-    rep = Rep::create(d, l);
+    m_rep = Rep::create(d, l);
   }
   for (int i = 0; i < l; i++)
     d[i].uc = c[i];
@@ -856,10 +836,7 @@ UString &UString::operator=(const char *c)
 
 UString &UString::operator=(const UString &str)
 {
-  str.rep->ref();
-  release();
-  rep = str.rep;
-
+  m_rep = str.m_rep;
   return *this;
 }
 
@@ -1000,10 +977,10 @@ uint32_t UString::toStrictUInt32(bool *ok) const
     *ok = false;
 
   // Empty string is not OK.
-  int len = rep->len;
+  int len = m_rep->len;
   if (len == 0)
     return 0;
-  const UChar *p = rep->data();
+  const UChar *p = m_rep->data();
   unsigned short c = p->unicode();
 
   // If the first digit is 0, only 0 itself is OK.
@@ -1140,31 +1117,26 @@ UString UString::substr(int pos, int len) const
   if (pos == 0 && len == s)
     return *this;
 
-  Rep *newRep = Rep::create(rep, pos, len);
-  UString result(newRep);
-  newRep->deref();
-
-  return result;
+  return UString(Rep::create(m_rep, pos, len));
 }
 
-void UString::detach()
+void UString::copyForWriting()
 {
-  if (rep->rc > 1 || rep->baseString) {
+  if (m_rep->rc > 1 || m_rep->baseString) {
     int l = size();
     UChar *n = static_cast<UChar *>(fastMalloc(sizeof(UChar) * l));
     memcpy(n, data(), l * sizeof(UChar));
-    release();
-    rep = Rep::create(n, l);
+    m_rep = Rep::create(n, l);
   }
 }
 
 bool operator==(const UString& s1, const UString& s2)
 {
-  if (s1.rep->len != s2.rep->len)
+  if (s1.m_rep->len != s2.m_rep->len)
     return false;
 
-  return (memcmp(s1.rep->data(), s2.rep->data(),
-		 s1.rep->len * sizeof(UChar)) == 0);
+  return (memcmp(s1.m_rep->data(), s2.m_rep->data(),
+		 s1.m_rep->len * sizeof(UChar)) == 0);
 }
 
 bool operator==(const UString& s1, const char *s2)

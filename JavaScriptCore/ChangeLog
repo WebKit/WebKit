@@ -1,3 +1,57 @@
+2005-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- add PassRefPtr, a smart pointer class that works in conjunction
+	with RefPtr but has transfer-of-ownership semantics
+	- apply RefPtr and PassRefPtr to UString
+	- cleaned up UString a little so that it doesn't need to have so many friend classes
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add):
+        * kjs/identifier.h:
+        (KJS::Identifier::Identifier):
+        (KJS::Identifier::equal):
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::get):
+        (KJS::PropertyMap::getLocation):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::remove):
+        * kjs/ustring.cpp:
+        (KJS::UCharReference::operator=):
+        (KJS::UCharReference::ref):
+        (KJS::UString::Rep::createCopying):
+        (KJS::UString::Rep::create):
+        (KJS::UString::usedCapacity):
+        (KJS::UString::usedPreCapacity):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::expandPreCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::spliceSubstringsWithSeparators):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        (KJS::UString::toStrictUInt32):
+        (KJS::UString::substr):
+        (KJS::UString::copyForWriting):
+        (KJS::operator==):
+        * kjs/ustring.h:
+        (KJS::UString::UString):
+        (KJS::UString::~UString):
+        (KJS::UString::data):
+        (KJS::UString::isNull):
+        (KJS::UString::isEmpty):
+        (KJS::UString::size):
+        (KJS::UString::rep):
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::RefPtr):
+        (KXMLCore::RefPtr::operator*):
+        (KXMLCore::::operator):
+        (KXMLCore::operator==):
+        (KXMLCore::operator!=):
+        (KXMLCore::static_pointer_cast):
+        (KXMLCore::const_pointer_cast):
+
 2005-12-04  Geoffrey Garen  <ggaren@apple.com>
 
         Update test results to match Anders's last checkin.

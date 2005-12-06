@@ -34,7 +34,8 @@ namespace KJS {
         Identifier() { }
         Identifier(const char *s) : _ustring(add(s)) { }
         Identifier(const UChar *s, int length) : _ustring(add(s, length)) { }
-        explicit Identifier(const UString &s) : _ustring(add(s.rep)) { }
+        explicit Identifier(UString::Rep *rep) : _ustring(add(rep)) { } 
+        explicit Identifier(const UString &s) : _ustring(add(s.rep())) { }
         
         const UString &ustring() const { return _ustring; }
         DOM::DOMString domString() const;
@@ -72,9 +73,9 @@ namespace KJS {
         static bool equal(UString::Rep *, UString::Rep *);
 
         static bool equal(const Identifier &a, const Identifier &b)
-            { return a._ustring.rep == b._ustring.rep; }
+            { return a._ustring.rep() == b._ustring.rep(); }
         static bool equal(const Identifier &a, const char *b)
-            { return equal(a._ustring.rep, b); }
+            { return equal(a._ustring.rep(), b); }
         
         static UString::Rep *add(const char *);
         static UString::Rep *add(const UChar *, int length);

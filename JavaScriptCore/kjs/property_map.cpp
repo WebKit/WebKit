@@ -157,7 +157,7 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
 {
     assert(!name.isNull());
     
-    UString::Rep *rep = name._ustring.rep;
+    UString::Rep *rep = name._ustring.rep();
     
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -198,7 +198,7 @@ ValueImp *PropertyMap::get(const Identifier &name) const
 {
     assert(!name.isNull());
     
-    UString::Rep *rep = name._ustring.rep;
+    UString::Rep *rep = name._ustring.rep();
 
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -235,7 +235,7 @@ ValueImp **PropertyMap::getLocation(const Identifier &name)
 {
     assert(!name.isNull());
     
-    UString::Rep *rep = name._ustring.rep;
+    UString::Rep *rep = name._ustring.rep();
 
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -295,7 +295,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     
     checkConsistency();
 
-    UString::Rep *rep = name._ustring.rep;
+    UString::Rep *rep = name._ustring.rep();
     
 #if DEBUG_PROPERTIES
     printf("adding property %s, attributes = 0x%08x (", name.ascii(), attributes);
@@ -470,7 +470,7 @@ void PropertyMap::remove(const Identifier &name)
     
     checkConsistency();
 
-    UString::Rep *rep = name._ustring.rep;
+    UString::Rep *rep = name._ustring.rep();
 
     UString::Rep *key;
 

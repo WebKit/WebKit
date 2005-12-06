@@ -254,18 +254,18 @@ UString::UString(const QString &d)
 {
   // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
   // memory layout
-  rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
+  m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
 UString::UString(const DOMString &d)
 {
   if (d.isNull()) {
-    attach(&Rep::null);
+    m_rep = &Rep::null;
     return;
   }
   // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
   // memory layout
-  rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
+  m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
 DOMString UString::domString() const
