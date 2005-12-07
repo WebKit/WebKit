@@ -1,5 +1,17 @@
 2005-12-07  David Hyatt  <hyatt@apple.com>
 
+	Fix for Radar bug #4333923, typing tab character into empty
+	document in Mail doesn't work.  This was just a silly regression
+	from my pre-wrap/pre-line implementation.  I accidentally changed
+	code to examine the wrong style().
+	
+        Reviewed by harrison
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
+2005-12-07  David Hyatt  <hyatt@apple.com>
+
 	Fix the DHTML menus on monster.com.  offsetParent should only return RenderObjects that
 	have corresponding DOM elements.
 	
