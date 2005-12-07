@@ -5109,15 +5109,13 @@
 	clipped overflow blocks so that they aren't mistakenly included
 	in hit testing.
 
+	The Radar bug for this is 4321425.
+	
 	Reviewed by Beth.
 
         * khtml/rendering/render_layer.cpp:
         (khtml::RenderLayer::containsPoint):
-        * kwq/KWQComboBox.mm:
-        (QComboBox::focusPolicy):
-        * kwq/KWQListBox.mm:
-        (QListBox::focusPolicy):
-
+        
 2005-11-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
