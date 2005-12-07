@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 362x18
+          text run at (0,0) width 362: "Note that background and font are both buggy right now!"
+      RenderBlock {DIV} at (24,42) size 736x28 [color=#FFFFFF] [bgcolor=#800080]
+        RenderText {TEXT} at (0,0) size 50x28
+          text run at (0,0) width 50: "Test"
+      RenderBlock (anonymous) at (0,94) size 784x252
+        RenderText {TEXT} at (0,0) size 388x18
+          text run at (0,0) width 388: "background-image: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,18) size 388x18
+          text run at (0,18) width 388: "background-repeat: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,36) size 418x18
+          text run at (0,36) width 418: "background-attachment: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,54) size 413x18
+          text run at (0,54) width 413: "background-position-x: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,72) size 413x18
+          text run at (0,72) width 413: "background-position-y: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,90) size 373x18
+          text run at (0,90) width 373: "background-clip: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,108) size 387x18
+          text run at (0,108) width 387: "background-origin: initial (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,126) size 387x18
+          text run at (0,126) width 387: "background-color: purple (original property was background)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,144) size 300x18
+          text run at (0,144) width 300: "margin-top: 1em (original property was margin)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,162) size 510x18
+          text run at (0,162) width 510: "margin-right: 1em (original property was margin and property was implicitly set.)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,180) size 525x18
+          text run at (0,180) width 525: "margin-bottom: 1em (original property was margin and property was implicitly set.)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,198) size 501x18
+          text run at (0,198) width 501: "margin-left: 1em (original property was margin and property was implicitly set.)"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,216) size 75x18
+          text run at (0,216) width 75: "color: white"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,234) size 356x18
+          text run at (0,234) width 356: "font: normal normal normal 24px/normal Lucida Grande"
+        RenderBR {BR} at (0,0) size 0x0
