@@ -1,3 +1,13 @@
+2005-12-07  David Hyatt  <hyatt@apple.com>
+
+	Fix the DHTML menus on monster.com.  offsetParent should only return RenderObjects that
+	have corresponding DOM elements.
+	
+        Reviewed by Eric Seidel
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::offsetParent):
+
 2005-12-07  Eric Seidel  <eseidel@apple.com>
 
         No review needed, removing dead (svg only) files.
