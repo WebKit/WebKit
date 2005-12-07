@@ -119,15 +119,15 @@ namespace DOM {
 
 	DOM::DocumentImpl *document() const;
 
-	void addProperty( int propId, CSSValueImpl *value, bool important );
+	void addProperty(int propId, CSSValueImpl *value, bool important);
 	bool hasProperties() const { return numParsedProperties > 0; }
 	CSSMutableStyleDeclarationImpl *createStyleDeclaration( CSSStyleRuleImpl *rule );
 	void clearProperties();
 
-	bool parseValue( int propId, bool important );
-	bool parseShortHand( const int *properties, int numProperties, bool important );
-	bool parse4Values( const int *properties, bool important );
-	bool parseContent( int propId, bool important );
+	bool parseValue(int propId, bool important);
+	bool parseShorthand(int propId, const int *properties, int numProperties, bool important);
+	bool parse4Values(int propId, const int *properties, bool important);
+	bool parseContent(int propId, bool important);
 
         CSSValueImpl* parseBackgroundColor();
         CSSValueImpl* parseBackgroundImage();
@@ -170,7 +170,10 @@ namespace DOM {
 	CSSProperty **parsedProperties;
 	int numParsedProperties;
 	int maxParsedProperties;
-	bool inParseShortHand;
+	
+        int m_inParseShorthand;
+        int m_currentShorthand;
+        bool m_implicitShorthand;
 
         AtomicString defaultNamespace;
         
@@ -185,7 +188,18 @@ namespace DOM {
         
     private:
         void setupParser(const char *prefix, const DOMString &string, const char *suffix);
-        
+        void enterShorthand(int propId)
+        {
+            if (!(m_inParseShorthand++))
+                m_currentShorthand = propId;
+        }
+        void exitShorthand()
+        {
+            if (!(--m_inParseShorthand))
+                m_currentShorthand = 0;
+        }
+        bool inShorthand() const { return m_inParseShorthand; }
+
 	unsigned short *data;
 	unsigned short *yytext;
 	unsigned short *yy_c_buf_p;

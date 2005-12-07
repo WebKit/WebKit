@@ -757,6 +757,16 @@ using namespace DOM;
     return [self _styleDeclarationImpl]->getPropertyPriority(propertyName);
 }
 
+- (NSString *)getPropertyShorthand:(NSString *)propertyName
+{
+    return [self _styleDeclarationImpl]->getPropertyShorthand(propertyName);
+}
+
+- (BOOL)isPropertyImplicit:(NSString *)propertyName
+{
+    return [self _styleDeclarationImpl]->isPropertyImplicit(propertyName);
+}
+
 - (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
 {
     int exceptionCode;
@@ -2514,6 +2524,12 @@ void removeWrapperForRGB(QRgb value)
     ElementImpl *elementImpl = [elt _elementImpl];
     DOMString pseudoEltString(pseudoElt);
     return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.impl())];
+}
+
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
+{
+    // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
+    return [DOMCSSRuleList _ruleListWithImpl: AbstractViewImpl([self _documentImpl]).getMatchedCSSRules([elt _elementImpl], DOMString(pseudoElt).impl(), false).get()];
 }
 
 @end

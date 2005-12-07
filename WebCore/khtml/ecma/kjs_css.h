@@ -57,7 +57,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { CssText, Length, ParentRule };
     enum { GetPropertyValue, GetPropertyCSSValue, RemoveProperty, 
-           GetPropertyPriority, SetProperty, Item };
+           GetPropertyPriority, GetPropertyShorthand, IsPropertyImplicit, SetProperty, Item };
     DOM::CSSStyleDeclarationImpl *impl() const { return m_impl.get(); }
   private:
     static ValueImp *indexGetter(ExecState *, const Identifier&, const PropertySlot&);

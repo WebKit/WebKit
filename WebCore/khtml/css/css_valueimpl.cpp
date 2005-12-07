@@ -131,6 +131,25 @@ DOMString CSSStyleDeclarationImpl::getPropertyPriority(const DOMString &property
     return getPropertyPriority(propID) ? "important" : "";
 }
 
+DOMString CSSStyleDeclarationImpl::getPropertyShorthand(const DOMString &propertyName)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return DOMString();
+    int shorthandID = getPropertyShorthand(propID);
+    if (!shorthandID)
+        return DOMString();
+    return getPropertyName(shorthandID);
+}
+
+bool CSSStyleDeclarationImpl::isPropertyImplicit(const DOMString &propertyName)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return false;
+    return isPropertyImplicit(propID);
+}
+
 void CSSStyleDeclarationImpl::setProperty(const DOMString &propertyName, const DOMString &value, const DOMString &priority, int &exception)
 {
     int propID = propertyID(propertyName);
@@ -385,8 +404,26 @@ bool CSSMutableStyleDeclarationImpl::getPropertyPriority(int propertyID) const
 {
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = m_values.begin(); it != end; ++it)
-        if (propertyID == (*it).m_id)
-            return (*it).m_bImportant;
+        if (propertyID == (*it).id())
+            return (*it).isImportant();
+    return false;
+}
+
+int CSSMutableStyleDeclarationImpl::getPropertyShorthand(int propertyID) const
+{
+    QValueListConstIterator<CSSProperty> end;
+    for (QValueListConstIterator<CSSProperty> it = m_values.begin(); it != end; ++it)
+        if (propertyID == (*it).id())
+            return (*it).shorthandID();
+    return false;
+}
+
+bool CSSMutableStyleDeclarationImpl::isPropertyImplicit(int propertyID) const
+{
+    QValueListConstIterator<CSSProperty> end;
+    for (QValueListConstIterator<CSSProperty> it = m_values.begin(); it != end; ++it)
+        if (propertyID == (*it).id())
+            return (*it).isImplicit();
     return false;
 }
 
@@ -1337,12 +1374,12 @@ DOMString ShadowValueImpl::cssText() const
 
 DOMString CSSProperty::cssText() const
 {
-    return getPropertyName(m_id) + DOMString(": ") + m_value->cssText() + (m_bImportant ? DOMString(" !important") : DOMString()) + DOMString("; ");
+    return getPropertyName(id()) + DOMString(": ") + m_value->cssText() + (isImportant() ? DOMString(" !important") : DOMString()) + DOMString("; ");
 }
 
 bool operator==(const CSSProperty &a, const CSSProperty &b)
 {
-    return a.m_id == b.m_id && a.m_bImportant == b.m_bImportant && a.m_value == b.m_value;
+    return a.m_id == b.m_id && a.m_important == b.m_important && a.m_value == b.m_value;
 }
 
 }

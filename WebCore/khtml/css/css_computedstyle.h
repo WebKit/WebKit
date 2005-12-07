@@ -50,6 +50,8 @@ public:
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
     virtual DOMString getPropertyValue(int propertyID) const;
     virtual bool getPropertyPriority(int propertyID) const;
+    virtual int getPropertyShorthand(int propertyID) const { return -1; }
+    virtual bool isPropertyImplicit(int propertyID) const { return true; }
 
     virtual CSSMutableStyleDeclarationImpl *copy() const;
     virtual CSSMutableStyleDeclarationImpl *makeMutable();

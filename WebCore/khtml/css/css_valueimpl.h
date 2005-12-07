@@ -63,9 +63,14 @@ public:
     CSSValueImpl *getPropertyCSSValue(const DOMString &propertyName);
     DOMString getPropertyValue(const DOMString &propertyName);
     DOMString getPropertyPriority(const DOMString &propertyName);
+    DOMString getPropertyShorthand(const DOMString& propertyName);
+    bool isPropertyImplicit(const DOMString& propertyName);
+    
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const = 0;
     virtual DOMString getPropertyValue(int propertyID) const = 0;
     virtual bool getPropertyPriority(int propertyID) const = 0;
+    virtual int getPropertyShorthand(int propertyID) const = 0;
+    virtual bool isPropertyImplicit(int propertyID) const = 0;
 
     void setProperty(const DOMString &propertyName, const DOMString &value, const DOMString &priority, int &exception);
     DOMString removeProperty(const DOMString &propertyName, int &exception);
@@ -406,49 +411,65 @@ public:
 class CSSProperty
 {
 public:
-    CSSProperty() : m_id(-1), m_bImportant(false), m_value(0)
+    CSSProperty(int propID, CSSValueImpl *value, bool important = false, int shorthandID = 0, bool implicit = false)
+        : m_id(propID), m_shorthandID(shorthandID), m_important(important), m_implicit(implicit), m_value(value)
     {
+        if (value)
+            value->ref();
     }
-    CSSProperty(int propID, CSSValueImpl *value, bool important = false)
-        : m_id(propID), m_bImportant(important), m_value(value)
-    {
-        if (value) value->ref();
-    }
+    
     CSSProperty(const CSSProperty& o)
     {
         m_id = o.m_id;
-        m_bImportant = o.m_bImportant;
+        m_shorthandID = o.m_shorthandID;
+        m_important = o.m_important;
+        m_implicit = o.m_implicit;
         m_value = o.m_value;
-        if (m_value) m_value->ref();
+        if (m_value)
+            m_value->ref();
     }
+    
     CSSProperty &operator=(const CSSProperty& o)
     {
-        if (o.m_value) o.m_value->ref();
-	if (m_value) m_value->deref();
+        if (o.m_value)
+            o.m_value->ref();
+	if (m_value)
+            m_value->deref();
         m_id = o.m_id;
-        m_bImportant = o.m_bImportant;
+        m_shorthandID = o.m_shorthandID;
+        m_important = o.m_important;
         m_value = o.m_value;
         return *this;
     }
+    
     ~CSSProperty() {
-	if(m_value) m_value->deref();
+	if (m_value)
+            m_value->deref();
     }
 
     void setValue(CSSValueImpl *val) {
-	if (val) val->ref();
-        if (m_value) m_value->deref();
+	if (val)
+            val->ref();
+        if (m_value)
+            m_value->deref();
         m_value = val;
     }
 
     int id() const { return m_id; }
-    bool isImportant() const { return m_bImportant; }
+    int shorthandID() const { return m_shorthandID; }
+    
+    bool isImportant() const { return m_important; }
+    bool isImplicit() const { return m_implicit; }
+
     CSSValueImpl *value() const { return m_value; }
     
     DOMString cssText() const;
 
     // make sure the following fits in 4 bytes.
-    int  m_id;
-    bool m_bImportant;
+    int m_id;
+    int m_shorthandID;  // If this property was set as part of a shorthand, gives the shorthand.
+    bool m_important : 1;
+    bool m_implicit  : 1; // Whether or not the property was set implicitly as the result of a shorthand.
 
     friend bool operator==(const CSSProperty &, const CSSProperty &);
 
@@ -478,6 +499,8 @@ public:
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
     virtual DOMString getPropertyValue(int propertyID) const;
     virtual bool getPropertyPriority(int propertyID) const;
+    virtual int getPropertyShorthand(int propertyID) const;
+    virtual bool isPropertyImplicit(int propertyID) const;
 
     virtual void setProperty(int propertyId, const DOMString &value, bool important, int &exceptionCode);
     virtual DOMString removeProperty(int propertyID, int &exceptionCode);

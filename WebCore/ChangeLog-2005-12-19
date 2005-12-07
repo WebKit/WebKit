@@ -1,3 +1,79 @@
+<<<<<<< ChangeLog
+2005-12-05  David Hyatt  <hyatt@apple.com>
+
+	Add support for more methods for exposing more useful style information.
+
+	getMatchedCSSRules can be used to obtain the matched sheet rules for an element.  In Obj-C
+	it will also include user/user agent sheet rules.
+
+	Also add support for tracking the original shorthand in which a property was declared, as well
+	as whether the property was just implicitly set rather than explicitly mentioned (e.g., if it was
+	an omitted piece of a shorthand).  The new methods on CSSStyleDeclaration are getPropertyShorthand
+	and isPropertyImplicit.
+	
+        Reviewed by mjs
+
+        Test: fast/inspector/style.html
+
+        * khtml/css/css_computedstyle.h:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyShorthand):
+        (DOM::CSSComputedStyleDeclarationImpl::isPropertyImplicit):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSStyleDeclarationImpl::getPropertyShorthand):
+        (DOM::CSSStyleDeclarationImpl::isPropertyImplicit):
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyPriority):
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyShorthand):
+        (DOM::CSSMutableStyleDeclarationImpl::isPropertyImplicit):
+        (DOM::CSSProperty::cssText):
+        (DOM::operator==):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSProperty::CSSProperty):
+        (DOM::CSSProperty::operator=):
+        (DOM::CSSProperty::~CSSProperty):
+        (DOM::CSSProperty::setValue):
+        (DOM::CSSProperty::shorthandID):
+        (DOM::CSSProperty::isImportant):
+        (DOM::CSSProperty::isImplicit):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::CSSParser):
+        (CSSParser::addProperty):
+        (CSSParser::parseValue):
+        (CSSParser::parseBackgroundShorthand):
+        (CSSParser::parseShorthand):
+        (CSSParser::parse4Values):
+        (CSSParser::parseBackgroundPosition):
+        (CSSParser::parseBackgroundProperty):
+        * khtml/css/cssparser.h:
+        (DOM::CSSParser::enterShorthand):
+        (DOM::CSSParser::exitShorthand):
+        (DOM::CSSParser::inShorthand):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::CSSStyleSelector::matchRulesForList):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleRulesForElement):
+        (khtml::CSSStyleSelector::pseudoStyleRulesForElement):
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_css.h:
+        (KJS::DOMCSSStyleDeclaration::):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_views.h:
+        (KJS::DOMAbstractView::):
+        * khtml/xml/dom2_viewsimpl.cpp:
+        (DOM::AbstractViewImpl::getComputedStyle):
+        (DOM::AbstractViewImpl::getMatchedCSSRules):
+        * khtml/xml/dom2_viewsimpl.h:
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration getPropertyShorthand:]):
+        (-[DOMCSSStyleDeclaration isPropertyImplicit:]):
+        (-[DOMDocument getMatchedCSSRules::]):
+        * kwq/DOMPrivate.h:
+
+=======
 2005-12-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
@@ -252,6 +328,7 @@
         * khtml/khtmlview.cpp: (KHTMLView::dispatchMouseEvent): Do the same "skip text node"
         logic for the "oldUnder" variable as for the "targetNode" variable.
 
+>>>>>>> 1.482
 2005-12-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

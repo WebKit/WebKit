@@ -110,6 +110,8 @@ static bool isCSSPropertyName(const Identifier &JSPropertyName)
   getPropertyCSSValue	DOMCSSStyleDeclaration::GetPropertyCSSValue	DontDelete|Function 1
   removeProperty	DOMCSSStyleDeclaration::RemoveProperty		DontDelete|Function 1
   getPropertyPriority	DOMCSSStyleDeclaration::GetPropertyPriority	DontDelete|Function 1
+  getPropertyShorthand  DOMCSSStyleDeclaration::GetPropertyShorthand    DontDelete|Function 1
+  isPropertyImplicit    DOMCSSStyleDeclaration::IsPropertyImplicit      DontDelete|Function 1
   setProperty		DOMCSSStyleDeclaration::SetProperty		DontDelete|Function 3
   item			DOMCSSStyleDeclaration::Item			DontDelete|Function 1
 @end
@@ -257,6 +259,10 @@ ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, Objec
       return getStringOrNull(styleDecl.removeProperty(s, exception));
     case DOMCSSStyleDeclaration::GetPropertyPriority:
       return getStringOrNull(styleDecl.getPropertyPriority(s));
+    case DOMCSSStyleDeclaration::GetPropertyShorthand:
+      return getStringOrNull(styleDecl.getPropertyShorthand(s));
+    case DOMCSSStyleDeclaration::IsPropertyImplicit:
+      return Boolean(styleDecl.isPropertyImplicit(s));
     case DOMCSSStyleDeclaration::SetProperty:
       styleDecl.setProperty(s, args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
       return Undefined();
