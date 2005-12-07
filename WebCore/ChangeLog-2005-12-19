@@ -1,3 +1,12 @@
+2005-12-07  Eric Seidel  <eseidel@apple.com>
+
+        No review needed, removing dead (svg only) files.
+
+        Removing unused files.
+
+        * kcanvas/KCanvasRegistry.cpp: Removed.
+        * kcanvas/KCanvasRegistry.h: Removed.
+
 2005-12-05  David Hyatt  <hyatt@apple.com>
 
 	Add support for more methods for exposing more useful style information.
