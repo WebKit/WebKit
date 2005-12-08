@@ -1,3 +1,13 @@
+2005-12-08  Eric Seidel  <eseidel@apple.com>
+
+        No review needed, build fix only.
+
+        * ksvg2/css/KSVGCSSParser.cpp:
+        (DOM::CSSParser::parseSVGValue): parseShorthand rename
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.cpp: missing header
+        * ksvg2/svg/SVGFELightElementImpl.cpp: missing header
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.cpp: missing header
+
 2005-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -272,7 +272,7 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
             const int properties[3] = { SVGCSS_PROP_MARKER_START,
                                         SVGCSS_PROP_MARKER_MID,
                                         SVGCSS_PROP_MARKER_END };
-            return parseShortHand(properties, 3, important);
+            return parseShorthand(propId, properties, 3, important);
     }
 
     case SVGCSS_PROP_CLIP_PATH:    // <uri> | none | inherit
