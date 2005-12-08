@@ -132,3 +132,9 @@
 // WebDocumentSelection protocol implementors should call this in becomeFirstResponder
 - (void)_selectedFrameDidChange;
 @end
+
+@interface WebView (AllWebViews)
++ (void)_makeAllWebViewsPerformSelector:(SEL)selector;
+- (void)_removeFromAllWebViewsSet;
+- (void)_addToAllWebViewsSet;
+@end

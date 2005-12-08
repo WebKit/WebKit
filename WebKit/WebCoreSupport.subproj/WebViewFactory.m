@@ -30,7 +30,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebControllerSets.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSUserDefaultsExtras.h>
@@ -74,7 +74,7 @@
 {
     [[WebPluginDatabase installedPlugins] refresh];
     if (reloadPages) {
-        [WebViewSets makeWebViewsPerformSelector:@selector(_reloadForPluginChanges)];
+        [WebView _makeAllWebViewsPerformSelector:@selector(_reloadForPluginChanges)];
     }
 }
 

@@ -30,12 +30,8 @@
 
 @class WebView;
 
-@interface WebViewSets : NSObject
-+ (void)addWebView:(WebView *)webView toSetNamed:(NSString *)name;
-+ (void)removeWebView:(WebView *)webView fromSetNamed:(NSString *)name;
-+ (NSEnumerator *)webViewsInSetNamed:(NSString *)name;
-+ (void)makeWebViewsPerformSelector:(SEL)selector;
+@interface WebFrameNamespaces : NSObject
++ (void)addWebView:(WebView *)webView toFrameNamespace:(NSString *)name;
++ (void)removeWebView:(WebView *)webView fromFrameNamespace:(NSString *)name;
++ (NSEnumerator *)webViewsInFrameNamespace:(NSString *)name;
 @end
-
-
-

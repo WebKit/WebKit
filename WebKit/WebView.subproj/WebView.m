@@ -88,6 +88,8 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
 
+#import <CoreFoundation/CFSet.h>
+
 #import <Foundation/NSURLConnection.h>
 #import <objc/objc-runtime.h>
 
@@ -319,6 +321,43 @@ static BOOL shouldUseFontSmoothing = YES;
 
 @end
 
+@implementation WebView (AllWebViews)
+
+static CFSetCallBacks NonRetainingSetCallbacks = {
+    0,
+    NULL,
+    NULL,
+    CFCopyDescription,
+    CFEqual,
+    CFHash
+};
+
+static CFMutableSetRef allWebViewsSet;
+
++ (void)_makeAllWebViewsPerformSelector:(SEL)selector
+{
+    if (!allWebViewsSet)
+        return;
+
+    [(NSMutableSet *)allWebViewsSet makeObjectsPerformSelector:selector];
+}
+
+- (void)_removeFromAllWebViewsSet
+{
+    if (allWebViewsSet)
+        CFSetRemoveValue(allWebViewsSet, self);
+}
+
+- (void)_addToAllWebViewsSet
+{
+    if (!allWebViewsSet)
+	allWebViewsSet = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+
+    CFSetSetValue(allWebViewsSet, self);
+}
+
+@end
+
 @implementation WebView (WebPrivate)
 
 #ifdef DEBUG_WIDGET_DRAWING
@@ -419,8 +458,9 @@ static bool debugWidget = true;
 
 - (void)_close
 {
+    [self _removeFromAllWebViewsSet];
     if (_private->setName != nil) {
-        [WebViewSets removeWebView:self fromSetNamed:_private->setName];
+        [WebFrameNamespaces removeWebView:self fromFrameNamespace:_private->setName];
         [_private->setName release];
         _private->setName = nil;
     }
@@ -606,7 +646,7 @@ static bool debugWidget = true;
 
     // Try other WebViews in the same set
     if (_private->setName != nil) {
-        NSEnumerator *enumerator = [WebViewSets webViewsInSetNamed:_private->setName];
+        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:_private->setName];
         WebView *webView;
         while ((webView = [enumerator nextObject]) != nil && frame == nil) {
 	    frame = [webView _findFrameInThisWindowNamed:name sourceFrame:source];
@@ -1541,6 +1581,7 @@ NSMutableDictionary *countInvocations;
     [wv release];
 
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
+    [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
     
     // If there's already a next key view (e.g., from a nib), wire it up to our
@@ -2250,7 +2291,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (groupName != _private->setName){
         [_private->setName release];
         _private->setName = [groupName copy];
-        [WebViewSets addWebView:self toSetNamed:_private->setName];
+        [WebFrameNamespaces addWebView:self toFrameNamespace:_private->setName];
     }
 }
 

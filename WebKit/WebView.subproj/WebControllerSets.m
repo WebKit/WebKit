@@ -37,65 +37,52 @@ CFEqual,
 CFHash
 };
 
-@implementation WebViewSets
+@implementation WebFrameNamespaces
 
-NSMutableDictionary *sets = nil;
+NSMutableDictionary *namespaces = nil;
 
-+(void)addWebView:(WebView *)webView toSetNamed: (NSString *)name
++(void)addWebView:(WebView *)webView toFrameNamespace:(NSString *)name
 {
-    if (sets == nil) {
-	sets = [[NSMutableDictionary alloc] init];
+    if (namespaces == nil) {
+	namespaces = [[NSMutableDictionary alloc] init];
     }
 
-    CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (set == NULL) {
-	set = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
-	[sets setObject:(id)set forKey:name];
-	CFRelease(set);
+    if (namespace == NULL) {
+	namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+	[namespaces setObject:(id)namespace forKey:name];
+	CFRelease(namespace);
     }
 
     
-    CFSetSetValue(set, webView);
+    CFSetSetValue(namespace, webView);
 }
 
-+(void)removeWebView:(WebView *)webView fromSetNamed: (NSString *)name
++(void)removeWebView:(WebView *)webView fromFrameNamespace:(NSString *)name
 {
-    CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (set == NULL) {
+    if (namespace == NULL) {
 	return;
     }
 
-    CFSetRemoveValue(set, webView);
+    CFSetRemoveValue(namespace, webView);
 
-    if (CFSetGetCount(set) == 0) {
-	[sets removeObjectForKey:name];
+    if (CFSetGetCount(namespace) == 0) {
+	[namespaces removeObjectForKey:name];
     }
 }
 
-
-+(NSEnumerator *)webViewsInSetNamed:(NSString *)name;
++(NSEnumerator *)webViewsInFrameNamespace:(NSString *)name;
 {
-    CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (set == NULL) {
+    if (namespace == NULL) {
 	return [[[NSEnumerator alloc] init] autorelease];
     }
     
-    return [(NSSet *)set objectEnumerator];
-}
-
-+ (void)makeWebViewsPerformSelector:(SEL)selector
-{
-    NSEnumerator *setEnumerator = [sets objectEnumerator];
-    NSMutableSet *set;
-    while ((set = [setEnumerator nextObject]) != nil) {
-        [set makeObjectsPerformSelector:selector];
-    }
+    return [(NSSet *)namespace objectEnumerator];
 }
 
 @end
-
-
-

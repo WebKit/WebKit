@@ -362,7 +362,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // This approach is an inherent limitation of not making a close execute immediately
     // after a call to window.close.
     
-    [WebViewSets removeWebView:parentWebView fromSetNamed:[parentWebView groupName]];
+    [WebFrameNamespaces removeWebView:parentWebView fromFrameNamespace:[parentWebView groupName]];
 
     [parentWebView stopLoading:self];
     
@@ -1718,7 +1718,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     NSMutableArray *deferredWebViews = [NSMutableArray array];
     NSString *setName = [webView groupName];
     if (setName) {
-        NSEnumerator *enumerator = [WebViewSets webViewsInSetNamed:setName];
+        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:setName];
         WebView *otherWebView;
         while ((otherWebView = [enumerator nextObject]) != nil) {
             if (otherWebView != webView && ![otherWebView defersCallbacks]) {

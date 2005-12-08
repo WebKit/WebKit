@@ -1,3 +1,34 @@
+2005-12-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- some small changes towards frame tree refactoring
+
+	Renamed WebViewSets to WebFrameNamespaces, and put the method for
+	performing a selector on all extant WebViews to WebView itself,
+	with a separate set tracking live WebViews. This should allow
+	moving the storage of this info down to WebCore more easily.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge closeWindowSoon]):
+        (-[WebBridge runModal]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory refreshPlugins:]):
+        * WebView.subproj/WebControllerSets.h:
+        * WebView.subproj/WebControllerSets.m:
+        (+[WebFrameNamespaces addWebView:toFrameNamespace:]):
+        (webView::if):
+        (+[WebFrameNamespaces webViewsInFrameNamespace:]):
+        * WebView.subproj/WebView.m:
+        (+[WebView _makeAllWebViewsPerformSelector:]):
+        (-[WebView _removeFromAllWebViewsSet]):
+        (-[WebView _addToAllWebViewsSet]):
+        (-[WebView _close]):
+        (-[WebView _findFrameNamed:sourceFrame:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView setGroupName:]):
+        * WebView.subproj/WebViewInternal.h:
+
 2005-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
