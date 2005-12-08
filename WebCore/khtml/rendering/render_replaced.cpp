@@ -220,7 +220,8 @@ QColor RenderReplaced::selectionColor(QPainter *p) const
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)
       : RenderReplaced(node),
-	m_deleteWidget(false)
+        m_deleteWidget(false),
+        m_refCount(0)
 {
     m_widget = 0;
     // a replaced element doesn't support being anonymous
@@ -278,7 +279,7 @@ void RenderWidget::destroy()
 
 RenderWidget::~RenderWidget()
 {
-    KHTMLAssert( refCount() <= 0 );
+    KHTMLAssert(m_refCount <= 0);
 
     if (m_deleteWidget)
         delete m_widget;
@@ -461,7 +462,7 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
     elem->deref();
 
     // stop processing if the widget gets deleted, but continue in all other cases
-    if (hasOneRef())
+    if (m_refCount == 1)
         filtered = true;
     deref(arena);
 
@@ -470,8 +471,7 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 
 void RenderWidget::deref(RenderArena *arena)
 {
-    if (_ref) _ref--; 
-    if (!_ref)
+    if (--m_refCount <= 0)
         arenaDelete(arena, this);
 }
 

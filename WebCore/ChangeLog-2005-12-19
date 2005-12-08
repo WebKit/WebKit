@@ -1,3 +1,27 @@
+2005-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5686
+          make Shared::deref faster by eliminating multiple branches
+
+        * khtml/misc/shared.h: Rewrote both Shared and TreeShared to be functionally
+        the same, but used signed reference counts and remove the extra
+        check inside deref that handles the case of extra derefs (a programming
+        mistake in any case). This elimnates a branch from a hot code path.
+        Also added license header. New versions have private data members, unlike
+        the old ones that used protected.
+
+        * khtml/rendering/render_replaced.h: Removed private inheritance from
+        Shared, and instead just declared a variable that holds a reference count,
+        because that's the only thing that was being used from Shared.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::RenderWidget): Initialized m_refCount.
+        (RenderWidget::~RenderWidget): Use m_refCount.
+        (RenderWidget::eventFilter): Ditto.
+        (RenderWidget::deref): Use m_refCount and the new faster idiom (although here
+        it's not important becaue the function isn't even inlined).
+
 2005-12-08  Eric Seidel  <eseidel@apple.com>
 
         No review needed, build fix only.

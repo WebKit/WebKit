@@ -74,7 +74,7 @@ protected:
 };
 
 
-class RenderWidget : public QObject, public RenderReplaced, private khtml::Shared<RenderWidget>
+class RenderWidget : public QObject, public RenderReplaced
 {
     Q_OBJECT
 public:
@@ -93,7 +93,7 @@ public:
     QWidget *widget() const { return m_widget; }
     KHTMLView* view() const { return m_view; }
 
-    RenderArena *ref() { _ref++; return renderArena(); }
+    RenderArena *ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena *arena);
     
     virtual void setSelectionState(SelectionState s);
@@ -113,6 +113,7 @@ protected:
     bool m_deleteWidget;
     QWidget *m_widget;
     KHTMLView* m_view;
+    int m_refCount;
 };
 
 };
