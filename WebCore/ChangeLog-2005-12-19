@@ -1,3 +1,16 @@
+2005-12-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        No applet test (mjs says DRT has kittens in that case)
+        SVG is covered by <use> test cases (5 tests).
+
+        Fixes <applet> in xhtml, as well as <use> in SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5987
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::endElementNs): call closeRenderer()
+
 2005-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

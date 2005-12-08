@@ -375,12 +375,10 @@ void XMLTokenizer::endElementNs()
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
-    if (m_currentNode->parentNode() != 0) {
-        do {
-            m_currentNode = m_currentNode->parentNode();
-        } while (m_currentNode && m_currentNode->implicitNode());
-    }
-// ###  else error
+    while (m_currentNode->implicitNode())
+        m_currentNode = m_currentNode->parentNode();
+    m_currentNode->closeRenderer();
+    m_currentNode = m_currentNode->parentNode();
 }
 
 void XMLTokenizer::characters(const xmlChar *s, int len)
