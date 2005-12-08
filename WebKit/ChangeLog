@@ -1,3 +1,23 @@
+2005-12-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim O.
+        
+        - Added WebKit mechanism to help correctly pass the first responder into the PDF view hierarchy,
+        in order to start addressing keyboard focus and selection highlight issues. Unfortunately this 
+        doesn't actually have any user effect yet due to problems that must be fixed in PDFKit.
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView acceptsFirstResponder]):
+        Overridden to returns YES. Needed so NSClipView knows it's OK to pass focus down to this level.
+        (-[WebPDFView becomeFirstResponder]):
+        With setNextKeyView:, splices the PDF view into the focus-passing mechanism in much the same
+        way as NSScrollView and NSClipView.
+        (-[WebPDFView setNextKeyView:]):
+        With becomeFirstResponder:, splices the PDF view into the focus-passing mechanism in much the same
+        way as NSScrollView and NSClipView.
+        (-[WebPDFView resignFirstResponder]):
+        Removed this method because the WebPDFView itself is never first responder except transiently.
+
 2005-12-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

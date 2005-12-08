@@ -735,23 +735,53 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     }
 }
 
-- (BOOL)becomeFirstResponder
-{
-    BOOL result = [super becomeFirstResponder];
-    if (result) {
-        [[self _webView] _selectedFrameDidChange];
-    }
-    return result;
+- (BOOL)acceptsFirstResponder {
+    return YES;
 }
 
-- (BOOL)resignFirstResponder
+- (BOOL)becomeFirstResponder
 {
-    BOOL resign = [super resignFirstResponder];
-    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection]) {
-        [self deselectAll];
+    // This works together with setNextKeyView to splice our PDFSubview into
+    // the key loop similar to the way NSScrollView does this.
+    NSWindow *window = [self window];
+    id newFirstResponder = nil;
+    
+    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+        NSView *previousValidKeyView = [self previousValidKeyView];
+        if ((previousValidKeyView != self) && (previousValidKeyView != PDFSubview))
+            newFirstResponder = previousValidKeyView;
+    } else {
+        // FIXME 4370845: Passing first responder-ness down to the PDFSubview itself
+        // should work, but doesn't due to missing first responder-passing code needed
+        // in PDFKit. So this next line doesn't currently help (or hurt), but it should start
+        // working when PDFKit fixes 4370845.
+        newFirstResponder = PDFSubview;
     }
-    return resign;
+    
+    if (!newFirstResponder)
+        return NO;
+    
+    if (![window makeFirstResponder:newFirstResponder])
+        return NO;
+    
+    [[self _webView] _selectedFrameDidChange];
+
+    // FIXME 4265966: We don't currently have a way to notice when the PDFView (or subview) loses focus,
+    // so sometimes a secondary selection is left behind in the PDFView when the primary selection moves elsewhere.    
+    
+    return YES;
 }
+
+- (void)setNextKeyView:(NSView *)aView
+{
+    // This works together with becomeFirstResponder to splice PDFSubview into
+    // the key loop similar to the way NSScrollView does this.
+    if (PDFSubview)
+        [PDFSubview setNextKeyView:aView];
+    else
+        [super setNextKeyView:aView];
+}
+
 
 @end
 
