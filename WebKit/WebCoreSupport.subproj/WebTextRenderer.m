@@ -582,7 +582,7 @@ static void destroy(WebTextRenderer *renderer)
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     if (shouldUseATSU(run))
-        ATSU_pointToOffset(self, run, style, x, reversed, includePartialGlyphs);
+        return ATSU_pointToOffset(self, run, style, x, reversed, includePartialGlyphs);
     return CG_pointToOffset(self, run, style, x, reversed, includePartialGlyphs);
 }
 

@@ -1,3 +1,14 @@
+2005-12-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5878
+          REGRESSION (WebTextRenderer.m r1.201): pointToOffset always takes the CG code path
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        Added the missing "return".
+
 2005-12-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
