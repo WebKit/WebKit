@@ -10,10 +10,22 @@ layer at (0,0) size 480x360
           KCanvasContainer {g} at (0,-6) size 0x0
             KCanvasContainer {g} at (0,-6) size 0x0
               KCanvasContainer {use} at (0,-6) size 0x0 [filter=#erode1]
+                KCanvasContainer {g} at (35,19) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (35,19) size 0x0
+                    KCanvasContainer {g} at (35,19) size 0x0
             KCanvasContainer {g} at (255,-6) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,0.00)}]
               KCanvasContainer {use} at (255,-6) size 0x0 [filter=#erode2]
+                KCanvasContainer {g} at (290,19) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (290,19) size 0x0
+                    KCanvasContainer {g} at (290,19) size 0x0
             KCanvasContainer {g} at (0,134) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
               KCanvasContainer {use} at (0,134) size 0x0 [filter=#dilate1]
+                KCanvasContainer {g} at (35,159) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (35,159) size 0x0
+                    KCanvasContainer {g} at (35,159) size 0x0
             KCanvasContainer {g} at (255,134) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,140.00)}]
               KCanvasContainer {use} at (255,134) size 0x0 [filter=#dilate2]
+                KCanvasContainer {g} at (290,159) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (290,159) size 0x0
+                    KCanvasContainer {g} at (290,159) size 0x0
       KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

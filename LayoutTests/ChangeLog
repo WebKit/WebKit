@@ -1,3 +1,27 @@
+2005-12-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Fixes <applet> in xhtml, as well as <use> in SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5987
+
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+
 2005-12-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Landed by Darin.
