@@ -1,3 +1,15 @@
+2005-12-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by eseidel.  Committed by eseidel.
+        
+        No test possible since this fixes random behavior.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5997
+        REGRESSION: Focus rings around links are not erased when focus is lost
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::NodeImpl): Initialize m_inDetach to false.
+
 2005-12-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
