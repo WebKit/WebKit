@@ -1,3 +1,15 @@
+2005-12-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Landed by Darin.
+
+        - added regression test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5878
+          REGRESSION (WebTextRenderer.m r1.201): pointToOffset always takes the CG code path
+
+        * fast/text/atsui-pointtooffset-calls-cg-expected.checksum: Added.
+        * fast/text/atsui-pointtooffset-calls-cg-expected.png: Added.
+        * fast/text/atsui-pointtooffset-calls-cg-expected.txt: Added.
+        * fast/text/atsui-pointtooffset-calls-cg.html: Added.
+
 2005-12-05  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.
