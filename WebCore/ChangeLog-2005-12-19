@@ -1,3 +1,22 @@
+2005-12-08  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff.
+	
+	<rdar://problem/4366496> 10.4.4 Regression: "Corel Painter IX (v9.1)"
+	crashed when going from the "Open a template" menu to "Select recent
+	Document" in the "Welcome to Corel XI!" window.
+	
+	These are the parts of that bug fix that were not already fixed in TOT.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+	Retain the event because it is the [NSApp currentEvent], which can
+	change and therefore be released during [super trackMouse:...]
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendFakeEventsAfterWidgetTracking):
+	Allow for the event not being leftmousedown or keydown
+
 2005-12-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by eseidel.  Committed by eseidel.

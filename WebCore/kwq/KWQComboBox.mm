@@ -408,6 +408,10 @@ void QComboBox::populate()
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
     WebCoreBridge *bridge = box ? [KWQKHTMLPart::bridgeForWidget(box) retain] : nil;
+
+    // we need to retain the event because it is the [NSApp currentEvent], which can change
+    // and therefore be released during [super trackMouse:...]
+    [event retain];
     BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
     if (result && bridge) {
         // Give KHTML a chance to fix up its event state, since the popup eats all the
@@ -415,6 +419,7 @@ void QComboBox::populate()
         // at this point!
         [bridge part]->sendFakeEventsAfterWidgetTracking(event);
     }
+    [event release];
     [bridge release];
     return result;
 }

@@ -2776,48 +2776,49 @@ void KWQKHTMLPart::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
     _sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
-    ASSERT(eventType == NSLeftMouseDown || eventType == NSKeyDown);
-    NSEvent *fakeEvent = nil;
-    if (eventType == NSLeftMouseDown) {
-        fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                location:[initiatingEvent locationInWindow]
-                            modifierFlags:[initiatingEvent modifierFlags]
-                                timestamp:[initiatingEvent timestamp]
-                            windowNumber:[initiatingEvent windowNumber]
-                                    context:[initiatingEvent context]
-                                eventNumber:[initiatingEvent eventNumber]
-                                clickCount:[initiatingEvent clickCount]
-                                pressure:[initiatingEvent pressure]];
+    if (eventType == NSLeftMouseDown || eventType == NSKeyDown) {
+	NSEvent *fakeEvent = nil;
+	if (eventType == NSLeftMouseDown) {
+	    fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+				    location:[initiatingEvent locationInWindow]
+				modifierFlags:[initiatingEvent modifierFlags]
+				    timestamp:[initiatingEvent timestamp]
+				windowNumber:[initiatingEvent windowNumber]
+					context:[initiatingEvent context]
+				    eventNumber:[initiatingEvent eventNumber]
+				    clickCount:[initiatingEvent clickCount]
+				    pressure:[initiatingEvent pressure]];
+	
+	    mouseUp(fakeEvent);
+	}
+	else { // eventType == NSKeyDown
+	    fakeEvent = [NSEvent keyEventWithType:NSKeyUp
+				    location:[initiatingEvent locationInWindow]
+			       modifierFlags:[initiatingEvent modifierFlags]
+				   timestamp:[initiatingEvent timestamp]
+				windowNumber:[initiatingEvent windowNumber]
+				     context:[initiatingEvent context]
+				  characters:[initiatingEvent characters] 
+		 charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
+				   isARepeat:[initiatingEvent isARepeat] 
+				     keyCode:[initiatingEvent keyCode]];
+	    keyEvent(fakeEvent);
+	}
+	// FIXME:  We should really get the current modifierFlags here, but there's no way to poll
+	// them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
+	// no up-to-date cache of them anywhere.
+	fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+				       location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
+				  modifierFlags:[initiatingEvent modifierFlags]
+				      timestamp:[initiatingEvent timestamp]
+				   windowNumber:[initiatingEvent windowNumber]
+					context:[initiatingEvent context]
+				    eventNumber:0
+				     clickCount:0
+				       pressure:0];
+	mouseMoved(fakeEvent);
+    }
     
-        mouseUp(fakeEvent);
-    }
-    else { // eventType == NSKeyDown
-        fakeEvent = [NSEvent keyEventWithType:NSKeyUp
-                                location:[initiatingEvent locationInWindow]
-                           modifierFlags:[initiatingEvent modifierFlags]
-                               timestamp:[initiatingEvent timestamp]
-                            windowNumber:[initiatingEvent windowNumber]
-                                 context:[initiatingEvent context]
-                              characters:[initiatingEvent characters] 
-             charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
-                               isARepeat:[initiatingEvent isARepeat] 
-                                 keyCode:[initiatingEvent keyCode]];
-        keyEvent(fakeEvent);
-    }
-    // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
-    // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
-    // no up-to-date cache of them anywhere.
-    fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-                                   location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
-                              modifierFlags:[initiatingEvent modifierFlags]
-                                  timestamp:[initiatingEvent timestamp]
-                               windowNumber:[initiatingEvent windowNumber]
-                                    context:[initiatingEvent context]
-                                eventNumber:0
-                                 clickCount:0
-                                   pressure:0];
-    mouseMoved(fakeEvent);
-
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
