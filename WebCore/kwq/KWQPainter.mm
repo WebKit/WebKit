@@ -560,8 +560,8 @@ void QPainter::drawFloatPixmap( float x, float y, float w, float h, const QPixma
     NSRect inRect = NSMakeRect(x, y, tw, th);
     NSRect fromRect = NSMakeRect(sx, sy, tsw, tsh);
     
-    [pixmap.imageRenderer drawImageInRect:inRect
-                                      fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
+    [pixmap.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -574,7 +574,7 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     KWQ_BLOCK_EXCEPTIONS;
     NSRect tempRect = { {x, y}, {w, h} }; // workaround for 4213314
     NSPoint tempPoint = { sx, sy };
-    [pixmap.imageRenderer tileInRect:tempRect fromPoint:tempPoint context:context];
+    [pixmap.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -589,8 +589,8 @@ void QPainter::drawScaledAndTiledPixmap(int x, int y, int w, int h, const QPixma
         return drawPixmap(x, y, w, h, pixmap, sx, sy, sw, sh, -1, context);
 
     KWQ_BLOCK_EXCEPTIONS;
-    [pixmap.imageRenderer scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
-                      withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:context];
+    [pixmap.imageRenderer() scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
+                        withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

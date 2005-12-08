@@ -45,8 +45,7 @@
 #include "SVGPaintImpl.h"
 #endif
 
-void qFatal ( const char * msg ) {}
-
+using namespace khtml;
 using namespace DOM;
 
 ValueList::ValueList()
@@ -185,7 +184,7 @@ void CSSParser::parseSheet( CSSStyleSheetImpl *sheet, const DOMString &string )
     rule = 0;
 }
 
-CSSRuleImpl *CSSParser::parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string )
+CSSRuleImpl *CSSParser::parseRule(CSSStyleSheetImpl *sheet, const DOMString &string)
 {
     styleElement = sheet;
     
@@ -235,14 +234,14 @@ bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id
     return ok;
 }
 
-QRgb CSSParser::parseColor( const DOM::DOMString &string )
+QRgb CSSParser::parseColor(const DOMString &string)
 {
     QRgb color = 0;
     CSSMutableStyleDeclarationImpl *dummyStyleDeclaration = new CSSMutableStyleDeclarationImpl;
     
     dummyStyleDeclaration->ref();
 
-    DOM::CSSParser parser(true);
+    CSSParser parser(true);
 
     // First try creating a color specified by name or the "#" syntax.
     if (!parser.parseColor(string.qstring(), color)) {
@@ -251,8 +250,8 @@ QRgb CSSParser::parseColor( const DOM::DOMString &string )
         bool ok = parser.parseColor(dummyStyleDeclaration, string);
         if ( ok ) {
             CSSValueImpl *value = parser.parsedProperties[0]->value();
-            if (value->cssValueType() == DOM::CSSValue::CSS_PRIMITIVE_VALUE) {
-                DOM::CSSPrimitiveValueImpl *primitiveValue = static_cast<DOM::CSSPrimitiveValueImpl *>(value);
+            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+                CSSPrimitiveValueImpl *primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
                 color = primitiveValue->getRGBColorValue();
             }
         }
@@ -340,7 +339,7 @@ void CSSParser::clearProperties()
     numParsedProperties = 0;
 }
 
-DOM::DocumentImpl *CSSParser::document() const
+DocumentImpl *CSSParser::document() const
 {
     StyleBaseImpl *root = styleElement;
     DocumentImpl *doc = 0;
@@ -687,12 +686,18 @@ bool CSSParser::parseValue( int propId, bool important )
 	//  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
 	// nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | text |
 	// wait | help ] ] | inherit
-    // MSIE 5 compatibility :/
-        if ( !strict && id == CSS_VAL_HAND ) {
+        if (!strict && id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
             id = CSS_VAL_POINTER;
 	    valid_primitive = true;
-        } else if ( id >= CSS_VAL_AUTO && id <= CSS_VAL_HELP )
+        } else if (id >= CSS_VAL_AUTO && id <= CSS_VAL_HELP)
 	    valid_primitive = true;
+        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
+            DOMString uri = parseURL(domString(value->string));
+            if (!uri.isEmpty()) {
+                parsedValue = new CSSImageValueImpl(DOMString(KURL(styleElement->baseURL().qstring(), uri.qstring()).url()), styleElement);
+                valueList->next();
+            }
+	}
 	break;
 
     case CSS_PROP_BACKGROUND_ATTACHMENT:
@@ -720,7 +725,7 @@ bool CSSParser::parseValue( int propId, bool important )
         }
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
 	    // ### allow string in non strict mode?
-	    DOMString uri = khtml::parseURL( domString( value->string ) );
+	    DOMString uri = parseURL( domString( value->string ) );
 	    if (!uri.isEmpty()) {
 		parsedValue = new CSSImageValueImpl(
 		    DOMString(KURL( styleElement->baseURL().qstring(), uri.qstring()).url()),
@@ -928,7 +933,7 @@ bool CSSParser::parseValue( int propId, bool important )
             CSSValueImpl* parsedValue = 0;
             while ((val = valueList->current())) {
                 if (val->unit == CSSPrimitiveValue::CSS_URI) {
-                    DOMString value = khtml::parseURL(domString(val->string));
+                    DOMString value = parseURL(domString(val->string));
                     parsedValue = new CSSPrimitiveValueImpl(
                                     DOMString(KURL(styleElement->baseURL().qstring(), value.qstring()).url()), 
                                     CSSPrimitiveValue::CSS_URI);
@@ -1508,7 +1513,7 @@ bool CSSParser::parseContent( int propId, bool important )
     while ( (val = valueList->current()) ) {
         if ( val->unit == CSSPrimitiveValue::CSS_URI ) {
             // url
-	    DOMString value = khtml::parseURL(domString(val->string));
+	    DOMString value = parseURL(domString(val->string));
             parsedValue = new CSSImageValueImpl(
 		DOMString(KURL( styleElement->baseURL().qstring(), value.qstring()).url() ), styleElement );
 #ifdef CSS_DEBUG
@@ -1564,7 +1569,7 @@ CSSValueImpl* CSSParser::parseBackgroundImage()
     if (valueList->current()->id == CSS_VAL_NONE)
         return new CSSImageValueImpl();
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
-        DOMString uri = khtml::parseURL(domString(valueList->current()->string));
+        DOMString uri = parseURL(domString(valueList->current()->string));
         if (!uri.isEmpty())
             return new CSSImageValueImpl(DOMString(KURL(styleElement->baseURL().qstring(), uri.qstring()).url()), 
                                          styleElement);
@@ -2217,7 +2222,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColor()
 
 CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
 {
-    QRgb c = khtml::transparentColor;
+    QRgb c = transparentColor;
     if ( !strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000. ) {
         QString str;
@@ -2578,7 +2583,7 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     if (val->unit != CSSPrimitiveValue::CSS_URI)
         return context.failed();
         
-    DOMString uri = khtml::parseURL(domString(val->string));
+    DOMString uri = parseURL(domString(val->string));
     if (uri.isEmpty())
         return context.failed();
     
@@ -2623,7 +2628,7 @@ static inline int yyerror( const char *str ) {
 
 #include "parser.h"
 
-int DOM::CSSParser::lex( void *_yylval ) {
+int CSSParser::lex( void *_yylval ) {
     YYSTYPE *yylval = (YYSTYPE *)_yylval;
     int token = lex();
     int length;
@@ -2704,7 +2709,7 @@ static inline int toHex( char c ) {
     return 0;
 }
 
-unsigned short *DOM::CSSParser::text(int *length)
+unsigned short *CSSParser::text(int *length)
 {
     unsigned short *start = yytext;
     int l = yyleng;
@@ -2846,12 +2851,12 @@ typedef unsigned int YY_CHAR;
 	*yy_cp = 0; \
 	yy_c_buf_p = yy_cp;
 #define YY_BREAK break;
-#define ECHO qDebug( "%s", QString( (QChar *)yytext, yyleng ).latin1() )
+#define ECHO
 #define YY_RULE_SETUP
 #define INITIAL 0
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 #define yyterminate() yyTok = END_TOKEN; return yyTok
-#define YY_FATAL_ERROR(a) qFatal(a)
+#define YY_FATAL_ERROR(a)
 
 #include "tokenizer.cpp"
 

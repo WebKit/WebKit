@@ -1,3 +1,19 @@
+2005-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5689
+          add support for CSS "custom cursors" (cursor images)
+
+        * WebCoreSupport.subproj/WebImageRenderer.h: Remove declaration of TIFFRepresentation and
+        image methods since both are required by the WebCoreImageRenderer protocol now and we don't
+        have to re-declare them.
+
+        * Misc.subproj/WebNSPasteboardExtras.m: Add an import of the WebCoreImageRenderer.h file
+        since we need to use methods inherited from that protocol.
+        * Misc.subproj/WebNSViewExtras.m: Ditto.
+        * WebCoreSupport.subproj/WebImageRenderer.m: Ditto. (Use and implement.)
+
 2005-12-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by Darin.

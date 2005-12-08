@@ -75,24 +75,21 @@ using namespace HTMLNames;
 // #define STYLE_SHARING_STATS 1
 
 #define HANDLE_INHERIT(prop, Prop) \
-if (isInherit) \
-{\
-    style->set##Prop(parentStyle->prop());\
-    return;\
+if (isInherit) { \
+    style->set##Prop(parentStyle->prop()); \
+    return; \
 }
 
 #define HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
 HANDLE_INHERIT(prop, Prop) \
-else if (isInitial) \
-{\
-    style->set##Prop(RenderStyle::initial##Prop());\
-    return;\
+if (isInitial) { \
+    style->set##Prop(RenderStyle::initial##Prop()); \
+    return; \
 }
 
 #define HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
 HANDLE_INHERIT(prop, Prop) \
-else if (isInitial) \
-{\
+if (isInitial) { \
     style->set##Prop(RenderStyle::initial##Value());\
     return;\
 }
@@ -160,24 +157,21 @@ while (currChild) { \
 } }
 
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
-if (id == propID) \
-{\
-    style->set##Prop(parentStyle->prop());\
-    return;\
+if (id == propID) { \
+    style->set##Prop(parentStyle->prop()); \
+    return; \
 }
 
 #define HANDLE_INITIAL_COND(propID, Prop) \
-if (id == propID) \
-{\
-    style->set##Prop(RenderStyle::initial##Prop());\
-    return;\
+if (id == propID) { \
+    style->set##Prop(RenderStyle::initial##Prop()); \
+    return; \
 }
 
 #define HANDLE_INITIAL_COND_WITH_VALUE(propID, Prop, Value) \
-if (id == propID) \
-{\
-    style->set##Prop(RenderStyle::initial##Value());\
-    return;\
+if (id == propID) { \
+    style->set##Prop(RenderStyle::initial##Value()); \
+    return; \
 }
 
 namespace khtml {
@@ -2398,10 +2392,28 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         break;
     }
     case CSS_PROP_CURSOR:
-        HANDLE_INHERIT_AND_INITIAL(cursor, Cursor)
-        if (primitiveValue)
-            style->setCursor( (ECursor) (primitiveValue->getIdent() - CSS_VAL_AUTO) );
-        break;        
+        if (isInherit) {
+            style->setCursor(parentStyle->cursor());
+            style->setCursorImage(parentStyle->cursorImage());
+            return;
+        }
+        if (isInitial) {
+            style->setCursor(RenderStyle::initialCursor());
+            style->setCursorImage(0);
+            return;
+        }
+        if (primitiveValue) {
+            int type = primitiveValue->primitiveType();
+            if (type == CSSPrimitiveValue::CSS_IDENT) {
+                style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
+                style->setCursorImage(0);
+            } else if (type == CSSPrimitiveValue::CSS_URI) {
+                CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(primitiveValue);
+                style->setCursor(CURSOR_AUTO);
+                style->setCursorImage(image->image(element->getDocument()->docLoader()));
+            }
+        }
+        break;
 // colors || inherit
     case CSS_PROP_BACKGROUND_COLOR:
     case CSS_PROP_BORDER_TOP_COLOR:

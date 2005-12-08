@@ -28,17 +28,15 @@
 
 #import <WebKit/WebImageRenderer.h>
 
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebHTMLView.h>
+#import <WebKit/WebImageData.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKitSystemInterface.h>
-
-#import <WebCore/WebCoreImageRenderer.h>
-
-#import <WebKit/WebImageData.h>
 
 // Forward declarations of internal methods.
 @interface WebImageRenderer (WebInternal)

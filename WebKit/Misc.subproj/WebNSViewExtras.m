@@ -28,6 +28,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
@@ -209,9 +210,8 @@
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
     NSPoint origin;
-    NSImage *image;
-    
-    image = [wir image];
+
+    NSImage *image = [wir image];
     if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;

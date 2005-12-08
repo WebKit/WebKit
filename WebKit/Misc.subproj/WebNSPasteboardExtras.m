@@ -28,6 +28,7 @@
 
 #import <WebKit/WebNSPasteboardExtras.h>
 
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>

@@ -361,40 +361,15 @@ bool QWidget::isVisible() const
 void QWidget::setCursor(const QCursor &cur)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    id view = data->view;
-    while (view) {
+    for (id view = data->view; view; view = [view superview]) {
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
+            if ([view respondsToSelector:@selector(documentCursor)] && cur.handle() == [view documentCursor])
+                break;
             [view setDocumentCursor:cur.handle()];
             break;
         }
-        view = [view superview];
     }
     KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-QCursor QWidget::cursor()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    QCursor cursor;
-
-    id view = data->view;
-    while (view) {
-        if ([view respondsToSelector:@selector(documentCursor)]) { 
-            cursor = QCursor::makeWithNSCursor([view documentCursor]);
-            break;
-        }
-        view = [view superview];
-    }
-
-    return cursor;
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QCursor();
-}
-
-void QWidget::unsetCursor()
-{
-    setCursor(QCursor());
 }
 
 bool QWidget::event(QEvent *)

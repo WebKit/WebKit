@@ -1110,20 +1110,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (node) {
         [element setObject:[DOMNode _nodeWithImpl:node] forKey:WebCoreElementDOMNodeKey];
     
+        // Only return image information if there is an image.
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
-            NSImage * image = (NSImage *)(r->pixmap().image());
-            // Only return image information if there is an image.
-            if (image && !r->isDisplayingError()) {
-                [element setObject:r->pixmap().image() forKey:WebCoreElementImageKey];
+            if (!r->isDisplayingError()) {
+                QPixmap p = r->pixmap();
+                NSImage *image = [p.imageRenderer() image];
+                if (image)
+                    [element setObject:image forKey:WebCoreElementImageKey];
             }
-                
+
             int x, y;
             if (r->absolutePosition(x, y)) {
                 NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
                 [element setObject:rect forKey:WebCoreElementImageRectKey];
             }
-                
+
             ElementImpl *i = static_cast<ElementImpl*>(node);
     
             // FIXME: Code copied from RenderImage::updateFromElement; should share.

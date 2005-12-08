@@ -204,7 +204,6 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 	    }
 
             if (getDocument() && getDocument()->view() && getDocument()->part()) {
-                getDocument()->view()->resetCursor();
                 getDocument()->part()->
                     urlSelected( url, button, state, utarget );
             }

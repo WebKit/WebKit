@@ -345,9 +345,9 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
             }
         }
     } else {
-        result = [m_dragImage.image() image];
+        result = [m_dragImage.imageRenderer() image];
         if (loc) {
-            *loc = NSPoint(m_dragLoc);
+            *loc = m_dragLoc;
             loc->y = [result size].height - loc->y;
         }
     }

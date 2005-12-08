@@ -23,26 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQCursor.h"
-#import "KWQLogging.h"
-#import "KWQFoundationExtras.h"
 
-// The NSCursor cocoa calls here can't fail, so no need to block Cocoa exceptions
+#import "KWQFoundationExtras.h"
+#import "WebCoreImageRenderer.h"
+
+static NSCursor *createCustomCursor(const QPixmap& pixmap)
+{
+    NSImage *image = [pixmap.imageRenderer() image];
+    if (!image)
+        return nil;
+    return [[NSCursor alloc] initWithImage:image hotSpot:NSZeroPoint];
+}
 
 QCursor::QCursor()
     : cursor(nil)
 {
 }
 
-QCursor::QCursor(const QPixmap &pixmap)
-    : cursor(nil)
+QCursor::QCursor(const QPixmap& pixmap)
+    : cursor(createCustomCursor(pixmap))
 {
-    // Needed for custom cursors.
-    ERROR("not yet implemented");
 }
 
-QCursor::QCursor(const QCursor &other)
+QCursor::QCursor(const QCursor& other)
     : cursor(KWQRetain(other.cursor))
 {
 }
@@ -59,7 +64,7 @@ QCursor QCursor::makeWithNSCursor(NSCursor * c)
     return q;
 }
       
-QCursor &QCursor::operator=(const QCursor &other)
+QCursor& QCursor::operator=(const QCursor& other)
 {
     KWQRetain(other.cursor);
     KWQRelease(cursor);

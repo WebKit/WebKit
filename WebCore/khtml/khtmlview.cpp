@@ -209,10 +209,10 @@ public:
 
 void KHTMLToolTip::maybeTip(const QPoint& /*p*/)
 {
-    DOM::NodeImpl *node = m_viewprivate->underMouse;
+    NodeImpl *node = m_viewprivate->underMouse;
     while ( node ) {
         if ( node->isElementNode() ) {
-            AtomicString s = static_cast<DOM::ElementImpl*>( node )->getAttribute(ATTR_TITLE);
+            AtomicString s = static_cast<ElementImpl*>( node )->getAttribute(ATTR_TITLE);
             if (!s.isEmpty()) {
                 QRect r( m_view->contentsToViewport( node->getRect().topLeft() ), node->getRect().size() );
                 tip( r,  s.qstring() );
@@ -264,7 +264,7 @@ KHTMLView::~KHTMLView()
     {
         //WABA: Is this Ok? Do I need to deref it as well?
         //Does this need to be done somewhere else?
-        DOM::DocumentImpl *doc = m_part->xmlDocImpl();
+        DocumentImpl *doc = m_part->xmlDocImpl();
         if (doc)
             doc->detach();
 
@@ -376,9 +376,9 @@ void KHTMLView::setMarginHeight(int h)
 void KHTMLView::adjustViewSize()
 {
     if( m_part->xmlDocImpl() ) {
-        DOM::DocumentImpl *document = m_part->xmlDocImpl();
+        DocumentImpl *document = m_part->xmlDocImpl();
 
-        khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas *>(document->renderer());
+        RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
         if ( !root )
             return;
         
@@ -389,7 +389,7 @@ void KHTMLView::adjustViewSize()
     }
 }
 
-void KHTMLView::applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode)
+void KHTMLView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode)
 {
     // Handle the overflow:hidden/scroll case for the body/html elements.  WinIE treats
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
@@ -452,7 +452,7 @@ void KHTMLView::layout()
         return;
     }
 
-    DOM::DocumentImpl* document = m_part->xmlDocImpl();
+    DocumentImpl* document = m_part->xmlDocImpl();
     if (!document) {
         // FIXME: Should we set _height here too?
         _width = visibleWidth();
@@ -466,7 +466,7 @@ void KHTMLView::layout()
     if (document->hasChangedChild())
         document->recalcStyle();
 
-    khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas*>(document->renderer());
+    RenderCanvas* root = static_cast<RenderCanvas*>(document->renderer());
     if (!root) {
         // FIXME: Do we need to set _width or _height here?
         d->layoutSchedulingEnabled = true;
@@ -596,7 +596,7 @@ void KHTMLView::layout()
 
 void KHTMLView::updateDashboardRegions()
 {
-    DOM::DocumentImpl* document = m_part->xmlDocImpl();
+    DocumentImpl* document = m_part->xmlDocImpl();
     if (document->hasDashboardRegions()) {
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
@@ -623,7 +623,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     d->mousePressed = true;
 
-    DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MousePress );
+    NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MousePress );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (KWQ(m_part)->passSubframeEventToSubframe(mev)) {
@@ -639,10 +639,10 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
         d->clickNode->ref();
 
     bool swallowEvent = dispatchMouseEvent(mousedownEvent,mev.innerNode.get(),true,
-                                           d->clickCount,_mouse,true,DOM::NodeImpl::MousePress);
+                                           d->clickCount,_mouse,true,NodeImpl::MousePress);
 
     if (!swallowEvent) {
-	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
+	MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
 	QApplication::sendEvent( m_part, &event );
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
@@ -669,7 +669,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     // We get this instead of a second mouse-up 
     d->mousePressed = false;
 
-    DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseDblClick );
+    NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseDblClick );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (KWQ(m_part)->passSubframeEventToSubframe(mev))
@@ -677,27 +677,81 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     d->clickCount = _mouse->clickCount();
     bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
-                                           d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
+                                           d->clickCount,_mouse,false,NodeImpl::MouseRelease);
 
     if (mev.innerNode == d->clickNode)
         dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
-			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
+			   d->clickCount,_mouse,true,NodeImpl::MouseRelease);
 
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
-	khtml::MouseReleaseEvent event1( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
+	MouseReleaseEvent event1( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
 	QApplication::sendEvent( m_part, &event1 );
 
-	khtml::MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
+	MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
 	QApplication::sendEvent( m_part, &event2 );
     }
 
     invalidateClick();
 }
 
-static bool isSubmitImage(DOM::NodeImpl *node)
+static bool isSubmitImage(NodeImpl *node)
 {
     return node && node->hasTagName(inputTag) && static_cast<HTMLInputElementImpl*>(node)->inputType() == HTMLInputElementImpl::IMAGE;
+}
+
+static QCursor selectCursor(const NodeImpl::MouseEvent &event, KHTMLPart *part, bool mousePressed)
+{
+    // During selection, use an I-beam no matter what we're over
+    if (mousePressed && part->hasSelection())
+        return KCursor::ibeamCursor();
+
+    NodeImpl *node = event.innerNode.get();
+    RenderObject *renderer = node ? node->renderer() : 0;
+    RenderStyle *style = renderer ? renderer->style() : 0;
+
+    if (style && style->cursorImage() && !style->cursorImage()->pixmap().isNull())
+        return QCursor(style->cursorImage()->pixmap());
+
+    switch (style ? style->cursor() : CURSOR_AUTO) {
+        case CURSOR_AUTO:
+            if (!event.url.isNull() || isSubmitImage(node))
+                return part->urlCursor();
+            if ((node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()))
+                return KCursor::ibeamCursor();
+            break;
+        case CURSOR_CROSS:
+            return KCursor::crossCursor();
+        case CURSOR_POINTER:
+            return part->urlCursor();
+        case CURSOR_MOVE:
+            return KCursor::sizeAllCursor();
+        case CURSOR_E_RESIZE:
+            return KCursor::eastResizeCursor();
+        case CURSOR_W_RESIZE:
+            return KCursor::westResizeCursor();
+        case CURSOR_N_RESIZE:
+            return KCursor::northResizeCursor();
+        case CURSOR_S_RESIZE:
+            return KCursor::southResizeCursor();
+        case CURSOR_NE_RESIZE:
+            return KCursor::northEastResizeCursor();
+        case CURSOR_SW_RESIZE:
+            return KCursor::southWestResizeCursor();
+        case CURSOR_NW_RESIZE:
+            return KCursor::northWestResizeCursor();
+        case CURSOR_SE_RESIZE:
+            return KCursor::southEastResizeCursor();
+        case CURSOR_TEXT:
+            return KCursor::ibeamCursor();
+        case CURSOR_WAIT:
+            return KCursor::waitCursor();
+        case CURSOR_HELP:
+            return KCursor::whatsThisCursor();
+        case CURSOR_DEFAULT:
+            break;
+    }
+    return QCursor();
 }
 
 void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
@@ -716,110 +770,27 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // if we are allowed to select.
     // This means that :hover and :active freeze in the state they were in when the mouse
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
-    DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseMove );
+    NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseMove );
     m_part->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_part->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
     if (KWQ(m_part)->passSubframeEventToSubframe(mev))
         return;
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
-                                           0,_mouse,true,DOM::NodeImpl::MouseMove);
+                                           0,_mouse,true,NodeImpl::MouseMove);
 
 
     // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
     m_part->executeScheduledScript();
 
-    NodeImpl *node = mev.innerNode.get();
-    RenderObject *renderer = node ? node->renderer() : 0;
-    RenderStyle *style = renderer ? renderer->style() : 0;
+    viewport()->setCursor(selectCursor(mev, m_part, d->mousePressed));
 
-    QCursor c;
-    if (style && style->cursor() == CURSOR_AUTO && style->cursorImage()
-        && !(style->cursorImage()->pixmap().isNull())) {
-        /* First of all it works: Check out http://www.iam.unibe.ch/~schlpbch/cursor.html
-         *
-         * But, I don't know what exactly we have to do here: rescale to 32*32, change to monochrome..
-         */
-        //kdDebug( 6000 ) << "using custom cursor" << endl;
-        const QPixmap p = style->cursorImage()->pixmap();
-        // ### fix
-        c = QCursor(p);
-    }
-
-    switch ( style ? style->cursor() : CURSOR_AUTO ) {
-    case CURSOR_AUTO:
-        if ( d->mousePressed && m_part->hasSelection() )
-	    // during selection, use an IBeam no matter what we're over
-	    c = KCursor::ibeamCursor();
-        else if ( (!mev.url.isNull() || isSubmitImage(node)) && m_part->settings()->changeCursor() )
-            c = m_part->urlCursor();
-        else if ( (node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()) )
-            c = KCursor::ibeamCursor();
-        break;
-    case CURSOR_CROSS:
-        c = KCursor::crossCursor();
-        break;
-    case CURSOR_POINTER:
-        c = m_part->urlCursor();
-        break;
-    case CURSOR_MOVE:
-        c = KCursor::sizeAllCursor();
-        break;
-    case CURSOR_E_RESIZE:
-        c = KCursor::eastResizeCursor();
-        break;
-    case CURSOR_W_RESIZE:
-        c = KCursor::westResizeCursor();
-        break;
-    case CURSOR_N_RESIZE:
-        c = KCursor::northResizeCursor();
-        break;
-    case CURSOR_S_RESIZE:
-        c = KCursor::southResizeCursor();
-        break;
-    case CURSOR_NE_RESIZE:
-        c = KCursor::northEastResizeCursor();
-        break;
-    case CURSOR_SW_RESIZE:
-        c = KCursor::southWestResizeCursor();
-        break;
-    case CURSOR_NW_RESIZE:
-        c = KCursor::northWestResizeCursor();
-        break;
-    case CURSOR_SE_RESIZE:
-        c = KCursor::southEastResizeCursor();
-        break;
-    case CURSOR_TEXT:
-        c = KCursor::ibeamCursor();
-        break;
-    case CURSOR_WAIT:
-        c = KCursor::waitCursor();
-        break;
-    case CURSOR_HELP:
-        c = KCursor::whatsThisCursor();
-        break;
-    case CURSOR_DEFAULT:
-        break;
-    }
-
-    QWidget *vp = viewport();
-    if ( vp->cursor().handle() != c.handle() ) {
-        if( c.handle() == KCursor::arrowCursor().handle())
-            vp->unsetCursor();
-        else
-            vp->setCursor( c );
-    }
     d->prevMouseX = xm;
     d->prevMouseY = ym;
 
     if (!swallowEvent) {
-        khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-        QApplication::sendEvent( m_part, &event );
+        MouseMoveEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        QApplication::sendEvent(m_part, &event);
     }
-}
-
-void KHTMLView::resetCursor()
-{
-    viewport()->unsetCursor();
 }
 
 void KHTMLView::invalidateClick()
@@ -844,22 +815,22 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     //kdDebug( 6000 ) << "\nmouseReleaseEvent: x=" << xm << ", y=" << ym << endl;
 
-    DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseRelease );
+    NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseRelease );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (KWQ(m_part)->passSubframeEventToSubframe(mev))
         return;
 
     bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
-                                           d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
+                                           d->clickCount,_mouse,false,NodeImpl::MouseRelease);
 
     if (d->clickCount > 0 && mev.innerNode == d->clickNode
         )
 	dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
-			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
+			   d->clickCount,_mouse,true,NodeImpl::MouseRelease);
 
     if (!swallowEvent) {
-	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
+	MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
 	QApplication::sendEvent( m_part, &event );
     }
 
@@ -898,7 +869,7 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
 // ### what kind of c*** is that ?
 }
 
-bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard)
+bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const QPoint &loc, ClipboardImpl *clipboard)
 {
     int clientX, clientY;
     viewportToContents(loc.x(), loc.y(), clientX, clientY);
@@ -923,12 +894,12 @@ bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, DOM::NodeImpl *
     return accept;
 }
 
-bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+bool KHTMLView::updateDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     int xm, ym;
     viewportToContents(loc.x(), loc.y(), xm, ym);
-    DOM::NodeImpl::MouseEvent mev(0, DOM::NodeImpl::MouseMove);
+    NodeImpl::MouseEvent mev(0, NodeImpl::MouseMove);
     m_part->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
     NodeImpl *newTarget = mev.innerNode.get();
 
@@ -953,7 +924,7 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     return accept;
 }
 
-void KHTMLView::cancelDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+void KHTMLView::cancelDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
 {
     if (d->dragTarget) {
         dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), loc, clipboard);
@@ -961,7 +932,7 @@ void KHTMLView::cancelDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     d->dragTarget = 0;
 }
 
-bool KHTMLView::performDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+bool KHTMLView::performDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     if (d->dragTarget) {
@@ -972,7 +943,7 @@ bool KHTMLView::performDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipbo
 }
 
 
-DOM::NodeImpl *KHTMLView::nodeUnderMouse() const
+NodeImpl *KHTMLView::nodeUnderMouse() const
 {
     return d->underMouse;
 }
@@ -1195,7 +1166,7 @@ void KHTMLView::restoreScrollBar ( )
 }
 
 
-bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, DOM::NodeImpl *targetNode, bool cancelable,
+bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targetNode, bool cancelable,
 				   int detail,QMouseEvent *_mouse, bool setUnder,
 				   int mouseEventType)
 {
@@ -1246,7 +1217,7 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, DOM::NodeImpl 
         // Blur current focus node when a link/button is clicked; this
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
-        DOM::NodeImpl* node = targetNode;
+        NodeImpl* node = targetNode;
         for ( ; node && !node->isFocusable(); node = node->parentNode());
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
@@ -1392,4 +1363,3 @@ void KHTMLView::setTransparent(bool isTransparent)
 {
     d->isTransparent = isTransparent;
 }
-

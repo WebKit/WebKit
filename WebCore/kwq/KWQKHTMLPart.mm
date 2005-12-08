@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2338,7 +2338,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
         if (_mouseDownMayStartDrag) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
-            d->m_view->resetCursor();
+            d->m_view->viewport()->setCursor(QCursor());
             
             NSPoint dragLocation = [_currentEvent locationInWindow];
             if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {
@@ -2912,22 +2912,22 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
     
     NSFileWrapper *wrapper = nil;
 
-    AtomicString attr = e->getAttribute(srcAttr);
+    const AtomicString& attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.qstring()).getNSURL();
         wrapper = [_bridge fileWrapperForURL:URL];
     }    
     if (!wrapper) {
         RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
-        NSImage * image = (NSImage *)(renderer->pixmap().image());
-        NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
-        wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
-        [wrapper setPreferredFilename:@"image.tiff"];
-        [wrapper autorelease];
+        if (renderer->isImage()) {
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[renderer->pixmap().imageRenderer() TIFFRepresentation]];
+            [wrapper setPreferredFilename:@"image.tiff"];
+            [wrapper autorelease];
+        }
     }
 
     return wrapper;
-    
+
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return nil;

@@ -1,3 +1,51 @@
+2005-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5689
+          add support for CSS "custom cursors" (cursor images)
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Added code to the
+        CSS_PROP_CURSOR case to handle cursor images.
+        * khtml/css/cssparser.cpp: (CSSParser::parseValue): Allow and parse a URL for the
+        cursor for the image case.
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::applyProperty): Do
+        the appropriate inherit and initial for CSS_PROP_CURSOR, and allow either an
+        identifier or a URL for the value.
+        * khtml/html/html_inlineimpl.cpp: (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        Removed inappropriate call to resetCursor. We don't change the cursor shape just
+        because we're following a link.
+        * khtml/khtmlview.cpp:
+        (selectCursor): Added. New function that chooses the appropriate cursor.
+        Includes new logic to handle image cursors.
+        (KHTMLView::viewportMouseMoveEvent): Refactored to use selectCursor to choose
+        the appropriate cursor.
+        * kwq/KWQClipboard.mm: (KWQClipboard::dragNSImage): Call the function to get an
+        image renderer by its new name, imageRenderer().
+        * kwq/KWQCursor.mm:
+        (createCustomCursor): Added.
+        (QCursor::QCursor): Changed constructor that takes a QPixmap to call createCustomCursor.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent): Replaced a call to resetCursor with a call to
+        setCursor(QCursor()).
+        (KWQKHTMLPart::fileWrapperForElement): Fixed code that assumed the render object is always
+        a RenderImage. Call TIFFRepresentation on the image renderer instead of incorrectly assuming
+        it's always an NSImage.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawFloatPixmap): Call imageRenderer function instead of getting right at the
+        data member.
+        (QPainter::drawTiledPixmap): Ditto.
+        (QPainter::drawScaledAndTiledPixmap): Ditto.
+        * kwq/KWQPixmap.h: Removed convertToImage(), renamed image() to imageRenderer().
+        * kwq/KWQPixmap.mm: Similar name changes.
+        * kwq/KWQWidget.mm: (QWidget::setCursor): To workaround extra work done by AppKit when you set
+        the cursor to the same one, check if the cursor is already set before calling setDocumentCursor.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Call the image method on the image
+        renderer instead of incorrectly assuming the renderer itself is an image.
+
+        * kwq/WebCoreImageRenderer.h: Added a TIFFRepresentation method to this protocol.
+
 2005-12-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for Radar bug #4333923, typing tab character into empty
