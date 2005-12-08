@@ -2936,7 +2936,6 @@ done:
         // WebFrameView has this same kind of logic for the previousValidKeyView case.
         if (view == nil || view == self) {
             ASSERT([self _frame] != [[self _webView] mainFrame]);
-            ASSERT(lookInsideWebFrameViews);
             view = [[self _bridge] nextValidKeyViewOutsideWebFrameViews];
         }
     }

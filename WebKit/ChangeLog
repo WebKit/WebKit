@@ -1,3 +1,16 @@
+2005-12-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - <rdar://problem/4331488> TOT Assertion failure in -[WebHTMLView nextValidKeyView] 
+        @ home.netscape.com
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray nextValidKeyView]):
+        Removed assert that I added a while back. In this case at least, the assertion is
+        overzealous, and I can't recreate the tortured chain of logic that led me to adding
+        this assertion in the first place.
+
 2005-12-06  David Harrison  <harrison@apple.com>
 
 	Reviewed by Darin.
