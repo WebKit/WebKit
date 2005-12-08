@@ -105,7 +105,7 @@ namespace KXMLCore {
         T *m_ptr;
     };
     
-    template <class T> PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<T>& o) 
+    template <class T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<T>& o) 
     {
         T *optr = o.m_ptr;
         if (optr)
@@ -126,7 +126,7 @@ namespace KXMLCore {
         return *this;
     }
 
-    template <class T> PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<T>& ref)
+    template <class T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<T>& ref)
     {
         T *optr = ref.release();
         if (T *ptr = m_ptr)

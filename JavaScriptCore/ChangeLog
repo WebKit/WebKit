@@ -1,3 +1,23 @@
+2005-12-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fix major memory leak and resultant slowdown on JavaScript iBench from
+	my PassRefPtr changes
+	
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::create): I forgot to change one of the two overloads to create
+	with a refcount of 0 instead of 1 (the smart pointer then bumps it. But instead of
+	changing it, I changed both to start with a refcounter of 1 and use PassRefPtr::adopt
+	to adopt the initial refcount, this may be a hair more efficient.
+
+	- made the assignment operators for smart pointers inline because Shark said so
+	
+        * kxmlcore/PassRefPtr.h:
+        (KXMLCore::::operator=):
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::::operator=):
+
 2005-12-06  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

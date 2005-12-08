@@ -88,7 +88,7 @@ namespace KXMLCore {
         return *this;
     }
 
-    template <class T> RefPtr<T>& RefPtr<T>::operator=(PassRefPtr_Ref<T> ref)
+    template <class T> inline RefPtr<T>& RefPtr<T>::operator=(PassRefPtr_Ref<T> ref)
     {
         if (m_ptr)
             m_ptr->deref();
