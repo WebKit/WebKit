@@ -1838,6 +1838,11 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] selectionRect];
 }
 
+- (NSView *)selectionView
+{
+    return self;
+}
+
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];

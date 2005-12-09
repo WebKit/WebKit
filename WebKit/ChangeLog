@@ -1,5 +1,29 @@
 2005-12-08  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Tim Hatcher.
+        
+        Some cleanup of how selection rects are associated with NSViews.
+
+        * WebView.subproj/WebDocumentPrivate.h:
+        Added a -selectionView method to <WebDocumentSelection>, and clarified that the
+        selectionRect is in the coordinate system of this view.
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[WebSearchableTextView selectionView]):
+        new method, returns self
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView selectionView]):
+        new method, returns self
+        
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView selectionRect]):
+        translate result into coordinate system of [PDFSubview documentView]
+        (-[WebPDFView selectionView]):
+        new method, returns [PDFSubview documentView]
+
+2005-12-08  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim Omernick and Dave Hyatt.
         
         - fixed these semi-legendary bugs:

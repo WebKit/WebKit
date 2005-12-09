@@ -697,15 +697,22 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     NSEnumerator *pages = [[selection pages] objectEnumerator];
     PDFPage *page;
     while ((page = [pages nextObject]) != nil) {
-        NSRect selectionOnPageInViewCoordinates = [PDFSubview convertRect:[selection boundsForPage:page] fromPage:page];
-        if (NSIsEmptyRect(result)) {
-            result = selectionOnPageInViewCoordinates;
-        } else {
-            result = NSUnionRect(result, selectionOnPageInViewCoordinates);
-        }
+        NSRect selectionOnPageInPDFViewCoordinates = [PDFSubview convertRect:[selection boundsForPage:page] fromPage:page];
+        if (NSIsEmptyRect(result))
+            result = selectionOnPageInPDFViewCoordinates;
+        else
+            result = NSUnionRect(result, selectionOnPageInPDFViewCoordinates);
     }
     
+    // Convert result to be in documentView (selectionView) coordinates
+    result = [PDFSubview convertRect:result toView:[PDFSubview documentView]];
+    
     return result;
+}
+
+- (NSView *)selectionView
+{
+    return [PDFSubview documentView];
 }
 
 - (NSArray *)pasteboardTypesForSelection

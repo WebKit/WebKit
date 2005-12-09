@@ -108,6 +108,11 @@
     return result;
 }
 
+- (NSView *)selectionView
+{
+    return self;
+}
+
 - (NSArray *)pasteboardTypesForSelection
 {
     return [self writablePasteboardTypes];

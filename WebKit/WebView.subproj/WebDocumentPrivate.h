@@ -42,5 +42,11 @@
 @protocol WebDocumentSelection <NSObject>
 - (NSArray *)pasteboardTypesForSelection;
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+
+// Rect tightly enclosing the selection, in coordinates of selectionView
 - (NSRect)selectionRect;
+
+// View that draws the selection and can be made first responder. Often this is self but it could be
+// a nested view, as for example in the case of WebPDFView.
+- (NSView *)selectionView;
 @end
