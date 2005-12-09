@@ -183,7 +183,15 @@ void QScrollView::setContentsPos(int x, int y)
     if (docView)
         view = docView;
         
-    [view scrollPoint:p];
+    NSView *originalView = view;
+    while (view) {
+        if ([view isKindOfClass:[NSClipView class]]) {
+            NSPoint viewPoint = [view convertPoint:p fromView:originalView];
+            [view scrollRectToVisible:NSMakeRect(viewPoint.x, viewPoint.y, 1, NSHeight([view bounds]))];
+        }
+        view = [view superview];
+    }
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

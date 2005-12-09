@@ -1,3 +1,16 @@
+2005-12-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4371187> 10.4.4 Regression: Anchor tags for navigation
+	within messages in HTML mail no longer working
+
+	A kwq category on NSView used to ensure scrolling the super NSClipViews, but that is gone now.
+	Implemented equivalent functionality by walking up the view hierarchy in QScrollView::setContentsPos().
+
+        * kwq/KWQScrollView.mm:
+        (QScrollView::setContentsPos):
+
 2005-12-08  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.
