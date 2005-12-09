@@ -1441,6 +1441,16 @@ NPObject *KWQKHTMLPart::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
         KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
+        
+        // The window script object can be 0 if JavaScript is disabled.  However, callers (like plugins) expect us to
+        // always return a window script object here.  By substituting a plain ObjectImp for the window's ObjectImp,
+        // we can satisfy callers' assumptions and let them try to manipulate the dummy object when JavaScript is
+        // disabled.
+        if (!win) {
+            JSLock lock;
+            win = new KJS::ObjectImp();
+        }
+        
         _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject(), bindingRootObject());
     }
 
