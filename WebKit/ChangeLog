@@ -1,3 +1,13 @@
+2005-12-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by nobody, build fix.
+
+        Using <PDFKit/PDFKit.h> was causing build failures for the Mail team.
+        The comment about getting an ambiguous signature conflict anywhere the
+        method "count" is used seems to no longer be an issue.
+
+        * WebView.subproj/WebPreferencesPrivate.h: Use <Quartz/Quartz.h>
+
 2005-12-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.

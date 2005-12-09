@@ -27,12 +27,7 @@
  */
 
 #import <WebKit/WebPreferences.h>
-
-#import <PDFKit/PDFView.h>
-// NOTE: #importing Quartz/Quartz.h causes an ambiguous signature conflict anywhere the method "count" is used.
-// To avoid this, we #import just this specific header. For this to work, the project's Framework Search Paths
-// has been modified to include /System/Library/Frameworks/Quartz.framework/Frameworks. Clients that include 
-// this file may have to do this same trick.
+#import <Quartz/Quartz.h>
 
 @interface WebPreferences (WebPrivate)
 
