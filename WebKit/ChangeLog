@@ -1,6 +1,19 @@
 2005-12-08  John Sullivan  <sullivan@apple.com>
 
-        Reviewed by Tim O.
+        Reviewed by Tim Omernick and Dave Hyatt.
+        
+        - fixed these semi-legendary bugs:
+        <rdar://problem/4032405> Inline PDF doesn't get keyboard focus like web pages do, so can't scroll with keys without clicking
+        <rdar://problem/4265684> PDFs use secondary selection when displaying found text (4748)
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView becomeFirstResponder]):
+        Discovered that there is indeed PDFKit API for accessing the view that becomes focused; now
+        passes the focus down to that view.
+
+2005-12-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
         
         - Added WebKit mechanism to help correctly pass the first responder into the PDF view hierarchy,
         in order to start addressing keyboard focus and selection highlight issues. Unfortunately this 

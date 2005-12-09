@@ -751,11 +751,10 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
         if ((previousValidKeyView != self) && (previousValidKeyView != PDFSubview))
             newFirstResponder = previousValidKeyView;
     } else {
-        // FIXME 4370845: Passing first responder-ness down to the PDFSubview itself
-        // should work, but doesn't due to missing first responder-passing code needed
-        // in PDFKit. So this next line doesn't currently help (or hurt), but it should start
-        // working when PDFKit fixes 4370845.
-        newFirstResponder = PDFSubview;
+        NSView *PDFDocumentView = [PDFSubview documentView];
+        if ([PDFDocumentView acceptsFirstResponder]) {
+            newFirstResponder = PDFDocumentView;
+        }
     }
     
     if (!newFirstResponder)
