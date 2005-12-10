@@ -1,3 +1,20 @@
+2005-12-09  Justin Garcia  <justin.garcia@apple.com>
+
+        New layout tests for:
+        <rdar://problem/4370209> Reproducible crash when pasting over whitespace:pre text
+        <rdar://problem/4370220> Double or triple clicking in whitespace:pre text creates incorrect selections
+
+        Reviewed by harrison
+
+        * editing/pasteboard/paste-pre-002-expected.checksum: Added.
+        * editing/pasteboard/paste-pre-002-expected.png: Added.
+        * editing/pasteboard/paste-pre-002-expected.txt: Added.
+        * editing/pasteboard/paste-pre-002.html: Added.
+        * editing/selection/triple-click-in-pre-expected.checksum: Added.
+        * editing/selection/triple-click-in-pre-expected.png: Added.
+        * editing/selection/triple-click-in-pre-expected.txt: Added.
+        * editing/selection/triple-click-in-pre.html: Added.
+
 2005-12-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

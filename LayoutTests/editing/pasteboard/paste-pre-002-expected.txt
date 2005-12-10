@@ -1,0 +1,30 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > DIV > BODY > HTML > #document to 0 of PRE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > DIV > BODY > HTML > #document to 7 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > PRE > DIV > DIV > BODY > HTML > #document to 7 of #text > PRE > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text to 7 of #text toDOMRange:range from 7 of #text > PRE > DIV > DIV > BODY > HTML > #document to 7 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 147x18
+          text run at (0,0) width 147: "This is a layout test for "
+        RenderInline {A} at (0,0) size 149x18 [color=#0000EE]
+          RenderText {TEXT} at (147,0) size 149x18
+            text run at (147,0) width 149: "rdar://problem/4370209"
+        RenderText {TEXT} at (296,0) size 784x36
+          text run at (296,0) width 393: " \"Reproducible crash when pasting over whitespace:pre text\". "
+          text run at (689,0) width 95: "The text below"
+          text run at (0,18) width 263: "is selected, copied, and pasted over itself. "
+          text run at (263,18) width 205: "You'll see foo/nbar if successful."
+      RenderBlock {DIV} at (0,49) size 784x30
+        RenderBlock {DIV} at (0,0) size 784x30
+          RenderBlock {PRE} at (0,0) size 784x30
+            RenderText {TEXT} at (0,0) size 24x30
+              text run at (0,0) width 24: "foo"
+              text run at (0,15) width 24: "bar"
+caret: position 7 of child 0 {TEXT} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

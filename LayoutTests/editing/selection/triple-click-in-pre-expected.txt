@@ -1,0 +1,31 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 30 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 30 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 16 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 678x18
+          text run at (0,0) width 379: "This tests modifying a selection created with a double click. "
+          text run at (379,0) width 299: "The new selection should use word granularity."
+      RenderBlock {P} at (0,34) size 784x54 [color=#008000]
+        RenderText {TEXT} at (0,0) size 764x54
+          text run at (0,0) width 224: "This test does not run interactively. "
+          text run at (224,0) width 414: "It uses the layoutTestControllers eventSender to do mouse clicks. "
+          text run at (638,0) width 121: "To run it manually,"
+          text run at (0,18) width 522: "triple click on the second line in the box below (anywhere after \"whitespace:pre\"). "
+          text run at (522,18) width 242: "The triple click should select the entire"
+          text run at (0,36) width 27: "line."
+      RenderBlock {DIV} at (0,104) size 784x58
+        RenderBlock {DIV} at (0,0) size 784x58 [border: (1px solid #0000FF)]
+          RenderBlock {PRE} at (1,14) size 782x30
+            RenderText {TEXT} at (0,0) size 120x30
+              text run at (0,0) width 120: "this text is in"
+              text run at (0,15) width 112: "whitespace:pre"
+selection start: position 16 of child 0 {TEXT} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 30 of child 0 {TEXT} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
