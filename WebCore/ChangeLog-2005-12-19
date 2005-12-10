@@ -1,3 +1,24 @@
+2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5784
+          Assertion failure in DocumentImpl::removeElementById() (idCount > 0)
+          Another symptom is that getElementById doesn't work when the ID is on a duplicate
+          <html> or <body> element.
+
+        Added a new layout test that checks for at least one symptom of the bug.
+
+        * khtml/html/htmlparser.cpp: (HTMLParser::handleError): Use setAttribute here instead
+        of using insertAttribute and calling recalcStyle explicitly. That's because setAttribute
+        does other things that are needed to change an attribute in an attribute map that's
+        already connected to an element, including updating the ID map if the attribute is
+        the ID attribute.
+
+        * khtml/xml/dom_elementimpl.h: (DOM::NamedAttrMapImpl::insertAttribute):
+        Assert that this parser-only function is only used on attribute maps that aren't yet
+        attached to elements.
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric and Tim Omernick.

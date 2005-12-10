@@ -1,3 +1,10 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5784
+
+        * fast/parser/duplicate-html-body-element-IDs-expected.txt: Added.
+        * fast/parser/duplicate-html-body-element-IDs.html: Added.
+
 2005-12-09  Justin Garcia  <justin.garcia@apple.com>
 
         New layout tests for:

@@ -339,15 +339,13 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
                     NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
-                    NamedAttrMapImpl *bmap = static_cast<ElementImpl*>(doc()->firstChild())->attributes(false);
-                    bool changed = false;
+                    ElementImpl *existingHTML = static_cast<ElementImpl*>(doc()->firstChild());
+                    NamedAttrMapImpl *bmap = existingHTML->attributes(false);
                     for (unsigned l = 0; map && l < map->length(); ++l) {
                         AttributeImpl* it = map->attributeItem(l);
-                        changed = !bmap->getAttributeItem(it->name());
-                        bmap->insertAttribute(it->clone(false));
+                        if (!bmap->getAttributeItem(it->name()))
+                            existingHTML->setAttribute(it->name(), it->value());
                     }
-                    if (changed)
-                        doc()->recalcStyle(NodeImpl::Inherit);
                 }
                 return false;
             }
@@ -376,15 +374,13 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
                 NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
-                NamedAttrMapImpl *bmap = doc()->body()->attributes(false);
-                bool changed = false;
+                ElementImpl *existingBody = doc()->body();
+                NamedAttrMapImpl *bmap = existingBody->attributes(false);
                 for (unsigned l = 0; map && l < map->length(); ++l) {
                     AttributeImpl* it = map->attributeItem(l);
-                    changed = !bmap->getAttributeItem(it->name());
-                    bmap->insertAttribute(it->clone(false));
+                    if (!bmap->getAttributeItem(it->name()))
+                        existingBody->setAttribute(it->name(), it->value());
                 }
-                if (changed)
-                    doc()->recalcStyle(NodeImpl::Inherit);
                 return false;
             }
             else if (!current->isDocumentNode())
