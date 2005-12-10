@@ -31,6 +31,7 @@
 #include "reference_list.h"
 #include "types.h"
 #include "value.h"
+#include "HashSet.h"
 
 #include "array_object.lut.h"
 
@@ -446,9 +447,13 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
 
     // fall through
   case Join: {
+    static HashSet< ObjectImp*, PointerHash<ObjectImp*> > visitedElems;
+    if (visitedElems.contains(thisObj))
+      return jsString("");
     UString separator = ",";
     UString str = "";
 
+    visitedElems.insert(thisObj);
     if (!args[0]->isUndefined())
       separator = args[0]->toString(exec);
     for (unsigned int k = 0; k < length; k++) {
@@ -488,6 +493,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       if ( exec->hadException() )
         break;
     }
+    visitedElems.remove(thisObj);
     result = String(str);
     break;
   }

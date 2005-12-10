@@ -1,0 +1,6 @@
+This will test Array.toString with circular references. If an element contains a reference to itself or one of its children (at any depth) contains a reference to it, it will be skipped. This can result in either a trailing ',' (if the self reference is at the end of the array) or ',,' if the self reference is contained at some mid point in the array.
+Array Contents	Expected Output	Actual Output
+[1, 2, self]	1,2,	1,2,
+[1, 2, [3, 4, parent]]	1,2,3,4,	1,2,3,4,
+[1, 2, [3, 4, parent], 5]	1,2,3,4,,5	1,2,3,4,,5
+

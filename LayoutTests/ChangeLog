@@ -1,3 +1,10 @@
+2005-12-10  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3539
+
+        * fast/js/cyclic-ref-toString-expected.txt: Added.
+        * fast/js/cyclic-ref-toString.html: Added.
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5784
