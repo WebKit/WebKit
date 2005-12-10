@@ -2554,6 +2554,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [self isEditable];
 }
 
+// This method name is used by Mail on Tiger (but not post-Tiger), so we shouldn't delete it 
+// until the day comes when we're no longer supporting Mail on Tiger.
+- (WebFrame *)_frameForCurrentSelection
+{
+    return [self _selectedOrMainFrame];
+}
+
 - (WebFrame *)selectedFrame
 {
     // If the first responder is a view in our tree, we get the frame containing the first responder.

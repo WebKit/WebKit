@@ -1,3 +1,16 @@
+2005-12-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        - fixed <rdar://problem/4373905> Cannot paste in Tiger Mail using TOT WebKit
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _frameForCurrentSelection]):
+        I removed this method many moons ago when restructuring the code involving frames and selection.
+        Too bad Mail was still using it (d'oh!). In Leopard Mail has updated to use newer SPI (which should
+        become API), but to continue to work with Mail on Tiger we need this method to be around. Now it's
+        just a cover for the method _selectedOrMainFrame, to which it was renamed so very long ago.
+
 2005-12-09  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
