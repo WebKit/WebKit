@@ -1,3 +1,34 @@
+2005-12-09  Justin Garcia  <justin.garcia@apple.com>
+
+        <rdar://problem/4370209> Reproducible crash when pasting over whitespace:pre text
+        <rdar://problem/4370220> Double or triple clicking in whitespace:pre text creates incorrect selections
+        Some preparation for a fix for:
+        <radar://problem/4364427> triple-click includes first item on next line (www.apple.com, but I think I've seen it elsewhere)
+        
+        There were a few bugs in endOfParagraph's and endOfLine's handling of IncludeLineBreak.
+        The IncludeLinebreak concept also doesn't make sense: when asked to 
+        IncludeLineBreak, "endOfParagraph" would return the start of the next paragraph.  
+        Callers that want this funtionality should just call endOfParagraph and then get next() 
+        if it exists.
+        In endOfParagraph's whitespace:pre handling, when the input visible position
+        was at the end of a text node with whitespace:pre, that text node was searched
+        for '/n'.  It should be skipped.
+        
+        Reviewed by harrison
+
+        Added new layout tests in editing/pasting and editing/selection
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::validate):
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfLine):
+        (khtml::isEndOfLine):
+        (khtml::endOfParagraph):
+        (khtml::isEndOfParagraph):
+        * khtml/editing/visible_units.h:
+
 2005-12-09  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

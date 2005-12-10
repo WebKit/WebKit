@@ -542,26 +542,29 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     
     VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
     VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
-    VisiblePosition visibleParagraphEnd(endOfParagraph(visiblePos, IncludeLineBreak));
+    VisiblePosition visibleParagraphEnd = endOfParagraph(visiblePos);
+    VisiblePosition next = visibleParagraphEnd.next();
+    VisiblePosition visibleEnd = next.isNotNull() ? next : visibleParagraphEnd;
+    
     Position paragraphStart = visibleParagraphStart.deepEquivalent().upstream();
-    Position paragraphEnd = visibleParagraphEnd.deepEquivalent().upstream();
+    Position end = visibleEnd.deepEquivalent().upstream();
     
     // Perform some checks to see if we need to perform work in this function.
     if (paragraphStart.node()->isBlockFlow()) {
-        if (paragraphEnd.node()->isBlockFlow()) {
-            if (!paragraphEnd.node()->isAncestor(paragraphStart.node())) {
+        if (end.node()->isBlockFlow()) {
+            if (!end.node()->isAncestor(paragraphStart.node())) {
                 // If the paragraph end is a descendant of paragraph start, then we need to run
                 // the rest of this function. If not, we can bail here.
                 return;
             }
         }
-        else if (paragraphEnd.node()->enclosingBlockFlowElement() != paragraphStart.node()) {
+        else if (end.node()->enclosingBlockFlowElement() != paragraphStart.node()) {
             // The paragraph end is in another block that is an ancestor of the paragraph start.
             // We can bail as we have a full block to work with.
-            ASSERT(paragraphStart.node()->isAncestor(paragraphEnd.node()->enclosingBlockFlowElement()));
+            ASSERT(paragraphStart.node()->isAncestor(end.node()->enclosingBlockFlowElement()));
             return;
         }
-        else if (isEndOfDocument(visibleParagraphEnd)) {
+        else if (isEndOfDocument(visibleEnd)) {
             // At the end of the document. We can bail here as well.
             return;
         }
@@ -572,7 +575,7 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     NodeImpl *moveNode = paragraphStart.node();
     if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
         moveNode = moveNode->traverseNextNode();
-    NodeImpl *endNode = paragraphEnd.node();
+    NodeImpl *endNode = end.node();
     
     insertNodeAt(newBlock, paragraphStart.node(), paragraphStart.offset());
 

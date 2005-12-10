@@ -906,17 +906,32 @@ void SelectionController::validate(ETextGranularity granularity)
             
             break;
             }
-        case LINE:
+        case LINE: {
+            m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
+            VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
+            // If the end of this line is at the end of a paragraph, include the space 
+            // after the end of the line in the selection.
+            if (isEndOfParagraph(end)) {
+                VisiblePosition next = end.next();
+                if (next.isNotNull())
+                    end = next;
+            }
+            m_end = end.deepEquivalent();
+            break;
+        }
         case LINE_BOUNDARY:
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
-            m_end = endOfLine(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
+            m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
         case PARAGRAPH: {
             VisiblePosition pos(m_start, m_affinity);
             if (isStartOfLine(pos) && isEndOfDocument(pos))
                 pos = pos.previous();
             m_start = startOfParagraph(pos).deepEquivalent();
-            m_end = endOfParagraph(VisiblePosition(m_end, m_affinity), IncludeLineBreak).deepEquivalent();
+            VisiblePosition visibleParagraphEnd = endOfParagraph(VisiblePosition(m_end, m_affinity));
+            // Include the space after the end of the paragraph in the selection.
+            VisiblePosition startOfNextParagraph = visibleParagraphEnd.next();
+            m_end = startOfNextParagraph.isNotNull() ? startOfNextParagraph.deepEquivalent() : visibleParagraphEnd.deepEquivalent();
             break;
         }
         case DOCUMENT_BOUNDARY:

@@ -315,11 +315,8 @@ VisiblePosition startOfLine(const VisiblePosition &c)
     return VisiblePosition(startNode, startOffset, DOWNSTREAM);
 }
 
-VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+VisiblePosition endOfLine(const VisiblePosition &c)
 {
-    // FIXME: Need to implement the "include line break" version.
-    assert(includeLineBreak == DoNotIncludeLineBreak);
-
     RootInlineBox *rootBox = rootBoxForLine(c);
     if (!rootBox)
         return VisiblePosition();
@@ -343,8 +340,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLin
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
         endOffset = endTextBox->m_start + endTextBox->m_len;
     }
-
-    // generate VisiblePosition, use UPSTREAM affinity if possible
+    
     return VisiblePosition(endNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);
 }
 
@@ -360,7 +356,7 @@ bool isStartOfLine(const VisiblePosition &p)
 
 bool isEndOfLine(const VisiblePosition &p)
 {
-    return p.isNotNull() && p == endOfLine(p, DoNotIncludeLineBreak);
+    return p.isNotNull() && p == endOfLine(p);
 }
 
 VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
@@ -587,16 +583,15 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
     return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
-VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+VisiblePosition endOfParagraph(const VisiblePosition &c)
 {
-    Position p = c.deepEquivalent();
-
-    NodeImpl *startNode = p.node();
-    if (!startNode)
+    if (c.isNull())
         return VisiblePosition();
 
+    Position p = c.deepEquivalent();
+    NodeImpl *startNode = p.node();
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-    NodeImpl *stayInsideBlock = includeLineBreak ? 0 : startBlock;
+    NodeImpl *stayInsideBlock = startBlock;
     
     NodeImpl *node = startNode;
     int offset = p.offset();
@@ -610,42 +605,27 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         RenderStyle *style = r->style();
         if (style->visibility() != VISIBLE)
             continue;
-        if (r->isBR()) {
-            if (includeLineBreak) {
-                VisiblePosition beforeBreak(n, 0, DOWNSTREAM);
-                VisiblePosition next = beforeBreak.next();
-                return next.isNotNull() ? next : beforeBreak;
-            }
+            
+        if (r->isBR() || r->isBlockFlow())
             break;
-        }
-        if (r->isBlockFlow()) {
-            if (includeLineBreak)
-                return VisiblePosition(n, 0, DOWNSTREAM);
-            break;
-        }
+            
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         // We should probably do this in other cases such as startOfParagraph.
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
-            if (includeLineBreak && !n->isAncestor(startBlock))
-                return VisiblePosition(n, 0, DOWNSTREAM);
             int length = static_cast<RenderText *>(r)->length();
             // FIXME: Not clear what to do with pre-wrap or pre-line here.
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
-                int o = 0;
-                if (n == startNode && offset < length)
-                    o = offset;
+                int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i)
                     if (text[i] == '\n')
-                        return VisiblePosition(n, i + includeLineBreak, DOWNSTREAM);
+                        return VisiblePosition(n, i, DOWNSTREAM);
             }
             node = n;
-            offset = length;
+            offset = r->caretMaxOffset();
         } else if (r->isReplaced()) {
             node = n;
             offset = 1;
-            if (includeLineBreak && !n->isAncestor(startBlock))
-                break;
         }
     }
 
@@ -664,7 +644,7 @@ bool isStartOfParagraph(const VisiblePosition &pos)
 
 bool isEndOfParagraph(const VisiblePosition &pos)
 {
-    return pos.isNotNull() && isEqualIgnoringAffinity(pos, endOfParagraph(pos, DoNotIncludeLineBreak));
+    return pos.isNotNull() && isEqualIgnoringAffinity(pos, endOfParagraph(pos));
 }
 
 VisiblePosition previousParagraphPosition(const VisiblePosition &p, int x)
