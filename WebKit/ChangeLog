@@ -1,3 +1,12 @@
+2005-12-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Carbon.subproj/HIWebView.m:
+        (UpdateCommandStatus):
+	Don't call -performSelector:withObject: on a method that returns a BOOL; this is not guaranteed to work on all architectures.
+	-performSelector:withObject:'s return value should only be checked if the method returns an object.
+
 2005-12-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by nobody, build fix.
