@@ -1,5 +1,14 @@
 2005-12-10  Darin Adler  <darin@apple.com>
 
+        New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5826
+
+        * fast/overflow/overflow-rtl-expected.checksum: Added.
+        * fast/overflow/overflow-rtl-expected.png: Added.
+        * fast/overflow/overflow-rtl-expected.txt: Added.
+        * fast/overflow/overflow-rtl.html: Added.
+
+2005-12-10  Darin Adler  <darin@apple.com>
+
         New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3983
 
         * fast/css/outline-auto-location-expected.checksum: Added.

@@ -1,3 +1,24 @@
+2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt, landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5826
+          Blocks with direction:rtl and overflow:auto or scroll have incorrect scrollbars
+
+        * khtml/rendering/render_block.cpp: (khtml::RenderBlock::leftmostPosition):
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::RenderLayer): Initialize
+        (khtml::RenderLayer::scrollOffset):
+        (khtml::RenderLayer::subtractScrollOffset):
+        (khtml::RenderLayer::scrollToOffset):
+        (khtml::RenderLayer::scrollRectToVisible):
+        (khtml::RenderLayer::updateScrollPositionFromScrollbars):
+        (khtml::RenderLayer::computeScrollDimensions):
+        (khtml::RenderLayer::updateScrollInfoAfterLayout):
+        * khtml/rendering/render_layer.h:
+        (khtml::RenderLayer::scrollXOffset):
+        (khtml::RenderLayer::scrollToYOffset):
+
 2005-12-10  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Hyatt, landed by Darin.

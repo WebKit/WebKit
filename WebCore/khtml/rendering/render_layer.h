@@ -240,11 +240,11 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollOffset(int& x, int& y);
     void subtractScrollOffset(int& x, int& y);
-    int scrollXOffset() const { return m_scrollX; }
+    int scrollXOffset() const { return m_scrollX + m_scrollOriginX; }
     int scrollYOffset() const { return m_scrollY; }
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
-    void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
+    void scrollToYOffset(int y) { scrollToOffset(m_scrollX + m_scrollOriginX, y); }
     void scrollRectToVisible(const QRect &r, const ScrollAlignment& alignX = gAlignCenterIfNeeded, const ScrollAlignment& alignY = gAlignCenterIfNeeded);
     QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);    
     void setHasHorizontalScrollbar(bool hasScrollbar);
@@ -368,6 +368,8 @@ protected:
     // Our scroll offsets if the view is scrolled.
     int m_scrollX;
     int m_scrollY;
+    int m_scrollOriginX;
+    int m_scrollLeftOverflow;
     
     // The width/height of our scrolled area.
     int m_scrollWidth;

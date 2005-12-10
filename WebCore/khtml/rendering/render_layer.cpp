@@ -124,6 +124,8 @@ m_width( 0 ),
 m_height( 0 ),
 m_scrollX( 0 ),
 m_scrollY( 0 ),
+m_scrollOriginX( 0 ),
+m_scrollLeftOverflow( 0 ),
 m_scrollWidth( 0 ),
 m_scrollHeight( 0 ),
 m_hBar( 0 ),
@@ -488,14 +490,14 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
 void
 RenderLayer::scrollOffset(int& x, int& y)
 {
-    x += scrollXOffset();
+    x += scrollXOffset() + m_scrollLeftOverflow;
     y += scrollYOffset();
 }
 
 void
 RenderLayer::subtractScrollOffset(int& x, int& y)
 {
-    x -= scrollXOffset();
+    x -= scrollXOffset() + m_scrollLeftOverflow;
     y -= scrollYOffset();
 }
 
@@ -520,7 +522,7 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     // complicated (since it will involve testing whether our layer
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
-    m_scrollX = x;
+    m_scrollX = x - m_scrollOriginX;
     m_scrollY = y;
 
     // Update the positions of our child layers.
@@ -545,7 +547,7 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     
     if (updateScrollbars) {
         if (m_hBar)
-            m_hBar->setValue(m_scrollX);
+            m_hBar->setValue(scrollXOffset());
         if (m_vBar)
             m_vBar->setValue(m_scrollY);
     }
@@ -557,8 +559,8 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
     QRect newRect = rect;
     
     if (m_object->hasOverflowClip()) {
-        QRect layerBounds = QRect(m_x + m_scrollX, m_y + m_scrollY, m_width, m_height);
-        QRect exposeRect = QRect(rect.x() + m_scrollX, rect.y() + m_scrollY, rect.width(), rect.height());
+        QRect layerBounds = QRect(m_x + scrollXOffset(), m_y + m_scrollY, m_width, m_height);
+        QRect exposeRect = QRect(rect.x() + scrollXOffset(), rect.y() + m_scrollY, rect.width(), rect.height());
         QRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
         int xOffset = r.x() - m_x;
@@ -567,11 +569,11 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
         xOffset = kMax(0, kMin(m_scrollWidth - m_width, xOffset));
         yOffset = kMax(0, kMin(m_scrollHeight - m_height, yOffset));
         
-        if (xOffset != m_scrollX || yOffset != m_scrollY) {
-            int diffX = m_scrollX;
+        if (xOffset != scrollXOffset() || yOffset != m_scrollY) {
+            int diffX = scrollXOffset();
             int diffY = m_scrollY;
             scrollToOffset(xOffset, yOffset);
-            diffX = m_scrollX - diffX;
+            diffX = scrollXOffset() - diffX;
             diffY = m_scrollY - diffY;
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
@@ -668,12 +670,12 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect, const QRect &expose
 void RenderLayer::updateScrollPositionFromScrollbars()
 {
     bool needUpdate = false;
-    int newX = m_scrollX;
+    int newX = scrollXOffset();
     int newY = m_scrollY;
     
     if (m_hBar) {
         newX = m_hBar->value();
-        if (newX != m_scrollX)
+        if (newX != scrollXOffset())
            needUpdate = true;
     }
 
@@ -795,15 +797,23 @@ int RenderLayer::scrollHeight()
 void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
 {
     m_scrollDimensionsDirty = false;
-
-    int rightPos = m_object->rightmostPosition(true, false) - m_object->borderLeft();
-    int bottomPos = m_object->lowestPosition(true, false) - m_object->borderTop();
+    
+    bool ltr = m_object->style()->direction() == LTR;
 
     int clientWidth = m_object->clientWidth();
     int clientHeight = m_object->clientHeight();
 
+    m_scrollLeftOverflow = ltr ? 0 : kMin(0, m_object->leftmostPosition(true, false) - m_object->borderLeft());
+
+    int rightPos = ltr ?
+                    m_object->rightmostPosition(true, false) - m_object->borderLeft() :
+                    clientWidth - m_scrollLeftOverflow;
+    int bottomPos = m_object->lowestPosition(true, false) - m_object->borderTop();
+
     m_scrollWidth = kMax(rightPos, clientWidth);
     m_scrollHeight = kMax(bottomPos, clientHeight);
+    
+    m_scrollOriginX = ltr ? 0 : m_scrollWidth - clientWidth;
 
     if (needHBar)
         *needHBar = rightPos > clientWidth;
@@ -824,9 +834,9 @@ RenderLayer::updateScrollInfoAfterLayout()
     if (m_object->style()->overflow() != OMARQUEE) {
         // Layout may cause us to be in an invalid scroll position.  In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
-        int newX = kMax(0, kMin(m_scrollX, scrollWidth() - m_object->clientWidth()));
+        int newX = kMax(0, kMin(scrollXOffset(), scrollWidth() - m_object->clientWidth()));
         int newY = kMax(0, kMin(m_scrollY, scrollHeight() - m_object->clientHeight()));
-        if (newX != m_scrollX || newY != m_scrollY)
+        if (newX != scrollXOffset() || newY != m_scrollY)
             scrollToOffset(newX, newY);
     }
 
@@ -869,6 +879,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         if (pageStep < 0) pageStep = clientWidth;
         m_hBar->setSteps(LINE_STEP, pageStep);
         m_hBar->setKnobProportion(clientWidth, m_scrollWidth);
+        m_hBar->setValue(scrollXOffset());
     }
     if (m_vBar) {
         int clientHeight = m_object->clientHeight();
