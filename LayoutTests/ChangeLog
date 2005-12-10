@@ -1,3 +1,13 @@
+2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6029
+        plainText() returns a partial result when the node contains RTL text 
+
+        * fast/dom/inner-text-rtl-expected.txt: Added.
+        * fast/dom/inner-text-rtl.html: Added.
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         New layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5826

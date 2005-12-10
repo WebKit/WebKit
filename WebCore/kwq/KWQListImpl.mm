@@ -373,6 +373,16 @@ void *KWQListImpl::getLast() const
     return tail ? tail->data : 0;
 }
 
+void *KWQListImpl::getNext() const
+{
+    return cur && cur->next ? cur->next->data : 0;
+}
+
+void *KWQListImpl::getPrev() const
+{
+    return cur && cur->prev ? cur->prev->data : 0;
+}
+
 void *KWQListImpl::current() const
 {
     if (cur != NULL) {

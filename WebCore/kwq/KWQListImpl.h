@@ -56,6 +56,8 @@ public:
 
     void *getFirst() const;
     void *getLast() const;
+    void *getNext() const;
+    void *getPrev() const;
     void *current() const;
     void *first();
     void *last();

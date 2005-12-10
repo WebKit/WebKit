@@ -1,5 +1,24 @@
 2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6029
+          plainText() returns a partial result when the node contains RTL text
+
+        Test: fast/dom/inner-text-rtl.html
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextBox): Avoid advancing m_sortedTextBoxes if textBoxEnd wasn't reached.
+        * kwq/KWQListImpl.h:
+        * kwq/KWQListImpl.mm:
+        (KWQListImpl::getNext): Added.
+        (KWQListImpl::getPrev): Added.
+        * kwq/KWQPtrList.h:
+        (QPtrList::getNext): Added.
+        (QPtrList::getPrev): Added.
+
+2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt, landed by Darin.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5826

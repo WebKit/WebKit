@@ -287,7 +287,7 @@ void TextIterator::handleTextBox()
         int runEnd = kMin(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
-        InlineTextBox *nextTextBox = renderer->containsReversedText() ? m_sortedTextBoxes.next() : m_textBox->nextTextBox();
+        InlineTextBox *nextTextBox = renderer->containsReversedText() ? m_sortedTextBoxes.getNext() : m_textBox->nextTextBox();
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),
@@ -327,10 +327,14 @@ void TextIterator::handleTextBox()
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             }
             m_textBox = nextTextBox;
+            if (renderer->containsReversedText())
+                m_sortedTextBoxes.next();
             return;
         }
         // Advance and continue
         m_textBox = nextTextBox;
+        if (renderer->containsReversedText())
+            m_sortedTextBoxes.next();
     }
 }
 

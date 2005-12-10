@@ -60,6 +60,8 @@ public:
 
     T *getFirst() const { return (T *)impl.getFirst(); }
     T *getLast() const { return (T *)impl.getLast(); }
+    T *getNext() const { return (T *)impl.getNext(); }
+    T *getPrev() const { return (T *)impl.getPrev(); }
     T *current() const { return (T *)impl.current(); }
     T *first() { return (T *)impl.first(); }
     T *last() { return (T *)impl.last(); }
