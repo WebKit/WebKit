@@ -1,3 +1,10 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        Was getting build failures related to "count" methods.
+        Made Tim's build fix Leopard-only.
+
+        * WebView.subproj/WebPreferencesPrivate.h: Go back to <PDFKit/PDFKit.h> on Tiger.
+
 2005-12-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson.
