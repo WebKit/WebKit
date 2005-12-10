@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,34 @@
 #define QTIMER_H_
 
 #include "KWQObject.h"
-#include "KWQSignal.h"
-
-#ifdef __OBJC__
-@class NSTimer;
-#else
-class NSTimer;
-#endif
 
 class QTimer : public QObject {
 public:
-    QTimer(QObject *parent = 0);
+    QTimer() : m_runLoopTimer(0), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout())) { }
     ~QTimer() { stop(); }
     
-    bool isActive() const;
+    bool isActive() const { return m_runLoopTimer; }
     void start(int msec, bool singleShot = false);
     void stop();
     void fire();
     
     static void singleShot(int msec, QObject *receiver, const char *member);
-    
+
     // This is just a hack used by KWQKHTMLPart. The monitor function
     // gets called when the timer starts and when it is stopped before firing,
     // but not when the timer fires.
     void setMonitor(void (*monitorFunction)(void *context), void *context);
-    NSTimer *getNSTimer() { return m_timer; }
 
-private:    
-    NSTimer *m_timer;
+    CFAbsoluteTime fireDate() const { return CFRunLoopTimerGetNextFireDate(m_runLoopTimer); }
+
+private:
+    CFRunLoopTimerRef m_runLoopTimer;
     void (*m_monitorFunction)(void *context);
     void *m_monitorFunctionContext;
     KWQSignal m_timeoutSignal;
+
+    QTimer(const QTimer&);
+    QTimer& operator=(const QTimer&);
 };
 
 #endif

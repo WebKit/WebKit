@@ -92,63 +92,14 @@ using namespace DOM;
 using namespace EventNames;
 using namespace HTMLNames;
 
-using khtml::Cache;
-using khtml::CharacterIterator;
-using khtml::ChildFrame;
-using khtml::Decoder;
-using khtml::DashboardRegionValue;
-using khtml::EditCommandPtr;
-using khtml::endOfWord;
-using khtml::findPlainText;
-using khtml::FocusState;
-using khtml::InlineTextBox;
-using khtml::LeftWordIfOnBoundary;
-using khtml::MouseDoubleClickEvent;
-using khtml::MouseMoveEvent;
-using khtml::MousePressEvent;
-using khtml::MouseReleaseEvent;
-using khtml::parseURL;
-using khtml::PRE;
-using khtml::RenderCanvas;
-using khtml::RenderImage;
-using khtml::RenderLayer;
-using khtml::RenderListItem;
-using khtml::RenderObject;
-using khtml::RenderStyle;
-using khtml::RenderTableCell;
-using khtml::RenderText;
-using khtml::theme;
-using khtml::RenderWidget;
-using khtml::RightWordIfOnBoundary;
-using khtml::SelectionController;
-using khtml::SELECT_IGNORE;
-using khtml::setEnd;
-using khtml::setStart;
-using khtml::ShadowData;
-using khtml::startOfWord;
-using khtml::startVisiblePosition;
-using khtml::StyleDashboardRegion;
-using khtml::TextIterator;
-using khtml::DOWNSTREAM;
-using khtml::VP_UPSTREAM_IF_POSSIBLE;
-using khtml::VISIBLE;
-using khtml::VisiblePosition;
-using khtml::WordAwareIterator;
+using namespace KJS;
+using namespace Bindings;
 
-using KIO::Job;
+using namespace khtml;
 
-using KJS::Interpreter;
-using KJS::JSLock;
-using KJS::Location;
-using KJS::SavedBuiltins;
-using KJS::SavedProperties;
-using KJS::ScheduledAction;
-using KJS::Window;
+using namespace KIO;
 
-using KJS::Bindings::Instance;
-
-using KParts::ReadOnlyPart;
-using KParts::URLArgs;
+using namespace KParts;
 
 NSEvent *KWQKHTMLPart::_currentEvent = nil;
 
@@ -1127,11 +1078,13 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
     
     KWQ_BLOCK_EXCEPTIONS;
     if (d->m_redirectionTimer.isActive()) {
+        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:d->m_redirectionTimer.fireDate()];
         [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
                                      delay:d->m_delayRedirect
-                                  fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]
+                                  fireDate:fireDate
                                lockHistory:d->m_redirectLockHistory
                                isJavaScriptFormAction:d->m_executingJavaScriptFormAction];
+        [fireDate release];
     } else {
         [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
     }
@@ -1462,24 +1415,22 @@ void KWQKHTMLPart::partClearedInBegin()
     [_bridge windowObjectCleared];
 }
 
-QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
+PausedTimeouts *KWQKHTMLPart::pauseTimeouts()
 {
     if (d->m_doc && d->m_jscript) {
         Window *w = Window::retrieveWindow(this);
-        if (w && w->hasTimeouts()) {
-            return w->pauseTimeouts(key);
-        }
+        if (w)
+            return w->pauseTimeouts();
     }
     return 0;
 }
 
-void KWQKHTMLPart::resumeActions(QMap<int, ScheduledAction*> *actions, const void *key)
+void KWQKHTMLPart::resumeTimeouts(PausedTimeouts *t)
 {
     if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
         Window *w = Window::retrieveWindow(this);
-        if (w) {
-            w->resumeTimeouts(actions, key);
-        }
+        if (w)
+            w->resumeTimeouts(t);
     }
 }
 
@@ -1562,14 +1513,13 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
     SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
-    QMap<int, ScheduledAction*> *actions = [state pausedActions];
+    PausedTimeouts *timeouts = [state pausedTimeouts];
     
     cancelRedirection();
 
     // We still have to close the previous part page.
-    if (!d->m_restored){
+    if (!d->m_restored)
         closeURL();
-    }
             
     d->m_bComplete = false;
     
@@ -1577,13 +1527,12 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_bLoadEventEmitted = true;
     
     // delete old status bar msg's from kjs (if it _was_ activated on last URL)
-    if( d->m_bJScriptEnabled )
-    {
+    if (d->m_bJScriptEnabled) {
         d->m_kjsStatusBarText = QString::null;
         d->m_kjsDefaultStatusBarText = QString::null;
     }
 
-    ASSERT (url);
+    ASSERT(url);
     
     m_url = *url;
     
@@ -1617,27 +1566,24 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_mousePressNode = mousePressNode;
     
     Decoder *decoder = doc->decoder();
-    if (decoder) {
+    if (decoder)
         decoder->ref();
-    }
-    if (d->m_decoder) {
+    if (d->m_decoder)
         d->m_decoder->deref();
-    }
     d->m_decoder = decoder;
 
-    doc->setParseMode ([state parseMode]);
+    doc->setParseMode([state parseMode]);
     
     updatePolicyBaseURL();
 
     { // scope the lock
         JSLock lock;
-        restoreWindowProperties (windowProperties);
-        restoreLocationProperties (locationProperties);
-        restoreInterpreterBuiltins (*interpreterBuiltins);
+        restoreWindowProperties(windowProperties);
+        restoreLocationProperties(locationProperties);
+        restoreInterpreterBuiltins(*interpreterBuiltins);
     }
 
-    if (actions)
-        resumeActions (actions, state);
+    resumeTimeouts(timeouts);
     
     checkCompleted();
 }
@@ -4249,7 +4195,7 @@ void KWQKHTMLPart::setMarkedTextRange(const DOM::RangeImpl *range, NSArray *attr
     int exception = 0;
 
     ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
-    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->nodeType() == Node::TEXT_NODE);
+    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->nodeType() == DOM::Node::TEXT_NODE);
 
     if (attributes == nil) {
         m_markedTextUsesUnderlines = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,111 +27,37 @@
 #import "KWQTimer.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQLogging.h"
-#import "KWQFoundationExtras.h"
 
-// We know the Cocoa calls in this file are safe because they are all
-// to the simple ObjC class defined here, or simple NSTimer calls that
-// can't throw.
-
-@interface KWQTimerTarget : NSObject
+static void timerFired(CFRunLoopTimerRef, void *info)
 {
-    QTimer *timer;
-}
-+ (KWQTimerTarget *)targetWithQTimer:(QTimer *)timer;
-- (void)timerFired:(id)userInfo;
-@end
-
-@interface KWQSingleShotTimerTarget : NSObject
-{
-    KWQSlot *slot;
-}
-+ (KWQSingleShotTimerTarget *)targetWithQObject:(QObject *)object member:(const char *)member;
-- (void)timerFired:(id)userInfo;
-@end
-
-@implementation KWQTimerTarget
-
-+ (KWQTimerTarget *)targetWithQTimer:(QTimer *)t
-{
-    KWQTimerTarget *target = [[[self alloc] init] autorelease];
-    target->timer = t;
-    return target;
-}
-
-- (void)timerFired:(id)userInfo
-{
-    timer->fire();
-}
-
-@end
-
-@implementation KWQSingleShotTimerTarget
-
-+ (KWQSingleShotTimerTarget *)targetWithQObject:(QObject *)object member:(const char *)member
-{
-    KWQSingleShotTimerTarget *target = [[[self alloc] init] autorelease];
-    target->slot = new KWQSlot(object, member);
-    return target;
-}
-
-- (void)dealloc
-{
-    delete slot;
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    delete slot;
-    [super finalize];
-}
-
-- (void)timerFired:(id)userInfo
-{
-    slot->call();
-}
-
-@end
-
-QTimer::QTimer(QObject *parent)
-    : m_timer(nil), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout()))
-{
-    if (parent) LOG(NotYetImplemented, "Parent pointer ignored.  QTimer will be leaked and may fire after parent dealloc causing crash.");
-}
-
-bool QTimer::isActive() const
-{
-    return m_timer;
+    ((QTimer *)info)->fire();
 }
 
 void QTimer::start(int msec, bool singleShot)
 {
     stop();
-    m_timer = KWQRetain([NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
-                                                target:[KWQTimerTarget targetWithQTimer:this]
-                                              selector:@selector(timerFired:)
-                                              userInfo:nil
-                                               repeats:!singleShot]);
 
-    if (m_monitorFunction) {
+    CFTimeInterval interval = msec * 0.001;
+    CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
+    m_runLoopTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + interval,
+        singleShot ? 0 : interval, 0, 0, timerFired, &context);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_runLoopTimer, kCFRunLoopDefaultMode);
+
+    if (m_monitorFunction)
         m_monitorFunction(m_monitorFunctionContext);
-    }
 }
 
 void QTimer::stop()
 {
-    if (m_timer == nil) {
+    if (!m_runLoopTimer)
         return;
-    }
     
-    [m_timer invalidate];
-    KWQRelease(m_timer);
-    m_timer = nil;
+    CFRunLoopTimerInvalidate(m_runLoopTimer);
+    CFRelease(m_runLoopTimer);
+    m_runLoopTimer = 0;
 
-    if (m_monitorFunction) {
+    if (m_monitorFunction)
         m_monitorFunction(m_monitorFunctionContext);
-    }
 }
 
 void QTimer::setMonitor(void (*monitorFunction)(void *context), void *context)
@@ -143,22 +69,12 @@ void QTimer::setMonitor(void (*monitorFunction)(void *context), void *context)
 
 void QTimer::fire()
 {
-    // Ensure that m_timer is kept around for duration of callback.
-    // Final reference will eventually be released in stop(), which may be called 
-    // in this frame, hence the need to ensure the timer is kept around until
-    // the pool is released. 
-    [[m_timer retain] autorelease];
+    if (m_runLoopTimer && !CFRunLoopTimerIsValid(m_runLoopTimer)) {
+        CFRunLoopTimerInvalidate(m_runLoopTimer);
+        CFRelease(m_runLoopTimer);
+        m_runLoopTimer = 0;
+    }
 
     // Note: This call may destroy the QTimer, so be sure not to touch any fields afterward.
     m_timeoutSignal.call();
 }
-
-void QTimer::singleShot(int msec, QObject *receiver, const char *member)
-{
-    [NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
-                                     target:[KWQSingleShotTimerTarget targetWithQObject:receiver member:member]
-                                   selector:@selector(timerFired:)
-                                   userInfo:nil
-                                    repeats:NO];
-}
-

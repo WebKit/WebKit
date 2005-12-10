@@ -1,3 +1,84 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric and Tim Omernick.
+
+        - speed up timers by using CFTimerRunLoopRef instead of NSTimer
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5677
+
+        * kwq/KWQObject.h: Removed pauseTimer, resumeTimers, and _addTimer, added timerIntervals and
+        restartTimer. Made KWQObjectSenderScope functions be inline.
+        * kwq/KWQObject.mm:
+        (timerFired): Added. Function called when the CFRunLoopTimerRef fires. Puts the timer into the
+        deferred timer array if timers are deferred, otherwise makes a QTimerEvent and calls timerEvent
+        on the target.
+        (QObject::startTimer): Moved most of the code inside restartTimer. This now just picks a new
+        timer ID and calls restartTimer.
+        (QObject::restartTimer): Added. Creates a KWQObjectTimer and puts it in a timers dictionary.
+        That includes creating a CFRunLoopTimer and scheduling it on the current run loop.
+        (QObject::timerIntervals): Added. Looks up a timer and returns the intervals for next time to
+        fire and the "fire again" interval.
+        (deleteTimer): Added. Invalidates and then removes a timer.
+        (QObject::killTimer): Changed to use deleteTimer to do most of its work.
+        (deleteOneTimer): Added. Calls deleteTimer.
+        (QObject::killTimers): Changed to use deleteOneTimer to do most of its work.
+        (sendDeferredTimerEvent): Added. Creates a QTimerEvent and calls timerEvent on the target.
+        (sendDeferredTimerEvents): Added. Calls sendDeferredTimerEvent in a loop on all the deferred timers.
+        (QObject::setDefersTimers): Updated to call sendDeferredTimerEvents as needed.
+
+        * kwq/KWQTimer.h:
+        (QTimer::QTimer): Made constructor inline and removed the optional parameter.
+        (QTimer::isActive): Made inline.
+        (QTimer::fireDate): Added. Inline function.
+        Got rid of the NSTimer and added a CFRunLoopTimer.
+        * kwq/KWQTimer.mm:
+        (timerFired): Added. Calls fire on the QTimer object.
+        (QTimer::start): Changed to create a CFRunLoopTimer.
+        (QTimer::stop): Changed to use CFRunLoopTimer functions.
+        (QTimer::fire): Ditto.
+
+        * khtml/ecma/kjs_window.h: Added PausedTimeouts class. Moved WindowQObject class up in the
+        file so it can be used inline in the implementation of the Window class, and changed to
+        use the PausedTimeouts class intead of a QMap to store the paused timeouts.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::ScheduledAction::execute): Put a check for nil part at the start; this replaces
+        a check in the caller and a check partway down this function (after the part was
+        already dereferenced). Fixed message handling so the message is not converted to ascii
+        and back. Added an isObject() check so we won't crash if the passed function is a value
+        that's not an object. Changed check for function vs. script to check for a function
+        of nil instead of using a separate boolean.
+        (KJS::WindowQObject::pauseTimeouts): Updated to create the new PausedTimeouts object,
+        using the new QObject::timerIntervals function rather than the old QObject::pauseTimer
+        function. This means that the paused timers are entirely stored in the PausedTimeouts
+        object instead of being half in a QMap and the other half inside the QObject itself.
+        (KJS::WindowQObject::resumeTimeouts): Ditto, using the new QObject::restartTimer function.
+        (KJS::PausedTimeouts::~PausedTimeouts): Added. Deletes the stored timeouts, including
+        the scheduled actions, unless the timeouts have already been resumed (in which case the
+        m_array field will be 0).
+
+        * kwq/KWQKHTMLPart.h: Renamed pause/resumeActions to pause/resumeTimeouts and made them
+        use the PausedTimeouts class and no longer take a key parameter.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped): Use the new fireDate() function rathe than
+        the old getNSTimer() function to get the fire date.
+        (KWQKHTMLPart::pauseTimeouts): Remove the call to hasTimeouts and the key parameter.
+        (KWQKHTMLPart::resumeTimeouts): Remove the key parameter.
+        (KWQKHTMLPart::openURLFromPageCache): Change the timeout handling to use PausedTimeouts instead
+        of a QMap for the paused timeouts.
+
+        * kwq/KWQPageState.h: Changed to use PausedTimeouts instead of a QMap for timeouts.
+        Added a pausedTimeouts parameter to the initializer and removed the setPausedActions: method.
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:interpreterBuiltins:pausedTimeouts:]):
+        Added code where it sets the pausedTimouts.
+        (-[KWQPageState pausedTimeouts]): Added.
+        (-[KWQPageState clear]): Added code to delete the pausedTimeouts and to deref mousePressNode.
+        (-[KWQPageState invalidate]): Fixed bug where document would not be deref'd if the view was 0.
+        (-[KWQPageState dealloc]): Removed code to deref mousePressNode since that's now handled in the clear method.
+        (-[KWQPageState finalize]): Set document to 0 after deref for consistency.
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge saveDocumentToPageCache]): Changed to pass in the
+        paused timeouts using the new pauseTimeouts function.
+
 2005-12-09  Justin Garcia  <justin.garcia@apple.com>
 
         <rdar://problem/4370209> Reproducible crash when pasting over whitespace:pre text

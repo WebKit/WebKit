@@ -26,14 +26,10 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
-#include "KWQDef.h"
-#include "KWQSignal.h"
-
-#include "KWQNamespace.h"
-#include "KWQString.h"
 #include "KWQEvent.h"
-#include "KWQStringList.h"
 #include "KWQPtrList.h"
+#include "KWQSignal.h"
+#include "KWQStringList.h"
 
 #define slots : public
 #define SLOT(x) "SLOT:" #x
@@ -43,35 +39,29 @@
 #define Q_OBJECT
 #define Q_PROPERTY(text)
 
-class QEvent;
-class QPaintDevice;
-class QPaintDeviceMetrics;
-class QWidget;
+class QBitmap;
+class QBrush;
 class QColor;
 class QColorGroup;
-class QPalette;
+class QEvent;
+class QFont;
+class QFontMetrics;
+class QImage;
+class QMovie;
+class QPaintDevice;
+class QPaintDeviceMetrics;
 class QPainter;
+class QPalette;
+class QRect;
 class QRegion;
 class QSize;
 class QSizePolicy;
-class QRect;
-class QFont;
-class QFontMetrics;
-class QBrush;
-class QBitmap;
-class QMovie;
 class QTimer;
-class QImage;
 class QVariant;
+class QWidget;
 
 class KWQGuardedPtrBase;
 class KWQSignal;
-
-#ifdef __OBJC__
-@class NSTimer;
-#else
-class NSTimer;
-#endif
 
 class QObject : public Qt {
 public:
@@ -85,12 +75,11 @@ public:
 
     bool inherits(const char *className) const;
 
-    int startTimer(int);
-    void killTimer(int);
+    int startTimer(int interval);
+    void killTimer(int timerId);
     void killTimers();
-    void pauseTimer(int _timerId, const void *key);
-    void resumeTimers(const void *key, QObject *target);
-    static void clearPausedTimers (const void *key);
+    void timerIntervals(int timerId, int& nextFireInterval, int& repeatInterval) const;
+    void restartTimer(int timerId, int nextFireInterval, int repeatInterval);
     
     virtual void timerEvent(QTimerEvent *);
 
@@ -117,8 +106,6 @@ public:
     virtual bool isQScrollView() const;
 
 private:
-    void _addTimer(NSTimer *timer, int _timerId);
-
     // no copying or assignment
     QObject(const QObject &);
     QObject &operator=(const QObject &);
@@ -145,11 +132,11 @@ private:
 class KWQObjectSenderScope
 {
 public:
-    KWQObjectSenderScope(const QObject *);
-    ~KWQObjectSenderScope();
+    KWQObjectSenderScope(const QObject *o) : m_savedSender(QObject::_sender) { QObject::_sender = o; }
+    ~KWQObjectSenderScope() { QObject::_sender = m_savedSender; }
 
 private:
-    const QObject *_savedSender;
+    const QObject *m_savedSender;
 };
 
 #endif

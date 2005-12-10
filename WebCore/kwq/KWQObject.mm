@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,94 +26,24 @@
 #include "config.h"
 #import "KWQObject.h"
 
-#import "KWQVariant.h"
 #import <kxmlcore/Assertions.h>
+#import <kxmlcore/FastMalloc.h>
 
-// The Foundation-level Cocoa calls here (NSTimer, NSDate, NSArray,
-// NSDictionary) should be exception-free, so no need to block
-// exceptions.
+struct KWQObjectTimer {
+    QObject *target;
+    int timerId;
+    CFRunLoopTimerRef runLoopTimer; // non-0 for running timers
+    bool deferred; // true if timer is in the deferredTimers array
+    bool deleted;
+};
 
 const QObject *QObject::_sender;
 bool QObject::_defersTimers;
 
 static CFMutableDictionaryRef timerDictionaries;
-static CFMutableDictionaryRef allPausedTimers;
-static NSMutableArray *deferredTimers;
-static bool deferringTimers;
-
-@interface KWQObjectTimerTarget : NSObject
-{
-@public
-    QObject *target;
-    int timerId;
-    NSTimeInterval remainingTime;
-}
-
-- initWithQObject:(QObject *)object timerId:(int)timerId;
-- (void)timerFired;
-
-@end
-
-KWQSignal *QObject::findSignal(const char *signalName) const
-{
-    for (KWQSignal *signal = _signalListHead; signal; signal = signal->_next) {
-        if (KWQNamesMatch(signalName, signal->_name)) {
-            return signal;
-        }
-    }
-    return 0;
-}
-
-void QObject::connect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
-{
-    // FIXME: Assert that sender is not NULL rather than doing the if statement.
-    if (!sender) {
-        return;
-    }
-    
-    KWQSignal *signal = sender->findSignal(signalName);
-    if (!signal) {
-#if !ERROR_DISABLED
-        if (1
-            && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
-            && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
-            && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
-            && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
-            && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotViewCleared())) // FIXME: Should implement this one!
-            )
-	ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);
-#endif
-        return;
-    }
-    signal->connect(KWQSlot(const_cast<QObject *>(receiver), member));
-}
-
-void QObject::disconnect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
-{
-    // FIXME: Assert that sender is not NULL rather than doing the if statement.
-    if (!sender)
-        return;
-    
-    KWQSignal *signal = sender->findSignal(signalName);
-    if (!signal) {
-        // FIXME: ERROR
-        return;
-    }
-    signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
-}
-
-KWQObjectSenderScope::KWQObjectSenderScope(const QObject *o)
-    : _savedSender(QObject::_sender)
-{
-    QObject::_sender = o;
-}
-
-KWQObjectSenderScope::~KWQObjectSenderScope()
-{
-    QObject::_sender = _savedSender;
-}
+static CFMutableArrayRef deferredTimers;
+static CFRunLoopTimerRef sendDeferredTimerEventsTimer;
+static int lastTimerIdUsed;
 
 QObject::QObject(QObject *parent, const char *name)
     : _signalListHead(0), _signalsBlocked(false)
@@ -130,7 +60,54 @@ QObject::~QObject()
     killTimers();
 }
 
-void QObject::timerEvent(QTimerEvent *te)
+KWQSignal *QObject::findSignal(const char *signalName) const
+{
+    for (KWQSignal *signal = _signalListHead; signal; signal = signal->_next)
+        if (KWQNamesMatch(signalName, signal->_name))
+            return signal;
+    return 0;
+}
+
+void QObject::connect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
+{
+    // FIXME: Assert that sender is not 0 rather than doing the if statement, then fix callers who call with 0.
+    if (!sender)
+        return;
+    
+    KWQSignal *signal = sender->findSignal(signalName);
+    if (!signal) {
+#if !ERROR_DISABLED
+        if (1
+            && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
+            && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
+            && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
+            && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
+            && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
+            && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))
+            && !KWQNamesMatch(member, SLOT(slotViewCleared())) // FIXME: Should implement this one!
+            )
+        ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);
+#endif
+        return;
+    }
+    signal->connect(KWQSlot(const_cast<QObject *>(receiver), member));
+}
+
+void QObject::disconnect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
+{
+    // FIXME: Assert that sender is not 0 rather than doing the if statement, then fix callers who call with 0.
+    if (!sender)
+        return;
+    
+    KWQSignal *signal = sender->findSignal(signalName);
+    if (!signal) {
+        // FIXME: Put a call to ERROR here and clean up callers who do this.
+        return;
+    }
+    signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
+}
+
+void QObject::timerEvent(QTimerEvent *)
 {
 }
 
@@ -139,226 +116,170 @@ bool QObject::event(QEvent *)
     return false;
 }
 
-void QObject::pauseTimer (int _timerId, const void *key)
+static void timerFired(CFRunLoopTimerRef runLoopTimer, void *info)
 {
-    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
-    NSNumber *timerId = [NSNumber numberWithInt:_timerId];
-    NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
-
-    if ([timer isValid]){
-        KWQObjectTimerTarget *target = (KWQObjectTimerTarget *)[timer userInfo];
-
-        if (target){
-            NSDate *fireDate = [timer fireDate];
-            NSTimeInterval remainingTime = [fireDate timeIntervalSinceDate: [NSDate date]];
-        
-            if (remainingTime < 0)
-                remainingTime = DBL_EPSILON;
-            
-            if (allPausedTimers == NULL) {
-                // The global targets dictionary itself leaks, but the contents are removed
-                // when each timer fires or is killed.
-                allPausedTimers = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-            }
-    
-            NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
-            if (pausedTimers == nil) {
-                pausedTimers = [[NSMutableArray alloc] init];
-                CFDictionarySetValue(allPausedTimers, key, pausedTimers);
-                [pausedTimers release];
-            }
-            
-            target->remainingTime = remainingTime;
-            [pausedTimers addObject:target];
-                    
-            [timer invalidate];
-            [timers removeObjectForKey:timerId];
+    KWQObjectTimer *timer = static_cast<KWQObjectTimer *>(info);
+    if (QObject::defersTimers()) {
+        if (!timer->deferred) {
+            if (!deferredTimers)
+                deferredTimers = CFArrayCreateMutable(0, 0, 0);
+            CFArrayAppendValue(deferredTimers, timer);
+            timer->deferred = true;
         }
+    } else {
+        QTimerEvent event(timer->timerId);
+        timer->target->timerEvent(&event);
     }
 }
 
-void QObject::_addTimer(NSTimer *timer, int _timerId)
+int QObject::startTimer(int interval)
 {
-    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
-    if (timers == nil) {
-        timers = [[NSMutableDictionary alloc] init];
+    int timerId = ++lastTimerIdUsed;
+    restartTimer(timerId, interval, interval);
+    return timerId;
+}
+
+void QObject::restartTimer(int timerId, int nextFireInterval, int repeatInterval)
+{
+    ASSERT(timerId > 0);
+    ASSERT(timerId <= lastTimerIdUsed);
+
+    if (!timerDictionaries)
+        timerDictionaries = CFDictionaryCreateMutable(0, 0, 0, &kCFTypeDictionaryValueCallBacks);
+
+    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    if (!timers) {
+        timers = CFDictionaryCreateMutable(0, 0, 0, 0);
         CFDictionarySetValue(timerDictionaries, this, timers);
-        [timers release];
+        CFRelease(timers);
     }
-    [timers setObject:timer forKey:[NSNumber numberWithInt:_timerId]];
+
+    ASSERT(!CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId)));
+
+    KWQObjectTimer *timer = static_cast<KWQObjectTimer *>(fastMalloc(sizeof(KWQObjectTimer)));
+    timer->target = this;
+    timer->timerId = timerId;
+    CFRunLoopTimerContext context = { 0, timer, 0, 0, 0 };
+    CFRunLoopTimerRef runLoopTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + nextFireInterval * 0.001,
+        repeatInterval * 0.001, 0, 0, timerFired, &context);
+    timer->runLoopTimer = runLoopTimer;
+    timer->deferred = false;
+    timer->deleted = false;
+
+    CFDictionarySetValue(timers, reinterpret_cast<void *>(timerId), timer);
+
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), runLoopTimer, kCFRunLoopDefaultMode);
 }
 
-static int nextTimerID = 1;
-
-void QObject::clearPausedTimers (const void *key)
+void QObject::timerIntervals(int timerId, int& nextFireInterval, int& repeatInterval) const
 {
-    if (allPausedTimers)
-        CFDictionaryRemoveValue(allPausedTimers, key);
+    nextFireInterval = -1;
+    repeatInterval = -1;
+    if (!timerDictionaries)
+        return;
+    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    if (!timers)
+        return;
+    KWQObjectTimer *timer = (KWQObjectTimer *)CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId));
+    if (!timer)
+        return;
+    nextFireInterval = (int)((CFRunLoopTimerGetNextFireDate(timer->runLoopTimer) - CFAbsoluteTimeGetCurrent()) * 1000);
+    repeatInterval = (int)(CFRunLoopTimerGetInterval(timer->runLoopTimer) * 1000);
 }
 
-void QObject::resumeTimers (const void *key, QObject *_target)
+static void deleteTimer(KWQObjectTimer *timer)
 {
-    if (allPausedTimers == NULL) {
-        return;
-    }
-    
-    int maxId = MAX(0, nextTimerID);
-        
-    NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
-    if (pausedTimers == nil)
-        return;
+    CFRunLoopTimerInvalidate(timer->runLoopTimer);
+    CFRelease(timer->runLoopTimer);
 
-    int count = [pausedTimers count];
-    while (count--){
-        KWQObjectTimerTarget *target = [pausedTimers objectAtIndex: count];
-        target->target = _target;
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:target->remainingTime
-            target:target
-            selector:@selector(timerFired)
-            userInfo:target
-            repeats:YES];
-        [pausedTimers removeLastObject];
-
-        maxId = MAX (maxId, target->timerId);
-                        
-        _addTimer (timer, target->timerId);
-    }
-    nextTimerID = maxId+1;
-    
-    CFDictionaryRemoveValue(allPausedTimers, key);
+    if (timer->deferred)
+        timer->deleted = true;
+    else
+        fastFree(timer);
 }
 
-int QObject::startTimer(int milliseconds)
+void QObject::killTimer(int timerId)
 {
-    if (timerDictionaries == NULL) {
-        // The global timers dictionary itself lives forever, but the contents are removed
-        // when each timer fires or is killed.
-        timerDictionaries = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-    }
-    
-    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
-    if (timers == nil) {
-        timers = [[NSMutableDictionary alloc] init];
-        CFDictionarySetValue(timerDictionaries, this, timers);
-        [timers release];
-    }
-
-    KWQObjectTimerTarget *target = [[KWQObjectTimerTarget alloc] initWithQObject:this timerId:nextTimerID];
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:milliseconds / 1000.0
-          target:target
-        selector:@selector(timerFired)
-        userInfo:target
-         repeats:YES];
-    [target release];
-    
-    _addTimer (timer, nextTimerID);
-    
-    return nextTimerID++;    
+    if (!timerDictionaries)
+        return;
+    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    if (!timers)
+        return;
+    KWQObjectTimer *timer = (KWQObjectTimer *)CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId));
+    if (!timer)
+        return;
+    deleteTimer(timer);
+    CFDictionaryRemoveValue(timers, reinterpret_cast<void *>(timerId));
 }
 
-void QObject::killTimer(int _timerId)
+static void deleteOneTimer(const void *key, const void *value, void *context)
 {
-    if (_timerId == 0) {
-        return;
-    }
-    if (timerDictionaries == NULL) {
-        return;
-    }
-    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
-    NSNumber *timerId = [NSNumber numberWithInt:_timerId];
-    NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
-    // Only try to remove the timer is it hasn't fired (and is therefore valid).  It is NOT
-    // permissible to reference a timer's userInfo if it is invalid.
-    if ([timer isValid]){
-        [deferredTimers removeObject:(KWQObjectTimerTarget *)[timer userInfo]];
-        [timer invalidate];
-    }
-    [timers removeObjectForKey:timerId];
+    deleteTimer((KWQObjectTimer *)value);
 }
 
 void QObject::killTimers()
 {
-    if (timerDictionaries == NULL) {
+    if (!timerDictionaries)
         return;
-    }
-    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
-    if (timers == nil) {
+    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    if (!timers)
         return;
-    }
-    NSEnumerator *e = [timers keyEnumerator];
-    NSNumber *timerId;
-    while ((timerId = [e nextObject]) != nil) {
-	killTimer([timerId intValue]);
-    }
-
+    CFDictionaryApplyFunction(timers, deleteOneTimer, 0);
     CFDictionaryRemoveValue(timerDictionaries, this);
+}
+
+static void sendDeferredTimerEvent(const void *value, void *context)
+{
+    KWQObjectTimer *timer = (KWQObjectTimer *)value;
+    if (!timer)
+        return;
+    if (timer->deleted) {
+        fastFree(timer);
+        return;
+    }
+    QTimerEvent event(timer->timerId);
+    timer->target->timerEvent(&event);
+    if (timer->deleted) {
+        fastFree(timer);
+        return;
+    }
+    timer->deferred = false;
+}
+
+static void sendDeferredTimerEvents(CFRunLoopTimerRef, void *)
+{
+    CFRelease(sendDeferredTimerEventsTimer);
+    sendDeferredTimerEventsTimer = 0;
+
+    CFArrayRef timers = deferredTimers;
+    deferredTimers = 0;
+
+    if (timers) {
+        CFArrayApplyFunction(timers, CFRangeMake(0, CFArrayGetCount(timers)), sendDeferredTimerEvent, 0);
+        CFRelease(timers);
+    }
 }
 
 void QObject::setDefersTimers(bool defers)
 {
     if (defers) {
         _defersTimers = true;
-        deferringTimers = true;
-        [NSObject cancelPreviousPerformRequestsWithTarget:[KWQObjectTimerTarget class]];
+        if (sendDeferredTimerEventsTimer) {
+            CFRunLoopTimerInvalidate(sendDeferredTimerEventsTimer);
+            CFRelease(sendDeferredTimerEventsTimer);
+            sendDeferredTimerEventsTimer = 0;
+        }
         return;
     }
     
     if (_defersTimers) {
         _defersTimers = false;
-        if (deferringTimers) {
-            [KWQObjectTimerTarget performSelector:@selector(stopDeferringTimers) withObject:nil afterDelay:0];
-        }
+        ASSERT(!sendDeferredTimerEventsTimer);
+        sendDeferredTimerEventsTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent(),
+            0, 0, 0, sendDeferredTimerEvents, 0);
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), sendDeferredTimerEventsTimer, kCFRunLoopDefaultMode);
     }
 }
-
-@implementation KWQObjectTimerTarget
-
-- initWithQObject:(QObject *)qo timerId:(int)t
-{
-    [super init];
-    target = qo;
-    timerId = t;
-    return self;
-}
-
-- (void)sendTimerEvent
-{
-    QTimerEvent event(timerId);
-    target->timerEvent(&event);
-}
-
-- (void)timerFired
-{
-    if (deferringTimers) {
-        if (deferredTimers == nil) {
-            deferredTimers = [[NSMutableArray alloc] init];
-        }
-	if (![deferredTimers containsObject:self]) {
-	    [deferredTimers addObject:self];
-	}
-    } else {
-        [self sendTimerEvent];
-    }
-}
-
-+ (void)stopDeferringTimers
-{
-    ASSERT(deferringTimers);
-    while ([deferredTimers count] != 0) {
-	// remove before sending the timer event, in case the timer
-	// callback cancels the timer - we don't want to remove too
-	// much in that case.
-	KWQObjectTimerTarget *timerTarget = [deferredTimers objectAtIndex:0];
-	[timerTarget retain];
-	[deferredTimers removeObjectAtIndex:0];
-        [timerTarget sendTimerEvent];
-	[timerTarget release];
-    }
-
-    deferringTimers = false;
-}
-
-@end
 
 bool QObject::inherits(const char *className) const
 {
