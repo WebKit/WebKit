@@ -147,7 +147,7 @@ using KJS::Bindings::RootObject;
 NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
-NSString *WebCoreElementImageKey =              @"WebElementImage";
+NSString *WebCoreElementImageRendererKey =      @"WebCoreElementImageRenderer";
 NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
 NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
 NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
@@ -1117,9 +1117,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
             if (!r->isDisplayingError()) {
                 QPixmap p = r->pixmap();
-                NSImage *image = [p.imageRenderer() image];
-                if (image)
-                    [element setObject:image forKey:WebCoreElementImageKey];
+                if (p.imageRenderer())
+                    [element setObject:p.imageRenderer() forKey:WebCoreElementImageRendererKey];
             }
 
             int x, y;
@@ -1801,7 +1800,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
-// punctuation when itÕs inserted into the receiverÕs text over charRange. Returns by reference
+// punctuation when itâ€™s inserted into the receiverâ€™s text over charRange. Returns by reference
 // in beforeString and afterString any whitespace that should be added, unless either or both are
 // nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString

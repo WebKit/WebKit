@@ -1,3 +1,16 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6032
+          REGRESSION: Uncaught exception when image is dragged out of webpage
+
+        * WebCore.exp: Export the new WebCoreElementImageRendererKey and remove the old
+        WebCoreElementImageKey.
+        * kwq/WebCoreBridge.h: Add WebCoreElementImageRendererKey, remove WebCoreElementImageKey.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Pass the image renderer in the
+        dictionary, but not the NSImage.
+
 2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

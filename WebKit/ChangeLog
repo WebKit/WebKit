@@ -1,5 +1,20 @@
 2005-12-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6032
+          REGRESSION: Uncaught exception when image is dragged out of webpage
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        Pass the image renderer, not the NSImage.
+        (-[WebHTMLView elementAtPoint:]): Add an NSImage to the dictionary, which now comes from
+        WebCore with only an image renderer.
+        * WebView.subproj/WebView.m: (-[WebView _writeImageElement:withPasteboardTypes:toPasteboard:]):
+        Pass the image renderer, not the NSImage.
+
+2005-12-10  Darin Adler  <darin@apple.com>
+
         Was getting build failures related to "count" methods.
         Made Tim's build fix Leopard-only.
 

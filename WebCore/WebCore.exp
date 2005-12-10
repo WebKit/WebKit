@@ -121,8 +121,8 @@
 _WebCoreElementDOMNodeKey
 _WebCoreElementFrameKey
 _WebCoreElementImageAltStringKey
-_WebCoreElementImageKey
 _WebCoreElementImageRectKey
+_WebCoreElementImageRendererKey
 _WebCoreElementImageURLKey
 _WebCoreElementIsSelectedKey
 _WebCoreElementLinkLabelKey
