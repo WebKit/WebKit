@@ -1,3 +1,13 @@
+2005-12-10  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Hyatt, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3983
+          outline:auto improperly puts outline around contained elements, not the actual div
+
+        * khtml/rendering/render_flow.cpp: (RenderFlow::addFocusRingRects):
+        Only add the rect if this is a RenderBlock.
+
 2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

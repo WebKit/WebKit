@@ -658,25 +658,15 @@ QRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
 
 void RenderFlow::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
-    // Only paint focus ring around outermost contenteditable element.
-    // But skip the body element if it is outermost.
-    if (element() && element()->isContentEditable()) {
-        if (element()->parentNode() && !element()->parentNode()->isContentEditable() && !element()->hasTagName(bodyTag))
-            p->addFocusRingRect(_tx, _ty, width(), height());
-        return;
-    }
+    if (isRenderBlock())
+       p->addFocusRingRect(_tx, _ty, width(), height());
 
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        p->addFocusRingRect(_tx + curr->xPos(), 
-                            _ty + curr->yPos(), 
-                            curr->width(), 
-                            curr->height());
-    }
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        p->addFocusRingRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height());
     
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         if (!curr->isText())
             curr->addFocusRingRects(p, _tx + curr->xPos(), _ty + curr->yPos());
-    }
     
     if (continuation())
         continuation()->addFocusRingRects(p, 
