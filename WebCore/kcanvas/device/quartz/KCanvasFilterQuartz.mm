@@ -282,8 +282,8 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 
 CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	CIFilter *filter = nil;
 	KWQ_BLOCK_EXCEPTIONS
+	CIFilter *filter = nil;
 	
 	switch(blendMode()) {
 	case BM_NORMAL:
@@ -432,8 +432,8 @@ CIFilter *KCanvasFEComponentTransferQuartz::getCIFilter(KCanvasFilterQuartz *qua
 
 CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	CIFilter *filter = nil;
 	KWQ_BLOCK_EXCEPTIONS
+	CIFilter *filter = nil;
 	switch(operation()) {
 	case CO_OVER:
             filter = [CIFilter filterWithName:@"CISourceOverCompositing"];
@@ -669,8 +669,8 @@ CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFi
 CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
 	// Just stack a bunch of composite source over filters together...
-	CIFilter *filter = nil;
 	KWQ_BLOCK_EXCEPTIONS
+	CIFilter *filter = nil;
 	QStringList inputs = mergeInputs();
 	QValueListIterator<QString> it = inputs.begin();
 	QValueListIterator<QString> end = inputs.end();

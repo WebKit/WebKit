@@ -81,6 +81,8 @@ private:
 class QPointF {
 public:
     QPointF(float x, float y) : m_x(x), m_y(y) { }
+    // this constructor is needed for building on gcc 3.3
+    QPointF() { }
 
     float x() const { return m_x; }
     void setX(float x) { m_x = x; }
@@ -157,7 +159,8 @@ class KCanvasFilterQuartz;
 class KCanvasFilterEffect
 {
 public:
-    KCanvasFilterEffect() { };
+    // this default constructor is only needed for gcc 3.3
+    KCanvasFilterEffect() { }
     virtual ~KCanvasFilterEffect() { };
 
     virtual KCFilterEffectType effectType() const { return FE_TURBULENCE; }
@@ -345,6 +348,8 @@ typedef enum {
 class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
 {
 public:
+    KCanvasFEConvolveMatrix() { };
+
     QSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(QSize kernelSize) { m_kernelSize = kernelSize; }
     

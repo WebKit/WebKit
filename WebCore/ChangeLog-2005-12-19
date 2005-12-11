@@ -1,3 +1,18 @@
+2005-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Tim Hatcher.
+
+        - fix WebCore SVG build for gcc 3.3 (don't know why it has these complaints)
+
+        * kcanvas/KCanvasFilters.h:
+        (QPointF::QPointF): Add a default constructor
+        (KCanvasFEConvolveMatrix::KCanvasFEConvolveMatrix): ditto
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEBlendQuartz::getCIFilter): Move a variable declaration
+	instead exception blocking
+        (KCanvasFECompositeQuartz::getCIFilter): ditto
+        (KCanvasFEMergeQuartz::getCIFilter): ditto
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
