@@ -1,3 +1,16 @@
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Small fixes made during SVG code review.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5999
+
+        * svg/custom/conditional-processing-outside-switch-expected.checksum: Added.
+        * svg/custom/conditional-processing-outside-switch-expected.png: Added.
+        * svg/custom/conditional-processing-outside-switch-expected.txt: Added.
+        * svg/custom/conditional-processing-outside-switch.svg: Added.
+        * svg/custom/simpleCDF-expected.txt:
+
 2005-12-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
