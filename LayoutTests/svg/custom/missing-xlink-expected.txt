@@ -1,0 +1,23 @@
+layer at (0,0) size 575x345
+  RenderCanvas at (0,0) size 480x345
+layer at (0,0) size 575x156
+  RenderBlock {HTML} at (0,0) size 480x156
+    RenderBody {BODY} at (8,18) size 464x130
+      RenderBlock (anonymous) at (0,0) size 464x0
+        RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock (anonymous) at (0,0) size 464x94
+        RenderBlock {H3} at (0,0) size 464x22
+          RenderText {TEXT} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {DIV} at (0,40) size 464x14
+          RenderText {TEXT} at (0,0) size 567x14
+            text run at (0,0) width 567: "error on line 6 at column 60: Namespace prefix xlink for href on a is not defined"
+        RenderBlock {H3} at (0,72) size 464x22
+          RenderText {TEXT} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,112) size 464x18
+        RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        KCanvasContainer {svg} at (8,130) size 100x100
+          KCanvasItem {rect} at (8,130) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+          KCanvasContainer {a} at (8,130) size 100x100
+            KCanvasItem {rect} at (8,130) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

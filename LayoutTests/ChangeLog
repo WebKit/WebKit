@@ -1,5 +1,43 @@
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin & mjs.
+
+        Fixes SVG to load external scripts and report parse errors.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5875
+
+        Added 7 layout tests to exercise parse error code.
+
+        * fast/invalid/junk-data-expected.checksum: Added.
+        * fast/invalid/junk-data-expected.png: Added.
+        * fast/invalid/junk-data-expected.txt: Added.
+        * fast/invalid/junk-data.xml: Added.
+        * fast/invalid/missing-end-tag-expected.checksum: Added.
+        * fast/invalid/missing-end-tag-expected.png: Added.
+        * fast/invalid/missing-end-tag-expected.txt: Added.
+        * fast/invalid/missing-end-tag.xhtml: Added.
+        * fast/xsl/xslt-extra-content-at-end-expected.checksum: Added.
+        * fast/xsl/xslt-extra-content-at-end-expected.png: Added.
+        * fast/xsl/xslt-extra-content-at-end-expected.txt: Added.
+        * fast/xsl/xslt-extra-content-at-end.xml: Added.
+        * fast/xsl/xslt-mismatched-tags-in-xslt-expected.checksum: Added.
+        * fast/xsl/xslt-mismatched-tags-in-xslt-expected.png: Added.
+        * fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Added.
+        * fast/xsl/xslt-mismatched-tags-in-xslt.xml: Added.
+        * fast/xsl/xslt-missing-namespace-in-xslt-expected.checksum: Added.
+        * fast/xsl/xslt-missing-namespace-in-xslt-expected.png: Added.
+        * fast/xsl/xslt-missing-namespace-in-xslt-expected.txt: Added.
+        * fast/xsl/xslt-missing-namespace-in-xslt.xml: Added.
+        * svg/custom/junk-data-expected.checksum: Added.
+        * svg/custom/junk-data-expected.png: Added.
+        * svg/custom/junk-data-expected.txt: Added.
+        * svg/custom/junk-data.svg: Added.
+        * svg/custom/missing-xlink-expected.checksum: Added.
+        * svg/custom/missing-xlink-expected.png: Added.
+        * svg/custom/missing-xlink-expected.txt: Added.
+        * svg/custom/missing-xlink.svg: Added.
+
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Small fixes made during SVG code review.
