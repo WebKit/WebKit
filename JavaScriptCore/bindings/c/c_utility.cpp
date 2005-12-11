@@ -137,22 +137,22 @@ ValueImp *convertNPVariantToValue(ExecState *exec, const NPVariant *variant)
         return jsBoolean(false);
     }
     else if (type == NPVariantType_Null) {
-        return Null();
+        return jsNull();
     }
     else if (type == NPVariantType_Void) {
-        return Undefined();
+        return jsUndefined();
     }
     else if (type == NPVariantType_Int32) {
         int32_t anInt;
         if (NPN_VariantToInt32(variant, &anInt))
-            return Number(anInt);
-        return Number(0);
+            return jsNumber(anInt);
+        return jsNumber(0);
     }
     else if (type == NPVariantType_Double) {
         double aDouble;
         if (NPN_VariantToDouble(variant, &aDouble))
-            return Number(aDouble);
-        return Number(0);
+            return jsNumber(aDouble);
+        return jsNumber(0);
     }
     else if (type == NPVariantType_String) {
         NPUTF16 *stringValue;
@@ -176,7 +176,7 @@ ValueImp *convertNPVariantToValue(ExecState *exec, const NPVariant *variant)
         }
     }
     
-    return Undefined();
+    return jsUndefined();
 }
 
 } }

@@ -197,11 +197,11 @@ bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
         if (type == Normal) {
             result = completion.value();
             if (!result) {
-                result = Undefined();
+                result = jsUndefined();
             }
         }
         else
-            result = Undefined();
+            result = jsUndefined();
             
         free ((void *)scriptString);
         

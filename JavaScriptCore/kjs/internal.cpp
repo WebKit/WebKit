@@ -529,8 +529,8 @@ InterpreterImp::InterpreterImp(Interpreter *interp, ObjectImp *glob)
 
   // built-in values
   global->put(&globExec, "NaN",        jsNaN(), DontEnum|DontDelete);
-  global->put(&globExec, "Infinity",   Number(Inf), DontEnum|DontDelete);
-  global->put(&globExec, "undefined",  Undefined(), DontEnum|DontDelete);
+  global->put(&globExec, "Infinity",   jsNumber(Inf), DontEnum|DontDelete);
+  global->put(&globExec, "undefined",  jsUndefined(), DontEnum|DontDelete);
 
   // built-in functions
   global->put(&globExec, "eval",       new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::Eval, 1), DontEnum);

@@ -210,7 +210,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
-        result = Undefined();
+        result = jsUndefined();
     }
 
     // Convert and return the result of the function call.
@@ -241,13 +241,13 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (type == Normal) {
         result = completion.value();
         if (!result)
-            result = Undefined();
+            result = jsUndefined();
     } else
-        result = Undefined();
+        result = jsUndefined();
     
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
-        result = Undefined();
+        result = jsUndefined();
     }
     
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
@@ -294,7 +294,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
-        result = Undefined();
+        result = jsUndefined();
     }
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
@@ -358,7 +358,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
-        result = Undefined();
+        result = jsUndefined();
     }
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];

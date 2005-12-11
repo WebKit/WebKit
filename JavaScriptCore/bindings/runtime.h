@@ -114,7 +114,7 @@ public:
     
     virtual Field *fieldNamed(const char *name, Instance *instance) const = 0;
 
-    virtual ValueImp *fallbackObject(ExecState *, Instance *, const Identifier &) { return Undefined(); }
+    virtual ValueImp *fallbackObject(ExecState *, Instance *, const Identifier &) { return jsUndefined(); }
     
     virtual ~Class() {}
 };
@@ -152,7 +152,7 @@ public:
     virtual Class *getClass() const = 0;
     
     virtual ValueImp *getValueOfField(ExecState *exec, const Field *aField) const;
-    virtual ValueImp *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); }
+    virtual ValueImp *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return jsUndefined(); }
     virtual void setValueOfField(ExecState *exec, const Field *aField, ValueImp *aValue) const;
     virtual bool supportsSetValueOfUndefinedField() { return false; }
     virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, ValueImp *aValue) {}
@@ -162,7 +162,7 @@ public:
     
     virtual ValueImp *defaultValue(Type hint) const = 0;
     
-    virtual ValueImp *valueOf() const { return String(getClass()->name()); }
+    virtual ValueImp *valueOf() const { return jsString(getClass()->name()); }
     
     void setExecutionContext(const RootObject *r) { _executionContext = r; }
     const RootObject *executionContext() const { return _executionContext; }

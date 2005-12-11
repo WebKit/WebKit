@@ -1,3 +1,159 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminated the old Undefined(), Null(), Boolean(), Number(), and String()
+
+        Code now uses jsUndefined(), jsNull(), jsBoolean(), jsNumber(), and jsString().
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        * bindings/c/c_runtime.cpp:
+        (CField::valueFromInstance):
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertNPVariantToValue):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        (JavaInstance::invokeDefaultMethod):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::eval):
+        (JSObject::convertJObjectToValue):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        (JavaField::valueFromInstance):
+        (JavaArray::valueAt):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcFallbackObjectImp::callAsFunction):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Class::fallbackObject):
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::valueOf):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::lengthGetter):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::lengthGetter):
+        (RuntimeMethodImp::callAsFunction):
+        (RuntimeMethodImp::execute):
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::lengthGetter):
+        (CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
+        (ArrayPrototypeImp::ArrayPrototypeImp):
+        (ArrayProtoFuncImp::ArrayProtoFuncImp):
+        (ArrayProtoFuncImp::callAsFunction):
+        (ArrayObjectImp::ArrayObjectImp):
+        * kjs/bool_object.cpp:
+        (BooleanPrototypeImp::BooleanPrototypeImp):
+        (BooleanProtoFuncImp::callAsFunction):
+        (BooleanObjectImp::BooleanObjectImp):
+        (BooleanObjectImp::callAsFunction):
+        * kjs/error_object.cpp:
+        (ErrorPrototypeImp::ErrorPrototypeImp):
+        (ErrorProtoFuncImp::ErrorProtoFuncImp):
+        (ErrorProtoFuncImp::callAsFunction):
+        (ErrorObjectImp::ErrorObjectImp):
+        (NativeErrorImp::NativeErrorImp):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::DeclaredFunctionImp::execute):
+        (KJS::encode):
+        (KJS::decode):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionPrototypeImp::FunctionPrototypeImp):
+        (FunctionPrototypeImp::callAsFunction):
+        (FunctionProtoFuncImp::callAsFunction):
+        (FunctionObjectImp::FunctionObjectImp):
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::initGlobalObject):
+        * kjs/interpreter.h:
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        (MathObjectImp::getValueProperty):
+        (MathFuncImp::callAsFunction):
+        * kjs/nodes.cpp:
+        (Node::setExceptionDetailsIfNeeded):
+        (NullNode::evaluate):
+        (PropertyNode::evaluate):
+        (FunctionCallBracketNode::evaluate):
+        (FunctionCallDotNode::evaluate):
+        (PostfixBracketNode::evaluate):
+        (PostfixDotNode::evaluate):
+        (VoidNode::evaluate):
+        (PrefixBracketNode::evaluate):
+        (PrefixDotNode::evaluate):
+        (ShiftNode::evaluate):
+        (valueForReadModifyAssignment):
+        (AssignDotNode::evaluate):
+        (AssignBracketNode::evaluate):
+        (VarDeclNode::evaluate):
+        (VarDeclNode::processVarDecls):
+        (VarDeclListNode::evaluate):
+        (ReturnNode::execute):
+        (CaseClauseNode::evalStatements):
+        (ParameterNode::evaluate):
+        (FuncDeclNode::processFuncDecl):
+        * kjs/nodes.h:
+        (KJS::StatementNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberPrototypeImp::NumberPrototypeImp):
+        (NumberProtoFuncImp::callAsFunction):
+        (NumberObjectImp::NumberObjectImp):
+        (NumberObjectImp::getValueProperty):
+        (NumberObjectImp::callAsFunction):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::get):
+        (KJS::Error::create):
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::callAsFunction):
+        (ObjectObjectImp::ObjectObjectImp):
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::undefinedGetter):
+        * kjs/regexp_object.cpp:
+        (RegExpPrototypeImp::RegExpPrototypeImp):
+        (RegExpProtoFuncImp::callAsFunction):
+        (RegExpObjectImp::RegExpObjectImp):
+        (RegExpObjectImp::arrayOfMatches):
+        (RegExpObjectImp::getBackref):
+        (RegExpObjectImp::getLastMatch):
+        (RegExpObjectImp::getLastParen):
+        (RegExpObjectImp::getLeftContext):
+        (RegExpObjectImp::getRightContext):
+        (RegExpObjectImp::getValueProperty):
+        (RegExpObjectImp::construct):
+        * kjs/string_object.cpp:
+        (StringInstanceImp::StringInstanceImp):
+        (StringPrototypeImp::StringPrototypeImp):
+        (replace):
+        (StringProtoFuncImp::callAsFunction):
+        (StringObjectImp::StringObjectImp):
+        (StringObjectImp::callAsFunction):
+        (StringObjectFuncImp::StringObjectFuncImp):
+        (StringObjectFuncImp::callAsFunction):
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+        (VersionFunctionImp::callAsFunction):
+        * kjs/value.h:
+
 2005-12-10  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
         Reviewed by Maciej, landed by Darin.

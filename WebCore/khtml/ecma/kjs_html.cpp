@@ -159,7 +159,7 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
   switch (id) {
   case HTMLDocument::Clear: // even IE doesn't support that one...
     //doc.clear(); // TODO
-    return Undefined();
+    return jsUndefined();
   case HTMLDocument::Open:
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (args.size() > 2) {
@@ -173,15 +173,15 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
 	  return functionObject->call(exec, window, args);
 	}
       }
-      return Undefined();
+      return jsUndefined();
     }
     // In the case of two parameters or fewer, do a normal document open.
     doc.open();
-    return Undefined();
+    return jsUndefined();
   case HTMLDocument::Close:
     // see khtmltests/ecma/tokenizer-script-recursion.html
     doc.close();
-    return Undefined();
+    return jsUndefined();
   case HTMLDocument::Write:
   case HTMLDocument::WriteLn: {
     // DOM only specifies single string argument, but NS & IE allow multiple
@@ -193,7 +193,7 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
       str += "\n";
     //kdDebug() << "document.write: " << str.ascii() << endl;
     doc.write(str.domString());
-    return Undefined();
+    return jsUndefined();
   }
   case HTMLDocument::GetElementsByName:
     return getDOMNodeList(exec, doc.getElementsByName(args[0]->toString(exec).domString()).get());
@@ -203,7 +203,7 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
     break;
   }
 
-  return Undefined();
+  return jsUndefined();
 }
 
 const ClassInfo KJS::HTMLDocument::info =
@@ -296,21 +296,21 @@ ValueImp *HTMLDocument::getValueProperty(ExecState *exec, int token) const
     
   switch (token) {
   case Title:
-    return String(doc.title());
+    return jsString(doc.title());
   case Referrer:
-    return String(doc.referrer());
+    return jsString(doc.referrer());
   case Domain:
-    return String(doc.domain());
+    return jsString(doc.domain());
   case URL:
-    return String(doc.URL());
+    return jsString(doc.URL());
   case Body:
     return getDOMNode(exec, body);
   case Location:
     if (Window* win = Window::retrieveWindow(part))
       return win->location();
-    return Undefined();
+    return jsUndefined();
   case Cookie:
-    return String(doc.cookie());
+    return jsString(doc.cookie());
   case Images:
     return getHTMLCollection(exec, doc.images().get());
   case Embeds:
@@ -328,49 +328,49 @@ ValueImp *HTMLDocument::getValueProperty(ExecState *exec, int token) const
       // To be implemented. Meanwhile, return an object with a length property set to 0
       kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
       ObjectImp *obj = new ObjectImp;
-      obj->put(exec, lengthPropertyName, Number(0));
+      obj->put(exec, lengthPropertyName, jsNumber(0));
       return obj;
     }
   case All:
     // Disable document.all when we try to be Netscape-compatible
     if (exec->dynamicInterpreter()->compatMode() == Interpreter::NetscapeCompat)
-      return Undefined();
+      return jsUndefined();
     return getHTMLCollection(exec, doc.all().get());
   case BgColor:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->bgColor());
+      return jsUndefined();
+    return jsString(bodyElement->bgColor());
   case FgColor:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->text());
+      return jsUndefined();
+    return jsString(bodyElement->text());
   case AlinkColor:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->aLink());
+      return jsUndefined();
+    return jsString(bodyElement->aLink());
   case LinkColor:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->link());
+      return jsUndefined();
+    return jsString(bodyElement->link());
   case VlinkColor:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->vLink());
+      return jsUndefined();
+    return jsString(bodyElement->vLink());
   case LastModified:
-    return String(doc.lastModified());
+    return jsString(doc.lastModified());
   case Height:
-    return Number(view ? view->contentsHeight() : 0);
+    return jsNumber(view ? view->contentsHeight() : 0);
   case Width:
-    return Number(view ? view->contentsWidth() : 0);
+    return jsNumber(view ? view->contentsWidth() : 0);
   case Dir:
     if (!bodyElement)
-      return Undefined();
-    return String(bodyElement->dir());
+      return jsUndefined();
+    return jsString(bodyElement->dir());
   case DesignMode:
-    return String(doc.inDesignMode() ? "on" : "off");
+    return jsString(doc.inDesignMode() ? "on" : "off");
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -1293,7 +1293,7 @@ ValueImp *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& pro
         if (Window *window = Window::retrieveWindow(doc->part()))
             return window;
 
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -1304,7 +1304,7 @@ ValueImp *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifi
         if (Window *window = Window::retrieveWindow(doc->part()))
             return window->get(exec, propertyName);
 
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -1322,7 +1322,7 @@ ValueImp *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identi
 
     if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
         return static_cast<ObjectImp *>(runtimeObject)->get(exec, propertyName);
-    return Undefined();
+    return jsUndefined();
 }
 
 bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1435,23 +1435,23 @@ ValueImp *KJS::HTMLElement::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
         if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<ObjectImp *>(runtimeObject)->call(exec, thisObj, args);
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::htmlGetter(ExecState* exec, int token) const
 {
     HTMLHtmlElementImpl& html = *static_cast<HTMLHtmlElementImpl*>(impl());
     if (token == HtmlVersion)
-        return String(html.version());
-    return Undefined();
+        return jsString(html.version());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::headGetter(ExecState* exec, int token) const
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile)
-        return String(head.profile());
-    return Undefined();
+        return jsString(head.profile());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::linkGetter(ExecState* exec, int token) const
@@ -1459,57 +1459,57 @@ ValueImp *HTMLElement::linkGetter(ExecState* exec, int token) const
     HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
         case LinkDisabled:
-            return Boolean(link.disabled());
+            return jsBoolean(link.disabled());
         case LinkCharset:
-            return String(link.charset());
+            return jsString(link.charset());
         case LinkHref:
-            return String(link.href());
+            return jsString(link.href());
         case LinkHrefLang:
-            return String(link.hreflang());
+            return jsString(link.hreflang());
         case LinkMedia:           
-            return String(link.media());
+            return jsString(link.media());
         case LinkRel:             
-            return String(link.rel());
+            return jsString(link.rel());
         case LinkRev:            
-            return String(link.rev());
+            return jsString(link.rev());
         case LinkTarget:          
-            return String(link.target());
+            return jsString(link.target());
         case LinkType:            
-            return String(link.type());
+            return jsString(link.type());
         case LinkSheet:           
             return getDOMStyleSheet(exec, link.sheet());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::titleGetter(ExecState* exec, int token) const
 {
     HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
     if (token == TitleText)
-        return String(title.text());
-    return Undefined();
+        return jsString(title.text());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::metaGetter(ExecState* exec, int token) const
 {
     HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
-        case MetaContent:         return String(meta.content());
-        case MetaHttpEquiv:       return String(meta.httpEquiv());
-        case MetaName:            return String(meta.name());
-        case MetaScheme:          return String(meta.scheme());
+        case MetaContent:         return jsString(meta.content());
+        case MetaHttpEquiv:       return jsString(meta.httpEquiv());
+        case MetaName:            return jsString(meta.name());
+        case MetaScheme:          return jsString(meta.scheme());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::baseGetter(ExecState* exec, int token) const
 {
     HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
     switch (token) {
-        case BaseHref:            return String(base.href());
-        case BaseTarget:          return String(base.target());
+        case BaseHref:            return jsString(base.href());
+        case BaseTarget:          return jsString(base.target());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::isIndexGetter(ExecState* exec, int token) const
@@ -1517,33 +1517,33 @@ ValueImp *HTMLElement::isIndexGetter(ExecState* exec, int token) const
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     switch (token) {
         case IsIndexForm:            return getDOMNode(exec, isindex.form()); // type HTMLFormElement
-        case IsIndexPrompt:          return String(isindex.prompt());
+        case IsIndexPrompt:          return jsString(isindex.prompt());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::styleGetter(ExecState* exec, int token) const
 {
     HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
     switch (token) {
-        case StyleDisabled:        return Boolean(style.disabled());
-        case StyleMedia:           return String(style.media());
-        case StyleType:            return String(style.type());
+        case StyleDisabled:        return jsBoolean(style.disabled());
+        case StyleMedia:           return jsString(style.media());
+        case StyleType:            return jsString(style.type());
         case StyleSheet:           return getDOMStyleSheet(exec, style.sheet());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::bodyGetter(ExecState* exec, int token) const
 {
     HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
     switch (token) {
-        case BodyALink:           return String(body.aLink());
-        case BodyBackground:      return String(body.background());
-        case BodyBgColor:         return String(body.bgColor());
-        case BodyLink:            return String(body.link());
-        case BodyText:            return String(body.text());
-        case BodyVLink:           return String(body.vLink());
+        case BodyALink:           return jsString(body.aLink());
+        case BodyBackground:      return jsString(body.background());
+        case BodyBgColor:         return jsString(body.bgColor());
+        case BodyLink:            return jsString(body.link());
+        case BodyText:            return jsString(body.text());
+        case BodyVLink:           return jsString(body.vLink());
         default: {
             // Update the document's layout before we compute these attributes.
             DocumentImpl *doc = body.getDocument();
@@ -1552,17 +1552,17 @@ ValueImp *HTMLElement::bodyGetter(ExecState* exec, int token) const
             KHTMLView *view = doc ? doc->view() : 0;
             switch (token) {
                 case BodyScrollLeft:
-                    return Number(view ? view->contentsX() : 0);
+                    return jsNumber(view ? view->contentsX() : 0);
                 case BodyScrollTop:
-                    return Number(view ? view->contentsY() : 0);
+                    return jsNumber(view ? view->contentsY() : 0);
                 case BodyScrollHeight:
-                    return Number(view ? view->contentsHeight() : 0);
+                    return jsNumber(view ? view->contentsHeight() : 0);
                 case BodyScrollWidth:
-                    return Number(view ? view->contentsWidth() : 0);
+                    return jsNumber(view ? view->contentsWidth() : 0);
             }
         }
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::formGetter(ExecState* exec, int token) const
@@ -1570,44 +1570,44 @@ ValueImp *HTMLElement::formGetter(ExecState* exec, int token) const
     HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
     switch (token) {
         case FormElements:        return getHTMLCollection(exec, form.elements().get());
-        case FormLength:          return Number(form.length());
-        case FormName:            return String(form.name());
-        case FormAcceptCharset:   return String(form.acceptCharset());
-        case FormAction:          return String(form.action());
-        case FormEncType:         return String(form.enctype());
-        case FormMethod:          return String(form.method());
-        case FormTarget:          return String(form.target());
+        case FormLength:          return jsNumber(form.length());
+        case FormName:            return jsString(form.name());
+        case FormAcceptCharset:   return jsString(form.acceptCharset());
+        case FormAction:          return jsString(form.action());
+        case FormEncType:         return jsString(form.enctype());
+        case FormMethod:          return jsString(form.method());
+        case FormTarget:          return jsString(form.target());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::selectGetter(ExecState* exec, int token) const
 {
     HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
     switch (token) {
-        case SelectType:            return String(select.type());
-        case SelectSelectedIndex:   return Number(select.selectedIndex());
-        case SelectValue:           return String(select.value());
-        case SelectLength:          return Number(select.length());
+        case SelectType:            return jsString(select.type());
+        case SelectSelectedIndex:   return jsNumber(select.selectedIndex());
+        case SelectValue:           return jsString(select.value());
+        case SelectLength:          return jsNumber(select.length());
         case SelectForm:            return getDOMNode(exec, select.form()); // type HTMLFormElement
         case SelectOptions:         return getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select); // type HTMLCollection
-        case SelectDisabled:        return Boolean(select.disabled());
-        case SelectMultiple:        return Boolean(select.multiple());
-        case SelectName:            return String(select.name());
-        case SelectSize:            return Number(select.size());
-        case SelectTabIndex:        return Number(select.tabIndex());
+        case SelectDisabled:        return jsBoolean(select.disabled());
+        case SelectMultiple:        return jsBoolean(select.multiple());
+        case SelectName:            return jsString(select.name());
+        case SelectSize:            return jsNumber(select.size());
+        case SelectTabIndex:        return jsNumber(select.tabIndex());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::optGroupGetter(ExecState* exec, int token) const
 {
     HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
     switch (token) {
-        case OptGroupDisabled:        return Boolean(optgroup.disabled());
-        case OptGroupLabel:           return String(optgroup.label());
+        case OptGroupDisabled:        return jsBoolean(optgroup.disabled());
+        case OptGroupLabel:           return jsString(optgroup.label());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::optionGetter(ExecState* exec, int token) const
@@ -1615,73 +1615,73 @@ ValueImp *HTMLElement::optionGetter(ExecState* exec, int token) const
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
     switch (token) {
         case OptionForm:            return getDOMNode(exec,option.form()); // type HTMLFormElement
-        case OptionDefaultSelected: return Boolean(option.defaultSelected());
-        case OptionText:            return String(option.text());
-        case OptionIndex:           return Number(option.index());
-        case OptionDisabled:        return Boolean(option.disabled());
-        case OptionLabel:           return String(option.label());
-        case OptionSelected:        return Boolean(option.selected());
-        case OptionValue:           return String(option.value());
+        case OptionDefaultSelected: return jsBoolean(option.defaultSelected());
+        case OptionText:            return jsString(option.text());
+        case OptionIndex:           return jsNumber(option.index());
+        case OptionDisabled:        return jsBoolean(option.disabled());
+        case OptionLabel:           return jsString(option.label());
+        case OptionSelected:        return jsBoolean(option.selected());
+        case OptionValue:           return jsString(option.value());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 static ValueImp *getInputSelectionStart(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
-        return Number(input.selectionStart());
-    return Undefined();
+        return jsNumber(input.selectionStart());
+    return jsUndefined();
 }
 
 static ValueImp *getInputSelectionEnd(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
-        return Number(input.selectionEnd());
-    return Undefined();
+        return jsNumber(input.selectionEnd());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::inputGetter(ExecState* exec, int token) const
 {
     HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
-        case InputDefaultValue:    return String(input.defaultValue());
-        case InputDefaultChecked:  return Boolean(input.defaultChecked());
+        case InputDefaultValue:    return jsString(input.defaultValue());
+        case InputDefaultChecked:  return jsBoolean(input.defaultChecked());
         case InputForm:            return getDOMNode(exec,input.form()); // type HTMLFormElement
-        case InputAccept:          return String(input.accept());
-        case InputAccessKey:       return String(input.accessKey());
-        case InputAlign:           return String(input.align());
-        case InputAlt:             return String(input.alt());
-        case InputChecked:         return Boolean(input.checked());
-        case InputDisabled:        return Boolean(input.disabled());
-        case InputIndeterminate:   return Boolean(input.indeterminate());
-        case InputMaxLength:       return Number(input.maxLength());
-        case InputName:            return String(input.name());
-        case InputReadOnly:        return Boolean(input.readOnly());
+        case InputAccept:          return jsString(input.accept());
+        case InputAccessKey:       return jsString(input.accessKey());
+        case InputAlign:           return jsString(input.align());
+        case InputAlt:             return jsString(input.alt());
+        case InputChecked:         return jsBoolean(input.checked());
+        case InputDisabled:        return jsBoolean(input.disabled());
+        case InputIndeterminate:   return jsBoolean(input.indeterminate());
+        case InputMaxLength:       return jsNumber(input.maxLength());
+        case InputName:            return jsString(input.name());
+        case InputReadOnly:        return jsBoolean(input.readOnly());
         case InputSelectionStart:  return getInputSelectionStart(input);
         case InputSelectionEnd:    return getInputSelectionEnd(input);
-        case InputSize:            return Number(input.size());
-        case InputSrc:             return String(input.src());
-        case InputTabIndex:        return Number(input.tabIndex());
-        case InputType:            return String(input.type());
-        case InputUseMap:          return String(input.useMap());
-        case InputValue:           return String(input.value());
+        case InputSize:            return jsNumber(input.size());
+        case InputSrc:             return jsString(input.src());
+        case InputTabIndex:        return jsNumber(input.tabIndex());
+        case InputType:            return jsString(input.type());
+        case InputUseMap:          return jsString(input.useMap());
+        case InputValue:           return jsString(input.value());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
 {
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
-        case TextAreaDefaultValue:    return String(textarea.defaultValue());
+        case TextAreaDefaultValue:    return jsString(textarea.defaultValue());
         case TextAreaForm:            return getDOMNode(exec,textarea.form()); // type HTMLFormElement
-        case TextAreaAccessKey:       return String(textarea.accessKey());
-        case TextAreaCols:            return Number(textarea.cols());
-        case TextAreaDisabled:        return Boolean(textarea.disabled());
-        case TextAreaName:            return String(textarea.name());
-        case TextAreaReadOnly:        return Boolean(textarea.readOnly());
-        case TextAreaRows:            return Number(textarea.rows());
-        case TextAreaSelectionStart:  return Number(textarea.selectionStart());
+        case TextAreaAccessKey:       return jsString(textarea.accessKey());
+        case TextAreaCols:            return jsNumber(textarea.cols());
+        case TextAreaDisabled:        return jsBoolean(textarea.disabled());
+        case TextAreaName:            return jsString(textarea.name());
+        case TextAreaReadOnly:        return jsBoolean(textarea.readOnly());
+        case TextAreaRows:            return jsNumber(textarea.rows());
+        case TextAreaSelectionStart:  return jsNumber(textarea.selectionStart());
         case TextAreaSelectionEnd:
             // FIXME (4363497): Work-around to prevent regression caused by GMail bug (4344954).
             // For the love of all that is holy, let's remove this code as soon as
@@ -1689,12 +1689,12 @@ ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
             if (impl() && impl()->getDocument() && (impl()->getDocument()->domain() == "mail.google.com"))
                     return jsUndefined();
             
-            return Number(textarea.selectionEnd());
-        case TextAreaTabIndex:        return Number(textarea.tabIndex());
-        case TextAreaType:            return String(textarea.type());
-        case TextAreaValue:           return String(textarea.value());
+            return jsNumber(textarea.selectionEnd());
+        case TextAreaTabIndex:        return jsNumber(textarea.tabIndex());
+        case TextAreaType:            return jsString(textarea.type());
+        case TextAreaValue:           return jsString(textarea.value());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::buttonGetter(ExecState* exec, int token) const
@@ -1702,14 +1702,14 @@ ValueImp *HTMLElement::buttonGetter(ExecState* exec, int token) const
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
         case ButtonForm:            return getDOMNode(exec,button.form()); // type HTMLFormElement
-        case ButtonAccessKey:       return String(button.accessKey());
-        case ButtonDisabled:        return Boolean(button.disabled());
-        case ButtonName:            return String(button.name());
-        case ButtonTabIndex:        return Number(button.tabIndex());
-        case ButtonType:            return String(button.type());
-        case ButtonValue:           return String(button.value());
+        case ButtonAccessKey:       return jsString(button.accessKey());
+        case ButtonDisabled:        return jsBoolean(button.disabled());
+        case ButtonName:            return jsString(button.name());
+        case ButtonTabIndex:        return jsNumber(button.tabIndex());
+        case ButtonType:            return jsString(button.type());
+        case ButtonValue:           return jsString(button.value());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::labelGetter(ExecState* exec, int token) const
@@ -1717,10 +1717,10 @@ ValueImp *HTMLElement::labelGetter(ExecState* exec, int token) const
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
         case LabelForm:            return getDOMNode(exec,label.form()); // type HTMLFormElement
-        case LabelAccessKey:       return String(label.accessKey());
-        case LabelHtmlFor:         return String(label.htmlFor());
+        case LabelAccessKey:       return jsString(label.accessKey());
+        case LabelHtmlFor:         return jsString(label.htmlFor());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
@@ -1728,7 +1728,7 @@ ValueImp *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
     HTMLFieldSetElementImpl& fieldSet = *static_cast<HTMLFieldSetElementImpl*>(impl());
     if (token == FieldSetForm)
         return getDOMNode(exec,fieldSet.form()); // type HTMLFormElement
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::legendGetter(ExecState* exec, int token) const
@@ -1736,105 +1736,105 @@ ValueImp *HTMLElement::legendGetter(ExecState* exec, int token) const
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
         case LegendForm:            return getDOMNode(exec,legend.form()); // type HTMLFormElement
-        case LegendAccessKey:       return String(legend.accessKey());
-        case LegendAlign:           return String(legend.align());
+        case LegendAccessKey:       return jsString(legend.accessKey());
+        case LegendAlign:           return jsString(legend.align());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::uListGetter(ExecState* exec, int token) const
 {
     HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
     switch (token) {
-        case UListCompact:         return Boolean(uList.compact());
-        case UListType:            return String(uList.type());
+        case UListCompact:         return jsBoolean(uList.compact());
+        case UListType:            return jsString(uList.type());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::oListGetter(ExecState* exec, int token) const
 {
     HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
     switch (token) {
-        case OListCompact:         return Boolean(oList.compact());
-        case OListStart:           return Number(oList.start());
-        case OListType:            return String(oList.type());
+        case OListCompact:         return jsBoolean(oList.compact());
+        case OListStart:           return jsNumber(oList.start());
+        case OListType:            return jsString(oList.type());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::dListGetter(ExecState* exec, int token) const
 {
     HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
     if (token == DListCompact)
-        return Boolean(dList.compact());
-    return Undefined();
+        return jsBoolean(dList.compact());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::dirGetter(ExecState* exec, int token) const
 {
     HTMLDirectoryElementImpl& dir = *static_cast<HTMLDirectoryElementImpl*>(impl());
     if (token == DirectoryCompact)
-        return Boolean(dir.compact());
-    return Undefined();
+        return jsBoolean(dir.compact());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::menuGetter(ExecState* exec, int token) const
 {
     HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
     if (token == MenuCompact)
-        return Boolean(menu.compact());
-    return Undefined();
+        return jsBoolean(menu.compact());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::liGetter(ExecState* exec, int token) const
 {
     HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
     switch (token) {
-        case LIType:            return String(li.type());
-        case LIValue:           return Number(li.value());
+        case LIType:            return jsString(li.type());
+        case LIValue:           return jsNumber(li.value());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::divGetter(ExecState* exec, int token) const
 {
     HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
     if (token == DivAlign)
-        return String(div.align());
-    return Undefined();
+        return jsString(div.align());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::paragraphGetter(ExecState* exec, int token) const
 {
     HTMLParagraphElementImpl& p = *static_cast<HTMLParagraphElementImpl*>(impl());
     if (token == ParagraphAlign)
-        return String(p.align());
-    return Undefined();
+        return jsString(p.align());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::headingGetter(ExecState* exec, int token) const
 {
     HTMLHeadingElementImpl& h = *static_cast<HTMLHeadingElementImpl*>(impl());
     if (token == HeadingAlign)
-        return String(h.align());
-    return Undefined();
+        return jsString(h.align());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
 {
     HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
     if (token == BlockQuoteCite)
-        return String(blockQuote.cite());
-    return Undefined();
+        return jsString(blockQuote.cite());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::quoteGetter(ExecState* exec, int token) const
 {
     HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
     if (token == QuoteCite)
-        return String(quote.cite());
-    return Undefined();
+        return jsString(quote.cite());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
@@ -1842,122 +1842,122 @@ ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
     // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
     if (token == PreWidth)
-        return Number(pre.width());
+        return jsNumber(pre.width());
     if (token == PreWrap)
-        return Boolean(pre.wrap());
-    return Undefined();
+        return jsBoolean(pre.wrap());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::brGetter(ExecState* exec, int token) const
 {
     HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
     if (token == BRClear)
-        return String(br.clear());
-    return Undefined();
+        return jsString(br.clear());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::baseFontGetter(ExecState* exec, int token) const
 {
     HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
     switch (token) {
-        case BaseFontColor:           return String(baseFont.color());
-        case BaseFontFace:            return String(baseFont.face());
-        case BaseFontSize:            return String(baseFont.size());
+        case BaseFontColor:           return jsString(baseFont.color());
+        case BaseFontFace:            return jsString(baseFont.face());
+        case BaseFontSize:            return jsString(baseFont.size());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::fontGetter(ExecState* exec, int token) const
 {
     HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
     switch (token) {
-        case FontColor:           return String(font.color());
-        case FontFace:            return String(font.face());
-        case FontSize:            return String(font.size());
+        case FontColor:           return jsString(font.color());
+        case FontFace:            return jsString(font.face());
+        case FontSize:            return jsString(font.size());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::hrGetter(ExecState* exec, int token) const
 {
     HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
     switch (token) {
-        case HRAlign:           return String(hr.align());
-        case HRNoShade:         return Boolean(hr.noShade());
-        case HRSize:            return String(hr.size());
-        case HRWidth:           return String(hr.width());
+        case HRAlign:           return jsString(hr.align());
+        case HRNoShade:         return jsBoolean(hr.noShade());
+        case HRSize:            return jsString(hr.size());
+        case HRWidth:           return jsString(hr.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::modGetter(ExecState* exec, int token) const
 {
     HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
     switch (token) {
-        case ModCite:            return String(mod.cite());
-        case ModDateTime:        return String(mod.dateTime());
+        case ModCite:            return jsString(mod.cite());
+        case ModDateTime:        return jsString(mod.dateTime());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::anchorGetter(ExecState* exec, int token) const
 {
     HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
     switch (token) {
-        case AnchorAccessKey:       return String(anchor.accessKey());
-        case AnchorCharset:         return String(anchor.charset());
-        case AnchorCoords:          return String(anchor.coords());
-        case AnchorHref:            return String(anchor.href());
-        case AnchorHrefLang:        return String(anchor.hreflang());
-        case AnchorHash:            return String('#'+KURL(anchor.href().qstring()).ref());
-        case AnchorHost:            return String(KURL(anchor.href().qstring()).host());
+        case AnchorAccessKey:       return jsString(anchor.accessKey());
+        case AnchorCharset:         return jsString(anchor.charset());
+        case AnchorCoords:          return jsString(anchor.coords());
+        case AnchorHref:            return jsString(anchor.href());
+        case AnchorHrefLang:        return jsString(anchor.hreflang());
+        case AnchorHash:            return jsString('#'+KURL(anchor.href().qstring()).ref());
+        case AnchorHost:            return jsString(KURL(anchor.href().qstring()).host());
         case AnchorHostname: {
             KURL url(anchor.href().qstring());
             kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
-                return String(url.host());
+                return jsString(url.host());
             else
-                return String(url.host() + ":" + QString::number(url.port()));
+                return jsString(url.host() + ":" + QString::number(url.port()));
         }
-        case AnchorPathName:        return String(KURL(anchor.href().qstring()).path());
-        case AnchorPort:            return String(QString::number(KURL(anchor.href().qstring()).port()));
-        case AnchorProtocol:        return String(KURL(anchor.href().qstring()).protocol()+":");
-        case AnchorSearch:          return String(KURL(anchor.href().qstring()).query());
-        case AnchorName:            return String(anchor.name());
-        case AnchorRel:             return String(anchor.rel());
-        case AnchorRev:             return String(anchor.rev());
-        case AnchorShape:           return String(anchor.shape());
-        case AnchorTabIndex:        return Number(anchor.tabIndex());
-        case AnchorTarget:          return String(anchor.target());
-        case AnchorType:            return String(anchor.type());
+        case AnchorPathName:        return jsString(KURL(anchor.href().qstring()).path());
+        case AnchorPort:            return jsString(QString::number(KURL(anchor.href().qstring()).port()));
+        case AnchorProtocol:        return jsString(KURL(anchor.href().qstring()).protocol()+":");
+        case AnchorSearch:          return jsString(KURL(anchor.href().qstring()).query());
+        case AnchorName:            return jsString(anchor.name());
+        case AnchorRel:             return jsString(anchor.rel());
+        case AnchorRev:             return jsString(anchor.rev());
+        case AnchorShape:           return jsString(anchor.shape());
+        case AnchorTabIndex:        return jsNumber(anchor.tabIndex());
+        case AnchorTarget:          return jsString(anchor.target());
+        case AnchorType:            return jsString(anchor.type());
         case AnchorText:
             if (DocumentImpl* doc = anchor.getDocument())
                 doc->updateLayoutIgnorePendingStylesheets();
-            return String(anchor.innerText());
+            return jsString(anchor.innerText());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::imageGetter(ExecState* exec, int token) const
 {
     HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
     switch (token) {
-        case ImageName:            return String(image.name());
-        case ImageAlign:           return String(image.align());
-        case ImageAlt:             return String(image.alt());
-        case ImageBorder:          return Number(image.border());
-        case ImageHeight:          return Number(image.height(true));
-        case ImageHspace:          return Number(image.hspace());
-        case ImageIsMap:           return Boolean(image.isMap());
-        case ImageLongDesc:        return String(image.longDesc());
-        case ImageSrc:             return String(image.src());
-        case ImageUseMap:          return String(image.useMap());
-        case ImageVspace:          return Number(image.vspace());
-        case ImageWidth:           return Number(image.width(true));
-        case ImageX:               return Number(image.x());
-        case ImageY:               return Number(image.y());
+        case ImageName:            return jsString(image.name());
+        case ImageAlign:           return jsString(image.align());
+        case ImageAlt:             return jsString(image.alt());
+        case ImageBorder:          return jsNumber(image.border());
+        case ImageHeight:          return jsNumber(image.height(true));
+        case ImageHspace:          return jsNumber(image.hspace());
+        case ImageIsMap:           return jsBoolean(image.isMap());
+        case ImageLongDesc:        return jsString(image.longDesc());
+        case ImageSrc:             return jsString(image.src());
+        case ImageUseMap:          return jsString(image.useMap());
+        case ImageVspace:          return jsNumber(image.vspace());
+        case ImageWidth:           return jsNumber(image.width(true));
+        case ImageX:               return jsNumber(image.x());
+        case ImageY:               return jsNumber(image.y());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::objectGetter(ExecState* exec, int token) const
@@ -1965,58 +1965,58 @@ ValueImp *HTMLElement::objectGetter(ExecState* exec, int token) const
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
         case ObjectForm:            return getDOMNode(exec,object.form()); // type HTMLFormElement
-        case ObjectCode:            return String(object.code());
-        case ObjectAlign:           return String(object.align());
-        case ObjectArchive:         return String(object.archive());
-        case ObjectBorder:          return String(object.border());
-        case ObjectCodeBase:        return String(object.codeBase());
-        case ObjectCodeType:        return String(object.codeType());
+        case ObjectCode:            return jsString(object.code());
+        case ObjectAlign:           return jsString(object.align());
+        case ObjectArchive:         return jsString(object.archive());
+        case ObjectBorder:          return jsString(object.border());
+        case ObjectCodeBase:        return jsString(object.codeBase());
+        case ObjectCodeType:        return jsString(object.codeType());
         case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
-                                           getDOMNode(exec, object.contentDocument()) : Undefined();
-        case ObjectData:            return String(object.data());
-        case ObjectDeclare:         return Boolean(object.declare());
-        case ObjectHeight:          return String(object.height());
-        case ObjectHspace:          return String(object.hspace());
-        case ObjectName:            return String(object.name());
-        case ObjectStandby:         return String(object.standby());
-        case ObjectTabIndex:        return Number(object.tabIndex());
-        case ObjectType:            return String(object.type());
-        case ObjectUseMap:          return String(object.useMap());
-        case ObjectVspace:          return String(object.vspace());
-        case ObjectWidth:           return String(object.width());
+                                           getDOMNode(exec, object.contentDocument()) : jsUndefined();
+        case ObjectData:            return jsString(object.data());
+        case ObjectDeclare:         return jsBoolean(object.declare());
+        case ObjectHeight:          return jsString(object.height());
+        case ObjectHspace:          return jsString(object.hspace());
+        case ObjectName:            return jsString(object.name());
+        case ObjectStandby:         return jsString(object.standby());
+        case ObjectTabIndex:        return jsNumber(object.tabIndex());
+        case ObjectType:            return jsString(object.type());
+        case ObjectUseMap:          return jsString(object.useMap());
+        case ObjectVspace:          return jsString(object.vspace());
+        case ObjectWidth:           return jsString(object.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::paramGetter(ExecState* exec, int token) const
 {
     HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
     switch (token) {
-        case ParamName:            return String(param.name());
-        case ParamType:            return String(param.type());
-        case ParamValue:           return String(param.value());
-        case ParamValueType:       return String(param.valueType());
+        case ParamName:            return jsString(param.name());
+        case ParamType:            return jsString(param.type());
+        case ParamValue:           return jsString(param.value());
+        case ParamValueType:       return jsString(param.valueType());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::appletGetter(ExecState* exec, int token) const
 {
     HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
     switch (token) {
-        case AppletAlign:           return String(applet.align());
-        case AppletAlt:             return String(applet.alt());
-        case AppletArchive:         return String(applet.archive());
-        case AppletCode:            return String(applet.code());
-        case AppletCodeBase:        return String(applet.codeBase());
-        case AppletHeight:          return String(applet.height());
-        case AppletHspace:          return String(applet.hspace());
-        case AppletName:            return String(applet.name());
-        case AppletObject:          return String(applet.object());
-        case AppletVspace:          return String(applet.vspace());
-        case AppletWidth:           return String(applet.width());
+        case AppletAlign:           return jsString(applet.align());
+        case AppletAlt:             return jsString(applet.alt());
+        case AppletArchive:         return jsString(applet.archive());
+        case AppletCode:            return jsString(applet.code());
+        case AppletCodeBase:        return jsString(applet.codeBase());
+        case AppletHeight:          return jsString(applet.height());
+        case AppletHspace:          return jsString(applet.hspace());
+        case AppletName:            return jsString(applet.name());
+        case AppletObject:          return jsString(applet.object());
+        case AppletVspace:          return jsString(applet.vspace());
+        case AppletWidth:           return jsString(applet.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::mapGetter(ExecState* exec, int token) const
@@ -2024,54 +2024,54 @@ ValueImp *HTMLElement::mapGetter(ExecState* exec, int token) const
     HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
     switch (token) {
         case MapAreas:           return getHTMLCollection(exec, map.areas().get()); // type HTMLCollection
-        case MapName:            return String(map.name());
+        case MapName:            return jsString(map.name());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::areaGetter(ExecState* exec, int token) const
 {
     HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
     switch (token) {
-        case AreaAccessKey:       return String(area.accessKey());
-        case AreaAlt:             return String(area.alt());
-        case AreaCoords:          return String(area.coords());
-        case AreaHref:            return String(area.href());
-        case AreaHash:            return String('#'+KURL(area.href().qstring()).ref());
-        case AreaHost:            return String(KURL(area.href().qstring()).host());
+        case AreaAccessKey:       return jsString(area.accessKey());
+        case AreaAlt:             return jsString(area.alt());
+        case AreaCoords:          return jsString(area.coords());
+        case AreaHref:            return jsString(area.href());
+        case AreaHash:            return jsString('#'+KURL(area.href().qstring()).ref());
+        case AreaHost:            return jsString(KURL(area.href().qstring()).host());
         case AreaHostName: {
             KURL url(area.href().qstring());
             kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
-                return String(url.host());
+                return jsString(url.host());
             else
-                return String(url.host() + ":" + QString::number(url.port()));
+                return jsString(url.host() + ":" + QString::number(url.port()));
         }
-        case AreaPathName:        return String(KURL(area.href().qstring()).path());
-        case AreaPort:            return String(QString::number(KURL(area.href().qstring()).port()));
-        case AreaProtocol:        return String(KURL(area.href().qstring()).protocol()+":");
-        case AreaSearch:          return String(KURL(area.href().qstring()).query());
-        case AreaNoHref:          return Boolean(area.noHref());
-        case AreaShape:           return String(area.shape());
-        case AreaTabIndex:        return Number(area.tabIndex());
-        case AreaTarget:          return String(area.target());
+        case AreaPathName:        return jsString(KURL(area.href().qstring()).path());
+        case AreaPort:            return jsString(QString::number(KURL(area.href().qstring()).port()));
+        case AreaProtocol:        return jsString(KURL(area.href().qstring()).protocol()+":");
+        case AreaSearch:          return jsString(KURL(area.href().qstring()).query());
+        case AreaNoHref:          return jsBoolean(area.noHref());
+        case AreaShape:           return jsString(area.shape());
+        case AreaTabIndex:        return jsNumber(area.tabIndex());
+        case AreaTarget:          return jsString(area.target());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::scriptGetter(ExecState* exec, int token) const
 {
     HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
     switch (token) {
-        case ScriptText:            return String(script.text());
-        case ScriptHtmlFor:         return String(script.htmlFor());
-        case ScriptEvent:           return String(script.event());
-        case ScriptCharset:         return String(script.charset());
-        case ScriptDefer:           return Boolean(script.defer());
-        case ScriptSrc:             return String(script.src());
-        case ScriptType:            return String(script.type());
+        case ScriptText:            return jsString(script.text());
+        case ScriptHtmlFor:         return jsString(script.htmlFor());
+        case ScriptEvent:           return jsString(script.event());
+        case ScriptCharset:         return jsString(script.charset());
+        case ScriptDefer:           return jsBoolean(script.defer());
+        case ScriptSrc:             return jsString(script.src());
+        case ScriptType:            return jsString(script.type());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableGetter(ExecState* exec, int token) const
@@ -2083,101 +2083,101 @@ ValueImp *HTMLElement::tableGetter(ExecState* exec, int token) const
         case TableTFoot:           return getDOMNode(exec,table.tFoot()); // type HTMLTableSectionElement
         case TableRows:            return getHTMLCollection(exec, table.rows().get()); // type HTMLCollection
         case TableTBodies:         return getHTMLCollection(exec, table.tBodies().get()); // type HTMLCollection
-        case TableAlign:           return String(table.align());
-        case TableBgColor:         return String(table.bgColor());
-        case TableBorder:          return String(table.border());
-        case TableCellPadding:     return String(table.cellPadding());
-        case TableCellSpacing:     return String(table.cellSpacing());
-        case TableFrame:           return String(table.frame());
-        case TableRules:           return String(table.rules());
-        case TableSummary:         return String(table.summary());
-        case TableWidth:           return String(table.width());
+        case TableAlign:           return jsString(table.align());
+        case TableBgColor:         return jsString(table.bgColor());
+        case TableBorder:          return jsString(table.border());
+        case TableCellPadding:     return jsString(table.cellPadding());
+        case TableCellSpacing:     return jsString(table.cellSpacing());
+        case TableFrame:           return jsString(table.frame());
+        case TableRules:           return jsString(table.rules());
+        case TableSummary:         return jsString(table.summary());
+        case TableWidth:           return jsString(table.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
 {
     HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
     if (token == TableCaptionAlign)
-        return String(tableCaption.align());
-    return Undefined();
+        return jsString(tableCaption.align());
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableColGetter(ExecState* exec, int token) const
 {
     HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
     switch (token) {
-        case TableColAlign:           return String(tableCol.align());
-        case TableColCh:              return String(tableCol.ch());
-        case TableColChOff:           return String(tableCol.chOff());
-        case TableColSpan:            return Number(tableCol.span());
-        case TableColVAlign:          return String(tableCol.vAlign());
-        case TableColWidth:           return String(tableCol.width());
+        case TableColAlign:           return jsString(tableCol.align());
+        case TableColCh:              return jsString(tableCol.ch());
+        case TableColChOff:           return jsString(tableCol.chOff());
+        case TableColSpan:            return jsNumber(tableCol.span());
+        case TableColVAlign:          return jsString(tableCol.vAlign());
+        case TableColWidth:           return jsString(tableCol.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableSectionGetter(ExecState* exec, int token) const
 {
     HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
     switch (token) {
-        case TableSectionAlign:           return String(tableSection.align());
-        case TableSectionCh:              return String(tableSection.ch());
-        case TableSectionChOff:           return String(tableSection.chOff());
-        case TableSectionVAlign:          return String(tableSection.vAlign());
+        case TableSectionAlign:           return jsString(tableSection.align());
+        case TableSectionCh:              return jsString(tableSection.ch());
+        case TableSectionChOff:           return jsString(tableSection.chOff());
+        case TableSectionVAlign:          return jsString(tableSection.vAlign());
         case TableSectionRows:            return getHTMLCollection(exec, tableSection.rows().get()); // type HTMLCollection
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableRowGetter(ExecState* exec, int token) const
 {
     HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
     switch (token) {
-        case TableRowRowIndex:        return Number(tableRow.rowIndex());
-        case TableRowSectionRowIndex: return Number(tableRow.sectionRowIndex());
+        case TableRowRowIndex:        return jsNumber(tableRow.rowIndex());
+        case TableRowSectionRowIndex: return jsNumber(tableRow.sectionRowIndex());
         case TableRowCells:           return getHTMLCollection(exec, tableRow.cells().get()); // type HTMLCollection
-        case TableRowAlign:           return String(tableRow.align());
-        case TableRowBgColor:         return String(tableRow.bgColor());
-        case TableRowCh:              return String(tableRow.ch());
-        case TableRowChOff:           return String(tableRow.chOff());
-        case TableRowVAlign:          return String(tableRow.vAlign());
+        case TableRowAlign:           return jsString(tableRow.align());
+        case TableRowBgColor:         return jsString(tableRow.bgColor());
+        case TableRowCh:              return jsString(tableRow.ch());
+        case TableRowChOff:           return jsString(tableRow.chOff());
+        case TableRowVAlign:          return jsString(tableRow.vAlign());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::tableCellGetter(ExecState* exec, int token) const
 {
     HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
     switch (token) {
-        case TableCellCellIndex:       return Number(tableCell.cellIndex());
-        case TableCellAbbr:            return String(tableCell.abbr());
-        case TableCellAlign:           return String(tableCell.align());
-        case TableCellAxis:            return String(tableCell.axis());
-        case TableCellBgColor:         return String(tableCell.bgColor());
-        case TableCellCh:              return String(tableCell.ch());
-        case TableCellChOff:           return String(tableCell.chOff());
-        case TableCellColSpan:         return Number(tableCell.colSpan());
-        case TableCellHeaders:         return String(tableCell.headers());
-        case TableCellHeight:          return String(tableCell.height());
-        case TableCellNoWrap:          return Boolean(tableCell.noWrap());
-        case TableCellRowSpan:         return Number(tableCell.rowSpan());
-        case TableCellScope:           return String(tableCell.scope());
-        case TableCellVAlign:          return String(tableCell.vAlign());
-        case TableCellWidth:           return String(tableCell.width());
+        case TableCellCellIndex:       return jsNumber(tableCell.cellIndex());
+        case TableCellAbbr:            return jsString(tableCell.abbr());
+        case TableCellAlign:           return jsString(tableCell.align());
+        case TableCellAxis:            return jsString(tableCell.axis());
+        case TableCellBgColor:         return jsString(tableCell.bgColor());
+        case TableCellCh:              return jsString(tableCell.ch());
+        case TableCellChOff:           return jsString(tableCell.chOff());
+        case TableCellColSpan:         return jsNumber(tableCell.colSpan());
+        case TableCellHeaders:         return jsString(tableCell.headers());
+        case TableCellHeight:          return jsString(tableCell.height());
+        case TableCellNoWrap:          return jsBoolean(tableCell.noWrap());
+        case TableCellRowSpan:         return jsNumber(tableCell.rowSpan());
+        case TableCellScope:           return jsString(tableCell.scope());
+        case TableCellVAlign:          return jsString(tableCell.vAlign());
+        case TableCellWidth:           return jsString(tableCell.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::frameSetGetter(ExecState* exec, int token) const
 {
     HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
     switch (token) {
-        case FrameSetCols:            return String(frameSet.cols());
-        case FrameSetRows:            return String(frameSet.rows());
+        case FrameSetCols:            return jsString(frameSet.cols());
+        case FrameSetRows:            return jsString(frameSet.rows());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::frameGetter(ExecState* exec, int token) const
@@ -2185,52 +2185,52 @@ ValueImp *HTMLElement::frameGetter(ExecState* exec, int token) const
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
         case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
-                                          getDOMNode(exec, frameElement.contentDocument()) : Undefined();
+                                          getDOMNode(exec, frameElement.contentDocument()) : jsUndefined();
         case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
                                         ? Window::retrieve(frameElement.contentPart())
-                                        : Undefined();
-        case FrameFrameBorder:     return String(frameElement.frameBorder());
-        case FrameLongDesc:        return String(frameElement.longDesc());
-        case FrameMarginHeight:    return String(frameElement.marginHeight());
-        case FrameMarginWidth:     return String(frameElement.marginWidth());
-        case FrameName:            return String(frameElement.name());
-        case FrameNoResize:        return Boolean(frameElement.noResize());
-        case FrameScrolling:       return String(frameElement.scrolling());
+                                        : jsUndefined();
+        case FrameFrameBorder:     return jsString(frameElement.frameBorder());
+        case FrameLongDesc:        return jsString(frameElement.longDesc());
+        case FrameMarginHeight:    return jsString(frameElement.marginHeight());
+        case FrameMarginWidth:     return jsString(frameElement.marginWidth());
+        case FrameName:            return jsString(frameElement.name());
+        case FrameNoResize:        return jsBoolean(frameElement.noResize());
+        case FrameScrolling:       return jsString(frameElement.scrolling());
         case FrameSrc:
-        case FrameLocation:        return String(frameElement.src());
+        case FrameLocation:        return jsString(frameElement.src());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::iFrameGetter(ExecState* exec, int token) const
 {
     HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
     switch (token) {
-        case IFrameAlign:                return String(iFrame.align());
+        case IFrameAlign:                return jsString(iFrame.align());
           // ### security check ?
         case IFrameDocument: // non-standard, mapped to contentDocument
         case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
-                                      getDOMNode(exec, iFrame.contentDocument()) : Undefined();
+                                      getDOMNode(exec, iFrame.contentDocument()) : jsUndefined();
         case IFrameContentWindow:	return checkNodeSecurity(exec,iFrame.contentDocument()) 
                                         ? Window::retrieve(iFrame.contentPart())
-                                        : Undefined();
-        case IFrameFrameBorder:     return String(iFrame.frameBorder());
-        case IFrameHeight:          return String(iFrame.height());
-        case IFrameLongDesc:        return String(iFrame.longDesc());
-        case IFrameMarginHeight:    return String(iFrame.marginHeight());
-        case IFrameMarginWidth:     return String(iFrame.marginWidth());
-        case IFrameName:            return String(iFrame.name());
-        case IFrameScrolling:       return String(iFrame.scrolling());
-        case IFrameSrc:             return String(iFrame.src());
-        case IFrameWidth:           return String(iFrame.width());
+                                        : jsUndefined();
+        case IFrameFrameBorder:     return jsString(iFrame.frameBorder());
+        case IFrameHeight:          return jsString(iFrame.height());
+        case IFrameLongDesc:        return jsString(iFrame.longDesc());
+        case IFrameMarginHeight:    return jsString(iFrame.marginHeight());
+        case IFrameMarginWidth:     return jsString(iFrame.marginWidth());
+        case IFrameName:            return jsString(iFrame.name());
+        case IFrameScrolling:       return jsString(iFrame.scrolling());
+        case IFrameSrc:             return jsString(iFrame.src());
+        case IFrameWidth:           return jsString(iFrame.width());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::marqueeGetter(ExecState* exec, int token) const
 {
     // FIXME: Find out what WinIE exposes as properties and implement this.
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *HTMLElement::getValueProperty(ExecState *exec, int token) const
@@ -2239,42 +2239,42 @@ ValueImp *HTMLElement::getValueProperty(ExecState *exec, int token) const
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
     switch (token) {
         case ElementId:
-        // iht.com relies on this value being "" when no id is present.  Other browsers do this as well.
-        // So we use String() instead of String() here.
-        return String(element.id());
+            // iht.com relies on this value being "" when no id is present. Other browsers do this as well.
+            // So we use jsString() instead of jsStringOrNull() here.
+            return jsString(element.id());
         case ElementTitle:
-            return String(element.title());
+            return jsString(element.title());
         case ElementLang:
-            return String(element.lang());
+            return jsString(element.lang());
         case ElementDir:
-            return String(element.dir());
+            return jsString(element.dir());
         case ElementClassName:
-            return String(element.className());
+            return jsString(element.className());
         case ElementInnerHTML:
-            return String(element.innerHTML());
+            return jsString(element.innerHTML());
         case ElementInnerText:
             if (DocumentImpl* doc = impl()->getDocument())
                 doc->updateLayoutIgnorePendingStylesheets();
-            return String(element.innerText());
+            return jsString(element.innerText());
         case ElementOuterHTML:
-            return String(element.outerHTML());
+            return jsString(element.outerHTML());
         case ElementOuterText:
-            return String(element.outerText());
+            return jsString(element.outerText());
         case ElementDocument:
             return getDOMNode(exec,element.ownerDocument());
         case ElementChildren:
             return getHTMLCollection(exec, element.children().get());
         case ElementContentEditable:
-            return String(element.contentEditable());
+            return jsString(element.contentEditable());
         case ElementIsContentEditable:
-            return Boolean(element.isContentEditable());
+            return jsBoolean(element.isContentEditable());
     }
 
     // Now check the properties specific to our element type.
     const Accessors* info = getSetInfo();
     if (info && info->m_getter)
         return (this->*(info->m_getter))(exec, token);
-    return Undefined();
+    return jsUndefined();
 }
 
 UString KJS::HTMLElement::toString(ExecState *exec) const
@@ -2328,7 +2328,7 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
 HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
   : DOMFunction(), id(i)
 {
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
 ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
@@ -2343,111 +2343,111 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
         if (id == KJS::HTMLElement::FormSubmit) {
             form.submit();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::FormReset) {
             form.reset();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(selectTag)) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         if (id == KJS::HTMLElement::SelectAdd) {
             select.add(toHTMLElement(args[0]), toHTMLElement(args[1]), exception);
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::SelectRemove) {
             select.remove(int(args[0]->toNumber(exec)));
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::SelectBlur) {
             select.blur();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::SelectFocus) {
             select.focus();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(inputTag)) {
         HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
         if (id == KJS::HTMLElement::InputBlur) {
             input.blur();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::InputFocus) {
             input.focus();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::InputSelect) {
             input.select();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::InputClick) {
             input.click();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::InputSetSelectionRange) {
             input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(buttonTag)) {
         HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
         if (id == KJS::HTMLElement::ButtonBlur) {
             button.blur();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::ButtonFocus) {
             button.focus();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(labelTag)) {
         HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
         if (id == KJS::HTMLElement::LabelFocus) {
             label.focus();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(legendTag)) {
         HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
         if (id == KJS::HTMLElement::LegendFocus) {
             legend.focus();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(textareaTag)) {
         HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
         if (id == KJS::HTMLElement::TextAreaBlur) {
             textarea.blur();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TextAreaFocus) {
             textarea.focus();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TextAreaSelect) {
             textarea.select();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TextAreaSetSelectionRange) {
             textarea.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(aTag)) {
         HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
         if (id == KJS::HTMLElement::AnchorBlur) {
             anchor.blur();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::AnchorFocus) {
             anchor.focus();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::AnchorToString)
-            return String(thisObj->toString(exec));
+            return jsString(thisObj->toString(exec));
     }
     else if (element.hasLocalName(tableTag)) {
         HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
@@ -2455,25 +2455,25 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             return getDOMNode(exec,table.createTHead());
         else if (id == KJS::HTMLElement::TableDeleteTHead) {
             table.deleteTHead();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TableCreateTFoot)
             return getDOMNode(exec,table.createTFoot());
         else if (id == KJS::HTMLElement::TableDeleteTFoot) {
             table.deleteTFoot();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TableCreateCaption)
             return getDOMNode(exec,table.createCaption());
         else if (id == KJS::HTMLElement::TableDeleteCaption) {
             table.deleteCaption();
-            return Undefined();
+            return jsUndefined();
         }
         else if (id == KJS::HTMLElement::TableInsertRow)
             return getDOMNode(exec,table.insertRow(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableDeleteRow) {
             table.deleteRow(args[0]->toInt32(exec), exception);
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(theadTag) ||
@@ -2484,7 +2484,7 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             return getDOMNode(exec, tableSection.insertRow(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
             tableSection.deleteRow(args[0]->toInt32(exec), exception);
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(trTag)) {
@@ -2493,7 +2493,7 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             return getDOMNode(exec,tableRow.insertCell(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableRowDeleteCell) {
             tableRow.deleteCell(args[0]->toInt32(exec), exception);
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(marqueeTag)) {
@@ -2501,13 +2501,13 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->start();
-            return Undefined();
+            return jsUndefined();
         }
         if (id == KJS::HTMLElement::MarqueeStop && element.renderer() && 
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->stop();
-            return Undefined();
+            return jsUndefined();
         }
     }
     else if (element.hasLocalName(canvasTag)) {
@@ -2515,11 +2515,11 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
             if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).qstring().lower() == "2d")) {
                 return new Context2D(&element);
             }
-            return Undefined();
+            return jsUndefined();
         }
     }
 
-    return Undefined();
+    return jsUndefined();
 }
 
 void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -3323,7 +3323,7 @@ HTMLCollection::~HTMLCollection()
 ValueImp *HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
-    return Number(thisObj->m_impl->length());
+    return jsNumber(thisObj->m_impl->length());
 }
 
 ValueImp *HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -3402,7 +3402,7 @@ ValueImp *KJS::HTMLCollection::callAsFunction(ExecState *exec, ObjectImp *, cons
       }
     }
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
@@ -3418,7 +3418,7 @@ ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &
 #ifdef KJS_VERBOSE
     kdDebug(6070) << "not found" << endl;
 #endif
-    return Undefined();
+    return jsUndefined();
   }
 
   if (namedItems.count() == 1)
@@ -3441,7 +3441,7 @@ ValueImp *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, ObjectIm
   case KJS::HTMLCollection::NamedItem:
     return static_cast<HTMLCollection *>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -3455,14 +3455,14 @@ HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *
 ValueImp *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLSelectCollection *thisObj = static_cast<HTMLSelectCollection *>(slot.slotBase());
-    return Number(thisObj->m_element->selectedIndex());
+    return jsNumber(thisObj->m_element->selectedIndex());
 }
 
 bool HTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == "selectedIndex") {
     slot.setCustom(this, selectedIndexGetter);
-    //result = Number(m_element->selectedIndex());
+    //result = jsNumber(m_element->selectedIndex());
     return true;
   }
 
@@ -3560,7 +3560,7 @@ OptionConstructorImp::OptionConstructorImp(ExecState *exec, DocumentImpl *d)
 
   // no. of arguments for constructor
   // ## is 4 correct ? 0 to 4, it seems to be
-  put(exec,lengthPropertyName, Number(4), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 
 bool OptionConstructorImp::implementsConstruct() const
@@ -3650,34 +3650,34 @@ ValueImp *Image::getValueProperty(ExecState *, int token) const
   case Src:
     return jsString(doc ? doc->completeURL(src.domString()) : src);
   case Complete:
-    return Boolean(!img || img->status() >= khtml::CachedObject::Persistent);
+    return jsBoolean(!img || img->status() >= khtml::CachedObject::Persistent);
   case OnLoad:
     if (onLoadListener && onLoadListener->listenerObjImp()) {
       return onLoadListener->listenerObj();
     } else {
-      return Null();
+      return jsNull();
     }
   case Width: {
     if (widthSet)
-        return Number(width);
+        return jsNumber(width);
     int w = 0;
     if (img) {
       QSize size = img->pixmap_size();
       if (size.isValid())
         w = size.width();
     }
-    return Number(w);
+    return jsNumber(w);
   }
   case Height: {
     if (heightSet)
-        return Number(height);
+        return jsNumber(height);
     int h = 0;
     if (img) {
       QSize size = img->pixmap_size();
       if (size.isValid())
         h = size.height();
     }
-    return Number(h);
+    return jsNumber(h);
   }
   default:
     kdWarning() << "Image::getValueProperty unhandled token " << token << endl;
@@ -3771,11 +3771,11 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
     Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj);
     khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
     if (!renderer)
-        return Undefined();
+        return jsUndefined();
 
     CGContextRef drawingContext = renderer->drawingContext();
     if (!drawingContext)
-        return Undefined();
+        return jsUndefined();
     
     switch (id) {
         case Context2D::Save: {
@@ -4284,7 +4284,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 }
                 else {
                     // No image.
-                    return Undefined();
+                    return jsUndefined();
                 }
                 w = pixmap.width();
                 h = pixmap.height();
@@ -4302,7 +4302,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(e->renderer());
                 if (!renderer) {
                     // No renderer, nothing to draw.
-                    return Undefined();
+                    return jsUndefined();
                 }
 
                 sourceContext = renderer->drawingContext();
@@ -4472,7 +4472,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         }
     }
 
-    return Undefined();
+    return jsUndefined();
 }
 
 const ClassInfo Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
@@ -4590,7 +4590,7 @@ ValueImp *Context2D::getValueProperty(ExecState *, int token) const
         }
     }
     
-    return Undefined();
+    return jsUndefined();
 }
 
 void Context2D::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -4883,21 +4883,21 @@ Context2D::Context2D(HTMLElementImpl *e)
     _globalAlpha(jsUndefined()),
     _globalComposite(jsUndefined())
 {
-    _lineWidth = Number (1.);
-    _strokeStyle = String ("black");
-    _fillStyle = String ("black");
+    _lineWidth = jsNumber(1);
+    _strokeStyle = jsString("black");
+    _fillStyle = jsString("black");
     
-    _lineCap = String("butt");
-    _lineJoin = String("miter");
-    _miterLimit = Number(10.0);
+    _lineCap = jsString("butt");
+    _lineJoin = jsString("miter");
+    _miterLimit = jsNumber(10);
     
-    _shadowOffsetX = Number(0.);
-    _shadowOffsetY = Number(0.);
-    _shadowBlur = Number(0.);
-    _shadowColor = String("black");
+    _shadowOffsetX = jsNumber(0);
+    _shadowOffsetY = jsNumber(0);
+    _shadowBlur = jsNumber(0);
+    _shadowColor = jsString("black");
         
-    _globalAlpha = Number(1.);
-    _globalComposite = String("source-over");
+    _globalAlpha = jsNumber(1);
+    _globalComposite = jsString("source-over");
     
     stateStack.setAutoDelete(true);
 }
@@ -4995,7 +4995,7 @@ ValueImp *GradientFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
         }
     }
 
-    return Undefined();
+    return jsUndefined();
 }
 
 void gradientCallback (void *info, const float *in, float *out)
@@ -5096,7 +5096,7 @@ bool Gradient::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
 
 ValueImp *Gradient::getValueProperty(ExecState *, int token) const
 {
-    return Undefined();
+    return jsUndefined();
 }
 
 void Gradient::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -5292,7 +5292,7 @@ bool ImagePattern::getOwnPropertySlot(ExecState *exec, const Identifier& propert
 
 ValueImp *ImagePattern::getValueProperty(ExecState *, int token) const
 {
-    return Undefined();
+    return jsUndefined();
 }
 
 void ImagePattern::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -5316,7 +5316,7 @@ ValueImp *getSelectHTMLCollection(ExecState *exec, HTMLCollectionImpl *c, HTMLSe
 {
   DOMObject *ret;
   if (!c)
-    return Null();
+    return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
   if ((ret = interp->getDOMObject(c)))
     return ret;

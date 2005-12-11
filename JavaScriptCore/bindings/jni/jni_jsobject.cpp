@@ -204,9 +204,9 @@ jobject JSObject::eval(jstring script) const
     if (type == Normal) {
         result = completion.value();
         if (!result)
-            result = Undefined();
+            result = jsUndefined();
     } else
-        result = Undefined();
+        result = jsUndefined();
     
     return convertValueToJObject (result);
 }
@@ -412,11 +412,11 @@ ValueImp *JSObject::convertJObjectToValue (jobject theObject) const
         JNIEnv *env = getJNIEnv();
         jfieldID fieldID = env->GetFieldID((jclass)classOfInstance, "nativeJSObject", "int");
         if (fieldID == NULL) {
-            return Undefined();
+            return jsUndefined();
         }
         jlong nativeHandle = env->GetLongField(theObject, fieldID);
         if (nativeHandle == UndefinedHandle) {
-            return Undefined();
+            return jsUndefined();
         }
         ObjectImp *imp = static_cast<ObjectImp*>(jlong_to_impptr(nativeHandle));
         return imp;

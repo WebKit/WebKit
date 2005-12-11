@@ -76,7 +76,7 @@ ArrayInstanceImp::~ArrayInstanceImp()
 
 ValueImp *ArrayInstanceImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-  return Number(static_cast<ArrayInstanceImp *>(slot.slotBase())->length);
+  return jsNumber(static_cast<ArrayInstanceImp *>(slot.slotBase())->length);
 }
 
 bool ArrayInstanceImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -291,8 +291,8 @@ struct CompareWithCompareFunctionArguments {
         , compareFunction(cf)
         , globalObject(e->dynamicInterpreter()->globalObject())
     {
-        arguments.append(Undefined());
-        arguments.append(Undefined());
+        arguments.append(jsUndefined());
+        arguments.append(jsUndefined());
     }
 
     ExecState *exec;
@@ -400,7 +400,7 @@ ArrayPrototypeImp::ArrayPrototypeImp(ExecState *exec,
                                      ObjectPrototypeImp *objProto)
   : ArrayInstanceImp(objProto, 0)
 {
-  setInternalValue(Null());
+  setInternalValue(jsNull());
 }
 
 bool ArrayPrototypeImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -415,7 +415,7 @@ ArrayProtoFuncImp::ArrayProtoFuncImp(ExecState *exec, int i, int len)
     static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
     ), id(i)
 {
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
 bool ArrayProtoFuncImp::implementsCall() const
@@ -494,7 +494,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
         break;
     }
     visitedElems.remove(thisObj);
-    result = String(str);
+    result = jsString(str);
     break;
   }
   case Concat: {
@@ -525,18 +525,18 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       curArg = *it;
       curObj = static_cast<ObjectImp *>(it++); // may be 0
     }
-    arr->put(exec,lengthPropertyName, Number(n), DontEnum | DontDelete);
+    arr->put(exec,lengthPropertyName, jsNumber(n), DontEnum | DontDelete);
 
     result = arr;
     break;
   }
   case Pop:{
     if (length == 0) {
-      thisObj->put(exec, lengthPropertyName, Number(length), DontEnum | DontDelete);
-      result = Undefined();
+      thisObj->put(exec, lengthPropertyName, jsNumber(length), DontEnum | DontDelete);
+      result = jsUndefined();
     } else {
       result = thisObj->get(exec, length - 1);
-      thisObj->put(exec, lengthPropertyName, Number(length - 1), DontEnum | DontDelete);
+      thisObj->put(exec, lengthPropertyName, jsNumber(length - 1), DontEnum | DontDelete);
     }
     break;
   }
@@ -544,8 +544,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     for (int n = 0; n < args.size(); n++)
       thisObj->put(exec, length + n, args[n]);
     length += args.size();
-    thisObj->put(exec,lengthPropertyName, Number(length), DontEnum | DontDelete);
-    result = Number(length);
+    thisObj->put(exec,lengthPropertyName, jsNumber(length), DontEnum | DontDelete);
+    result = jsNumber(length);
     break;
   }
   case Reverse: {
@@ -572,8 +572,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
   }
   case Shift: {
     if (length == 0) {
-      thisObj->put(exec, lengthPropertyName, Number(length), DontEnum | DontDelete);
-      result = Undefined();
+      thisObj->put(exec, lengthPropertyName, jsNumber(length), DontEnum | DontDelete);
+      result = jsUndefined();
     } else {
       result = thisObj->get(exec, 0);
       for(unsigned int k = 1; k < length; k++) {
@@ -583,7 +583,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
           thisObj->deleteProperty(exec, k-1);
       }
       thisObj->deleteProperty(exec, length - 1);
-      thisObj->put(exec, lengthPropertyName, Number(length - 1), DontEnum | DontDelete);
+      thisObj->put(exec, lengthPropertyName, jsNumber(length - 1), DontEnum | DontDelete);
     }
     break;
   }
@@ -626,7 +626,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       if (ValueImp *v = getProperty(exec, thisObj, k))
         resObj->put(exec, n, v);
     }
-    resObj->put(exec, lengthPropertyName, Number(n), DontEnum | DontDelete);
+    resObj->put(exec, lengthPropertyName, jsNumber(n), DontEnum | DontDelete);
     break;
   }
   case Sort:{
@@ -653,7 +653,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     }
 
     if (length == 0) {
-      thisObj->put(exec, lengthPropertyName, Number(0), DontEnum | DontDelete);
+      thisObj->put(exec, lengthPropertyName, jsNumber(0), DontEnum | DontDelete);
       result = thisObj;
       break;
     }
@@ -719,7 +719,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       if (ValueImp *v = getProperty(exec, thisObj, k+begin))
         resObj->put(exec, k, v);
     }
-    resObj->put(exec, lengthPropertyName, Number(deleteCount), DontEnum | DontDelete);
+    resObj->put(exec, lengthPropertyName, jsNumber(deleteCount), DontEnum | DontDelete);
 
     unsigned int additionalArgs = maxInt( args.size() - 2, 0 );
     if ( additionalArgs != deleteCount )
@@ -751,7 +751,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     {
       thisObj->put(exec, k+begin, args[k+2]);
     }
-    thisObj->put(exec, lengthPropertyName, Number(length - deleteCount + additionalArgs), DontEnum | DontDelete);
+    thisObj->put(exec, lengthPropertyName, jsNumber(length - deleteCount + additionalArgs), DontEnum | DontDelete);
     break;
   }
   case UnShift: { // 15.4.4.13
@@ -765,7 +765,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     }
     for ( unsigned int k = 0; k < nrArgs; ++k )
       thisObj->put(exec, k, args[k]);
-    result = Number(length + nrArgs);
+    result = jsNumber(length + nrArgs);
     thisObj->put(exec, lengthPropertyName, result, DontEnum | DontDelete);
     break;
   }
@@ -785,7 +785,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     ObjectImp *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicInterpreter()->globalObject() :  args[1]->toObject(exec);
     
     if (id == Some || id == Every)
-      result = Boolean(id == Every);
+      result = jsBoolean(id == Every);
     else
       result = thisObj;
     
@@ -794,17 +794,17 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       List eachArguments;
       
       eachArguments.append(thisObj->get(exec, k));
-      eachArguments.append(Number(k));
+      eachArguments.append(jsNumber(k));
       eachArguments.append(thisObj);
       
       bool predicateResult = eachFunction->call(exec, applyThis, eachArguments)->toBoolean(exec);
       
       if (id == Every && !predicateResult) {
-        result = Boolean(false);
+        result = jsBoolean(false);
         break;
       }
       if (id == Some && predicateResult) {
-        result = Boolean(true);
+        result = jsBoolean(true);
         break;
       }
     }
@@ -827,10 +827,10 @@ ArrayObjectImp::ArrayObjectImp(ExecState *exec,
   : InternalFunctionImp(funcProto)
 {
   // ECMA 15.4.3.1 Array.prototype
-  put(exec,prototypePropertyName, arrayProto, DontEnum|DontDelete|ReadOnly);
+  put(exec, prototypePropertyName, arrayProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
+  put(exec, lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 bool ArrayObjectImp::implementsConstruct() const

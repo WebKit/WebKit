@@ -309,12 +309,11 @@ QString Identifier::qstring() const
   return QString((QChar*) data(), size());
 }
 
-ValueImp *getStringOrNull(DOMString s)
+ValueImp *jsStringOrNull(const DOMString &s)
 {
-  if (s.isNull())
-    return Null();
-  else
-    return String(s);
+    if (s.isNull())
+        return jsNull();
+    return jsString(s);
 }
 
 DOMString valueToStringWithNullCheck(ExecState *exec, ValueImp *val)
@@ -366,7 +365,7 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   sprintf(buffer, "%s exception %d", type, code);
 
   ObjectImp *errorObject = throwError(exec, GeneralError, buffer);
-  errorObject->put(exec, "code", Number(code));
+  errorObject->put(exec, "code", jsNumber(code));
 }
 
 }

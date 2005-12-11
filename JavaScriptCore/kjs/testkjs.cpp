@@ -58,10 +58,10 @@ ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*
   case Print:
   case Debug:
     fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
-    return Undefined();
+    return jsUndefined();
   case Quit:
     exit(0);
-    return Undefined();
+    return jsUndefined();
   case GC:
   {
     JSLock lock;
@@ -72,7 +72,7 @@ ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*
     break;
   }
 
-  return Undefined();
+  return jsUndefined();
 }
 
 class VersionFunctionImp : public ObjectImp {
@@ -86,7 +86,7 @@ ValueImp *VersionFunctionImp::callAsFunction(ExecState */*exec*/, ObjectImp */*t
 {
   // We need this function for compatibility with the Mozilla JS tests but for now
   // we don't actually do any version-specific handling
-  return Undefined();
+  return jsUndefined();
 }
 
 class GlobalImp : public ObjectImp {

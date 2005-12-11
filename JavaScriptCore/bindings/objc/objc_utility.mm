@@ -173,7 +173,7 @@ ValueImp *convertNSStringToString(NSString *nsstring)
     chars = (unichar *)malloc(sizeof(unichar)*length);
     [nsstring getCharacters:chars];
     UString u((const UChar*)chars, length);
-    ValueImp *aValue = String (u);
+    ValueImp *aValue = jsString(u);
     free((void *)chars);
     return aValue;
 }
@@ -210,78 +210,51 @@ ValueImp *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType 
                     id       to Object wrapper
                 */
                 if ([*obj isKindOfClass:[NSString class]]){
-                    NSString *string = (NSString *)*obj;
-                    aValue = convertNSStringToString (string);
-                }
-                else if (*obj == [WebUndefined undefined]) {
-                    return Undefined();
-                }
-                else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
-                    aValue = Boolean(true);
-                }
-                else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
-                    aValue = Boolean(false);
-                }
-                else if ([*obj isKindOfClass:[NSNumber class]]) {
-                    aValue = Number([*obj doubleValue]);
-                }
-                else if ([*obj isKindOfClass:[NSArray class]]) {
-                    aValue = new RuntimeArrayImp(exec, new ObjcArray (*obj));
-                }
-                else if ([*obj isKindOfClass:[WebScriptObject class]]) {
+                    aValue = convertNSStringToString((NSString *)*obj);
+                } else if (*obj == [WebUndefined undefined]) {
+                    return jsUndefined();
+                }  else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
+                    aValue = jsBoolean(true);
+                } else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
+                    aValue = jsBoolean(false);
+                } else if ([*obj isKindOfClass:[NSNumber class]]) {
+                    aValue = jsNumber([*obj doubleValue]);
+                } else if ([*obj isKindOfClass:[NSArray class]]) {
+                    aValue = new RuntimeArrayImp(exec, new ObjcArray(*obj));
+                } else if ([*obj isKindOfClass:[WebScriptObject class]]) {
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
                     aValue = [jsobject _imp];
-                }
-                else if (*obj == 0) {
-                    return Undefined();
-                }
-                else {
+                } else if (*obj == 0) {
+                    return jsUndefined();
+                } else {
 		    aValue = Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)*obj);
                 }
             }
             break;
         case ObjcCharType:
-            {
-                char *objcVal = (char *)buffer;
-                aValue = Number ((short)*objcVal);
-            }
+            aValue = jsNumber(*(char *)buffer);
             break;
         case ObjcShortType:
-            {
-                short *objcVal = (short *)buffer;
-                aValue = Number ((short)*objcVal);
-            }
+            aValue = jsNumber(*(short *)buffer);
             break;
         case ObjcIntType:
-            {
-                int *objcVal = (int *)buffer;
-                aValue = Number ((int)*objcVal);
-            }
+            aValue = jsNumber(*(int *)buffer);
             break;
         case ObjcLongType:
-            {
-                long *objcVal = (long *)buffer;
-                aValue = Number ((long)*objcVal);
-            }
+            aValue = jsNumber(*(long *)buffer);
             break;
         case ObjcFloatType:
-            {
-                float *objcVal = (float *)buffer;
-                aValue = Number ((float)*objcVal);
-            }
+            aValue = jsNumber(*(float *)buffer);
             break;
         case ObjcDoubleType:
-            {
-                double *objcVal = (double *)buffer;
-                aValue = Number ((double)*objcVal);
-            }
+            aValue = jsNumber(*(double *)buffer);
             break;
         default:
             // Should never get here.  Argument types are filtered (and
             // the assert above should have fired in the impossible case
             // of an invalid type anyway).
-            fprintf (stderr, "%s:  invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
-            assert (true);
+            fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
+            assert(false);
     }
     
     return aValue;

@@ -108,7 +108,7 @@ ValueImp *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList
 
     NPIdentifier ident = _NPN_GetStringIdentifier (method->name());
     if (!_object->_class->hasMethod (_object, ident)) {
-        return Undefined();
+        return jsUndefined();
     }
 
     unsigned i, count = args.size();
@@ -143,7 +143,7 @@ ValueImp *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList
         return resultValue;
     }
     
-    return Undefined();
+    return jsUndefined();
 }
 
 
@@ -185,7 +185,7 @@ ValueImp *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
         }
     }
     
-    return Undefined();
+    return jsUndefined();
 }
 
 

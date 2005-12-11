@@ -401,11 +401,11 @@ KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSVal
 KJS::ValueImp *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 {
     if(s == SVGPathSeg::null)
-        return KJS::Null();
+        return KJS::jsNull();
 
     KDOM::ScriptInterpreter *interpreter = static_cast<KDOM::ScriptInterpreter *>(exec->interpreter());
     if(!interpreter)
-        return KJS::Null();
+        return KJS::jsNull();
     
     // Reuse existing bridge, if possible
     KJS::ObjectImp *request = interpreter->getDOMObject(s.handle());

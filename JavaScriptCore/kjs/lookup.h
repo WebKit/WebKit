@@ -329,7 +329,7 @@ namespace KJS {
   public: \
     ClassFunc(ExecState *exec, int i, int len) : id(i) \
     { \
-       put(exec, lengthPropertyName, Number(len), DontDelete|ReadOnly|DontEnum); \
+       put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
     } \
     /* Macro user needs to implement the callAsFunction function. */ \
     virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args); \

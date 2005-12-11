@@ -300,10 +300,10 @@ void JSLazyEventListener::parseCode() const
       ObjectImp *constr = interpreter->builtinFunction();
       List args;
 
-      static ProtectedPtr<ValueImp> eventString = String("event");
+      static ProtectedPtr<ValueImp> eventString = jsString("event");
       UString sourceURL(part->m_url.url());
       args.append(eventString);
-      args.append(String(code));
+      args.append(jsString(code));
       listener = constr->construct(exec, args, sourceURL, lineNumber); // ### is globalExec ok ?
 
       if (exec->hadException()) {
@@ -386,7 +386,7 @@ bool EventConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& pro
 ValueImp *EventConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
-  return Number(token);
+  return jsNumber(token);
 }
 
 ValueImp *getEventConstructor(ExecState *exec)
@@ -451,24 +451,24 @@ ValueImp *DOMEvent::getValueProperty(ExecState *exec, int token) const
   EventImpl &event = *m_impl;
   switch (token) {
   case Type:
-    return String(event.type().domString());
+    return jsString(event.type().domString());
   case Target:
   case SrcElement: /*MSIE extension - "the object that fired the event"*/
     return getDOMNode(exec, event.target());
   case CurrentTarget:
     return getDOMNode(exec, event.currentTarget());
   case EventPhase:
-    return Number((unsigned int)event.eventPhase());
+    return jsNumber(event.eventPhase());
   case Bubbles:
-    return Boolean(event.bubbles());
+    return jsBoolean(event.bubbles());
   case CancelBubble:
-    return Boolean(event.getCancelBubble());
+    return jsBoolean(event.getCancelBubble());
   case ReturnValue:
-    return Boolean(!event.defaultPrevented());
+    return jsBoolean(!event.defaultPrevented());
   case Cancelable:
-    return Boolean(event.cancelable());
+    return jsBoolean(event.cancelable());
   case TimeStamp:
-    return Number(event.timeStamp());
+    return jsNumber(event.timeStamp());
   case ClipboardData:
   {
     if (event.isClipboardEvent()) {
@@ -478,7 +478,7 @@ ValueImp *DOMEvent::getValueProperty(ExecState *exec, int token) const
       }
       return clipboard;
     } else {
-      return Undefined();
+      return jsUndefined();
     }
   }
   case DataTransfer:
@@ -490,7 +490,7 @@ ValueImp *DOMEvent::getValueProperty(ExecState *exec, int token) const
       }
       return clipboard;
     } else {
-      return Undefined();
+      return jsUndefined();
     }
   }
   default:
@@ -529,21 +529,21 @@ ValueImp *DOMEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp * thisObj
   switch (id) {
     case DOMEvent::StopPropagation:
       event.stopPropagation();
-      return Undefined();
+      return jsUndefined();
     case DOMEvent::PreventDefault:
       event.preventDefault();
-      return Undefined();
+      return jsUndefined();
     case DOMEvent::InitEvent:
       event.initEvent(AtomicString(args[0]->toString(exec).domString()), args[1]->toBoolean(exec), args[2]->toBoolean(exec));
-      return Undefined();
+      return jsUndefined();
   };
-  return Undefined();
+  return jsUndefined();
 }
 
 ValueImp *getDOMEvent(ExecState *exec, EventImpl *e)
 {
   if (!e)
-    return Null();
+    return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
   JSLock lock;
@@ -593,7 +593,7 @@ bool EventExceptionConstructor::getOwnPropertySlot(ExecState *exec, const Identi
 ValueImp *EventExceptionConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
-  return Number(token);
+  return jsNumber(token);
 }
 
 ValueImp *getEventExceptionConstructor(ExecState *exec)
@@ -646,24 +646,24 @@ ValueImp *DOMUIEvent::getValueProperty(ExecState *exec, int token) const
   case View:
     return getDOMAbstractView(exec, event.view());
   case Detail:
-    return Number(event.detail());
+    return jsNumber(event.detail());
   case KeyCode:
-    return Number(event.keyCode());
+    return jsNumber(event.keyCode());
   case CharCode:
-    return Number(event.charCode());
+    return jsNumber(event.charCode());
   case LayerX:
-    return Number(event.layerX());
+    return jsNumber(event.layerX());
   case LayerY:
-    return Number(event.layerY());
+    return jsNumber(event.layerY());
   case PageX:
-    return Number(event.pageX());
+    return jsNumber(event.pageX());
   case PageY:
-    return Number(event.pageY());
+    return jsNumber(event.pageY());
   case Which:
-    return Number(event.which());
+    return jsNumber(event.which());
   default:
     kdWarning() << "Unhandled token in DOMUIEvent::getValueProperty : " << token << endl;
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -679,9 +679,9 @@ ValueImp *DOMUIEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
                           args[2]->toBoolean(exec),
                           toAbstractView(args[3]),
                           args[4]->toInt32(exec));
-      return Undefined();
+      return jsUndefined();
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -758,30 +758,30 @@ ValueImp *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   MouseEventImpl &event = *static_cast<MouseEventImpl *>(impl());
   switch (token) {
   case ScreenX:
-    return Number(event.screenX());
+    return jsNumber(event.screenX());
   case ScreenY:
-    return Number(event.screenY());
+    return jsNumber(event.screenY());
   case ClientX:
   case X:
-    return Number(event.clientX());
+    return jsNumber(event.clientX());
   case ClientY:
   case Y:
-    return Number(event.clientY());
+    return jsNumber(event.clientY());
   case OffsetX: // MSIE extension
-    return Number(offsetFromTarget(&event).x());
+    return jsNumber(offsetFromTarget(&event).x());
   case OffsetY: // MSIE extension
-    return Number(offsetFromTarget(&event).y());
+    return jsNumber(offsetFromTarget(&event).y());
   case CtrlKey:
-    return Boolean(event.ctrlKey());
+    return jsBoolean(event.ctrlKey());
   case ShiftKey:
-    return Boolean(event.shiftKey());
+    return jsBoolean(event.shiftKey());
   case AltKey:
-    return Boolean(event.altKey());
+    return jsBoolean(event.altKey());
   case MetaKey:
-    return Boolean(event.metaKey());
+    return jsBoolean(event.metaKey());
   case Button:
     // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others), but we will match the standard DOM.
-    return Number(event.button());
+    return jsNumber(event.button());
   case ToElement:
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
     return getDOMNode(exec, event.type() == mouseoutEvent ? event.relatedTarget() : event.target());
@@ -818,9 +818,9 @@ ValueImp *DOMMouseEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
                                 args[12]->toBoolean(exec), // metaKeyArg
                                 args[13]->toInt32(exec), // buttonArg
                                 toNode(args[14])); // relatedTargetArg
-      return Undefined();
+      return jsUndefined();
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -870,19 +870,19 @@ ValueImp *DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
   KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(impl());
   switch (token) {
   case KeyIdentifier:
-    return String(event.keyIdentifier());
+    return jsString(event.keyIdentifier());
   case KeyLocation:
-    return Number(event.keyLocation());
+    return jsNumber(event.keyLocation());
   case CtrlKey:
-    return Boolean(event.ctrlKey());
+    return jsBoolean(event.ctrlKey());
   case ShiftKey:
-    return Boolean(event.shiftKey());
+    return jsBoolean(event.shiftKey());
   case AltKey:
-    return Boolean(event.altKey());
+    return jsBoolean(event.altKey());
   case MetaKey:
-    return Boolean(event.metaKey());
+    return jsBoolean(event.metaKey());
   case AltGraphKey:
-    return Boolean(event.altGraphKey());
+    return jsBoolean(event.altGraphKey());
   default:
     kdWarning() << "Unhandled token in DOMKeyboardEvent::getValueProperty : " << token << endl;
     return NULL;
@@ -907,9 +907,9 @@ ValueImp *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
                               args[8]->toBoolean(exec), // shiftKeyArg
                               args[9]->toBoolean(exec), // metaKeyArg
                               args[10]->toBoolean(exec)); // altGraphKeyArg
-      return Undefined();
+      return jsUndefined();
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -930,7 +930,7 @@ bool MutationEventConstructor::getOwnPropertySlot(ExecState *exec, const Identif
 ValueImp *MutationEventConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
-  return Number(token);
+  return jsNumber(token);
 }
 
 ValueImp *getMutationEventConstructor(ExecState *exec)
@@ -979,13 +979,13 @@ ValueImp *DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
   case RelatedNode:
     return getDOMNode(exec, event.relatedNode());
   case PrevValue:
-    return String(event.prevValue());
+    return jsString(event.prevValue());
   case NewValue:
-    return String(event.newValue());
+    return jsString(event.newValue());
   case AttrName:
-    return String(event.attrName());
+    return jsString(event.attrName());
   case AttrChange:
-    return Number(event.attrChange());
+    return jsNumber(event.attrChange());
   default:
     kdWarning() << "Unhandled token in DOMMutationEvent::getValueProperty : " << token << endl;
     return NULL;
@@ -1007,9 +1007,9 @@ ValueImp *DOMMutationEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
                                       args[5]->toString(exec).domString(), // newValueArg
                                       args[6]->toString(exec).domString(), // attrNameArg
                                       args[7]->toInt32(exec)); // attrChangeArg
-      return Undefined();
+      return jsUndefined();
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -1053,38 +1053,38 @@ ValueImp *DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
     DOM::WheelEventImpl *e = static_cast<DOM::WheelEventImpl *>(impl());
     switch (token) {
         case AltKey:
-            return Boolean(e->altKey());
+            return jsBoolean(e->altKey());
         case ClientX:
         case X:
-            return Number(e->clientX());
+            return jsNumber(e->clientX());
         case ClientY:
         case Y:
-            return Number(e->clientY());
+            return jsNumber(e->clientY());
         case CtrlKey:
-            return Number(e->ctrlKey());
+            return jsNumber(e->ctrlKey());
         case MetaKey:
-            return Number(e->metaKey());
+            return jsNumber(e->metaKey());
         case OffsetX:
-            return Number(offsetFromTarget(e).x());
+            return jsNumber(offsetFromTarget(e).x());
         case OffsetY:
-            return Number(offsetFromTarget(e).y());
+            return jsNumber(offsetFromTarget(e).y());
         case ScreenX:
-            return Number(e->screenX());
+            return jsNumber(e->screenX());
         case ScreenY:
-            return Number(e->screenY());
+            return jsNumber(e->screenY());
         case ShiftKey:
-            return Boolean(e->shiftKey());
+            return jsBoolean(e->shiftKey());
         case WheelDelta:
-            return Number(e->wheelDelta());
+            return jsNumber(e->wheelDelta());
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *DOMWheelEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
     if (!thisObj->inherits(&DOMWheelEvent::info))
         return throwError(exec, TypeError);
-    return Undefined();
+    return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -1127,9 +1127,9 @@ Clipboard::~Clipboard()
 static ValueImp *stringOrUndefined(const DOM::DOMString &str)
 {
     if (str.isNull()) {
-        return Undefined();
+        return jsUndefined();
     } else {
-        return String(str);
+        return jsString(str);
     }
 }
 
@@ -1151,11 +1151,11 @@ ValueImp *Clipboard::getValueProperty(ExecState *exec, int token) const
         {
             QStringList qTypes = clipboard->types();
             if (qTypes.isEmpty()) {
-                return Null(); 
+                return jsNull(); 
             } else {
                 List list;
                 for (QStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
-                    list.append(String(UString(*it)));
+                    list.append(jsString(UString(*it)));
                 }
                 return exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
             }
@@ -1199,10 +1199,10 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
         case Clipboard::ClearData:
             if (args.size() == 0) {
                 cb->clipboard->clearAllData();
-                return Undefined();
+                return jsUndefined();
             } else if (args.size() == 1) {
                 cb->clipboard->clearData(args[0]->toString(exec).domString());
-                return Undefined();
+                return jsUndefined();
             } else {
                 return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
             }
@@ -1212,9 +1212,9 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                 bool success;
                 DOM::DOMString result = cb->clipboard->getData(args[0]->toString(exec).domString(), success);
                 if (success) {
-                    return String(result);
+                    return jsString(result);
                 } else {
-                    return Undefined();
+                    return jsUndefined();
                 }
             } else {
                 return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
@@ -1222,14 +1222,14 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
         }
         case Clipboard::SetData:
             if (args.size() == 2) {
-                return Boolean(cb->clipboard->setData(args[0]->toString(exec).domString(), args[1]->toString(exec).domString()));
+                return jsBoolean(cb->clipboard->setData(args[0]->toString(exec).domString(), args[1]->toString(exec).domString()));
             } else {
                 return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
             }
         case Clipboard::SetDragImage:
         {
             if (!cb->clipboard->isForDragging()) {
-                return Undefined();
+                return jsUndefined();
             }
 
             if (args.size() != 3)
@@ -1243,7 +1243,7 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
             if (node) {
                 if (node->isElementNode()) {
                     cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
-                    return Undefined();
+                    return jsUndefined();
                 } else {
                     return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
                 }
@@ -1254,13 +1254,13 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
             if (o->isObject() && o->inherits(&Image::info)) {
                 Image *JSImage = static_cast<Image*>(o);
                 cb->clipboard->setDragImage(JSImage->image()->pixmap(), QPoint(x,y));                
-                return Undefined();
+                return jsUndefined();
             } else {
                 return throwError(exec, TypeError);
             }
         }
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 }

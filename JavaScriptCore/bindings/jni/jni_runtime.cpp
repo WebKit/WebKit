@@ -71,7 +71,7 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
 ValueImp *JavaArray::convertJObjectToArray (ExecState *exec, jobject anObject, const char *type, const RootObject *r)
 {
     if (type[0] != '[')
-        return Undefined();
+        return jsUndefined();
 
     return new RuntimeArrayImp(exec, new JavaArray((jobject)anObject, type, r));
 }
@@ -108,7 +108,7 @@ ValueImp *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
 
-    ValueImp *jsresult = Undefined();
+    ValueImp *jsresult = jsUndefined();
     
     switch (_JNIType) {
         case object_type: {
@@ -125,12 +125,9 @@ ValueImp *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
         }
         break;
             
-        case boolean_type: {
-	    jvalue result = dispatchValueFromInstance (exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", boolean_type);
-	    jboolean value = result.z;
-            jsresult = Boolean((bool)value);
-        }
-        break;
+        case boolean_type:
+            jsresult = jsBoolean(dispatchValueFromInstance(exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", boolean_type).z);
+            break;
             
         case byte_type:
         case char_type:
@@ -140,7 +137,7 @@ ValueImp *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
             jint value;
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getInt", "(Ljava/lang/Object;)I", int_type);
 	    value = result.i;
-            jsresult = Number((int)value);
+            jsresult = jsNumber((int)value);
 	}
 	break;
 
@@ -150,7 +147,7 @@ ValueImp *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
             jdouble value;
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getDouble", "(Ljava/lang/Object;)D", double_type);
 	    value = result.i;
-            jsresult = Number((double)value);
+            jsresult = jsNumber((double)value);
         }
         break;
         default:
@@ -471,7 +468,7 @@ ValueImp *JavaArray::valueAt(ExecState *exec, unsigned int index) const
 
             // No object?
             if (!anObject) {
-                return Null();
+                return jsNull();
             }
             
             // Nested array?
@@ -486,21 +483,21 @@ ValueImp *JavaArray::valueAt(ExecState *exec, unsigned int index) const
             jbooleanArray booleanArray = (jbooleanArray)javaArray();
             jboolean aBoolean;
             env->GetBooleanArrayRegion(booleanArray, index, 1, &aBoolean);
-            return Boolean (aBoolean);
+            return jsBoolean(aBoolean);
         }
             
         case byte_type: {
             jbyteArray byteArray = (jbyteArray)javaArray();
             jbyte aByte;
             env->GetByteArrayRegion(byteArray, index, 1, &aByte);
-            return Number (aByte);
+            return jsNumber(aByte);
         }
             
         case char_type: {
             jcharArray charArray = (jcharArray)javaArray();
             jchar aChar;
             env->GetCharArrayRegion(charArray, index, 1, &aChar);
-            return Number (aChar);
+            return jsNumber(aChar);
             break;
         }
             
@@ -508,40 +505,40 @@ ValueImp *JavaArray::valueAt(ExecState *exec, unsigned int index) const
             jshortArray shortArray = (jshortArray)javaArray();
             jshort aShort;
             env->GetShortArrayRegion(shortArray, index, 1, &aShort);
-            return Number (aShort);
+            return jsNumber(aShort);
         }
             
         case int_type: {
             jintArray intArray = (jintArray)javaArray();
             jint anInt;
             env->GetIntArrayRegion(intArray, index, 1, &anInt);
-            return Number (anInt);
+            return jsNumber(anInt);
         }
             
         case long_type: {
             jlongArray longArray = (jlongArray)javaArray();
             jlong aLong;
             env->GetLongArrayRegion(longArray, index, 1, &aLong);
-            return Number ((long int)aLong);
+            return jsNumber(aLong);
         }
             
         case float_type: {
             jfloatArray floatArray = (jfloatArray)javaArray();
             jfloat aFloat;
             env->GetFloatArrayRegion(floatArray, index, 1, &aFloat);
-            return Number (aFloat);
+            return jsNumber(aFloat);
         }
             
         case double_type: {
             jdoubleArray doubleArray = (jdoubleArray)javaArray();
             jdouble aDouble;
             env->GetDoubleArrayRegion(doubleArray, index, 1, &aDouble);
-            return Number (aDouble);
+            return jsNumber(aDouble);
         }
         default:
         break;
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 unsigned int JavaArray::getLength() const

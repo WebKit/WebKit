@@ -49,7 +49,7 @@ RegExpPrototypeImp::RegExpPrototypeImp(ExecState *exec,
                                        FunctionPrototypeImp *funcProto)
   : ObjectImp(objProto)
 {
-  setInternalValue(String(""));
+  setInternalValue(jsString(""));
 
   // The constructor will be added later in RegExpObject's constructor (?)
 
@@ -79,7 +79,7 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
   if (!thisObj->inherits(&RegExpImp::info)) {
     if (thisObj->inherits(&RegExpPrototypeImp::info)) {
       switch (id) {
-        case ToString: return String("//");
+        case ToString: return jsString("//");
       }
     }
     
@@ -105,8 +105,8 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     if (!globalFlag)
       lastIndex = 0;
     if (lastIndex < 0 || lastIndex > input.size()) {
-      thisObj->put(exec, "lastIndex", jsZero(), DontDelete | DontEnum);
-      return Null();
+      thisObj->put(exec, "lastIndex", jsNumber(0), DontDelete | DontEnum);
+      return jsNull();
     }
 
     int foundIndex;
@@ -115,17 +115,17 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
 
     // Test
     if (id == Test)
-      return Boolean(didMatch);
+      return jsBoolean(didMatch);
 
     // Exec
     if (didMatch) {
       if (globalFlag)
-        thisObj->put(exec, "lastIndex", Number(foundIndex + match.size()), DontDelete | DontEnum);
+        thisObj->put(exec, "lastIndex", jsNumber(foundIndex + match.size()), DontDelete | DontEnum);
       return regExpObj->arrayOfMatches(exec, match);
     } else {
       if (globalFlag)
-        thisObj->put(exec, "lastIndex", jsZero(), DontDelete | DontEnum);
-      return Null();
+        thisObj->put(exec, "lastIndex", jsNumber(0), DontDelete | DontEnum);
+      return jsNull();
     }
   }
   break;
@@ -140,10 +140,10 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     if (thisObj->get(exec, "multiline")->toBoolean(exec)) {
       result += "m";
     }
-    return String(result);
+    return jsString(result);
   }
 
-  return Undefined();
+  return jsUndefined();
 }
 
 // ------------------------------ RegExpImp ------------------------------------
@@ -200,7 +200,7 @@ RegExpObjectImp::RegExpObjectImp(ExecState *exec,
   putDirect(prototypePropertyName, regProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsTwo(), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, jsNumber(2), ReadOnly|DontDelete|DontEnum);
 }
 
 RegExpObjectImp::~RegExpObjectImp()
@@ -240,7 +240,7 @@ ObjectImp *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &resul
 {
   List list;
   // The returned array contains 'result' as first item, followed by the list of matches
-  list.append(String(result));
+  list.append(jsString(result));
   if ( lastOvector )
     for ( unsigned i = 1 ; i < lastNumSubPatterns + 1 ; ++i )
     {
@@ -249,12 +249,12 @@ ObjectImp *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &resul
         list.append(jsUndefined());
       else {
         UString substring = lastInput.substr( start, lastOvector[2*i+1] - start );
-        list.append(String(substring));
+        list.append(jsString(substring));
       }
     }
   ObjectImp *arr = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
-  arr->put(exec, "index", Number(lastOvector[0]));
-  arr->put(exec, "input", String(lastInput));
+  arr->put(exec, "index", jsNumber(lastOvector[0]));
+  arr->put(exec, "input", jsString(lastInput));
   return arr;
 }
 
@@ -262,20 +262,20 @@ ValueImp *RegExpObjectImp::getBackref(unsigned i) const
 {
   if (lastOvector && i < lastNumSubPatterns + 1) {
     UString substring = lastInput.substr(lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i] );
-    return String(substring);
+    return jsString(substring);
   } 
 
-  return String("");
+  return jsString("");
 }
 
 ValueImp *RegExpObjectImp::getLastMatch() const
 {
   if (lastOvector) {
     UString substring = lastInput.substr(lastOvector[0], lastOvector[1] - lastOvector[0]);
-    return String(substring);
+    return jsString(substring);
   }
   
-  return String("");
+  return jsString("");
 }
 
 ValueImp *RegExpObjectImp::getLastParen() const
@@ -284,20 +284,20 @@ ValueImp *RegExpObjectImp::getLastParen() const
   if (i > 0) {
     assert(lastOvector);
     UString substring = lastInput.substr(lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i]);
-    return String(substring);
+    return jsString(substring);
   }
     
-  return String("");
+  return jsString("");
 }
 
 ValueImp *RegExpObjectImp::getLeftContext() const
 {
   if (lastOvector) {
     UString substring = lastInput.substr(0, lastOvector[0]);
-    return String(substring);
+    return jsString(substring);
   }
   
-  return String("");
+  return jsString("");
 }
 
 ValueImp *RegExpObjectImp::getRightContext() const
@@ -305,10 +305,10 @@ ValueImp *RegExpObjectImp::getRightContext() const
   if (lastOvector) {
     UString s = lastInput;
     UString substring = s.substr(lastOvector[1], s.size() - lastOvector[1]);
-    return String(substring);
+    return jsString(substring);
   }
   
-  return String("");
+  return jsString("");
 }
 
 bool RegExpObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -353,7 +353,7 @@ ValueImp *RegExpObjectImp::getValueProperty(ExecState *exec, int token) const
       assert(0);
   }
 
-  return String("");
+  return jsString("");
 }
 
 void RegExpObjectImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -406,7 +406,7 @@ ObjectImp *RegExpObjectImp::construct(ExecState *exec, const List &args)
   dat->putDirect("multiline", jsBoolean(multiline), DontDelete | ReadOnly | DontEnum);
 
   dat->putDirect("source", jsString(p), DontDelete | ReadOnly | DontEnum);
-  dat->putDirect("lastIndex", jsZero(), DontDelete | DontEnum);
+  dat->putDirect("lastIndex", jsNumber(0), DontDelete | DontEnum);
 
   int reflags = RegExp::None;
   if (global)

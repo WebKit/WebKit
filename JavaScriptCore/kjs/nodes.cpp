@@ -70,10 +70,10 @@ using namespace KJS;
 #define KJS_CHECKEXCEPTIONVALUE \
   if (exec->hadException()) { \
     setExceptionDetailsIfNeeded(exec); \
-    return Undefined(); \
+    return jsUndefined(); \
   } \
   if (Collector::outOfMemory()) \
-    return Undefined(); // will be picked up by KJS_CHECKEXCEPTION
+    return jsUndefined(); // will be picked up by KJS_CHECKEXCEPTION
 
 #define KJS_CHECKEXCEPTIONLIST \
   if (exec->hadException()) { \
@@ -174,8 +174,8 @@ void Node::setExceptionDetailsIfNeeded(ExecState *exec)
     if (exceptionValue->isObject()) {
         ObjectImp *exception = static_cast<ObjectImp *>(exceptionValue);
         if (!exception->hasProperty(exec, "line") && !exception->hasProperty(exec, "sourceURL")) {
-            exception->put(exec, "line", Number(line));
-            exception->put(exec, "sourceURL", String(sourceURL));
+            exception->put(exec, "line", jsNumber(line));
+            exception->put(exec, "sourceURL", jsString(sourceURL));
         }
     }
 }
@@ -216,7 +216,7 @@ void StatementNode::processFuncDecl(ExecState *exec)
 
 ValueImp *NullNode::evaluate(ExecState *)
 {
-  return Null();
+  return jsNull();
 }
 
 // ------------------------------ BooleanNode ----------------------------------
@@ -380,9 +380,9 @@ ValueImp *PropertyNode::evaluate(ExecState *)
   ValueImp *s;
 
   if (str.isNull()) {
-    s = String(UString::from(numeric));
+    s = jsString(UString::from(numeric));
   } else {
-    s = String(str.ustring());
+    s = jsString(str.ustring());
   }
 
   return s;
@@ -571,13 +571,13 @@ ValueImp *FunctionCallBracketNode::evaluate(ExecState *exec)
     if (baseObj->getPropertySlot(exec, i, slot))
       funcVal = slot.getValue(exec, i);
     else
-      funcVal = Undefined();
+      funcVal = jsUndefined();
   } else {
     Identifier ident(subscriptVal->toString(exec));
     if (baseObj->getPropertySlot(exec, ident, slot))
       funcVal = baseObj->get(exec, ident);
     else
-      funcVal = Undefined();
+      funcVal = jsUndefined();
   }
 
   KJS_CHECKEXCEPTIONVALUE
@@ -620,7 +620,7 @@ ValueImp *FunctionCallDotNode::evaluate(ExecState *exec)
 
   ObjectImp *baseObj = baseVal->toObject(exec);
   PropertySlot slot;
-  ValueImp *funcVal = baseObj->getPropertySlot(exec, ident, slot) ? slot.getValue(exec, ident) : Undefined();
+  ValueImp *funcVal = baseObj->getPropertySlot(exec, ident, slot) ? slot.getValue(exec, ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
   if (!funcVal->isObject())
@@ -690,7 +690,7 @@ ValueImp *PostfixBracketNode::evaluate(ExecState *exec)
   uint32_t propertyIndex;
   if (subscript->getUInt32(propertyIndex)) {
     PropertySlot slot;
-    ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
+    ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
     double n = v->toNumber(exec);
@@ -703,7 +703,7 @@ ValueImp *PostfixBracketNode::evaluate(ExecState *exec)
 
   Identifier propertyName(subscript->toString(exec));
   PropertySlot slot;
-  ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
+  ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
   double n = v->toNumber(exec);
@@ -723,7 +723,7 @@ ValueImp *PostfixDotNode::evaluate(ExecState *exec)
   ObjectImp *base = baseValue->toObject(exec);
 
   PropertySlot slot;
-  ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
+  ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
   double n = v->toNumber(exec);
@@ -806,7 +806,7 @@ ValueImp *VoidNode::evaluate(ExecState *exec)
   expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  return Undefined();
+  return jsUndefined();
 }
 
 // ECMA 11.4.3
@@ -917,7 +917,7 @@ ValueImp *PrefixBracketNode::evaluate(ExecState *exec)
   uint32_t propertyIndex;
   if (subscript->getUInt32(propertyIndex)) {
     PropertySlot slot;
-    ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
+    ValueImp *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
     double n = v->toNumber(exec);
@@ -931,7 +931,7 @@ ValueImp *PrefixBracketNode::evaluate(ExecState *exec)
 
   Identifier propertyName(subscript->toString(exec));
   PropertySlot slot;
-  ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
+  ValueImp *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
   double n = v->toNumber(exec);
@@ -952,7 +952,7 @@ ValueImp *PrefixDotNode::evaluate(ExecState *exec)
   ObjectImp *base = baseValue->toObject(exec);
 
   PropertySlot slot;
-  ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
+  ValueImp *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
   double n = v->toNumber(exec);
@@ -1056,7 +1056,7 @@ ValueImp *ShiftNode::evaluate(ExecState *exec)
     return jsNumber(v1->toUInt32(exec) >> i2);
   default:
     assert(!"ShiftNode: unhandled switch case");
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -1255,7 +1255,7 @@ static inline ValueImp *valueForReadModifyAssignment(ExecState * exec, ValueImp 
     break;
   default:
     assert(0);
-    v = Undefined();
+    v = jsUndefined();
   }
   
   return v;
@@ -1317,7 +1317,7 @@ ValueImp *AssignDotNode::evaluate(ExecState *exec)
     v = m_right->evaluate(exec);
   } else {
     PropertySlot slot;
-    ValueImp *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
+    ValueImp *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
     ValueImp *v2 = m_right->evaluate(exec);
     v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
@@ -1347,7 +1347,7 @@ ValueImp *AssignBracketNode::evaluate(ExecState *exec)
       v = m_right->evaluate(exec);
     } else {
       PropertySlot slot;
-      ValueImp *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
+      ValueImp *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : jsUndefined();
       KJS_CHECKEXCEPTIONVALUE
       ValueImp *v2 = m_right->evaluate(exec);
       v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
@@ -1366,7 +1366,7 @@ ValueImp *AssignBracketNode::evaluate(ExecState *exec)
     v = m_right->evaluate(exec);
   } else {
     PropertySlot slot;
-    ValueImp *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
+    ValueImp *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
     ValueImp *v2 = m_right->evaluate(exec);
     v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
@@ -1466,7 +1466,7 @@ ValueImp *VarDeclNode::evaluate(ExecState *exec)
       // built-in properties of the global object with var declarations.
       if (variable->getDirect(ident)) 
           return 0;
-      val = Undefined();
+      val = jsUndefined();
   }
 
 #ifdef KJS_VERBOSE
@@ -1496,7 +1496,7 @@ void VarDeclNode::processVarDecls(ExecState *exec)
       flags |= DontDelete;
     if (varType == VarDeclNode::Constant)
       flags |= ReadOnly;
-    variable->put(exec, ident, Undefined(), flags);
+    variable->put(exec, ident, jsUndefined(), flags);
   }
 }
 
@@ -1509,7 +1509,7 @@ ValueImp *VarDeclListNode::evaluate(ExecState *exec)
     n->var->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 void VarDeclListNode::processVarDecls(ExecState *exec)
@@ -1918,7 +1918,7 @@ Completion ReturnNode::execute(ExecState *exec)
   }
 
   if (!value)
-    return Completion(ReturnValue, Undefined());
+    return Completion(ReturnValue, jsUndefined());
 
   ValueImp *v = value->evaluate(exec);
   KJS_CHECKEXCEPTION
@@ -1966,7 +1966,7 @@ Completion CaseClauseNode::evalStatements(ExecState *exec)
   if (list)
     return list->execute(exec);
   else
-    return Completion(Normal, Undefined());
+    return Completion(Normal, jsUndefined());
 }
 
 void CaseClauseNode::processVarDecls(ExecState *exec)
@@ -2191,7 +2191,7 @@ void TryNode::processVarDecls(ExecState *exec)
 // ECMA 13
 ValueImp *ParameterNode::evaluate(ExecState *)
 {
-  return Undefined();
+  return jsUndefined();
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
@@ -2226,7 +2226,7 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
   for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
     func->addParameter(p->ident());
 
-  func->put(exec, lengthPropertyName, Number(plen), ReadOnly|DontDelete|DontEnum);
+  func->put(exec, lengthPropertyName, jsNumber(plen), ReadOnly|DontDelete|DontEnum);
 
   // ECMA 10.2.2
   context->variableObject()->put(exec, ident, func, Internal | (context->codeType() == EvalCode ? 0 : DontDelete));

@@ -200,7 +200,7 @@ namespace KJS {
      *
      * @param code The code to evaluate
      * @param thisV The value to pass in as the "this" value for the script
-     * execution. This should either be Null() or an Object.
+     * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
     Completion evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, ValueImp *thisV = NULL);

@@ -48,11 +48,11 @@ ErrorPrototypeImp::ErrorPrototypeImp(ExecState *exec,
                                      FunctionPrototypeImp *funcProto)
   : ObjectImp(objectProto)
 {
-  setInternalValue(Undefined());
+  setInternalValue(jsUndefined());
   // The constructor will be added later in ErrorObjectImp's constructor
 
-  put(exec, namePropertyName,     String("Error"), DontEnum);
-  put(exec, messagePropertyName,  String("Unknown error"), DontEnum);
+  put(exec, namePropertyName,     jsString("Error"), DontEnum);
+  put(exec, messagePropertyName,  jsString("Unknown error"), DontEnum);
   putDirect(toStringPropertyName, new ErrorProtoFuncImp(exec,funcProto), DontEnum);
 }
 
@@ -61,7 +61,7 @@ ErrorPrototypeImp::ErrorPrototypeImp(ExecState *exec,
 ErrorProtoFuncImp::ErrorProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto)
   : InternalFunctionImp(funcProto)
 {
-  putDirect(lengthPropertyName, jsZero(), DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, jsNumber(0), DontDelete|ReadOnly|DontEnum);
 }
 
 bool ErrorProtoFuncImp::implementsCall() const
@@ -84,7 +84,7 @@ ValueImp *ErrorProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     s += ": " + v->toString(exec); // Mozilla compatible format
   }
 
-  return String(s);
+  return jsString(s);
 }
 
 // ------------------------------ ErrorObjectImp -------------------------------
@@ -95,8 +95,8 @@ ErrorObjectImp::ErrorObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto,
 {
   // ECMA 15.11.3.1 Error.prototype
   putDirect(prototypePropertyName, errorProto, DontEnum|DontDelete|ReadOnly);
-  putDirect(lengthPropertyName, jsOne(), DontDelete|ReadOnly|DontEnum);
-  //putDirect(namePropertyName, String(n));
+  putDirect(lengthPropertyName, jsNumber(1), DontDelete|ReadOnly|DontEnum);
+  //putDirect(namePropertyName, jsString(n));
 }
 
 bool ErrorObjectImp::implementsConstruct() const
@@ -148,7 +148,7 @@ NativeErrorImp::NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
                                ObjectImp *prot)
   : InternalFunctionImp(funcProto), proto(prot)
 {
-  putDirect(lengthPropertyName, jsOne(), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
+  putDirect(lengthPropertyName, jsNumber(1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
   putDirect(prototypePropertyName, proto, DontDelete|ReadOnly|DontEnum);
 }
 

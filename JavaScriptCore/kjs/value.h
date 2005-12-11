@@ -175,13 +175,10 @@ private:
 AllocatedValueImp *jsUndefined();
 AllocatedValueImp *jsNull();
 
-AllocatedValueImp *jsBoolean(bool = false);
+AllocatedValueImp *jsBoolean(bool);
 
 ValueImp *jsNumber(double);
 ValueImp *jsNaN();
-ValueImp *jsZero();
-ValueImp *jsOne();
-ValueImp *jsTwo();
 
 AllocatedValueImp *jsString(const UString &); // returns empty string if passed null string
 AllocatedValueImp *jsString(const char * = ""); // returns empty string if passed 0
@@ -417,30 +414,6 @@ inline UString ValueImp::toString(ExecState *exec) const
 
     return downcast()->toString(exec);
 }
-
-inline ValueImp *jsZero()
-{
-    return SimpleNumber::make(0.0);
-}
-
-inline ValueImp *jsOne()
-{
-    return SimpleNumber::make(1.0);
-}
-
-inline ValueImp *jsTwo()
-{
-    return SimpleNumber::make(2.0);
-}
-
-// compatibility names so we don't have to change so much code
-
-inline AllocatedValueImp *Undefined() { return jsUndefined(); }
-inline AllocatedValueImp *Null() { return jsNull(); }
-inline AllocatedValueImp *Boolean(bool b) { return jsBoolean(b); }
-inline ValueImp *Number(double n) { return jsNumber(n); }
-inline AllocatedValueImp *String(const UString& s) { return jsString(s); }
-inline AllocatedValueImp *String(const char *s) { return jsString(s); }
 
 } // namespace
 

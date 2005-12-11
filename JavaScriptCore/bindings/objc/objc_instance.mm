@@ -143,7 +143,7 @@ NS_DURING
     if (method->isFallbackMethod()) {
         if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
             NSLog(@"Incorrect signature for invokeUndefinedMethodFromWebScript:withArguments: -- return type must be object.");
-            NS_VALUERETURN(Undefined(), ValueImp *);
+            NS_VALUERETURN(jsUndefined(), ValueImp *);
         }
         
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
@@ -223,7 +223,7 @@ NS_DURING
     assert ([signature methodReturnLength] < 1024);
     
     if (*type == 'v') {
-        resultValue = Undefined();
+        resultValue = jsUndefined();
     }
     else {
         [invocation getReturnValue:buffer];
@@ -232,7 +232,7 @@ NS_DURING
 
 NS_HANDLER
     
-    resultValue = Undefined();
+    resultValue = jsUndefined();
 
 NS_ENDHANDLER
 
@@ -246,7 +246,7 @@ ValueImp *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 NS_DURING
 
     if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
-        NS_VALUERETURN(Undefined(), ValueImp *);
+        NS_VALUERETURN(jsUndefined(), ValueImp *);
     
     NSMethodSignature *signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -256,7 +256,7 @@ NS_DURING
     
     if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
         NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
-        NS_VALUERETURN(Undefined(), ValueImp *);
+        NS_VALUERETURN(jsUndefined(), ValueImp *);
     }
     
     NSMutableArray *objcArgs = [NSMutableArray array];
@@ -283,7 +283,7 @@ NS_DURING
 
 NS_HANDLER
 
-    resultValue = Undefined();
+    resultValue = jsUndefined();
 
 NS_ENDHANDLER
 
@@ -334,7 +334,7 @@ ValueImp *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) c
 
 ValueImp *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const
 {
-    ValueImp *volatile result = Undefined();
+    ValueImp *volatile result = jsUndefined();
     
     id targetObject = getObject();
     

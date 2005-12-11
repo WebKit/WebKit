@@ -98,7 +98,7 @@ ValueImp *DOMParserProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
     }
   }
 		
-  return Undefined();
+  return jsUndefined();
 }
 
 } // end namespace

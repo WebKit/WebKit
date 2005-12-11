@@ -123,7 +123,7 @@ ValueImp *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance
     if (objcValue)
         aValue = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
     else
-        aValue = Undefined();
+        aValue = jsUndefined();
 
     return aValue;
 }
@@ -299,7 +299,7 @@ bool ObjcFallbackObjectImp::implementsCall() const
 
 ValueImp *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    ValueImp *result = Undefined();
+    ValueImp *result = jsUndefined();
     
     RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj);
     if (imp) {

@@ -53,7 +53,7 @@ NumberPrototypeImp::NumberPrototypeImp(ExecState *exec,
                                        FunctionPrototypeImp *funcProto)
   : NumberInstanceImp(objProto)
 {
-  setInternalValue(jsZero());
+  setInternalValue(jsNumber(0));
 
   // The constructor will be added later, after NumberObjectImp has been constructed
 
@@ -148,14 +148,14 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
         *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[i % radix];
         i /= radix;
       } while (i);
-      return String(p);
+      return jsString(p);
     } else
-      return String(v->toString(exec));
+      return jsString(v->toString(exec));
   }
   case ToLocaleString: /* TODO */
-    return String(v->toString(exec));
+    return jsString(v->toString(exec));
   case ValueOf:
-    return Number(v->toNumber(exec));
+    return jsNumber(v->toNumber(exec));
   case ToFixed: 
   {
       ValueImp *fractionDigits = args[0];
@@ -166,7 +166,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       
       double x = v->toNumber(exec);
       if (isNaN(x))
-          return String("NaN");
+          return jsString("NaN");
       
       UString s = "";
       if (x < 0) {
@@ -175,7 +175,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       }
       
       if (x >= pow(10.0, 21.0))
-          return String(s+UString::from(x));
+          return jsString(s+UString::from(x));
       
       double n = floor(x*pow(10.0, f));
       if (fabs(n / pow(10.0, f) - x) > fabs((n + 1) / pow(10.0, f) - x))
@@ -193,15 +193,15 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
           assert(k == m.size());
       }
       if (k-f < m.size())
-          return String(s+m.substr(0,k-f)+"."+m.substr(k-f));
+          return jsString(s+m.substr(0,k-f)+"."+m.substr(k-f));
       else
-          return String(s+m.substr(0,k-f));
+          return jsString(s+m.substr(0,k-f));
   }
   case ToExponential: {
       double x = v->toNumber(exec);
       
       if (isNaN(x) || isInf(x))
-          return String(UString::from(x));
+          return jsString(UString::from(x));
       
       ValueImp *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
@@ -229,7 +229,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       int sign;
       
       if (isNaN(x))
-          return String("NaN");
+          return jsString("NaN");
       
       char *result = kjs_dtoa(x, 0, 0, &decimalPoint, &sign, NULL);
       int length = strlen(result);
@@ -285,7 +285,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       
       kjs_freedtoa(result);
       
-      return String(UString(buf));
+      return jsString(buf);
   }
   case ToPrecision:
   {
@@ -295,7 +295,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       double dp = args[0]->toInteger(exec);
       double x = v->toNumber(exec);
       if (isNaN(dp) || isNaN(x) || isInf(x))
-          return String(v->toString(exec));
+          return jsString(v->toString(exec));
       
       UString s = "";
       if (x < 0) {
@@ -325,9 +325,9 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
               if (m.size() > 1)
                   m = m.substr(0,1)+"."+m.substr(1);
               if (e >= 0)
-                  return String(s+m+"e+"+UString::from(e));
+                  return jsString(s+m+"e+"+UString::from(e));
               else
-                  return String(s+m+"e-"+UString::from(-e));
+                  return jsString(s+m+"e-"+UString::from(-e));
           }
       }
       else {
@@ -336,16 +336,16 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       }
       
       if (e == p-1) {
-          return String(s+m);
+          return jsString(s+m);
       }
       else if (e >= 0) {
           if (e+1 < m.size())
-              return String(s+m.substr(0,e+1)+"."+m.substr(e+1));
+              return jsString(s+m.substr(0,e+1)+"."+m.substr(e+1));
           else
-              return String(s+m.substr(0,e+1));
+              return jsString(s+m.substr(0,e+1));
       }
       else {
-          return String(s+"0."+char_sequence('0',-(e+1))+m);
+          return jsString(s+"0."+char_sequence('0',-(e+1))+m);
       }
    }
       
@@ -375,7 +375,7 @@ NumberObjectImp::NumberObjectImp(ExecState *exec,
   putDirect(prototypePropertyName, numberProto,DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsOne(), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 bool NumberObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -390,15 +390,15 @@ ValueImp *NumberObjectImp::getValueProperty(ExecState *, int token) const
   case NaNValue:
     return jsNaN();
   case NegInfinity:
-    return Number(-Inf);
+    return jsNumber(-Inf);
   case PosInfinity:
-    return Number(Inf);
+    return jsNumber(Inf);
   case MaxValue:
-    return Number(1.7976931348623157E+308);
+    return jsNumber(1.7976931348623157E+308);
   case MinValue:
-    return Number(5E-324);
+    return jsNumber(5E-324);
   }
-  return Null();
+  return jsNull();
 }
 
 bool NumberObjectImp::implementsConstruct() const
@@ -433,7 +433,7 @@ bool NumberObjectImp::implementsCall() const
 ValueImp *NumberObjectImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
   if (args.isEmpty())
-    return Number(0);
+    return jsNumber(0);
   else
-    return Number(args[0]->toNumber(exec));
+    return jsNumber(args[0]->toNumber(exec));
 }

@@ -57,7 +57,7 @@ namespace KJS {
   public:
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual ValueImp *toPrimitive(ExecState *exec, Type) const { return String(toString(exec)); }
+    virtual ValueImp *toPrimitive(ExecState *exec, Type) const { return jsString(toString(exec)); }
     virtual UString toString(ExecState *) const { return UString("[function]"); }
   };
 
@@ -148,9 +148,9 @@ namespace KJS {
   };
 
   /**
-   *  Get a String object, or Null() if s is null
+   *  Get a String object, or jsNull() if s is null
    */
-  ValueImp *getStringOrNull(DOM::DOMString s);
+  ValueImp *jsStringOrNull(const DOM::DOMString&);
 
   /**
    *  Get a DOMString object or a null DOMString if the value is null

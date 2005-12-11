@@ -171,58 +171,58 @@ ValueImp *Navigator::getValueProperty(ExecState *exec, int token) const
   QString userAgent = KWQ(m_part)->userAgent();
   switch (token) {
   case AppCodeName:
-    return String("Mozilla");
+    return jsString("Mozilla");
   case AppName:
     // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
     if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
         userAgent.find(QString::fromLatin1("compatible")) == -1)
     {
       //kdDebug() << "appName -> Mozilla" << endl;
-      return String("Netscape");
+      return jsString("Netscape");
     }
     if (userAgent.find(QString::fromLatin1("Microsoft")) >= 0 ||
         userAgent.find(QString::fromLatin1("MSIE")) >= 0)
     {
       //kdDebug() << "appName -> IE" << endl;
-      return String("Microsoft Internet Explorer");
+      return jsString("Microsoft Internet Explorer");
     }
     // FIXME: Should we define a fallback result here besides "Konqueror"?
-    return Undefined();
+    return jsUndefined();
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
-    return String(userAgent.mid(userAgent.find('/') + 1));
+    return jsString(userAgent.mid(userAgent.find('/') + 1));
   case Product:
     // When acting normal, we pretend to be "Gecko".
     if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1) {
-        return String("Gecko");
+        return jsString("Gecko");
     }
-    // When spoofing as IE, we use Undefined().
-    return Undefined();
+    // When spoofing as IE, we use jsUndefined().
+    return jsUndefined();
   case ProductSub:
-    return String("20030107");
+    return jsString("20030107");
   case Vendor:
-    return String("Apple Computer, Inc.");
+    return jsString("Apple Computer, Inc.");
   case Language:
     // We don't have an implementation of KGlobal::locale().  We do however
     // have a static method on KLocale to access the current language.
-    return String(KLocale::language());
+    return jsString(KLocale::language());
   case UserAgent:
-    return String(userAgent);
+    return jsString(userAgent);
   case Platform:
     // yet another evil hack, but necessary to spoof some sites...
     if ( (userAgent.find(QString::fromLatin1("Win"),0,false)>=0) )
-      return String(QString::fromLatin1("Win32"));
+      return jsString(QString::fromLatin1("Win32"));
     else if ( (userAgent.find(QString::fromLatin1("Macintosh"),0,false)>=0) ||
               (userAgent.find(QString::fromLatin1("Mac_PowerPC"),0,false)>=0) )
-      return String(QString::fromLatin1("MacPPC"));
+      return jsString(QString::fromLatin1("MacPPC"));
     else
-      return String(QString::fromLatin1("X11"));
+      return jsString(QString::fromLatin1("X11"));
   case _Plugins:
     return new Plugins(exec);
   case _MimeTypes:
     return new MimeTypes(exec);
   case CookieEnabled:
-    return Boolean(KWQKCookieJar::cookieEnabled());
+    return jsBoolean(KWQKCookieJar::cookieEnabled());
   default:
     kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
     return NULL;
@@ -334,7 +334,7 @@ IMPLEMENT_PROTOFUNC(PluginsFunc)
 ValueImp *Plugins::getValueProperty(ExecState *exec, int token) const
 {
   assert(token == Length);
-  return Number(plugins->count());
+  return jsNumber(plugins->count());
 }
 
 ValueImp *Plugins::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -349,7 +349,7 @@ ValueImp *Plugins::nameGetter(ExecState *exec, const Identifier& propertyName, c
       return new Plugin(exec, pl);
     }
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -393,7 +393,7 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 ValueImp *MimeTypes::getValueProperty(ExecState *exec, int token) const
 {
   assert(token == Length);
-  return Number(plugins->count());
+  return jsNumber(plugins->count());
 }
 
 ValueImp *MimeTypes::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -407,7 +407,7 @@ ValueImp *MimeTypes::nameGetter(ExecState *exec, const Identifier& propertyName,
       if (m->type == propertyName.qstring())
           return new MimeType(exec, m);
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 bool MimeTypes::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -453,16 +453,16 @@ ValueImp *Plugin::getValueProperty(ExecState *exec, int token) const
 {
     switch (token) {
     case Name:
-        return String(m_info->name);
+        return jsString(m_info->name);
     case Filename:
-        return String(m_info->file);
+        return jsString(m_info->file);
     case Description:
-        return String(m_info->desc);
+        return jsString(m_info->desc);
     case Length: 
-        return Number(m_info->mimes.count());
+        return jsNumber(m_info->mimes.count());
     default:
         assert(0);
-        return Undefined();
+        return jsUndefined();
     }
 }
 
@@ -479,7 +479,7 @@ ValueImp *Plugin::nameGetter(ExecState *exec, const Identifier& propertyName, co
         if (m->type == propertyName.qstring())
             return new MimeType(exec, m);
     }
-    return Undefined();
+    return jsUndefined();
 }
 
 
@@ -525,15 +525,15 @@ ValueImp *MimeType::getValueProperty(ExecState *exec, int token) const
 {
     switch (token) {
     case Type:
-        return String(m_info->type);
+        return jsString(m_info->type);
     case Suffixes:
-        return String(m_info->suffixes);
+        return jsString(m_info->suffixes);
     case Description:
-        return String(m_info->desc);
+        return jsString(m_info->desc);
     case EnabledPlugin:
         return new Plugin(exec, m_info->plugin);
     default:
-        return Undefined();
+        return jsUndefined();
     }
 }
 
@@ -545,7 +545,7 @@ bool MimeType::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
 ValueImp *PluginsFunc::callAsFunction(ExecState *exec, ObjectImp *, const List &args)
 {
     PluginBase(exec).refresh(args[0]->toBoolean(exec));
-    return Undefined();
+    return jsUndefined();
 }
 
 ValueImp *NavigatorFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
@@ -554,7 +554,7 @@ ValueImp *NavigatorFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
     return throwError(exec, TypeError);
   Navigator *nav = static_cast<Navigator *>(thisObj);
   // javaEnabled()
-  return Boolean(nav->part()->javaEnabled());
+  return jsBoolean(nav->part()->javaEnabled());
 }
 
 } // namespace

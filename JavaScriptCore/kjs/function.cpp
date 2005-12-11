@@ -100,7 +100,7 @@ ValueImp *FunctionImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const
     bool cont = dbg->callEvent(&newExec,sid,lineno,this,args);
     if (!cont) {
       dbg->imp()->abort();
-      return Undefined();
+      return jsUndefined();
     }
   }
 
@@ -129,7 +129,7 @@ ValueImp *FunctionImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const
     int cont = dbg->returnEvent(&newExec,sid,lineno,this);
     if (!cont) {
       dbg->imp()->abort();
-      return Undefined();
+      return jsUndefined();
     }
   }
 
@@ -140,7 +140,7 @@ ValueImp *FunctionImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const
   else if (comp.complType() == ReturnValue)
     return comp.value();
   else
-    return Undefined();
+    return jsUndefined();
 }
 
 void FunctionImp::addParameter(const Identifier &n)
@@ -190,7 +190,7 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 	variable->put(exec, p->name, *it);
 	it++;
       } else
-	variable->put(exec, p->name, Undefined());
+	variable->put(exec, p->name, jsUndefined());
       p = p->next;
     }
   }
@@ -216,7 +216,7 @@ ValueImp *FunctionImp::argumentsGetter(ExecState *exec, const Identifier& proper
     }
     context = context->callingContext();
   }
-  return Null();
+  return jsNull();
 }
 
 ValueImp *FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -228,7 +228,7 @@ ValueImp *FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyN
     ++count;
     p = p->next;
   }
-  return Number(count);
+  return jsNumber(count);
 }
 
 bool FunctionImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -337,7 +337,7 @@ Completion DeclaredFunctionImp::execute(ExecState *exec)
 
   if (result.complType() == Throw || result.complType() == ReturnValue)
       return result;
-  return Completion(Normal, Undefined()); // TODO: or ReturnValue ?
+  return Completion(Normal, jsUndefined()); // TODO: or ReturnValue ?
 }
 
 void DeclaredFunctionImp::processVarDecls(ExecState *exec)
@@ -575,7 +575,7 @@ static ValueImp *encode(ExecState *exec, const List &args, const char *do_not_es
       r += tmp;
     }
   }
-  return String(r);
+  return jsString(r);
 }
 
 static ValueImp *decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
@@ -640,7 +640,7 @@ static ValueImp *decode(ExecState *exec, const List &args, const char *do_not_un
     k++;
     s.append(c);
   }
-  return String(s);
+  return jsString(s);
 }
 
 static bool isStrWhiteSpace(unsigned short c)
@@ -787,7 +787,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         if (dbg) {
           bool cont = dbg->sourceParsed(exec, sid, UString(), s, errLine);
           if (!cont)
-            return Undefined();
+            return jsUndefined();
         }
 
         // no program node means a syntax occurred
@@ -814,7 +814,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         if (newExec.hadException())
           exec->setException(newExec.exception());
 
-        res = Undefined();
+        res = jsUndefined();
         if (c.complType() == Throw)
           exec->setException(c.value());
         else if (c.isValueCompletion())
@@ -823,17 +823,17 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
       break;
     }
   case ParseInt:
-    res = Number(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
+    res = jsNumber(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
     break;
   case ParseFloat:
-    res = Number(parseFloat(args[0]->toString(exec)));
+    res = jsNumber(parseFloat(args[0]->toString(exec)));
     break;
   case IsNaN:
-    res = Boolean(isNaN(args[0]->toNumber(exec)));
+    res = jsBoolean(isNaN(args[0]->toNumber(exec)));
     break;
   case IsFinite: {
     double n = args[0]->toNumber(exec);
-    res = Boolean(!isNaN(n) && !isInf(n));
+    res = jsBoolean(!isNaN(n) && !isInf(n));
     break;
   }
   case DecodeURI:
@@ -867,7 +867,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         }
         r += s;
       }
-      res = String(r);
+      res = jsString(r);
       break;
     }
   case UnEscape:
@@ -894,7 +894,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         k++;
         s += UString(c, 1);
       }
-      res = String(s);
+      res = jsString(s);
       break;
     }
 #ifndef NDEBUG

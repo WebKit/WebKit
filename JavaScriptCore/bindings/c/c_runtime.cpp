@@ -54,7 +54,7 @@ ValueImp *CField::valueFromInstance(ExecState *exec, const Instance *inst) const
         aValue = convertNPVariantToValue (exec, &property);
     }
     else {
-        aValue = Undefined();
+        aValue = jsUndefined();
     }
     return aValue;
 }

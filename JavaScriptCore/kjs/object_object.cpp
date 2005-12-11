@@ -36,7 +36,7 @@ using namespace KJS;
 
 ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
                                        FunctionPrototypeImp *funcProto)
-  : ObjectImp() // [[Prototype]] is Null()
+  : ObjectImp() // [[Prototype]] is null
 {
     putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToString,               0), DontEnum);
     putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToLocaleString,   0), DontEnum);
@@ -79,7 +79,7 @@ ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
             return jsString(thisObj->toString(exec));
         case ToString:
         default:
-            return String("[object " + thisObj->className() + "]");
+            return jsString("[object " + thisObj->className() + "]");
     }
 }
 
@@ -94,7 +94,7 @@ ObjectObjectImp::ObjectObjectImp(ExecState *exec,
   putDirect(prototypePropertyName, objProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsOne(), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 

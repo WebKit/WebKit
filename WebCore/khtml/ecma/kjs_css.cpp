@@ -141,7 +141,7 @@ DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
 ValueImp *DOMCSSStyleDeclaration::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSStyleDeclaration *thisObj = static_cast<DOMCSSStyleDeclaration *>(slot.slotBase());
-  return getStringOrNull(thisObj->m_impl->item(slot.index()));
+  return jsStringOrNull(thisObj->m_impl->item(slot.index()));
 }
 
 ValueImp *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -158,11 +158,11 @@ ValueImp *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, const Ident
   CSSValueImpl *v = thisObj->m_impl->getPropertyCSSValue(prop);
   if (v) {
     if (pixelOrPos && v->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-      return Number(static_cast<CSSPrimitiveValueImpl *>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
+      return jsNumber(static_cast<CSSPrimitiveValueImpl *>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
     else
-      return getStringOrNull(v->cssText());
+      return jsStringOrNull(v->cssText());
   } else
-    return String("");
+    return jsString("");
 }
 
 bool DOMCSSStyleDeclaration::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -193,14 +193,14 @@ ValueImp *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case CssText:
-    return getStringOrNull(m_impl->cssText());
+    return jsStringOrNull(m_impl->cssText());
   case Length:
     return jsNumber(m_impl->length());
   case ParentRule:
     return getDOMCSSRule(exec, m_impl->parentRule());
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -252,24 +252,24 @@ ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, Objec
 
   switch (id) {
     case DOMCSSStyleDeclaration::GetPropertyValue:
-      return getStringOrNull(styleDecl.getPropertyValue(s));
+      return jsStringOrNull(styleDecl.getPropertyValue(s));
     case DOMCSSStyleDeclaration::GetPropertyCSSValue:
       return getDOMCSSValue(exec,styleDecl.getPropertyCSSValue(s));
     case DOMCSSStyleDeclaration::RemoveProperty:
-      return getStringOrNull(styleDecl.removeProperty(s, exception));
+      return jsStringOrNull(styleDecl.removeProperty(s, exception));
     case DOMCSSStyleDeclaration::GetPropertyPriority:
-      return getStringOrNull(styleDecl.getPropertyPriority(s));
+      return jsStringOrNull(styleDecl.getPropertyPriority(s));
     case DOMCSSStyleDeclaration::GetPropertyShorthand:
-      return getStringOrNull(styleDecl.getPropertyShorthand(s));
+      return jsStringOrNull(styleDecl.getPropertyShorthand(s));
     case DOMCSSStyleDeclaration::IsPropertyImplicit:
-      return Boolean(styleDecl.isPropertyImplicit(s));
+      return jsBoolean(styleDecl.isPropertyImplicit(s));
     case DOMCSSStyleDeclaration::SetProperty:
       styleDecl.setProperty(s, args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
-      return Undefined();
+      return jsUndefined();
     case DOMCSSStyleDeclaration::Item:
-      return getStringOrNull(styleDecl.item(args[0]->toInt32(exec)));
+      return jsStringOrNull(styleDecl.item(args[0]->toInt32(exec)));
     default:
-      return Undefined();
+      return jsUndefined();
   }
 }
 
@@ -308,17 +308,17 @@ ValueImp *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
   StyleSheetImpl &styleSheet = *m_impl;
   switch (token) {
   case Type:
-    return getStringOrNull(styleSheet.type());
+    return jsStringOrNull(styleSheet.type());
   case Disabled:
-    return Boolean(styleSheet.disabled());
+    return jsBoolean(styleSheet.disabled());
   case OwnerNode:
     return getDOMNode(exec,styleSheet.ownerNode());
   case ParentStyleSheet:
     return getDOMStyleSheet(exec,styleSheet.parentStyleSheet());
   case Href:
-    return getStringOrNull(styleSheet.href());
+    return jsStringOrNull(styleSheet.href());
   case Title:
-    return getStringOrNull(styleSheet.title());
+    return jsStringOrNull(styleSheet.title());
   case Media:
     return getDOMMediaList(exec, styleSheet.media());
   }
@@ -338,7 +338,7 @@ ValueImp *getDOMStyleSheet(ExecState *exec, StyleSheetImpl *ss)
 {
   DOMObject *ret;
   if (!ss)
-    return Null();
+    return jsNull();
   ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
   if ((ret = interp->getDOMObject(ss)))
     return ret;
@@ -373,10 +373,10 @@ ValueImp *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
 {
     switch(token) {
     case Length:
-      return Number(m_impl->length());
+      return jsNumber(m_impl->length());
     default:
       assert(0);
-      return Undefined();
+      return jsUndefined();
     }
 }
 
@@ -437,7 +437,7 @@ ValueImp *getDOMStyleSheetList(ExecState *exec, StyleSheetListImpl *ssl, Documen
   // Can't use the cacheDOMObject macro because of the doc argument
   DOMObject *ret;
   if (!ssl)
-    return Null();
+    return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
   if ((ret = interp->getDOMObject(ssl)))
     return ret;
@@ -455,7 +455,7 @@ ValueImp *DOMStyleSheetListFunc::callAsFunction(ExecState *exec, ObjectImp *this
   StyleSheetListImpl &styleSheetList = *static_cast<DOMStyleSheetList *>(thisObj)->impl();
   if (id == DOMStyleSheetList::Item)
     return getDOMStyleSheet(exec, styleSheetList.item(args[0]->toInt32(exec)));
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -492,19 +492,19 @@ ValueImp *DOMMediaList::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case MediaText:
-    return getStringOrNull(m_impl->mediaText());
+    return jsStringOrNull(m_impl->mediaText());
   case Length:
-    return Number(m_impl->length());
+    return jsNumber(m_impl->length());
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
 ValueImp *DOMMediaList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMMediaList *thisObj = static_cast<DOMMediaList *>(slot.slotBase());
-  return getStringOrNull(thisObj->m_impl->item(slot.index()));
+  return jsStringOrNull(thisObj->m_impl->item(slot.index()));
 }
 
 bool DOMMediaList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -546,15 +546,15 @@ ValueImp *KJS::DOMMediaListProtoFunc::callAsFunction(ExecState *exec, ObjectImp 
   MediaListImpl &mediaList = *static_cast<DOMMediaList *>(thisObj)->impl();
   switch (id) {
     case DOMMediaList::Item:
-      return getStringOrNull(mediaList.item(args[0]->toInt32(exec)));
+      return jsStringOrNull(mediaList.item(args[0]->toInt32(exec)));
     case DOMMediaList::DeleteMedium:
       mediaList.deleteMedium(args[0]->toString(exec).domString());
-      return Undefined();
+      return jsUndefined();
     case DOMMediaList::AppendMedium:
       mediaList.appendMedium(args[0]->toString(exec).domString());
-      return Undefined();
+      return jsUndefined();
     default:
-      return Undefined();
+      return jsUndefined();
   }
 }
 
@@ -600,7 +600,7 @@ ValueImp *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
     return getDOMCSSRuleList(exec, static_cast<CSSStyleSheetImpl *>(impl())->cssRules());
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -617,18 +617,18 @@ ValueImp *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
   CSSStyleSheetImpl &styleSheet = *static_cast<CSSStyleSheetImpl *>(static_cast<DOMCSSStyleSheet *>(thisObj)->impl());
   switch (id) {
     case DOMCSSStyleSheet::InsertRule:
-      return Number(styleSheet.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec), exception));
+      return jsNumber(styleSheet.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec), exception));
     case DOMCSSStyleSheet::DeleteRule:
       styleSheet.deleteRule(args[0]->toInt32(exec), exception);
-      return Undefined();
+      return jsUndefined();
     case DOMCSSStyleSheet::AddRule: {
       int index = args.size() >= 3 ? args[2]->toInt32(exec) : -1;
       styleSheet.addRule(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), index, exception);
       // As per Microsoft documentation, always return -1.
-      return Number(-1);
+      return jsNumber(-1);
     }
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -651,10 +651,10 @@ ValueImp *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case Length:
-    return Number(m_impl->length());
+    return jsNumber(m_impl->length());
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -697,7 +697,7 @@ ValueImp *DOMCSSRuleListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
     case DOMCSSRuleList::Item:
       return getDOMCSSRule(exec,cssRuleList.item(args[0]->toInt32(exec)));
     default:
-      return Undefined();
+      return jsUndefined();
   }
 }
 
@@ -795,9 +795,9 @@ ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   CSSRuleImpl &cssRule = *m_impl;
   switch (token) {
   case Type:
-    return Number(cssRule.type());
+    return jsNumber(cssRule.type());
   case CssText:
-    return getStringOrNull(cssRule.cssText());
+    return jsStringOrNull(cssRule.cssText());
   case ParentStyleSheet:
     return getDOMStyleSheet(exec,cssRule.parentStyleSheet());
   case ParentRule:
@@ -805,7 +805,7 @@ ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::STYLE_RULE:
   case Style_SelectorText:
-    return getStringOrNull(static_cast<CSSStyleRuleImpl *>(m_impl.get())->selectorText());
+    return jsStringOrNull(static_cast<CSSStyleRuleImpl *>(m_impl.get())->selectorText());
   case Style_Style:
     return getDOMCSSStyleDeclaration(exec, static_cast<CSSStyleRuleImpl *>(m_impl.get())->style());
 
@@ -821,13 +821,13 @@ ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::PAGE_RULE:
   case Page_SelectorText:
-    return getStringOrNull(static_cast<CSSPageRuleImpl *>(m_impl.get())->selectorText());
+    return jsStringOrNull(static_cast<CSSPageRuleImpl *>(m_impl.get())->selectorText());
   case Page_Style:
     return getDOMCSSStyleDeclaration(exec, static_cast<CSSPageRuleImpl *>(m_impl.get())->style());
 
   // for DOM::CSSRule::IMPORT_RULE:
   case Import_Href:
-    return getStringOrNull(static_cast<CSSImportRuleImpl *>(m_impl.get())->href());
+    return jsStringOrNull(static_cast<CSSImportRuleImpl *>(m_impl.get())->href());
   case Import_Media:
     return getDOMMediaList(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->media());
   case Import_StyleSheet:
@@ -835,12 +835,12 @@ ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::CHARSET_RULE:
   case Charset_Encoding:
-    return getStringOrNull(static_cast<CSSCharsetRuleImpl *>(m_impl.get())->encoding());
+    return jsStringOrNull(static_cast<CSSCharsetRuleImpl *>(m_impl.get())->encoding());
 
   default:
     assert(0);
   }
-  return Undefined();
+  return jsUndefined();
 }
 
 void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
@@ -894,12 +894,12 @@ ValueImp *DOMCSSRuleFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, co
   if (cssRule.type() == DOM::CSSRule::MEDIA_RULE) {
     CSSMediaRuleImpl &rule = static_cast<CSSMediaRuleImpl &>(cssRule);
     if (id == DOMCSSRule::Media_InsertRule)
-      return Number(rule.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec)));
+      return jsNumber(rule.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec)));
     else if (id == DOMCSSRule::Media_DeleteRule)
       rule.deleteRule(args[0]->toInt32(exec));
   }
 
-  return Undefined();
+  return jsUndefined();
 }
 
 ValueImp *getDOMCSSRule(ExecState *exec, CSSRuleImpl *r)
@@ -931,19 +931,19 @@ ValueImp *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case UNKNOWN_RULE:
-    return Number(DOM::CSSRule::UNKNOWN_RULE);
+    return jsNumber(DOM::CSSRule::UNKNOWN_RULE);
   case STYLE_RULE:
-    return Number(DOM::CSSRule::STYLE_RULE);
+    return jsNumber(DOM::CSSRule::STYLE_RULE);
   case CHARSET_RULE:
-    return Number(DOM::CSSRule::CHARSET_RULE);
+    return jsNumber(DOM::CSSRule::CHARSET_RULE);
   case IMPORT_RULE:
-    return Number(DOM::CSSRule::IMPORT_RULE);
+    return jsNumber(DOM::CSSRule::IMPORT_RULE);
   case MEDIA_RULE:
-    return Number(DOM::CSSRule::MEDIA_RULE);
+    return jsNumber(DOM::CSSRule::MEDIA_RULE);
   case FONT_FACE_RULE:
-    return Number(DOM::CSSRule::FONT_FACE_RULE);
+    return jsNumber(DOM::CSSRule::FONT_FACE_RULE);
   case PAGE_RULE:
-    return Number(DOM::CSSRule::PAGE_RULE);
+    return jsNumber(DOM::CSSRule::PAGE_RULE);
   }
   return NULL;
 }
@@ -973,12 +973,12 @@ ValueImp *DOMCSSValue::getValueProperty(ExecState *exec, int token) const
   CSSValueImpl &cssValue = *m_impl;
   switch (token) {
   case CssText:
-    return getStringOrNull(cssValue.cssText());
+    return jsStringOrNull(cssValue.cssText());
   case CssValueType:
-    return Number(cssValue.cssValueType());
+    return jsNumber(cssValue.cssValueType());
   default:
     assert(0);
-    return Undefined();
+    return jsUndefined();
   }
 }
 
@@ -1000,7 +1000,7 @@ ValueImp *getDOMCSSValue(ExecState *exec, CSSValueImpl *v)
 {
   DOMObject *ret;
   if (!v)
-    return Null();
+    return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
   if ((ret = interp->getDOMObject(v)))
     return ret;
@@ -1036,13 +1036,13 @@ ValueImp *CSSValueConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case CSS_INHERIT:
-    return Number(DOM::CSSValue::CSS_INHERIT);
+    return jsNumber(DOM::CSSValue::CSS_INHERIT);
   case CSS_PRIMITIVE_VALUE:
-    return Number(DOM::CSSValue::CSS_PRIMITIVE_VALUE);
+    return jsNumber(DOM::CSSValue::CSS_PRIMITIVE_VALUE);
   case CSS_VALUE_LIST:
-    return Number(DOM::CSSValue::CSS_VALUE_LIST);
+    return jsNumber(DOM::CSSValue::CSS_VALUE_LIST);
   case CSS_CUSTOM:
-    return Number(DOM::CSSValue::CSS_CUSTOM);
+    return jsNumber(DOM::CSSValue::CSS_CUSTOM);
   }
   return NULL;
 }
@@ -1082,7 +1082,7 @@ DOMCSSPrimitiveValue::DOMCSSPrimitiveValue(ExecState *exec, CSSPrimitiveValueImp
 ValueImp *DOMCSSPrimitiveValue::getValueProperty(ExecState *exec, int token)
 {
   assert(token == PrimitiveType);
-  return Number(static_cast<CSSPrimitiveValueImpl *>(impl())->primitiveType());
+  return jsNumber(static_cast<CSSPrimitiveValueImpl *>(impl())->primitiveType());
 }
 
 bool DOMCSSPrimitiveValue::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1099,14 +1099,14 @@ ValueImp *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, ObjectI
   switch (id) {
     case DOMCSSPrimitiveValue::SetFloatValue:
       val.setFloatValue(args[0]->toInt32(exec), args[1]->toNumber(exec), exception);
-      return Undefined();
+      return jsUndefined();
     case DOMCSSPrimitiveValue::GetFloatValue:
-      return Number(val.getFloatValue(args[0]->toInt32(exec)));
+      return jsNumber(val.getFloatValue(args[0]->toInt32(exec)));
     case DOMCSSPrimitiveValue::SetStringValue:
       val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec).domString(), exception);
-      return Undefined();
+      return jsUndefined();
     case DOMCSSPrimitiveValue::GetStringValue:
-      return getStringOrNull(val.getStringValue());
+      return jsStringOrNull(val.getStringValue());
     case DOMCSSPrimitiveValue::GetCounterValue:
       return getDOMCounter(exec,val.getCounterValue());
     case DOMCSSPrimitiveValue::GetRectValue:
@@ -1114,7 +1114,7 @@ ValueImp *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, ObjectI
     case DOMCSSPrimitiveValue::GetRGBColorValue:
       return getDOMRGBColor(exec,val.getRGBColorValue());
     default:
-      return Undefined();
+      return jsUndefined();
   }
 }
 
@@ -1161,7 +1161,7 @@ bool CSSPrimitiveValueConstructor::getOwnPropertySlot(ExecState *exec, const Ide
 ValueImp *CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
-  return Number(token);
+  return jsNumber(token);
 }
 
 ValueImp *getCSSPrimitiveValueConstructor(ExecState *exec)
@@ -1189,7 +1189,7 @@ DOMCSSValueList::DOMCSSValueList(ExecState *exec, CSSValueListImpl *v)
 ValueImp *DOMCSSValueList::getValueProperty(ExecState *exec, int token) const
 {
   assert(token == Length);
-  return Number(static_cast<CSSValueListImpl *>(impl())->length());
+  return jsNumber(static_cast<CSSValueListImpl *>(impl())->length());
 }
 
 ValueImp *DOMCSSValueList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -1228,7 +1228,7 @@ ValueImp *DOMCSSValueListFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
     case DOMCSSValueList::Item:
       return getDOMCSSValue(exec,valueList.item(args[0]->toInt32(exec)));
     default:
-      return Undefined();
+      return jsUndefined();
   }
 }
 
@@ -1345,11 +1345,11 @@ ValueImp *DOMCounter::getValueProperty(ExecState *, int token) const
   CounterImpl &counter = *m_counter;
   switch (token) {
   case identifier:
-    return getStringOrNull(counter.identifier());
+    return jsStringOrNull(counter.identifier());
   case listStyle:
-    return getStringOrNull(counter.listStyle());
+    return jsStringOrNull(counter.listStyle());
   case separator:
-    return getStringOrNull(counter.separator());
+    return jsStringOrNull(counter.separator());
   default:
     return NULL;
   }

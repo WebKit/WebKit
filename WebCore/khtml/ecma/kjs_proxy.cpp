@@ -246,7 +246,7 @@ public:
 ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
   fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
-  return Undefined();
+  return jsUndefined();
 }
 
 void KJSProxyImpl::initScript()
