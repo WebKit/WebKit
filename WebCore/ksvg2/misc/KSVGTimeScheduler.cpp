@@ -41,7 +41,7 @@ SVGTimer::SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot)
     m_scheduler = scheduler;
     m_singleShot = singleShot;
     
-    m_timer = new QTimer(scheduler);
+    m_timer = new QTimer();
 }
 
 SVGTimer::~SVGTimer()

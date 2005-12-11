@@ -1,3 +1,12 @@
+2005-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
+	- fix SVG build for recent QTimer changes.
+
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::SVGTimer):
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.
