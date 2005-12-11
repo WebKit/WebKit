@@ -95,9 +95,9 @@ void CInstance::end()
     // Do nothing.
 }
 
-ValueImp *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
+JSValue *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
 {
-    ValueImp *resultValue;
+    JSValue *resultValue;
 
     // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
@@ -147,9 +147,9 @@ ValueImp *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList
 }
 
 
-ValueImp *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
+JSValue *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 {
-    ValueImp *resultValue;
+    JSValue *resultValue;
 
     if (_object->_class->invokeDefault) {     
         unsigned i, count = args.size();
@@ -189,7 +189,7 @@ ValueImp *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 }
 
 
-ValueImp *CInstance::defaultValue (Type hint) const
+JSValue *CInstance::defaultValue (Type hint) const
 {
     if (hint == StringType) {
         return stringValue();
@@ -204,26 +204,26 @@ ValueImp *CInstance::defaultValue (Type hint) const
     return valueOf();
 }
 
-ValueImp *CInstance::stringValue() const
+JSValue *CInstance::stringValue() const
 {
     char buf[1024];
     snprintf(buf, 1024, "NPObject %p, NPClass %p", _object, _object->_class);
     return jsString(buf);
 }
 
-ValueImp *CInstance::numberValue() const
+JSValue *CInstance::numberValue() const
 {
     // FIXME:  Implement something sensible
     return jsNumber(0);
 }
 
-ValueImp *CInstance::booleanValue() const
+JSValue *CInstance::booleanValue() const
 {
     // FIXME:  Implement something sensible
     return jsBoolean(false);
 }
 
-ValueImp *CInstance::valueOf() const 
+JSValue *CInstance::valueOf() const 
 {
     return stringValue();
 }

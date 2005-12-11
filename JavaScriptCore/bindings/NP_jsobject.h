@@ -40,12 +40,12 @@ extern NPClass *NPScriptObjectClass;
 typedef struct
 {
     NPObject object;
-    KJS::ObjectImp *imp;
+    KJS::JSObject *imp;
     const KJS::Bindings::RootObject *originExecutionContext;
     const KJS::Bindings::RootObject *executionContext;
 } JavaScriptObject;
 
-NPObject *_NPN_CreateScriptObject (NPP npp, KJS::ObjectImp *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext);
+NPObject *_NPN_CreateScriptObject (NPP npp, KJS::JSObject *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext);
 
 #ifdef __cplusplus
 }

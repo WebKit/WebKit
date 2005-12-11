@@ -69,12 +69,12 @@ namespace KJS {
  * Class to implement all methods that are properties of the
  * Date.prototype object
  */
-class DateProtoFuncImp : public InternalFunctionImp {
+class DateProtoFunc : public InternalFunctionImp {
 public:
-    DateProtoFuncImp(ExecState *, int i, int len);
+    DateProtoFunc(ExecState *, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
     Completion execute(const List &);
     enum { ToString, ToDateString, ToTimeString, ToLocaleString,
@@ -98,10 +98,10 @@ private:
  */
 class DateObjectFuncImp : public InternalFunctionImp {
 public:
-    DateObjectFuncImp(ExecState *, FunctionPrototypeImp *, int i, int len);
+    DateObjectFuncImp(ExecState *, FunctionPrototype *, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
     enum { Parse, UTC };
 
@@ -378,93 +378,93 @@ static void fillStructuresUsingDateArgs(ExecState *exec, const List &args, int m
     }
 }
 
-// ------------------------------ DateInstanceImp ------------------------------
+// ------------------------------ DateInstance ------------------------------
 
-const ClassInfo DateInstanceImp::info = {"Date", 0, 0, 0};
+const ClassInfo DateInstance::info = {"Date", 0, 0, 0};
 
-DateInstanceImp::DateInstanceImp(ObjectImp *proto)
-  : ObjectImp(proto)
+DateInstance::DateInstance(JSObject *proto)
+  : JSObject(proto)
 {
 }
 
-// ------------------------------ DatePrototypeImp -----------------------------
+// ------------------------------ DatePrototype -----------------------------
 
-const ClassInfo DatePrototypeImp::info = {"Date", &DateInstanceImp::info, &dateTable, 0};
+const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, &dateTable, 0};
 
 /* Source for date_object.lut.h
    We use a negative ID to denote the "UTC" variant.
 @begin dateTable 61
-  toString		DateProtoFuncImp::ToString		DontEnum|Function	0
-  toUTCString		-DateProtoFuncImp::ToUTCString		DontEnum|Function	0
-  toDateString		DateProtoFuncImp::ToDateString		DontEnum|Function	0
-  toTimeString		DateProtoFuncImp::ToTimeString		DontEnum|Function	0
-  toLocaleString	DateProtoFuncImp::ToLocaleString	DontEnum|Function	0
-  toLocaleDateString	DateProtoFuncImp::ToLocaleDateString	DontEnum|Function	0
-  toLocaleTimeString	DateProtoFuncImp::ToLocaleTimeString	DontEnum|Function	0
-  valueOf		DateProtoFuncImp::ValueOf		DontEnum|Function	0
-  getTime		DateProtoFuncImp::GetTime		DontEnum|Function	0
-  getFullYear		DateProtoFuncImp::GetFullYear		DontEnum|Function	0
-  getUTCFullYear	-DateProtoFuncImp::GetFullYear		DontEnum|Function	0
-  toGMTString		-DateProtoFuncImp::ToGMTString		DontEnum|Function	0
-  getMonth		DateProtoFuncImp::GetMonth		DontEnum|Function	0
-  getUTCMonth		-DateProtoFuncImp::GetMonth		DontEnum|Function	0
-  getDate		DateProtoFuncImp::GetDate		DontEnum|Function	0
-  getUTCDate		-DateProtoFuncImp::GetDate		DontEnum|Function	0
-  getDay		DateProtoFuncImp::GetDay		DontEnum|Function	0
-  getUTCDay		-DateProtoFuncImp::GetDay		DontEnum|Function	0
-  getHours		DateProtoFuncImp::GetHours		DontEnum|Function	0
-  getUTCHours		-DateProtoFuncImp::GetHours		DontEnum|Function	0
-  getMinutes		DateProtoFuncImp::GetMinutes		DontEnum|Function	0
-  getUTCMinutes		-DateProtoFuncImp::GetMinutes		DontEnum|Function	0
-  getSeconds		DateProtoFuncImp::GetSeconds		DontEnum|Function	0
-  getUTCSeconds		-DateProtoFuncImp::GetSeconds		DontEnum|Function	0
-  getMilliseconds	DateProtoFuncImp::GetMilliSeconds	DontEnum|Function	0
-  getUTCMilliseconds	-DateProtoFuncImp::GetMilliSeconds	DontEnum|Function	0
-  getTimezoneOffset	DateProtoFuncImp::GetTimezoneOffset	DontEnum|Function	0
-  setTime		DateProtoFuncImp::SetTime		DontEnum|Function	1
-  setMilliseconds	DateProtoFuncImp::SetMilliSeconds	DontEnum|Function	1
-  setUTCMilliseconds	-DateProtoFuncImp::SetMilliSeconds	DontEnum|Function	1
-  setSeconds		DateProtoFuncImp::SetSeconds		DontEnum|Function	2
-  setUTCSeconds		-DateProtoFuncImp::SetSeconds		DontEnum|Function	2
-  setMinutes		DateProtoFuncImp::SetMinutes		DontEnum|Function	3
-  setUTCMinutes		-DateProtoFuncImp::SetMinutes		DontEnum|Function	3
-  setHours		DateProtoFuncImp::SetHours		DontEnum|Function	4
-  setUTCHours		-DateProtoFuncImp::SetHours		DontEnum|Function	4
-  setDate		DateProtoFuncImp::SetDate		DontEnum|Function	1
-  setUTCDate		-DateProtoFuncImp::SetDate		DontEnum|Function	1
-  setMonth		DateProtoFuncImp::SetMonth		DontEnum|Function	2
-  setUTCMonth		-DateProtoFuncImp::SetMonth		DontEnum|Function	2
-  setFullYear		DateProtoFuncImp::SetFullYear		DontEnum|Function	3
-  setUTCFullYear	-DateProtoFuncImp::SetFullYear		DontEnum|Function	3
-  setYear		DateProtoFuncImp::SetYear		DontEnum|Function	1
-  getYear		DateProtoFuncImp::GetYear		DontEnum|Function	0
+  toString		DateProtoFunc::ToString		DontEnum|Function	0
+  toUTCString		-DateProtoFunc::ToUTCString		DontEnum|Function	0
+  toDateString		DateProtoFunc::ToDateString		DontEnum|Function	0
+  toTimeString		DateProtoFunc::ToTimeString		DontEnum|Function	0
+  toLocaleString	DateProtoFunc::ToLocaleString	DontEnum|Function	0
+  toLocaleDateString	DateProtoFunc::ToLocaleDateString	DontEnum|Function	0
+  toLocaleTimeString	DateProtoFunc::ToLocaleTimeString	DontEnum|Function	0
+  valueOf		DateProtoFunc::ValueOf		DontEnum|Function	0
+  getTime		DateProtoFunc::GetTime		DontEnum|Function	0
+  getFullYear		DateProtoFunc::GetFullYear		DontEnum|Function	0
+  getUTCFullYear	-DateProtoFunc::GetFullYear		DontEnum|Function	0
+  toGMTString		-DateProtoFunc::ToGMTString		DontEnum|Function	0
+  getMonth		DateProtoFunc::GetMonth		DontEnum|Function	0
+  getUTCMonth		-DateProtoFunc::GetMonth		DontEnum|Function	0
+  getDate		DateProtoFunc::GetDate		DontEnum|Function	0
+  getUTCDate		-DateProtoFunc::GetDate		DontEnum|Function	0
+  getDay		DateProtoFunc::GetDay		DontEnum|Function	0
+  getUTCDay		-DateProtoFunc::GetDay		DontEnum|Function	0
+  getHours		DateProtoFunc::GetHours		DontEnum|Function	0
+  getUTCHours		-DateProtoFunc::GetHours		DontEnum|Function	0
+  getMinutes		DateProtoFunc::GetMinutes		DontEnum|Function	0
+  getUTCMinutes		-DateProtoFunc::GetMinutes		DontEnum|Function	0
+  getSeconds		DateProtoFunc::GetSeconds		DontEnum|Function	0
+  getUTCSeconds		-DateProtoFunc::GetSeconds		DontEnum|Function	0
+  getMilliseconds	DateProtoFunc::GetMilliSeconds	DontEnum|Function	0
+  getUTCMilliseconds	-DateProtoFunc::GetMilliSeconds	DontEnum|Function	0
+  getTimezoneOffset	DateProtoFunc::GetTimezoneOffset	DontEnum|Function	0
+  setTime		DateProtoFunc::SetTime		DontEnum|Function	1
+  setMilliseconds	DateProtoFunc::SetMilliSeconds	DontEnum|Function	1
+  setUTCMilliseconds	-DateProtoFunc::SetMilliSeconds	DontEnum|Function	1
+  setSeconds		DateProtoFunc::SetSeconds		DontEnum|Function	2
+  setUTCSeconds		-DateProtoFunc::SetSeconds		DontEnum|Function	2
+  setMinutes		DateProtoFunc::SetMinutes		DontEnum|Function	3
+  setUTCMinutes		-DateProtoFunc::SetMinutes		DontEnum|Function	3
+  setHours		DateProtoFunc::SetHours		DontEnum|Function	4
+  setUTCHours		-DateProtoFunc::SetHours		DontEnum|Function	4
+  setDate		DateProtoFunc::SetDate		DontEnum|Function	1
+  setUTCDate		-DateProtoFunc::SetDate		DontEnum|Function	1
+  setMonth		DateProtoFunc::SetMonth		DontEnum|Function	2
+  setUTCMonth		-DateProtoFunc::SetMonth		DontEnum|Function	2
+  setFullYear		DateProtoFunc::SetFullYear		DontEnum|Function	3
+  setUTCFullYear	-DateProtoFunc::SetFullYear		DontEnum|Function	3
+  setYear		DateProtoFunc::SetYear		DontEnum|Function	1
+  getYear		DateProtoFunc::GetYear		DontEnum|Function	0
 @end
 */
 // ECMA 15.9.4
 
-DatePrototypeImp::DatePrototypeImp(ExecState *, ObjectPrototypeImp *objectProto)
-  : DateInstanceImp(objectProto)
+DatePrototype::DatePrototype(ExecState *, ObjectPrototype *objectProto)
+  : DateInstance(objectProto)
 {
     setInternalValue(jsNaN());
     // The constructor will be added later, after DateObjectImp has been built.
 }
 
-bool DatePrototypeImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DatePrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<DateProtoFuncImp, ObjectImp>(exec, &dateTable, this, propertyName, slot);
+    return getStaticFunctionSlot<DateProtoFunc, JSObject>(exec, &dateTable, this, propertyName, slot);
 }
 
-// ------------------------------ DateProtoFuncImp -----------------------------
+// ------------------------------ DateProtoFunc -----------------------------
 
-DateProtoFuncImp::DateProtoFuncImp(ExecState *exec, int i, int len)
-  : InternalFunctionImp(static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())),
+DateProtoFunc::DateProtoFunc(ExecState *exec, int i, int len)
+  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype())),
     id(abs(i)), utc(i<0)
   // We use a negative ID to denote the "UTC" variant.
 {
     putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
-bool DateProtoFuncImp::implementsCall() const
+bool DateProtoFunc::implementsCall() const
 {
     return true;
 }
@@ -475,10 +475,10 @@ static bool isTime_tSigned()
     return minusOne < 0;
 }
 
-ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if ((id == ToString || id == ValueOf || id == GetTime || id == SetTime) &&
-      !thisObj->inherits(&DateInstanceImp::info)) {
+      !thisObj->inherits(&DateInstance::info)) {
     // non-generic function called on non-date object
 
     // ToString and ValueOf are generic according to the spec, but the mozilla
@@ -487,7 +487,7 @@ ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
   }
 
 
-  ValueImp *result = 0;
+  JSValue *result = 0;
   UString s;
 #if !__APPLE__
   const int bufsize=100;
@@ -497,7 +497,7 @@ ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
     oldlocale = setlocale(LC_ALL, 0);
   // FIXME: Where's the code to set the locale back to oldlocale?
 #endif
-  ValueImp *v = thisObj->internalValue();
+  JSValue *v = thisObj->internalValue();
   double milli = v->toNumber(exec);
   if (isNaN(milli)) {
     switch (id) {
@@ -681,8 +681,8 @@ ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
 // TODO: MakeTime (15.9.11.1) etc. ?
 
 DateObjectImp::DateObjectImp(ExecState *exec,
-                             FunctionPrototypeImp *funcProto,
-                             DatePrototypeImp *dateProto)
+                             FunctionPrototype *funcProto,
+                             DatePrototype *dateProto)
   : InternalFunctionImp(funcProto)
 {
   // ECMA 15.9.4.1 Date.prototype
@@ -703,7 +703,7 @@ bool DateObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.9.3
-ObjectImp *DateObjectImp::construct(ExecState *exec, const List &args)
+JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
 {
   int numArgs = args.size();
 
@@ -755,7 +755,7 @@ ObjectImp *DateObjectImp::construct(ExecState *exec, const List &args)
     }
   }
   
-  DateInstanceImp *ret = new DateInstanceImp(exec->lexicalInterpreter()->builtinDatePrototype());
+  DateInstance *ret = new DateInstance(exec->lexicalInterpreter()->builtinDatePrototype());
   ret->setInternalValue(jsNumber(timeClip(value)));
   return ret;
 }
@@ -766,7 +766,7 @@ bool DateObjectImp::implementsCall() const
 }
 
 // ECMA 15.9.2
-ValueImp *DateObjectImp::callAsFunction(ExecState * /*exec*/, ObjectImp * /*thisObj*/, const List &/*args*/)
+JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
 {
     time_t t = time(0);
     tm ts;
@@ -776,7 +776,7 @@ ValueImp *DateObjectImp::callAsFunction(ExecState * /*exec*/, ObjectImp * /*this
 
 // ------------------------------ DateObjectFuncImp ----------------------------
 
-DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len)
+DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototype *funcProto, int i, int len)
     : InternalFunctionImp(funcProto), id(i)
 {
     putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
@@ -788,7 +788,7 @@ bool DateObjectFuncImp::implementsCall() const
 }
 
 // ECMA 15.9.4.2 - 3
-ValueImp *DateObjectFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DateObjectFuncImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (id == Parse) {
     return jsNumber(parseDate(args[0]->toString(exec)));

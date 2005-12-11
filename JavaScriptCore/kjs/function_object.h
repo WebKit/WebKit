@@ -34,13 +34,13 @@ namespace KJS {
    * The initial value of Function.prototype (and thus all objects created
    * with the Function constructor)
    */
-  class FunctionPrototypeImp : public InternalFunctionImp {
+  class FunctionPrototype : public InternalFunctionImp {
   public:
-    FunctionPrototypeImp(ExecState *exec);
-    virtual ~FunctionPrototypeImp();
+    FunctionPrototype(ExecState *exec);
+    virtual ~FunctionPrototype();
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
   /**
@@ -49,13 +49,13 @@ namespace KJS {
    * Class to implement all methods that are properties of the
    * Function.prototype object
    */
-  class FunctionProtoFuncImp : public InternalFunctionImp {
+  class FunctionProtoFunc : public InternalFunctionImp {
   public:
-    FunctionProtoFuncImp(ExecState *exec,
-                        FunctionPrototypeImp *funcProto, int i, int len);
+    FunctionProtoFunc(ExecState *exec,
+                        FunctionPrototype *funcProto, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { ToString, Apply, Call };
   private:
@@ -69,14 +69,14 @@ namespace KJS {
    */
   class FunctionObjectImp : public InternalFunctionImp {
   public:
-    FunctionObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto);
+    FunctionObjectImp(ExecState *exec, FunctionPrototype *funcProto);
     virtual ~FunctionObjectImp();
 
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
+    virtual JSObject *construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
 } // namespace

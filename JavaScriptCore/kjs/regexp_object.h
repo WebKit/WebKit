@@ -28,31 +28,31 @@
 
 namespace KJS {
   class ExecState;
-  class RegExpPrototypeImp : public ObjectImp {
+  class RegExpPrototype : public JSObject {
   public:
-    RegExpPrototypeImp(ExecState *exec,
-                       ObjectPrototypeImp *objProto,
-                       FunctionPrototypeImp *funcProto);
+    RegExpPrototype(ExecState *exec,
+                       ObjectPrototype *objProto,
+                       FunctionPrototype *funcProto);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };
 
-  class RegExpProtoFuncImp : public InternalFunctionImp {
+  class RegExpProtoFunc : public InternalFunctionImp {
   public:
-    RegExpProtoFuncImp(ExecState *exec,
-                       FunctionPrototypeImp *funcProto, int i, int len);
+    RegExpProtoFunc(ExecState *exec,
+                       FunctionPrototype *funcProto, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { Exec, Test, ToString };
   private:
     int id;
   };
 
-  class RegExpImp : public ObjectImp {
+  class RegExpImp : public JSObject {
   public:
-    RegExpImp(RegExpPrototypeImp *regexpProto);
+    RegExpImp(RegExpPrototype *regexpProto);
     ~RegExpImp();
     void setRegExp(RegExp *r) { reg = r; }
     RegExp* regExp() const { return reg; }
@@ -69,28 +69,28 @@ namespace KJS {
            Input, Multiline, LastMatch, LastParen, LeftContext, RightContext };
     
     RegExpObjectImp(ExecState *exec,
-                    FunctionPrototypeImp *funcProto,
-                    RegExpPrototypeImp *regProto);
+                    FunctionPrototype *funcProto,
+                    RegExpPrototype *regProto);
     virtual ~RegExpObjectImp();
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
-    virtual void put(ExecState *, const Identifier &, ValueImp *, int attr = None);
-    void putValueProperty(ExecState *, int token, ValueImp *, int attr);
+    virtual void put(ExecState *, const Identifier &, JSValue *, int attr = None);
+    void putValueProperty(ExecState *, int token, JSValue *, int attr);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *, int token) const;
+    JSValue *getValueProperty(ExecState *, int token) const;
     UString performMatch(RegExp *, const UString&, int startOffset = 0, int *endOffset = 0, int **ovector = 0);
-    ObjectImp *arrayOfMatches(ExecState *exec, const UString &result) const;
+    JSObject *arrayOfMatches(ExecState *exec, const UString &result) const;
     
     virtual const ClassInfo *classInfo() const { return &info; }
   private:
-    ValueImp *getBackref(unsigned) const;
-    ValueImp *getLastMatch() const;
-    ValueImp *getLastParen() const;
-    ValueImp *getLeftContext() const;
-    ValueImp *getRightContext() const;
+    JSValue *getBackref(unsigned) const;
+    JSValue *getLastMatch() const;
+    JSValue *getLastParen() const;
+    JSValue *getLeftContext() const;
+    JSValue *getRightContext() const;
 
     // Global search cache / settings
     bool multiline;

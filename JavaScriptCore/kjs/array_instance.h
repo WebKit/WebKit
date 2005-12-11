@@ -27,16 +27,16 @@
 
 namespace KJS {
 
-  class ArrayInstanceImp : public ObjectImp {
+  class ArrayInstance : public JSObject {
   public:
-    ArrayInstanceImp(ObjectImp *proto, unsigned initialLength);
-    ArrayInstanceImp(ObjectImp *proto, const List &initialValues);
-    ~ArrayInstanceImp();
+    ArrayInstance(JSObject *proto, unsigned initialLength);
+    ArrayInstance(JSObject *proto, const List &initialValues);
+    ~ArrayInstance();
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, JSValue *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
     virtual ReferenceList propList(ExecState *exec, bool recursive);
@@ -49,10 +49,10 @@ namespace KJS {
     unsigned getLength() const { return length; }
     
     void sort(ExecState *exec);
-    void sort(ExecState *exec, ObjectImp *compareFunction);
+    void sort(ExecState *exec, JSObject *compareFunction);
     
   private:
-    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     void setLength(unsigned newLength, ExecState *exec);
     
@@ -63,7 +63,7 @@ namespace KJS {
     unsigned length;
     unsigned storageLength;
     unsigned capacity;
-    ValueImp **storage;
+    JSValue **storage;
   };
 
 } // namespace KJS

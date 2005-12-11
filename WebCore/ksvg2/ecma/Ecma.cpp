@@ -114,7 +114,7 @@ void Ecma::setupDocument(KDOM::DocumentImpl *document)
     // Create base bridge for document
     SVGDocument docObj(svgDocument);
 
-    KJS::ObjectImp *kjsObj = docObj.bridge(interpreter()->globalExec());
+    KJS::JSObject *kjsObj = docObj.bridge(interpreter()->globalExec());
 #ifndef APPLE_CHANGES
     kjsObj->ref();
 #endif
@@ -123,10 +123,10 @@ void Ecma::setupDocument(KDOM::DocumentImpl *document)
     svgDocument->deref();
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
+KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
 {
     // Use svg element ids to distinguish between svg elements.
-    KJS::ObjectImp *ret = 0;
+    KJS::JSObject *ret = 0;
 
     KDOM::NodeImpl *nodeImpl = static_cast<KDOM::NodeImpl *>(n.handle());
     if(!nodeImpl)
@@ -361,7 +361,7 @@ KJS::ObjectImp *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
     return ret;
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e)
+KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e)
 {
     KDOM::EventImpl *eventImpl = e.handle();
     if(!eventImpl)
@@ -382,7 +382,7 @@ KJS::ObjectImp *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e)
     return 0;
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c)
+KJS::JSObject *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c)
 {
     KDOM::CSSValueImpl *impl = c.handle();
 
@@ -398,7 +398,7 @@ KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSVal
     return 0;
 }
 
-KJS::ValueImp *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
+KJS::JSValue *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 {
     if(s == SVGPathSeg::null)
         return KJS::jsNull();
@@ -408,11 +408,11 @@ KJS::ValueImp *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
         return KJS::jsNull();
     
     // Reuse existing bridge, if possible
-    KJS::ObjectImp *request = interpreter->getDOMObject(s.handle());
+    KJS::JSObject *request = interpreter->getDOMObject(s.handle());
     if(request)
         return request;
     
-    KJS::ObjectImp *ret = 0;
+    KJS::JSObject *ret = 0;
     unsigned short type = s.pathSegType();
 
     switch(type)

@@ -138,13 +138,13 @@ DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMCSSStyleDeclaration::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSStyleDeclaration::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSStyleDeclaration *thisObj = static_cast<DOMCSSStyleDeclaration *>(slot.slotBase());
   return jsStringOrNull(thisObj->m_impl->item(slot.index()));
 }
 
-ValueImp *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSStyleDeclaration *thisObj = static_cast<DOMCSSStyleDeclaration *>(slot.slotBase());
 
@@ -189,7 +189,7 @@ bool DOMCSSStyleDeclaration::getOwnPropertySlot(ExecState *exec, const Identifie
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-ValueImp *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
+JSValue *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case CssText:
@@ -204,7 +204,7 @@ ValueImp *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
   }
 }
 
-void DOMCSSStyleDeclaration::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr )
+void DOMCSSStyleDeclaration::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr )
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMCSSStyleDeclaration::put " << propertyName.qstring() << endl;
@@ -241,7 +241,7 @@ void DOMCSSStyleDeclaration::put(ExecState *exec, const Identifier &propertyName
   }
 }
 
-ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSStyleDeclaration::info))
     return throwError(exec, TypeError);
@@ -273,7 +273,7 @@ ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, Objec
   }
 }
 
-ValueImp *getDOMCSSStyleDeclaration(ExecState *exec, CSSStyleDeclarationImpl *s)
+JSValue *getDOMCSSStyleDeclaration(ExecState *exec, CSSStyleDeclarationImpl *s)
 {
   return cacheDOMObject<CSSStyleDeclarationImpl, DOMCSSStyleDeclaration>(exec, s);
 }
@@ -303,7 +303,7 @@ bool DOMStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& proper
   return getStaticValueSlot<DOMStyleSheet, DOMObject>(exec, &DOMStyleSheetTable, this, propertyName, slot);
 }
 
-ValueImp *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
 {
   StyleSheetImpl &styleSheet = *m_impl;
   switch (token) {
@@ -325,7 +325,7 @@ ValueImp *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
   return NULL;
 }
 
-void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   if (propertyName == "disabled") {
     m_impl->setDisabled(value->toBoolean(exec));
@@ -334,7 +334,7 @@ void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, ValueIm
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-ValueImp *getDOMStyleSheet(ExecState *exec, StyleSheetImpl *ss)
+JSValue *getDOMStyleSheet(ExecState *exec, StyleSheetImpl *ss)
 {
   DOMObject *ret;
   if (!ss)
@@ -369,7 +369,7 @@ DOMStyleSheetList::~DOMStyleSheetList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
 {
     switch(token) {
     case Length:
@@ -380,13 +380,13 @@ ValueImp *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-ValueImp *DOMStyleSheetList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMStyleSheetList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
   return getDOMStyleSheet(exec, thisObj->m_impl->item(slot.index()));
 }
 
-ValueImp *DOMStyleSheetList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMStyleSheetList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
   ElementImpl *element = thisObj->m_doc->getElementById(propertyName.domString());
@@ -432,7 +432,7 @@ bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& pr
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-ValueImp *getDOMStyleSheetList(ExecState *exec, StyleSheetListImpl *ssl, DocumentImpl *doc)
+JSValue *getDOMStyleSheetList(ExecState *exec, StyleSheetListImpl *ssl, DocumentImpl *doc)
 {
   // Can't use the cacheDOMObject macro because of the doc argument
   DOMObject *ret;
@@ -448,7 +448,7 @@ ValueImp *getDOMStyleSheetList(ExecState *exec, StyleSheetListImpl *ssl, Documen
   }
 }
 
-ValueImp *DOMStyleSheetListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMStyleSheetListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMStyleSheetList::info))
     return throwError(exec, TypeError);
@@ -488,7 +488,7 @@ DOMMediaList::~DOMMediaList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMMediaList::getValueProperty(ExecState *exec, int token)
+JSValue *DOMMediaList::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case MediaText:
@@ -501,7 +501,7 @@ ValueImp *DOMMediaList::getValueProperty(ExecState *exec, int token)
   }
 }
 
-ValueImp *DOMMediaList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMMediaList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMMediaList *thisObj = static_cast<DOMMediaList *>(slot.slotBase());
   return jsStringOrNull(thisObj->m_impl->item(slot.index()));
@@ -525,7 +525,7 @@ bool DOMMediaList::getOwnPropertySlot(ExecState *exec, const Identifier& propert
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   MediaListImpl &mediaList = *m_impl;
   if (propertyName == "mediaText")
@@ -534,12 +534,12 @@ void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, ValueImp
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-ValueImp *getDOMMediaList(ExecState *exec, MediaListImpl *ml)
+JSValue *getDOMMediaList(ExecState *exec, MediaListImpl *ml)
 {
   return cacheDOMObject<MediaListImpl, DOMMediaList>(exec, ml);
 }
 
-ValueImp *KJS::DOMMediaListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *KJS::DOMMediaListProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMMediaList::info))
     return throwError(exec, TypeError);
@@ -590,7 +590,7 @@ DOMCSSStyleSheet::~DOMCSSStyleSheet()
 {
 }
 
-ValueImp *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case OwnerRule:
@@ -609,7 +609,7 @@ bool DOMCSSStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& pro
   return getStaticValueSlot<DOMCSSStyleSheet, DOMStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
 }
 
-ValueImp *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSStyleSheet::info))
     return throwError(exec, TypeError);
@@ -647,7 +647,7 @@ DOMCSSRuleList::~DOMCSSRuleList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case Length:
@@ -658,7 +658,7 @@ ValueImp *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-ValueImp *DOMCSSRuleList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSRuleList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSRuleList *thisObj = static_cast<DOMCSSRuleList *>(slot.slotBase());
   return getDOMCSSRule(exec, thisObj->m_impl->item(slot.index()));
@@ -688,7 +688,7 @@ bool DOMCSSRuleList::getOwnPropertySlot(ExecState *exec, const Identifier& prope
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-ValueImp *DOMCSSRuleListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSRuleListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSRuleList::info))
     return throwError(exec, TypeError);
@@ -701,7 +701,7 @@ ValueImp *DOMCSSRuleListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
   }
 }
 
-ValueImp *getDOMCSSRuleList(ExecState *exec, CSSRuleListImpl *rl)
+JSValue *getDOMCSSRuleList(ExecState *exec, CSSRuleListImpl *rl)
 {
   return cacheDOMObject<CSSRuleListImpl, DOMCSSRuleList>(exec, rl);
 }
@@ -790,7 +790,7 @@ bool DOMCSSRule::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   return getStaticPropertySlot<DOMCSSRuleFunc, DOMCSSRule, DOMObject>(exec, &DOMCSSRuleTable, this, propertyName, slot);
 }
 
-ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 {
   CSSRuleImpl &cssRule = *m_impl;
   switch (token) {
@@ -843,14 +843,14 @@ ValueImp *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   return jsUndefined();
 }
 
-void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   const HashTable* table = classInfo()->propHashTable; // get the right hashtable
   const HashEntry* entry = Lookup::findEntry(table, propertyName);
   if (entry) {
     if (entry->attr & Function) // function: put as override property
     {
-      ObjectImp::put(exec, propertyName, value, attr);
+      JSObject::put(exec, propertyName, value, attr);
       return;
     }
     else if ((entry->attr & ReadOnly) == 0) // let lookupPut print the warning if not
@@ -862,7 +862,7 @@ void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, ValueImp *
   lookupPut<DOMCSSRule, DOMObject>(exec, propertyName, value, attr, &DOMCSSRuleTable, this);
 }
 
-void DOMCSSRule::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
+void DOMCSSRule::putValueProperty(ExecState *exec, int token, JSValue *value, int)
 {
   switch (token) {
   // for DOM::CSSRule::STYLE_RULE:
@@ -885,7 +885,7 @@ void DOMCSSRule::putValueProperty(ExecState *exec, int token, ValueImp *value, i
   }
 }
 
-ValueImp *DOMCSSRuleFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSRule::info))
     return throwError(exec, TypeError);
@@ -902,7 +902,7 @@ ValueImp *DOMCSSRuleFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, co
   return jsUndefined();
 }
 
-ValueImp *getDOMCSSRule(ExecState *exec, CSSRuleImpl *r)
+JSValue *getDOMCSSRule(ExecState *exec, CSSRuleImpl *r)
 {
   return cacheDOMObject<CSSRuleImpl, DOMCSSRule>(exec, r);
 }
@@ -927,7 +927,7 @@ bool CSSRuleConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& p
   return getStaticValueSlot<CSSRuleConstructor, DOMObject>(exec, &CSSRuleConstructorTable, this, propertyName, slot);
 }
 
-ValueImp *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
+JSValue *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case UNKNOWN_RULE:
@@ -948,7 +948,7 @@ ValueImp *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
   return NULL;
 }
 
-ValueImp *getCSSRuleConstructor(ExecState *exec)
+JSValue *getCSSRuleConstructor(ExecState *exec)
 {
   return cacheGlobalObject<CSSRuleConstructor>( exec, "[[cssRule.constructor]]" );
 }
@@ -968,7 +968,7 @@ DOMCSSValue::~DOMCSSValue()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMCSSValue::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMCSSValue::getValueProperty(ExecState *exec, int token) const
 {
   CSSValueImpl &cssValue = *m_impl;
   switch (token) {
@@ -987,7 +987,7 @@ bool DOMCSSValue::getOwnPropertySlot(ExecState *exec, const Identifier& property
   return getStaticValueSlot<DOMCSSValue, DOMObject>(exec, &DOMCSSValueTable, this, propertyName, slot);
 }
 
-void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   CSSValueImpl &cssValue = *m_impl;
   if (propertyName == "cssText")
@@ -996,7 +996,7 @@ void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, ValueImp 
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-ValueImp *getDOMCSSValue(ExecState *exec, CSSValueImpl *v)
+JSValue *getDOMCSSValue(ExecState *exec, CSSValueImpl *v)
 {
   DOMObject *ret;
   if (!v)
@@ -1032,7 +1032,7 @@ bool CSSValueConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& 
   return getStaticValueSlot<CSSValueConstructor, DOMObject>(exec, &CSSValueConstructorTable, this, propertyName, slot);
 }
 
-ValueImp *CSSValueConstructor::getValueProperty(ExecState *, int token) const
+JSValue *CSSValueConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case CSS_INHERIT:
@@ -1047,7 +1047,7 @@ ValueImp *CSSValueConstructor::getValueProperty(ExecState *, int token) const
   return NULL;
 }
 
-ValueImp *getCSSValueConstructor(ExecState *exec)
+JSValue *getCSSValueConstructor(ExecState *exec)
 {
   return cacheGlobalObject<CSSValueConstructor>( exec, "[[cssValue.constructor]]" );
 }
@@ -1079,7 +1079,7 @@ DOMCSSPrimitiveValue::DOMCSSPrimitiveValue(ExecState *exec, CSSPrimitiveValueImp
   setPrototype(DOMCSSPrimitiveValueProto::self(exec));
 }
 
-ValueImp *DOMCSSPrimitiveValue::getValueProperty(ExecState *exec, int token)
+JSValue *DOMCSSPrimitiveValue::getValueProperty(ExecState *exec, int token)
 {
   assert(token == PrimitiveType);
   return jsNumber(static_cast<CSSPrimitiveValueImpl *>(impl())->primitiveType());
@@ -1090,7 +1090,7 @@ bool DOMCSSPrimitiveValue::getOwnPropertySlot(ExecState *exec, const Identifier&
   return getStaticValueSlot<DOMCSSPrimitiveValue, DOMCSSValue>(exec, &DOMCSSPrimitiveValueTable, this, propertyName, slot);
 }
 
-ValueImp *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSPrimitiveValue::info))
     return throwError(exec, TypeError);
@@ -1158,13 +1158,13 @@ bool CSSPrimitiveValueConstructor::getOwnPropertySlot(ExecState *exec, const Ide
   return getStaticValueSlot<CSSPrimitiveValueConstructor, CSSValueConstructor>(exec, &CSSPrimitiveValueConstructorTable, this, propertyName, slot);
 }
 
-ValueImp *CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
+JSValue *CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
 {
   // We use the token as the value to return directly
   return jsNumber(token);
 }
 
-ValueImp *getCSSPrimitiveValueConstructor(ExecState *exec)
+JSValue *getCSSPrimitiveValueConstructor(ExecState *exec)
 {
   return cacheGlobalObject<CSSPrimitiveValueConstructor>( exec, "[[cssPrimitiveValue.constructor]]" );
 }
@@ -1186,13 +1186,13 @@ DOMCSSValueList::DOMCSSValueList(ExecState *exec, CSSValueListImpl *v)
 { 
 }
 
-ValueImp *DOMCSSValueList::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMCSSValueList::getValueProperty(ExecState *exec, int token) const
 {
   assert(token == Length);
   return jsNumber(static_cast<CSSValueListImpl *>(impl())->length());
 }
 
-ValueImp *DOMCSSValueList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSValueList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSValueList *thisObj = static_cast<DOMCSSValueList *>(slot.slotBase());
   return getDOMCSSValue(exec, static_cast<CSSValueListImpl *>(thisObj->impl())->item(slot.index()));
@@ -1219,7 +1219,7 @@ bool DOMCSSValueList::getOwnPropertySlot(ExecState *exec, const Identifier& prop
   return DOMCSSValue::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-ValueImp *DOMCSSValueListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMCSSValueListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMCSSValue::info))
     return throwError(exec, TypeError);
@@ -1253,7 +1253,7 @@ bool DOMRGBColor::getOwnPropertySlot(ExecState *exec, const Identifier& property
   return getStaticValueSlot<DOMRGBColor, DOMObject>(exec, &DOMRGBColorTable, this, propertyName, slot);
 }
 
-ValueImp *DOMRGBColor::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMRGBColor::getValueProperty(ExecState *exec, int token) const
 {
   int color = m_color;
   switch (token) {
@@ -1270,7 +1270,7 @@ ValueImp *DOMRGBColor::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-ValueImp *getDOMRGBColor(ExecState *, unsigned c)
+JSValue *getDOMRGBColor(ExecState *, unsigned c)
 {
   // ### implement equals for RGBColor since they're not refcounted objects
   return new DOMRGBColor(c);
@@ -1297,7 +1297,7 @@ bool DOMRect::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
   return getStaticValueSlot<DOMRect, DOMObject>(exec,  &DOMRectTable, this, propertyName, slot);
 }
 
-ValueImp *DOMRect::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMRect::getValueProperty(ExecState *exec, int token) const
 {
   RectImpl &rect = *m_rect;
   switch (token) {
@@ -1314,7 +1314,7 @@ ValueImp *DOMRect::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-ValueImp *getDOMRect(ExecState *exec, RectImpl *r)
+JSValue *getDOMRect(ExecState *exec, RectImpl *r)
 {
   return cacheDOMObject<RectImpl, DOMRect>(exec, r);
 }
@@ -1340,7 +1340,7 @@ bool DOMCounter::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   return getStaticValueSlot<DOMCounter, DOMObject>(exec, &DOMCounterTable, this, propertyName, slot);
 }
 
-ValueImp *DOMCounter::getValueProperty(ExecState *, int token) const
+JSValue *DOMCounter::getValueProperty(ExecState *, int token) const
 {
   CounterImpl &counter = *m_counter;
   switch (token) {
@@ -1355,7 +1355,7 @@ ValueImp *DOMCounter::getValueProperty(ExecState *, int token) const
   }
 }
 
-ValueImp *getDOMCounter(ExecState *exec, CounterImpl *c)
+JSValue *getDOMCounter(ExecState *exec, CounterImpl *c)
 {
   return cacheDOMObject<CounterImpl, DOMCounter>(exec, c);
 }

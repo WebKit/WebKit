@@ -74,7 +74,7 @@ Class *JavaInstance::getClass() const
     return _class;
 }
 
-ValueImp *JavaInstance::stringValue() const
+JSValue *JavaInstance::stringValue() const
 {
     jstring stringValue = (jstring)callJNIObjectMethod (_instance->_instance, "toString", "()Ljava/lang/String;");
     JNIEnv *env = getJNIEnv();
@@ -84,23 +84,23 @@ ValueImp *JavaInstance::stringValue() const
     return jsString(u);
 }
 
-ValueImp *JavaInstance::numberValue() const
+JSValue *JavaInstance::numberValue() const
 {
     jdouble doubleValue = callJNIDoubleMethod (_instance->_instance, "doubleValue", "()D");
     return jsNumber(doubleValue);
 }
 
-ValueImp *JavaInstance::booleanValue() const
+JSValue *JavaInstance::booleanValue() const
 {
     jboolean booleanValue = callJNIBooleanMethod (_instance->_instance, "booleanValue", "()Z");
     return jsBoolean(booleanValue);
 }
 
-ValueImp *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
+JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
 {
     int i, count = args.size();
     jvalue *jArgs;
-    ValueImp *resultValue;
+    JSValue *resultValue;
     Method *method = 0;
     unsigned int numMethods = methodList.length();
     
@@ -148,7 +148,7 @@ ValueImp *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodL
     bool handled = false;
     if (execContext && execContext->nativeHandle()) {
         jobject obj = _instance->_instance;
-        ValueImp *exceptionDescription = NULL;
+        JSValue *exceptionDescription = NULL;
         const char *callingURL = 0;  // FIXME, need to propagate calling URL to Java
         handled = dispatchJNICall (execContext->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
         if (exceptionDescription) {
@@ -294,13 +294,13 @@ ValueImp *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodL
     return resultValue;
 }
 
-ValueImp *JavaInstance::invokeDefaultMethod (ExecState *exec, const List &args)
+JSValue *JavaInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 {
     return jsUndefined();
 }
 
 
-ValueImp *JavaInstance::defaultValue (Type hint) const
+JSValue *JavaInstance::defaultValue (Type hint) const
 {
     if (hint == StringType) {
         return stringValue();
@@ -327,7 +327,7 @@ ValueImp *JavaInstance::defaultValue (Type hint) const
     return valueOf();
 }
 
-ValueImp *JavaInstance::valueOf() const 
+JSValue *JavaInstance::valueOf() const 
 {
     return stringValue();
 };

@@ -97,7 +97,7 @@ static bool _isSafeScript(JavaScriptObject *obj)
     return true;
 }
 
-NPObject *_NPN_CreateScriptObject (NPP npp, KJS::ObjectImp *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext)
+NPObject *_NPN_CreateScriptObject (NPP npp, KJS::JSObject *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext)
 {
     JavaScriptObject *obj = (JavaScriptObject *)_NPN_CreateObject(npp, NPScriptObjectClass);
 
@@ -150,7 +150,7 @@ bool _NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant
 	    // Lookup the function object.
 	    ExecState *exec = obj->executionContext->interpreter()->globalExec();
 	    JSLock lock;
-	    ValueImp *func = obj->imp->get (exec, identifierFromNPIdentifier(i->value.string));
+	    JSValue *func = obj->imp->get (exec, identifierFromNPIdentifier(i->value.string));
 
 	    if (func->isNull()) {
 		NPN_InitializeVariantAsNull(result);
@@ -160,10 +160,10 @@ bool _NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant
 		return false;
 	    } else {
 		// Call the function object.
-		ObjectImp *funcImp = static_cast<ObjectImp*>(func);
-		ObjectImp *thisObj = const_cast<ObjectImp*>(obj->imp);
+		JSObject *funcImp = static_cast<JSObject*>(func);
+		JSObject *thisObj = const_cast<JSObject*>(obj->imp);
 		List argList = listFromVariantArgs(exec, args, argCount);
-		ValueImp *resultV = funcImp->call (exec, thisObj, argList);
+		JSValue *resultV = funcImp->call (exec, thisObj, argList);
 
 		// Convert and return the result of the function call.
 		convertValueToNPVariant(exec, resultV, result);
@@ -185,7 +185,7 @@ bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
 	    return false;
 
         ExecState *exec = obj->executionContext->interpreter()->globalExec();
-        ValueImp *result;
+        JSValue *result;
         
         JSLock lock;
         NPUTF16 *scriptString;
@@ -225,7 +225,7 @@ bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVarian
         PrivateIdentifier *i = (PrivateIdentifier *)propertyName;
         
         JSLock lock;
-        ValueImp *result;
+        JSValue *result;
         if (i->isString) {
             result = obj->imp->get (exec, identifierFromNPIdentifier(i->value.string));
         } else {
@@ -352,7 +352,7 @@ bool _NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
         ExecState *exec = obj->executionContext->interpreter()->globalExec();
 
         JSLock lock;
-        ValueImp *func = obj->imp->get (exec, identifierFromNPIdentifier(i->value.string));
+        JSValue *func = obj->imp->get (exec, identifierFromNPIdentifier(i->value.string));
 
         if (func->isUndefined()) {
             return false;

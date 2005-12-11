@@ -27,9 +27,9 @@
 
 namespace KJS {
 
-  class NumberInstanceImp : public ObjectImp {
+  class NumberInstance : public JSObject {
   public:
-    NumberInstanceImp(ObjectImp *proto);
+    NumberInstance(JSObject *proto);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
@@ -41,11 +41,11 @@ namespace KJS {
    * The initial value of Number.prototype (and thus all objects created
    * with the Number constructor
    */
-  class NumberPrototypeImp : public NumberInstanceImp {
+  class NumberPrototype : public NumberInstance {
   public:
-    NumberPrototypeImp(ExecState *exec,
-                       ObjectPrototypeImp *objProto,
-                       FunctionPrototypeImp *funcProto);
+    NumberPrototype(ExecState *exec,
+                       ObjectPrototype *objProto,
+                       FunctionPrototype *funcProto);
   };
 
   /**
@@ -54,13 +54,13 @@ namespace KJS {
    * Class to implement all methods that are properties of the
    * Number.prototype object
    */
-  class NumberProtoFuncImp : public InternalFunctionImp {
+  class NumberProtoFunc : public InternalFunctionImp {
   public:
-    NumberProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+    NumberProtoFunc(ExecState *exec, FunctionPrototype *funcProto,
                        int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { ToString, ToLocaleString, ValueOf, ToFixed, ToExponential, ToPrecision };
   private:
@@ -75,24 +75,24 @@ namespace KJS {
   class NumberObjectImp : public InternalFunctionImp {
   public:
     NumberObjectImp(ExecState *exec,
-                    FunctionPrototypeImp *funcProto,
-                    NumberPrototypeImp *numberProto);
+                    FunctionPrototype *funcProto,
+                    NumberPrototype *numberProto);
 
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
     Completion execute(const List &);
-    ObjectImp *construct(const List &);
+    JSObject *construct(const List &);
   };
 
 } // namespace

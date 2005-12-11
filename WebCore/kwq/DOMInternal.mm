@@ -52,7 +52,7 @@ using DOM::RangeException;
 
 using KJS::ExecState;
 using KJS::Interpreter;
-using KJS::ObjectImp;
+using KJS::JSObject;
 
 using KJS::Bindings::RootObject;
 
@@ -189,7 +189,7 @@ DOMString::DOMString(NSString *str)
     ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, nodeImpl));
+    JSObject *scriptImp = static_cast<JSObject *>(getDOMNode(exec, nodeImpl));
 
     const RootObject *executionContext = KWQ(part)->bindingRootObject();
 

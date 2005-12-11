@@ -49,9 +49,9 @@ typedef enum
 
 void convertNPStringToUTF16(const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
 void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
-void coerceValueToNPVariantStringType(KJS::ExecState *exec, KJS::ValueImp *value, NPVariant *result);
-void convertValueToNPVariant(KJS::ExecState *exec, KJS::ValueImp *value, NPVariant *result);
-KJS::ValueImp *convertNPVariantToValue(KJS::ExecState *exec, const NPVariant *variant);
+void coerceValueToNPVariantStringType(KJS::ExecState *exec, KJS::JSValue *value, NPVariant *result);
+void convertValueToNPVariant(KJS::ExecState *exec, KJS::JSValue *value, NPVariant *result);
+KJS::JSValue *convertNPVariantToValue(KJS::ExecState *exec, const NPVariant *variant);
 
 typedef struct 
 {

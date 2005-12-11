@@ -76,7 +76,7 @@ static NodePerDocMap *domNodesPerDocument()
 }
 
 
-ScriptInterpreter::ScriptInterpreter( ObjectImp *global, KHTMLPart* part )
+ScriptInterpreter::ScriptInterpreter( JSObject *global, KHTMLPart* part )
   : Interpreter( global ), m_part( part ),
     m_evt( 0L ), m_inlineCode(false), m_timerCallback(false)
 {
@@ -216,7 +216,7 @@ bool ScriptInterpreter::wasRunByUserGesture() const
 }
 
 
-bool ScriptInterpreter::isGlobalObject(ValueImp *v)
+bool ScriptInterpreter::isGlobalObject(JSValue *v)
 {
     return v->isObject(&Window::info);
 }
@@ -228,13 +228,13 @@ bool ScriptInterpreter::isSafeScript (const Interpreter *_target)
     return KJS::Window::isSafeScript (this, target);
 }
 
-Interpreter *ScriptInterpreter::interpreterForGlobalObject (const ValueImp *imp)
+Interpreter *ScriptInterpreter::interpreterForGlobalObject (const JSValue *imp)
 {
     const KJS::Window *win = static_cast<const KJS::Window *>(imp);
     return win->interpreter();
 }
 
-void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     void *result = 0;
     
@@ -309,14 +309,14 @@ QString Identifier::qstring() const
   return QString((QChar*) data(), size());
 }
 
-ValueImp *jsStringOrNull(const DOMString &s)
+JSValue *jsStringOrNull(const DOMString &s)
 {
     if (s.isNull())
         return jsNull();
     return jsString(s);
 }
 
-DOMString valueToStringWithNullCheck(ExecState *exec, ValueImp *val)
+DOMString valueToStringWithNullCheck(ExecState *exec, JSValue *val)
 {
     if (val->isNull())
         return DOMString();
@@ -324,7 +324,7 @@ DOMString valueToStringWithNullCheck(ExecState *exec, ValueImp *val)
     return val->toString(exec).domString();
 }
 
-QVariant ValueToVariant(ExecState* exec, ValueImp *val) {
+QVariant ValueToVariant(ExecState* exec, JSValue *val) {
   QVariant res;
   switch (val->type()) {
   case BooleanType:
@@ -364,7 +364,7 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   char buffer[100]; // needs to fit 20 characters, plus an integer in ASCII, plus a null character
   sprintf(buffer, "%s exception %d", type, code);
 
-  ObjectImp *errorObject = throwError(exec, GeneralError, buffer);
+  JSObject *errorObject = throwError(exec, GeneralError, buffer);
   errorObject->put(exec, "code", jsNumber(code));
 }
 

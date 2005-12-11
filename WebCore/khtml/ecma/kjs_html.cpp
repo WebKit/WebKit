@@ -143,14 +143,14 @@ namespace KJS {
 class HTMLElementFunction : public DOMFunction {
 public:
   HTMLElementFunction(ExecState *exec, int i, int len);
-  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args);
+  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
 private:
   int id;
 };
 
 IMPLEMENT_PROTOFUNC(HTMLDocFunction)
 
-ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&HTMLDocument::info))
     return throwError(exec, TypeError);
@@ -167,7 +167,7 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
       if (part) {
 	Window *window = Window::retrieveWindow(part);
 	if (window) {
-	  ObjectImp *functionObject = window->get(exec, "open")->getObject();
+	  JSObject *functionObject = window->get(exec, "open")->getObject();
 	  if (!functionObject || !functionObject->implementsCall())
 	    return throwError(exec, TypeError);
 	  return functionObject->call(exec, window, args);
@@ -263,7 +263,7 @@ HTMLDocument::HTMLDocument(ExecState *exec, HTMLDocumentImpl *d)
 {
 }
 
-ValueImp *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   HTMLDocument *thisObj = static_cast<HTMLDocument *>(slot.slotBase());
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(thisObj->impl());
@@ -284,7 +284,7 @@ ValueImp *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& prope
   return getHTMLCollection(exec, collection.get());
 }
 
-ValueImp *HTMLDocument::getValueProperty(ExecState *exec, int token) const
+JSValue *HTMLDocument::getValueProperty(ExecState *exec, int token) const
 {
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
 
@@ -327,7 +327,7 @@ ValueImp *HTMLDocument::getValueProperty(ExecState *exec, int token) const
     {
       // To be implemented. Meanwhile, return an object with a length property set to 0
       kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
-      ObjectImp *obj = new ObjectImp;
+      JSObject *obj = new JSObject;
       obj->put(exec, lengthPropertyName, jsNumber(0));
       return obj;
     }
@@ -396,7 +396,7 @@ bool HTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propert
   return DOMDocument::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLDocument::put " << propertyName.qstring() << endl;
@@ -404,7 +404,7 @@ void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, Val
   lookupPut<HTMLDocument, DOMDocument>( exec, propertyName, value, attr, &HTMLDocumentTable, this );
 }
 
-void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
+void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
@@ -1259,7 +1259,7 @@ HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
 {
 }
 
-ValueImp *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1267,7 +1267,7 @@ ValueImp *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& proper
     return getDOMNode(exec, form->elements()->item(slot.index()));
 }
 
-ValueImp *HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1275,7 +1275,7 @@ ValueImp *HTMLElement::formNameGetter(ExecState *exec, const Identifier& propert
     return HTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
 }
 
-ValueImp *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLSelectElementImpl *select = static_cast<HTMLSelectElementImpl *>(thisObj->impl());
@@ -1283,7 +1283,7 @@ ValueImp *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& prop
     return getDOMNode(exec, select->optionsHTMLCollection()->item(slot.index()));
 }
 
-ValueImp *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -1296,7 +1296,7 @@ ValueImp *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& pro
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
 
@@ -1307,7 +1307,7 @@ ValueImp *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifi
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -1315,13 +1315,13 @@ ValueImp *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& pr
     return getRuntimeObject(exec, element);
 }
 
-ValueImp *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
 
-    if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
-        return static_cast<ObjectImp *>(runtimeObject)->get(exec, propertyName);
+    if (JSValue *runtimeObject = getRuntimeObject(exec, element))
+        return static_cast<JSObject *>(runtimeObject)->get(exec, propertyName);
     return jsUndefined();
 }
 
@@ -1341,7 +1341,7 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
         }
 
         // FIXME: need faster way to check for a named item and/or a way to pass on the named items subcollection
-        ValueImp *namedItems = HTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
+        JSValue *namedItems = HTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
         if (!namedItems->isUndefined()) {
             slot.setCustom(this, formNameGetter);
             return true;
@@ -1374,9 +1374,9 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             slot.setCustom(this, runtimeObjectGetter);
             return true;
         }
-	ValueImp *runtimeObject = getRuntimeObject(exec,&element);
+	JSValue *runtimeObject = getRuntimeObject(exec,&element);
 	if (runtimeObject) {
-	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject);
+	    JSObject *imp = static_cast<JSObject *>(runtimeObject);
 	    if (imp->hasProperty(exec, propertyName)) {
                 slot.setCustom(this, runtimeObjectPropertyGetter);
                 return true;
@@ -1422,23 +1422,23 @@ bool KJS::HTMLElement::implementsCall() const
         DocumentImpl* doc = element->getDocument();
         KJSProxy *proxy = KJSProxy::proxy(doc->part());
         ExecState *exec = proxy->interpreter()->globalExec();
-        if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
-            return static_cast<ObjectImp *>(runtimeObject)->implementsCall();
+        if (JSValue *runtimeObject = getRuntimeObject(exec, element))
+            return static_cast<JSObject *>(runtimeObject)->implementsCall();
     }
     return false;
 }
 
-ValueImp *KJS::HTMLElement::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args)
+JSValue *KJS::HTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const List&args)
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
-        if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
-            return static_cast<ObjectImp *>(runtimeObject)->call(exec, thisObj, args);
+        if (JSValue *runtimeObject = getRuntimeObject(exec, element))
+            return static_cast<JSObject *>(runtimeObject)->call(exec, thisObj, args);
     }
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::htmlGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::htmlGetter(ExecState* exec, int token) const
 {
     HTMLHtmlElementImpl& html = *static_cast<HTMLHtmlElementImpl*>(impl());
     if (token == HtmlVersion)
@@ -1446,7 +1446,7 @@ ValueImp *HTMLElement::htmlGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::headGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::headGetter(ExecState* exec, int token) const
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile)
@@ -1454,7 +1454,7 @@ ValueImp *HTMLElement::headGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::linkGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::linkGetter(ExecState* exec, int token) const
 {
     HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
@@ -1482,7 +1482,7 @@ ValueImp *HTMLElement::linkGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::titleGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::titleGetter(ExecState* exec, int token) const
 {
     HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
     if (token == TitleText)
@@ -1490,7 +1490,7 @@ ValueImp *HTMLElement::titleGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::metaGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::metaGetter(ExecState* exec, int token) const
 {
     HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
@@ -1502,7 +1502,7 @@ ValueImp *HTMLElement::metaGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::baseGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::baseGetter(ExecState* exec, int token) const
 {
     HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
     switch (token) {
@@ -1512,7 +1512,7 @@ ValueImp *HTMLElement::baseGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::isIndexGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::isIndexGetter(ExecState* exec, int token) const
 {
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     switch (token) {
@@ -1522,7 +1522,7 @@ ValueImp *HTMLElement::isIndexGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::styleGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::styleGetter(ExecState* exec, int token) const
 {
     HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
     switch (token) {
@@ -1534,7 +1534,7 @@ ValueImp *HTMLElement::styleGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::bodyGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::bodyGetter(ExecState* exec, int token) const
 {
     HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
     switch (token) {
@@ -1565,7 +1565,7 @@ ValueImp *HTMLElement::bodyGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::formGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::formGetter(ExecState* exec, int token) const
 {
     HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
     switch (token) {
@@ -1581,7 +1581,7 @@ ValueImp *HTMLElement::formGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::selectGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::selectGetter(ExecState* exec, int token) const
 {
     HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
     switch (token) {
@@ -1600,7 +1600,7 @@ ValueImp *HTMLElement::selectGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::optGroupGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::optGroupGetter(ExecState* exec, int token) const
 {
     HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
     switch (token) {
@@ -1610,7 +1610,7 @@ ValueImp *HTMLElement::optGroupGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::optionGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::optionGetter(ExecState* exec, int token) const
 {
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
     switch (token) {
@@ -1626,21 +1626,21 @@ ValueImp *HTMLElement::optionGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-static ValueImp *getInputSelectionStart(HTMLInputElementImpl &input)
+static JSValue *getInputSelectionStart(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
         return jsNumber(input.selectionStart());
     return jsUndefined();
 }
 
-static ValueImp *getInputSelectionEnd(HTMLInputElementImpl &input)
+static JSValue *getInputSelectionEnd(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
         return jsNumber(input.selectionEnd());
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::inputGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::inputGetter(ExecState* exec, int token) const
 {
     HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
@@ -1669,7 +1669,7 @@ ValueImp *HTMLElement::inputGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::textAreaGetter(ExecState* exec, int token) const
 {
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
@@ -1697,7 +1697,7 @@ ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::buttonGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::buttonGetter(ExecState* exec, int token) const
 {
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
@@ -1712,7 +1712,7 @@ ValueImp *HTMLElement::buttonGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::labelGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::labelGetter(ExecState* exec, int token) const
 {
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
@@ -1723,7 +1723,7 @@ ValueImp *HTMLElement::labelGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
 {
     HTMLFieldSetElementImpl& fieldSet = *static_cast<HTMLFieldSetElementImpl*>(impl());
     if (token == FieldSetForm)
@@ -1731,7 +1731,7 @@ ValueImp *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::legendGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::legendGetter(ExecState* exec, int token) const
 {
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
@@ -1742,7 +1742,7 @@ ValueImp *HTMLElement::legendGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::uListGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::uListGetter(ExecState* exec, int token) const
 {
     HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
     switch (token) {
@@ -1752,7 +1752,7 @@ ValueImp *HTMLElement::uListGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::oListGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::oListGetter(ExecState* exec, int token) const
 {
     HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
     switch (token) {
@@ -1763,7 +1763,7 @@ ValueImp *HTMLElement::oListGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::dListGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::dListGetter(ExecState* exec, int token) const
 {
     HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
     if (token == DListCompact)
@@ -1771,7 +1771,7 @@ ValueImp *HTMLElement::dListGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::dirGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::dirGetter(ExecState* exec, int token) const
 {
     HTMLDirectoryElementImpl& dir = *static_cast<HTMLDirectoryElementImpl*>(impl());
     if (token == DirectoryCompact)
@@ -1779,7 +1779,7 @@ ValueImp *HTMLElement::dirGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::menuGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::menuGetter(ExecState* exec, int token) const
 {
     HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
     if (token == MenuCompact)
@@ -1787,7 +1787,7 @@ ValueImp *HTMLElement::menuGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::liGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::liGetter(ExecState* exec, int token) const
 {
     HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
     switch (token) {
@@ -1797,7 +1797,7 @@ ValueImp *HTMLElement::liGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::divGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::divGetter(ExecState* exec, int token) const
 {
     HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
     if (token == DivAlign)
@@ -1805,7 +1805,7 @@ ValueImp *HTMLElement::divGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::paragraphGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::paragraphGetter(ExecState* exec, int token) const
 {
     HTMLParagraphElementImpl& p = *static_cast<HTMLParagraphElementImpl*>(impl());
     if (token == ParagraphAlign)
@@ -1813,7 +1813,7 @@ ValueImp *HTMLElement::paragraphGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::headingGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::headingGetter(ExecState* exec, int token) const
 {
     HTMLHeadingElementImpl& h = *static_cast<HTMLHeadingElementImpl*>(impl());
     if (token == HeadingAlign)
@@ -1821,7 +1821,7 @@ ValueImp *HTMLElement::headingGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
 {
     HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
     if (token == BlockQuoteCite)
@@ -1829,7 +1829,7 @@ ValueImp *HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::quoteGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::quoteGetter(ExecState* exec, int token) const
 {
     HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
     if (token == QuoteCite)
@@ -1837,7 +1837,7 @@ ValueImp *HTMLElement::quoteGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::preGetter(ExecState* exec, int token) const
 {
     // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
@@ -1848,7 +1848,7 @@ ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::brGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::brGetter(ExecState* exec, int token) const
 {
     HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
     if (token == BRClear)
@@ -1856,7 +1856,7 @@ ValueImp *HTMLElement::brGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::baseFontGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::baseFontGetter(ExecState* exec, int token) const
 {
     HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
     switch (token) {
@@ -1867,7 +1867,7 @@ ValueImp *HTMLElement::baseFontGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::fontGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::fontGetter(ExecState* exec, int token) const
 {
     HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
     switch (token) {
@@ -1878,7 +1878,7 @@ ValueImp *HTMLElement::fontGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::hrGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::hrGetter(ExecState* exec, int token) const
 {
     HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
     switch (token) {
@@ -1890,7 +1890,7 @@ ValueImp *HTMLElement::hrGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::modGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::modGetter(ExecState* exec, int token) const
 {
     HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
     switch (token) {
@@ -1900,7 +1900,7 @@ ValueImp *HTMLElement::modGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::anchorGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::anchorGetter(ExecState* exec, int token) const
 {
     HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
     switch (token) {
@@ -1938,7 +1938,7 @@ ValueImp *HTMLElement::anchorGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::imageGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::imageGetter(ExecState* exec, int token) const
 {
     HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
     switch (token) {
@@ -1960,7 +1960,7 @@ ValueImp *HTMLElement::imageGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::objectGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::objectGetter(ExecState* exec, int token) const
 {
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
@@ -1988,7 +1988,7 @@ ValueImp *HTMLElement::objectGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::paramGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::paramGetter(ExecState* exec, int token) const
 {
     HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
     switch (token) {
@@ -2000,7 +2000,7 @@ ValueImp *HTMLElement::paramGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::appletGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::appletGetter(ExecState* exec, int token) const
 {
     HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
     switch (token) {
@@ -2019,7 +2019,7 @@ ValueImp *HTMLElement::appletGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::mapGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::mapGetter(ExecState* exec, int token) const
 {
     HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
     switch (token) {
@@ -2029,7 +2029,7 @@ ValueImp *HTMLElement::mapGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::areaGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::areaGetter(ExecState* exec, int token) const
 {
     HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
     switch (token) {
@@ -2059,7 +2059,7 @@ ValueImp *HTMLElement::areaGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::scriptGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::scriptGetter(ExecState* exec, int token) const
 {
     HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
     switch (token) {
@@ -2074,7 +2074,7 @@ ValueImp *HTMLElement::scriptGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableGetter(ExecState* exec, int token) const
 {
     HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
     switch (token) {
@@ -2096,7 +2096,7 @@ ValueImp *HTMLElement::tableGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
 {
     HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
     if (token == TableCaptionAlign)
@@ -2104,7 +2104,7 @@ ValueImp *HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableColGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableColGetter(ExecState* exec, int token) const
 {
     HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
     switch (token) {
@@ -2118,7 +2118,7 @@ ValueImp *HTMLElement::tableColGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableSectionGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableSectionGetter(ExecState* exec, int token) const
 {
     HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
     switch (token) {
@@ -2131,7 +2131,7 @@ ValueImp *HTMLElement::tableSectionGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableRowGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableRowGetter(ExecState* exec, int token) const
 {
     HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
     switch (token) {
@@ -2147,7 +2147,7 @@ ValueImp *HTMLElement::tableRowGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::tableCellGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::tableCellGetter(ExecState* exec, int token) const
 {
     HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
     switch (token) {
@@ -2170,7 +2170,7 @@ ValueImp *HTMLElement::tableCellGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::frameSetGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::frameSetGetter(ExecState* exec, int token) const
 {
     HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
     switch (token) {
@@ -2180,7 +2180,7 @@ ValueImp *HTMLElement::frameSetGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::frameGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::frameGetter(ExecState* exec, int token) const
 {
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
@@ -2202,7 +2202,7 @@ ValueImp *HTMLElement::frameGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::iFrameGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::iFrameGetter(ExecState* exec, int token) const
 {
     HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
     switch (token) {
@@ -2227,13 +2227,13 @@ ValueImp *HTMLElement::iFrameGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::marqueeGetter(ExecState* exec, int token) const
+JSValue *HTMLElement::marqueeGetter(ExecState* exec, int token) const
 {
     // FIXME: Find out what WinIE exposes as properties and implement this.
     return jsUndefined();
 }
 
-ValueImp *HTMLElement::getValueProperty(ExecState *exec, int token) const
+JSValue *HTMLElement::getValueProperty(ExecState *exec, int token) const
 {
     // Check our set of generic properties first.
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
@@ -2302,7 +2302,7 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
   HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
 
   // The document is put on first, fall back to searching it only after the element and form.
-  scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element->ownerDocument())));
+  scope.push(static_cast<JSObject *>(getDOMNode(exec, element->ownerDocument())));
 
   // The form is next, searched before the document, but after the element itself.
   
@@ -2311,18 +2311,18 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
   // <table> or <tbody>.
   HTMLFormElementImpl *form = getForm(element);
   if (form)
-    scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form)));
+    scope.push(static_cast<JSObject *>(getDOMNode(exec, form)));
   else {
     NodeImpl *form = element->parentNode();
     while (form && !form->hasTagName(formTag))
       form = form->parentNode();
     
     if (form)
-      scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form)));
+      scope.push(static_cast<JSObject *>(getDOMNode(exec, form)));
   }
   
   // The element is on top, searched first.
-  scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element)));
+  scope.push(static_cast<JSObject *>(getDOMNode(exec, element)));
 }
 
 HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
@@ -2331,7 +2331,7 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
-ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&KJS::HTMLElement::info))
         return throwError(exec, TypeError);
@@ -2522,7 +2522,7 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
     return jsUndefined();
 }
 
-void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
 #ifdef KJS_VERBOSE
     DOM::DOMString str = value.isNull() ? DOM::DOMString() : value->toString(exec).domString();
@@ -2539,14 +2539,14 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, Valu
         bool ok;
         /*uint u =*/ propertyName.toUInt32(&ok);
         if (ok) {
-            ObjectImp *coll = static_cast<ObjectImp *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+            JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
             coll->put(exec,propertyName,value);
             return;
         }
     }
     else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
-	if (ValueImp *runtimeObject = getRuntimeObject(exec, &element)) {
-	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject);
+	if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
+	    JSObject *imp = static_cast<JSObject *>(runtimeObject);
 	    if (imp->canPut(exec, propertyName))
 		return imp->put(exec, propertyName, value);
 	}
@@ -2556,7 +2556,7 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, Valu
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
     if (entry) {
         if (entry->attr & Function) { // function: put as override property
-            ObjectImp::put(exec, propertyName, value, attr);
+            JSObject::put(exec, propertyName, value, attr);
             return;
         }
         else if (!(entry->attr & ReadOnly)) { // let lookupPut print the warning if read-only
@@ -2568,21 +2568,21 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, Valu
     lookupPut<KJS::HTMLElement, DOMElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void HTMLElement::htmlSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile) 
         head.setProfile(str);
 }
 
-void HTMLElement::headSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::headSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile) 
         head.setProfile(str);
 }
 
-void HTMLElement::linkSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::linkSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
@@ -2598,14 +2598,14 @@ void HTMLElement::linkSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::titleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::titleSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
      HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
      if (token == TitleText)
         title.setText(str);
 }
 
-void HTMLElement::metaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::metaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
@@ -2616,7 +2616,7 @@ void HTMLElement::metaSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::baseSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::baseSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
     switch (token) {
@@ -2625,14 +2625,14 @@ void HTMLElement::baseSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::isIndexSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::isIndexSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     if (token == IsIndexPrompt)
         isindex.setPrompt(str);
 }
 
-void HTMLElement::styleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::styleSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
     switch (token) {
@@ -2642,7 +2642,7 @@ void HTMLElement::styleSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::bodySetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::bodySetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
     switch (token) {
@@ -2669,7 +2669,7 @@ void HTMLElement::bodySetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::formSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::formSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
     switch (token) {
@@ -2684,7 +2684,7 @@ void HTMLElement::formSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::selectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
     switch (token) {
@@ -2692,7 +2692,7 @@ void HTMLElement::selectSetter(ExecState *exec, int token, ValueImp *value, cons
         case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
         case SelectValue:           { select.setValue(str); return; }
         case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                        ObjectImp *coll = static_cast<ObjectImp *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+                                        JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
                                         coll->put(exec,lengthPropertyName,value);
                                         return;
                                     }
@@ -2706,7 +2706,7 @@ void HTMLElement::selectSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::optGroupSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::optGroupSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
     switch (token) {
@@ -2715,7 +2715,7 @@ void HTMLElement::optGroupSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::optionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::optionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     DOMExceptionTranslator exception(exec);
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
@@ -2731,7 +2731,7 @@ void HTMLElement::optionSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::inputSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::inputSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
@@ -2759,7 +2759,7 @@ void HTMLElement::inputSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::textAreaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::textAreaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
@@ -2779,7 +2779,7 @@ void HTMLElement::textAreaSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::buttonSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::buttonSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
@@ -2793,7 +2793,7 @@ void HTMLElement::buttonSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::labelSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::labelSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
@@ -2803,11 +2803,11 @@ void HTMLElement::labelSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::fieldSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::fieldSetSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
 }
 
-void HTMLElement::legendSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::legendSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
@@ -2817,7 +2817,7 @@ void HTMLElement::legendSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::uListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::uListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
     switch (token) {
@@ -2826,7 +2826,7 @@ void HTMLElement::uListSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::oListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::oListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
     switch (token) {
@@ -2836,28 +2836,28 @@ void HTMLElement::oListSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::dListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::dListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
     if (token == DListCompact)
         dList.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::dirSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::dirSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLDirectoryElementImpl& directory = *static_cast<HTMLDirectoryElementImpl*>(impl());
     if (token == DirectoryCompact)
         directory.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::menuSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::menuSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
     if (token == MenuCompact)
         menu.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::liSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::liSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
     switch (token) {
@@ -2866,42 +2866,42 @@ void HTMLElement::liSetter(ExecState *exec, int token, ValueImp *value, const DO
     }
 }
 
-void HTMLElement::divSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::divSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
     if (token == DivAlign)
         div.setAlign(str);
 }
 
-void HTMLElement::paragraphSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::paragraphSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLParagraphElementImpl& paragraph = *static_cast<HTMLParagraphElementImpl*>(impl());
     if (token == ParagraphAlign)
         paragraph.setAlign(str);
 }
 
-void HTMLElement::headingSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::headingSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLHeadingElementImpl& heading = *static_cast<HTMLHeadingElementImpl*>(impl());
     if (token == HeadingAlign)
         heading.setAlign(str);
 }
 
-void HTMLElement::blockQuoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::blockQuoteSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
     if (token == BlockQuoteCite)
         blockQuote.setCite(str);
 }
 
-void HTMLElement::quoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::quoteSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
     if (token == QuoteCite)
         quote.setCite(str);
 }
 
-void HTMLElement::preSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::preSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
     if (token == PreWidth)
@@ -2910,14 +2910,14 @@ void HTMLElement::preSetter(ExecState *exec, int token, ValueImp *value, const D
         pre.setWrap(value->toBoolean(exec));
 }
 
-void HTMLElement::brSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::brSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
     if (token == BRClear)
         br.setClear(str);
 }
 
-void HTMLElement::baseFontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::baseFontSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
     switch (token) {
@@ -2927,7 +2927,7 @@ void HTMLElement::baseFontSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::fontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::fontSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
     switch (token) {
@@ -2937,7 +2937,7 @@ void HTMLElement::fontSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::hrSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::hrSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
     switch (token) {
@@ -2948,7 +2948,7 @@ void HTMLElement::hrSetter(ExecState *exec, int token, ValueImp *value, const DO
     }
 }
 
-void HTMLElement::modSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::modSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
     switch (token) {
@@ -2957,7 +2957,7 @@ void HTMLElement::modSetter(ExecState *exec, int token, ValueImp *value, const D
     }
 }
 
-void HTMLElement::anchorSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::anchorSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
     switch (token) {
@@ -2976,7 +2976,7 @@ void HTMLElement::anchorSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::imageSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::imageSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
     switch (token) {
@@ -2995,7 +2995,7 @@ void HTMLElement::imageSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::objectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::objectSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
@@ -3021,7 +3021,7 @@ void HTMLElement::objectSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::paramSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::paramSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
     switch (token) {
@@ -3032,7 +3032,7 @@ void HTMLElement::paramSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::appletSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::appletSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
     switch (token) {
@@ -3050,7 +3050,7 @@ void HTMLElement::appletSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::mapSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::mapSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
     if (token == MapName)
@@ -3058,7 +3058,7 @@ void HTMLElement::mapSetter(ExecState *exec, int token, ValueImp *value, const D
         map.setName(str);
 }
 
-void HTMLElement::areaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::areaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
     switch (token) {
@@ -3073,7 +3073,7 @@ void HTMLElement::areaSetter(ExecState *exec, int token, ValueImp *value, const 
     }
 }
 
-void HTMLElement::scriptSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::scriptSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
     switch (token) {
@@ -3087,7 +3087,7 @@ void HTMLElement::scriptSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::tableSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
     switch (token) {
@@ -3108,14 +3108,14 @@ void HTMLElement::tableSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::tableCaptionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableCaptionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
     if (token == TableCaptionAlign)
         tableCaption.setAlign(str);
 }
 
-void HTMLElement::tableColSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableColSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
     switch (token) {
@@ -3128,7 +3128,7 @@ void HTMLElement::tableColSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::tableSectionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableSectionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
     switch (token) {
@@ -3140,7 +3140,7 @@ void HTMLElement::tableSectionSetter(ExecState *exec, int token, ValueImp *value
     }
 }
 
-void HTMLElement::tableRowSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableRowSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
     switch (token) {
@@ -3155,7 +3155,7 @@ void HTMLElement::tableRowSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::tableCellSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::tableCellSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
     switch (token) {
@@ -3177,7 +3177,7 @@ void HTMLElement::tableCellSetter(ExecState *exec, int token, ValueImp *value, c
     }
 }
 
-void HTMLElement::frameSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::frameSetSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
     switch (token) {
@@ -3186,7 +3186,7 @@ void HTMLElement::frameSetSetter(ExecState *exec, int token, ValueImp *value, co
     }
 }
 
-void HTMLElement::frameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::frameSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
@@ -3203,7 +3203,7 @@ void HTMLElement::frameSetter(ExecState *exec, int token, ValueImp *value, const
     }
 }
 
-void HTMLElement::iFrameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::iFrameSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
     switch (token) {
@@ -3221,12 +3221,12 @@ void HTMLElement::iFrameSetter(ExecState *exec, int token, ValueImp *value, cons
     }
 }
 
-void HTMLElement::marqueeSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
+void HTMLElement::marqueeSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
 {
     // FIXME: Find out what WinIE supports and implement it.
 }
 
-void HTMLElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
+void HTMLElement::putValueProperty(ExecState *exec, int token, JSValue *value, int)
 {
     DOMExceptionTranslator exception(exec);
     DOM::DOMString str = value->toString(exec).domString();
@@ -3272,14 +3272,14 @@ void HTMLElement::putValueProperty(ExecState *exec, int token, ValueImp *value, 
         return (this->*(info->m_setter))(exec, token, value, str);  
 }
 
-HTMLElementImpl *toHTMLElement(ValueImp *val)
+HTMLElementImpl *toHTMLElement(JSValue *val)
 {
     if (!val || !val->isObject(&HTMLElement::info))
         return 0;
     return static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(val)->impl());
 }
 
-HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *val)
+HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(JSValue *val)
 {
     HTMLElementImpl *e = toHTMLElement(val);
     if (e && e->hasTagName(captionTag))
@@ -3287,7 +3287,7 @@ HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *val)
     return 0;
 }
 
-HTMLTableSectionElementImpl *toHTMLTableSectionElement(ValueImp *val)
+HTMLTableSectionElementImpl *toHTMLTableSectionElement(JSValue *val)
 {
     HTMLElementImpl *e = toHTMLElement(val);
     if (e && (e->hasTagName(theadTag) || e->hasTagName(tbodyTag) || e->hasTagName(tfootTag)))
@@ -3320,19 +3320,19 @@ HTMLCollection::~HTMLCollection()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return jsNumber(thisObj->m_impl->length());
 }
 
-ValueImp *HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
-ValueImp *HTMLCollection::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return thisObj->getNamedItems(exec, propertyName);
@@ -3345,8 +3345,8 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
       return true;
   } else {
     // Look in the prototype (for functions) before assuming it's an item's name
-    ValueImp *proto = prototype();
-    if (proto->isObject() && static_cast<ObjectImp *>(proto)->hasProperty(exec, propertyName))
+    JSValue *proto = prototype();
+    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
       return false;
 
     // name or index ?
@@ -3368,7 +3368,7 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-ValueImp *KJS::HTMLCollection::callAsFunction(ExecState *exec, ObjectImp *, const List &args)
+JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const List &args)
 {
   // Do not use thisObj here. It can be the HTMLDocument, in the document.forms(i) case.
   HTMLCollectionImpl &collection = *m_impl;
@@ -3405,7 +3405,7 @@ ValueImp *KJS::HTMLCollection::callAsFunction(ExecState *exec, ObjectImp *, cons
   return jsUndefined();
 }
 
-ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
+JSValue *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
@@ -3427,7 +3427,7 @@ ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &
   return new DOMNamedNodesCollection(exec, namedItems);
 }
 
-ValueImp *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::HTMLCollection::info))
     return throwError(exec, TypeError);
@@ -3452,7 +3452,7 @@ HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *
 {
 }
 
-ValueImp *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLSelectCollection *thisObj = static_cast<HTMLSelectCollection *>(slot.slotBase());
     return jsNumber(thisObj->m_element->selectedIndex());
@@ -3469,7 +3469,7 @@ bool HTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifier&
   return HTMLCollection::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int)
+void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLSelectCollection::put " << propertyName.qstring() << endl;
@@ -3555,7 +3555,7 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
 OptionConstructorImp::OptionConstructorImp(ExecState *exec, DocumentImpl *d)
     : m_doc(d)
 {
-  // ## isn't there some redundancy between ObjectImp::_proto and the "prototype" property ?
+  // ## isn't there some redundancy between JSObject::_proto and the "prototype" property ?
   //put(exec,"prototype", ...,DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
@@ -3568,7 +3568,7 @@ bool OptionConstructorImp::implementsConstruct() const
   return true;
 }
 
-ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
+JSObject *OptionConstructorImp::construct(ExecState *exec, const List &args)
 {
   int exception = 0;
   RefPtr<ElementImpl> el(m_doc->createElement("option", exception));
@@ -3591,7 +3591,7 @@ ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
   }
 
   setDOMException(exec, exception);
-  return static_cast<ObjectImp *>(getDOMNode(exec,opt));
+  return static_cast<JSObject *>(getDOMNode(exec,opt));
 }
 
 ////////////////////// Image Object ////////////////////////
@@ -3606,22 +3606,22 @@ bool ImageConstructorImp::implementsConstruct() const
   return true;
 }
 
-ObjectImp *ImageConstructorImp::construct(ExecState * exec, const List & list)
+JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
 {
     bool widthSet = false, heightSet = false;
     int width = 0, height = 0;
     if (list.size() > 0) {
         widthSet = true;
-        ValueImp *w = list.at(0);
+        JSValue *w = list.at(0);
         width = w->toInt32(exec);
     }
     if (list.size() > 1) {
         heightSet = true;
-        ValueImp *h = list.at(1);
+        JSValue *h = list.at(1);
         height = h->toInt32(exec);
     }
         
-    ObjectImp *result(new Image(m_doc.get(), widthSet, width, heightSet, height));
+    JSObject *result(new Image(m_doc.get(), widthSet, width, heightSet, height));
   
     /* TODO: do we need a prototype ? */
     return result;
@@ -3644,7 +3644,7 @@ bool Image::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, 
   return getStaticValueSlot<Image,DOMObject>(exec, &ImageTable, this, propertyName, slot);
 }
 
-ValueImp *Image::getValueProperty(ExecState *, int token) const
+JSValue *Image::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case Src:
@@ -3685,12 +3685,12 @@ ValueImp *Image::getValueProperty(ExecState *, int token) const
   }
 }
 
-void Image::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void Image::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   lookupPut<Image,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
 }
 
-void Image::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
+void Image::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
   switch(token) {
   case Src:
@@ -3750,12 +3750,12 @@ Image::~Image()
 
 IMPLEMENT_PROTOFUNC(Context2DFunction)
 
-static bool isGradient(ValueImp *value)
+static bool isGradient(JSValue *value)
 {
     return value->isObject(&Gradient::info);
 }
 
-static bool isImagePattern(ValueImp *value)
+static bool isImagePattern(JSValue *value)
 {
     return value->isObject(&ImagePattern::info);
 }
@@ -3763,7 +3763,7 @@ static bool isImagePattern(ValueImp *value)
 #define BITS_PER_COMPONENT 8
 #define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
 
-ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&Context2D::info))
         return throwError(exec, TypeError);
@@ -3970,7 +3970,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 // operates on clippin regions!  Odd, but true.
                 CGContextClip(drawingContext);
 
-                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_fillStyle);
+                JSObject *o = static_cast<JSObject*>(contextObject->_fillStyle);
                 Gradient *gradient = static_cast<Gradient*>(o);
                 CGShadingRef shading = gradient->getShading();
                 CGContextDrawShading(drawingContext, shading);
@@ -3999,7 +3999,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 CGContextReplacePathWithStrokedPath(drawingContext);
                 CGContextClip(drawingContext);
 
-                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_strokeStyle);
+                JSObject *o = static_cast<JSObject*>(contextObject->_strokeStyle);
                 Gradient *gradient = static_cast<Gradient*>(o);
                 
                 CGShadingRef shading = gradient->getShading();
@@ -4266,7 +4266,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 return throwError(exec, SyntaxError);
             
             // Make sure first argument is an object.
-            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            JSObject *o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
 
@@ -4388,7 +4388,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         case Context2D::DrawImageFromRect: {
             if (args.size() != 10)
                 return throwError(exec, SyntaxError);
-            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            JSObject *o = static_cast<JSObject*>(args[0]);
             if (!o->isObject() || !o->inherits(&Image::info))
                 return throwError(exec, TypeError);
             Image *i = static_cast<Image*>(o);
@@ -4457,7 +4457,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         case Context2D::CreatePattern: {
             if (args.size() != 2)
                 return throwError(exec, SyntaxError);
-            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            JSObject *o = static_cast<JSObject*>(args[0]);
             if (!o->isObject() || !o->inherits(&Image::info))
                 return throwError(exec, TypeError);
             int repetitionType = ImagePattern::Repeat;
@@ -4535,7 +4535,7 @@ bool Context2D::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
     return getStaticPropertySlot<Context2DFunction, Context2D, DOMObject>(exec, &Context2DTable, this, propertyName, slot);
 }
 
-ValueImp *Context2D::getValueProperty(ExecState *, int token) const
+JSValue *Context2D::getValueProperty(ExecState *, int token) const
 {
     switch(token) {
         case StrokeStyle: {
@@ -4593,7 +4593,7 @@ ValueImp *Context2D::getValueProperty(ExecState *, int token) const
     return jsUndefined();
 }
 
-void Context2D::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void Context2D::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     lookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &Context2DTable, this );
 }
@@ -4612,7 +4612,7 @@ CGContextRef Context2D::drawingContext()
 }
 
 
-CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value)
+CGColorRef colorRefFromValue(ExecState *exec, JSValue *value)
 {
     CGColorSpaceRef colorSpace;
     float components[4];
@@ -4635,7 +4635,7 @@ CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value)
     return colorRef;
 }
 
-QColor colorFromValue(ExecState *exec, ValueImp *value)
+QColor colorFromValue(ExecState *exec, JSValue *value)
 {
     QRgb color = DOM::CSSParser::parseColor(value->toString(exec).domString());
     return QColor(color);
@@ -4694,7 +4694,7 @@ void Context2D::updateStrokeImagePattern()
     }
 }
 
-void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
+void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
     CGContextRef context = drawingContext();
     if (!context)
@@ -4710,7 +4710,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, in
             else {
                 // _strokeStyle is used when stroke() is called on the context.
                 // CG doesn't have the notion of a setting a stroke gradient.
-                ObjectImp *o = static_cast<ObjectImp*>(value);
+                JSObject *o = static_cast<JSObject*>(value);
                 
                 if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
                     throwError(exec, TypeError);
@@ -4727,7 +4727,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, in
             else {
                 // _fillStyle is checked when fill() is called on the context.
                 // CG doesn't have the notion of setting a fill gradient.
-                ObjectImp *o = static_cast<ObjectImp*>(value);
+                JSObject *o = static_cast<JSObject*>(value);
                 
                 if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
                     throwError(exec, TypeError);
@@ -4908,7 +4908,7 @@ Context2D::~Context2D()
 
 void Context2D::mark()
 {
-    ValueImp *v;
+    JSValue *v;
 
     v = _strokeStyle;
     if (!v->marked())
@@ -4978,7 +4978,7 @@ const ClassInfo KJS::Gradient::info = { "Gradient", 0, &GradientTable, 0 };
 
 IMPLEMENT_PROTOFUNC(GradientFunction)
 
-ValueImp *GradientFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *GradientFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&Gradient::info))
         return throwError(exec, TypeError);
@@ -5094,17 +5094,17 @@ bool Gradient::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
     return getStaticPropertySlot<GradientFunction, Gradient, DOMObject>(exec, &GradientTable, this, propertyName, slot);
 }
 
-ValueImp *Gradient::getValueProperty(ExecState *, int token) const
+JSValue *Gradient::getValueProperty(ExecState *, int token) const
 {
     return jsUndefined();
 }
 
-void Gradient::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void Gradient::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     lookupPut<Gradient,DOMObject>(exec, propertyName, value, attr, &GradientTable, this );
 }
 
-void Gradient::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
+void Gradient::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
 }
 
@@ -5290,29 +5290,29 @@ bool ImagePattern::getOwnPropertySlot(ExecState *exec, const Identifier& propert
     return getStaticValueSlot<ImagePattern, DOMObject>(exec, &ImagePatternTable, this, propertyName, slot);
 }
 
-ValueImp *ImagePattern::getValueProperty(ExecState *, int token) const
+JSValue *ImagePattern::getValueProperty(ExecState *, int token) const
 {
     return jsUndefined();
 }
 
-void ImagePattern::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void ImagePattern::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     lookupPut<ImagePattern,DOMObject>(exec, propertyName, value, attr, &ImagePatternTable, this );
 }
 
-void ImagePattern::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
+void ImagePattern::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
 }
 
 ////////////////////////////////////////////////////////////////
                      
 
-ValueImp *getHTMLCollection(ExecState *exec, HTMLCollectionImpl *c)
+JSValue *getHTMLCollection(ExecState *exec, HTMLCollectionImpl *c)
 {
   return cacheDOMObject<HTMLCollectionImpl, HTMLCollection>(exec, c);
 }
 
-ValueImp *getSelectHTMLCollection(ExecState *exec, HTMLCollectionImpl *c, HTMLSelectElementImpl *e)
+JSValue *getSelectHTMLCollection(ExecState *exec, HTMLCollectionImpl *c, HTMLSelectElementImpl *e)
 {
   DOMObject *ret;
   if (!c)

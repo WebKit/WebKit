@@ -68,7 +68,7 @@ public:
     virtual MethodList methodsNamed(const char *name, Instance *instance) const;
     virtual Field *fieldNamed(const char *name, Instance *instance) const;
 
-    virtual ValueImp *fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
+    virtual JSValue *fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
     
     virtual Constructor *constructorAt(int i) const { return 0; }
     virtual int numConstructors() const { return 0; }

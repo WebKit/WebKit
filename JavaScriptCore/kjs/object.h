@@ -80,20 +80,20 @@ namespace KJS {
     void *dummy;
   };
   
-  class ObjectImp : public AllocatedValueImp {
+  class JSObject : public JSCell {
   public:
     /**
-     * Creates a new ObjectImp with the specified prototype
+     * Creates a new JSObject with the specified prototype
      *
      * @param proto The prototype
      */
-    ObjectImp(ObjectImp *proto);
+    JSObject(JSObject *proto);
 
     /**
-     * Creates a new ObjectImp with a prototype of jsNull()
+     * Creates a new JSObject with a prototype of jsNull()
      * (that is, the ECMAScript "null" value, not a null object pointer).
      */
-    ObjectImp();
+    JSObject();
 
     virtual void mark();
     virtual Type type() const;
@@ -113,13 +113,13 @@ namespace KJS {
      * class declarations:
      *
      * \code
-     *   class BarImp : public ObjectImp {
+     *   class BarImp : public JSObject {
      *     virtual const ClassInfo *classInfo() const { return &info; }
      *     static const ClassInfo info;
      *     // ...
      *   };
      *
-     *   class FooImp : public ObjectImp {
+     *   class FooImp : public JSObject {
      *     virtual const ClassInfo *classInfo() const { return &info; }
      *     static const ClassInfo info;
      *     // ...
@@ -143,7 +143,7 @@ namespace KJS {
      * class return a non-NULL pointer for their classInfo() methods (otherwise
      * it will return false).
      *
-     * For example, for two ObjectImp pointers obj1 and obj2, you can check
+     * For example, for two JSObject pointers obj1 and obj2, you can check
      * if obj1's class inherits from obj2's class using the following:
      *
      *   if (obj1->inherits(obj2->classInfo())) {
@@ -175,8 +175,8 @@ namespace KJS {
      *
      * @return The object's prototype
      */
-    ValueImp *prototype() const;
-    void setPrototype(ValueImp *proto);
+    JSValue *prototype() const;
+    void setPrototype(JSValue *proto);
 
     /**
      * Returns the class name of the object
@@ -208,8 +208,8 @@ namespace KJS {
      *
      * @return The specified property, or Undefined
      */
-    ValueImp *get(ExecState *exec, const Identifier &propertyName) const;
-    ValueImp *get(ExecState *exec, unsigned propertyName) const;
+    JSValue *get(ExecState *exec, const Identifier &propertyName) const;
+    JSValue *get(ExecState *exec, unsigned propertyName) const;
 
     bool getPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     bool getPropertySlot(ExecState *, unsigned, PropertySlot&);
@@ -226,8 +226,8 @@ namespace KJS {
      * @param propertyName The name of the property to set
      * @param propertyValue The value to set
      */
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, JSValue *value, int attr = None);
 
     /**
      * Used to check whether or not a particular property is allowed to be set
@@ -299,7 +299,7 @@ namespace KJS {
      * Implementation of the [[DefaultValue]] internal property (implemented by
      * all Objects)
      */
-    virtual ValueImp *defaultValue(ExecState *exec, Type hint) const;
+    virtual JSValue *defaultValue(ExecState *exec, Type hint) const;
 
     /**
      * Whether or not the object implements the construct() method. If this
@@ -339,8 +339,8 @@ namespace KJS {
     /**
      * Implementation of the [[Construct]] internal property
      */
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
-    virtual ObjectImp *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
+    virtual JSObject *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
 
     /**
      * Whether or not the object implements the call() method. If this returns
@@ -369,8 +369,8 @@ namespace KJS {
      * @param args List of arguments to be passed to the function
      * @return The return value from the function
      */
-    ValueImp *call(ExecState *exec, ObjectImp *thisObj, const List &args);
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    JSValue *call(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     /**
      * Whether or not the object implements the hasInstance() method. If this
@@ -391,7 +391,7 @@ namespace KJS {
      * @return true if value delegates behavior to this object, otherwise
      * false
      */
-    virtual bool hasInstance(ExecState *exec, ValueImp *value);
+    virtual bool hasInstance(ExecState *exec, JSValue *value);
 
     /**
      * Returns the scope of this object. This is used when execution declared
@@ -448,7 +448,7 @@ namespace KJS {
      * @see ECMA 8.6.2
      * @return The internal value of the object
      */
-    ValueImp *internalValue() const;
+    JSValue *internalValue() const;
 
     /**
      * Sets the internal value of the object
@@ -457,24 +457,24 @@ namespace KJS {
      *
      * @param v The new internal value
      */
-    void setInternalValue(ValueImp *v);
+    void setInternalValue(JSValue *v);
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
 
     bool getPropertyAttributes(const Identifier& propertyName, int& attributes) const;
     
     // This get function only looks at the property map.
     // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
     // to look up in the prototype, it might already exist there)
-    ValueImp *getDirect(const Identifier& propertyName) const
+    JSValue *getDirect(const Identifier& propertyName) const
         { return _prop.get(propertyName); }
-    ValueImp **getDirectLocation(const Identifier& propertyName)
+    JSValue **getDirectLocation(const Identifier& propertyName)
         { return _prop.getLocation(propertyName); }
-    void putDirect(const Identifier &propertyName, ValueImp *value, int attr = 0);
+    void putDirect(const Identifier &propertyName, JSValue *value, int attr = 0);
     void putDirect(const Identifier &propertyName, int value, int attr = 0);
     
     /**
@@ -492,8 +492,8 @@ namespace KJS {
     PropertyMap _prop;
   private:
     const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
-    ValueImp *_proto;
-    ValueImp *_internalValue;
+    JSValue *_proto;
+    JSValue *_internalValue;
     ScopeChain _scope;
   };
 
@@ -524,8 +524,8 @@ namespace KJS {
      * @param sourceId Optional source id.
      * @param sourceURL Optional source URL.
      */
-    static ObjectImp *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
-    static ObjectImp *create(ExecState *, ErrorType, const char *message);
+    static JSObject *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+    static JSObject *create(ExecState *, ErrorType, const char *message);
 
     /**
      * Array of error names corresponding to ErrorType
@@ -533,49 +533,49 @@ namespace KJS {
     static const char * const * const errorNames;
   };
 
-ObjectImp *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
-ObjectImp *throwError(ExecState *, ErrorType, const UString &message);
-ObjectImp *throwError(ExecState *, ErrorType, const char *message);
-ObjectImp *throwError(ExecState *, ErrorType);
+JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+JSObject *throwError(ExecState *, ErrorType, const UString &message);
+JSObject *throwError(ExecState *, ErrorType, const char *message);
+JSObject *throwError(ExecState *, ErrorType);
   
-inline bool AllocatedValueImp::isObject(const ClassInfo *info) const
+inline bool JSCell::isObject(const ClassInfo *info) const
 {
-    return isObject() && static_cast<const ObjectImp *>(this)->inherits(info);
+    return isObject() && static_cast<const JSObject *>(this)->inherits(info);
 }
 
-inline ObjectImp::ObjectImp(ObjectImp *proto)
+inline JSObject::JSObject(JSObject *proto)
     : _proto(proto), _internalValue(0)
 {
     assert(proto);
 }
 
-inline ObjectImp::ObjectImp()
+inline JSObject::JSObject()
     : _proto(jsNull()), _internalValue(0)
 {
 }
 
-inline ValueImp *ObjectImp::internalValue() const
+inline JSValue *JSObject::internalValue() const
 {
     return _internalValue;
 }
 
-inline void ObjectImp::setInternalValue(ValueImp *v)
+inline void JSObject::setInternalValue(JSValue *v)
 {
     _internalValue = v;
 }
 
-inline ValueImp *ObjectImp::prototype() const
+inline JSValue *JSObject::prototype() const
 {
     return _proto;
 }
 
-inline void ObjectImp::setPrototype(ValueImp *proto)
+inline void JSObject::setPrototype(JSValue *proto)
 {
     assert(proto);
     _proto = proto;
 }
 
-inline bool ObjectImp::inherits(const ClassInfo *info) const
+inline bool JSObject::inherits(const ClassInfo *info) const
 {
     for (const ClassInfo *ci = classInfo(); ci; ci = ci->parentClass)
         if (ci == info)
@@ -585,27 +585,27 @@ inline bool ObjectImp::inherits(const ClassInfo *info) const
 
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
-inline bool ObjectImp::getPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+inline bool JSObject::getPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    ObjectImp *object = this;
+    JSObject *object = this;
     while (true) {
         if (object->getOwnPropertySlot(exec, propertyName, slot))
             return true;
 
-        ValueImp *proto = object->_proto;
+        JSValue *proto = object->_proto;
         if (!proto->isObject())
             return false;
 
-        object = static_cast<ObjectImp *>(proto);
+        object = static_cast<JSObject *>(proto);
     }
 }
 
 // It may seem crazy to inline a function this large, especially a virtual function,
 // but it makes a big difference to property lookup that derived classes can inline their
 // base class call to this.
-inline bool ObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+inline bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (ValueImp **location = getDirectLocation(propertyName)) {
+    if (JSValue **location = getDirectLocation(propertyName)) {
         slot.setValueSlot(this, location);
         return true;
     }
@@ -619,12 +619,12 @@ inline bool ObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
-// FIXME: Put this function in a separate file named something like scope_chain_mark.h -- can't put it in scope_chain.h since it depends on ObjectImp.
+// FIXME: Put this function in a separate file named something like scope_chain_mark.h -- can't put it in scope_chain.h since it depends on JSObject.
 
 inline void ScopeChain::mark()
 {
     for (ScopeChainNode *n = _node; n; n = n->next) {
-        ObjectImp *o = n->object;
+        JSObject *o = n->object;
         if (!o->marked())
             o->mark();
     }

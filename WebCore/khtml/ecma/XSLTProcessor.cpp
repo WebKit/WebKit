@@ -68,7 +68,7 @@ XSLTProcessor::~XSLTProcessor()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&KJS::XSLTProcessor::info))
         return throwError(exec, TypeError);
@@ -76,7 +76,7 @@ ValueImp *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
     switch (id) {
         case XSLTProcessor::ImportStylesheet:
         {
-            ValueImp *nodeVal = args[0];
+            JSValue *nodeVal = args[0];
             if (nodeVal->isObject(&DOMNode::info)) {
                 DOMNode *node = static_cast<DOMNode *>(nodeVal);
                 processor.importStylesheet(node->impl());
@@ -87,8 +87,8 @@ ValueImp *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
         }
         case XSLTProcessor::TransformToFragment:
         {
-            ValueImp *nodeVal = args[0];
-            ValueImp *docVal = args[1];
+            JSValue *nodeVal = args[0];
+            JSValue *docVal = args[1];
             if (nodeVal->isObject(&DOMNode::info) && docVal->isObject(&DOMDocument::info)) {
                 DOMNode *node = static_cast<DOMNode *>(nodeVal);
                 DOMDocument *doc = static_cast<DOMDocument *>(docVal);
@@ -100,7 +100,7 @@ ValueImp *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
         }
         case XSLTProcessor::TransformToDocument:
         {
-            ValueImp *nodeVal = args[0];
+            JSValue *nodeVal = args[0];
             if (nodeVal->isObject(&DOMNode::info)) {
                 DOMNode *node = static_cast<DOMNode *>(nodeVal);
                 RefPtr<DocumentImpl> resultDocument = processor.transformToDocument(node->impl());

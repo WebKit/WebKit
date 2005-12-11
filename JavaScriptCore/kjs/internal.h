@@ -40,7 +40,7 @@ namespace KJS {
   class Node;
   class ProgramNode;
   class FunctionBodyNode;
-  class FunctionPrototypeImp;
+  class FunctionPrototype;
   class FunctionImp;
   class Debugger;
 
@@ -48,76 +48,76 @@ namespace KJS {
   //                            Primitive impls
   // ---------------------------------------------------------------------------
 
-  class UndefinedImp : public AllocatedValueImp {
+  class UndefinedImp : public JSCell {
   public:
     Type type() const { return UndefinedType; }
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
   };
 
-  class NullImp : public AllocatedValueImp {
+  class NullImp : public JSCell {
   public:
     Type type() const { return NullType; }
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
   };
 
-  class BooleanImp : public AllocatedValueImp {
+  class BooleanImp : public JSCell {
   public:
     BooleanImp(bool v = false) : val(v) { }
     bool value() const { return val; }
 
     Type type() const { return BooleanType; }
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
 
   private:
     bool val;
   };
   
-  class StringImp : public AllocatedValueImp {
+  class StringImp : public JSCell {
   public:
     StringImp(const UString& v) : val(v) { }
     UString value() const { return val; }
 
     Type type() const { return StringType; }
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
 
   private:
     UString val;
   };
 
-  class NumberImp : public AllocatedValueImp {
+  class NumberImp : public JSCell {
     friend class ConstantValues;
     friend class InterpreterImp;
-    friend ValueImp *jsNumber(double);
+    friend JSValue *jsNumber(double);
   public:
     double value() const { return val; }
 
     Type type() const { return NumberType; }
 
-    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    ObjectImp *toObject(ExecState *exec) const;
+    JSObject *toObject(ExecState *exec) const;
 
   private:
     NumberImp(double v) : val(v) { }
@@ -204,48 +204,48 @@ namespace KJS {
   class SavedBuiltinsInternal {
     friend class InterpreterImp;
   private:
-    ProtectedPtr<ObjectImp> b_Object;
-    ProtectedPtr<ObjectImp> b_Function;
-    ProtectedPtr<ObjectImp> b_Array;
-    ProtectedPtr<ObjectImp> b_Boolean;
-    ProtectedPtr<ObjectImp> b_String;
-    ProtectedPtr<ObjectImp> b_Number;
-    ProtectedPtr<ObjectImp> b_Date;
-    ProtectedPtr<ObjectImp> b_RegExp;
-    ProtectedPtr<ObjectImp> b_Error;
+    ProtectedPtr<JSObject> b_Object;
+    ProtectedPtr<JSObject> b_Function;
+    ProtectedPtr<JSObject> b_Array;
+    ProtectedPtr<JSObject> b_Boolean;
+    ProtectedPtr<JSObject> b_String;
+    ProtectedPtr<JSObject> b_Number;
+    ProtectedPtr<JSObject> b_Date;
+    ProtectedPtr<JSObject> b_RegExp;
+    ProtectedPtr<JSObject> b_Error;
 
-    ProtectedPtr<ObjectImp> b_ObjectPrototype;
-    ProtectedPtr<ObjectImp> b_FunctionPrototype;
-    ProtectedPtr<ObjectImp> b_ArrayPrototype;
-    ProtectedPtr<ObjectImp> b_BooleanPrototype;
-    ProtectedPtr<ObjectImp> b_StringPrototype;
-    ProtectedPtr<ObjectImp> b_NumberPrototype;
-    ProtectedPtr<ObjectImp> b_DatePrototype;
-    ProtectedPtr<ObjectImp> b_RegExpPrototype;
-    ProtectedPtr<ObjectImp> b_ErrorPrototype;
+    ProtectedPtr<JSObject> b_ObjectPrototype;
+    ProtectedPtr<JSObject> b_FunctionPrototype;
+    ProtectedPtr<JSObject> b_ArrayPrototype;
+    ProtectedPtr<JSObject> b_BooleanPrototype;
+    ProtectedPtr<JSObject> b_StringPrototype;
+    ProtectedPtr<JSObject> b_NumberPrototype;
+    ProtectedPtr<JSObject> b_DatePrototype;
+    ProtectedPtr<JSObject> b_RegExpPrototype;
+    ProtectedPtr<JSObject> b_ErrorPrototype;
 
-    ProtectedPtr<ObjectImp> b_evalError;
-    ProtectedPtr<ObjectImp> b_rangeError;
-    ProtectedPtr<ObjectImp> b_referenceError;
-    ProtectedPtr<ObjectImp> b_syntaxError;
-    ProtectedPtr<ObjectImp> b_typeError;
-    ProtectedPtr<ObjectImp> b_uriError;
+    ProtectedPtr<JSObject> b_evalError;
+    ProtectedPtr<JSObject> b_rangeError;
+    ProtectedPtr<JSObject> b_referenceError;
+    ProtectedPtr<JSObject> b_syntaxError;
+    ProtectedPtr<JSObject> b_typeError;
+    ProtectedPtr<JSObject> b_uriError;
 
-    ProtectedPtr<ObjectImp> b_evalErrorPrototype;
-    ProtectedPtr<ObjectImp> b_rangeErrorPrototype;
-    ProtectedPtr<ObjectImp> b_referenceErrorPrototype;
-    ProtectedPtr<ObjectImp> b_syntaxErrorPrototype;
-    ProtectedPtr<ObjectImp> b_typeErrorPrototype;
-    ProtectedPtr<ObjectImp> b_uriErrorPrototype;
+    ProtectedPtr<JSObject> b_evalErrorPrototype;
+    ProtectedPtr<JSObject> b_rangeErrorPrototype;
+    ProtectedPtr<JSObject> b_referenceErrorPrototype;
+    ProtectedPtr<JSObject> b_syntaxErrorPrototype;
+    ProtectedPtr<JSObject> b_typeErrorPrototype;
+    ProtectedPtr<JSObject> b_uriErrorPrototype;
   };
 
   class InterpreterImp {
     friend class Collector;
   public:
-    InterpreterImp(Interpreter *interp, ObjectImp *glob);
+    InterpreterImp(Interpreter *interp, JSObject *glob);
     ~InterpreterImp();
 
-    ObjectImp *globalObject() { return global; }
+    JSObject *globalObject() { return global; }
     Interpreter *interpreter() const { return m_interpreter; }
 
     void initGlobalObject();
@@ -254,43 +254,43 @@ namespace KJS {
 
     ExecState *globalExec() { return &globExec; }
     bool checkSyntax(const UString &code);
-    Completion evaluate(const UString &code, ValueImp *thisV, const UString &sourceURL, int startingLineNumber);
+    Completion evaluate(const UString &code, JSValue *thisV, const UString &sourceURL, int startingLineNumber);
     Debugger *debugger() const { return dbg; }
     void setDebugger(Debugger *d) { dbg = d; }
 
-    ObjectImp *builtinObject() const { return b_Object; }
-    ObjectImp *builtinFunction() const { return b_Function; }
-    ObjectImp *builtinArray() const { return b_Array; }
-    ObjectImp *builtinBoolean() const { return b_Boolean; }
-    ObjectImp *builtinString() const { return b_String; }
-    ObjectImp *builtinNumber() const { return b_Number; }
-    ObjectImp *builtinDate() const { return b_Date; }
-    ObjectImp *builtinRegExp() const { return b_RegExp; }
-    ObjectImp *builtinError() const { return b_Error; }
+    JSObject *builtinObject() const { return b_Object; }
+    JSObject *builtinFunction() const { return b_Function; }
+    JSObject *builtinArray() const { return b_Array; }
+    JSObject *builtinBoolean() const { return b_Boolean; }
+    JSObject *builtinString() const { return b_String; }
+    JSObject *builtinNumber() const { return b_Number; }
+    JSObject *builtinDate() const { return b_Date; }
+    JSObject *builtinRegExp() const { return b_RegExp; }
+    JSObject *builtinError() const { return b_Error; }
 
-    ObjectImp *builtinObjectPrototype() const { return b_ObjectPrototype; }
-    ObjectImp *builtinFunctionPrototype() const { return b_FunctionPrototype; }
-    ObjectImp *builtinArrayPrototype() const { return b_ArrayPrototype; }
-    ObjectImp *builtinBooleanPrototype() const { return b_BooleanPrototype; }
-    ObjectImp *builtinStringPrototype() const { return b_StringPrototype; }
-    ObjectImp *builtinNumberPrototype() const { return b_NumberPrototype; }
-    ObjectImp *builtinDatePrototype() const { return b_DatePrototype; }
-    ObjectImp *builtinRegExpPrototype() const { return b_RegExpPrototype; }
-    ObjectImp *builtinErrorPrototype() const { return b_ErrorPrototype; }
+    JSObject *builtinObjectPrototype() const { return b_ObjectPrototype; }
+    JSObject *builtinFunctionPrototype() const { return b_FunctionPrototype; }
+    JSObject *builtinArrayPrototype() const { return b_ArrayPrototype; }
+    JSObject *builtinBooleanPrototype() const { return b_BooleanPrototype; }
+    JSObject *builtinStringPrototype() const { return b_StringPrototype; }
+    JSObject *builtinNumberPrototype() const { return b_NumberPrototype; }
+    JSObject *builtinDatePrototype() const { return b_DatePrototype; }
+    JSObject *builtinRegExpPrototype() const { return b_RegExpPrototype; }
+    JSObject *builtinErrorPrototype() const { return b_ErrorPrototype; }
 
-    ObjectImp *builtinEvalError() const { return b_evalError; }
-    ObjectImp *builtinRangeError() const { return b_rangeError; }
-    ObjectImp *builtinReferenceError() const { return b_referenceError; }
-    ObjectImp *builtinSyntaxError() const { return b_syntaxError; }
-    ObjectImp *builtinTypeError() const { return b_typeError; }
-    ObjectImp *builtinURIError() const { return b_uriError; }
+    JSObject *builtinEvalError() const { return b_evalError; }
+    JSObject *builtinRangeError() const { return b_rangeError; }
+    JSObject *builtinReferenceError() const { return b_referenceError; }
+    JSObject *builtinSyntaxError() const { return b_syntaxError; }
+    JSObject *builtinTypeError() const { return b_typeError; }
+    JSObject *builtinURIError() const { return b_uriError; }
 
-    ObjectImp *builtinEvalErrorPrototype() const { return b_evalErrorPrototype; }
-    ObjectImp *builtinRangeErrorPrototype() const { return b_rangeErrorPrototype; }
-    ObjectImp *builtinReferenceErrorPrototype() const { return b_referenceErrorPrototype; }
-    ObjectImp *builtinSyntaxErrorPrototype() const { return b_syntaxErrorPrototype; }
-    ObjectImp *builtinTypeErrorPrototype() const { return b_typeErrorPrototype; }
-    ObjectImp *builtinURIErrorPrototype() const { return b_uriErrorPrototype; }
+    JSObject *builtinEvalErrorPrototype() const { return b_evalErrorPrototype; }
+    JSObject *builtinRangeErrorPrototype() const { return b_rangeErrorPrototype; }
+    JSObject *builtinReferenceErrorPrototype() const { return b_referenceErrorPrototype; }
+    JSObject *builtinSyntaxErrorPrototype() const { return b_syntaxErrorPrototype; }
+    JSObject *builtinTypeErrorPrototype() const { return b_typeErrorPrototype; }
+    JSObject *builtinURIErrorPrototype() const { return b_uriErrorPrototype; }
 
     void setCompatMode(Interpreter::CompatMode mode) { m_compatMode = mode; }
     Interpreter::CompatMode compatMode() const { return m_compatMode; }
@@ -300,7 +300,7 @@ namespace KJS {
     InterpreterImp *nextInterpreter() const { return next; }
     InterpreterImp *prevInterpreter() const { return prev; }
 
-    static InterpreterImp *interpreterWithGlobalObject(ObjectImp *);
+    static InterpreterImp *interpreterWithGlobalObject(JSObject *);
     
     void setContext(ContextImp *c) { _context = c; }
     ContextImp *context() const { return _context; }
@@ -311,46 +311,46 @@ namespace KJS {
   private:
     void clear();
     Interpreter *m_interpreter;
-    ObjectImp *global;
+    JSObject *global;
     Debugger *dbg;
 
     // Built-in properties of the object prototype. These are accessible
     // from here even if they are replaced by js code (e.g. assigning to
     // Array.prototype)
 
-    ProtectedPtr<ObjectImp> b_Object;
-    ProtectedPtr<ObjectImp> b_Function;
-    ProtectedPtr<ObjectImp> b_Array;
-    ProtectedPtr<ObjectImp> b_Boolean;
-    ProtectedPtr<ObjectImp> b_String;
-    ProtectedPtr<ObjectImp> b_Number;
-    ProtectedPtr<ObjectImp> b_Date;
-    ProtectedPtr<ObjectImp> b_RegExp;
-    ProtectedPtr<ObjectImp> b_Error;
+    ProtectedPtr<JSObject> b_Object;
+    ProtectedPtr<JSObject> b_Function;
+    ProtectedPtr<JSObject> b_Array;
+    ProtectedPtr<JSObject> b_Boolean;
+    ProtectedPtr<JSObject> b_String;
+    ProtectedPtr<JSObject> b_Number;
+    ProtectedPtr<JSObject> b_Date;
+    ProtectedPtr<JSObject> b_RegExp;
+    ProtectedPtr<JSObject> b_Error;
 
-    ProtectedPtr<ObjectImp> b_ObjectPrototype;
-    ProtectedPtr<ObjectImp> b_FunctionPrototype;
-    ProtectedPtr<ObjectImp> b_ArrayPrototype;
-    ProtectedPtr<ObjectImp> b_BooleanPrototype;
-    ProtectedPtr<ObjectImp> b_StringPrototype;
-    ProtectedPtr<ObjectImp> b_NumberPrototype;
-    ProtectedPtr<ObjectImp> b_DatePrototype;
-    ProtectedPtr<ObjectImp> b_RegExpPrototype;
-    ProtectedPtr<ObjectImp> b_ErrorPrototype;
+    ProtectedPtr<JSObject> b_ObjectPrototype;
+    ProtectedPtr<JSObject> b_FunctionPrototype;
+    ProtectedPtr<JSObject> b_ArrayPrototype;
+    ProtectedPtr<JSObject> b_BooleanPrototype;
+    ProtectedPtr<JSObject> b_StringPrototype;
+    ProtectedPtr<JSObject> b_NumberPrototype;
+    ProtectedPtr<JSObject> b_DatePrototype;
+    ProtectedPtr<JSObject> b_RegExpPrototype;
+    ProtectedPtr<JSObject> b_ErrorPrototype;
 
-    ProtectedPtr<ObjectImp> b_evalError;
-    ProtectedPtr<ObjectImp> b_rangeError;
-    ProtectedPtr<ObjectImp> b_referenceError;
-    ProtectedPtr<ObjectImp> b_syntaxError;
-    ProtectedPtr<ObjectImp> b_typeError;
-    ProtectedPtr<ObjectImp> b_uriError;
+    ProtectedPtr<JSObject> b_evalError;
+    ProtectedPtr<JSObject> b_rangeError;
+    ProtectedPtr<JSObject> b_referenceError;
+    ProtectedPtr<JSObject> b_syntaxError;
+    ProtectedPtr<JSObject> b_typeError;
+    ProtectedPtr<JSObject> b_uriError;
 
-    ProtectedPtr<ObjectImp> b_evalErrorPrototype;
-    ProtectedPtr<ObjectImp> b_rangeErrorPrototype;
-    ProtectedPtr<ObjectImp> b_referenceErrorPrototype;
-    ProtectedPtr<ObjectImp> b_syntaxErrorPrototype;
-    ProtectedPtr<ObjectImp> b_typeErrorPrototype;
-    ProtectedPtr<ObjectImp> b_uriErrorPrototype;
+    ProtectedPtr<JSObject> b_evalErrorPrototype;
+    ProtectedPtr<JSObject> b_rangeErrorPrototype;
+    ProtectedPtr<JSObject> b_referenceErrorPrototype;
+    ProtectedPtr<JSObject> b_syntaxErrorPrototype;
+    ProtectedPtr<JSObject> b_typeErrorPrototype;
+    ProtectedPtr<JSObject> b_uriErrorPrototype;
 
     ExecState globExec;
     Interpreter::CompatMode m_compatMode;
@@ -382,22 +382,22 @@ namespace KJS {
 
 
 
-  class InternalFunctionImp : public ObjectImp {
+  class InternalFunctionImp : public JSObject {
   public:
     InternalFunctionImp();
-    InternalFunctionImp(FunctionPrototypeImp *funcProto);
+    InternalFunctionImp(FunctionPrototype *funcProto);
     bool implementsHasInstance() const;
-    bool hasInstance(ExecState *exec, ValueImp *value);
+    bool hasInstance(ExecState *exec, JSValue *value);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };
 
   // helper function for toInteger, toInt32, toUInt32 and toUInt16
-  double roundValue(ExecState *, ValueImp *);
+  double roundValue(ExecState *, JSValue *);
 
 #ifndef NDEBUG
-  void printInfo(ExecState *exec, const char *s, ValueImp *, int lineno = -1);
+  void printInfo(ExecState *exec, const char *s, JSValue *, int lineno = -1);
 #endif
 
 inline LabelStack::~LabelStack()

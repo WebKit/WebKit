@@ -81,12 +81,12 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
     if(comp.complType() == KJS::Throw)
     {
         KJS::ExecState *exec = ecmaEngine->globalExec();
-        KJS::ValueImp *exVal = comp.value();
+        KJS::JSValue *exVal = comp.value();
 
         int lineno = -1;
         if(exVal->isObject())
         {
-            KJS::ValueImp *lineVal = static_cast<KJS::ObjectImp *>(exVal)->get(exec, "line");
+            KJS::JSValue *lineVal = static_cast<KJS::JSObject *>(exVal)->get(exec, "line");
             if(lineVal->type() == KJS::NumberType)
                 lineno = int(lineVal->toNumber(exec));
         }

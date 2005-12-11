@@ -1,5 +1,30 @@
 2005-12-10  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Maciej.
+
+        - did long-promised KJS renaming:
+        
+            ValueImp -> JSValue
+            ObjectImp -> JSObject
+            AllocatedValueImp -> JSCell
+        
+        A renaming to get a class out of the way
+        
+            KJS::Bindings::JSObject -> JavaJSObject
+ 
+        and some other "imp-reduction" renaming
+        
+            *InstanceImp -> *Instance
+            *ProtoFuncImp -> *ProtoFunc
+            *PrototypeImp -> *Prototype
+            ArgumentsImp -> Arguments
+            RuntimeArrayImp -> RuntimeArray
+            RuntimeMethodImp -> RuntimeMethod
+
+        * most files and functions
+
+2005-12-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - eliminated the old Undefined(), Null(), Boolean(), Number(), and String()

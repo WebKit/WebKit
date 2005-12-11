@@ -57,11 +57,11 @@ private:
     RefPtr<DOM::XSLTProcessorImpl> m_impl;
 };
 
-class XSLTProcessorConstructorImp : public ObjectImp {
+class XSLTProcessorConstructorImp : public JSObject {
 public:
     XSLTProcessorConstructorImp(ExecState *) { }
     virtual bool implementsConstruct() const { return true; }
-    virtual ObjectImp *construct(ExecState *exec, const List &args) { return new XSLTProcessor(exec); }
+    virtual JSObject *construct(ExecState *exec, const List &args) { return new XSLTProcessor(exec); }
 };
 
 };

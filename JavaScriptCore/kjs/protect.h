@@ -31,22 +31,22 @@
 
 namespace KJS {
 
-    inline void gcProtect(ValueImp *val) 
+    inline void gcProtect(JSValue *val) 
     { 
 	ProtectedValues::increaseProtectCount(val);
     }
 
-    inline void gcUnprotect(ValueImp *val)
+    inline void gcUnprotect(JSValue *val)
     { 
 	ProtectedValues::decreaseProtectCount(val);
     }
 
-    inline void gcProtectNullTolerant(ValueImp *val) 
+    inline void gcProtectNullTolerant(JSValue *val) 
     {
 	if (val) gcProtect(val);
     }
 
-    inline void gcUnprotectNullTolerant(ValueImp *val) 
+    inline void gcUnprotectNullTolerant(JSValue *val) 
     {
 	if (val) gcUnprotect(val);
     }

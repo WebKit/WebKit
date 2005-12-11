@@ -101,8 +101,8 @@ const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable, 0 };
 */
 
 MathObjectImp::MathObjectImp(ExecState * /*exec*/,
-                             ObjectPrototypeImp *objProto)
-  : ObjectImp(objProto)
+                             ObjectPrototype *objProto)
+  : JSObject(objProto)
 {
 }
 
@@ -110,10 +110,10 @@ MathObjectImp::MathObjectImp(ExecState * /*exec*/,
 
 bool MathObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticPropertySlot<MathFuncImp, MathObjectImp, ObjectImp>(exec, &mathTable, this, propertyName, slot);
+  return getStaticPropertySlot<MathFuncImp, MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
 }
 
-ValueImp *MathObjectImp::getValueProperty(ExecState *, int token) const
+JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
 {
   double d = -42; // ;)
   switch (token) {
@@ -152,7 +152,7 @@ ValueImp *MathObjectImp::getValueProperty(ExecState *, int token) const
 
 MathFuncImp::MathFuncImp(ExecState *exec, int i, int l)
   : InternalFunctionImp(
-    static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
+    static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
     ), id(i)
 {
   putDirect(lengthPropertyName, l, DontDelete|ReadOnly|DontEnum);
@@ -163,7 +163,7 @@ bool MathFuncImp::implementsCall() const
   return true;
 }
 
-ValueImp *MathFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   double arg = args[0]->toNumber(exec);
   double arg2 = args[1]->toNumber(exec);

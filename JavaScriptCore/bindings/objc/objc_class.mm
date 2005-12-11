@@ -234,7 +234,7 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
     return aField;
 }
 
-ValueImp *ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
+JSValue *ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
 {
     ObjcInstance * objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();

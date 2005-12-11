@@ -13,12 +13,12 @@
 #include <JavaScriptCore/value.h>
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(KJS::ValueImp *)value originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext;
++ (id)_convertValueToObjcValue:(KJS::JSValue *)value originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext;
 - _init;
-- _initWithObjectImp:(KJS::ObjectImp *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
-- (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
+- _initWithJSObject:(KJS::JSObject *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
+- (void)_initializeWithObjectImp:(KJS::JSObject *)imp originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext ;
 - (void)_initializeScriptDOMNodeImp;
-- (KJS::ObjectImp *)_imp;
+- (KJS::JSObject *)_imp;
 - (void)_setExecutionContext:(const KJS::Bindings::RootObject *)context;
 - (const KJS::Bindings::RootObject *)_executionContext;
 - (void)_setOriginExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext;
@@ -28,7 +28,7 @@
 @interface WebScriptObjectPrivate : NSObject
 {
 @public
-    KJS::ObjectImp *imp;
+    KJS::JSObject *imp;
     const KJS::Bindings::RootObject *executionContext;
     const KJS::Bindings::RootObject *originExecutionContext;
     BOOL isCreatedByDOMWrapper;

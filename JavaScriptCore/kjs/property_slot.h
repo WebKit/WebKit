@@ -30,36 +30,36 @@ namespace KJS {
 
 class HashEntry;
 class ExecState;
-class ObjectImp;
+class JSObject;
 
 #define VALUE_SLOT_MARKER ((GetValueFunc)1)
 class PropertySlot
 {
 public:
-    typedef ValueImp *(*GetValueFunc)(ExecState *, const Identifier&, const PropertySlot&);
+    typedef JSValue *(*GetValueFunc)(ExecState *, const Identifier&, const PropertySlot&);
 
-    ValueImp *getValue(ExecState *exec, const Identifier& propertyName) const
+    JSValue *getValue(ExecState *exec, const Identifier& propertyName) const
     { 
         if (m_getValue == VALUE_SLOT_MARKER)
             return *m_data.valueSlot;
         return m_getValue(exec, propertyName, *this); 
     }
 
-    ValueImp *getValue(ExecState *exec, unsigned propertyName) const
+    JSValue *getValue(ExecState *exec, unsigned propertyName) const
     { 
         if (m_getValue == VALUE_SLOT_MARKER)
             return *m_data.valueSlot;
         return m_getValue(exec, Identifier::from(propertyName), *this); 
     }
     
-    void setValueSlot(ObjectImp *slotBase, ValueImp **valueSlot) 
+    void setValueSlot(JSObject *slotBase, JSValue **valueSlot) 
     {
         m_slotBase = slotBase;
         m_data.valueSlot = valueSlot;
         m_getValue = VALUE_SLOT_MARKER;
     }
 
-    void setStaticEntry(ObjectImp *slotBase, const HashEntry *staticEntry, GetValueFunc getValue)
+    void setStaticEntry(JSObject *slotBase, const HashEntry *staticEntry, GetValueFunc getValue)
     {
         assert(getValue);
         m_slotBase = slotBase;
@@ -67,14 +67,14 @@ public:
         m_getValue = getValue;
     }
 
-    void setCustom(ObjectImp *slotBase, GetValueFunc getValue)
+    void setCustom(JSObject *slotBase, GetValueFunc getValue)
     {
         assert(getValue);
         m_slotBase = slotBase;
         m_getValue = getValue;
     }
 
-    void setCustomIndex(ObjectImp *slotBase, unsigned index, GetValueFunc getValue)
+    void setCustomIndex(JSObject *slotBase, unsigned index, GetValueFunc getValue)
     {
         assert(getValue);
         m_slotBase = slotBase;
@@ -82,25 +82,25 @@ public:
         m_getValue = getValue;
     }
 
-    void setUndefined(ObjectImp *slotBase)
+    void setUndefined(JSObject *slotBase)
     {
         m_slotBase = slotBase;
         m_getValue = undefinedGetter;
     }
 
-    ObjectImp *slotBase() const { return m_slotBase; }
+    JSObject *slotBase() const { return m_slotBase; }
 
     const HashEntry *staticEntry() const { return m_data.staticEntry; }
     unsigned index() const { return m_data.index; }
 
 private:
-    static ValueImp *undefinedGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *undefinedGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     GetValueFunc m_getValue;
 
-    ObjectImp *m_slotBase;
+    JSObject *m_slotBase;
     union {
-        ValueImp **valueSlot;
+        JSValue **valueSlot;
         const HashEntry *staticEntry;
         unsigned index;
     } m_data;

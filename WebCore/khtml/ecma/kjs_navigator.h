@@ -27,11 +27,11 @@ class KHTMLPart;
 
 namespace KJS {
 
-  class Navigator : public ObjectImp {
+  class Navigator : public JSObject {
   public:
     Navigator(ExecState *exec, KHTMLPart *p);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { AppCodeName, AppName, AppVersion, Language, UserAgent, Platform,

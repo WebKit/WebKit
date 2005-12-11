@@ -41,10 +41,10 @@ struct ListImp : ListImpBase
 {
     ListImpState state;
     int capacity;
-    ValueImp **overflow;
+    JSValue **overflow;
 
     union {
-        ValueImp *values[inlineValuesSize];
+        JSValue *values[inlineValuesSize];
         ListImp *nextInFreeList;
     };
 
@@ -239,7 +239,7 @@ void List::release()
     }
 }
 
-ValueImp *List::at(int i) const
+JSValue *List::at(int i) const
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
     if ((unsigned)i >= (unsigned)imp->size)
@@ -254,7 +254,7 @@ void List::clear()
     _impBase->size = 0;
 }
 
-void List::append(ValueImp *v)
+void List::append(JSValue *v)
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
 
@@ -272,8 +272,8 @@ void List::append(ValueImp *v)
     
     if (i >= imp->capacity) {
         int newCapacity = i * 2;
-        ValueImp **newOverflow = new ValueImp * [newCapacity - inlineValuesSize];
-        ValueImp **oldOverflow = imp->overflow;
+        JSValue **newOverflow = new JSValue * [newCapacity - inlineValuesSize];
+        JSValue **oldOverflow = imp->overflow;
         int oldOverflowSize = i - inlineValuesSize;
         for (int j = 0; j != oldOverflowSize; j++)
             newOverflow[j] = oldOverflow[j];
@@ -297,7 +297,7 @@ List List::copy() const
     for (int i = 0; i != inlineSize; ++i)
         copy.append(imp->values[i]);
 
-    ValueImp **overflow = imp->overflow;
+    JSValue **overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i != overflowSize; ++i)
         copy.append(overflow[i]);
@@ -318,7 +318,7 @@ List List::copyTail() const
     for (int i = 1; i < inlineSize; ++i)
         copy.append(imp->values[i]);
 
-    ValueImp **overflow = imp->overflow;
+    JSValue **overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i < overflowSize; ++i)
         copy.append(overflow[i]);

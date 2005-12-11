@@ -31,7 +31,7 @@ namespace KJS {
 
   class ContextImp;
   class InterpreterImp;
-  class RuntimeMethodImp;
+  class RuntimeMethod;
   class ScopeChain;
 
   namespace Bindings {
@@ -77,7 +77,7 @@ namespace KJS {
      *
      * @return The execution context's variable object
      */
-    ObjectImp *variableObject() const;
+    JSObject *variableObject() const;
 
     /**
      * Returns the "this" value for the execution context. This is the value
@@ -94,7 +94,7 @@ namespace KJS {
      *
      * @return The execution context's "this" value
      */
-    ObjectImp *thisValue() const;
+    JSObject *thisValue() const;
 
     /**
      * Returns the context from which the current context was invoked. For
@@ -151,7 +151,7 @@ namespace KJS {
      *
      * @param global The object to use as the global object for this interpreter
      */
-    Interpreter(ObjectImp *global);
+    Interpreter(JSObject *global);
     /**
      * Creates a new interpreter. A global object will be created and
      * initialized with the standard global properties.
@@ -163,7 +163,7 @@ namespace KJS {
      * Returns the object that is used as the global object during all script
      * execution performed by this interpreter
      */
-    ObjectImp *globalObject() const;
+    JSObject *globalObject() const;
 
     void initGlobalObject();
 
@@ -203,10 +203,10 @@ namespace KJS {
      * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    Completion evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, ValueImp *thisV = NULL);
+    Completion evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, JSValue *thisV = NULL);
 
 	// Overload of evaluate to keep JavaScriptGlue both source and binary compatible.
-	Completion evaluate(const UString &code, ValueImp *thisV = NULL, const UString &sourceFilename = UString());
+	Completion evaluate(const UString &code, JSValue *thisV = NULL, const UString &sourceFilename = UString());
 
     /**
      * @internal
@@ -224,109 +224,109 @@ namespace KJS {
      *
      * @return The builtin "Object" object
      */
-    ObjectImp *builtinObject() const;
+    JSObject *builtinObject() const;
 
     /**
      * Returns the builtin "Function" object.
      */
-    ObjectImp *builtinFunction() const;
+    JSObject *builtinFunction() const;
 
     /**
      * Returns the builtin "Array" object.
      */
-    ObjectImp *builtinArray() const;
+    JSObject *builtinArray() const;
 
     /**
      * Returns the builtin "Boolean" object.
      */
-    ObjectImp *builtinBoolean() const;
+    JSObject *builtinBoolean() const;
 
     /**
      * Returns the builtin "String" object.
      */
-    ObjectImp *builtinString() const;
+    JSObject *builtinString() const;
 
     /**
      * Returns the builtin "Number" object.
      */
-    ObjectImp *builtinNumber() const;
+    JSObject *builtinNumber() const;
 
     /**
      * Returns the builtin "Date" object.
      */
-    ObjectImp *builtinDate() const;
+    JSObject *builtinDate() const;
 
     /**
      * Returns the builtin "RegExp" object.
      */
-    ObjectImp *builtinRegExp() const;
+    JSObject *builtinRegExp() const;
 
     /**
      * Returns the builtin "Error" object.
      */
-    ObjectImp *builtinError() const;
+    JSObject *builtinError() const;
 
     /**
      * Returns the builtin "Object.prototype" object.
      */
-    ObjectImp *builtinObjectPrototype() const;
+    JSObject *builtinObjectPrototype() const;
 
     /**
      * Returns the builtin "Function.prototype" object.
      */
-    ObjectImp *builtinFunctionPrototype() const;
+    JSObject *builtinFunctionPrototype() const;
 
     /**
      * Returns the builtin "Array.prototype" object.
      */
-    ObjectImp *builtinArrayPrototype() const;
+    JSObject *builtinArrayPrototype() const;
 
     /**
      * Returns the builtin "Boolean.prototype" object.
      */
-    ObjectImp *builtinBooleanPrototype() const;
+    JSObject *builtinBooleanPrototype() const;
 
     /**
      * Returns the builtin "String.prototype" object.
      */
-    ObjectImp *builtinStringPrototype() const;
+    JSObject *builtinStringPrototype() const;
 
     /**
      * Returns the builtin "Number.prototype" object.
      */
-    ObjectImp *builtinNumberPrototype() const;
+    JSObject *builtinNumberPrototype() const;
 
     /**
      * Returns the builtin "Date.prototype" object.
      */
-    ObjectImp *builtinDatePrototype() const;
+    JSObject *builtinDatePrototype() const;
 
     /**
      * Returns the builtin "RegExp.prototype" object.
      */
-    ObjectImp *builtinRegExpPrototype() const;
+    JSObject *builtinRegExpPrototype() const;
 
     /**
      * Returns the builtin "Error.prototype" object.
      */
-    ObjectImp *builtinErrorPrototype() const;
+    JSObject *builtinErrorPrototype() const;
 
     /**
      * The initial value of "Error" global property
      */
-    ObjectImp *builtinEvalError() const;
-    ObjectImp *builtinRangeError() const;
-    ObjectImp *builtinReferenceError() const;
-    ObjectImp *builtinSyntaxError() const;
-    ObjectImp *builtinTypeError() const;
-    ObjectImp *builtinURIError() const;
+    JSObject *builtinEvalError() const;
+    JSObject *builtinRangeError() const;
+    JSObject *builtinReferenceError() const;
+    JSObject *builtinSyntaxError() const;
+    JSObject *builtinTypeError() const;
+    JSObject *builtinURIError() const;
 
-    ObjectImp *builtinEvalErrorPrototype() const;
-    ObjectImp *builtinRangeErrorPrototype() const;
-    ObjectImp *builtinReferenceErrorPrototype() const;
-    ObjectImp *builtinSyntaxErrorPrototype() const;
-    ObjectImp *builtinTypeErrorPrototype() const;
-    ObjectImp *builtinURIErrorPrototype() const;
+    JSObject *builtinEvalErrorPrototype() const;
+    JSObject *builtinRangeErrorPrototype() const;
+    JSObject *builtinReferenceErrorPrototype() const;
+    JSObject *builtinSyntaxErrorPrototype() const;
+    JSObject *builtinTypeErrorPrototype() const;
+    JSObject *builtinURIErrorPrototype() const;
 
     enum CompatMode { NativeMode, IECompat, NetscapeCompat };
     /**
@@ -375,7 +375,7 @@ namespace KJS {
      * is used to determine if an object is the Window object so we can perform
      * security checks.
      */
-    virtual bool isGlobalObject(ValueImp *v) { return false; }
+    virtual bool isGlobalObject(JSValue *v) { return false; }
     
     /** 
      * Find the interpreter for a particular global object.  This should really
@@ -384,7 +384,7 @@ namespace KJS {
      * created in an application to correctly implement this method.  The only
      * override of this method is currently in WebCore.
      */
-    virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp) { return 0; }
+    virtual Interpreter *interpreterForGlobalObject (const JSValue *imp) { return 0; }
     
     /**
      * Determine if the it is 'safe' to execute code in the target interpreter from an
@@ -394,7 +394,7 @@ namespace KJS {
      */
     virtual bool isSafeScript (const Interpreter *target) { return true; }
     
-    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
+    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 #endif
 
     // This is a workaround to avoid accessing the global variables for these identifiers in
@@ -435,7 +435,7 @@ namespace KJS {
     friend class InterpreterImp;
     friend class FunctionImp;
 #if APPLE_CHANGES
-    friend class RuntimeMethodImp;
+    friend class RuntimeMethod;
 #endif
 
     friend class GlobalFuncImp;
@@ -465,9 +465,9 @@ namespace KJS {
      */
     Context context() const { return _context; }
 
-    void setException(ValueImp *e) { _exception = e; }
+    void setException(JSValue *e) { _exception = e; }
     void clearException() { _exception = NULL; }
-    ValueImp *exception() const { return _exception; }
+    JSValue *exception() const { return _exception; }
     bool hadException() const { return _exception; }
 
   private:
@@ -475,7 +475,7 @@ namespace KJS {
         : _interpreter(interp), _context(con), _exception(NULL) { }
     Interpreter *_interpreter;
     ContextImp *_context;
-    ValueImp *_exception;
+    JSValue *_exception;
   };
 
 } // namespace

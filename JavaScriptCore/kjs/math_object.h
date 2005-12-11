@@ -27,12 +27,12 @@
 
 namespace KJS {
 
-  class MathObjectImp : public ObjectImp {
+  class MathObjectImp : public JSObject {
   public:
     MathObjectImp(ExecState *exec,
-                  ObjectPrototypeImp *objProto);
+                  ObjectPrototype *objProto);
     bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2,
@@ -44,7 +44,7 @@ namespace KJS {
   public:
     MathFuncImp(ExecState *exec, int i, int l);
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   private:
     int id;
   };

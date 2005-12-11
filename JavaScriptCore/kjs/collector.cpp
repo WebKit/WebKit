@@ -282,7 +282,7 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
 
 gotGoodPointer:
       if (((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
-        AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(x);
+        JSCell *imp = reinterpret_cast<JSCell *>(x);
         if (!imp->marked())
           imp->mark();
       }
@@ -384,7 +384,7 @@ void Collector::markProtectedObjects()
   Entry *table = ProtectedValues::_table;
   Entry *end = table + ProtectedValues::_tableSize;
   for (Entry *entry = table; entry != end; ++entry) {
-    AllocatedValueImp *val = entry->key;
+    JSCell *val = entry->key;
     if (val && !val->marked()) {
       val->mark();
     }
@@ -426,11 +426,11 @@ bool Collector::collect()
       // special case with a block where all cells are used -- testing indicates this happens often
       for (size_t i = 0; i < CELLS_PER_BLOCK; i++) {
         CollectorCell *cell = curBlock->cells + i;
-        AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
+        JSCell *imp = reinterpret_cast<JSCell *>(cell);
         if (imp->m_marked) {
           imp->m_marked = false;
         } else {
-          imp->~AllocatedValueImp();
+          imp->~JSCell();
           --usedCells;
           --numLiveObjects;
 
@@ -447,11 +447,11 @@ bool Collector::collect()
         if (cell->u.freeCell.zeroIfFree == 0) {
           ++minimumCellsToProcess;
         } else {
-          AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
+          JSCell *imp = reinterpret_cast<JSCell *>(cell);
           if (imp->m_marked) {
             imp->m_marked = false;
           } else {
-            imp->~AllocatedValueImp();
+            imp->~JSCell();
             --usedCells;
             --numLiveObjects;
 
@@ -491,10 +491,10 @@ bool Collector::collect()
   
   size_t cell = 0;
   while (cell < heap.usedOversizeCells) {
-    AllocatedValueImp *imp = (AllocatedValueImp *)heap.oversizeCells[cell];
+    JSCell *imp = (JSCell *)heap.oversizeCells[cell];
     
     if (!imp->m_marked) {
-      imp->~AllocatedValueImp();
+      imp->~JSCell();
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
 #else
@@ -563,7 +563,7 @@ size_t Collector::numReferencedObjects()
   size_t size = ProtectedValues::_tableSize;
   ProtectedValues::KeyValue *table = ProtectedValues::_table;
   for (size_t i = 0; i < size; i++) {
-    AllocatedValueImp *val = table[i].key;
+    JSCell *val = table[i].key;
     if (val) {
       ++count;
     }
@@ -574,7 +574,7 @@ size_t Collector::numReferencedObjects()
 
 #if APPLE_CHANGES
 
-static const char *className(AllocatedValueImp *val)
+static const char *className(JSCell *val)
 {
   const char *name = "???";
   switch (val->type()) {
@@ -596,7 +596,7 @@ static const char *className(AllocatedValueImp *val)
       name = "number";
       break;
     case ObjectType: {
-      const ClassInfo *info = static_cast<ObjectImp *>(val)->classInfo();
+      const ClassInfo *info = static_cast<JSObject *>(val)->classInfo();
       name = info ? info->className : "Object";
       break;
     }
@@ -611,7 +611,7 @@ const void *Collector::rootObjectClasses()
   int size = ProtectedValues::_tableSize;
   ProtectedValues::KeyValue *table = ProtectedValues::_table;
   for (int i = 0; i < size; i++) {
-    AllocatedValueImp *val = table[i].key;
+    JSCell *val = table[i].key;
     if (val) {
       CFStringRef name = CFStringCreateWithCString(NULL, className(val), kCFStringEncodingASCII);
       CFSetAddValue(classes, name);

@@ -30,9 +30,9 @@
 
 namespace KJS {
 
-class RuntimeObjectImp : public ObjectImp {
+class RuntimeObjectImp : public JSObject {
 public:
-    RuntimeObjectImp(ObjectImp *proto);
+    RuntimeObjectImp(JSObject *proto);
     ~RuntimeObjectImp();
     
     RuntimeObjectImp(Bindings::Instance *i, bool ownsInstance = true);
@@ -41,11 +41,11 @@ public:
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
-    virtual ValueImp *defaultValue(ExecState *exec, Type hint) const;
+    virtual JSValue *defaultValue(ExecState *exec, Type hint) const;
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
     
     void setInternalInstance(Bindings::Instance *i) { instance = i; }
     Bindings::Instance *getInternalInstance() const { return instance; }
@@ -53,9 +53,9 @@ public:
     static const ClassInfo info;
 
 private:
-    static ValueImp *fallbackObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static ValueImp *fieldGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static ValueImp *methodGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *fallbackObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *fieldGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *methodGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::Instance *instance;
     bool ownsInstance;

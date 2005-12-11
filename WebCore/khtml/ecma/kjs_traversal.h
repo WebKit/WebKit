@@ -38,7 +38,7 @@ namespace KJS {
     DOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
     ~DOMNodeIterator();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -54,7 +54,7 @@ namespace KJS {
   public:
     NodeFilterConstructor(ExecState *) { }
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot& slot);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -78,8 +78,8 @@ namespace KJS {
     DOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
     ~DOMTreeWalker();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot& slot);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Root, WhatToShow, Filter, ExpandEntityReferences, CurrentNode,
@@ -90,20 +90,20 @@ namespace KJS {
     RefPtr<DOM::TreeWalkerImpl> m_impl;
   };
 
-  ValueImp *getDOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
-  ValueImp *getNodeFilterConstructor(ExecState *exec);
-  ValueImp *getDOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
-  ValueImp *getDOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
+  JSValue *getDOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
+  JSValue *getNodeFilterConstructor(ExecState *exec);
+  JSValue *getDOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
+  JSValue *getDOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
 
-  DOM::NodeFilterImpl *toNodeFilter(const ValueImp *); // returns 0 if value is not a DOMNodeFilter
+  DOM::NodeFilterImpl *toNodeFilter(const JSValue *); // returns 0 if value is not a DOMNodeFilter
 
   class JSNodeFilterCondition : public DOM::NodeFilterCondition {
   public:
-    JSNodeFilterCondition(ObjectImp * _filter);
+    JSNodeFilterCondition(JSObject * _filter);
     virtual ~JSNodeFilterCondition() {}
     virtual short acceptNode(DOM::NodeImpl*) const;
   protected:
-    ProtectedPtr<ObjectImp> filter;
+    ProtectedPtr<JSObject> filter;
   };
 
 } // namespace

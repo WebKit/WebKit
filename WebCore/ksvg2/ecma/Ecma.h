@@ -40,9 +40,9 @@ namespace KSVG
         virtual ~Ecma();
 
         // We are a KDOM user, so implement the hook to convert svg elements to kjs objects
-        virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n);
-        virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e);
-        virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c);
+        virtual KJS::JSObject *inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n);
+        virtual KJS::JSObject *inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e);
+        virtual KJS::JSObject *inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c);
 
     protected:
         virtual void setupDocument(KDOM::DocumentImpl *document);
@@ -50,7 +50,7 @@ namespace KSVG
 
     // Helpers
     class SVGPathSeg;
-    KJS::ValueImp *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
+    KJS::JSValue *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
 };
 
 #endif

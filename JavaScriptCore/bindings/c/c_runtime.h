@@ -48,8 +48,8 @@ public:
         _fieldIdentifier = ident;
     };
     
-    virtual ValueImp *valueFromInstance(ExecState *exec, const Instance *instance) const;
-    virtual void setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const;
+    virtual JSValue *valueFromInstance(ExecState *exec, const Instance *instance) const;
+    virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const;
     
     virtual const char *name() const { return _NPN_UTF8FromIdentifier(_fieldIdentifier); }
     virtual RuntimeType type() const { return ""; }
@@ -84,8 +84,8 @@ public:
 
     CArray &operator=(const CArray &other);
     
-    virtual void setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const;
-    virtual ValueImp *valueAt(ExecState *exec, unsigned int index) const;
+    virtual void setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const;
+    virtual JSValue *valueAt(ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
     virtual ~CArray();

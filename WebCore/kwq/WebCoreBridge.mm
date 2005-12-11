@@ -135,7 +135,7 @@ using khtml::VisiblePosition;
 using KJS::ExecState;
 using KJS::Interpreter;
 using KJS::JSLock;
-using KJS::ObjectImp;
+using KJS::JSObject;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 using KJS::Window;
@@ -178,7 +178,7 @@ static RootObject *rootForView(void *v)
 
 static pthread_t mainThread = 0;
 
-static void updateRenderingForBindings (ExecState *exec, ObjectImp *rootObject)
+static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
 {
     if (pthread_self() != mainThread)
         return;

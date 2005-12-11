@@ -92,11 +92,11 @@ static KJSDidExecuteFunctionPtr _DidExecuteFunction;
 void Instance::setDidExecuteFunction (KJSDidExecuteFunctionPtr func) { _DidExecuteFunction = func; }
 KJSDidExecuteFunctionPtr Instance::didExecuteFunction () { return _DidExecuteFunction; }
 
-ValueImp *Instance::getValueOfField (KJS::ExecState *exec, const Field *aField) const {  
+JSValue *Instance::getValueOfField (KJS::ExecState *exec, const Field *aField) const {  
     return aField->valueFromInstance (exec, this);
 }
 
-void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, ValueImp *aValue) const {  
+void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, JSValue *aValue) const {  
     aField->setValueToInstance (exec, this, aValue);
 }
 
@@ -127,7 +127,7 @@ Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, 
     return newInstance;
 }
 
-ObjectImp *Instance::createRuntimeObject (BindingLanguage language, void *nativeInstance, const RootObject *executionContext)
+JSObject *Instance::createRuntimeObject (BindingLanguage language, void *nativeInstance, const RootObject *executionContext)
 {
     Instance *interfaceObject = Instance::createBindingForLanguageInstance(language, (void *)nativeInstance, executionContext);
     
@@ -135,14 +135,14 @@ ObjectImp *Instance::createRuntimeObject (BindingLanguage language, void *native
     return new RuntimeObjectImp(interfaceObject,true);
 }
 
-void *Instance::createLanguageInstanceForValue (ExecState *exec, BindingLanguage language, ObjectImp *value, const RootObject *origin, const RootObject *current)
+void *Instance::createLanguageInstanceForValue (ExecState *exec, BindingLanguage language, JSObject *value, const RootObject *origin, const RootObject *current)
 {
     void *result = 0;
     
     if (!value->isObject())
 	return 0;
 
-    ObjectImp *imp = static_cast<ObjectImp*>(value);
+    JSObject *imp = static_cast<JSObject*>(value);
     
     switch (language) {
 	case Instance::ObjectiveCLanguage: {

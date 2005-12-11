@@ -26,7 +26,7 @@
 
 namespace KJS {
 
-ValueImp *PropertySlot::undefinedGetter(ExecState *, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *PropertySlot::undefinedGetter(ExecState *, const Identifier& propertyName, const PropertySlot& slot)
 {
     return jsUndefined();
 }

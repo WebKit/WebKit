@@ -77,7 +77,7 @@ namespace KJS {
         ~WindowQObject() { parentDestroyed(); }
 
         int installTimeout(const UString &handler, int interval, bool singleShot);
-        int installTimeout(ValueImp *function, const List &, int interval, bool singleShot);
+        int installTimeout(JSValue *function, const List &, int interval, bool singleShot);
         void clearTimeout(int timerId, bool delAction = true);
 
         PausedTimeouts *pauseTimeouts();
@@ -92,7 +92,7 @@ namespace KJS {
         QMap<int, ScheduledAction *> m_timeouts;
   };
 
-  class Screen : public ObjectImp {
+  class Screen : public JSObject {
   public:
     Screen(ExecState *exec);
     enum {
@@ -100,14 +100,14 @@ namespace KJS {
       AvailWidth
     };
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
   private:
     KHTMLView *view;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   };
 
-  class Window : public ObjectImp {
+  class Window : public JSObject {
     friend QGuardedPtr<KHTMLPart> getInstance();
     friend class Location;
     friend class WindowFunc;
@@ -122,7 +122,7 @@ namespace KJS {
      * for the specified part p this will be returned in order to have unique
      * bindings.
      */
-    static ValueImp *retrieve(KHTMLPart *p);
+    static JSValue *retrieve(KHTMLPart *p);
     /**
      * Returns the Window object for a given HTML part
      */
@@ -135,12 +135,12 @@ namespace KJS {
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
 
     int installTimeout(const UString& handler, int t, bool singleShot) { return winq->installTimeout(handler, t, singleShot); }
-    int installTimeout(ValueImp* function, List& args, int t, bool singleShot) { return winq->installTimeout(function, args, t, singleShot); }
+    int installTimeout(JSValue* function, List& args, int t, bool singleShot) { return winq->installTimeout(function, args, t, singleShot); }
     void clearTimeout(int timerId) { winq->clearTimeout(timerId); }
     PausedTimeouts* pauseTimeouts() { return winq->pauseTimeouts(); }
     void resumeTimeouts(PausedTimeouts* t) { winq->resumeTimeouts(t); }
@@ -159,8 +159,8 @@ namespace KJS {
     BarInfo *scrollbars(ExecState *exec) const;
     BarInfo *statusbar(ExecState *exec) const;
     BarInfo *toolbar(ExecState *exec) const;
-    JSEventListener *getJSEventListener(ValueImp *val, bool html = false);
-    JSUnprotectedEventListener *getJSUnprotectedEventListener(ValueImp *val, bool html = false);
+    JSEventListener *getJSEventListener(JSValue *val, bool html = false);
+    JSUnprotectedEventListener *getJSUnprotectedEventListener(JSValue *val, bool html = false);
     JSLazyEventListener *getJSLazyEventListener(const QString &code, DOM::NodeImpl *node, int lineno = 0);
     void clear( ExecState *exec );
     virtual UString toString(ExecState *exec) const;
@@ -169,7 +169,7 @@ namespace KJS {
     void setCurrentEvent(DOM::EventImpl *evt);
 
     // Set a place to put a dialog return value when the window is cleared.
-    void setReturnValueSlot(ValueImp **slot) { m_returnValueSlot = slot; }
+    void setReturnValueSlot(JSValue **slot) { m_returnValueSlot = slot; }
 
     QPtrDict<JSEventListener> jsEventListeners;
     QPtrDict<JSUnprotectedEventListener> jsUnprotectedEventListeners;
@@ -192,13 +192,13 @@ namespace KJS {
            Onselect, Onsubmit, Onunload, Onbeforeunload,
            Statusbar, Toolbar, FrameElement, ShowModalDialog };
   protected:
-    ValueImp *getListener(ExecState *exec, const DOM::AtomicString &eventType) const;
-    void setListener(ExecState *exec, const DOM::AtomicString &eventType, ValueImp *func);
+    JSValue *getListener(ExecState *exec, const DOM::AtomicString &eventType) const;
+    void setListener(ExecState *exec, const DOM::AtomicString &eventType, JSValue *func);
   private:
-    static ValueImp *childFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *namedFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *namedItemGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *childFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *namedFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *namedItemGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
     void updateLayout() const;
 
@@ -216,7 +216,7 @@ namespace KJS {
     BarInfo *m_toolbar;
     WindowQObject *winq;
     DOM::EventImpl *m_evt;
-    ValueImp **m_returnValueSlot;
+    JSValue **m_returnValueSlot;
   };
 
   /**
@@ -226,7 +226,7 @@ namespace KJS {
    */
     class ScheduledAction {
     public:
-        ScheduledAction(ValueImp *func, const List& args, bool singleShot)
+        ScheduledAction(JSValue *func, const List& args, bool singleShot)
             : m_func(func), m_args(args), m_singleShot(singleShot) { }
         ScheduledAction(const QString& code, bool singleShot)
             : m_code(code), m_singleShot(singleShot) { }
@@ -234,18 +234,18 @@ namespace KJS {
         bool singleShot() const { return m_singleShot; }
 
     private:
-        ProtectedPtr<ValueImp> m_func;
+        ProtectedPtr<JSValue> m_func;
         List m_args;
         QString m_code;
         bool m_singleShot;
     };
 
-  class Location : public ObjectImp {
+  class Location : public JSObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    virtual ValueImp *toPrimitive(ExecState *exec, Type preferred) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual JSValue *toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
     enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, EqualEqual,
            Replace, Reload, ToString, Assign };
@@ -258,11 +258,11 @@ namespace KJS {
     QGuardedPtr<KHTMLPart> m_part;
   };
 
-  class Selection : public ObjectImp {
+  class Selection : public JSObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual ValueImp *toPrimitive(ExecState *exec, Type preferred) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual JSValue *toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, EqualEqual, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
@@ -276,10 +276,10 @@ namespace KJS {
     QGuardedPtr<KHTMLPart> m_part;
   };
 
-  class BarInfo : public ObjectImp {
+  class BarInfo : public JSObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    JSValue *getValueProperty(ExecState *exec, int token) const;
     enum { Visible };
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
     KHTMLPart *part() const { return m_part; }

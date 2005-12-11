@@ -127,16 +127,16 @@ namespace KJS {
    * Helper for getStaticFunctionSlot and getStaticPropertySlot
    */
   template <class FuncImp>
-  inline ValueImp *staticFunctionGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+  inline JSValue *staticFunctionGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
   {
-      // Look for cached value in dynamic map of properties (in ObjectImp)
-      ObjectImp *thisObj = slot.slotBase();
-      ValueImp *cachedVal = thisObj->getDirect(propertyName);
+      // Look for cached value in dynamic map of properties (in JSObject)
+      JSObject *thisObj = slot.slotBase();
+      JSValue *cachedVal = thisObj->getDirect(propertyName);
       if (cachedVal)
         return cachedVal;
 
       const HashEntry *entry = slot.staticEntry();
-      ValueImp *val = new FuncImp(exec, entry->value, entry->params);
+      JSValue *val = new FuncImp(exec, entry->value, entry->params);
       thisObj->putDirect(propertyName, val, entry->attr);
       return val;
   }
@@ -146,7 +146,7 @@ namespace KJS {
    * Helper for getStaticValueSlot and getStaticPropertySlot
    */
   template <class ThisImp>
-  inline ValueImp *staticValueGetter(ExecState *exec, const Identifier&, const PropertySlot& slot)
+  inline JSValue *staticValueGetter(ExecState *exec, const Identifier&, const PropertySlot& slot)
   {
       ThisImp *thisObj = static_cast<ThisImp *>(slot.slotBase());
       const HashEntry *entry = slot.staticEntry();
@@ -197,7 +197,7 @@ namespace KJS {
    */
   template <class FuncImp, class ParentImp>
   inline bool getStaticFunctionSlot(ExecState *exec, const HashTable *table, 
-                                    ObjectImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
+                                    JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
@@ -235,7 +235,7 @@ namespace KJS {
    */
   template <class ThisImp, class ParentImp>
   inline void lookupPut(ExecState *exec, const Identifier &propertyName,
-                        ValueImp *value, int attr,
+                        JSValue *value, int attr,
                         const HashTable* table, ThisImp* thisObj)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -243,7 +243,7 @@ namespace KJS {
     if (!entry) // not found: forward to parent
       thisObj->ParentImp::put(exec, propertyName, value, attr);
     else if (entry->attr & Function) // function: put as override property
-      thisObj->ObjectImp::put(exec, propertyName, value, attr);
+      thisObj->JSObject::put(exec, propertyName, value, attr);
     else if (entry->attr & ReadOnly) // readonly! Can't put!
 #ifdef KJS_VERBOSE
       fprintf(stderr,"WARNING: Attempt to change value of readonly property '%s'\n",propertyName.ascii());
@@ -262,15 +262,15 @@ namespace KJS {
    * that cached object. Note that the object constructor must take 1 argument, exec.
    */
   template <class ClassCtor>
-  inline ObjectImp *cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
+  inline JSObject *cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
   {
-    ObjectImp *globalObject = static_cast<ObjectImp *>(exec->lexicalInterpreter()->globalObject());
-    ValueImp *obj = globalObject->getDirect(propertyName);
+    JSObject *globalObject = static_cast<JSObject *>(exec->lexicalInterpreter()->globalObject());
+    JSValue *obj = globalObject->getDirect(propertyName);
     if (obj) {
       assert(obj->isObject());
-      return static_cast<ObjectImp *>(obj);
+      return static_cast<JSObject *>(obj);
     }
-    ObjectImp *newObject = new ClassCtor(exec);
+    JSObject *newObject = new ClassCtor(exec);
     globalObject->put(exec, propertyName, newObject, Internal);
     return newObject;
   }
@@ -292,16 +292,16 @@ namespace KJS {
    * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
    */
 #define DEFINE_PROTOTYPE(ClassName,ClassProto) \
-  class ClassProto : public ObjectImp { \
-    friend ObjectImp *cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
+  class ClassProto : public JSObject { \
+    friend JSObject *cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
   public: \
-    static ObjectImp *self(ExecState *exec) \
+    static JSObject *self(ExecState *exec) \
     { \
       return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
     } \
   protected: \
     ClassProto( ExecState *exec ) \
-      : ObjectImp( exec->lexicalInterpreter()->builtinObjectPrototype() ) {} \
+      : JSObject( exec->lexicalInterpreter()->builtinObjectPrototype() ) {} \
     \
   public: \
     virtual const ClassInfo *classInfo() const { return &info; } \
@@ -313,13 +313,13 @@ namespace KJS {
 #define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
-      return getStaticFunctionSlot<ClassFunc,ObjectImp>(exec, &ClassProto##Table, this, propertyName, slot); \
+      return getStaticFunctionSlot<ClassFunc,JSObject>(exec, &ClassProto##Table, this, propertyName, slot); \
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
-      if (getStaticFunctionSlot<ClassFunc,ObjectImp>(exec, &ClassProto##Table, this, propertyName, slot)) \
+      if (getStaticFunctionSlot<ClassFunc,JSObject>(exec, &ClassProto##Table, this, propertyName, slot)) \
           return true; \
       return ParentProto::self(exec)->getOwnPropertySlot(exec, propertyName, slot); \
     }
@@ -332,7 +332,7 @@ namespace KJS {
        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
     } \
     /* Macro user needs to implement the callAsFunction function. */ \
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args); \
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args); \
   private: \
     int id; \
   };

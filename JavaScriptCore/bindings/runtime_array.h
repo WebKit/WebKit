@@ -32,15 +32,15 @@
 
 namespace KJS {
     
-class RuntimeArrayImp : public ArrayInstanceImp {
+class RuntimeArray : public ArrayInstance {
 public:
-    RuntimeArrayImp(ExecState *exec, Bindings::Array *i);
-    ~RuntimeArrayImp();
+    RuntimeArray(ExecState *exec, Bindings::Array *i);
+    ~RuntimeArray();
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, JSValue *value, int attr = None);
     
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
@@ -54,8 +54,8 @@ public:
     static const ClassInfo info;
 
 private:
-    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static ValueImp *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::Array *_array;
 };

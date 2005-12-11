@@ -36,47 +36,47 @@
 using namespace KJS;
 
 
-// ------------------------------ NumberInstanceImp ----------------------------
+// ------------------------------ NumberInstance ----------------------------
 
-const ClassInfo NumberInstanceImp::info = {"Number", 0, 0, 0};
+const ClassInfo NumberInstance::info = {"Number", 0, 0, 0};
 
-NumberInstanceImp::NumberInstanceImp(ObjectImp *proto)
-  : ObjectImp(proto)
+NumberInstance::NumberInstance(JSObject *proto)
+  : JSObject(proto)
 {
 }
-// ------------------------------ NumberPrototypeImp ---------------------------
+// ------------------------------ NumberPrototype ---------------------------
 
 // ECMA 15.7.4
 
-NumberPrototypeImp::NumberPrototypeImp(ExecState *exec,
-                                       ObjectPrototypeImp *objProto,
-                                       FunctionPrototypeImp *funcProto)
-  : NumberInstanceImp(objProto)
+NumberPrototype::NumberPrototype(ExecState *exec,
+                                       ObjectPrototype *objProto,
+                                       FunctionPrototype *funcProto)
+  : NumberInstance(objProto)
 {
   setInternalValue(jsNumber(0));
 
   // The constructor will be added later, after NumberObjectImp has been constructed
 
-  putDirect(toStringPropertyName,       new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToString,       1), DontEnum);
-  putDirect(toLocaleStringPropertyName, new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToLocaleString, 0), DontEnum);
-  putDirect(valueOfPropertyName,        new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ValueOf,        0), DontEnum);
-  putDirect(toFixedPropertyName,        new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToFixed,        1), DontEnum);
-  putDirect(toExponentialPropertyName,  new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToExponential,  1), DontEnum);
-  putDirect(toPrecisionPropertyName,    new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToPrecision,    1), DontEnum);
+  putDirect(toStringPropertyName,       new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToString,       1), DontEnum);
+  putDirect(toLocaleStringPropertyName, new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToLocaleString, 0), DontEnum);
+  putDirect(valueOfPropertyName,        new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ValueOf,        0), DontEnum);
+  putDirect(toFixedPropertyName,        new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToFixed,        1), DontEnum);
+  putDirect(toExponentialPropertyName,  new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToExponential,  1), DontEnum);
+  putDirect(toPrecisionPropertyName,    new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToPrecision,    1), DontEnum);
 }
 
 
-// ------------------------------ NumberProtoFuncImp ---------------------------
+// ------------------------------ NumberProtoFunc ---------------------------
 
-NumberProtoFuncImp::NumberProtoFuncImp(ExecState *exec,
-                                       FunctionPrototypeImp *funcProto, int i, int len)
+NumberProtoFunc::NumberProtoFunc(ExecState *exec,
+                                       FunctionPrototype *funcProto, int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 
-bool NumberProtoFuncImp::implementsCall() const
+bool NumberProtoFunc::implementsCall() const
 {
   return true;
 }
@@ -126,13 +126,13 @@ static UString char_sequence(char c, int count)
 }
 
 // ECMA 15.7.4.2 - 15.7.4.7
-ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   // no generic function. "this" has to be a Number object
-  if (!thisObj->inherits(&NumberInstanceImp::info))
+  if (!thisObj->inherits(&NumberInstance::info))
     return throwError(exec, TypeError);
 
-  ValueImp *v = thisObj->internalValue();
+  JSValue *v = thisObj->internalValue();
   switch (id) {
   case ToString: {
     double dradix = 10;
@@ -158,7 +158,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     return jsNumber(v->toNumber(exec));
   case ToFixed: 
   {
-      ValueImp *fractionDigits = args[0];
+      JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
       if (!(df >= 0 && df <= 20)) // true for NaN
           return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
@@ -203,7 +203,7 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       if (isNaN(x) || isInf(x))
           return jsString(UString::from(x));
       
-      ValueImp *fractionDigits = args[0];
+      JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
       if (!(df >= 0 && df <= 20)) // true for NaN
           return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
@@ -367,8 +367,8 @@ const ClassInfo NumberObjectImp::info = {"Number", &InternalFunctionImp::info, &
 @end
 */
 NumberObjectImp::NumberObjectImp(ExecState *exec,
-                                 FunctionPrototypeImp *funcProto,
-                                 NumberPrototypeImp *numberProto)
+                                 FunctionPrototype *funcProto,
+                                 NumberPrototype *numberProto)
   : InternalFunctionImp(funcProto)
 {
   // Number.Prototype
@@ -383,7 +383,7 @@ bool NumberObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& prop
   return getStaticValueSlot<NumberObjectImp, InternalFunctionImp>(exec, &numberTable, this, propertyName, slot);
 }
 
-ValueImp *NumberObjectImp::getValueProperty(ExecState *, int token) const
+JSValue *NumberObjectImp::getValueProperty(ExecState *, int token) const
 {
   // ECMA 15.7.3
   switch(token) {
@@ -408,10 +408,10 @@ bool NumberObjectImp::implementsConstruct() const
 
 
 // ECMA 15.7.1
-ObjectImp *NumberObjectImp::construct(ExecState *exec, const List &args)
+JSObject *NumberObjectImp::construct(ExecState *exec, const List &args)
 {
-  ObjectImp *proto = exec->lexicalInterpreter()->builtinNumberPrototype();
-  ObjectImp *obj(new NumberInstanceImp(proto));
+  JSObject *proto = exec->lexicalInterpreter()->builtinNumberPrototype();
+  JSObject *obj(new NumberInstance(proto));
 
   double n;
   if (args.isEmpty())
@@ -430,7 +430,7 @@ bool NumberObjectImp::implementsCall() const
 }
 
 // ECMA 15.7.2
-ValueImp *NumberObjectImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *NumberObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   if (args.isEmpty())
     return jsNumber(0);

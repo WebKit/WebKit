@@ -73,17 +73,17 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual ValueImp *valueOf() const;
-    virtual ValueImp *defaultValue (Type hint) const;
+    virtual JSValue *valueOf() const;
+    virtual JSValue *defaultValue (Type hint) const;
 
-    virtual ValueImp *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual ValueImp *invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);
 
     jobject javaInstance() const { return _instance->_instance; }
     
-    ValueImp *stringValue() const;
-    ValueImp *numberValue() const;
-    ValueImp *booleanValue() const;
+    JSValue *stringValue() const;
+    JSValue *numberValue() const;
+    JSValue *booleanValue() const;
         
 private:
     JavaInstance ();                         // prevent default construction

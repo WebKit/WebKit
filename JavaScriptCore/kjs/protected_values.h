@@ -24,18 +24,18 @@
 #define KJS_PROTECTED_VALUES_H
 
 namespace KJS {
-    class ValueImp;
-    class AllocatedValueImp;
+    class JSValue;
+    class JSCell;
 
     class ProtectedValues {
     public:
-	static void increaseProtectCount(ValueImp *key);
-	static void decreaseProtectCount(ValueImp *key);
+	static void increaseProtectCount(JSValue *key);
+	static void decreaseProtectCount(JSValue *key);
 
-	static int getProtectCount(ValueImp *key);
+	static int getProtectCount(JSValue *key);
 
     private:
-	static void insert(AllocatedValueImp *key, int value);
+	static void insert(JSCell *key, int value);
 	static void expand();
 	static void shrink();
 	static void rehash(int newTableSize);
@@ -44,7 +44,7 @@ namespace KJS {
 	friend class Collector;
 
 	struct KeyValue {
-	    AllocatedValueImp *key;
+	    JSCell *key;
 	    int value;
 	};
 

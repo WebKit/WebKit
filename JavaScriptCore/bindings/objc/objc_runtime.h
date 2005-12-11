@@ -79,8 +79,8 @@ public:
         return *this;
     }
 
-    virtual ValueImp *valueFromInstance(ExecState *exec, const Instance *instance) const;
-    virtual void setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const;
+    virtual JSValue *valueFromInstance(ExecState *exec, const Instance *instance) const;
+    virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const;
     
     virtual const char *name() const;
     virtual RuntimeType type() const;
@@ -142,32 +142,32 @@ public:
     
     virtual ~ObjcArray();
 
-    virtual void setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const;
-    virtual ValueImp *valueAt(ExecState *exec, unsigned int index) const;
+    virtual void setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const;
+    virtual JSValue *valueAt(ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
     ObjectStructPtr getObjcArray() const { return _array; }
 
-    static ValueImp *convertObjcArrayToArray(ExecState *exec, ObjectStructPtr anObject);
+    static JSValue *convertObjcArrayToArray(ExecState *exec, ObjectStructPtr anObject);
 
 private:
     ObjectStructPtr _array;
 };
 
-class ObjcFallbackObjectImp : public ObjectImp {
+class ObjcFallbackObjectImp : public JSObject {
 public:
-    ObjcFallbackObjectImp(ObjectImp *proto);
+    ObjcFallbackObjectImp(JSObject *proto);
     ObjcFallbackObjectImp(ObjcInstance *i, const Identifier propertyName);
 
     const ClassInfo *classInfo() const { return &info; }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
-    virtual ValueImp *defaultValue(ExecState *exec, Type hint) const;
+    virtual JSValue *defaultValue(ExecState *exec, Type hint) const;
 
     virtual Type type() const;
     virtual bool toBoolean(ExecState *exec) const;

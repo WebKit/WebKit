@@ -51,12 +51,12 @@ namespace KJS {
     Completed = 4
   };
 
-  class XMLHttpRequestConstructorImp : public ObjectImp {
+  class XMLHttpRequestConstructorImp : public JSObject {
   public:
     XMLHttpRequestConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     ~XMLHttpRequestConstructorImp();
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args);
   private:
     RefPtr<DOM::DocumentImpl> doc;
   };
@@ -66,9 +66,9 @@ namespace KJS {
     XMLHttpRequest(ExecState *, DOM::DocumentImpl *d);
     ~XMLHttpRequest();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual void mark();
 
@@ -84,8 +84,8 @@ namespace KJS {
     friend class XMLHttpRequestProtoFunc;
     friend class XMLHttpRequestQObject;
 
-    ValueImp *getStatusText() const;
-    ValueImp *getStatus() const;
+    JSValue *getStatusText() const;
+    JSValue *getStatus() const;
     bool urlMatchesDocumentDomain(const KURL&) const;
 
     XMLHttpRequestQObject *qObject;
@@ -100,8 +100,8 @@ namespace KJS {
     void send(const QString& _body);
     void abort();
     void setRequestHeader(const QString& name, const QString &value);
-    ValueImp *getAllResponseHeaders() const;
-    ValueImp *getResponseHeader(const QString& name) const;
+    JSValue *getAllResponseHeaders() const;
+    JSValue *getResponseHeader(const QString& name) const;
 
     void changeState(XMLHttpRequestState newState);
 

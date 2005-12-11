@@ -30,33 +30,33 @@
 
 using namespace KJS;
 
-const ClassInfo RuntimeArrayImp::info = {"RuntimeArray", &ArrayInstanceImp::info, 0, 0};
+const ClassInfo RuntimeArray::info = {"RuntimeArray", &ArrayInstance::info, 0, 0};
 
-RuntimeArrayImp::RuntimeArrayImp(ExecState *exec, Bindings::Array *a)
-    : ArrayInstanceImp(exec->lexicalInterpreter()->builtinArrayPrototype(), a->getLength())
+RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
+    : ArrayInstance(exec->lexicalInterpreter()->builtinArrayPrototype(), a->getLength())
 {
     // Always takes ownership of concrete array.
     _array = a;
 }
 
-RuntimeArrayImp::~RuntimeArrayImp()
+RuntimeArray::~RuntimeArray()
 {
     delete _array;
 }
 
-ValueImp *RuntimeArrayImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    RuntimeArrayImp *thisObj = static_cast<RuntimeArrayImp *>(slot.slotBase());
+    RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return jsNumber(thisObj->getLength());
 }
 
-ValueImp *RuntimeArrayImp::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    RuntimeArrayImp *thisObj = static_cast<RuntimeArrayImp *>(slot.slotBase());
+    RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return thisObj->getConcreteArray()->valueAt(exec, slot.index());
 }
 
-bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == lengthPropertyName) {
         slot.setCustom(this, lengthGetter);
@@ -72,20 +72,20 @@ bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, const Identifier& prop
         }
     }
     
-    return ArrayInstanceImp::getOwnPropertySlot(exec, propertyName, slot);
+    return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
 {
     if (index < getLength()) {
         slot.setCustomIndex(this, index, indexGetter);
         return true;
     }
     
-    return ArrayInstanceImp::getOwnPropertySlot(exec, index, slot);
+    return ArrayInstance::getOwnPropertySlot(exec, index, slot);
 }
 
-void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void RuntimeArray::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     if (propertyName == lengthPropertyName) {
         throwError(exec, RangeError);
@@ -99,10 +99,10 @@ void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, Value
         return;
     }
     
-    ObjectImp::put(exec, propertyName, value, attr);
+    JSObject::put(exec, propertyName, value, attr);
 }
 
-void RuntimeArrayImp::put(ExecState *exec, unsigned index, ValueImp *value, int attr)
+void RuntimeArray::put(ExecState *exec, unsigned index, JSValue *value, int attr)
 {
     if (index >= getLength()) {
         throwError(exec, RangeError);
@@ -112,12 +112,12 @@ void RuntimeArrayImp::put(ExecState *exec, unsigned index, ValueImp *value, int 
     getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArrayImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
+bool RuntimeArray::deleteProperty(ExecState *exec, const Identifier &propertyName)
 {
     return false;
 }
 
-bool RuntimeArrayImp::deleteProperty(ExecState *exec, unsigned index)
+bool RuntimeArray::deleteProperty(ExecState *exec, unsigned index)
 {
     return false;
 }

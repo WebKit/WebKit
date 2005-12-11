@@ -711,7 +711,7 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
-jvalue convertValueToJValue (ExecState *exec, ValueImp *value, JNIType _JNIType, const char *javaClassName)
+jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, const char *javaClassName)
 {
     jvalue result;
    
@@ -721,14 +721,14 @@ jvalue convertValueToJValue (ExecState *exec, ValueImp *value, JNIType _JNIType,
             
             // First see if we have a Java instance.
             if (value->isObject()){
-                ObjectImp *objectImp = static_cast<ObjectImp*>(value);
+                JSObject *objectImp = static_cast<JSObject*>(value);
 		if (objectImp->classInfo() == &RuntimeObjectImp::info) {
 		    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value);
 		    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
 		    result.l = instance->javaInstance();
 		}
-		else if (objectImp->classInfo() == &RuntimeArrayImp::info) {
-		    RuntimeArrayImp *imp = static_cast<RuntimeArrayImp *>(value);
+		else if (objectImp->classInfo() == &RuntimeArray::info) {
+		    RuntimeArray *imp = static_cast<RuntimeArray *>(value);
 		    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
 		    result.l = array->javaArray();
 		}

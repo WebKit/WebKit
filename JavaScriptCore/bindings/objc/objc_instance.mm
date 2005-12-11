@@ -123,9 +123,9 @@ Bindings::Class *ObjcInstance::getClass() const
     return static_cast<Bindings::Class*>(_class);
 }
 
-ValueImp *ObjcInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
+JSValue *ObjcInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
 {
-    ValueImp *resultValue;
+    JSValue *resultValue;
 
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
@@ -143,7 +143,7 @@ NS_DURING
     if (method->isFallbackMethod()) {
         if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
             NSLog(@"Incorrect signature for invokeUndefinedMethodFromWebScript:withArguments: -- return type must be object.");
-            NS_VALUERETURN(jsUndefined(), ValueImp *);
+            NS_VALUERETURN(jsUndefined(), JSValue *);
         }
         
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
@@ -239,14 +239,14 @@ NS_ENDHANDLER
     return resultValue;
 }
 
-ValueImp *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
+JSValue *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 {
-    ValueImp *resultValue;
+    JSValue *resultValue;
     
 NS_DURING
 
     if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
-        NS_VALUERETURN(jsUndefined(), ValueImp *);
+        NS_VALUERETURN(jsUndefined(), JSValue *);
     
     NSMethodSignature *signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -256,7 +256,7 @@ NS_DURING
     
     if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
         NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
-        NS_VALUERETURN(jsUndefined(), ValueImp *);
+        NS_VALUERETURN(jsUndefined(), JSValue *);
     }
     
     NSMutableArray *objcArgs = [NSMutableArray array];
@@ -290,7 +290,7 @@ NS_ENDHANDLER
     return resultValue;
 }
 
-void ObjcInstance::setValueOfField (ExecState *exec, const Field *aField, ValueImp *aValue) const
+void ObjcInstance::setValueOfField (ExecState *exec, const Field *aField, JSValue *aValue) const
 {
     aField->setValueToInstance (exec, this, aValue);
 }
@@ -305,7 +305,7 @@ bool ObjcInstance::supportsSetValueOfUndefinedField ()
     return false;
 }
 
-void ObjcInstance::setValueOfUndefinedField (ExecState *exec, const Identifier &property, ValueImp *aValue)
+void ObjcInstance::setValueOfUndefinedField (ExecState *exec, const Identifier &property, JSValue *aValue)
 {
     id targetObject = getObject();
     
@@ -328,13 +328,13 @@ void ObjcInstance::setValueOfUndefinedField (ExecState *exec, const Identifier &
     }
 }
 
-ValueImp *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const {  
+JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const {  
     return aField->valueFromInstance (exec, this);
 }
 
-ValueImp *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const
+JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const
 {
-    ValueImp *volatile result = jsUndefined();
+    JSValue *volatile result = jsUndefined();
     
     id targetObject = getObject();
     
@@ -360,7 +360,7 @@ ValueImp *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identif
     return result;
 }
 
-ValueImp *ObjcInstance::defaultValue (Type hint) const
+JSValue *ObjcInstance::defaultValue (Type hint) const
 {
     if (hint == StringType) {
         return stringValue();
@@ -386,24 +386,24 @@ ValueImp *ObjcInstance::defaultValue (Type hint) const
     return valueOf();
 }
 
-ValueImp *ObjcInstance::stringValue() const
+JSValue *ObjcInstance::stringValue() const
 {
     return convertNSStringToString ([getObject() description]);
 }
 
-ValueImp *ObjcInstance::numberValue() const
+JSValue *ObjcInstance::numberValue() const
 {
     // FIXME:  Implement something sensible
     return jsNumber(0);
 }
 
-ValueImp *ObjcInstance::booleanValue() const
+JSValue *ObjcInstance::booleanValue() const
 {
     // FIXME:  Implement something sensible
     return jsBoolean(false);
 }
 
-ValueImp *ObjcInstance::valueOf() const 
+JSValue *ObjcInstance::valueOf() const 
 {
     return stringValue();
 }

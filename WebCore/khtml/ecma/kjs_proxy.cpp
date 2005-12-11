@@ -114,7 +114,7 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
 
   JSLock lock;
 
-  KJS::ValueImp *thisNode = n ? Window::retrieve(m_part) : getDOMNode(m_script->globalExec(), n);
+  KJS::JSValue *thisNode = n ? Window::retrieve(m_part) : getDOMNode(m_script->globalExec(), n);
   UString code(str);
   Completion comp = m_script->evaluate(filename, baseLine, code, thisNode);
 
@@ -236,14 +236,14 @@ void KJSProxyImpl::appendSourceFile(QString url, QString code)
 }
 
 // Implementation of the debug() function
-class TestFunctionImp : public ObjectImp {
+class TestFunctionImp : public JSObject {
 public:
-  TestFunctionImp() : ObjectImp() {}
+  TestFunctionImp() : JSObject() {}
   virtual bool implementsCall() const { return true; }
-  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 };
 
-ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
   return jsUndefined();
@@ -256,7 +256,7 @@ void KJSProxyImpl::initScript()
 
   // Build the global object - which is a Window instance
   KJS::JSLock lock;
-  ObjectImp *globalObject( new Window(m_part) );
+  JSObject *globalObject( new Window(m_part) );
 
   // Create a KJS interpreter for this part
   m_script = new KJS::ScriptInterpreter(globalObject, m_part);

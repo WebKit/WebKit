@@ -58,7 +58,7 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
 
 FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
   : InternalFunctionImp(
-      static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
+      static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
       ), param(0L), ident(n)
 {
 }
@@ -73,9 +73,9 @@ bool FunctionImp::implementsCall() const
   return true;
 }
 
-ValueImp *FunctionImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *FunctionImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-  ObjectImp *globalObj = exec->dynamicInterpreter()->globalObject();
+  JSObject *globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
   ContextImp ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, codeType(),
@@ -170,7 +170,7 @@ UString FunctionImp::parameterString() const
 // ECMA 10.1.3q
 void FunctionImp::processParameters(ExecState *exec, const List &args)
 {
-  ObjectImp *variable = exec->context().imp()->variableObject();
+  JSObject *variable = exec->context().imp()->variableObject();
 
 #ifdef KJS_VERBOSE
   fprintf(stderr, "---------------------------------------------------\n"
@@ -206,7 +206,7 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
 }
 
-ValueImp *FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   ContextImp *context = exec->_context;
@@ -219,7 +219,7 @@ ValueImp *FunctionImp::argumentsGetter(ExecState *exec, const Identifier& proper
   return jsNull();
 }
 
-ValueImp *FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   const Parameter *p = thisObj->param;
@@ -248,7 +248,7 @@ bool FunctionImp::getOwnPropertySlot(ExecState *exec, const Identifier& property
     return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void FunctionImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void FunctionImp::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier() || propertyName == lengthPropertyName)
         return;
@@ -312,21 +312,21 @@ bool DeclaredFunctionImp::implementsConstruct() const
 }
 
 // ECMA 13.2.2 [[Construct]]
-ObjectImp *DeclaredFunctionImp::construct(ExecState *exec, const List &args)
+JSObject *DeclaredFunctionImp::construct(ExecState *exec, const List &args)
 {
-  ObjectImp *proto;
-  ValueImp *p = get(exec,prototypePropertyName);
+  JSObject *proto;
+  JSValue *p = get(exec,prototypePropertyName);
   if (p->isObject())
-    proto = static_cast<ObjectImp*>(p);
+    proto = static_cast<JSObject*>(p);
   else
     proto = exec->lexicalInterpreter()->builtinObjectPrototype();
 
-  ObjectImp *obj(new ObjectImp(proto));
+  JSObject *obj(new JSObject(proto));
 
-  ValueImp *res = call(exec,obj,args);
+  JSValue *res = call(exec,obj,args);
 
   if (res->isObject())
-    return static_cast<ObjectImp *>(res);
+    return static_cast<JSObject *>(res);
   else
     return obj;
 }
@@ -413,13 +413,13 @@ Identifier& IndexToNameMap::operator[](const Identifier &index)
   return (*this)[indexAsNumber];
 }
 
-// ------------------------------ ArgumentsImp ---------------------------------
+// ------------------------------ Arguments ---------------------------------
 
-const ClassInfo ArgumentsImp::info = {"Arguments", 0, 0, 0};
+const ClassInfo Arguments::info = {"Arguments", 0, 0, 0};
 
 // ECMA 10.1.8
-ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act)
-: ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), 
+Arguments::Arguments(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act)
+: JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), 
 _activationObject(act),
 indexToNameMap(func, args)
 {
@@ -430,50 +430,50 @@ indexToNameMap(func, args)
   ListIterator iterator = args.begin(); 
   for (; iterator != args.end(); i++, iterator++) {
     if (!indexToNameMap.isMapped(Identifier::from(i))) {
-      ObjectImp::put(exec, Identifier::from(i), *iterator, DontEnum);
+      JSObject::put(exec, Identifier::from(i), *iterator, DontEnum);
     }
   }
 }
 
-void ArgumentsImp::mark() 
+void Arguments::mark() 
 {
-  ObjectImp::mark();
+  JSObject::mark();
   if (_activationObject && !_activationObject->marked())
     _activationObject->mark();
 }
 
-ValueImp *ArgumentsImp::mappedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Arguments::mappedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-  ArgumentsImp *thisObj = static_cast<ArgumentsImp *>(slot.slotBase());
+  Arguments *thisObj = static_cast<Arguments *>(slot.slotBase());
   return thisObj->_activationObject->get(exec, thisObj->indexToNameMap[propertyName]);
 }
 
-bool ArgumentsImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool Arguments::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (indexToNameMap.isMapped(propertyName)) {
     slot.setCustom(this, mappedIndexGetter);
     return true;
   }
 
-  return ObjectImp::getOwnPropertySlot(exec, propertyName, slot);
+  return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
+void Arguments::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
   if (indexToNameMap.isMapped(propertyName)) {
     _activationObject->put(exec, indexToNameMap[propertyName], value, attr);
   } else {
-    ObjectImp::put(exec, propertyName, value, attr);
+    JSObject::put(exec, propertyName, value, attr);
   }
 }
 
-bool ArgumentsImp::deleteProperty(ExecState *exec, const Identifier &propertyName) 
+bool Arguments::deleteProperty(ExecState *exec, const Identifier &propertyName) 
 {
   if (indexToNameMap.isMapped(propertyName)) {
     indexToNameMap.unMap(propertyName);
     return true;
   } else {
-    return ObjectImp::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(exec, propertyName);
   }
 }
 
@@ -489,7 +489,7 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
-ValueImp *ActivationImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *ActivationImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   ActivationImp *thisObj = static_cast<ActivationImp *>(slot.slotBase());
 
@@ -508,7 +508,7 @@ PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
 bool ActivationImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // do this first so property map arguments property wins over the below
-    if (ObjectImp::getOwnPropertySlot(exec, propertyName, slot))
+    if (JSObject::getOwnPropertySlot(exec, propertyName, slot))
         return true;
 
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier()) {
@@ -523,7 +523,7 @@ bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyNa
 {
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier())
         return false;
-    return ObjectImp::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(exec, propertyName);
 }
 
 void ActivationImp::mark()
@@ -533,18 +533,18 @@ void ActivationImp::mark()
     _arguments.mark();
     if (_argumentsObject && !_argumentsObject->marked())
         _argumentsObject->mark();
-    ObjectImp::mark();
+    JSObject::mark();
 }
 
 void ActivationImp::createArgumentsObject(ExecState *exec) const
 {
-  _argumentsObject = new ArgumentsImp(exec, _function, _arguments, const_cast<ActivationImp *>(this));
+  _argumentsObject = new Arguments(exec, _function, _arguments, const_cast<ActivationImp *>(this));
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
 
 
-GlobalFuncImp::GlobalFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len)
+GlobalFuncImp::GlobalFuncImp(ExecState *exec, FunctionPrototype *funcProto, int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
@@ -560,7 +560,7 @@ bool GlobalFuncImp::implementsCall() const
   return true;
 }
 
-static ValueImp *encode(ExecState *exec, const List &args, const char *do_not_escape)
+static JSValue *encode(ExecState *exec, const List &args, const char *do_not_escape)
 {
   UString r = "", s, str = args[0]->toString(exec);
   CString cstr = str.UTF8String();
@@ -578,7 +578,7 @@ static ValueImp *encode(ExecState *exec, const List &args, const char *do_not_es
   return jsString(r);
 }
 
-static ValueImp *decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
+static JSValue *decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
 {
   UString s = "", str = args[0]->toString(exec);
   int k = 0, len = str.size();
@@ -747,9 +747,9 @@ static double parseFloat(const UString &s)
     return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
 }
 
-ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
-  ValueImp *res = jsUndefined();
+  JSValue *res = jsUndefined();
 
   static const char do_not_escape[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -772,7 +772,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
 
   switch (id) {
     case Eval: { // eval()
-      ValueImp *x = args[0];
+      JSValue *x = args[0];
       if (!x->isString())
         return x;
       else {
@@ -796,7 +796,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         }
 
         // enter a new execution context
-        ObjectImp *thisVal = static_cast<ObjectImp *>(exec->context().thisValue());
+        JSObject *thisVal = static_cast<JSObject *>(exec->context().thisValue());
         ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
                        exec->dynamicInterpreter()->imp(),
                        thisVal,

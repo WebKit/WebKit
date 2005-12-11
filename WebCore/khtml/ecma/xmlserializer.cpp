@@ -45,7 +45,7 @@ IMPLEMENT_PROTOFUNC(XMLSerializerProtoFunc)
 IMPLEMENT_PROTOTYPE(XMLSerializerProto,XMLSerializerProtoFunc)
 
 XMLSerializerConstructorImp::XMLSerializerConstructorImp(ExecState *)
-    : ObjectImp()
+    : JSObject()
 {
 }
 
@@ -54,7 +54,7 @@ bool XMLSerializerConstructorImp::implementsConstruct() const
   return true;
 }
 
-ObjectImp *XMLSerializerConstructorImp::construct(ExecState *exec, const List &)
+JSObject *XMLSerializerConstructorImp::construct(ExecState *exec, const List &)
 {
   return new XMLSerializer(exec);
 }
@@ -71,7 +71,7 @@ XMLSerializer::XMLSerializer(ExecState *exec)
   setPrototype(XMLSerializerProto::self(exec));
 }
 
-ValueImp *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&XMLSerializer::info))
     return throwError(exec, TypeError);

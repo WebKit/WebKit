@@ -51,12 +51,12 @@ const ScopeChain &Context::scopeChain() const
   return rep->scopeChain();
 }
 
-ObjectImp *Context::variableObject() const
+JSObject *Context::variableObject() const
 {
   return rep->variableObject();
 }
 
-ObjectImp *Context::thisValue() const
+JSObject *Context::thisValue() const
 {
   return rep->thisValue();
 }
@@ -68,7 +68,7 @@ const Context Context::callingContext() const
 
 // ------------------------------ Interpreter ----------------------------------
 
-Interpreter::Interpreter(ObjectImp *global) 
+Interpreter::Interpreter(JSObject *global) 
   : rep(0)
   , m_argumentsPropertyName(&argumentsPropertyName)
   , m_specialPrototypePropertyName(&specialPrototypePropertyName)
@@ -81,7 +81,7 @@ Interpreter::Interpreter()
   , m_argumentsPropertyName(&argumentsPropertyName)
   , m_specialPrototypePropertyName(&specialPrototypePropertyName)
 {
-  rep = new InterpreterImp(this, new ObjectImp);
+  rep = new InterpreterImp(this, new JSObject);
 }
 
 Interpreter::~Interpreter()
@@ -89,7 +89,7 @@ Interpreter::~Interpreter()
   delete rep;
 }
 
-ObjectImp *Interpreter::globalObject() const
+JSObject *Interpreter::globalObject() const
 {
   return rep->globalObject();
 }
@@ -109,12 +109,12 @@ bool Interpreter::checkSyntax(const UString &code)
   return rep->checkSyntax(code);
 }
 
-Completion Interpreter::evaluate(const UString &code, ValueImp *thisV, const UString &)
+Completion Interpreter::evaluate(const UString &code, JSValue *thisV, const UString &)
 {
   return evaluate(UString(), 0, code, thisV);
 }
 
-Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, ValueImp *thisV)
+Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, JSValue *thisV)
 {
   Completion comp = rep->evaluate(code,thisV, sourceURL, startingLineNumber);
 
@@ -133,152 +133,152 @@ Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumbe
   return comp;
 }
 
-ObjectImp *Interpreter::builtinObject() const
+JSObject *Interpreter::builtinObject() const
 {
   return rep->builtinObject();
 }
 
-ObjectImp *Interpreter::builtinFunction() const
+JSObject *Interpreter::builtinFunction() const
 {
   return rep->builtinFunction();
 }
 
-ObjectImp *Interpreter::builtinArray() const
+JSObject *Interpreter::builtinArray() const
 {
   return rep->builtinArray();
 }
 
-ObjectImp *Interpreter::builtinBoolean() const
+JSObject *Interpreter::builtinBoolean() const
 {
   return rep->builtinBoolean();
 }
 
-ObjectImp *Interpreter::builtinString() const
+JSObject *Interpreter::builtinString() const
 {
   return rep->builtinString();
 }
 
-ObjectImp *Interpreter::builtinNumber() const
+JSObject *Interpreter::builtinNumber() const
 {
   return rep->builtinNumber();
 }
 
-ObjectImp *Interpreter::builtinDate() const
+JSObject *Interpreter::builtinDate() const
 {
   return rep->builtinDate();
 }
 
-ObjectImp *Interpreter::builtinRegExp() const
+JSObject *Interpreter::builtinRegExp() const
 {
   return rep->builtinRegExp();
 }
 
-ObjectImp *Interpreter::builtinError() const
+JSObject *Interpreter::builtinError() const
 {
   return rep->builtinError();
 }
 
-ObjectImp *Interpreter::builtinObjectPrototype() const
+JSObject *Interpreter::builtinObjectPrototype() const
 {
   return rep->builtinObjectPrototype();
 }
 
-ObjectImp *Interpreter::builtinFunctionPrototype() const
+JSObject *Interpreter::builtinFunctionPrototype() const
 {
   return rep->builtinFunctionPrototype();
 }
 
-ObjectImp *Interpreter::builtinArrayPrototype() const
+JSObject *Interpreter::builtinArrayPrototype() const
 {
   return rep->builtinArrayPrototype();
 }
 
-ObjectImp *Interpreter::builtinBooleanPrototype() const
+JSObject *Interpreter::builtinBooleanPrototype() const
 {
   return rep->builtinBooleanPrototype();
 }
 
-ObjectImp *Interpreter::builtinStringPrototype() const
+JSObject *Interpreter::builtinStringPrototype() const
 {
   return rep->builtinStringPrototype();
 }
 
-ObjectImp *Interpreter::builtinNumberPrototype() const
+JSObject *Interpreter::builtinNumberPrototype() const
 {
   return rep->builtinNumberPrototype();
 }
 
-ObjectImp *Interpreter::builtinDatePrototype() const
+JSObject *Interpreter::builtinDatePrototype() const
 {
   return rep->builtinDatePrototype();
 }
 
-ObjectImp *Interpreter::builtinRegExpPrototype() const
+JSObject *Interpreter::builtinRegExpPrototype() const
 {
   return rep->builtinRegExpPrototype();
 }
 
-ObjectImp *Interpreter::builtinErrorPrototype() const
+JSObject *Interpreter::builtinErrorPrototype() const
 {
   return rep->builtinErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinEvalError() const
+JSObject *Interpreter::builtinEvalError() const
 {
   return rep->builtinEvalError();
 }
 
-ObjectImp *Interpreter::builtinRangeError() const
+JSObject *Interpreter::builtinRangeError() const
 {
   return rep->builtinRangeError();
 }
 
-ObjectImp *Interpreter::builtinReferenceError() const
+JSObject *Interpreter::builtinReferenceError() const
 {
   return rep->builtinReferenceError();
 }
 
-ObjectImp *Interpreter::builtinSyntaxError() const
+JSObject *Interpreter::builtinSyntaxError() const
 {
   return rep->builtinSyntaxError();
 }
 
-ObjectImp *Interpreter::builtinTypeError() const
+JSObject *Interpreter::builtinTypeError() const
 {
   return rep->builtinTypeError();
 }
 
-ObjectImp *Interpreter::builtinURIError() const
+JSObject *Interpreter::builtinURIError() const
 {
   return rep->builtinURIError();
 }
 
-ObjectImp *Interpreter::builtinEvalErrorPrototype() const
+JSObject *Interpreter::builtinEvalErrorPrototype() const
 {
   return rep->builtinEvalErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinRangeErrorPrototype() const
+JSObject *Interpreter::builtinRangeErrorPrototype() const
 {
   return rep->builtinRangeErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinReferenceErrorPrototype() const
+JSObject *Interpreter::builtinReferenceErrorPrototype() const
 {
   return rep->builtinReferenceErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinSyntaxErrorPrototype() const
+JSObject *Interpreter::builtinSyntaxErrorPrototype() const
 {
   return rep->builtinSyntaxErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinTypeErrorPrototype() const
+JSObject *Interpreter::builtinTypeErrorPrototype() const
 {
   return rep->builtinTypeErrorPrototype();
 }
 
-ObjectImp *Interpreter::builtinURIErrorPrototype() const
+JSObject *Interpreter::builtinURIErrorPrototype() const
 {
   return rep->builtinURIErrorPrototype();
 }
@@ -321,7 +321,7 @@ void Interpreter::setShouldPrintExceptions(bool print)
 }
 
 
-void *Interpreter::createLanguageInstanceForValue(ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *Interpreter::createLanguageInstanceForValue(ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     return Bindings::Instance::createLanguageInstanceForValue (exec, (Bindings::Instance::BindingLanguage)language, value, origin, current);
 }

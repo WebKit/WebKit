@@ -100,7 +100,7 @@ bool Debugger::sourceUnused(ExecState */*exec*/, int /*sourceId*/)
 }
 
 bool Debugger::exception(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                         ObjectImp */*exceptionObj*/)
+                         JSObject */*exceptionObj*/)
 {
   return true;
 }
@@ -112,13 +112,13 @@ bool Debugger::atStatement(ExecState */*exec*/, int /*sourceId*/, int /*firstLin
 }
 
 bool Debugger::callEvent(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                         ObjectImp */*function*/, const List &/*args*/)
+                         JSObject */*function*/, const List &/*args*/)
 {
   return true;
 }
 
 bool Debugger::returnEvent(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                           ObjectImp */*function*/)
+                           JSObject */*function*/)
 {
   return true;
 }

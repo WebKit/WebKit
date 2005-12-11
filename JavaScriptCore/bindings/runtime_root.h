@@ -39,15 +39,15 @@ class RootObject;
 
 typedef RootObject *(*FindRootObjectForNativeHandleFunctionPtr)(void *);
 
-extern CFMutableDictionaryRef findReferenceDictionary(ObjectImp *imp);
-extern const RootObject *rootForImp (ObjectImp *imp);
+extern CFMutableDictionaryRef findReferenceDictionary(JSObject *imp);
+extern const RootObject *rootForImp (JSObject *imp);
 extern const RootObject *rootForInterpreter (Interpreter *interpreter);
-extern void addNativeReference (const RootObject *root, ObjectImp *imp);
-extern void removeNativeReference (ObjectImp *imp);
+extern void addNativeReference (const RootObject *root, JSObject *imp);
+extern void removeNativeReference (JSObject *imp);
 
 class RootObject
 {
-friend class JSObject;
+friend class JavaJSObject;
 public:
     RootObject (const void *nativeHandle) : _nativeHandle(nativeHandle), _imp(0), _interpreter(0) {}
     ~RootObject () {
@@ -55,13 +55,13 @@ public:
         gcUnprotect(_imp);
     }
     
-    void setRootObjectImp (ObjectImp *i) { 
+    void setRootObjectImp (JSObject *i) { 
         JSLock lock;
         _imp = i;
         gcProtect(_imp);
     }
     
-    ObjectImp *rootObjectImp() const { return _imp; }
+    JSObject *rootObjectImp() const { return _imp; }
     
     void setInterpreter (Interpreter *i);
     Interpreter *interpreter() const { return _interpreter; }
@@ -84,7 +84,7 @@ public:
 
 private:
     const void *_nativeHandle;
-    ObjectImp *_imp;
+    JSObject *_imp;
     Interpreter *_interpreter;
 
     static FindRootObjectForNativeHandleFunctionPtr _findRootObjectForNativeHandleFunctionPtr;

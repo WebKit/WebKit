@@ -42,7 +42,7 @@ static inline id createObjCDOMNode(DOM::NodeImpl *node)
 
 namespace KJS {
 
-void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     if (value->inherits(&DOMNode::info)) {
 	DOMNode *imp = static_cast<DOMNode *>(value);

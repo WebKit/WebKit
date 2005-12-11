@@ -62,11 +62,11 @@ void GlobalObject::afterTimeout() const
         doc()->updateRendering();
 }
 
-KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) const
+KJS::JSValue *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) const
 {
     kdDebug(26004) << "KSVG::GlobalObject (" << this << ")::get " << p.qstring() << endl;
 
-    KJS::ValueImp *ret = KDOM::GlobalObject::get(exec, p);
+    KJS::JSValue *ret = KDOM::GlobalObject::get(exec, p);
     if(ret->type() != KJS::UndefinedType)
         return ret;
 

@@ -26,7 +26,7 @@
 
 namespace KJS {
 
-  class FunctionPrototypeImp;
+  class FunctionPrototype;
 
   /**
    * @internal
@@ -34,9 +34,9 @@ namespace KJS {
    * The initial value of Object.prototype (and thus all objects created
    * with the Object constructor
    */
-  class ObjectPrototypeImp : public ObjectImp {
+  class ObjectPrototype : public JSObject {
   public:
-    ObjectPrototypeImp(ExecState *exec, FunctionPrototypeImp *funcProto);
+    ObjectPrototype(ExecState *exec, FunctionPrototype *funcProto);
   };
 
   /**
@@ -45,12 +45,12 @@ namespace KJS {
    * Class to implement all methods that are properties of the
    * Object.prototype object
    */
-  class ObjectProtoFuncImp : public InternalFunctionImp {
+  class ObjectProtoFunc : public InternalFunctionImp {
   public:
-    ObjectProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len);
+    ObjectProtoFunc(ExecState *exec, FunctionPrototype *funcProto, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *, ObjectImp *, const List &args);
+    virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
 
     enum { ToString, ToLocaleString, ValueOf, HasOwnProperty, PropertyIsEnumerable };
   private:
@@ -66,13 +66,13 @@ namespace KJS {
   public:
 
     ObjectObjectImp(ExecState *exec,
-                    ObjectPrototypeImp *objProto,
-                    FunctionPrototypeImp *funcProto);
+                    ObjectPrototype *objProto,
+                    FunctionPrototype *funcProto);
 
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *, const List &args);
+    virtual JSObject *construct(ExecState *, const List &args);
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *, ObjectImp *, const List &args);
+    virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
   };
 
 } // namespace

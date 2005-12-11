@@ -49,7 +49,7 @@ using namespace KJS;
 
 - (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state;
 - (void)_setWrapper:(id)wrapper;
-- (id)_convertValueToObjcValue:(ValueImp *)value;
+- (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
 
@@ -92,7 +92,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
         return true;
     }
-    virtual bool callEvent(ExecState *state, int sid, int lineno, ObjectImp *func, const List &args) {
+    virtual bool callEvent(ExecState *state, int sid, int lineno, JSObject *func, const List &args) {
         if (!_nested) {
             _nested = true;
             _current = [_objc _enterFrame:state];
@@ -109,7 +109,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
         return true;
     }
-    virtual bool returnEvent(ExecState *state, int sid, int lineno, ObjectImp *func) {
+    virtual bool returnEvent(ExecState *state, int sid, int lineno, JSObject *func) {
         if (!_nested) {
             _nested = true;
             [[_objc delegate] leavingFrame:_current sourceId:sid line:lineno];
@@ -210,7 +210,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     _wrapper = wrapper;     // (already retained)
 }
 
-- (id)_convertValueToObjcValue:(ValueImp *)value
+- (id)_convertValueToObjcValue:(JSValue *)value
 {
     if (!value) {
         return nil;
@@ -315,14 +315,14 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
     ExecState   *state   = _state;
     Interpreter *interp  = state->interpreter();
-    ObjectImp   *globObj = interp->globalObject();
+    JSObject   *globObj = interp->globalObject();
 
     // find "eval"
-    ObjectImp *eval = NULL;
+    JSObject *eval = NULL;
     if (state->context().imp()) {  // "eval" won't work without context (i.e. at global scope)
-        ValueImp *v = globObj->get(state, "eval");
-        if (v->isObject() && static_cast<ObjectImp *>(v)->implementsCall()) {
-            eval = static_cast<ObjectImp *>(v);
+        JSValue *v = globObj->get(state, "eval");
+        if (v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
+            eval = static_cast<JSObject *>(v);
         }
         else {
             // no "eval" - fallback operates on global exec state
@@ -330,11 +330,11 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
     }
 
-    ValueImp *savedException = state->exception();
+    JSValue *savedException = state->exception();
     state->clearException();
 
     // evaluate
-    ValueImp *result;
+    JSValue *result;
     if (eval) {
         JSLock lock;
         List args;

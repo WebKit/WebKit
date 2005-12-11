@@ -32,24 +32,24 @@
 
 using namespace KJS;
 
-// ------------------------------ ObjectPrototypeImp --------------------------------
+// ------------------------------ ObjectPrototype --------------------------------
 
-ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
-                                       FunctionPrototypeImp *funcProto)
-  : ObjectImp() // [[Prototype]] is null
+ObjectPrototype::ObjectPrototype(ExecState *exec,
+                                       FunctionPrototype *funcProto)
+  : JSObject() // [[Prototype]] is null
 {
-    putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToString,               0), DontEnum);
-    putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ToLocaleString,   0), DontEnum);
-    putDirect(valueOfPropertyName, new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::ValueOf,                 0), DontEnum);
-    putDirect("hasOwnProperty", new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::HasOwnProperty,             1), DontEnum);
-    putDirect("propertyIsEnumerable", new ObjectProtoFuncImp(exec, funcProto, ObjectProtoFuncImp::PropertyIsEnumerable, 1), DontEnum);
+    putDirect(toStringPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString,               0), DontEnum);
+    putDirect(toLocaleStringPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString,   0), DontEnum);
+    putDirect(valueOfPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf,                 0), DontEnum);
+    putDirect("hasOwnProperty", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty,             1), DontEnum);
+    putDirect("propertyIsEnumerable", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1), DontEnum);
 }
 
 
-// ------------------------------ ObjectProtoFuncImp --------------------------------
+// ------------------------------ ObjectProtoFunc --------------------------------
 
-ObjectProtoFuncImp::ObjectProtoFuncImp(ExecState *exec,
-                                       FunctionPrototypeImp *funcProto,
+ObjectProtoFunc::ObjectProtoFunc(ExecState *exec,
+                                       FunctionPrototype *funcProto,
                                        int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
@@ -57,14 +57,14 @@ ObjectProtoFuncImp::ObjectProtoFuncImp(ExecState *exec,
 }
 
 
-bool ObjectProtoFuncImp::implementsCall() const
+bool ObjectProtoFunc::implementsCall() const
 {
   return true;
 }
 
 // ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
-ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     switch (id) {
         case ValueOf:
@@ -86,8 +86,8 @@ ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
 // ------------------------------ ObjectObjectImp --------------------------------
 
 ObjectObjectImp::ObjectObjectImp(ExecState *exec,
-                                 ObjectPrototypeImp *objProto,
-                                 FunctionPrototypeImp *funcProto)
+                                 ObjectPrototype *objProto,
+                                 FunctionPrototype *funcProto)
   : InternalFunctionImp(funcProto)
 {
   // ECMA 15.2.3.1
@@ -104,17 +104,17 @@ bool ObjectObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.2.2
-ObjectImp *ObjectObjectImp::construct(ExecState *exec, const List &args)
+JSObject *ObjectObjectImp::construct(ExecState *exec, const List &args)
 {
   // if no arguments have been passed ...
   if (args.isEmpty()) {
-    ObjectImp *proto = exec->lexicalInterpreter()->builtinObjectPrototype();
-    ObjectImp *result(new ObjectImp(proto));
+    JSObject *proto = exec->lexicalInterpreter()->builtinObjectPrototype();
+    JSObject *result(new JSObject(proto));
     return result;
   }
 
-  ValueImp *arg = *(args.begin());
-  if (ObjectImp *obj = arg->getObject())
+  JSValue *arg = *(args.begin());
+  if (JSObject *obj = arg->getObject())
     return obj;
 
   switch (arg->type()) {
@@ -126,7 +126,7 @@ ObjectImp *ObjectObjectImp::construct(ExecState *exec, const List &args)
     assert(!"unhandled switch case in ObjectConstructor");
   case NullType:
   case UndefinedType:
-    return new ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype());
+    return new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype());
   }
 }
 
@@ -135,16 +135,16 @@ bool ObjectObjectImp::implementsCall() const
   return true;
 }
 
-ValueImp *ObjectObjectImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *ObjectObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
-  ValueImp *result;
+  JSValue *result;
 
   List argList;
   // Construct a new Object
   if (args.isEmpty()) {
     result = construct(exec,argList);
   } else {
-    ValueImp *arg = args[0];
+    JSValue *arg = args[0];
     if (arg->isUndefinedOrNull()) {
       argList.append(arg);
       result = construct(exec,argList);

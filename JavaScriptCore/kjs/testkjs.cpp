@@ -35,11 +35,11 @@
 
 using namespace KJS;
 
-class TestFunctionImp : public ObjectImp {
+class TestFunctionImp : public JSObject {
 public:
   TestFunctionImp(int i, int length);
   virtual bool implementsCall() const { return true; }
-  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
   enum { Print, Debug, Quit, GC };
 
@@ -47,12 +47,12 @@ private:
   int id;
 };
 
-TestFunctionImp::TestFunctionImp(int i, int length) : ObjectImp(), id(i)
+TestFunctionImp::TestFunctionImp(int i, int length) : JSObject(), id(i)
 {
   putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
 }
 
-ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   switch (id) {
   case Print:
@@ -75,21 +75,21 @@ ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*
   return jsUndefined();
 }
 
-class VersionFunctionImp : public ObjectImp {
+class VersionFunctionImp : public JSObject {
 public:
-  VersionFunctionImp() : ObjectImp() {}
+  VersionFunctionImp() : JSObject() {}
   virtual bool implementsCall() const { return true; }
-  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 };
 
-ValueImp *VersionFunctionImp::callAsFunction(ExecState */*exec*/, ObjectImp */*thisObj*/, const List &/*args*/)
+JSValue *VersionFunctionImp::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
 {
   // We need this function for compatibility with the Mozilla JS tests but for now
   // we don't actually do any version-specific handling
   return jsUndefined();
 }
 
-class GlobalImp : public ObjectImp {
+class GlobalImp : public JSObject {
 public:
   virtual UString className() const { return "global"; }
 };
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
   {
     JSLock lock;
 
-    ObjectImp *global(new GlobalImp());
+    JSObject *global(new GlobalImp());
 
     // create interpreter
     Interpreter interp(global);
@@ -153,11 +153,11 @@ int main(int argc, char **argv)
 
       if (comp.complType() == Throw) {
         ExecState *exec = interp.globalExec();
-        ValueImp *exVal = comp.value();
+        JSValue *exVal = comp.value();
         char *msg = exVal->toString(exec).ascii();
         int lineno = -1;
         if (exVal->isObject()) {
-          ValueImp *lineVal = static_cast<ObjectImp *>(exVal)->get(exec,"line");
+          JSValue *lineVal = static_cast<JSObject *>(exVal)->get(exec,"line");
           if (lineVal->isNumber())
             lineno = int(lineVal->toNumber(exec));
         }

@@ -40,40 +40,40 @@
 
 namespace KJS {
 
-AllocatedValueImp *ConstantValues::undefined = NULL;
-AllocatedValueImp *ConstantValues::null = NULL;
-AllocatedValueImp *ConstantValues::jsTrue = NULL;
-AllocatedValueImp *ConstantValues::jsFalse = NULL;
+JSCell *ConstantValues::undefined = NULL;
+JSCell *ConstantValues::null = NULL;
+JSCell *ConstantValues::jsTrue = NULL;
+JSCell *ConstantValues::jsFalse = NULL;
 
 static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
 
-void *AllocatedValueImp::operator new(size_t size)
+void *JSCell::operator new(size_t size)
 {
     return Collector::allocate(size);
 }
 
-bool AllocatedValueImp::getUInt32(unsigned&) const
+bool JSCell::getUInt32(unsigned&) const
 {
     return false;
 }
 
 // ECMA 9.4
-double ValueImp::toInteger(ExecState *exec) const
+double JSValue::toInteger(ExecState *exec) const
 {
     uint32_t i;
     if (getUInt32(i))
         return i;
-    return roundValue(exec, const_cast<ValueImp*>(this));
+    return roundValue(exec, const_cast<JSValue*>(this));
 }
 
-int32_t ValueImp::toInt32(ExecState *exec) const
+int32_t JSValue::toInt32(ExecState *exec) const
 {
     uint32_t i;
     if (getUInt32(i))
         return i;
 
-    double d = roundValue(exec, const_cast<ValueImp*>(this));
+    double d = roundValue(exec, const_cast<JSValue*>(this));
     if (isNaN(d) || isInf(d))
         return 0;
     double d32 = fmod(d, D32);
@@ -86,13 +86,13 @@ int32_t ValueImp::toInt32(ExecState *exec) const
     return static_cast<int32_t>(d32);
 }
 
-uint32_t ValueImp::toUInt32(ExecState *exec) const
+uint32_t JSValue::toUInt32(ExecState *exec) const
 {
     uint32_t i;
     if (getUInt32(i))
         return i;
 
-    double d = roundValue(exec, const_cast<ValueImp*>(this));
+    double d = roundValue(exec, const_cast<JSValue*>(this));
     if (isNaN(d) || isInf(d))
         return 0;
     double d32 = fmod(d, D32);
@@ -103,13 +103,13 @@ uint32_t ValueImp::toUInt32(ExecState *exec) const
     return static_cast<uint32_t>(d32);
 }
 
-uint16_t ValueImp::toUInt16(ExecState *exec) const
+uint16_t JSValue::toUInt16(ExecState *exec) const
 {
     uint32_t i;
     if (getUInt32(i))
         return i;
 
-    double d = roundValue(exec, const_cast<ValueImp*>(this));
+    double d = roundValue(exec, const_cast<JSValue*>(this));
     if (isNaN(d) || isInf(d))
         return 0;
     double d16 = fmod(d, D16);
@@ -120,14 +120,14 @@ uint16_t ValueImp::toUInt16(ExecState *exec) const
     return static_cast<uint16_t>(d16);
 }
 
-ObjectImp *ValueImp::toObject(ExecState *exec) const
+JSObject *JSValue::toObject(ExecState *exec) const
 {
     if (SimpleNumber::is(this))
         return static_cast<const NumberImp *>(this)->NumberImp::toObject(exec);
     return downcast()->toObject(exec);
 }
 
-bool AllocatedValueImp::getBoolean(bool &booleanValue) const
+bool JSCell::getBoolean(bool &booleanValue) const
 {
     if (!isBoolean())
         return false;
@@ -135,7 +135,7 @@ bool AllocatedValueImp::getBoolean(bool &booleanValue) const
     return true;
 }
 
-bool AllocatedValueImp::getNumber(double &numericValue) const
+bool JSCell::getNumber(double &numericValue) const
 {
     if (!isNumber())
         return false;
@@ -143,12 +143,12 @@ bool AllocatedValueImp::getNumber(double &numericValue) const
     return true;
 }
 
-double AllocatedValueImp::getNumber() const
+double JSCell::getNumber() const
 {
     return isNumber() ? static_cast<const NumberImp *>(this)->value() : NaN;
 }
 
-bool AllocatedValueImp::getString(UString &stringValue) const
+bool JSCell::getString(UString &stringValue) const
 {
     if (!isString())
         return false;
@@ -156,34 +156,34 @@ bool AllocatedValueImp::getString(UString &stringValue) const
     return true;
 }
 
-UString AllocatedValueImp::getString() const
+UString JSCell::getString() const
 {
     return isString() ? static_cast<const StringImp *>(this)->value() : UString();
 }
 
-ObjectImp *AllocatedValueImp::getObject()
+JSObject *JSCell::getObject()
 {
-    return isObject() ? static_cast<ObjectImp *>(this) : 0;
+    return isObject() ? static_cast<JSObject *>(this) : 0;
 }
 
-const ObjectImp *AllocatedValueImp::getObject() const
+const JSObject *JSCell::getObject() const
 {
-    return isObject() ? static_cast<const ObjectImp *>(this) : 0;
+    return isObject() ? static_cast<const JSObject *>(this) : 0;
 }
 
-AllocatedValueImp *jsString(const char *s)
+JSCell *jsString(const char *s)
 {
     return new StringImp(s ? s : "");
 }
 
-AllocatedValueImp *jsString(const UString &s)
+JSCell *jsString(const UString &s)
 {
     return s.isNull() ? new StringImp("") : new StringImp(s);
 }
 
-ValueImp *jsNumber(double d)
+JSValue *jsNumber(double d)
 {
-  ValueImp *v = SimpleNumber::make(d);
+  JSValue *v = SimpleNumber::make(d);
   return v ? v : new NumberImp(d);
 }
 
@@ -200,16 +200,16 @@ void ConstantValues::initIfNeeded()
 
 void ConstantValues::mark()
 {
-    if (AllocatedValueImp *v = undefined)
+    if (JSCell *v = undefined)
         if (!v->marked())
             v->mark();
-    if (AllocatedValueImp *v = null)
+    if (JSCell *v = null)
         if (!v->marked())
             v->mark();
-    if (AllocatedValueImp *v = jsTrue)
+    if (JSCell *v = jsTrue)
         if (!v->marked())
             v->mark();
-    if (AllocatedValueImp *v = jsFalse)
+    if (JSCell *v = jsFalse)
         if (!v->marked())
             v->mark();
 }

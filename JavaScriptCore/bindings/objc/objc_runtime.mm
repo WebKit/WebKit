@@ -103,9 +103,9 @@ RuntimeType ObjcField::type() const
     return "";
 }
 
-ValueImp *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance) const
+JSValue *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance) const
 {
-    ValueImp *aValue;
+    JSValue *aValue;
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id objcValue = nil;
 
@@ -128,7 +128,7 @@ ValueImp *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance
     return aValue;
 }
 
-static id convertValueToObjcObject (ExecState *exec, ValueImp *value)
+static id convertValueToObjcObject (ExecState *exec, JSValue *value)
 {
     const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
     if (!root) {
@@ -140,7 +140,7 @@ static id convertValueToObjcObject (ExecState *exec, ValueImp *value)
 }
 
 
-void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const
+void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const
 {
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
@@ -185,7 +185,7 @@ ObjcArray &ObjcArray::operator=(const ObjcArray &other)
     return *this;
 }
 
-void ObjcArray::setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const
+void ObjcArray::setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const
 {
     if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
         throwError(exec, TypeError, "Array is not mutable.");
@@ -213,13 +213,13 @@ NS_ENDHANDLER
 }
 
 
-ValueImp *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
+JSValue *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
 {
     if (index > [_array count])
         return throwError(exec, RangeError, "Index exceeds array size.");
     
     ObjectStructPtr obj = 0;
-    ObjectImp * volatile error;
+    JSObject * volatile error;
     volatile bool haveError = false;
 
 NS_DURING
@@ -247,8 +247,8 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::info = {"ObjcFallbackObject", 0, 0, 0};
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjectImp *proto)
-  : ObjectImp(proto)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSObject *proto)
+  : JSObject(proto)
 {
     _instance = 0;
 }
@@ -267,7 +267,7 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier
 }
 
 void ObjcFallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                 ValueImp *value, int attr)
+                 JSValue *value, int attr)
 {
 }
 
@@ -297,9 +297,9 @@ bool ObjcFallbackObjectImp::implementsCall() const
     return false;
 }
 
-ValueImp *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-    ValueImp *result = jsUndefined();
+    JSValue *result = jsUndefined();
     
     RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj);
     if (imp) {
@@ -332,7 +332,7 @@ bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,
     return false;
 }
 
-ValueImp *ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
+JSValue *ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }

@@ -89,7 +89,7 @@ void JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int l
     [], other       exception
 
 */
-ObjcValue convertValueToObjcValue (ExecState *exec, ValueImp *value, ObjcValueType type)
+ObjcValue convertValueToObjcValue (ExecState *exec, JSValue *value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
@@ -166,14 +166,14 @@ ObjcValue convertValueToObjcValue (ExecState *exec, ValueImp *value, ObjcValueTy
     return result;
 }
 
-ValueImp *convertNSStringToString(NSString *nsstring)
+JSValue *convertNSStringToString(NSString *nsstring)
 {
     unichar *chars;
     unsigned int length = [nsstring length];
     chars = (unichar *)malloc(sizeof(unichar)*length);
     [nsstring getCharacters:chars];
     UString u((const UChar*)chars, length);
-    ValueImp *aValue = jsString(u);
+    JSValue *aValue = jsString(u);
     free((void *)chars);
     return aValue;
 }
@@ -194,9 +194,9 @@ ValueImp *convertNSStringToString(NSString *nsstring)
     other           should not happen
 
 */
-ValueImp *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
+JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
 {
-    ValueImp *aValue = NULL;
+    JSValue *aValue = NULL;
 
     switch (type) {
         case ObjcObjectType:
@@ -220,7 +220,7 @@ ValueImp *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType 
                 } else if ([*obj isKindOfClass:[NSNumber class]]) {
                     aValue = jsNumber([*obj doubleValue]);
                 } else if ([*obj isKindOfClass:[NSArray class]]) {
-                    aValue = new RuntimeArrayImp(exec, new ObjcArray(*obj));
+                    aValue = new RuntimeArray(exec, new ObjcArray(*obj));
                 } else if ([*obj isKindOfClass:[WebScriptObject class]]) {
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
                     aValue = [jsobject _imp];
@@ -307,21 +307,21 @@ ObjcValueType objcValueTypeForType (const char *type)
 }
 
 
-void *createObjcInstanceForValue(ValueImp *value, const RootObject *origin, const RootObject *current)
+void *createObjcInstanceForValue(JSValue *value, const RootObject *origin, const RootObject *current)
 {
     if (!value->isObject())
 	return 0;
-    ObjectImp *object = static_cast<ObjectImp *>(value);
-    return [[[WebScriptObject alloc] _initWithObjectImp:object originExecutionContext:origin executionContext:current] autorelease];
+    JSObject *object = static_cast<JSObject *>(value);
+    return [[[WebScriptObject alloc] _initWithJSObject:object originExecutionContext:origin executionContext:current] autorelease];
 }
 
-ObjectImp *throwError(ExecState *exec, ErrorType type, NSString *message)
+JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)
 {
     assert(message);
     size_t length = [message length];
     unichar *buffer = new unichar[length];
     [message getCharacters:buffer];
-    ObjectImp *error = throwError(exec, type, UString(reinterpret_cast<UChar *>(buffer), length));
+    JSObject *error = throwError(exec, type, UString(reinterpret_cast<UChar *>(buffer), length));
     delete [] buffer;
     return error;
 }

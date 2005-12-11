@@ -63,10 +63,10 @@ static void _didExecute(WebScriptObject *obj)
     ExecState *exec = [obj _executionContext]->interpreter()->globalExec();
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
-        func (exec, static_cast<ObjectImp*>([obj _executionContext]->rootObjectImp()));
+        func (exec, static_cast<JSObject*>([obj _executionContext]->rootObjectImp()));
 }
 
-- (void)_initializeWithObjectImp:(ObjectImp *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
+- (void)_initializeWithObjectImp:(JSObject *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     _private->imp = imp;
     _private->executionContext = executionContext;    
@@ -75,7 +75,7 @@ static void _didExecute(WebScriptObject *obj)
     addNativeReference (executionContext, imp);
 }
 
-- _initWithObjectImp:(ObjectImp *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
+- _initWithJSObject:(JSObject *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     assert (imp != 0);
     //assert (root != 0);
@@ -89,7 +89,7 @@ static void _didExecute(WebScriptObject *obj)
     return self;
 }
 
-- (ObjectImp *)_imp
+- (JSObject *)_imp
 {
     if (!_private->imp && _private->isCreatedByDOMWrapper) {
         // Associate the WebScriptObject with the JS wrapper for the ObjC DOM
@@ -193,9 +193,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     JSLock lock;
     
-    ValueImp *v = convertObjcValueToValue(exec, &name, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &name, ObjcObjectType);
     Identifier identifier(v->toString(exec));
-    ValueImp *func = [self _imp]->get (exec, identifier);
+    JSValue *func = [self _imp]->get (exec, identifier);
 
     if (!func || func->isUndefined()) {
         // Maybe throw an exception here?
@@ -203,10 +203,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     }
 
     // Call the function object.    
-    ObjectImp *funcImp = static_cast<ObjectImp*>(func);
-    ObjectImp *thisObj = const_cast<ObjectImp*>([self _imp]);
+    JSObject *funcImp = static_cast<JSObject*>(func);
+    JSObject *thisObj = const_cast<JSObject*>([self _imp]);
     List argList = listFromNSArray(exec, args);
-    ValueImp *result = funcImp->call (exec, thisObj, argList);
+    JSValue *result = funcImp->call (exec, thisObj, argList);
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -230,11 +230,11 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return nil;
     
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
-    ValueImp *result;
+    JSValue *result;
     
     JSLock lock;
     
-    ValueImp *v = convertObjcValueToValue(exec, &script, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &script, ObjcObjectType);
     Completion completion = [self _executionContext]->interpreter()->evaluate(UString(), 0, v->toString(exec));
     ComplType type = completion.complType();
     
@@ -268,7 +268,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
     JSLock lock;
-    ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->put (exec, Identifier (v->toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
 
     if (exec->hadException()) {
@@ -289,8 +289,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
     JSLock lock;
-    ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    ValueImp *result = [self _imp]->get (exec, Identifier (v->toString(exec)));
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    JSValue *result = [self _imp]->get (exec, Identifier (v->toString(exec)));
     
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -315,7 +315,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
 
     JSLock lock;
-    ValueImp *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->deleteProperty (exec, Identifier (v->toString(exec)));
 
     if (exec->hadException()) {
@@ -332,7 +332,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return @"Undefined";
 
     JSLock lock;
-    ObjectImp *thisObj = const_cast<ObjectImp*>([self _imp]);
+    JSObject *thisObj = const_cast<JSObject*>([self _imp]);
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     
     id result = convertValueToObjcValue(exec, thisObj, ObjcObjectType).objectValue;
@@ -354,7 +354,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     JSLock lock;
-    ValueImp *result = [self _imp]->get (exec, (unsigned)index);
+    JSValue *result = [self _imp]->get (exec, (unsigned)index);
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
@@ -393,17 +393,17 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         throwError(root->interpreter()->globalExec(), GeneralError, description);
 }
 
-+ (id)_convertValueToObjcValue:(ValueImp *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
++ (id)_convertValueToObjcValue:(JSValue *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     // First see if we have a ObjC instance.
     if (value->isObject()) {
-        ObjectImp *objectImp = static_cast<ObjectImp*>(value);
+        JSObject *objectImp = static_cast<JSObject*>(value);
 	Interpreter *intepreter = executionContext->interpreter();
 	ExecState *exec = intepreter->globalExec();
         JSLock lock;
 	
         if (objectImp->classInfo() != &RuntimeObjectImp::info) {
-	    ValueImp *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
+	    JSValue *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
 	    if (runtimeObject && runtimeObject->isObject())
 		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject);
 	}

@@ -66,7 +66,7 @@ DOMAbstractView::~DOMAbstractView()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-ValueImp *DOMAbstractView::getValueProperty(ExecState *exec, int token)
+JSValue *DOMAbstractView::getValueProperty(ExecState *exec, int token)
 {
     assert(token == Document);
     return getDOMNode(exec, impl()->document());
@@ -77,7 +77,7 @@ bool DOMAbstractView::getOwnPropertySlot(ExecState *exec, const Identifier& prop
     return getStaticValueSlot<DOMAbstractView, DOMObject>(exec, &DOMAbstractViewTable, this, propertyName, slot);
 }
 
-ValueImp *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&DOMAbstractView::info))
     return throwError(exec, TypeError);
@@ -107,12 +107,12 @@ ValueImp *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, ObjectImp *t
   return jsUndefined();
 }
 
-ValueImp *getDOMAbstractView(ExecState *exec, AbstractViewImpl *av)
+JSValue *getDOMAbstractView(ExecState *exec, AbstractViewImpl *av)
 {
   return cacheDOMObject<AbstractViewImpl, DOMAbstractView>(exec, av);
 }
 
-AbstractViewImpl *toAbstractView(ValueImp *val)
+AbstractViewImpl *toAbstractView(JSValue *val)
 {
   if (!val || !val->isObject(&DOMAbstractView::info))
     return 0;

@@ -1371,7 +1371,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
     if (!_bindingRoot) {
         JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
-        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
+        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
         _bindingRoot->setInterpreter (KJSProxy::proxy(this)->interpreter());
         addPluginRootObject (_bindingRoot);
@@ -1383,8 +1383,8 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
         KJS::JSLock lock;
-        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
-        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
+        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
+        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithJSObject:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
 
     return _windowScriptObject;
@@ -1393,15 +1393,15 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
 NPObject *KWQKHTMLPart::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
-        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
+        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         
         // The window script object can be 0 if JavaScript is disabled.  However, callers (like plugins) expect us to
-        // always return a window script object here.  By substituting a plain ObjectImp for the window's ObjectImp,
+        // always return a window script object here.  By substituting a plain JSObject for the window's JSObject,
         // we can satisfy callers' assumptions and let them try to manipulate the dummy object when JavaScript is
         // disabled.
         if (!win) {
             JSLock lock;
-            win = new KJS::ObjectImp();
+            win = new KJS::JSObject();
         }
         
         _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject(), bindingRootObject());

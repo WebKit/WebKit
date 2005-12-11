@@ -31,24 +31,24 @@
 namespace KJS {
 
 
-class RuntimeMethodImp : public FunctionImp 
+class RuntimeMethod : public FunctionImp 
 {
 public:
-    RuntimeMethodImp(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
+    RuntimeMethod(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
     
-    virtual ~RuntimeMethodImp();
+    virtual ~RuntimeMethod();
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual bool implementsCall() const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     virtual CodeType codeType() const;
     
     virtual Completion execute(ExecState *exec);
 
 private:
-    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::MethodList _methodList;
 };

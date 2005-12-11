@@ -27,9 +27,9 @@
 
 namespace KJS {
 
-    class ObjectImp;
+    class JSObject;
     class ReferenceList;
-    class ValueImp;
+    class JSValue;
     
     class SavedProperty;
     
@@ -59,7 +59,7 @@ namespace KJS {
     {
         PropertyMapHashTableEntry() : key(0) { }
         UString::Rep *key;
-        ValueImp *value;
+        JSValue *value;
         int attributes;
         int index;
     };
@@ -74,15 +74,15 @@ namespace KJS {
 
         void clear();
         
-        void put(const Identifier &name, ValueImp *value, int attributes);
+        void put(const Identifier &name, JSValue *value, int attributes);
         void remove(const Identifier &name);
-        ValueImp *get(const Identifier &name) const;
-        ValueImp *get(const Identifier &name, int &attributes) const;
-        ValueImp **getLocation(const Identifier &name);
+        JSValue *get(const Identifier &name) const;
+        JSValue *get(const Identifier &name, int &attributes) const;
+        JSValue **getLocation(const Identifier &name);
 
         void mark() const;
-        void addEnumerablesToReferenceList(ReferenceList &, ObjectImp *) const;
-	void addSparseArrayPropertiesToReferenceList(ReferenceList &, ObjectImp *) const;
+        void addEnumerablesToReferenceList(ReferenceList &, JSObject *) const;
+	void addSparseArrayPropertiesToReferenceList(ReferenceList &, JSObject *) const;
 
         void save(SavedProperties &) const;
         void restore(const SavedProperties &p);
@@ -93,7 +93,7 @@ namespace KJS {
         void rehash();
         void rehash(int newTableSize);
         
-        void insert(UString::Rep *, ValueImp *value, int attributes, int index);
+        void insert(UString::Rep *, JSValue *value, int attributes, int index);
         
         void checkConsistency();
         

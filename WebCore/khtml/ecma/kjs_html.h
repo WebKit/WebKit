@@ -46,9 +46,9 @@ namespace KJS {
   public:
     HTMLDocument(ExecState *exec, DOM::HTMLDocumentImpl *d);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
@@ -56,19 +56,19 @@ namespace KJS {
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
            BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };
   private:
-    static ValueImp *namedItemGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *namedItemGetter(ExecState *, const Identifier&, const PropertySlot&);
   };
 
   class HTMLElement : public DOMElement {
   public:
     HTMLElement(ExecState *exec, DOM::HTMLElementImpl *e);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int);
     virtual UString toString(ExecState *exec) const;
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
     virtual bool implementsCall() const;
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
@@ -85,8 +85,8 @@ namespace KJS {
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
 
     // FIXME: Might make sense to combine this with ClassInfo some day.
-    typedef ValueImp *(HTMLElement::*GetterFunction)(ExecState *exec, int token) const;
-    typedef void (HTMLElement::*SetterFunction)(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
+    typedef JSValue *(HTMLElement::*GetterFunction)(ExecState *exec, int token) const;
+    typedef void (HTMLElement::*SetterFunction)(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* getSetInfo() const;
     static const Accessors html_accessors, head_accessors, link_accessors, title_accessors,
@@ -100,114 +100,114 @@ namespace KJS {
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
-    ValueImp *htmlGetter(ExecState* exec, int token) const;
-    void  htmlSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *headGetter(ExecState* exec, int token) const;
-    void  headSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *linkGetter(ExecState* exec, int token) const;
-    void  linkSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *titleGetter(ExecState* exec, int token) const;
-    void  titleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *metaGetter(ExecState* exec, int token) const;
-    void  metaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *baseGetter(ExecState* exec, int token) const;
-    void  baseSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *isIndexGetter(ExecState* exec, int token) const;
-    void  isIndexSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *styleGetter(ExecState* exec, int token) const;
-    void  styleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *bodyGetter(ExecState* exec, int token) const;
-    void  bodySetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *formGetter(ExecState* exec, int token) const;
-    void  formSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *selectGetter(ExecState* exec, int token) const;
-    void  selectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *optGroupGetter(ExecState* exec, int token) const;
-    void  optGroupSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *optionGetter(ExecState* exec, int token) const;
-    void  optionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *inputGetter(ExecState* exec, int token) const;
-    void  inputSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *textAreaGetter(ExecState* exec, int token) const;
-    void  textAreaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *buttonGetter(ExecState* exec, int token) const;
-    void  buttonSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *labelGetter(ExecState* exec, int token) const;
-    void  labelSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *fieldSetGetter(ExecState* exec, int token) const;
-    void  fieldSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *legendGetter(ExecState* exec, int token) const;
-    void  legendSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *uListGetter(ExecState* exec, int token) const;
-    void  uListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *oListGetter(ExecState* exec, int token) const;
-    void  oListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *dListGetter(ExecState* exec, int token) const;
-    void  dListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *dirGetter(ExecState* exec, int token) const;
-    void  dirSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *menuGetter(ExecState* exec, int token) const;
-    void  menuSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *liGetter(ExecState* exec, int token) const;
-    void  liSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *divGetter(ExecState* exec, int token) const;
-    void  divSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *paragraphGetter(ExecState* exec, int token) const;
-    void  paragraphSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *headingGetter(ExecState* exec, int token) const;
-    void  headingSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *blockQuoteGetter(ExecState* exec, int token) const;
-    void  blockQuoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *quoteGetter(ExecState* exec, int token) const;
-    void  quoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *preGetter(ExecState* exec, int token) const;
-    void  preSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *brGetter(ExecState* exec, int token) const;
-    void  brSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *baseFontGetter(ExecState* exec, int token) const;
-    void  baseFontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *fontGetter(ExecState* exec, int token) const;
-    void  fontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *hrGetter(ExecState* exec, int token) const;
-    void  hrSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *modGetter(ExecState* exec, int token) const;
-    void  modSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *anchorGetter(ExecState* exec, int token) const;
-    void  anchorSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *imageGetter(ExecState* exec, int token) const;
-    void  imageSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *objectGetter(ExecState* exec, int token) const;
-    void  objectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *paramGetter(ExecState* exec, int token) const;
-    void  paramSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *appletGetter(ExecState* exec, int token) const;
-    void  appletSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *mapGetter(ExecState* exec, int token) const;
-    void  mapSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *areaGetter(ExecState* exec, int token) const;
-    void  areaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *scriptGetter(ExecState* exec, int token) const;
-    void  scriptSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableGetter(ExecState* exec, int token) const;
-    void  tableSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableCaptionGetter(ExecState* exec, int token) const;
-    void  tableCaptionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableColGetter(ExecState* exec, int token) const;
-    void  tableColSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableSectionGetter(ExecState* exec, int token) const;
-    void  tableSectionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableRowGetter(ExecState* exec, int token) const;
-    void  tableRowSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *tableCellGetter(ExecState* exec, int token) const;
-    void  tableCellSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *frameSetGetter(ExecState* exec, int token) const;
-    void  frameSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *frameGetter(ExecState* exec, int token) const;
-    void  frameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *iFrameGetter(ExecState* exec, int token) const;
-    void  iFrameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
-    ValueImp *marqueeGetter(ExecState* exec, int token) const;
-    void  marqueeSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str);
+    JSValue *htmlGetter(ExecState* exec, int token) const;
+    void  htmlSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *headGetter(ExecState* exec, int token) const;
+    void  headSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *linkGetter(ExecState* exec, int token) const;
+    void  linkSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *titleGetter(ExecState* exec, int token) const;
+    void  titleSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *metaGetter(ExecState* exec, int token) const;
+    void  metaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *baseGetter(ExecState* exec, int token) const;
+    void  baseSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *isIndexGetter(ExecState* exec, int token) const;
+    void  isIndexSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *styleGetter(ExecState* exec, int token) const;
+    void  styleSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *bodyGetter(ExecState* exec, int token) const;
+    void  bodySetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *formGetter(ExecState* exec, int token) const;
+    void  formSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *selectGetter(ExecState* exec, int token) const;
+    void  selectSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *optGroupGetter(ExecState* exec, int token) const;
+    void  optGroupSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *optionGetter(ExecState* exec, int token) const;
+    void  optionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *inputGetter(ExecState* exec, int token) const;
+    void  inputSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *textAreaGetter(ExecState* exec, int token) const;
+    void  textAreaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *buttonGetter(ExecState* exec, int token) const;
+    void  buttonSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *labelGetter(ExecState* exec, int token) const;
+    void  labelSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *fieldSetGetter(ExecState* exec, int token) const;
+    void  fieldSetSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *legendGetter(ExecState* exec, int token) const;
+    void  legendSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *uListGetter(ExecState* exec, int token) const;
+    void  uListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *oListGetter(ExecState* exec, int token) const;
+    void  oListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *dListGetter(ExecState* exec, int token) const;
+    void  dListSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *dirGetter(ExecState* exec, int token) const;
+    void  dirSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *menuGetter(ExecState* exec, int token) const;
+    void  menuSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *liGetter(ExecState* exec, int token) const;
+    void  liSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *divGetter(ExecState* exec, int token) const;
+    void  divSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *paragraphGetter(ExecState* exec, int token) const;
+    void  paragraphSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *headingGetter(ExecState* exec, int token) const;
+    void  headingSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *blockQuoteGetter(ExecState* exec, int token) const;
+    void  blockQuoteSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *quoteGetter(ExecState* exec, int token) const;
+    void  quoteSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *preGetter(ExecState* exec, int token) const;
+    void  preSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *brGetter(ExecState* exec, int token) const;
+    void  brSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *baseFontGetter(ExecState* exec, int token) const;
+    void  baseFontSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *fontGetter(ExecState* exec, int token) const;
+    void  fontSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *hrGetter(ExecState* exec, int token) const;
+    void  hrSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *modGetter(ExecState* exec, int token) const;
+    void  modSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *anchorGetter(ExecState* exec, int token) const;
+    void  anchorSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *imageGetter(ExecState* exec, int token) const;
+    void  imageSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *objectGetter(ExecState* exec, int token) const;
+    void  objectSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *paramGetter(ExecState* exec, int token) const;
+    void  paramSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *appletGetter(ExecState* exec, int token) const;
+    void  appletSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *mapGetter(ExecState* exec, int token) const;
+    void  mapSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *areaGetter(ExecState* exec, int token) const;
+    void  areaSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *scriptGetter(ExecState* exec, int token) const;
+    void  scriptSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableGetter(ExecState* exec, int token) const;
+    void  tableSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableCaptionGetter(ExecState* exec, int token) const;
+    void  tableCaptionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableColGetter(ExecState* exec, int token) const;
+    void  tableColSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableSectionGetter(ExecState* exec, int token) const;
+    void  tableSectionSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableRowGetter(ExecState* exec, int token) const;
+    void  tableRowSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *tableCellGetter(ExecState* exec, int token) const;
+    void  tableCellSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *frameSetGetter(ExecState* exec, int token) const;
+    void  frameSetSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *frameGetter(ExecState* exec, int token) const;
+    void  frameSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *iFrameGetter(ExecState* exec, int token) const;
+    void  iFrameSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
+    JSValue *marqueeGetter(ExecState* exec, int token) const;
+    void  marqueeSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
 
     enum { HtmlVersion, HeadProfile, LinkHref, LinkRel, LinkMedia,
            LinkCharset, LinkDisabled, LinkHrefLang, LinkRev, LinkTarget, LinkType,
@@ -285,69 +285,69 @@ namespace KJS {
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText};
   private:
-    static ValueImp *formIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *formNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *selectIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *framesetNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *frameWindowPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *runtimeObjectGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *runtimeObjectPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *formIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *formNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *selectIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *framesetNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *frameWindowPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *runtimeObjectGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *runtimeObjectPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
   };
 
-  DOM::HTMLElementImpl *toHTMLElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object
-  DOM::HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableCaptionElementImpl
-  DOM::HTMLTableSectionElementImpl *toHTMLTableSectionElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableSectionElementImpl
+  DOM::HTMLElementImpl *toHTMLElement(JSValue *); // returns 0 if passed-in value is not a HTMLElement object
+  DOM::HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(JSValue *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableCaptionElementImpl
+  DOM::HTMLTableSectionElementImpl *toHTMLTableSectionElement(JSValue *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableSectionElementImpl
 
   class HTMLCollection : public DOMObject {
   public:
     HTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
     ~HTMLCollection();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
     enum { Item, NamedItem, Tags };
-    ValueImp *getNamedItems(ExecState *exec, const Identifier &propertyName) const;
+    JSValue *getNamedItems(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     DOM::HTMLCollectionImpl *impl() const { return m_impl.get(); }
   protected:
     RefPtr<DOM::HTMLCollectionImpl> m_impl;
   private:
-    static ValueImp *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static ValueImp *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
   };
 
   class HTMLSelectCollection : public HTMLCollection {
   public:
     HTMLSelectCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
   private:
-    static ValueImp *selectedIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *selectedIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
 
     RefPtr<DOM::HTMLSelectElementImpl> m_element;
   };
 
   ////////////////////// Option Object ////////////////////////
 
-  class OptionConstructorImp : public ObjectImp {
+  class OptionConstructorImp : public JSObject {
   public:
     OptionConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args);
   private:
     RefPtr<DOM::DocumentImpl> m_doc;
   };
 
   ////////////////////// Image Object ////////////////////////
 
-  class ImageConstructorImp : public ObjectImp {
+  class ImageConstructorImp : public JSObject {
   public:
     ImageConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     virtual bool implementsConstruct() const;
-    virtual ObjectImp *construct(ExecState *exec, const List &args);
+    virtual JSObject *construct(ExecState *exec, const List &args);
   private:
     RefPtr<DOM::DocumentImpl> m_doc;
   };
@@ -357,9 +357,9 @@ namespace KJS {
     Image(DOM::DocumentImpl *d, bool ws, int w, bool hs, int h);
     ~Image();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     void notifyFinished(khtml::CachedObject *);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -387,9 +387,9 @@ namespace KJS {
     Context2D(DOM::HTMLElementImpl *e);
     ~Context2D();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual void mark();
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -443,24 +443,24 @@ private:
     
     QPtrList<List> stateStack;
     
-    ValueImp *_strokeStyle;
-    ValueImp *_fillStyle;
-    ValueImp *_lineWidth;
-    ValueImp *_lineCap;
-    ValueImp *_lineJoin;
-    ValueImp *_miterLimit;
-    ValueImp *_shadowOffsetX;
-    ValueImp *_shadowOffsetY;
-    ValueImp *_shadowBlur;
-    ValueImp *_shadowColor;
-    ValueImp *_globalAlpha;
-    ValueImp *_globalComposite;
+    JSValue *_strokeStyle;
+    JSValue *_fillStyle;
+    JSValue *_lineWidth;
+    JSValue *_lineCap;
+    JSValue *_lineJoin;
+    JSValue *_miterLimit;
+    JSValue *_shadowOffsetX;
+    JSValue *_shadowOffsetY;
+    JSValue *_shadowBlur;
+    JSValue *_shadowColor;
+    JSValue *_globalAlpha;
+    JSValue *_globalComposite;
   };
 
     // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
-    CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value);
+    CGColorRef colorRefFromValue(ExecState *exec, JSValue *value);
 
-    QColor colorFromValue(ExecState *exec, ValueImp *value);
+    QColor colorFromValue(ExecState *exec, JSValue *value);
 
     struct ColorStop {
         float stop;
@@ -479,9 +479,9 @@ private:
     Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
     ~Gradient();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -525,9 +525,9 @@ private:
   public:
     ImagePattern(Image *i, int type);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    ValueImp *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
+    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -548,8 +548,8 @@ private:
     CGRect _bounds;
   };
 
-  ValueImp *getHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
-  ValueImp *getSelectHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
+  JSValue *getHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
+  JSValue *getSelectHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
 
 } // namespace
 

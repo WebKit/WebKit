@@ -53,24 +53,24 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual ValueImp *valueOf() const;
-    virtual ValueImp *defaultValue (Type hint) const;
+    virtual JSValue *valueOf() const;
+    virtual JSValue *defaultValue (Type hint) const;
 
-    virtual ValueImp *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual ValueImp *invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);
 
-    virtual void setValueOfField (ExecState *exec, const Field *aField, ValueImp *aValue) const;
+    virtual void setValueOfField (ExecState *exec, const Field *aField, JSValue *aValue) const;
     virtual bool supportsSetValueOfUndefinedField ();
-    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, ValueImp *aValue);
+    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, JSValue *aValue);
     
-    virtual ValueImp *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
-    virtual ValueImp *getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
+    virtual JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
+    virtual JSValue *getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
     
-    ValueImp *stringValue() const;
-    ValueImp *numberValue() const;
-    ValueImp *booleanValue() const;
+    JSValue *stringValue() const;
+    JSValue *numberValue() const;
+    JSValue *booleanValue() const;
     
 private:
     ObjectStructPtr _instance;

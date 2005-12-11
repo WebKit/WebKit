@@ -39,7 +39,7 @@ int ProtectedValues::_tableSize;
 int ProtectedValues::_tableSizeMask;
 int ProtectedValues::_keyCount;
 
-int ProtectedValues::getProtectCount(ValueImp *k)
+int ProtectedValues::getProtectCount(JSValue *k)
 {
     assert(k);
     assert(JSLock::lockCount() > 0);
@@ -57,7 +57,7 @@ int ProtectedValues::getProtectCount(ValueImp *k)
     ++numProbes;
     numCollisions += _table[i].key && _table[i].key != k;
 #endif
-    while (AllocatedValueImp *key = _table[i].key) {
+    while (JSCell *key = _table[i].key) {
         if (key == k) {
 	    return _table[i].value;
 	}
@@ -68,7 +68,7 @@ int ProtectedValues::getProtectCount(ValueImp *k)
 }
 
 
-void ProtectedValues::increaseProtectCount(ValueImp *k)
+void ProtectedValues::increaseProtectCount(JSValue *k)
 {
     assert(k);
     assert(JSLock::lockCount() > 0);
@@ -86,7 +86,7 @@ void ProtectedValues::increaseProtectCount(ValueImp *k)
     ++numProbes;
     numCollisions += _table[i].key && _table[i].key != k;
 #endif
-    while (AllocatedValueImp *key = _table[i].key) {
+    while (JSCell *key = _table[i].key) {
         if (key == k) {
 	    _table[i].value++;
 	    return;
@@ -102,7 +102,7 @@ void ProtectedValues::increaseProtectCount(ValueImp *k)
         expand();
 }
 
-inline void ProtectedValues::insert(AllocatedValueImp *k, int v)
+inline void ProtectedValues::insert(JSCell *k, int v)
 {
     unsigned hash = pointerHash(k);
     
@@ -118,7 +118,7 @@ inline void ProtectedValues::insert(AllocatedValueImp *k, int v)
     _table[i].value = v;
 }
 
-void ProtectedValues::decreaseProtectCount(ValueImp *k)
+void ProtectedValues::decreaseProtectCount(JSValue *k)
 {
     assert(k);
     assert(JSLock::lockCount() > 0);
@@ -128,7 +128,7 @@ void ProtectedValues::decreaseProtectCount(ValueImp *k)
 
     unsigned hash = pointerHash(k);
     
-    AllocatedValueImp *key;
+    JSCell *key;
     
     int i = hash & _tableSizeMask;
 #if DUMP_STATISTICS

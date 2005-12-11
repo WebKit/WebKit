@@ -36,51 +36,51 @@
 
 using namespace KJS;
 
-// ------------------------------ FunctionPrototypeImp -------------------------
+// ------------------------------ FunctionPrototype -------------------------
 
-FunctionPrototypeImp::FunctionPrototypeImp(ExecState *exec)
+FunctionPrototype::FunctionPrototype(ExecState *exec)
 {
   putDirect(lengthPropertyName,   jsNumber(0),                                                       DontDelete|ReadOnly|DontEnum);
-  putDirect(toStringPropertyName, new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0), DontEnum);
+  putDirect(toStringPropertyName, new FunctionProtoFunc(exec, this, FunctionProtoFunc::ToString, 0), DontEnum);
   static const Identifier applyPropertyName("apply");
-  putDirect(applyPropertyName,    new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Apply,    2), DontEnum);
+  putDirect(applyPropertyName,    new FunctionProtoFunc(exec, this, FunctionProtoFunc::Apply,    2), DontEnum);
   static const Identifier callPropertyName("call");
-  putDirect(callPropertyName,     new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Call,     1), DontEnum);
+  putDirect(callPropertyName,     new FunctionProtoFunc(exec, this, FunctionProtoFunc::Call,     1), DontEnum);
 }
 
-FunctionPrototypeImp::~FunctionPrototypeImp()
+FunctionPrototype::~FunctionPrototype()
 {
 }
 
-bool FunctionPrototypeImp::implementsCall() const
+bool FunctionPrototype::implementsCall() const
 {
   return true;
 }
 
 // ECMA 15.3.4
-ValueImp *FunctionPrototypeImp::callAsFunction(ExecState */*exec*/, ObjectImp */*thisObj*/, const List &/*args*/)
+JSValue *FunctionPrototype::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
 {
   return jsUndefined();
 }
 
-// ------------------------------ FunctionProtoFuncImp -------------------------
+// ------------------------------ FunctionProtoFunc -------------------------
 
-FunctionProtoFuncImp::FunctionProtoFuncImp(ExecState *exec,
-                                         FunctionPrototypeImp *funcProto, int i, int len)
+FunctionProtoFunc::FunctionProtoFunc(ExecState *exec,
+                                         FunctionPrototype *funcProto, int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 
-bool FunctionProtoFuncImp::implementsCall() const
+bool FunctionProtoFunc::implementsCall() const
 {
   return true;
 }
 
-ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
+JSValue *FunctionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-  ValueImp *result = NULL;
+  JSValue *result = NULL;
 
   switch (id) {
   case ToString: {
@@ -106,14 +106,14 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
     }
     break;
   case Apply: {
-    ValueImp *thisArg = args[0];
-    ValueImp *argArray = args[1];
-    ObjectImp *func = thisObj;
+    JSValue *thisArg = args[0];
+    JSValue *argArray = args[1];
+    JSObject *func = thisObj;
 
     if (!func->implementsCall())
       return throwError(exec, TypeError);
 
-    ObjectImp *applyThis;
+    JSObject *applyThis;
     if (thisArg->isUndefinedOrNull())
       applyThis = exec->dynamicInterpreter()->globalObject();
     else
@@ -122,10 +122,10 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
     List applyArgs;
     if (!argArray->isUndefinedOrNull()) {
       if (argArray->isObject() &&
-           (static_cast<ObjectImp *>(argArray)->inherits(&ArrayInstanceImp::info) ||
-            static_cast<ObjectImp *>(argArray)->inherits(&ArgumentsImp::info))) {
+           (static_cast<JSObject *>(argArray)->inherits(&ArrayInstance::info) ||
+            static_cast<JSObject *>(argArray)->inherits(&Arguments::info))) {
 
-        ObjectImp *argArrayObj = static_cast<ObjectImp *>(argArray);
+        JSObject *argArrayObj = static_cast<JSObject *>(argArray);
         unsigned int length = argArrayObj->get(exec,lengthPropertyName)->toUInt32(exec);
         for (unsigned int i = 0; i < length; i++)
           applyArgs.append(argArrayObj->get(exec,i));
@@ -137,13 +137,13 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
     }
     break;
   case Call: {
-    ValueImp *thisArg = args[0];
-    ObjectImp *func = thisObj;
+    JSValue *thisArg = args[0];
+    JSObject *func = thisObj;
 
     if (!func->implementsCall())
       return throwError(exec, TypeError);
 
-    ObjectImp *callThis;
+    JSObject *callThis;
     if (thisArg->isUndefinedOrNull())
       callThis = exec->dynamicInterpreter()->globalObject();
     else
@@ -159,7 +159,7 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
 
 // ------------------------------ FunctionObjectImp ----------------------------
 
-FunctionObjectImp::FunctionObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto)
+FunctionObjectImp::FunctionObjectImp(ExecState *exec, FunctionPrototype *funcProto)
   : InternalFunctionImp(funcProto)
 {
   putDirect(prototypePropertyName, funcProto, DontEnum|DontDelete|ReadOnly);
@@ -178,7 +178,7 @@ bool FunctionObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.3.2 The Function Constructor
-ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber)
+JSObject *FunctionObjectImp::construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber)
 {
   UString p("");
   UString body;
@@ -207,7 +207,7 @@ ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args, const
     bool cont = dbg->sourceParsed(exec,sid,UString(),body,errLine);
     if (!cont) {
       dbg->imp()->abort();
-      return new ObjectImp();
+      return new JSObject();
     }
   }
 
@@ -258,15 +258,15 @@ ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args, const
 
   List consArgs;
 
-  ObjectImp *objCons = exec->lexicalInterpreter()->builtinObject();
-  ObjectImp *prototype = objCons->construct(exec,List::empty());
+  JSObject *objCons = exec->lexicalInterpreter()->builtinObject();
+  JSObject *prototype = objCons->construct(exec,List::empty());
   prototype->put(exec, constructorPropertyName, fimp, DontEnum|DontDelete|ReadOnly);
   fimp->put(exec, prototypePropertyName, prototype, DontEnum|DontDelete|ReadOnly);
   return fimp;
 }
 
 // ECMA 15.3.2 The Function Constructor
-ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args)
+JSObject *FunctionObjectImp::construct(ExecState *exec, const List &args)
 {
   return FunctionObjectImp::construct(exec, args, UString(), 0);
 }
@@ -278,7 +278,7 @@ bool FunctionObjectImp::implementsCall() const
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
-ValueImp *FunctionObjectImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
+JSValue *FunctionObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   return construct(exec,args);
 }

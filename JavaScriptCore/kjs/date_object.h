@@ -25,12 +25,12 @@
 
 namespace KJS {
 
-    class FunctionPrototypeImp;
-    class ObjectPrototypeImp;
+    class FunctionPrototype;
+    class ObjectPrototype;
 
-    class DateInstanceImp : public ObjectImp {
+    class DateInstance : public JSObject {
     public:
-        DateInstanceImp(ObjectImp *proto);
+        DateInstance(JSObject *proto);
 
         virtual const ClassInfo *classInfo() const { return &info; }
         static const ClassInfo info;
@@ -42,9 +42,9 @@ namespace KJS {
      * The initial value of Date.prototype (and thus all objects created
      * with the Date constructor
      */
-    class DatePrototypeImp : public DateInstanceImp {
+    class DatePrototype : public DateInstance {
     public:
-        DatePrototypeImp(ExecState *, ObjectPrototypeImp *);
+        DatePrototype(ExecState *, ObjectPrototype *);
         virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
         virtual const ClassInfo *classInfo() const { return &info; }
         static const ClassInfo info;
@@ -57,15 +57,15 @@ namespace KJS {
      */
     class DateObjectImp : public InternalFunctionImp {
     public:
-        DateObjectImp(ExecState *, FunctionPrototypeImp *, DatePrototypeImp *);
+        DateObjectImp(ExecState *, FunctionPrototype *, DatePrototype *);
 
         virtual bool implementsConstruct() const;
-        virtual ObjectImp *construct(ExecState *, const List &args);
+        virtual JSObject *construct(ExecState *, const List &args);
         virtual bool implementsCall() const;
-        virtual ValueImp *callAsFunction(ExecState *, ObjectImp *thisObj, const List &args);
+        virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
         Completion execute(const List &);
-        ObjectImp *construct(const List &);
+        JSObject *construct(const List &);
     };
 
 } // namespace

@@ -63,7 +63,7 @@ JNIType JNITypeFromClassName(const char *name);
 JNIType JNITypeFromPrimitiveType(char type);
 const char *signatureFromPrimitiveType(JNIType type);
 
-jvalue convertValueToJValue(ExecState *exec, ValueImp *value, JNIType _JNIType, const char *javaClassName);
+jvalue convertValueToJValue(ExecState *exec, JSValue *value, JNIType _JNIType, const char *javaClassName);
 
 jvalue getJNIField(jobject obj, JNIType type, const char *name, const char *signature);
 
@@ -106,7 +106,7 @@ jdouble callJNIDoubleMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
 JavaVM *getJavaVM();
 JNIEnv *getJNIEnv();
 
-bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, ValueImp *&exceptionDescription);
+bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, JSValue *&exceptionDescription);
 
 } // namespace Bindings
 
