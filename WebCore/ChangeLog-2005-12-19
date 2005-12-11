@@ -1,3 +1,9 @@
+2005-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Eric.
+
+        * Makefile.am: Support --enable-svg
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
