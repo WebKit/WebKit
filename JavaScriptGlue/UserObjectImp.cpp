@@ -57,7 +57,7 @@ bool UserObjectImp::implementsCall() const
 
 ValueImp *UserObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    ValueImp *result = Undefined();
+    ValueImp *result = jsUndefined();
     JSUserObject* jsThisObj = KJSValueToJSObject(thisObj, exec);
     if (jsThisObj) {
         CFIndex argCount = args.size();
@@ -172,30 +172,30 @@ JSUserObject* UserObjectImp::GetJSUserObject() const
 
 ValueImp *UserObjectImp::toPrimitive(ExecState *exec, Type preferredType) const
 {
-    ValueImp *result = Undefined();
+    ValueImp *result = jsUndefined();
     JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue) {
         CFTypeID cfType = CFGetTypeID(cfValue);  // toPrimitive
         if (cfValue == GetCFNull()) {
-            result = Null();
+            result = jsNull();
         }
         else if (cfType == CFBooleanGetTypeID()) {
             if (cfValue == kCFBooleanTrue) {
-                result = KJS::Boolean(true);
+                result = jsBoolean(true);
             } else {
-                result = KJS::Boolean(false);
+                result = jsBoolean(false);
             }
         } else if (cfType == CFStringGetTypeID()) {
-            result = KJS::String(CFStringToUString((CFStringRef)cfValue));
+            result = jsString(CFStringToUString((CFStringRef)cfValue));
         } else if (cfType == CFNumberGetTypeID()) {
             double d = 0.0;
             CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &d);
-            result = KJS::Number(d);
+            result = jsNumber(d);
         } else if (cfType == CFURLGetTypeID()) {
             CFURLRef absURL = CFURLCopyAbsoluteURL((CFURLRef)cfValue);
             if (absURL) {
-                result = KJS::String(CFStringToUString(CFURLGetString(absURL)));
+                result = jsString(CFStringToUString(CFURLGetString(absURL)));
                 ReleaseCFType(absURL);
             }
         }

@@ -1,3 +1,17 @@
+2005-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - eliminated the old Undefined(), Null(), Boolean(), Number(), and String()
+
+        Code now uses jsUndefined(), jsNull(), jsBoolean(), jsNumber(), and jsString().
+
+        * JSUtils.cpp:
+        (JSObjectKJSValue):
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        (UserObjectImp::toPrimitive):
+
 2005-12-05  Maciej Stachowiak  <mjs@apple.com>
 
         - added new forwarding headers

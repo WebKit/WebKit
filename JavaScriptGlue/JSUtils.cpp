@@ -106,7 +106,7 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
 {
     JSLock lock;
 
-    ValueImp *result = Undefined();
+    ValueImp *result = jsUndefined();
     if (ptr)
     {
         bool handled = false;
@@ -132,7 +132,7 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
                     CFTypeID typeID = CFGetTypeID(cfType);
                     if (typeID == CFStringGetTypeID())
                     {
-                        result = String(CFStringToUString((CFStringRef)cfType));
+                        result = jsString(CFStringToUString((CFStringRef)cfType));
                         handled = true;
                     }
                     else if (typeID == CFNumberGetTypeID())
@@ -142,7 +142,7 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
                             double num;
                             if (CFNumberGetValue((CFNumberRef)cfType, kCFNumberDoubleType, &num))
                             {
-                                result = Number(num);
+                                result = jsNumber(num);
                                 handled = true;
                             }
                         }
@@ -151,14 +151,14 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
                             long num;
                             if (CFNumberGetValue((CFNumberRef)cfType, kCFNumberLongType, &num))
                             {
-                                result = Number(num);
+                                result = jsNumber(num);
                                 handled = true;
                             }
                         }
                     }
                     else if (typeID == CFBooleanGetTypeID())
                     {
-                        result = KJS::Boolean(CFBooleanGetValue((CFBooleanRef)cfType));
+                        result = jsBoolean(CFBooleanGetValue((CFBooleanRef)cfType));
                         handled = true;
                     }
                     else if (typeID == CFDateGetTypeID())
@@ -166,7 +166,7 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
                     }
                     else if (typeID == CFNullGetTypeID())
                     {
-                        result = Null();
+                        result = jsNull();
                         handled = true;
                     }
                 }
