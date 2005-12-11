@@ -42,6 +42,7 @@
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
+#include "XLinkNames.h"
 #endif
 
 #include <qptrstack.h>
@@ -660,6 +661,28 @@ void XMLTokenizer::finish()
     emit finishedParsing();
 }
 
+static inline RefPtr<ElementImpl> createXHTMLParserErrorHeader(DocumentImpl* doc, const DOMString& errorMessages) 
+{
+    int exceptioncode = 0;
+    RefPtr<ElementImpl> reportElement = doc->createElementNS(xhtmlNamespaceURI, "parsererror", exceptioncode);
+    reportElement->setAttribute(styleAttr, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    
+    RefPtr<ElementImpl> h3 = doc->createElementNS(xhtmlNamespaceURI, "h3", exceptioncode);
+    reportElement->appendChild(h3.get(), exceptioncode);
+    h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
+    
+    RefPtr<ElementImpl> fixed = doc->createElementNS(xhtmlNamespaceURI, "div", exceptioncode);
+    reportElement->appendChild(fixed.get(), exceptioncode);
+    fixed->setAttribute(styleAttr, "font-family:monospace;font-size:12px");
+    fixed->appendChild(doc->createTextNode(errorMessages), exceptioncode);
+    
+    h3 = doc->createElementNS(xhtmlNamespaceURI, "h3", exceptioncode);
+    reportElement->appendChild(h3.get(), exceptioncode);
+    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
+    
+    return reportElement;
+}
+
 void XMLTokenizer::insertErrorMessageBlock()
 {
     // One or more errors occurred during parsing of the code. Display an error block to the user above
@@ -669,29 +692,30 @@ void XMLTokenizer::insertErrorMessageBlock()
     // Create elements for display
     int exceptioncode = 0;
     DocumentImpl *doc = m_doc;
-    NodeImpl* root = doc->documentElement();
-    if (!root) {
-        root = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
+    NodeImpl* documentElement = doc->documentElement();
+    if (!documentElement) {
+        NodeImpl *rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
+        doc->appendChild(rootElement, exceptioncode);
         NodeImpl* body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
-        root->appendChild(body, exceptioncode);
-        doc->appendChild(root, exceptioncode);
-        root = body;
+        rootElement->appendChild(body, exceptioncode);
+        documentElement = body;
     }
+#if SVG_SUPPORT
+    else if (documentElement->namespaceURI() == KSVG::SVGNames::svgNamespaceURI) {
+        // Until our SVG implementation has text support, it is best if we 
+        // wrap the erroneous SVG document in an xhtml document and render
+        // the combined document with error messages.
+        RefPtr<NodeImpl> rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
+        NodeImpl* body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
+        rootElement->appendChild(body, exceptioncode);
+        body->appendChild(documentElement, exceptioncode);
+        doc->appendChild(rootElement.get(), exceptioncode);
+        documentElement = body;
+    }
+#endif
 
-    ElementImpl* reportElement = doc->createElementNS(xhtmlNamespaceURI, "parsererror", exceptioncode);
-    reportElement->setAttribute(styleAttr, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
-    ElementImpl* h3 = doc->createElementNS(xhtmlNamespaceURI, "h3", exceptioncode);
-    h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
-    reportElement->appendChild(h3, exceptioncode);
-    ElementImpl* fixed = doc->createElementNS(xhtmlNamespaceURI, "div", exceptioncode);
-    fixed->setAttribute(styleAttr, "font-family:monospace;font-size:12px");
-    NodeImpl* textNode = doc->createTextNode(m_errorMessages);
-    fixed->appendChild(textNode, exceptioncode);
-    reportElement->appendChild(fixed, exceptioncode);
-    h3 = doc->createElementNS(xhtmlNamespaceURI, "h3", exceptioncode);
-    reportElement->appendChild(h3, exceptioncode);
-    
-    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
+    RefPtr<ElementImpl> reportElement = createXHTMLParserErrorHeader(doc, m_errorMessages);
+    documentElement->insertBefore(reportElement.get(), documentElement->firstChild(), exceptioncode);
 #ifdef KHTML_XSLT
     if (doc->transformSourceDocument()) {
         ElementImpl* par = doc->createElementNS(xhtmlNamespaceURI, "p", exceptioncode);
@@ -700,8 +724,6 @@ void XMLTokenizer::insertErrorMessageBlock()
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);
     }
 #endif
-    root->insertBefore(reportElement, root->firstChild(), exceptioncode);
-
     doc->updateRendering();
 }
 
@@ -727,35 +749,35 @@ void XMLTokenizer::executeScripts()
     // start loading the script and return (executeScripts() will be called again once the script is loaded
     // and continue where it left off). For scripts that don't have a src attribute, execute the code
     // inside the tag
-    while (m_scriptsIt->current()) {
-        DOMString scriptSrc = m_scriptsIt->current()->getAttribute(srcAttr);
-        QString charset = m_scriptsIt->current()->getAttribute(charsetAttr).qstring();
+    while (ElementImpl *scriptElement = m_scriptsIt->current()) {
+        ++(*m_scriptsIt);
+        DOMString scriptHref = scriptElement->getAttribute(srcAttr);
+#if SVG_SUPPORT
+        if (scriptElement->hasTagName(KSVG::SVGNames::scriptTag))
+            scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
+#endif
+        QString charset = scriptElement->getAttribute(charsetAttr).qstring();
 
 	// don't load external scripts for standalone documents (for now)
-        if (scriptSrc != "" && m_doc->part()) {
+        if (!scriptHref.isEmpty() && m_doc->part()) {
             // we have a src attribute
-            m_cachedScript = m_doc->docLoader()->requestScript(scriptSrc, charset);
-            ++(*m_scriptsIt);
+            m_cachedScript = m_doc->docLoader()->requestScript(scriptHref, charset);
             m_cachedScript->ref(this); // will call executeScripts() again if already cached
             return;
         }
         else {
             // no src attribute - execute from contents of tag
             QString scriptCode = "";
-            NodeImpl *child;
-            for (child = m_scriptsIt->current()->firstChild(); child; child = child->nextSibling()) {
-                if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE) {
+            for (NodeImpl *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
+                if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<TextImpl*>(child)->data().qstring();
-                }
             }
             // the script cannot do document.write until we support incremental parsing
             // ### handle the case where the script deletes the node or redirects to
             // another page, etc. (also in notifyFinished())
             // ### the script may add another script node after this one which should be executed
-            if (m_view) {
+            if (m_view)
                 m_view->part()->executeScript(scriptCode);
-            }
-            ++(*m_scriptsIt);
         }
     }
 

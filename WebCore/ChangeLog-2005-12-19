@@ -1,5 +1,21 @@
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin & mjs.
+
+        Fixes SVG to load external scripts and report parse errors.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5875
+
+        Added 7 layout tests to exercise parse error code.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::createXHTMLParserErrorHeader):
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+        (khtml::XMLTokenizer::executeScripts):
+        * ksvg2/svg/SVGStyledElementImpl.h: removed broken code
+        * ksvg2/svg/SVGStyledElementImpl.cpp: removed broken attach()
+
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Small fixes made during SVG code review.

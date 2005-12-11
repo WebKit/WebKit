@@ -113,28 +113,6 @@ void SVGStyledElementImpl::attributeChanged(KDOM::AttributeImpl *attr, bool pres
     notifyAttributeChange();
 }
 
-void SVGStyledElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate)
-{
-    if(needFillStrokeUpdate && renderer()->isRenderPath()) {
-        RenderPath *renderPath = static_cast<RenderPath *>(renderer());
-        style->updateFill(renderPath);
-        style->updateStroke(renderPath);
-    }
-}
-
-void SVGStyledElementImpl::attach()
-{
-    createRendererIfNeeded();
-    if (m_render && m_render->isRenderPath())
-    {
-        RenderPath *renderPath = static_cast<RenderPath *>(m_render);
-        KCanvasRenderingStyle *renderingStyle = static_cast<KCanvasRenderingStyle *>(renderPath->canvasStyle());
-        finalizeStyle(renderingStyle);
-    }
-
-    KDOM::NodeImpl::attach();
-}
-
 khtml::RenderCanvas *SVGStyledElementImpl::canvas() const
 {
     return static_cast<khtml::RenderCanvas *>(getDocument()->renderer());
