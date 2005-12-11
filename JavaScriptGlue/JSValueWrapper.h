@@ -11,13 +11,13 @@
 
 class JSValueWrapper {
 public:
-    JSValueWrapper(ValueImp *inValue, ExecState *inExec);
+    JSValueWrapper(JSValue *inValue, ExecState *inExec);
     virtual ~JSValueWrapper();
 
-    ValueImp *GetValue();
+    JSValue *GetValue();
     ExecState *GetExecState() const;
 
-    ProtectedPtr<ValueImp> fValue;
+    ProtectedPtr<JSValue> fValue;
     ExecState *fExec;
 
     static void GetJSObectCallBacks(JSObjectCallBacks& callBacks);

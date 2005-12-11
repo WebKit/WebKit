@@ -1,5 +1,13 @@
 2005-12-10  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Maciej.
+
+        - updated for KJS class renaming
+
+        * many files and functions
+
+2005-12-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - eliminated the old Undefined(), Null(), Boolean(), Number(), and String()

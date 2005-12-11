@@ -247,7 +247,7 @@ JSObjectRef JSRunCopyGlobalObject(JSRunRef ref)
     JSRun* ptr = (JSRun*)ref;
     if (ptr)
     {
-        ObjectImp *globalObject = ptr->GlobalObject();
+        JSObject *globalObject = ptr->GlobalObject();
         result = (JSObjectRef)KJSValueToJSObject(globalObject, ptr->GetInterpreter()->globalExec());
     }
     return result;

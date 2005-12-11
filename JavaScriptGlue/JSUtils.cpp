@@ -12,12 +12,12 @@
 #include "JavaScriptCore/reference_list.h"
 
 struct ObjectImpList {
-    ObjectImp* imp;
+    JSObject* imp;
     ObjectImpList* next;
     CFTypeRef data;
 };
 
-static CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImpList* inImps);
+static CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpList* inImps);
 
 
 //--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ CFStringRef IdentifierToCFString(const Identifier& inIdentifier)
 //--------------------------------------------------------------------------
 // KJSValueToJSObject
 //--------------------------------------------------------------------------
-JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec)
+JSUserObject* KJSValueToJSObject(JSValue *inValue, ExecState *exec)
 {
     JSUserObject* result = 0;
 
@@ -102,11 +102,11 @@ JSUserObject* KJSValueToJSObject(ValueImp *inValue, ExecState *exec)
 //--------------------------------------------------------------------------
 // JSObjectKJSValue
 //--------------------------------------------------------------------------
-ValueImp *JSObjectKJSValue(JSUserObject* ptr)
+JSValue *JSObjectKJSValue(JSUserObject* ptr)
 {
     JSLock lock;
 
-    ValueImp *result = jsUndefined();
+    JSValue *result = jsUndefined();
     if (ptr)
     {
         bool handled = false;
@@ -188,7 +188,7 @@ ValueImp *JSObjectKJSValue(JSUserObject* ptr)
 // KJSValueToCFTypeInternal
 //--------------------------------------------------------------------------
 // Caller is responsible for releasing the returned CFTypeRef
-CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImpList* inImps)
+CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpList* inImps)
 {
     if (!inValue)
         return 0;
@@ -241,11 +241,11 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
                 }
                 else
                 {
-                    ObjectImp *object = inValue->toObject(exec);
+                    JSObject *object = inValue->toObject(exec);
                     UInt8 isArray = false;
 
                     // if two objects reference each
-                    ObjectImp* imp = object;
+                    JSObject* imp = object;
                     ObjectImpList* temp = inImps;
                     while (temp) {
                         if (imp == temp->imp) {
@@ -354,7 +354,7 @@ CFTypeRef KJSValueToCFTypeInternal(ValueImp *inValue, ExecState *exec, ObjectImp
     return result;
 }
 
-CFTypeRef KJSValueToCFType(ValueImp *inValue, ExecState *exec)
+CFTypeRef KJSValueToCFType(JSValue *inValue, ExecState *exec)
 {
     return KJSValueToCFTypeInternal(inValue, exec, 0);
 }
