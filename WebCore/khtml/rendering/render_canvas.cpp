@@ -29,10 +29,6 @@
 
 #include "khtml_part.h"
 
-#if SVG_SUPPORT
-#include "KRenderingDeviceQuartz.h"
-#endif
-
 using namespace khtml;
 
 //#define BOX_DEBUG

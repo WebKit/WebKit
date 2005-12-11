@@ -140,19 +140,6 @@ KSVGView *SVGDocumentImpl::svgView() const
     return static_cast<KSVGView *>(m_view);
 }
 
-#if 0
-KDOM::Ecma *SVGDocumentImpl::ecmaEngine() const
-{
-    if(m_ecmaEngine) // No need to initialize anymore...
-        return m_ecmaEngine;
-
-    m_ecmaEngine = new Ecma(const_cast<SVGDocumentImpl *>(this));
-    m_ecmaEngine->setup(implementation()->cdfInterface());
-
-    return m_ecmaEngine;
-}
-#endif
-
 void SVGDocumentImpl::finishedParsing()
 {
     addScripts(rootElement());

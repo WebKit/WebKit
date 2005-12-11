@@ -1,3 +1,54 @@
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Small fixes made during SVG code review.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5999
+
+        One test case added for conditional processing directives
+        used outside of switch statements.
+
+        * WebCore+SVG/DrawDocument.mm:
+        (-[DrawView description]):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEGaussianBlurQuartz::getCIFilter):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::loadDefaultStyle):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieveActive):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::isImageType):
+        * khtml/khtml_part.h:
+        * khtml/rendering/DataRef.h:
+        (khtml::DataRef::operator == ):
+        (khtml::DataRef::operator != ):
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::localTransform):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::createEvent):
+        * khtml/xml/dom_elementimpl.cpp:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+        * ksvg2/css/KSVGCSSParser.cpp:
+        (DOM::CSSParser::parseSVGValue):
+        * ksvg2/css/svg.css:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::childShouldCreateRenderer):
+        * ksvg2/svg/SVGElementImpl.h:
+        (KSVG::SVGElementImpl::isValid):
+
 2005-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.

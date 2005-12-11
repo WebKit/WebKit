@@ -28,9 +28,7 @@
 #include <qcolor.h>
 #include <qrect.h>
 #include <assert.h>
-#if SVG_SUPPORT
 #include <qwmatrix.h>
-#endif
 
 #include "editing/text_affinity.h"
 #include "misc/khtmllayout.h"
@@ -283,7 +281,7 @@ public:
     virtual bool isRenderPath() const { return false; }
     virtual QRect relativeBBox(bool includeStroke = true) const { return QRect(); }
     // We may eventually want to make these non-virtual
-    virtual QMatrix localTransform() const { return QMatrix(1,0,0,1,xPos(),xPos()); }
+    virtual QMatrix localTransform() const { return QMatrix(1, 0, 0, 1, xPos(), yPos()); }
     virtual void setLocalTransform(const QMatrix&) { }
     virtual QMatrix absoluteTransform() const;
 #endif

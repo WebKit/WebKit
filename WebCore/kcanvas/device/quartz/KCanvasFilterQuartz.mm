@@ -652,7 +652,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 
 CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	FE_QUARTZ_SETUP_INPUT(@"CIGaussianBlur");
+	FE_QUARTZ_SETUP_INPUT(@"CIGaussianPyramid");
 	
 	float inputRadius = stdDeviationX();
 	if (inputRadius != stdDeviationY()) {

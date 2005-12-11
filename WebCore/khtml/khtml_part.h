@@ -89,12 +89,6 @@ namespace khtml
   class XMLTokenizer;
 }
 
-#ifdef SVG_SUPPORT
-namespace KSVG {
-    class SVGAElementImpl;
-}
-#endif
-
 namespace KJS {
     class DOMDocument;
     class Selection;
@@ -177,9 +171,6 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class khtml::RenderWidget;
   friend class khtml::CSSStyleSelector;
   friend class KHTMLPartIface;
-#ifdef SVG_SUPPORT
-    friend class KSVG::SVGAElementImpl;
-#endif
 
   Q_PROPERTY( bool javaScriptEnabled READ jScriptEnabled WRITE setJScriptEnabled )
   Q_PROPERTY( bool javaEnabled READ javaEnabled WRITE setJavaEnabled )
@@ -908,8 +899,6 @@ public:
    * you know what you're doing.
    */
   KURL completeURL( const QString &url );
-
-protected:
 
   /**
    * presents a detailed error message to the user.

@@ -702,7 +702,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 {
 #if SVG_SUPPORT
     // This is horribly inefficient.  Eventually we'll have to integrate
-    // this more directly by caling: Diff svgDiff = svgStyle->diff(other)
+    // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
     // and then checking svgDiff and returning from the appropraite places below.
     if (m_svgStyle != other->m_svgStyle)
         return Layout;

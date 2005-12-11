@@ -37,10 +37,6 @@
 
 #include "html/htmlparser.h"
 
-#if SVG_SUPPORT
-#include "SVGNames.h"
-#endif
-
 #include "rendering/render_canvas.h"
 #include "css/css_valueimpl.h"
 #include "css/cssproperties.h"
@@ -520,16 +516,6 @@ void ElementImpl::removedFromDocument()
 
     ContainerNodeImpl::removedFromDocument();
 }
-
-#if SVG_SUPPORT
-bool ElementImpl::rendererIsNeeded(khtml::RenderStyle *style)
-{
-    // SVG ignores arbitrary xml elements in its render tree contrary to the normal CSS/XML behavior.
-    if ((KSVG::SVGNames::svgNamespaceURI == parentNode()->namespaceURI())) // FIXME: && !parentNode()->hasTagName(KSVG::SVGNames::foreignObjectTag)
-        return false;
-    return NodeImpl::rendererIsNeeded(style);
-}
-#endif
 
 void ElementImpl::attach()
 {

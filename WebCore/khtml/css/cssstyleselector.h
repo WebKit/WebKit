@@ -200,7 +200,6 @@ public:
         void mapBackgroundXPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
         void mapBackgroundYPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
         
-    protected:
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes

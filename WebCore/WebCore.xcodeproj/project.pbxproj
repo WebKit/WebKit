@@ -1931,6 +1931,7 @@
 		A8122CF308D564B100844FA3 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; };
 		A8122CF408D564B100844FA3 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; };
 		A8212D0708794A2300677359 /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A82336B1094C23BE0085A296 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRef.h; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElementImpl.h; sourceTree = "<group>"; };
 		A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElementImpl.cpp; sourceTree = "<group>"; };
 		A83C819F091189B9009BF4A7 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; };
@@ -3835,6 +3836,7 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				A82336B1094C23BE0085A296 /* DataRef.h */,
 				F523D29E02DE4438018635CA /* bidi.h */,
 				F523D29D02DE4438018635CA /* bidi.cpp */,
 				F523D2A002DE4438018635CA /* break_lines.h */,

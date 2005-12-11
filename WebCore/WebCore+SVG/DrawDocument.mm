@@ -238,12 +238,6 @@ using namespace KSVG;
 
 - (NSString *)description
 {
-    // Detect description if possible...
-//  KDOM::NodeListImpl *descList = _private->svgDocument->getElementsByTagName("desc");
-//  if(descList && (descList->length() > 0)) {
-//  SVGDescElementImpl *descImpl = dynamic_cast<SVGDescElementImpl *>(descList->item(0));
-//  return descImpl->description().string().getNSString();
-//  }
     return nil;
 }
 

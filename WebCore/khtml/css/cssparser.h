@@ -147,7 +147,7 @@ namespace DOM {
 	CSSPrimitiveValueImpl *parseColorFromValue(Value* val);
         
 #if SVG_SUPPORT
-        bool parseSVGValue(int propId, bool important, int expected = 1);
+        bool parseSVGValue(int propId, bool important);
         CSSValueImpl *parseSVGPaint();
         CSSValueImpl *parseSVGColor();
         CSSValueImpl *parseSVGStrokeDasharray();

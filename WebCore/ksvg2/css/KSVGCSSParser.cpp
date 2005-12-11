@@ -32,7 +32,7 @@ using namespace KSVG;
 typedef DOM::Value KDOMCSSValue;
 typedef DOM::ValueList KDOMCSSValueList;
 
-bool CSSParser::parseSVGValue(int propId, bool important, int expected)
+bool CSSParser::parseSVGValue(int propId, bool important)
 {
     if(!valueList)
         return false;
@@ -42,13 +42,10 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
         return false;
 
     int id = value->id;
-    if(id == CSS_VAL_INHERIT && expected == 1)
-    {
+    if (id == CSS_VAL_INHERIT) {
         addProperty(propId, new CSSInheritedValueImpl(), important);
         return true;
-    }
-    else if(id == CSS_VAL_INITIAL && expected == 1)
-    {
+    } else if (id == CSS_VAL_INITIAL) {
         addProperty(propId, new CSSInitialValueImpl(), important);
         return true;
     }
@@ -310,10 +307,8 @@ bool CSSParser::parseSVGValue(int propId, bool important, int expected)
             // qDebug(" new quirks value: value=%.2f, unit=%d", value->fValue, value->unit);
             parsedValue = new CSSQuirkPrimitiveValueImpl(value->fValue, CSSPrimitiveValue::CSS_EMS);
         }
-        --expected;
         valueList->next();
-        if(valueList->current() && expected == 0)
-        {
+        if (valueList->current()) {
             delete parsedValue;
             parsedValue = 0;
         }

@@ -69,10 +69,11 @@ namespace KSVG
         virtual bool isGradientStop() const { return false; }
         
         // For SVGTestsImpl
-        virtual bool isValid() const { return false; }
+        virtual bool isValid() const { return true; }
         
         virtual void closeRenderer() { m_closed = true; }
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
+        virtual bool childShouldCreateRenderer(DOM::NodeImpl *) const;
         
         // helper:
         bool isClosed() const { return m_closed; }

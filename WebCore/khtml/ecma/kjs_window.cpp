@@ -366,13 +366,8 @@ Window *Window::retrieveWindow(KHTMLPart *p)
   JSObject *obj = retrieve(p)->getObject();
 #ifndef NDEBUG
   // obj should never be null, except when javascript has been disabled in that part.
-  if ( p && p->jScriptEnabled() )
-  {
+  if (p && p->jScriptEnabled())
     assert(obj);
-#ifndef QWS
-    //assert( dynamic_cast<Window*>(obj) ); // type checking
-#endif
-  }
 #endif
   if (!obj) // JS disabled
     return 0;
@@ -381,12 +376,9 @@ Window *Window::retrieveWindow(KHTMLPart *p)
 
 Window *Window::retrieveActive(ExecState *exec)
 {
-  JSValue *imp = exec->dynamicInterpreter()->globalObject();
-  assert( imp );
-#ifndef QWS
-  //assert( dynamic_cast<Window*>(imp) );
-#endif
-  return static_cast<Window*>(imp);
+    JSValue *imp = exec->dynamicInterpreter()->globalObject();
+    assert(imp);
+    return static_cast<Window*>(imp);
 }
 
 JSValue *Window::retrieve(KHTMLPart *p)

@@ -31,10 +31,6 @@
 
 #include "rendering/render_text.h"
 
-#if SVG_SUPPORT
-#include "SVGNames.h"
-#endif
-
 #include <kdebug.h>
 
 using namespace DOM;
@@ -457,11 +453,6 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
             // make a render object for this text.
             return false;
     }
-    
-#if SVG_SUPPORT
-    if (par->element()->namespaceURI() == KSVG::SVGNames::svgNamespaceURI)
-        return false;
-#endif
     
     return true;
 }

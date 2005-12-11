@@ -87,12 +87,12 @@ public:
 
     bool operator == (const DataRef<DATA>& o) const
     {
-	return (*m_data == *(o.m_data));
+	return ((m_data == o.m_data) || (*m_data == *(o.m_data)));
     }
     
     bool operator != (const DataRef<DATA>& o) const
     {
-	return (*m_data != *(o.m_data));
+	return ((m_data != o.m_data) && (*m_data != *(o.m_data)));
     }
 
 private:
