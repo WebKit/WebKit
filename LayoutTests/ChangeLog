@@ -1,3 +1,15 @@
+2005-12-12  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        "S" and "T" path types handle control points incorrectly
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6042
+
+        * svg/custom/control-points-for-S-and-T-expected.checksum: Added.
+        * svg/custom/control-points-for-S-and-T-expected.png: Added.
+        * svg/custom/control-points-for-S-and-T-expected.txt: Added.
+        * svg/custom/control-points-for-S-and-T.svg: Added.
+
 2005-12-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
