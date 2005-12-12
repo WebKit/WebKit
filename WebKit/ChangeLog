@@ -1,3 +1,38 @@
+2005-12-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - Made protocol <WebDocumentSelection> include protocol <WebDocumentText>, for clarity.
+        This required moving some methods from WebTextView, which conformed to <WebDocumentText>,
+        up into superclass WebSearchableTextView, which conformed to <WebDocumentSelection>.
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[NSString supportsTextEncoding]):
+        moved this method (unchanged) from subclass WebTextView
+        (-[NSString string]):
+        ditto
+        (-[NSString attributedString]):
+        ditto
+        (-[NSString selectedString]):
+        ditto
+        (-[NSString selectedAttributedString]):
+        ditto
+        (-[NSString selectAll]):
+        ditto
+        (-[NSString deselectAll]):
+        ditto
+        
+        * WebView.subproj/WebDocumentPrivate.h:
+        made <WebDocumentSelection> incorporate <WebDocumentText> rather than just <NSObject>
+        * WebView.subproj/WebHTMLView.h:
+        removed <WebDocumentText> from protocol list since it's covered by <WebDocumentSelection>
+        * WebView.subproj/WebPDFView.h:
+        ditto
+        * WebView.subproj/WebTextView.h:
+        ditto
+        * WebView.subproj/WebTextView.m:
+        removed the methods that were moved into WebSearchableTextView.m
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

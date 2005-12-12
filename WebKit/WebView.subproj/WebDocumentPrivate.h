@@ -39,7 +39,7 @@
 - (DOMDocument *)DOMDocument;
 @end
 
-@protocol WebDocumentSelection <NSObject>
+@protocol WebDocumentSelection <WebDocumentText>
 - (NSArray *)pasteboardTypesForSelection;
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 

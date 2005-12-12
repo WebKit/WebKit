@@ -294,41 +294,6 @@
                                types:[NSArray arrayWithObject:NSStringPboardType]];
 }
 
-- (BOOL)supportsTextEncoding
-{
-    return YES;
-}
-
-- (NSString *)string
-{
-    return [super string];
-}
-
-- (NSAttributedString *)attributedString
-{
-    return [self attributedSubstringFromRange:NSMakeRange(0, [[self string] length])];
-}
-
-- (NSString *)selectedString
-{
-    return [[self string] substringWithRange:[self selectedRange]];
-}
-
-- (NSAttributedString *)selectedAttributedString
-{
-    return [self attributedSubstringFromRange:[self selectedRange]];
-}
-
-- (void)selectAll
-{
-    [self setSelectedRange:NSMakeRange(0, [[self string] length])];
-}
-
-- (void)deselectAll
-{
-    [self setSelectedRange:NSMakeRange(0,0)];
-}
-
 - (void)keyDown:(NSEvent *)event
 {
     [[self nextResponder] keyDown:event];

@@ -32,7 +32,7 @@
 @class WebDataSource;
 @class WebCoreTextDecoder;
 
-@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentElement>
+@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentElement>
 {
     float _textSizeMultiplier;
     WebCoreTextDecoder *_decoder;
