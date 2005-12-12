@@ -655,7 +655,7 @@ NSSize WebIconLargeSize = {128, 128};
     } else {
         if (!path || ![path isAbsolutePath]) {
             // Return the generic icon when there is no path.
-            icon = [workspace iconForFileType:@"????"];
+            icon = [workspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
         } else {
             icon = [workspace iconForFile:path];
         }

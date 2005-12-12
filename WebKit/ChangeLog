@@ -1,3 +1,16 @@
+2005-12-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and checked in by John Sullivan.
+        
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6053
+        WebIconDatabase returns the Accessibility Verifier app icon instead of
+        a generic document icon
+        
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        use file type iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon) instead of '????'
+        to get the generic document icon.
+
 2005-12-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
