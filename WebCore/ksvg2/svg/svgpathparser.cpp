@@ -22,10 +22,6 @@
 #include <qstring.h>
 #include <math.h>
 
-#ifndef APPLE_CHANGES
-#include <iostream>
-#endif
-
 using namespace KSVG;
 
 const char *KSVG::parseCoord(const char *ptr, double &number)
@@ -285,6 +281,11 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                     ptr = parseCoord( ptr, y2 );
                     ptr = parseCoord( ptr, tox );
                     ptr = parseCoord( ptr, toy );
+                    if(!(lastCommand == 'c' || lastCommand == 'C' ||
+                         lastCommand == 's' || lastCommand == 'S')) {
+                        contrlx = curx;
+                        contrly = cury;
+					}
 
                     if( process )
                     {
@@ -341,6 +342,11 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                 {
                     ptr = parseCoord(ptr, tox);
                     ptr = parseCoord(ptr, toy);
+                    if(!(lastCommand == 'q' || lastCommand == 'Q' ||
+                         lastCommand == 't' || lastCommand == 'T')) {
+                        contrlx = curx;
+                        contrly = cury;
+					}
 
                     if( process )
                     {
@@ -398,7 +404,6 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                     return;
                 }
             }
-
             lastCommand = command;
 
             if(*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9'))
@@ -415,7 +420,7 @@ SVGPathParser::parseSVG( const QString &s, bool process )
             if( lastCommand != 'C' && lastCommand != 'c' &&
                 lastCommand != 'S' && lastCommand != 's' &&
                 lastCommand != 'Q' && lastCommand != 'q' &&
-                lastCommand != 'T' && lastCommand != 't')
+                lastCommand != 'T' && lastCommand != 't' ) 
             {
                 contrlx = curx;
                 contrly = cury;

@@ -1,3 +1,15 @@
+2005-12-12  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        Test: svg/custom/control-points-for-S-and-T.svg
+
+        "S" and "T" path types handle control points incorrectly
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6042
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (SVGPathParser::parseSVG):
+
 2005-12-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
@@ -2078,7 +2090,7 @@
 
 2005-11-30  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Fixes 5 test cases:
         - paths-data-02-t.svg (most noticeable)
@@ -8796,7 +8808,7 @@
 
 2005-10-13  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Test cases updated:
         * svg-tests/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
@@ -8908,7 +8920,7 @@
 
 2005-10-11  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Fix SVGSymbolElementImpl to not warn when inheriting viewbox.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5278
@@ -9090,7 +9102,7 @@
 
 2005-10-08  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Almost forgot the layout test for the last commit. ;)
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
@@ -9102,7 +9114,7 @@
 
 2005-10-08  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Fix to handle forward referencing <use> elements.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
@@ -10266,7 +10278,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-10-03  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Committed by eseidel.
 
         Fixes hang, caused by path parser spinning forever.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5239
