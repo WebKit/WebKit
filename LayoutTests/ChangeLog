@@ -1,3 +1,14 @@
+2005-12-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Test for: <rdar://problem/4372143>
+
+        * fast/forms/textarea-setinnerhtml-expected.checksum: Added.
+        * fast/forms/textarea-setinnerhtml-expected.png: Added.
+        * fast/forms/textarea-setinnerhtml-expected.txt: Added.
+        * fast/forms/textarea-setinnerhtml.html: Added.
+
 2005-12-12  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.  Committed by eseidel.
