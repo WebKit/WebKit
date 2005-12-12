@@ -1,3 +1,42 @@
+2005-12-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        No test cases needed, no functionality change.
+        Corrected spacing, and conformance with style guidelines.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6039
+
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEComponentTransfer::setRedFunction):
+        (KCanvasFEComponentTransfer::setGreenFunction):
+        (KCanvasFEComponentTransfer::setBlueFunction):
+        (KCanvasFEComponentTransfer::setAlphaFunction):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (ciVector):
+        (KCanvasFilterQuartz::prepareFilter):
+        (KCanvasFilterQuartz::applyFilter):
+        (KCanvasFilterQuartz::filterBBoxForItemBBox):
+        (KCanvasFilterQuartz::getCIFilterStack):
+        (KCanvasFilterQuartz::imageForName):
+        (KCanvasFilterQuartz::setImageForName):
+        (KCanvasFilterQuartz::setOutputImage):
+        (alphaImageForImage):
+        (KCanvasFilterQuartz::inputImage):
+        (KCanvasFEBlendQuartz::getCIFilter):
+        (KCanvasFEColorMatrixQuartz::getCIFilter):
+        (KCanvasFECompositeQuartz::getCIFilter):
+        (getPointLightVectors):
+        (getLightVectors):
+        (getNormalMap):
+        (KCanvasFEDiffuseLightingQuartz::getCIFilter):
+        (KCanvasFEFloodQuartz::getCIFilter):
+        (KCanvasFEGaussianBlurQuartz::getCIFilter):
+        (KCanvasFEMergeQuartz::getCIFilter):
+        (KCanvasFEOffsetQuartz::getCIFilter):
+        (KCanvasFESpecularLightingQuartz::getCIFilter):
+        (KCanvasFETileQuartz::getCIFilter):
+
 2005-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

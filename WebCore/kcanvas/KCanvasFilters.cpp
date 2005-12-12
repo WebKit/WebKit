@@ -100,13 +100,11 @@ void KCanvasFilterEffect::setResult(const QString &result)
     m_result = result;
 }
 
-
 static QTextStream &operator<<(QTextStream &ts, const KCanvasPoint3F p)
 {
     ts << "x=" << p.x() << " y=" << p.y() << " z=" << p.z();
     return ts;  
 }
-
 
 QTextStream &KCanvasFilterEffect::externalRepresentation(QTextStream &ts) const
 {
@@ -143,8 +141,6 @@ QTextStream &KCDistantLightSource::externalRepresentation(QTextStream &ts) const
     ts << "[elevation=\"" << elevation() << "\"]";
     return ts;  
 }
-
-
 
 static QTextStream &operator<<(QTextStream &ts, QPointF p)
 {

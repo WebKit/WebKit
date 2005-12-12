@@ -243,31 +243,8 @@ typedef enum {
     CT_GAMMA = 4
 } KCComponentTransferType;
 
-/*
- // Keep this around in case we want to make this a class:
-     KCComponentTransferType type() const;
-    void setType(KCComponentTransferType type) { m_type = type; }
-    
-    Q3ValueList<float> tableValues() const;
-    void setTableValues(Q3ValueList<float> tableValues);
-    
-    float slope() const { return m_slope; }
-    void setSlope(float slope) { m_slope = slope; }
-    
-    float intercept() const { return m_intercept; }
-    void setIntercept(float intercept) { m_intercept = intercept; }
-    
-    float amplitude() const { return m_amplitude; }
-    void setAmplitude(float amplitude) { m_amplitude = amplitude; }
-    
-    float exponent() const { return m_exponent; }
-    void setExponent(float exponent) { m_exponent = exponent; }
-    
-    float offset() const { return m_offset; }
-    void setOffset(float offset) { m_offset = offset; }
-*/
-
-typedef struct {
+struct KCComponentTransferFunction
+{
     KCComponentTransferType type;
     Q3ValueList<float> tableValues;
     float slope;
@@ -275,24 +252,24 @@ typedef struct {
     float amplitude;
     float exponent;
     float offset;
-} KCComponentTransferFunction;
+};
 
 class KCanvasFEComponentTransfer : public KCanvasFilterEffect
 {
-public:
+public:    
     KCComponentTransferFunction redFunction() const { return m_redFunc; }
-    void setRedFunction(const KCComponentTransferFunction &func) { m_redFunc = func; }
+    void setRedFunction(const KCComponentTransferFunction& func) { m_redFunc = func; }
     
     KCComponentTransferFunction greenFunction() const { return m_greenFunc; }
-    void setGreenFunction(const KCComponentTransferFunction &func) { m_greenFunc = func; }
+    void setGreenFunction(const KCComponentTransferFunction& func) { m_greenFunc = func; }
     
     KCComponentTransferFunction blueFunction() const { return m_blueFunc; }
-    void setBlueFunction(const KCComponentTransferFunction &func) { m_blueFunc = func; }
+    void setBlueFunction(const KCComponentTransferFunction& func) { m_blueFunc = func; }
     
     KCComponentTransferFunction alphaFunction() const { return m_alphaFunc; }
-    void setAlphaFunction(const KCComponentTransferFunction &func) { m_alphaFunc = func; }
+    void setAlphaFunction(const KCComponentTransferFunction& func) { m_alphaFunc = func; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    QTextStream& externalRepresentation(QTextStream&) const;
 
 private:
     KCComponentTransferFunction m_redFunc;
