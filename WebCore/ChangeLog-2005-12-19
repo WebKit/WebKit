@@ -1,3 +1,15 @@
+2005-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5538
+          XSLT crashes with multi-word internal entity declarations
+
+        Added the crashing specimen as a layout test.
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp: (DOM::XSLStyleSheetImpl::loadChildSheets):
+        Check that the node is an element node before calling IS_XSLT_ELEM.
+
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin & mjs.

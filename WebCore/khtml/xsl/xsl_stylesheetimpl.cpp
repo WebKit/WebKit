@@ -148,7 +148,7 @@ void XSLStyleSheetImpl::loadChildSheets()
                 curr = curr->next;
                 continue;
             }
-            if (IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
+            if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar *)"href", XSLT_NAMESPACE);
                 QString buff = QString::fromUtf8((const char*)uriRef);
                 loadChildSheet(buff);
@@ -159,7 +159,7 @@ void XSLStyleSheetImpl::loadChildSheets()
 
         // Now handle includes.
         while (curr) {
-            if (IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "include")) {
+            if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "include")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar *)"href", XSLT_NAMESPACE);
                 QString buff = QString::fromUtf8((const char*)uriRef);
                 loadChildSheet(buff);

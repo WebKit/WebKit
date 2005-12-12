@@ -1,3 +1,15 @@
+2005-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        Test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=5538
+
+        * fast/xsl/resources/xslt-entity.xsl: Added.
+        * fast/xsl/xslt-entity-expected.checksum: Added.
+        * fast/xsl/xslt-entity-expected.png: Added.
+        * fast/xsl/xslt-entity-expected.txt: Added.
+        * fast/xsl/xslt-entity.xml: Added.
+
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
         Adding pixel results omitted from previous commits.
