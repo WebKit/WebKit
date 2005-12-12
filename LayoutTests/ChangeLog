@@ -1,5 +1,13 @@
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
+        Adding resources overlooked in previous commit.
+
+        * fast/xsl/resources/xslt-extra-content-at-end.xsl: Added.
+        * fast/xsl/resources/xslt-mismatched-tags-in-xslt.xsl: Added.
+        * fast/xsl/resources/xslt-missing-namespace-in-xslt.xsl: Added.
+
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin & mjs.
 
         Fixes SVG to load external scripts and report parse errors.
