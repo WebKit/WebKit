@@ -1,3 +1,15 @@
+2005-12-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Test: fast/forms/textarea-setinnerhtml.html
+
+        Fixes setInnerHTML for <textarea>
+        <rdar://problem/4372143>
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLTextAreaElementImpl::setValue):
+
 2005-12-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrison.
