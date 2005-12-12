@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (2,2) size 796x596
+  RenderBlock {HTML} at (2,2) size 796x596
+    RenderBody {BODY} at (2,2) size 792x592
+      RenderBlock {PRE} at (2,0) size 788x270
+        RenderText {TEXT} at (0,0) size 208x270
+          text run at (0,0) width 8: "*"
+          text run at (0,15) width 24: "div"
+          text run at (0,30) width 64: "div span"
+          text run at (0,45) width 80: "div ~ span"
+          text run at (0,60) width 80: "div > span"
+          text run at (0,75) width 80: "div + span"
+          text run at (0,90) width 40: "#temp"
+          text run at (0,105) width 64: "div#temp"
+          text run at (0,120) width 176: "div.test[title=\"test\"]"
+          text run at (0,135) width 160: ".test[title~=\"test\"]"
+          text run at (0,150) width 168: "div > [title|=\"test\"]"
+          text run at (0,165) width 184: "div.test[title^=\"test\"]"
+          text run at (0,180) width 192: "span#test[title$=\"test\"]"
+          text run at (0,195) width 208: "span[title*=\"test\"]::after"
+          text run at (0,210) width 80: "div[title]"
+          text run at (0,225) width 56: "[title]"
+          text run at (0,240) width 48: "a:link"
+          text run at (0,255) width 192: "div, span > div:hover, a"

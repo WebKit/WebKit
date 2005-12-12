@@ -367,9 +367,15 @@ CSSStyleRuleImpl::~CSSStyleRuleImpl()
 
 DOM::DOMString CSSStyleRuleImpl::selectorText() const
 {
-    // FIXME: Handle all the selectors in the chain for comma-separated selectors.
-    if (m_selector)
-        return m_selector->selectorText();
+    if (m_selector) {
+        DOMString str;
+        for (CSSSelector *s = m_selector; s; s = s->next()) {
+            if (s != m_selector)
+                str += ", ";
+            str += s->selectorText();
+        }
+        return str;
+    }
     return DOMString();
 }
 

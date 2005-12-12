@@ -236,7 +236,6 @@ void CSSSelector::extractPseudoType() const
            match = PseudoElement;
     else if (match == PseudoElement && !element)
         _pseudoType = PseudoOther;
-    value = nullAtom;
 }
 
 
@@ -265,64 +264,32 @@ DOMString CSSSelector::selectorText() const
     DOMString str;
     const CSSSelector* cs = this;
     const AtomicString& localName = cs->tag.localName();
-    if (localName == starAtom && cs->match == CSSSelector::Id)
-    {
-        str = "#";
+    if (cs->match == CSSSelector::None || localName != starAtom)
+        str = localName;
+    if (cs->match == CSSSelector::Id) {
+        str += "#";
         str += cs->value.qstring();
-    }
-    else if (localName == starAtom && cs->match == CSSSelector::Class)
-    {
-        str = ".";
+    } else if (cs->match == CSSSelector::Class) {
+        str += ".";
         str += cs->value.qstring();
-    }
-    else if (localName == starAtom  && cs->match == CSSSelector::PseudoClass)
-    {
-        str = ":";
+    } else if (cs->match == CSSSelector::PseudoClass) {
+        str += ":";
         str += cs->value.qstring();
-    }
-    else if (localName == starAtom && cs->match == CSSSelector::PseudoElement)
-    {
-        str = "::";
+    } else if (cs->match == CSSSelector::PseudoElement) {
+        str += "::";
         str += cs->value.qstring();
-    }
-    else
-    {
-        if (localName == starAtom)
-            str = "*";
-        else
-            str = localName;
-        if (cs->match == CSSSelector::Id)
-        {
-            str += "#";
-            str += cs->value.qstring();
-        }
-        else if (cs->match == CSSSelector::Class)
-        {
-            str += ".";
-            str += cs->value.qstring();
-        }
-        else if (cs->match == CSSSelector::PseudoClass)
-        {
-            str += ":";
-            str += cs->value.qstring();
-        }
-        else if (cs->match == CSSSelector::PseudoElement)
-        {
-            str += "::";
-            str += cs->value.qstring();
-        }
-        // optional attribute
-        if (cs->hasAttribute()) {
-            // FIXME: Add support for dumping namespaces.
-            DOMString attrName = cs->attr.localName();
-            str += "[";
-            str += attrName;
-            switch (cs->match) {
+    } else if (cs->hasAttribute()) {
+        // FIXME: Add support for dumping namespaces.
+        DOMString attrName = cs->attr.localName();
+        str += "[";
+        str += attrName;
+        switch (cs->match) {
             case CSSSelector::Exact:
                 str += "=";
                 break;
             case CSSSelector::Set:
-                str += " "; /// ## correct?
+                // set has no operator or value, just the attrName
+                str += "]";
                 break;
             case CSSSelector::List:
                 str += "~=";
@@ -341,21 +308,22 @@ DOMString CSSSelector::selectorText() const
                 break;
             default:
                 kdWarning(6080) << "Unhandled case in CSSStyleRuleImpl::selectorText : match=" << cs->match << endl;
-            }
+        }
+        if (cs->match != CSSSelector::Set) {
             str += "\"";
             str += cs->value.qstring();
             str += "\"]";
         }
     }
-    if ( cs->tagHistory ) {
+    if (cs->tagHistory) {
         DOMString tagHistoryText = cs->tagHistory->selectorText();
-		if ( cs->relation == DirectAdjacent )
+        if (cs->relation == CSSSelector::DirectAdjacent)
             str = tagHistoryText + " + " + str;
-        else if ( cs->relation == IndirectAdjacent )
+        else if (cs->relation == CSSSelector::IndirectAdjacent)
             str = tagHistoryText + " ~ " + str;
-        else if ( cs->relation == Child )
+        else if (cs->relation == CSSSelector::Child)
             str = tagHistoryText + " > " + str;
-        else if ( cs->relation == SubSelector )
+        else if (cs->relation == CSSSelector::SubSelector)
             str += tagHistoryText; // the ":" is provided by selectorText()
         else // Descendant
             str = tagHistoryText + " " + str;

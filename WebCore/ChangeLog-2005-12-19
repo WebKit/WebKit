@@ -1,3 +1,19 @@
+2005-12-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/dom/css-selectorText.html
+
+        Fixes selecotrText serialization to only print "*"
+        when it is stand alone. Fixes the attribute set selector,
+        along with general cleanup. Also print chained selectors.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::selectorText):
+        * khtml/css/css_ruleimpl.cpp:
+        (DOM::CSSStyleRuleImpl::selectorText):
+
 2005-12-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

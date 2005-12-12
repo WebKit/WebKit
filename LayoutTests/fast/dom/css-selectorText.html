@@ -1,0 +1,36 @@
+<html>
+<head>
+<style>
+* { margin: 2px; }
+div { margin: 2px; }
+div span { margin 2px; }
+div ~ span { margin 2px; }
+div > span { margin 2px; }
+div + span { margin 2px; }
+#temp { margin 2px; }
+div#temp { margin 2px; }
+div.test[title="test"] { margin: 2px; }
+.test[title~="test"] { margin: 2px; }
+div > [title|="test"] { margin: 2px; }
+div.test[title^="test"] { margin: 2px; }
+span#test[title$="test"] { margin: 2px; }
+span[title*="test"]::after { margin: 2px; }
+div[title] { margin: 2px; }
+[title] { margin: 2px; }
+a:link { margin: 2px; }
+div, span > div:hover, a { margin: 2px; }
+</style>
+</head>
+<body>
+<pre id="result"></pre>
+<script>
+var styleSheet = document.styleSheets.item(0);
+var s = "";
+for (var i = 0; i < styleSheet.cssRules.length; i++) {
+	var rule = styleSheet.cssRules[i];
+	s += rule.selectorText + "\n";
+}
+document.getElementById("result").innerText = s;
+</script>
+</body>
+</html>
