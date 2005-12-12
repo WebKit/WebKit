@@ -1,5 +1,16 @@
 2005-12-11  Eric Seidel  <eseidel@apple.com>
 
+        Adding pixel results omitted from previous commits.
+
+        * fast/block/positioning/leftmargin-topmargin-expected.checksum: Added.
+        * fast/block/positioning/leftmargin-topmargin-expected.png: Added.
+        * fast/clip/017-expected.checksum: Added.
+        * fast/clip/017-expected.png: Added.
+        * fast/inspector/style-expected.checksum: Added.
+        * fast/inspector/style-expected.png: Added.
+
+2005-12-11  Eric Seidel  <eseidel@apple.com>
+
         Adding resources overlooked in previous commit.
 
         * fast/xsl/resources/xslt-extra-content-at-end.xsl: Added.
