@@ -30,6 +30,7 @@
 #include "kjs_window.h"
 #include <kjs/internal.h> // for InterpreterImp
 #include <kjs/collector.h>
+#include <kxmlcore/HashMap.h>
 
 #include "dom/dom_exception.h"
 #include "dom/dom2_events.h"

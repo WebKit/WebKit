@@ -1,5 +1,11 @@
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
+        - build fix for last-minute part of previous change
+
+        * khtml/ecma/kjs_binding.cpp:
+
+2005-12-13  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - updated for new HashCountedSet class
