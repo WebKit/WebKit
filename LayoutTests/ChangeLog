@@ -1,3 +1,19 @@
+2005-12-12  David Harrison  <harrison@apple.com>
+
+	<rdar://problem/4026906> Paste of HTML table content can break table structure
+	<rdar://problem/4027704> Paste of HTML list content can break list structure by dropping empty list items
+	
+        * editing/pasteboard/block-wrappers-necessary.html:
+	    Removed empty p tag.
+        * editing/pasteboard/paste-list-001-expected.checksum: Added.
+        * editing/pasteboard/paste-list-001-expected.png: Added.
+        * editing/pasteboard/paste-list-001-expected.txt: Added.
+        * editing/pasteboard/paste-list-001.html: Added.
+        * editing/pasteboard/paste-table-001-expected.checksum: Added.
+        * editing/pasteboard/paste-table-001-expected.png: Added.
+        * editing/pasteboard/paste-table-001-expected.txt: Added.
+        * editing/pasteboard/paste-table-001.html: Added.
+
 2005-12-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Hyatt.
