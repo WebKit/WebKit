@@ -33,6 +33,7 @@
 		6557E8F808EA5D4D0049CDFC /* HashMapPtrSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 6557E8F708EA5D4D0049CDFC /* HashMapPtrSpec.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6D089E859700760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		657EEBC0094E445E008C9C7B /* HashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EEBBF094E445E008C9C7B /* HashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6580F796094070560082C219 /* PassRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6580F795094070560082C219 /* PassRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65C647B4093EF8D60022C380 /* RefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C647B3093EF8D60022C380 /* RefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
@@ -115,7 +116,6 @@
 		932F5B840822A1C700736975 /* NP_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 517BE7F40610E39600221947 /* NP_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B850822A1C700736975 /* npruntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 5199B1BE061B65BC0070C006 /* npruntime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B880822A1C700736975 /* protect.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C02FBB0637462A003E7EE6 /* protect.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B890822A1C700736975 /* protected_values.h in Headers */ = {isa = PBXBuildFile; fileRef = 650B68D90639033F009D42DE /* protected_values.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B8A0822A1C700736975 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51863F6F065420E800E9E8DD /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B8B0822A1C700736975 /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 700DA117065984CE00747C0B /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B8C0822A1C700736975 /* npapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CA3B4F06CC2166005600E3 /* npapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -174,7 +174,6 @@
 		932F5BC90822A1C700736975 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A4FB06010F8200CBD2F2 /* c_utility.cpp */; };
 		932F5BCA0822A1C700736975 /* c_class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A53A06012C3000CBD2F2 /* c_class.cpp */; };
 		932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5199B1BD061B65BC0070C006 /* npruntime.cpp */; };
-		932F5BCD0822A1C700736975 /* protected_values.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 650B68D80639033F009D42DE /* protected_values.cpp */; };
 		932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51863FC406542D3100E9E8DD /* WebScriptObject.mm */; };
 		932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517EF37306D695930007C1BA /* jni_objc.mm */; };
 		932F5BD00822A1C700736975 /* softlinking.c in Sources */ = {isa = PBXBuildFile; fileRef = 8442A376074175C2000AE2ED /* softlinking.c */; };
@@ -321,8 +320,6 @@
 		51F0EC1005C86F3500E6DF1B /* objc_header.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = objc_header.h; path = bindings/objc/objc_header.h; sourceTree = "<group>"; };
 		51F0EC9605C88DC700E6DF1B /* objc_utility.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = objc_utility.h; path = bindings/objc/objc_utility.h; sourceTree = "<group>"; };
 		51F0EC9705C88DC700E6DF1B /* objc_utility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = objc_utility.mm; path = bindings/objc/objc_utility.mm; sourceTree = "<group>"; };
-		650B68D80639033F009D42DE /* protected_values.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = protected_values.cpp; sourceTree = "<group>"; };
-		650B68D90639033F009D42DE /* protected_values.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_values.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
 		652C107E08DA7B1E0020887D /* protected_reference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_reference.h; sourceTree = "<group>"; };
@@ -338,6 +335,7 @@
 		6560A63D04B3B69F008AE952 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		65621E6B089E859700760F35 /* property_slot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = property_slot.cpp; sourceTree = "<group>"; };
 		65621E6C089E859700760F35 /* property_slot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = property_slot.h; sourceTree = "<group>"; };
+		657EEBBF094E445E008C9C7B /* HashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashCountedSet.h; sourceTree = "<group>"; };
 		6580F795094070560082C219 /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; };
@@ -532,9 +530,7 @@
 				65621E6B089E859700760F35 /* property_slot.cpp */,
 				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
-				650B68D80639033F009D42DE /* protected_values.cpp */,
 				652C107E08DA7B1E0020887D /* protected_reference.h */,
-				650B68D90639033F009D42DE /* protected_values.h */,
 				F692A84E0255597D01FF60F7 /* array_object.h */,
 				F692A84D0255597D01FF60F7 /* array_object.cpp */,
 				F692A8500255597D01FF60F7 /* bool_object.cpp */,
@@ -664,6 +660,7 @@
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
 			children = (
+				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
 				65C647B3093EF8D60022C380 /* RefPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
@@ -822,7 +819,6 @@
 				932F5B840822A1C700736975 /* NP_jsobject.h in Headers */,
 				932F5B850822A1C700736975 /* npruntime.h in Headers */,
 				932F5B880822A1C700736975 /* protect.h in Headers */,
-				932F5B890822A1C700736975 /* protected_values.h in Headers */,
 				932F5B8A0822A1C700736975 /* WebScriptObject.h in Headers */,
 				932F5B8B0822A1C700736975 /* WebScriptObjectPrivate.h in Headers */,
 				932F5B8C0822A1C700736975 /* npapi.h in Headers */,
@@ -851,6 +847,7 @@
 				65EA4C9C092AF9E20093D800 /* JSLock.h in Headers */,
 				65C647B4093EF8D60022C380 /* RefPtr.h in Headers */,
 				6580F796094070560082C219 /* PassRefPtr.h in Headers */,
+				657EEBC0094E445E008C9C7B /* HashCountedSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1213,7 +1210,6 @@
 				932F5BC90822A1C700736975 /* c_utility.cpp in Sources */,
 				932F5BCA0822A1C700736975 /* c_class.cpp in Sources */,
 				932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */,
-				932F5BCD0822A1C700736975 /* protected_values.cpp in Sources */,
 				932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */,
 				932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */,
 				932F5BD00822A1C700736975 /* softlinking.c in Sources */,

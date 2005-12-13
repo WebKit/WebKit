@@ -1,3 +1,13 @@
+2005-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - updated for new HashCountedSet class
+
+        * ForwardingHeaders/kxmlcore/HashCountedSet.h: Added forwarding header.
+        * khtml/ecma/kjs_binding.cpp: Moved #define to disable pointer specialization higher
+	in the file.
+
 2005-12-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

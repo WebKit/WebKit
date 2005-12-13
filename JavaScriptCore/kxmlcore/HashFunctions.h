@@ -23,6 +23,8 @@
 #ifndef KXMLCORE_HASH_FUNCTIONS_H
 #define KXMLCORE_HASH_FUNCTIONS_H
 
+#include <stdint.h>
+
 namespace KXMLCore {
 
     template<typename T> class DefaultHash;

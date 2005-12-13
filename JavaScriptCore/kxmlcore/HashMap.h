@@ -54,6 +54,7 @@ class HashMap {
     int capacity() const;
     bool isEmpty() const;
 
+    // iterators iterate over pairs of keys and values
     iterator begin();
     iterator end();
     const_iterator begin() const;
@@ -65,7 +66,14 @@ class HashMap {
     MappedType get(const KeyType &key) const;
 
     // replaces value but not key if key is already present
+    // return value is a pair of the iterator to the key location, 
+    // and a boolean that's true if a new value was actually added
     std::pair<iterator, bool> set(const KeyType &key, const MappedType &mapped); 
+
+    // does nothing if key is already present
+    // return value is a pair of the iterator to the key location, 
+    // and a boolean that's true if a new value was actually added
+    std::pair<iterator, bool> add(const KeyType &key, const MappedType &mapped); 
 
     void remove(const KeyType& key);
     void remove(iterator it);
@@ -139,11 +147,17 @@ template<typename Key, typename Mapped, typename HashFunctions, typename KeyTrai
 std::pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::set(const KeyType &key, const MappedType &mapped) 
 {
     pair<iterator, bool> result = m_impl.insert(ValueType(key, mapped));
-    // the insert call aboveinsert won't change anything if the key is
+    // the insert call above won't change anything if the key is
     // already there; in that case, make sure to set the value.
     if (!result.second)
         result.first->second = mapped;    
     return result;
+}
+
+template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>
+std::pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::add(const KeyType &key, const MappedType &mapped)
+{
+    return m_impl.insert(ValueType(key, mapped));
 }
 
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>

@@ -67,7 +67,7 @@ enum Type {
  */
 class JSValue {
     friend class JSCell; // so it can derive from this class
-    friend class ProtectedValues; // so it can call downcast()
+    friend class Collector; // so it can call downcast()
 
 private:
     JSValue();

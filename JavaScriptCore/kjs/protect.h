@@ -26,19 +26,19 @@
 
 #include "reference.h"
 #include "value.h"
-#include "protected_values.h"
+#include "collector.h"
 #include "JSLock.h"
 
 namespace KJS {
 
     inline void gcProtect(JSValue *val) 
     { 
-	ProtectedValues::increaseProtectCount(val);
+	Collector::protect(val);
     }
 
     inline void gcUnprotect(JSValue *val)
     { 
-	ProtectedValues::decreaseProtectCount(val);
+	Collector::unprotect(val);
     }
 
     inline void gcProtectNullTolerant(JSValue *val) 
@@ -51,7 +51,8 @@ namespace KJS {
 	if (val) gcUnprotect(val);
     }
     
-    // FIXME: Share more code with RefPtr template? The only difference is the ref/deref operation.
+    // FIXME: Share more code with RefPtr template? The only differences are the ref/deref operation
+    // and the implicit conversion to raw pointer
     template <class T> class ProtectedPtr {
     public:
         ProtectedPtr() : m_ptr(NULL) { }

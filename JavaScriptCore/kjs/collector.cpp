@@ -24,6 +24,7 @@
 
 #include <kxmlcore/FastMalloc.h>
 #include <kxmlcore/FastMallocInternal.h>
+#include <kxmlcore/HashCountedSet.h>
 #include "internal.h"
 #include "list.h"
 #include "value.h"
@@ -378,16 +379,44 @@ void Collector::markStackObjectsConservatively()
 #endif
 }
 
+typedef HashCountedSet<JSCell *, PointerHash<JSCell *> > ProtectCounts;
+
+static ProtectCounts& protectedValues()
+{
+    static ProtectCounts pv;
+    return pv;
+}
+
+void Collector::protect(JSValue *k)
+{
+    assert(k);
+    assert(JSLock::lockCount() > 0);
+
+    if (SimpleNumber::is(k))
+      return;
+
+    protectedValues().insert(k->downcast());
+}
+
+void Collector::unprotect(JSValue *k)
+{
+    assert(k);
+    assert(JSLock::lockCount() > 0);
+
+    if (SimpleNumber::is(k))
+      return;
+
+    protectedValues().remove(k->downcast());
+}
+
 void Collector::markProtectedObjects()
 {
-  typedef ProtectedValues::KeyValue Entry;
-  Entry *table = ProtectedValues::_table;
-  Entry *end = table + ProtectedValues::_tableSize;
-  for (Entry *entry = table; entry != end; ++entry) {
-    JSCell *val = entry->key;
-    if (val && !val->marked()) {
+  ProtectCounts& pv = protectedValues();
+  ProtectCounts::iterator end = pv.end();
+  for (ProtectCounts::iterator it = pv.begin(); it != end; ++it) {
+    JSCell *val = it->first;
+    if (!val->marked())
       val->mark();
-    }
   }
 }
 
@@ -558,18 +587,7 @@ size_t Collector::numGCNotAllowedObjects()
 
 size_t Collector::numReferencedObjects()
 {
-  size_t count = 0;
-
-  size_t size = ProtectedValues::_tableSize;
-  ProtectedValues::KeyValue *table = ProtectedValues::_table;
-  for (size_t i = 0; i < size; i++) {
-    JSCell *val = table[i].key;
-    if (val) {
-      ++count;
-    }
-  }
-
-  return count;
+  return protectedValues().size();
 }
 
 #if APPLE_CHANGES
@@ -606,19 +624,18 @@ static const char *className(JSCell *val)
 
 const void *Collector::rootObjectClasses()
 {
+  // FIXME: this should be a HashSet (or maybe even CountedHashSet)
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
 
-  int size = ProtectedValues::_tableSize;
-  ProtectedValues::KeyValue *table = ProtectedValues::_table;
-  for (int i = 0; i < size; i++) {
-    JSCell *val = table[i].key;
-    if (val) {
-      CFStringRef name = CFStringCreateWithCString(NULL, className(val), kCFStringEncodingASCII);
-      CFSetAddValue(classes, name);
-      CFRelease(name);
-    }
+  ProtectCounts& pv = protectedValues();
+  ProtectCounts::iterator end = pv.end();
+  for (ProtectCounts::iterator it = pv.begin(); it != end; ++it) {
+    JSCell *val = it->first;
+    CFStringRef name = CFStringCreateWithCString(NULL, className(val), kCFStringEncodingASCII);
+    CFSetAddValue(classes, name);
+    CFRelease(name);
   }
-  
+
   return classes;
 }
 

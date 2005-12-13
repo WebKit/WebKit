@@ -158,6 +158,9 @@ namespace KXMLCore {
         
         std::pair<iterator, bool> set(const KeyType &key, const MappedType &mapped) 
         { return m_impl.set(key, mapped); }
+
+        std::pair<iterator, bool> add(const KeyType &key, const MappedType &mapped) 
+        { return m_impl.add(key, mapped); }
         
         void remove(const KeyType& key) { m_impl.remove(key); }
         void remove(iterator it) { m_impl.remove(it.m_impl); }
@@ -201,6 +204,9 @@ namespace KXMLCore {
         
         std::pair<iterator, bool> set(const KeyType &key, const MappedType &mapped) 
         { return m_impl.set(key, mapped); }
+
+        std::pair<iterator, bool> add(const KeyType &key, const MappedType &mapped) 
+        { return m_impl.add(key, mapped); }
         
         void remove(const KeyType& key) { m_impl.remove(key); }
         void remove(iterator it) { m_impl.remove(it.m_impl); }

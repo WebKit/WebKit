@@ -1,3 +1,37 @@
+2005-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- added a new HashCountedSet class for the common pattern of mapping items to counts that can change
+	
+        * kxmlcore/HashCountedSet.h: Added.
+        (KXMLCore::HashCountedSet::*): Implemented, on top of HashMap.
+        * kxmlcore/HashMap.h:
+        (KXMLCore::HashMap::add): New method - does not replace existing value if key already present
+	but otherwise like set().
+        (KXMLCore::HashMap::set): Improved comments.
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::HashMap::add): Added to specializations too.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add new  file.
+        * kxmlcore/HashFunctions.h: Added include of stdint.h
+	
+	- replaced the custom hashtable for values protected from GC with HashCountedSet
+
+        * kjs/collector.cpp:
+        (KJS::Collector::protect): Moved code here from ProtectedValues::increaseProtectCount
+	since the code is so simple now.
+        (KJS::Collector::unprotect): Ditto for ProtectedValues::decreaseProtectCount.
+        (KJS::Collector::markProtectedObjects): Updated for new way of doing things, now
+	simpler and safer.
+        (KJS::Collector::numReferencedObjects): ditto
+        (KJS::Collector::rootObjectClasses): ditto
+        * kjs/collector.h: Added protect and unprotect static methods
+        * kjs/protect.h:
+        (KJS::gcProtect): Updated for removal of ProtectedValues class
+        (KJS::gcUnprotect): likewise
+        * kjs/protected_values.cpp: Removed.
+        * kjs/protected_values.h: Removed.
+
 2005-12-10  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.
