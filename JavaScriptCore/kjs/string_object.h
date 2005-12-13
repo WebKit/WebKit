@@ -39,8 +39,8 @@ namespace KJS {
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static JSValue *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
+    static JSValue *lengthGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
   };
 
   /**

@@ -153,7 +153,7 @@ JSValue *JSObject::get(ExecState *exec, const Identifier &propertyName) const
   PropertySlot slot;
 
   if (const_cast<JSObject *>(this)->getPropertySlot(exec, propertyName, slot))
-    return slot.getValue(exec, propertyName);
+    return slot.getValue(exec, const_cast<JSObject *>(this), propertyName);
     
   return jsUndefined();
 }
@@ -162,7 +162,7 @@ JSValue *JSObject::get(ExecState *exec, unsigned propertyName) const
 {
   PropertySlot slot;
   if (const_cast<JSObject *>(this)->getPropertySlot(exec, propertyName, slot))
-    return slot.getValue(exec, propertyName);
+    return slot.getValue(exec, const_cast<JSObject *>(this), propertyName);
     
   return jsUndefined();
 }
@@ -211,6 +211,35 @@ void JSObject::put(ExecState *exec, const Identifier &propertyName, JSValue *val
     fprintf( stderr, "WARNING: canPut %s said NO\n", propertyName.ascii() );
 #endif
     return;
+  }
+
+  JSObject *obj = this;
+  while (true) {
+    if (JSValue *gs = obj->_prop.get(propertyName)) {
+      if (gs->type() == GetterSetterType) {
+        JSObject *setterFunc = static_cast<GetterSetterImp *>(gs)->getSetter();
+            
+        if (!setterFunc) {
+          throwError(exec, TypeError, "setting a property that has only a getter");
+          return;
+        }
+            
+        List args;
+        args.append(value);
+        
+        setterFunc->call(exec, this, args);
+        return;
+      } else  {
+        // If there's an existing property on the object or one of its 
+        // prototype it should be replaced, so we just break here.
+        break;
+      }
+    }
+     
+    if (!obj->_proto || !obj->_proto->isObject())
+      break;
+        
+    obj = static_cast<JSObject *>(obj->_proto);
   }
 
   _prop.put(propertyName,value,attr);
@@ -330,6 +359,36 @@ const HashEntry* JSObject::findPropertyHashEntry(const Identifier& propertyName)
     }
   }
   return 0;
+}
+
+void JSObject::defineGetter(ExecState *exec, const Identifier& propertyName, JSObject *getterFunc)
+{
+    JSValue *o = getDirect(propertyName);
+    GetterSetterImp *gs;
+    
+    if (o && o->type() == GetterSetterType) {
+        gs = static_cast<GetterSetterImp *>(o);
+    } else {
+        gs = new GetterSetterImp;
+        putDirect(propertyName, gs);
+    }
+    
+    gs->setGetter(getterFunc);
+}
+
+void JSObject::defineSetter(ExecState *exec, const Identifier& propertyName, JSObject *setterFunc)
+{
+    JSValue *o = getDirect(propertyName);
+    GetterSetterImp *gs;
+    
+    if (o && o->type() == GetterSetterType) {
+        gs = static_cast<GetterSetterImp *>(o);
+    } else {
+        gs = new GetterSetterImp;
+        putDirect(propertyName, gs);
+    }
+    
+    gs->setSetter(setterFunc);
 }
 
 bool JSObject::implementsConstruct() const

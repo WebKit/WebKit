@@ -223,6 +223,45 @@ bool NumberImp::getUInt32(uint32_t& uint32) const
   return (double)uint32 == val;
 }
 
+// --------------------------- GetterSetterImp ---------------------------------
+void GetterSetterImp::mark()
+{
+    if (getter && !getter->marked())
+        getter->mark();
+    if (setter && !setter->marked())
+        setter->mark();
+}
+
+JSValue *GetterSetterImp::toPrimitive(ExecState *exec, Type type) const
+{
+    assert(false);
+    return jsNull();
+}
+
+bool GetterSetterImp::toBoolean(ExecState *) const
+{
+    assert(false);
+    return false;
+}
+
+double GetterSetterImp::toNumber(ExecState *) const
+{
+    assert(false);
+    return 0.0;
+}
+
+UString GetterSetterImp::toString(ExecState *) const
+{
+    assert(false);
+    return UString::null();
+}
+
+JSObject *GetterSetterImp::toObject(ExecState *exec) const
+{
+    assert(false);
+    return jsNull()->toObject(exec);
+}
+
 // ------------------------------ LabelStack -----------------------------------
 
 bool LabelStack::push(const Identifier &id)
@@ -834,6 +873,9 @@ void printInfo(ExecState *exec, const char *s, JSValue *o, int lineno)
       name = static_cast<JSObject *>(v)->className();
       if (name.isNull())
         name = "(unknown class)";
+      break;
+    case GetterSetterType:
+      name = "GetterSetter";
       break;
     }
     UString vString = v->toString(exec);

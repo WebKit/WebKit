@@ -54,7 +54,8 @@ enum Type {
     BooleanType       = 3,
     StringType        = 4,
     NumberType        = 5,
-    ObjectType        = 6
+    ObjectType        = 6,
+    GetterSetterType  = 7
 };
 
 /**
@@ -132,6 +133,7 @@ class JSCell : public JSValue {
     friend class NumberImp;
     friend class StringImp;
     friend class JSObject;
+    friend class GetterSetterImp;
 private:
     JSCell();
     virtual ~JSCell();

@@ -52,7 +52,7 @@ namespace KJS {
     void sort(ExecState *exec, JSObject *compareFunction);
     
   private:
-    static JSValue *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
     void setLength(unsigned newLength, ExecState *exec);
     

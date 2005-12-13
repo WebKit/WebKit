@@ -54,6 +54,7 @@ using namespace KJS;
 static bool makeAssignNode(Node*& result, Node *loc, Operator op, Node *expr);
 static bool makePrefixNode(Node*& result, Node *expr, Operator op);
 static bool makePostfixNode(Node*& result, Node *expr, Operator op);
+static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier &getOrSet, Identifier& name, ParameterNode *params, FunctionBodyNode *body);
 static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
 static Node *makeTypeOfNode(Node *expr);
 static Node *makeDeleteNode(Node *expr);
@@ -84,8 +85,9 @@ static Node *makeDeleteNode(Node *expr);
   CaseClauseNode      *ccl;
   ElementNode         *elm;
   Operator            op;
-  PropertyValueNode   *plist;
-  PropertyNode        *pnode;
+  PropertyListNode   *plist;
+  PropertyNode       *pnode;
+  PropertyNameNode   *pname;
 }
 
 %start Program
@@ -179,9 +181,9 @@ static Node *makeDeleteNode(Node *expr);
 %type <clist> CaseClauses  CaseClausesOpt
 %type <ival>  Elision ElisionOpt
 %type <elm>   ElementList
-%type <plist> PropertyNameAndValueList
-%type <pnode> PropertyName
-
+%type <pname> PropertyName
+%type <pnode> Property
+%type <plist> PropertyList
 %%
 
 Literal:
@@ -202,10 +204,28 @@ Literal:
                                         }
 ;
 
+PropertyName:
+    IDENT                               { $$ = new PropertyNameNode(*$1); }
+  | STRING                              { $$ = new PropertyNameNode(Identifier(*$1)); }
+  | NUMBER                              { $$ = new PropertyNameNode($1); }
+;
+
+Property:
+    PropertyName ':' AssignmentExpr     { $$ = new PropertyNode($1, $3, PropertyNode::Constant); }
+  | IDENT IDENT '(' ')' FunctionBody    { if (!makeGetterOrSetterPropertyNode($$, *$1, *$2, 0, $5)) YYABORT; }
+  | IDENT IDENT '(' FormalParameterList ')' FunctionBody
+                                        { if (!makeGetterOrSetterPropertyNode($$, *$1, *$2, $4, $6)) YYABORT; }
+;
+
+PropertyList:
+    Property                            { $$ = new PropertyListNode($1); }
+  | PropertyList ',' Property           { $$ = new PropertyListNode($3, $1); }
+;
+
 PrimaryExpr:
     PrimaryExprNoBrace
   | '{' '}'                             { $$ = new ObjectLiteralNode(); }
-  | '{' PropertyNameAndValueList '}'    { $$ = new ObjectLiteralNode($2); }
+  | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2); }
 ;
 
 PrimaryExprNoBrace:
@@ -236,18 +256,6 @@ ElisionOpt:
 Elision:
     ','                                 { $$ = 1; }
   | Elision ','                         { $$ = $1 + 1; }
-;
-
-PropertyNameAndValueList:
-    PropertyName ':' AssignmentExpr     { $$ = new PropertyValueNode($1, $3); }
-  | PropertyNameAndValueList ',' PropertyName ':' AssignmentExpr
-                                        { $$ = new PropertyValueNode($3, $5, $1); }
-;
-
-PropertyName:
-    IDENT                               { $$ = new PropertyNode(*$1); }
-  | STRING                              { $$ = new PropertyNode(Identifier(*$1)); }
-  | NUMBER                              { $$ = new PropertyNode($1); }
 ;
 
 MemberExpr:
@@ -806,10 +814,10 @@ FunctionDeclaration:
 FunctionExpr:
     FUNCTION '(' ')' FunctionBody       { $$ = new FuncExprNode(Identifier::null(), $4); }
   | FUNCTION '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(Identifier::null(), $3, $5); }
+                                        { $$ = new FuncExprNode(Identifier::null(), $5, $3); }
   | FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncExprNode(*$2, $5); }
   | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(*$2, $4, $6); }
+                                        { $$ = new FuncExprNode(*$2, $6, $4); }
 ;
 
 FormalParameterList:
@@ -958,6 +966,23 @@ static Node *makeDeleteNode(Node *expr)
         DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
         return new DeleteDotNode(dot->base(), dot->identifier());
     }
+}
+
+static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier& getOrSet, Identifier& name, ParameterNode *params, FunctionBodyNode *body)
+{
+    PropertyNode::Type type;
+    
+    if (getOrSet == "get")
+        type = PropertyNode::Getter;
+    else if (getOrSet == "set")
+        type = PropertyNode::Setter;
+    else
+        return false;
+    
+    result = new PropertyNode(new PropertyNameNode(name), 
+                              new FuncExprNode(Identifier::null(), body, params), type);
+
+    return true;
 }
 
 int yyerror(const char * /* s */)  /* Called by yyparse on error */

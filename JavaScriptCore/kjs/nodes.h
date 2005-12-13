@@ -32,8 +32,8 @@
 namespace KJS {
 
   class ProgramNode;
-  class PropertyNode;
-  class PropertyValueNode;
+  class PropertyNameNode;
+  class PropertyListNode;
   class Reference;
   class RegExp;
   class SourceElementsNode;
@@ -246,41 +246,54 @@ namespace KJS {
     bool opt;
   };
 
-  class PropertyValueNode : public Node {
+  class PropertyNameNode : public Node {
   public:
-    // list pointer is tail of a circular list, cracked in the ObjectLiteralNode ctor
-    PropertyValueNode(PropertyNode *n, Node *a)
-      : name(n), assign(a), list(this) { }
-    PropertyValueNode(PropertyNode *n, Node *a, PropertyValueNode *l)
-      : name(n), assign(a), list(l->list) { l->list = this; }
-    JSValue *evaluate(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
-  private:
-    friend class ObjectLiteralNode;
-    RefPtr<PropertyNode> name;
-    RefPtr<Node> assign;
-    RefPtr<PropertyValueNode> list;
-  };
-
-  class ObjectLiteralNode : public Node {
-  public:
-    ObjectLiteralNode() : list(0) { }
-    ObjectLiteralNode(PropertyValueNode *l) : list(l->list) { l->list = 0; }
-    JSValue *evaluate(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
-  private:
-    RefPtr<PropertyValueNode> list;
-  };
-
-  class PropertyNode : public Node {
-  public:
-    PropertyNode(double d) : numeric(d) { }
-    PropertyNode(const Identifier &s) : str(s) { }
+    PropertyNameNode(double d) : numeric(d) { }
+    PropertyNameNode(const Identifier &s) : str(s) { }
     JSValue *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
     double numeric;
     Identifier str;
+  };
+  
+  class PropertyNode : public Node {
+  public:
+    enum Type { Constant, Getter, Setter };
+    PropertyNode(PropertyNameNode *n, Node *a, Type t) 
+      : name(n), assign(a), type(t) { }
+    JSValue *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+    friend class PropertyListNode;
+  private:
+    RefPtr<PropertyNameNode> name;
+    RefPtr<Node> assign;
+    Type type;
+  };
+  
+  class PropertyListNode : public Node {
+  public:
+    // list pointer is tail of a circular list, cracked in the ObjectLiteralNode ctor
+    PropertyListNode(PropertyNode *n)
+      : node(n), list(this) { }
+    PropertyListNode(PropertyNode *n, PropertyListNode *l)
+      : node(n), list(l->list) { l->list = this; }
+    JSValue *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  private:
+    friend class ObjectLiteralNode;
+    RefPtr<PropertyNode> node;
+    RefPtr<PropertyListNode> list;
+  };
+
+  class ObjectLiteralNode : public Node {
+  public:
+    ObjectLiteralNode() : list(0) { }
+    ObjectLiteralNode(PropertyListNode *l) : list(l->list) { l->list = 0; }
+    JSValue *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  private:
+    RefPtr<PropertyListNode> list;
   };
 
   class BracketAccessorNode : public Node {
@@ -1030,13 +1043,13 @@ namespace KJS {
 
   class FuncExprNode : public Node {
   public:
-    FuncExprNode(const Identifier &i, FunctionBodyNode *b)
-      : ident(i), param(0), body(b) { }
-    FuncExprNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
-      : ident(i), param(p->next), body(b) { p->next = 0; }
+    FuncExprNode(const Identifier &i, FunctionBodyNode *b, ParameterNode *p = 0)
+      : ident(i), param(p ? p->next : 0), body(b) { if (p) p->next = 0; }
     virtual JSValue *evaluate(ExecState *);
     virtual void streamTo(SourceStream &) const;
   private:
+    // Used for streamTo
+    friend class PropertyNode;
     Identifier ident;
     RefPtr<ParameterNode> param;
     RefPtr<FunctionBodyNode> body;

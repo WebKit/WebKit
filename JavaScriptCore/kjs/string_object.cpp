@@ -52,12 +52,12 @@ StringInstance::StringInstance(JSObject *proto, const UString &string)
   setInternalValue(jsString(string));
 }
 
-JSValue *StringInstance::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot &slot)
+JSValue *StringInstance::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot &slot)
 {
     return jsNumber(static_cast<StringInstance *>(slot.slotBase())->internalValue()->toString(exec).size());
 }
 
-JSValue *StringInstance::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot &slot)
+JSValue *StringInstance::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot &slot)
 {
     const UChar c = static_cast<StringInstance *>(slot.slotBase())->internalValue()->toString(exec)[slot.index()];
     return jsString(UString(&c, 1));

@@ -155,13 +155,35 @@ void ObjectLiteralNode::streamTo(SourceStream &s) const
     s << "{ }";
 }
 
-void PropertyValueNode::streamTo(SourceStream &s) const
+void PropertyListNode::streamTo(SourceStream &s) const
 {
-  for (const PropertyValueNode *n = this; n; n = n->list.get())
-    s << n->name << ": " << n->assign;
+  s << node;
+  
+  for (const PropertyListNode *n = list.get(); n; n = n->list.get())
+    s << ", " << n->node;
 }
 
 void PropertyNode::streamTo(SourceStream &s) const
+{
+  switch (type) {
+    case Constant:
+      s << name << ": " << assign;
+      break;
+    case Getter:
+    case Setter: {
+      const FuncExprNode *func = static_cast<const FuncExprNode *>(assign.get());
+      if (type == Getter)
+        s << "get "; 
+      else
+        s << "set ";
+      
+      s << name << "(" << func->param << ")" << func->body;
+      break;
+    }
+  }
+}
+
+void PropertyNameNode::streamTo(SourceStream &s) const
 {
   if (str.isNull())
     s << UString::from(numeric);

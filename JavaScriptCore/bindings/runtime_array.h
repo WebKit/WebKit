@@ -54,8 +54,8 @@ public:
     static const ClassInfo info;
 
 private:
-    static JSValue *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
     Bindings::Array *_array;
 };

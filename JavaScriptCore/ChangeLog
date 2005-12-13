@@ -1,3 +1,189 @@
+2005-12-12  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=6041>
+        
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::lengthGetter):
+        (RuntimeArray::indexGetter):
+        * bindings/runtime_array.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::lengthGetter):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        * bindings/runtime_object.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstance::lengthGetter):
+        (getProperty):
+        Update for changes to PropertySlot::getValue and
+        PropertySlot::GetValueFunc.
+        
+        * kjs/collector.cpp:
+        (KJS::className):
+        Handle GetterSetterType.
+        
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::Arguments::mappedIndexGetter):
+        (KJS::ActivationImp::argumentsGetter):
+        * kjs/function.h:
+        Update for changes to PropertySlot::getValue and
+        PropertySlot::GetValueFunc.
+        
+        * kjs/grammar.y:
+        Rework grammar parts for get set declarations directly
+        in the object literal.
+        
+        * kjs/internal.cpp:
+        (KJS::GetterSetterImp::mark):
+        (KJS::GetterSetterImp::toPrimitive):
+        (KJS::GetterSetterImp::toBoolean):
+        (KJS::GetterSetterImp::toNumber):
+        (KJS::GetterSetterImp::toString):
+        (KJS::GetterSetterImp::toObject):
+        Add type conversion functions. These aren't meant to be called.
+        
+        (KJS::printInfo):
+        Handle GetterSetterType.
+        
+        * kjs/lookup.h:        
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        Update for changes to PropertySlot::GetValueFunc.
+        
+        * kjs/nodes.cpp:
+        Refactor they way properties nodes are implemented.
+        We now have a PropertyListNode which is a list of PropertyNodes.
+        Each PropertyNode has a name (which is a PropertyNameNode) and an associated
+        value node. PropertyNodes can be of different types. The Constant type is the
+        old constant declaration and the Getter and Setter types are for property getters
+        and setters.
+        (ResolveNode::evaluate):
+        Update for changes to PropertySlot::getValue.
+        
+        (PropertyListNode::evaluate):
+        Go through all property nodes and set them on the newly created object. If the
+        property nodes are of type Getter or Setter, define getters and setters. Otherwise,
+        just add the properties like before.
+        
+        (PropertyNode::evaluate):
+        This should never be called directly.
+        
+        (PropertyNameNode::evaluate):
+        Rename from PropertyNode::evaluate.
+        
+        (FunctionCallResolveNode::evaluate):
+        (FunctionCallBracketNode::evaluate):
+        (FunctionCallDotNode::evaluate):
+        (PostfixResolveNode::evaluate):
+        (PostfixBracketNode::evaluate):
+        (PostfixDotNode::evaluate):
+        (TypeOfResolveNode::evaluate):
+        (PrefixResolveNode::evaluate):
+        (PrefixBracketNode::evaluate):
+        (PrefixDotNode::evaluate):
+        (AssignResolveNode::evaluate):
+        (AssignDotNode::evaluate):
+        (AssignBracketNode::evaluate):
+        Update for changes to PropertySlot::getValue.
+        
+        * kjs/nodes.h:
+        (KJS::PropertyNameNode::PropertyNameNode):
+        Rename from PropertyNode.
+        
+        (KJS::PropertyNode::):
+        (KJS::PropertyNode::PropertyNode):
+        New class, representing a single property.
+        
+        (KJS::PropertyListNode::PropertyListNode):
+        Rename from PropertyValueNode.
+        
+        (KJS::FuncExprNode::FuncExprNode):
+        Put ParameterNode parameter last, and make it optional.
+        
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        Use a PropertyListNode here now.
+        
+        * kjs/nodes2string.cpp:
+        (PropertyListNode::streamTo):
+        Iterate through all property nodes.
+        
+        (PropertyNode::streamTo):
+        Print out the name and value. Doesn't handle getters and setters currently.
+        
+        (PropertyNameNode::streamTo):
+        Rename from PropertyNode::streamTo.
+        
+        * kjs/object.cpp:
+        (KJS::JSObject::get):
+        Update for changes to PropertySlot::getValue.
+        
+        (KJS::JSObject::put):
+        If the property already exists and has a Setter, invoke
+        the setter function instead of setting the property directly.
+        
+        (KJS::JSObject::defineGetter):
+        (KJS::JSObject::defineSetter):
+        New functions for defining property getters and setters on the object.
+        
+        * kjs/object.h:
+        (KJS::GetterSetterImp::type):
+        (KJS::GetterSetterImp::GetterSetterImp):
+        (KJS::GetterSetterImp::getGetter):
+        (KJS::GetterSetterImp::setGetter):
+        (KJS::GetterSetterImp::getSetter):
+        (KJS::GetterSetterImp::setSetter):
+        New class for properties which have getters and setters defined.
+        This class is only used internally and should never be seen from the outside.
+        
+        (KJS::JSObject::getOwnPropertySlot):
+         If the property is a getter, call setGetterSlot on the property slot.
+         
+        * kjs/object_object.cpp:
+        (ObjectPrototype::ObjectPrototype):
+        Add __defineGetter__, __defineSetter, __lookupGetter__, __lookupSetter__
+        to prototype.
+        
+        (ObjectProtoFunc::callAsFunction):
+        Implement handlers for new functions.
+        
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFunc::):
+        Add ids for new functions.
+        
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::undefinedGetter):
+        Update for changes to PropertySlot::GetValueFunc.
+        
+        (KJS::PropertySlot::functionGetter):
+        Call the function getter object and return its value.
+        
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::getValue):
+        Add a new argument which is the original object that
+        getPropertySlot was called on.
+        
+        (KJS::PropertySlot::setGetterSlot):
+        (KJS::PropertySlot::):
+        New function which sets a getter slot. When getValue is called on a 
+        getter slot, the getter function object is invoked.
+        
+        * kjs/string_object.cpp:
+        (StringInstance::lengthGetter):
+        (StringInstance::indexGetter):
+        * kjs/string_object.h:
+        Update for changes to PropertySlot::GetValueFunc.
+        
+        * kjs/value.h:
+        (KJS::):
+        Add GetterSetterType and make GetterSetterImp a friend class of JSCell.
+
 2005-12-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

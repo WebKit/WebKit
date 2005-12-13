@@ -43,6 +43,11 @@ ObjectPrototype::ObjectPrototype(ExecState *exec,
     putDirect(valueOfPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf,                 0), DontEnum);
     putDirect("hasOwnProperty", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty,             1), DontEnum);
     putDirect("propertyIsEnumerable", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1), DontEnum);
+    // Mozilla extensions
+    putDirect("__defineGetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter,             2), DontEnum);
+    putDirect("__defineSetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter,             2), DontEnum);
+    putDirect("__lookupGetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupGetter,             1), DontEnum);
+    putDirect("__lookupSetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupSetter,             1), DontEnum);
 }
 
 
@@ -72,6 +77,53 @@ JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
         case HasOwnProperty: {
             PropertySlot slot;
             return jsBoolean(thisObj->getOwnPropertySlot(exec, Identifier(args[0]->toString(exec)), slot));
+        }
+        case DefineGetter: 
+        case DefineSetter: {
+            if (!args[1]->isObject() ||
+                !static_cast<JSObject *>(args[1])->implementsCall()) {
+                if (id == DefineGetter)
+                    return throwError(exec, SyntaxError, "invalid getter usage");
+                else
+                    return throwError(exec, SyntaxError, "invalid setter usage");
+            }
+
+            if (id == DefineGetter)
+                thisObj->defineGetter(exec, Identifier(args[0]->toString(exec)), static_cast<JSObject *>(args[1]));
+            else
+                thisObj->defineSetter(exec, Identifier(args[0]->toString(exec)), static_cast<JSObject *>(args[1]));
+            return jsUndefined();
+        }
+        case LookupGetter:
+        case LookupSetter: {
+            Identifier propertyName = Identifier(args[0]->toString(exec));
+            
+            JSObject *obj = thisObj;
+            while (true) {
+                JSValue *v = obj->getDirect(propertyName);
+                
+                if (v) {
+                    if (v->type() != GetterSetterType)
+                        return jsUndefined();
+
+                    JSObject *funcObj;
+                        
+                    if (id == LookupGetter)
+                        funcObj = static_cast<GetterSetterImp *>(v)->getGetter();
+                    else
+                        funcObj = static_cast<GetterSetterImp *>(v)->getSetter();
+                
+                    if (!funcObj)
+                        return jsUndefined();
+                    else
+                        return funcObj;
+                }
+                
+                if (!obj->prototype() || !obj->prototype()->isObject())
+                    return jsUndefined();
+                
+                obj = static_cast<JSObject *>(obj->prototype());
+            }
         }
         case PropertyIsEnumerable:
             return jsBoolean(thisObj->propertyIsEnumerable(exec, Identifier(args[0]->toString(exec))));

@@ -44,13 +44,13 @@ RuntimeArray::~RuntimeArray()
     delete _array;
 }
 
-JSValue *RuntimeArray::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return jsNumber(thisObj->getLength());
 }
 
-JSValue *RuntimeArray::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return thisObj->getConcreteArray()->valueAt(exec, slot.index());

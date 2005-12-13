@@ -64,8 +64,8 @@ namespace KJS {
     Identifier ident;
 
   private:
-    static JSValue *argumentsGetter(ExecState *, const Identifier &, const PropertySlot&);
-    static JSValue *lengthGetter(ExecState *, const Identifier &, const PropertySlot&);
+    static JSValue *argumentsGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
+    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
 
     void processParameters(ExecState *exec, const List &);
     virtual void processVarDecls(ExecState *exec);
@@ -115,7 +115,7 @@ namespace KJS {
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static JSValue *mappedIndexGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
+    static JSValue *mappedIndexGetter(ExecState *exec, JSObject *, const Identifier &, const PropertySlot& slot);
 
     ActivationImp *_activationObject; 
     mutable IndexToNameMap indexToNameMap;
@@ -136,7 +136,7 @@ namespace KJS {
     bool isActivation() { return true; }
   private:
     static PropertySlot::GetValueFunc getArgumentsGetter();
-    static JSValue *argumentsGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
+    static JSValue *argumentsGetter(ExecState *exec, JSObject *, const Identifier &, const PropertySlot& slot);
     void createArgumentsObject(ExecState *exec) const;
     
     FunctionImp *_function;
