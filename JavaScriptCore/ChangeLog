@@ -1,3 +1,9 @@
+2005-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated test results to match Anders's last fix.
+
+        * tests/mozilla/expected.html:
+
 2005-12-13  Anders Carlsson  <andersca@mac.com>
 
         * ChangeLog: Add titles for my bugzilla bugs.
