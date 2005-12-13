@@ -1,3 +1,30 @@
+2005-12-12  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+	<rdar://problem/4027704> Paste of HTML list content can break list structure by dropping empty list items
+
+	Fixed by having ReplaceSelectionCommand remove empty nodes just
+	from the ancestors of the node(s) moved by mergeStart, rather
+	than scanning the whole fragment.
+	
+	Layout tests added:
+	    editing/pasteboard/paste-table-001.html
+	    editing/pasteboard/paste-list-001.html
+	    
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::isProbablyTableStructureNode):
+        (khtml::ReplaceSelectionCommand::pruneEmptyNodes):
+	Removed no longer needed functions.
+	
+        (khtml::ReplaceSelectionCommand::doApply):
+	Remove ancestor nodes emptied by mergeStart.
+	Do that instead of calling pruneEmptyNodes().
+	
+        * khtml/editing/replace_selection_command.h:
+        (khtml::ReplacementFragment::desiredStyles):
+	Removed pruneEmptyNodes().
+
 2005-12-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.

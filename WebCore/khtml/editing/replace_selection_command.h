@@ -68,8 +68,6 @@ public:
     DOM::NodeImpl *mergeStartNode() const;
 
     const QValueList<NodeDesiredStyle> &desiredStyles() { return m_styles; }
-        
-    void pruneEmptyNodes();
 
     EFragmentType type() const { return m_type; }
     bool isEmpty() const { return m_type == EmptyFragment; }
