@@ -1,3 +1,15 @@
+2005-12-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6041
+        Support property getters and setters.
+        
+        * fast/js/property-getters-and-setters-expected.txt: Added.
+        * fast/js/property-getters-and-setters.html: Added.
+
+        * ChangeLog: Add titles for the bugzilla urls.
+        
 2005-12-13  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
@@ -414,7 +426,8 @@
 
         Add new tests for
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=3999>
-
+        Object.prototype is missing propertyIsEnumerable
+        
         * fast/js/test-propertyIsEnumerable-expected.txt: Added.
         * fast/js/test-propertyIsEnumerable.html: Added.
 
@@ -491,7 +504,8 @@
         Reviewed by Geoffrey.
 
         - Add test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3382>
-
+        nodes2strings.cpp fails to print left expression of ForInNode when 'var' is not used
+        
         * fast/js/for-in-to-text-expected.txt: Added.
         * fast/js/for-in-to-text.html: Added.
 

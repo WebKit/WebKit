@@ -1,0 +1,152 @@
+<html>
+<head>
+<script>
+function debug(str) {
+    var c = document.getElementById('console')
+    c.innerHTML += (str + "<br>")
+}
+
+
+function runTests() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    // the get set object declaration syntax
+    var o1 = { 'a':7, get b() { return this.a + 1 }, set b(x) { this.a = x } }
+    if (o1.b != 8) {
+        debug('FAILURE: get function did not return the correct value')
+        return;
+    }
+    o1.b = 10;
+    if (o1.b != 11) {
+        debug('FAILURE: get function did not return the correct value')
+        return;
+    }
+    
+    // __defineGetter__ and __defineSetter__
+    var o2 = new Object()
+    o2.a = 7;
+    o2.__defineGetter__('b', function getB() { return this.a + 1} )
+    o2.__defineSetter__('b', function setB(x) { this.a = x})
+    if (o2.b != 8) {
+           debug('FAILURE: get function did not return the correct value')
+           return;
+    }
+    o2.b = 10;
+    if (o2.b != 11) {
+        debug('FAILURE: get function did not return the correct value')
+        return;
+    }   
+    
+    // Setting a value without having a setter
+    var o3 = { get x() { return 42; } }
+    var numExceptions = 0;
+    try {
+        o3.x = 10;
+    } catch (e) {
+        numExceptions++;
+    }
+    
+    if (numExceptions != 1) {
+        debug('FAILURE: Setting a value without a setter did not throw an exception')
+        return;
+    }
+    
+    // Getting a value without having a getter
+    var o4 = { set x(y) { }}
+    if (o4.x != undefined) {
+        debug('FAILURE: Getting a value without a getter did not return undefined')
+        return;
+    }
+
+    // __lookupGetter__ and __lookupSetter__
+    var o4 = new Object()
+    function getB() { return this.a }
+    function setB(x) { this.a = x }
+    o4.__defineGetter__('b', getB)
+    o4.__defineSetter__('b', setB)
+    
+    if (o4.__lookupGetter__('b') != getB) {
+        debug('FAILURE: __lookupGetter__ did not return the correct function')
+        return;
+    }
+    if (o4.__lookupSetter__('b') != setB) {
+        debug('FAILURE: __lookupSetter__ did not return the correct function')
+        return;
+    }
+    
+    // __defineGetter__ and __defineSetter__ with various invalid arguments
+    var numExceptions = 0;
+    var o5 = new Object();
+    try { o5.__defineSetter__('a', null) } catch (e) { numExceptions++; }
+    try { o5.__defineSetter__('a', o5) } catch (e) { numExceptions++; }
+    try { o5.__defineGetter__('a', null) } catch (e) { numExceptions++; }
+    try { o5.__defineGetter__('a', o5) } catch (e) { numExceptions++; }
+    
+    if (numExceptions != 4) {
+        debug('FAILURE: one of the invalid getter/setter definitions did not throw an exception')
+        return;
+    }
+    
+    // setters and getters with exceptions
+    var o6 = { get x() { throw 'Exception in get'}, set x(f) { throw 'Exception in set'}}
+    var x = 0;
+    var numExceptions = 0;
+    try {
+        x = o6.x;
+    } catch (e) {
+        numExceptions++;
+        if (x != 0) {
+            debug('FAILURE: x was updated even though the getter threw an exception')
+            return false;
+        }
+    }
+    if (numExceptions != 1) {
+        debug('FAILURE: did not get an exception even though the x getter threw one')
+        return;
+    }
+    var numExceptions = 0;
+    try {
+        o6.x = 42;
+    } catch (e) {
+        numExceptions++;
+    }
+    if (numExceptions != 1) {
+        debug('FAILURE: did not get an exception even though the x setter threw one')
+        return;
+    }
+
+    // Defining a setter should also define a getter for the same property
+    // which returns undefined. Thus, a getter defined on the prototype should not
+    // be called.
+    o6 = { 'a':7, set x(b) { this.a = b; }}
+    o6.prototype = { get x() { return 42; }}
+    
+    if (o6.x != undefined) {
+        debug('FAILURE: x should be undefined!');
+        return;
+    }
+
+    // If an object has a property and its prototype has a setter function for that
+    // property, then setting the property should set the property directly and not call
+    // the setter function.
+    var o7 = new Object()
+    o7.numSets = 0;
+    o7.x = 10;
+    o7.__proto__.__defineSetter__('x', function() { this.numSets++; })
+    o7.x = 20;
+    if (o7.numSets != 0) {
+        debug('FAILURE: setter function should not be called.')
+        return;
+    }
+
+    debug('SUCCESS!')
+}
+</script>
+</head>
+<body onload="runTests();">
+This performs a number of different tests on JavaScript getters and setters. If this test is successful, the text "SUCCESS" should be shown below. Otherwise, "FAILURE" and the reason for the failure is shown.
+<pre id="console"></pre>
+</body>
+</html>
+
