@@ -1659,7 +1659,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_web_layoutIfNeededRecursive: (NSRect)rect testDirtyRect:(bool)testDirtyRect
 {
     unsigned index, count;
-    for (index = 0, count = [_subviews count]; index < count; index++) {
+    for (index = 0, count = [(NSArray *)_subviews count]; index < count; index++) {
         NSView *subview = [_subviews objectAtIndex:index];
         NSRect dirtiedSubviewRect = [subview convertRect: rect fromView: self];
         [subview _web_layoutIfNeededRecursive: dirtiedSubviewRect testDirtyRect:testDirtyRect];
@@ -2867,7 +2867,7 @@ done:
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
 
     // Convert image renderer to NSImage.
-    [elementInfo _web_setObjectIfNotNil:[[elementInfoWC objectForKey:WebCoreElementImageRendererKey] image] forKey:WebElementImageKey];
+    [elementInfo _web_setObjectIfNotNil:[(WebImageRenderer *)[elementInfoWC objectForKey:WebCoreElementImageRendererKey] image] forKey:WebElementImageKey];
     
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
     ASSERT(webFrameView);

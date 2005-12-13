@@ -244,7 +244,7 @@ NSSize WebIconLargeSize = {128, 128};
                     [pageURLs removeObject:pageURL];
                     
                     // Maybe this was the last page URL mapped to this icon URL
-                    if ([pageURLs count] == 0) {
+                    if ([(NSMutableSet *)pageURLs count] == 0) {
                         [_private->iconURLToPageURLs removeObjectForKey:iconURL];
                     }
                 } else {
