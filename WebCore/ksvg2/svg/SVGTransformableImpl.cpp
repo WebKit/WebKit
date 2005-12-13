@@ -23,6 +23,7 @@
 #include "config.h"
 #include <qregexp.h>
 #include <qstringlist.h>
+#include <kxmlcore/PassRefPtr.h>
 
 #include <kdom/core/AttrImpl.h>
 
@@ -36,6 +37,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
+#include "ksvg.h"
 
 using namespace KSVG;
 
@@ -53,12 +55,15 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
         return;
 
     // Split string for handling 1 transform statement at a time
-    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).qstring());
+    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).qstring().simplifyWhiteSpace());
     QStringList::ConstIterator it = subtransforms.begin();
     QStringList::ConstIterator end = subtransforms.end();
     for(; it != end; ++it)
     {
         QStringList subtransform = QStringList::split('(', (*it));
+        
+        if (subtransform.count() < 2)
+            break; // invalid transform, ignore.
 
         subtransform[0] = subtransform[0].stripWhiteSpace().lower();
         subtransform[1] = subtransform[1].simplifyWhiteSpace();
@@ -76,6 +81,9 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
                 pos += reg.matchedLength();
             }
         }
+        
+        if (params.count() < 1)
+            break;
 
         if(subtransform[0].startsWith(QString::fromLatin1(";")) ||
            subtransform[0].startsWith(QString::fromLatin1(",")))
@@ -83,50 +91,50 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
             subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
         }
 
-        SVGTransformImpl *t = new SVGTransformImpl();
+        PassRefPtr<SVGTransformImpl> t = new SVGTransformImpl();
 
         if(subtransform[0] == QString::fromLatin1("rotate"))
         {
-            if(params.count() == 3)
+            if (params.count() == 3)
                 t->setRotate(params[0].toDouble(),
                              params[1].toDouble(),
                               params[2].toDouble());
-            else
+            else if (params.count() == 1)
                 t->setRotate(params[0].toDouble(), 0, 0);
         }
         else if(subtransform[0] == QString::fromLatin1("translate"))
         {
-            if(params.count() == 2)
+            if (params.count() == 2)
                 t->setTranslate(params[0].toDouble(), params[1].toDouble());
-            else // Spec: if only one param given, assume 2nd param to be 0
+            else if (params.count() == 1) // Spec: if only one param given, assume 2nd param to be 0
                 t->setTranslate(params[0].toDouble(), 0);
         }
         else if(subtransform[0] == QString::fromLatin1("scale"))
         {
-            if(params.count() == 2)
+            if (params.count() == 2)
                 t->setScale(params[0].toDouble(), params[1].toDouble());
-            else // Spec: if only one param given, assume uniform scaling
+            else if (params.count() == 1) // Spec: if only one param given, assume uniform scaling
                 t->setScale(params[0].toDouble(), params[0].toDouble());
         }
-        else if(subtransform[0] == QString::fromLatin1("skewx"))
+        else if(subtransform[0] == QString::fromLatin1("skewx") && (params.count() == 1))
             t->setSkewX(params[0].toDouble());
-        else if(subtransform[0] == QString::fromLatin1("skewy"))
+        else if(subtransform[0] == QString::fromLatin1("skewy") && (params.count() == 1))
             t->setSkewY(params[0].toDouble());
-        else if(subtransform[0] == QString::fromLatin1("matrix"))
+        else if(subtransform[0] == QString::fromLatin1("matrix") && (params.count() == 6))
         {
-            if(params.count() >= 6)
-            {
-                SVGMatrixImpl *ret = new SVGMatrixImpl(params[0].toDouble(),
-                                                       params[1].toDouble(),
-                                                       params[2].toDouble(),
-                                                       params[3].toDouble(),
-                                                       params[4].toDouble(),
-                                                       params[5].toDouble());
-                t->setMatrix(ret);
-            }
+            SVGMatrixImpl *ret = new SVGMatrixImpl(params[0].toDouble(),
+                                                   params[1].toDouble(),
+                                                   params[2].toDouble(),
+                                                   params[3].toDouble(),
+                                                   params[4].toDouble(),
+                                                   params[5].toDouble());
+            t->setMatrix(ret);
         }
-
-        list->appendItem(t);
+        
+        if (t->type() == SVG_TRANSFORM_UNKNOWN)
+            break; // failed to parse a valid transform, abort.
+        
+        list->appendItem(t.release());
     }
 }
 

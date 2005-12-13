@@ -1,3 +1,14 @@
+2005-12-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Fix crash on malformed transform attributes and transforms with
+        trailing spaces:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6061
+
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::parseTransformAttribute):
+
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         - build fix for last-minute part of previous change
