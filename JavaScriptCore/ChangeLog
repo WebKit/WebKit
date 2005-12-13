@@ -1,8 +1,13 @@
+2005-12-13  Anders Carlsson  <andersca@mac.com>
+
+        * ChangeLog: Add titles for my bugzilla bugs.
+
 2005-12-12  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
 
         - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=6041>
+        Support property getters and setters.
         
         * bindings/runtime_array.cpp:
         (RuntimeArray::lengthGetter):
@@ -507,7 +512,8 @@
         Reviewed by Geoffrey.
 
         - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3999>
-
+        Object.prototype is missing propertyIsEnumerable
+        
         * kjs/object.cpp:
         (KJS::ObjectImp::canPut):
         Refactor to use getPropertyAttributes.
@@ -539,7 +545,8 @@
         Reviewed by Darin.
 
         - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3382>
-
+        nodes2strings.cpp fails to print left expression of ForInNode when 'var' is not used
+        
         Patch by Mark Rowe.
 
         * kjs/nodes2string.cpp:
