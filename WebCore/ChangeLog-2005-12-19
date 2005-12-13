@@ -1,5 +1,9 @@
 2005-12-13  Anders Carlsson  <andersca@mac.com>
 
+        * ChangeLog: Add titles to the recent bugzilla bugs.
+
+2005-12-13  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Darin.
 
         * khtml/ecma/kjs_css.cpp:
@@ -1427,7 +1431,8 @@
         Reviewed by Darin and Geoffrey.
 
         - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4194>
-
+        Reproducible Poof Crash when using search field at mathworks.com
+        
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::setFocusNode):
         Don't send onblur to a node if m_inDetach is true.
