@@ -106,8 +106,8 @@ namespace KJS {
     virtual JSValue *toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
 
   private:
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     RefPtr<DOM::NodeListImpl> m_impl;
   };
@@ -173,7 +173,7 @@ namespace KJS {
     // Constructor for inherited classes; doesn't set up a prototype.
     DOMElement(DOM::ElementImpl *e);
   private:
-    static JSValue *attributeGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *attributeGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
   };
 
   DOM::ElementImpl *toElement(JSValue *); // returns 0 if passed-in value is not a DOMElement object
@@ -219,9 +219,9 @@ namespace KJS {
            GetNamedItemNS, SetNamedItemNS, RemoveNamedItemNS };
     DOM::NamedNodeMapImpl *impl() const { return m_impl.get(); }
   private:
-    static JSValue *lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     RefPtr<DOM::NamedNodeMapImpl> m_impl;
   };
@@ -298,8 +298,8 @@ namespace KJS {
     DOMNamedNodesCollection(ExecState *exec, const QValueList< RefPtr<DOM::NodeImpl> >& nodes );
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
   private:
-    static JSValue *lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     QValueList< RefPtr<DOM::NodeImpl> > m_nodes;
   };

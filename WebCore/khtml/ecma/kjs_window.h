@@ -195,10 +195,10 @@ namespace KJS {
     JSValue *getListener(ExecState *exec, const DOM::AtomicString &eventType) const;
     void setListener(ExecState *exec, const DOM::AtomicString &eventType, JSValue *func);
   private:
-    static JSValue *childFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *namedFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *namedItemGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *childFrameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *namedFrameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *namedItemGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     void updateLayout() const;
 

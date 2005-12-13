@@ -79,8 +79,8 @@ namespace KJS {
         static const ClassInfo info;
         enum { Length, Refresh };
     private:
-        static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
+        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     };
 
     class MimeTypes : public PluginBase {
@@ -92,8 +92,8 @@ namespace KJS {
         static const ClassInfo info;
         enum { Length };
     private:
-        static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
+        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     };
 
     class Plugin : public PluginBase {
@@ -105,8 +105,8 @@ namespace KJS {
         static const ClassInfo info;
         enum { Name, Filename, Description, Length };
     private:
-        static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
+        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
         PluginInfo *m_info;
     };
@@ -337,12 +337,12 @@ JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
   return jsNumber(plugins->count());
 }
 
-JSValue *Plugins::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Plugins::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new Plugin(exec, plugins->at(slot.index()));
 }
 
-JSValue *Plugins::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Plugins::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   for (PluginInfo *pl = plugins->first(); pl; pl = plugins->next()) {
     if (pl->name == propertyName.qstring()) {
@@ -396,12 +396,12 @@ JSValue *MimeTypes::getValueProperty(ExecState *exec, int token) const
   return jsNumber(plugins->count());
 }
 
-JSValue *MimeTypes::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *MimeTypes::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new MimeType(exec, mimes->at(slot.index()));
 }
 
-JSValue *MimeTypes::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *MimeTypes::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   for (MimeClassInfo *m = mimes->first(); m; m = mimes->next()) {
       if (m->type == propertyName.qstring())
@@ -466,13 +466,13 @@ JSValue *Plugin::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-JSValue *Plugin::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Plugin::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     Plugin *thisObj = static_cast<Plugin *>(slot.slotBase());
     return new MimeType(exec, thisObj->m_info->mimes.at(slot.index()));
 }
 
-JSValue *Plugin::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Plugin::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     Plugin *thisObj = static_cast<Plugin *>(slot.slotBase());
     for (MimeClassInfo *m = thisObj->m_info->mimes.first(); m; m = thisObj->m_info->mimes.next()) {

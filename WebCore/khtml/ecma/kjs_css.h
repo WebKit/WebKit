@@ -60,8 +60,8 @@ namespace KJS {
            GetPropertyPriority, GetPropertyShorthand, IsPropertyImplicit, SetProperty, Item };
     DOM::CSSStyleDeclarationImpl *impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static JSValue *cssPropertyGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue *cssPropertyGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
     RefPtr<DOM::CSSStyleDeclarationImpl> m_impl;
   };
@@ -103,8 +103,8 @@ namespace KJS {
     DOM::StyleSheetListImpl *impl() const { return m_impl.get(); }
     enum { Item, Length };
   private:
-    static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static JSValue *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
     RefPtr<DOM::StyleSheetListImpl> m_impl;
     RefPtr<DOM::DocumentImpl> m_doc;
@@ -127,7 +127,7 @@ namespace KJS {
            Item, DeleteMedium, AppendMedium };
     DOM::MediaListImpl *impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
     RefPtr<DOM::MediaListImpl> m_impl;
   };
 
@@ -157,7 +157,7 @@ namespace KJS {
     enum { Item, Length };
     DOM::CSSRuleListImpl *impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     RefPtr<DOM::CSSRuleListImpl> m_impl;
   };
@@ -269,7 +269,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { Length, Item };
   private:
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
   };
 
   class DOMRGBColor : public DOMObject {

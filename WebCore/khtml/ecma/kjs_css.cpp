@@ -138,13 +138,13 @@ DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *DOMCSSStyleDeclaration::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSStyleDeclaration::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSStyleDeclaration *thisObj = static_cast<DOMCSSStyleDeclaration *>(slot.slotBase());
   return jsStringOrNull(thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSStyleDeclaration *thisObj = static_cast<DOMCSSStyleDeclaration *>(slot.slotBase());
 
@@ -380,13 +380,13 @@ JSValue *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-JSValue *DOMStyleSheetList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMStyleSheetList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
   return getDOMStyleSheet(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMStyleSheetList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMStyleSheetList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
   ElementImpl *element = thisObj->m_doc->getElementById(propertyName.domString());
@@ -501,7 +501,7 @@ JSValue *DOMMediaList::getValueProperty(ExecState *exec, int token)
   }
 }
 
-JSValue *DOMMediaList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMMediaList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMMediaList *thisObj = static_cast<DOMMediaList *>(slot.slotBase());
   return jsStringOrNull(thisObj->m_impl->item(slot.index()));
@@ -658,7 +658,7 @@ JSValue *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-JSValue *DOMCSSRuleList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSRuleList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSRuleList *thisObj = static_cast<DOMCSSRuleList *>(slot.slotBase());
   return getDOMCSSRule(exec, thisObj->m_impl->item(slot.index()));
@@ -1192,7 +1192,7 @@ JSValue *DOMCSSValueList::getValueProperty(ExecState *exec, int token) const
   return jsNumber(static_cast<CSSValueListImpl *>(impl())->length());
 }
 
-JSValue *DOMCSSValueList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMCSSValueList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSValueList *thisObj = static_cast<DOMCSSValueList *>(slot.slotBase());
   return getDOMCSSValue(exec, static_cast<CSSValueListImpl *>(thisObj->impl())->item(slot.index()));

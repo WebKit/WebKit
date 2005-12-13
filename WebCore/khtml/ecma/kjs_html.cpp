@@ -263,7 +263,7 @@ HTMLDocument::HTMLDocument(ExecState *exec, HTMLDocumentImpl *d)
 {
 }
 
-JSValue *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   HTMLDocument *thisObj = static_cast<HTMLDocument *>(slot.slotBase());
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(thisObj->impl());
@@ -1259,7 +1259,7 @@ HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
 {
 }
 
-JSValue *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::formIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1267,7 +1267,7 @@ JSValue *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propert
     return getDOMNode(exec, form->elements()->item(slot.index()));
 }
 
-JSValue *HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::formNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1275,7 +1275,7 @@ JSValue *HTMLElement::formNameGetter(ExecState *exec, const Identifier& property
     return HTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
 }
 
-JSValue *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::selectIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLSelectElementImpl *select = static_cast<HTMLSelectElementImpl *>(thisObj->impl());
@@ -1283,7 +1283,7 @@ JSValue *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& prope
     return getDOMNode(exec, select->optionsHTMLCollection()->item(slot.index()));
 }
 
-JSValue *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -1296,7 +1296,7 @@ JSValue *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& prop
     return jsUndefined();
 }
 
-JSValue *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::frameWindowPropertyGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
 
@@ -1307,7 +1307,7 @@ JSValue *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifie
     return jsUndefined();
 }
 
-JSValue *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::runtimeObjectGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -1315,7 +1315,7 @@ JSValue *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& pro
     return getRuntimeObject(exec, element);
 }
 
-JSValue *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -3320,19 +3320,19 @@ HTMLCollection::~HTMLCollection()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return jsNumber(thisObj->m_impl->length());
 }
 
-JSValue *HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *HTMLCollection::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLCollection::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return thisObj->getNamedItems(exec, propertyName);
@@ -3452,7 +3452,7 @@ HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *
 {
 }
 
-JSValue *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLSelectCollection *thisObj = static_cast<HTMLSelectCollection *>(slot.slotBase());
     return jsNumber(thisObj->m_element->selectedIndex());

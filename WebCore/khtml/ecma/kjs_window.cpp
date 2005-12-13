@@ -123,8 +123,8 @@ public:
     virtual UString toString(ExecState *exec) const;
     enum { Length, Location };
   private:
-    static JSValue *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static JSValue *nameGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -913,19 +913,19 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    return jsUndefined();
 }
 
-JSValue *Window::childFrameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Window::childFrameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   return retrieve(thisObj->m_part->childFrameNamed(propertyName.qstring()));
 }
 
-JSValue *Window::namedFrameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Window::namedFrameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   return retrieve(thisObj->m_part->findFrame(propertyName.qstring()));
 }
 
-JSValue *Window::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Window::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   
@@ -936,7 +936,7 @@ JSValue *Window::indexGetter(ExecState *exec, const Identifier& propertyName, co
   return retrieve(static_cast<KHTMLPart*>(frame));
 }
 
-JSValue *Window::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   DocumentImpl *doc = thisObj->m_part->xmlDocImpl();
@@ -2027,7 +2027,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
   }
 }
 
-JSValue *FrameArray::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
   KParts::ReadOnlyPart *frame = thisObj->part->frames().at(slot.index());
@@ -2040,7 +2040,7 @@ JSValue *FrameArray::indexGetter(ExecState *exec, const Identifier& propertyName
   return jsUndefined();
 }
 
-JSValue *FrameArray::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FrameArray::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
   KParts::ReadOnlyPart *frame = thisObj->part->findFrame(propertyName.qstring());

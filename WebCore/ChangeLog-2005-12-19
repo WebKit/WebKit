@@ -1,3 +1,57 @@
+2005-12-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::indexGetter):
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+        (KJS::DOMStyleSheetList::indexGetter):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMMediaList::indexGetter):
+        (KJS::DOMCSSRuleList::indexGetter):
+        (KJS::DOMCSSValueList::indexGetter):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::indexGetter):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMElement::attributeGetter):
+        (KJS::DOMNamedNodeMap::lengthGetter):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLElement::formIndexGetter):
+        (KJS::HTMLElement::formNameGetter):
+        (KJS::HTMLElement::selectIndexGetter):
+        (KJS::HTMLElement::framesetNameGetter):
+        (KJS::HTMLElement::frameWindowPropertyGetter):
+        (KJS::HTMLElement::runtimeObjectGetter):
+        (KJS::HTMLElement::runtimeObjectPropertyGetter):
+        (KJS::HTMLCollection::lengthGetter):
+        (KJS::HTMLCollection::indexGetter):
+        (KJS::HTMLCollection::nameGetter):
+        (KJS::HTMLSelectCollection::selectedIndexGetter):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugins::indexGetter):
+        (KJS::Plugins::nameGetter):
+        (KJS::MimeTypes::indexGetter):
+        (KJS::MimeTypes::nameGetter):
+        (KJS::Plugin::indexGetter):
+        (KJS::Plugin::nameGetter):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::namedFrameGetter):
+        (KJS::Window::indexGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        * khtml/ecma/kjs_window.h:
+        Update for changes to PropertySlot::GetValueFunc.
+
 2005-12-13  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

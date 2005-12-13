@@ -743,13 +743,13 @@ JSValue *DOMNodeList::getValueProperty(ExecState *exec, int token) const
   return jsNumber(m_impl->length());
 }
 
-JSValue *DOMNodeList::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
   return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMNodeList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
   return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.domString()));
@@ -1190,7 +1190,7 @@ JSValue *DOMElement::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-JSValue *DOMElement::attributeGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMElement::attributeGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMElement *thisObj = static_cast<DOMElement *>(slot.slotBase());
 
@@ -1452,19 +1452,19 @@ DOMNamedNodeMap::~DOMNamedNodeMap()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *DOMNamedNodeMap::lengthGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNamedNodeMap::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
   return jsNumber(thisObj->m_impl->length());
 }
 
-JSValue *DOMNamedNodeMap::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNamedNodeMap::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
   return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMNamedNodeMap::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNamedNodeMap::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
   return getDOMNode(exec, thisObj->m_impl->getNamedItem(propertyName.domString()));
@@ -1865,13 +1865,13 @@ DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const QValueList< 
 {
 }
 
-JSValue *DOMNamedNodesCollection::lengthGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection *>(slot.slotBase());
   return jsNumber(thisObj->m_nodes.count());
 }
 
-JSValue *DOMNamedNodesCollection::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection *>(slot.slotBase());
   return getDOMNode(exec, thisObj->m_nodes[slot.index()].get());

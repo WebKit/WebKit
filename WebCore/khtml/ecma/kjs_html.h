@@ -56,7 +56,7 @@ namespace KJS {
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
            BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };
   private:
-    static JSValue *namedItemGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *namedItemGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
   };
 
   class HTMLElement : public DOMElement {
@@ -285,13 +285,13 @@ namespace KJS {
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText};
   private:
-    static JSValue *formIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *formNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *selectIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *framesetNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *frameWindowPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *runtimeObjectGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *runtimeObjectPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *formIndexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *formNameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *selectIndexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *framesetNameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *frameWindowPropertyGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *runtimeObjectGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *runtimeObjectPropertyGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
   };
 
   DOM::HTMLElementImpl *toHTMLElement(JSValue *); // returns 0 if passed-in value is not a HTMLElement object
@@ -314,9 +314,9 @@ namespace KJS {
   protected:
     RefPtr<DOM::HTMLCollectionImpl> m_impl;
   private:
-    static JSValue *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
-    static JSValue *nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *lengthGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
   };
 
   class HTMLSelectCollection : public HTMLCollection {
@@ -325,7 +325,7 @@ namespace KJS {
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
   private:
-    static JSValue *selectedIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static JSValue *selectedIndexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     RefPtr<DOM::HTMLSelectElementImpl> m_element;
   };
