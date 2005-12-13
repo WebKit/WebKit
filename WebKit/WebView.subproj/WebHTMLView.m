@@ -69,6 +69,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <WebCore/WebCoreImageRenderer.h>
 
 #import <AppKit/NSAccessibility.h>
 
@@ -2867,7 +2868,7 @@ done:
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
 
     // Convert image renderer to NSImage.
-    [elementInfo _web_setObjectIfNotNil:[(WebImageRenderer *)[elementInfoWC objectForKey:WebCoreElementImageRendererKey] image] forKey:WebElementImageKey];
+    [elementInfo _web_setObjectIfNotNil:[(id <WebCoreImageRenderer>)[elementInfoWC objectForKey:WebCoreElementImageRendererKey] image] forKey:WebElementImageKey];
     
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
     ASSERT(webFrameView);

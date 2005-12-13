@@ -2,11 +2,10 @@
 
         Reviewed by nobody, simple build fix.
 
-        Fixes a couple ambiguous selector build errors when building with 3.3.
+        Fixes a couple ambiguous selector build errors when building with GCC 3.3.
 
         * Misc.subproj/WebIconDatabase.m:
         (-[WebIconDatabase releaseIconForURL:]):
-        * WebCoreSupport.subproj/WebImageRenderer.h: Added missing methods for image and imageRef.
         * WebView.subproj/WebHTMLView.m:
         (-[NSView _web_layoutIfNeededRecursive:testDirtyRect:]):
         (-[NSArray elementAtPoint:]):
