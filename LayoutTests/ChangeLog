@@ -1,3 +1,23 @@
+2005-12-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        3 tests checking expected behavior for bad transform.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6061
+
+        * svg/custom/transform-ignore-after-invalid-expected.checksum: Added.
+        * svg/custom/transform-ignore-after-invalid-expected.png: Added.
+        * svg/custom/transform-ignore-after-invalid-expected.txt: Added.
+        * svg/custom/transform-ignore-after-invalid.svg: Added.
+        * svg/custom/transform-invalid-expected.checksum: Added.
+        * svg/custom/transform-invalid-expected.png: Added.
+        * svg/custom/transform-invalid-expected.txt: Added.
+        * svg/custom/transform-invalid.svg: Added.
+        * svg/custom/transform-with-ending-space-expected.checksum: Added.
+        * svg/custom/transform-with-ending-space-expected.png: Added.
+        * svg/custom/transform-with-ending-space-expected.txt: Added.
+        * svg/custom/transform-with-ending-space.svg: Added.
+
 2005-12-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
