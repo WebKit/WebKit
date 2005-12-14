@@ -1,3 +1,13 @@
+2005-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- remove the dead _frameForDataSource: method (WebDataSource now knows its WebFrame)
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6072
+	
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 === Safari-521~5 ===
 
 2005-12-12  Timothy Hatcher  <timothy@apple.com>

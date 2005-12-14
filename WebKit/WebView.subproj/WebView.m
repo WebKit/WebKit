@@ -885,41 +885,6 @@ static bool debugWidget = true;
     return _private->scriptDebugDelegateForwarder;
 }
 
-- (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame
-{
-    NSArray *frames;
-    int i, count;
-    WebFrame *result, *aFrame;
-
-    if ([frame dataSource] == dataSource)
-        return frame;
-
-    if ([frame provisionalDataSource] == dataSource)
-        return frame;
-
-    // It's safe to use the internal version because we know this
-    // function will not change the set of frames
-    frames = [frame _internalChildFrames];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForDataSource: dataSource fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-
-    return nil;
-}
-
-
-- (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource
-{
-    WebFrame *frame = [self mainFrame];
-
-    return [self _frameForDataSource: dataSource fromFrame: frame];
-}
-
-
 - (WebFrame *)_frameForView: (WebFrameView *)aView fromFrame: (WebFrame *)frame
 {
     NSArray *frames;

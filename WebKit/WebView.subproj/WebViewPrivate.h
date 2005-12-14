@@ -140,24 +140,7 @@ typedef enum {
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
-/*!
-    @method frameForDataSource:
-    @abstract Return the frame associated with the data source.
-    @discussion Traverses the frame tree to find the frame associated
-    with a datasource.
-    @param datasource The datasource to  match against each frame.
-    @result The frame that has the associated datasource.
-*/
-- (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource;
-
-    /*!
-            @method frameForView:
-     @abstract Return the frame associated with the view.
-     @discussion Traverses the frame tree to find the view.
-     @param aView The view to match against each frame.
-     @result The frame that has the associated view.
-     */
-- (WebFrame *)_frameForView: (WebFrameView *)aView;
+- (WebFrame *)_frameForView:(WebFrameView *)view;
 
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;
 
