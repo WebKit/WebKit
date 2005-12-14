@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x37
+        RenderText {TEXT} at (0,0) size 364x18
+          text run at (0,0) width 364: "This is to test onchange of checkboxes and radio buttons. "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBlock {INPUT} at (3,22) size 12x12
+        RenderText {TEXT} at (18,18) size 65x18
+          text run at (18,18) width 65: "Checkbox"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,37) size 784x18
+        RenderText {TEXT} at (0,0) size 321x18
+          text run at (0,0) width 321: "Test 1 Passed. onChange event fired for checkbox."
+      RenderBlock (anonymous) at (0,55) size 784x19
+        RenderBlock {INPUT} at (3,3) size 12x13
+        RenderText {TEXT} at (18,0) size 50x18
+          text run at (18,0) width 50: "Radio 1"
+        RenderText {TEXT} at (68,0) size 4x18
+          text run at (68,0) width 4: " "
+        RenderBlock {INPUT} at (75,3) size 12x13
+        RenderText {TEXT} at (90,0) size 50x18
+          text run at (90,0) width 50: "Radio 2"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,74) size 784x18
+        RenderText {TEXT} at (0,0) size 336x18
+          text run at (0,0) width 336: "Test 2 Passed. onChange event fired for radio button."

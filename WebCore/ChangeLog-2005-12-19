@@ -1,3 +1,17 @@
+2005-12-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5465
+        REGRESSION: check box onchange event doesn't fire (radio buttons do not get disabled in Bugzilla)
+
+        Test: fast/forms/checkbox-radio-onchange.html
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::setChecked): call onChange after setting the checked state.  
+        This will match our old behavior, and Firefox behavior.  
+        This will also fire onChange for radio buttons which matches Firefox behavior.
+
 2005-12-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt and Darin.
