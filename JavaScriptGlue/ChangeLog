@@ -1,3 +1,14 @@
+2005-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+	- Fixed build after Anders's last checkin to JavaScriptCore.
+	
+        Reviewed by darin.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::userObjectGetter): Updated to reflect new argument that 
+	getters take (unused here).
+        * UserObjectImp.h:
+
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

@@ -113,7 +113,7 @@ ReferenceList UserObjectImp::propList(ExecState *exec, bool recursive)
     return list;
 }
 
-JSValue *UserObjectImp::userObjectGetter(ExecState *, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *UserObjectImp::userObjectGetter(ExecState *, JSObject *, const Identifier& propertyName, const PropertySlot& slot)
 {
     UserObjectImp *thisObj = static_cast<UserObjectImp *>(slot.slotBase());
     // getOwnPropertySlot should have guarded against a null fJSUserObject.

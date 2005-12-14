@@ -37,7 +37,7 @@ public:
 protected:
     UserObjectImp();
 private:
-    static JSValue *userObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static JSValue *userObjectGetter(ExecState *, JSObject *originalObject, const Identifier& propertyName, const PropertySlot&);
 
     JSUserObject* fJSUserObject;
 };
