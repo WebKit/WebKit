@@ -1,3 +1,5 @@
+=== Safari-521~5 ===
+
 2005-12-13  Geoffrey Garen  <ggaren@apple.com>
 
 	- Fixed build after Anders's last checkin to JavaScriptCore.
