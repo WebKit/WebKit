@@ -1,3 +1,13 @@
+2005-12-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+         Layout test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5921>
+         Hit-testing text in overflows does not take scrolling into account.
+ 
+         * fast/overflow/overflow-text-hit-testing-expected.checksum: Added.
+         * fast/overflow/overflow-text-hit-testing-expected.png: Added.
+         * fast/overflow/overflow-text-hit-testing-expected.txt: Added.
+         * fast/overflow/overflow-text-hit-testing.html: Added.
+
 2005-12-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

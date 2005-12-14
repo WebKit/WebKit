@@ -945,7 +945,10 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
     int absx, absy;
-    containingBlock()->absolutePosition(absx, absy);
+    RenderBlock *cb = containingBlock();
+    cb->absolutePosition(absx, absy);
+    if (cb->hasOverflowClip())
+        cb->layer()->subtractScrollOffset(absx, absy);
 
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above

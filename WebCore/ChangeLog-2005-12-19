@@ -1,3 +1,15 @@
+2005-12-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
+         Reviewed by Darin & Geoff, committed by Adele.
+         
+         Test: fast/overflow/overflow-text-hit-testing.html
+ 
+         Fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5921>
+         Hit-testing text in overflows does not take scrolling into account.
+ 
+         * khtml/rendering/render_text.cpp:
+         (RenderText::positionForCoordinates): Adjust for containing block scroll
+         
 2005-12-14 Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin, committed by Adele.
