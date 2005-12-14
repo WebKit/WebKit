@@ -1293,7 +1293,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     NSMutableDictionary *dict;
     float fontHeight = [[self layoutManager] defaultLineHeightForFont:font];
     float h = (lineHeight / 2.0f) - (fontHeight / 2.0f);
-    h = (h >= 0.0) ? floor(h) : -floor(-h);
+    h = (h >= 0.0) ? floorf(h) : -floorf(-h);
     
     if (typingAttrs)
         dict = [typingAttrs mutableCopy];
