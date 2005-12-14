@@ -35,7 +35,7 @@
 
 class KHTMLPartPrivate;
 class KHTMLPartBrowserExtension;
-class KJSProxy;
+class KJSProxyImpl;
 class KHTMLView;
 class KHTMLSettings;
 class KJavaAppletContext;
@@ -161,7 +161,6 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class KJS::Window;
   friend class KJS::WindowFunc;
   friend class KJS::DOMDocument;
-  friend class KJSProxy;
   friend class KHTMLPartBrowserExtension;
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
@@ -181,7 +180,6 @@ class KHTMLPart : public KParts::ReadOnlyPart
   Q_PROPERTY( QCString dcopObjectId READ dcopObjectId )
 
 public:
-  enum GUIProfile { DefaultGUI, BrowserViewGUI /* ... */ };
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
   /**
@@ -196,10 +194,8 @@ public:
    * @p parentWidget is used as parent for both objects, the part and
    * the view.
    */
-  KHTMLPart( QWidget *parentWidget = 0, const char *widgetname = 0,
-             QObject *parent = 0, const char *name = 0, GUIProfile prof = DefaultGUI );
-
-  KHTMLPart( KHTMLView *view, QObject *parent = 0, const char *name = 0, GUIProfile prof = DefaultGUI );
+  KHTMLPart(QWidget *parentWidget = 0, const char *widgetname = 0, QObject *parent = 0, const char *name = 0);
+  KHTMLPart(KHTMLView *view, QObject *parent = 0, const char *name = 0);
 
   /**
    * Destructor.
@@ -1138,7 +1134,7 @@ private:
   void popupMenu( const QString &url );
 
 
-  void init( KHTMLView *view, GUIProfile prof );
+  void init(KHTMLView *view);
 
   virtual void clear();
 
@@ -1190,9 +1186,8 @@ private:
   
   void cancelRedirection(bool newLoadInProgress = false);
 
-  KJSProxy *jScript();
-
  public:
+  KJSProxyImpl *jScript();
   KHTMLPart *opener();
   void setOpener(KHTMLPart *_opener);
   bool openedByJS();

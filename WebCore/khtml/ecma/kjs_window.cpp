@@ -356,9 +356,9 @@ Window::~Window()
     delete winq;
 }
 
-Interpreter *Window::interpreter() const
+ScriptInterpreter *Window::interpreter() const
 {
-    return KJSProxy::proxy( m_part )->interpreter();
+    return m_part->jScript()->interpreter();
 }
 
 Window *Window::retrieveWindow(KHTMLPart *p)
@@ -383,14 +383,10 @@ Window *Window::retrieveActive(ExecState *exec)
 
 JSValue *Window::retrieve(KHTMLPart *p)
 {
-  assert(p);
-  KJSProxy *proxy = KJSProxy::proxy( p );
-  if (proxy) {
-#ifdef KJS_VERBOSE
-    kdDebug(6070) << "Window::retrieve part=" << p << " interpreter=" << proxy->interpreter() << " window=" << proxy->interpreter()->globalObject() << endl;
-#endif
-    return proxy->interpreter()->globalObject(); // the Global object is the "window"
-  } else
+    assert(p);
+    if (KJSProxyImpl *proxy = p->jScript())
+        return proxy->interpreter()->globalObject(); // the Global object is the "window"
+  
     return jsUndefined(); // This can happen with JS disabled on the domain of that window
 }
 
@@ -1423,8 +1419,7 @@ void Window::clear( ExecState *exec )
   Collector::collect();
 
   // Now recreate a working global object for the next URL that will use us
-  Interpreter *interpreter = KJSProxy::proxy( m_part )->interpreter();
-  interpreter->initGlobalObject();
+  interpreter()->initGlobalObject();
 }
 
 void Window::setCurrentEvent(EventImpl *evt)
@@ -1870,7 +1865,7 @@ void ScheduledAction::execute(Window *window)
     if (!window->m_part)
         return;
 
-    ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(KJSProxy::proxy(window->m_part)->interpreter());
+    ScriptInterpreter *interpreter = window->interpreter();
 
     interpreter->setProcessingTimerCallback(true);
   

@@ -39,7 +39,6 @@
 #include "editing/html_interchange.h"
 #include "editing/SelectionController.h"
 
-#include <kglobal.h>
 #include <kdebug.h>
 
 #include "rendering/render_object.h"

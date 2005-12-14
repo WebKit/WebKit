@@ -45,7 +45,6 @@
 
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kglobal.h>
 #include <kimageio.h>
 #include <kcharsets.h>
 #include <kiconloader.h>
@@ -180,9 +179,8 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const DOMString &url, KI
     // load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
-    bool b;
     if(!charset.isEmpty())
-	m_codec = KGlobal::charsets()->codecForName(charset, b);
+	m_codec = QTextCodec::codecForName(charset.latin1());
     else
         m_codec = QTextCodec::codecForName("iso8859-1");
 }
@@ -273,9 +271,8 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
     // load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
-    bool b;
     if(!charset.isEmpty())
-        m_codec = KGlobal::charsets()->codecForName(charset, b);
+        m_codec = QTextCodec::codecForName(charset.latin1());
     else
 	m_codec = QTextCodec::codecForName("iso8859-1");
 }

@@ -176,7 +176,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     Cache::init();
 
     // The widget is made outside this class in our case.
-    KHTMLPart::init( 0, DefaultGUI );
+    KHTMLPart::init(0);
 
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
@@ -239,7 +239,7 @@ bool KWQKHTMLPart::userGestureHint()
         KHTMLPart *rootPart = this;
         while (rootPart->parentPart() != 0)
             rootPart = rootPart->parentPart();
-        KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy(rootPart)->interpreter());
+        KJS::ScriptInterpreter *interpreter = rootPart->jScript()->interpreter();
         return interpreter->wasRunByUserGesture();
     } else
         // if no JS, assume the user initiated this nav
@@ -1373,7 +1373,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
-        _bindingRoot->setInterpreter (KJSProxy::proxy(this)->interpreter());
+        _bindingRoot->setInterpreter(jScript()->interpreter());
         addPluginRootObject (_bindingRoot);
     }
     return _bindingRoot;

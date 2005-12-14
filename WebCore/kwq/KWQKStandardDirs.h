@@ -29,15 +29,6 @@
 #include "KWQString.h"
 #include "KWQKGlobal.h"
 
-QString locate(const char *type, const QString& filename, 
-    const KInstance* instance=KGlobal::instance());
-
-QString locateLocal(const char *type, const QString &filename, 
-    const KInstance *instance=KGlobal::instance());
-
-class KStandardDirs {
-public:
-    static QString saveLocation(const char *, const QString &) { return 0; }
-};
+QString locate(const char *type, const QString& filename);
 
 #endif

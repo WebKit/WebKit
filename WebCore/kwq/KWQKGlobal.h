@@ -27,19 +27,11 @@
 #define KGLOBAL_H_
 
 #include "KWQString.h"
-#include "KWQKInstance.h"
 
-class KCharsets;
-class KLocale;
-class KStandardDirs;
 class KConfig;
 
 class KGlobal {
 public:
-    static KInstance *instance() { return 0; }
-    static KCharsets *charsets() { return 0; }
-    static KLocale *locale() { return 0; }
-    static KStandardDirs *dirs() { return 0; }
     static KConfig *config();
 
     static const QString &staticQString(const QString &);

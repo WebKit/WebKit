@@ -26,14 +26,7 @@
 #include "config.h"
 #import "KWQKHTMLFactory.h"
 
-#import "KWQKInstance.h"
 #import "KWQKHTMLSettings.h"
-
-KInstance *KHTMLFactory::instance()
-{
-    static KInstance instance;
-    return &instance;
-}
 
 KHTMLSettings *KHTMLFactory::defaultHTMLSettings()
 {

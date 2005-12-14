@@ -46,7 +46,6 @@
 #include "css/csshelper.h"
 #include "ecma/kjs_proxy.h"
 #include <kcharsets.h>
-#include <kglobal.h>
 #include <ctype.h>
 #include <assert.h>
 #include <qvariant.h>
@@ -164,7 +163,6 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, KHTMLView *_view, bool inc
     buffer = 0;
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
-    charsets = KGlobal::charsets();
     parser = new HTMLParser(_view, _doc, includesComments);
     m_executingScript = 0;
     onHold = false;
@@ -181,7 +179,6 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, DOM::DocumentFragmentImpl 
     buffer = 0;
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
-    charsets = KGlobal::charsets();
     parser = new HTMLParser(i, _doc, includesComments);
     m_executingScript = 0;
     onHold = false;
@@ -1675,7 +1672,7 @@ void HTMLTokenizer::finish()
 
 void HTMLTokenizer::processToken()
 {
-    KJSProxy *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;    
+    KJSProxyImpl *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;    
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if ( dest > buffer )

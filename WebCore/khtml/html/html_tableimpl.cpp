@@ -44,7 +44,6 @@
 #include "rendering/render_table.h"
 
 #include <kdebug.h>
-#include <kglobal.h>
 
 using namespace khtml;
 

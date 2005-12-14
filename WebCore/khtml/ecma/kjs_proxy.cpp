@@ -32,35 +32,6 @@ using namespace KJS;
 
 using DOM::EventListener;
 
-extern "C" {
-  KJSProxy *kjs_html_init(KHTMLPart *khtmlpart);
-}
-
-class KJSProxyImpl : public KJSProxy {
-public:
-  KJSProxyImpl(KHTMLPart *part);
-  virtual ~KJSProxyImpl();
-  virtual QVariant evaluate(QString filename, int baseLine, const QString&str, DOM::NodeImpl *n);
-  virtual void clear();
-  virtual DOM::EventListener *createHTMLEventHandler(QString sourceUrl, QString code, DOM::NodeImpl *node);
-  virtual void finishedWithEvent(DOM::EventImpl *event);
-  virtual KJS::ScriptInterpreter *interpreter();
-
-  virtual void setDebugEnabled(bool enabled);
-  virtual bool paused() const;
-  virtual void setSourceFile(QString url, QString code);
-  virtual void appendSourceFile(QString url, QString code);
-
-  void initScript();
-
-private:
-  KJS::ScriptInterpreter* m_script;
-  bool m_debugEnabled;
-#ifndef NDEBUG
-  static int s_count;
-#endif
-};
-
 #ifndef NDEBUG
 int KJSProxyImpl::s_count = 0;
 #endif
@@ -69,7 +40,6 @@ KJSProxyImpl::KJSProxyImpl(KHTMLPart *part)
 {
   m_script = 0;
   m_part = part;
-  m_debugEnabled = false;
 #ifndef NDEBUG
   s_count++;
 #endif
@@ -103,13 +73,6 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
   // See smart window.open policy for where this is used.
   bool inlineCode = filename.isNull();
 
-#ifdef KJS_DEBUGGER
-  if (inlineCode)
-    filename = "(unknown file)";
-  if (KJSDebugWin::instance())
-    KJSDebugWin::instance()->setNextSourceInfo(filename,baseLine);
-#endif
-
   m_script->setInlineCode(inlineCode);
 
   JSLock lock;
@@ -139,30 +102,17 @@ void KJSProxyImpl::clear() {
   // We have to keep it, so that the Window object for the part remains the same.
   // (we used to delete and re-create it, previously)
   if (m_script) {
-#ifdef KJS_DEBUGGER
-    KJSDebugWin *debugWin = KJSDebugWin::instance();
-    if (debugWin && debugWin->currentScript() == m_script) {
-        debugWin->setMode(KJSDebugWin::Stop);
-    }
-#endif
     Window *win = Window::retrieveWindow(m_part);
     if (win)
         win->clear( m_script->globalExec() );
   }
 }
 
-DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QString code, DOM::NodeImpl *node)
+DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString code, DOM::NodeImpl *node)
 {
-#ifdef KJS_DEBUGGER
-  if (KJSDebugWin::instance())
-    KJSDebugWin::instance()->setNextSourceInfo(sourceUrl,m_handlerLineno);
-#else
-  Q_UNUSED(sourceUrl);
-#endif
-
   initScript();
   JSLock lock;
-  return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code,node,m_handlerLineno);
+  return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code, node, m_handlerLineno);
 }
 
 void KJSProxyImpl::finishedWithEvent(DOM::EventImpl *event)
@@ -180,59 +130,6 @@ KJS::ScriptInterpreter *KJSProxyImpl::interpreter()
     initScript();
   m_part->keepAlive();
   return m_script;
-}
-
-void KJSProxyImpl::setDebugEnabled(bool enabled)
-{
-#ifdef KJS_DEBUGGER
-  m_debugEnabled = enabled;
-  if (m_script)
-      m_script->setDebuggingEnabled(enabled);
-  // NOTE: this is consistent across all KJSProxyImpl instances, as we only
-  // ever have 1 debug window
-  if (!enabled && KJSDebugWin::instance()) {
-    KJSDebugWin::destroyInstance();
-  }
-  else if (enabled && !KJSDebugWin::instance()) {
-    KJSDebugWin::createInstance();
-    initScript();
-    KJSDebugWin::instance()->attach(m_script);
-  }
-#else
-  Q_UNUSED(enabled);
-#endif
-}
-
-bool KJSProxyImpl::paused() const
-{
-#ifdef KJS_DEBUGGER
-  if (KJSDebugWin::instance())
-    return KJSDebugWin::instance()->inSession();
-#endif
-  return false;
-}
-
-void KJSProxyImpl::setSourceFile(QString url, QString code)
-{
-#ifdef KJS_DEBUGGER
-  if (KJSDebugWin::instance())
-    KJSDebugWin::instance()->setSourceFile(url,code);
-#else
-  Q_UNUSED(url);
-  Q_UNUSED(code);
-#endif
-
-}
-
-void KJSProxyImpl::appendSourceFile(QString url, QString code)
-{
-#ifdef KJS_DEBUGGER
-  if (KJSDebugWin::instance())
-    KJSDebugWin::instance()->appendSourceFile(url,code);
-#else
-  Q_UNUSED(url);
-  Q_UNUSED(code);
-#endif
 }
 
 // Implementation of the debug() function
@@ -264,7 +161,6 @@ void KJSProxyImpl::initScript()
 #ifdef KJS_DEBUGGER
   m_script->setDebuggingEnabled(m_debugEnabled);
 #endif
-  //m_script->enableDebug();
   globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
 
   QString userAgent = KWQ(m_part)->userAgent();
@@ -276,17 +172,4 @@ void KJSProxyImpl::initScript()
     if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
         userAgent.find(QString::fromLatin1("compatible")) == -1)
       m_script->setCompatMode(Interpreter::NetscapeCompat);
-}
-
-// Helper method, so that all classes which need jScript() don't need to be added
-// as friend to KHTMLPart
-KJSProxy * KJSProxy::proxy( KHTMLPart *part )
-{
-    return part ? part->jScript() : NULL;
-}
-
-// initialize HTML module
-KJSProxy *kjs_html_init(KHTMLPart *khtmlpart)
-{
-  return new KJSProxyImpl(khtmlpart);
 }

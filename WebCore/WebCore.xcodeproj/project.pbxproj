@@ -210,14 +210,12 @@
 		93F1995508245E59001E9ABC /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
 		93F1995708245E59001E9ABC /* KWQKKAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F587861D02DE398401EA4122 /* KWQKKAction.h */; };
-		93F1995808245E59001E9ABC /* KWQKLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F902DE382001EA4122 /* KWQKLibrary.h */; };
 		93F1995908245E59001E9ABC /* KWQKLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = F587862102DE398401EA4122 /* KWQKLineEdit.h */; };
 		93F1995A08245E59001E9ABC /* KWQKListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587862202DE398401EA4122 /* KWQKListBox.h */; };
 		93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
 		93F1995C08245E59001E9ABC /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866702DE3B3201EA4122 /* KWQKPartsBrowserExtension.h */; };
 		93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
-		93F1995F08245E59001E9ABC /* KWQKPartsFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866A02DE3B3201EA4122 /* KWQKPartsFactory.h */; };
 		93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
 		93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		93F1996208245E59001E9ABC /* KWQKPartsPartManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866D02DE3B3201EA4122 /* KWQKPartsPartManager.h */; };
@@ -746,14 +744,12 @@
 		A8212B2008794A2300677359 /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		A8212B2108794A2300677359 /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
 		A8212B2208794A2300677359 /* KWQKKAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F587861D02DE398401EA4122 /* KWQKKAction.h */; };
-		A8212B2308794A2300677359 /* KWQKLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F902DE382001EA4122 /* KWQKLibrary.h */; };
 		A8212B2408794A2300677359 /* KWQKLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = F587862102DE398401EA4122 /* KWQKLineEdit.h */; };
 		A8212B2508794A2300677359 /* KWQKListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587862202DE398401EA4122 /* KWQKListBox.h */; };
 		A8212B2608794A2300677359 /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
 		A8212B2708794A2300677359 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866702DE3B3201EA4122 /* KWQKPartsBrowserExtension.h */; };
 		A8212B2808794A2300677359 /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		A8212B2908794A2300677359 /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
-		A8212B2A08794A2300677359 /* KWQKPartsFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866A02DE3B3201EA4122 /* KWQKPartsFactory.h */; };
 		A8212B2B08794A2300677359 /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
 		A8212B2C08794A2300677359 /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		A8212B2D08794A2300677359 /* KWQKPartsPartManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866D02DE3B3201EA4122 /* KWQKPartsPartManager.h */; };
@@ -1263,10 +1259,8 @@
 		A8C0FB9D089701F900BA5114 /* KCanvasRenderingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */; };
 		A8C0FBA0089701F900BA5114 /* KSVGTimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */; };
 		A8C0FBA1089701F900BA5114 /* KSVGTimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */; };
-		A8C0FBA6089701F900BA5114 /* KSVGCSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6F7089701F100BA5114 /* KSVGCSSParser.h */; };
 		A8C0FBA7089701F900BA5114 /* svg.css in Resources */ = {isa = PBXBuildFile; fileRef = A8C0F6F8089701F100BA5114 /* svg.css */; };
 		A8C0FBAA089701F900BA5114 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
-		A8C0FBAB089701F900BA5114 /* SVGCSSStyleSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6FC089701F100BA5114 /* SVGCSSStyleSelector.h */; };
 		A8C0FBAE089701F900BA5114 /* SVGRenderStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */; };
 		A8C0FBAF089701F900BA5114 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F700089701F100BA5114 /* SVGRenderStyle.h */; };
 		A8C0FBB0089701F900BA5114 /* SVGRenderStyleDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */; };
@@ -1973,10 +1967,8 @@
 		A8C0F6F4089701F100BA5114 /* cssproperties.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cssproperties.in; sourceTree = "<group>"; };
 		A8C0F6F5089701F100BA5114 /* cssvalues.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cssvalues.in; sourceTree = "<group>"; };
 		A8C0F6F6089701F100BA5114 /* KSVGCSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSVGCSSParser.cpp; sourceTree = "<group>"; };
-		A8C0F6F7089701F100BA5114 /* KSVGCSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSVGCSSParser.h; sourceTree = "<group>"; };
 		A8C0F6F8089701F100BA5114 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSStyleSelector.cpp; sourceTree = "<group>"; };
-		A8C0F6FC089701F100BA5114 /* SVGCSSStyleSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGCSSStyleSelector.h; sourceTree = "<group>"; };
 		A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyle.cpp; sourceTree = "<group>"; };
 		A8C0F700089701F100BA5114 /* SVGRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyle.h; sourceTree = "<group>"; };
 		A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyleDefs.cpp; sourceTree = "<group>"; };
@@ -2663,7 +2655,6 @@
 		F58785F502DE382001EA4122 /* KWQKGlobal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKGlobal.h; sourceTree = "<group>"; };
 		F58785F602DE382001EA4122 /* KWQKGlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKGlobalSettings.h; sourceTree = "<group>"; };
 		F58785F802DE382001EA4122 /* KWQKInstance.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKInstance.h; sourceTree = "<group>"; };
-		F58785F902DE382001EA4122 /* KWQKLibrary.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKLibrary.h; sourceTree = "<group>"; };
 		F58785FA02DE382001EA4122 /* KWQKLocale.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKLocale.h; sourceTree = "<group>"; };
 		F58785FD02DE382001EA4122 /* KWQKStandardDirs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKStandardDirs.h; sourceTree = "<group>"; };
 		F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKStaticDeleter.h; sourceTree = "<group>"; };
@@ -2692,7 +2683,6 @@
 		F587866702DE3B3201EA4122 /* KWQKPartsBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserExtension.h; sourceTree = "<group>"; };
 		F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserInterface.h; sourceTree = "<group>"; };
 		F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsEvent.h; sourceTree = "<group>"; };
-		F587866A02DE3B3201EA4122 /* KWQKPartsFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsFactory.h; sourceTree = "<group>"; };
 		F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsHistoryProvider.h; sourceTree = "<group>"; };
 		F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsPart.h; sourceTree = "<group>"; };
 		F587866D02DE3B3201EA4122 /* KWQKPartsPartManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsPartManager.h; sourceTree = "<group>"; };
@@ -3098,10 +3088,8 @@
 				A8C0F6F4089701F100BA5114 /* cssproperties.in */,
 				A8C0F6F5089701F100BA5114 /* cssvalues.in */,
 				A8C0F6F6089701F100BA5114 /* KSVGCSSParser.cpp */,
-				A8C0F6F7089701F100BA5114 /* KSVGCSSParser.h */,
 				A8C0F6F8089701F100BA5114 /* svg.css */,
 				A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */,
-				A8C0F6FC089701F100BA5114 /* SVGCSSStyleSelector.h */,
 				A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */,
 				A8C0F700089701F100BA5114 /* SVGRenderStyle.h */,
 				A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */,
@@ -4056,7 +4044,6 @@
 				F58785F602DE382001EA4122 /* KWQKGlobalSettings.h */,
 				F58784F502DE375901EA4122 /* KWQKGlobalSettings.mm */,
 				F58785F802DE382001EA4122 /* KWQKInstance.h */,
-				F58785F902DE382001EA4122 /* KWQKLibrary.h */,
 				F58785FA02DE382001EA4122 /* KWQKLocale.h */,
 				F587850402DE375901EA4122 /* KWQKLocale.mm */,
 				F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */,
@@ -4129,7 +4116,6 @@
 				F58784C702DE375801EA4122 /* KWQKPartsBrowserInterface.mm */,
 				F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */,
 				F587850802DE375901EA4122 /* KWQKPartsEvent.mm */,
-				F587866A02DE3B3201EA4122 /* KWQKPartsFactory.h */,
 				F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */,
 				F58784F602DE375901EA4122 /* KWQKHistoryProvider.mm */,
 				F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */,
@@ -4411,14 +4397,12 @@
 				93F1995508245E59001E9ABC /* KWQKJob.h in Headers */,
 				93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */,
 				93F1995708245E59001E9ABC /* KWQKKAction.h in Headers */,
-				93F1995808245E59001E9ABC /* KWQKLibrary.h in Headers */,
 				93F1995908245E59001E9ABC /* KWQKLineEdit.h in Headers */,
 				93F1995A08245E59001E9ABC /* KWQKListBox.h in Headers */,
 				93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */,
 				93F1995C08245E59001E9ABC /* KWQKPartsBrowserExtension.h in Headers */,
 				93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */,
 				93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */,
-				93F1995F08245E59001E9ABC /* KWQKPartsFactory.h in Headers */,
 				93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */,
 				93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */,
 				93F1996208245E59001E9ABC /* KWQKPartsPartManager.h in Headers */,
@@ -4752,14 +4736,12 @@
 				A8212B2008794A2300677359 /* KWQKJob.h in Headers */,
 				A8212B2108794A2300677359 /* KWQKJobClasses.h in Headers */,
 				A8212B2208794A2300677359 /* KWQKKAction.h in Headers */,
-				A8212B2308794A2300677359 /* KWQKLibrary.h in Headers */,
 				A8212B2408794A2300677359 /* KWQKLineEdit.h in Headers */,
 				A8212B2508794A2300677359 /* KWQKListBox.h in Headers */,
 				A8212B2608794A2300677359 /* KWQKLocale.h in Headers */,
 				A8212B2708794A2300677359 /* KWQKPartsBrowserExtension.h in Headers */,
 				A8212B2808794A2300677359 /* KWQKPartsBrowserInterface.h in Headers */,
 				A8212B2908794A2300677359 /* KWQKPartsEvent.h in Headers */,
-				A8212B2A08794A2300677359 /* KWQKPartsFactory.h in Headers */,
 				A8212B2B08794A2300677359 /* KWQKPartsHistoryProvider.h in Headers */,
 				A8212B2C08794A2300677359 /* KWQKPartsPart.h in Headers */,
 				A8212B2D08794A2300677359 /* KWQKPartsPartManager.h in Headers */,
@@ -4943,8 +4925,6 @@
 				A898F147088121E90075EFB2 /* htmlfactory.h in Headers */,
 				A8C0FB9D089701F900BA5114 /* KCanvasRenderingStyle.h in Headers */,
 				A8C0FBA1089701F900BA5114 /* KSVGTimeScheduler.h in Headers */,
-				A8C0FBA6089701F900BA5114 /* KSVGCSSParser.h in Headers */,
-				A8C0FBAB089701F900BA5114 /* SVGCSSStyleSelector.h in Headers */,
 				A8C0FBAF089701F900BA5114 /* SVGRenderStyle.h in Headers */,
 				A8C0FBB1089701F900BA5114 /* SVGRenderStyleDefs.h in Headers */,
 				A8C0FCA0089701F900BA5114 /* SVGZoomEventImpl.h in Headers */,

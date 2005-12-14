@@ -35,8 +35,6 @@
 #include "htmlnames.h"
 #include "xml/dom_docimpl.h"
 
-#include <kglobal.h>
-
 #include <qapplication.h>
 #include <qstyle.h>
 

@@ -203,8 +203,6 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case Vendor:
     return jsString("Apple Computer, Inc.");
   case Language:
-    // We don't have an implementation of KGlobal::locale().  We do however
-    // have a static method on KLocale to access the current language.
     return jsString(KLocale::language());
   case UserAgent:
     return jsString(userAgent);
@@ -241,7 +239,7 @@ PluginBase::PluginBase(ExecState *exec)
         mimes->setAutoDelete( true );
 
         // read configuration
-        KConfig c(KGlobal::dirs()->saveLocation("data","nsplugins")+"/pluginsinfo");
+        KConfig c("");
         unsigned num = (unsigned int)c.readNumEntry("number");
         for ( unsigned n=0; n<num; n++ ) {
 

@@ -45,7 +45,6 @@
 #include <kmimetype.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <qtimer.h>
 #include <qpainter.h>
 #include "qdict.h"

@@ -26,7 +26,6 @@
 #include <qstring.h>
 
 class KHTMLPart;
-class KJSDebugWin;
 
 namespace DOM {
   class EventImpl;
@@ -36,36 +35,30 @@ namespace DOM {
 
 namespace KJS {
   class List;
-  class Interpreter;
+  class ScriptInterpreter;
 }
 
-/**
- * @internal
- *
- * @short Proxy class serving as interface when being dlopen'ed.
- */
-class KJSProxy {
+class KJSProxyImpl {
 public:
-  KJSProxy() { m_handlerLineno = 0; }
-  virtual ~KJSProxy() { }
-  virtual QVariant evaluate(QString filename, int baseLine, const QString &, DOM::NodeImpl *n) = 0;
-  virtual void clear() = 0;
-  virtual DOM::EventListener *createHTMLEventHandler(QString sourceUrl, QString code, DOM::NodeImpl *node) = 0;
-  virtual void finishedWithEvent(DOM::EventImpl *event) = 0;
-  virtual KJS::Interpreter *interpreter() = 0;
+    KJSProxyImpl(KHTMLPart *part);
+    ~KJSProxyImpl();
+    QVariant evaluate(QString filename, int baseLine, const QString& str, DOM::NodeImpl *n);
+    void clear();
+    DOM::EventListener *createHTMLEventHandler(QString code, DOM::NodeImpl *node);
+    void finishedWithEvent(DOM::EventImpl *event);
+    KJS::ScriptInterpreter *interpreter();
+    void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
-  virtual void setDebugEnabled(bool enabled) = 0;
-  virtual bool paused() const = 0;
-  virtual void setSourceFile(QString url, QString code) = 0;
-  virtual void appendSourceFile(QString url, QString code) = 0;
+    void initScript();
 
-  void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
-
-  KHTMLPart *m_part;
-  int m_handlerLineno;
-
-  // Helper method, to access the private KHTMLPart::jScript()
-  static KJSProxy *proxy( KHTMLPart *part );
+private:
+    KJS::ScriptInterpreter* m_script;
+    KHTMLPart *m_part;
+    int m_handlerLineno;
+#ifndef NDEBUG
+    static int s_count;
+#endif
 };
+
 
 #endif

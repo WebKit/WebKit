@@ -50,7 +50,6 @@
 #include "render_theme.h"
 
 #include <kcharsets.h>
-#include <kglobal.h>
 #include <kdebug.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
@@ -326,7 +325,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
             if (part)
                 enc = part->encoding();
         }
-        if((codec = KGlobal::charsets()->codecForName(enc.latin1())))
+        if((codec = QTextCodec::codecForName(enc.latin1())))
             break;
     }
 

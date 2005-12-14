@@ -1420,7 +1420,7 @@ bool KJS::HTMLElement::implementsCall() const
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
         DocumentImpl* doc = element->getDocument();
-        KJSProxy *proxy = KJSProxy::proxy(doc->part());
+        KJSProxyImpl *proxy = doc->part()->jScript();
         ExecState *exec = proxy->interpreter()->globalExec();
         if (JSValue *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<JSObject *>(runtimeObject)->implementsCall();

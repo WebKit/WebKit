@@ -1,3 +1,112 @@
+2005-12-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        SVG test cases changed (now the svg.css is loaded properly).
+        No other functionality changes, just code removal.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6078
+
+        * ForwardingHeaders/klibloader.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/csshelper.cpp:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::parseUASheet):
+        (khtml::CSSStyleSelector::loadDefaultStyle):
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::eventParameterName):
+        (KJS::JSLazyEventListener::parseCode):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLElement::implementsCall):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        (KJS::PluginBase::PluginBase):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::KJSProxyImpl):
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::clear):
+        (KJSProxyImpl::createHTMLEventHandler):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_proxy.h:
+        (KJSProxyImpl::setEventHandlerLineno):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::interpreter):
+        (KJS::Window::retrieve):
+        (KJS::Window::clear):
+        (KJS::ScheduledAction::execute):
+        * khtml/ecma/kjs_window.h:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::evaluateScript):
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        (khtml::HTMLTokenizer::processToken):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::KHTMLPart):
+        (KHTMLPart::init):
+        (KHTMLPart::~KHTMLPart):
+        (KHTMLPart::restoreURL):
+        (KHTMLPart::didOpenURL):
+        (KHTMLPart::jScript):
+        (KHTMLPart::executeScript):
+        (KHTMLPart::write):
+        (KHTMLPart::reparseConfiguration):
+        (KHTMLPart::createHTMLEventListener):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/misc/decoder.cpp:
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (CachedScript::CachedScript):
+        * khtml/rendering/render_flow.cpp:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/rendering/render_inline.cpp:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_table.cpp:
+        * khtml/rendering/table_layout.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::implicitOpen):
+        (DocumentImpl::write):
+        * khtml/xml/dom_nodeimpl.cpp:
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        (SVGTestsImpl::isValid):
+        * kwq/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * kwq/KWQKGlobal.h:
+        * kwq/KWQKHTMLFactory.h:
+        (KHTMLFactory::vLinks):
+        * kwq/KWQKHTMLFactory.mm:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::userGestureHint):
+        (KWQKHTMLPart::bindingRootObject):
+        * kwq/KWQKHTMLSettings.h:
+        (KHTMLSettings::fantasyFontName):
+        (KHTMLSettings::isJavaScriptEnabled):
+        * kwq/KWQKInstance.h: Removed.
+        * kwq/KWQKLibrary.h: Removed.
+        * kwq/KWQKPartsFactory.h: Removed.
+        * kwq/KWQKPartsPart.h:
+        (KParts::ReadOnlyPart::name):
+        * kwq/KWQKStandardDirs.h:
+        * kwq/KWQKStandardDirs.mm:
+        (locate):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge executionContextForView:]):
+
 2005-12-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

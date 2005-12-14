@@ -23,7 +23,6 @@
  */
 
 #include "config.h"
-#include <kglobal.h>
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"

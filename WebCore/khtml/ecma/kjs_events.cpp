@@ -80,15 +80,15 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
   JSObject *win = windowObj();
 
   KHTMLPart *part = static_cast<Window*>(win)->part();
-  KJSProxy *proxy = 0;
+  KJSProxyImpl *proxy = 0;
   if (part)
-      proxy = KJSProxy::proxy( part );
+      proxy = part->jScript();
   if (!proxy)
     return;
 
   JSLock lock;
   
-  ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
+  ScriptInterpreter *interpreter = proxy->interpreter();
   ExecState *exec = interpreter->globalExec();
   
   bool hasHandleEvent = false;
@@ -283,26 +283,31 @@ JSObject *JSLazyEventListener::listenerObj() const
   return listener;
 }
 
+JSValue *JSLazyEventListener::eventParameterName() const
+{
+    static ProtectedPtr<JSValue> eventString = jsString("event");
+    return eventString.get();
+}
+
 void JSLazyEventListener::parseCode() const
 {
   if (!parsed) {
     JSObject *w = win;
     KHTMLPart *part = static_cast<Window *>(w)->part();
-    KJSProxy *proxy = 0L;
+    KJSProxyImpl *proxy = 0;
     if (part)
-      proxy = KJSProxy::proxy( part );
+      proxy = part->jScript();
 
     if (proxy) {
-      ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
+      ScriptInterpreter *interpreter = proxy->interpreter();
       ExecState *exec = interpreter->globalExec();
 
       JSLock lock;
       JSObject *constr = interpreter->builtinFunction();
       List args;
 
-      static ProtectedPtr<JSValue> eventString = jsString("event");
       UString sourceURL(part->m_url.url());
-      args.append(eventString);
+      args.append(eventParameterName());
       args.append(jsString(code));
       listener = constr->construct(exec, args, sourceURL, lineNumber); // ### is globalExec ok ?
 

@@ -27,7 +27,6 @@
 #include "config.h"
 #include "khtml_part.h"
 
-#define DIRECT_LINKAGE_TO_ECMA
 #define QT_NO_CLIPBOARD
 #define QT_NO_DRAGANDDROP
 
@@ -179,17 +178,12 @@ FrameList::Iterator FrameList::find( const QString &name )
     return it;
 }
 
-KHTMLPart::KHTMLPart( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name,
-                      GUIProfile prof )
-: KParts::ReadOnlyPart( parent, name )
+KHTMLPart::KHTMLPart(QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name)
+    : KParts::ReadOnlyPart(parent, name), d(0)
 {
-    d = 0;
-    KHTMLFactory::registerPart( this );
-    setInstance( KHTMLFactory::instance(), prof == BrowserViewGUI && !parentPart() );
 }
 
-
-void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
+void KHTMLPart::init(KHTMLView *view)
 {
   AtomicString::init();
   QualifiedName::init();
@@ -199,10 +193,6 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   KSVG::SVGNames::init();
   XLinkNames::init();
 #endif
-  if ( prof == DefaultGUI )
-    setXMLFile( "khtml.rc" );
-  else if ( prof == BrowserViewGUI )
-    setXMLFile( "khtml_browser.rc" );
 
   frameCount = 0;
 
@@ -220,10 +210,8 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   // The java, javascript, and plugin settings will be set after the settings
   // have been initialized.
   d->m_bJScriptEnabled = true;
-  d->m_bJScriptDebugEnabled = true;
   d->m_bJavaEnabled = true;
   d->m_bPluginsEnabled = true;
-
 
   connect( khtml::Cache::loader(), SIGNAL( requestStarted( khtml::DocLoader*, khtml::CachedObject* ) ),
            this, SLOT( slotLoaderRequestStarted( khtml::DocLoader*, khtml::CachedObject* ) ) );
@@ -232,18 +220,14 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   connect( khtml::Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
-
   connect( &d->m_redirectionTimer, SIGNAL( timeout() ),
            this, SLOT( slotRedirect() ) );
 
   connect(&d->m_lifeSupportTimer, SIGNAL(timeout()), this, SLOT(slotEndLifeSupport()));
-
 }
 
 KHTMLPart::~KHTMLPart()
 {
-  //kdDebug(6050) << "KHTMLPart::~KHTMLPart " << this << endl;
-
   stopAutoScroll();
   cancelRedirection();
 
@@ -269,7 +253,6 @@ KHTMLPart::~KHTMLPart()
   delete d->m_hostExtension;
 
   delete d; d = 0;
-  KHTMLFactory::deregisterPart( this );
 }
 
 bool KHTMLPart::restoreURL( const KURL &url )
@@ -294,12 +277,10 @@ bool KHTMLPart::restoreURL( const KURL &url )
 
   // set the java(script) flags according to the current host.
   d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
-  d->m_bJScriptDebugEnabled = d->m_settings->isJavaScriptDebugEnabled();
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
 
   m_url = url;
-
 
   emit started( 0L );
 
@@ -373,7 +354,6 @@ bool KHTMLPart::didOpenURL(const KURL &url)
   }
 
   // set the javascript flags according to the current url
-  d->m_bJScriptDebugEnabled = d->m_settings->isJavaScriptDebugEnabled();
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
 
@@ -531,50 +511,15 @@ bool KHTMLPart::metaRefreshEnabled() const
   return d->m_metaRefreshEnabled;
 }
 
-// Define this to disable dlopening kjs_html, when directly linking to it.
-// You need to edit khtml/Makefile.am to add ./ecma/libkjs_html.la to LIBADD
-// and to edit khtml/ecma/Makefile.am to s/kjs_html/libkjs_html/, remove libkhtml from LIBADD,
-//        remove LDFLAGS line, and replace kde_module with either lib (shared) or noinst (static)
-//#define DIRECT_LINKAGE_TO_ECMA
-
-#ifdef DIRECT_LINKAGE_TO_ECMA
-extern "C" { KJSProxy *kjs_html_init(KHTMLPart *khtmlpart); }
-#endif
-
-KJSProxy *KHTMLPart::jScript()
+KJSProxyImpl *KHTMLPart::jScript()
 {
-  if (!jScriptEnabled()){
-    return 0;
-  }
+    if (!jScriptEnabled())
+        return 0;
 
-  if ( !d->m_jscript )
-  {
-#ifndef DIRECT_LINKAGE_TO_ECMA
-    KLibrary *lib = KLibLoader::self()->library("kjs_html");
-    if ( !lib ) {
-      setJScriptEnabled( false );
-      return 0;
-    }
-    // look for plain C init function
-    void *sym = lib->symbol("kjs_html_init");
-    if ( !sym ) {
-      lib->unload();
-      setJScriptEnabled( false );
-      return 0;
-    }
-    typedef KJSProxy* (*initFunction)(KHTMLPart *);
-    initFunction initSym = (initFunction) sym;
-    d->m_jscript = (*initSym)(this);
-    d->m_kjs_lib = lib;
-#else
-    d->m_jscript = kjs_html_init(this);
-    // d->m_kjs_lib remains 0L.
-#endif
-    if (d->m_bJScriptDebugEnabled)
-        d->m_jscript->setDebugEnabled(true);
-  }
+    if (!d->m_jscript)
+        d->m_jscript = new KJSProxyImpl(this);
 
-  return d->m_jscript;
+    return d->m_jscript;
 }
 
 void KHTMLPart::replaceContentsWithScriptResult( const KURL &url )
@@ -602,9 +547,9 @@ QVariant KHTMLPart::executeScript( DOM::NodeImpl *n, const QString &script, bool
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KHTMLPart::executeScript n=" << n.nodeName().qstring().latin1() << "(" << (n.isNull() ? 0 : n.nodeType()) << ") " << script << endl;
 #endif
-  KJSProxy *proxy = jScript();
+  KJSProxyImpl *proxy = jScript();
 
-  if (!proxy || proxy->paused())
+  if (!proxy)
     return QVariant();
   d->m_runningScripts++;
   // If forceUserGesture is true, then make the script interpreter
@@ -1066,18 +1011,13 @@ void KHTMLPart::write( const char *str, int len )
       d->m_doc->determineParseMode( decoded );
       d->m_bFirstData = false;
 
-  //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
       // ### this is still quite hacky, but should work a lot better than the old solution
       if(d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
       d->m_doc->recalcStyle( NodeImpl::Force );
   }
 
-  if (jScript())
-    jScript()->appendSourceFile(m_url.url(),decoded);
-  Tokenizer* t = d->m_doc->tokenizer();
-
-  if(t)
-    t->write( decoded, true );
+  if (Tokenizer* t = d->m_doc->tokenizer())
+      t->write( decoded, true );
 }
 
 void KHTMLPart::write( const QString &str )
@@ -1090,8 +1030,6 @@ void KHTMLPart::write( const QString &str )
       d->m_doc->setParseMode( DocumentImpl::Strict );
       d->m_bFirstData = false;
   }
-  if (jScript())
-    jScript()->appendSourceFile(m_url.url(),str);
   Tokenizer* t = d->m_doc->tokenizer();
   if(t)
     t->write( str, true );
@@ -2368,7 +2306,6 @@ void KHTMLPart::reparseConfiguration()
      d->m_doc->docLoader()->setShowAnimations( d->m_settings->showAnimations() );
 
   d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(m_url.host());
-  d->m_bJScriptDebugEnabled = d->m_settings->isJavaScriptDebugEnabled();
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(m_url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(m_url.host());
 
@@ -2936,9 +2873,9 @@ QVariant KHTMLPart::executeScript(QString filename, int baseLine, NodeImpl *n, c
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "executeScript: filename=" << filename << " baseLine=" << baseLine << " script=" << script << endl;
 #endif
-  KJSProxy *proxy = jScript();
+  KJSProxyImpl *proxy = jScript();
 
-  if (!proxy || proxy->paused())
+  if (!proxy)
     return QVariant();
   QVariant ret = proxy->evaluate(filename,baseLine,script, n );
   DocumentImpl::updateDocumentsRendering();
@@ -2954,12 +2891,9 @@ void KHTMLPart::slotPartRemoved( KParts::Part *part )
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code, NodeImpl *node )
 {
-  KJSProxy *proxy = jScript();
-
-  if (!proxy)
+    if (KJSProxyImpl *proxy = jScript())
+        return proxy->createHTMLEventHandler(code, node);
     return 0;
-
-  return proxy->createHTMLEventHandler( m_url.url(), code, node );
 }
 
 KHTMLPart *KHTMLPart::opener()

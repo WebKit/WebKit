@@ -593,7 +593,7 @@ void HTMLScriptElementImpl::evaluateScript(const QString &URL, const DOMString &
     
     KHTMLPart *part = getDocument()->part();
     if (part) {
-        KJSProxy *proxy = KJSProxy::proxy(part);
+        KJSProxyImpl *proxy = part->jScript();
         if (proxy) {
             m_evaluated = true;
             proxy->evaluate(URL, 0, script.qstring(), 0);

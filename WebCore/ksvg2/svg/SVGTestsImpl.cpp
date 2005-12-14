@@ -77,7 +77,7 @@ bool SVGTestsImpl::isValid() const
     for(unsigned long i = 0;i < list->numberOfItems();i++)
     {
         KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
-        if(value.isEmpty() || value.qstring() != (KGlobal::locale()->language()).left(2))
+        if(value.isEmpty() || value.qstring() != (KLocale::language()).left(2))
             return false;
     }
 

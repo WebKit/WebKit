@@ -29,7 +29,6 @@
 #include <qfontdatabase.h>
 
 #include <kcharsets.h>
-#include <kglobal.h>
 #include <kdebug.h>
 
 #include "rendering/render_style.h"

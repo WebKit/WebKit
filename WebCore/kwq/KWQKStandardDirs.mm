@@ -25,6 +25,7 @@
 
 #include "config.h"
 #import "KWQKStandardDirs.h"
+#import "KWQStringList.h"
 
 // The NSBundle calls in this file can't throw, so no need to block
 // Cocoa exceptions.
@@ -34,19 +35,11 @@
 @implementation KWQKStandardDirsBundleDummy
 @end
 
-QString locate(const char *type, const QString &filename, const KInstance *instance)
+QString locate(const char *type, const QString &filename)
 {
-    // FIXME: Eliminate this hard-coding at some point?
-    bool quirk = true;
-    if (filename.contains("html4"))
-        quirk = false;
+    QStringList list = QStringList::split('.', filename);
+    if (list.count() != 2)
+        return QString();
     NSBundle *bundle = [NSBundle bundleForClass:[KWQKStandardDirsBundleDummy class]];
-    if (quirk)
-        return QString::fromNSString([bundle pathForResource:@"quirks" ofType:@"css"]);
-    return QString::fromNSString([bundle pathForResource:@"html4" ofType:@"css"]);
-}
-
-QString locateLocal(const char *type, const QString &filename, const KInstance *instance)
-{
-    return QString();
+    return QString::fromNSString([bundle pathForResource:list[0].getNSString() ofType:list[1].getNSString()]);
 }

@@ -79,7 +79,6 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kurl.h>
-#include <kglobal.h>
 #include <kcharsets.h>
 #include <kglobalsettings.h>
 

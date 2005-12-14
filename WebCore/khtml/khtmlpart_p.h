@@ -28,17 +28,14 @@
 #define khtmlpart_p_h
 
 #include <kcursor.h>
-#include <klibloader.h>
-#include <kxmlguifactory.h>
 #include <kaction.h>
 #include <kparts/partmanager.h>
+#include <kio/global.h>
 
-#include "khtml_run.h"
 #include "khtml_find.h"
 #include "khtml_factory.h"
 #include "khtml_events.h"
 #include "khtml_ext.h"
-#include "khtml_iface.h"
 #include "khtml_settings.h"
 #include "misc/decoder.h"
 #include "misc/formdata.h"
@@ -110,7 +107,6 @@ public:
     m_decoder = 0L;
     m_jscript = 0L;
     m_runningScripts = 0;
-    m_kjs_lib = 0;
     m_job = 0L;
     m_bComplete = true;
     m_bLoadingMainResource = false;
@@ -193,8 +189,6 @@ public:
     delete m_dcopobject;
     delete m_extension;
     delete m_jscript;
-    if ( m_kjs_lib)
-       m_kjs_lib->unload();
 #ifndef Q_WS_QWS
     delete m_javaContext;
 #endif
@@ -218,11 +212,9 @@ public:
   QString scheduledScript;
   RefPtr<DOM::NodeImpl> scheduledScriptNode;
 
-  KJSProxy *m_jscript;
-  KLibrary *m_kjs_lib;
+  KJSProxyImpl *m_jscript;
   int m_runningScripts;
   bool m_bJScriptEnabled :1;
-  bool m_bJScriptDebugEnabled :1;
   bool m_bJavaEnabled :1;
   bool m_bPluginsEnabled :1;
   bool m_bJScriptForce :1;

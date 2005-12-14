@@ -22,6 +22,7 @@
 #define KJS_DOM_H
 
 #include "kjs_binding.h"
+#include "dom_nodeimpl.h"
 
 #include <qvaluelist.h>
 #include "misc/shared.h"
@@ -35,8 +36,6 @@ namespace DOM {
     class ElementImpl;
     class EntityImpl;
     class NamedNodeMapImpl;
-    class NodeImpl;
-    class NodeListImpl;
     class NotationImpl;
     class ProcessingInstructionImpl;
     class TextImpl;

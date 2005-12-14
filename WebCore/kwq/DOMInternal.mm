@@ -185,7 +185,7 @@ DOMString::DOMString(NSString *str)
 
     // Dig up Interpreter and ExecState.
     KHTMLPart *part = nodeImpl->getDocument()->part();
-    Interpreter *interpreter = KJSProxy::proxy(part)->interpreter();
+    Interpreter *interpreter = part->jScript()->interpreter();
     ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.

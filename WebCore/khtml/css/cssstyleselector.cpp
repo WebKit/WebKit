@@ -53,7 +53,6 @@
 
 #include <kstandarddirs.h>
 #include <kcharsets.h>
-#include <kglobal.h>
 #include <qfile.h>
 #include <qfontdatabase.h>
 #include <qfontinfo.h>
@@ -225,7 +224,8 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     view = doc->view();
     strictParsing = _strictParsing;
     settings = view ? view->part()->settings() : 0;
-    if(!defaultStyle) loadDefaultStyle(settings);
+    if (!defaultStyle)
+        loadDefaultStyle();
     m_medium = view ? view->mediaType() : QString("all");
 
     m_userStyle = 0;
@@ -302,7 +302,7 @@ CSSStyleSelector::~CSSStyleSelector()
     delete m_userSheet;
 }
 
-static CSSStyleSheetImpl* parseUASheet(const KHTMLSettings* s, const char* sheetName)
+static CSSStyleSheetImpl* parseUASheet(const char* sheetName)
 {
     QFile f(locate( "data", sheetName));
     f.open(IO_ReadOnly);
@@ -314,8 +314,6 @@ static CSSStyleSheetImpl* parseUASheet(const KHTMLSettings* s, const char* sheet
         file[readbytes] = '\0';
 
     QString style = QString::fromLatin1(file.data());
-    if (s)
-        style += s->settingsToCSS();
     DOMString str(style);
 
     CSSStyleSheetImpl* sheet = new CSSStyleSheetImpl((CSSStyleSheetImpl*)0);
@@ -323,10 +321,10 @@ static CSSStyleSheetImpl* parseUASheet(const KHTMLSettings* s, const char* sheet
     return sheet;
 }
 
-void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
+void CSSStyleSelector::loadDefaultStyle()
 {
     if(defaultStyle) return;
-    defaultSheet = parseUASheet(s, "khtml/css/html4.css");
+    defaultSheet = parseUASheet("html4.css");
 
     // Collect only strict-mode rules.
     defaultStyle = new CSSRuleSet();
@@ -336,13 +334,13 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
     defaultPrintStyle->addRulesFromSheet(defaultSheet, "print");
 
 #if SVG_SUPPORT
-    svgSheet = parseUASheet(0, "ksvg2/css/svg.css");
+    svgSheet = parseUASheet("svg.css");
     defaultStyle->addRulesFromSheet(svgSheet, "screen");
     defaultPrintStyle->addRulesFromSheet(svgSheet, "print");
 #endif
 
     // Collect only quirks-mode rules.
-    quirksSheet = parseUASheet(0, "khtml/css/quirks.css");
+    quirksSheet = parseUASheet("quirks.css");
     defaultQuirksStyle = new CSSRuleSet();
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, "screen");
 }

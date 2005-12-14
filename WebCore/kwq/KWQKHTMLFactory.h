@@ -27,27 +27,20 @@
 #define __khtml_factory_h__
 
 #include "khtml_part.h"
-#include "KWQKPartsFactory.h"
 #include "KWQKPartsHistoryProvider.h"
 
-class KInstance;
 class KHTMLPart;
 class KHTMLSettings;
 
 class KHTMLFactory
 {
 public:
-  static KInstance *instance();
-
   static KHTMLSettings *defaultHTMLSettings();
 
   // list of visited URLs
   static KParts::HistoryProvider *vLinks() { 
     return KParts::HistoryProvider::self();
   }
-  
-  static void registerPart(KHTMLPart *) { }
-  static void deregisterPart(KHTMLPart *) { }
 };
 
 #endif
