@@ -20,7 +20,7 @@ MacKorean: x-mac-korean
 MacArabic: x-mac-arabic
 MacHebrew: x-mac-hebrew
 MacGreek: x-mac-greek
-MacCyrillic: x-mac-cyrillic, xmacukrainian
+MacCyrillic: x-mac-cyrillic, maccyrillic, xmacukrainian
 MacDevanagari: x-mac-devanagari
 MacGurmukhi: x-mac-gurmukhi
 MacGujarati: x-mac-gujarati

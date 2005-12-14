@@ -1,3 +1,12 @@
+2005-12-14 Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin, committed by Adele.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4362
+        Add mac-cyrillic to the list of encodings
+
+        * kwq/mac-encodings.txt: Added maccyrillic
+
 2005-12-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
