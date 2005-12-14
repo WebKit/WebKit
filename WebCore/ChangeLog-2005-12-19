@@ -1,3 +1,16 @@
+2005-12-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/dom/css-shortHands.html
+
+        First cut at leaving off implicit values in shorthand properties.
+        Need to account for multipl backgrounds and "border" later.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::get4Values):
+        (DOM::CSSMutableStyleDeclarationImpl::getShortHandValue):
+
 2005-12-13  Anders Carlsson  <andersca@mac.com>
 
         * ChangeLog: Add titles to the recent bugzilla bugs.

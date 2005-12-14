@@ -1,3 +1,14 @@
+2005-12-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test case for our CSS shorthand serialization.
+
+        * fast/dom/css-shortHands-expected.checksum: Added.
+        * fast/dom/css-shortHands-expected.png: Added.
+        * fast/dom/css-shortHands-expected.txt: Added.
+        * fast/dom/css-shortHands.html: Added.
+
 2005-12-13  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
