@@ -68,7 +68,7 @@ using khtml::RenderLayer;
 @interface NSTextView (KWQTextArea)
 - (NSParagraphStyle *)_KWQ_typingParagraphStyle;
 - (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style;
-- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight fontHeight:(float)fontHeight;
+- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font;
 @end
 
 @interface NSTextStorage (KWQTextArea)
@@ -547,7 +547,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSParagraphStyle *style = [textView _KWQ_typingParagraphStyle];
     if (_lineHeight) {
         ASSERT(style);
-        [textView _KWQ_updateTypingAttributes:style forLineHeight:_lineHeight fontHeight:([_font ascender] - [_font descender])];
+        [textView _KWQ_updateTypingAttributes:style forLineHeight:_lineHeight font:_font];
     }
 }
 
@@ -594,7 +594,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     }
     NSMutableParagraphStyle *newStyle = [paraStyle mutableCopy];
     [newStyle setMinimumLineHeight:lineHeight];
-    [textView _KWQ_updateTypingAttributes:newStyle forLineHeight:lineHeight fontHeight:([_font ascender] - [_font descender])];
+    [textView _KWQ_updateTypingAttributes:newStyle forLineHeight:lineHeight font:_font];
     [newStyle release];
 }
 
@@ -1287,11 +1287,13 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [attributes release];
 }
 
-- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight fontHeight:(float)fontHeight
+- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font
 {
     NSDictionary *typingAttrs = [self typingAttributes];
     NSMutableDictionary *dict;
+    float fontHeight = [[self layoutManager] defaultLineHeightForFont:font];
     float h = (lineHeight / 2.0f) - (fontHeight / 2.0f);
+    h = (h >= 0.0) ? floor(h) : -floor(-h);
     
     if (typingAttrs)
         dict = [typingAttrs mutableCopy];

@@ -1,3 +1,20 @@
+2005-12-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Eric.
+
+	Fix for <rdar://problem/4374783> 10.4.4 REGRESSION: caret 
+	disappears when typing at the bottom of a scrollable textarea.
+
+	This regression occurred because we were calculating the font
+	height incorrectly. Made changes that Doug suggested in the bug.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView setFont:]): Send the font itself to 
+	_KWQ_updateTypingAttributes
+        (-[KWQTextAreaTextView setLineHeight:]): Same.
+        (-[NSTextView _KWQ_updateTypingAttributes:forLineHeight:font:]):
+	Calculate the font height using defaultLineHeightForFont.
+
 2005-12-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
  
          Reviewed by Darin & Geoff, committed by Adele.

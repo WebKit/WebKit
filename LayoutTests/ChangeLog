@@ -1,3 +1,20 @@
+2005-12-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Eric.
+
+	This layout test is sort of for <rdar://problem/4374783> 10.4.4 
+	REGRESSION: caret disappears when typing at the bottom of a 
+	scrollable textarea.
+
+	It does not address the fundamental problem with that bug,
+	but it does make sure we ignore negative line-height in
+	textareas.
+
+        * fast/forms/negativeLineHeight-expected.checksum: Added.
+        * fast/forms/negativeLineHeight-expected.png: Added.
+        * fast/forms/negativeLineHeight-expected.txt: Added.
+        * fast/forms/negativeLineHeight.html: Added.
+
 2005-12-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
          Layout test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5921>
