@@ -140,11 +140,14 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
                 o = lastChild();
             } else {
                 RenderObject *lastBox = beforeChild;
+                RenderObject *nextToLastBox = beforeChild;
                 while (lastBox && lastBox->parent()->isAnonymous() &&
-                        !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION)
+                        !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION) {
+                    nextToLastBox = lastBox;
                     lastBox = lastBox->parent();
+                }
                 if (lastBox && lastBox->isAnonymous()) {
-                    lastBox->addChild(child, beforeChild);
+                    lastBox->addChild(child, nextToLastBox);
                     return;
                 } else {
                     if (beforeChild && !beforeChild->isTableSection())

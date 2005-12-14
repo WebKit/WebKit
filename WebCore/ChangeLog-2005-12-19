@@ -1,3 +1,23 @@
+2005-12-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt and Darin.
+
+	Fix for <rdar://problem/4335884> REGRESSION: assertion failure 
+	after adding DOM element (render_container.cpp:365: beforeChild->
+	parent() == this).
+
+	When adding a child, tables should send the next to last box
+	instead of the last box as beforeChild because that is what
+	RenderContainer::insertChildNode() expects. RenderContainer
+	::insertChildNode() will not recurse to the correct box for
+	tables because tables won't pass the isAnonymousBlock() check,
+	so tables must send the correct information to start with.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild): Keep track of the nextToLastBox and
+	send that one to the other addChild() functions instead of the
+	lastBox.
+
 === Safari-521~5 ===
 
 2005-12-13  Timothy Hatcher  <timothy@apple.com>
