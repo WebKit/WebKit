@@ -45,13 +45,6 @@
 #define WebDragIconRightInset			7.0
 #define WebDragIconBottomInset			3.0
 
-#ifdef DEBUG_VIEWS
-@interface NSObject (Foo)
-- (void*)_renderFramePart;
-- (id)_frameForView: (id)aView;
-@end
-#endif
-
 @implementation NSView (WebExtras)
 
 - (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass
@@ -170,35 +163,6 @@
         return NSDragOperationNone;
     }
 }
-
-#ifdef DEBUG_VIEWS
-- (void)_web_printViewHierarchy: (int)level
-{
-    NSArray *subviews;
-    int _level = level, i;
-    NSRect f;
-    NSView *subview;
-    void *rfp = 0;
-    
-    subviews = [self subviews];
-    _level = level;
-    while (_level-- > 0)
-        printf (" ");
-    f = [self frame];
-    
-    if ([self respondsToSelector: @selector(_webView)]){
-        id aWebView = [self _webView];
-        id aFrame = [aWebView _frameForView: self];
-        rfp = [aFrame _renderFramePart];
-    }
-    
-    printf ("%s renderFramePart %p (%f,%f) w %f, h %f\n", [[[self class] className] cString], rfp, f.origin.x, f.origin.y, f.size.width, f.size.height);
-    for (i = 0; i < (int)[subviews count]; i++){
-        subview = [subviews objectAtIndex: i];
-        [subview _web_printViewHierarchy: level + 1];
-    }
-}
-#endif
 
 - (void)_web_dragImage:(WebImageRenderer *)wir
                   rect:(NSRect)rect

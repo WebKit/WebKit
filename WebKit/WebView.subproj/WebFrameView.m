@@ -79,6 +79,7 @@ enum {
 {
 @public
     WebView *webView;
+    WebFrame *webFrame;
     WebDynamicScrollBarsView *frameScrollView;
     
     // These margin values are used to temporarily hold the margins of a frame until
@@ -228,6 +229,12 @@ enum {
     _private->webView = webView;    
 }
 
+- (void)_setWebFrame:(WebFrame *)webFrame
+{
+    // Not retained because the WebView owns the WebFrame, which owns the WebFrameView.
+    _private->webFrame = webFrame;    
+}
+
 - (NSScrollView *)_scrollView
 {
     // this can be called by [super dealloc] when cleaning up the keyview loop,
@@ -365,7 +372,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebFrame *)webFrame
 {
-    return [[self _webView] _frameForView: self]; 
+    return _private->webFrame;
 }
 
 - (void)setAllowsScrolling: (BOOL)flag

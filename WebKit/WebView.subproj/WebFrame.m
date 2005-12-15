@@ -621,6 +621,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
     [_private setWebView:nil];
     [_private->webFrameView _setWebView:nil];
+    [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
     [_private->dataSource _setWebView:nil];
     [_private->provisionalDataSource _setWebView:nil];
 
@@ -2433,6 +2434,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
     }
     [newDataSource _setWebView:[self webView]];
+    // FIXME: shouldn't this set the WebFrame too? who sets it?
 
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
@@ -2854,6 +2856,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (fv) {
         [_private setWebFrameView:fv];
         [fv _setWebView:v];
+        [fv _setWebFrame:self];
     }
     
     ++WebFrameCount;

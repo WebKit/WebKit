@@ -140,8 +140,6 @@ typedef enum {
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
-- (WebFrame *)_frameForView:(WebFrameView *)view;
-
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;
 
 - (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;

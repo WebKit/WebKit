@@ -885,36 +885,6 @@ static bool debugWidget = true;
     return _private->scriptDebugDelegateForwarder;
 }
 
-- (WebFrame *)_frameForView: (WebFrameView *)aView fromFrame: (WebFrame *)frame
-{
-    NSArray *frames;
-    int i, count;
-    WebFrame *result, *aFrame;
-
-    if ([frame frameView] == aView)
-        return frame;
-
-    // It's safe to use the internal version because we know this
-    // function will not change the set of frames
-    frames = [frame _internalChildFrames];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForView: aView fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-
-    return nil;
-}
-
-- (WebFrame *)_frameForView: (WebFrameView *)aView
-{
-    WebFrame *frame = [self mainFrame];
-
-    return [self _frameForView: aView fromFrame: frame];
-}
-
 - (void)_closeWindow
 {
     [[self _UIDelegateForwarder] webViewClose:self];

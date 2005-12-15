@@ -1,3 +1,21 @@
+2005-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- remove _frameForView: method from WebView and replace with a direct pointer on the WebFrameView in the WebFrame
+
+        * Misc.subproj/WebNSViewExtras.m:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        (-[WebFrame initWithName:webFrameView:webView:]):
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _setWebFrame:]):
+        (-[WebFrameView webFrame]):
+        * WebView.subproj/WebFrameViewInternal.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
