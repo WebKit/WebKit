@@ -515,10 +515,10 @@ void HTMLScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!getDocument()->part())
             return;
     
-        QString url = attr->value().qstring();
+        const AtomicString& url = attr->value();
         if (!url.isEmpty()) {
             QString charset = getAttribute(charsetAttr).qstring();
-            m_cachedScript = getDocument()->docLoader()->requestScript(DOMString(url), charset);
+            m_cachedScript = getDocument()->docLoader()->requestScript(url, charset);
             m_cachedScript->ref(this);
         }
     } else
@@ -548,10 +548,10 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     if (!getDocument()->part())
         return;
     
-    QString url = getAttribute(srcAttr).qstring();
+    const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
         QString charset = getAttribute(charsetAttr).qstring();
-        m_cachedScript = getDocument()->docLoader()->requestScript(DOMString(url), charset);
+        m_cachedScript = getDocument()->docLoader()->requestScript(url, charset);
         m_cachedScript->ref(this);
         return;
     }

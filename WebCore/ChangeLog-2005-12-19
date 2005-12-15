@@ -1,3 +1,13 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - removed unnecessary conversion between AtomicString and QString
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::parseMappedAttribute): Remove extra conversions.
+        (HTMLScriptElementImpl::insertedIntoDocument): Ditto.
+
 2005-12-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin and Tim Hatcher.
@@ -168,7 +178,7 @@
          * khtml/rendering/render_text.cpp:
          (RenderText::positionForCoordinates): Adjust for containing block scroll
          
-2005-12-14 Alexey Proskuryakov  <ap@nypop.com>
+2005-12-14  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin, committed by Adele.
 
