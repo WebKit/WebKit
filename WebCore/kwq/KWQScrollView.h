@@ -47,7 +47,10 @@ public:
     int contentsHeight() const;
     int contentsX() const;
     int contentsY() const;
+    int scrollXOffset() const;
+    int scrollYOffset() const;
     void scrollBy(int dx, int dy);
+    void scrollPointRecursively(int dx, int dy);
 
     void setContentsPos(int x, int y);
 

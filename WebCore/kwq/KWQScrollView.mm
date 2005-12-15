@@ -155,6 +155,30 @@ int QScrollView::contentsY() const
     return 0;
 }
 
+int QScrollView::scrollXOffset() const
+{
+    NSView *view = getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    if ([view _KWQ_isScrollView]) {
+        return (int)[[(NSScrollView *)view contentView] visibleRect].origin.x;
+    }
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return 0;
+}
+
+int QScrollView::scrollYOffset() const
+{
+    NSView *view = getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    if ([view _KWQ_isScrollView]) {
+        return (int)[[(NSScrollView *)view contentView] visibleRect].origin.y;
+    }
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return 0;
+}
+
 int QScrollView::childX(QWidget* w)
 {
     return w->x();
@@ -170,6 +194,30 @@ void QScrollView::scrollBy(int dx, int dy)
     setContentsPos(contentsX() + dx, contentsY() + dy);
 }
 
+void QScrollView::scrollPointRecursively(int x, int y)
+{ 
+    x = (x < 0) ? 0 : x;
+    y = (y < 0) ? 0 : y;
+    NSPoint p = NSMakePoint(x,y);
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    NSView *docView;
+    NSView *view = getView();    
+    docView = getDocumentView();
+    if (docView)
+        view = docView;
+    
+    NSView *originalView = view;
+    while (view) {
+        if ([view isKindOfClass:[NSClipView class]]) {
+            NSPoint viewPoint = [view convertPoint:p fromView:originalView];
+            [view scrollPoint:viewPoint];
+        }
+        view = [view superview];
+    }
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 void QScrollView::setContentsPos(int x, int y)
 {
     x = (x < 0) ? 0 : x;
@@ -182,16 +230,7 @@ void QScrollView::setContentsPos(int x, int y)
     docView = getDocumentView();
     if (docView)
         view = docView;
-        
-    NSView *originalView = view;
-    while (view) {
-        if ([view isKindOfClass:[NSClipView class]]) {
-            NSPoint viewPoint = [view convertPoint:p fromView:originalView];
-            [view scrollRectToVisible:NSMakeRect(viewPoint.x, viewPoint.y, 1, NSHeight([view bounds]))];
-        }
-        view = [view superview];
-    }
-
+    [view scrollPoint:p];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

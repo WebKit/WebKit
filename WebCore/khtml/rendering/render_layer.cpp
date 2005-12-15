@@ -557,14 +557,15 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
 {
     RenderLayer* parentLayer = 0;
     QRect newRect = rect;
+    int xOffset = 0, yOffset = 0;
     
     if (m_object->hasOverflowClip()) {
         QRect layerBounds = QRect(m_x + scrollXOffset(), m_y + m_scrollY, m_width, m_height);
         QRect exposeRect = QRect(rect.x() + scrollXOffset(), rect.y() + m_scrollY, rect.width(), rect.height());
         QRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        int xOffset = r.x() - m_x;
-        int yOffset = r.y() - m_y;
+        xOffset = r.x() - m_x;
+        yOffset = r.y() - m_y;
         // Adjust offsets if they're outside of the allowable range.
         xOffset = kMax(0, kMin(m_scrollWidth - m_width, xOffset));
         yOffset = kMax(0, kMin(m_scrollHeight - m_height, yOffset));
@@ -583,15 +584,27 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
             parentLayer = m_object->parent()->enclosingLayer();
     } else {
         QScrollView* view = m_object->document()->view();
-        QRect viewRect = QRect(view->contentsX(), view->contentsY(), view->visibleWidth(), view->visibleHeight());
         if (view) {
+            QRect viewRect = QRect(view->scrollXOffset(), view->scrollYOffset(), view->visibleWidth(), view->visibleHeight());
             QRect r = getRectToExpose(viewRect, rect, alignX, alignY);
-            view->setContentsPos(r.x(), r.y());
-        }
-        if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
-            parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
-            newRect.setX(rect.x() - view->contentsX() + view->viewport()->x());
-            newRect.setY(rect.y() - view->contentsY() + view->viewport()->y());
+            
+            xOffset = r.x();
+            yOffset = r.y();
+            // Adjust offsets if they're outside of the allowable range.
+            xOffset = kMax(0, kMin(view->contentsWidth(), xOffset));
+            yOffset = kMax(0, kMin(view->contentsHeight(), yOffset));
+            
+
+            if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
+                view->setContentsPos(xOffset, yOffset);
+                parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
+                newRect.setX(rect.x() - view->contentsX() + view->viewport()->x());
+                newRect.setY(rect.y() - view->contentsY() + view->viewport()->y());
+            } else {
+                // If this is the outermost view that RenderLayer needs to scroll, then we should scroll the view recursively
+                // Other apps, like Mail, rely on this feature.
+                view->scrollPointRecursively(xOffset, yOffset);
+            }
         }
     }
     

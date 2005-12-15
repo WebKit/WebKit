@@ -1,3 +1,23 @@
+2005-12-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin and Tim Hatcher.
+
+        - fixed <rdar://problem/4375502> 10.4.4 REGRESSION: Clicking on anchor tag in email causes unwanted horizontal scroll
+
+        When scrolling views, we were failing to take the current scroll position into account when calculating the new scroll position. 
+
+        * kwq/KWQScrollView.h: Added scrollPointRecursively.
+        * kwq/KWQScrollView.mm:
+        (QScrollView::scrollXOffset): Calculates the x-coordinate scroll offset for a view.
+        (QScrollView::scrollYOffset): Calculates the y-coordinate scroll offset for a view.
+        (QScrollView::scrollPointRecursively): This function walks up the view hierarchy to scroll to a point.  
+        I moved this from setContentsPos so that function would only have an effect on the current view.
+        (QScrollView::setContentsPos): return to old behavior where this function calls scrollPoint on a view and doesn't recurse.
+
+        * khtml/rendering/render_layer.cpp: (khtml::RenderLayer::scrollRectToVisible): 
+        Uses new QScrollView functions scrollXOffset and scrollYOffset to correctly calculate how a view should scroll.
+        Also determines whether or not QScrollView should try to scroll recursively (which happens when scrollRectToVisible is done calling itself recursively).
+
 2005-12-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
