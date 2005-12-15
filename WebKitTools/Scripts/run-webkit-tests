@@ -36,6 +36,7 @@ use FindBin;
 use Cwd;
 use lib $FindBin::Bin;
 use webkitdirs;
+use Time::HiRes qw(time);
 
 # Run all the tests passed in on the command line.
 # If no tests are passed, find all the .html, .xml, .xhtml (and svg) files in the test directory.
@@ -65,6 +66,7 @@ my $maxHeight = '';
 my $verbose = 0;
 my $quiet = '';
 my $singly = 0;
+my $report10Slowest = 0;
 
 GetOptions('svg' => \$testSVGs, 
     'pixel-tests|p' => \$pixelTests,
@@ -74,7 +76,8 @@ GetOptions('svg' => \$testSVGs,
     'max-height|h=s' => \$maxHeight, 
     'verbose|v' => \$verbose,
     'quiet|q' => \$quiet,
-    'singly|1' => \$singly);
+    'singly|1' => \$singly,
+    'slowest' => \$report10Slowest);
 
 my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
@@ -106,12 +109,17 @@ my $testResults = "$testResultsDirectory/results.html";
 
 my @tests = ();
 
-my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
+my $prunePart = "\\( -name resources \\! -prune \\)";
+my $extensionPart = "-name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
-    $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.svg' -or -name '*.xml'";
+    $extensionPart = "-name '*.svg' -or -name '*.xml'";
 } elsif ($haveSVGSupport) {
-	$findArguments .= " -or -name '*.svg'";
+    $extensionPart .= " -or -name '*.svg'";
+} else {
+    $prunePart .= " -or \\( -name svg \\! -prune \\)";
 }
+my $findArguments = "$prunePart -or $extensionPart";
+
 my $foundTestName = 0;
 for my $test (@ARGV) {
     next if $test =~ /^-/;
@@ -140,6 +148,7 @@ die "no tests to run\n" if !@tests;
 my %counts;
 my %tests;
 my %imagesPresent;
+my %durations;
 my $count = 0;
 
 my @toolArgs = ();
@@ -199,6 +208,8 @@ for my $test (@tests) {
 
     my $result;
 
+    my $startTime = time;
+
     print OUT "$testDirectory/$test\n";
 
     my $actual = "";
@@ -206,6 +217,8 @@ for my $test (@tests) {
         last if /#EOF/;
         $actual .= $_;
     }
+
+    $durations{$test} = time - $startTime;
 
     my $expected;
     if (open EXPECTED, "<", "$testDirectory/$base-expected.txt") {
@@ -424,6 +437,15 @@ my %text = (
     fail => "failed (tool did not execute successfully)",
 );
 
+if ($report10Slowest) {
+    print "\n\nThe 10 slowest tests:\n\n";
+    my $count = 0;
+    for my $test (sort slowestcmp keys %durations) {
+        printf "%0.2f secs: %s\n", $durations{$test}, $test;
+        last if ++$count == 10;
+    }
+}
+
 print "\n";
 
 if ($counts{match} && $counts{match} == $count) {
@@ -517,7 +539,7 @@ if ($counts{match} && $counts{match} == $count) {
     print HTML "</html>\n";
     close HTML;
     
-    system "WebKitTools/Scripts/run-safari", "-NSOpen",$testResults;
+    system "WebKitTools/Scripts/run-safari", "-NSOpen", $testResults;
 }
 
 sub printLeaks
@@ -609,4 +631,15 @@ sub numericcmp($$)
     
     # One of the two is now empty; compare lengths for result in this case.
     return @a <=> @b;
+}
+
+# Sort slowest tests first.
+sub slowestcmp($$)
+{
+    my ($testa, $testb) = @_;
+
+    my $dura = $durations{$testa};
+    my $durb = $durations{$testb};
+    return $durb <=> $dura if $dura != $durb;
+    return pathcmp($testa, $testb);
 }

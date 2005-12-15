@@ -1,3 +1,9 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        * Scripts/run-webkit-tests: Don't run tests in directories named "svg" if SVG
+        support is not compiled in. Report the 10 slowest tests if "--slowest" is
+        passed on the command line.
+
 2005-12-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
