@@ -1,3 +1,9 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        - updated test result -- this test now succeeds due to some recent change
+
+        * dom/xhtml/level2/html/HTMLTextAreaElement12-expected.txt: Regenerated.
+
 2005-12-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
