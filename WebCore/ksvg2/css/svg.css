@@ -25,6 +25,16 @@
 
 @namespace "http://www.w3.org/2000/svg";
 
+/* When an outermost SVG 'svg' element is stand-alone or embedded inline within a parent XML grammar 
+which does not use CSS layout [CSS2-LAYOUT] or XSL formatting [XSL], the 'overflow' property on the 
+outermost 'svg' element is ignored for the purposes of visual rendering and the initial clipping path is set 
+to the bounds of the initial viewport.
+*/
+svg:root
+{
+    overflow: visible !important;
+}
+
 svg, symbol, marker, pattern, foreignObject
 {
     overflow: hidden;
