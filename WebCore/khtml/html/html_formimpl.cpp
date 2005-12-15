@@ -3202,14 +3202,17 @@ int HTMLOptionElementImpl::index() const
 {
     // Let's do this dynamically. Might be a bit slow, but we're sure
     // we won't forget to update a member variable in some cases...
-    QMemArray<HTMLElementImpl*> items = getSelect()->listItems();
-    int l = items.count();
-    int optionIndex = 0;
-    for(int i = 0; i < l; i++) {
-        if (items[i]->hasLocalName(optionTag)) {
-            if (static_cast<HTMLOptionElementImpl*>(items[i]) == this)
-                return optionIndex;
-            optionIndex++;
+    HTMLSelectElementImpl *select = getSelect();
+    if (select) {
+        QMemArray<HTMLElementImpl*> items = select->listItems();
+        int l = items.count();
+        int optionIndex = 0;
+        for(int i = 0; i < l; i++) {
+            if (items[i]->hasLocalName(optionTag)) {
+                if (static_cast<HTMLOptionElementImpl*>(items[i]) == this)
+                    return optionIndex;
+                optionIndex++;
+            }
         }
     }
     kdWarning() << "HTMLOptionElementImpl::index(): option not found!" << endl;
