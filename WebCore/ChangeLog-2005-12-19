@@ -1,3 +1,15 @@
+2005-12-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin and Hyatt.
+
+        Fixed <rdar://problem/4381360> REGRESSION: Focus ring on contenteditable div outlines text in overflow area instead of div (6100)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6100
+
+        Test: fast/overflow/overflow-focus-ring.html
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addFocusRingRects): For overflow, we don't need to compute the rects for the children.
+
 2005-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
