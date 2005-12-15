@@ -89,12 +89,12 @@ public:
     CSSFontFaceRuleImpl(StyleBaseImpl *parent);
     virtual ~CSSFontFaceRuleImpl();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style; }
+    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
 
     virtual bool isFontFaceRule() { return true; }
 
 protected:
-    CSSMutableStyleDeclarationImpl *m_style;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
 };
 
 
@@ -108,8 +108,8 @@ public:
     virtual ~CSSImportRuleImpl();
 
     DOM::DOMString href() const { return m_strHref; }
-    MediaListImpl *media() const { return m_lstMedia; }
-    CSSStyleSheetImpl *styleSheet() const { return m_styleSheet; }
+    MediaListImpl *media() const { return m_lstMedia.get(); }
+    CSSStyleSheetImpl *styleSheet() const { return m_styleSheet.get(); }
 
     virtual bool isImportRule() { return true; }
     virtual DOMString cssText() const;
@@ -122,8 +122,8 @@ public:
 
 protected:
     DOMString m_strHref;
-    MediaListImpl *m_lstMedia;
-    CSSStyleSheetImpl *m_styleSheet;
+    RefPtr<MediaListImpl> m_lstMedia;
+    RefPtr<CSSStyleSheetImpl> m_styleSheet;
     khtml::CachedCSSStyleSheet *m_cachedSheet;
     bool m_loading;
 };
@@ -158,7 +158,7 @@ public:
     virtual ~CSSMediaRuleImpl();
 
     MediaListImpl *media() const { return m_lstMedia; }
-    CSSRuleListImpl *cssRules() { return m_lstCSSRules; }
+    CSSRuleListImpl *cssRules() { return m_lstCSSRules.get(); }
 
     unsigned insertRule ( const DOM::DOMString &rule, unsigned index );
     void deleteRule ( unsigned index ) { m_lstCSSRules->deleteRule( index ); }
@@ -170,7 +170,7 @@ public:
     unsigned append( CSSRuleImpl *rule );
 protected:
     MediaListImpl *m_lstMedia;
-    CSSRuleListImpl *m_lstCSSRules;
+    RefPtr<CSSRuleListImpl> m_lstCSSRules;
 };
 
 
@@ -180,7 +180,7 @@ public:
     CSSPageRuleImpl(StyleBaseImpl *parent);
     virtual ~CSSPageRuleImpl();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style; }
+    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
 
     virtual bool isPageRule() { return true; }
 
@@ -188,7 +188,7 @@ public:
     void setSelectorText(DOM::DOMString str);
 
 protected:
-    CSSMutableStyleDeclarationImpl *m_style;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
 };
 
 class CSSImportantRuleImpl;
@@ -199,7 +199,7 @@ public:
     CSSStyleRuleImpl(StyleBaseImpl *parent);
     virtual ~CSSStyleRuleImpl();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style; }
+    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
 
     virtual bool isStyleRule() { return true; }
     virtual DOMString cssText() const;
@@ -213,10 +213,10 @@ public:
     void setDeclaration( CSSMutableStyleDeclarationImpl *style);
 
     CSSSelector* selector() { return m_selector; }
-    CSSMutableStyleDeclarationImpl *declaration() { return m_style; }
+    CSSMutableStyleDeclarationImpl *declaration() { return m_style.get(); }
  
 protected:
-    CSSMutableStyleDeclarationImpl *m_style;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
     CSSSelector* m_selector;
 };
 

@@ -3504,7 +3504,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             
             // Set up a length box to represent our image slices.
             LengthBox& l = image.m_slices;
-            RectImpl* r = borderImage->m_imageSliceRect;
+            RectImpl* r = borderImage->m_imageSliceRect.get();
             if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
                 l.top = Length((int)r->top()->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
             else
@@ -4035,7 +4035,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             else if (region->m_isRectangle) {
                 style->setDashboardRegion (StyleDashboardRegion::Rectangle, region->m_label, top, right, bottom, left, region == first ? false : true);
             }
-            region = region->m_next;
+            region = region->m_next.get();
         }
         
         element->getDocument()->setHasDashboardRegions (true);

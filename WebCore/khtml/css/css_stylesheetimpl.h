@@ -69,7 +69,7 @@ public:
     StyleSheetImpl *parentStyleSheet() const;
     DOM::DOMString href() const { return m_strHref; }
     DOM::DOMString title() const { return m_strTitle; }
-    MediaListImpl *media() const { return m_media; }
+    MediaListImpl *media() const { return m_media.get(); }
     void setMedia( MediaListImpl *media );
 
     virtual bool isLoading() { return false; }
@@ -78,7 +78,7 @@ protected:
     DOM::NodeImpl *m_parentNode;
     DOM::DOMString m_strHref;
     DOM::DOMString m_strTitle;
-    MediaListImpl *m_media;
+    RefPtr<MediaListImpl> m_media;
     bool m_disabled;
 };
 

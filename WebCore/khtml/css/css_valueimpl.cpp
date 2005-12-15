@@ -314,14 +314,12 @@ DOMString CSSMutableStyleDeclarationImpl::get4Values( const int* properties ) co
     DOMString res;
     for (int i = 0; i < 4; ++i) {
         if (!isPropertyImplicit(properties[i])) {
-            CSSValueImpl* value = getPropertyCSSValue(properties[i]);
+            RefPtr<CSSValueImpl> value = getPropertyCSSValue(properties[i]);
             if (!value) // apparently all 4 properties must be specified.
                 return DOMString();
-            value->ref();
             if (!res.isNull())
                 res += " ";
             res += value->cssText();
-            value->deref();
         }
     }
     return res;
@@ -332,13 +330,11 @@ DOMString CSSMutableStyleDeclarationImpl::getShortHandValue( const int* properti
     DOMString res;
     for (int i = 0; i < number; ++i) {
         if (!isPropertyImplicit(properties[i])) {
-            CSSValueImpl* value = getPropertyCSSValue(properties[i]);
+            RefPtr<CSSValueImpl> value = getPropertyCSSValue(properties[i]);
             if (value) { // TODO provide default value if !value
-                value->ref();
                 if (!res.isNull())
                     res += " ";
                 res += value->cssText();
-                value->deref();
             }
         }
     }
@@ -552,10 +548,8 @@ void CSSMutableStyleDeclarationImpl::merge(CSSMutableStyleDeclarationImpl *other
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = other->valuesIterator(); it != end; ++it) {
         const CSSProperty &property = *it;
-        CSSValueImpl *value = getPropertyCSSValue(property.id());
+        RefPtr<CSSValueImpl> value = getPropertyCSSValue(property.id());
         if (value) {
-            value->ref();
-            value->deref();
             if (!argOverridesOnConflict)
                 continue;
             removeProperty(property.id());
@@ -575,14 +569,9 @@ void CSSStyleDeclarationImpl::diff(CSSMutableStyleDeclarationImpl *style) const
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it(style->valuesIterator()); it != end; ++it) {
         const CSSProperty &property = *it;
-        CSSValueImpl *value = getPropertyCSSValue(property.id());
-        if (value) {
-            value->ref();
-            if (value->cssText() == property.value()->cssText()) {
-                properties.append(property.id());
-            }
-            value->deref();
-        }
+        RefPtr<CSSValueImpl> value = getPropertyCSSValue(property.id());
+        if (value && (value->cssText() == property.value()->cssText()))
+            properties.append(property.id());
     }
     
     for (QValueListIterator<int> it(properties.begin()); it != properties.end(); ++it)
@@ -762,31 +751,28 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(double num, CSSPrimitiveValue::Unit
 
 CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type)
 {
-    m_value.string = str.impl();
-    if(m_value.string) m_value.string->ref();
+    if ((m_value.string = str.impl()))
+        m_value.string->ref();
     m_type = type;
 }
 
 CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CounterImpl *c)
 {
-    m_value.counter = c;
-    if (m_value.counter)
+    if ((m_value.counter = c))
         m_value.counter->ref();
     m_type = CSSPrimitiveValue::CSS_COUNTER;
 }
 
 CSSPrimitiveValueImpl::CSSPrimitiveValueImpl( RectImpl *r)
 {
-    m_value.rect = r;
-    if (m_value.rect)
+    if ((m_value.rect = r))
         m_value.rect->ref();
     m_type = CSSPrimitiveValue::CSS_RECT;
 }
 
 CSSPrimitiveValueImpl::CSSPrimitiveValueImpl( DashboardRegionImpl *r)
 {
-    m_value.region = r;
-    if (m_value.region)
+    if ((m_value.region = r))
         m_value.region->ref();
     m_type = CSSPrimitiveValue::CSS_DASHBOARD_REGION;
 }
@@ -799,8 +785,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(QRgb color)
 
 CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PairImpl* p)
 {
-    m_value.pair = p;
-    if (p)
+    if ((m_value.pair = p))
         p->ref();
     m_type = CSSPrimitiveValue::CSS_PAIR;
 }
@@ -816,7 +801,8 @@ void CSSPrimitiveValueImpl::cleanup()
     case CSSPrimitiveValue::CSS_STRING:
     case CSSPrimitiveValue::CSS_URI:
     case CSSPrimitiveValue::CSS_ATTR:
-        if(m_value.string) m_value.string->deref();
+        if(m_value.string)
+            m_value.string->deref();
         break;
     case CSSPrimitiveValue::CSS_COUNTER:
         m_value.counter->deref();
@@ -1101,7 +1087,7 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
                 text += region->bottom()->cssText() + " ";
                 text += region->left()->cssText();
                 text += ")";
-                region = region->m_next;
+                region = region->m_next.get();
             }
             break;
         }
@@ -1113,45 +1099,29 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 
 RectImpl::RectImpl()
 {
-    m_top = 0;
-    m_right = 0;
-    m_bottom = 0;
-    m_left = 0;
 }
 
 RectImpl::~RectImpl()
 {
-    if (m_top) m_top->deref();
-    if (m_right) m_right->deref();
-    if (m_bottom) m_bottom->deref();
-    if (m_left) m_left->deref();
 }
 
 void RectImpl::setTop( CSSPrimitiveValueImpl *top )
 {
-    if( top ) top->ref();
-    if ( m_top ) m_top->deref();
     m_top = top;
 }
 
 void RectImpl::setRight( CSSPrimitiveValueImpl *right )
 {
-    if( right ) right->ref();
-    if ( m_right ) m_right->deref();
     m_right = right;
 }
 
 void RectImpl::setBottom( CSSPrimitiveValueImpl *bottom )
 {
-    if( bottom ) bottom->ref();
-    if ( m_bottom ) m_bottom->deref();
     m_bottom = bottom;
 }
 
 void RectImpl::setLeft( CSSPrimitiveValueImpl *left )
 {
-    if( left ) left->ref();
-    if ( m_left ) m_left->deref();
     m_left = left;
 }
 
@@ -1159,26 +1129,19 @@ void RectImpl::setLeft( CSSPrimitiveValueImpl *left )
 
 PairImpl::PairImpl()
 {
-    m_first = m_second = 0;
 }
 
 PairImpl::~PairImpl()
 {
-    if (m_first) m_first->deref();
-    if (m_second) m_second->deref();
 }
 
 void PairImpl::setFirst(CSSPrimitiveValueImpl *first)
 {
-    if (first) first->ref();
-    if (m_first) m_first->deref();
     m_first = first;
 }
 
 void PairImpl::setSecond(CSSPrimitiveValueImpl *second)
 {
-    if (second) second->ref();
-    if (m_second) m_second->deref();
     m_second = second;
 }
 
@@ -1224,18 +1187,10 @@ CSSBorderImageValueImpl::CSSBorderImageValueImpl(CSSImageValueImpl* image, RectI
 : m_image(image), m_imageSliceRect(imageRect),
   m_horizontalSizeRule(horizontalRule), m_verticalSizeRule(verticalRule)
 {
-    if (m_image)
-        m_image->ref();
-    if (m_imageSliceRect)
-        m_imageSliceRect->ref();
 }
 
 CSSBorderImageValueImpl::~CSSBorderImageValueImpl()
 {
-    if (m_image)
-        m_image->deref();
-    if (m_imageSliceRect)
-        m_imageSliceRect->deref();
 }
 
 DOMString CSSBorderImageValueImpl::cssText() const

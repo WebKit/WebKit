@@ -1,3 +1,81 @@
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        khtml/css should use RefPtr instead of manual ref() deref()
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6094
+
+        No functionality changes, thus no tests.
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyValue):
+        * khtml/css/css_ruleimpl.cpp:
+        (DOM::CSSFontFaceRuleImpl::CSSFontFaceRuleImpl):
+        (DOM::CSSFontFaceRuleImpl::~CSSFontFaceRuleImpl):
+        (DOM::CSSImportRuleImpl::CSSImportRuleImpl):
+        (DOM::CSSImportRuleImpl::~CSSImportRuleImpl):
+        (DOM::CSSImportRuleImpl::setStyleSheet):
+        (DOM::CSSMediaRuleImpl::CSSMediaRuleImpl):
+        (DOM::CSSMediaRuleImpl::~CSSMediaRuleImpl):
+        (DOM::CSSPageRuleImpl::CSSPageRuleImpl):
+        (DOM::CSSPageRuleImpl::~CSSPageRuleImpl):
+        (DOM::CSSStyleRuleImpl::CSSStyleRuleImpl):
+        (DOM::CSSStyleRuleImpl::~CSSStyleRuleImpl):
+        (DOM::CSSStyleRuleImpl::setDeclaration):
+        * khtml/css/css_ruleimpl.h:
+        (DOM::CSSFontFaceRuleImpl::style):
+        (DOM::CSSImportRuleImpl::media):
+        (DOM::CSSImportRuleImpl::styleSheet):
+        (DOM::CSSMediaRuleImpl::cssRules):
+        (DOM::CSSPageRuleImpl::style):
+        (DOM::CSSStyleRuleImpl::style):
+        (DOM::CSSStyleRuleImpl::declaration):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (StyleSheetImpl::StyleSheetImpl):
+        (StyleSheetImpl::~StyleSheetImpl):
+        (StyleSheetImpl::setMedia):
+        * khtml/css/css_stylesheetimpl.h:
+        (DOM::StyleSheetImpl::media):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::get4Values):
+        (DOM::CSSMutableStyleDeclarationImpl::getShortHandValue):
+        (DOM::CSSMutableStyleDeclarationImpl::merge):
+        (DOM::CSSStyleDeclarationImpl::diff):
+        (DOM::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (DOM::CSSPrimitiveValueImpl::cleanup):
+        (DOM::CSSPrimitiveValueImpl::cssText):
+        (DOM::RectImpl::RectImpl):
+        (DOM::RectImpl::~RectImpl):
+        (DOM::RectImpl::setTop):
+        (DOM::RectImpl::setRight):
+        (DOM::RectImpl::setBottom):
+        (DOM::RectImpl::setLeft):
+        (DOM::PairImpl::PairImpl):
+        (DOM::PairImpl::~PairImpl):
+        (DOM::PairImpl::setFirst):
+        (DOM::PairImpl::setSecond):
+        (DOM::CSSBorderImageValueImpl::CSSBorderImageValueImpl):
+        (DOM::CSSBorderImageValueImpl::~CSSBorderImageValueImpl):
+        * khtml/css/css_valueimpl.h:
+        (DOM::RectImpl::top):
+        (DOM::RectImpl::right):
+        (DOM::RectImpl::bottom):
+        (DOM::RectImpl::left):
+        (DOM::PairImpl::first):
+        (DOM::PairImpl::second):
+        (DOM::DashboardRegionImpl::setNext):
+        (DOM::CSSProperty::CSSProperty):
+        (DOM::CSSProperty::operator=):
+        (DOM::CSSProperty::~CSSProperty):
+        (DOM::CSSProperty::setValue):
+        (DOM::CSSProperty::value):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseColor):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::transformToString):
+
 2005-12-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin and Hyatt.
