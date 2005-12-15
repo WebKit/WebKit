@@ -15,7 +15,6 @@
 		DD66F3C008F73ED700C75FD7 /* JSValueWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = F11798C90262545403CA149D /* JSValueWrapper.h */; };
 		DD66F3C108F73ED700C75FD7 /* UserObjectImp.h in Headers */ = {isa = PBXBuildFile; fileRef = F11798CF0262579C03CA149D /* UserObjectImp.h */; };
 		DD66F3C308F73ED700C75FD7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
-		DD66F3C508F73ED700C75FD7 /* JavaScriptGlue.exp in Sources */ = {isa = PBXBuildFile; fileRef = F1EB7EAB02621EAF03CA149D /* JavaScriptGlue.exp */; };
 		DD66F3C608F73ED700C75FD7 /* JavaScriptGlue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F11798B20262465703CA149D /* JavaScriptGlue.cpp */; };
 		DD66F3C708F73ED700C75FD7 /* JSRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F11798BC026246FD03CA149D /* JSRun.cpp */; };
 		DD66F3C808F73ED700C75FD7 /* JSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F11798B6026246FD03CA149D /* JSUtils.cpp */; };
@@ -272,7 +271,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD66F3C508F73ED700C75FD7 /* JavaScriptGlue.exp in Sources */,
 				DD66F3C608F73ED700C75FD7 /* JavaScriptGlue.cpp in Sources */,
 				DD66F3C708F73ED700C75FD7 /* JSRun.cpp in Sources */,
 				DD66F3C808F73ED700C75FD7 /* JSUtils.cpp in Sources */,
@@ -301,9 +299,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = .;
+				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -324,9 +324,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = .;
+				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -347,6 +349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = .;
@@ -369,50 +372,30 @@
 		DD66F3D208F73ED700C75FD7 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
-				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
 			};
 			name = Development;
 		};
 		DD66F3D308F73ED700C75FD7 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
 				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
-				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Deployment;
 		};

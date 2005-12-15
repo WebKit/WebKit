@@ -1,3 +1,11 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Removed some redundant build
+        settings, turned off prebinding explicitly for our Development and
+        Deployment builds, remove .exp file from sources. All "clean-up".
+
 === Safari-521~5 ===
 
 2005-12-13  Geoffrey Garen  <ggaren@apple.com>
