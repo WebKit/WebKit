@@ -24,8 +24,6 @@
 #include "kjs_window.h"
 #include "kjs_events.h"
 #include <khtml_part.h>
-#include <kprotocolmanager.h>
-#include <kdebug.h>
 #include <kjs/collector.h>
 
 using namespace KJS;
@@ -40,6 +38,7 @@ KJSProxyImpl::KJSProxyImpl(KHTMLPart *part)
 {
   m_script = 0;
   m_part = part;
+  m_handlerLineno = 0;
 #ifndef NDEBUG
   s_count++;
 #endif
@@ -157,10 +156,6 @@ void KJSProxyImpl::initScript()
 
   // Create a KJS interpreter for this part
   m_script = new KJS::ScriptInterpreter(globalObject, m_part);
-
-#ifdef KJS_DEBUGGER
-  m_script->setDebuggingEnabled(m_debugEnabled);
-#endif
   globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
 
   QString userAgent = KWQ(m_part)->userAgent();

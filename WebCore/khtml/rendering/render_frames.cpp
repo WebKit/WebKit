@@ -39,10 +39,7 @@
 #include "khtml_part.h"
 #include "render_arena.h"
 
-#include <kapplication.h>
 #include <kcursor.h>
-#include <kmessagebox.h>
-#include <kmimetype.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <qtimer.h>
@@ -517,7 +514,6 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         if(evt->type() == mousedownEvent)
         {
             setResizing(true);
-            KApplication::setOverrideCursor(cursor);
             m_vSplitPos = _x;
             m_hSplitPos = _y;
             m_oldpos = -1;
@@ -531,7 +527,6 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     if(m_resizing && evt->type() == mouseupEvent)
     {
         setResizing(false);
-        KApplication::restoreOverrideCursor();
         
         if(m_vSplit != -1 )
         {
@@ -1024,5 +1019,3 @@ void RenderPart::updateWidgetPosition()
             static_cast<KHTMLView*>(view)->layout();
     }
 }
-
-#include "render_frames.moc"

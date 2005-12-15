@@ -38,11 +38,6 @@ HistoryProvider *HistoryProvider::self()
     return &instance;
 }
 
-void HistoryProvider::insert(const QString &s)
-{
-    // Insertion handled by WebKit.
-}
-
 bool HistoryProvider::contains(const QString &s) const
 {
     // the other side of the bridge is careful not to throw exceptions here

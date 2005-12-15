@@ -84,12 +84,7 @@ public:
     void contentsToViewport(int x, int y, int& vx, int& vy);
     void viewportToContents(int vx, int vy, int& x, int& y);
 
-    QWidget *clipper() const { return 0; }
-    void enableClipper(bool) { }
-
     void setStaticBackground(bool);
-
-    void resizeEvent(QResizeEvent *);
         
     NSView *getDocumentView() const;
 

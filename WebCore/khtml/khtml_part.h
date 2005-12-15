@@ -1100,11 +1100,6 @@ private:
   /**
    * @internal
    */
-  void emitSelectionChanged();
-
-  /**
-   * @internal
-   */
   void timerEvent(QTimerEvent *);
   
   /**

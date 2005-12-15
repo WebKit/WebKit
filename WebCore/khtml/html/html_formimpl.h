@@ -205,7 +205,6 @@ public:
      */
     virtual bool appendFormData(FormDataList&, bool) { return false; }
 
-    virtual void defaultEventHandler(EventImpl *evt);
     virtual bool isEditable();
 
     virtual QString state();

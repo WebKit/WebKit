@@ -1538,10 +1538,8 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     
     // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
     // data arrives) (Simon)
-    if(m_url.protocol().startsWith( "http" ) && !m_url.host().isEmpty() && m_url.path().isEmpty()) {
+    if (m_url.protocol().startsWith("http") && !m_url.host().isEmpty() && m_url.path().isEmpty())
         m_url.setPath("/");
-        emit d->m_extension->setLocationBarURL( m_url.prettyURL() );
-    }
     
     // copy to m_workingURL after fixing m_url above
     d->m_workingURL = m_url;

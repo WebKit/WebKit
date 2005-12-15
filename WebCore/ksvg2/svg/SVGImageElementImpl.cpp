@@ -21,7 +21,6 @@
 */
 
 #include "config.h"
-#include <kmimetype.h>
 
 #include <qimage.h>
 #include <qbuffer.h>

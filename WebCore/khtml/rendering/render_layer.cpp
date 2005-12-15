@@ -55,6 +55,10 @@
 #include "xml/EventNames.h"
 #include "html/html_blockimpl.h"
 
+#if SVG_SUPPORT
+#include "SVGNames.h"
+#endif
+
 #include <qscrollbar.h>
 #include <qptrvector.h>
 
@@ -306,6 +310,10 @@ RenderLayer::enclosingPositionedAncestor() const
 bool
 RenderLayer::isTransparent() const
 {
+#if SVG_SUPPORT
+    if (m_object->node()->namespaceURI() == KSVG::SVGNames::svgNamespaceURI)
+        return false;
+#endif
     return m_object->style()->opacity() < 1.0f;
 }
 

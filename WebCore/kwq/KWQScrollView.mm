@@ -489,10 +489,6 @@ void QScrollView::setStaticBackground(bool b)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::resizeEvent(QResizeEvent *)
-{
-}
-
 NSView *QScrollView::getDocumentView() const
 {
     id view = getView();

@@ -36,7 +36,6 @@ class QListboxItem;
 
 #include <qtextedit.h>
 #include <klineedit.h>
-#include <qhbox.h>
 #include <klistbox.h>
 #include <kcombobox.h>
 

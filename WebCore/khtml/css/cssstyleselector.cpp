@@ -54,8 +54,6 @@
 #include <kstandarddirs.h>
 #include <kcharsets.h>
 #include <qfile.h>
-#include <qfontdatabase.h>
-#include <qfontinfo.h>
 #include <qvaluelist.h>
 #include <qstring.h>
 #include <kdebug.h>
@@ -63,7 +61,6 @@
 #include <qdatetime.h>
 #include <assert.h>
 #include <qpaintdevicemetrics.h>
-#include <qintcache.h>
 #include <stdlib.h>
 
 #include <kxmlcore/HashMap.h>

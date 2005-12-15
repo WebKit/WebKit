@@ -32,10 +32,6 @@ class KHTMLPart;
 class KHTMLPartBrowserExtension : public KParts::BrowserExtension {
 public:
     KHTMLPartBrowserExtension(KHTMLPart *);
-
-    void editableWidgetFocused(QWidget *) { }
-    void editableWidgetBlurred(QWidget *) { }
-    void setLocationBarURL(const QString &) { }
     
     virtual KParts::BrowserInterface *browserInterface() { return &_browserInterface; }
 

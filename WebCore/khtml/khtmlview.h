@@ -164,15 +164,11 @@ public:
      void clear();
 
 signals:
-        void cleared();
-    
-protected:
+    void cleared();
+
 public:
-        void clearPart();
+    void clearPart();
     virtual void resizeEvent ( QResizeEvent * event );
-    virtual void showEvent ( QShowEvent * );
-    virtual void hideEvent ( QHideEvent *);
-    
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusInEvent( QFocusEvent * );
     virtual void focusOutEvent( QFocusEvent * );
@@ -184,8 +180,6 @@ public:
 #endif
 
     void keyPressEvent( QKeyEvent *_ke );
-    void keyReleaseEvent ( QKeyEvent *_ke );
-    void contentsContextMenuEvent ( QContextMenuEvent *_ce );
     void doAutoScroll();
 
     bool updateDragAndDrop(const QPoint &, DOM::ClipboardImpl *clipboard);

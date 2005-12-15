@@ -51,11 +51,7 @@
 
 #include <kcharsets.h>
 #include <kdebug.h>
-#include <kmimetype.h>
-#include <kmessagebox.h>
 #include <klocale.h>
-#include <netaccess.h>
-#include <kfileitem.h>
 #include <qfile.h>
 #include <qtextcodec.h>
 
@@ -961,35 +957,6 @@ bool HTMLGenericFormElementImpl::isMouseFocusable() const
         return false;
     }
     return false;
-}
-
-void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
-{
-    if (evt->target()==this)
-    {
-        // Report focus in/out changes to the browser extension (editable widgets only)
-        KHTMLPart *part = getDocument()->part();
-        if (evt->type()==DOMFocusInEvent && isEditable() && part && m_render && m_render->isWidget()) {
-            KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>(part->browserExtension());
-            QWidget *widget = static_cast<RenderWidget*>(m_render)->widget();
-            if (ext)
-                ext->editableWidgetFocused(widget);
-        }
-
-	// We don't want this default key event handling, we'll count on
-	// Cocoa event dispatch if the event doesn't get blocked.
-
-	if (evt->type()==DOMFocusOutEvent && isEditable() && part && m_render && m_render->isWidget()) {
-	    KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>(part->browserExtension());
-	    QWidget *widget = static_cast<RenderWidget*>(m_render)->widget();
-	    if (ext)
-		ext->editableWidgetBlurred(widget);
-
-	    // ### Don't count popup as a valid reason for losing the focus (example: opening the options of a select
-	    // combobox shouldn't emit onblur)
-	}
-    }
-    HTMLElementImpl::defaultEventHandler(evt);
 }
 
 bool HTMLGenericFormElementImpl::isEditable()

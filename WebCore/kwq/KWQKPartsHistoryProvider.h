@@ -34,7 +34,6 @@ class HistoryProvider : public QObject {
 public:
     static HistoryProvider *self();
 
-    void insert(const QString &);
     bool contains(const QString &) const;
 };
 

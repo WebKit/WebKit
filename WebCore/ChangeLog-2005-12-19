@@ -2,6 +2,159 @@
 
         Reviewed by darin.
 
+        Remove more legacy code from khtml/kwq
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6091
+
+        No tests needed, no functionality changes.
+
+        * ForwardingHeaders/kapplication.h: Removed.
+        * ForwardingHeaders/kcompletionbox.h: Removed.
+        * ForwardingHeaders/kdatastream.h: Removed.
+        * ForwardingHeaders/kfiledialog.h: Removed.
+        * ForwardingHeaders/kfileitem.h: Removed.
+        * ForwardingHeaders/khtml_iface.h: Removed.
+        * ForwardingHeaders/khtml_pagecache.h: Removed.
+        * ForwardingHeaders/khtml_printsettings.h: Removed.
+        * ForwardingHeaders/khtml_run.h: Removed.
+        * ForwardingHeaders/kiconloader.h: Removed.
+        * ForwardingHeaders/kio/kprotocolmanager.h: Removed.
+        * ForwardingHeaders/kio/netaccess.h: Removed.
+        * ForwardingHeaders/kmessagebox.h: Removed.
+        * ForwardingHeaders/kmimetype.h: Removed.
+        * ForwardingHeaders/kmultipledrag.h: Removed.
+        * ForwardingHeaders/kparts/partmanager.h: Removed.
+        * ForwardingHeaders/kprinter.h: Removed.
+        * ForwardingHeaders/kprotocolmanager.h: Removed.
+        * ForwardingHeaders/ksimpleconfig.h: Removed.
+        * ForwardingHeaders/ksslcertchain.h: Removed.
+        * ForwardingHeaders/ksslinfodlg.h: Removed.
+        * ForwardingHeaders/kstdaction.h: Removed.
+        * ForwardingHeaders/ktempfile.h: Removed.
+        * ForwardingHeaders/ktrader.h: Removed.
+        * ForwardingHeaders/kurldrag.h: Removed.
+        * ForwardingHeaders/kxmlguifactory.h: Removed.
+        * ForwardingHeaders/netaccess.h: Removed.
+        * ForwardingHeaders/private/qucomextra_p.h: Removed.
+        * ForwardingHeaders/qasyncimageio.h: Removed.
+        * ForwardingHeaders/qbitmap.h: Removed.
+        * ForwardingHeaders/qclipboard.h: Removed.
+        * ForwardingHeaders/qdir.h: Removed.
+        * ForwardingHeaders/qdrawutil.h: Removed.
+        * ForwardingHeaders/qfontdatabase.h: Removed.
+        * ForwardingHeaders/qfontinfo.h: Removed.
+        * ForwardingHeaders/qglobal.h: Removed.
+        * ForwardingHeaders/qhbox.h: Removed.
+        * ForwardingHeaders/qinputdialog.h: Removed.
+        * ForwardingHeaders/qintcache.h: Removed.
+        * ForwardingHeaders/qmetaobject.h: Removed.
+        * ForwardingHeaders/qmovie.h: Removed.
+        * ForwardingHeaders/qobjectlist.h: Removed.
+        * ForwardingHeaders/qtooltip.h: Removed.
+        * ForwardingHeaders/scheduler.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::KJSProxyImpl):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/kjs_window.moc: Removed.
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::HTMLDocumentImpl):
+        * khtml/html/html_documentimpl.moc: Removed.
+        * khtml/html/html_formimpl.cpp:
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/htmltokenizer.moc: Removed.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::didOpenURL):
+        (KHTMLPart::stopLoading):
+        (KHTMLPart::createJavaContext):
+        (KHTMLPart::begin):
+        (KHTMLPart::slotRedirection):
+        (KHTMLPart::setSelection):
+        (KHTMLPart::handleFallbackContent):
+        * khtml/khtml_part.h:
+        * khtml/khtml_part.moc: Removed.
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate):
+        (KHTMLViewPrivate::~KHTMLViewPrivate):
+        (KHTMLView::KHTMLView):
+        (KHTMLView::init):
+        (KHTMLView::resizeEvent):
+        (KHTMLView::layout):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::scrollTo):
+        (KHTMLView::focusNextPrevNode):
+        (KHTMLView::focusInEvent):
+        (KHTMLView::focusOutEvent):
+        * khtml/khtmlview.h:
+        * khtml/khtmlview.moc: Removed.
+        * khtml/misc/loader.cpp:
+        (CachedImage::CachedImage):
+        (CachedImage::ref):
+        (CachedImage::deref):
+        (CachedImage::pixmap_size):
+        (CachedImage::valid_rect):
+        (CachedImage::clear):
+        (CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (Cache::clear):
+        (Cache::flush):
+        (Cache::getStatistics):
+        (Cache::setCacheDisabled):
+        * khtml/misc/loader.h:
+        * khtml/misc/loader.moc: Removed.
+        * khtml/rendering/render_form.cpp:
+        (ComboBoxWidget::ComboBoxWidget):
+        (RenderSelect::createListBox):
+        (RenderSlider::slotClicked):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_form.moc: Removed.
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        (RenderPart::updateWidgetPosition):
+        * khtml/rendering/render_frames.moc: Removed.
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::isTransparent):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::destroy):
+        (RenderWidget::setSelectionState):
+        * khtml/rendering/render_replaced.moc: Removed.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentTypeImpl::cloneNode):
+        * khtml/xml/dom_docimpl.moc: Removed.
+        * khtml/xml/xml_tokenizer.cpp:
+        * khtml/xml/xml_tokenizer.moc: Removed.
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        * kwq/KWQApplication.h:
+        (QApplication::sendEvent):
+        * kwq/KWQComboBox.h:
+        * kwq/KWQKApplication.h: Removed.
+        * kwq/KWQKHTMLPageCache.h: Removed.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache):
+        * kwq/KWQKHTMLPartBrowserExtension.h:
+        * kwq/KWQKHistoryProvider.mm:
+        * kwq/KWQKJavaAppletContext.h:
+        (KJavaAppletContext::KJavaAppletContext):
+        * kwq/KWQKPartsHistoryProvider.h:
+        * kwq/KWQKPartsPartManager.h: Removed.
+        * kwq/KWQMovie.h: Removed.
+        * kwq/KWQMovie.mm: Removed.
+        * kwq/KWQObject.h:
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQWidget.h:
+
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         khtml/css should use RefPtr instead of manual ref() deref()
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6094
 
@@ -73,8 +226,6 @@
         (CSSParser::parseColor):
         * khtml/css/cssstyleselector.cpp:
         (khtml::CSSStyleSelector::applyProperty):
-        * khtml/xsl/xslt_processorimpl.cpp:
-        (DOM::XSLTProcessorImpl::transformToString):
 
 2005-12-15  Adele Peterson  <adele@apple.com>
 

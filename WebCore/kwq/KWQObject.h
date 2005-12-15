@@ -47,7 +47,6 @@ class QEvent;
 class QFont;
 class QFontMetrics;
 class QImage;
-class QMovie;
 class QPaintDevice;
 class QPaintDeviceMetrics;
 class QPainter;

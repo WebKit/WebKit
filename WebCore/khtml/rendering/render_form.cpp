@@ -26,8 +26,6 @@
 #include "config.h"
 #include <kdebug.h>
 #include <klocale.h>
-#include <kfiledialog.h>
-#include <kcompletionbox.h>
 #include <kcursor.h>
 
 #include <qstyle.h>
@@ -609,9 +607,6 @@ RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
 ComboBoxWidget::ComboBoxWidget(QWidget *parent)
     : KComboBox(false, parent)
 {
-    setAutoMask(true);
-    if (listBox()) listBox()->installEventFilter(this);
-    setMouseTracking(true);
 }
 
 bool ComboBoxWidget::event(QEvent *e)
@@ -918,12 +913,9 @@ KListBox* RenderSelect::createListBox()
 {
     KListBox *lb = new KListBox(view()->viewport());
     lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
-    // ### looks broken
-    //lb->setAutoMask(true);
     connect( lb, SIGNAL( selectionChanged() ), this, SLOT( slotSelectionChanged() ) );
     connect( lb, SIGNAL( clicked( QListBoxItem * ) ), this, SLOT( slotClicked() ) );
     m_ignoreSelectEvents = false;
-    lb->setMouseTracking(true);
 
     return lb;
 }
@@ -1231,6 +1223,3 @@ void RenderSlider::slotClicked()
     // emit mouseClick event etc
     RenderFormElement::slotClicked();
 }
-
-
-#include "render_form.moc"

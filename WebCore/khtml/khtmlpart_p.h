@@ -29,7 +29,6 @@
 
 #include <kcursor.h>
 #include <kaction.h>
-#include <kparts/partmanager.h>
 #include <kio/global.h>
 
 #include "khtml_find.h"
@@ -87,8 +86,6 @@ public:
 
 typedef FrameList::ConstIterator ConstFrameIt;
 typedef FrameList::Iterator FrameIt;
-
-static int khtml_part_dcop_counter = 0;
 
 enum RedirectionScheduled {
     noRedirectionScheduled,
@@ -181,12 +178,9 @@ public:
     m_opener = 0;
     m_openedByJS = false;
     m_newJSInterpreterExists = false;
-    m_dcopobject = 0;
-    m_dcop_counter = ++khtml_part_dcop_counter;
   }
   ~KHTMLPartPrivate()
   {
-    delete m_dcopobject;
     delete m_extension;
     delete m_jscript;
 #ifndef Q_WS_QWS
@@ -226,8 +220,6 @@ public:
   bool m_bPluginsOverride :1;
   bool m_restored :1;
   int m_frameNameId;
-  int m_dcop_counter;
-  DCOPObject *m_dcopobject;
 
 #ifndef Q_WS_QWS
   KJavaAppletContext *m_javaContext;

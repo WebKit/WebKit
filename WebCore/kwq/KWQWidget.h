@@ -72,9 +72,6 @@ public:
     
     void setActiveWindow();
 
-    void setAutoMask(bool) { }
-    void setMouseTracking(bool) { }
-
     long winId() const;
     int x() const;
     int y() const;
@@ -125,19 +122,6 @@ public:
     void show();
     void hide();
 
-    void showEvent(QShowEvent *) { }
-    void hideEvent(QHideEvent *) { }
-    void wheelEvent(QWheelEvent *) { }
-    void keyPressEvent(QKeyEvent *) { }
-    void keyReleaseEvent(QKeyEvent *) { }
-    void focusInEvent(QFocusEvent *) { }
-    void focusOutEvent(QFocusEvent *) { }
-
-    enum BackgroundMode { NoBackground };    
-    void setBackgroundMode(BackgroundMode) { }
-
-    void setAcceptDrops(bool) { }
-        
     NSView *getView() const;
     NSView *getOuterView() const;
     void setView(NSView *aView);

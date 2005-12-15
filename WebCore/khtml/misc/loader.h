@@ -54,7 +54,6 @@
 #include <dom/dom_string.h>
 #include "DocPtr.h"
 
-class QMovie;
 class KHTMLPart;
 
 namespace KIO {
@@ -360,20 +359,10 @@ namespace khtml
         virtual bool isImage() const { return true; }
 
 	void clear();
-
-    private slots:
-	/**
-	 * gets called, whenever a QMovie changes frame
-	 */
-	void movieUpdated( const QRect &rect );
-        void movieStatus(int);
-        void movieResize(const QSize&);
-        void deleteMovie();
-
+        
     private:
         void do_notify(const QPixmap& p, const QRect& r);
 
-	QMovie* m;
         QPixmap* p;
 	QPixmap* bg;
         QRgb bgColor;
@@ -644,11 +633,6 @@ protected:
 	static int size() { return maxSize; };
 
         static int maxCacheableObjectSize() { return maxCacheable; }
-
-	/**
-	 * prints some statistics to stdout
-	 */
-	static void statistics();
 
 	/**
 	 * clean up cache

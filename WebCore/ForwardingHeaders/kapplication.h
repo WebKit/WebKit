@@ -1,1 +1,0 @@
-#import "KWQKApplication.h"

@@ -3434,5 +3434,3 @@ NodeImpl *DocumentTypeImpl::cloneNode(bool /*deep*/)
     // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
     return 0;
 }
-
-#include "dom_docimpl.moc"
