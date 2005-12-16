@@ -585,16 +585,15 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return jsString(formatLocaleDate(exec, secs, false, true, args));
     break;
 #else
-  case ToLocaleString:
-    strftime(timebuffer, bufsize, "%c", t);
+    strftime(timebuffer, bufsize, "%c", &t);
     return jsString(timebuffer);
     break;
   case ToLocaleDateString:
-    strftime(timebuffer, bufsize, "%x", t);
+    strftime(timebuffer, bufsize, "%x", &t);
     return jsString(timebuffer);
     break;
   case ToLocaleTimeString:
-    strftime(timebuffer, bufsize, "%X", t);
+    strftime(timebuffer, bufsize, "%X", &t);
     return jsString(timebuffer);
     break;
 #endif
