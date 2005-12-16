@@ -1,3 +1,16 @@
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6014
+        Bidi algorithm: incorrect resolved levels for neutrals between R and
+        ET ON L
+
+        * fast/text/international/bidi-european-terminators-expected.checksum: Added.
+        * fast/text/international/bidi-european-terminators-expected.png: Added.
+        * fast/text/international/bidi-european-terminators-expected.txt: Added.
+        * fast/text/international/bidi-european-terminators.html: Added.
+
 2005-12-16  Darin Adler  <darin@apple.com>
 
         - Added layout tests Evan Gross contributed about converting to attributed string.
