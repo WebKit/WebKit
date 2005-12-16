@@ -1,3 +1,13 @@
+2005-12-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6112
+        REGRESSION: navigator.plugins empty.
+
+        * fast/js/Plug-ins-expected.checksum: Added.
+        * fast/js/Plug-ins-expected.png: Added.
+        * fast/js/Plug-ins-expected.txt: Added.
+        * fast/js/Plug-ins.html: Added.
+
 2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
