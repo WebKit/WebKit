@@ -1,3 +1,39 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6092
+          REGRESSION: dom/xhtml/level2/html//HTMLInputElement01.xhtml crashes
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::XMLTokenizer): Initialize the new m_currentNodeIsReferenced
+        field to false for the document case, and true for the non-0 fragment case. Also
+        don't reference the document in the document tokenizer case to avoid a circular
+        reference -- HTML parser already does both of these things.
+        (khtml::XMLTokenizer::~XMLTokenizer): Call setCurrentNode(0) to release the current
+        node in case the tokenizer is being destroyed without finishing parsing. Only call
+        deref on the document inthe fragment-parsing case.
+        (khtml::XMLTokenizer::setCurrentNode): Added. Reference the current node only if
+        it's not the document. Just as with the HTML parser, use a boolean to track whether
+        the current node needs a deref or not.
+        (khtml::XMLTokenizer::startElementNs): Use a RefPtr to keep the newly created element
+        alive at least until setCurrentNode is called. Remove the bogus explicit delete of
+        of the node after calling addChild, since reference counting takes care of it.
+        Stop parsing if we fail to create an element.
+        (khtml::XMLTokenizer::endElementNs): Use setCurrentNode and use a local variable
+        to avoid reference count thrash.
+        (khtml::XMLTokenizer::characters): Changed to only support text nodes. CDATA no
+        longer calls this function. 
+        (khtml::XMLTokenizer::enterText): Use setCurrentNode, and remove bogus delete call. 
+        (khtml::XMLTokenizer::exitText): Add checks for stopped parser and for whether
+        the current node is a text node so this can be called unconditionally.
+        (khtml::XMLTokenizer::cdataBlock): Use setCurrentNode and move the call before the
+        call to attach to make sure the node is already ref'd when attach is called.
+        (khtml::XMLTokenizer::finish): Call setCurrentNode(0) to release the nodes we've
+        been parsing.
+        (khtml::XMLTokenizer::executeScripts): Fixed incorrect cast to TextImpl to cast to
+        the base class CharacterDataImpl instead.
+
 2005-12-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Tim Hatcher.

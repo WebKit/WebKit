@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "xml_tokenizer.h"
+
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
@@ -100,7 +101,7 @@ public:
     void internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID);
 
 private:
-    void end();
+    void setCurrentNode(NodeImpl*);
 
     int lineNumber() const;
     int columnNumber() const;
@@ -120,6 +121,7 @@ private:
 
     xmlParserCtxtPtr m_context;
     NodeImpl *m_currentNode;
+    bool m_currentNodeIsReferenced;
 
     bool m_sawError;
     bool m_sawXSLTransform;
@@ -168,12 +170,12 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
     static bool didInit = false;
     if (!didInit) {
         xmlInitParser();
-        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, NULL);
-        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, NULL);
+        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, 0);
+        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, 0);
         didInit = true;
     }
 
-    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, NULL, NULL, 0, NULL);
+    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, 0, 0, 0, 0);
     parser->_private = userData;
     parser->replaceEntities = true;
     const QChar BOM(0xFEFF);
@@ -193,20 +195,20 @@ static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 
 XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, KHTMLView *_view)
     : m_doc(_doc), m_view(_view),
-      m_context(NULL), m_currentNode(m_doc),
+      m_context(0), m_currentNode(_doc), m_currentNodeIsReferenced(false),
       m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(false)
 {
-    if (m_doc)
-        m_doc->ref();
 }
 
 XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentElement)
     : m_doc(fragment->getDocument()), m_view(0),
-      m_context(0), m_currentNode(fragment),
+      m_context(0), m_currentNode(fragment), m_currentNodeIsReferenced(fragment),
       m_sawError(false), m_errorCount(0),
       m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(true)
 {
+    if (fragment)
+        fragment->ref();
     if (m_doc)
         m_doc->ref();
           
@@ -235,11 +237,23 @@ XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentEl
 
 XMLTokenizer::~XMLTokenizer()
 {
-    if (m_doc)
+    setCurrentNode(0);
+    if (m_parsingFragment && m_doc)
         m_doc->deref();
     delete m_scriptsIt;
     if (m_cachedScript)
         m_cachedScript->deref(this);
+}
+
+void XMLTokenizer::setCurrentNode(NodeImpl* n)
+{
+    bool nodeNeedsReference = n && n != m_doc;
+    if (nodeNeedsReference)
+        n->ref(); 
+    if (m_currentNodeIsReferenced) 
+        m_currentNode->deref(); 
+    m_currentNode = n;
+    m_currentNodeIsReferenced = nodeNeedsReference;
 }
 
 bool XMLTokenizer::write(const TokenizerString &s, bool /*appendData*/ )
@@ -313,10 +327,9 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
 {
     if (m_parserStopped)
         return;
-    
-    if (m_currentNode->nodeType() == Node::TEXT_NODE)
-        exitText();
-    
+
+    exitText();
+
     DOMString localName = toQString(xmlLocalName);
     DOMString uri = toQString(xmlURI);
     DOMString prefix = toQString(xmlPrefix);
@@ -330,17 +343,23 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     }
 
     int exceptioncode = 0;
-    ElementImpl *newElement = m_doc->createElementNS(uri, qName, exceptioncode);
-    if (!newElement)
+    RefPtr<ElementImpl> newElement = m_doc->createElementNS(uri, qName, exceptioncode);
+    if (!newElement) {
+        stopParsing();
         return;
+    }
     
-    handleElementNamespaces(newElement, libxmlNamespaces, nb_namespaces, exceptioncode);
-    if (exceptioncode)
+    handleElementNamespaces(newElement.get(), libxmlNamespaces, nb_namespaces, exceptioncode);
+    if (exceptioncode) {
+        stopParsing();
         return;
+    }
     
-    handleElementAttributes(newElement, libxmlAttributes, nb_attributes, exceptioncode);
-    if (exceptioncode)
+    handleElementAttributes(newElement.get(), libxmlAttributes, nb_attributes, exceptioncode);
+    if (exceptioncode) {
+        stopParsing();
         return;
+    }
 
     // FIXME: This hack ensures implicit table bodies get constructed in XHTML and XML files.
     // We want to consolidate this with the HTML parser and HTML DOM code at some point.
@@ -348,25 +367,25 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     if (m_currentNode->hasTagName(tableTag) &&
         newElement->hasTagName(trTag) &&
         m_currentNode->isHTMLElement() && newElement->isHTMLElement()) {
-        NodeImpl* implicitTBody =
+        RefPtr<NodeImpl> implicitTBody =
            new HTMLTableSectionElementImpl(tbodyTag, m_doc, true /* implicit */);
-        m_currentNode->addChild(implicitTBody);
+        m_currentNode->addChild(implicitTBody.get());
+        setCurrentNode(implicitTBody.get());
         if (m_view && !implicitTBody->attached())
             implicitTBody->attach();
-        m_currentNode = implicitTBody;
     }
 
     if (newElement->hasTagName(scriptTag))
-        static_cast<HTMLScriptElementImpl *>(newElement)->setCreatedByParser(true);
+        static_cast<HTMLScriptElementImpl *>(newElement.get())->setCreatedByParser(true);
 
-    if (!m_currentNode->addChild(newElement)) {
-        delete newElement;
+    if (!m_currentNode->addChild(newElement.get())) {
+        stopParsing();
         return;
     }
     
+    setCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
-            newElement->attach();
-    m_currentNode = newElement;
+        newElement->attach();
 }
 
 void XMLTokenizer::endElementNs()
@@ -374,12 +393,14 @@ void XMLTokenizer::endElementNs()
     if (m_parserStopped)
         return;
 
-    if (m_currentNode->nodeType() == Node::TEXT_NODE)
-        exitText();
-    while (m_currentNode->implicitNode())
-        m_currentNode = m_currentNode->parentNode();
-    m_currentNode->closeRenderer();
-    m_currentNode = m_currentNode->parentNode();
+    exitText();
+
+    NodeImpl *n = m_currentNode;
+    while (n->implicitNode())
+        n = n->parentNode();
+    RefPtr<NodeImpl> parent = n->parentNode();
+    n->closeRenderer();
+    setCurrentNode(parent.get());
 }
 
 void XMLTokenizer::characters(const xmlChar *s, int len)
@@ -387,10 +408,7 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
     if (m_parserStopped)
         return;
     
-    if (m_currentNode->nodeType() == Node::TEXT_NODE ||
-        m_currentNode->nodeType() == Node::CDATA_SECTION_NODE ||
-        enterText()) {
-
+    if (m_currentNode->isTextNode() || enterText()) {
         int exceptioncode = 0;
         static_cast<TextImpl*>(m_currentNode)->appendData(toQString(s, len), exceptioncode);
     }
@@ -398,25 +416,28 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
 
 bool XMLTokenizer::enterText()
 {
-    NodeImpl *newNode = m_doc->createTextNode("");
-    if (m_currentNode->addChild(newNode)) {
-        m_currentNode = newNode;
-        return true;
-    }
-    else {
-        delete newNode;
+    RefPtr<NodeImpl> newNode = new TextImpl(m_doc, "");
+    if (!m_currentNode->addChild(newNode.get()))
         return false;
-    }
+    setCurrentNode(newNode.get());
+    return true;
 }
 
 void XMLTokenizer::exitText()
 {
+    if (m_parserStopped)
+        return;
+
+    if (!m_currentNode->isTextNode())
+        return;
+
     if (m_view && m_currentNode && !m_currentNode->attached())
         m_currentNode->attach();
-    
-    NodeImpl* par = m_currentNode->parentNode();
-    if (par != 0)
-        m_currentNode = par;
+
+    // FIXME: What's the right thing to do if the parent is really 0?
+    // Just leaving the current node set to the text node doesn't make much sense.
+    if (NodeImpl* par = m_currentNode->parentNode())
+        setCurrentNode(par);
 }
 
 void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
@@ -459,22 +480,23 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     if (m_parserStopped)
         return;
 
-    if (m_currentNode->nodeType() == Node::TEXT_NODE)
-        exitText();
-    
+    exitText();
+
     // ### handle exceptions
     int exception = 0;
-    ProcessingInstructionImpl *pi = m_doc->createProcessingInstruction(
-        toQString(target),
-        toQString(data),
-        exception);
+    RefPtr<ProcessingInstructionImpl> pi = m_doc->createProcessingInstruction(
+        toQString(target), toQString(data), exception);
     if (exception)
         return;
 
-    m_currentNode->addChild(pi);
+    if (!m_currentNode->addChild(pi.get()))
+        return;
+    if (m_view && !pi->attached())
+        pi->attach();
+
     // don't load stylesheets for standalone documents
     if (m_doc->part()) {
-	m_sawXSLTransform = !pi->checkStyleSheet();
+        m_sawXSLTransform = !pi->checkStyleSheet();
 #ifdef KHTML_XSLT
         // Pretend we didn't see this PI if we're the result of a transform.
         if (m_sawXSLTransform && !m_doc->transformSourceDocument())
@@ -491,36 +513,26 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
     if (m_parserStopped)
         return;
 
-    if (m_currentNode->nodeType() == Node::TEXT_NODE)
-        exitText();
+    exitText();
 
-    int ignoreException = 0;
-    NodeImpl *newNode = m_doc->createCDATASection("", ignoreException);
-    if (m_currentNode->addChild(newNode)) {
-        if (m_view && !newNode->attached())
-            newNode->attach();
-        m_currentNode = newNode;
-    }
-    else {
-        delete newNode;
+    RefPtr<NodeImpl> newNode = new CDATASectionImpl(m_doc, toQString(s, len));
+    if (!m_currentNode->addChild(newNode.get()))
         return;
-    }
-
-    characters(s, len);
-
-    if (m_currentNode->parentNode() != 0)
-        m_currentNode = m_currentNode->parentNode();
+    if (m_view && !newNode->attached())
+        newNode->attach();
 }
 
 void XMLTokenizer::comment(const xmlChar *s)
 {
     if (m_parserStopped)
         return;
-    
-    if (m_currentNode->nodeType() == Node::TEXT_NODE)
-        exitText();
-    // ### handle exceptions
-    m_currentNode->addChild(m_doc->createComment(toQString(s)));
+
+    exitText();
+
+    RefPtr<NodeImpl> newNode = new CommentImpl(m_doc, toQString(s));
+    m_currentNode->addChild(newNode.get());
+    if (m_view && !newNode->attached())
+        newNode->attach();
 }
 
 void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
@@ -620,7 +632,8 @@ static void internalSubsetHandler(void *closure, const xmlChar *name, const xmlC
 void XMLTokenizer::finish()
 {
     if (m_xmlCode.isEmpty())
-            return;
+        return;
+
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
     sax.error = normalErrorHandler;
@@ -646,18 +659,20 @@ void XMLTokenizer::finish()
     if (m_context->myDoc)
         xmlFreeDoc(m_context->myDoc);
     xmlFreeParserCtxt(m_context);
-    m_context = NULL;
+    m_context = 0;
 
     if (m_sawError) {
         insertErrorMessageBlock();
     } else {
         // Parsing was successful. Now locate all html <script> tags in the document and execute them
         // one by one.
+        exitText();
         addScripts(m_doc);
         m_scriptsIt = new QPtrListIterator<ElementImpl>(m_scripts);
         executeScripts();
     }
 
+    setCurrentNode(0);
     emit finishedParsing();
 }
 
@@ -758,19 +773,18 @@ void XMLTokenizer::executeScripts()
 #endif
         QString charset = scriptElement->getAttribute(charsetAttr).qstring();
 
-	// don't load external scripts for standalone documents (for now)
+        // don't load external scripts for standalone documents (for now)
         if (!scriptHref.isEmpty() && m_doc->part()) {
             // we have a src attribute
             m_cachedScript = m_doc->docLoader()->requestScript(scriptHref, charset);
             m_cachedScript->ref(this); // will call executeScripts() again if already cached
             return;
-        }
-        else {
+        } else {
             // no src attribute - execute from contents of tag
             QString scriptCode = "";
             for (NodeImpl *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
-                if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE)
-                    scriptCode += static_cast<TextImpl*>(child)->data().qstring();
+                if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
+                    scriptCode += static_cast<CharacterDataImpl*>(child)->data().qstring();
             }
             // the script cannot do document.write until we support incremental parsing
             // ### handle the case where the script deletes the node or redirects to
