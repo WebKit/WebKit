@@ -1,3 +1,16 @@
+2005-12-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        No test cases needed (no functionality changes).
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLImportRuleImpl::XSLImportRuleImpl):
+        (DOM::XSLImportRuleImpl::~XSLImportRuleImpl):
+        (DOM::XSLImportRuleImpl::setStyleSheet):
+        * khtml/xsl/xsl_stylesheetimpl.h:
+        (DOM::XSLImportRuleImpl::styleSheet):
+
 2005-12-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

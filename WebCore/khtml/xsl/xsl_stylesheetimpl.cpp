@@ -230,17 +230,14 @@ XSLImportRuleImpl::XSLImportRuleImpl(StyleBaseImpl* parent, const DOMString &hre
 : StyleBaseImpl(parent)
 {
     m_strHref = href;
-    m_styleSheet = 0;
     m_cachedSheet = 0;
     m_loading = false;
 }
 
 XSLImportRuleImpl::~XSLImportRuleImpl()
 {
-    if (m_styleSheet) {
+    if (m_styleSheet)
         m_styleSheet->setParent(0);
-        m_styleSheet->deref();
-    }
     
     if (m_cachedSheet)
         m_cachedSheet->deref(this);
@@ -248,12 +245,10 @@ XSLImportRuleImpl::~XSLImportRuleImpl()
 
 void XSLImportRuleImpl::setStyleSheet(const DOMString& url, const DOMString& sheet)
 {
-    if (m_styleSheet) {
+    if (m_styleSheet)
         m_styleSheet->setParent(0);
-        m_styleSheet->deref();
-    }
+    
     m_styleSheet = new XSLStyleSheetImpl(this, url);
-    m_styleSheet->ref();
     
     XSLStyleSheetImpl* parent = parentStyleSheet();
     if (parent)
