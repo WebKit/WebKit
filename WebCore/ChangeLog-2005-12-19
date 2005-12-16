@@ -1,5 +1,30 @@
 2005-12-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+	Made SVG on by default!
+        Also removed last two KHTML_NO_CPLUSPLUS_DOM #ifs and turned off.
+        Removed APPLE_COMPILE_HACK, fixing or replacing with #if 0 for now.
+
+        * WebCore.xcodeproj/project.pbxproj: Made SVG default!
+        * ksvg2/KSVGSettings.cpp: Removed.
+        * ksvg2/css/SVGCSSStyleSelector.cpp: fixed copyright.
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        (SVGCursorElementImpl::notifyFinished): fixed
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::parseMappedAttribute): removed dead code.
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::createRenderer): #if 0
+        (SVGImageElementImpl::notifyFinished): #if 0
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::pixelUnitToMillimeterX): #if 0
+        (SVGSVGElementImpl::pixelUnitToMillimeterY): #if 0
+        * kwq/DOM.mm: removed KHTML_NO_CPLUSPLUS_DOM
+        (ObjCNodeFilterCondition::acceptNode):
+        * kwq/KWQKHTMLPart.mm: removed KHTML_NO_CPLUSPLUS_DOM
+
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
 	Fix build break.  (Files missed in previous commit.)
 
         * khtml/css/csshelper.cpp:

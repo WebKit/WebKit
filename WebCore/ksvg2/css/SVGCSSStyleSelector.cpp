@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2005 Apple Computer, Inc.
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 

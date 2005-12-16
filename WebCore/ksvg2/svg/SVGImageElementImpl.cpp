@@ -123,9 +123,8 @@ void SVGImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 
 khtml::RenderObject *SVGImageElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
-    QString fname = KDOM::DOMString(href()->baseVal()).qstring();
-#ifndef APPLE_COMPILE_HACK
-    KURL fullUrl(ownerDocument()->documentKURI(), fname);
+#if 0
+    KURL fullUrl(ownerDocument()->completeURL(href()->baseVal()));
     KMimeType::Ptr mimeType = KMimeType::findByURL(fullUrl);
     if(mimeType->is(QString::fromLatin1("image/svg+xml"))) // does it have svg content?
     {
@@ -176,7 +175,7 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
     KRenderingPaintServer *fillPaintServer = QPainter::renderingDevice()->createPaintServer(PS_IMAGE);
     canvasStyle->fillPainter()->setPaintServer(fillPaintServer);
 
-#ifndef APPLE_COMPILE_HACK
+#if 0
     if(finishedObj == m_cachedDocument)
     {
         KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(0);

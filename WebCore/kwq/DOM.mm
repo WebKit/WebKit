@@ -2238,13 +2238,8 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
     CFRelease(m_filter);
 }
 
-short ObjCNodeFilterCondition::acceptNode(NodeImpl* n) const
+short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
 {
-#if KHTML_NO_CPLUSPLUS_DOM
-    NodeImpl *node = n;
-#else
-    NodeImpl *node = n.handle();
-#endif
     if (!node)
         return NodeFilter::FILTER_REJECT;
     return [m_filter acceptNode:[DOMNode _nodeWithImpl:node]];

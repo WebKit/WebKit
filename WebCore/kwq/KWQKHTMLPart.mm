@@ -113,14 +113,6 @@ void KHTMLPart::completed(bool arg)
     KWQ(this)->_completed.call(arg);
 }
 
-#if !KHTML_NO_CPLUSPLUS_DOM
-
-void KHTMLPart::nodeActivated(const Node &)
-{
-}
-
-#endif
-
 bool KHTMLPart::openURL(const KURL &URL)
 {
     ASSERT_NOT_REACHED();

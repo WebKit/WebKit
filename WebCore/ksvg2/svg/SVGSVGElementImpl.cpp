@@ -155,7 +155,7 @@ SVGRectImpl *SVGSVGElementImpl::viewport() const
 
 float SVGSVGElementImpl::pixelUnitToMillimeterX() const
 {
-#ifndef APPLE_COMPILE_HACK
+#if 0
     if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
     {
         Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
@@ -168,7 +168,7 @@ float SVGSVGElementImpl::pixelUnitToMillimeterX() const
 
 float SVGSVGElementImpl::pixelUnitToMillimeterY() const
 {
-#ifndef APPLE_COMPILE_HACK
+#if 0
     if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
     {
         Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
@@ -198,13 +198,6 @@ void SVGSVGElementImpl::setUseCurrentView(bool currentView)
 {
     m_useCurrentView = currentView;
 }
-
-/*
-SVGViewSpecImpl *SVGSVGElementImpl::currentView() const
-{
-    return 0;
-}
-*/
 
 float SVGSVGElementImpl::currentScale() const
 {

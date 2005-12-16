@@ -103,17 +103,6 @@ KDOM::AtomicString SVGElementImpl::tryGetAttributeNS(const KDOM::DOMString& name
 
 void SVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-#ifndef APPLE_COMPILE_HACK
-    // We don't yet know how to support setIsId/isId
-    if (attr->name() == SVGNames::idAttr)
-    {
-        // FIXME: This seems bogus.  id should be in the null or xml namespace, right? -- ecs 10/31/05
-        KDOM::AttrImpl *attr = getAttributeNodeNS(KDOM::NS_SVG, "id");
-        if(attr)
-            attr->setIsId(true);
-    }
-    else
-#endif
     // standard events
     if (attr->name() == onclickAttr)
         setHTMLEventListener(clickEvent, getDocument()->createHTMLEventListener(attr->value().qstring(), this));
