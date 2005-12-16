@@ -1071,7 +1071,8 @@ void KHTMLPart::slotFinishedParsing()
 
   if (!d->m_view)
     return; // We are probably being destructed.
-    
+
+  RefPtr<KHTMLPart> protector(this);
   checkCompleted();
 
   if (!d->m_view)
