@@ -141,16 +141,17 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int selEnd = selStart;
     int selTop = rootBox->selectionTop();
     int selHeight = rootBox->selectionHeight();
+    int leadWidth = 0;
 
     // FIXME: For justified text, just return the entire text box's rect.  At the moment there's still no easy
     // way to get the width of a run including the justification padding.
     if (sPos > 0 && !m_toAdd) {
         // The selection begins in the middle of our run.
-        int w = textObj->width(m_start, sPos, m_firstLine, m_x);
+        leadWidth = textObj->width(m_start, sPos, textPos(), m_firstLine);
         if (m_reversed)
-            selStart -= w;
+            selStart -= leadWidth;
         else
-            selStart += w;
+            selStart += leadWidth;
     }
 
     if (m_toAdd || (sPos == 0 && ePos == m_len)) {
@@ -161,7 +162,7 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     }
     else {
         // Our run is partially selected, and so we need to measure.
-        int w = textObj->width(sPos + m_start, ePos - sPos, m_firstLine);
+        int w = textObj->width(sPos + m_start, ePos - sPos, textPos() + leadWidth, m_firstLine);
         if (sPos + m_start > 0 && textObj->str->s[sPos + m_start].isSpace() && !textObj->str->s[sPos + m_start - 1].isSpace())
             w += textObj->style(m_firstLine)->wordSpacing();
         if (m_reversed)
@@ -232,7 +233,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
             
             // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
             m_truncation = offset + m_start;
-            return m_x + static_cast<RenderText*>(m_object)->width(m_start, offset, m_firstLine);
+            return m_x + static_cast<RenderText*>(m_object)->width(m_start, offset, textPos(), m_firstLine);
         }
     }
     else {
@@ -564,7 +565,7 @@ void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
         return;
     
     int width = (m_truncation == cNoTruncation) ? 
-                m_width : static_cast<RenderText*>(m_object)->width(m_start, m_truncation - m_start, m_firstLine);
+                m_width : static_cast<RenderText*>(m_object)->width(m_start, m_truncation - m_start, textPos(), m_firstLine);
     
     // Get the text decoration colors.
     QColor underline, overline, linethrough;
@@ -601,7 +602,7 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
     if (paintStart <= marker.startOffset) {
         paintStart = marker.startOffset;
         useWholeWidth = false;
-        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, m_firstLine);
+        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
     }
     if (paintEnd != marker.endOffset) {      // end points at the last char, not past it
         paintEnd = kMin(paintEnd, marker.endOffset);
@@ -612,7 +613,7 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
-        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, m_firstLine);
+        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
@@ -650,7 +651,7 @@ void InlineTextBox::paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, KWQ
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
-        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, m_firstLine);
+        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
         paintEnd = kMin(paintEnd, (unsigned)underline.endOffset);
@@ -661,7 +662,7 @@ void InlineTextBox::paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, KWQ
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
-        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, m_firstLine);
+        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
     int underlineOffset = m_height - 3;

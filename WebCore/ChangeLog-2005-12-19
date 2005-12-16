@@ -1,6 +1,21 @@
 2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6043
+        Incorrect selection highlighting in pre-formatted text with tabs
+
+        * khtml/rendering/render_text.cpp: Correct parameters in calls to RenderText::width().
+        (InlineTextBox::selectionRect):
+        (InlineTextBox::placeEllipsisBox):
+        (InlineTextBox::paintDecoration):
+        (InlineTextBox::paintMarker):
+        (InlineTextBox::paintMarkedTextUnderline):
+        * manual-tests/pre-tab-selection-rect.html: Added.
+
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
         
         Test: fast/js/replace-child-siblings.html
 
