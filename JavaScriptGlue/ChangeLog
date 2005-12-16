@@ -1,5 +1,11 @@
 2005-12-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        * JSRun.cpp: (JSRun::Evaluate): Updated for change to Interpreter::evaluate.
+
+2005-12-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Tim Hatcher.
 
         * JavaScriptGlue.xcodeproj/project.pbxproj: Removed some redundant build
@@ -57,8 +63,6 @@
         * kxmlcore/RefPtr.h: Added.
 
 2005-12-05  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * kxmlcore/PassRefPtr.h: Added.
 
