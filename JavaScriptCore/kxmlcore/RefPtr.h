@@ -34,12 +34,10 @@ namespace KXMLCore {
         RefPtr() : m_ptr(NULL) {}
         RefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->ref(); }
-        RefPtr(PassRefPtr<T>& o) : m_ptr(o.release()) {}
 
         ~RefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
         
         template <class U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
-        template <class U> RefPtr(PassRefPtr<U>& o) : m_ptr(o.release()) { }
         
         T *get() const { return m_ptr; }
         
