@@ -1,0 +1,5 @@
+This is a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6069 Assertion failure in RenderBlock::addChildToFlow during replaceChild. It tests whether replaceChild() works correctly when the new node and the old node are siblings.
+
+Test result: PASS
+
+

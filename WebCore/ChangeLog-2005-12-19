@@ -1,3 +1,16 @@
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        Test: fast/js/replace-child-siblings.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6069
+        Assertion failure in RenderBlock::addChildToFlow during replaceChild
+        
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::replaceChild): If the new child was right
+        before or right after the old child, then it just stays.
+        
 2005-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

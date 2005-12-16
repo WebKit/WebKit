@@ -1,3 +1,13 @@
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6069
+        Assertion failure in RenderBlock::addChildToFlow during replaceChild
+
+        * fast/js/replace-child-siblings-expected.txt: Added.
+        * fast/js/replace-child-siblings.html: Added.
+
 2005-12-15  Adele Peterson  <adele@apple.com>
 
         Test for <rdar://problem/4258232> Crash in HTMLOptionElementImpl::index when option element has no corresponding select - http://www.mattkruse.com/javascript/datadumper/
