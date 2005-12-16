@@ -24,7 +24,9 @@
 #define KXMLCORE_HASH_TRAITS_H
 
 #include <utility>
+#ifndef WIN32
 #include <bits/cpp_type_traits.h>
+#endif
 
 namespace KXMLCore {
 
