@@ -1682,14 +1682,7 @@ JSValue *HTMLElement::textAreaGetter(ExecState* exec, int token) const
         case TextAreaReadOnly:        return jsBoolean(textarea.readOnly());
         case TextAreaRows:            return jsNumber(textarea.rows());
         case TextAreaSelectionStart:  return jsNumber(textarea.selectionStart());
-        case TextAreaSelectionEnd:
-            // FIXME (4363497): Work-around to prevent regression caused by GMail bug (4344954).
-            // For the love of all that is holy, let's remove this code as soon as
-            // Google fixes its bug.
-            if (impl() && impl()->getDocument() && (impl()->getDocument()->domain() == "mail.google.com"))
-                    return jsUndefined();
-            
-            return jsNumber(textarea.selectionEnd());
+        case TextAreaSelectionEnd:    return jsNumber(textarea.selectionEnd());
         case TextAreaTabIndex:        return jsNumber(textarea.tabIndex());
         case TextAreaType:            return jsString(textarea.type());
         case TextAreaValue:           return jsString(textarea.value());

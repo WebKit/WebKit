@@ -1,3 +1,17 @@
+2005-12-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed <rdar://problem/4381444> Remove GMail-specific work-around 
+        previously added.
+
+        Reviewed by Darin.
+
+        No test case because this patch just turns on already-tested behavior
+        for GMail.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::textAreaGetter): Removed code that hid the
+        selectionEnd property from sites on the GMail domain.
+
 2005-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
