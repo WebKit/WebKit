@@ -5021,8 +5021,12 @@ static NSArray *validAttributes = nil;
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
 {
-    ERROR("TEXTINPUT: attributedSubstringFromRange: not yet implemented");
-    return nil;
+    WebBridge *bridge = [self _bridge];
+    DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
+    if (!range)
+        return nil;
+    
+    return [bridge attributedStringFrom:[range startContainer] startOffset:[range startOffset] to:[range endContainer] endOffset:[range endOffset]];
 }
 
 // test for 10.4 because of <rdar://problem/4243463>

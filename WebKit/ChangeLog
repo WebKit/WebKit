@@ -1,3 +1,13 @@
+2005-12-16  Evan Gross  <evan@rainmakerinc.com>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4680
+          WebHTMLView (WebNSTextInputSupport) - attributedSubstringFromRange "not yet implemented"
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView attributedSubstringFromRange:]):
+        Implement by calling the same RTF conversion used when copying to the pasteboard.
+
 2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
