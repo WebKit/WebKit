@@ -1,3 +1,8 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        * khtml/xml/xml_tokenizer.cpp: (khtml::XMLTokenizer::exitText):
+        Add missing null check.
+
 2005-12-15  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed <rdar://problem/4381444> Remove GMail-specific work-around 

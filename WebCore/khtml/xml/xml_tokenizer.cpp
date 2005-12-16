@@ -428,7 +428,7 @@ void XMLTokenizer::exitText()
     if (m_parserStopped)
         return;
 
-    if (!m_currentNode->isTextNode())
+    if (!m_currentNode || !m_currentNode->isTextNode())
         return;
 
     if (m_view && m_currentNode && !m_currentNode->attached())
