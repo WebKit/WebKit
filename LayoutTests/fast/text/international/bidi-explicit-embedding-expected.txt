@@ -10,22 +10,22 @@ layer at (0,0) size 800x494
           text run at (0,36) width 600: "Roman characters and digits should be in increasing order from left to right."
       RenderBlock {P} at (0,70) size 784x18
         RenderText {TEXT} at (0,0) size 62x18
-          text run at (0,0) width 27: "\x{5D0}\x{5D1}\x{5D2}"
+          text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (27,0) width 35: " def "
         RenderInline {SPAN} at (0,0) size 38x18
           RenderText {TEXT} at (62,0) size 38x18
-            text run at (62,0) width 38: "(\x{5D6}\x{5D7}\x{5D8}]"
+            text run at (62,0) width 38 RTL: "(\x{5D6}\x{5D7}\x{5D8}]"
         RenderText {TEXT} at (100,0) size 24x18
           text run at (100,0) width 24: " jkl"
       RenderBlock {P} at (0,104) size 784x18
         RenderText {TEXT} at (0,0) size 62x18
-          text run at (0,0) width 27: "\x{5D0}\x{5D1}\x{5D2}"
+          text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (27,0) width 35: " def "
         RenderInline {SPAN} at (0,0) size 37x18
           RenderText {TEXT} at (62,0) size 37x18
-            text run at (62,0) width 6: "]"
+            text run at (62,0) width 6 RTL: "]"
             text run at (68,0) width 25: "ghi"
-            text run at (93,0) width 6: "("
+            text run at (93,0) width 6 RTL: "("
         RenderText {TEXT} at (99,0) size 24x18
           text run at (99,0) width 24: " jkl"
       RenderBlock {P} at (0,138) size 784x18
@@ -33,84 +33,84 @@ layer at (0,0) size 800x494
           text run at (0,0) width 33: "abc "
         RenderInline {SPAN} at (0,0) size 59x18
           RenderText {TEXT} at (33,0) size 59x18
-            text run at (33,0) width 6: "]"
+            text run at (33,0) width 6 RTL: "]"
             text run at (39,0) width 21: "23"
-            text run at (60,0) width 5: " "
+            text run at (60,0) width 5 RTL: " "
             text run at (65,0) width 21: "45"
-            text run at (86,0) width 6: "("
+            text run at (86,0) width 6 RTL: "("
         RenderText {TEXT} at (92,0) size 31x18
           text run at (92,0) width 31: " fgh"
       RenderBlock {P} at (0,172) size 784x18
         RenderText {TEXT} at (0,0) size 123x18
           text run at (0,0) width 33: "abc "
-          text run at (33,0) width 6: "]"
+          text run at (33,0) width 6 RTL: "]"
           text run at (39,0) width 21: "23"
-          text run at (60,0) width 5: " "
+          text run at (60,0) width 5 RTL: " "
           text run at (65,0) width 21: "45"
-          text run at (86,0) width 6: "("
+          text run at (86,0) width 6 RTL: "("
           text run at (92,0) width 31: " fgh"
       RenderBlock {P} at (0,206) size 784x18
         RenderText {TEXT} at (0,0) size 110x18
           text run at (0,0) width 33: "abc "
-          text run at (33,0) width 6: "]"
+          text run at (33,0) width 6 RTL: "]"
           text run at (39,0) width 40: "de fg"
-          text run at (79,0) width 6: "("
+          text run at (79,0) width 6 RTL: "("
           text run at (85,0) width 25: " hij"
       RenderBlock {P} at (0,240) size 784x18
         RenderText {TEXT} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
         RenderInline {SPAN} at (0,0) size 55x18
           RenderText {TEXT} at (11,0) size 55x18
-            text run at (11,0) width 6: "]"
+            text run at (11,0) width 6 RTL: "]"
             text run at (17,0) width 43: "ab cd"
-            text run at (60,0) width 6: "("
+            text run at (60,0) width 6 RTL: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,274) size 784x18
         RenderText {TEXT} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
         RenderInline {SPAN} at (0,0) size 51x18
           RenderText {TEXT} at (11,0) size 51x18
-            text run at (11,0) width 26: " \x{5D2}\x{5D3}]"
+            text run at (11,0) width 26 RTL: " \x{5D2}\x{5D3}]"
             text run at (37,0) width 19: "ab"
-            text run at (56,0) width 6: "("
+            text run at (56,0) width 6 RTL: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,308) size 784x18
         RenderText {TEXT} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
         RenderInline {SPAN} at (0,0) size 23x18
           RenderText {TEXT} at (11,0) size 23x18
-            text run at (11,0) width 6: "]"
+            text run at (11,0) width 6 RTL: "]"
             text run at (17,0) width 11: "2"
-            text run at (28,0) width 6: "("
+            text run at (28,0) width 6 RTL: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,342) size 784x18
         RenderText {TEXT} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
         RenderInline {SPAN} at (0,0) size 21x18
           RenderText {TEXT} at (11,0) size 21x18
-            text run at (11,0) width 6: "]"
+            text run at (11,0) width 6 RTL: "]"
             text run at (17,0) width 9: "a"
-            text run at (26,0) width 6: "("
+            text run at (26,0) width 6 RTL: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,376) size 784x18
         RenderText {TEXT} at (0,0) size 62x18
           text run at (0,0) width 11: "1"
-          text run at (11,0) width 26: " \x{5D2}\x{5D3}]"
+          text run at (11,0) width 26 RTL: " \x{5D2}\x{5D3}]"
           text run at (37,0) width 19: "ab"
-          text run at (56,0) width 6: "("
+          text run at (56,0) width 6 RTL: "("
       RenderBlock {P} at (0,410) size 784x18
         RenderInline {SPAN} at (0,0) size 102x18
           RenderText {TEXT} at (0,0) size 102x18
-            text run at (0,0) width 6: "]"
+            text run at (0,0) width 6 RTL: "]"
             text run at (6,0) width 28: "abc"
-            text run at (34,0) width 37: " \x{5D0}\x{5D1}\x{5D2} "
+            text run at (34,0) width 37 RTL: " \x{5D0}\x{5D1}\x{5D2} "
             text run at (71,0) width 25: "def"
-            text run at (96,0) width 6: "("
+            text run at (96,0) width 6 RTL: "("
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,444) size 784x18
         RenderText {TEXT} at (0,0) size 102x18
-          text run at (0,0) width 6: "]"
+          text run at (0,0) width 6 RTL: "]"
           text run at (6,0) width 28: "abc"
-          text run at (34,0) width 37: " \x{5D0}\x{5D1}\x{5D2} "
+          text run at (34,0) width 37 RTL: " \x{5D0}\x{5D1}\x{5D2} "
           text run at (71,0) width 25: "def"
-          text run at (96,0) width 6: "("
+          text run at (96,0) width 6 RTL: "("

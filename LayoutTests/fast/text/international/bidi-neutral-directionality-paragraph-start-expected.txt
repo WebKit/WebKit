@@ -26,10 +26,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,208) size 784x18
         RenderText {TEXT} at (0,0) size 65x18
           text run at (0,0) width 11: "? "
-          text run at (11,0) width 23: "\x{FEB2} \x{FEED}"
+          text run at (11,0) width 23 RTL: "\x{FEB2} \x{FEED}"
           text run at (34,0) width 31: "hello"
       RenderBlock {P} at (0,242) size 784x18
         RenderText {TEXT} at (715,0) size 69x18
-          text run at (715,0) width 27: " \x{FEB2} \x{FEED}"
+          text run at (715,0) width 27 RTL: " \x{FEB2} \x{FEED}"
           text run at (742,0) width 31: "hello"
-          text run at (773,0) width 11: "? "
+          text run at (773,0) width 11 RTL: "? "

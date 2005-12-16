@@ -264,7 +264,13 @@ static QString quoteAndEscapeNonPrintables(const QString &s)
 
 static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextBox &run)
 {
-    ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width << ": "
+    ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width;
+    if (run.m_reversed || run.m_dirOverride) {
+        ts << (run.m_reversed ? " RTL" : " LTR");
+        if (run.m_dirOverride)
+            ts << " override";
+    }
+    ts << ": "
     	<< quoteAndEscapeNonPrintables(o.data().qstring().mid(run.m_start, run.m_len))
     	<< "\n"; 
 }

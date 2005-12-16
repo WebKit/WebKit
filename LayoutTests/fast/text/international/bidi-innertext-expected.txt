@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,72) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 119x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 16: "\x{5DF}\x{5DE}"
+          text run at (56,0) width 16 RTL: "\x{5DF}\x{5DE}"
           text run at (72,0) width 8: "3"
-          text run at (80,0) width 34: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (80,0) width 34 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
           text run at (114,0) width 5: ")"
       RenderBlock (anonymous) at (0,90) size 784x18
         RenderText {TEXT} at (0,0) size 107x18
@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,108) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 142x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 34: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (56,0) width 34 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
           text run at (90,0) width 31: "hello"
-          text run at (121,0) width 16: "\x{5DF}\x{5DE}"
+          text run at (121,0) width 16 RTL: "\x{5DF}\x{5DE}"
           text run at (137,0) width 5: ")"
       RenderBlock (anonymous) at (0,126) size 784x18
         RenderText {TEXT} at (0,0) size 192x18
@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,144) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 143x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 30: "\x{5E7}\x{5E7}\x{5E8}"
+          text run at (56,0) width 30 RTL: "\x{5E7}\x{5E7}\x{5E8}"
           text run at (86,0) width 8: "3"
-          text run at (94,0) width 36: "\x{5D9}\x{5E7}\x{5DD}\x{5DC}"
+          text run at (94,0) width 36 RTL: "\x{5D9}\x{5E7}\x{5DD}\x{5DC}"
           text run at (130,0) width 13: "h)"
       RenderBlock (anonymous) at (0,162) size 784x18
         RenderText {TEXT} at (0,0) size 218x18
@@ -45,11 +45,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,180) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 260x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 38: " \x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (56,0) width 38 RTL: " \x{5D7}\x{5D5}\x{5D3}\x{5D0}"
           text run at (94,0) width 24: "300"
-          text run at (118,0) width 54: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}\x{5DF}\x{5DE} "
+          text run at (118,0) width 54 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}\x{5DF}\x{5DE} "
           text run at (172,0) width 40: "34023"
-          text run at (212,0) width 43: "\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
+          text run at (212,0) width 43 RTL: "\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
           text run at (255,0) width 5: ")"
       RenderBlock (anonymous) at (0,198) size 784x18
         RenderText {TEXT} at (0,0) size 71x18
@@ -63,9 +63,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,252) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 188x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 67: "\x{5D7}\x{5D5}\x{5D3}\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
+          text run at (56,0) width 67 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
           text run at (123,0) width 39: " hello "
-          text run at (162,0) width 21: "\x{5DF}\x{5DE}\x{5D9}"
+          text run at (162,0) width 21 RTL: "\x{5DF}\x{5DE}\x{5D9}"
           text run at (183,0) width 5: ")"
       RenderBlock (anonymous) at (0,270) size 784x18
         RenderText {TEXT} at (0,0) size 162x18
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,288) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 132x18
           text run at (0,0) width 87: "Testing (hello"
-          text run at (87,0) width 40: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
+          text run at (87,0) width 40 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
           text run at (127,0) width 5: ")"
       RenderBlock (anonymous) at (0,306) size 784x18
         RenderText {TEXT} at (0,0) size 162x18
@@ -81,6 +81,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,324) size 784x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 132x18
           text run at (0,0) width 56: "Testing ("
-          text run at (56,0) width 40: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
+          text run at (56,0) width 40 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
           text run at (96,0) width 36: "hello)"
       RenderBlock {OL} at (0,358) size 784x0

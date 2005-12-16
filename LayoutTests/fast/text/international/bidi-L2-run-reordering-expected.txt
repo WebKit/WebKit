@@ -11,27 +11,27 @@ layer at (0,0) size 800x102
         RenderInline {SPAN} at (0,0) size 134x20 [border: (1px solid #008000)]
           RenderText {TEXT} at (1,0) size 132x18
             text run at (1,0) width 26: "abc "
-            text run at (27,0) width 28: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (27,0) width 28 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (55,0) width 24: "123"
-            text run at (79,0) width 30: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (79,0) width 30 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (109,0) width 24: " def"
         RenderText {TEXT} at (134,0) size 4x18
           text run at (134,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 134x20 [border: (1px solid #008000)]
           RenderText {TEXT} at (139,0) size 132x18
             text run at (139,0) width 26: "abc "
-            text run at (165,0) width 28: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (165,0) width 28 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (193,0) width 24: "123"
-            text run at (217,0) width 30: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (217,0) width 30 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (247,0) width 24: " def"
         RenderText {TEXT} at (272,0) size 4x18
           text run at (272,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 134x20 [border: (1px solid #008000)]
           RenderText {TEXT} at (277,0) size 132x18
             text run at (277,0) width 26: "abc "
-            text run at (303,0) width 28: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (303,0) width 28 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (331,0) width 24: "123"
-            text run at (355,0) width 30: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (355,0) width 30 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (385,0) width 24: " def"
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0

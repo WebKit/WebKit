@@ -19,13 +19,13 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
         RenderInline {BDO} at (0,0) size 221x18
           RenderText {TEXT} at (0,18) size 221x18
-            text run at (0,18) width 221: "This sentence should be backward."
+            text run at (0,18) width 221 RTL override: "This sentence should be backward."
         RenderText {TEXT} at (221,18) size 4x18
           text run at (221,18) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {BDO} at (0,0) size 209x18
           RenderText {TEXT} at (0,36) size 209x18
-            text run at (0,36) width 209: "This sentence should be forward."
+            text run at (0,36) width 209 LTR override: "This sentence should be forward."
         RenderText {TEXT} at (209,36) size 4x18
           text run at (209,36) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -34,17 +34,17 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,54) size 0x18
         RenderInline {BDO} at (0,0) size 12x18
           RenderText {TEXT} at (0,72) size 12x18
-            text run at (0,72) width 12: "A"
+            text run at (0,72) width 12 RTL override: "A"
         RenderText {TEXT} at (12,72) size 4x18
           text run at (12,72) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {BDO} at (0,0) size 290x18
           RenderText {TEXT} at (0,90) size 26x18
-            text run at (0,90) width 26: "My "
+            text run at (0,90) width 26 LTR override: "My "
           RenderInline {BDO} at (0,0) size 55x18
             RenderText {TEXT} at (26,90) size 55x18
-              text run at (26,90) width 55: "umbrella"
+              text run at (26,90) width 55 RTL override: "umbrella"
           RenderText {TEXT} at (81,90) size 209x18
-            text run at (81,90) width 209: " sure would be useful in this rain."
+            text run at (81,90) width 209 LTR override: " sure would be useful in this rain."
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
