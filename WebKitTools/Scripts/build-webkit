@@ -34,8 +34,8 @@ use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $svgSupport = 0;
-GetOptions('svg' => \$svgSupport);
+my $svgSupport = 1;
+GetOptions('svg!' => \$svgSupport);
 
 checkRequiredSystemConfig();
 setConfiguration();
@@ -77,8 +77,8 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 for my $dir (@projects) {
     chdir $dir or die;
     my $result;
-    if ($svgSupport && ($dir eq "WebCore")) {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "$dir+SVG";
+    if (!$svgSupport && ($dir eq "WebCore")) {
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "$dir-no-SVG";
     } else {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options;
     }

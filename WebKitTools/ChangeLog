@@ -1,5 +1,11 @@
 2005-12-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        * Scripts/build-webkit: --svg is now default!
+
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Don't run svg test automatically if +SVG is built (yet).
