@@ -1,3 +1,12 @@
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
+	Fix build break.  (Files missed in previous commit.)
+
+        * khtml/css/csshelper.cpp:
+        * khtml/ecma/kjs_navigator.cpp:
+        * khtml/rendering/render_canvasimage.cpp:
+        * khtml/rendering/render_image.cpp:
+
 2005-12-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

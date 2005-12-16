@@ -28,13 +28,9 @@
 #include "render_image.h"
 #include "render_canvas.h"
 
-#include <qdrawutil.h>
 #include <qpainter.h>
 #include <qpen.h>
 #include <qwmatrix.h>
-
-#include <kapplication.h>
-#include <kdebug.h>
 
 #include "css/csshelper.h"
 #include "misc/helper.h"

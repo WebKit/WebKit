@@ -28,7 +28,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 
-#include <kio/kprotocolmanager.h>
 #include "kjs_navigator.h"
 #include "kjs/lookup.h"
 #include "kjs_binding.h"
