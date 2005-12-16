@@ -2,6 +2,42 @@
 
         Reviewed by darin.
 
+        DOMString should hold its impl in a RefPtr
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6106
+        I also cleaned up spacing in dom_string.cpp
+        No tests needed (no functionality changes).
+
+        * khtml/dom/dom_string.cpp:
+        (DOM::DOMString::DOMString):
+        (DOM::DOMString::operator += ):
+        (DOM::DOMString::insert):
+        (DOM::DOMString::operator []):
+        (DOM::DOMString::find):
+        (DOM::DOMString::length):
+        (DOM::DOMString::truncate):
+        (DOM::DOMString::remove):
+        (DOM::DOMString::split):
+        (DOM::DOMString::lower):
+        (DOM::DOMString::upper):
+        (DOM::DOMString::percentage):
+        (DOM::DOMString::unicode):
+        (DOM::DOMString::qstring):
+        (DOM::DOMString::toInt):
+        (DOM::DOMString::copy):
+        (DOM::strcasecmp):
+        (DOM::DOMString::toCoordsArray):
+        (DOM::DOMString::toLengthArray):
+        (DOM::operator==):
+        * khtml/dom/dom_string.h:
+        (DOM::DOMString::DOMString):
+        (DOM::DOMString::impl):
+
+2005-12-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        XSLTProcessorImpl should use RefPtr instead of manual ref/deref
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6110
         No test cases needed (no functionality changes).
 
         * khtml/xsl/xsl_stylesheetimpl.cpp:
