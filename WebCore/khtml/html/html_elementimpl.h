@@ -97,6 +97,8 @@ public:
     static bool inBlockTagList(const NodeImpl* newChild);
     static bool isRecognizedTagName(const QualifiedName& tagName);
 
+    void setHTMLEventListener(const AtomicString& eventType, AttributeImpl*);
+
 protected:
 
     // for IMG, OBJECT and APPLET

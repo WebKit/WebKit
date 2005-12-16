@@ -94,7 +94,7 @@ namespace KJS {
 
   class Screen : public JSObject {
   public:
-    Screen(ExecState *exec);
+    Screen(ExecState*);
     enum {
       Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight,
       AvailWidth
@@ -131,13 +131,13 @@ namespace KJS {
      * returns a pointer to the Window object this javascript interpreting instance
      * was called from.
      */
-    static Window *retrieveActive(ExecState *exec);
+    static Window *retrieveActive(ExecState*);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool toBoolean(ExecState *exec) const;
+    virtual bool toBoolean(ExecState*) const;
 
     int installTimeout(const UString& handler, int t, bool singleShot) { return winq->installTimeout(handler, t, singleShot); }
     int installTimeout(JSValue* function, List& args, int t, bool singleShot) { return winq->installTimeout(function, args, t, singleShot); }
@@ -149,21 +149,21 @@ namespace KJS {
 
     void scheduleClose();
         
-    bool isSafeScript(ExecState *exec) const;
+    bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
     Location *location() const;
     Selection *selection() const;
-    BarInfo *locationbar(ExecState *exec) const;
-    BarInfo *menubar(ExecState *exec) const;
-    BarInfo *personalbar(ExecState *exec) const;
-    BarInfo *scrollbars(ExecState *exec) const;
-    BarInfo *statusbar(ExecState *exec) const;
-    BarInfo *toolbar(ExecState *exec) const;
-    JSEventListener *getJSEventListener(JSValue *val, bool html = false);
-    JSUnprotectedEventListener *getJSUnprotectedEventListener(JSValue *val, bool html = false);
-    JSLazyEventListener *getJSLazyEventListener(const QString &code, DOM::NodeImpl *node, int lineno = 0);
-    void clear( ExecState *exec );
-    virtual UString toString(ExecState *exec) const;
+    BarInfo *locationbar(ExecState*) const;
+    BarInfo *menubar(ExecState*) const;
+    BarInfo *personalbar(ExecState*) const;
+    BarInfo *scrollbars(ExecState*) const;
+    BarInfo *statusbar(ExecState*) const;
+    BarInfo *toolbar(ExecState*) const;
+    JSEventListener *getJSEventListener(JSValue*, bool html = false);
+    JSUnprotectedEventListener *getJSUnprotectedEventListener(JSValue*, bool html = false);
+    JSLazyEventListener *getJSLazyEventListener(const DOM::DOMString& code, DOM::NodeImpl*, int lineno = 0);
+    void clear(ExecState *);
+    virtual UString toString(ExecState *) const;
 
     // Set the current "event" object
     void setCurrentEvent(DOM::EventImpl *evt);
@@ -246,7 +246,7 @@ namespace KJS {
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual JSValue *toPrimitive(ExecState *exec, Type preferred) const;
-    virtual UString toString(ExecState *exec) const;
+    virtual UString toString(ExecState*) const;
     enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, EqualEqual,
            Replace, Reload, ToString, Assign };
     KHTMLPart *part() const { return m_part; }
@@ -263,7 +263,7 @@ namespace KJS {
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual JSValue *toPrimitive(ExecState *exec, Type preferred) const;
-    virtual UString toString(ExecState *exec) const;
+    virtual UString toString(ExecState*) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, EqualEqual, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
            SetBaseAndExtent, SetPosition, Modify };

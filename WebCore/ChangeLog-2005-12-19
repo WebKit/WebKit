@@ -1,5 +1,97 @@
 2005-12-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5688
+          speed up JavaScript parsing by not creating a UString just to parse
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::DOMNode::getListener): Use listenerObj instead of
+        listenerObjImp.
+        * khtml/ecma/kjs_html.cpp: (KJS::Image::getValueProperty): Ditto.
+        * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::getValueProperty): Ditto.
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getListener): Ditto.
+        (KJS::Window::getJSLazyEventListener): Take code as a DOMString, not QString.
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::jsStringOrUndefined): Renamed function and moved it to the top of the file.
+        (KJS::JSAbstractEventListener::handleEvent): Cleaned up function, removed double
+        logging, and fixed code path to not use UString::ascii().
+        (KJS::JSUnprotectedEventListener::JSUnprotectedEventListener): Updated since type
+        of the window object is now Window.
+        (KJS::JSUnprotectedEventListener::~JSUnprotectedEventListener): Ditto.
+        (KJS::JSUnprotectedEventListener::windowObj): Ditto.
+        (KJS::JSEventListener::JSEventListener): Ditto.
+        (KJS::JSEventListener::~JSEventListener): Ditto.
+        (KJS::JSEventListener::windowObj): Ditto.
+        (KJS::JSLazyEventListener::JSLazyEventListener): Ditto. Also changed code to be
+        a DOMString instead of a QString.
+        (KJS::JSLazyEventListener::handleEvent): Removed function because the base class
+        handleEvent already calls listenerObj which takes care of parseCode -- no need to
+        do an additional parseCode here.
+        (KJS::JSLazyEventListener::parseCode): Rearrange and clean up a bit. Code is now
+        a DOMString instead of a QString.
+        (KJS::Clipboard::Clipboard): Remove explicit ref since we now use a RefPtr for
+        the clipboard object.
+        (KJS::Clipboard::getValueProperty): Update to call jsStringOrUndefined.
+
+        * khtml/ecma/kjs_events.h: Reformatted the file. Changed windowObj functions to
+        return Window* instead of ObjectImp*. Removed listenerObjImp function. Removed
+        destructors from many classes that don't need them. Used a RefPtr for the
+        ClipboardImpl in a Clipboard object.
+
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate): Take filename and code as DOMString instead of QString.
+        (KJSProxyImpl::createHTMLEventHandler): Take URL and code as DOMString.
+
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLEventListener): Take a DOMString rather than a QString for the
+        JavaScript code.
+        (DocumentImpl::setHTMLWindowEventListener): Added an overload that takes an attribute
+        pointer. Calls through after extracting the code from the attribute value.
+
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::setHTMLEventListener): New
+        version of function that takes an attribute pointer; calls through to the base class
+        after extracting the code from the attribute value.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute): Change to use new setHTMLWindowEventListener
+        and setHTMLEventListener that takes an attribute pointer.
+        (HTMLFrameElementImpl::parseMappedAttribute): Ditto.
+        (HTMLFrameSetElementImpl::parseMappedAttribute): Ditto.
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseMappedAttribute): Ditto.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLInputElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLLabelElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLSelectElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute): Ditto.
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLImageElementImpl::parseMappedAttribute): Ditto.
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute): Ditto.
+
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::notifyFinished): Don't convert URL to QString since we now take
+        a DOMString.
+        (HTMLScriptElementImpl::evaluateScript): Change to take script as a DOMString.
+
+        * khtml/khtml_part.h:
+        * khtml/khtml_part.cpp: (KHTMLPart::createHTMLEventListener): Take a DOMString rather than
+        a QString for the JavaScript code.
+
+        * kwq/WebCoreScriptDebugger.mm: (-[WebCoreScriptCallFrame evaluateWebScript:]): Change
+        code path so it doesn't convert an NSString to UTF-8 to get it into the JavaScript
+        machinery. Use QString::fromNSString instead for now.
+
+2005-12-15  Darin Adler  <darin@apple.com>
+
         - fix crash caused by my last check-in
 
         * khtml/ecma/domparser.cpp: (KJS::DOMParserProtoFunc::callAsFunction):

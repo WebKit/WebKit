@@ -174,13 +174,13 @@ JSValue *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
   case StatusText:
     return getStatusText();
   case Onreadystatechange:
-   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObjImp()) {
+   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObj()) {
      return onReadyStateChangeListener->listenerObj();
    } else {
      return jsNull();
    }
   case Onload:
-   if (onLoadListener && onLoadListener->listenerObjImp()) {
+   if (onLoadListener && onLoadListener->listenerObj()) {
      return onLoadListener->listenerObj();
    } else {
      return jsNull();

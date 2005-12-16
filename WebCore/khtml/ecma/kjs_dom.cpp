@@ -629,7 +629,7 @@ JSValue *DOMNode::getListener(const AtomicString &eventType) const
 {
     DOM::EventListener *listener = m_impl->getHTMLEventListener(eventType);
     JSEventListener *jsListener = static_cast<JSEventListener*>(listener);
-    if ( jsListener && jsListener->listenerObjImp() )
+    if (jsListener && jsListener->listenerObj())
 	return jsListener->listenerObj();
     else
 	return jsNull();

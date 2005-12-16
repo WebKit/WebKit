@@ -3645,7 +3645,7 @@ JSValue *Image::getValueProperty(ExecState *, int token) const
   case Complete:
     return jsBoolean(!img || img->status() >= khtml::CachedObject::Persistent);
   case OnLoad:
-    if (onLoadListener && onLoadListener->listenerObjImp()) {
+    if (onLoadListener && onLoadListener->listenerObj()) {
       return onLoadListener->listenerObj();
     } else {
       return jsNull();

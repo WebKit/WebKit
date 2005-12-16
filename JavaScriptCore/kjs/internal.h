@@ -254,7 +254,7 @@ namespace KJS {
 
     ExecState *globalExec() { return &globExec; }
     bool checkSyntax(const UString &code);
-    Completion evaluate(const UString &code, JSValue *thisV, const UString &sourceURL, int startingLineNumber);
+    Completion evaluate(const UChar* code, int codeLength, JSValue* thisV, const UString& sourceURL, int startingLineNumber);
     Debugger *debugger() const { return dbg; }
     void setDebugger(Debugger *d) { dbg = d; }
 

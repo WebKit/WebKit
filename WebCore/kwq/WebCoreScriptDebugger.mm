@@ -27,14 +27,15 @@
  */
 
 #include "config.h"
-#import <WebCore/WebCoreScriptDebugger.h>
+#import "WebCoreScriptDebugger.h"
+
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/context.h>
 
+#import "KWQString.h"
+
 using namespace KJS;
-
-
 
 @interface WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
 
@@ -311,7 +312,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (id)evaluateWebScript:(NSString *)script
 {
-    UString code([script UTF8String]);
+    UString code(QString::fromNSString(script));
 
     ExecState   *state   = _state;
     Interpreter *interp  = state->interpreter();
@@ -343,7 +344,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     }
     else {
         // no "eval", or no context (i.e. global scope) - use global fallback
-        result = interp->imp()->evaluate(code, globObj, UString(), 0).value();
+        result = interp->imp()->evaluate(code.data(), code.size(), globObj, UString(), 0).value();
     }
 
     if (state->hadException()) {

@@ -1154,7 +1154,7 @@ private:
 
   bool requestObject( khtml::ChildFrame *child, const KURL &url, const KParts::URLArgs &args = KParts::URLArgs() );
 
-  DOM::EventListener *createHTMLEventListener( QString code, DOM::NodeImpl *node );
+  DOM::EventListener *createHTMLEventListener(const DOM::DOMString& code, DOM::NodeImpl *node);
 
 public:
   DOM::DocumentImpl *xmlDocImpl() const;

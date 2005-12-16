@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "html/html_headimpl.h"
+
 #include "html/html_documentimpl.h"
 #include "xml/dom_textimpl.h"
 
@@ -58,7 +59,7 @@ HTMLBaseElementImpl::~HTMLBaseElementImpl()
 void HTMLBaseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == hrefAttr) {
-	m_href = khtml::parseURL(attr->value());
+	m_href = parseURL(attr->value());
 	process();
     } else if (attr->name() == targetAttr) {
     	m_target = attr->value();
@@ -169,7 +170,7 @@ void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         tokenizeRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = getDocument()->completeURL( khtml::parseURL(attr->value()).qstring() );
+        m_url = getDocument()->completeURL(parseURL(attr->value()).qstring());
 	process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
@@ -580,13 +581,13 @@ void HTMLScriptElementImpl::notifyFinished(CachedObject* o)
 
     assert(cs == m_cachedScript);
 
-    evaluateScript(cs->url().qstring(), cs->script());
+    evaluateScript(cs->url(), cs->script());
 
     cs->deref(this);
     m_cachedScript = 0;
 }
 
-void HTMLScriptElementImpl::evaluateScript(const QString &URL, const DOMString &script)
+void HTMLScriptElementImpl::evaluateScript(const DOMString& URL, const DOMString& script)
 {
     if (m_evaluated)
         return;
@@ -596,7 +597,7 @@ void HTMLScriptElementImpl::evaluateScript(const QString &URL, const DOMString &
         KJSProxyImpl *proxy = part->jScript();
         if (proxy) {
             m_evaluated = true;
-            proxy->evaluate(URL, 0, script.qstring(), 0);
+            proxy->evaluate(URL, 0, script, 0);
             DocumentImpl::updateDocumentsRendering();
         }
     }

@@ -1,3 +1,20 @@
+2005-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5688
+          speed up JavaScript parsing by not creating a UString just to parse
+
+        * kjs/internal.h:
+        * kjs/internal.cpp: (KJS::InterpreterImp::evaluate): Change to take a character pointer
+        and length rather than a UString.
+
+        * kjs/interpreter.h:
+        * kjs/interpreter.cpp: (Interpreter::evaluate): Ditto.
+
+        * kjs/protect.h: Remove uneeded "convert to bool" operator since we already have a
+        "convert to raw pointer" operator in this class.
+
 === Safari-521~5 ===
 
 2005-12-13  Geoffrey Garen  <ggaren@apple.com>

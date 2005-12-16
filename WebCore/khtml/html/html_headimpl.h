@@ -206,7 +206,7 @@ public:
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
     virtual void closeRenderer();
 
-    void evaluateScript(const QString &, const DOMString &);
+    void evaluateScript(const DOMString &URL, const DOMString &script);
 
     DOMString text() const;
     void setText(const DOMString &);

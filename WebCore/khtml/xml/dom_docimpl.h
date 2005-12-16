@@ -466,11 +466,13 @@ public:
     EventListener *getHTMLWindowEventListener(const AtomicString &eventType);
     void removeHTMLWindowEventListener(const AtomicString &eventType);
 
+    void setHTMLWindowEventListener(const AtomicString& eventType, AttributeImpl*);
+
     void addWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     void removeWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     bool hasWindowEventListener(const AtomicString &eventType);
 
-    EventListener *createHTMLEventListener(QString code, NodeImpl *node);
+    EventListener *createHTMLEventListener(const DOMString& code, NodeImpl*);
     
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.

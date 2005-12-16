@@ -148,26 +148,19 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (attached())
             getDocument()->recalcStyle(Force);
     } else if (attr->name() == onloadAttr) {
-        getDocument()->setHTMLWindowEventListener(loadEvent,	    
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
-        getDocument()->setHTMLWindowEventListener(beforeunloadEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        getDocument()->setHTMLWindowEventListener(unloadEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(unloadEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        getDocument()->setHTMLWindowEventListener(blurEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(blurEvent, attr);
     } else if (attr->name() == onfocusAttr) {
-        getDocument()->setHTMLWindowEventListener(focusEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(focusEvent, attr);
     } else if (attr->name() == onresizeAttr) {
-        getDocument()->setHTMLWindowEventListener(resizeEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(resizeEvent, attr);
     } else if (attr->name() == onscrollAttr) {
-        getDocument()->setHTMLWindowEventListener(scrollEvent,
-                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
+        getDocument()->setHTMLWindowEventListener(scrollEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -420,14 +413,11 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_scrolling = QScrollView::AlwaysOff;
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(loadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
-        setHTMLEventListener(beforeunloadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(unloadEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -707,14 +697,11 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if(!m_border)
             frameborder = false;
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(loadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
-        setHTMLEventListener(beforeunloadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(unloadEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }

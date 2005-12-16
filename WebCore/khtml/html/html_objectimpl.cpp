@@ -632,11 +632,9 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (m_render)
           needWidgetUpdate = true;
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(loadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(loadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(unloadEvent, attr);
     } else if (attr->name() == nameAttr) {
 	    DOMString newNameAttr = attr->value();
 	    if (isDocNamedItem() && inDocument() && getDocument()->isHTMLDocument()) {

@@ -209,11 +209,11 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attrName == ismapAttr) {
         ismap = true;
     } else if (attrName == onabortAttr) {
-        setHTMLEventListener(abortEvent, getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(abortEvent, attr);
     } else if (attrName == onerrorAttr) {
-        setHTMLEventListener(errorEvent, getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(errorEvent, attr);
     } else if (attrName == onloadAttr) {
-        setHTMLEventListener(loadEvent, getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(loadEvent, attr);
     } else if (attrName == compositeAttr) {
         _compositeOperator = attr->value().qstring();
     } else if (attrName == nameAttr) {

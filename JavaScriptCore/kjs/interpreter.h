@@ -203,10 +203,8 @@ namespace KJS {
      * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    Completion evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, JSValue *thisV = NULL);
-
-	// Overload of evaluate to keep JavaScriptGlue both source and binary compatible.
-	Completion evaluate(const UString &code, JSValue *thisV = NULL, const UString &sourceFilename = UString());
+    Completion evaluate(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength, JSValue* thisV = 0);
+    Completion evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV = 0);
 
     /**
      * @internal
@@ -359,15 +357,12 @@ namespace KJS {
     static void finalCheck();
 #endif
 
-#if APPLE_CHANGES
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
-#endif
 
     void saveBuiltins (SavedBuiltins &) const;
     void restoreBuiltins (const SavedBuiltins &);
 
-#if APPLE_CHANGES
     /**
      * Determine if the value is a global object (for any interpreter).  This may
      * be difficult to determine for multiple uses of JSC in a process that are
@@ -394,8 +389,7 @@ namespace KJS {
      */
     virtual bool isSafeScript (const Interpreter *target) { return true; }
     
-    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
-#endif
+    virtual void *createLanguageInstanceForValue(ExecState*, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current);
 
     // This is a workaround to avoid accessing the global variables for these identifiers in
     // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
@@ -434,10 +428,7 @@ namespace KJS {
   class ExecState {
     friend class InterpreterImp;
     friend class FunctionImp;
-#if APPLE_CHANGES
-    friend class RuntimeMethod;
-#endif
-
+    friend class RuntimeMethodImp;
     friend class GlobalFuncImp;
   public:
     /**
@@ -465,17 +456,17 @@ namespace KJS {
      */
     Context context() const { return _context; }
 
-    void setException(JSValue *e) { _exception = e; }
-    void clearException() { _exception = NULL; }
-    JSValue *exception() const { return _exception; }
+    void setException(JSValue* e) { _exception = e; }
+    void clearException() { _exception = 0; }
+    JSValue* exception() const { return _exception; }
     bool hadException() const { return _exception; }
 
   private:
-    ExecState(Interpreter *interp, ContextImp *con)
-        : _interpreter(interp), _context(con), _exception(NULL) { }
-    Interpreter *_interpreter;
-    ContextImp *_context;
-    JSValue *_exception;
+    ExecState(Interpreter* interp, ContextImp* con)
+        : _interpreter(interp), _context(con), _exception(0) { }
+    Interpreter* _interpreter;
+    ContextImp* _context;
+    JSValue* _exception;
   };
 
 } // namespace

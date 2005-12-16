@@ -206,7 +206,7 @@ for my $test (@tests) {
 
     my $result;
 
-    my $startTime = time;
+    my $startTime = time if $report10Slowest;
 
     print OUT "$testDirectory/$test\n";
 
@@ -216,7 +216,7 @@ for my $test (@tests) {
         $actual .= $_;
     }
 
-    $durations{$test} = time - $startTime;
+    $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
     if (open EXPECTED, "<", "$testDirectory/$base-expected.txt") {

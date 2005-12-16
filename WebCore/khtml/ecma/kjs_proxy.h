@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
@@ -19,33 +18,33 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_PROXY_H_
-#define _KJS_PROXY_H_
+#ifndef KJS_PROXY_H
+#define KJS_PROXY_H
 
 #include <qvariant.h>
-#include <qstring.h>
 
 class KHTMLPart;
+class QString;
 
 namespace DOM {
-  class EventImpl;
-  class EventListener;
-  class NodeImpl;
+    class DOMString;
+    class EventImpl;
+    class EventListener;
+    class NodeImpl;
 };
 
 namespace KJS {
-  class List;
-  class ScriptInterpreter;
+    class ScriptInterpreter;
 }
 
 class KJSProxyImpl {
 public:
-    KJSProxyImpl(KHTMLPart *part);
+    KJSProxyImpl(KHTMLPart*);
     ~KJSProxyImpl();
-    QVariant evaluate(QString filename, int baseLine, const QString& str, DOM::NodeImpl *n);
+    QVariant evaluate(const DOM::DOMString& filename, int baseLine, const DOM::DOMString& code, DOM::NodeImpl*);
     void clear();
-    DOM::EventListener *createHTMLEventHandler(QString code, DOM::NodeImpl *node);
-    void finishedWithEvent(DOM::EventImpl *event);
+    DOM::EventListener* createHTMLEventHandler(const DOM::DOMString& code, DOM::NodeImpl*);
+    void finishedWithEvent(DOM::EventImpl*);
     KJS::ScriptInterpreter *interpreter();
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
@@ -55,10 +54,6 @@ private:
     KJS::ScriptInterpreter* m_script;
     KHTMLPart *m_part;
     int m_handlerLineno;
-#ifndef NDEBUG
-    static int s_count;
-#endif
 };
-
 
 #endif

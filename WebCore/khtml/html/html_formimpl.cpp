@@ -588,11 +588,9 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
     } else if (attr->name() == onsubmitAttr) {
-        setHTMLEventListener(submitEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(submitEvent, attr);
     } else if (attr->name() == onresetAttr) {
-        setHTMLEventListener(resetEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(resetEvent, attr);
     } else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
@@ -1084,11 +1082,9 @@ void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // Do nothing.
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(blurEvent, attr);
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
 }
@@ -1664,26 +1660,20 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == heightAttr) {
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(blurEvent, attr);
     } else if (attr->name() == onselectAttr) {
-        setHTMLEventListener(selectEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(selectEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(changeEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(changeEvent, attr);
     } else if (attr->name() == oninputAttr) {
-        setHTMLEventListener(inputEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(inputEvent, attr);
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setHTMLEventListener(searchEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(searchEvent, attr);
     } else if (attr->name() == resultsAttr) {
         m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
         setChanged();
@@ -2385,11 +2375,9 @@ bool HTMLLabelElementImpl::isFocusable() const
 void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(blurEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -2795,14 +2783,11 @@ void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(blurEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(changeEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(changeEvent, attr);
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
 }
@@ -3398,17 +3383,13 @@ void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // ignore for the moment
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(blurEvent, attr);
     } else if (attr->name() == onselectAttr) {
-        setHTMLEventListener(selectEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(selectEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(changeEvent,
-                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(changeEvent, attr);
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
 }
