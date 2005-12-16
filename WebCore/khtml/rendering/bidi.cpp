@@ -71,6 +71,7 @@ struct BidiState {
     bool adjustEmbedding;
     BidiIterator endOfLine;
     bool reachedEndOfLine;
+    BidiIterator lastBeforeET;
 };
 
 inline bool operator==(const BidiStatus& status1, const BidiStatus& status2)
@@ -1125,12 +1126,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
             if (bidi.status.lastStrong != QChar::DirAL) {
                 // if last strong was AL change EN to AN
                 switch (bidi.status.last) {
-                    case QChar::DirET:
-                        if (bidi.status.lastStrong == QChar::DirR || bidi.status.lastStrong == QChar::DirAL) {
-                            appendRun(bidi);
-                            bidi.dir = QChar::DirEN;
-			}
-			// fall through
                     case QChar::DirEN:
                     case QChar::DirL:
                         break;
@@ -1145,6 +1140,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     case QChar::DirCS:
                         if (bidi.status.eor == QChar::DirEN)
                             break;
+                    case QChar::DirET:
                     case QChar::DirBN:
                     case QChar::DirB:
                     case QChar::DirS:
@@ -1152,7 +1148,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     case QChar::DirON:
                         if (bidi.status.eor == QChar::DirR) {
                             // neutrals go to R
-                            bidi.eor = bidi.last;
+                            bidi.eor = bidi.status.last == QChar::DirET ? bidi.lastBeforeET : bidi.last;
                             appendRun(bidi);
                             bidi.dir = QChar::DirEN;
                         } else if (bidi.status.eor != QChar::DirL &&
@@ -1160,7 +1156,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                                  bidi.dir != QChar::DirL) {
                             // numbers on both sides, neutrals get right to left direction
                             appendRun(bidi);
-                            bidi.eor = bidi.last;
+                            bidi.eor = bidi.status.last == QChar::DirET ? bidi.lastBeforeET : bidi.last;
                             bidi.dir = QChar::DirR;
                             appendRun(bidi);
                             bidi.dir = QChar::DirEN;
@@ -1232,19 +1228,8 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                 dirCurrent = QChar::DirEN;
                 bidi.eor = bidi.current;
                 bidi.status.eor = dirCurrent;
-                break;
-            } else if ((bidi.status.eor == QChar::DirR || bidi.status.eor == QChar::DirAL || bidi.status.eor == QChar::DirAN || (bidi.status.eor == QChar::DirEN && bidi.status.lastStrong == QChar::DirR)) && bidi.last!=bidi.current) {
-                // most of the time this is unnecessary, but we need to secure the R run in case
-                // the ET ends up being neutral and followed by L
-                if (bidi.status.last!=QChar::DirET) {
-                    bidi.dir = bidi.status.eor;
-                    appendRun(bidi);
-                    bidi.eor = bidi.last;
-                }
-                bidi.status.eor = QChar::DirR;
-                bidi.dir = QChar::DirR;
-                break;
-            }
+            } else if (bidi.status.last != QChar::DirET)
+                bidi.lastBeforeET = emptyRun ? bidi.eor : bidi.last;
             break;
 
         // boundary neutrals should be ignored

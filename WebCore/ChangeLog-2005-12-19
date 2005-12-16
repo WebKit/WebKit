@@ -2,6 +2,21 @@
 
         Reviewed and landed by Darin.
 
+        Test: fast/text/international/bidi-european-terminators.html
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6014
+        Bidi algorithm: incorrect resolved levels for neutrals between R and
+        ET ON L
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::bidiReorderLine):
+        Keep track of the last position before the current run of ETs directly
+        using a new BidiState member, lastBeforeET.
+
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5486
           DumpRenderTree should print the RTL and directional override flags for text runs
 
