@@ -1,3 +1,11 @@
+2005-12-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Don't run svg test automatically if +SVG is built (yet).
+
+        * Scripts/run-webkit-tests:
+
 2005-12-15  Darin Adler  <darin@apple.com>
 
         * Scripts/run-webkit-tests: Don't run tests in directories named "svg" if SVG
