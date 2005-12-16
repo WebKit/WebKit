@@ -1,3 +1,14 @@
+2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6090
+          REGRESSION: Assertion failure when choosing Copy from a WebImageView's contextual menu
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView elementAtPoint:]): Use WebCoreElementImageRendererKey
+        for the image renderer and WebElementImageKey for the image.
+
 2005-12-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

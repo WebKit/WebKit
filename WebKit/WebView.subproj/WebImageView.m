@@ -43,6 +43,7 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
+#import <WebCore/WebCoreBridge.h>
 
 @implementation WebImageView
 
@@ -236,7 +237,8 @@
     ASSERT(frame);
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        [rep image],                            WebElementImageKey,
+        [rep image],                            WebCoreElementImageRendererKey,
+        [[rep image] image],                    WebElementImageKey,
         [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
         [rep URL],                              WebElementImageURLKey,
         [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
