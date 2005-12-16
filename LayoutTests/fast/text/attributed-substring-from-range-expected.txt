@@ -1,0 +1,29 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > B > BODY > HTML > #document to 1 of #text > I > B > BODY > HTML > #document toDOMRange:range from 1 of #text > I > B > BODY > HTML > #document to 3 of #text > I > B > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Testing styled text (12<b>3<i>456</i></b>)
+(0, 0): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 2): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 3): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 6): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 7): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 100): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(5, 1): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(5, 2):
+(100, 0):
+(100, 100):
+Testing proper space runs (1._2.__3.___4_5)
+total length: 0
+one space: " "
+two spaces: "  "
+three spaces: "   "
+four spaces: "    "
+Testing space-only runs (1..2...3....4.5)
+total length: 0
+(0, 100):
+
+

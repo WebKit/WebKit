@@ -1,0 +1,35 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Actual HTML:
+<pre> <DIV class="editing" id="test"></DIV> </pre>
+(0, 0):
+(0, 0) length: 0
+(0, 2):
+(0, 2) length: 0
+(1, 2):
+(1, 2) length: 0
+(0, 3):
+(0, 3) length: 0
+(0, 6):
+(0, 6) length: 0
+(0, 7):
+(0, 7) length: 0
+(0, 31):
+(0, 31) length: 0
+(0, 100):
+(0, 100) length: 0
+(1, 100):
+(1, 100) length: 0
+(2, 3):
+(2, 3) length: 0
+(5, 1):
+(5, 1) length: 0
+(5, 2):
+(5, 2) length: 0
+(5, 5):
+(5, 5) length: 0
+(15, 14):
+(15, 14) length: 0
+(100, 0):
+(100, 100):
+
+

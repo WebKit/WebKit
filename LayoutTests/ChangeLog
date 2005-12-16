@@ -1,3 +1,13 @@
+2005-12-16  Darin Adler  <darin@apple.com>
+
+        - Added layout tests Evan Gross contributed about converting to attributed string.
+          The results here currently seem wrong, but are what I get with TOT.
+
+        * fast/text/attributed-substring-from-range-expected.txt: Added.
+        * fast/text/attributed-substring-from-range-lines-expected.txt: Added.
+        * fast/text/attributed-substring-from-range-lines.html: Added.
+        * fast/text/attributed-substring-from-range.html: Added.
+
 2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
