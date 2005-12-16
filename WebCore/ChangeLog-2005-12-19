@@ -1,3 +1,20 @@
+2005-12-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6112
+        REGRESSION: navigator.plugins empty.
+
+        Layout test added:
+        * fast/js/Plug-ins-expected.checksum: Added.
+        * fast/js/Plug-ins-expected.png: Added.
+        * fast/js/Plug-ins-expected.txt: Added.
+        * fast/js/Plug-ins.html: Added.
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::PluginBase::PluginBase): Changed initialization of KConfig from
+        empty string to pluginsinfo.
+
 2005-12-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

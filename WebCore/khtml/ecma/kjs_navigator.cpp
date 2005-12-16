@@ -238,7 +238,7 @@ PluginBase::PluginBase(ExecState *exec)
         mimes->setAutoDelete( true );
 
         // read configuration
-        KConfig c("");
+        KConfig c("pluginsinfo");
         unsigned num = (unsigned int)c.readNumEntry("number");
         for ( unsigned n=0; n<num; n++ ) {
 
