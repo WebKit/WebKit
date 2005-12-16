@@ -1,5 +1,12 @@
 2005-12-15  Darin Adler  <darin@apple.com>
 
+        - fix crash caused by my last check-in
+
+        * khtml/ecma/domparser.cpp: (KJS::DOMParserProtoFunc::callAsFunction):
+        Use RefPtr to ref/deref the tokenizer.
+
+2005-12-15  Darin Adler  <darin@apple.com>
+
         * khtml/xml/xml_tokenizer.cpp: (khtml::XMLTokenizer::exitText):
         Add missing null check.
 
