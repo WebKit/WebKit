@@ -1,3 +1,11 @@
+2005-12-17  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        * khtml/css/css_ruleimpl.h:
+        (DOM::CSSMediaRuleImpl::media):
+        Make m_lstMedia a smart pointer.
+
 2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
