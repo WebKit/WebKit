@@ -1,3 +1,15 @@
+2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5479
+          Can't select text with RTL override rendered by ATSUI
+
+        * fast/text/atsui-rtl-override-selection-expected.checksum: Added.
+        * fast/text/atsui-rtl-override-selection-expected.png: Added.
+        * fast/text/atsui-rtl-override-selection-expected.txt: Added.
+        * fast/text/atsui-rtl-override-selection.html: Added.
+
 2005-12-16  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6112

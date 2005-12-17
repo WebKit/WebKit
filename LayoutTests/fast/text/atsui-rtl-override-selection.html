@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Selection in text with RTL override in ATSUI</title>
+<script type="text/javascript">
+function step7()
+{
+    eventSender.mouseUp();
+    layoutTestController.notifyDone();
+}
+
+function step6()
+{
+    eventSender.mouseMoveTo(60, 10);
+    window.setTimeout(step7, 1);
+}
+
+function step5()
+{
+    eventSender.mouseMoveTo(15, 10);
+    window.setTimeout(step6, 1);
+}
+
+function step4()
+{
+    eventSender.mouseDown();
+    window.setTimeout(step5, 1);
+}
+
+function step3()
+{
+    eventSender.mouseMoveTo(14, 10);
+    window.setTimeout(step4, 1000);
+}
+
+step3();
+layoutTestController.waitUntilDone();
+</script>
+</head>
+<body style="margin: 0; padding: 0;"">
+<!-- The &#x0300; forces ATSUI rendering -->
+<bdo dir="rtl">&#x0300;muspimeroL</bdo>
+<hr>
+&ldquo;remips&rdquo; should be highlighted in the above.
+</body>
+</html>

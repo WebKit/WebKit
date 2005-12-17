@@ -747,8 +747,9 @@ int InlineTextBox::textPos() const
 int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 {
     RenderText* text = static_cast<RenderText*>(m_object);
-    const Font* f = text->htmlFont(m_firstLine);
-    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, text->tabWidth(), textPos(), _x - m_x, m_reversed, includePartialGlyphs);
+    RenderStyle *style = text->style(m_firstLine);
+    const Font* f = &style->htmlFont();
+    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, text->tabWidth(), textPos(), _x - m_x, m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), includePartialGlyphs);
 }
 
 int InlineTextBox::positionForOffset(int offset) const

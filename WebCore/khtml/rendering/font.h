@@ -103,7 +103,7 @@ public:
                   QPainter::TextDirection d, bool visuallyOrdered = false, int from = -1, int to = -1, QColor bg = QColor()) const;
     float floatWidth(QChar *str, int slen, int pos, int len, int tabWidth, int xpos) const;
     bool isFixedPitch() const;
-    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const;
+    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, QPainter::TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const;
     void drawHighlightForText(QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
         QChar *str, int slen, int pos, int len, int width,
         QPainter::TextDirection d, bool visuallyOrdered = false, int from = -1, int to = -1, QColor bg = QColor()) const;
@@ -127,9 +127,9 @@ inline float Font::floatWidth(QChar *chs, int slen, int pos, int len, int tabWid
     return fm.floatWidth(chs, slen, pos, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
-inline int Font::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const
+inline int Font::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, QPainter::TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
 {
-    return fm.checkSelectionPoint(s, slen, pos, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed, includePartialGlyphs);
+    return fm.checkSelectionPoint(s + pos, slen - pos, 0, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, d == QPainter::RTL, visuallyOrdered, includePartialGlyphs);
 }
 
 inline int Font::width(QChar *chs, int slen, int pos, int len, int tabWidth, int xpos) const

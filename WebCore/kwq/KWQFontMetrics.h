@@ -54,7 +54,7 @@ public:
     int width(const QString &, int tabWidth, int xpos, int len=-1) const;
     int width(const QChar *, int len, int tabWidth, int xpos) const;
     float floatWidth(const QChar *, int slen, int pos, int len, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const;
-    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const;
+    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const;
 
     QRect boundingRect(QChar) const;
     QRect boundingRect(const QString &, int tabWidth, int xpos, int len=-1) const;

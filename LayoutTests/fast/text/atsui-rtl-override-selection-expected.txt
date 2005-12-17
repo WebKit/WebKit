@@ -1,0 +1,23 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document toDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document toDOMRange:range from 3 of #text > BDO > BODY > HTML > #document to 9 of #text > BDO > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock (anonymous) at (0,0) size 800x18
+        RenderInline {BDO} at (0,0) size 85x18
+          RenderText {TEXT} at (0,0) size 85x18
+            text run at (0,0) width 85 RTL override: "\x{300}muspimeroL"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {HR} at (0,26) size 800x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,36) size 800x18
+        RenderText {TEXT} at (0,0) size 281x18
+          text run at (0,0) width 281: "\x{201C}remips\x{201D} should be highlighted in the above."
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+selection start: position 3 of child 0 {TEXT} of child 2 {BDO} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 0 {TEXT} of child 2 {BDO} of child 1 {BODY} of child 0 {HTML} of document

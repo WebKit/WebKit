@@ -135,9 +135,9 @@ static void ATSU_draw(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTe
 
 // Selection point detection in runs.
 static int CG_pointToOffset(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *,
-    int x, bool reversed, bool includePartialGlyphs);
+    int x, bool includePartialGlyphs);
 static int ATSU_pointToOffset(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *,
-    int x, bool reversed, bool includePartialGlyphs);
+    int x, bool includePartialGlyphs);
 
 // Drawing highlight.
 static void CG_drawHighlight(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
@@ -234,7 +234,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
         const WebCoreTextRun *run = params->run;
-        const UniChar *characters = run->characters;
+        const UniChar *characters = run->characters + run->from;
         WebTextRenderer *renderer = params->renderer;
         UniChar ch, nextCh;
         nextCh = *(UniChar *)(((char *)characters)+layoutRecords[0].originalOffset);
@@ -261,7 +261,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (isRoundingHackCharacter(nextCh))
                 if (!isLastChar
                         || style->applyRunRounding
-                        || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to])))
+                        || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to - run->from])))
                     lastAdjustedPos = ceilf(lastAdjustedPos);
             layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
         }
@@ -579,11 +579,11 @@ static void destroy(WebTextRenderer *renderer)
     CGContextRestoreGState(context);
 }
 
-- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
+- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     if (shouldUseATSU(run))
-        return ATSU_pointToOffset(self, run, style, x, reversed, includePartialGlyphs);
-    return CG_pointToOffset(self, run, style, x, reversed, includePartialGlyphs);
+        return ATSU_pointToOffset(self, run, style, x, includePartialGlyphs);
+    return CG_pointToOffset(self, run, style, x, includePartialGlyphs);
 }
 
 + (void)setAlwaysUseATSU:(bool)f
@@ -955,13 +955,29 @@ static void CG_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, const 
 static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, float *widthBuffer, WebTextRenderer **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult)
 {
     WidthIterator it;
-    initializeWidthIterator(&it, renderer, run, style);
+    WebCoreTextRun completeRun;
+    const WebCoreTextRun *aRun;
+    if (!style->rtl)
+        aRun = run;
+    else {
+        completeRun = *run;
+        completeRun.to = run->length;
+        aRun = &completeRun;
+    }
+    initializeWidthIterator(&it, renderer, aRun, style);
     int numGlyphs = advanceWidthIterator(&it, run->to, widthBuffer, rendererBuffer, glyphBuffer);
-    if (startPosition)
-        *startPosition = it.widthToStart;
+    float runWidth = it.runWidthSoFar;
+    if (startPosition) {
+        if (!style->rtl)
+            *startPosition = it.widthToStart;
+        else {
+            advanceWidthIterator(&it, run->length, 0, 0, 0);
+            *startPosition = it.runWidthSoFar - runWidth;
+        }
+    }
     if (numGlyphsResult)
         *numGlyphsResult = numGlyphs;
-    return it.runWidthSoFar;
+    return runWidth;
 }
 
 static void updateGlyphMapEntry(WebTextRenderer *renderer, UChar32 c, ATSGlyphRef glyph, WebTextRenderer *substituteRenderer)
@@ -1275,11 +1291,9 @@ static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl
 
     UniChar *charactersWithOverride = malloc(sizeof(UniChar) * (run->length + 2));
 
-    memcpy(&charactersWithOverride[0], &run->characters[0], sizeof(UniChar) * from);
-    charactersWithOverride[from] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
-    memcpy(&charactersWithOverride[from + 1], &run->characters[from], sizeof(UniChar) * (to - from));
-    charactersWithOverride[to + 1] = POP_DIRECTIONAL_FORMATTING;
-    memcpy(&charactersWithOverride[to + 2], &run->characters[to], sizeof(UniChar) * (run->length - to));
+    charactersWithOverride[0] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
+    memcpy(&charactersWithOverride[1], &run->characters[0], sizeof(UniChar) * run->length);
+    charactersWithOverride[run->length + 1] = POP_DIRECTIONAL_FORMATTING;
 
     WebCoreTextRun runWithOverride;
 
@@ -1313,63 +1327,48 @@ static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *
 {
     // The only Cocoa calls made here are to NSColor and NSBezierPath, and they do not raise exceptions.
 
-    int from, to;
-    float selectedLeftX;
-    const WebCoreTextRun *aRun = run;
-    WebCoreTextRun swappedRun;
-
     if (style->backgroundColor == nil)
         return;
     
-    if (style->directionalOverride) {
-        swappedRun = addDirectionalOverride(run, style->rtl);
-        aRun = &swappedRun;
-    } else if (style->rtl && !renderer->ATSUMirrors) {
-        swappedRun = applyMirroringToRun(run);
-        aRun = &swappedRun;
-    }
-
-    from = aRun->from;
-    to = aRun->to;
+    int from = run->from;
+    int to = run->to;
     if (from == -1)
         from = 0;
     if (to == -1)
         to = run->length;
-   
     int runLength = to - from;
     if (runLength <= 0)
         return;
 
-    WebCoreTextRun completeRun = *aRun;
-    completeRun.from = 0;
-    completeRun.to = aRun->length;
-    ATSULayoutParameters params;
-    createATSULayoutParameters(&params, renderer, &completeRun, style);
-    ItemCount count;
-    ATSLayoutRecord *layoutRecords;
-    OSStatus status = ATSUDirectGetLayoutDataArrayPtrFromTextLayout(params.layout, 0, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, (void **)&layoutRecords, &count);
-    if (status != noErr)
-        FATAL_ALWAYS("ATSUDirectGetLayoutDataArrayPtrFromTextLayout failed(%d)", status);
-    ItemCount i = 0;
-    if (!style->rtl)
-        while (i < count && layoutRecords[i].originalOffset < sizeof(UniChar) * aRun->from)
-            i++;
-    else while (i < count && layoutRecords[i].originalOffset >= sizeof(UniChar) * aRun->to)
-            i++;
-    ItemCount j = i;
-    if (!style->rtl)
-        while (j < count - 1 && layoutRecords[j].originalOffset < sizeof(UniChar) * aRun->to)
-            j++;
-    else while (j < count - 1 && layoutRecords[j].originalOffset >= sizeof(UniChar) * aRun->from)
-            j++;
-    
-    float beforeWidth = FixedToFloat(layoutRecords[i].realPos);
-    if ((style->applyWordRounding && isRoundingHackCharacter(run->characters[run->from])) || style->applyRunRounding)
-        beforeWidth = ceilf(beforeWidth);
-    float afterWidth = FixedToFloat(layoutRecords[j].realPos);
-    float backgroundWidth = afterWidth - beforeWidth;
+    WebCoreTextRun runWithLead = *run;
+    runWithLead.from = 0;
+    WebCoreTextRun *aRun = &runWithLead;
+    WebCoreTextRun swappedRun;
 
-    selectedLeftX = geometry->point.x + beforeWidth;
+    if (style->directionalOverride) {
+        swappedRun = addDirectionalOverride(aRun, style->rtl);
+        aRun = &swappedRun;
+    } else if (style->rtl && !renderer->ATSUMirrors) {
+        swappedRun = applyMirroringToRun(aRun);
+        aRun = &swappedRun;
+    }
+
+   
+    float selectedLeftX;
+    float widthWithLead = ATSU_floatWidthForRun(renderer, aRun, style);
+    
+    aRun->to -= runLength;
+    float leadWidth = ATSU_floatWidthForRun(renderer, aRun, style);
+    
+    float backgroundWidth = roundf(widthWithLead - leadWidth);
+
+    if (!style->rtl)
+        selectedLeftX = roundf(geometry->point.x + leadWidth);
+    else {
+        aRun->to += run->length - run->from;
+        float totalWidth = ATSU_floatWidthForRun(renderer, aRun, style);
+        selectedLeftX = roundf(geometry->point.x + totalWidth - widthWithLead);
+    }
     
     [style->backgroundColor set];
 
@@ -1377,9 +1376,7 @@ static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *
         ? geometry->point.y - renderer->ascent : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight
         ? renderer->lineSpacing : geometry->selectionHeight;
-    [NSBezierPath fillRect:NSMakeRect(roundf(selectedLeftX), yPos, roundf(backgroundWidth), height)];
-
-    disposeATSULayoutParameters(&params);
+    [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
 
     if (style->directionalOverride || (style->rtl && !renderer->ATSUMirrors))
         free((void *)swappedRun.characters);
@@ -1449,20 +1446,11 @@ static void ATSU_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, cons
 }
 
 static int ATSU_pointToOffset(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style,
-    int x, bool reversed, bool includePartialGlyphs)
+    int x, bool includePartialGlyphs)
 {
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
-    if (style->rtl && !style->directionalOverride) {
-        // Work around ATSUPositionToOffset problem with e.g. Lucida Grande 14
-        swappedRun = *run;
-        swappedRun.characters += run->from;
-        swappedRun.from = 0;
-        swappedRun.to -= run->from;
-        swappedRun.length -= run->from;
-        aRun = &swappedRun;
-    }
     // Enclose in LRO/RLO - PDF to force ATSU to render visually.
     if (style->directionalOverride) {
         swappedRun = addDirectionalOverride(aRun, style->rtl);
@@ -1513,7 +1501,7 @@ static bool advanceWidthIteratorOneCharacter(WidthIterator *iterator, float *tot
 }
 
 static int CG_pointToOffset(WebTextRenderer *renderer, const WebCoreTextRun * run, const WebCoreTextStyle *style,
-    int x, bool reversed, bool includePartialGlyphs)
+    int x, bool includePartialGlyphs)
 {
     float delta = (float)x;
 
@@ -1522,7 +1510,7 @@ static int CG_pointToOffset(WebTextRenderer *renderer, const WebCoreTextRun * ru
 
     unsigned offset;
 
-    if (reversed) {
+    if (style->rtl) {
         delta -= CG_floatWidthForRun(renderer, run, style, 0, 0, 0, 0, 0);
         while (1) {
             offset = it.currentCharacter;

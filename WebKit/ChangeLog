@@ -1,3 +1,21 @@
+2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5479
+          Can't select text with RTL override rendered by ATSUI
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation): Update since the layout only includes from -> to now.
+        (-[WebTextRenderer pointToOffset:style:position:includePartialGlyphs:]): Remove
+        reversed parameter.
+        (CG_floatWidthForRun): Add code to handle RTL case.
+        (addDirectionalOverride): Put the override around the entire run.
+        (ATSU_drawHighlight): Rearrange and reuse ATSU_floatWidthForRun for more of the work.
+        Also round.
+        (ATSU_pointToOffset): Remove reversed parameter and run swapping.
+        (CG_pointToOffset): Remove reversed parameter, using rtl flag in style instead.
+
 2005-12-16  Evan Gross  <evan@rainmakerinc.com>
 
         Reviewed and landed by Darin.

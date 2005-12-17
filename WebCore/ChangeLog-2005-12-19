@@ -1,3 +1,19 @@
+2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5479
+          Can't select text with RTL override rendered by ATSUI
+
+        * khtml/rendering/font.h: Remove reversed parameter from checkSelectionPoint, replacing
+        it with a text direction parameter.
+        * khtml/rendering/render_text.cpp: (InlineTextBox::offsetForPosition): Ditto.
+        * kwq/KWQFontMetrics.h: Add a directional override parameter to checkSelectionPoint.
+        * kwq/KWQFontMetrics.mm: (QFontMetrics::checkSelectionPoint): Pass the directional override
+        through to the text renderer. Don't pass the reversed flag redundantly -- use the rtl flag
+        in the style instead.
+        * kwq/WebCoreTextRenderer.h: Remove reversed parameter from pointToOffset.
+
 2005-12-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

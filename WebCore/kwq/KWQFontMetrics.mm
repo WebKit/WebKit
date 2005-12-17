@@ -224,7 +224,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
     return [data->getRenderer() floatWidthForRun:&run style:&style];
 }
 
-int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
+int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
 {
     if (!data) {
         ERROR("called checkSelectionPoint on an empty QFontMetrics");
@@ -246,8 +246,9 @@ int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int 
     style.tabWidth = tabWidth;
     style.xpos = xpos;
     style.rtl = reversed;
+    style.directionalOverride = dirOverride;
 
-    return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
+    return [data->getRenderer() pointToOffset:&run style:&style position:x includePartialGlyphs:includePartialGlyphs];
 }
 
 QRect QFontMetrics::boundingRect(QChar c) const
