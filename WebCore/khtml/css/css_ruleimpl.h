@@ -157,7 +157,7 @@ public:
     CSSMediaRuleImpl( StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList );
     virtual ~CSSMediaRuleImpl();
 
-    MediaListImpl *media() const { return m_lstMedia; }
+    MediaListImpl *media() const { return m_lstMedia.get(); }
     CSSRuleListImpl *cssRules() { return m_lstCSSRules.get(); }
 
     unsigned insertRule ( const DOM::DOMString &rule, unsigned index );
@@ -169,7 +169,7 @@ public:
     /* Not part of the DOM */
     unsigned append( CSSRuleImpl *rule );
 protected:
-    MediaListImpl *m_lstMedia;
+    RefPtr<MediaListImpl> m_lstMedia;
     RefPtr<CSSRuleListImpl> m_lstCSSRules;
 };
 

@@ -1,7 +1,10 @@
 2005-12-17  Anders Carlsson  <andersca@mac.com>
 
-        Reviewed by Eric.
+        Reviewed by Darin.
 
+        - Fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=6120>
+        Random crashes when running the test suite
+        
         * khtml/css/css_ruleimpl.h:
         (DOM::CSSMediaRuleImpl::media):
         Make m_lstMedia a smart pointer.
