@@ -1,6 +1,6 @@
 2005-12-17  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
 
         Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6119
         split() function ignores case insensitive modifier.
