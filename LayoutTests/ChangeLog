@@ -1,3 +1,11 @@
+2005-12-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6119
+        split() function ignores case insensitive modifier.
+
+        * fast/js/string-split-ignore-case-expected.txt: Added.
+        * fast/js/string-split-ignore-case.html: Added.
+
 2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

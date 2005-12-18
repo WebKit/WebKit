@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+function print(message) {
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+
+    var source = "1s2S3";
+    var regexp = /s/i; 
+    var result = source.split(regexp);
+    if (result.length == 3)
+        print("success");
+    else
+        print("failure");
+    print("\"" + source + "\".split(" + regexp + ") yielded " + result);
+}
+</script>
+</head>
+<body onload="test();">
+<p>This test checks for a regression against <i>http://bugzilla.opendarwin.org/show_bug.cgi?id=6119 split() function ignores case insensitive modifier</i>.</p>
+<p>If the test passes, you will see a "success" message below.</p>
+<hr>
+<div id='console'/>
+</body>
+</html>
