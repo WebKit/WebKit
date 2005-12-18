@@ -1,3 +1,13 @@
+2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5631
+          KWQKHTMLPart::attributedString ignores many tags
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString):
+        Fix incorrectly nested else.
+
 2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

@@ -3115,60 +3115,59 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         [result appendAttributedString: partialString];                
                         [partialString release];
                     }
-                    else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
-                        if (!hasNewLine)
-                            text += "\n";
-                        hasNewLine = true;
-                    } else if (n->hasTagName(tdTag) ||
-                               n->hasTagName(thTag) ||
-                               n->hasTagName(hrTag) ||
-                               n->hasTagName(ddTag) ||
-                               n->hasTagName(dlTag) ||
-                               n->hasTagName(dtTag) ||
-                               n->hasTagName(preTag) ||
-                               n->hasTagName(blockquoteTag) ||
-                               n->hasTagName(divTag)) {
-                        if (!hasNewLine)
+                } else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
+                    if (!hasNewLine)
+                        text += "\n";
+                    hasNewLine = true;
+                } else if (n->hasTagName(tdTag) ||
+                           n->hasTagName(thTag) ||
+                           n->hasTagName(hrTag) ||
+                           n->hasTagName(ddTag) ||
+                           n->hasTagName(dlTag) ||
+                           n->hasTagName(dtTag) ||
+                           n->hasTagName(preTag) ||
+                           n->hasTagName(blockquoteTag) ||
+                           n->hasTagName(divTag)) {
+                    if (!hasNewLine)
+                        text += '\n';
+                    hasNewLine = true;
+                } else if (n->hasTagName(pTag) ||
+                           n->hasTagName(trTag) ||
+                           n->hasTagName(h1Tag) ||
+                           n->hasTagName(h2Tag) ||
+                           n->hasTagName(h3Tag) ||
+                           n->hasTagName(h4Tag) ||
+                           n->hasTagName(h5Tag) ||
+                           n->hasTagName(h6Tag)) {
+                    if (!hasNewLine)
+                        text += '\n';
+                    
+                    // In certain cases, emit a paragraph break.
+                    int bottomMargin = renderer->collapsedMarginBottom();
+                    int fontSize = style->htmlFont().getFontDef().computedPixelSize();
+                    if (bottomMargin * 2 >= fontSize) {
+                        if (!hasParagraphBreak) {
                             text += '\n';
-                        hasNewLine = true;
-                    } else if (n->hasTagName(pTag) ||
-                               n->hasTagName(trTag) ||
-                               n->hasTagName(h1Tag) ||
-                               n->hasTagName(h2Tag) ||
-                               n->hasTagName(h3Tag) ||
-                               n->hasTagName(h4Tag) ||
-                               n->hasTagName(h5Tag) ||
-                               n->hasTagName(h6Tag)) {
-                        if (!hasNewLine)
-                            text += '\n';
-                        
-                        // In certain cases, emit a paragraph break.
-                        int bottomMargin = renderer->collapsedMarginBottom();
-                        int fontSize = style->htmlFont().getFontDef().computedPixelSize();
-                        if (bottomMargin * 2 >= fontSize) {
-                            if (!hasParagraphBreak) {
-                                text += '\n';
-                                hasParagraphBreak = true;
-                            }
+                            hasParagraphBreak = true;
                         }
-                        
-                        hasNewLine = true;
                     }
-                    else if (n->hasTagName(imgTag)) {
-                        if (pendingStyledSpace != nil) {
-                            if (linkStartLocation == [result length]) {
-                                ++linkStartLocation;
-                            }
-                            [result appendAttributedString:pendingStyledSpace];
-                            [pendingStyledSpace release];
-                            pendingStyledSpace = nil;
+                    
+                    hasNewLine = true;
+                }
+                else if (n->hasTagName(imgTag)) {
+                    if (pendingStyledSpace != nil) {
+                        if (linkStartLocation == [result length]) {
+                            ++linkStartLocation;
                         }
-                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n));
-                        NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
-                        NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
-                        [result appendAttributedString: iString];
-                        [attachment release];
+                        [result appendAttributedString:pendingStyledSpace];
+                        [pendingStyledSpace release];
+                        pendingStyledSpace = nil;
                     }
+                    NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n));
+                    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                    NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
+                    [result appendAttributedString: iString];
+                    [attachment release];
                 }
 
                 NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
