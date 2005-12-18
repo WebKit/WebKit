@@ -2,6 +2,15 @@
 
         Reviewed by Geoff.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6144
+          REGRESSION: DOMStringImpl leak in code to make DOMString from NSString
+
+        * kwq/DOMInternal.mm: (DOMString::DOMString): Remove now-unneeded ref.
+
+2005-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5680
           containsOnlyWhitespace does not need to be a virtual function
 
