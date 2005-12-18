@@ -168,12 +168,6 @@ bool StringProtoFunc::implementsCall() const
   return true;
 }
 
-static inline bool regExpIsGlobal(RegExpImp *regExp, ExecState *exec)
-{
-    JSValue *globalProperty = regExp->get(exec,"global");
-    return !globalProperty->isUndefined() && globalProperty->toBoolean(exec);
-}
-
 static inline void expandSourceRanges(UString::Range * & array, int& count, int& capacity)
 {
   int newCapacity;
@@ -268,10 +262,9 @@ static JSValue *replace(ExecState *exec, const UString &source, JSValue *pattern
   else
     replacementString = replacement->toString(exec);
 
-  if (pattern->isObject() && pattern->toObject(exec)->inherits(&RegExpImp::info)) {
-    RegExpImp* imp = static_cast<RegExpImp *>( pattern->toObject(exec) );
-    RegExp *reg = imp->regExp();
-    bool global = regExpIsGlobal(imp, exec);
+  if (pattern->isObject() && static_cast<JSObject *>(pattern)->inherits(&RegExpImp::info)) {
+    RegExp *reg = static_cast<RegExpImp *>(pattern)->regExp();
+    bool global = reg->flags() & RegExp::Global;
 
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
 
@@ -453,9 +446,8 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     u = s;
     RegExp *reg, *tmpReg = 0;
     RegExpImp *imp = 0;
-    if (a0->isObject() && a0->getObject()->inherits(&RegExpImp::info)) {
-      imp = static_cast<RegExpImp *>(a0);
-      reg = imp->regExp();
+    if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
+      reg = static_cast<RegExpImp *>(a0)->regExp();
     } else { 
       /*
        *  ECMA 15.5.4.12 String.prototype.search (regexp)
@@ -534,9 +526,8 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     i = p0 = 0;
     uint32_t limit = a1->isUndefined() ? 0xFFFFFFFFU : a1->toUInt32(exec);
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
-      JSObject *obj0 = static_cast<JSObject *>(a0);
-      RegExp reg(obj0->get(exec,"source")->toString(exec));
-      if (u.isEmpty() && !reg.match(u, 0).isNull()) {
+      RegExp *reg = static_cast<RegExpImp *>(a0)->regExp();
+      if (u.isEmpty() && !reg->match(u, 0).isNull()) {
 	// empty string matched by regexp -> empty array
 	res->put(exec,lengthPropertyName, jsNumber(0));
 	break;
@@ -546,7 +537,7 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 	// TODO: back references
         int mpos;
         int *ovector = 0L;
-	UString mstr = reg.match(u, pos, &mpos, &ovector);
+	UString mstr = reg->match(u, pos, &mpos, &ovector);
         delete [] ovector; ovector = 0L;
 	if (mpos < 0)
 	  break;

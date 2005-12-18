@@ -1,3 +1,28 @@
+2005-12-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6119
+        split() function ignores case insensitive modifier.
+
+        Glossary:
+        RegExpImp: The C++ object you get when JavaScript executes
+                   "new RegExp()".
+        RegExp:    A C++ wrapper object that performs regular expression
+                   matching on behalf of a RegExpImp.
+
+        Instead of unnecessarily constructing a RegExp which (wrongly) lacks
+        any modifiers, String.split() now uses the RegExp built in to the 
+        RegExpImp passed to it, which has the right modifiers already.
+
+        I also cleaned up other bits of the string code to standardized how
+        we handle RegExpImp arguments.
+
+        * ChangeLog:
+        * kjs/string_object.cpp:
+        (replace):
+        (StringProtoFunc::callAsFunction):
+
 2005-12-16  David Hyatt  <hyatt@apple.com>
 
 	Remove unused RefPtr constructors that can create an ambiguity in ustring on some platforms.
