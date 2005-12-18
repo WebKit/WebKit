@@ -1,3 +1,16 @@
+2005-12-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt, landed by Darin.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5980
+        Bidi properties of an inline container whose first child is an
+        inline container are ignored
+
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum: Added.
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Added.
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.txt: Added.
+        * fast/text/international/bidi-ignored-for-first-child-inline.html: Added.
+
 2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed and landed by Darin.
