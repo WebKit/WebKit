@@ -52,7 +52,7 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
 
-    enum { ToString, ToLocaleString, ValueOf, HasOwnProperty, PropertyIsEnumerable,
+    enum { ToString, ToLocaleString, ValueOf, HasOwnProperty, IsPrototypeOf, PropertyIsEnumerable,
            DefineGetter, DefineSetter, LookupGetter, LookupSetter };
   private:
     int id;

@@ -43,6 +43,7 @@ ObjectPrototype::ObjectPrototype(ExecState *exec,
     putDirect(valueOfPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf,                 0), DontEnum);
     putDirect("hasOwnProperty", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty,             1), DontEnum);
     putDirect("propertyIsEnumerable", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1), DontEnum);
+    putDirect("isPrototypeOf", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf,               1), DontEnum);
     // Mozilla extensions
     putDirect("__defineGetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter,             2), DontEnum);
     putDirect("__defineSetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter,             2), DontEnum);
@@ -77,6 +78,22 @@ JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
         case HasOwnProperty: {
             PropertySlot slot;
             return jsBoolean(thisObj->getOwnPropertySlot(exec, Identifier(args[0]->toString(exec)), slot));
+        }
+        case IsPrototypeOf: {
+            if (!args[0]->isObject())
+                return jsBoolean(false);
+         
+            JSValue *v = static_cast<JSObject *>(args[0])->prototype();
+
+            while (true) {
+                if (!v->isObject())
+                    return jsBoolean(false);
+                
+                if (thisObj == static_cast<JSObject *>(v))
+                    return jsBoolean(true);
+                
+                v = static_cast<JSObject *>(v)->prototype();
+            }
         }
         case DefineGetter: 
         case DefineSetter: {

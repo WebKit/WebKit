@@ -1,3 +1,21 @@
+2005-12-18  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin and Geoffrey.
+
+        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4000>
+        Object.prototype is missing isPrototypeOf
+        
+        * kjs/object_object.cpp:
+        (ObjectPrototype::ObjectPrototype):
+        Add isPrototypeOf to object prototype.
+        
+        (ObjectProtoFunc::callAsFunction):
+        Implement isPrototypeOf
+        
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFunc::):
+        Add id for isPrototypeOf.
+
 2005-12-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
