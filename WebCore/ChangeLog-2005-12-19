@@ -1,5 +1,25 @@
 2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5927
+          Result of XSLT transformation has no charset defined
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::applyXSLTransform):
+        Get encoding from transform and pass in to XSLTProcessor.
+
+        * khtml/xsl/xslt_processorimpl.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource): Added encoding parameter.
+        Create a Decoder and use it to decode the source document (default encoding UTF-8).
+        (DOM::XSLTProcessorImpl::transformToString): Add an encoding result. Set it to the
+        encoding from the libxml2 document object.
+        (DOM::XSLTProcessorImpl::transformToDocument): Get encoding from transform and pass
+        in to XSLTProcessor.
+        (DOM::XSLTProcessorImpl::transformToFragment): Ditto.
+
+2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric, landed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5631

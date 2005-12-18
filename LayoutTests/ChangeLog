@@ -1,3 +1,16 @@
+2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
+        - XSLT document encoding tests
+
+        * fast/xsl/xslt-doc-enc-expected.txt: Added.
+        * fast/xsl/xslt-doc-enc.xml: Added.
+        * fast/xsl/xslt-doc-enc.xsl: Added.
+        * fast/xsl/xslt-doc-noenc-expected.txt: Added.
+        * fast/xsl/xslt-doc-noenc.xml: Added.
+        * fast/xsl/xslt-doc-noenc.xsl: Added.
+
 2005-12-18  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

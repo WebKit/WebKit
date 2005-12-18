@@ -3143,10 +3143,11 @@ void DocumentImpl::applyXSLTransform(ProcessingInstructionImpl* pi)
     
     QString resultMIMEType;
     QString newSource;
-    if (!processor->transformToString(this, resultMIMEType, newSource))
+    QString resultEncoding;
+    if (!processor->transformToString(this, resultMIMEType, newSource, resultEncoding))
         return;
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).
-    processor->createDocumentFromSource(newSource, resultMIMEType, this, view());
+    processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, view());
 }
 
 #endif
