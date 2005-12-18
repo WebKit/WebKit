@@ -1,3 +1,15 @@
+2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5768
+          pages with frames that are all "fixed" get no layout and are blank (like www.farnell.nl)
+
+        * khtml/rendering/render_frames.cpp: (RenderFrameSet::layout):
+        * manual-tests/bugzilla-5768.html: Added. Can't seem to get it to work (fail) as an automated test.
+        * manual-tests/resources/frame1.html: Added.
+        * manual-tests/resources/frame2.html: Added.
+
 2005-12-17  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

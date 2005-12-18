@@ -376,7 +376,8 @@ void RenderFrameSet::layout( )
                         m_hSplitVar[r] = false;
                     }
                     child = child->nextSibling();
-                    if(!child) goto end2;
+                    if(!child)
+                        goto end1;
                 }
 #ifdef DEBUG_LAYOUT
                 else
@@ -386,6 +387,7 @@ void RenderFrameSet::layout( )
         }
 
     }
+ end1:
     RenderContainer::layout();
  end2:
     setNeedsLayout(false);
