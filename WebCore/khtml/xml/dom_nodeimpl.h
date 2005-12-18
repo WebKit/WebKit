@@ -128,8 +128,6 @@ public:
     virtual bool isMalformed() { return false; }
     virtual void setMalformed(bool malformed) {};
     
-    virtual bool containsOnlyWhitespace() const { return false; }
-    
     // helper functions not being part of the DOM
     // Attention: they assume that the caller did the consistency checking!
     void setPreviousSibling(NodeImpl *previous) { m_previous = previous; }

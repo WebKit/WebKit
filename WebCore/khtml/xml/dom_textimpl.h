@@ -51,7 +51,7 @@ public:
     virtual void deleteData ( const unsigned offset, const unsigned count, int &exceptioncode );
     virtual void replaceData ( const unsigned offset, const unsigned count, const DOMString &arg, int &exceptioncode );
 
-    virtual bool containsOnlyWhitespace() const;
+    bool containsOnlyWhitespace() const;
     bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
     
     // DOM methods overridden from  parent classes

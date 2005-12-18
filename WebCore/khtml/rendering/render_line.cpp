@@ -908,20 +908,22 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
 
 static bool shouldDrawDecoration(RenderObject* obj)
 {
-    bool shouldDraw = false;
-    for (RenderObject* curr = obj->firstChild();
-         curr; curr = curr->nextSibling()) {
-        if (curr->isInlineFlow()) {
-            shouldDraw = true;
-            break;
+    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling()) {
+        if (curr->isInlineFlow())
+            return true;
+        if (curr->isText() && !curr->isBR()) {
+            if (!curr->style()->collapseWhiteSpace())
+                return true;
+            NodeImpl* currElement = curr->element();
+            if (!currElement)
+                return true;
+            if (!currElement->isTextNode())
+                return true;
+            if (!static_cast<TextImpl*>(currElement)->containsOnlyWhitespace())
+                return true;
         }
-        else if (curr->isText() && !curr->isBR() && (!curr->style()->collapseWhiteSpace() ||
-                 !curr->element() || !curr->element()->containsOnlyWhitespace())) {
-            shouldDraw = true;
-            break;
-        }	
     }
-    return shouldDraw;
+    return false;
 }
 
 void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren)

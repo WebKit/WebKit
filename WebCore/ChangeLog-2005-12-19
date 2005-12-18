@@ -1,3 +1,20 @@
+2005-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5680
+          containsOnlyWhitespace does not need to be a virtual function
+
+        * khtml/rendering/render_frames.cpp: (RenderPartObject::updateWidget): Cast
+        pointer to a TextImpl before calling containsOnlyWhitespace; the code already
+        checked isTextNode.
+        * khtml/rendering/render_line.cpp: (khtml::shouldDrawDecoration): Expanded an
+        if statement into a few separate ones for slight additional clarity. Added a
+        check of isTextNode and cast pointer to a TextImpl.
+
+        * khtml/xml/dom_nodeimpl.h: Remove containsOnlyWhitespace function.
+        * khtml/xml/dom_textimpl.h: Remove virtual keyword from containsOnlyWhitespace.
+
 2005-12-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt, landed by Darin.
