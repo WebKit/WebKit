@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,9 @@
 
 #include "config.h"
 #import "KWQCharsets.h"
+
+#import <unicode/ucnv.h>
+#import <unicode/utypes.h>
 
 struct CharsetEntry {
     const char *name;
@@ -71,10 +75,15 @@ CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *name, KWQEnc
 
     const void *value;
     if (!CFDictionaryGetValueIfPresent(nameToTable, name, &value)) {
-        if (flags) {
-            *flags = NoEncodingFlags;
+        UErrorCode err = U_ZERO_ERROR;
+        name = ucnv_getStandardName(name, "IANA", &err);
+        
+        if (!name || !CFDictionaryGetValueIfPresent(nameToTable, name, &value)) {
+            if (flags) {
+                *flags = NoEncodingFlags;
+            }
+            return kCFStringEncodingInvalidId;
         }
-        return kCFStringEncodingInvalidId;
     }
     if (flags) {
         *flags = static_cast<const CharsetEntry *>(value)->flags;

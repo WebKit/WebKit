@@ -2,6 +2,17 @@
 
         Reviewed and landed by Darin.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5932
+          Wrong encoding used for http://www.miel.ru
+
+        * kwq/KWQCharsets.mm: (KWQCFStringEncodingFromIANACharsetName):
+        Fall back on ICU encoding names if we don't find the name in the WebCore
+        encoding names table.
+
+2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5927
           Result of XSLT transformation has no charset defined
 

@@ -2,6 +2,16 @@
 
         Reviewed and landed by Darin.
 
+        - test of a particular character set name that is not in the WebCore table
+          but is in the ICU table (see bugzilla 5932)
+
+        * fast/encoding/charset-cp1251-expected.txt: Added.
+        * fast/encoding/charset-cp1251.html: Added.
+
+2005-12-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
         - XSLT document encoding tests
 
         * fast/xsl/xslt-doc-enc-expected.txt: Added.
