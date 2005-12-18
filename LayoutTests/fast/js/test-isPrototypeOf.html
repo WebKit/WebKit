@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <script>
+        function debug(str) {
+            var c = document.getElementById('console')
+            c.innerHTML += str + "<br>"
+        }
+    
+        function runTests () {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+                
+            if (Object.isPrototypeOf('string') != false) {
+                debug('FAILURE: isPrototype should return false if the argument is not an object')
+                return;
+            }
+            
+            if (Array.prototype.isPrototypeOf(new Array()) != true) {
+                debug('FAILURE: Array.prototype should be prototype of newly created arrays')
+                return;
+            }
+            
+            function ObjectA () { }
+            function ObjectB () { }
+            ObjectB.prototype = new ObjectA()
+            
+            var objb = new ObjectB()
+            
+            if (ObjectA.prototype.isPrototypeOf(objb) != true) {
+                debug('FAILURE: ObjectA.prototype should be prototype of newly created ObjectB objects')
+                return;
+            }
+            
+            function ObjectC () {}
+            ObjectC.prototype = new ObjectB()
+            
+            var objc = new ObjectC()
+            
+            if (ObjectA.prototype.isPrototypeOf(objc) != true) {
+                debug('FAILURE: ObjectA.prototype should be prototype of newly created ObjectC objects')
+                return;
+            }
+            debug('SUCCESS!')
+        }
+    </script>
+  </head>
+<body onload="runTests();">
+	 <p>This tests that isPrototypeOf works according to the ECMA spec. If this test is successful, "SUCCESS" should be shown below.</p>
+    <pre id="console"></pre>
+  </body>
+</html>

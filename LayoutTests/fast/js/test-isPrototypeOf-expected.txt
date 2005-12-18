@@ -1,0 +1,4 @@
+This tests that isPrototypeOf works according to the ECMA spec. If this test is successful, "SUCCESS" should be shown below.
+
+SUCCESS!
+
