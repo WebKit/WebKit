@@ -49,6 +49,50 @@ using namespace DOM::EventNames;
 
 using khtml::Decoder;
 
+static inline QString getMIMEType(const QString& contentTypeString)
+{
+    return QStringList::split(";", contentTypeString, true)[0].stripWhiteSpace();
+}
+
+static QString getCharset(const QString& contentTypeString)
+{
+    int pos = 0;
+    int length = (int)contentTypeString.length();
+    
+    while (pos < length) {
+        pos = contentTypeString.find("charset", pos, false);
+        if (pos <= 0)
+            return QString();
+        
+        // is what we found a beginning of a word?
+        if (contentTypeString[pos-1] > ' ' && contentTypeString[pos-1] != ';') {
+            pos += 7;
+            continue;
+        }
+        
+        pos += 7;
+
+        // skip whitespace
+        while (pos != length && contentTypeString[pos] <= ' ')
+            ++pos;
+    
+        if (contentTypeString[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
+            continue;
+
+        while (pos != length && (contentTypeString[pos] <= ' ' || contentTypeString[pos] == '"' || contentTypeString[pos] == '\''))
+            ++pos;
+
+        // we don't handle spaces within quoted parameter values, because charset names cannot have any
+        int endpos = pos;
+        while (pos != length && contentTypeString[endpos] > ' ' && contentTypeString[endpos] != '"' && contentTypeString[endpos] != '\'' && contentTypeString[endpos] != ';')
+            ++endpos;
+    
+        return contentTypeString.mid(pos, endpos-pos);
+    }
+    
+    return QString();
+}
+
 namespace KJS {
 
 ////////////////////// XMLHttpRequest Object ////////////////////////
@@ -137,21 +181,9 @@ JSValue *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
     if (state != Completed) {
       return jsUndefined();
     }
+
     if (!createdDocument) {
-      QString mimeType;
-      
-      if (MIMETypeOverride.isEmpty()) {
-        JSValue *header = getResponseHeader("Content-Type");
-        if (header->isUndefined()) {
-          mimeType = "text/xml";
-        } else {
-	  mimeType = QStringList::split(";", header->toString(exec).qstring(), true)[0].stripWhiteSpace();
-        }
-      } else {
-        mimeType = MIMETypeOverride;
-      }
-      
-      if (typeIsXML = DOMImplementationImpl::isXMLMIMEType(mimeType)) {
+      if (typeIsXML = responseIsXML()) {
 	responseXML = doc->implementation()->createDocument();
 
 	DocumentImpl *docImpl = responseXML.get();
@@ -422,11 +454,10 @@ JSValue *XMLHttpRequest::getAllResponseHeaders() const
   return jsString(responseHeaders.mid(endOfLine + 1) + "\n");
 }
 
-JSValue *XMLHttpRequest::getResponseHeader(const QString& name) const
+QString XMLHttpRequest::getResponseHeader(const QString& name) const
 {
-  if (responseHeaders.isEmpty()) {
-    return jsUndefined();
-  }
+  if (responseHeaders.isEmpty())
+    return QString();
 
   QRegExp headerLinePattern(name + ":", false);
 
@@ -440,14 +471,23 @@ JSValue *XMLHttpRequest::getResponseHeader(const QString& name) const
     headerLinePos = headerLinePattern.match(responseHeaders, headerLinePos + 1, &matchLength);
   }
 
-
-  if (headerLinePos == -1) {
-    return jsUndefined();
-  }
+  if (headerLinePos == -1)
+    return QString();
     
   int endOfLine = responseHeaders.find("\n", headerLinePos + matchLength);
+  
+  return responseHeaders.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
+}
 
-  return jsString(responseHeaders.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace());
+bool XMLHttpRequest::responseIsXML() const
+{
+    QString mimeType = getMIMEType(MIMETypeOverride);
+    if (mimeType.isEmpty())
+        mimeType = getMIMEType(getResponseHeader("Content-Type"));
+    if (mimeType.isEmpty())
+      mimeType = "text/xml";
+    
+    return DOMImplementationImpl::isXMLMIMEType(mimeType);
 }
 
 JSValue *XMLHttpRequest::getStatus() const
@@ -548,21 +588,27 @@ void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
   }
 }
 
-void XMLHttpRequest::slotData( KIO::Job*, const char *data, int len )
+void XMLHttpRequest::slotData(KIO::Job*, const char *data, int len)
 {
-  if (state < Loaded) {
+  if (responseHeaders.isEmpty() && job)
     responseHeaders = job->queryMetaData("HTTP-Headers");
-    encoding = job->queryMetaData("charset");
-    changeState(Loaded);
-  }
-  
 
-  if ( decoder == NULL ) {
+  if (state < Loaded)
+    changeState(Loaded);
+  
+  if (decoder == NULL) {
+    encoding = getCharset(MIMETypeOverride);
+    if (encoding.isEmpty())
+      encoding = getCharset(getResponseHeader("Content-Type"));
+    if (encoding.isEmpty() && job)
+      encoding = job->queryMetaData("charset");
+    
     decoder = new Decoder;
-    if (!encoding.isNull())
+    if (!encoding.isEmpty())
       decoder->setEncoding(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
     else {
-      // FIXME: Inherit the default encoding from the parent document?
+      // only allow Decoder to look inside the response if it's XML
+      decoder->setEncoding("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
     }
   }
   if (len == 0)
@@ -647,8 +693,13 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
     if (args.size() != 1) {
       return jsUndefined();
     }
+    
+    QString header = request->getResponseHeader(args[0]->toString(exec).qstring());
 
-    return request->getResponseHeader(args[0]->toString(exec).qstring());
+    if (header.isNull())
+      return jsUndefined();
+
+    return jsString(header);
   }
   case XMLHttpRequest::Open:
     {

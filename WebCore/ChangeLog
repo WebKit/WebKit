@@ -1,2 +1,19 @@
+2005-12-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin, committed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5744
+          XMLHttpRequest does not apply page encoding after assigning via innerHtml
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (getMIMEType): A helper function to get MIME type from a Content-Type string.
+        (getCharset): A helper function to get charset from a Content-Type string.
+        (KJS::XMLHttpRequest::getValueProperty): Factored out responseIsXML().
+        (KJS::XMLHttpRequest::getResponseHeader): Return QString instead of JSValue
+          (to get rid of unnecessary JSLocks).
+        (KJS::XMLHttpRequest::responseIsXML): A new method that analyses Content-Type.
+        (KJS::XMLHttpRequest::slotData): Use a correct charset for responses, see bug for details.
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction): Update for getResponseHeader() changes
+        * khtml/ecma/xmlhttprequest.h:
 
 == Rolled over to ChangeLog-2005-12-19 ==

@@ -44,11 +44,11 @@ namespace KJS {
 
   // these exact numeric values are important because JS expects them
   enum XMLHttpRequestState {
-    Uninitialized = 0,
-    Loading = 1,
-    Loaded = 2,
-    Interactive = 3,
-    Completed = 4
+    Uninitialized = 0,  // open() has not been called yet
+    Loading = 1,        // send() has not been called yet
+    Loaded = 2,         // send() has been called, headers and status are available
+    Interactive = 3,    // Downloading, responseText holds the partial data
+    Completed = 4       // Finished with all operations
   };
 
   class XMLHttpRequestConstructorImp : public JSObject {
@@ -101,8 +101,9 @@ namespace KJS {
     void abort();
     void setRequestHeader(const QString& name, const QString &value);
     JSValue *getAllResponseHeaders() const;
-    JSValue *getResponseHeader(const QString& name) const;
-
+    QString getResponseHeader(const QString& name) const;
+    bool responseIsXML() const;
+    
     void changeState(XMLHttpRequestState newState);
 
     static QPtrDict< QPtrDict<XMLHttpRequest> > &requestsByDocument();
