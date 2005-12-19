@@ -1,3 +1,14 @@
+2005-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4312
+          XMLHttpRequest headers that have two CRLF sequences lead to Obj-C exception
+
+        * kwq/KWQLoader.mm:
+        (+[NSDictionary _webcore_dictionaryWithHeaderString:_webcore_dictionaryWithHeaderString:]):
+        Check length of string before calling characterAtIndex:0 since it will fail for an empty string.
+
 2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Beth

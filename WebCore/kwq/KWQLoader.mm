@@ -60,26 +60,27 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 @end
 
 @implementation NSDictionary (WebCore_Extras)
+
 + (id)_webcore_dictionaryWithHeaderString:(NSString *)string
 {
     NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
 
     NSArray *lines = [string componentsSeparatedByString:@"\r\n"];
-
     NSEnumerator *e = [lines objectEnumerator];
-    NSString *line;
-
     NSString *lastHeaderName = nil;
 
-    while ((line = (NSString *)[e nextObject]) != nil) {
-	if (([line characterAtIndex:0] == ' ' || [line characterAtIndex:0] == '\t')
-	    && lastHeaderName != nil) {
-	    // lines that start with space or tab continue the previous header value
-	    NSString *oldVal = [headers objectForKey:lastHeaderName];
-	    ASSERT(oldVal);
-	    [headers setObject:[NSString stringWithFormat:@"%@ %@", oldVal, [line stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]]]
-	                forKey:lastHeaderName];
-	    continue;
+    while (NSString *line = (NSString *)[e nextObject]) {
+	if ([line length]) {
+            unichar firstChar = [line characterAtIndex:0];
+            if ((firstChar == ' ' || firstChar == '\t') && lastHeaderName != nil) {
+                // lines that start with space or tab continue the previous header value
+                NSString *oldVal = [headers objectForKey:lastHeaderName];
+                ASSERT(oldVal);
+                NSString *newVal = [line stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
+                [headers setObject:[NSString stringWithFormat:@"%@ %@", oldVal, newVal]
+                            forKey:lastHeaderName];
+                continue;
+            }
 	}
 
 	NSRange colonRange = [line rangeOfString:@":"];
@@ -100,7 +101,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 	}
     }
 
-    NSDictionary *dictionary =  [NSDictionary dictionaryWithDictionary:headers];
+    NSDictionary *dictionary = [NSDictionary dictionaryWithDictionary:headers];
     
     [headers release];
     
