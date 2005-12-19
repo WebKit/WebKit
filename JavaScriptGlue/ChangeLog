@@ -1,3 +1,12 @@
+2005-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and Eric Seidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
+          stop using <ostream> in WebCore, eliminating the <cmath> troubles it causes
+
+        * kxmlcore/AlwaysInline.h: Added.
+
 2005-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
