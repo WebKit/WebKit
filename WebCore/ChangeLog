@@ -1,3 +1,16 @@
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Beth
+
+	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6149
+          REGRESSION (WebCore-417.5): horizontal scrollbar in overflow with top
+          border doesn't receive mouse events
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::isPointInScrollbar):
+	Removed borderTop() from horizontal scrollbar rect computation.
+	* manual-tests/scrollbar-hittest2.html: Added.
+
 2005-12-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin, committed by Adele.
