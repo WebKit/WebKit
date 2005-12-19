@@ -1,3 +1,19 @@
+2005-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4990
+          WebKit needs to use a local pasteboard during testing
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Call poseAs to substitute our NSPasteboard class for the default one.
+        Create a local pasteboard (really a global one with a unique name) and release
+        it when exiting from the function so we don't leave it in the pasteboard server.
+        (dumpRenderTree): Added an autorelease pool around one small bit of code that
+        ddn't have one. Fixed a leak in an unlikely error case.
+        (+[DumpRenderTreePasteboard generalPasteboard]): Override the default version
+        of this method to return our local pasteboard.
+
 2005-12-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Tim Hatcher.

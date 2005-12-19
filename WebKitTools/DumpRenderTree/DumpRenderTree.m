@@ -26,15 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/NSURLRequest.h>
-#import <Foundation/NSError.h>
-
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPreferences.h>
@@ -42,11 +37,17 @@
 
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
 
+#import <objc/objc-runtime.h> // for class_poseAs
+
 #define COMMON_DIGEST_FOR_OPENSSL
-#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonDigest.h> // for MD5 functions
+
 #import <getopt.h>
 
 #import "TextInputController.h"
+
+@interface DumpRenderTreePasteboard : NSPasteboard
+@end
 
 @interface WaitUntilDoneDelegate : NSObject
 @end
@@ -80,10 +81,13 @@ static int dumpPixels = NO;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
+static NSPasteboard *localPasteboard;
 
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
 
     int width = 800;
     int height = 600;
@@ -144,10 +148,12 @@ int main(int argc, const char *argv[])
         }
     
     if ([[[NSFontManager sharedFontManager] availableMembersOfFontFamily:@"Ahem"] count] == 0) {
-		fprintf(stderr, "\nAhem font is not available. This special simple font is used to construct certain types of predictable tests.\n\nTo run regression tests, please get it from <http://webkit.opendarwin.org/quality/Ahem.ttf>.\n");
-		exit(1);
+        fprintf(stderr, "\nAhem font is not available. This special simple font is used to construct certain types of predictable tests.\n\nTo run regression tests, please get it from <http://webkit.opendarwin.org/quality/Ahem.ttf>.\n");
+        exit(1);
     }
     
+    localPasteboard = [NSPasteboard pasteboardWithUniqueName];
+
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
@@ -190,7 +196,11 @@ int main(int argc, const char *argv[])
     [delegate release];
     [editingDelegate release];
 
+    [localPasteboard releaseGlobally];
+    localPasteboard = nil;
+    
     [pool release];
+
     return 0;
 }
 
@@ -497,7 +507,7 @@ static void dump(void)
 - (void)mouseDown
 {
     [[[frame frameView] documentView] layout];
-    if(GetCurrentEventTime() - lastClick >= 1)
+    if (GetCurrentEventTime() - lastClick >= 1)
         clickCount = 1;
     else
         clickCount++;
@@ -542,13 +552,14 @@ static void dump(void)
 static void dumpRenderTree(const char *filename)
 {
     CFStringRef filenameString = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
-    if (filenameString == NULL) {
+    if (!filenameString) {
         fprintf(stderr, "can't parse filename as UTF-8\n");
         return;
     }
 
     CFURLRef URL = CFURLCreateWithFileSystemPath(NULL, filenameString, kCFURLPOSIXPathStyle, FALSE);
-    if (URL == NULL) {
+    if (!URL) {
+        CFRelease(filenameString);
         fprintf(stderr, "can't turn %s into a CFURL\n", filename);
         return;
     }
@@ -571,11 +582,13 @@ static void dumpRenderTree(const char *filename)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         [pool release];
     }
+    pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
+    [pool release];
 }
 
 /* Hashes a bitmap and returns a text string for comparison and saving to a file */
-NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
+static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
 {
     MD5_CTX md5Context;
     unsigned char hash[16];
@@ -591,3 +604,13 @@ NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
 
     return [NSString stringWithUTF8String:hex];
 }
+
+@implementation DumpRenderTreePasteboard
+
+// Return a local pasteboard so we don't disturb the real pasteboard when running tests.
++ (NSPasteboard *)generalPasteboard
+{
+    return localPasteboard;
+}
+
+@end
