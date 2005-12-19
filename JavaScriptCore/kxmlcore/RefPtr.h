@@ -31,7 +31,7 @@ namespace KXMLCore {
     template <class T> class RefPtr
     {
     public:
-        RefPtr() : m_ptr(NULL) {}
+        RefPtr() : m_ptr(0) {}
         RefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->ref(); }
 
@@ -44,17 +44,11 @@ namespace KXMLCore {
         T& operator*() const { return *m_ptr; }
         T *operator->() const { return m_ptr; }
         
-        bool operator!() const { return m_ptr == NULL; }
-
+        bool operator!() const { return !m_ptr; }
     
-        // this type conversion operator allows implicit conversion to
-        // bool but not to other integer types
-
+        // This conversion operator allows implicit conversion to bool but not to other integer types.
         typedef T * (RefPtr::*UnspecifiedBoolType)() const;
-        operator UnspecifiedBoolType() const
-        {
-            return m_ptr ? &RefPtr::get : 0;
-        }
+        operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::get : 0; }
         
         RefPtr& operator=(const RefPtr&);
         RefPtr& operator=(T *);

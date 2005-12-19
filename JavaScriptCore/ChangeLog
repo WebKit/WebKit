@@ -1,5 +1,24 @@
 2005-12-19  Darin Adler  <darin@apple.com>
 
+        Originally done by both George Staikos and Alexey Proskuryakov.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5706
+          Sharedptr dependency can be removed
+
+        Our coding guidelines say "use 0 instead of NULL" and both RefPtr and
+        PassRefPtr were using NULL, which required including a header that
+        defines NULL.
+
+        * kxmlcore/PassRefPtr.h:
+        (KXMLCore::PassRefPtr::PassRefPtr): Use 0 instead of NULL.
+        (KXMLCore::PassRefPtr::operator!): Use ! instead of == NULL.
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::RefPtr): Use 0 instead of NULL.
+        (KXMLCore::RefPtr::operator!): Use ! instead of == NULL.
+        Also did some reformatting.
+
+2005-12-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen and Eric Seidel.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
