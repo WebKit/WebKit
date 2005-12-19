@@ -2,6 +2,51 @@
 
         Reviewed by Darin, committed by Adele.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6139
+          ATSUI code path should implement small caps, synthetic bold and oblique and correct metrics for fallback fonts
+
+        * fast/text/atsui-multiple-renderers-expected.checksum: Added.
+        * fast/text/atsui-multiple-renderers-expected.png: Added.
+        * fast/text/atsui-multiple-renderers-expected.txt: Added.
+        * fast/text/atsui-multiple-renderers.html: Added.
+
+        * css1/text_properties/text-transCapitalize-expected.checksum:
+        * css1/text_properties/text-transCapitalize-expected.png:
+        * fast/text/international/bidi-AN-after-L-expected.checksum:
+        * fast/text/international/bidi-AN-after-L-expected.png:
+        * fast/text/international/bidi-AN-after-L-expected.txt:
+        * fast/text/international/bidi-L2-run-reordering-expected.checksum:
+        * fast/text/international/bidi-L2-run-reordering-expected.png:
+        * fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * fast/text/international/bidi-LDB-2-CSS-expected.checksum:
+        * fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * fast/text/international/bidi-LDB-2-HTML-expected.checksum:
+        * fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum:
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * fast/text/international/bidi-european-terminators-expected.checksum:
+        * fast/text/international/bidi-european-terminators-expected.png:
+        * fast/text/international/bidi-european-terminators-expected.txt:
+        * fast/text/international/bidi-fallback-font-weight-expected.checksum:
+        * fast/text/international/bidi-fallback-font-weight-expected.png:
+        * fast/text/international/bidi-fallback-font-weight-expected.txt:
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum:
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.png:
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * fast/text/international/bidi-innertext-expected.checksum:
+        * fast/text/international/bidi-innertext-expected.png:
+        * fast/text/international/bidi-innertext-expected.txt:
+        * fast/text/international/bidi-override-expected.checksum:
+        * fast/text/international/bidi-override-expected.png:
+        * fast/text/international/bidi-override-expected.txt:
+
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6137
           Disable kerning and some ligatures in the ATSUI code path
 

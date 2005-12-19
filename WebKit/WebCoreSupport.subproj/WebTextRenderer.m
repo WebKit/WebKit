@@ -46,6 +46,7 @@
 // FIXME: FATAL_ALWAYS seems like a bad idea; lets stop using it.
 
 #define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7f
+#define SYNTHETIC_OBLIQUE_ANGLE 14
 
 // Should be more than enough for normal usage.
 #define NUM_SUBSTITUTE_FONT_MAPS 10
@@ -109,10 +110,13 @@ typedef struct WidthIterator {
 
 typedef struct ATSULayoutParameters
 {
-    WebTextRenderer *renderer;
     const WebCoreTextRun *run;
     const WebCoreTextStyle *style;
     ATSUTextLayout layout;
+    WebTextRenderer **renderers;
+    UniChar *charBuffer;
+    bool hasSyntheticBold;
+    bool syntheticBoldPass;
 } ATSULayoutParameters;
 
 static WebTextRenderer *rendererForAlternateFont(WebTextRenderer *, WebCoreFont);
@@ -227,32 +231,48 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             return status;
         }
         
-        // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
-        // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
-        // does in any of its device-metrics modes.
-        bool roundEachGlyph = [params->renderer->font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
         const WebCoreTextRun *run = params->run;
         const UniChar *characters = run->characters + run->from;
-        WebTextRenderer *renderer = params->renderer;
+        WebTextRenderer **renderers = params->renderers + run->from;
+        WebTextRenderer *renderer;
+        WebTextRenderer *lastRenderer = 0;
         UniChar ch, nextCh;
-        nextCh = *(UniChar *)(((char *)characters)+layoutRecords[0].originalOffset);
+        ByteCount offset = layoutRecords[0].originalOffset;
+        nextCh = *(UniChar *)(((char *)characters)+offset);
+        bool shouldRound;
+        bool syntheticBoldPass = params->syntheticBoldPass;
+        Fixed syntheticBoldOffset;
+        ATSGlyphRef spaceGlyph;
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
         ItemCount i;
         for (i = 1; i < count; i++) {
-            BOOL isLastChar = i == count - 1;
+            bool isLastChar = i == count - 1;
+            renderer = renderers[offset / 2];
+            if (renderer != lastRenderer) {
+                lastRenderer = renderer;
+                // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
+                // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
+                // does in any of its device-metrics modes.
+                shouldRound = [renderer->font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
+                if (syntheticBoldPass) {
+                    syntheticBoldOffset = FloatToFixed(renderer->syntheticBoldOffset);
+                    spaceGlyph = renderer->spaceGlyph;
+                }
+            }
             ch = nextCh;
-
+            offset = layoutRecords[i].originalOffset;
             // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
             // We won't actually round unless the other conditions are satisfied.
-            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+layoutRecords[i].originalOffset);
+            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
 
             float width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
             lastNativePos = layoutRecords[i].realPos;
-            if (roundEachGlyph)
+            if (shouldRound)
                 width = roundf(width);
+            width += renderer->syntheticBoldOffset;
             if (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
                 width = renderer->adjustedSpaceWidth;
             if (isRoundingHackCharacter(ch))
@@ -263,6 +283,12 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                         || style->applyRunRounding
                         || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to - run->from])))
                     lastAdjustedPos = ceilf(lastAdjustedPos);
+            if (syntheticBoldPass) {
+                if (syntheticBoldOffset)
+                    layoutRecords[i-1].realPos += syntheticBoldOffset;
+                else
+                    layoutRecords[i-1].glyphID = spaceGlyph;
+            }
             layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
         }
         
@@ -796,7 +822,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         matrix.d = -matrix.d;
     }
     if (syntheticOblique)
-        matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(14 * acosf(0) / 90), 1, 0, 0)); 
+        matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
 
     WKSetCGFontRenderingMode(cgContext, drawFont);
@@ -1161,6 +1187,8 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
         }
         
         CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+        if (renderer->font.syntheticOblique)
+            transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
         Fixed fontSize = FloatToFixed([renderer->font.font pointSize]);
         // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
         Fract kerningInhibitFactor = FloatToFract(1.0);
@@ -1192,15 +1220,21 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
     }
 }
 
-static ATSUTextLayout createATSUTextLayout(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style)
+static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style)
 {
+    params->run = run;
+    params->style = style;
+    // FIXME: It is probably best to always allocate a buffer for RTL, since even if for this
+    // renderer ATSUMirrors is true, for a substitute renderer it might be false.
+    WebTextRenderer **renderers = malloc(run->length * sizeof(WebTextRenderer *));
+    params->renderers = renderers;
+    UniChar *charBuffer = (style->smallCaps || (style->rtl && !renderer->ATSUMirrors)) ? malloc(run->length * sizeof(UniChar)) : 0;
+    params->charBuffer = charBuffer;
+    params->syntheticBoldPass = false;
+
     // The only Cocoa calls here are to NSGraphicsContext, which does not raise exceptions.
 
     ATSUTextLayout layout;
-    UniCharCount runLength;
-    ATSUFontID ATSUSubstituteFont;
-    UniCharArrayOffset substituteOffset;
-    UniCharCount substituteLength;
     OSStatus status;
     ATSULayoutOperationOverrideSpecifier overrideSpecifier;
     
@@ -1209,22 +1243,29 @@ static ATSUTextLayout createATSUTextLayout(WebTextRenderer *renderer, const WebC
     // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
     // - \n, \t, and nonbreaking space render as a space.
     // - Other control characters do not render (other code path uses zero-width spaces).
-    // - Small caps.
-    // - Synthesized bold.
-    // - Synthesized oblique.
 
-    runLength = run->to - run->from;
+    UniCharCount totalLength = run->length;
+    UniCharArrayOffset runTo = (run->to == -1 ? totalLength : (unsigned int)run->to);
+    UniCharArrayOffset runFrom = run->from;
+    
+    if (charBuffer)
+        memcpy(charBuffer, run->characters, totalLength * sizeof(UniChar));
+
+    UniCharCount runLength = runTo - runFrom;
+    
     status = ATSUCreateTextLayoutWithTextPtr(
-            run->characters,
-            run->from,      // offset
+            (charBuffer ? charBuffer : run->characters),
+            runFrom,        // offset
             runLength,      // length
-            run->length,    // total length
+            totalLength,    // total length
             1,              // styleRunCount
             &runLength,     // length of style run
             &renderer->_ATSUStyle, 
             &layout);
     if (status != noErr)
         FATAL_ALWAYS("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
+    params->layout = layout;
+    ATSUSetTextLayoutRefCon(layout, (UInt32)params);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;
@@ -1243,20 +1284,81 @@ static ATSUTextLayout createATSUTextLayout(WebTextRenderer *renderer, const WebC
     if (status != noErr)
         FATAL_ALWAYS("ATSUSetTransientFontMatching failed(%d)", status);
 
-    substituteOffset = run->from;
-    while ((status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength)) == kATSUFontsMatched || status == kATSUFontsNotMatched) {
-        WebTextRenderer *substituteRenderer = findSubstituteRenderer(renderer, run->characters + substituteOffset, substituteLength, style->families);
-        if (substituteRenderer) {
-            initializeATSUStyle(substituteRenderer);
-            if (substituteRenderer->_ATSUStyle)
-                ATSUSetRunStyle(layout, substituteRenderer->_ATSUStyle, substituteOffset, substituteLength);
-            // ignoring errors
+    params->hasSyntheticBold = false;
+    ATSUFontID ATSUSubstituteFont;
+    UniCharArrayOffset substituteOffset = runFrom;
+    UniCharCount substituteLength;
+    UniCharArrayOffset lastOffset;
+    WebTextRenderer *substituteRenderer;
+
+    while (substituteOffset < runTo) {
+        lastOffset = substituteOffset;
+        status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
+        if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
+            substituteRenderer = findSubstituteRenderer(renderer, run->characters+substituteOffset, substituteLength, style->families);
+            if (substituteRenderer) {
+                initializeATSUStyle(substituteRenderer);
+                if (substituteRenderer->_ATSUStyle)
+                    ATSUSetRunStyle(layout, substituteRenderer->_ATSUStyle, substituteOffset, substituteLength);
+            } else
+                substituteRenderer = renderer;
+        } else {
+            substituteOffset = runTo;
+            substituteLength = 0;
+        }
+
+        bool isSmallCap = false;
+        WebTextRenderer *r = renderer;
+        UniCharArrayOffset i;
+        for (i = lastOffset;  ; i++) {
+            UniCharArrayOffset firstSmallCap;
+            if (i == substituteOffset || i == substituteOffset + substituteLength) {
+                if (isSmallCap) {
+                    isSmallCap = false;
+                    initializeATSUStyle(getSmallCapsRenderer(r));
+                    ATSUSetRunStyle(layout, getSmallCapsRenderer(r)->_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                }
+                if (i == substituteOffset && substituteLength > 0)
+                    r = substituteRenderer;
+                else
+                    break;
+            }
+            if (rtl && charBuffer && !r->ATSUMirrors)
+                charBuffer[i] = u_charMirror(charBuffer[i]);
+            if (style->smallCaps) {
+                UniChar c = charBuffer[i];
+                UniChar newC;
+                if (!u_isbase(c))
+                    renderers[i] = isSmallCap ? getSmallCapsRenderer(r) : r;
+                else if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
+                    charBuffer[i] = newC;
+                    if (!isSmallCap) {
+                        isSmallCap = true;
+                        firstSmallCap = i;
+                    }
+                    renderers[i] = getSmallCapsRenderer(r);
+                } else {
+                    if (isSmallCap) {
+                        isSmallCap = false;
+                        initializeATSUStyle(getSmallCapsRenderer(r));
+                        ATSUSetRunStyle(layout, getSmallCapsRenderer(r)->_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                    }
+                    renderers[i] = r;
+                }
+            } else
+                renderers[i] = r;
+            if (renderers[i]->syntheticBoldOffset)
+                params->hasSyntheticBold = true;
         }
         substituteOffset += substituteLength;
     }
-    // ignoring errors in font substitution
-        
-    return layout;
+}
+
+static void disposeATSULayoutParameters(ATSULayoutParameters *params)
+{
+    ATSUDisposeTextLayout(params->layout);
+    free(params->charBuffer);
+    free(params->renderers);
 }
 
 static ATSTrapezoid getTextBounds(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, NSPoint p)
@@ -1317,24 +1419,6 @@ static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl
     return runWithOverride;
 }
 
-// Be sure to free the run.characters allocated by this function.
-static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
-{
-    UniChar *mirroredCharacters = malloc(sizeof(UniChar)*(run->length));
-    unsigned int i;
-    for (i = 0; i < run->length; i++)
-        mirroredCharacters[i] = u_charMirror(run->characters[i]);
-
-    WebCoreTextRun mirroredRun;
-
-    mirroredRun.from = run->from;
-    mirroredRun.to = run->to;
-    mirroredRun.length = run->length;
-    mirroredRun.characters = mirroredCharacters;
-
-    return mirroredRun;
-}
-
 static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
 {
     // The only Cocoa calls made here are to NSColor and NSBezierPath, and they do not raise exceptions.
@@ -1360,11 +1444,7 @@ static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *
     if (style->directionalOverride) {
         swappedRun = addDirectionalOverride(aRun, style->rtl);
         aRun = &swappedRun;
-    } else if (style->rtl && !renderer->ATSUMirrors) {
-        swappedRun = applyMirroringToRun(aRun);
-        aRun = &swappedRun;
     }
-
    
     float selectedLeftX;
     float widthWithLead = ATSU_floatWidthForRun(renderer, aRun, style);
@@ -1390,7 +1470,7 @@ static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *
         ? renderer->lineSpacing : geometry->selectionHeight;
     [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
 
-    if (style->directionalOverride || (style->rtl && !renderer->ATSUMirrors))
+    if (style->directionalOverride)
         free((void *)swappedRun.characters);
 }
 
@@ -1406,9 +1486,6 @@ static void ATSU_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, cons
     
     if (style->directionalOverride) {
         swappedRun = addDirectionalOverride(run, style->rtl);
-        aRun = &swappedRun;
-    } else if (style->rtl && !renderer->ATSUMirrors) {
-        swappedRun = applyMirroringToRun(run);
         aRun = &swappedRun;
     }
 
@@ -1442,6 +1519,12 @@ static void ATSU_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, cons
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
     status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
+    if (status == noErr && params.hasSyntheticBold) {
+        // Force relayout for the bold pass
+        ATSUClearLayoutCache(params.layout, 0);
+        params.syntheticBoldPass = true;
+        status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
+    }
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
     CGContextTranslateCTM(context, -geometry->point.x, -geometry->point.y);
@@ -1453,7 +1536,7 @@ static void ATSU_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, cons
 
     disposeATSULayoutParameters(&params);
     
-    if (style->directionalOverride || (style->rtl && !renderer->ATSUMirrors))
+    if (style->directionalOverride)
         free((void *)swappedRun.characters);
 }
 
@@ -1466,9 +1549,6 @@ static int ATSU_pointToOffset(WebTextRenderer *renderer, const WebCoreTextRun *r
     // Enclose in LRO/RLO - PDF to force ATSU to render visually.
     if (style->directionalOverride) {
         swappedRun = addDirectionalOverride(aRun, style->rtl);
-        aRun = &swappedRun;
-    } else if (style->rtl && !renderer->ATSUMirrors) {
-        swappedRun = applyMirroringToRun(aRun);
         aRun = &swappedRun;
     }
 
@@ -1492,7 +1572,7 @@ static int ATSU_pointToOffset(WebTextRenderer *renderer, const WebCoreTextRun *r
 
     disposeATSULayoutParameters(&params);
     
-    if (style->directionalOverride || (style->rtl && !renderer->ATSUMirrors))
+    if (style->directionalOverride)
         free((void *)swappedRun.characters);
 
     return offset - aRun->from;
@@ -1634,20 +1714,6 @@ static void initializeWidthIterator(WidthIterator *iterator, WebTextRenderer *re
         advanceWidthIterator(&startPositionIterator, run->from, 0, 0, 0);
         iterator->widthToStart = startPositionIterator.runWidthSoFar;
     }
-}
-
-static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style) 
-{
-    params->renderer = renderer;
-    params->run = run;
-    params->style = style;
-    params->layout = createATSUTextLayout(renderer, run, style);
-    ATSUSetTextLayoutRefCon(params->layout, (UInt32)params);
-}
-
-static void disposeATSULayoutParameters(ATSULayoutParameters *params)
-{
-    ATSUDisposeTextLayout(params->layout);
 }
 
 static UChar32 normalizeVoicingMarks(WidthIterator *iterator)

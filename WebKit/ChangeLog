@@ -2,6 +2,28 @@
 
         Reviewed by Darin, committed by Adele.
         
+        Test: fast/text/atsui-multiple-renderers.html
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6139
+          ATSUI code path should implement small caps, synthetic bold and oblique and correct metrics for fallback fonts
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation): Fetch renderer info from the renderers array;
+        add synthetic bold offset; render only synthetic bold in the synthetic bold pass.
+        (drawGlyphs): Replaced 14 with new SYNTHETIC_OBLIQUE_ANGLE define.
+        (initializeATSUStyle): Apply a skewing transform for synthetic oblique.
+        (createATSUTextLayout): Merged into createATSUTextLayout.
+        (createATSULayoutParameters): Merged in createATSUTextLayout; allocate
+        and fill a renderers array and a character buffer for small caps and mirroring;
+        (applyMirroringToRun): Merged into createATSULayoutParameters.
+        (ATSU_drawHighlight): Deleted mirroring code.
+        (ATSU_draw): Deleted mirroring code; added second pass for synthetic bold.
+        (ATSU_pointToOffset): Deleted mirroring code.
+
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+        
         Test: fast/text/atsui-kerning-and-ligatures.html
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6137
