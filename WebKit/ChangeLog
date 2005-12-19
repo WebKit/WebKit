@@ -1,3 +1,16 @@
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+        
+        Test: fast/text/should-use-atsui.html
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6132
+          Incorrect selection highlighting for ATSUI text when selected range is "CG-safe"
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (shouldUseATSU): Always start scanning from 0 since drawing and
+        highlighting also measure everything up to run->from.
+
 2005-12-17  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

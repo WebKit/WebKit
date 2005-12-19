@@ -1859,7 +1859,8 @@ static bool shouldUseATSU(const WebCoreTextRun *run)
     const UniChar *characters = run->characters;
     int to = run->to;
     int i;
-    for (i = run->from; i < to; i++) {
+    // Start from 0 since drawing and highlighting also measure the characters before run->from
+    for (i = 0; i < to; i++) {
         UniChar c = characters[i];
         if (c < 0x300)      // U+0300 through U+036F Combining diacritical marks
             continue;

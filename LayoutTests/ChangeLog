@@ -1,3 +1,15 @@
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6132
+          Incorrect selection highlighting for ATSUI text when selected range is "CG-safe"
+
+        * fast/text/should-use-atsui-expected.checksum: Added.
+        * fast/text/should-use-atsui-expected.png: Added.
+        * fast/text/should-use-atsui-expected.txt: Added.
+        * fast/text/should-use-atsui.html: Added.
+
 2005-12-18  Justin Haygood  <justin@xiondigital.net>
 
         Reviewed, tweaked, and landed by Darin.
