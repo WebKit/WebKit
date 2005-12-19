@@ -1,3 +1,13 @@
+2005-12-18  Justin Haygood  <justin@xiondigital.net>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5227
+          Array indexOf() extension for JavaScript 1.5 Core
+
+        * kjs/array_object.h:
+        * kjs/array_object.cpp: (ArrayProtoFunc::callAsFunction): Added implementation of indexOf.
+
 2005-12-18  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin and Geoffrey.

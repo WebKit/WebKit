@@ -392,6 +392,7 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
   every          ArrayProtoFunc::Every          DontEnum|Function 5
   forEach        ArrayProtoFunc::ForEach        DontEnum|Function 5
   some           ArrayProtoFunc::Some           DontEnum|Function 5
+  indexOf        ArrayProtoFunc::IndexOf       DontEnum|Function 1
 @end
 */
 
@@ -810,7 +811,34 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
     }
     break;
   }
-    
+
+  case IndexOf: {
+    // JavaScript 1.5 Extension by Mozilla
+    // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:indexOf
+
+    unsigned index = 0;
+    double d = args[1]->toInteger(exec);
+    if (d < 0)
+        d += length;
+    if (d > 0) {
+        if (d > length)
+            index = length;
+        else
+            index = static_cast<unsigned>(d);
+    }
+
+    JSValue* searchElement = args[0];
+    for (; index < length; ++index) {
+        JSValue* e = getProperty(exec, thisObj, index);
+        if (!e)
+            e = jsUndefined();
+        if (strictEqual(exec, searchElement, e))
+            return jsNumber(index);
+    }
+
+    return jsNumber(-1);
+  }
+
   default:
     assert(0);
     result = 0;
