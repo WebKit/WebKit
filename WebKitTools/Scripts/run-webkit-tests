@@ -180,6 +180,7 @@ for my $test (@tests) {
     if (!$toolOpen) {
         local %ENV;
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
         $ENV{MallocStackLogging} = 1 if $checkLeaks;
         $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
         $dumpToolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
