@@ -472,7 +472,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, JSObject *glob)
   recursion = 0;
 }
 
- void InterpreterImp::initGlobalObject()
+void InterpreterImp::initGlobalObject()
 {
   Identifier::init();
   

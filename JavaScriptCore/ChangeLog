@@ -1,3 +1,22 @@
+2005-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Adele
+
+	- replaced custom Identifier hashtable with HashSet
+
+        * kjs/identifier.cpp:
+        (KXMLCore::):
+        (KJS::identifierTable):
+        (KJS::Identifier::equal):
+        (KJS::hash):
+        (KJS::equal):
+        (KJS::convert):
+        (KJS::Identifier::add):
+        (KJS::Identifier::remove):
+        * kjs/identifier.h:
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::initGlobalObject):
+
 2005-12-18  Justin Haygood  <justin@xiondigital.net>
 
         Reviewed, tweaked, and landed by Darin.

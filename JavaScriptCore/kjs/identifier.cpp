@@ -37,39 +37,34 @@
 #include "identifier.h"
 
 #include <kxmlcore/FastMalloc.h>
+#include <kxmlcore/HashSet.h>
 #include <string.h> // for strlen
 #include <new> // for placement new
 
-#define DUMP_STATISTICS 0
+namespace KXMLCore {
+
+    template<typename T> class DefaultHash;
+
+    template<> struct DefaultHash<KJS::UString::Rep *> {
+        static unsigned hash(const KJS::UString::Rep *key) { return key->hash(); }
+        static bool equal(const KJS::UString::Rep *a, const KJS::UString::Rep *b) { return KJS::Identifier::equal(a, b); }
+    };
+}
 
 namespace KJS {
 
-#if DUMP_STATISTICS
+typedef HashSet<UString::Rep *> IdentifierTable;
+static IdentifierTable *table;
 
-static int numProbes;
-static int numCollisions;
-
-struct IdentifierStatisticsExitLogger { ~IdentifierStatisticsExitLogger(); };
-
-static IdentifierStatisticsExitLogger logger;
-
-IdentifierStatisticsExitLogger::~IdentifierStatisticsExitLogger()
+static inline IdentifierTable& identifierTable()
 {
-    printf("\nKJS::Identifier statistics\n\n");
-    printf("%d probes\n", numProbes);
-    printf("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
+    if (!table)
+        table = new IdentifierTable;
+    return *table;
 }
 
-#endif
 
-const int _minTableSize = 64;
-
-UString::Rep **Identifier::_table;
-int Identifier::_tableSize;
-int Identifier::_tableSizeMask;
-int Identifier::_keyCount;
-
-bool Identifier::equal(UString::Rep *r, const char *s)
+bool Identifier::equal(const UString::Rep *r, const char *s)
 {
     int length = r->len;
     const UChar *d = r->data();
@@ -79,7 +74,7 @@ bool Identifier::equal(UString::Rep *r, const char *s)
     return s[length] == 0;
 }
 
-bool Identifier::equal(UString::Rep *r, const UChar *s, int length)
+bool Identifier::equal(const UString::Rep *r, const UChar *s, int length)
 {
     if (r->len != length)
         return false;
@@ -90,7 +85,7 @@ bool Identifier::equal(UString::Rep *r, const UChar *s, int length)
     return true;
 }
 
-bool Identifier::equal(UString::Rep *r, UString::Rep *b)
+bool Identifier::equal(const UString::Rep *r, const UString::Rep *b)
 {
     int length = r->len;
     if (length != b->len)
@@ -103,6 +98,31 @@ bool Identifier::equal(UString::Rep *r, UString::Rep *b)
     return true;
 }
 
+inline unsigned hash(const char* const& c)
+{
+    return UString::Rep::computeHash(c);
+}
+
+inline bool equal(UString::Rep* const& r, const char* const& s)
+{
+    return Identifier::equal(r, s);
+}
+
+inline UString::Rep *convert(const char* const& c, unsigned hash)
+{
+    int length = strlen(c);
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
+    for (int i = 0; i != length; i++)
+        d[i] = c[i];
+    
+    UString::Rep *r = UString::Rep::create(d, length).release();
+    r->isIdentifier = 1;
+    r->rc = 0;
+    r->_hash = hash;
+
+    return r; 
+}
+
 UString::Rep *Identifier::add(const char *c)
 {
     if (!c)
@@ -111,38 +131,36 @@ UString::Rep *Identifier::add(const char *c)
     if (length == 0)
         return &UString::Rep::empty;
     
-    if (!_table)
-        expand();
-    
-    unsigned hash = UString::Rep::computeHash(c);
-    
-    int i = hash & _tableSizeMask;
-#if DUMP_STATISTICS
-    ++numProbes;
-    numCollisions += _table[i] && !equal(_table[i], c);
-#endif
-    while (UString::Rep *key = _table[i]) {
-        if (equal(key, c))
-            return key;
-        i = (i + 1) & _tableSizeMask;
-    }
-    
-    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
-    for (int j = 0; j != length; j++)
-        d[j] = c[j];
-    
-    UString::Rep *r = UString::Rep::create(d, length).release();
+    return *identifierTable().insert<const char *, hash, KJS::equal, convert>(c).first;
+}
+
+struct UCharBuffer {
+    const UChar *s;
+    uint length;
+};
+
+inline unsigned hash(const UCharBuffer& buf)
+{
+    return UString::Rep::computeHash(buf.s, buf.length);
+}
+
+inline bool equal(UString::Rep* const& str, const UCharBuffer& buf)
+{
+    return Identifier::equal(str, buf.s, buf.length);
+}
+
+inline UString::Rep *convert(const UCharBuffer& buf, unsigned hash)
+{
+    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * buf.length));
+    for (unsigned i = 0; i != buf.length; i++)
+        d[i] = buf.s[i];
+
+    UString::Rep *r = UString::Rep::create(d, buf.length).release();
     r->isIdentifier = 1;
     r->rc = 0;
     r->_hash = hash;
-    
-    _table[i] = r;
-    ++_keyCount;
-    
-    if (_keyCount * 2 >= _tableSize)
-        expand();
-    
-    return r;
+
+    return r; 
 }
 
 UString::Rep *Identifier::add(const UChar *s, int length)
@@ -150,151 +168,27 @@ UString::Rep *Identifier::add(const UChar *s, int length)
     if (length == 0)
         return &UString::Rep::empty;
     
-    if (!_table)
-        expand();
-    
-    unsigned hash = UString::Rep::computeHash(s, length);
-    
-    int i = hash & _tableSizeMask;
-#if DUMP_STATISTICS
-    ++numProbes;
-    numCollisions += _table[i] && !equal(_table[i], s, length);
-#endif
-    while (UString::Rep *key = _table[i]) {
-        if (equal(key, s, length))
-            return key;
-        i = (i + 1) & _tableSizeMask;
-    }
-    
-    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
-    for (int j = 0; j != length; j++)
-        d[j] = s[j];
-    
-    UString::Rep *r = UString::Rep::create(d, length).release();
-    r->isIdentifier = 1;
-    r->rc = 0;
-    r->_hash = hash;
-    
-    _table[i] = r;
-    ++_keyCount;
-    
-    if (_keyCount * 2 >= _tableSize)
-        expand();
-    
-    return r;
+    UCharBuffer buf = {s, length}; 
+    return *identifierTable().insert<UCharBuffer, hash, KJS::equal, convert>(buf).first;
 }
 
 UString::Rep *Identifier::add(UString::Rep *r)
 {
     if (r->isIdentifier)
         return r;
+
     if (r->len == 0)
         return &UString::Rep::empty;
-    
-    if (!_table)
-        expand();
-    
-    unsigned hash = r->hash();
-    
-    int i = hash & _tableSizeMask;
-#if DUMP_STATISTICS
-    ++numProbes;
-    numCollisions += _table[i] && !equal(_table[i], r);
-#endif
-    while (UString::Rep *key = _table[i]) {
-        if (equal(key, r))
-            return key;
-        i = (i + 1) & _tableSizeMask;
-    }
-    
-    r->isIdentifier = 1;
-    
-    _table[i] = r;
-    ++_keyCount;
-    
-    if (_keyCount * 2 >= _tableSize)
-        expand();
-    
-    return r;
-}
 
-inline void Identifier::insert(UString::Rep *key)
-{
-    unsigned hash = key->hash();
-    
-    int i = hash & _tableSizeMask;
-#if DUMP_STATISTICS
-    ++numProbes;
-    numCollisions += _table[i] != 0;
-#endif
-    while (_table[i])
-        i = (i + 1) & _tableSizeMask;
-    
-    _table[i] = key;
+    UString::Rep *result = *identifierTable().insert(r).first;
+    if (result == r)
+        r->isIdentifier = true;
+    return result;
 }
 
 void Identifier::remove(UString::Rep *r)
 {
-    unsigned hash = r->hash();
-    
-    UString::Rep *key;
-    
-    int i = hash & _tableSizeMask;
-#if DUMP_STATISTICS
-    ++numProbes;
-    numCollisions += _table[i] && equal(_table[i], r);
-#endif
-    while ((key = _table[i])) {
-        if (equal(key, r))
-            break;
-        i = (i + 1) & _tableSizeMask;
-    }
-    if (!key)
-        return;
-    
-    _table[i] = 0;
-    --_keyCount;
-    
-    if (_keyCount * 6 < _tableSize && _tableSize > _minTableSize) {
-        shrink();
-        return;
-    }
-    
-    // Reinsert all the items to the right in the same cluster.
-    while (1) {
-        i = (i + 1) & _tableSizeMask;
-        key = _table[i];
-        if (!key)
-            break;
-        _table[i] = 0;
-        insert(key);
-    }
-}
-
-void Identifier::expand()
-{
-    rehash(_tableSize == 0 ? _minTableSize : _tableSize * 2);
-}
-
-void Identifier::shrink()
-{
-    rehash(_tableSize / 2);
-}
-
-void Identifier::rehash(int newTableSize)
-{
-    int oldTableSize = _tableSize;
-    UString::Rep **oldTable = _table;
-
-    _tableSize = newTableSize;
-    _tableSizeMask = newTableSize - 1;
-    _table = (UString::Rep **)fastCalloc(newTableSize, sizeof(UString::Rep *));
-
-    for (int i = 0; i != oldTableSize; ++i)
-        if (UString::Rep *key = oldTable[i])
-            insert(key);
-
-    fastFree(oldTable);
+    identifierTable().remove(r);
 }
 
 // Global constants for property name strings.

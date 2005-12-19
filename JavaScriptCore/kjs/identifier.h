@@ -65,13 +65,13 @@ namespace KJS {
     
         static void remove(UString::Rep *);
 
+        static bool equal(const UString::Rep *, const char *);
+        static bool equal(const UString::Rep *, const UChar *, int length);
+        static bool equal(const UString::Rep *, const UString::Rep *);
+
     private:
         UString _ustring;
         
-        static bool equal(UString::Rep *, const char *);
-        static bool equal(UString::Rep *, const UChar *, int length);
-        static bool equal(UString::Rep *, UString::Rep *);
-
         static bool equal(const Identifier &a, const Identifier &b)
             { return a._ustring.rep() == b._ustring.rep(); }
         static bool equal(const Identifier &a, const char *b)
@@ -80,17 +80,6 @@ namespace KJS {
         static UString::Rep *add(const char *);
         static UString::Rep *add(const UChar *, int length);
         static UString::Rep *add(UString::Rep *);
-        
-        static void insert(UString::Rep *);
-        
-        static void rehash(int newTableSize);
-        static void expand();
-        static void shrink();
-
-        static UString::Rep **_table;
-        static int _tableSize;
-        static int _tableSizeMask;
-        static int _keyCount;
     };
     
 #if !KJS_IDENTIFIER_HIDE_GLOBALS
