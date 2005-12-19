@@ -303,13 +303,3 @@ bool operator==(const QCString &s1, const char *s2)
     }
     return (strcmp(s1, s2) == 0);
 }
-
-#ifdef _KWQ_IOSTREAM_
-
-ostream &operator <<(ostream &o, const QCString &s)
-{
-    const char *chs = s;
-    return o << chs;
-}
-
-#endif

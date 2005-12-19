@@ -26,10 +26,6 @@
 #include <cstddef>
 #include <new>
 
-#ifndef NDEBUG
-#include <ostream>
-#endif
-
 // Work around bug 3553309 by re-including <ctype.h>.
 #include <cctype>
 #define isalnum(c)      __istype((c), (_CTYPE_A|_CTYPE_D))

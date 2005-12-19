@@ -36,17 +36,13 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-#import <JavaScriptCore/jni_jsobject.h>
-#import <JavaScriptCore/npruntime.h>
-#import <JavaScriptCore/NP_jsobject.h>
-#import <JavaScriptCore/runtime.h>
-
 #import "KWQDict.h"
 #import "KWQClipboard.h"
 #import "KWQScrollBar.h"
 
 class KHTMLPartPrivate;
 class KWQWindowWidget;
+class NPObject;
 
 namespace DOM {
     class DocumentFragmentImpl;
@@ -65,6 +61,10 @@ namespace KJS {
     class SavedProperties;
     class SavedBuiltins;
     class ScheduledAction;
+    namespace Bindings {
+        class Instance;
+        class RootObject;
+    }
 }
 
 #ifdef __OBJC__
@@ -206,8 +206,7 @@ public:
 
     bool shouldClose();
 
-    void KWQKHTMLPart::addMessageToConsole(const QString &message,  unsigned int lineNumber, const QString &sourceID);
-    using KHTMLPart::xmlDocImpl;
+    void addMessageToConsole(const QString &message,  unsigned int lineNumber, const QString &sourceID);
     khtml::RenderObject *renderer() const;
     void forceLayout();
     void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
@@ -359,7 +358,7 @@ public:
     KJS::Bindings::RootObject *bindingRootObject();
     
     WebScriptObject *windowScriptObject();
-    NPObject *KWQKHTMLPart::windowScriptNPObject();
+    NPObject *windowScriptNPObject();
     
     void partClearedInBegin();
     

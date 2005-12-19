@@ -22,14 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_H_
-#define _RUNTIME_H_
 
-#include "list.h"
-#include "object.h"
+#ifndef JAVASCRIPTCORE_BINDINGS_RUNTIME_H
+#define JAVASCRIPTCORE_BINDINGS_RUNTIME_H
+
 #include "value.h"
 
 namespace KJS  {
+
+class Identifier;
+class List;
+
 namespace Bindings {
 
 class Instance;
@@ -53,7 +56,7 @@ public:
 class Constructor
 {
 public:
-    virtual Parameter *parameterAt(int i) const = 0;
+    virtual Parameter* parameterAt(int i) const = 0;
     virtual int numParameters() const = 0;
 
     virtual ~Constructor() {}
@@ -62,35 +65,33 @@ public:
 class Field
 {
 public:
-    virtual const char *name() const = 0;
+    virtual const char* name() const = 0;
     virtual RuntimeType type() const = 0;
 
-    virtual JSValue *valueFromInstance(ExecState *, const Instance *) const = 0;
-    virtual void setValueToInstance(ExecState *, const Instance *, JSValue *) const = 0;
+    virtual JSValue* valueFromInstance(ExecState*, const Instance*) const = 0;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const = 0;
 
     virtual ~Field() {}
 };
-
 
 class MethodList
 {
 public:
     MethodList() : _methods(0), _length(0) {}
     
-    void addMethod(Method *aMethod);
+    void addMethod(Method*);
     unsigned int length() const;
-    Method *methodAt(unsigned int index) const;
+    Method* methodAt(unsigned int index) const;
     
     ~MethodList();
     
-    MethodList(const MethodList &other);
-    MethodList &operator=(const MethodList &other);
+    MethodList(const MethodList&);
+    MethodList& operator=(const MethodList&);
 
 private:
     Method **_methods;
     unsigned int _length;
 };
-
 
 class Method
 {
@@ -107,19 +108,19 @@ class Class
 public:
     virtual const char *name() const = 0;
     
-    virtual MethodList methodsNamed(const char *name, Instance *instance) const = 0;
+    virtual MethodList methodsNamed(const char *name, Instance*) const = 0;
     
     virtual Constructor *constructorAt(int i) const = 0;
     virtual int numConstructors() const = 0;
     
-    virtual Field *fieldNamed(const char *name, Instance *instance) const = 0;
+    virtual Field *fieldNamed(const char *name, Instance*) const = 0;
 
-    virtual JSValue *fallbackObject(ExecState *, Instance *, const Identifier &) { return jsUndefined(); }
+    virtual JSValue* fallbackObject(ExecState*, Instance*, const Identifier&) { return jsUndefined(); }
     
     virtual ~Class() {}
 };
 
-typedef void (*KJSDidExecuteFunctionPtr)(ExecState *exec, JSObject *rootObject);
+typedef void (*KJSDidExecuteFunctionPtr)(ExecState*, JSObject* rootObject);
 
 class Instance
 {
@@ -133,9 +134,9 @@ public:
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
     
-    static Instance *createBindingForLanguageInstance(BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
-    static void *createLanguageInstanceForValue(ExecState *exec, BindingLanguage language, JSObject *value, const RootObject *origin, const RootObject *current);
-    static JSObject *createRuntimeObject(BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
+    static Instance* createBindingForLanguageInstance(BindingLanguage, void* nativeInstance, const RootObject* = 0);
+    static void* createLanguageInstanceForValue(ExecState*, BindingLanguage, JSObject* value, const RootObject* origin, const RootObject* current);
+    static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, const RootObject* = 0);
 
     Instance() : _executionContext(0) {}
     
@@ -151,18 +152,18 @@ public:
     
     virtual Class *getClass() const = 0;
     
-    virtual JSValue *getValueOfField(ExecState *exec, const Field *aField) const;
-    virtual JSValue *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return jsUndefined(); }
-    virtual void setValueOfField(ExecState *exec, const Field *aField, JSValue *aValue) const;
+    virtual JSValue* getValueOfField(ExecState*, const Field*) const;
+    virtual JSValue* getValueOfUndefinedField(ExecState*, const Identifier& property, Type hint) const { return jsUndefined(); }
+    virtual void setValueOfField(ExecState*, const Field*, JSValue*) const;
     virtual bool supportsSetValueOfUndefinedField() { return false; }
-    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue) {}
+    virtual void setValueOfUndefinedField(ExecState*, const Identifier& property, JSValue*) {}
     
-    virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const List &args) = 0;
-    virtual JSValue *invokeDefaultMethod(ExecState *exec, const List &args) = 0;
+    virtual JSValue* invokeMethod(ExecState*, const MethodList&, const List& args) = 0;
+    virtual JSValue* invokeDefaultMethod(ExecState*, const List& args) = 0;
     
-    virtual JSValue *defaultValue(Type hint) const = 0;
+    virtual JSValue* defaultValue(Type hint) const = 0;
     
-    virtual JSValue *valueOf() const { return jsString(getClass()->name()); }
+    virtual JSValue* valueOf() const { return jsString(getClass()->name()); }
     
     void setExecutionContext(const RootObject *r) { _executionContext = r; }
     const RootObject *executionContext() const { return _executionContext; }
@@ -170,19 +171,19 @@ public:
     virtual ~Instance() {}
 
 protected:
-    const RootObject *_executionContext;
+    const RootObject* _executionContext;
 };
 
 class Array
 {
 public:
-    virtual void setValueAt(ExecState *, unsigned index, JSValue *) const = 0;
-    virtual JSValue *valueAt(ExecState *, unsigned index) const = 0;
+    virtual void setValueAt(ExecState *, unsigned index, JSValue*) const = 0;
+    virtual JSValue* valueAt(ExecState *, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
     virtual ~Array() {}
 };
 
-const char *signatureForParameters(const List &aList);
+const char *signatureForParameters(const List&);
 
 } // namespace Bindings
 

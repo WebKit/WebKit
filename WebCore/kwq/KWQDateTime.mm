@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-#import <Foundation/Foundation.h>
 #import "KWQDateTime.h"
+
 #import <time.h>
-#import "WebCoreGraphicsBridge.h"
 
 static CFTimeZoneRef systemTimeZone()
 {
@@ -102,55 +101,3 @@ bool KWQUIEventTime::uiEventPending() const
                                               inMode:NSEventTrackingRunLoopMode dequeue:NO] != nil;
 */
 }
-
-#ifdef _KWQ_IOSTREAM_
-
-std::ostream &operator<<(std::ostream &o, const QDate &date)
-{
-    return o <<
-        "QDate: [yy/mm/dd: " <<
-        date.year <<
-        '/' <<
-        date.month <<
-        '/' <<
-        date.day <<
-        ']';
-}
-
-std::ostream &operator<<(std::ostream &o, const QTime &time)
-{
-    CFGregorianDate g = CFAbsoluteTimeGetGregorianDate(time.timeInSeconds, systemTimeZone());
-    return o <<
-        "QTime: [hh:mm:ss:ms = " <<
-        (int)g.hour <<
-        ':' <<
-        (int)g.minute <<
-        ':' <<
-        (int)g.second <<
-        ':' <<
-        time.msec() <<
-        ']';
-}
-
-std::ostream &operator<<(std::ostream &o, const QDateTime &dateTime)
-{
-    CFGregorianDate g = CFAbsoluteTimeGetGregorianDate(dateTime.dateInSeconds, systemTimeZone());
-    return o <<
-        "QDateTime: [yy/mm/dd hh:mm:ss:ms = " <<
-        (int)g.year <<
-        '/' <<
-        (int)g.month <<
-        '/' <<
-        (int)g.day <<
-        ' ' << 
-        (int)g.hour <<
-        ':' <<
-        (int)g.minute <<
-        ':' <<
-        (int)g.second <<
-        ':' <<
-        ((int)(g.second * 1000) % 1000) <<
-        ']';
-}
-
-#endif // _KWQ_IOSTREAM_

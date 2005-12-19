@@ -1,5 +1,57 @@
 2005-12-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff Garen and Eric Seidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
+          stop using <ostream> in WebCore, eliminating the <cmath> troubles it causes
+
+        * ForwardingHeaders/kxmlcore/AlwaysInline.h: Added.
+        * WebCorePrefix.h: Removed the use of <ostream>.
+
+        * kwq/KWQDef.h: Removed now-unused Q_INT64, Q_INT16, Q_UINT16, qRound, and _KWQ_IOSTREAM_.
+
+        * kwq/KWQKHTMLPart.h: Removed some unneeded headers and added forward-declarations of classes
+        instead. Corrected some incorrect member function declarations.
+        * kwq/KWQKHTMLPart.mm: Added a now-needed header.
+
+        * khtml/ecma/kjs_window.cpp: Removed the <cmath> workaround.
+        * khtml/rendering/bidi.cpp: Added include of AlwaysInline.h and removed a
+        lot of unnecessary includes.
+        * khtml/rendering/render_canvasimage.cpp: Removed the <cmath> workaround.
+        * khtml/rendering/render_image.cpp: Removed the <cmath> workaround.
+        * khtml/rendering/render_text.cpp: Added include of AlwaysInline.h and removed a
+        lot of unnecessary includes.
+
+        * ksvg2/css/SVGCSSStyleSelector.cpp: (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp: (SVGAnimateColorElementImpl::calculateColor):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp: (SVGAnimateTransformElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp: (SVGAnimationElementImpl::closeRenderer):
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp: (SVGLinearGradientElementImpl::buildGradient):
+        * ksvg2/svg/SVGPatternElementImpl.cpp: (SVGPatternElementImpl::notifyAttributeChange):
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp: (SVGRadialGradientElementImpl::buildGradient):
+        Replaced use of qRound with use of lroundf or lround as appropriate.
+
+        * kwq/KWQCString.h:
+        * kwq/KWQCString.mm:
+        * kwq/KWQDateTime.h:
+        * kwq/KWQDateTime.mm:
+        * kwq/KWQMap.h:
+        * kwq/KWQMemArray.h:
+        * kwq/KWQPoint.mm:
+        * kwq/KWQPointArray.h:
+        * kwq/KWQPtrList.h:
+        * kwq/KWQPtrStack.h:
+        * kwq/KWQPtrVector.h:
+        * kwq/KWQRect.h:
+        * kwq/KWQRect.mm:
+        * kwq/KWQSize.h:
+        * kwq/KWQSize.mm:
+        * kwq/KWQValueList.h:
+        Removed _KWQ_IOSTREAM_ code that was used at one time for unit tests, but is now unneeded,
+        and requires <ostream>.
+
+2005-12-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen and John Sullivan.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4312

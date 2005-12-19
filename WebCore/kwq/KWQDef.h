@@ -27,7 +27,6 @@
 #define KWQDEF_H_
 
 #include <sys/types.h>
-#include <cmath>
 
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED
@@ -35,14 +34,10 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 #endif
 
-typedef int64_t Q_INT64;
-typedef u_int64_t Q_UINT64;
+typedef uint64_t Q_UINT64;
 
 typedef int Q_INT32;
 typedef unsigned int Q_UINT32;
-
-typedef short Q_INT16;
-typedef unsigned short Q_UINT16;
 
 template<class T>
 inline const T& kMin ( const T& a, const T& b ) { return a < b ? a : b; }
@@ -51,8 +46,6 @@ template<class T>
 inline const T& kMax ( const T& a, const T& b ) { return b < a ? a : b; }
 
 #define QABS(a) (((a) >= 0) ? (a) : -(a))
-
-inline int qRound(double a) { return lround(a); }
 
 #ifndef TRUE
 #define TRUE 1
@@ -69,9 +62,5 @@ void qWarning(const char *msg, ...);
 #define Q_UNUSED(x) (void)(x)
 
 #define Q_ASSERT(arg) do {} while(0)
-
-#ifndef NDEBUG
-#define _KWQ_IOSTREAM_
-#endif
 
 #endif

@@ -29,10 +29,6 @@
 #include "KWQDef.h"
 #include <CoreFoundation/CFDate.h>
 
-#ifdef _KWQ_IOSTREAM_
-#include <iosfwd>
-#endif
-
 class QTime {
 public:
     QTime() : timeInSeconds(0) { }
@@ -52,9 +48,6 @@ private:
     CFAbsoluteTime timeInSeconds; 
     
     friend class QDateTime;
-#ifdef _KWQ_IOSTREAM_
-    friend std::ostream &operator<<( std::ostream &, const QTime & );
-#endif
 };
 
 class QDate {
@@ -67,10 +60,6 @@ private:
     int day;
     
     friend class QDateTime;
-#ifdef _KWQ_IOSTREAM_
-    friend std::ostream &operator<<( std::ostream &, const QDate & );
-#endif
-
 };
 
 class QDateTime {
@@ -86,10 +75,6 @@ public:
 
 private:
     CFAbsoluteTime dateInSeconds;
-
-#ifdef _KWQ_IOSTREAM_
-    friend std::ostream &operator<<( std::ostream &, const QDateTime & );
-#endif
 };
 
 class KWQUIEventTime {

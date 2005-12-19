@@ -71,13 +71,6 @@
 #include "css/css_stylesheetimpl.h"
 #include "misc/shared.h"
 
-// Must include <cmath> instead of <math.h> because of a bug in the
-// gcc 3.3 library version of <math.h> where if you include both
-// <cmath> and <math.h> the macros necessary for functions like
-// isnan are not defined.
-#include <cmath>
-using std::isnan;
-
 using namespace DOM;
 using namespace EventNames;
 

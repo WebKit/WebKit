@@ -20,22 +20,19 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "bidi.h"
+
 #include "break_lines.h"
-#include "render_block.h"
-#include "render_text.h"
-#include "render_arena.h"
-#include "render_canvas.h"
 #include "khtmlview.h"
-#include "xml/dom_docimpl.h"
-#include "misc/shared.h"
+#include "kxmlcore/AlwaysInline.h"
+#include "render_arena.h"
+#include "render_block.h"
+#include "render_canvas.h"
+#include "render_text.h"
 
-#include "kdebug.h"
-#include "qdatetime.h"
-#include "qfontmetrics.h"
-
-using DOM::AtomicString;
+using namespace DOM;
 
 namespace khtml {
 

@@ -262,9 +262,9 @@ QColor SVGAnimateColorElementImpl::clampColor(int r, int g, int b) const
 
 void SVGAnimateColorElementImpl::calculateColor(double time, int &r, int &g, int &b) const
 {
-    r = qRound(m_redDiff * time) + m_fromColor->color().red();
-    g = qRound(m_greenDiff * time) + m_fromColor->color().green();
-    b = qRound(m_blueDiff * time) + m_fromColor->color().blue();
+    r = lround(m_redDiff * time) + m_fromColor->color().red();
+    g = lround(m_greenDiff * time) + m_fromColor->color().green();
+    b = lround(m_blueDiff * time) + m_fromColor->color().blue();
 }
 
 QColor SVGAnimateColorElementImpl::color() const

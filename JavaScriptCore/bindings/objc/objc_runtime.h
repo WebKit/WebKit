@@ -29,7 +29,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "runtime.h"
-#include "ustring.h"
+#include "object.h"
 
 #include "objc_header.h"
 

@@ -417,7 +417,7 @@ void SVGAnimationElementImpl::closeRenderer()
     if(!ownerSVG)
         return;
 
-    ownerSVG->timeScheduler()->addTimer(this, qRound(getStartTime()));
+    ownerSVG->timeScheduler()->addTimer(this, lround(getStartTime()));
 }
 
 KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const

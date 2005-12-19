@@ -81,6 +81,7 @@
 #import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
+#import <JavaScriptCore/NP_jsobject.h>
 
 #if APPLE_CHANGES
 #import "KWQAccObjectCache.h"

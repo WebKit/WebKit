@@ -29,10 +29,6 @@
 #include "KWQDef.h"
 #include "KWQValueListImpl.h"
 
-#ifdef _KWQ_IOSTREAM_
-#include <ostream>
-#endif
-
 template <class T> class QValueList;
 template <class T> class QValueListConstIterator;
 
@@ -148,28 +144,6 @@ inline bool operator==(const QValueList<T> &a, const QValueList<T> &b)
 {
     return a.impl.isEqual(b.impl, QValueList<T>::nodesEqual);
 }
-
-#ifdef _KWQ_IOSTREAM_
-
-template<class T>
-inline std::ostream &operator<<(std::ostream &o, const QValueList<T>&p)
-{
-    o <<
-        "QValueList: [size: " <<
-        (Q_UINT32)p.count() <<
-        "; items: ";
-        QValueListConstIterator<T> it = p.begin();
-        while (it != p.end()) {
-            o << *it;
-            if (++it != p.end()) {
-                o << ", ";
-            }
-        }
-        o << "]";
-    return o;
-}
-
-#endif
 
 #define Q3ValueList QValueList
 #define Q3ValueListIterator QValueListIterator

@@ -23,35 +23,21 @@
  */
 
 #include "config.h"
-#include "rendering/render_text.h"
+#include "render_text.h"
 
-#include "rendering/render_canvas.h"
-#include "rendering/render_object.h"
-#include "rendering/break_lines.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_nodeimpl.h"
-#include "xml/dom_docimpl.h"
-#include "xml/dom_position.h"
+#include "break_lines.h"
+#include "kxmlcore/AlwaysInline.h"
 #include "render_arena.h"
-
-#include "misc/loader.h"
-
-#include "khtml_part.h"
-
-#include <qpainter.h>
+#include "render_block.h"
+#include "xml/dom2_rangeimpl.h"
 #include <qpen.h>
-#include <kdebug.h>
-#include <assert.h>
-
 #include <unicode/ubrk.h>
-#include <unicode/uloc.h>
-#include <unicode/utypes.h>
-#include <unicode/parseerr.h>
 
 //#define DEBUG_LAYOUT
 
-using namespace khtml;
 using namespace DOM;
+
+namespace khtml {
 
 #ifndef NDEBUG
 static bool inInlineTextBoxDetach;
@@ -1875,4 +1861,6 @@ RefPtr<DOMStringImpl> RenderTextFragment::originalString() const
     if (result && (start() > 0 || start() < result->l))
         result = result->substring(start(), end());
     return RefPtr<DOMStringImpl>(result);
+}
+
 }

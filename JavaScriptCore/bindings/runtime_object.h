@@ -27,6 +27,7 @@
 #define KJS_RUNTIME_OBJECT_H
 
 #include "runtime.h"
+#include "object.h"
 
 namespace KJS {
 

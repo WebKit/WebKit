@@ -31,10 +31,6 @@
 
 #include "KWQVectorImpl.h"
 
-#ifdef _KWQ_IOSTREAM_
-#include <ostream>
-#endif
-
 class QGVector : public QPtrCollection
 {
 public:
@@ -70,25 +66,5 @@ public:
 
     KWQVectorImpl impl;
 };
-
-#ifdef _KWQ_IOSTREAM_
-
-template<class T>
-inline std::ostream &operator<<(std::ostream &stream, const QPtrVector<T> &v)
-{
-    uint i = 0;
-    uint count = v.count();
-
-    stream << "QPtrVector: [size: " << count << "; items: ";
-
-    while(i < count ) {
-	stream << *v[i] << ", ";
-	++i;
-    }
-
-    return stream << "]";
-}
-
-#endif
 
 #endif

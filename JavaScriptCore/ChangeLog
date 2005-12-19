@@ -1,3 +1,29 @@
+2005-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and Eric Seidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
+          stop using <ostream> in WebCore, eliminating the <cmath> troubles it causes
+
+        * kjs/simple_number.h: Removed many unnecessary includes, including
+        the <cmath> one to work around GCC library header bugs. We may have to
+        add some includes elsewhere for platforms other than OS X, since our
+        prefix header takes care of some things.
+
+        * kxmlcore/AlwaysInline.h: Added. Now clients that don't include
+        simple_number.h can still get the ALWAYS_INLINE macro.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added AlwaysInline.h.
+
+        * bindings/NP_jsobject.h: Removed a lot of unnecessary includes
+        and removed C-specific stuff from this C++-only header.
+        * bindings/jni/jni_jsobject.h: Removed a lot of unnecessary includes
+        and did some reformatting.
+        * bindings/objc/objc_runtime.h:  Removed an unnecessary include.
+        * bindings/runtime.h: Removed some unneeded includes. Reformatted.
+        * bindings/runtime.cpp: Updated to compile with header changes,
+        including a lot of reformatting.
+        * bindings/runtime_object.h: Removed an unnecessary include.
+
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and Adele

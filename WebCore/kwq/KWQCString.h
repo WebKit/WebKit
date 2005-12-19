@@ -60,10 +60,6 @@ public:
     QCString &operator+=(const char *s) { return append(s); }
     QCString &operator+=(char c) { return append(c); }
 
-#ifdef _KWQ_IOSTREAM_
-    friend std::ostream &operator<<(std::ostream &, const QCString &);
-#endif
-
 private:
     bool resize(uint);
 };

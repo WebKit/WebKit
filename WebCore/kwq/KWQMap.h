@@ -30,10 +30,6 @@
 
 #include "KWQMapImpl.h"
 
-#ifdef _KWQ_IOSTREAM_
-#include <ostream>
-#endif
-
 template <class K, class V> class QMap;
 template <class K, class V> class QMapIterator;
 template <class K, class V> class QMapConstIterator;
@@ -299,28 +295,5 @@ protected:
     }
 
 };
-
-#ifdef _KWQ_IOSTREAM_
-
-template<class K, class V>
-inline std::ostream &operator<<(std::ostream &stream, const QMap<K,V> &m) 
-{
-    uint count = m.count();
-    stream << "QMap: [size: " << count << "; items: ";
-
-    QMapConstIterator<K,V> iter = m.begin();
-    
-    for (unsigned int i = 0; i < count; i++) {
-	stream << "(" << iter.key() << "," << iter.data() << ")";
-	if (i + 1 < count) {
-	    stream << ", ";
-	}
-	++iter;
-    }
-
-    return stream << "]";
-}
-
-#endif
 
 #endif

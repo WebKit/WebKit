@@ -22,27 +22,8 @@
 #ifndef KJS_SIMPLE_NUMBER_H
 #define KJS_SIMPLE_NUMBER_H
 
-// We include these headers here because simple_number.h is the most low-level header we have.
-#include <float.h>
-#include <math.h>
-#include <stdint.h>
-#include <string.h>
-
-// Workaround for a bug in GCC library headers.
-// We'd prefer to just use math.h.
-#if !WIN32
-#include <cmath>
-using std::isfinite;
-using std::isinf;
-using std::isnan;
-using std::signbit;
-#endif
-
-#if defined(__GNUC__) && (__GNUC__ > 3)
-#define ALWAYS_INLINE __attribute__ ((always_inline))
-#else
-#define ALWAYS_INLINE inline
-#endif
+#include <stdlib.h>
+#include "kxmlcore/AlwaysInline.h"
 
 namespace KJS {
 

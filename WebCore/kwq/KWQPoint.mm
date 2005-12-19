@@ -70,10 +70,3 @@ const QPoint operator*(const QPoint &p, double s)
 {
     return QPoint((int)(p.xCoord * s), (int)(p.yCoord * s));
 }
-
-#ifdef _KWQ_IOSTREAM_
-std::ostream &operator<<(std::ostream &o, const QPoint &p)
-{
-    return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
-}
-#endif

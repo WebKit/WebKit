@@ -80,10 +80,3 @@ bool operator!=(const QSize &a, const QSize &b)
 {
     return a.w != b.w || a.h != b.h;
 }
-
-#ifdef _KWQ_IOSTREAM_
-std::ostream &operator<<(std::ostream &o, const QSize &s)
-{
-    return o << "QSize: [w: " << s.width() << "; h: " << s.height() << "]";
-}
-#endif

@@ -30,10 +30,6 @@
 #include "KWQCollection.h"
 #include "KWQListImpl.h"
 
-#ifdef _KWQ_IOSTREAM_
-#include <ostream>
-#endif
-
 template <class T> class QPtrListIterator;
 
 template <class T> class QPtrList : public QPtrCollection {
@@ -113,34 +109,5 @@ private:
 
 #define Q3PtrList QPtrList
 #define Q3PtrListIterator QPtrListIterator
-
-#ifdef _KWQ_IOSTREAM_
-
-template<class T>
-inline std::ostream &operator<<(std::ostream &stream, const QPtrList<T> &l)
-{
-    QPtrListIterator<T> iter(l);
-    unsigned count = l.count();
-
-    stream << "QPtrList: [size: " << l.count() << "; items: ";
-
-    // print first
-    if (count != 0) {
-	stream << *iter.current();
-	++iter;
-	--count;
-    }
-    
-    // print rest
-    while (count != 0) {
-	stream << ", " << *iter.current();
-	++iter;
-	--count;
-    }
-
-    return stream << "]";
-}
-
-#endif
 
 #endif

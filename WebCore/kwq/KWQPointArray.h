@@ -28,10 +28,6 @@
 
 #include "KWQDef.h"
 
-#ifdef _KWQ_IOSTREAM_
-#include <iosfwd>
-#endif
-
 #include "KWQMemArray.h"
 
 // workaround for <rdar://problem/4294625>
@@ -94,12 +90,7 @@ public:
     void point(uint, int *, int *);
     void setPoint(uint, int, int);
     bool setPoints(int, int, int, int, int, int, int, int, int);
-    bool setPoints( int nPoints, const int *points );
-    
-#ifdef _KWQ_IOSTREAM_
-    friend std::ostream &operator<<(std::ostream &, const QPoint &);
-#endif
-    
+    bool setPoints(int nPoints, const int *points);    
 };
 
 #endif
