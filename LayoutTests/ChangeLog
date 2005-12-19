@@ -2,6 +2,18 @@
 
         Reviewed by Darin, committed by Adele.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6137
+          Disable kerning and some ligatures in the ATSUI code path
+
+        * fast/text/atsui-kerning-and-ligatures-expected.checksum: Added.
+        * fast/text/atsui-kerning-and-ligatures-expected.png: Added.
+        * fast/text/atsui-kerning-and-ligatures-expected.txt: Added.
+        * fast/text/atsui-kerning-and-ligatures.html: Added.
+
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6132
           Incorrect selection highlighting for ATSUI text when selected range is "CG-safe"
 

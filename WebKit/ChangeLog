@@ -2,6 +2,20 @@
 
         Reviewed by Darin, committed by Adele.
         
+        Test: fast/text/atsui-kerning-and-ligatures.html
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6137
+          Disable kerning and some ligatures in the ATSUI code path
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (initializeATSUStyle): Disable kerning; disable ligatures unless the font
+        does not contain 'a', in which case it is assumed to never be rendered
+        by the CG code path.
+
+2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+        
         Test: fast/text/should-use-atsui.html
 
         - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6132

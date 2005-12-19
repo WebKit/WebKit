@@ -1162,10 +1162,12 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
         
         CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
         Fixed fontSize = FloatToFixed([renderer->font.font pointSize]);
-        ATSUAttributeTag styleTags[] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag};
-        ByteCount styleSizes[] = {  sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform) };
-        ATSUAttributeValuePtr styleValues[] = { &fontSize, &fontID, &transform  };
-        status = ATSUSetAttributes(renderer->_ATSUStyle, 3, styleTags, styleSizes, styleValues);
+        // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
+        Fract kerningInhibitFactor = FloatToFract(1.0);
+        ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
+        ByteCount styleSizes[4] = { sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform), sizeof(Fract) };
+        ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
+        status = ATSUSetAttributes(renderer->_ATSUStyle, 4, styleTags, styleSizes, styleValues);
         if (status != noErr)
             FATAL_ALWAYS("ATSUSetAttributes failed (%d)", status);
         status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
@@ -1175,6 +1177,16 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
             renderer->ATSUMirrors = NO;
         else
             FATAL_ALWAYS("ATSFontGetTable failed (%d)", status);
+
+        // Turn off ligatures such as 'fi' to match the CG code path's behavior, until bugzilla 6135 is fixed.
+        // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
+        // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
+        // See bugzilla 5166.
+        if ([[renderer->font.font coveredCharacterSet] characterIsMember:'a']) {
+            ATSUFontFeatureType featureTypes[] = { kLigaturesType };
+            ATSUFontFeatureSelector featureSelectors[] = { kCommonLigaturesOffSelector };
+            status = ATSUSetFontFeatures(renderer->_ATSUStyle, 1, featureTypes, featureSelectors);
+        }
 
         renderer->ATSUStyleInitialized = YES;
     }
