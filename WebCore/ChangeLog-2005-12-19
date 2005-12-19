@@ -1,3 +1,12 @@
+2005-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - removed unused SPI headers
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kwq/DOM-compat.h: Removed.
+
 2005-12-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

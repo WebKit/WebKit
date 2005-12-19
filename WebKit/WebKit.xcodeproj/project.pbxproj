@@ -27,9 +27,6 @@
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */; };
 		7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */; };
-		9398100E0824BF01008DF038 /* WebDOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D194B034E734901A80180 /* WebDOMDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9398100F0824BF01008DF038 /* WebDOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D194D034E734901A80180 /* WebDOMElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810100824BF01008DF038 /* WebDOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D1951034E734901A80180 /* WebDOMNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810110824BF01008DF038 /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607D020F50ED0ECA1767 /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810120824BF01008DF038 /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F520FB190221DEFD01C1A525 /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810130824BF01008DF038 /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607F020F50ED0ECA1767 /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -551,9 +548,6 @@
 		F5488CF502CB04EE01FF6274 /* WebCookieAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebCookieAdapter.m; sourceTree = "<group>"; };
 		F560BEBC030DAF4401C1A526 /* WebSearchableTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchableTextView.h; sourceTree = "<group>"; };
 		F560BEBD030DAF4401C1A526 /* WebSearchableTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSearchableTextView.m; sourceTree = "<group>"; };
-		F57D194B034E734901A80180 /* WebDOMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMDocument.h; sourceTree = "<group>"; };
-		F57D194D034E734901A80180 /* WebDOMElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMElement.h; sourceTree = "<group>"; };
-		F57D1951034E734901A80180 /* WebDOMNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMNode.h; sourceTree = "<group>"; };
 		F57FB8C4034E180101A80180 /* WebDebugDOMNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDebugDOMNode.h; path = ../WebView.subproj/WebDebugDOMNode.h; sourceTree = "<group>"; };
 		F57FB8C5034E180101A80180 /* WebDebugDOMNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebDebugDOMNode.m; path = ../WebView.subproj/WebDebugDOMNode.m; sourceTree = "<group>"; };
 		F5883BDE025E5C6A01000102 /* nullplugin.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = nullplugin.tiff; path = Resources/nullplugin.tiff; sourceTree = "<group>"; };
@@ -981,9 +975,6 @@
 		F57D194A034E732C01A80180 /* DOM */ = {
 			isa = PBXGroup;
 			children = (
-				F57D194B034E734901A80180 /* WebDOMDocument.h */,
-				F57D194D034E734901A80180 /* WebDOMElement.h */,
-				F57D1951034E734901A80180 /* WebDOMNode.h */,
 				846171F90624AE5B0071A4A3 /* WebDOMOperations.h */,
 				84AE905F062DE6A80075BBF9 /* WebDOMOperationsPrivate.h */,
 				846171FA0624AE5B0071A4A3 /* WebDOMOperations.m */,
@@ -1113,9 +1104,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9398100E0824BF01008DF038 /* WebDOMDocument.h in Headers */,
-				9398100F0824BF01008DF038 /* WebDOMElement.h in Headers */,
-				939810100824BF01008DF038 /* WebDOMNode.h in Headers */,
 				220398770922D816009C3FFC /* WebBaseNetscapePluginViewInternal.h in Headers */,
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,
 				939810120824BF01008DF038 /* WebHistory.h in Headers */,
@@ -1280,7 +1268,6 @@
 			buildConfigurationList = 149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKit" */;
 			buildPhases = (
 				93AF528708254B33005D0156 /* DOM.h */,
-				93AF52AB08254D94005D0156 /* DOM-compat.h */,
 				93AF52A708254D8B005D0156 /* DOMCore.h */,
 				93AF52A908254D8F005D0156 /* DOMCSS.h */,
 				93AF52A508254D87005D0156 /* DOMEvents.h */,
@@ -1629,22 +1616,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMCSS.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMCSS.h\"";
-		};
-		93AF52AB08254D94005D0156 /* DOM-compat.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOM-compat.h",
-			);
-			name = "DOM-compat.h";
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOM-compat.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOM-compat.h\" > \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/DOM-compat.h\"";
 		};
 		93AF52CE08254E18005D0156 /* DOMTraversal.h */ = {
 			isa = PBXShellScriptBuildPhase;

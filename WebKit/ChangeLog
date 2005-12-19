@@ -1,3 +1,14 @@
+2005-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- remove some unused SPI headers.
+
+        * DOM.subproj/WebDOMDocument.h: Removed.
+        * DOM.subproj/WebDOMElement.h: Removed.
+        * DOM.subproj/WebDOMNode.h: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2005-12-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

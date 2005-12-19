@@ -312,7 +312,6 @@
 		93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB094059A28B100B83B92 /* xbl_binding.h */; };
 		93F199CE08245E59001E9ABC /* dom_atomicstring.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364605C9D5E200E42902 /* dom_atomicstring.h */; };
 		93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */; };
-		93F199D008245E59001E9ABC /* DOM-compat.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16801805EDB91A00B87935 /* DOM-compat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199D108245E59001E9ABC /* htmlediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9185DD05EE59B80081354D /* htmlediting.h */; };
 		93F199D208245E59001E9ABC /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6305EFFE6B0032DCB5 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199D308245E59001E9ABC /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */; };
@@ -838,7 +837,6 @@
 		A88AD2050952480A001DD196 /* xbl_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB094059A28B100B83B92 /* xbl_binding.h */; };
 		A88AD2060952480A001DD196 /* dom_atomicstring.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364605C9D5E200E42902 /* dom_atomicstring.h */; };
 		A88AD2070952480A001DD196 /* dom_atomicstringlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */; };
-		A88AD2080952480A001DD196 /* DOM-compat.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16801805EDB91A00B87935 /* DOM-compat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD2090952480A001DD196 /* htmlediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9185DD05EE59B80081354D /* htmlediting.h */; };
 		A88AD20A0952480A001DD196 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6305EFFE6B0032DCB5 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD20B0952480A001DD196 /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */; };
@@ -2336,7 +2334,6 @@
 		BCF0192503D3802200B2D04D /* table_layout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = table_layout.h; sourceTree = "<group>"; };
 		BE02D4E6066F908A0076809F /* jsediting.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = jsediting.h; path = editing/jsediting.h; sourceTree = "<group>"; };
 		BE02D4E7066F908A0076809F /* jsediting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = jsediting.cpp; path = editing/jsediting.cpp; sourceTree = "<group>"; };
-		BE16801805EDB91A00B87935 /* DOM-compat.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "DOM-compat.h"; sourceTree = "<group>"; };
 		BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQTextUtilities.mm; sourceTree = "<group>"; };
 		BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreGraphicsBridge.h; sourceTree = "<group>"; };
 		BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreGraphicsBridge.m; sourceTree = "<group>"; };
@@ -3930,7 +3927,6 @@
 				932127540606724900B62302 /* DOMViews.h */,
 				931D7224065FC25900C966E1 /* DOMViewsInternal.h */,
 				931D722A065FC40800C966E1 /* DOMViews.mm */,
-				BE16801805EDB91A00B87935 /* DOM-compat.h */,
 			);
 			name = DOM;
 			sourceTree = "<group>";
@@ -4479,7 +4475,6 @@
 				93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */,
 				93F199CE08245E59001E9ABC /* dom_atomicstring.h in Headers */,
 				93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */,
-				93F199D008245E59001E9ABC /* DOM-compat.h in Headers */,
 				93F199D108245E59001E9ABC /* htmlediting.h in Headers */,
 				93F199D208245E59001E9ABC /* DOM.h in Headers */,
 				93F199D308245E59001E9ABC /* DOMInternal.h in Headers */,
@@ -4984,7 +4979,6 @@
 				A88AD2050952480A001DD196 /* xbl_binding.h in Headers */,
 				A88AD2060952480A001DD196 /* dom_atomicstring.h in Headers */,
 				A88AD2070952480A001DD196 /* dom_atomicstringlist.h in Headers */,
-				A88AD2080952480A001DD196 /* DOM-compat.h in Headers */,
 				A88AD2090952480A001DD196 /* htmlediting.h in Headers */,
 				A88AD20A0952480A001DD196 /* DOM.h in Headers */,
 				A88AD20B0952480A001DD196 /* DOMInternal.h in Headers */,
