@@ -1,5 +1,44 @@
 2005-12-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6143
+          DOM::ElementImpl should use a RefPtr for the attribute map
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::ElementImpl): Remove code to initialize the pointer; not needed since
+        RefPtr gets initialized to 0.
+        (ElementImpl::~ElementImpl): Remove code to deref the pointer; RefPtr handles that.
+        (ElementImpl::attributes): Add get() call to get raw pointer.
+        (ElementImpl::setAttributeMap): Remove code to deref the old map and set the new map.
+        But added code to clear the element pointer from the old map (missing in the old
+        version). Also added a FIXME.
+        (ElementImpl::createAttributeMap): Remove ref(); RefPtr handles that.
+        (NamedAttrMapImpl::addAttribute): Use a RefPtr to guarantee the element does not go
+        away in the middle of dispatching DOM events.
+        (StyledElementImpl::attributeChanged): Clean up code by using the inline function
+        mappedAttributes() instead of doing type casts.
+        (StyledElementImpl::parseMappedAttribute): Ditto.
+        (StyledElementImpl::getClassList): Ditto.
+
+        * khtml/xml/dom_elementimpl.h: Make ElementImpl::namedAttrMap be a RefPtr instead
+        of raw pointer. Added an overload of StyledElementImpl::mappedAttributes for both
+        const and non-const.
+
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::addChild): Use a RefPtr to ref/deref
+        the child so that it doesn't leak.
+
+        * khtml/html/htmlparser.h: Changed isindex to use a RefPtr.
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::~HTMLParser): Removed now-unneeded ref.
+        (HTMLParser::isindexCreateErrorCheck): Remove now-unneeded deref/ref.
+        (HTMLParser::handleIsindex): Put isindex element into a RefPtr. This prevents a
+        crash that was otherwise happening during layout tests (caused indirectly by
+        the changes above).
+        (HTMLParser::startBody): Added call to get().
+
+2005-12-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen and Eric Seidel.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
@@ -56,6 +95,9 @@
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4312
           XMLHttpRequest headers that have two CRLF sequences lead to Obj-C exception
+
+        I found this by code inspection after examining a security report about
+        vulnerabilities in other browsers' XMLHttpRequest implementations.
 
         * kwq/KWQLoader.mm:
         (+[NSDictionary _webcore_dictionaryWithHeaderString:_webcore_dictionaryWithHeaderString:]):

@@ -334,9 +334,10 @@ void NodeImpl::setLastChild(NodeImpl *)
 {
 }
 
-NodeImpl *NodeImpl::addChild(NodeImpl *)
+NodeImpl *NodeImpl::addChild(NodeImpl *newChild)
 {
-  return 0;
+    RefPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+    return 0;
 }
 
 bool NodeImpl::isContentEditable() const
