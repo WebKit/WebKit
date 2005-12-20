@@ -1,3 +1,11 @@
+2005-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for <rdar://problem/4370397> Missing return statement in
+        JSMethodNameToObjcMethodName.
+
+        * fast/js/objc-big-method-name-expected.txt: Added.
+        * fast/js/objc-big-method-name.html: Added.
+
 2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, committed by Adele.

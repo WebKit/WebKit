@@ -87,19 +87,21 @@ const char *ObjcClass::name() const
     return _isa->name;
 }
 
-MethodList ObjcClass::methodsNamed(const char *_name, Instance *instance) const
+MethodList ObjcClass::methodsNamed(const char *JSName, Instance *instance) const
 {
     MethodList methodList;
-    char name[4096];
-    
-    JSMethodNameToObjCMethodName (_name, name, 4096);
-    
-    if (*name == 0) {
-        return methodList;
+    char fixedSizeBuffer[1024];
+    char *buffer = fixedSizeBuffer;
+
+    if (!convertJSMethodNameToObjc(JSName, buffer, sizeof(fixedSizeBuffer))) {
+        int length = strlen(JSName) + 1;
+        buffer = new char[length];
+        if (!buffer || !convertJSMethodNameToObjc(JSName, buffer, length))
+            return methodList;
     }
         
-    CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    Method *method = (Method *)CFDictionaryGetValue (_methods, methodName);
+    CFStringRef methodName = CFStringCreateWithCString(NULL, buffer, kCFStringEncodingASCII);
+    Method *method = (Method *)CFDictionaryGetValue(_methods, methodName);
     if (method) {
         CFRelease (methodName);
         methodList.addMethod(method);
@@ -131,7 +133,7 @@ MethodList ObjcClass::methodsNamed(const char *_name, Instance *instance) const
                 }
 
                 if ((mappedName && [mappedName isEqual:(NSString *)methodName]) ||
-                    strcmp ((const char *)objcMethod->method_name, name) == 0) {
+                    strcmp ((const char *)objcMethod->method_name, buffer) == 0) {
                     Method *aMethod = new ObjcMethod (thisClass, (const char *)objcMethod->method_name);
                     CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
                     methodList.addMethod (aMethod);
@@ -143,6 +145,8 @@ MethodList ObjcClass::methodsNamed(const char *_name, Instance *instance) const
     }
     
     CFRelease (methodName);
+    if (buffer != fixedSizeBuffer)
+        delete [] buffer;
 
     return methodList;
 }

@@ -42,41 +42,53 @@ namespace KJS {
 namespace Bindings {
 
 /*
-    The default name concatenates the components of the
-    ObjectiveC selector name and replaces ':' with '_'.  '_' characters
-    are escaped with an additional '$', i.e. '_' becomes "$_".  '$' are
-    also escaped, i.e.
-        ObjectiveC name         Default script name
-        moveTo::                move__
+    By default, a JavaScript method name is produced by concatenating the 
+    components of an ObjectiveC method name, replacing ':' with '_', and 
+    escaping '_' and '$' with a leading '$', such that '_' becomes "$_" and 
+    '$' becomes "$$". For example:
+
+    ObjectiveC name         Default JavaScript name
+        moveTo::                moveTo__
         moveTo_                 moveTo$_
         moveTo$_                moveTo$$$_
-    @result Returns the name to be used to represent the specificed selector in the
+
+    This function performs the inverse of that operation.
+ 
+    @result Fills 'buffer' with the ObjectiveC method name that corresponds to 'JSName'. 
+            Returns true for success, false for failure. (Failure occurs when 'buffer' 
+            is not big enough to hold the result.)
 */
-void JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
+bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSize)
 {
-    const char *np = name;
-    char *bp;
+    assert(JSName && buffer);
+    
+    const char *sp = JSName; // source pointer
+    char *dp = buffer; // destination pointer
+        
+    char *end = buffer + bufferSize;
+    while (dp < end) {
+        if (*sp == '$') {
+            ++sp;
+            *dp = *sp;
+        } else if (*sp == '_')
+            *dp = ':';
+	else
+            *dp = *sp;
 
-    if (strlen(name)*2+1 > len){
-        *buffer = 0;
-    }
-
-    bp = buffer;
-    while (*np) {
-        if (*np == '$') {
-            np++;
-            *bp++ = *np++;
-            continue;
+        // If a future coder puts funny ++ operators above, we might write off the end 
+        // of the buffer in the middle of this loop. Let's make sure to check for that.
+        assert(dp < end);
+        
+        if (*sp == 0) { // We finished converting JSName
+            assert(strlen(JSName) < bufferSize);
+            return true;
         }
         
-        if (*np == '_') {
-            np++;
-            *bp++ = ':';
-        }
-        else
-            *bp++ = *np++;
+        ++sp; 
+        ++dp;
     }
-    *bp++ = 0;
+
+    return false; // We ran out of buffer before converting JSName
 }
 
 /*

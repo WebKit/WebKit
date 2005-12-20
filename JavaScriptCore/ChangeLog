@@ -1,3 +1,32 @@
+2005-12-19  Geoffrey Garen  <ggaren@apple.com>
+  
+        Reviewed by Maciej.
+
+        Fixed <rdar://problem/4370397> Missing return statement in
+        JSMethodNameToObjcMethodName.
+
+        JSMethodNameToObjcMethodName had a check for a name being too long, but
+        the check was missing a return statement.
+
+        A lot of this code was confusing and some of it was wrong, so I fixed
+        it up, added some asserts to catch this type of bug in the future, 
+        changed some comments, and renamed some variables.
+
+        The two advantages of the new algorithm are (1) It makes writing past
+        the end of the buffer virtually impossible because the test on the main
+        loop is "while (not past end of buffer)" and (2) It's twice as fast
+        because it doesn't call strlen. (There's no need to call strlen when
+        we're walking the string ourselves.) 
+        
+        methodsNamed also supports arbitrary-length method names now. Just in 
+        case the AppKit folks start getting REALLY verbose...
+
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::JSMethodNameToObjcMethodName):
+
 2005-12-19  Darin Adler  <darin@apple.com>
 
         Originally done by both George Staikos and Alexey Proskuryakov.
