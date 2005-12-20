@@ -265,7 +265,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[_frame frameView] setAllowsScrolling:visible];
 }
 
-- (BOOL)isStatusBarVisible
+- (BOOL)isStatusbarVisible
 {
     ASSERT(_frame != nil);
     WebView *wv = [_frame webView];
@@ -275,7 +275,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:wv];
 }
 
-- (void)setStatusBarVisible:(BOOL)visible
+- (void)setStatusbarVisible:(BOOL)visible
 {
     ASSERT(_frame != nil);
     WebView *wv = [_frame webView];
