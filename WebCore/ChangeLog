@@ -1,3 +1,13 @@
+2005-12-20  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4294417> Cannot un-italicize some text after triple clicking it
+
+        Reviewed by Justin.
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        Removed check for tab span because ApplyStyleCommand::removeCSSStyle() already makes the same check.
+        
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         <rdar://problem/4387270> editing/deleting/delete-3800834-fix failing

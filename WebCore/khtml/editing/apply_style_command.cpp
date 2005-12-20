@@ -1199,10 +1199,6 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     StyleChange styleChange(style, Position(startNode, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
     int exceptionCode = 0;
     
-    // Prevent style changes to our tab spans, because it might remove the whitespace:pre we are after
-    if (isTabSpanTextNode(startNode))
-        return;
-    
     //
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
     //
