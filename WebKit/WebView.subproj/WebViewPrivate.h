@@ -154,8 +154,6 @@ typedef enum {
 - (void)setDefersCallbacks:(BOOL)defers;
 
 - (void)_setTopLevelFrameName:(NSString *)name;
-- (WebFrame *)_findFrameInThisWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source;
-- (WebFrame *)_findFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source;
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 

@@ -709,32 +709,6 @@ static bool debugWidget = true;
     [[self mainFrame] _setName:name];
 }
 
-- (WebFrame *)_findFrameInThisWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source
-{
-    return [[self mainFrame] _descendantFrameNamed:name sourceFrame:(WebFrame *)source];
-}
-
-- (WebFrame *)_findFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
-{
-    // Try this WebView first.
-    WebFrame *frame = [self _findFrameInThisWindowNamed:name sourceFrame:source];
-
-    if (frame != nil) {
-        return frame;
-    }
-
-    // Try other WebViews in the same set
-    if ([self groupName] != nil) {
-        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:[self groupName]];
-        WebView *webView;
-        while ((webView = [enumerator nextObject]) != nil && frame == nil) {
-	    frame = [webView _findFrameInThisWindowNamed:name sourceFrame:source];
-        }
-    }
-
-    return frame;
-}
-
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
     id wd = [self UIDelegate];

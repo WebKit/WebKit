@@ -1,3 +1,30 @@
+2005-12-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- push more of frame lookup and management from WebView to
+	WebFrame, this is in preparation for shifting this to WebCore
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge closeWindowSoon]): Adjust for change to WebFrameNamespaces
+        (-[WebBridge runModal]): ditto
+        * WebView.subproj/WebControllerSets.h:
+        * WebView.subproj/WebControllerSets.m:
+        (+[WebFrameNamespaces addFrame:toNamespace:]): This now operates in terms
+	of WebFrames (expected to be the main frame) not WebViews.
+        (+[WebFrameNamespaces framesInNamespace:]): Ditto.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setFrameNamespace:]): Set self, not WebView.
+        (-[WebFrame _shouldAllowAccessFrom:]): Moved this code above use
+	to avoid prototyping the method.
+        (-[WebFrame _descendantFrameNamed:sourceFrame:]): Ditto.
+        (-[WebFrame _frameInAnyWindowNamed:sourceFrame:]): Copied logic
+	over from WebView.
+        (-[WebFrame findFrameNamed:]): Do it all here, don't call WebView.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-12-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by adele.

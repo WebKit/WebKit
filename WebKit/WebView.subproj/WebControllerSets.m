@@ -41,7 +41,7 @@ CFHash
 
 NSMutableDictionary *namespaces = nil;
 
-+(void)addWebView:(WebView *)webView toFrameNamespace:(NSString *)name
++(void)addFrame:(WebFrame *)frame toNamespace:(NSString *)name
 {
     if (!name)
         return;
@@ -57,10 +57,10 @@ NSMutableDictionary *namespaces = nil;
 	CFRelease(namespace);
     }
     
-    CFSetSetValue(namespace, webView);
+    CFSetSetValue(namespace, frame);
 }
 
-+(void)removeWebView:(WebView *)webView fromFrameNamespace:(NSString *)name
++(void)removeFrame:(WebFrame *)frame fromNamespace:(NSString *)name
 {
     if (!name)
         return;
@@ -70,13 +70,13 @@ NSMutableDictionary *namespaces = nil;
     if (!namespace)
 	return;
 
-    CFSetRemoveValue(namespace, webView);
+    CFSetRemoveValue(namespace, frame);
 
     if (CFSetGetCount(namespace) == 0)
 	[namespaces removeObjectForKey:name];
 }
 
-+(NSEnumerator *)webViewsInFrameNamespace:(NSString *)name;
++(NSEnumerator *)framesInNamespace:(NSString *)name;
 {
     if (!name)
 	return [[[NSEnumerator alloc] init] autorelease];

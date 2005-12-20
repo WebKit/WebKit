@@ -28,10 +28,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebView;
+@class WebFrame;
 
 @interface WebFrameNamespaces : NSObject
-+ (void)addWebView:(WebView *)webView toFrameNamespace:(NSString *)name;
-+ (void)removeWebView:(WebView *)webView fromFrameNamespace:(NSString *)name;
-+ (NSEnumerator *)webViewsInFrameNamespace:(NSString *)name;
++ (void)addFrame:(WebFrame *)frame toNamespace:(NSString *)name;
++ (void)removeFrame:(WebFrame *)frame fromNamespace:(NSString *)name;
++ (NSEnumerator *)framesInNamespace:(NSString *)name;
 @end

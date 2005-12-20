@@ -368,10 +368,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // This approach is an inherent limitation of not making a close execute immediately
     // after a call to window.close.
     
-    [WebFrameNamespaces removeWebView:parentWebView fromFrameNamespace:[parentWebView groupName]];
-
+    [parentWebView setGroupName:nil];
     [parentWebView stopLoading:self];
-    
     [parentWebView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
 }
 
@@ -1722,11 +1720,11 @@ static NSCharacterSet *_getPostSmartSet(void)
     // Defer callbacks in all the other views in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
     NSMutableArray *deferredWebViews = [NSMutableArray array];
-    NSString *setName = [webView groupName];
-    if (setName) {
-        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:setName];
+    NSString *namespace = [webView groupName];
+    if (namespace) {
+        NSEnumerator *enumerator = [WebFrameNamespaces framesInNamespace:namespace];
         WebView *otherWebView;
-        while ((otherWebView = [enumerator nextObject]) != nil) {
+        while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
             if (otherWebView != webView && ![otherWebView defersCallbacks]) {
                 [otherWebView setDefersCallbacks:YES];
                 [deferredWebViews addObject:otherWebView];

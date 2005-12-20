@@ -575,76 +575,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return [_private->bridge isFrameSet];
 }
 
-- (BOOL)_shouldAllowAccessFrom:(WebFrame *)source
-{
-    // if no source frame, allow access
-    if (source == nil) {
-        return YES;
-    }
-
-    //   - allow access if the two frames are in the same window
-    if ([self webView] == [source webView]) {
-        return YES;
-    }
-
-    //   - allow if the request is made from a local file.
-    NSString *sourceDomain = [[source _bridge] domain];
-    if ([sourceDomain length] == 0) {
-        return YES;
-    }
-
-    //   - allow access if this frame or one of its ancestors
-    //     has the same origin as source
-    WebFrame *ancestor = self;
-    while (ancestor != nil) {
-        NSString *ancestorDomain = [[ancestor _bridge] domain];
-        if (ancestorDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:ancestorDomain]) {
-            return YES;
-        }
-        ancestor = [ancestor parentFrame];
-    }
-
-    //   - allow access if this frame is a toplevel window and the source
-    //     can access its opener. Note that we only allow one level of
-    //     recursion here.
-    if ([self parentFrame] == nil) {
-        NSString *openerDomain = [[[self _bridge] opener] domain];
-        if (openerDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:openerDomain]) {
-            return YES;
-        }
-    }
-
-    // otherwise deny access
-    return NO;
-}
-
-
-- (WebFrame *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
-{
-    // for security reasons, we do not want to even make frames visible to frames that
-    // can't access them 
-    if ([[self name] isEqualToString: name] && [self _shouldAllowAccessFrom:source]) {
-        return self;
-    }
-
-    // It's OK to use the internal version of getting the child
-    // frames, since we know this method won't change the set of
-    // frames
-    NSArray *children = [self _internalChildFrames];
-    WebFrame *frame;
-    unsigned i;
-
-    for (i = 0; i < [children count]; i++){
-        frame = [children objectAtIndex: i];
-        frame = [frame _descendantFrameNamed:name sourceFrame:source];
-        if (frame){
-            return frame;
-        }
-    }
-
-    return nil;
-}
-
 - (void)_detachChildren
 {
     // Note we have to be careful to remove the kids as we detach each one,
@@ -2864,11 +2794,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT(self == [[self webView] mainFrame]);
 
     if (namespace != _private->frameNamespace){
-        [WebFrameNamespaces removeWebView:[self webView] fromFrameNamespace:_private->frameNamespace];
+        [WebFrameNamespaces removeFrame:self fromNamespace:_private->frameNamespace];
         namespace = [namespace copy];
         [_private->frameNamespace release];
         _private->frameNamespace = namespace;
-        [WebFrameNamespaces addWebView:[self webView] toFrameNamespace:_private->frameNamespace];
+        [WebFrameNamespaces addFrame:self toNamespace:_private->frameNamespace];
     }
 }
 
@@ -3133,6 +3063,99 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [newDataSource release];
 }
 
+
+- (BOOL)_shouldAllowAccessFrom:(WebFrame *)source
+{
+    // if no source frame, allow access
+    if (source == nil) {
+        return YES;
+    }
+
+    //   - allow access if the two frames are in the same window
+    if ([self webView] == [source webView]) {
+        return YES;
+    }
+
+    //   - allow if the request is made from a local file.
+    NSString *sourceDomain = [[source _bridge] domain];
+    if ([sourceDomain length] == 0) {
+        return YES;
+    }
+
+    //   - allow access if this frame or one of its ancestors
+    //     has the same origin as source
+    WebFrame *ancestor = self;
+    while (ancestor != nil) {
+        NSString *ancestorDomain = [[ancestor _bridge] domain];
+        if (ancestorDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:ancestorDomain]) {
+            return YES;
+        }
+        ancestor = [ancestor parentFrame];
+    }
+
+    //   - allow access if this frame is a toplevel window and the source
+    //     can access its opener. Note that we only allow one level of
+    //     recursion here.
+    if ([self parentFrame] == nil) {
+        NSString *openerDomain = [[[self _bridge] opener] domain];
+        if (openerDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:openerDomain]) {
+            return YES;
+        }
+    }
+
+    // otherwise deny access
+    return NO;
+}
+
+- (WebFrame *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
+{
+    // for security reasons, we do not want to even make frames visible to frames that
+    // can't access them 
+    if ([[self name] isEqualToString: name] && [self _shouldAllowAccessFrom:source]) {
+        return self;
+    }
+
+    // It's OK to use the internal version of getting the child
+    // frames, since we know this method won't change the set of
+    // frames
+    NSArray *children = [self _internalChildFrames];
+    WebFrame *frame;
+    unsigned i;
+
+    for (i = 0; i < [children count]; i++){
+        frame = [children objectAtIndex: i];
+        frame = [frame _descendantFrameNamed:name sourceFrame:source];
+        if (frame){
+            return frame;
+        }
+    }
+
+    return nil;
+}
+
+- (WebFrame *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source
+{
+    ASSERT(self == [[self webView] mainFrame]);
+
+    // Try this WebView first.
+    WebFrame *frame = [self _descendantFrameNamed:name sourceFrame:source];
+
+    if (frame != nil) {
+        return frame;
+    }
+
+    // Try other WebViews in the same set
+    if ([self _frameNamespace] != nil) {
+        NSEnumerator *enumerator = [WebFrameNamespaces framesInNamespace:[self _frameNamespace]];
+        WebFrame *searchFrame;
+        while ((searchFrame = [enumerator nextObject])) {
+	    frame = [searchFrame _descendantFrameNamed:name sourceFrame:source];
+        }
+    }
+
+    return frame;
+}
+
 - (WebFrame *)findFrameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
@@ -3157,8 +3180,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebFrame *frame = [self _descendantFrameNamed:name sourceFrame:self];
 
     if (!frame) {
-        // Search in this WebView then in others.
-        frame = [[self webView] _findFrameNamed:name sourceFrame:self];
+        // Search in the main frame for this window then in others.
+        frame = [[[self webView] mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
     }
 
     return frame;
