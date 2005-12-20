@@ -71,96 +71,97 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 { 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
-    
-    WebCoreBridge *bridge;
-
-    NSString *referrer;
-    QString argsReferrer = urlArgs.metaData()["referrer"];
-    if (argsReferrer.length() > 0) {
-        referrer = argsReferrer.getNSString();
-    } else {
-        referrer = [_part->bridge() referrer];
-    }
-
     ASSERT(!winArgs.dialog || urlArgs.frameName.isEmpty());
 
     if (partResult)
 	*partResult = NULL;
 
-    if (frameName != nil) {
-	bridge = [_part->bridge() findFrameNamed:frameName];
-	if (bridge != nil) {
-	    if (!url.isEmpty()) {
-		[bridge loadURL:url.getNSURL() referrer:referrer reload:urlArgs.reload userGesture:true target:nil triggeringEvent:nil form:nil formValues:nil];
-	    }
-	    [bridge focusWindow];
-	    if (partResult) {
-		*partResult = [bridge part];
-	    }
-	    return;
-	}
+    NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
+    if (frameName) {
+        // FIXME: Can't you just use _part->findFrame?
+        if (WebCoreBridge *bridge = [_part->bridge() findFrameNamed:frameName]) {
+            if (!url.isEmpty()) {
+                QString argsReferrer = urlArgs.metaData()["referrer"];
+                NSString *referrer;
+                if (argsReferrer.length() > 0)
+                    referrer = argsReferrer.getNSString();
+                else
+                    referrer = [_part->bridge() referrer];
+
+                [bridge loadURL:url.getNSURL() 
+                       referrer:referrer 
+                         reload:urlArgs.reload 
+                    userGesture:true 
+                         target:nil 
+                triggeringEvent:nil 
+                           form:nil 
+                     formValues:nil];
+            }
+
+            [bridge focusWindow];
+
+            if (partResult)
+                *partResult = [bridge part];
+
+            return;
+        }
     }
     
+    WebCoreBridge *bridge;
     if (winArgs.dialog)
         bridge = [_part->bridge() createModalDialogWithURL:url.getNSURL()];
     else
         bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
+
     if (!bridge)
         return;
     
-    if (!winArgs.toolBarsVisible) {
-	[bridge setToolbarsVisible:NO];
+    if ([bridge part])
+	[bridge part]->setName(urlArgs.frameName);
+    
+    if (partResult)
+	*partResult = [bridge part];
+    
+    [bridge setToolbarsVisible:winArgs.toolBarsVisible];
+    [bridge setStatusbarVisible:winArgs.statusBarVisible];
+    [bridge setScrollbarsVisible:winArgs.scrollBarsVisible];
+    [bridge setWindowIsResizable:winArgs.resizable];
+    
+    NSRect windowFrame = [bridge windowFrame];
+
+    NSSize scaleRect = [[bridge webView] convertSize:NSMakeSize(1, 1) toView:nil];
+    float scaleX = scaleRect.width;
+    float scaleY = scaleRect.height;
+
+    // In JavaScript, the coordinate system of the window is the same as the coordinate system
+    // of the WebView, so we translate 'left' and 'top' from WebView coordinates to window coordinates.
+    // (If the screen resolution is scaled, window coordinates won't match WebView coordinates.)
+    if (winArgs.xSet)
+	windowFrame.origin.x = winArgs.x * scaleX;
+    if (winArgs.ySet) {
+	// In JavaScript, (0, 0) is the top left corner of the screen.
+	float screenTop = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
+	windowFrame.origin.y = screenTop - (winArgs.y * scaleY) - windowFrame.size.height;
+    }
+
+    // 'width' and 'height' specify the dimensions of the WebView, but we can only resize the window, 
+    // so we compute a delta, translate it to window coordinates, and use the translated delta 
+    // to resize the window.
+    NSRect webViewFrame = [[bridge webView] frame];
+    if (winArgs.widthSet) {
+	float widthDelta = (winArgs.width - webViewFrame.size.width) * scaleX;
+	windowFrame.size.width += widthDelta;
+    }
+    if (winArgs.heightSet) {
+	float heightDelta = (winArgs.height - webViewFrame.size.height) * scaleY;
+	windowFrame.size.height += heightDelta;
+	windowFrame.origin.y -= heightDelta;
     }
     
-    if (!winArgs.statusBarVisible) {
-	[bridge setStatusBarVisible:NO];
-    }
-    
-    if (!winArgs.scrollbarsVisible) {
-	[bridge setScrollbarsVisible:NO];
-    }
-    
-    if (!winArgs.resizable) {
-	[bridge setWindowIsResizable:NO];
-    }
-    
-    if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
-	NSRect frame = [bridge windowFrame];
-	NSRect contentRect = [bridge windowContentRect];
-	
-	if (winArgs.xSet) {
-	    frame.origin.x = winArgs.x;
-	}
-	
-	if (winArgs.ySet) {
-	    float heightForFlip = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
-	    frame.origin.y = heightForFlip - (winArgs.y + frame.size.height);
-	}
-	
-	if (winArgs.widthSet) {
-	    frame.size.width += winArgs.width - contentRect.size.width;
-	}
-	
-	if (winArgs.heightSet) {
-	    float heightDelta = winArgs.height - contentRect.size.height;
-	    frame.size.height += heightDelta;
-	    frame.origin.y -= heightDelta;
-	}
-	
-	[bridge setWindowFrame:frame];
-    }
+    [bridge setWindowFrame:windowFrame];
     
     [bridge showWindow];
-
-    if ([bridge part]) {
-	[bridge part]->setName(urlArgs.frameName);
-    }
     
-    if (partResult) {
-	*partResult = [bridge part];
-    }
-
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

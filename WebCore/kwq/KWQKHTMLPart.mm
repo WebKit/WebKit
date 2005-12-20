@@ -1837,7 +1837,7 @@ bool KWQKHTMLPart::scrollbarsVisible()
 
 bool KWQKHTMLPart::statusbarVisible()
 {
-    return [_bridge isStatusBarVisible];
+    return [_bridge isStatusbarVisible];
 }
 
 bool KWQKHTMLPart::toolbarVisible()

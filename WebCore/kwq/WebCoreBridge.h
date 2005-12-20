@@ -28,6 +28,7 @@
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardAccess.h>
+#import <WebKit/WebView.h>
 
 #ifdef __cplusplus
 
@@ -473,6 +474,7 @@ typedef enum
 - (NSString *)generateFrameName;
 - (void)frameDetached;
 - (NSView *)documentView;
+- (WebView *)webView;
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
@@ -500,8 +502,8 @@ typedef enum
 
 - (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;
-- (BOOL)isStatusBarVisible;
-- (void)setStatusBarVisible:(BOOL)visible;
+- (BOOL)isStatusbarVisible;
+- (void)setStatusbarVisible:(BOOL)visible;
 - (BOOL)areScrollbarsVisible;
 - (void)setScrollbarsVisible:(BOOL)visible;
 - (NSWindow *)window;

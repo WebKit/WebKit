@@ -81,7 +81,7 @@ struct WindowArgs {
     bool menuBarVisible;
     bool statusBarVisible;
     bool toolBarsVisible;
-    bool scrollbarsVisible;
+    bool scrollBarsVisible;
     bool resizable;
     bool fullscreen;
     bool xSet;
@@ -91,7 +91,7 @@ struct WindowArgs {
     bool dialog;
 
     WindowArgs() : x(0), y(0), width(0), height(0),
-        menuBarVisible(true), statusBarVisible(true), toolBarsVisible(true), scrollbarsVisible(true),
+        menuBarVisible(true), statusBarVisible(true), toolBarsVisible(true), scrollBarsVisible(true),
         resizable(true), fullscreen(false),
         xSet(false), ySet(false), widthSet(false), heightSet(false),
         dialog(false)

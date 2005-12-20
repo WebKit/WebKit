@@ -195,6 +195,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame findFrameNamed:name] _bridge];
 }
 
+- (WebView *)webView
+{
+    ASSERT(_frame != nil);
+    return [_frame webView];
+}
+
 - (NSView *)documentView
 {
     ASSERT(_frame != nil);

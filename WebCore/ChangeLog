@@ -1,3 +1,60 @@
+2005-12-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        Fixed <rdar://problem/4310363> JavaScript window.open: Height is 1 
+        pixel short, and related bugs.
+
+        There were a few bugs here.
+        (1) Our code took size arguments and applied them to the window's
+            content rect. That's incorrect. The Rhino book says the arguments 
+            should apply to the WebView. Other things that occupy the content 
+            rect include the tab bar, the status bar, and the 1 pixel border 
+            between brushed metal and document. All of these used to impinge 
+            on the web page's display area.
+
+            The fix is to calculate sizing based on the WebView instead of
+            the content rect. This means that the webViewContentRect and 
+            setContentRect delegate methods are obsolete and no longer called
+            by any of our code. (setContentRect was never called in the 
+            first place.)
+
+        (2) None of our sizing accounted for scaled resolutions.
+
+            The fix is to ask the WebView to scale all coordintes for us.
+
+        (3) Our code assumed that all window accoutrements were on by default.
+            Safari works that way, but other WebKit clients might not.
+
+            The fix is always to explicitly set an on/off state.
+        
+        (a) To facilitate scaling, I added a new bridge method, webView, to 
+        access the webView.
+
+        (b) For internal consistency, I changed ___Bars to ___bars in bridge 
+        methods, and ___bars to ___Bars in WinArgs data members. (Interestingly,
+        the different classes in our code are evenly divided on which format to 
+        use.)
+        
+        Added manual test:
+        * manual-tests/window-open-features.html: Added.
+        * manual-tests/resources/200x200.png: Added.
+        * manual-tests/resources/popup200x200.html: Added.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::showModalDialog): see (b)
+        (KJS::WindowFunc::callAsFunction): see (b)
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::statusbarVisible): see (b)
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+        At the top of this method, I just did some formatting cleanup and
+        moved the 'referrer' variable closer to where it's used.
+        The changes in the middle of the method are (3), the bottom, (2).
+        * kwq/KWQKPartsBrowserExtension.h:
+        (KParts::WindowArgs::WindowArgs): see (b)
+        * kwq/WebCoreBridge.h: see (a)
+
 2005-12-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
