@@ -1,3 +1,57 @@
+2005-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by eric, thatcher
+        
+        <rdar://problem/4172984> KWQExceptions needs to use @try/@catch instead of relying on NSException.h internals
+        
+        Needed to undef try/catch because of 4333439.  Moved the 
+        declarations of variables that are returned from within a @try 
+        block outside the @try block (because of "might be clobbered by 
+        a longjmp or vfork" warnings).  Moved some return statements
+        inside the @try block to fix volatilization errors with gcc4.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCorePrefix.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEBlendQuartz::getCIFilter):
+        (KCanvasFEColorMatrixQuartz::getCIFilter):
+        (KCanvasFECompositeQuartz::getCIFilter):
+        (getPointLightVectors):
+        (getLightVectors):
+        (getNormalMap):
+        (KCanvasFEDiffuseLightingQuartz::getCIFilter):
+        (KCanvasFEFloodQuartz::getCIFilter):
+        (KCanvasFEImageQuartz::getCIFilter):
+        (KCanvasFEMergeQuartz::getCIFilter):
+        (KCanvasFESpecularLightingQuartz::getCIFilter):
+        * kwq/KWQExceptions.h:
+        * kwq/KWQExceptions.mm:
+        (KWQReportBlockedException):
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::sizeForCharacterWidth):
+        (KWQFileButton::frameGeometry):
+        * kwq/KWQKCursor.mm:
+        (+[NSCursor _WebCore_cursorWithName:hotSpot:_WebCore_cursorWithName:hotSpot:]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart):
+        (KWQKHTMLPart::nextKeyView):
+        (KWQKHTMLPart::runJavaScriptPrompt):
+        (KWQKHTMLPart::keyEvent):
+        (KWQKHTMLPart::sendContextMenuEvent):
+        (KWQKHTMLPart::fileWrapperForElement):
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::imageFromRect):
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines):
+        * kwq/KWQLoader.mm:
+        (KWQCheckCacheObjectStatus):
+        * kwq/KWQWidget.mm:
+        (QWidget::frameGeometry):
+        (QWidget::mapFromGlobal):
+
 2005-12-20  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4294417> Cannot un-italicize some text after triple clicking it
@@ -7,7 +61,7 @@
         * khtml/editing/apply_style_command.cpp:
         (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
         Removed check for tab span because ApplyStyleCommand::removeCSSStyle() already makes the same check.
-        
+
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         <rdar://problem/4387270> editing/deleting/delete-3800834-fix failing
