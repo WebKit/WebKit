@@ -3,7 +3,7 @@
         Reviewed by Darin.
 
 	- made ALWAYS_INLINE declare things inline as well as __attribute__((always_inline))
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6159
 
         * kxmlcore/AlwaysInline.h:
 
@@ -12,7 +12,7 @@
         Reviewed by Darin.
 
 	- fixed a leak in the assignment operator from PassRefPtr to RefPtr
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6158
 
         * kxmlcore/RefPtr.h:
         (KXMLCore::RefPtr::operator=):
