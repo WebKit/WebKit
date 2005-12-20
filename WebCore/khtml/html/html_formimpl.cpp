@@ -299,10 +299,6 @@ static QCString fixLineBreaks(const QCString &s)
 
 bool HTMLFormElementImpl::formData(FormData &form_data) const
 {
-#ifdef FORMS_DEBUG
-    kdDebug( 6030 ) << "form: formData()" << endl;
-#endif
-
     QCString enc_string = ""; // used for non-multipart data
 
     // find out the QTextcodec to use
@@ -474,10 +470,6 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
 
     m_insubmit = true;
 
-#ifdef FORMS_DEBUG
-    kdDebug( 6030 ) << "submitting!" << endl;
-#endif
-
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
     
@@ -538,10 +530,6 @@ void HTMLFormElementImpl::reset(  )
     if(m_inreset || !part) return;
 
     m_inreset = true;
-
-#ifdef FORMS_DEBUG
-    kdDebug( 6030 ) << "reset pressed!" << endl;
-#endif
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
@@ -868,9 +856,6 @@ HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
             return static_cast<HTMLFormElementImpl *>(p);
         p = p->parentNode();
     }
-#ifdef FORMS_DEBUG
-    kdDebug( 6030 ) << "couldn't find form!" << endl;
-#endif
     return 0;
 }
 

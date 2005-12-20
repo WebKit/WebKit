@@ -2,6 +2,27 @@
 
         Reviewed by darin.
 
+        Remove additional bit-rotted DEBUG* ifdefs from WebCore.
+        This removes PARSER_DEBUG, FORMS_DEBUG and CSS_STYLESHEET_DEBUG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5931
+        No tests possible, only removing dead code.
+
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::parseString):
+        (CSSStyleSheetImpl::isLoading):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::reset):
+        (DOM::HTMLGenericFormElementImpl::getForm):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::processCloseTag):
+        (HTMLParser::createHead):
+
+2005-12-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Move Decoder onto Shared<T> and clients onto RefPtr.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6107
         No test cases possible, no functional changes.

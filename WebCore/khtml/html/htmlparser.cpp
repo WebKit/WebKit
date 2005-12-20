@@ -837,9 +837,6 @@ void HTMLParser::processCloseTag(Token *t)
         parseToken(t);
         popBlock(t->tagName);
     }
-#ifdef PARSER_DEBUG
-    kdDebug( 6035 ) << "closeTag --> current = " << current->nodeName().qstring() << endl;
-#endif
 }
 
 bool HTMLParser::isHeaderTag(const AtomicString& tagName)
@@ -1291,9 +1288,6 @@ void HTMLParser::createHead()
     int exceptioncode = 0;
     doc()->firstChild()->insertBefore(head, body, exceptioncode);
     if ( exceptioncode ) {
-#ifdef PARSER_DEBUG
-        kdDebug( 6035 ) << "creation of head failed!!!!" << endl;
-#endif
         head = 0;
     }
 }
