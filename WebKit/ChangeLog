@@ -4,7 +4,8 @@
 
 	- push more of frame lookup and management from WebView to
 	WebFrame, this is in preparation for shifting this to WebCore
-
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6163
+	
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge closeWindowSoon]): Adjust for change to WebFrameNamespaces
         (-[WebBridge runModal]): ditto
