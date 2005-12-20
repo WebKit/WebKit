@@ -1,3 +1,12 @@
+2005-12-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Development-only build fix.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]): fixed typo
+
 2005-12-20  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.

@@ -288,7 +288,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(policyTarget == nil);
     ASSERT(policyFormState == nil);
     ASSERT(policyDataSource == nil);
-    ASSERT(frameNamesace == nil);
+    ASSERT(frameNamespace == nil);
 
     [super dealloc];
 }
