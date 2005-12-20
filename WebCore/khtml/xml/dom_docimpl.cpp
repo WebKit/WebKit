@@ -390,7 +390,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_savedRenderer(0)
     , m_passwordFields(0)
     , m_secureForms(0)
-    , m_decoder(0)
     , m_createRenderers(true)
     , m_designMode(inherit)
     , m_hasDashboardRegions(false)
@@ -544,11 +543,7 @@ DocumentImpl::~DocumentImpl()
         delete m_accCache;
         m_accCache = 0;
     }
-    
-    if (m_decoder){
-        m_decoder->deref();
-        m_decoder = 0;
-    }
+    m_decoder = 0;
     
     if (m_jsEditor) {
         delete m_jsEditor;
@@ -1926,7 +1921,6 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y,
             }
             else
                 ev->url = href;
-//            qDebug("url: *%s*", ev->url.qstring().latin1());
         }
 
         if (!readonly)
@@ -2753,10 +2747,6 @@ HTMLMapElementImpl *DocumentImpl::getImageMap(const DOMString &URL) const
 
 void DocumentImpl::setDecoder(Decoder *decoder)
 {
-    decoder->ref();
-    if (m_decoder) {
-        m_decoder->deref();
-    }
     m_decoder = decoder;
 }
 

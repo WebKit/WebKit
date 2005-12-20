@@ -30,7 +30,7 @@ namespace khtml {
 /**
  * @internal
  */
-class Decoder
+class Decoder : public Shared<Decoder>
 {
 public:
     enum EncodingType {
@@ -56,9 +56,6 @@ public:
 
     QString flush() const;
 
-    void ref() { ++_refCount; }
-    void deref() { if (!--_refCount) delete this; }
-
 protected:
     // codec used for decoding. default is Latin1.
     QTextCodec *m_codec;
@@ -73,8 +70,6 @@ protected:
     bool body;
     bool beginning;
     bool visualRTL;
-
-    unsigned _refCount;
 };
 
 }

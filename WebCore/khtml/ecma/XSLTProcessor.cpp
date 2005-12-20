@@ -129,7 +129,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
             DOMString localName = args[1]->toString(exec).domString();
             DOMStringImpl *value = processor.getParameter(namespaceURI.impl(), localName.impl()).get();
             if (value)
-                return jsString(UString(value));
+                return jsString(UString(DOMString(value)));
             return jsUndefined();
         }
         case XSLTProcessor::RemoveParameter:

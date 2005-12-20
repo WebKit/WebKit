@@ -747,7 +747,7 @@ public:
     bool shouldCreateRenderers();
     
     void setDecoder(khtml::Decoder *);
-    khtml::Decoder *decoder() const { return m_decoder; }
+    khtml::Decoder *decoder() const { return m_decoder.get(); }
 
     void setDashboardRegionsDirty(bool f) { m_dashboardRegionsDirty = f; }
     bool dashboardRegionsDirty() const { return m_dashboardRegionsDirty; }
@@ -781,7 +781,7 @@ private:
     int m_passwordFields;
     int m_secureForms;
     
-    khtml::Decoder *m_decoder;
+    RefPtr<khtml::Decoder> m_decoder;
 
     mutable QDict<ElementImpl> m_elementsById;
     mutable QDict<char> m_idCount;

@@ -414,7 +414,7 @@ public:
         
 protected:
         DOM::DOMString m_sheet;
-        Decoder* m_decoder;
+        RefPtr<Decoder> m_decoder;
     };
 #endif
     
@@ -440,7 +440,7 @@ protected:
         
 protected:
         XBL::XBLDocumentImpl* m_document;
-        Decoder* m_decoder;
+        RefPtr<Decoder> m_decoder;
     };
 #endif
 

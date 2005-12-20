@@ -1,3 +1,42 @@
+2005-12-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Move Decoder onto Shared<T> and clients onto RefPtr.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6107
+        No test cases possible, no functional changes.
+
+        * khtml/ecma/XSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::XMLHttpRequest):
+        (KJS::XMLHttpRequest::~XMLHttpRequest):
+        (KJS::XMLHttpRequest::changeState):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequest::slotFinished):
+        (KJS::XMLHttpRequest::slotData):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::clear):
+        (KHTMLPart::begin):
+        (KHTMLPart::write):
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        * khtml/misc/decoder.cpp:
+        (Decoder::Decoder):
+        (Decoder::~Decoder):
+        * khtml/misc/decoder.h:
+        * khtml/misc/loader.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::prepareMouseEvent):
+        (DocumentImpl::setDecoder):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::decoder):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+
 2005-12-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

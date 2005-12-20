@@ -101,7 +101,6 @@ public:
   KHTMLPartPrivate(QObject* parent)
   {
     m_doc = 0L;
-    m_decoder = 0L;
     m_jscript = 0L;
     m_runningScripts = 0;
     m_job = 0L;
@@ -197,7 +196,7 @@ public:
   KHTMLPartBrowserExtension *m_extension;
   KHTMLPartBrowserHostExtension *m_hostExtension;
   DOM::DocumentImpl *m_doc;
-  khtml::Decoder *m_decoder;
+  RefPtr<khtml::Decoder> m_decoder;
   QString m_encoding;
   QString m_sheetUsed;
 #if !APPLE_CANGES
