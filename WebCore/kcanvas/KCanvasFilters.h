@@ -438,6 +438,9 @@ private:
 class KCanvasFEDiffuseLighting : public KCanvasFilterEffect
 {
 public:
+    KCanvasFEDiffuseLighting() : m_lightSource(0) { }
+    ~KCanvasFEDiffuseLighting() { delete m_lightSource; }
+
     QColor lightingColor() const { return m_lightingColor; }
     void setLightingColor(const QColor &lightingColor) { m_lightingColor = lightingColor; }
 
@@ -453,8 +456,8 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
 
-    const KCLightSource * lightSource() const { return m_lightSource; }
-    void setLightSource(KCLightSource * lightSource) { m_lightSource = lightSource; }
+    const KCLightSource *lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource *lightSource);
     
     QTextStream &externalRepresentation(QTextStream &) const;
 
@@ -595,6 +598,9 @@ private:
 class KCanvasFESpecularLighting : public KCanvasFilterEffect
 {
 public:
+    KCanvasFESpecularLighting() : m_lightSource(0) { }
+    ~KCanvasFESpecularLighting() { delete m_lightSource; }
+
     QColor lightingColor() const { return m_lightingColor; }
     void setLightingColor(const QColor &lightingColor) { m_lightingColor = lightingColor; }
 
@@ -613,8 +619,8 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
     
-    const KCLightSource * lightSource() const { return m_lightSource; }
-    void setLightSource(KCLightSource * lightSource) { m_lightSource = lightSource; }
+    const KCLightSource *lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource *lightSource);
     
     QTextStream &externalRepresentation(QTextStream &) const;
     

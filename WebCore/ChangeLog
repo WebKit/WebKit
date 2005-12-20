@@ -1,5 +1,26 @@
 2005-12-20  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Leaks when running SVG tests
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6156
+        No additional tests necessary, leaks already caught by other tests.
+
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFEDiffuseLighting::setLightSource): takes ownership
+        (KCanvasFESpecularLighting::setLightSource): takes ownership
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEDiffuseLighting::KCanvasFEDiffuseLighting): added
+        (KCanvasFEDiffuseLighting::~KCanvasFEDiffuseLighting): added
+        (KCanvasFEDiffuseLighting::lightSource): fixed spacing
+        (KCanvasFESpecularLighting::KCanvasFESpecularLighting): added
+        (KCanvasFESpecularLighting::~KCanvasFESpecularLighting): added
+        (KCanvasFESpecularLighting::lightSource): fixed spacing
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::stringForPath): added missing CFRelease
+
+2005-12-20  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Remove additional bit-rotted DEBUG* ifdefs from WebCore.

@@ -173,6 +173,7 @@ QString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
         CGPathRef cgPath = static_cast<const KCanvasPathQuartz *>(path)->cgPath();
         CFStringRef pathString = CFStringFromCGPath(cgPath);
         result = QString::fromCFString(pathString);
+        CFRelease(pathString);
     }
     return result;
 }
