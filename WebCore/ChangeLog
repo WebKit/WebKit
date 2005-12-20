@@ -1,3 +1,18 @@
+2005-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        <rdar://problem/4387270> editing/deleting/delete-3800834-fix failing
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6160> REGRESSION: Crash when running editing/deleting/delete-3800834-fix.html
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6161> REGRESSION: crash when pressing tab in editable WebHTMLView
+
+        Reviewed by darin
+    
+        Some callers call setAttribute on a floating element.  So, using 
+        a RefPtr for the element inside addAttribute can destroy
+        it.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::addAttribute):
+
 2005-12-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
