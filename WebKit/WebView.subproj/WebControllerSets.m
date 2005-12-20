@@ -43,44 +43,48 @@ NSMutableDictionary *namespaces = nil;
 
 +(void)addWebView:(WebView *)webView toFrameNamespace:(NSString *)name
 {
-    if (namespaces == nil) {
+    if (!name)
+        return;
+
+    if (!namespaces)
 	namespaces = [[NSMutableDictionary alloc] init];
-    }
 
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (namespace == NULL) {
+    if (!namespace) {
 	namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
 	[namespaces setObject:(id)namespace forKey:name];
 	CFRelease(namespace);
     }
-
     
     CFSetSetValue(namespace, webView);
 }
 
 +(void)removeWebView:(WebView *)webView fromFrameNamespace:(NSString *)name
 {
+    if (!name)
+        return;
+
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (namespace == NULL) {
+    if (!namespace)
 	return;
-    }
 
     CFSetRemoveValue(namespace, webView);
 
-    if (CFSetGetCount(namespace) == 0) {
+    if (CFSetGetCount(namespace) == 0)
 	[namespaces removeObjectForKey:name];
-    }
 }
 
 +(NSEnumerator *)webViewsInFrameNamespace:(NSString *)name;
 {
+    if (!name)
+	return [[[NSEnumerator alloc] init] autorelease];
+
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
-    if (namespace == NULL) {
+    if (!namespace)
 	return [[[NSEnumerator alloc] init] autorelease];
-    }
     
     return [(NSSet *)namespace objectEnumerator];
 }

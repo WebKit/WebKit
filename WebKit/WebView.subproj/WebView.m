@@ -204,6 +204,89 @@ macro(yankAndSelect) \
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
+@interface WebViewPrivate : NSObject
+{
+@public
+    WebFrame *mainFrame;
+    
+    id UIDelegate;
+    id UIDelegateForwarder;
+    id resourceProgressDelegate;
+    id resourceProgressDelegateForwarder;
+    id downloadDelegate;
+    id policyDelegate;
+    id policyDelegateForwarder;
+    id frameLoadDelegate;
+    id frameLoadDelegateForwarder;
+    id <WebFormDelegate> formDelegate;
+    id editingDelegate;
+    id editingDelegateForwarder;
+    id scriptDebugDelegate;
+    id scriptDebugDelegateForwarder;
+    
+    WebBackForwardList *backForwardList;
+    BOOL useBackForwardList;
+    
+    float textSizeMultiplier;
+
+    NSString *applicationNameForUserAgent;
+    NSString *userAgent;
+    BOOL userAgentOverridden;
+    
+    BOOL defersCallbacks;
+
+    WebPreferences *preferences;
+    WebCoreSettings *settings;
+        
+    BOOL lastElementWasNonNil;
+
+    NSWindow *hostWindow;
+
+    int programmaticFocusCount;
+    
+    WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
+
+    long long totalPageAndResourceBytesToLoad;
+    long long totalBytesReceived;
+    double progressValue;
+    double lastNotifiedProgressValue;
+    double lastNotifiedProgressTime;
+    double progressNotificationInterval;
+    double progressNotificationTimeInterval;
+    BOOL finalProgressChangedSent;
+    WebFrame *orginatingProgressFrame;
+    
+    int numProgressTrackedFrames;
+    NSMutableDictionary *progressItems;
+    
+    void *observationInfo;
+    
+    BOOL drawsBackground;
+    BOOL editable;
+    BOOL initiatedDrag;
+        
+    NSString *mediaStyle;
+    
+    NSView <WebDocumentDragging> *draggingDocumentView;
+    unsigned int dragDestinationActionMask;
+    WebBridge *dragCaretBridge;
+    
+    BOOL hasSpellCheckerDocumentTag;
+    WebNSInt spellCheckerDocumentTag;
+
+    BOOL continuousSpellCheckingEnabled;
+    BOOL smartInsertDeleteEnabled;
+    
+    BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
+    BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
+    BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
+    BOOL dashboardBehaviorAllowWheelScrolling;
+    
+    BOOL shouldUseFontSmoothing;
+    BOOL selectWordBeforeMenuEvent;
+}
+@end
+
 @interface WebView (WebFileInternal)
 #ifndef NDEBUG
 - (void)_debugCheckForMultipleSelectedFrames;
@@ -459,11 +542,7 @@ static bool debugWidget = true;
 - (void)_close
 {
     [self _removeFromAllWebViewsSet];
-    if (_private->setName != nil) {
-        [WebFrameNamespaces removeWebView:self fromFrameNamespace:_private->setName];
-        [_private->setName release];
-        _private->setName = nil;
-    }
+    [self setGroupName:nil];
 
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
@@ -645,8 +724,8 @@ static bool debugWidget = true;
     }
 
     // Try other WebViews in the same set
-    if (_private->setName != nil) {
-        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:_private->setName];
+    if ([self groupName] != nil) {
+        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:[self groupName]];
         WebView *webView;
         while ((webView = [enumerator nextObject]) != nil && frame == nil) {
 	    frame = [webView _findFrameInThisWindowNamed:name sourceFrame:source];
@@ -2223,16 +2302,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setGroupName:(NSString *)groupName
 {
-    if (groupName != _private->setName){
-        [_private->setName release];
-        _private->setName = [groupName copy];
-        [WebFrameNamespaces addWebView:self toFrameNamespace:_private->setName];
-    }
+    [[self mainFrame] _setFrameNamespace:groupName];
 }
 
 - (NSString *)groupName
 {
-    return _private->setName;
+    return [[self mainFrame] _frameNamespace];
 }
 
 - (double)estimatedProgress

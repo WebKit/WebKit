@@ -49,6 +49,10 @@
                                                             data:(NSData *)data
                                                            error:(NSError *)error;
 - (void)_setupForReplace;
+
+- (void)_setFrameNamespace:(NSString *)namespace;
+- (NSString *)_frameNamespace;
+
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

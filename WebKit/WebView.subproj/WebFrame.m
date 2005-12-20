@@ -64,6 +64,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebScriptDebugDelegatePrivate.h>
+#import <WebKit/WebControllerSets.h>
 
 #import <objc/objc-runtime.h>
 
@@ -186,6 +187,71 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
 @end
 
+@interface WebFramePrivate : NSObject
+{
+@public
+    WebFrame *nextSibling;
+    WebFrame *previousSibling;
+
+    NSString *name;
+    WebFrameView *webFrameView;
+    WebDataSource *dataSource;
+    WebDataSource *provisionalDataSource;
+    WebBridge *bridge;
+    WebView *webView;
+    WebFrameState state;
+    WebFrameLoadType loadType;
+    WebFrame *parent;
+    NSMutableArray *children;
+    WebHistoryItem *currentItem;	// BF item for our current content
+    WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
+                                        // (only known when navigating to a pre-existing BF item)
+    WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
+
+    WebPolicyDecisionListener *listener;
+    // state we'll need to continue after waiting for the policy delegate's decision
+    NSURLRequest *policyRequest;
+    NSString *policyFrameName;
+    id policyTarget;
+    SEL policySelector;
+    WebFormState *policyFormState;
+    WebDataSource *policyDataSource;
+    WebFrameLoadType policyLoadType;
+
+    BOOL quickRedirectComing;
+    BOOL isStoppingLoad;
+    BOOL delegateIsHandlingProvisionalLoadError;
+    BOOL delegateIsDecidingNavigationPolicy;
+    BOOL delegateIsHandlingUnimplementablePolicy;
+    
+    id internalLoadDelegate;
+    WebScriptDebugger *scriptDebugger;
+
+    NSString *frameNamespace;
+}
+
+- (void)setName:(NSString *)name;
+- (NSString *)name;
+- (void)setWebView:(WebView *)wv;
+- (WebView *)webView;
+- (void)setWebFrameView:(WebFrameView *)v;
+- (WebFrameView *)webFrameView;
+- (void)setDataSource:(WebDataSource *)d;
+- (WebDataSource *)dataSource;
+- (void)setProvisionalDataSource:(WebDataSource *)d;
+- (WebDataSource *)provisionalDataSource;
+- (WebFrameLoadType)loadType;
+- (void)setLoadType:(WebFrameLoadType)loadType;
+
+- (void)setProvisionalItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)provisionalItem;
+- (void)setPreviousItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)previousItem;
+- (void)setCurrentItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)currentItem;
+
+@end
+
 @implementation WebFramePrivate
 
 - init
@@ -222,6 +288,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(policyTarget == nil);
     ASSERT(policyFormState == nil);
     ASSERT(policyDataSource == nil);
+    ASSERT(frameNamesace == nil);
 
     [super dealloc];
 }
@@ -2790,6 +2857,26 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [old release];
         
     [self _detachChildren];
+}
+
+- (void)_setFrameNamespace:(NSString *)namespace
+{
+    ASSERT(self == [[self webView] mainFrame]);
+
+    if (namespace != _private->frameNamespace){
+        [WebFrameNamespaces removeWebView:[self webView] fromFrameNamespace:_private->frameNamespace];
+        namespace = [namespace copy];
+        [_private->frameNamespace release];
+        _private->frameNamespace = namespace;
+        [WebFrameNamespaces addWebView:[self webView] toFrameNamespace:_private->frameNamespace];
+    }
+}
+
+- (NSString *)_frameNamespace
+{
+    ASSERT(self == [[self webView] mainFrame]);
+
+    return _private->frameNamespace;
 }
 
 @end

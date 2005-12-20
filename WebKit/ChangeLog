@@ -1,3 +1,26 @@
+2005-12-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- Move handling of frame namespaces down to WebFrame.
+	- Put some internal class declarations in the implementation file.
+
+        * WebView.subproj/WebControllerSets.m:
+        (+[WebFrameNamespaces addWebView:toFrameNamespace:]):
+        (+[WebFrameNamespaces webViewsInFrameNamespace:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _setFrameNamespace:]):
+        (-[WebFrame _frameNamespace]):
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _close]):
+        (-[WebView _findFrameNamed:sourceFrame:]):
+        (-[WebView setGroupName:]):
+        (-[WebView groupName]):
+        * WebView.subproj/WebViewInternal.h:
+
 2005-12-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, committed by Adele.

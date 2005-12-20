@@ -78,69 +78,6 @@ extern NSString *WebPageCacheEntryDateKey;
 extern NSString *WebPageCacheDataSourceKey;
 extern NSString *WebPageCacheDocumentViewKey;
 
-@interface WebFramePrivate : NSObject
-{
-@public
-    WebFrame *nextSibling;
-    WebFrame *previousSibling;
-
-    NSString *name;
-    WebFrameView *webFrameView;
-    WebDataSource *dataSource;
-    WebDataSource *provisionalDataSource;
-    WebBridge *bridge;
-    WebView *webView;
-    WebFrameState state;
-    WebFrameLoadType loadType;
-    WebFrame *parent;
-    NSMutableArray *children;
-    WebHistoryItem *currentItem;	// BF item for our current content
-    WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
-                                        // (only known when navigating to a pre-existing BF item)
-    WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
-
-    WebPolicyDecisionListener *listener;
-    // state we'll need to continue after waiting for the policy delegate's decision
-    NSURLRequest *policyRequest;
-    NSString *policyFrameName;
-    id policyTarget;
-    SEL policySelector;
-    WebFormState *policyFormState;
-    WebDataSource *policyDataSource;
-    WebFrameLoadType policyLoadType;
-
-    BOOL quickRedirectComing;
-    BOOL isStoppingLoad;
-    BOOL delegateIsHandlingProvisionalLoadError;
-    BOOL delegateIsDecidingNavigationPolicy;
-    BOOL delegateIsHandlingUnimplementablePolicy;
-    
-    id internalLoadDelegate;
-    WebScriptDebugger *scriptDebugger;
-}
-
-- (void)setName:(NSString *)name;
-- (NSString *)name;
-- (void)setWebView:(WebView *)wv;
-- (WebView *)webView;
-- (void)setWebFrameView:(WebFrameView *)v;
-- (WebFrameView *)webFrameView;
-- (void)setDataSource:(WebDataSource *)d;
-- (WebDataSource *)dataSource;
-- (void)setProvisionalDataSource:(WebDataSource *)d;
-- (WebDataSource *)provisionalDataSource;
-- (WebFrameLoadType)loadType;
-- (void)setLoadType:(WebFrameLoadType)loadType;
-
-- (void)setProvisionalItem:(WebHistoryItem *)item;
-- (WebHistoryItem *)provisionalItem;
-- (void)setPreviousItem:(WebHistoryItem *)item;
-- (WebHistoryItem *)previousItem;
-- (void)setCurrentItem:(WebHistoryItem *)item;
-- (WebHistoryItem *)currentItem;
-
-@end
-
 @interface WebFrame (WebPrivate)
 
 // Other private methods
