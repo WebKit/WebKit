@@ -44,6 +44,7 @@ namespace KXMLCore {
         PassRefPtr() : m_ptr(0) {}
         PassRefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         PassRefPtr(const RefPtr<T>& o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
+        PassRefPtr(PassRefPtr& o) : m_ptr(o.release()) {}
 
         ~PassRefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
         
@@ -83,7 +84,7 @@ namespace KXMLCore {
             m_ptr = ref.m_ptr;
             return *this;
         }
-      
+
         template<typename U>
         operator PassRefPtr_Ref<U>()
         { 
@@ -190,10 +191,21 @@ namespace KXMLCore {
         return PassRefPtr<T>::adopt(const_cast<T *>(p.release())); 
     }
 
+    template <typename T> inline PassRefPtr<T> pass(T *ptr)
+    {
+        return PassRefPtr<T>(ptr);
+    }
+
+    template <typename T> inline PassRefPtr<T> pass(const RefPtr<T>& ptr)
+    {
+        return PassRefPtr<T>(ptr);
+    }
+
 } // namespace KXMLCore
 
 using KXMLCore::PassRefPtr;
 using KXMLCore::static_pointer_cast;
 using KXMLCore::const_pointer_cast;
+using KXMLCore::pass;
 
 #endif // KXMLCORE_PASS_REF_PTR_H

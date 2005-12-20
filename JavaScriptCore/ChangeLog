@@ -1,3 +1,38 @@
+2005-12-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed a leak in the assignment operator from PassRefPtr to RefPtr
+
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::operator=):
+
+	- fix problem with PassRefPtr that darin spotted - it lacked a copy constructor
+	and therefore was using the default one, which can lead to excess derefs
+
+	I fixed this by adding a copy constructor from non-const
+	reference, and by adding a template pass() function that you have
+	to use when raw pointer or RefPtr are passed where PassRefPtr is
+	expected.
+
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add): Changed to have PassRefPtr return type and
+	pass() the results.	
+        * kjs/identifier.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList): Use pass()
+	where required.
+        * kjs/ustring.cpp:
+        (KJS::UString::UString): Use pass() as needed.
+        (KJS::UString::append): ditto
+        (KJS::UString::substr): ditto
+        * kjs/ustring.h:
+        (KJS::UString::UString): Use initializer instead of assignment
+        * kxmlcore/PassRefPtr.h:
+        (KXMLCore::PassRefPtr::PassRefPtr): Added copy constructor
+        (KXMLCore::pass): new template function to make it convenient to pass
+	a PassRefPtr
+
 2005-12-19  Geoffrey Garen  <ggaren@apple.com>
   
         Reviewed by Maciej.

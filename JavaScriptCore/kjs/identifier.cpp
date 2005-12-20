@@ -123,15 +123,15 @@ inline UString::Rep *convert(const char* const& c, unsigned hash)
     return r; 
 }
 
-UString::Rep *Identifier::add(const char *c)
+PassRefPtr<UString::Rep> Identifier::add(const char *c)
 {
     if (!c)
-        return &UString::Rep::null;
+        return pass(&UString::Rep::null);
     int length = strlen(c);
     if (length == 0)
-        return &UString::Rep::empty;
+        return pass(&UString::Rep::empty);
     
-    return *identifierTable().insert<const char *, hash, KJS::equal, convert>(c).first;
+    return pass(*identifierTable().insert<const char *, hash, KJS::equal, convert>(c).first);
 }
 
 struct UCharBuffer {
@@ -163,27 +163,27 @@ inline UString::Rep *convert(const UCharBuffer& buf, unsigned hash)
     return r; 
 }
 
-UString::Rep *Identifier::add(const UChar *s, int length)
+PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
 {
     if (length == 0)
-        return &UString::Rep::empty;
+        return pass(&UString::Rep::empty);
     
     UCharBuffer buf = {s, length}; 
-    return *identifierTable().insert<UCharBuffer, hash, KJS::equal, convert>(buf).first;
+    return pass(*identifierTable().insert<UCharBuffer, hash, KJS::equal, convert>(buf).first);
 }
 
-UString::Rep *Identifier::add(UString::Rep *r)
+PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
 {
     if (r->isIdentifier)
-        return r;
+        return pass(r);
 
     if (r->len == 0)
-        return &UString::Rep::empty;
+        return pass(&UString::Rep::empty);
 
     UString::Rep *result = *identifierTable().insert(r).first;
     if (result == r)
         r->isIdentifier = true;
-    return result;
+    return pass(result);
 }
 
 void Identifier::remove(UString::Rep *r)
