@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        - fixed leak in createAttributeMap
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6162
+	
+        * khtml/xml/dom_elementimpl.cpp:
+        (StyledElementImpl::createAttributeMap): the new attribute map
+	is going in a RefPtr, don't also ref it manually.
+
+2005-12-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
         - change an assignment to a contructor declaration to build with PassRefPtr
 	leak fix changes
 
