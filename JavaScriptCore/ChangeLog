@@ -1,8 +1,18 @@
+2005-12-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- made ALWAYS_INLINE declare things inline as well as __attribute__((always_inline))
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+
+        * kxmlcore/AlwaysInline.h:
+
 2005-12-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
 	- fixed a leak in the assignment operator from PassRefPtr to RefPtr
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
 
         * kxmlcore/RefPtr.h:
         (KXMLCore::RefPtr::operator=):

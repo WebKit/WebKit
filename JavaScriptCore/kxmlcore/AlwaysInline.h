@@ -21,7 +21,7 @@
 
 #ifndef ALWAYS_INLINE
 #if defined(__GNUC__) && (__GNUC__ > 3)
-#define ALWAYS_INLINE __attribute__ ((__always_inline__))
+#define ALWAYS_INLINE inline __attribute__ ((__always_inline__))
 #else
 #define ALWAYS_INLINE inline
 #endif
