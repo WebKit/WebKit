@@ -1,3 +1,14 @@
+2005-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mitz
+        
+        Fixed more uninitialized variable warnings, and 
+        removed an extra semicolon.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation):
+        (createATSULayoutParameters):
+
 2005-12-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

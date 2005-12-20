@@ -241,10 +241,10 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         UniChar ch, nextCh;
         ByteCount offset = layoutRecords[0].originalOffset;
         nextCh = *(UniChar *)(((char *)characters)+offset);
-        bool shouldRound;
+        bool shouldRound = false;
         bool syntheticBoldPass = params->syntheticBoldPass;
-        Fixed syntheticBoldOffset;
-        ATSGlyphRef spaceGlyph;
+        Fixed syntheticBoldOffset = 0;
+        ATSGlyphRef spaceGlyph = 0;
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
         ItemCount i;
@@ -1289,7 +1289,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
     UniCharArrayOffset substituteOffset = runFrom;
     UniCharCount substituteLength;
     UniCharArrayOffset lastOffset;
-    WebTextRenderer *substituteRenderer = 0;;
+    WebTextRenderer *substituteRenderer = 0;
 
     while (substituteOffset < runTo) {
         lastOffset = substituteOffset;
