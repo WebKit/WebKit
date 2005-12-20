@@ -349,7 +349,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebView *parentWebView = [_frame webView];
 
-    // We need to remove the main frame from WebFrameNaemespaces here, before it actually
+    // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
     // can't find it. Otherwise, window.open will select a closed WebView instead of 
     // opening a new one <rdar://problem/3572585>.
@@ -361,8 +361,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // message by actually closing the WebView. Safari guarantees this behavior, but other apps might not.
     // This approach is an inherent limitation of not making a close execute immediately
     // after a call to window.close.
-    [[parentWebView mainFrame] _setFrameNamespace:nil];
+    
+    [WebFrameNamespaces removeWebView:parentWebView fromFrameNamespace:[parentWebView groupName]];
+
     [parentWebView stopLoading:self];
+    
     [parentWebView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
 }
 
@@ -1715,9 +1718,9 @@ static NSCharacterSet *_getPostSmartSet(void)
     NSMutableArray *deferredWebViews = [NSMutableArray array];
     NSString *setName = [webView groupName];
     if (setName) {
-        NSEnumerator *enumerator = [WebFrameNamespaces framesInNamespace:setName];
+        NSEnumerator *enumerator = [WebFrameNamespaces webViewsInFrameNamespace:setName];
         WebView *otherWebView;
-        while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
+        while ((otherWebView = [enumerator nextObject]) != nil) {
             if (otherWebView != webView && ![otherWebView defersCallbacks]) {
                 [otherWebView setDefersCallbacks:YES];
                 [deferredWebViews addObject:otherWebView];
