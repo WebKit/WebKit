@@ -1,3 +1,14 @@
+2005-12-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, committed by Adele.
+
+        - fix deployment builds broken by the ATSUI multiple renderers patch
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6153
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (createATSULayoutParameters): Assign initial values, which will never be used,
+        to substituteRenderer and firstSmallCap, to avoid uninitialized variable warnings.
+
 2005-12-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John.

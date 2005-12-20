@@ -1289,7 +1289,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
     UniCharArrayOffset substituteOffset = runFrom;
     UniCharCount substituteLength;
     UniCharArrayOffset lastOffset;
-    WebTextRenderer *substituteRenderer;
+    WebTextRenderer *substituteRenderer = 0;;
 
     while (substituteOffset < runTo) {
         lastOffset = substituteOffset;
@@ -1308,10 +1308,10 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
         }
 
         bool isSmallCap = false;
+        UniCharArrayOffset firstSmallCap = 0;
         WebTextRenderer *r = renderer;
         UniCharArrayOffset i;
         for (i = lastOffset;  ; i++) {
-            UniCharArrayOffset firstSmallCap;
             if (i == substituteOffset || i == substituteOffset + substituteLength) {
                 if (isSmallCap) {
                     isSmallCap = false;
