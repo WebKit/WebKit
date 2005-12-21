@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQExceptions.h"
+#import <kxmlcore/Assertions.h>
 
-void KWQReportBlockedException(KWQNSHandler& _localHandler)
+void KWQReportBlockedException(NSException *localException)
 {
-        NSException *localException = _NSExceptionObjectFromHandler2(&_localHandler.handler);
 #if ASSERT_DISABLED
 	NSLog(@"Uncaught exception - %@\n", localException);
 #else
-	ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException );
+	ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException);
 #endif
 }

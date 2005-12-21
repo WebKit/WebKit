@@ -246,18 +246,16 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(loader->part());
 
-    QString urlString = cachedObject->url().qstring();
-
-    if (!part->haveToldBridgeAboutLoad(urlString)) {
-	WebCoreBridge *bridge = part->bridge();
-
-	KWQ_BLOCK_EXCEPTIONS;
-	[bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
+    if (!part->haveToldBridgeAboutLoad(cachedObject->url().qstring())) {
+        WebCoreBridge *bridge = part->bridge();
+        
+        KWQ_BLOCK_EXCEPTIONS;
+        [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
                                     response:(NSURLResponse *)cachedObject->response()
                                         data:(NSData *)cachedObject->allData()];
-	KWQ_UNBLOCK_EXCEPTIONS;
+        KWQ_UNBLOCK_EXCEPTIONS;
 
-	part->didTellBridgeAboutLoad(urlString);
+        part->didTellBridgeAboutLoad(cachedObject->url().qstring());
     }
 }
 

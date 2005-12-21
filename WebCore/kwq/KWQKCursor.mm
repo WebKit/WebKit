@@ -49,8 +49,9 @@
         nameToCursor = [[NSMutableDictionary alloc] init];
     }
     
+    NSCursor *cursor;
     KWQ_BLOCK_EXCEPTIONS;
-    NSCursor * cursor = [nameToCursor objectForKey:name];
+    cursor = [nameToCursor objectForKey:name];
     if (!cursor) { 
 	NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
             [[NSBundle bundleForClass:[KWQKCursorBundleDummy class]]

@@ -322,9 +322,9 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     size = [NSScrollView frameSizeForContentSize:contentSize hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
     size.width += [NSScroller scrollerWidthForControlSize:NSSmallControlSize] - [NSScroller scrollerWidth] + leftMargin + rightMargin;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return QSize(size);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QSize(0, 0);
 }
 
 QWidget::FocusPolicy QListBox::focusPolicy() const

@@ -739,8 +739,8 @@ class KWQPluginPart : public ReadOnlyPart
 
 ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    KWQ_BLOCK_EXCEPTIONS;
     ReadOnlyPart *part;
+    KWQ_BLOCK_EXCEPTIONS;
 
     ObjectElementType objectType = ObjectElementFrame;
     if (child.m_type == ChildFrame::Object)
@@ -1233,9 +1233,10 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
 
 NSView *KWQKHTMLPart::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
 {
+    NSView * next;
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSView * next = nextKeyViewInFrameHierarchy(node, direction);
+    next = nextKeyViewInFrameHierarchy(node, direction);
     if (next) {
         return next;
     }
@@ -1791,10 +1792,11 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     QString defaultValueText = defaultValue;
     defaultValueText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
+    bool ok;
     KWQ_BLOCK_EXCEPTIONS;
     NSString *returnedText = nil;
 
-    bool ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
+    ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
 	       defaultText:defaultValue.getNSString() returningText:&returnedText];
 
     if (ok) {
@@ -1879,6 +1881,7 @@ void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
 
 bool KWQKHTMLPart::keyEvent(NSEvent *event)
 {
+    bool result;
     KWQ_BLOCK_EXCEPTIONS;
 
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
@@ -1905,7 +1908,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     _currentEvent = KWQRetain(event);
 
     QKeyEvent qEvent(event);
-    bool result = !node->dispatchKeyEvent(&qEvent);
+    result = !node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event.
     // To get KHTML to do this, we send a second KeyPress QKeyEvent with "is repeat" set to true,
@@ -2818,6 +2821,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
         return false;
     }
 
+    bool swallowEvent;
     KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
@@ -2831,7 +2835,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     NodeImpl::MouseEvent mev(qev.stateAfter(), NodeImpl::MousePress);
     doc->prepareMouseEvent(false, xm, ym, &mev);
 
-    bool swallowEvent = v->dispatchMouseEvent(contextmenuEvent,
+    swallowEvent = v->dispatchMouseEvent(contextmenuEvent,
         mev.innerNode.get(), true, 0, &qev, true, NodeImpl::MousePress);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode->isContentEditable())) {
@@ -2856,10 +2860,9 @@ struct ListItemInfo {
 
 NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 {
+    NSFileWrapper *wrapper = nil;
     KWQ_BLOCK_EXCEPTIONS;
     
-    NSFileWrapper *wrapper = nil;
-
     const AtomicString& attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.qstring()).getNSURL();
@@ -2915,6 +2918,7 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
 
 NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOffset, NodeImpl *endNode, int endOffset)
 {
+    NSMutableAttributedString *result;
     KWQ_BLOCK_EXCEPTIONS;
 
     NodeImpl * _startNode = _start;
@@ -2923,7 +2927,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         return nil;
     }
 
-    NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
+    result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;
     bool addedSpace = true;
@@ -3394,10 +3398,11 @@ NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
         return nil;
     }
     
+    NSImage *resultImage;
     KWQ_BLOCK_EXCEPTIONS;
     
     NSRect bounds = [view bounds];
-    NSImage *resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
+    resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
 
     if (rect.size.width != 0 && rect.size.height != 0) {
         [resultImage setFlipped:YES];

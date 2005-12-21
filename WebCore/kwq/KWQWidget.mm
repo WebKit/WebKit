@@ -190,12 +190,11 @@ void QWidget::move(const QPoint &p)
 QRect QWidget::frameGeometry() const
 {
     QRect rect;
-
     KWQ_BLOCK_EXCEPTIONS;
     rect = QRect([getOuterView() frame]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return rect;
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QRect();
 }
 
 int QWidget::baselinePosition(int height) const
@@ -419,9 +418,9 @@ QPoint QWidget::mapFromGlobal(const QPoint &p) const
 
     KWQ_BLOCK_EXCEPTIONS;
     bp = [[KWQKHTMLPart::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return QPoint(bp);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QPoint();
 }
 
 NSView *QWidget::getView() const

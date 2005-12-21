@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQKHTMLPartBrowserExtension.h"
 
+#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "WebCoreBridge.h"
 #import "khtml_part.h"

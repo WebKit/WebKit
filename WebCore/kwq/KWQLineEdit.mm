@@ -283,9 +283,9 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     size.width += ceilf([renderer floatWidthForRun:&run style:&style] * numCharacters);
 
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return QSize(size);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QSize(0, 0);
 }
 
 int QLineEdit::baselinePosition(int height) const

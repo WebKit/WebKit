@@ -97,9 +97,9 @@ QSize KWQFileButton::sizeForCharacterWidth(int characters) const
     NSSize size = {0,0};
     KWQ_BLOCK_EXCEPTIONS;
     size = [button bestVisualFrameSizeForCharacterCount:characters];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return QSize(size);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QSize(0, 0);
 }
 
 QRect KWQFileButton::frameGeometry() const
@@ -109,9 +109,9 @@ QRect KWQFileButton::frameGeometry() const
     NSRect frame = {{0,0},{0,0}};
     KWQ_BLOCK_EXCEPTIONS;
     frame = [button visualFrame];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     return QRect(frame);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QRect();
 }
 
 void KWQFileButton::setFrameGeometry(const QRect &rect)

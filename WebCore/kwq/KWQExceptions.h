@@ -24,32 +24,9 @@
  */
 
 #import <Foundation/NSException.h>
-#import <kxmlcore/Assertions.h>
 
-class KWQNSHandler
-{
- public:
-    KWQNSHandler() { _NSAddHandler2(&handler); }
-    ~KWQNSHandler() { _NSRemoveHandler2(&handler); }
+void KWQReportBlockedException(NSException *);
 
-    NSHandler2 handler;
- private:
-    KWQNSHandler(const KWQNSHandler &);
-    KWQNSHandler &operator=(const KWQNSHandler &);
-};
-
-
-void KWQReportBlockedException(KWQNSHandler& _localHandler);
-
-#define KWQ_BLOCK_EXCEPTIONS                            \
-{                                                       \
-    KWQNSHandler _localHandler;	                        \
-    if (!_NSSETJMP(_localHandler.handler._state, 0)) {
-
-
-#define KWQ_UNBLOCK_EXCEPTIONS                    \
-    } else {                                      \
-        KWQReportBlockedException(_localHandler); \
-    }                                             \
-}
+#define KWQ_BLOCK_EXCEPTIONS @try {
+#define KWQ_UNBLOCK_EXCEPTIONS } @catch(NSException *localException) { KWQReportBlockedException(localException); }
 
