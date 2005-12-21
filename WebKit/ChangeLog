@@ -1,3 +1,16 @@
+2005-12-20  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by justin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4682>
+        -[WebHTMLView firstRectForCharacterRange:] is using _selectedRange instead of the given range if no marked text
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView firstRectForCharacterRange:]): 
+        Handle some large unsigned values the way NSTextView does.
+        Actually use the range passed in instead of _selectedRange,
+        use of _selectedRange was a workaround that is no longer necessary.
+
 2005-12-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

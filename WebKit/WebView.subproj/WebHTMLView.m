@@ -4993,23 +4993,26 @@ static NSArray *validAttributes = nil;
 {
     WebBridge *bridge = [self _bridge];
     
-    DOMRange *range;
+    // Just to match NSTextView's behavior. Regression tests cannot detect this;
+    // to reproduce, use a test application from http://bugzilla.opendarwin.org/show_bug.cgi?id=4682
+    // (type something; try ranges (1, -1) and (2, -1).
+    if ((theRange.location + theRange.length < theRange.location) && (theRange.location + theRange.length != 0))
+        theRange.length = 0;
     
-    if ([self hasMarkedText]) {
-        range = [bridge convertNSRangeToDOMRange:theRange];
-    }
-    else {
-        range = [self _selectedRange];
-    }
+    DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
+    if (!range)
+        return NSMakeRect(0,0,0,0);
     
-    NSRect resultRect;
-    if ([range startContainer]) {
-        resultRect = [self convertRect:[bridge firstRectForDOMRange:range] toView:nil];
-        resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
-    }
-    else {
-        resultRect = NSMakeRect(0,0,0,0);
-    }
+    ASSERT([range startContainer]);
+    ASSERT([range endContainer]);
+    
+    NSRect resultRect = [bridge firstRectForDOMRange:range];
+    resultRect = [self convertRect:resultRect toView:nil];
+
+    NSWindow *window = [self window];
+    if (window)
+        resultRect.origin = [window convertBaseToScreen:resultRect.origin];
+    
     return resultRect;
 }
 
