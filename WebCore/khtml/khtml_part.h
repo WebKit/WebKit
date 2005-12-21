@@ -661,6 +661,12 @@ public:
   void selectAll();
 
   /**
+   * Marks contents of node as selected.
+   * Returns whether the selection changed.
+   */
+  bool selectContentsOfNode(DOM::NodeImpl*);
+ 
+  /**
    * Returns whether editing should end in the given range
    */
   virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;

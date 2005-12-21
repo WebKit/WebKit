@@ -792,8 +792,18 @@ CSSStyleDeclarationImpl *ElementImpl::style()
 void ElementImpl::focus()
 {
     DocumentImpl* doc = getDocument();
-    if (doc && isFocusable())
-        doc->setFocusNode(this);
+    if (doc) {
+        doc->updateLayout();
+        if (isFocusable()) {
+            doc->setFocusNode(this);
+            if (isContentEditable()) {
+                // FIXME: we should restore the previous selection if there is one, instead of always selecting all.
+                if (KWQ(doc->part())->selectContentsOfNode(this))
+                    KWQ(doc->part())->revealSelection();
+            } else if (renderer() && !renderer()->isWidget())
+                renderer()->enclosingLayer()->scrollRectToVisible(getRect());
+        }
+    }
 }
 
 void ElementImpl::blur()

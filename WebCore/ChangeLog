@@ -1,3 +1,33 @@
+2005-12-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5911
+        REGRESSION: Page scroll position jumps when clicking on word in editable div
+
+        I moved the scrolling code out of setFocusNode, and consolidated some of the focus code to scroll when necessary.
+
+        * khtml/html/html_formimpl.cpp: Removed HTMLButtonElementImpl::blur, HTMLButtonElementImpl::focus, HTMLInputElementImpl::blur, HTMLInputElementImpl::focus.  
+        New code in ElementImpl::focus will now handle these cases.  This allows tabbing through the elements to go through the same code path as calling focus() on an element.  
+        Before, focus() would scroll to reveal for any form elements that had a RenderWidget, but wouldn't scroll for anchor elements, or any of the new form elements.  
+        Now the behavior will be more consistent.
+        (DOM::HTMLLabelElementImpl::focus): calls ElementImpl::focus.
+        (DOM::HTMLLegendElementImpl::focus): ditto.
+        * khtml/html/html_formimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectAll): calls new function selectContentsOfNode
+        (KHTMLPart::selectContentsOfNode): factored out code to selectAll for a particular node- which is useful for contenteditable elements.
+        * khtml/khtml_part.h: added selectContentsOfNode
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode): removed scrolling code.
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::focus): Calls updateLayout in case focus() is called before there's a renderer.
+        Makes a selection for editable elements (right now we select all, but this will change).
+        Doesn't scroll if the renderer is a RenderWidget, since that is handled when the view becomes first responder.  This will go away when we convert the rest of our form elements.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::revealSelection): Made this more like centerSelectionInVisibleArea  where we get the right rectangle if the selection is a caret.
+        (KWQKHTMLPart::nextKeyViewInFrame): call ElementImpl::focus() for the node.  This will set the selection too, which used to be done here.
+
 2005-12-20  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by justin

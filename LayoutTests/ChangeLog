@@ -1,3 +1,24 @@
+2005-12-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Updating results for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5911
+        REGRESSION: Page scroll position jumps when clicking on word in editable div
+
+        These results all changed because we now select all for contenteditable elements when focus() is called on them.
+
+        * editing/selection/focus_editable_html-expected.checksum:
+        * editing/selection/focus_editable_html-expected.png:
+        * editing/selection/focus_editable_html-expected.txt:
+        * fast/dom/blur-contenteditable-expected.txt:
+        * fast/dom/focus-contenteditable-expected.checksum:
+        * fast/dom/focus-contenteditable-expected.png:
+        * fast/dom/focus-contenteditable-expected.txt:
+        * fast/overflow/overflow-focus-ring-expected.checksum:
+        * fast/overflow/overflow-focus-ring-expected.png:
+        * fast/overflow/overflow-focus-ring-expected.txt:
+
 2005-12-21  Eric Seidel  <eseidel@apple.com>
 
         Fixed ChangeLog typo.

@@ -2706,13 +2706,19 @@ void KHTMLPart::selectAll()
     
     NodeImpl *startNode = d->m_selection.start().node();
     NodeImpl *root = startNode && startNode->isContentEditable() ? startNode->rootEditableElement() : d->m_doc->documentElement();
-
-    SelectionController sel = SelectionController(Position(root, 0), khtml::DOWNSTREAM, Position(root, root->maxDeepOffset()), khtml::DOWNSTREAM);
     
-    if (shouldChangeSelection(sel))
-        setSelection(sel);
-        
+    selectContentsOfNode(root);
     selectFrameElementInParentIfFullySelected();
+}
+
+bool KHTMLPart::selectContentsOfNode(NodeImpl* node)
+{
+    SelectionController sel = SelectionController(Position(node, 0), khtml::DOWNSTREAM, Position(node, node->maxDeepOffset()), khtml::DOWNSTREAM);    
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel);
+        return true;
+    }
+    return false;
 }
 
 bool KHTMLPart::shouldChangeSelection(const SelectionController &newselection) const

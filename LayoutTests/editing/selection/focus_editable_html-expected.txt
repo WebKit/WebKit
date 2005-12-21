@@ -1,4 +1,6 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 1 of HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BODY > HTML > #document to 42 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 2008x2070
   RenderCanvas at (0,0) size 785x585
 layer at (0,0) size 2008x2070
@@ -15,3 +17,5 @@ layer at (0,0) size 2008x2070
         RenderText {TEXT} at (0,0) size 237x18
           text run at (0,0) width 237: "If the document scrolls here, test fails."
         RenderText {TEXT} at (0,0) size 0x0
+selection start: position 1 of child 0 {TEXT} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 42 of child 4 {TEXT} of child 0 {BODY} of child 0 {HTML} of document

@@ -259,9 +259,6 @@ public:
 
     DOMString value() const;
     void setValue(const DOMString &);
-
-    void blur();
-    void focus();
     
 protected:
     DOMString m_value;
@@ -354,9 +351,6 @@ public:
     void setValueFromRenderer(const DOMString &);
     bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
     void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
-
-    void blur();
-    void focus();
 
     virtual bool maintainsState() { return m_type != PASSWORD; }
     virtual QString state();
@@ -560,8 +554,6 @@ public:
 
     void add ( HTMLElementImpl *element, HTMLElementImpl *before, int &exceptioncode );
     void remove ( int index );
-    void blur();
-    void focus();
 
     DOMString value();
     void setValue(const DOMString &);
@@ -766,8 +758,6 @@ public:
     void setValue(const DOMString &value);
     DOMString defaultValue();
     void setDefaultValue(const DOMString &value);
-    void blur();
-    void focus();
 
     void invalidateValue() { m_valueIsValid = false; }
     void updateValue();

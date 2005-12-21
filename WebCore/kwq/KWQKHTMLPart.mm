@@ -856,13 +856,27 @@ void KWQKHTMLPart::unfocusWindow()
 
 void KWQKHTMLPart::revealSelection()
 {
-    if (d->m_selection.start().isNotNull()) {
-        if (selectionStart() && selectionStart()->renderer()) {
-            RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
-            if (layer) {
-                ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
-                layer->scrollRectToVisible(selectionRect());
-            }
+    QRect rect;
+    
+    switch (selection().state()) {
+        case SelectionController::NONE:
+            return;
+            
+        case SelectionController::CARET:
+            rect = selection().caretRect();
+            break;
+
+        case SelectionController::RANGE:
+            rect = selectionRect();
+            break;
+    }
+    
+    ASSERT(d->m_selection.start().isNotNull());
+    if (selectionStart() && selectionStart()->renderer()) {
+        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+        if (layer) {
+            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+            layer->scrollRectToVisible(rect);
         }
     }
 }
@@ -1195,18 +1209,11 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
             if (view) {
                 return view;
             }
-        }
-        else {
-            doc->setFocusNode(node);
-            if (node->isEditableBlock()) {
-                SelectionController sel(Position(node, 0), DOWNSTREAM, Position(node, node->maxDeepOffset()), DOWNSTREAM);
-                if (KHTMLPart::shouldChangeSelection(sel))
-                    setSelection(sel);
-            }
- 
-            [_bridge makeFirstResponder:[_bridge documentView]];
-            return [_bridge documentView];
-        }
+        } else {
+            static_cast<ElementImpl *>(node)->focus(); 
+        } 
+        [_bridge makeFirstResponder:[_bridge documentView]];
+        return [_bridge documentView];
     }
 }
 

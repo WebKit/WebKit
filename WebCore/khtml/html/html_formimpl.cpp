@@ -1041,17 +1041,6 @@ DOMString HTMLButtonElementImpl::type() const
     return getAttribute(typeAttr);
 }
 
-void HTMLButtonElementImpl::blur()
-{
-    if(getDocument()->focusNode() == this)
-	getDocument()->setFocusNode(0);
-}
-
-void HTMLButtonElementImpl::focus()
-{
-    getDocument()->setFocusNode(this);
-}
-
 void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() ==  typeAttr) {
@@ -2018,17 +2007,6 @@ bool HTMLInputElementImpl::storesValueSeparateFromAttribute() const
     return false;
 }
 
-void HTMLInputElementImpl::blur()
-{
-    if(getDocument()->focusNode() == this)
-	getDocument()->setFocusNode(0);
-}
-
-void HTMLInputElementImpl::focus()
-{
-    getDocument()->setFocusNode(this);
-}
-
 void* HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 {
     // preventDefault or "return false" are used to reverse the automatic checking/selection we do here.
@@ -2390,7 +2368,7 @@ ElementImpl *HTMLLabelElementImpl::formElement()
 void HTMLLabelElementImpl::focus()
 {
     if (ElementImpl *element = formElement())
-        getDocument()->setFocusNode(element);
+        element->focus();
 }
 
 void HTMLLabelElementImpl::accessKeyAction(bool sendToAnyElement)
@@ -2502,7 +2480,7 @@ ElementImpl *HTMLLegendElementImpl::formElement()
 void HTMLLegendElementImpl::focus()
 {
     if (ElementImpl *element = formElement())
-        getDocument()->setFocusNode(element);
+        element->focus();
 }
 
 void HTMLLegendElementImpl::accessKeyAction(bool sendToAnyElement)
@@ -2636,17 +2614,6 @@ void HTMLSelectElementImpl::remove( int index )
     item->deref();
     if( !exceptioncode )
         setRecalcListItems();
-}
-
-void HTMLSelectElementImpl::blur()
-{
-    if(getDocument()->focusNode() == this)
-	getDocument()->setFocusNode(0);
-}
-
-void HTMLSelectElementImpl::focus()
-{
-    getDocument()->setFocusNode(this);
 }
 
 DOMString HTMLSelectElementImpl::value()
@@ -3467,17 +3434,6 @@ void HTMLTextAreaElementImpl::setDefaultValue(const DOMString &defaultValue)
     }
     insertBefore(getDocument()->createTextNode(defaultValue),firstChild(), exceptioncode);
     setValue(defaultValue);
-}
-
-void HTMLTextAreaElementImpl::blur()
-{
-    if(getDocument()->focusNode() == this)
-	getDocument()->setFocusNode(0);
-}
-
-void HTMLTextAreaElementImpl::focus()
-{
-    getDocument()->setFocusNode(this);
 }
 
 bool HTMLTextAreaElementImpl::isEditable()

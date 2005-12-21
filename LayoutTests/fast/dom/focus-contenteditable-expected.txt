@@ -1,4 +1,6 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 19 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 785x894
   RenderCanvas at (0,0) size 785x600
 layer at (0,0) size 785x894
@@ -18,3 +20,5 @@ layer at (0,0) size 785x894
         RenderText {TEXT} at (0,0) size 78x18
           text run at (0,0) width 78: "Test Passed."
       RenderBlock {DIV} at (0,878) size 769x0
+selection start: position 0 of child 0 {TEXT} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 19 of child 0 {TEXT} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
