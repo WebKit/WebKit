@@ -262,13 +262,6 @@ void RenderWidget::destroy()
     if (layer)
         layer->clearClipRect();
     
-    if (m_inlineBoxWrapper) {
-        if (!documentBeingDestroyed())
-            m_inlineBoxWrapper->remove();
-        m_inlineBoxWrapper->destroy(arena);
-        m_inlineBoxWrapper = 0;
-    }
-    
     setNode(0);
     deref(arena);
     

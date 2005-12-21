@@ -2061,6 +2061,8 @@ void RenderObject::remove()
     if (parent())
         //have parent, take care of the tree integrity
         parent()->removeChild(this);
+    
+    deleteLineBoxWrapper();
 }
 
 void RenderObject::destroy()

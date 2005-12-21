@@ -1,3 +1,54 @@
+2005-12-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin).
+
+        <rdar://problem/4039777> Pasting particular snippet of HTML containing list items and a link creates too many list items
+        - Fixed paste crash by making calling RenderBox::deleteLineBoxWrapper() from RenderObject::remove(),
+        so that the connection is broken before the InlineBox's parent gets deleted.
+        - Fixed overzealous style changes when setting the style on a specific range of elements.  These specific
+        ranges are derived programmatically, e.g. as a part of pasting, so they must be respected exactly rather
+        than modified by converting the endpoints to VisiblePositions.
+        
+        Test cases coming soon.
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::ApplyStyleCommand):
+        (khtml::ApplyStyleCommand::updateStartEnd):
+        (khtml::ApplyStyleCommand::startPosition):
+        (khtml::ApplyStyleCommand::endPosition):
+        (khtml::ApplyStyleCommand::applyBlockStyle):
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::ApplyStyleCommand::removeInlineStyle):
+        (khtml::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextAtEndIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtEndIfNeeded):
+        (khtml::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (khtml::ApplyStyleCommand::joinChildTextNodes):
+        * khtml/editing/apply_style_command.h:
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::applyStyle):
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles):
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::destroy):
+        (RenderBox::deleteLineBoxWrapper):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::~RenderListMarker):
+        (RenderListMarker::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::remove):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::destroy):
+
 2005-12-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

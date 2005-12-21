@@ -148,13 +148,6 @@ void RenderBox::destroy()
     // This must be done before we destroy the RenderObject.
     if (layer)
         layer->clearClipRect();
-        
-    if (m_inlineBoxWrapper) {
-        if (!documentBeingDestroyed())
-            m_inlineBoxWrapper->remove();
-        m_inlineBoxWrapper->destroy(arena);
-        m_inlineBoxWrapper = 0;
-    }
 
     RenderObject::destroy();
     
@@ -755,9 +748,12 @@ InlineBox* RenderBox::inlineBoxWrapper() const
 
 void RenderBox::deleteLineBoxWrapper()
 {
-    if (m_inlineBoxWrapper)
+    if (m_inlineBoxWrapper) {
+        if (!documentBeingDestroyed())
+            m_inlineBoxWrapper->remove();
         m_inlineBoxWrapper->destroy(renderArena());
-    m_inlineBoxWrapper = 0;
+        m_inlineBoxWrapper = 0;
+    }
 }
 
 void RenderBox::setInlineBoxWrapper(InlineBox* b)

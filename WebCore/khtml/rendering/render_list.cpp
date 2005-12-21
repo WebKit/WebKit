@@ -330,21 +330,23 @@ RenderListMarker::RenderListMarker(DocumentImpl* document)
 
 RenderListMarker::~RenderListMarker()
 {
-    if(m_listImage)
+    if (m_listImage)
         m_listImage->deref(this);
 }
 
 void RenderListMarker::setStyle(RenderStyle *s)
 {
-    if ( s && style() && s->listStylePosition() != style()->listStylePosition() )
+    if (s && style() && s->listStylePosition() != style()->listStylePosition())
         setNeedsLayoutAndMinMaxRecalc();
     
     RenderBox::setStyle(s);
 
     if ( m_listImage != style()->listStyleImage() ) {
-	if(m_listImage)  m_listImage->deref(this);
+	if (m_listImage)
+	    m_listImage->deref(this);
 	m_listImage = style()->listStyleImage();
-	if(m_listImage) m_listImage->ref(this);
+	if (m_listImage)
+	    m_listImage->ref(this);
     }
 }
 

@@ -385,7 +385,7 @@ public:
     // iterate over structures on the line.
     virtual InlineBox* inlineBoxWrapper() const;
     virtual void setInlineBoxWrapper(InlineBox* b);
-    void deleteLineBoxWrapper();
+    virtual void deleteLineBoxWrapper();
 
     virtual InlineBox *inlineBox(int offset=0, EAffinity affinity = UPSTREAM);
     

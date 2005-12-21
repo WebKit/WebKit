@@ -118,6 +118,12 @@ void CompositeEditCommand::applyStyle(CSSStyleDeclarationImpl *style, EditAction
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommand::applyStyle(CSSStyleDeclarationImpl *style, Position start, Position end, EditAction editingAction)
+{
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, start, end, editingAction));
+    applyCommandToComposite(cmd);
+}
+
 void CompositeEditCommand::insertParagraphSeparator()
 {
     EditCommandPtr cmd(new InsertParagraphSeparatorCommand(document()));

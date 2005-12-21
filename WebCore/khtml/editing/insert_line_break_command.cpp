@@ -171,16 +171,7 @@ void InsertLineBreakCommand::doApply()
     
     if (typingStyle && typingStyle->length() > 0) {
         SelectionController selectionBeforeStyle = endingSelection();
-
-        DOM::RangeImpl *rangeAroundNode = document()->createRange();
-        int exception = 0;
-        rangeAroundNode->selectNode(nodeToInsert, exception);
-
-        // affinity is not really important since this is a temp selection
-        // just for calling applyStyle
-        setEndingSelection(SelectionController(rangeAroundNode, khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
-        applyStyle(typingStyle);
-
+        applyStyle(typingStyle, Position(nodeToInsert, 0), Position(nodeToInsert, nodeToInsert->maxDeepOffset()));
         setEndingSelection(selectionBeforeStyle);
     }
 

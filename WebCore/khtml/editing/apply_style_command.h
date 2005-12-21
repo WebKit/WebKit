@@ -40,6 +40,7 @@ public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
 
     ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
+    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, const DOM::Position start, const DOM::Position end, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
     virtual ~ApplyStyleCommand();
 	
     virtual void doApply();
@@ -80,10 +81,17 @@ private:
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
     float computedFontSize(const DOM::NodeImpl *);
     void joinChildTextNodes(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end);
+
+    void ApplyStyleCommand::updateStartEnd(DOM::Position newStart, DOM::Position newEnd);
+    DOM::Position ApplyStyleCommand::startPosition();
+    DOM::Position ApplyStyleCommand::endPosition();
     
+    DOM::Position m_start;
+    DOM::Position m_end;
     RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_style;
     EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
+    bool m_useEndingSelection;
 };
 
 bool isStyleSpan(const DOM::NodeImpl *node);

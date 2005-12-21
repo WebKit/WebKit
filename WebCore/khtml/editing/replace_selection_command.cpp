@@ -347,18 +347,8 @@ void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle>
         
         // If the desiredStyle is non-zero length, that means the current style differs
         // from the desired by the styles remaining in the desiredStyle declaration.
-        if (desiredStyle->length() > 0) {
-            DOM::RangeImpl *rangeAroundNode = document()->createRange();
-            rangeAroundNode->ref();
-            int exceptionCode = 0;
-            rangeAroundNode->selectNode(node, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            // affinity is not really important since this is a temp selection
-            // just for calling applyStyle
-            setEndingSelection(SelectionController(rangeAroundNode, SEL_DEFAULT_AFFINITY, SEL_DEFAULT_AFFINITY));
-            applyStyle(desiredStyle);
-            rangeAroundNode->deref();
-        }
+        if (desiredStyle->length() > 0)
+	    applyStyle(desiredStyle, Position(node, 0), Position(node, node->maxDeepOffset()));
 
         currentStyle->deref();
     }
@@ -986,19 +976,15 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
 
         if (m_matchStyle) {
             assert(m_insertionStyle);
-            setEndingSelection(SelectionController(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
-            applyStyle(m_insertionStyle);
+            applyStyle(m_insertionStyle, start, end);
         }    
         
         if (lastPositionToSelect.isNotNull())
             end = lastPositionToSelect;
-    }
-    else if (lastPositionToSelect.isNotNull()) {
+    } else if (lastPositionToSelect.isNotNull()) {
         start = end = lastPositionToSelect;
-    }
-    else {
+    } else
         return;
-    }
     
     if (m_selectReplacement)
         setEndingSelection(SelectionController(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));

@@ -53,6 +53,7 @@ protected:
     void appendNode(DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
     void applyCommandToComposite(EditCommandPtr &);
     void applyStyle(DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes);
+    void applyStyle(DOM::CSSStyleDeclarationImpl *style, DOM::Position start, DOM::Position end, EditAction editingAction=EditActionChangeAttributes);
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteSelection(const SelectionController &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
