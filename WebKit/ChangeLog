@@ -1,3 +1,39 @@
+ 2005-12-16  Justin Garcia  <justin.garcia@apple.com>
+ 
+         <rdar://problem/4103393> Frequent Safari crash on lexisnexus.com (khtml::Selection::xPosForVerticalArrowNavigation)
+         <rdar://problem/4330451> CrashTracer: [REGRESSION] 2235 crashes in Safari at com.apple.WebCore: khtml::Selection::xPosForVerticalArrowNavigation const  436
+         
+         Reviewed by darin
+         
+         WebCore will crash when a selection that starts or ends in a node 
+         that has been removed from the document is modify()d.  This can occur:
+         (1) in non-editable regions (4103393 and 4330451), (2) in editable 
+         regions (4383146) as the result of arbitrary DOM operations, and (3) in 
+         Mail (4099739) as the result of an editing operation that sets a 
+         bad ending selection.
+         
+         Crashes of type (1) can occur when the user uses the arrow keys 
+         to interact with a web app, or when the user tries to use 
+         command-shift-arrow to switch tabs (this is a depricated
+         combo that will work if no one else responds to it). The easiest 
+         way to fix these crashes is to disallow editing'ish selection changes 
+         like moveDown:, selectWord:, pageDown:, etc, when the selection 
+         is in a non-editable region.
+         
+         Crashes of type (2) will require a more complicated fix (but occur 
+         much less often than type (1)).  Crashes of type (3) must be 
+         fixed by tracking down the editing operation that sets bad selections.
+         
+         Added a layout-test:
+         * editing/selection/selection-actions.html
+ 
+         * WebView.subproj/WebHTMLView.m:
+         (-[WebHTMLView _canAlterCurrentSelection]):
+         (-[WebHTMLView _alterCurrentSelection:direction:granularity:]):
+         (-[WebHTMLView _alterCurrentSelection:verticalDistance:]):
+         (-[WebHTMLView _expandSelectionToGranularity:]):
+         * WebView.subproj/WebHTMLViewPrivate.h:
+
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mitz

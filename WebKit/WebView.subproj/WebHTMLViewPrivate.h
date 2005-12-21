@@ -78,6 +78,7 @@
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
 - (BOOL)_canEdit;
+- (BOOL)_canAlterCurrentSelection;
 - (BOOL)_hasSelection;
 - (BOOL)_hasSelectionOrInsertionPoint;
 - (BOOL)_isEditable;

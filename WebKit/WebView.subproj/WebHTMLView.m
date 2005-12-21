@@ -1520,6 +1520,11 @@ static WebHTMLView *lastHitView = nil;
     return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
 }
 
+- (BOOL)_canAlterCurrentSelection
+{
+    return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
+}
+
 - (BOOL)_hasSelection
 {
     return [[self _bridge] selectionState] == WebSelectionStateRange;
@@ -3345,6 +3350,9 @@ done:
 
 - (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
+    if (![self _canAlterCurrentSelection])
+        return;
+        
     WebBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
     WebView *webView = [self _webView];
@@ -3355,6 +3363,9 @@ done:
 
 - (void)_alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
+    if (![self _canAlterCurrentSelection])
+        return;
+        
     WebBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration verticalDistance:verticalDistance];
     WebView *webView = [self _webView];
@@ -3567,6 +3578,9 @@ done:
 
 - (void)_expandSelectionToGranularity:(WebBridgeSelectionGranularity)granularity
 {
+    if (![self _canAlterCurrentSelection])
+        return;
+        
     WebBridge *bridge = [self _bridge];
     DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
     if (range && ![range collapsed]) {
