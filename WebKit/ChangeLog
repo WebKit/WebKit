@@ -1,3 +1,23 @@
+2005-12-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6146
+          (REGRESSION: Bold font used for Google search result pages is too thick)
+          
+        This is a problem with a particular font that was installed by Microsoft Office X. Though the
+        font and/or lower levels of font-handling code in the system are buggy, this bad symptom will
+        occur for users of Safari and other WebKit clients who happen to have one of these bad fonts.
+        This adds a workaround to avoid the problem.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]):
+        When we're going to synthesize bold or italic, yet the font we looked up was apparently a
+        match for the traits, try to look up a font that without the to-be-synthesized traits.
+        This way, instead of applying synthetic bold over Arial Bold, we'll apply synthetic
+        bold over Arial Regular, which is uglier than just using Arial Bold, but far less ugly
+        than using Arial Bold with synthetic bold too.
+
  2005-12-16  Justin Garcia  <justin.garcia@apple.com>
  
          <rdar://problem/4103393> Frequent Safari crash on lexisnexus.com (khtml::Selection::xPosForVerticalArrowNavigation)

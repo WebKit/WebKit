@@ -278,12 +278,18 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 - (WebCoreFont)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
     NSFont *font = nil;
+    NSString *matchedFamily = nil;
     
     int i = 0;
     while (families && families[i] != 0 && font == nil) {
         NSString *family = families[i++];
-        if ([family length] != 0)
+        if ([family length] != 0) {
             font = [self cachedFontFromFamily:family traits:traits size:size];
+            if (font) {
+                matchedFamily = family;
+                break;
+            }
+        }
     }
 
     if (font == nil) {
@@ -313,12 +319,34 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     NSFontTraitMask actualTraits = 0;
     if (traits & (NSItalicFontMask | NSBoldFontMask))
         actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:font];
-
+    
     WebCoreFont result;
     result.font = font;
     result.syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result.syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
     result.forPrinter = NO;
+    
+    // There are some malformed fonts that will be correctly returned by -cachedFontForFamily:traits:size: as a match for a particular trait,
+    // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 
+    // synthetic bold on top of an already-bold font, as reported in <http://bugzilla.opendarwin.org/show_bug.cgi?id=6146>. To work around this
+    // problem, if we got an apparent exact match, but the requested traits aren't present in the matched font, we'll try to get a font from 
+    // the same family without those traits (to apply the synthetic traits to later).
+    if (matchedFamily) {
+        NSFontTraitMask nonSyntheticTraits = traits;
+        
+        if (result.syntheticBold)
+            nonSyntheticTraits &= ~NSBoldFontMask;
+        
+        if (result.syntheticOblique)
+            nonSyntheticTraits &= ~NSItalicFontMask;
+        
+        if (nonSyntheticTraits != traits) {
+            NSFont *fontWithoutSyntheticTraits = [self cachedFontFromFamily:matchedFamily traits:nonSyntheticTraits size:size];
+            if (fontWithoutSyntheticTraits)
+                result.font = fontWithoutSyntheticTraits;
+        }
+    }
+    
     return result;
 }
 
