@@ -1,3 +1,12 @@
+2005-12-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/4387630> REGRESSION: <select> element's onClick event doesn't fire @ bugweb.apple.com
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passSubframeEventToSubframe): only pass mouse down for khtmlviews.
+
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eric, thatcher

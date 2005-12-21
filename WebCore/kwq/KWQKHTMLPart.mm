@@ -2527,7 +2527,7 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             if (!renderer || !renderer->isWidget())
                 return false;
             QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
-            if (!widget || !widget->inherits("KHTMLView"))
+            if (!widget || !widget->isKHTMLView())
                 return false;
             KHTMLPart *subframePart = static_cast<KHTMLView *>(widget)->part();
             if (!subframePart)
@@ -2545,6 +2545,9 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             if (!renderer || !renderer->isWidget()) {
                 return false;
             }
+            QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+            if (!widget || !widget->isKHTMLView())
+                return false;
             if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(renderer))) {
                 return false;
             }
