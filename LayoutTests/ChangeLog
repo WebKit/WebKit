@@ -1,5 +1,18 @@
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by justin
+        
+        New layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4682>
+        -[WebHTMLView firstRectForCharacterRange:] is using _selectedRange instead of the given range if no marked text
+
+        * editing/input/firstrectforcharacterrange-plain-expected.txt: Added.
+        * editing/input/firstrectforcharacterrange-plain.html: Added.
+        * editing/input/firstrectforcharacterrange-styled-expected.txt: Added.
+        * editing/input/firstrectforcharacterrange-styled.html: Added.
+
+2005-12-20  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         Layout test for:

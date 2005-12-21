@@ -1,0 +1,59 @@
+<html>
+<head>
+<style>
+body { margin: 10; padding: 0 }
+</style>
+</head>
+<body contenteditable>
+12<b>3<i>4</i></b>
+<script type="text/javascript">
+
+	var console_messages = document.createElement("ol");
+	
+	function log(message)
+	{
+		var item = document.createElement("li");
+		item.appendChild(document.createTextNode(message));
+		console_messages.appendChild(item);
+	}
+	
+	if (window.layoutTestController) {
+		
+		try {
+		
+			layoutTestController.dumpAsText();
+		
+			window.getSelection().setPosition(document.body, 4);
+            textInputController.setMarkedText("56", 0, 1);
+
+			log(textInputController.firstRectForCharacterRange(0, 0)); // caret at the beginning 
+			log(textInputController.firstRectForCharacterRange(1, 0)); // caret after the first character 
+			log(textInputController.firstRectForCharacterRange(6, 0)); // caret at the end of line
+			log(textInputController.firstRectForCharacterRange(6, 100)); // -"-
+			log(textInputController.firstRectForCharacterRange(0, 1)); // first character
+			log(textInputController.firstRectForCharacterRange(5, 1)); // last character
+			log(textInputController.firstRectForCharacterRange(5, 2)); // -"-
+			log(textInputController.firstRectForCharacterRange(5, 100)); // -"-
+			log(textInputController.firstRectForCharacterRange(0, 6)); // first line
+			log(textInputController.firstRectForCharacterRange(0, 7)); // -"-
+			log(textInputController.firstRectForCharacterRange(0, 4294967295)); // -"-
+			log(textInputController.firstRectForCharacterRange(1, 4294967295)); // first line without the first character
+			log(textInputController.firstRectForCharacterRange(7, 0)); // out of bounds, should be zero rect
+			log(textInputController.firstRectForCharacterRange(1000, 0)); // -"-
+			log(textInputController.firstRectForCharacterRange(7, 1)); // -"-
+			log(textInputController.firstRectForCharacterRange(7, 4294967295)); // -"-
+
+		} catch (ex) {
+			log("Exception: " + ex.description);
+		}
+		
+		var console = document.createElement("p");
+		console.appendChild(console_messages);
+		document.body.appendChild(console);
+		
+	} else {
+		document.write("(cannot run interactively)");
+	}
+</script>
+</body>
+</html>
