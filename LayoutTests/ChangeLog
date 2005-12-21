@@ -1,3 +1,17 @@
+2005-12-21  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Beef up our XSLT processor tests to include a test which passes
+        a parameter into the transform.  I also took this opportunity
+        to clean up the output a bit, and in the process found another
+        bug and file: http://bugzilla.opendarwin.org/show_bug.cgi?id=6180 
+
+        * fast/xsl/resources/xslt-param.xml: Added.
+        * fast/xsl/resources/xslt-param.xsl: Added.
+        * fast/xsl/xslt-processer-expected.txt:
+        * fast/xsl/xslt-processer.html:
+
 2005-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by justin

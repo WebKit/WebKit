@@ -1,8 +1,10 @@
 <html>
 <head>
 <STYLE>
-    pre { border:1px solid blue }
-    span { font-weight: bold }
+pre { border:1px solid blue }
+span { font-weight: bold }
+.success { color: green; }
+.failure { color: red; }
 </STYLE>
 </head>
 <body id="body">
@@ -27,10 +29,10 @@ function addSectionHeader(name) {
 function addResultExpectException(name, func) {
 	try {
 		var result = func();
-		addStringResult(testname, "****Failure**** (expected exception, instead got result: \"" + result + "\")");
+		addStringResult(testname, "****Failure**** (expected exception, instead got result: \"" + result + "\")", "failure");
 	} catch (e) {
 		// FIXME: probably should check exception type
-		addStringResult(testname, "Success");
+		addSuccessResult(testname);
 	}
 }
 
@@ -38,18 +40,17 @@ function addResultExpectValueWhenSerialized(name, value, expectedValue) {
 	var serializedValue;
 	if (value)
 		serializedValue = serializer.serializeToString(value);
-	if (value == expectedValue)
-		addStringResult(name, "Success");
+	if (serializedValue == expectedValue)
+		addSuccessResult(name);
 	else
-		addStringResult(name, "****Failure**** (expected: \"" + expectedValue + "\" actual: \"" + serializedValue + "\")");
+		addFailureResult(name, expectedValue, serializedValue);
 }
-
 
 function addResultExpectValue(name, value, expectedValue) {
 	if (value == expectedValue)
-		addStringResult(name, "Success");
+		addSuccessResult(name);
 	else
-		addStringResult(name, "****Failure**** (expected: \"" + expectedValue + "\" actual: \"" + value + "\")");
+		addFailureResult(name, expectedValue, value);
 }
 
 function getXMLDocument(name)
@@ -59,14 +60,24 @@ function getXMLDocument(name)
 	return requester.responseXML;
 }
 
-function addStringResult(name, result)
+function addStringResult(name, result, cssClass)
 {
 	testId++;
 	var testNumberString = "" + sectionId + "." + testId
 	var testIdString = "id" + testNumberString;
 	document.writeln("<span>" + testNumberString + " " + name + ":</span>");
-	document.writeln("<pre id=\"" + testIdString + "\">@@NO VALUE@@</pre>");
+	document.writeln("<pre id=\"" + testIdString + "\" class=\"" + cssClass + "\">@@NO VALUE@@</pre>");
 	document.getElementById(testIdString).firstChild.nodeValue = result;
+}
+
+function addFailureResult(name, expectedValue, actual)
+{
+	addStringResult(name, "****Failure**** (expected: \"" + expectedValue + "\" actual: \"" + actual + "\")", "failure");
+}
+
+function addSuccessResult(name)
+{
+	addStringResult(name, "Success", "success");
 }
 
 function addXMLResult(name, result)
@@ -120,7 +131,7 @@ addResultExpectException(testname, function () { return processor.importStyleshe
 
 processor.reset();
 var newXML = processor.transformToDocument(xml);
-addXMLResult("Don't import stylesheet", newXML);
+addResultExpectValueWhenSerialized("Don't import stylesheet", newXML, undefined);
 
 
 
@@ -138,7 +149,7 @@ addResultExpectException(testname, function () { return processor.transformToFra
 
 ownerDocument = document.implementation.createDocument("", "test", null);
 newFragment = processor.transformToFragment(xml, undefined);
-addXMLResult("fragment with undefined output document", newFragment);
+addResultExpectValueWhenSerialized("fragment with undefined output document", newFragment, undefined);
 
 // 2.3 use non-DOMDocument output parameter
 
@@ -151,7 +162,22 @@ ownerDocument = document.implementation.createDocument("", "test", null);
 var secondDocument = document.implementation.createDocument("", "test", null);
 newFragment = processor.transformToFragment(xml, ownerDocument);
 var secondFragment = processor.transformToFragment(xml, secondDocument);
-addXMLResult("transform to same fragment twice", secondFragment);
+addResultExpectValueWhenSerialized("transform to same fragment twice", secondFragment, serializer.serializeToString(newFragment));
+
+
+// 2.5 transform to text
+// 2.6 fragment using passed parameters
+var paramXSL = getXMLDocument("resources/xslt-param.xsl");
+var paramXML = getXMLDocument("resources/xslt-param.xml");
+
+var paramProcessor = new XSLTProcessor;
+paramProcessor.importStylesheet(paramXSL);
+paramProcessor.setParameter(null, "param", "SUCCESS");
+
+var ownerDocument = document.implementation.createDocument("", "test", null);
+var fragment = paramProcessor.transformToFragment(paramXML, ownerDocument);
+addResultExpectValueWhenSerialized("transformed fragment containing only text", fragment, "SUCCESS");
+addResultExpectValue("fragment using passed parameters", fragment.firstChild.nodeValue, "SUCCESS");
 
 
 
@@ -162,15 +188,15 @@ addSectionHeader("DOMDocument transformToDocument(in DOMNode source)");
 
 processor.reset();
 processor.importStylesheet(xsl1);
-addResultExpectException(testname, function () { return processor.transformToDocument(undefined); } );
+addResultExpectException("document from undefined source", function () { return processor.transformToDocument(undefined); } );
 
 // 3.2 transform twice
 
 processor.reset();
 processor.importStylesheet(xsl1);
 var newXML = processor.transformToDocument(xml);
-var newXML = processor.transformToDocument(xml);
-addXMLResult("document from undefined source", newXML);
+var newerXML = processor.transformToDocument(xml);
+addResultExpectValueWhenSerialized("transform twice", newXML, serializer.serializeToString(newerXML));
 
 
 
@@ -188,7 +214,7 @@ addResultExpectValue(testname, processor.getParameter("foo", "foo"), "Success");
 // 4.2 pass undefined namespace
 
 processor.setParameter(undefined, "foo", "Success");
-addStringResult("pass undefined namespace", processor.getParameter(undefined, "foo"));
+addResultExpectValue("pass undefined namespace", processor.getParameter(undefined, "foo"), "Success");
 
 // 4.3 pass setParameter an undefined name
 
@@ -253,7 +279,7 @@ addResultExpectValue(testname, processor.getParameter(undefined, "undefined"), "
 // 6.4 pass removeParameter a name which has not been set
 
 processor.removeParameter(undefined, "neverbeensetforremove");
-addStringResult("pass removeParameter a name which has not been set", "Success");
+addResultExpectValue("pass removeParameter a name which has not been set", "Success", "Success");
 
 // 6.5 verify removeParameter actually removes
 processor.setParameter(null, "test", "testValue");
@@ -287,10 +313,7 @@ addResultExpectValue(testname, processor.getParameter(null, "test"), undefined);
 // 8.2 call, verify that stylesheet has been cleared after reset()
 var testname = "verify that stylesheet has been cleared";
 var resultDocument = processor.transformToDocument(xml);
-if (resultDocument)
-	addStringResult(testname, "****Failure**** (actual: " + serializer.serializeToString(resultDocument) + ")");
-else
-	addStringResult(testname, "Success");
+addResultExpectValueWhenSerialized(testname, resultDocument, undefined);
 
 </script>
 

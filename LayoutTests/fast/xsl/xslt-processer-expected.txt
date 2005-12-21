@@ -53,39 +53,36 @@ SOURCE XML: <<<&тест&>>>
 1.4 Import undefined stylesheet:
 ****Failure**** (expected exception, instead got result: "undefined")
 1.5 Don't import stylesheet:
-undefined
+Success
 
 2.0 DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output):
 
 2.1 fragment with undefined source:
 ****Failure**** (expected exception, instead got result: "undefined")
 2.2 fragment with undefined output document:
-undefined
+Success
 2.3 use non-DOMDocument output parameter:
 ****Failure**** (expected exception, instead got result: "undefined")
 2.4 transform to same fragment twice:
-<html xmlns="http://www.w3.org/1999/xhtml">
+Success
+2.5 transformed fragment containing only text:
+****Failure**** (expected: "SUCCESS" actual: "<html xmlns="http://www.w3.org/1999/xhtml">
 <head><title /></head>
 <body>
-<pre>CHARACTERS IN XSLT: <<<&тест&>>>
-SOURCE XML: <<<&тест&>>>
-</pre>
+<pre>
+    	FAILURE
+	</pre>
 </body>
-</html>
+</html>")
+2.6 fragment using passed parameters:
+****Failure**** (expected: "SUCCESS" actual: "null")
 
 3.0 DOMDocument transformToDocument(in DOMNode source):
 
 3.1 use non-DOMDocument output parameter:
 ****Failure**** (expected exception, instead got result: "undefined")
-3.2 document from undefined source:
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head><title /></head>
-<body>
-<pre>CHARACTERS IN XSLT: <<<&тест&>>>
-SOURCE XML: <<<&тест&>>>
-</pre>
-</body>
-</html>
+3.2 transform twice:
+Success
 
 4.0 void setParameter(in DOMString namespaceURI, in DOMString localName, in Value value):
 
