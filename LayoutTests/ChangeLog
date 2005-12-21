@@ -1,3 +1,16 @@
+2005-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        Layout test for:
+        <rdar://problem/4103393> Frequent Safari crash on lexisnexus.com (khtml::Selection::xPosForVerticalArrowNavigation)
+         <rdar://problem/4330451> CrashTracer: [REGRESSION] 2235 crashes in Safari at com.apple.WebCore: khtml::Selection::xPosForVerticalArrowNavigation const  436
+
+        * editing/selection/selection-actions-expected.checksum: Added.
+        * editing/selection/selection-actions-expected.png: Added.
+        * editing/selection/selection-actions-expected.txt: Added.
+        * editing/selection/selection-actions.html: Added.
+
 2005-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for <rdar://problem/4370397> Missing return statement in
