@@ -1,3 +1,22 @@
+2005-12-20  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by justin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4682>
+        -[WebHTMLView firstRectForCharacterRange:] is using _selectedRange instead of the given range if no marked text
+
+        Added layout tests:
+        * editing/input/firstrectforcharacterrange-styled
+        * editing/input/firstrectforcharacterrange-plain
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::rangeFromLocationAndLength): 
+        Return null if the range isn't found, instead of a startless/endless 
+        range.  Set the end if the requested location+length is out of bounds.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge convertToDOMRange:]): Handle larged unsigned values 
+        before calling rangeWithLocationAndLength, which expects signed ints.
+
 2005-12-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

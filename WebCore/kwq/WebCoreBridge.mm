@@ -1679,6 +1679,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (RangeImpl *)convertToDOMRange:(NSRange)nsrange
 {
+    if (nsrange.location > INT_MAX)
+        return 0;
+    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
+        nsrange.length = INT_MAX - nsrange.location;
+
     return TextIterator::rangeFromLocationAndLength(_part->xmlDocImpl(), nsrange.location, nsrange.length);
 }
 

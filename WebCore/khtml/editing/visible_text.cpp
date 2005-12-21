@@ -990,11 +990,16 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
 
     int docTextPosition = 0;
     int rangeEnd = rangeLocation + rangeLength;
+    bool startRangeFound = false;
+
+    RefPtr<RangeImpl> textRunRange;
 
     for (TextIterator it(rangeOfContents(doc).get()); !it.atEnd(); it.advance()) {
         int len = it.length();
+        textRunRange = it.range();
+
         if (rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len) {
-            RefPtr<RangeImpl> textRunRange = it.range();
+            startRangeFound = true;
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeLocation - docTextPosition;
@@ -1007,8 +1012,8 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
                 }
             }
         }
+
         if (rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len) {
-            RefPtr<RangeImpl> textRunRange = it.range();
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeEnd - docTextPosition;
@@ -1020,13 +1025,24 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
                     resultRange->setEnd(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
                 }
             }
-            if ( !(rangeLength == 0 && rangeEnd == docTextPosition + len) ) {
+            if (!(rangeLength == 0 && rangeEnd == docTextPosition + len)) {
+                docTextPosition += len;
                 break;
             }
         }
-        docTextPosition += it.length();
+        docTextPosition += len;
     }
-
+    
+    if (!startRangeFound) {
+        delete resultRange;
+        return 0;
+    }
+    
+    if (rangeLength != 0 && rangeEnd > docTextPosition) { // rangeEnd is out of bounds
+        int exception = 0;
+        resultRange->setEnd(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
+    }
+    
     return resultRange;
 }
 
