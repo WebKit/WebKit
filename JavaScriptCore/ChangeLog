@@ -1,3 +1,18 @@
+2005-12-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Removed evil hack for determining if a type is an integer, replaced
+        with template metaprogramming.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Set tab size to 2 for
+        testkjs.cpp
+        * kjs/testkjs.cpp:
+        (main): Inserted asserts to test IsInteger. FIXME: Move these to
+        KXMLCore unit tests directory when we create one.
+        * kxmlcore/HashTraits.h:
+        (KXMLCore::): Added IsInteger class for querying types.
+
 2005-12-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

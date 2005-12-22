@@ -24,24 +24,29 @@
 #define KXMLCORE_HASH_TRAITS_H
 
 #include <utility>
-#ifndef WIN32
-#include <bits/cpp_type_traits.h>
-#endif
 
 namespace KXMLCore {
 
     using std::pair;
- 
-    // FIXME: stop using this evil hack, use something supported or else specialize
-    // for all numerit cypes by hand
+    
+    template <typename T> struct IsInteger           { static const bool value = false; };
+    template <> struct IsInteger<bool>               { static const bool value = true; };
+    template <> struct IsInteger<char>               { static const bool value = true; };
+    template <> struct IsInteger<signed char>        { static const bool value = true; };
+    template <> struct IsInteger<unsigned char>      { static const bool value = true; };
+    template <> struct IsInteger<short>              { static const bool value = true; };
+    template <> struct IsInteger<unsigned short>     { static const bool value = true; };
+    template <> struct IsInteger<int>                { static const bool value = true; };
+    template <> struct IsInteger<unsigned int>       { static const bool value = true; };
+    template <> struct IsInteger<long>               { static const bool value = true; };
+    template <> struct IsInteger<unsigned long>      { static const bool value = true; };
+    template <> struct IsInteger<long long>          { static const bool value = true; };
+    template <> struct IsInteger<unsigned long long> { static const bool value = true; };
+        
     template<typename T>
     struct HashTraits {
         typedef T traitType;
-#ifdef __GLIBCXX__ // gcc 3.4 and greater:
-        static const bool emptyValueIsZero = std::__is_integer<T>::__value;
-#else
-        static const bool emptyValueIsZero = std::__is_integer<T>::_M_type;
-#endif
+        static const bool emptyValueIsZero = IsInteger<T>::value;
         
         static traitType emptyValue() {
             return traitType();

@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "HashTraits.h"
 #include "value.h"
 #include "object.h"
 #include "types.h"
@@ -34,6 +35,7 @@
 #include "JSLock.h"
 
 using namespace KJS;
+using namespace KXMLCore;
 
 class TestFunctionImp : public JSObject {
 public:
@@ -105,7 +107,29 @@ int main(int argc, char **argv)
   bool ret = true;
   {
     JSLock lock;
+    
+    // Unit tests for KXMLCore::IsInteger. Don't have a better place for them now.
+    // FIXME: move these once we create a unit test directory for KXMLCore.
+    assert(IsInteger<bool>::value);
+    assert(IsInteger<char>::value);
+    assert(IsInteger<signed char>::value);
+    assert(IsInteger<unsigned char>::value);
+    assert(IsInteger<short>::value);
+    assert(IsInteger<unsigned short>::value);
+    assert(IsInteger<int>::value);
+    assert(IsInteger<unsigned int>::value);
+    assert(IsInteger<long>::value);
+    assert(IsInteger<unsigned long>::value);
+    assert(IsInteger<long long>::value);
+    assert(IsInteger<unsigned long long>::value);
 
+    assert(!IsInteger<char *>::value);
+    assert(!IsInteger<const char *>::value);
+    assert(!IsInteger<volatile char *>::value);
+    assert(!IsInteger<double>::value);
+    assert(!IsInteger<float>::value);
+    assert(!IsInteger<GlobalImp>::value);
+    
     JSObject *global(new GlobalImp());
 
     // create interpreter
