@@ -1,3 +1,11 @@
+2005-12-16  Darin Adler  <darin@apple.com>
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6184
+          fast/text/attributed-substring-from-range* failing
+
+        * fast/text/attributed-substring-from-range-expected.txt: Updated.
+        * fast/text/attributed-substring-from-range-lines-expected.txt: Updated.
+
 2005-12-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

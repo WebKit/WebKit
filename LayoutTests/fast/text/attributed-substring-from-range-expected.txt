@@ -10,20 +10,20 @@ Testing styled text (12<b>3<i>456</i></b>)
 (0, 2): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
 (0, 3): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
 (0, 6): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(0, 7): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(0, 100): { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 7): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 100): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
 (5, 1): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-(5, 2):
-(100, 0):
-(100, 100):
+(5, 2): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(100, 0): undefined
+(100, 100): undefined
 Testing proper space runs (1._2.__3.___4_5)
-total length: 0
+total length: 15
 one space: " "
 two spaces: "  "
 three spaces: "   "
 four spaces: "    "
 Testing space-only runs (1..2...3....4.5)
-total length: 0
-(0, 100):
+total length: 9
+(0, 100): 1 2 3 4 5{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. P [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
 
 
