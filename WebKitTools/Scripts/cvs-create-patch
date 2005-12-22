@@ -2,6 +2,7 @@
 
 # Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
 # Copyright (C) 2005 Ben La Monica <ben.lamonica@gmail.com> All rights reserved.
+# Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com> All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -177,9 +178,15 @@ sub addNewDirectory
     for my $file (@files) {
         next if $file eq "." || $file eq "..";
         if (-d "$dir/$file") {
-            addNewDirectory($indexPath, "$dir/$file");
+            my $oldDir = getcwd();
+            chdir $dir;
+            addNewDirectory($indexPath, "$file");
+            chdir $oldDir;
         } else {
-            addNewFile("$indexPath", "$dir/$file");
+            my $oldDir = getcwd();
+            chdir $dir;
+            addNewFile($indexPath, "$file");
+            chdir $oldDir;
         }
     }
 }
@@ -203,8 +210,7 @@ sub addNewFile
         return;
     }
 
-    $indexPath =~ s|[^/]+$|| if defined $indexPath;
-    $indexPath .= $newFile;
+    $indexPath .= "/" . $newFile;
 
     #get rid of the first 2 lines
     shift @fileContents;
