@@ -38,7 +38,6 @@
         Also remove unneeded const in raw pointer versions.
         (KXMLCore::operator!=): Ditto.
 
->>>>>>> 1.920
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
