@@ -180,17 +180,25 @@ public:
     int clientY() const { return m_clientY; }
     int layerX() const { return m_layerX; }
     int layerY() const { return m_layerY; }
+    int offsetX() const { return m_offsetX; }
+    int offsetY() const { return m_offsetY; }
     virtual int pageX() const;
     virtual int pageY() const;
+    int x() const;
+    int y() const;
 protected: // expose these so MouseEventImpl::initMouseEvent can set them
     int m_screenX;
     int m_screenY;
     int m_clientX;
     int m_clientY;
-    void computeLayerPos();
+    void computePositions();
 private:
+    int m_pageX;
+    int m_pageY;
     int m_layerX;
     int m_layerY;
+    int m_offsetX;
+    int m_offsetY;
 };
 
 // Introduced in DOM Level 2
@@ -214,9 +222,12 @@ public:
 		   NodeImpl *relatedTargetArg,
                    ClipboardImpl *clipboardArg=0);
     virtual ~MouseEventImpl();
+    // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others), but we will match the standard DOM.
     unsigned short button() const { return m_button; }
     NodeImpl *relatedTarget() const { return m_relatedTarget.get(); }
     ClipboardImpl *clipboard() const { return m_clipboard.get(); }
+    NodeImpl *toElement() const;
+    NodeImpl *fromElement() const;
     void initMouseEvent(const AtomicString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,

@@ -3,7 +3,7 @@
  *
  * (C) 2001 Peter Kelly (pmk@post.com)
  * (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,20 +25,20 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include "dom/dom2_events.h"
-#include "xml/dom_docimpl.h"
-#include "xml/dom2_viewsimpl.h"
-#include "xml/EventNames.h"
+#include "khtmlview.h"
 #include "rendering/render_layer.h"
+#include "xml/EventNames.h"
+#include "xml/dom2_viewsimpl.h"
+#include "xml/dom_docimpl.h"
 
-using khtml::RenderObject;
-using khtml::RenderLayer;
+using namespace khtml;
 
 namespace DOM {
 
 using namespace EventNames;
 
 #if __APPLE__
-inline DOMTimeStamp currentTimeStamp()
+static inline DOMTimeStamp currentTimeStamp()
 {
     // Since this shows up on profiles, do this an even faster way on Mac OS X.
     return static_cast<DOMTimeStamp>((CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970) * 1000);
@@ -209,7 +209,8 @@ int UIEventImpl::which() const
 // -----------------------------------------------------------------------------
 
 MouseRelatedEventImpl::MouseRelatedEventImpl()
-    : m_screenX(0), m_screenY(0), m_clientX(0), m_clientY(0), m_layerX(0), m_layerY(0)
+    : m_screenX(0), m_screenY(0), m_clientX(0), m_clientY(0)
+    , m_pageX(0), m_pageY(0), m_layerX(0), m_layerY(0), m_offsetX(0), m_offsetY(0)
 {
 }
 
@@ -228,56 +229,91 @@ MouseRelatedEventImpl::MouseRelatedEventImpl(const AtomicString &eventType,
 			       bool metaKeyArg)
     : UIEventWithKeyStateImpl(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
+    , m_screenX(screenXArg), m_screenY(screenYArg)
+    , m_clientX(clientXArg), m_clientY(clientYArg)
 {
-    m_screenX = screenXArg;
-    m_screenY = screenYArg;
-    m_clientX = clientXArg;
-    m_clientY = clientYArg;
-    computeLayerPos();
+    computePositions();
 }
 
-void MouseRelatedEventImpl::computeLayerPos()
+void MouseRelatedEventImpl::computePositions()
 {
-    m_layerX = m_clientX;
-    m_layerY = m_clientY;
+    m_pageX = m_clientX;
+    m_pageY = m_clientY;
 
-    AbstractViewImpl *av = view();
+    m_layerX = m_pageX;
+    m_layerY = m_pageY;
+
+    m_offsetX = m_pageX;
+    m_offsetY = m_pageY;
+
+    AbstractViewImpl* av = view();
     if (!av)
         return;
-    DocumentImpl *doc = av->document();
+    DocumentImpl* doc = av->document();
     if (!doc)
-	return;
-    RenderObject *docRenderer = doc->renderer();
-    if (!docRenderer)
+        return;
+    KHTMLView* kv = doc->view();
+    if (!kv)
         return;
 
-    khtml::RenderObject::NodeInfo renderInfo(true, false);
-    docRenderer->layer()->hitTest(renderInfo, m_clientX, m_clientY);
+    doc->updateRendering();
 
-    NodeImpl *node = renderInfo.innerNonSharedNode();
-    while (node && !node->renderer()) {
-	node = node->parent();
-    }
+    // Compute page position.
+    kv->viewportToContents(m_clientX, m_clientY, m_pageX, m_pageY);
 
-    if (!node) {
-	return;
-    }
+    // Compute offset position.
+    m_offsetX = m_pageX;
+    m_offsetY = m_pageY;
+    if (NodeImpl *n = target())
+        if (RenderObject *r = n->renderer()) {
+            int rx, ry;
+            if (r->absolutePosition(rx, ry)) {
+                m_offsetX -= rx;
+                m_offsetY -= ry;
+            }
+        }
 
-    node->renderer()->enclosingLayer()->updateLayerPosition();
-    
-    for (RenderLayer *layer = node->renderer()->enclosingLayer(); layer; layer = layer->parent()) {
-	m_layerX -= layer->xPos();
-	m_layerY -= layer->yPos();
+    // Compute layer position.
+    m_layerX = m_pageX;
+    m_layerY = m_pageY;
+    if (RenderObject* docRenderer = doc->renderer()) {
+        // FIXME: Should we use the target node instead of hit testing?
+        RenderObject::NodeInfo hitTestResult(true, false);
+        docRenderer->layer()->hitTest(hitTestResult, m_pageX, m_pageY);
+        NodeImpl *n = hitTestResult.innerNonSharedNode();
+        while (n && !n->renderer())
+            n = n->parent();
+        if (n) {
+            n->renderer()->enclosingLayer()->updateLayerPosition();    
+            for (RenderLayer *layer = n->renderer()->enclosingLayer(); layer; layer = layer->parent()) {
+                m_layerX -= layer->xPos();
+                m_layerY -= layer->yPos();
+            }
+        }
     }
 }
 
 int MouseRelatedEventImpl::pageX() const
 {
-    return m_clientX;
+    return m_pageX;
 }
 
 int MouseRelatedEventImpl::pageY() const
 {
+    return m_pageY;
+}
+
+int MouseRelatedEventImpl::x() const
+{
+    // FIXME: This is not correct.
+    // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
+    return m_clientX;
+}
+
+int MouseRelatedEventImpl::y() const
+{
+    // FIXME: This is not correct.
+    // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
     return m_clientY;
 }
 
@@ -348,7 +384,8 @@ void MouseEventImpl::initMouseEvent(const AtomicString &typeArg,
     m_metaKey = metaKeyArg;
     m_button = buttonArg;
     m_relatedTarget = relatedTargetArg;
-    computeLayerPos();
+
+    computePositions();
 }
 
 bool MouseEventImpl::isMouseEvent() const
@@ -370,6 +407,18 @@ int MouseEventImpl::which() const
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
     // So we must add 1.
     return m_button + 1;
+}
+
+NodeImpl* MouseEventImpl::toElement() const
+{
+    // MSIE extension - "the object toward which the user is moving the mouse pointer"
+    return type() == mouseoutEvent ? relatedTarget() : target();
+}
+
+NodeImpl* MouseEventImpl::fromElement() const
+{
+    // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
+    return type() == mouseoutEvent ? target() : relatedTarget();
 }
 
 //---------------------------------------------------------------------------------------------

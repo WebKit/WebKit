@@ -675,29 +675,6 @@ bool DOMMouseEvent::getOwnPropertySlot(ExecState *exec, const Identifier& proper
   return getStaticValueSlot<DOMMouseEvent, DOMUIEvent>(exec, &DOMMouseEventTable, this, propertyName, slot);
 }
 
-static QPoint offsetFromTarget(const MouseRelatedEventImpl *e)
-{
-    int x = e->clientX();
-    int y = e->clientY();
-
-    NodeImpl *n = e->target();
-    if (n) {
-        DocumentImpl *doc = n->getDocument();
-        if (doc) {
-            doc->updateRendering();
-            RenderObject *r = n->renderer();
-            if (r) {
-                int rx, ry;
-                if (r->absolutePosition(rx, ry)) {
-                    x -= rx;
-                    y -= ry;
-                }
-            }
-        }
-    }
-    return QPoint(x, y);
-}
-
 JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
 {
   MouseEventImpl &event = *static_cast<MouseEventImpl *>(impl());
@@ -707,15 +684,13 @@ JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   case ScreenY:
     return jsNumber(event.screenY());
   case ClientX:
-  case X:
     return jsNumber(event.clientX());
   case ClientY:
-  case Y:
     return jsNumber(event.clientY());
-  case OffsetX: // MSIE extension
-    return jsNumber(offsetFromTarget(&event).x());
-  case OffsetY: // MSIE extension
-    return jsNumber(offsetFromTarget(&event).y());
+  case OffsetX:
+    return jsNumber(event.offsetX());
+  case OffsetY:
+    return jsNumber(event.offsetY());
   case CtrlKey:
     return jsBoolean(event.ctrlKey());
   case ShiftKey:
@@ -725,16 +700,17 @@ JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   case MetaKey:
     return jsBoolean(event.metaKey());
   case Button:
-    // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others), but we will match the standard DOM.
     return jsNumber(event.button());
   case ToElement:
-    // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    return getDOMNode(exec, event.type() == mouseoutEvent ? event.relatedTarget() : event.target());
+    return getDOMNode(exec, event.toElement());
   case FromElement:
-    // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
-    return getDOMNode(exec, event.type() == mouseoutEvent ? event.target() : event.relatedTarget());
+    return getDOMNode(exec, event.fromElement());
   case RelatedTarget:
     return getDOMNode(exec, event.relatedTarget());
+  case X:
+    return jsNumber(event.x());
+  case Y:
+    return jsNumber(event.y());
   default:
     kdWarning() << "Unhandled token in DOMMouseEvent::getValueProperty : " << token << endl;
     return NULL;
@@ -987,19 +963,17 @@ JSValue *DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
         case AltKey:
             return jsBoolean(e->altKey());
         case ClientX:
-        case X:
             return jsNumber(e->clientX());
         case ClientY:
-        case Y:
             return jsNumber(e->clientY());
         case CtrlKey:
             return jsNumber(e->ctrlKey());
         case MetaKey:
             return jsNumber(e->metaKey());
         case OffsetX:
-            return jsNumber(offsetFromTarget(e).x());
+            return jsNumber(e->offsetX());
         case OffsetY:
-            return jsNumber(offsetFromTarget(e).y());
+            return jsNumber(e->offsetY());
         case ScreenX:
             return jsNumber(e->screenX());
         case ScreenY:
@@ -1008,6 +982,10 @@ JSValue *DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
             return jsBoolean(e->shiftKey());
         case WheelDelta:
             return jsNumber(e->wheelDelta());
+        case X:
+            return jsNumber(e->x());
+        case Y:
+            return jsNumber(e->y());
     }
     return jsUndefined();
 }

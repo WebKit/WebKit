@@ -1,3 +1,31 @@
+2005-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6177
+          move event code from JavaScript binding into DOM implementation
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMMouseEvent::getValueProperty): Change everything to just call through instead of doing
+        the work here.
+        (KJS::DOMWheelEvent::getValueProperty): Ditto.
+
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::MouseRelatedEventImpl::offsetX):
+        (DOM::MouseRelatedEventImpl::offsetY):
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::MouseRelatedEventImpl::MouseRelatedEventImpl): Initialize new m_pageX, m_pageY, m_layerX,
+        m_layerY, m_offsetX, and m_offsetY.
+        (DOM::MouseRelatedEventImpl::computePositions): Renamed from computeLayerPos since it handles
+        page position andoffset position too now.
+        (DOM::MouseRelatedEventImpl::pageX): Added. Not in header since it's virtual.
+        (DOM::MouseRelatedEventImpl::pageY): Ditto.
+        (DOM::MouseRelatedEventImpl::x): Added, with FIXME since it should change eventually.
+        (DOM::MouseRelatedEventImpl::y): Ditto.
+        (DOM::MouseEventImpl::initMouseEvent): Call computePositions instead of computeLayerPos.
+        (DOM::MouseEventImpl::toElement): Added.
+        (DOM::MouseEventImpl::fromElement): Added.
+
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj:
