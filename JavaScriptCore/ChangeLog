@@ -1,3 +1,8 @@
+2005-12-21  Timothy Hatcher  <timothy@apple.com>
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+          Set tab width to 8, indent width to 4 and uses tabs to false per file.
+
 2005-12-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
