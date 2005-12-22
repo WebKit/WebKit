@@ -1,3 +1,13 @@
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6192
+          add support for non-standard &nsup; entity (implemented in other browsers)
+
+        * fast/parser/nsup-entity-expected.txt: Added.
+        * fast/parser/nsup-entity.html: Added.
+
 2005-12-16  Darin Adler  <darin@apple.com>
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6184

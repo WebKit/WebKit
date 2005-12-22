@@ -67,11 +67,7 @@ using DOM::QualifiedName;
 using DOM::MappedAttributeImpl;
 using DOM::NamedMappedAttrMapImpl;
 
-// turn off inlining to void warning with newer gcc
-#undef __inline
-#define __inline
 #include "kentities.c"
-#undef __inline
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 

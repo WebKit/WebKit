@@ -2,6 +2,19 @@
 
         Reviewed by Eric.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6192
+          add support for non-standard &nsup; entity (implemented in other browsers)
+
+        * khtml/html/kentities.gperf: Add "nsup" to table.
+        * khtml/html/htmltokenizer.cpp: Removed old workaround for inlining issue that no
+        longer seems to be necessary; also touches the file which is important because
+        Xcode doesn't seem to understand the dependency on kentities.gperf and the need
+        to recompile.
+
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6167
           RenderStyle default constructor should initialize its members for speed
 
