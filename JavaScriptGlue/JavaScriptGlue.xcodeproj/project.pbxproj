@@ -54,26 +54,26 @@
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptGlue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F11798B20262465703CA149D /* JavaScriptGlue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptGlue.cpp; sourceTree = "<group>"; };
-		F11798B30262465703CA149D /* JavaScriptGlue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JavaScriptGlue.h; sourceTree = "<group>"; };
-		F11798B6026246FD03CA149D /* JSUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSUtils.cpp; sourceTree = "<group>"; };
-		F11798B7026246FD03CA149D /* JSUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSUtils.h; sourceTree = "<group>"; };
-		F11798B8026246FD03CA149D /* JSBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; };
-		F11798B9026246FD03CA149D /* JSBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
-		F11798BA026246FD03CA149D /* JSObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
-		F11798BB026246FD03CA149D /* JSObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
-		F11798BC026246FD03CA149D /* JSRun.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRun.cpp; sourceTree = "<group>"; };
-		F11798BD026246FD03CA149D /* JSRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRun.h; sourceTree = "<group>"; };
-		F11798C80262545403CA149D /* JSValueWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueWrapper.cpp; sourceTree = "<group>"; };
-		F11798C90262545403CA149D /* JSValueWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSValueWrapper.h; sourceTree = "<group>"; };
-		F11798CE0262579C03CA149D /* UserObjectImp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UserObjectImp.cpp; sourceTree = "<group>"; };
-		F11798CF0262579C03CA149D /* UserObjectImp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserObjectImp.h; sourceTree = "<group>"; };
+		F11798B20262465703CA149D /* JavaScriptGlue.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptGlue.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798B30262465703CA149D /* JavaScriptGlue.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptGlue.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798B6026246FD03CA149D /* JSUtils.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUtils.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798B7026246FD03CA149D /* JSUtils.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSUtils.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798B8026246FD03CA149D /* JSBase.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798B9026246FD03CA149D /* JSBase.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798BA026246FD03CA149D /* JSObject.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798BB026246FD03CA149D /* JSObject.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798BC026246FD03CA149D /* JSRun.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRun.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798BD026246FD03CA149D /* JSRun.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSRun.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798C80262545403CA149D /* JSValueWrapper.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798C90262545403CA149D /* JSValueWrapper.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSValueWrapper.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798CE0262579C03CA149D /* UserObjectImp.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserObjectImp.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F11798CF0262579C03CA149D /* UserObjectImp.h */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = UserObjectImp.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F14FC9F30258E9A603CA149D /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
-		F1EB7EAB02621EAF03CA149D /* JavaScriptGlue.exp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.exports; path = JavaScriptGlue.exp; sourceTree = "<group>"; };
+		F1EB7EAB02621EAF03CA149D /* JavaScriptGlue.exp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptGlue.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
