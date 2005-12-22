@@ -1,3 +1,21 @@
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6167
+          RenderStyle default constructor should initialize its members for speed
+
+        * khtml/rendering/DataRef.h: (khtml::DataRef::operator=): Eliminate an extra
+        branch by doing ref before deref instead of == check.
+
+        * khtml/rendering/render_style.cpp:
+        (khtml::initDefaultStyle): Added. Function to initialize the default style
+        for use in constructor.
+        (khtml::RenderStyle::RenderStyle): Changed constructor to initalize all the
+        members with constructor syntax instead of using assignment on all of them.
+        * khtml/rendering/render_style.h: Removed static data member _default --
+        it's now a file scope global instead.
+
 2005-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

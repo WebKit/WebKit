@@ -1032,9 +1032,6 @@ protected:
     
 // !END SYNC!
 
-// static default style
-    static RenderStyle* _default;
-
 protected:
     void setBitDefaults()
     {

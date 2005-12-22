@@ -34,10 +34,11 @@
 
 #include "kdebug.h"
 
-using namespace khtml;
+using namespace DOM;
 
-using DOM::DOMStringImpl;
-using DOM::DOMString;
+namespace khtml {
+
+static RenderStyle *defaultStyle;
 
 StyleSurroundData::StyleSurroundData()
     : margin( Fixed ), padding( Auto )
@@ -512,31 +513,32 @@ void RenderStyle::arenaDelete(RenderArena *arena)
     arena->free(*(size_t *)this, this);
 }
 
-RenderStyle::RenderStyle()
-:m_pseudoState(PseudoUnknown), m_affectedByAttributeSelectors(false)
+inline RenderStyle *initDefaultStyle()
 {
-    m_ref = 0;
-    
-    if (!_default)
-	_default = ::new RenderStyle(true);
+    if (!defaultStyle)
+        defaultStyle = ::new RenderStyle(true);
+    return defaultStyle;
+}
 
-    box = _default->box;
-    visual = _default->visual;
-    background = _default->background;
-    surround = _default->surround;
-    css3NonInheritedData = _default->css3NonInheritedData;
-    css3InheritedData = _default->css3InheritedData;
-    
-    inherited = _default->inherited;
-
+RenderStyle::RenderStyle()
+    : box(initDefaultStyle()->box)
+    , visual(defaultStyle->visual)
+    , background(defaultStyle->background)
+    , surround(defaultStyle->surround)
+    , css3NonInheritedData(defaultStyle->css3NonInheritedData)
+    , css3InheritedData(defaultStyle->css3InheritedData)
+    , inherited(defaultStyle->inherited)
+    , pseudoStyle(0)
+    , content(0)
+    , m_pseudoState(PseudoUnknown)
+    , m_affectedByAttributeSelectors(false)
+    , m_ref(0)
 #if SVG_SUPPORT
-    m_svgStyle = _default->m_svgStyle;
+    , m_svgStyle(defaultStyle->m_svgStyle)
 #endif
 
-    setBitDefaults();
-
-    pseudoStyle = 0;
-    content = 0;
+{
+    setBitDefaults(); // Would it be faster to copy this from the default style?
 }
 
 RenderStyle::RenderStyle(bool)
@@ -870,14 +872,11 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 }
 
 
-RenderStyle* RenderStyle::_default = 0;
 //int RenderStyle::counter = 0;
 //int SharedData::counter = 0;
 
 void RenderStyle::cleanup()
 {
-    delete _default;
-    _default = 0;
 //    counter = 0;
 //    SharedData::counter = 0;
 }
@@ -1127,4 +1126,6 @@ const QValueList<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
         noneListInitialized = true;
     }
     return noneList;
+}
+
 }
