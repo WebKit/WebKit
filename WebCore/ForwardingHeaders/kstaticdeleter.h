@@ -1,1 +1,0 @@
-#import "KWQKStaticDeleter.h"

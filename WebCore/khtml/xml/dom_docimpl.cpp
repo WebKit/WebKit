@@ -48,7 +48,6 @@
 #include <qpaintdevicemetrics.h>
 #include <qregexp.h>
 #include <kdebug.h>
-#include <kstaticdeleter.h>
 
 #include "rendering/render_canvas.h"
 #include "rendering/render_frames.h"
@@ -60,7 +59,6 @@
 #include "khtml_part.h"
 
 #include <kglobalsettings.h>
-#include <kstringhandler.h>
 #include "khtml_settings.h"
 #include "khtmlpart_p.h"
 
@@ -369,7 +367,6 @@ HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument(const DOMString &tit
 
 // ------------------------------------------------------------------------
 
-KStaticDeleter< QPtrList<DocumentImpl> > s_changedDocumentsDeleter;
 QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 
 // KHTMLView might be 0
@@ -1007,7 +1004,7 @@ TreeWalkerImpl *DocumentImpl::createTreeWalker(NodeImpl *root, unsigned whatToSh
 void DocumentImpl::setDocumentChanged(bool b)
 {
     if (!changedDocuments)
-        changedDocuments = s_changedDocumentsDeleter.setObject(changedDocuments, new QPtrList<DocumentImpl>());
+        changedDocuments = new QPtrList<DocumentImpl>;
 
     if (b && !m_docChanged)
         changedDocuments->append(this);

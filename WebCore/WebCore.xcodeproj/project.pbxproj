@@ -215,8 +215,6 @@
 		93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		93F1996408245E59001E9ABC /* KWQKStandardDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */; };
-		93F1996508245E59001E9ABC /* KWQKStaticDeleter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */; };
-		93F1996608245E59001E9ABC /* KWQKStringHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860002DE382001EA4122 /* KWQKStringHandler.h */; };
 		93F1996708245E59001E9ABC /* KWQKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860202DE382001EA4122 /* KWQKURL.h */; };
 		93F1996808245E59001E9ABC /* KWQKWin.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860402DE382001EA4122 /* KWQKWin.h */; };
 		93F1996908245E59001E9ABC /* KWQKWinModule.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860502DE382001EA4122 /* KWQKWinModule.h */; };
@@ -405,7 +403,6 @@
 		93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850402DE375901EA4122 /* KWQKLocale.mm */; };
 		93F19A3308245E59001E9ABC /* KWQKPartsEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850802DE375901EA4122 /* KWQKPartsEvent.mm */; };
 		93F19A3408245E59001E9ABC /* KWQKStandardDirs.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850C02DE375901EA4122 /* KWQKStandardDirs.mm */; };
-		93F19A3508245E59001E9ABC /* KWQKStringHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850D02DE375901EA4122 /* KWQKStringHandler.mm */; };
 		93F19A3608245E59001E9ABC /* KWQKURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850E02DE375901EA4122 /* KWQKURL.mm */; };
 		93F19A3708245E59001E9ABC /* KWQKWin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850F02DE375901EA4122 /* KWQKWin.mm */; };
 		93F19A3808245E59001E9ABC /* KWQKWinModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851002DE375901EA4122 /* KWQKWinModule.mm */; };
@@ -740,8 +737,6 @@
 		A88AD1A40952480A001DD196 /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		A88AD1A60952480A001DD196 /* KWQKStandardDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */; };
-		A88AD1A70952480A001DD196 /* KWQKStaticDeleter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */; };
-		A88AD1A80952480A001DD196 /* KWQKStringHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860002DE382001EA4122 /* KWQKStringHandler.h */; };
 		A88AD1A90952480A001DD196 /* KWQKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860202DE382001EA4122 /* KWQKURL.h */; };
 		A88AD1AA0952480A001DD196 /* KWQKWin.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860402DE382001EA4122 /* KWQKWin.h */; };
 		A88AD1AB0952480A001DD196 /* KWQKWinModule.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860502DE382001EA4122 /* KWQKWinModule.h */; };
@@ -972,7 +967,6 @@
 		A88AD28F0952480A001DD196 /* KWQKLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850402DE375901EA4122 /* KWQKLocale.mm */; };
 		A88AD2900952480A001DD196 /* KWQKPartsEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850802DE375901EA4122 /* KWQKPartsEvent.mm */; };
 		A88AD2910952480A001DD196 /* KWQKStandardDirs.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850C02DE375901EA4122 /* KWQKStandardDirs.mm */; };
-		A88AD2920952480A001DD196 /* KWQKStringHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850D02DE375901EA4122 /* KWQKStringHandler.mm */; };
 		A88AD2930952480A001DD196 /* KWQKURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850E02DE375901EA4122 /* KWQKURL.mm */; };
 		A88AD2940952480A001DD196 /* KWQKWin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850F02DE375901EA4122 /* KWQKWin.mm */; };
 		A88AD2950952480A001DD196 /* KWQKWinModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851002DE375901EA4122 /* KWQKWinModule.mm */; };
@@ -2567,7 +2561,6 @@
 		F587850402DE375901EA4122 /* KWQKLocale.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKLocale.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850802DE375901EA4122 /* KWQKPartsEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsEvent.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850C02DE375901EA4122 /* KWQKStandardDirs.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKStandardDirs.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587850D02DE375901EA4122 /* KWQKStringHandler.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKStringHandler.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850E02DE375901EA4122 /* KWQKURL.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKURL.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850F02DE375901EA4122 /* KWQKWin.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKWin.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851002DE375901EA4122 /* KWQKWinModule.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKWinModule.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2637,9 +2630,7 @@
 		F58785F802DE382001EA4122 /* KWQKInstance.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKInstance.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58785FA02DE382001EA4122 /* KWQKLocale.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKLocale.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58785FD02DE382001EA4122 /* KWQKStandardDirs.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKStandardDirs.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKStaticDeleter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKStandardDirs.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587860002DE382001EA4122 /* KWQKStringHandler.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKStringHandler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587860202DE382001EA4122 /* KWQKURL.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKURL.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587860402DE382001EA4122 /* KWQKWin.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKWin.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587860502DE382001EA4122 /* KWQKWinModule.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKWinModule.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4020,12 +4011,9 @@
 				F58785F802DE382001EA4122 /* KWQKInstance.h */,
 				F58785FA02DE382001EA4122 /* KWQKLocale.h */,
 				F587850402DE375901EA4122 /* KWQKLocale.mm */,
-				F58785FE02DE382001EA4122 /* KWQKStaticDeleter.h */,
 				F58785FD02DE382001EA4122 /* KWQKStandardDirs.h */,
 				F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */,
 				F587850C02DE375901EA4122 /* KWQKStandardDirs.mm */,
-				F587860002DE382001EA4122 /* KWQKStringHandler.h */,
-				F587850D02DE375901EA4122 /* KWQKStringHandler.mm */,
 				F587860202DE382001EA4122 /* KWQKURL.h */,
 				F587850E02DE375901EA4122 /* KWQKURL.mm */,
 				F587860402DE382001EA4122 /* KWQKWin.h */,
@@ -4375,8 +4363,6 @@
 				93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
 				93F1996408245E59001E9ABC /* KWQKStandardDirs.h in Headers */,
-				93F1996508245E59001E9ABC /* KWQKStaticDeleter.h in Headers */,
-				93F1996608245E59001E9ABC /* KWQKStringHandler.h in Headers */,
 				93F1996708245E59001E9ABC /* KWQKURL.h in Headers */,
 				93F1996808245E59001E9ABC /* KWQKWin.h in Headers */,
 				93F1996908245E59001E9ABC /* KWQKWinModule.h in Headers */,
@@ -4879,8 +4865,6 @@
 				A88AD1A40952480A001DD196 /* KWQKPartsPart.h in Headers */,
 				A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */,
 				A88AD1A60952480A001DD196 /* KWQKStandardDirs.h in Headers */,
-				A88AD1A70952480A001DD196 /* KWQKStaticDeleter.h in Headers */,
-				A88AD1A80952480A001DD196 /* KWQKStringHandler.h in Headers */,
 				A88AD1A90952480A001DD196 /* KWQKURL.h in Headers */,
 				A88AD1AA0952480A001DD196 /* KWQKWin.h in Headers */,
 				A88AD1AB0952480A001DD196 /* KWQKWinModule.h in Headers */,
@@ -6188,7 +6172,6 @@
 				93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */,
 				93F19A3308245E59001E9ABC /* KWQKPartsEvent.mm in Sources */,
 				93F19A3408245E59001E9ABC /* KWQKStandardDirs.mm in Sources */,
-				93F19A3508245E59001E9ABC /* KWQKStringHandler.mm in Sources */,
 				93F19A3608245E59001E9ABC /* KWQKURL.mm in Sources */,
 				93F19A3708245E59001E9ABC /* KWQKWin.mm in Sources */,
 				93F19A3808245E59001E9ABC /* KWQKWinModule.mm in Sources */,
@@ -6620,7 +6603,6 @@
 				A88AD28F0952480A001DD196 /* KWQKLocale.mm in Sources */,
 				A88AD2900952480A001DD196 /* KWQKPartsEvent.mm in Sources */,
 				A88AD2910952480A001DD196 /* KWQKStandardDirs.mm in Sources */,
-				A88AD2920952480A001DD196 /* KWQKStringHandler.mm in Sources */,
 				A88AD2930952480A001DD196 /* KWQKURL.mm in Sources */,
 				A88AD2940952480A001DD196 /* KWQKWin.mm in Sources */,
 				A88AD2950952480A001DD196 /* KWQKWinModule.mm in Sources */,

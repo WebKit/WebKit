@@ -24,7 +24,6 @@
 #include <math.h>
 
 #include <kdebug.h>
-#include <kstaticdeleter.h>
 
 #include "kcanvas/KCanvas.h"
 #include "KCanvasPath.h"
@@ -32,7 +31,6 @@
 #include "KRenderingDevice.h"
 #include "KCanvasContainer.h"
 
-static KStaticDeleter<KCanvasCreator> canvasCreatorDeleter;
 KCanvasCreator *KCanvasCreator::s_creator = 0;
 
 KCanvasCreator::KCanvasCreator()
@@ -46,7 +44,7 @@ KCanvasCreator::~KCanvasCreator()
 KCanvasCreator *KCanvasCreator::self()
 {
     if(!s_creator)
-        s_creator = canvasCreatorDeleter.setObject(s_creator, new KCanvasCreator());
+        s_creator = new KCanvasCreator();
 
     return s_creator;
 }

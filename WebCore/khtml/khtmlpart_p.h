@@ -199,9 +199,6 @@ public:
   RefPtr<khtml::Decoder> m_decoder;
   QString m_encoding;
   QString m_sheetUsed;
-#if !APPLE_CANGES
-  long m_cacheId;
-#endif
   QString scheduledScript;
   RefPtr<DOM::NodeImpl> scheduledScriptNode;
 

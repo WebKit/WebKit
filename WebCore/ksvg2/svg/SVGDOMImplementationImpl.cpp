@@ -21,7 +21,6 @@
 */
 
 #include "config.h"
-#include <kstaticdeleter.h>
 
 #include <kdom/kdom.h>
 #include <kdom/Helper.h>
@@ -42,7 +41,6 @@
 
 using namespace KSVG;
 
-static KStaticDeleter<SVGDOMImplementationImpl> instanceDeleter;
 SVGDOMImplementationImpl *SVGDOMImplementationImpl::s_instance = 0;
 QStringList SVGDOMImplementationImpl::s_features;
 
@@ -61,7 +59,7 @@ SVGDOMImplementationImpl *SVGDOMImplementationImpl::self()
 {
     if(!s_instance)
     {
-        s_instance = instanceDeleter.setObject(s_instance, new SVGDOMImplementationImpl());
+        s_instance = new SVGDOMImplementationImpl();
         
         // 1.1 features
         s_features.append(QString::fromLatin1("SVG"));

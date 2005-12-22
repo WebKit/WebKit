@@ -2,6 +2,34 @@
 
         Reviewed by Eric.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6193
+          remove some unused KWQ code
+
+        * kcanvas/KCanvasCreator.cpp: (KCanvasCreator::self): Don't use static deleter for
+        two reasons: (1) We don't want any globals with constructors in any of our frameworks
+        because they slow down framework load time. (2) There's no need to destroy this object at
+        process termination time -- it's extra work with no benefit. Because of both these
+        reasons, our KStaticDeleter implementation was basically a no-op.
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp: (SVGDOMImplementationImpl::self): Ditto.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::setDocumentChanged): Ditto.
+
+        * khtml/html/html_canvasimpl.cpp: Removed include of kstringhandler.h.
+        * khtml/html/html_imageimpl.cpp: Ditto.
+
+        * khtml/khtmlpart_p.h: Removed something that was in an "APPLE_CANGES" ifdef.
+
+        * ForwardingHeaders/kstaticdeleter.h: Removed.
+        * ForwardingHeaders/kstringhandler.h: Removed.
+        * kwq/KWQKStaticDeleter.h: Removed.
+        * kwq/KWQKStringHandler.h: Removed.
+        * kwq/KWQKStringHandler.mm: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed files.
+
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6192
           add support for non-standard &nsup; entity (implemented in other browsers)
 
