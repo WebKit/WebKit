@@ -1,3 +1,21 @@
+2005-12-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed <rdar://problem/4387433> Seed: Radio buttons behave incorrectly in Gmail settings
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::registerFormElement): update radio button hash map when moving form elements around.
+        (DOM::HTMLGenericFormElementImpl::insertedIntoTree): ditto.
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLGenericFormElementImpl::isRadioButton): Added.
+        (DOM::HTMLInputElementImpl::isRadioButton): Added.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::radioButtonChecked): 
+        Added comment explaining that we use 1 for the default form.  We can't use a null pointer as a key for the hash map.
+        (DocumentImpl::checkedRadioButtonForGroup): Added conversion of null form pointer to 1.
+        (DocumentImpl::removeRadioButtonGroup): ditto.
+
 2005-12-22  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.

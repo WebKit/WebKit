@@ -645,6 +645,14 @@ unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
 
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
+    DocumentImpl *doc = getDocument();
+    if (doc && e->isRadioButton() && !e->name().isEmpty()) {
+        HTMLGenericFormElementImpl* currentCheckedRadio = doc->checkedRadioButtonForGroup(e->name().impl(), (HTMLFormElementImpl*) 0);
+        if (currentCheckedRadio == e)
+            doc->removeRadioButtonGroup(e->name().impl(), (HTMLFormElementImpl*) 0);
+        if (e->isChecked())
+            doc->radioButtonChecked((HTMLInputElementImpl*) e, this);
+    }
     insertIntoVector(formElements, formElementIndex(e), e);
 }
 
@@ -807,6 +815,11 @@ void HTMLGenericFormElementImpl::insertedIntoTree(bool deep)
         m_form = getForm();
 	if (m_form)
 	    m_form->registerFormElement(this);
+        else {
+            DocumentImpl *doc = getDocument();
+            if (doc && isRadioButton() && !name().isEmpty() && isChecked())
+                doc->radioButtonChecked((HTMLInputElementImpl*)this, m_form);
+        }
     }
 
     HTMLElementImpl::insertedIntoTree(deep);

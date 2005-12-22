@@ -1,3 +1,14 @@
+2005-12-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Tests for <rdar://problem/4387433> Seed: Radio buttons behave incorrectly in Gmail settings
+
+        * fast/forms/radio_checked_dynamic-expected.checksum: Added.
+        * fast/forms/radio_checked_dynamic-expected.png: Added.
+        * fast/forms/radio_checked_dynamic-expected.txt: Added.
+        * fast/forms/radio_checked_dynamic.html: Added.
+
 2005-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
