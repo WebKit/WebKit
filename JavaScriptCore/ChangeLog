@@ -1,3 +1,32 @@
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6191
+          RefPtr/PassRefPtr have a leak issue, operator== issues
+
+        * kxmlcore/PassRefPtr.h:
+        (KXMLCore::PassRefPtr::PassRefPtr): Remove non-template constructor that takes RefPtr
+        since the constructor template that takes RefPtr should be sufficient. Add a constructor
+        template that takes PassRefPtr&.
+        (KXMLCore::PassRefPtr::adopt): Use PassRefPtr_Ref to avoid setting pointer first to
+        0 and then to the pointer.
+        (KXMLCore::PassRefPtr::operator=): Added template versions that take PassRefPtr& and
+        RefPtr parameters.
+        (KXMLCore::PassRefPtr::operator PassRefPtr<U>): Changed to fix leak -- old version
+        would release and then ref.
+        (KXMLCore::operator==): Make templates have two parameters so you can mix types.
+        Also remove unneeded const in raw pointer versions.
+        (KXMLCore::operator!=): Ditto.
+
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::RefPtr): Add constructor template that takes PassRefPtr.
+        (KXMLCore::RefPtr::operator=): Add assignment operator templates that take
+        RefPtr and PassRefPtr.
+        (KXMLCore::operator==): Make templates have two parameters so you can mix types.
+        Also remove unneeded const in raw pointer versions.
+        (KXMLCore::operator!=): Ditto.
+
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

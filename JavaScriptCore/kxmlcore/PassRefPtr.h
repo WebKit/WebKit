@@ -43,8 +43,8 @@ namespace KXMLCore {
     public:
         PassRefPtr() : m_ptr(0) {}
         PassRefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
-        PassRefPtr(const RefPtr<T>& o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
         PassRefPtr(PassRefPtr& o) : m_ptr(o.release()) {}
+        template <typename U> PassRefPtr(PassRefPtr<U>& o) : m_ptr(o.release()) { }
 
         ~PassRefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
         
@@ -55,11 +55,10 @@ namespace KXMLCore {
 
         T *release() { T *tmp = m_ptr; m_ptr = 0; return tmp; }
 
-        static PassRefPtr<T> adopt(T *ptr) 
-        { 
-            PassRefPtr result; 
-            result.m_ptr = ptr; 
-            return result; 
+        template <typename U> static PassRefPtr<T> adopt(U* ptr)
+        {
+            PassRefPtr result((PassRefPtr_Ref<T>(ptr)));
+            return result;
         }
         
         T& operator*() const { return *m_ptr; }
@@ -71,9 +70,10 @@ namespace KXMLCore {
         typedef T* (PassRefPtr::*UnspecifiedBoolType)() const;
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::get : 0; }
         
-        PassRefPtr& operator=(const RefPtr<T>&);
         PassRefPtr& operator=(T *);
         PassRefPtr& operator=(PassRefPtr&);
+        template <typename U> PassRefPtr& operator=(PassRefPtr<U>&);
+        template <typename U> PassRefPtr& operator=(const RefPtr<U>&);
 
         PassRefPtr(PassRefPtr_Ref<T> ref) : m_ptr(ref.m_ptr) { }
       
@@ -85,23 +85,14 @@ namespace KXMLCore {
             return *this;
         }
 
-        template<typename U>
-        operator PassRefPtr_Ref<U>()
-        { 
-            return PassRefPtr_Ref<U>(release()); 
-        }
-
-        template<typename U>
-        operator PassRefPtr<U>()
-        { 
-            return PassRefPtr<U>(this->release()); 
-        }
+        template <typename U> operator PassRefPtr_Ref<U>() { return PassRefPtr_Ref<U>(release()); }
+        template <typename U> operator PassRefPtr<U>() { return PassRefPtr_Ref<U>(release()); }
         
     private:
         T *m_ptr;
     };
     
-    template <class T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<T>& o) 
+    template <typename T> template <typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<U>& o) 
     {
         T *optr = o.m_ptr;
         if (optr)
@@ -112,7 +103,7 @@ namespace KXMLCore {
         return *this;
     }
     
-    template <class T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(T *optr)
+    template <typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(T* optr)
     {
         if (optr)
             optr->ref();
@@ -122,7 +113,7 @@ namespace KXMLCore {
         return *this;
     }
 
-    template <class T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<T>& ref)
+    template <typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<T>& ref)
     {
         T *optr = ref.release();
         if (T *ptr = m_ptr)
@@ -131,62 +122,71 @@ namespace KXMLCore {
         return *this;
     }
     
-    template <class T> inline bool operator==(const PassRefPtr<T>& a, const PassRefPtr<T>& b) 
+    template <typename T> template <typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(PassRefPtr<U>& ref)
+    {
+        T *optr = ref.release();
+        if (T *ptr = m_ptr)
+            ptr->deref();
+        m_ptr = optr;
+        return *this;
+    }
+    
+    template <typename T, typename U> inline bool operator==(const PassRefPtr<T>& a, const PassRefPtr<U>& b) 
     { 
         return a.get() == b.get(); 
     }
 
-    template <class T> inline bool operator==(const PassRefPtr<T>& a, const RefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator==(const PassRefPtr<T>& a, const RefPtr<U>& b) 
     { 
         return a.get() == b.get(); 
     }
 
-    template <class T> inline bool operator==(const RefPtr<T>& a, const PassRefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator==(const RefPtr<T>& a, const PassRefPtr<U>& b) 
     { 
         return a.get() == b.get(); 
     }
 
-    template <class T> inline bool operator==(const PassRefPtr<T>& a, const T *b) 
+    template <typename T, typename U> inline bool operator==(const PassRefPtr<T>& a, U* b) 
     { 
         return a.get() == b; 
     }
     
-    template <class T> inline bool operator==(const T *a, const PassRefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator==(T* a, const PassRefPtr<U>& b) 
     {
         return a == b.get(); 
     }
     
-    template <class T> inline bool operator!=(const PassRefPtr<T>& a, const PassRefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator!=(const PassRefPtr<T>& a, const PassRefPtr<U>& b) 
     { 
         return a.get() != b.get(); 
     }
 
-    template <class T> inline bool operator!=(const PassRefPtr<T>& a, const RefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator!=(const PassRefPtr<T>& a, const RefPtr<U>& b) 
     { 
         return a.get() != b.get(); 
     }
 
-    template <class T> inline bool operator!=(const RefPtr<T>& a, const PassRefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator!=(const RefPtr<T>& a, const PassRefPtr<U>& b) 
     { 
         return a.get() != b.get(); 
     }
 
-    template <class T> inline bool operator!=(const PassRefPtr<T>& a, const T *b)
+    template <typename T, typename U> inline bool operator!=(const PassRefPtr<T>& a, U* b)
     {
         return a.get() != b; 
     }
 
-    template <class T> inline bool operator!=(const T *a, const PassRefPtr<T>& b) 
+    template <typename T, typename U> inline bool operator!=(T* a, const PassRefPtr<U>& b) 
     { 
         return a != b.get(); 
     }
     
-    template <class T, class U> inline PassRefPtr<T> static_pointer_cast(const PassRefPtr<U>& p) 
+    template <typename T, typename U> inline PassRefPtr<T> static_pointer_cast(const PassRefPtr<U>& p) 
     { 
         return PassRefPtr<T>::adopt(static_cast<T *>(p.release())); 
     }
 
-    template <class T, class U> inline PassRefPtr<T> const_pointer_cast(const PassRefPtr<U>& p) 
+    template <typename T, typename U> inline PassRefPtr<T> const_pointer_cast(const PassRefPtr<U>& p) 
     { 
         return PassRefPtr<T>::adopt(const_cast<T *>(p.release())); 
     }
