@@ -1,3 +1,14 @@
+2005-12-22  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric and Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6196
+        Would like to be able to define prototypes in headers
+        
+        * kjs/lookup.h:
+        Move ClassName from KJS_DECLARE_PROTOTYPE to KJS_IMPLEMENT_PROTOTYPE.
+        Also, namespace all macros by prefixing them with KJS_. 
+
 2005-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -27,6 +38,7 @@
         Also remove unneeded const in raw pointer versions.
         (KXMLCore::operator!=): Ditto.
 
+>>>>>>> 1.920
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

@@ -284,39 +284,44 @@ namespace KJS {
    * not one in each derived class. So we link the (unique) prototypes between them.
    *
    * Using those macros is very simple: define the hashtable (e.g. "DOMNodeProtoTable"), then
-   * DEFINE_PROTOTYPE("DOMNode",DOMNodeProto)
-   * IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
-   * IMPLEMENT_PROTOTYPE(DOMNodeProto,DOMNodeProtoFunc)
+   * KJS_DEFINE_PROTOTYPE(DOMNodeProto)
+   * KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
+   * KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto,DOMNodeProtoFunc)
    * and use DOMNodeProto::self(exec) as prototype in the DOMNode constructor.
    * If the prototype has a "parent prototype", e.g. DOMElementProto falls back on DOMNodeProto,
    * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
    */
-#define DEFINE_PROTOTYPE(ClassName,ClassProto) \
+#define KJS_DEFINE_PROTOTYPE(ClassProto) \
   class ClassProto : public JSObject { \
     friend JSObject *cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
   public: \
-    static JSObject *self(ExecState *exec) \
-    { \
-      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
-    } \
+    static JSObject *ClassProto::self(ExecState *exec); \
+    virtual const ClassInfo *classInfo() const { return &info; } \
+    static const ClassInfo info; \
+    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&); \
   protected: \
     ClassProto( ExecState *exec ) \
       : JSObject( exec->lexicalInterpreter()->builtinObjectPrototype() ) {} \
     \
-  public: \
-    virtual const ClassInfo *classInfo() const { return &info; } \
-    static const ClassInfo info; \
-    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&); \
-  }; \
-  const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 };
+  };
 
-#define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
+#define KJS_IMPLEMENT_PROTOTYPE(ClassName, ClassProto,ClassFunc) \
+    const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
+    JSObject *ClassProto::self(ExecState *exec) \
+    { \
+      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
+    } \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
       return getStaticFunctionSlot<ClassFunc,JSObject>(exec, &ClassProto##Table, this, propertyName, slot); \
     }
 
-#define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
+#define KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassName, ClassProto,ClassFunc,ParentProto)  \
+    const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
+    JSObject *ClassProto::self(ExecState *exec) \
+    { \
+      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
+    } \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
       if (getStaticFunctionSlot<ClassFunc,JSObject>(exec, &ClassProto##Table, this, propertyName, slot)) \
@@ -324,7 +329,7 @@ namespace KJS {
       return ParentProto::self(exec)->getOwnPropertySlot(exec, propertyName, slot); \
     }
 
-#define IMPLEMENT_PROTOFUNC(ClassFunc) \
+#define KJS_IMPLEMENT_PROTOFUNC(ClassFunc) \
   class ClassFunc : public DOMFunction { \
   public: \
     ClassFunc(ExecState *exec, int i, int len) : id(i) \
