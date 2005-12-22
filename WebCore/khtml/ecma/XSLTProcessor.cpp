@@ -54,9 +54,9 @@ const ClassInfo XSLTProcessor::info = { "XSLTProcessor", 0, 0, 0 };
 @end
 */
 
-DEFINE_PROTOTYPE("XSLTProcessor", XSLTProcessorProto)
-IMPLEMENT_PROTOFUNC(XSLTProcessorProtoFunc)
-IMPLEMENT_PROTOTYPE(XSLTProcessorProto, XSLTProcessorProtoFunc)
+KJS_DEFINE_PROTOTYPE(XSLTProcessorProto)
+KJS_IMPLEMENT_PROTOFUNC(XSLTProcessorProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorProto, XSLTProcessorProtoFunc)
 
 XSLTProcessor::XSLTProcessor(ExecState *exec) : m_impl(new XSLTProcessorImpl())
 {

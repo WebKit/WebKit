@@ -371,9 +371,9 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
   initEvent		DOMEvent::InitEvent		DontDelete|Function 3
 @end
 */
-DEFINE_PROTOTYPE("DOMEvent", DOMEventProto)
-IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
-IMPLEMENT_PROTOTYPE(DOMEventProto, DOMEventProtoFunc)
+KJS_DEFINE_PROTOTYPE(DOMEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventProto, DOMEventProtoFunc)
 
 DOMEvent::DOMEvent(ExecState *exec, EventImpl *e)
   : m_impl(e), clipboard(0) 
@@ -573,9 +573,9 @@ const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTabl
   initUIEvent	DOMUIEvent::InitUIEvent	DontDelete|Function 5
 @end
 */
-DEFINE_PROTOTYPE("DOMUIEvent",DOMUIEventProto)
-IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
-IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMUIEventProto,DOMUIEventProtoFunc,DOMEventProto)
+KJS_DEFINE_PROTOTYPE(DOMUIEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMUIEvent",DOMUIEventProto,DOMUIEventProtoFunc,DOMEventProto)
 
 DOMUIEvent::DOMUIEvent(ExecState *exec, UIEventImpl *e)
   : DOMEvent(exec, e)
@@ -660,9 +660,9 @@ const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMou
   initMouseEvent	DOMMouseEvent::InitMouseEvent	DontDelete|Function 15
 @end
 */
-DEFINE_PROTOTYPE("DOMMouseEvent",DOMMouseEventProto)
-IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
-IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIEventProto)
+KJS_DEFINE_PROTOTYPE(DOMMouseEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMMouseEvent",DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIEventProto)
 
 DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEventImpl *e)
   : DOMUIEvent(exec, e)
@@ -762,9 +762,9 @@ const ClassInfo DOMKeyboardEvent::info = { "KeyboardEvent", &DOMUIEvent::info, &
   initKeyboardEvent	DOMKeyboardEvent::InitKeyboardEvent	DontDelete|Function 11
 @end
 */
-DEFINE_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto)
-IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
-IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMKeyboardEventProto, DOMKeyboardEventProtoFunc, DOMUIEventProto)
+KJS_DEFINE_PROTOTYPE(DOMKeyboardEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMKeyboardEvent", DOMKeyboardEventProto, DOMKeyboardEventProtoFunc, DOMUIEventProto)
 
 DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEventImpl *e)
   : DOMUIEvent(exec, e)
@@ -865,9 +865,9 @@ const ClassInfo DOMMutationEvent::info = { "MutationEvent", &DOMEvent::info, &DO
   initMutationEvent	DOMMutationEvent::InitMutationEvent	DontDelete|Function 8
 @end
 */
-DEFINE_PROTOTYPE("DOMMutationEvent",DOMMutationEventProto)
-IMPLEMENT_PROTOFUNC(DOMMutationEventProtoFunc)
-IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMutationEventProto,DOMMutationEventProtoFunc,DOMEventProto)
+KJS_DEFINE_PROTOTYPE(DOMMutationEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMMutationEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMMutationEvent",DOMMutationEventProto,DOMMutationEventProtoFunc,DOMEventProto)
 
 DOMMutationEvent::DOMMutationEvent(ExecState *exec, MutationEventImpl *e)
   : DOMEvent(exec, e)
@@ -942,9 +942,9 @@ const ClassInfo DOMWheelEvent::info = { "WheelEvent", &DOMEvent::info, &DOMWheel
 @begin DOMWheelEventProtoTable 1
 @end
 */
-DEFINE_PROTOTYPE("DOMWheelEvent",DOMWheelEventProto)
-IMPLEMENT_PROTOFUNC(DOMWheelEventProtoFunc)
-IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMWheelEventProto,DOMWheelEventProtoFunc,DOMEventProto)
+KJS_DEFINE_PROTOTYPE(DOMWheelEventProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMWheelEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMWheelEvent",DOMWheelEventProto,DOMWheelEventProtoFunc,DOMEventProto)
 
 DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
     : DOMUIEvent(exec, e)
@@ -1015,9 +1015,9 @@ const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
 @end
 */
 
-DEFINE_PROTOTYPE("Clipboard", ClipboardProto)
-IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
-IMPLEMENT_PROTOTYPE(ClipboardProto, ClipboardProtoFunc)
+KJS_DEFINE_PROTOTYPE(ClipboardProto)
+KJS_IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("Clipboard", ClipboardProto, ClipboardProtoFunc)
 
 Clipboard::Clipboard(ExecState *exec, DOM::ClipboardImpl *cb)
   : clipboard(cb)

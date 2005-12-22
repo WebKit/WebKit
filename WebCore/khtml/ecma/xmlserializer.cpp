@@ -40,9 +40,9 @@ namespace KJS {
   serializeToString XMLSerializer::SerializeToString DontDelete|Function 1
 @end
 */
-DEFINE_PROTOTYPE("XMLSerializer",XMLSerializerProto)
-IMPLEMENT_PROTOFUNC(XMLSerializerProtoFunc)
-IMPLEMENT_PROTOTYPE(XMLSerializerProto,XMLSerializerProtoFunc)
+KJS_DEFINE_PROTOTYPE(XMLSerializerProto)
+KJS_IMPLEMENT_PROTOFUNC(XMLSerializerProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("XMLSerializer",XMLSerializerProto,XMLSerializerProtoFunc)
 
 XMLSerializerConstructorImp::XMLSerializerConstructorImp(ExecState *)
     : JSObject()

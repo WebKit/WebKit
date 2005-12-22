@@ -51,9 +51,9 @@ const ClassInfo DOMAbstractView::info = { "AbstractView", 0, &DOMAbstractViewTab
 @end
 */
 
-DEFINE_PROTOTYPE("DOMAbstractView",DOMAbstractViewProto)
-IMPLEMENT_PROTOFUNC(DOMAbstractViewProtoFunc)
-IMPLEMENT_PROTOTYPE(DOMAbstractViewProto,DOMAbstractViewProtoFunc)
+KJS_DEFINE_PROTOTYPE(DOMAbstractViewProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMAbstractViewProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("DOMAbstractView",DOMAbstractViewProto,DOMAbstractViewProtoFunc)
 
 DOMAbstractView::DOMAbstractView(ExecState *exec, AbstractViewImpl *av)
   : m_impl(av)

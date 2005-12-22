@@ -1,3 +1,23 @@
+2005-12-22  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6196
+        Would like to be able to define prototypes in headers
+
+        * khtml/ecma/XSLTProcessor.cpp:
+        * khtml/ecma/domparser.cpp:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_range.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/ecma/kjs_views.cpp:
+        * khtml/ecma/xmlhttprequest.cpp:
+        * khtml/ecma/xmlserializer.cpp:
+        Update for changes to JSC.
+
 2005-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

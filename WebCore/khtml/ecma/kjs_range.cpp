@@ -69,9 +69,9 @@ const ClassInfo DOMRange::info = { "Range", 0, &DOMRangeTable, 0 };
   createContextualFragment  DOMRange::CreateContextualFragment  DontDelete|Function 1
 @end
 */
-DEFINE_PROTOTYPE("DOMRange",DOMRangeProto)
-IMPLEMENT_PROTOFUNC(DOMRangeProtoFunc)
-IMPLEMENT_PROTOTYPE(DOMRangeProto,DOMRangeProtoFunc)
+KJS_DEFINE_PROTOTYPE(DOMRangeProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMRangeProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("DOMRange",DOMRangeProto,DOMRangeProtoFunc)
 
 DOMRange::DOMRange(ExecState *exec, RangeImpl *r)
  : m_impl(r) 

@@ -155,7 +155,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   javaEnabled	Navigator::JavaEnabled	DontDelete|Function 0
 @end
 */
-IMPLEMENT_PROTOFUNC(NavigatorFunc)
+KJS_IMPLEMENT_PROTOFUNC(NavigatorFunc)
 
 Navigator::Navigator(ExecState *exec, KHTMLPart *p)
   : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), m_part(p) { }
@@ -326,7 +326,7 @@ void PluginBase::refresh(bool reload)
   refresh	Plugins::Refresh	DontDelete|Function 0
 @end
 */
-IMPLEMENT_PROTOFUNC(PluginsFunc)
+KJS_IMPLEMENT_PROTOFUNC(PluginsFunc)
 
 JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
 {

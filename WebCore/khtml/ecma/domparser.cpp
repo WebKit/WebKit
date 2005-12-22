@@ -36,9 +36,9 @@ using DOM::DOMImplementationImpl;
 */
 namespace KJS {
 
-DEFINE_PROTOTYPE("DOMParser",DOMParserProto)
-IMPLEMENT_PROTOFUNC(DOMParserProtoFunc)
-IMPLEMENT_PROTOTYPE(DOMParserProto,DOMParserProtoFunc)
+KJS_DEFINE_PROTOTYPE(DOMParserProto)
+KJS_IMPLEMENT_PROTOFUNC(DOMParserProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("DOMParser",DOMParserProto,DOMParserProtoFunc)
 
 DOMParserConstructorImp::DOMParserConstructorImp(ExecState *, DOM::DocumentImpl *d)
     : doc(d)
