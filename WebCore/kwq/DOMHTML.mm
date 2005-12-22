@@ -4052,10 +4052,7 @@ static NSView *viewForElement(DOMElement *element)
     NSTextField *field = (NSTextField *)viewForElement(self);
     ASSERT(field != nil);
     NSRect result = [field bounds];
-    if ([field isFlipped]) {
-        result.origin.y += result.size.height;
-    }
-    result.origin = [field convertPoint:result.origin toView:nil];
+    result = [field convertRect:result toView:nil];
     result.origin = [[field window] convertBaseToScreen:result.origin];
     return result;
 }
