@@ -366,7 +366,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
     if (!node || !node->getDocument())
         return VisiblePosition();
     
-    node->getDocument()->updateLayout();
+    node->getDocument()->updateLayoutIgnorePendingStylesheets();
     
     RenderObject *renderer = node->renderer();
     if (!renderer)
@@ -429,7 +429,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
     if (!node || !node->getDocument())
         return VisiblePosition();
     
-    node->getDocument()->updateLayout();
+    node->getDocument()->updateLayoutIgnorePendingStylesheets();
 
     RenderObject *renderer = node->renderer();
     if (!renderer)

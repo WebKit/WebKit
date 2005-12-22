@@ -299,7 +299,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Handle whitespace that occurs after the split
     if (splitText) {
-        document()->updateLayout();
+        updateLayout();
         pos = Position(startNode, 0);
         if (!pos.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space

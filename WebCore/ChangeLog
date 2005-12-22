@@ -1,5 +1,58 @@
 2005-12-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6142
+          intermittent failures in some paste tests
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::applyBlockStyle): Call new updateLayout member function.
+        (khtml::ApplyStyleCommand::applyInlineStyle): Ditto.
+        (khtml::ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries): Ditto.
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::addBlockPlaceholderIfNeeded): Ditto.
+        (khtml::CompositeEditCommand::findBlockPlaceholder): Ditto.
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Ditto.
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::fixupWhitespace): Ditto.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Ditto.
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::apply): Ditto.
+        (khtml::EditCommand::unapply): Ditto.
+        (khtml::EditCommand::reapply): Ditto.
+        (khtml::EditCommand::updateLayout): Added. Calls updateLayoutIgnorePendingStylesheets
+        on the document.
+        * khtml/editing/edit_command.h: Added updateLayout member function.
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply): Call new updateLayout member function.
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ditto.
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::execCommand): Call updateLayoutIgnorePendingStylesheets instead of updateLayout.
+        (DOM::JSEditor::queryCommandEnabled): Ditto.
+        (DOM::JSEditor::queryCommandIndeterm): Ditto.
+        (DOM::JSEditor::queryCommandState): Ditto.
+        (DOM::JSEditor::queryCommandValue): Ditto.
+        * khtml/editing/markup.cpp: (khtml::createMarkup): Ditto.
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplacementFragment::insertFragmentForTestRendering): Ditto.
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles): Call new updateLayout member function.
+        (khtml::ReplacementFragment::computeStylesUsingTestRendering): Call
+        updateLayoutIgnorePendingStylesheets instead of updateLayout.
+        (khtml::ReplaceSelectionCommand::doApply): Call new updateLayout member function.
+        (khtml::ReplaceSelectionCommand::removeLinePlaceholderIfNeeded): Ditto.
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): Ditto.
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousLinePosition): Call updateLayoutIgnorePendingStylesheets instead of updateLayout.
+        (khtml::nextLinePosition): Ditto.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::innerText): Ditto.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:closeTyping:]): Ditto.
+        (-[WebCoreBridge smartDeleteRangeForProposedRange:]): Ditto.
+
+2005-12-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6177
@@ -45,7 +98,7 @@
 
 2005-12-21  David Harrison  <harrison@apple.com>
 
-        Reviewed by Justin).
+        Reviewed by Justin.
 
         <rdar://problem/4039777> Pasting particular snippet of HTML containing list items and a link creates too many list items
         - Fixed paste crash by making calling RenderBox::deleteLineBoxWrapper() from RenderObject::remove(),

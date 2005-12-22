@@ -366,7 +366,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayout();
+    updateLayout();
 
     // get positions we want to use for applying style
     Position start = startPosition();
@@ -539,7 +539,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayout();
+    updateLayout();
     
     // adjust to the positions we want to use for applying style
     Position start = startPosition();
@@ -590,7 +590,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayout();
+    updateLayout();
     
     NodeImpl *node = start.node();
     if (start.offset() >= start.node()->caretMaxOffset())
@@ -857,11 +857,11 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries(const Position &
     // decoration while pushing down.
 
     pushDownTextDecorationStyleAroundNode(start.node(), start, end, false);
-    document()->updateLayout();
+    updateLayout();
     pushDownTextDecorationStyleAroundNode(start.node(), start, end, true);
 
     pushDownTextDecorationStyleAroundNode(end.node(), start, end, false);
-    document()->updateLayout();
+    updateLayout();
     pushDownTextDecorationStyleAroundNode(end.node(), start, end, true);
 }
 

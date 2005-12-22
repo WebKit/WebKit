@@ -337,7 +337,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     ASSERT(exceptionCode == 0);
 
     DocumentImpl *doc = commonAncestor->getDocument();
-    doc->updateLayout();
+    doc->updateLayoutIgnorePendingStylesheets();
 
     NodeImpl *commonAncestorBlock = 0;
     if (commonAncestor != 0) {
@@ -507,7 +507,7 @@ QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
     QPtrList<DOM::NodeImpl> *nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
-    node->getDocument()->updateLayout();
+    node->getDocument()->updateLayoutIgnorePendingStylesheets();
     return markup(node, includeChildren, false, nodes);
 }
 

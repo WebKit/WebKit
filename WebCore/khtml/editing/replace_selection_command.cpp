@@ -273,7 +273,7 @@ NodeImpl *ReplacementFragment::insertFragmentForTestRendering()
     ASSERT(exceptionCode == 0);
     holder->deref();
     
-    m_document->updateLayout();
+    m_document->updateLayoutIgnorePendingStylesheets();
     
     return holder;
 }
@@ -305,7 +305,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle>
     // This function uses the mapped "desired style" to apply the additional style needed, if any,
     // to make the node have the desired style.
 
-    document()->updateLayout();
+    updateLayout();
 
     QValueListConstIterator<NodeDesiredStyle> it;
     for (it = list.begin(); it != list.end(); ++it) {
@@ -395,7 +395,7 @@ void ReplacementFragment::computeStylesUsingTestRendering(NodeImpl *holder)
     if (!holder)
         return;
 
-    m_document->updateLayout();
+    m_document->updateLayoutIgnorePendingStylesheets();
 
     for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder))
         computeAndStoreNodeDesiredStyle(node, m_styles);
@@ -636,7 +636,7 @@ void ReplaceSelectionCommand::doApply()
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
         deleteSelection(false, !(m_fragment.hasInterchangeNewlineAtStart() || m_fragment.hasInterchangeNewlineAtEnd() || m_fragment.hasMoreThanOneBlock()));
-        document()->updateLayout();
+        updateLayout();
         visibleStart = VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY);
         if (m_fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
@@ -731,7 +731,7 @@ void ReplaceSelectionCommand::doApply()
     // add "smart replace" space, handle trailing newline, clean up.
     
     // initially, we say the insertion point is the start of selection
-    document()->updateLayout();
+    updateLayout();
     Position insertionPos = startPos;
 
     // step 1: merge content into the start block, if that is needed
@@ -758,7 +758,7 @@ void ReplaceSelectionCommand::doApply()
         
         // update insertion point to be at the end of the last block inserted
         if (m_lastNodeInserted) {
-            document()->updateLayout();
+            updateLayout();
             insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
         }
     }
@@ -788,13 +788,13 @@ void ReplaceSelectionCommand::doApply()
             refNode = node;
             node = next;
         }
-        document()->updateLayout();
+        updateLayout();
         insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
     }
 
     // step 3 : handle "smart replace" whitespace
     if (addTrailingSpace && m_lastNodeInserted) {
-        document()->updateLayout();
+        updateLayout();
         Position pos(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
         bool needsTrailingSpace = pos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
         if (needsTrailingSpace) {
@@ -812,7 +812,7 @@ void ReplaceSelectionCommand::doApply()
     }
 
     if (addLeadingSpace && m_firstNodeInserted) {
-        document()->updateLayout();
+        updateLayout();
         Position pos(m_firstNodeInserted, 0);
         bool needsLeadingSpace = pos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
         if (needsLeadingSpace) {
@@ -843,7 +843,7 @@ void ReplaceSelectionCommand::doApply()
                 insertParagraph = true;
             } else {
                 // Handle end-of-document case.
-                document()->updateLayout();
+                updateLayout();
                 if (isEndOfDocument(pos))
                     insertParagraph = true;
             }
@@ -864,7 +864,7 @@ void ReplaceSelectionCommand::doApply()
     } 
     else {
         if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(brTag) && !document()->inStrictMode()) {
-            document()->updateLayout();
+            updateLayout();
             VisiblePosition pos(Position(m_lastNodeInserted, 1), DOWNSTREAM);
             if (isEndOfBlock(pos)) {
                 NodeImpl *next = m_lastNodeInserted->traverseNextNode();
@@ -877,7 +877,7 @@ void ReplaceSelectionCommand::doApply()
         }
 
         if (moveNodesAfterEnd && !isLastVisiblePositionInSpecialElement(Position(m_lastNodeInserted, maxRangeOffset(m_lastNodeInserted)))) {
-            document()->updateLayout();
+            updateLayout();
             QValueList<NodeDesiredStyle> styles;
             QPtrList<NodeImpl> blocks;
             NodeImpl *node = beyondEndNode;
@@ -899,7 +899,7 @@ void ReplaceSelectionCommand::doApply()
                     break;
                 node = next;
             }
-            document()->updateLayout();
+            updateLayout();
             for (QPtrListIterator<NodeImpl> it(blocks); it.current(); ++it) {
                 NodeImpl *blockToRemove = it.current();
                 if (!blockToRemove->inDocument())
@@ -908,7 +908,7 @@ void ReplaceSelectionCommand::doApply()
                     if (blockToRemove->parentNode())
                         blocks.append(blockToRemove->parentNode()->enclosingBlockFlowElement());
                     removeNode(blockToRemove);
-                    document()->updateLayout();
+                    updateLayout();
                 }
             }
 
@@ -929,14 +929,14 @@ void ReplaceSelectionCommand::removeLinePlaceholderIfNeeded(NodeImpl *linePlaceh
     if (!linePlaceholder)
         return;
         
-    document()->updateLayout();
+    updateLayout();
     if (linePlaceholder->inDocument()) {
         VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
         if (placeholderPos.next().isNull() ||
             !(isStartOfLine(placeholderPos) && isEndOfLine(placeholderPos))) {
             NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
             removeNode(linePlaceholder);
-            document()->updateLayout();
+            updateLayout();
             if (!block->renderer() || block->renderer()->height() == 0)
                 removeNode(block);
         }
@@ -970,7 +970,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         }
         
         // Call updateLayout so caretMinOffset and caretMaxOffset return correct values.
-        document()->updateLayout();
+        updateLayout();
         start = Position(firstLeaf, firstLeaf->caretMinOffset());
         end = Position(lastLeaf, lastLeaf->caretMaxOffset());
 

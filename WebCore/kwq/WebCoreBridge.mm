@@ -1638,7 +1638,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
-    _part->xmlDocImpl()->updateLayout();
+    _part->xmlDocImpl()->updateLayoutIgnorePendingStylesheets();
 
     EAffinity affinity = static_cast<EAffinity>(selectionAffinity);
     
@@ -1786,7 +1786,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
-    _part->xmlDocImpl()->updateLayout();
+    _part->xmlDocImpl()->updateLayoutIgnorePendingStylesheets();
 
     Position start(startContainer, [proposedRange startOffset]);
     Position end(endContainer, [proposedRange endOffset]);

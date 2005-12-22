@@ -233,7 +233,7 @@ DOMString HTMLElementImpl::outerHTML() const
 DOMString HTMLElementImpl::innerText() const
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
-    getDocument()->updateLayout();
+    getDocument()->updateLayoutIgnorePendingStylesheets();
     return plainText(rangeOfContents(const_cast<HTMLElementImpl *>(this)).get());
 }
 

@@ -86,6 +86,8 @@ public:
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
+
+    void updateLayout() const;
     
 private:
     void assignTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
