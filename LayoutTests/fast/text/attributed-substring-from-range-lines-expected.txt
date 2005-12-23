@@ -1,7 +1,0 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-Actual HTML:
-<pre> <DIV class="editing" id="test"></DIV> </pre>
-(0, 0): undefined
-Exception: undefined
-
-

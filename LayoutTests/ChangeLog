@@ -1,3 +1,13 @@
+2005-12-22  Justin Garcia  <justin.garcia@apple.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6211>
+        fast/text/attributed-substring-from-range-lines needs LayoutTests/editing/editing.js
+
+        * editing/input/attributed-substring-from-range-lines-expected.txt: Added.
+        * editing/input/attributed-substring-from-range-lines.html: Added.
+        * fast/text/attributed-substring-from-range-lines-expected.txt: Removed.
+        * fast/text/attributed-substring-from-range-lines.html: Removed.
+
 2005-12-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
