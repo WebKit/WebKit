@@ -30,21 +30,35 @@
 namespace KXMLCore {
 
     template <typename T>
-    inline T identityExtract(const T& t) 
+    inline const T& identityExtract(const T& t) 
     { 
         return t; 
     }
 
-    template<typename Value, typename T, Value ConvertT(const T&, unsigned)> 
-    inline Value convertAdapter(const T& t, const T&, unsigned h)
-    { 
-        return ConvertT(t, h); 
-    }
 
+    template<typename Value, typename T, typename HashSetTranslator>
+    struct HashSetTranslatorAdapter 
+    {
+        static unsigned hash(const T& key)
+        {
+            return HashSetTranslator::hash(key);
+        }
+        
+        static bool equal(const Value& a, const T& b)
+        {
+            return HashSetTranslator::equal(a, b);
+        }
+        
+        static void translate(Value& location, const T& key, const T&, unsigned hashCode)
+        {
+            HashSetTranslator::translate(location, key, hashCode);
+        }
+    };
+    
     template<typename Value, typename HashFunctions = DefaultHash<Value>, typename Traits = HashTraits<Value> >
     class HashSet {
     private:
-        typedef HashTable<Value, Value, identityExtract<Value>, HashFunctions, Traits> ImplType;
+        typedef HashTable<Value, Value, identityExtract<Value>, HashFunctions, Traits, Traits> ImplType;
     public:
         typedef Value ValueType;
         typedef typename ImplType::iterator iterator;
@@ -69,8 +83,11 @@ namespace KXMLCore {
         
         // a special version of insert() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
-        // in the table
-        template<typename T, unsigned HashT(const T&), bool EqualT(const ValueType&, const T&), ValueType ConvertT(const T&, unsigned)> 
+        // in the table. HashTranslator should have the following methods:
+        //   static unsigned hash(const T&);
+        //   static bool equal(const ValueType&, const T&);
+        //   static translate(ValueType&, const T&, unsigned hashCode);
+        template<typename T, typename HashTranslator> 
         std::pair<iterator, bool> insert(const T& value);
         
         void remove(const ValueType& value);
@@ -148,10 +165,10 @@ namespace KXMLCore {
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
-    template<typename T, unsigned HashT(const T&), bool EqualT(const Value&, const T&), Value ConvertT(const T&, unsigned)> 
+    template<typename T, typename HashSetTranslator> 
     std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::insert(const T& value)
     {
-        return m_impl.insert<T, T, HashT, EqualT, convertAdapter<Value, T, ConvertT> >(value, value); 
+        return m_impl.template insert<T, T, HashSetTranslatorAdapter<ValueType, T, HashSetTranslator> >(value, value); 
     }
     
     template<typename Value, typename HashFunctions, typename Traits>

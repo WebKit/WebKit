@@ -1,3 +1,91 @@
+2005-12-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - Make HashMap/HashSet support non-POD types
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5332
+
+        The changes for support are relatively simple, but I also made extensive changes to
+        avoid copying, so that there isn't refcount thrash when you put RefPtrs into a HashMap.
+
+        * kxmlcore/HashTable.h:
+        (KXMLCore::swap): specialize swap for pairs, to swap elements individually,
+	so that excess copies can be avoided.
+        (KXMLCore::Mover::move): Template function to either copy or swap, used
+	when transferring elements from old table to new.
+        (KXMLCore::IdentityHashTranslator::hash): The old "converting lookup" templates
+	that took two or three function parameters now take a class parameter, this is
+	the class used to do a normal lookup.
+        (KXMLCore::IdentityHashTranslator::equal): Ditto.
+        (KXMLCore::IdentityHashTranslator::translate): Ditto. Translate now takes a reference
+	to write into instead of returning a value to avoid redundant copies.
+        (KXMLCore::HashTable::~HashTable): Use deallocateTable instead of freeing directly.
+        (KXMLCore::HashTable::insert): Based on HashTranslator now instead of separate
+	functions. Added a FIXME about a remaining rare excess copy.
+        (KXMLCore::HashTable::isEmptyBucket): Use KeyTraits directly instead of unwrapping
+	the key from Traits, to avoid creating and destroying pair, which copies.
+        (KXMLCore::HashTable::isDeletedBucket): ditto
+        (KXMLCore::HashTable::lookup): Use HashTranslator now instead of separate functions.
+        (KXMLCore::HashTable::initializeBucket): Renamed from emptyBucket. Use placement new to
+	work right for non-POD types.
+        (KXMLCore::HashTable::deleteBucket): Use assignDeleted to avoid excess copies.
+        (KXMLCore::HashTable::reinsert): use Mover template to copy or swap as appropriate
+        (KXMLCore::HashTable::allocateTable): Initialize every bucket if calloc won't do.
+        (KXMLCore::HashTable::deallocateTable): Destruct every bucket if needed.
+        (KXMLCore::HashTable::rehash): Avoid copy before reinserting, so that swap can do its magic.
+        (KXMLCore::HashTable::clear): use deallocateTable instead of freeing directly.
+        (KXMLCore::HashTable::HashTable): be more dumb when copying to ensure that non-POD types
+	work right
+        * kxmlcore/HashFunctions.h:
+        (KXMLCore::PointerHash): Specialize PointerHash for RefPtr
+        * kxmlcore/HashMap.h:
+        (KXMLCore::extractFirst): Return a reference not a full object to avoid
+	copies.
+        (KXMLCore::HashMapTranslator::hash): Use a special translator for insertion
+	to defer making the pair as long as possible, thus avoiding needless copies.
+        (KXMLCore::HashMapTranslator::equal): ditto
+        (KXMLCore::HashMapTranslator::translate): ditto
+        (KXMLCore::::inlineAdd): Shared by set and add to insert using HashMapTranslator
+        (KXMLCore::::set): Use inlineAdd
+        (KXMLCore::::add): Use inlineAdd
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::): Pass KeyTraits along
+        * kxmlcore/HashSet.h:
+        (KXMLCore::identityExtract): Return a reference not a full object to avoid copies.
+        (KXMLCore::HashSetTranslatorAdapter::hash): Redo adapter stuff to work with
+	the new HashTranslator approach.
+        (KXMLCore::HashSetTranslatorAdapter::equal): ditto
+        (KXMLCore::HashSetTranslatorAdapter::translate): ditto
+        (KXMLCore::::insert): ditto
+        * kxmlcore/HashTraits.h:
+        (KXMLCore::GenericHashTraits): This is intended be used as a base class for
+	customized traits: sensible defaults.
+        (KXMLCore::): Use it a bunch
+        (KXMLCore::assignDeleted): template function to allow pairs to be assigned the
+	deleted value w/o excess copies.
+        (KXMLCore::PairHashTraits::emptyValue): Updated
+        (KXMLCore::PairHashTraits::deletedValue): Updated
+        (KXMLCore::PairHashTraits::assignDeletedValue): part of assignDeleted hack
+        (KXMLCore::DeletedValueAssigner::assignDeletedValue): Use template magic
+	to either use use deletedValue or assignDeletedValue for the cases where we care.
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::swap): Added swap method.
+        (KXMLCore::swap): Added swap free function.
+        * kjs/identifier.cpp:
+        (KJS::CStringTranslator::hash): Use new HashTranslator class approach to
+	alternate type based insertion.
+        (KJS::CStringTranslator::equal): ditto
+        (KJS::CStringTranslator::translate): ditto
+        (KJS::Identifier::add): ditto
+        (KJS::UCharBufferTranslator::hash): ditto
+        (KJS::UCharBufferTranslator::equal): ditto
+        (KJS::UCharBufferTranslator::translate): ditto
+
+	- irrelevant change:
+	
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): Removed a stray space.
+
 2005-12-22  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric and Darin.

@@ -180,8 +180,8 @@ namespace KXMLCore {
         typedef Q *MappedType;
         typedef std::pair<KeyType, MappedType> ValueType;
         typedef typename std::pair<void *, void *> ImplValueType;
-        typedef HashTableIterator<void *, ImplValueType, extractFirst<ImplValueType>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> > > ImplIterator;
-        typedef HashTableConstIterator<void *, ImplValueType, extractFirst<ImplValueType>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> > > ImplConstIterator;
+        typedef HashTableIterator<void *, ImplValueType, extractFirst<ImplValueType>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplIterator;
+        typedef HashTableConstIterator<void *, ImplValueType, extractFirst<ImplValueType>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplConstIterator;
         
         typedef PointerHashIteratorAdapter<P, Q *> iterator;
         typedef PointerHashConstIteratorAdapter<P, Q *> const_iterator;

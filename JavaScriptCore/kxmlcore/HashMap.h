@@ -30,20 +30,45 @@
 namespace KXMLCore {
 
 template<typename PairType> 
-inline typename PairType::first_type extractFirst(const PairType& value)
+inline typename PairType::first_type const& extractFirst(const PairType& value)
 {
     return value.first;
 }
+
+template<typename Key, typename Mapped, typename HashFunctions>
+class HashMapTranslator 
+{
+    typedef pair<Key, Mapped> ValueType;
+        
+public:
+    static unsigned hash(const Key& key)
+    {
+        return HashFunctions::hash(key);
+    }
+    
+    static bool equal(const Key& a, const Key& b)
+    {
+        return HashFunctions::equal(a, b);
+    }
+    
+    static void translate(ValueType& location, const Key& key, const Mapped& mapped, unsigned)
+    {
+        ValueType tmp(key, mapped);
+        swap(tmp, location);
+    }
+};
+
 
 template<typename Key, typename Mapped, typename HashFunctions = DefaultHash<Key>, typename KeyTraits = HashTraits<Key>, typename MappedTraits = HashTraits<Mapped> >
 class HashMap {
  public:
     typedef Key KeyType;
     typedef Mapped MappedType;
-    typedef std::pair<Key, Mapped> ValueType;
+    typedef pair<Key, Mapped> ValueType;
     typedef PairHashTraits<KeyTraits, MappedTraits> ValueTraits;
  private:
-    typedef HashTable<KeyType, ValueType, extractFirst<ValueType>, HashFunctions, ValueTraits> ImplType;
+    typedef HashTable<KeyType, ValueType, extractFirst<ValueType>, HashFunctions, ValueTraits, KeyTraits> ImplType;
+    typedef HashMapTranslator<Key, Mapped, HashFunctions> TranslatorType; 
  public:
     typedef typename ImplType::iterator iterator;
     typedef typename ImplType::const_iterator const_iterator;
@@ -68,18 +93,20 @@ class HashMap {
     // replaces value but not key if key is already present
     // return value is a pair of the iterator to the key location, 
     // and a boolean that's true if a new value was actually added
-    std::pair<iterator, bool> set(const KeyType &key, const MappedType &mapped); 
+    pair<iterator, bool> set(const KeyType &key, const MappedType &mapped); 
 
     // does nothing if key is already present
     // return value is a pair of the iterator to the key location, 
     // and a boolean that's true if a new value was actually added
-    std::pair<iterator, bool> add(const KeyType &key, const MappedType &mapped); 
+    pair<iterator, bool> add(const KeyType &key, const MappedType &mapped); 
 
     void remove(const KeyType& key);
     void remove(iterator it);
     void clear();
 
  private:
+    pair<iterator, bool> inlineAdd(const KeyType &key, const MappedType &mapped);
+
     ImplType m_impl;
 };
 
@@ -144,10 +171,16 @@ bool HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::contains(cons
 }
 
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>
-std::pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::set(const KeyType &key, const MappedType &mapped) 
+pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::inlineAdd(const KeyType &key, const MappedType &mapped) 
 {
-    pair<iterator, bool> result = m_impl.insert(ValueType(key, mapped));
-    // the insert call above won't change anything if the key is
+    return m_impl.template insert<KeyType, MappedType, TranslatorType>(key, mapped); 
+}
+
+template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>
+pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::set(const KeyType &key, const MappedType &mapped) 
+{
+    pair<iterator, bool> result = inlineAdd(key, mapped);
+    // the add call above won't change anything if the key is
     // already there; in that case, make sure to set the value.
     if (!result.second)
         result.first->second = mapped;    
@@ -155,9 +188,9 @@ std::pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>:
 }
 
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>
-std::pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::add(const KeyType &key, const MappedType &mapped)
+pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::add(const KeyType &key, const MappedType &mapped)
 {
-    return m_impl.insert(ValueType(key, mapped));
+    return inlineAdd(key, mapped);
 }
 
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>

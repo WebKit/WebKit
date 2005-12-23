@@ -37,20 +37,32 @@ namespace DOM {
    
 static HashSet<DOMStringImpl *> stringTable;
 
-inline unsigned hash(const char* const& c)
+struct CStringTranslator 
 {
-    return DOMStringImpl::computeHash(c);
-}
+    static unsigned hash(const char* c)
+    {
+        return DOMStringImpl::computeHash(c);
+    }
 
-inline bool equal(DOMStringImpl* const& r, const char* const& s)
-{
-    int length = r->l;
-    const QChar *d = r->s;
-    for (int i = 0; i != length; ++i)
-        if (d[i] != s[i])
-            return false;
-    return s[length] == 0;
-}
+    static bool equal(DOMStringImpl *r, const char *s)
+    {
+        int length = r->l;
+        const QChar *d = r->s;
+        for (int i = 0; i != length; ++i)
+            if (d[i] != s[i])
+                return false;
+        return s[length] == 0;
+    }
+
+    static void translate(DOMStringImpl *& location, const char* const& c, unsigned hash)
+    {
+        DOMStringImpl *r = new DOMStringImpl(c);
+        r->_hash = hash;
+        r->_inTable = true;
+        
+        location = r; 
+    }
+};
 
 bool AtomicString::equal(const AtomicString &a, const char *b)
 { 
@@ -59,16 +71,7 @@ bool AtomicString::equal(const AtomicString &a, const char *b)
         return true;
     if ((!impl || !impl->s) || !b)
         return false;
-    return DOM::equal(impl, b); 
-}
-
-inline DOMStringImpl *convert(const char* const& c, unsigned hash)
-{
-    DOMStringImpl *r = new DOMStringImpl(c);
-    r->_hash = hash;
-    r->_inTable = true;
-
-    return r; 
+    return CStringTranslator::equal(impl, b); 
 }
 
 DOMStringImpl *AtomicString::add(const char *c)
@@ -79,51 +82,53 @@ DOMStringImpl *AtomicString::add(const char *c)
     if (length == 0)
         return DOMStringImpl::empty();
     
-    return *stringTable.insert<const char *, hash, DOM::equal, convert>(c).first;
+    return *stringTable.insert<const char *, CStringTranslator>(c).first;
 }
-
 
 struct QCharBuffer {
     const QChar *s;
     uint length;
 };
 
-inline unsigned hash(const QCharBuffer& buf)
+struct QCharBufferTranslator
 {
-    return DOMStringImpl::computeHash(buf.s, buf.length);
-}
-
-inline bool equal(DOMStringImpl* const& str, const QCharBuffer &buf)
-{
-    uint strLength = str->l;
-    uint bufLength = buf.length;
-    if (strLength != bufLength)
-        return false;
-
-    const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
-    const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
-    
-    uint halfLength = strLength >> 1;
-    for (uint i = 0; i != halfLength; ++i) {
-        if (*strChars++ != *bufChars++)
-            return false;
+    static unsigned hash(const QCharBuffer& buf)
+    {
+        return DOMStringImpl::computeHash(buf.s, buf.length);
     }
 
-    if (strLength & 1 && 
-        *reinterpret_cast<const uint16_t *>(strChars) != *reinterpret_cast<const uint16_t *>(bufChars))
-        return false;
+    static bool equal(DOMStringImpl* const& str, const QCharBuffer &buf)
+    {
+        uint strLength = str->l;
+        uint bufLength = buf.length;
+        if (strLength != bufLength)
+            return false;
+        
+        const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
+        const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
+        
+        uint halfLength = strLength >> 1;
+        for (uint i = 0; i != halfLength; ++i) {
+            if (*strChars++ != *bufChars++)
+                return false;
+        }
+        
+        if (strLength & 1 && 
+            *reinterpret_cast<const uint16_t *>(strChars) != *reinterpret_cast<const uint16_t *>(bufChars))
+            return false;
+        
+        return true;
+    }
 
-    return true;
-}
-
-inline DOMStringImpl *convert(const QCharBuffer& buf, unsigned hash)
-{
-    DOMStringImpl *r = new DOMStringImpl(buf.s, buf.length);
-    r->_hash = hash;
-    r->_inTable = true;
-    
-    return r; 
-}
+    static void translate(DOMStringImpl*& location, const QCharBuffer& buf, unsigned hash)
+    {
+        DOMStringImpl *r = new DOMStringImpl(buf.s, buf.length);
+        r->_hash = hash;
+        r->_inTable = true;
+        
+        location = r; 
+    }
+};
 
 DOMStringImpl *AtomicString::add(const QChar *s, int length)
 {
@@ -134,7 +139,7 @@ DOMStringImpl *AtomicString::add(const QChar *s, int length)
         return DOMStringImpl::empty();
     
     QCharBuffer buf = {s, length}; 
-    return *stringTable.insert<QCharBuffer, hash, DOM::equal, convert>(buf).first;
+    return *stringTable.insert<QCharBuffer, QCharBufferTranslator>(buf).first;
 }
 
 DOMStringImpl *AtomicString::add(DOMStringImpl *r)

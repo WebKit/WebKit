@@ -60,6 +60,8 @@ namespace KXMLCore {
         template <typename U> RefPtr& operator=(PassRefPtr<U>&);
         template <typename U> RefPtr& operator=(PassRefPtr_Ref<U>);
 
+        void swap(RefPtr&);
+
     private:
         T *m_ptr;
     };
@@ -136,6 +138,16 @@ namespace KXMLCore {
             m_ptr->deref();
         m_ptr = o.release();
         return *this;
+    }
+
+    template <class T> inline void RefPtr<T>::swap(RefPtr<T>& o)
+    {
+        stap(m_ptr, o.m_ptr);
+    }
+
+    template <class T> inline void swap(RefPtr<T>& a, RefPtr<T>& b)
+    {
+        a.swap(b);
     }
 
     template <typename T, typename U> inline bool operator==(const RefPtr<T>& a, const RefPtr<U>& b)

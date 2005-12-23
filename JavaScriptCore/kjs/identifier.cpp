@@ -98,30 +98,33 @@ bool Identifier::equal(const UString::Rep *r, const UString::Rep *b)
     return true;
 }
 
-inline unsigned hash(const char* const& c)
+struct CStringTranslator
 {
-    return UString::Rep::computeHash(c);
-}
+    static unsigned hash(const char *c)
+    {
+        return UString::Rep::computeHash(c);
+    }
 
-inline bool equal(UString::Rep* const& r, const char* const& s)
-{
-    return Identifier::equal(r, s);
-}
+    static bool equal(UString::Rep *r, const char *s)
+    {
+        return Identifier::equal(r, s);
+    }
 
-inline UString::Rep *convert(const char* const& c, unsigned hash)
-{
-    int length = strlen(c);
-    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
-    for (int i = 0; i != length; i++)
-        d[i] = c[i];
-    
-    UString::Rep *r = UString::Rep::create(d, length).release();
-    r->isIdentifier = 1;
-    r->rc = 0;
-    r->_hash = hash;
+    static void translate(UString::Rep*& location, const char *c, unsigned hash)
+    {
+        int length = strlen(c);
+        UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
+        for (int i = 0; i != length; i++)
+            d[i] = c[i];
+        
+        UString::Rep *r = UString::Rep::create(d, length).release();
+        r->isIdentifier = 1;
+        r->rc = 0;
+        r->_hash = hash;
 
-    return r; 
-}
+        location = r;
+    }
+};
 
 PassRefPtr<UString::Rep> Identifier::add(const char *c)
 {
@@ -131,7 +134,7 @@ PassRefPtr<UString::Rep> Identifier::add(const char *c)
     if (length == 0)
         return pass(&UString::Rep::empty);
     
-    return pass(*identifierTable().insert<const char *, hash, KJS::equal, convert>(c).first);
+    return pass(*identifierTable().insert<const char *, CStringTranslator>(c).first);
 }
 
 struct UCharBuffer {
@@ -139,29 +142,32 @@ struct UCharBuffer {
     uint length;
 };
 
-inline unsigned hash(const UCharBuffer& buf)
+struct UCharBufferTranslator
 {
-    return UString::Rep::computeHash(buf.s, buf.length);
-}
+    static unsigned hash(const UCharBuffer& buf)
+    {
+        return UString::Rep::computeHash(buf.s, buf.length);
+    }
 
-inline bool equal(UString::Rep* const& str, const UCharBuffer& buf)
-{
-    return Identifier::equal(str, buf.s, buf.length);
-}
+    static bool equal(UString::Rep *str, const UCharBuffer& buf)
+    {
+        return Identifier::equal(str, buf.s, buf.length);
+    }
 
-inline UString::Rep *convert(const UCharBuffer& buf, unsigned hash)
-{
-    UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * buf.length));
-    for (unsigned i = 0; i != buf.length; i++)
-        d[i] = buf.s[i];
-
-    UString::Rep *r = UString::Rep::create(d, buf.length).release();
-    r->isIdentifier = 1;
-    r->rc = 0;
-    r->_hash = hash;
-
-    return r; 
-}
+    static void translate(UString::Rep *& location, const UCharBuffer& buf, unsigned hash)
+    {
+        UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * buf.length));
+        for (unsigned i = 0; i != buf.length; i++)
+            d[i] = buf.s[i];
+        
+        UString::Rep *r = UString::Rep::create(d, buf.length).release();
+        r->isIdentifier = 1;
+        r->rc = 0;
+        r->_hash = hash;
+        
+        location = r; 
+    }
+};
 
 PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
 {
@@ -169,7 +175,7 @@ PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
         return pass(&UString::Rep::empty);
     
     UCharBuffer buf = {s, length}; 
-    return pass(*identifierTable().insert<UCharBuffer, hash, KJS::equal, convert>(buf).first);
+    return pass(*identifierTable().insert<UCharBuffer, UCharBufferTranslator>(buf).first);
 }
 
 PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)

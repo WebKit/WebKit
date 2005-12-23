@@ -92,18 +92,24 @@ typedef HashSet<QualifiedName::QualifiedNameImpl*, QNameHash> QNameSet;
 
 static QNameSet *gNameCache;
 
-inline bool equalComponents(QualifiedName::QualifiedNameImpl* const& name, const QualifiedNameComponents &components)
-{
-    return components.m_localName == name->m_localName.impl() &&
-           components.m_namespace == name->m_namespace.impl() &&
-           components.m_prefix == name->m_prefix.impl();
-}
-
-inline QualifiedName::QualifiedNameImpl *convertComponents(const QualifiedNameComponents& components, unsigned hash)
-{
-    return new QualifiedName::QualifiedNameImpl(components.m_prefix, components.m_localName, components.m_namespace);
-}
-
+struct QNameComponentsTranslator {
+    static unsigned hash(const QualifiedNameComponents& components) 
+    { 
+        return hashComponents(components); 
+    }
+    
+    static bool equal(QualifiedName::QualifiedNameImpl *name, const QualifiedNameComponents& components)
+    {
+        return components.m_localName == name->m_localName.impl() &&
+            components.m_namespace == name->m_namespace.impl() &&
+            components.m_prefix == name->m_prefix.impl();
+    }
+    
+    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned hash)
+    {
+        location = new QualifiedName::QualifiedNameImpl(components.m_prefix, components.m_localName, components.m_namespace);
+    }
+};
 
 QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
     : m_impl(0)
@@ -111,7 +117,7 @@ QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const
     if (!gNameCache)
         gNameCache = new QNameSet;
     QualifiedNameComponents components = { p.impl(), l.impl(), n.impl() };
-    m_impl = *gNameCache->insert<QualifiedNameComponents, hashComponents, equalComponents, convertComponents>(components).first;    
+    m_impl = *gNameCache->insert<QualifiedNameComponents, QNameComponentsTranslator>(components).first;    
     ref();
 }
 
