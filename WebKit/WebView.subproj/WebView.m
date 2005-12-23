@@ -298,9 +298,7 @@ macro(yankAndSelect) \
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 - (WebBridge *)_bridgeAtPoint:(NSPoint)point;
-- (void)_deselectFrame:(WebFrame *)frame;
 - (WebFrame *)_focusedFrame;
-- (BOOL)_frameIsSelected:(WebFrame *)frame;
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
@@ -2247,9 +2245,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             
             if ([searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO]) {
                 WebFrame *newSelectedFrame = [(WebFrameView *)[searchView _web_superviewOfClass:[WebFrameView class]] webFrame];
-                if (newSelectedFrame != startFrame) {
-                    [self _deselectFrame:startFrame];
-                }
+                if (newSelectedFrame != startFrame)
+                    [startFrame _clearSelection];
                 [[self window] makeFirstResponder:searchView];
                 return YES;
             }
@@ -3022,34 +3019,9 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return nil;
 }
 
-- (BOOL)_frameIsSelected:(WebFrame *)frame
-{
-    id documentView = [[frame frameView] documentView];    
-    
-    // optimization for common case to avoid creating potentially large selection string
-    if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        DOMRange *selectedDOMRange = [[frame _bridge] selectedDOMRange];
-        return selectedDOMRange && ![selectedDOMRange collapsed];
-    }
-    
-    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
-        return [[documentView selectedString] length] > 0;
-    }
-    
-    return NO;
-}
-
-- (void)_deselectFrame:(WebFrame *)frame
-{
-    id documentView = [[frame frameView] documentView];    
-    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
-        [documentView deselectAll];
-    }
-}
-
 - (WebFrame *)_findSelectedFrameStartingFromFrame:(WebFrame *)frame skippingFrame:(WebFrame *)frameToSkip
 {
-    if (frame != frameToSkip && [self _frameIsSelected:frame]) {
+    if (frame != frameToSkip && [frame _hasSelection]) {
         return frame;
     }
     
@@ -3079,9 +3051,8 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 #ifndef DEBUG
 - (void)_debugCollectSelectedFramesIntoArray:(NSMutableArray *)selectedFrames startingFromFrame:(WebFrame *)frame
 {
-    if ([self _frameIsSelected:frame]) {
+    if ([frame _hasSelection])
         [selectedFrames addObject:frame];
-    }
     
     NSArray *frames = [frame _internalChildFrames];
     int i;
@@ -3269,7 +3240,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
     // responder. It would be nicer to just notice first responder changes here instead, but there's no 
     // notification sent when the first responder changes in general (Radar 2573089).
-    [self _deselectFrame:[self _findSelectedFrameSkippingFrame:[self _focusedFrame]]];
+    [[self _findSelectedFrameSkippingFrame:[self _focusedFrame]] _clearSelection];
 
 #ifndef NDEBUG
     // While we're in the general area of selection and frames, check that there is only one now.

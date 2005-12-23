@@ -1,3 +1,21 @@
+2005-12-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- move a few more methods from WebView to WebFrame.	
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _hasSelection]): Renamed from _frameIsSelected: and moved from
+	WebView.
+        (-[WebFrame _clearSelection]): Renamed from _deselectFrame: and moved from 
+	WebView.
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]): Update for renames.
+        (-[WebView _findSelectedFrameStartingFromFrame:skippingFrame:]): Ditto.
+        (-[WebView _debugCollectSelectedFramesIntoArray:startingFromFrame:]): Ditto.
+        (-[WebView _selectedFrameDidChange]):
+
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * WebKit.xcodeproj/project.pbxproj:

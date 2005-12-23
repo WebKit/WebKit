@@ -2809,6 +2809,31 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _private->frameNamespace;
 }
 
+- (BOOL)_hasSelection
+{
+    id documentView = [[self frameView] documentView];    
+    
+    // optimization for common case to avoid creating potentially large selection string
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        DOMRange *selectedDOMRange = [[self _bridge] selectedDOMRange];
+        return selectedDOMRange && ![selectedDOMRange collapsed];
+    }
+    
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        return [[documentView selectedString] length] > 0;
+    }
+    
+    return NO;
+}
+
+- (void)_clearSelection
+{
+    id documentView = [[self frameView] documentView];    
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        [documentView deselectAll];
+    }
+}
+
 @end
 
 @implementation WebFormState : NSObject

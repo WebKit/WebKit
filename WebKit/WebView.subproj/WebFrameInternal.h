@@ -53,6 +53,9 @@
 - (void)_setFrameNamespace:(NSString *)namespace;
 - (NSString *)_frameNamespace;
 
+- (BOOL)_hasSelection;
+- (void)_clearSelection;
+
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)
