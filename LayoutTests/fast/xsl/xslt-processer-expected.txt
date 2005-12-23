@@ -69,9 +69,7 @@ Success
 ****Failure**** (expected: "SUCCESS" actual: "<html xmlns="http://www.w3.org/1999/xhtml">
 <head><title /></head>
 <body>
-<pre>
-    	FAILURE
-	</pre>
+<pre />
 </body>
 </html>")
 2.6 fragment using passed parameters:

@@ -1,3 +1,11 @@
+2005-12-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- updated for WebCore changes to make XSLT params partially work
+
+        * fast/xsl/xslt-processer-expected.txt:
+
 2005-12-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.
