@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Frame</title>
+</head>
+<body>
+<script>
+// Otherwise, DumpRenderTree prints empty output, for whatever reason.
+//  if (window.layoutTestController)
+//      layoutTestController.dumpAsText();
+
+chs = document.inputEncoding;
+if (!chs)
+	chs = document.charset;
+if (!chs)
+	chs = document.characterSet;
+
+document.write(chs);
+</script>
+
+<p>The above line should be your browser's default encoding, and not x-mac-cyrillic.</p>
+<!-- It's unlikely that anyone has x-mac-cyrillic as default -->
+
+<body>
+</html>

@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x0
+        layer at (0,0) size 798x0
+          RenderCanvas at (0,0) size 798x-4
+        layer at (0,0) size 798x0
+          RenderBlock {HTML} at (0,0) size 798x0
+            RenderBody {BODY} at (0,0) size 798x0
+      RenderFrame {FRAME} at (0,4) size 800x596
+        layer at (0,0) size 798x592
+          RenderCanvas at (0,0) size 798x592
+        layer at (0,0) size 798x592
+          RenderBlock {HTML} at (0,0) size 798x592
+            RenderBody {BODY} at (8,8) size 782x568
+              RenderBlock (anonymous) at (0,0) size 782x18
+                RenderText {TEXT} at (0,0) size 76x18
+                  text run at (0,0) width 76: "ISO-8859-1"
+              RenderBlock {P} at (0,34) size 782x18
+                RenderText {TEXT} at (0,0) size 515x18
+                  text run at (0,0) width 515: "The above line should be your browser's default encoding, and not x-mac-cyrillic."
