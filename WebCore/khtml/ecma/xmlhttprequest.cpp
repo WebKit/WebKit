@@ -1,6 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -354,8 +355,21 @@ void XMLHttpRequest::send(const QString& _body)
 
 
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
-      // FIXME: determine post encoding correctly by looking in headers for charset
-      job = KIO::http_post( url, _body.utf8(), false );
+      QString contentType = getRequestHeader("Content-Type");
+      QString charset;
+      if (contentType.isEmpty())
+        setRequestHeader("Content-Type", "application/xml");
+      else
+        charset = getCharset(contentType);
+      
+      if (charset.isEmpty())
+        charset = "UTF-8";
+      
+      QTextCodec *codec = QTextCodec::codecForName(charset.latin1());
+      if (!codec)   // FIXME: report an error?
+        codec = QTextCodec::codecForName("UTF-8");
+
+      job = KIO::http_post(url, codec->fromUnicode(_body), false);
   }
   else
   {
@@ -428,6 +442,11 @@ void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
   requestHeaders += value;
 }
 
+QString XMLHttpRequest::getRequestHeader(const QString& name) const
+{
+  return getSpecificHeader(requestHeaders, name);
+}
+
 JSValue *XMLHttpRequest::getAllResponseHeaders() const
 {
   if (responseHeaders.isEmpty()) {
@@ -445,27 +464,32 @@ JSValue *XMLHttpRequest::getAllResponseHeaders() const
 
 QString XMLHttpRequest::getResponseHeader(const QString& name) const
 {
-  if (responseHeaders.isEmpty())
+  return getSpecificHeader(responseHeaders, name);
+}
+
+QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString& name)
+{
+  if (headers.isEmpty())
     return QString();
 
   QRegExp headerLinePattern(name + ":", false);
 
   int matchLength;
-  int headerLinePos = headerLinePattern.match(responseHeaders, 0, &matchLength);
+  int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
   while (headerLinePos != -1) {
-    if (headerLinePos == 0 || responseHeaders[headerLinePos-1] == '\n') {
+    if (headerLinePos == 0 || headers[headerLinePos-1] == '\n') {
       break;
     }
     
-    headerLinePos = headerLinePattern.match(responseHeaders, headerLinePos + 1, &matchLength);
+    headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
   }
 
   if (headerLinePos == -1)
     return QString();
     
-  int endOfLine = responseHeaders.find("\n", headerLinePos + matchLength);
+  int endOfLine = headers.find("\n", headerLinePos + matchLength);
   
-  return responseHeaders.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
+  return headers.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
 }
 
 bool XMLHttpRequest::responseIsXML() const
@@ -727,7 +751,6 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
 	if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
 	  DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
           body = doc->toString().qstring();
-          // FIXME: also need to set content type, including encoding!
 	} else {
 	  // converting certain values (like null) to object can set an exception
 	  exec->clearException();

@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -100,10 +101,13 @@ namespace KJS {
     void send(const QString& _body);
     void abort();
     void setRequestHeader(const QString& name, const QString &value);
+    QString getRequestHeader(const QString& name) const;
     JSValue *getAllResponseHeaders() const;
     QString getResponseHeader(const QString& name) const;
     bool responseIsXML() const;
     
+    static QString getSpecificHeader(const QString& headers, const QString& name);
+
     void changeState(XMLHttpRequestState newState);
 
     static QPtrDict< QPtrDict<XMLHttpRequest> > &requestsByDocument();

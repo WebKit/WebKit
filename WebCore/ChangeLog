@@ -1,3 +1,19 @@
+2005-12-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3565
+          Posting data via XML HTTP Request doesnt work
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send): Set application/xml as a default Content-Type;
+          use a proper codec for request body if a charset is specified.
+        (KJS::XMLHttpRequest::getRequestHeader): Use getSpecificHeader.
+        (KJS::XMLHttpRequest::getResponseHeader): Ditto.
+        (KJS::XMLHttpRequest::getSpecificHeader): Factored out code from getResponseHeader.
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction): Removed a FIXME (this is done in send() now).
+        * khtml/ecma/xmlhttprequest.h:
+
 2005-12-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin Adler.
