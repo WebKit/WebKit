@@ -1,3 +1,174 @@
+2005-12-23  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove many use of .qstring()
+        Convert several instances of QStrings to DOMStrings
+        Add DOMString::replace(QChar, QChar)
+        Remove (unused) KWQLabel, KWQKGlobal
+        Slight performance improvement.
+        Also fixed ChangeLog line endings from previous commit.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6138
+
+        No tests needed, no functionality changes.
+
+        * ChangeLog: Fixed line endings
+        * ForwardingHeaders/kglobal.h: Removed.
+        * ForwardingHeaders/qlabel.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj: removed KWQLabel
+        * khtml/css/css_base.cpp:
+        (CSSSelector::selectorText):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (MediaListImpl::setMediaText):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::checkPseudoState):
+        * khtml/dom/dom_string.h:
+        (DOM::DOMString::replace):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::put):
+        (KJS::DOMAttr::put):
+        (KJS::DOMDocument::put):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocument::put):
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::Context2D::putValueProperty):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::execute):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::queryCommandSupported):
+        * khtml/editing/markup.cpp:
+        (khtml::stringValueForRange):
+        (khtml::startMarkup):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::addHTMLAlignment):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLInputElementImpl::appendFormData):
+        (DOM::HTMLTextAreaElementImpl::updateValue):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::parseMappedAttribute):
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLImageElementImpl::parseMappedAttribute):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLParamElementImpl::isURLAttribute):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::addChild):
+        (DOM::HTMLTableElementImpl::parseMappedAttribute):
+        (DOM::HTMLTablePartElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableSectionElementImpl::addChild):
+        (DOM::HTMLTableRowElementImpl::addChild):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::executeScript):
+        (KHTMLPart::checkEmitLoadEvent):
+        * khtml/misc/loader.cpp:
+        (CachedObject::finish):
+        (CachedCSSStyleSheet::checkNotify):
+        (CachedXSLStyleSheet::checkNotify):
+        (CachedXBLDocument::checkNotify):
+        (DocLoader::requestImage):
+        (DocLoader::requestStyleSheet):
+        (DocLoader::requestScript):
+        (Loader::servePendingRequests):
+        (Loader::cancelRequests):
+        * khtml/rendering/render_applet.cpp:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::~RenderBox):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::slotTextChanged):
+        (RenderLineEdit::updateFromElement):
+        (RenderTextArea::updateFromElement):
+        (RenderTextArea::text):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::paint):
+        (RenderListMarker::paint):
+        * khtml/rendering/render_text.cpp:
+        (khtml::RenderText::RenderText):
+        (khtml::RenderText::position):
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::hasFeature):
+        (DocumentImpl::getElementByAccessKey):
+        (DocumentImpl::recalcStyleSelector):
+        (DocumentImpl::defaultEventHandler):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dump):
+        (DOM::appendAttributeDesc):
+        (DOM::NodeImpl::showNode):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::lower):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::executeScripts):
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLStyleSheetImpl::loadChildSheets):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::documentViewForNode):
+        (KWQKHTMLPart::runJavaScriptAlert):
+        (KWQKHTMLPart::runJavaScriptConfirm):
+        (KWQKHTMLPart::runJavaScriptPrompt):
+        (KWQKHTMLPart::addMessageToConsole):
+        (KWQKHTMLPart::passWheelEventToChildWidget):
+        (KWQKHTMLPart::shouldDragAutoNode):
+        (KWQKHTMLPart::snapshotDragImage):
+        (convertAttributesToUnderlines):
+        (KWQKHTMLPart::setMarkedTextRange):
+        (KWQKHTMLPart::mousePressNode):
+        * kwq/KWQKGlobal.h: Removed.
+        * kwq/KWQKGlobal.mm: Removed.
+        * kwq/KWQLabel.h: Removed.
+        * kwq/KWQLabel.mm: Removed.
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setText):
+        (QLineEdit::text):
+        (QLineEdit::setAutoSaveName):
+        (QLineEdit::setPlaceholderString):
+        * kwq/KWQPainter.mm:
+        (QPainter::compositeOperatorFromString):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::call):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::call):
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setText):
+        (QTextEdit::text):
+        (QTextEdit::textWithHardLineBreaks):
+        * ksvg2/scripts/cssmakeprops: removed kglobal.h
+        * ksvg2/scripts/cssmakevalues: removed kglobal.h
+
 2005-12-23  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric Seidel.

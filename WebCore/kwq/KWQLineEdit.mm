@@ -36,6 +36,8 @@
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 
+using DOM::DOMString;
+
 @interface NSSearchField (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
@@ -143,20 +145,20 @@ void QLineEdit::setPalette(const QPalette &palette)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QLineEdit::setText(const QString &s)
+void QLineEdit::setText(const DOMString& s)
 {
     NSTextField *textField = (NSTextField *)getView();
     KWQ_BLOCK_EXCEPTIONS;
-    [textField setStringValue:s.getNSString()];
+    [textField setStringValue:s];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QString QLineEdit::text() const
+DOMString QLineEdit::text() const
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([m_controller string]);
+    return DOMString([m_controller string]);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QString();
+    return DOMString();
 }
 
 void QLineEdit::setMaxLength(int len)
@@ -359,17 +361,17 @@ void QLineEdit::setLiveSearch(bool liveSearch)
     [[searchField cell] setSendsWholeSearchString:!liveSearch];
 }
 
-void QLineEdit::setAutoSaveName(const QString& name)
+void QLineEdit::setAutoSaveName(const DOMString& name)
 {
     if (m_type != Search)
         return;
     
-    QString autosave;
+    DOMString autosave;
     if (!name.isEmpty())
         autosave = "com.apple.WebKit.searchField:" + name;
     
     NSSearchField *searchField = (NSSearchField *)getView();
-    [searchField setRecentsAutosaveName:autosave.getNSString()];
+    [searchField setRecentsAutosaveName:autosave];
 }
 
 void QLineEdit::setMaxResults(int maxResults)
@@ -397,10 +399,10 @@ void QLineEdit::setMaxResults(int maxResults)
     [searchCell setMaximumRecents:maxResults];
 }
 
-void QLineEdit::setPlaceholderString(const QString& placeholder)
+void QLineEdit::setPlaceholderString(const DOM::DOMString& placeholder)
 {
     NSTextField *textField = (NSTextField *)getView();
-    [[textField cell] setPlaceholderString:placeholder.getNSString()];
+    [[textField cell] setPlaceholderString:placeholder];
 }
 
 void QLineEdit::addSearchResult()

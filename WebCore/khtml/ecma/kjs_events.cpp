@@ -117,11 +117,11 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
 
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);
-            QString message = exception->get(exec, messagePropertyName)->toString(exec).qstring();
+            DOMString message = exception->get(exec, messagePropertyName)->toString(exec).domString();
             int lineNumber = exception->get(exec, "line")->toInt32(exec);
-            QString sourceURL = exception->get(exec, "sourceURL")->toString(exec).qstring();
+            DOMString sourceURL = exception->get(exec, "sourceURL")->toString(exec).domString();
             if (Interpreter::shouldPrintExceptions())
-                printf("(event handler):%s\n", message.local8Bit().data());
+                printf("(event handler):%s\n", message.qstring().utf8().data());
             KWQ(part)->addMessageToConsole(message, lineNumber, sourceURL);
             exec->clearException();
         } else {

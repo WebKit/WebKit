@@ -27,7 +27,6 @@
 #define KSTDDIRS_H_
 
 #include "KWQString.h"
-#include "KWQKGlobal.h"
 
 QString locate(const char *type, const QString& filename);
 

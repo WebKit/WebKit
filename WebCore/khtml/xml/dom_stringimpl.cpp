@@ -365,7 +365,8 @@ bool DOMStringImpl::isLower() const
 DOMStringImpl *DOMStringImpl::lower() const
 {
     DOMStringImpl *c = new DOMStringImpl;
-    if(!l) return c;
+    if (!l)
+        return c;
 
     c->s = QT_ALLOC_QCHAR_VEC(l);
     c->l = l;

@@ -441,7 +441,6 @@ public:
     void copyLatin1(char *buffer, uint position = 0, uint length = 0xffffffff) const;
     QCString utf8() const { int length; return utf8(length); }
     QCString utf8(int &length) const;
-    QCString local8Bit() const;
 
     bool isNull() const;
     bool isEmpty() const;

@@ -1216,13 +1216,13 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                      view /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                        scriptSrc = parser->doc()->completeURL(parseURL( a->value() ).qstring() );
+                        scriptSrc = parser->doc()->completeURL(parseURL(a->value()).qstring());
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().qstring().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
                         scriptSrcCharset = parser->doc()->part()->encoding();
                     /* Check type before language, since language is deprecated */
-                    if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().qstring().isEmpty())
+                    if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
                         foundTypeAttribute = true;
                     else
                         a = currToken.attrs->getAttributeItem(languageAttr);
@@ -1261,19 +1261,18 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                      Neither Mozilla 1.5 nor WinIE 6 accept leading or trailing whitespace.
                      We want to accept all the values that either of these browsers accept, but not other values.
                      */
-                    QString lang = a->value().qstring();
-                    lang = lang.lower();
-                    if( lang.compare("") != 0 &&
-                        lang.compare("javascript") != 0 &&
-                        lang.compare("javascript1.0") != 0 &&
-                        lang.compare("javascript1.1") != 0 &&
-                        lang.compare("javascript1.2") != 0 &&
-                        lang.compare("javascript1.3") != 0 &&
-                        lang.compare("javascript1.4") != 0 &&
-                        lang.compare("javascript1.5") != 0 &&
-                        lang.compare("ecmascript") != 0 &&
-                        lang.compare("livescript") != 0 &&
-                        lang.compare("jscript") )
+                    DOMString lang = a->value().domString().lower();
+                    if( lang != "" &&
+                        lang != "javascript" &&
+                        lang != "javascript1.0" &&
+                        lang != "javascript1.1" &&
+                        lang != "javascript1.2" &&
+                        lang != "javascript1.3" &&
+                        lang != "javascript1.4" &&
+                        lang != "javascript1.5" &&
+                        lang != "ecmascript" &&
+                        lang != "livescript" &&
+                        lang != "jscript")
                         javascript = false;
                 }
             }

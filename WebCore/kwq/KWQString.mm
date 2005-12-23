@@ -1155,11 +1155,6 @@ QCString QString::utf8(int &length) const
     return qcs;
 }
 
-QCString QString::local8Bit() const
-{
-    return utf8();
-}
-
 bool QString::isNull() const
 {
     return dataHandle == shared_null_handle;

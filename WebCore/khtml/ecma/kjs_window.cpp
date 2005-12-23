@@ -1319,8 +1319,7 @@ bool Window::isSafeScript(ExecState *exec) const
       thisDomain = ancestorPart->xmlDocImpl()->domain();
   }
 
-  //kdDebug(6070) << "current domain:" << actDomain.qstring() << ", frame domain:" << thisDomain.qstring() << endl;
-  if ( actDomain == thisDomain )
+  if (actDomain == thisDomain)
     return true;
 
   if (Interpreter::shouldPrintExceptions()) {
@@ -1330,9 +1329,8 @@ bool Window::isSafeScript(ExecState *exec) const
   QString message;
   message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                   thisDocument->URL().latin1(), actDocument->URL().latin1());
-  KWQ(m_part)->addMessageToConsole(message, 1, QString());
+  KWQ(m_part)->addMessageToConsole(DOMString(message), 1, DOMString());
   
-  kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.qstring() << "' to frame '" << thisDomain.qstring() << "'" << endl;
   return false;
 }
 
@@ -1425,8 +1423,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   if (!thisObj->inherits(&Window::info))
     return throwError(exec, TypeError);
   Window *window = static_cast<Window *>(thisObj);
-  QString str, str2;
-
   KHTMLPart *part = window->m_part;
   if (!part)
     return jsUndefined();
@@ -1434,7 +1430,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   KHTMLView *widget = part->view();
   JSValue *v = args[0];
   UString s = v->toString(exec);
-  str = s.qstring();
+  DOMString str = s.domString();
+  DOMString str2;
 
   switch (id) {
   case Window::Alert:
@@ -1447,14 +1444,16 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       part->xmlDocImpl()->updateRendering();
     return jsBoolean(KWQ(part)->runJavaScriptConfirm(str));
   case Window::Prompt:
+  {
     if (part && part->xmlDocImpl())
       part->xmlDocImpl()->updateRendering();
-    bool ok;
-    ok = KWQ(part)->runJavaScriptPrompt(str, args.size() >= 2 ? args[1]->toString(exec).qstring() : QString::null, str2);
-    if ( ok )
+    DOMString message = args.size() >= 2 ? args[1]->toString(exec).domString() : DOMString();
+    bool ok = KWQ(part)->runJavaScriptPrompt(str, message, str2);
+    if (ok)
         return jsString(str2);
     else
         return jsNull();
+  }
   case Window::Open:
   {
     KConfig *config = new KConfig("konquerorrc");
@@ -1582,10 +1581,9 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       // prepare arguments
       KURL url;
       KHTMLPart* activePart = Window::retrieveActive(exec)->m_part;
-      if (!str.isEmpty())
-      {
+      if (!str.isEmpty()) {
         if (activePart)
-          url = activePart->xmlDocImpl()->completeURL(str);
+          url = activePart->xmlDocImpl()->completeURL(str.qstring());
       }
 
       KParts::URLArgs uargs;
@@ -1870,10 +1868,10 @@ void ScheduledAction::execute(Window *window)
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
                 exec->clearException();
-                QString message = exception->get(exec, messagePropertyName)->toString(exec).qstring();
+                DOMString message = exception->get(exec, messagePropertyName)->toString(exec).domString();
                 int lineNumber = exception->get(exec, "line")->toInt32(exec);
                 if (Interpreter::shouldPrintExceptions())
-                    printf("(timer):%s\n", message.local8Bit().data());
+                    printf("(timer):%s\n", message.qstring().utf8().data());
                 KWQ(window->m_part)->addMessageToConsole(message, lineNumber, QString());
             }
         }

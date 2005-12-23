@@ -64,9 +64,9 @@ class QTextEdit : public QScrollView
 
     bool hasSelectedText() const;
     
-    void setText(const QString &);
-    QString text() const;
-    QString textWithHardLineBreaks() const;
+    void setText(const DOM::DOMString&);
+    DOM::DOMString text() const;
+    DOM::DOMString textWithHardLineBreaks() const;
 
     void setTextFormat(TextFormat) { }
 

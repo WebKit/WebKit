@@ -398,10 +398,7 @@ bool HTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propert
 
 void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLDocument::put " << propertyName.qstring() << endl;
-#endif
-  lookupPut<HTMLDocument, DOMDocument>( exec, propertyName, value, attr, &HTMLDocumentTable, this );
+    lookupPut<HTMLDocument, DOMDocument>(exec, propertyName, value, attr, &HTMLDocumentTable, this);
 }
 
 void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
@@ -2505,7 +2502,7 @@ JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thi
     }
     else if (element.hasLocalName(canvasTag)) {
         if (id == KJS::HTMLElement::GetContext) {
-            if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).qstring().lower() == "2d")) {
+            if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).domString().lower() == "2d")) {
                 return new Context2D(&element);
             }
             return jsUndefined();
@@ -2517,15 +2514,7 @@ JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thi
 
 void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
-#ifdef KJS_VERBOSE
-    DOM::DOMString str = value.isNull() ? DOM::DOMString() : value->toString(exec).domString();
-#endif
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
-#ifdef KJS_VERBOSE
-    kdDebug(6070) << "KJS::HTMLElement::tryPut " << propertyName.qstring()
-                  << " thisTag=" << element.tagName().qstring()
-                  << " str=" << str.qstring() << endl;
-#endif
     // First look at dynamic properties
     if (element.hasLocalName(selectTag)) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
@@ -3925,7 +3914,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (args.size() != 1)
                 return throwError(exec, SyntaxError);
             CGLineCap cap = kCGLineCapButt;
-            QString capString = args[0]->toString(exec).qstring().lower();
+            DOMString capString = args[0]->toString(exec).domString().lower();
             if (capString == "round")
                 cap = kCGLineCapRound;
             else if (capString == "square")
@@ -3937,7 +3926,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (args.size() != 1)
                 return throwError(exec, SyntaxError);
             CGLineJoin join = kCGLineJoinMiter;
-            QString joinString = args[0]->toString(exec).qstring().lower();
+            DOMString joinString = args[0]->toString(exec).domString().lower();
             if (joinString == "round")
                 join = kCGLineJoinRound;
             else if (joinString == "bevel")
@@ -4454,7 +4443,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (!o->isObject() || !o->inherits(&Image::info))
                 return throwError(exec, TypeError);
             int repetitionType = ImagePattern::Repeat;
-            QString repetitionString = args[1]->toString(exec).qstring().lower();
+            DOMString repetitionString = args[1]->toString(exec).domString().lower();
             if (repetitionString == "repeat-x")
                 repetitionType = ImagePattern::RepeatX;
             else if (repetitionString == "repeat-y")
@@ -4741,7 +4730,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
             _lineCap = value;
         
             CGLineCap cap = kCGLineCapButt;
-            QString capString = value->toString(exec).qstring().lower();
+            DOMString capString = value->toString(exec).domString().lower();
             if (capString == "round")
                 cap = kCGLineCapRound;
             else if (capString == "square")
@@ -4754,7 +4743,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
             _lineJoin = value;
             
             CGLineJoin join = kCGLineJoinMiter;
-            QString joinString = value->toString(exec).qstring().lower();
+            DOMString joinString = value->toString(exec).domString().lower();
             if (joinString == "round")
                 join = kCGLineJoinRound;
             else if (joinString == "bevel")

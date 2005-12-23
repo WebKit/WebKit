@@ -281,9 +281,6 @@ void RenderListItem::paint(PaintInfo& i, int _tx, int _ty)
     if (!m_height)
         return;
 
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << nodeName().qstring() << "(LI)::paint()" << endl;
-#endif
     RenderBlock::paint(i, _tx, _ty);
 }
 
@@ -373,10 +370,6 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
     if (shouldPaintBackgroundOrBorder()) 
         paintBoxDecorations(i, _tx, _ty);
-
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << nodeName().qstring() << "(ListMarker)::paintObject(" << _tx << ", " << _ty << ")" << endl;
-#endif
 
     QPainter* p = i.p;
     p->setFont(style()->font());

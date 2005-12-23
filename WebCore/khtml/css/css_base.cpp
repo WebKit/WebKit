@@ -268,16 +268,16 @@ DOMString CSSSelector::selectorText() const
         str = localName;
     if (cs->match == CSSSelector::Id) {
         str += "#";
-        str += cs->value.qstring();
+        str += cs->value;
     } else if (cs->match == CSSSelector::Class) {
         str += ".";
-        str += cs->value.qstring();
+        str += cs->value;
     } else if (cs->match == CSSSelector::PseudoClass) {
         str += ":";
-        str += cs->value.qstring();
+        str += cs->value;
     } else if (cs->match == CSSSelector::PseudoElement) {
         str += "::";
-        str += cs->value.qstring();
+        str += cs->value;
     } else if (cs->hasAttribute()) {
         // FIXME: Add support for dumping namespaces.
         DOMString attrName = cs->attr.localName();
@@ -311,7 +311,7 @@ DOMString CSSSelector::selectorText() const
         }
         if (cs->match != CSSSelector::Set) {
             str += "\"";
-            str += cs->value.qstring();
+            str += cs->value;
             str += "\"]";
         }
     }

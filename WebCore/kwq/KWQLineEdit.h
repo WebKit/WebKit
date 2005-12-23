@@ -62,8 +62,8 @@ public:
     void setReadOnly(bool);
     bool isReadOnly() const;
 
-    void setText(const QString &);
-    QString text() const;
+    void setText(const DOM::DOMString&);
+    DOM::DOMString text() const;
 
     void setWritingDirection(QPainter::TextDirection);
     
@@ -90,9 +90,9 @@ public:
     Type type() const { return m_type; }
     
     void setLiveSearch(bool liveSearch);
-    void setAutoSaveName(const QString& name);
+    void setAutoSaveName(const DOM::DOMString& name);
     void setMaxResults(int maxResults);
-    void setPlaceholderString(const QString& placeholder);
+    void setPlaceholderString(const DOM::DOMString& placeholder);
     void addSearchResult();
 
 private:

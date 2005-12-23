@@ -114,7 +114,7 @@ void KWQSignal::call(int i) const
     }
 }
 
-void KWQSignal::call(const QString &s) const
+void KWQSignal::call(const DOM::DOMString &s) const
 {
     if (!_object->_signalsBlocked) {
         KWQObjectSenderScope senderScope(_object);

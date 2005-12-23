@@ -43,9 +43,7 @@
 
 #include "xmlhttprequest.lut.h"
 
-using DOM::DocumentImpl;
-using DOM::DOMImplementationImpl;
-using DOM::EventImpl;
+using namespace DOM;
 using namespace DOM::EventNames;
 
 using khtml::Decoder;
@@ -342,7 +340,7 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
   changeState(Loading);
 }
 
-void XMLHttpRequest::send(const QString& _body)
+void XMLHttpRequest::send(const DOMString& _body)
 {
   if (!doc)
     return;
@@ -352,7 +350,6 @@ void XMLHttpRequest::send(const QString& _body)
     return;
 
   aborted = false;
-
 
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
       QString contentType = getRequestHeader("Content-Type");
@@ -369,15 +366,12 @@ void XMLHttpRequest::send(const QString& _body)
       if (!codec)   // FIXME: report an error?
         codec = QTextCodec::codecForName("UTF-8");
 
-      job = KIO::http_post(url, codec->fromUnicode(_body), false);
+      job = KIO::http_post(url, codec->fromUnicode(_body.qstring()), false);
   }
   else
-  {
      job = KIO::get( url, false, false );
-  }
-  if (requestHeaders.length() > 0) {
+  if (requestHeaders.length() > 0)
     job->addMetaData("customHTTPHeader", requestHeaders);
-  }
 
   if (!async) {
     QByteArray data;
@@ -751,7 +745,7 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
 	return jsUndefined();
       }
 
-      QString body;
+      DOMString body;
 
       if (args.size() >= 1) {
 	if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
@@ -760,7 +754,7 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
 	} else {
 	  // converting certain values (like null) to object can set an exception
 	  exec->clearException();
-	  body = args[0]->toString(exec).qstring();
+	  body = args[0]->toString(exec).domString();
 	}
       }
 

@@ -32,6 +32,8 @@
 #import "KWQPalette.h"
 #import "KWQTextArea.h"
 
+using DOM::DOMString;
+
 QTextEdit::QTextEdit(QWidget *parent)
     : _clicked(this, SIGNAL(clicked()))
     , _textChanged(this, SIGNAL(textChanged()))
@@ -50,34 +52,34 @@ QTextEdit::~QTextEdit()
     [textArea detachQTextEdit]; 
 }
 
-void QTextEdit::setText(const QString &string)
+void QTextEdit::setText(const DOMString& string)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     KWQ_BLOCK_EXCEPTIONS;
-    [textView setText:string.getNSString()];
+    [textView setText:string];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QString QTextEdit::text() const
+DOMString QTextEdit::text() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([textView text]);
+    return DOMString([textView text]);
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QString();
+    return DOMString();
 }
 
-QString QTextEdit::textWithHardLineBreaks() const
+DOMString QTextEdit::textWithHardLineBreaks() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([textView textWithHardLineBreaks]);
+    return DOMString([textView textWithHardLineBreaks]);
     KWQ_UNBLOCK_EXCEPTIONS;
     
-    return QString();
+    return DOMString();
 }
 
 void QTextEdit::getCursorPosition(int *paragraph, int *index) const

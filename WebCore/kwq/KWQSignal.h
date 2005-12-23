@@ -40,7 +40,7 @@ public:
     void call() const; // should be "emit"; can't be due to define in qobject.h
     void call(bool) const;
     void call(int) const;
-    void call(const QString &) const;
+    void call(const DOM::DOMString&) const;
     void call(KIO::Job *) const;
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
     void call(KIO::Job *, const char *data, int size) const;

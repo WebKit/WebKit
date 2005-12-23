@@ -368,7 +368,6 @@ DOM::DOMString MediaListImpl::mediaText() const
 void MediaListImpl::setMediaText(const DOM::DOMString &value)
 {
     m_lstMedia.clear();
-    QString val = value.qstring();
     QStringList list = QStringList::split( ',', value.qstring() );
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
     {

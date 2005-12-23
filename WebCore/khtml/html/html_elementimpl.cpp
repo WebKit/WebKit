@@ -425,7 +425,6 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 
 void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
 {
-    //qDebug("alignment is %s", alignment.qstring().latin1() );
     // vertical alignment with respect to the current baseline of the text
     // right or left means floating images
     int propfloat = -1;

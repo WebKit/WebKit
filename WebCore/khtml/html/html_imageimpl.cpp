@@ -198,12 +198,8 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attrName == usemapAttr) {
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
-        else {
-            QString url = getDocument()->completeURL(khtml::parseURL(attr->value()).qstring());
-            // ### we remove the part before the anchor and hope
-            // the map is on the same html page....
-            usemap = url;
-        }
+        else
+            usemap = getDocument()->completeURL(khtml::parseURL(attr->value()));
         m_isLink = !attr->isNull();
     } else if (attrName == ismapAttr) {
         ismap = true;

@@ -98,7 +98,7 @@ bool HTMLBodyElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttrib
 void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == backgroundAttr) {
-        QString url = khtml::parseURL(attr->value()).qstring();
+        DOMString url = khtml::parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {

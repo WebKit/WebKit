@@ -115,7 +115,7 @@ bool JSEditor::queryCommandState(const DOMString &command)
 
 bool JSEditor::queryCommandSupported(const DOMString &command)
 {
-    if (!supportsPasteCommand && command.qstring().lower() == "paste")
+    if (!supportsPasteCommand && command.lower() == "paste")
         return false;
     return commandImp(command) != 0;
 }

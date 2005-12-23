@@ -239,11 +239,10 @@ void KWQSlot::call(int i) const
     call();
 }
 
-void KWQSlot::call(const QString &string) const
+void KWQSlot::call(const DOM::DOMString &string) const
 {
-    if (m_object.isNull()) {
+    if (m_object.isNull())
         return;
-    }
     
     switch (m_function) {
         case slotTextChangedWithString:

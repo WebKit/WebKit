@@ -1616,7 +1616,7 @@ KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
     return KWQ(node->getDocument()->part());
 }
 
-NSView *KWQKHTMLPart::documentViewForNode(DOM::NodeImpl *node)
+NSView *KWQKHTMLPart::documentViewForNode(NodeImpl *node)
 {
     WebCoreBridge *bridge = partForNode(node)->bridge();
     return [bridge documentView];
@@ -1771,43 +1771,43 @@ void KWQKHTMLPart::sendScrollEvent()
     }
 }
 
-void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
+void KWQKHTMLPart::runJavaScriptAlert(const DOMString& message)
 {
-    QString text = message;
+    DOMString text = message;
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
     KWQ_BLOCK_EXCEPTIONS;
-    [_bridge runJavaScriptAlertPanelWithMessage:text.getNSString()];
+    [_bridge runJavaScriptAlertPanelWithMessage:text];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
+bool KWQKHTMLPart::runJavaScriptConfirm(const DOMString& message)
 {
-    QString text = message;
+    DOMString text = message;
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
-    return [_bridge runJavaScriptConfirmPanelWithMessage:text.getNSString()];
+    return [_bridge runJavaScriptConfirmPanelWithMessage:text];
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
 }
 
-bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
+bool KWQKHTMLPart::runJavaScriptPrompt(const DOMString& prompt, const DOMString& defaultValue, DOMString& result)
 {
-    QString promptText = prompt;
+    DOMString promptText = prompt;
     promptText.replace(QChar('\\'), backslashAsCurrencySymbol());
-    QString defaultValueText = defaultValue;
+    DOMString defaultValueText = defaultValue;
     defaultValueText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     bool ok;
     KWQ_BLOCK_EXCEPTIONS;
     NSString *returnedText = nil;
 
-    ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
-	       defaultText:defaultValue.getNSString() returningText:&returnedText];
+    ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt
+	       defaultText:defaultValue returningText:&returnedText];
 
     if (ok) {
-        result = QString::fromNSString(returnedText);
+        result = DOMString(returnedText);
         result.replace(backslashAsCurrencySymbol(), QChar('\\'));
     }
 
@@ -1854,12 +1854,12 @@ bool KWQKHTMLPart::toolbarVisible()
     return [_bridge areToolbarsVisible];
 }
 
-void KWQKHTMLPart::addMessageToConsole(const QString &message, unsigned lineNumber, const QString &sourceURL)
+void KWQKHTMLPart::addMessageToConsole(const DOMString &message, unsigned lineNumber, const DOMString &sourceURL)
 {
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-        message.getNSString(), @"message",
+        (NSString *)message, @"message",
         [NSNumber numberWithInt: lineNumber], @"lineNumber",
-        sourceURL.getNSString(), @"sourceURL",
+        (NSString *)sourceURL, @"sourceURL",
         NULL];
     [_bridge addMessageToConsole:dictionary];
 }
@@ -2597,7 +2597,7 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
     return false;
 }
 
-bool KWQKHTMLPart::passWheelEventToChildWidget(DOM::NodeImpl *node)
+bool KWQKHTMLPart::passWheelEventToChildWidget(NodeImpl *node)
 {
     KWQ_BLOCK_EXCEPTIONS;
         
@@ -2807,7 +2807,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
 }
 
 // Called as we walk up the element chain for nodes with CSS property -khtml-user-drag == auto
-bool KWQKHTMLPart::shouldDragAutoNode(DOM::NodeImpl* node, int x, int y) const
+bool KWQKHTMLPart::shouldDragAutoNode(NodeImpl* node, int x, int y) const
 {
     // We assume that WebKit only cares about dragging things that can be leaf nodes (text, images, urls).
     // This saves a bunch of expensive calls (creating WC and WK element dicts) as we walk farther up
@@ -3444,7 +3444,7 @@ NSImage *KWQKHTMLPart::selectionImage() const
     return result;
 }
 
-NSImage *KWQKHTMLPart::snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const
+NSImage *KWQKHTMLPart::snapshotDragImage(NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const
 {
     RenderObject *renderer = node->renderer();
     if (!renderer) {
@@ -4161,7 +4161,7 @@ bool KWQKHTMLPart::shouldEndEditing(const RangeImpl *range) const
     return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:const_cast<RangeImpl *>(range)]];
 }
 
-static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlines(const DOM::RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
+static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlines(const RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
     QValueList<KWQKHTMLPart::MarkedTextUnderline> result;
 
@@ -4195,7 +4195,7 @@ static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlin
     return result;
 }
 
-void KWQKHTMLPart::setMarkedTextRange(const DOM::RangeImpl *range, NSArray *attributes, NSArray *ranges)
+void KWQKHTMLPart::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, NSArray *ranges)
 {
     int exception = 0;
 
@@ -4315,7 +4315,7 @@ bool KWQKHTMLPart::isKHTMLPart() const
     return true;
 }
 
-DOM::NodeImpl *KWQKHTMLPart::mousePressNode()
+NodeImpl *KWQKHTMLPart::mousePressNode()
 {
     return d->m_mousePressNode.get();
 }

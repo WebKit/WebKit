@@ -562,12 +562,9 @@ void ElementImpl::recalcStyle( StyleChange change )
         }
     }
 
-    NodeImpl *n;
-    for (n = _first; n; n = n->nextSibling()) {
-	//qDebug("    (%p) calling recalcStyle on child %s/%p, change=%d", this, n, n->isElementNode() ? ((ElementImpl *)n)->tagName().qstring().latin1() : n->isTextNode() ? "text" : "unknown", change );
-        if ( change >= Inherit || n->isTextNode() ||
-             n->hasChangedChild() || n->changed() )
-            n->recalcStyle( change );
+    for (NodeImpl *n = _first; n; n = n->nextSibling()) {
+        if (change >= Inherit || n->isTextNode() || n->hasChangedChild() || n->changed())
+            n->recalcStyle(change);
     }
 
     setChanged( false );

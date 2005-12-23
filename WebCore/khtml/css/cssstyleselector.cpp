@@ -602,7 +602,6 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
             u.prepend(currentEncodedURL->path);
         cleanpath( u );
     }
-    //completeURL( attr.qstring() );
     pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 

@@ -511,14 +511,8 @@ QVariant KHTMLPart::executeScript( const QString &script, bool forceUserGesture 
     return executeScript( 0, script, forceUserGesture );
 }
 
-//Enable this to see all JS scripts being executed
-//#define KJS_VERBOSE
-
 QVariant KHTMLPart::executeScript( DOM::NodeImpl *n, const QString &script, bool forceUserGesture )
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KHTMLPart::executeScript n=" << n.nodeName().qstring().latin1() << "(" << (n.isNull() ? 0 : n.nodeType()) << ") " << script << endl;
-#endif
   KJSProxyImpl *proxy = jScript();
 
   if (!proxy)
@@ -533,9 +527,6 @@ QVariant KHTMLPart::executeScript( DOM::NodeImpl *n, const QString &script, bool
       submitFormAgain();
     DocumentImpl::updateDocumentsRendering();
 
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KHTMLPart::executeScript - done" << endl;
-#endif
   return ret;
 }
 
@@ -1171,22 +1162,16 @@ void KHTMLPart::checkEmitLoadEvent()
   // All frames completed -> set their domain to the frameset's domain
   // This must only be done when loading the frameset initially (#22039),
   // not when following a link in a frame (#44162).
-  if ( d->m_doc )
-  {
+  if (d->m_doc) {
     DOMString domain = d->m_doc->domain();
     ConstFrameIt it = d->m_frames.begin();
     ConstFrameIt end = d->m_frames.end();
-    for (; it != end; ++it )
-    {
+    for (; it != end; ++it ) {
       KParts::ReadOnlyPart *p = (*it).m_part;
-      if ( p && p->inherits( "KHTMLPart" ))
-      {
+      if (p && p->inherits("KHTMLPart")) {
         KHTMLPart* htmlFrame = static_cast<KHTMLPart *>(p);
         if (htmlFrame->d->m_doc)
-        {
-          kdDebug() << "KHTMLPart::checkCompleted setting frame domain to " << domain.qstring() << endl;
-          htmlFrame->d->m_doc->setDomain( domain );
-        }
+          htmlFrame->d->m_doc->setDomain(domain);
       }
     }
   }

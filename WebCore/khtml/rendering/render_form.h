@@ -101,7 +101,7 @@ public slots:
     virtual void slotSelectionChanged();
     
     // Hack to make KWQSlot code work.
-    virtual void slotTextChanged(const QString &string);
+    virtual void slotTextChanged(const DOM::DOMString &string);
 
 protected:
     virtual bool isEditable() const { return false; }
@@ -338,7 +338,7 @@ public:
     DOM::HTMLTextAreaElementImpl* element() const
     { return static_cast<DOM::HTMLTextAreaElementImpl*>(RenderObject::element()); }
 
-    QString text();
+    DOM::DOMString text();
 
     int selectionStart();
     int selectionEnd();

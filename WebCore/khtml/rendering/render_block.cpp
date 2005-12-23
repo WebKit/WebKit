@@ -3359,7 +3359,6 @@ void RenderBlock::updateFirstLetter()
             
             // account for first letter
             length++;
-            //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).qstring() << "'" << endl;
             
             // construct text fragment for the text after the first letter
             // NOTE: this might empty

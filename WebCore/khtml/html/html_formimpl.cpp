@@ -329,13 +329,9 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
         HTMLGenericFormElementImpl* current = formElements[i];
         FormDataList lst(codec);
 
-        if (!current->disabled() && current->appendFormData(lst, m_multipart))
-        {
-            //kdDebug(6030) << "adding name " << current->name().qstring() << endl;
-            for(QValueListConstIterator<FormDataListItem> it = lst.begin(); it != lst.end(); ++it )
-            {
-                if (!m_multipart)
-                {
+        if (!current->disabled() && current->appendFormData(lst, m_multipart)) {
+            for (QValueListConstIterator<FormDataListItem> it = lst.begin(); it != lst.end(); ++it) {
+                if (!m_multipart) {
                     // handle ISINDEX / <input name=isindex> special
                     // but only if its the first entry
                     if ( enc_string.isEmpty() && (*it).m_data == "isindex" ) {
@@ -1843,10 +1839,9 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
             return false;
 
         case IMAGE:
-            if (m_activeSubmit)
-            {
-                encoding.appendData(name().isEmpty() ? QString::fromLatin1("x") : (name().qstring() + ".x"), clickX());
-                encoding.appendData(name().isEmpty() ? QString::fromLatin1("y") : (name().qstring() + ".y"), clickY());
+            if (m_activeSubmit) {
+                encoding.appendData(name().isEmpty() ? "x" : (name() + ".x"), clickX());
+                encoding.appendData(name().isEmpty() ? "y" : (name() + ".y"), clickY());
                 if (!name().isEmpty() && !value().isEmpty())
                     encoding.appendData(name(), value());
                 return true;
@@ -1854,9 +1849,8 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
             break;
 
         case SUBMIT:
-            if (m_activeSubmit)
-            {
-                QString enc_str = valueWithDefault().qstring();
+            if (m_activeSubmit) {
+                DOMString enc_str = valueWithDefault();
                 if (!enc_str.isEmpty()) {
                     encoding.appendData(name(), enc_str);
                     return true;
@@ -3380,7 +3374,7 @@ void HTMLTextAreaElementImpl::updateValue()
 {
     if ( !m_valueIsValid ) {
         if ( m_render ) {
-            m_value = static_cast<RenderTextArea*>( m_render )->text();
+            m_value = static_cast<RenderTextArea*>( m_render )->text().qstring();
             m_valueMatchesRenderer = true;
         } else {
             m_value = defaultValue().qstring();

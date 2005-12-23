@@ -843,10 +843,9 @@ void RenderPartObject::updateWidget()
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->hasTagName(paramTag)) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
-              QString name = p->name().qstring().lower();
-              if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
+              DOMString name = p->name().lower();
+              if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url"))
                   url = p->value().qstring();
-              }
               if (serviceType.isEmpty() && name == "type") {
                   serviceType = p->value().qstring();
                   int pos = serviceType.find( ";" );
@@ -889,7 +888,7 @@ void RenderPartObject::updateWidget()
       
       // If we still don't have a type, try to map from a specific CLASSID to a type.
       if (serviceType.isEmpty() && !o->classId.isEmpty())
-          mapClassIdToServiceType(o->classId, serviceType);
+          mapClassIdToServiceType(o->classId.qstring(), serviceType);
       
       // If no URL and type, abort.
       if (url.isEmpty() && serviceType.isEmpty())

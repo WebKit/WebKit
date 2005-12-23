@@ -232,7 +232,7 @@ public:
 
     QString serviceType;
     QString url;
-    QString classId;
+    DOM::DOMString classId;
     bool needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;

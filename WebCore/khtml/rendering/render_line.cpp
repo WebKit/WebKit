@@ -1079,7 +1079,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
         setShadow = true;
     }
     
-    const DOMString& str = m_str.qstring();
+    const DOMString& str = m_str;
     font->drawText(p, m_x + _tx, 
                       m_y + _ty + m_baseline,
                       0, 0,

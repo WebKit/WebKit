@@ -502,7 +502,7 @@ void QPainter::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-int QPainter::compositeOperatorFromString (const QString &aString)
+int QPainter::compositeOperatorFromString(const QString &aString)
 {
     NSCompositingOperation op = NSCompositeSourceOver;
     

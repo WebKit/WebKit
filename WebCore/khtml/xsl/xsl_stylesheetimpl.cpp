@@ -130,7 +130,7 @@ void XSLStyleSheetImpl::loadChildSheets()
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the 
         // import/include list.
-        xmlAttrPtr idNode = xmlGetID(m_stylesheetDoc, (const xmlChar*)(const char*)(href().qstring().utf8()));
+        xmlAttrPtr idNode = xmlGetID(m_stylesheetDoc, (const xmlChar*)(href().qstring().utf8().data()));
         if (idNode == NULL)
             return;
         stylesheetRoot = idNode->parent;

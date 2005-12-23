@@ -170,7 +170,7 @@ void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         tokenizeRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = getDocument()->completeURL(parseURL(attr->value()).qstring());
+        m_url = getDocument()->completeURL(parseURL(attr->value()));
 	process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();

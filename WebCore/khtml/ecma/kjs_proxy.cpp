@@ -72,7 +72,7 @@ QVariant KJSProxyImpl::evaluate(const DOMString& filename, int baseLine, const D
     int lineNumber =  comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
     UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
 
-    KWQ(m_part)->addMessageToConsole(errorMessage.qstring(), lineNumber, sourceURL.qstring());
+    KWQ(m_part)->addMessageToConsole(errorMessage.domString(), lineNumber, sourceURL.domString());
   }
   return QVariant();
 }

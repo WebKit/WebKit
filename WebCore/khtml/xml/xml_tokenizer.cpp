@@ -771,11 +771,10 @@ void XMLTokenizer::executeScripts()
         if (scriptElement->hasTagName(KSVG::SVGNames::scriptTag))
             scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
 #endif
-        QString charset = scriptElement->getAttribute(charsetAttr).qstring();
-
         // don't load external scripts for standalone documents (for now)
         if (!scriptHref.isEmpty() && m_doc->part()) {
             // we have a src attribute
+            QString charset = scriptElement->getAttribute(charsetAttr).qstring();
             m_cachedScript = m_doc->docLoader()->requestScript(scriptHref, charset);
             m_cachedScript->ref(this); // will call executeScripts() again if already cached
             return;

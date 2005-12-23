@@ -91,19 +91,17 @@ static QString escapeHTML(const QString &in)
     return s;
 }
 
-static QString stringValueForRange(const NodeImpl *node, const RangeImpl *range)
+static DOMString stringValueForRange(const NodeImpl *node, const RangeImpl *range)
 {
     DOMString str = node->nodeValue().copy();
     if (range) {
         int exceptionCode;
-        if (node == range->endContainer(exceptionCode)) {
+        if (node == range->endContainer(exceptionCode))
             str.truncate(range->endOffset(exceptionCode));
-        }
-        if (node == range->startContainer(exceptionCode)) {
+        if (node == range->startContainer(exceptionCode))
             str.remove(0, range->startOffset(exceptionCode));
-        }
     }
-    return str.qstring();
+    return str;
 }
 
 static QString renderedText(const NodeImpl *node, const RangeImpl *range)
@@ -178,9 +176,9 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                     node->parentNode()->hasTagName(scriptTag) ||
                     node->parentNode()->hasTagName(styleTag) ||
                     node->parentNode()->hasTagName(textareaTag))
-                    return stringValueForRange(node, range);
+                    return stringValueForRange(node, range).qstring();
             }
-            QString markup = annotate ? escapeHTML(renderedText(node, range)) : escapeHTML(stringValueForRange(node, range));            
+            QString markup = annotate ? escapeHTML(renderedText(node, range)) : escapeHTML(stringValueForRange(node, range).qstring());            
             if (defaultStyle) {
                 NodeImpl *element = node->parentNode();
                 if (element) {

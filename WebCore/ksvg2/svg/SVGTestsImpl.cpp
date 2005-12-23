@@ -21,7 +21,6 @@
 */
 
 #include "config.h"
-#include <kglobal.h>
 #include <klocale.h>
 
 #include <kdom/core/AttrImpl.h>
