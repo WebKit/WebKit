@@ -1,3 +1,10 @@
+2005-12-22  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build problem from last commit.
+
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::::swap):
+
 2005-12-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

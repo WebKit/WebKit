@@ -23,6 +23,8 @@
 #ifndef KXMLCORE_REF_PTR_H
 #define KXMLCORE_REF_PTR_H
 
+#include <algorithm>
+
 namespace KXMLCore {
 
     template <typename T> class PassRefPtr;
@@ -142,7 +144,7 @@ namespace KXMLCore {
 
     template <class T> inline void RefPtr<T>::swap(RefPtr<T>& o)
     {
-        stap(m_ptr, o.m_ptr);
+        swap(m_ptr, o.m_ptr);
     }
 
     template <class T> inline void swap(RefPtr<T>& a, RefPtr<T>& b)
