@@ -1,5 +1,16 @@
 2005-12-22  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Cleaned up a previous checkin by defining global const defaultForm.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::radioButtonChecked):
+        (DocumentImpl::checkedRadioButtonForGroup):
+        (DocumentImpl::removeRadioButtonGroup):
+
+2005-12-22  Adele Peterson  <adele@apple.com>
+
         Reviewed by Tim Hatcher.
 
         Fixed <rdar://problem/4387433> Seed: Radio buttons behave incorrectly in Gmail settings

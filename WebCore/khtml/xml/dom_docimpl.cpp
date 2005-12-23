@@ -113,6 +113,9 @@ const int cLayoutScheduleThreshold = 250;
 
 DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
+// Use 1 to represent the document's default form.
+HTMLFormElementImpl* const defaultForm = (HTMLFormElementImpl*) 1;
+
 // DOM Level 2 says (letters added):
 //
 // a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
@@ -3209,9 +3212,8 @@ void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElem
     // Without a name, there is no group.
     if (caller->name().isEmpty())
         return;
-    // Use 1 to represent the document's default form
     if (!form)
-        form = (HTMLFormElementImpl*) 1;
+        form = defaultForm;
     // Uncheck the currently selected item
     if (!m_selectedRadioButtons)
         m_selectedRadioButtons = new FormToGroupMap;
@@ -3232,9 +3234,8 @@ HTMLInputElementImpl* DocumentImpl::checkedRadioButtonForGroup(DOMStringImpl* na
 {
     if (!m_selectedRadioButtons)
         return 0;
-    // Use 1 to represent the document's default form
     if (!form)
-        form = (HTMLFormElementImpl*) 1;
+        form = defaultForm;
     NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
     if (!formRadioButtons)
         return 0;
@@ -3244,9 +3245,8 @@ HTMLInputElementImpl* DocumentImpl::checkedRadioButtonForGroup(DOMStringImpl* na
 
 void DocumentImpl::removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementImpl *form)
 {
-    // Use 1 to represent the document's default form
     if (!form)
-        form = (HTMLFormElementImpl*) 1;
+        form = defaultForm;
     if (m_selectedRadioButtons) {
         NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
         if (formRadioButtons) {
