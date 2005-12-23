@@ -576,6 +576,12 @@ void XMLHttpRequest::processSyncLoadResults(const QByteArray &data, const KURL &
 
 void XMLHttpRequest::slotFinished(KIO::Job *)
 {
+  if (responseHeaders.isEmpty() && job)
+    responseHeaders = job->queryMetaData("HTTP-Headers");
+
+  if (state < Loaded)
+    changeState(Loaded);
+
   if (decoder)
     response += decoder->flush();
 

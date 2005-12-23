@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5924
+          Zero-length responses to XMLHTTPRequest mishandled
+
+        * khtml/ecma/xmlhttprequest.cpp (KJS::XMLHttpRequest::slotFinished):
+          Make sure to fetch response headers and set the state to Loaded, if
+          this hasn't been done already.
+
+2005-12-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric Seidel.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3565
           Posting data via XML HTTP Request doesnt work
 
