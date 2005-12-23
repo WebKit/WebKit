@@ -1,3 +1,14 @@
+2005-12-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6118
+        Investigate not using the frameset charset as a default for frames
+
+        * khtml/khtml_part.cpp (KHTMLPart::write):
+        Do not use the parent frame encoding as a default for sub-frames (revert
+        rdar://3100151). 
+
 2005-12-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
