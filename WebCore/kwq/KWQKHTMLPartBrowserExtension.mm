@@ -123,7 +123,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     if (partResult)
 	*partResult = [bridge part];
     
-    [bridge setToolbarsVisible:winArgs.toolBarsVisible];
+    [bridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
     [bridge setStatusbarVisible:winArgs.statusBarVisible];
     [bridge setScrollbarsVisible:winArgs.scrollBarsVisible];
     [bridge setWindowIsResizable:winArgs.resizable];

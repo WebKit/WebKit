@@ -479,7 +479,7 @@ static bool allowPopUp(ExecState *exec, Window *window)
             || static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture());
 }
 
-static QMap<QString, QString> parseFeatures(ExecState *exec, JSValue *featuresArg)
+static QMap<QString, QString> parseModalDialogFeatures(ExecState *exec, JSValue *featuresArg)
 {
     QMap<QString, QString> map;
 
@@ -559,7 +559,7 @@ static KHTMLPart *createNewWindow(ExecState *exec, Window *openerWindow, const Q
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     ReadOnlyPart *newReadOnlyPart = 0;
-    emit openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newReadOnlyPart);
+    openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newReadOnlyPart);
 
     if (!newReadOnlyPart || !newReadOnlyPart->inherits("KHTMLPart"))
         return 0;
@@ -603,7 +603,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     if (!canShowModalDialogNow(openerWindow) || !allowPopUp(exec, openerWindow))
         return jsUndefined();
     
-    const QMap<QString, QString> features = parseFeatures(exec, args[2]);
+    const QMap<QString, QString> features = parseModalDialogFeatures(exec, args[2]);
 
     bool trusted = false;
 
@@ -644,8 +644,11 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     wargs.resizable = boolFeature(features, "resizable");
     wargs.scrollBarsVisible = boolFeature(features, "scroll", true);
     wargs.statusBarVisible = boolFeature(features, "status", !trusted);
-    wargs.toolBarsVisible = false;
-
+    wargs.menuBarVisible = false;
+    wargs.toolBarVisible = false;
+    wargs.locationBarVisible = false;
+    wargs.fullscreen = false;
+    
     KHTMLPart *dialogPart = createNewWindow(exec, openerWindow, URL.qstring(), "", wargs, args[1]);
     if (!dialogPart)
         return jsUndefined();
@@ -1265,7 +1268,7 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
     QString message;
     message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                   targetDocument->URL().latin1(), originDocument->URL().latin1());
-    KWQ(targetPart)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
+    KWQ(targetPart)->addMessageToConsole(DOMString(message), 1, DOMString()); //fixme: provide a real line number and sourceurl
 
     return false;
 }
@@ -1418,6 +1421,146 @@ void Window::setCurrentEvent(EventImpl *evt)
   //kdDebug(6070) << "Window " << this << " (part=" << m_part << ")::setCurrentEvent m_evt=" << evt << endl;
 }
 
+static void setWindowFeature(const QString& keyString, const QString& valueString, WindowArgs& windowArgs)
+{
+    int value;
+    
+    if (valueString.length() == 0 || // listing a key with no value is shorthand for key=yes
+        valueString == "yes")
+        value = 1;
+    else
+        value = valueString.toInt();
+    
+    if (keyString == "left" || keyString == "screenx") {
+        windowArgs.xSet = true;
+        windowArgs.x = value;
+    } else if (keyString == "top" || keyString == "screeny") {
+        windowArgs.ySet = true;
+        windowArgs.y = value;
+    } else if (keyString == "width" || keyString == "innerwidth") {
+        windowArgs.widthSet = true;
+        windowArgs.width = value;
+    } else if (keyString == "height" || keyString == "innerheight") {
+        windowArgs.heightSet = true;
+        windowArgs.height = value;
+    } else if (keyString == "menubar")
+        windowArgs.menuBarVisible = value;
+    else if (keyString == "toolbar")
+        windowArgs.toolBarVisible = value;
+    else if (keyString == "location")
+        windowArgs.locationBarVisible = value;
+    else if (keyString == "status")
+        windowArgs.statusBarVisible = value;
+    else if (keyString == "resizable")
+        windowArgs.resizable = value;
+    else if (keyString == "fullscreen")
+        windowArgs.fullscreen = value;
+    else if (keyString == "scrollbars")
+        windowArgs.scrollBarsVisible = value;
+}
+
+static void parseWindowFeatures(const QString& features, KParts::WindowArgs& windowArgs)
+{
+    /*
+     The IE rule is: all features except for channelmode and fullscreen default to YES, but
+     if the user specifies a feature string, all features default to NO. (There is no public
+     standard that applies to this method.)
+     
+     <http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/open_0.asp>
+     */
+    
+    windowArgs.dialog = false;
+    windowArgs.fullscreen = false;
+    
+    if (features.length() == 0) {
+        windowArgs.menuBarVisible = true;
+        windowArgs.statusBarVisible = true;
+        windowArgs.toolBarVisible = true;
+        windowArgs.locationBarVisible = true;
+        windowArgs.scrollBarsVisible = true;
+        windowArgs.resizable = true;
+        
+        windowArgs.xSet = false;
+        windowArgs.ySet = false;
+        windowArgs.widthSet = false;
+        windowArgs.heightSet = false;
+        
+        return;
+    }
+    
+    windowArgs.menuBarVisible = false;
+    windowArgs.statusBarVisible = false;
+    windowArgs.toolBarVisible = false;
+    windowArgs.locationBarVisible = false;
+    windowArgs.scrollBarsVisible = false;
+    windowArgs.resizable = false;
+    
+    // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
+    int keyBegin, keyEnd;
+    int valueBegin, valueEnd;
+    
+    int i = 0;
+    int length = features.length();
+    QString buffer = features.lower();
+    while (i < length) {
+        // skip to first letter or number, but don't skip past the end of the string
+        while (!buffer[i].isLetterOrNumber()) {
+            if (i > length)
+                break;
+            i++;
+        }
+        keyBegin = i;
+        
+        // skip to first non-letter, non-number
+        while (buffer[i].isLetterOrNumber())
+            i++;
+        keyEnd = i;
+        
+        // skip to first '=', but don't skip past a ',' or the end of the string
+        while (buffer[i] != '=') {
+            if (buffer[i] == ',' || i >= length)
+                break;
+            i++;
+        }
+        
+        // skip to first letter or number, but don't skip past a ',' or the end of the string
+        while (!buffer[i].isLetterOrNumber()) {
+            if (buffer[i] == ',' || i >= length)
+                break;
+            i++;
+        }
+        valueBegin = i;
+        
+        // skip to first non-letter, non-number
+        while (buffer[i].isLetterOrNumber())
+            i++;
+        valueEnd = i;
+        
+        setWindowFeature(buffer.mid(keyBegin, keyEnd - keyBegin), buffer.mid(valueBegin, valueEnd - valueBegin), windowArgs);
+    }
+}
+
+static void constrainToVisible(const QRect &screen, KParts::WindowArgs& windowArgs)
+{
+    windowArgs.x += screen.x();
+    if (windowArgs.x < screen.x() || windowArgs.x > screen.right())
+        windowArgs.x = screen.x(); // only safe choice until size is determined
+    
+    windowArgs.y += screen.y();
+    if (windowArgs.y < screen.y() || windowArgs.y > screen.bottom())
+        windowArgs.y = screen.y(); // only safe choice until size is determined
+    
+    if (windowArgs.height > screen.height())  // should actually check workspace
+        windowArgs.height = screen.height();
+    if (windowArgs.height < 100)
+        windowArgs.height = 100;
+    
+    if (windowArgs.width > screen.width())    // should actually check workspace
+        windowArgs.width = screen.width();
+    if (windowArgs.width < 100)
+        windowArgs.width = 100;
+}
+
 JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&Window::info))
@@ -1456,201 +1599,86 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   }
   case Window::Open:
   {
-    KConfig *config = new KConfig("konquerorrc");
-    config->setGroup("Java/JavaScript Settings");
-    int policy = config->readUnsignedNumEntry( part->settings(), "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
-    delete config;
-    if ( policy == 1 ) {
-        policy = 0;
-    } else if ( policy == 3 ) // smart
-    {
-      // window.open disabled unless from a key/mouse event
-      if (static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture())
-      {
-        policy = 0;
-	LOG(PopupBlocking, "Allowed JavaScript window open of %s", args[0]->toString(exec).qstring().ascii());
-      } else {
-	LOG(PopupBlocking, "Blocked JavaScript window open of %s", args[0]->toString(exec).qstring().ascii());
-      }
-    }
-
-    QString frameName = args[1]->isUndefinedOrNull() ? QString("_blank") : args[1]->toString(exec).qstring();
-
-    if ( policy != 0 && !(part->findFrame(frameName) || frameName == "_top" || frameName == "_parent" || frameName == "_self")) {
-      return jsUndefined();
-    } else {
-      if (v->isUndefined())
-        str = QString();
-
-      KParts::WindowArgs winargs;
-
-      QString features = args[2]->toString(exec).qstring();
-      if (features.length() > 0) {
-        // when features is specified, all features default to false
-        winargs.menuBarVisible = false;
-        winargs.toolBarsVisible = false;
-        winargs.statusBarVisible = false;
-        winargs.scrollBarsVisible = false;
-        winargs.resizable = false;
-        QStringList flist = QStringList::split(',', features);
-        QStringList::ConstIterator it = flist.begin();
-        while (it != flist.end()) {
-          QString s = *it++;
-          QString key, val;
-          int pos = s.find('=');
-          if (pos >= 0) {
-            key = s.left(pos).stripWhiteSpace().lower();
-            val = s.mid(pos + 1).stripWhiteSpace().lower();
-	    int spacePos = val.find(' ');
-	    if (spacePos != -1) {
-	      val = val.left(spacePos);
-	    }
-
-            int scnum = QApplication::desktop()->screenNumber(widget->topLevelWidget());
-
-	    QRect screen = QApplication::desktop()->screenGeometry(scnum);
-            if (key == "left" || key == "screenx") {
-              bool ok;
-              double d = val.toDouble(&ok);
-              if ((d != 0 || ok) && !isnan(d)) {
-                d += screen.x();
-                if (d < screen.x() || d > screen.right())
-		  d = screen.x(); // only safe choice until size is determined
-                winargs.x = (int)d;
-	        winargs.xSet = true;
-              }
-            } else if (key == "top" || key == "screeny") {
-              bool ok;
-              double d = val.toDouble(&ok);
-              if ((d != 0 || ok) && !isnan(d)) {
-                d += screen.y();
-                if (d < screen.y() || d > screen.bottom())
-		  d = screen.y(); // only safe choice until size is determined
-                winargs.y = (int)d;
-	        winargs.ySet = true;
-              }
-            } else if (key == "height") {
-              bool ok;
-              double d = val.toDouble(&ok);
-              if ((d != 0 || ok) && !isnan(d)) {
-	        if (d > screen.height())  // should actually check workspace
-		  d = screen.height();
-                if (d < 100)
-		  d = 100;
-                winargs.height = (int)d;
-	        winargs.heightSet = true;
-              }
-            } else if (key == "width") {
-              bool ok;
-              double d = val.toDouble(&ok);
-              if ((d != 0 || ok) && !isnan(d)) {
-	        if (d > screen.width())    // should actually check workspace
-		  d = screen.width();
-                if (d < 100)
-		  d = 100;
-                winargs.width = (int)d;
-	        winargs.widthSet = true;
-              }
-            } else {
-              goto boolargs;
-	    }
-            continue;
-          } else {
-            // leaving away the value gives true
-            key = s.stripWhiteSpace().lower();
-            val = "1";
-          }
-        boolargs:
-          if (key == "menubar")
-            winargs.menuBarVisible = (val == "1" || val == "yes");
-          else if (key == "toolbar")
-            winargs.toolBarsVisible = (val == "1" || val == "yes");
-          else if (key == "location")  // ### missing in WindowArgs
-            winargs.toolBarsVisible = (val == "1" || val == "yes");
-          else if (key == "status" || key == "statusbar")
-            winargs.statusBarVisible = (val == "1" || val == "yes");
-          else if (key == "resizable")
-            winargs.resizable = (val == "1" || val == "yes");
-          else if (key == "fullscreen")
-            winargs.fullscreen = (val == "1" || val == "yes");
-          else if (key == "scrollbars")
-            winargs.scrollBarsVisible = !(val == "0" || val == "no");
-        }
-      }
-
+      QString frameName = args[1]->isUndefinedOrNull() ? QString("_blank") : args[1]->toString(exec).qstring();
+      if (!allowPopUp(exec, window) && !(part->findFrame(frameName)))
+          return jsUndefined();
+      if (frameName == "_top" || frameName == "_parent" || frameName == "_self")
+          return jsUndefined();
+      
+      KParts::WindowArgs windowArgs;
+      QString features = args[2]->isUndefinedOrNull() ? QString() : args[2]->toString(exec).qstring();
+      parseWindowFeatures(features, windowArgs);
+      
+      int screenNumber = QApplication::desktop()->screenNumber(widget->topLevelWidget());
+      constrainToVisible(QApplication::desktop()->screenGeometry(screenNumber), windowArgs);
+      
       // prepare arguments
       KURL url;
       KHTMLPart* activePart = Window::retrieveActive(exec)->m_part;
-      if (!str.isEmpty()) {
-        if (activePart)
+      if (!str.isEmpty() && activePart)
           url = activePart->xmlDocImpl()->completeURL(str.qstring());
-      }
 
       KParts::URLArgs uargs;
       uargs.frameName = frameName;
-      if ( uargs.frameName == "_top" )
-      {
-          while ( part->parentPart() )
+      if (uargs.frameName == "_top") {
+          while (part->parentPart())
               part = part->parentPart();
-
+          
           const Window* window = Window::retrieveWindow(part);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
+              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+              part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
           }
           return Window::retrieve(part);
       }
-      if ( uargs.frameName == "_parent" )
-      {
-          if ( part->parentPart() )
+      if (uargs.frameName == "_parent") {
+          if (part->parentPart())
               part = part->parentPart();
-
+          
           const Window* window = Window::retrieveWindow(part);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
+              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+              part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
           }
           return Window::retrieve(part);
       }
       uargs.serviceType = "text/html";
-
+      
       // request window (new or existing if framename is set)
       KParts::ReadOnlyPart *newPart = 0L;
       uargs.metaData()["referrer"] = activePart->referrer();
-      emit part->browserExtension()->createNewWindow("", uargs,winargs,newPart);
-      if (newPart && newPart->inherits("KHTMLPart")) {
-        KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
-        //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
-        khtmlpart->setOpener(part);
-        khtmlpart->setOpenedByJS(true);
-        
-        if (!khtmlpart->xmlDocImpl()) {
-            DocumentImpl *oldDoc = part->xmlDocImpl();
-            if (oldDoc && oldDoc->baseURL() != 0)
-                khtmlpart->begin(oldDoc->baseURL());
-            else
-                khtmlpart->begin();
-            
-            khtmlpart->write("<HTML><BODY>");
-            khtmlpart->end();
-
-            if (oldDoc) {
+      part->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
+      if (!newPart || !newPart->inherits("KHTMLPart"))
+          return jsUndefined();
+      KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
+      //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
+      khtmlpart->setOpener(part);
+      khtmlpart->setOpenedByJS(true);
+      
+      if (!khtmlpart->xmlDocImpl()) {
+          DocumentImpl *oldDoc = part->xmlDocImpl();
+          if (oldDoc && oldDoc->baseURL() != 0)
+              khtmlpart->begin(oldDoc->baseURL());
+          else
+              khtmlpart->begin();
+          
+          khtmlpart->write("<HTML><BODY>");
+          khtmlpart->end();
+          
+          if (oldDoc) {
               kdDebug(6070) << "Setting domain to " << oldDoc->domain().qstring() << endl;
               khtmlpart->xmlDocImpl()->setDomain( oldDoc->domain(), true );
               khtmlpart->xmlDocImpl()->setBaseURL( oldDoc->baseURL() );
-            }
-        }
-        if (!url.isEmpty()) {
+          }
+      }
+      if (!url.isEmpty()) {
           const Window* window = Window::retrieveWindow(khtmlpart);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            khtmlpart->scheduleLocationChange(url.url(), activePart->referrer(), false, userGesture);
+              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+              khtmlpart->scheduleLocationChange(url.url(), activePart->referrer(), false, userGesture);
           } 
-	}
-        return Window::retrieve(khtmlpart); // global object
-      } else
-        return jsUndefined();
-    }
+      }
+      return Window::retrieve(khtmlpart); // global object
   }
   case Window::Print:
     part->print();
@@ -1872,7 +1900,7 @@ void ScheduledAction::execute(Window *window)
                 int lineNumber = exception->get(exec, "line")->toInt32(exec);
                 if (Interpreter::shouldPrintExceptions())
                     printf("(timer):%s\n", message.qstring().utf8().data());
-                KWQ(window->m_part)->addMessageToConsole(message, lineNumber, QString());
+                KWQ(window->m_part)->addMessageToConsole(message, lineNumber, DOMString());
             }
         }
     } else
