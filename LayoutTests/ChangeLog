@@ -1,3 +1,16 @@
+2005-12-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6118
+        Investigate not using the frameset charset as a default for frames
+
+        * fast/encoding/frame-default-enc-expected.checksum: Added.
+        * fast/encoding/frame-default-enc-expected.png: Added.
+        * fast/encoding/frame-default-enc-expected.txt: Added.
+        * fast/encoding/frame-default-enc.html: Added.
+        * fast/encoding/resources/frame-default-enc-frame.html: Added.
+
 2005-12-22  Justin Garcia  <justin.garcia@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=6211>
