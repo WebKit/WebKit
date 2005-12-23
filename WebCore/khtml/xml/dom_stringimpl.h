@@ -26,6 +26,7 @@
 
 #include "misc/khtmllayout.h"
 #include "misc/shared.h"
+#include <kxmlcore/RefPtr.h>
 
 #define QT_ALLOC_QCHAR_VEC(N) static_cast<QChar*>(fastMalloc(sizeof(QChar)*(N)))
 #define QT_DELETE_QCHAR_VEC(P) fastFree(P)
@@ -192,6 +193,32 @@ namespace KXMLCore {
                     return false;
             return true;
         }
+    };
+
+    template<> struct DefaultHash<RefPtr<DOM::DOMStringImpl> > {
+        static unsigned hash(const RefPtr<DOM::DOMStringImpl>& key) 
+        { 
+            return DefaultHash<DOM::DOMStringImpl *>::hash(key.get());
+        }
+
+        static bool equal(const RefPtr<DOM::DOMStringImpl>& a, const RefPtr<DOM::DOMStringImpl>& b)
+        {
+            return DefaultHash<DOM::DOMStringImpl *>::equal(a.get(), b.get());
+        }
+    };
+    
+    template <typename T> class HashTraits;
+
+    template<>
+    struct HashTraits<RefPtr<DOM::DOMStringImpl> > {
+        typedef RefPtr<DOM::DOMStringImpl> TraitType;
+
+        static const bool emptyValueIsZero = true;
+        static const bool needsDestruction = true;
+        static const TraitType emptyValue() { return TraitType(); }
+
+        static const TraitType _deleted;
+        static const TraitType& deletedValue() { return _deleted; }
     };
 
 }

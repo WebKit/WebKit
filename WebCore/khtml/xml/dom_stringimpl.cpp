@@ -583,3 +583,9 @@ const char *DOMStringImpl::ascii() const
 }
 
 } // namespace DOM
+
+namespace KXMLCore {
+
+const RefPtr<DOM::DOMStringImpl> HashTraits<RefPtr<DOM::DOMStringImpl> >::_deleted = new DOM::DOMStringImpl(reinterpret_cast<char *>(0), 0);
+
+}

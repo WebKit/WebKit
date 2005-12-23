@@ -146,17 +146,18 @@ static inline void transformTextStringToXHTMLDocumentString(QString &text)
         "</html>\n";
 }
 
-static const char **xsltParamArrayFromQDict(QDict<DOMString> parameters)
+static const char **xsltParamArrayFromParameterMap(XSLTProcessorImpl::ParameterMap& parameters)
 {
-    if (parameters.count())
+    if (parameters.isEmpty())
         return 0;
-    const char **parameterArray = (const char **)malloc(((parameters.count() * 2) + 1) * sizeof(char *));
 
-    QDictIterator<DOMString> it(parameters);
+    const char **parameterArray = (const char **)malloc(((parameters.size() * 2) + 1) * sizeof(char *));
+
+    XSLTProcessorImpl::ParameterMap::iterator end = parameters.end();
     unsigned index = 0;
-    for (it.toFirst(); it.current(); ++it) {
-        parameterArray[++index] = strdup(it.currentKey().utf8().data());
-        parameterArray[++index] = strdup(it.current()->qstring().utf8().data());
+    for (XSLTProcessorImpl::ParameterMap::iterator it = parameters.begin(); it != end; ++it) {
+        parameterArray[index++] = strdup(DOMString(it->first.get()).qstring().utf8().data());
+        parameterArray[index++] = strdup(DOMString(it->second.get()).qstring().utf8().data());
     }
     parameterArray[index] = 0;
 
@@ -302,7 +303,7 @@ bool XSLTProcessorImpl::transformToString(NodeImpl *sourceNode, QString &mimeTyp
     cachedStylesheet->clearDocuments();
     
     xmlDocPtr sourceDoc = xmlDocPtrFromNode(sourceNode);
-    const char **params = xsltParamArrayFromQDict(m_parameters);
+    const char **params = xsltParamArrayFromParameterMap(m_parameters);
     xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, params);
     freeXsltParamArray(params);
     
@@ -343,21 +344,21 @@ RefPtr<DocumentFragmentImpl> XSLTProcessorImpl::transformToFragment(NodeImpl *so
 void XSLTProcessorImpl::setParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName, DOMStringImpl *value)
 {
     // FIXME: namespace support?
-    m_parameters.replace(DOMString(localName).qstring(), new DOMString(value));
+    // should make a QualifiedName here but we'd have to expose the impl
+    m_parameters.set(localName, value);
 }
 
 RefPtr<DOMStringImpl> XSLTProcessorImpl::getParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const
 {
     // FIXME: namespace support?
-    if (DOMString *value = m_parameters.find(DOMString(localName).qstring()))
-        return value->impl();
-    return 0;
+    // should make a QualifiedName here but we'd have to expose the impl
+    return m_parameters.get(localName);
 }
 
 void XSLTProcessorImpl::removeParameter(DOMStringImpl *namespaceURI, DOMStringImpl *localName)
 {
     // FIXME: namespace support?
-    m_parameters.remove(DOMString(localName).qstring());
+    m_parameters.remove(localName);
 }
 
 }

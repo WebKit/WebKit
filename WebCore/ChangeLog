@@ -1,3 +1,26 @@
+2005-12-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - made RefPtr<DOMStringImpl> usable as a hashtable key/value
+	- changed XSLTProcessorImpl to make use of this instead of a QDict.
+	- partially fixed broken param handling for xslt
+
+	See LayoutTests for updated test case.
+
+        * khtml/xml/dom_stringimpl.cpp:
+        * khtml/xml/dom_stringimpl.h:
+        (KXMLCore::): Set things up so you can use RefPtr<DOMStringImpl> as
+	a hashtable key (should already be usable as a value).
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::xsltParamArrayFromParameterMap): Updated to use a HashMap of RefPtrs instead
+	of QDict. Also, fixed bugs that would have kept this from ever working at all.
+        (DOM::XSLTProcessorImpl::transformToString): ditto
+        (DOM::XSLTProcessorImpl::setParameter): ditto
+        (DOM::XSLTProcessorImpl::getParameter): ditto
+        (DOM::XSLTProcessorImpl::removeParameter): ditto
+        * khtml/xsl/xslt_processorimpl.h:
+
 2005-12-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
