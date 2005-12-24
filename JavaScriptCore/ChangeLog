@@ -1,5 +1,19 @@
 2005-12-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+	- fixed "HashMap does not work with const pointer keys or values"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6222
+	
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::HashMap): In all methods, explicitly cast all pointers
+	to void * before passing to internal implementation. Use C-style
+	casts instead of new-style casts, because the real solution would
+        require a combo of reinterpret_cast anc const_cast.
+
+
+2005-12-23  Maciej Stachowiak  <mjs@apple.com>
+
         - this time for sure
 
         * kxmlcore/RefPtr.h:
