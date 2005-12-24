@@ -134,7 +134,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
         m_function = slotParentDestroyed;
     } else if (KWQNamesMatch(member, SLOT(submitFormAgain()))) {
         m_function = slotSubmitFormAgain;
-    } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const QString &)))) {
+    } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const DOMString &)))) {
         m_function = slotTextChangedWithString;
     } else if (KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const char *, int)))) {
 	if (object->isKHTMLLoader()) {

@@ -1,3 +1,20 @@
+2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6221
+          REGRESSION: Password field is blank error for secure websites using
+          password field (ToT, 12/24/05)
+
+        * khtml/kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Changed the parameter type of slotTextChanged to const DOMString &
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit): ditto.
+        (RenderLineEdit::slotTextChanged): ditto.
+        (RenderFileButton::RenderFileButton): ditto.
+        (RenderFileButton::slotTextChanged): ditto.
+
 2005-12-22  Geoffrey Garen  <ggaren@apple.com>
     
         Reviewed by vicki (yay!), eric.

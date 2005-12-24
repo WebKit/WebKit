@@ -150,7 +150,7 @@ public:
 
 public slots:
     void slotReturnPressed();
-    void slotTextChanged(const QString &string);
+    void slotTextChanged(const DOM::DOMString &string);
     void slotSelectionChanged();
     void slotPerformSearch();
 public:
@@ -219,7 +219,7 @@ public:
 public slots:
     virtual void slotClicked();
     virtual void slotReturnPressed();
-    virtual void slotTextChanged(const QString &string);
+    virtual void slotTextChanged(const DOM::DOMString &string);
 
 protected:
     virtual bool isEditable() const { return true; }
