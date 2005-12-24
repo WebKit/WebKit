@@ -304,9 +304,14 @@
     [[self nextResponder] keyUp:event];
 }
 
+- (WebFrame *)_webFrame
+{
+    return [[self _web_parentWebFrameView] webFrame];
+}
+
 - (NSDictionary *)_elementAtWindowPoint:(NSPoint)windowPoint
 {
-    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    WebFrame *frame = [self _webFrame];
     ASSERT(frame);
     
     NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
@@ -350,18 +355,16 @@
 - (BOOL)becomeFirstResponder
 {
     BOOL result = [super becomeFirstResponder];
-    if (result) {
-        [[self _web_parentWebView] _selectedFrameDidChange];
-    }
+    if (result)
+        [[self _webFrame] _clearSelectionInOtherFrames];
     return result;
 }
 
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection]) {
+    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection])
         [self deselectAll];
-    }
     return resign;
 }
 
@@ -373,10 +376,8 @@
     } else if ([link isKindOfClass:[NSString class]]) {
         URL = [[self class] _URLForString:(NSString *)link];
     }
-    if (URL != nil) {    
-        WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
-        [frame _safeLoadURL:URL];
-    }
+    if (URL != nil)
+        [[self _webFrame] _safeLoadURL:URL];
 }
 
 #pragma mark PRINTING

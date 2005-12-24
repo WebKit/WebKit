@@ -1,3 +1,38 @@
+2005-12-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- move more frame tree traversal code from WebView to WebFrame
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _atMostOneFrameHasSelection]): Moved this debug
+	method from WebView, renamed it and changed it to return a boolean
+	so it is appropriate for use in assertions instead of giving its own
+	errors.
+        (-[WebFrame _accumulateFramesWithSelection:]): Helper for the above.
+        (-[WebFrame _findFrameWithSelection]):  Moved from WebView and renamed from
+	_findSelectedFrame, also removed the skipping variant.
+        (-[WebFrame _clearSelectionInOtherFrames]): Moved from WebView and
+	changed how the logic works. Instead of clearing selection in any frame
+	but the focus frame, it clears selection in all but this one.
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView becomeFirstResponder]): Call _clearSelectionInOtherFrames
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]): Stop getting WebFrame
+	in needlessly roundabout way.
+        (-[WebPDFView becomeFirstResponder]): Call _clearSelectionInOtherFrames
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView _webFrame]): New helper method.
+        (-[WebTextView _elementAtWindowPoint:]): Use it.
+        (-[WebTextView becomeFirstResponder]): Call _clearSelectionInOtherFrames
+        (-[WebTextView resignFirstResponder]): Fix style issue
+        (-[WebTextView clickedOnLink:atIndex:]): Use new helkper
+        * WebView.subproj/WebView.m:
+        (-[WebView selectedFrame]): Call to WebFrame as appropriate
+        (-[WebView _selectedOrMainFrame]): Fix style issue
+        * WebView.subproj/WebViewInternal.h:
+
 2005-12-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

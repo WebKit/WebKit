@@ -55,6 +55,8 @@
 
 - (BOOL)_hasSelection;
 - (void)_clearSelection;
+- (WebFrame *)_findFrameWithSelection;
+- (void)_clearSelectionInOtherFrames;
 
 @end
 

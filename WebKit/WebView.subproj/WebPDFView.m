@@ -533,7 +533,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 - (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)URL
 {
     if (URL != nil) {    
-        WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+        WebFrame *frame = [dataSource webFrame];
         [frame _safeLoadURL:URL];
     }
 }
@@ -770,7 +770,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     if (![window makeFirstResponder:newFirstResponder])
         return NO;
     
-    [[self _webView] _selectedFrameDidChange];
+    [[dataSource webFrame] _clearSelectionInOtherFrames];
 
     // FIXME 4265966: We don't currently have a way to notice when the PDFView (or subview) loses focus,
     // so sometimes a secondary selection is left behind in the PDFView when the primary selection moves elsewhere.    

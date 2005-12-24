@@ -2834,6 +2834,61 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+#ifndef NDEBUG
+- (void)_accumulateFramesWithSelection:(NSMutableArray *)framesWithSelection
+{
+    if ([self _hasSelection])
+        [framesWithSelection addObject:self];
+    
+    NSArray *frames = [self _internalChildFrames];
+    int i;
+    int count = [frames count];
+    for (i = 0; i < count; i++) {
+        [[frames objectAtIndex:i] _accumulateFramesWithSelection:framesWithSelection];
+    }
+}
+
+- (BOOL)_atMostOneFrameHasSelection;
+{
+    // FIXME: 4186050 is one known case that makes this debug check fail
+    NSMutableArray *framesWithSelection = [NSMutableArray array];
+    [self _accumulateFramesWithSelection:framesWithSelection];
+    return [framesWithSelection count] <= 1;
+}
+#endif
+
+- (WebFrame *)_findFrameWithSelection
+{
+    ASSERT([self _atMostOneFrameHasSelection]);
+
+    if ([self _hasSelection])
+        return self;
+    
+    NSArray *frames = [self _internalChildFrames];
+    int i;
+    int count = [frames count];
+    for (i = 0; i < count; i++) {
+        WebFrame *frameWithSelection = [[frames objectAtIndex:i] _findFrameWithSelection];
+        if (frameWithSelection)
+            return frameWithSelection;
+    }
+    
+    return nil;
+}
+
+- (void)_clearSelectionInOtherFrames
+{
+    // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
+    // responder. It would be nicer to just notice first responder changes here instead, but there's no 
+    // notification sent when the first responder changes in general (Radar 2573089).
+    WebFrame *frameWithSelection = [[[self webView] mainFrame] _findFrameWithSelection];
+    if (frameWithSelection != self)
+        [frameWithSelection _clearSelection];
+
+    // While we're in the general area of selection and frames, check that there is only one now.
+    ASSERT([[[self webView] mainFrame] _atMostOneFrameHasSelection]);
+}
+
 @end
 
 @implementation WebFormState : NSObject

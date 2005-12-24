@@ -41,6 +41,7 @@
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
@@ -2984,10 +2985,9 @@ done:
             break;
         }
     }
-    if (view) {
+    if (view)
         [[self window] makeFirstResponder:view];
-    }
-    [[self _webView] _selectedFrameDidChange];
+    [[[self _web_parentWebFrameView] webFrame] _clearSelectionInOtherFrames];
     [self updateFocusState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;

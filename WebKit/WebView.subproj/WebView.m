@@ -288,11 +288,6 @@ macro(yankAndSelect) \
 @end
 
 @interface WebView (WebFileInternal)
-#ifndef NDEBUG
-- (void)_debugCheckForMultipleSelectedFrames;
-#endif
-- (WebFrame *)_findSelectedFrame;
-- (WebFrame *)_findSelectedFrameSkippingFrame:(WebFrame *)frameToSkip;
 - (WebFrame *)_selectedOrMainFrame;
 - (WebBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
@@ -623,13 +618,10 @@ static bool debugWidget = true;
     [frame _checkLoadComplete];
 }
 
-
 - (void)_mainReceivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
     ASSERT(dataSource);
-#ifndef NDEBUG
     ASSERT([dataSource webFrame]);
-#endif
     
     [dataSource _setMainDocumentError: error];
 
@@ -2548,24 +2540,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // This is faster than searching the frame hierarchy, and will give us a result even in the case
     // where the focused frame doesn't actually contain a selection.
     WebFrame *focusedFrame = [self _focusedFrame];
-    if (focusedFrame != nil) {
+    if (focusedFrame) {
 #ifndef NDEBUG
-        WebFrame *frameWithSelection = [self _findSelectedFrame];
-        ASSERT(frameWithSelection == nil || frameWithSelection == focusedFrame);
-        [self _debugCheckForMultipleSelectedFrames];
+        WebFrame *frameWithSelection = [[self mainFrame] _findFrameWithSelection];
 #endif
+        ASSERT(frameWithSelection == nil || frameWithSelection == focusedFrame);
         return focusedFrame;
     }
     
     // If the first responder is outside of our view tree, we search for a frame containing a selection.
     // There should be at most only one of these.
-    WebFrame *frameWithSelection = [self _findSelectedFrame];
-    if (frameWithSelection != nil) {
-#ifndef NDEBUG
-        [self _debugCheckForMultipleSelectedFrames];
-#endif
-        return frameWithSelection;
-    }
+    return [[self mainFrame] _findFrameWithSelection];
     
     return nil;
 }
@@ -3019,66 +3004,11 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return nil;
 }
 
-- (WebFrame *)_findSelectedFrameStartingFromFrame:(WebFrame *)frame skippingFrame:(WebFrame *)frameToSkip
-{
-    if (frame != frameToSkip && [frame _hasSelection]) {
-        return frame;
-    }
-    
-    NSArray *frames = [frame _internalChildFrames];
-    int i;
-    int count = [frames count];
-    for (i = 0; i < count; i++) {
-        WebFrame *selectedChildFrame = [self _findSelectedFrameStartingFromFrame:[frames objectAtIndex:i] skippingFrame:frameToSkip];
-        if (selectedChildFrame != nil) {
-            return selectedChildFrame;
-        }
-    }
-    
-    return nil;
-}
-
-- (WebFrame *)_findSelectedFrameSkippingFrame:(WebFrame *)frameToSkip
-{
-    return [self _findSelectedFrameStartingFromFrame:[self mainFrame] skippingFrame:frameToSkip];
-}
-
-- (WebFrame *)_findSelectedFrame
-{
-    return [self _findSelectedFrameSkippingFrame:nil];
-}
-
-#ifndef DEBUG
-- (void)_debugCollectSelectedFramesIntoArray:(NSMutableArray *)selectedFrames startingFromFrame:(WebFrame *)frame
-{
-    if ([frame _hasSelection])
-        [selectedFrames addObject:frame];
-    
-    NSArray *frames = [frame _internalChildFrames];
-    int i;
-    int count = [frames count];
-    for (i = 0; i < count; i++) {
-        [self _debugCollectSelectedFramesIntoArray:selectedFrames startingFromFrame:[frames objectAtIndex:i]];
-    }
-}
-
-- (void)_debugCheckForMultipleSelectedFrames
-{
-    NSMutableArray *selectedFrames = [NSMutableArray array];
-    [self _debugCollectSelectedFramesIntoArray:selectedFrames startingFromFrame:[self mainFrame]];
-    // FIXME: 4186050 is one known case that makes this assertion fire
-    if ([selectedFrames count] > 1) {
-        ERROR("%d frames have a selection at the same time", [selectedFrames count]);
-    }
-}
-#endif
-
 - (WebFrame *)_selectedOrMainFrame
 {
     WebFrame *result = [self selectedFrame];
-    if (result == nil) {
+    if (result == nil)
         result = [self mainFrame];
-    }
     return result;
 }
 
@@ -3229,23 +3159,6 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     }
     
     return foundSome;
-}
-
-@end
-
-@implementation WebView (WebDocumentSelectionExtras)
-
-- (void)_selectedFrameDidChange
-{
-    // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
-    // responder. It would be nicer to just notice first responder changes here instead, but there's no 
-    // notification sent when the first responder changes in general (Radar 2573089).
-    [[self _findSelectedFrameSkippingFrame:[self _focusedFrame]] _clearSelection];
-
-#ifndef NDEBUG
-    // While we're in the general area of selection and frames, check that there is only one now.
-    [self _debugCheckForMultipleSelectedFrames];
-#endif
 }
 
 @end
