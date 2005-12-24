@@ -1,3 +1,27 @@
+2005-12-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6231
+
+        - Fixed assertion failure in QString::mid caused by my last checkin. 
+        parseWindowFeatuers() sometimes called QString::mid() with a start 
+        index past the end of the string but a length of 0. There were two 
+        problems there. (1) parseWindowString() shouldn't have gotten past the 
+        end of the string. (2) QString had range truncating code that was 
+        borked. So I fixed both.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::parseWindowFeatures): One of the "past the end" tests was > 
+        instead of >=.
+        * kwq/KWQString.mm:
+        (QString::mid): Truncate length *before* deciding whether to return 
+        early. Also, compare start and data._length before computing 
+        data._length - start, because the error case we're trying to catch 
+        will almost certainly cause unsigned overflow.
+        * manual-tests/window-open-features-parsing.html: Added trailing ',' 
+        to uber-test to catch this failure, too.
+
 2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.

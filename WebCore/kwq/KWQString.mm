@@ -1860,17 +1860,21 @@ QString QString::mid(uint start, uint len) const
     {
         KWQStringData &data = **dataHandle;
         
-        if (data._length == 0)
-            return QString();
-            
         // clip length
-        if( len > data._length - start )
+        if (start >= data._length)
+            return QString();
+        
+        if (len > data._length - start)
             len = data._length - start;
 
+        if (len == 0)
+            return QString();
+        
         if ( index == 0 && len == data._length )
             return *this;
 
-        ASSERT( start+len<=data._length );	// range check
+        ASSERT(start + len >= start &&       // unsigned overflow
+               start + len <= data._length); // past the end
         
         // ascii case
         if( data._isAsciiValid && data._ascii )
