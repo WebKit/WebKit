@@ -693,83 +693,80 @@ const HTMLElement::Accessors HTMLElement::frame_accessors = { &HTMLElement::fram
 const HTMLElement::Accessors HTMLElement::iFrame_accessors = { &HTMLElement::iFrameGetter, &HTMLElement::iFrameSetter };
 const HTMLElement::Accessors HTMLElement::marquee_accessors = { &HTMLElement::marqueeGetter, &HTMLElement::marqueeSetter };
 
-const HTMLElement::Accessors* HTMLElement::getSetInfo() const
+const HTMLElement::Accessors* HTMLElement::accessors() const
 {
     // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
-    static QPtrDict<const HTMLElement::Accessors> getSetInfoDict;
-    if (getSetInfoDict.isEmpty()) {
-        getSetInfoDict.insert(aTag.localName().impl(), &a_accessors);
-        getSetInfoDict.insert(appletTag.localName().impl(), &applet_accessors);
-        getSetInfoDict.insert(areaTag.localName().impl(), &area_accessors);
-        getSetInfoDict.insert(baseTag.localName().impl(), &base_accessors);
-        getSetInfoDict.insert(basefontTag.localName().impl(), &baseFont_accessors);
-        getSetInfoDict.insert(blockquoteTag.localName().impl(), &blockQuote_accessors); 
-        getSetInfoDict.insert(bodyTag.localName().impl(), &body_accessors);
-        getSetInfoDict.insert(brTag.localName().impl(), &br_accessors);
-        getSetInfoDict.insert(buttonTag.localName().impl(), &button_accessors);
-        getSetInfoDict.insert(canvasTag.localName().impl(), &canvas_accessors);
-        getSetInfoDict.insert(captionTag.localName().impl(), &caption_accessors);
-        getSetInfoDict.insert(colTag.localName().impl(), &col_accessors);
-        getSetInfoDict.insert(colgroupTag.localName().impl(), &col_accessors);
-        getSetInfoDict.insert(delTag.localName().impl(), &mod_accessors);
-        getSetInfoDict.insert(dirTag.localName().impl(), &dir_accessors);
-        getSetInfoDict.insert(divTag.localName().impl(), &div_accessors);
-        getSetInfoDict.insert(dlTag.localName().impl(), &dl_accessors);
-        getSetInfoDict.insert(fieldsetTag.localName().impl(), &fieldSet_accessors);
-        getSetInfoDict.insert(fontTag.localName().impl(), &font_accessors);
-        getSetInfoDict.insert(formTag.localName().impl(), &form_accessors);
-        getSetInfoDict.insert(frameTag.localName().impl(), &frame_accessors);
-        getSetInfoDict.insert(framesetTag.localName().impl(), &frameSet_accessors);
-        getSetInfoDict.insert(h1Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(h2Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(h3Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(h4Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(h5Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(h6Tag.localName().impl(), &heading_accessors);
-        getSetInfoDict.insert(headTag.localName().impl(), &head_accessors);
-        getSetInfoDict.insert(hrTag.localName().impl(), &hr_accessors); 
-        getSetInfoDict.insert(htmlTag.localName().impl(), &html_accessors);
-        getSetInfoDict.insert(iframeTag.localName().impl(), &iFrame_accessors);
-        getSetInfoDict.insert(imgTag.localName().impl(), &img_accessors);
-        getSetInfoDict.insert(inputTag.localName().impl(), &input_accessors);
-        getSetInfoDict.insert(insTag.localName().impl(), &mod_accessors);
-        getSetInfoDict.insert(isindexTag.localName().impl(), &isIndex_accessors);
-        getSetInfoDict.insert(labelTag.localName().impl(), &label_accessors);
-        getSetInfoDict.insert(legendTag.localName().impl(), &legend_accessors);
-        getSetInfoDict.insert(liTag.localName().impl(), &li_accessors);
-        getSetInfoDict.insert(linkTag.localName().impl(), &link_accessors);
-        getSetInfoDict.insert(mapTag.localName().impl(), &map_accessors);
-        getSetInfoDict.insert(marqueeTag.localName().impl(), &marquee_accessors);
-        getSetInfoDict.insert(menuTag.localName().impl(), &menu_accessors);
-        getSetInfoDict.insert(metaTag.localName().impl(), &meta_accessors);
-        getSetInfoDict.insert(objectTag.localName().impl(), &object_accessors);
-        getSetInfoDict.insert(olTag.localName().impl(), &ol_accessors);
-        getSetInfoDict.insert(optionTag.localName().impl(), &option_accessors);
-        getSetInfoDict.insert(optgroupTag.localName().impl(), &optGroup_accessors);
-        getSetInfoDict.insert(pTag.localName().impl(), &p_accessors);
-        getSetInfoDict.insert(paramTag.localName().impl(), &param_accessors);
-        getSetInfoDict.insert(preTag.localName().impl(), &pre_accessors);
-        getSetInfoDict.insert(qTag.localName().impl(), &q_accessors);
-        getSetInfoDict.insert(scriptTag.localName().impl(), &script_accessors);
-        getSetInfoDict.insert(selectTag.localName().impl(), &select_accessors);
-        getSetInfoDict.insert(styleTag.localName().impl(), &style_accessors);
-        getSetInfoDict.insert(tableTag.localName().impl(), &table_accessors);
-        getSetInfoDict.insert(tbodyTag.localName().impl(), &tablesection_accessors);
-        getSetInfoDict.insert(tdTag.localName().impl(), &tablecell_accessors);
-        getSetInfoDict.insert(textareaTag.localName().impl(), &textArea_accessors);
-        getSetInfoDict.insert(thTag.localName().impl(), &tablecell_accessors);
-        getSetInfoDict.insert(theadTag.localName().impl(), &tablesection_accessors);
-        getSetInfoDict.insert(tfootTag.localName().impl(), &tablesection_accessors);
-        getSetInfoDict.insert(titleTag.localName().impl(), &title_accessors);
-        getSetInfoDict.insert(trTag.localName().impl(), &tr_accessors);
-        getSetInfoDict.insert(ulTag.localName().impl(), &ul_accessors);
+    static HashMap<DOM::DOMStringImpl *, const Accessors *, PointerHash<DOM::DOMStringImpl *> > accessorMap;
+    if (accessorMap.isEmpty()) {
+        accessorMap.add(aTag.localName().impl(), &a_accessors);
+        accessorMap.add(appletTag.localName().impl(), &applet_accessors);
+        accessorMap.add(areaTag.localName().impl(), &area_accessors);
+        accessorMap.add(baseTag.localName().impl(), &base_accessors);
+        accessorMap.add(basefontTag.localName().impl(), &baseFont_accessors);
+        accessorMap.add(blockquoteTag.localName().impl(), &blockQuote_accessors); 
+        accessorMap.add(bodyTag.localName().impl(), &body_accessors);
+        accessorMap.add(brTag.localName().impl(), &br_accessors);
+        accessorMap.add(buttonTag.localName().impl(), &button_accessors);
+        accessorMap.add(canvasTag.localName().impl(), &canvas_accessors);
+        accessorMap.add(captionTag.localName().impl(), &caption_accessors);
+        accessorMap.add(colTag.localName().impl(), &col_accessors);
+        accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
+        accessorMap.add(delTag.localName().impl(), &mod_accessors);
+        accessorMap.add(dirTag.localName().impl(), &dir_accessors);
+        accessorMap.add(divTag.localName().impl(), &div_accessors);
+        accessorMap.add(dlTag.localName().impl(), &dl_accessors);
+        accessorMap.add(fieldsetTag.localName().impl(), &fieldSet_accessors);
+        accessorMap.add(fontTag.localName().impl(), &font_accessors);
+        accessorMap.add(formTag.localName().impl(), &form_accessors);
+        accessorMap.add(frameTag.localName().impl(), &frame_accessors);
+        accessorMap.add(framesetTag.localName().impl(), &frameSet_accessors);
+        accessorMap.add(h1Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(h2Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(h3Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(h4Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(h5Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(h6Tag.localName().impl(), &heading_accessors);
+        accessorMap.add(headTag.localName().impl(), &head_accessors);
+        accessorMap.add(hrTag.localName().impl(), &hr_accessors); 
+        accessorMap.add(htmlTag.localName().impl(), &html_accessors);
+        accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
+        accessorMap.add(imgTag.localName().impl(), &img_accessors);
+        accessorMap.add(inputTag.localName().impl(), &input_accessors);
+        accessorMap.add(insTag.localName().impl(), &mod_accessors);
+        accessorMap.add(isindexTag.localName().impl(), &isIndex_accessors);
+        accessorMap.add(labelTag.localName().impl(), &label_accessors);
+        accessorMap.add(legendTag.localName().impl(), &legend_accessors);
+        accessorMap.add(liTag.localName().impl(), &li_accessors);
+        accessorMap.add(linkTag.localName().impl(), &link_accessors);
+        accessorMap.add(mapTag.localName().impl(), &map_accessors);
+        accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
+        accessorMap.add(menuTag.localName().impl(), &menu_accessors);
+        accessorMap.add(metaTag.localName().impl(), &meta_accessors);
+        accessorMap.add(objectTag.localName().impl(), &object_accessors);
+        accessorMap.add(olTag.localName().impl(), &ol_accessors);
+        accessorMap.add(optionTag.localName().impl(), &option_accessors);
+        accessorMap.add(optgroupTag.localName().impl(), &optGroup_accessors);
+        accessorMap.add(pTag.localName().impl(), &p_accessors);
+        accessorMap.add(paramTag.localName().impl(), &param_accessors);
+        accessorMap.add(preTag.localName().impl(), &pre_accessors);
+        accessorMap.add(qTag.localName().impl(), &q_accessors);
+        accessorMap.add(scriptTag.localName().impl(), &script_accessors);
+        accessorMap.add(selectTag.localName().impl(), &select_accessors);
+        accessorMap.add(styleTag.localName().impl(), &style_accessors);
+        accessorMap.add(tableTag.localName().impl(), &table_accessors);
+        accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
+        accessorMap.add(tdTag.localName().impl(), &tablecell_accessors);
+        accessorMap.add(textareaTag.localName().impl(), &textArea_accessors);
+        accessorMap.add(thTag.localName().impl(), &tablecell_accessors);
+        accessorMap.add(theadTag.localName().impl(), &tablesection_accessors);
+        accessorMap.add(tfootTag.localName().impl(), &tablesection_accessors);
+        accessorMap.add(titleTag.localName().impl(), &title_accessors);
+        accessorMap.add(trTag.localName().impl(), &tr_accessors);
+        accessorMap.add(ulTag.localName().impl(), &ul_accessors);
     }
     
     HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
-    const HTMLElement::Accessors* result = getSetInfoDict.find(element->localName().impl());
-    if (result)
-        return result;
-    return 0;
+    return accessorMap.get(element->localName().impl());
 }
 
 /*
@@ -2261,9 +2258,9 @@ JSValue *HTMLElement::getValueProperty(ExecState *exec, int token) const
     }
 
     // Now check the properties specific to our element type.
-    const Accessors* info = getSetInfo();
-    if (info && info->m_getter)
-        return (this->*(info->m_getter))(exec, token);
+    const Accessors* access = accessors();
+    if (access && access->m_getter)
+        return (this->*(access->m_getter))(exec, token);
     return jsUndefined();
 }
 
@@ -3249,9 +3246,9 @@ void HTMLElement::putValueProperty(ExecState *exec, int token, JSValue *value, i
     }
 
     // Now check for properties that apply to a specific element type.
-    const Accessors* info = getSetInfo();
-    if (info && info->m_setter)
-        return (this->*(info->m_setter))(exec, token, value, str);  
+    const Accessors* access = accessors();
+    if (access && access->m_setter)
+        return (this->*(access->m_setter))(exec, token, value, str);  
 }
 
 HTMLElementImpl *toHTMLElement(JSValue *val)

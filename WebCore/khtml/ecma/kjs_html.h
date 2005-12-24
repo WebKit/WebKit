@@ -88,7 +88,7 @@ namespace KJS {
     typedef JSValue *(HTMLElement::*GetterFunction)(ExecState *exec, int token) const;
     typedef void (HTMLElement::*SetterFunction)(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
-    const Accessors* getSetInfo() const;
+    const Accessors* accessors() const;
     static const Accessors html_accessors, head_accessors, link_accessors, title_accessors,
       meta_accessors, base_accessors, isIndex_accessors, style_accessors, body_accessors, form_accessors,
       select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,

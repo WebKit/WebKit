@@ -1,3 +1,17 @@
+2005-12-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - replaced QPtrDict for Accessors structs with HashMap (also renamed some
+	stray getSetInfo methods)
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6223
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::accessors):
+        (KJS::HTMLElement::getValueProperty):
+        (KJS::HTMLElement::putValueProperty):
+        * khtml/ecma/kjs_html.h:
+
 2005-12-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by eric.
