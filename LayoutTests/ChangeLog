@@ -1,3 +1,13 @@
+2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by eseidel.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6236
+          REGRESSION: Crash in DOMString::replace() in ToT (12/24/05)
+
+        * fast/forms/domstring-replace-crash-expected.txt: Added.
+        * fast/forms/domstring-replace-crash.html: Added.
+
 2005-12-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin Adler.
