@@ -1,3 +1,36 @@
+2005-12-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric and Dave Hyatt.
+
+	- make even const PassRefPtrs give transfer of ownership semantics
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6238
+	
+	This is a somewhat cheesy change. Having to use PassRefPtr_Ref creates ambiguities
+	in assignment and copy construction. And this makes life way easier and removes
+	the need for pass(). It is not really correct, but we pretty much never need a real
+	const PassRefPtr, and this takes care of things for PassRefPtr temporaries.
+	
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add): No more need for pass()
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList): No more need for pass()
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::create): Use adoptRef
+        (KJS::UString::UString): No more need for pass
+        (KJS::UString::append): No more need for pass
+        (KJS::UString::substr): No more need for pass
+        * kxmlcore/PassRefPtr.h: made m_ptr mutable (ugh)
+        (KXMLCore::PassRefPtr::PassRefPtr): Take a const PassRefPtr reference
+        (KXMLCore::PassRefPtr::release): Made this a const method (ugh)
+        (KXMLCore::PassRefPtr::operator=): clean up appropriately
+        (KXMLCore::adoptRef): Added this to use instead of PassRefPtr<T>::adopt, I think
+	it makes the behavior more clear and it is less verbose.
+        (KXMLCore::static_pointer_cast): use adoptRef
+        (KXMLCore::const_pointer_cast): use adoptRef
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::RefPtr): take const PassRefPtr&
+        (KXMLCore::PassRefPtr::operator=): take const PassRefPtr&
+
 2005-12-25  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

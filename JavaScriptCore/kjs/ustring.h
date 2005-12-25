@@ -462,7 +462,7 @@ namespace KJS {
 #endif
 
     Rep *rep() const { return m_rep.get(); }
-    UString(PassRefPtr<Rep> r) { m_rep = r; }
+    UString(PassRefPtr<Rep> r) : m_rep(r) { }
 
     void copyForWriting();
 

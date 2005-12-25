@@ -129,12 +129,12 @@ struct CStringTranslator
 PassRefPtr<UString::Rep> Identifier::add(const char *c)
 {
     if (!c)
-        return pass(&UString::Rep::null);
+        return &UString::Rep::null;
     int length = strlen(c);
     if (length == 0)
-        return pass(&UString::Rep::empty);
+        return &UString::Rep::empty;
     
-    return pass(*identifierTable().insert<const char *, CStringTranslator>(c).first);
+    return *identifierTable().insert<const char *, CStringTranslator>(c).first;
 }
 
 struct UCharBuffer {
@@ -172,24 +172,24 @@ struct UCharBufferTranslator
 PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
 {
     if (length == 0)
-        return pass(&UString::Rep::empty);
+        return &UString::Rep::empty;
     
     UCharBuffer buf = {s, length}; 
-    return pass(*identifierTable().insert<UCharBuffer, UCharBufferTranslator>(buf).first);
+    return *identifierTable().insert<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
 PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
 {
     if (r->isIdentifier)
-        return pass(r);
+        return r;
 
     if (r->len == 0)
-        return pass(&UString::Rep::empty);
+        return &UString::Rep::empty;
 
     UString::Rep *result = *identifierTable().insert(r).first;
     if (result == r)
         r->isIdentifier = true;
-    return pass(result);
+    return result;
 }
 
 void Identifier::remove(UString::Rep *r)

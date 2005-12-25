@@ -201,7 +201,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
   r->preCapacity = 0;
 
   // steal the single reference this Rep was created with
-  return PassRefPtr<Rep>::adopt(r);
+  return adoptRef(r);
 }
 
 PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, int length)
@@ -231,7 +231,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   r->preCapacity = 0;
 
   // steal the single reference this Rep was created with
-  return PassRefPtr<Rep>::adopt(r);
+  return adoptRef(r);
 }
 
 void UString::Rep::destroy()
@@ -459,7 +459,7 @@ UString::UString(const UString &a, const UString &b)
     UString x(a);
     x.expandCapacity(aOffset + length);
     memcpy(const_cast<UChar *>(a.data() + aSize), b.data(), bSize * sizeof(UChar));
-    m_rep = Rep::create(pass(a.m_rep), 0, length);
+    m_rep = Rep::create(a.m_rep, 0, length);
   } else if (-bOffset == b.usedPreCapacity() && 4 * bSize >= aSize) {
     // - b reaches the beginning of its buffer so it qualifies for shared prepend
     // - also, it's at least a quarter the length of a - prepending to a much shorter
@@ -467,7 +467,7 @@ UString::UString(const UString &a, const UString &b)
     UString y(b);
     y.expandPreCapacity(-bOffset + aSize);
     memcpy(const_cast<UChar *>(b.data() - aSize), a.data(), aSize * sizeof(UChar));
-    m_rep = Rep::create(pass(b.m_rep), -aSize, length);
+    m_rep = Rep::create(b.m_rep, -aSize, length);
   } else {
     // a does not qualify for append, and b does not qualify for prepend, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
@@ -685,7 +685,7 @@ UString &UString::append(const UString &t)
     // this reaches the end of the buffer - extend it
     expandCapacity(thisOffset + length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
-    m_rep = Rep::create(pass(m_rep), 0, length);
+    m_rep = Rep::create(m_rep, 0, length);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
@@ -726,7 +726,7 @@ UString &UString::append(const char *t)
     UChar *d = const_cast<UChar *>(data());
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
-    m_rep = Rep::create(pass(m_rep), 0, length);
+    m_rep = Rep::create(m_rep, 0, length);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length, 0);
@@ -766,7 +766,7 @@ UString &UString::append(unsigned short c)
     expandCapacity(thisOffset + length + 1);
     UChar *d = const_cast<UChar *>(data());
     d[length] = c;
-    m_rep = Rep::create(pass(m_rep), 0, length + 1);
+    m_rep = Rep::create(m_rep, 0, length + 1);
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize((length + 1), 0);
@@ -1122,7 +1122,7 @@ UString UString::substr(int pos, int len) const
   if (pos == 0 && len == s)
     return *this;
 
-  return UString(Rep::create(pass(m_rep), pos, len));
+  return UString(Rep::create(m_rep, pos, len));
 }
 
 void UString::copyForWriting()
