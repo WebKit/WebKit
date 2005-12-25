@@ -33,8 +33,8 @@
         - Fixed assertion failure in QString::mid caused by my last checkin. 
         parseWindowFeatuers() sometimes called QString::mid() with a start 
         index past the end of the string but a length of 0. There were two 
-        problems there. (1) parseWindowString() shouldn't have gotten past the 
-        end of the string. (2) QString had range truncating code that was 
+        problems there. (1) parseWindowFeatures() shouldn't have gotten past 
+        the end of the string. (2) QString had range truncating code that was 
         borked. So I fixed both.
 
         * khtml/ecma/kjs_window.cpp:
