@@ -1,3 +1,12 @@
+2005-12-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Un-break HashTable copy constructor.
+
+        * kxmlcore/HashTable.h:
+        (KXMLCore::::HashTable): use const_iterator instead
+
 2005-12-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

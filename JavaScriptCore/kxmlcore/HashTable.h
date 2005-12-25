@@ -565,8 +565,8 @@ namespace KXMLCore {
     {
         // doesn't matter if copying a hashtable is efficient so just
         // do it the dumb way, by copying each element.
-        iterator end = other.end();
-        for (iterator it = other.begin(); it != end; ++it) {
+        const_iterator end = other.end();
+        for (const_iterator it = other.begin(); it != end; ++it) {
             insert(*it);
         }
     }
