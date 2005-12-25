@@ -147,7 +147,7 @@ namespace KXMLCore {
             }
         }
         
-        iterator& operator++()
+        const_iterator& operator++()
         {
             ++m_position;
             skipEmptyBuckets();

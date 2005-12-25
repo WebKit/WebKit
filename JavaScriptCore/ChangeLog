@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        Unbreak HashTableConstIterator++ by returning const_iterator
+
+        * kxmlcore/HashTable.h:
+        (KXMLCore::HashTableConstIterator::operator++): use const_iterator
+
+2005-12-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Un-break HashTable copy constructor.
 
         * kxmlcore/HashTable.h:
