@@ -1,4 +1,16 @@
-2005-12-23  Maciej Stachowiak  <mjs@apple.com>
+2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by eseidel.
+        
+        Test: fast/forms/domstring-replace-crash.html
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6236
+          REGRESSION: Crash in DOMString::replace() in ToT (12/24/05)
+
+        * khtml/dom/dom_string.h:
+        (DOMString::replace): Added check for null m_impl.
+
+2005-12-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
 
