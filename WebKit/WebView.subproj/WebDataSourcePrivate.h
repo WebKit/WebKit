@@ -162,9 +162,7 @@
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setWebView:(WebView *)webView;
 - (void)_startLoading:(NSDictionary *)pageCache;
-- (void)_stopLoadingInternal;
 - (BOOL)_isStopping;
-- (void)_recursiveStopLoading;
 - (void)_addSubresourceLoader:(WebLoader *)loader;
 - (void)_removeSubresourceLoader:(WebLoader *)loader;
 - (void)_addPlugInStreamLoader:(WebLoader *)loader;

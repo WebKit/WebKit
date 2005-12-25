@@ -185,6 +185,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
+- (void)_stopLoadingSubframes;
 @end
 
 @interface WebFramePrivate : NSObject
@@ -674,7 +675,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)_setLoadType: (WebFrameLoadType)t
 {
-    [_private setLoadType: t];
+    [_private setLoadType:t];
 }
 
 - (WebFrameLoadType)_loadType
@@ -1123,14 +1124,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                                                  forFrame:self];
                     _private->delegateIsHandlingProvisionalLoadError = NO;
                     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
-                    
+
+                    // FIXME: can stopping loading here possibly have
+                    // any effect, if isLoading is false, which it
+                    // must be, to be in this branch of the if? And is it ok to just do 
+                    // a full-on stopLoading?
+                    [self _stopLoadingSubframes];
                     [pd _stopLoading];
+
+
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
                     if (pd == _private->provisionalDataSource) {
                         [self _setProvisionalDataSource:nil];
                         
-                        [[self webView] _progressCompleted: self];
+                        [[self webView] _progressCompleted:self];
                         
                         [self _setState:WebFrameStateComplete];
                     } else {
@@ -2145,6 +2153,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [[self provisionalDataSource] _defersCallbacksChanged];
     [[self dataSource] _defersCallbacksChanged];
+
+    // It's OK to use the internal version of getting the child
+    // frames, since undeferring callbacks will not do any immediate
+    // work, and so the set of frames can't change out from under us.
+    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -2200,7 +2213,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // we keep track of sibling pointers to avoid the overhead of a lookup in the children array
     
     if (currentIndex > 0) {
-        WebFrame *previousFrame = [[self childFrames] objectAtIndex: currentIndex - 1];
+        WebFrame *previousFrame = [[self childFrames] objectAtIndex:currentIndex - 1];
         previousFrame->_private->nextSibling = child;
         child->_private->previousSibling = previousFrame;
         ASSERT(child->_private->nextSibling == nil);
@@ -2889,6 +2902,34 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT([[[self webView] mainFrame] _atMostOneFrameHasSelection]);
 }
 
+- (void)_stopLoadingSubframes
+{
+    [[self  childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
+}
+
+- (BOOL)_subframeIsLoading
+{
+    // Put in the auto-release pool because it's common to call this from a run loop source,
+    // and then the entire list of frames lasts until the next autorelease.
+    // FIXME: is this really still true? we use _internalChildFrames now which does not
+    // make a copy.
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+
+    // It's OK to use the internal version of getting the child
+    // frames, since nothing we do here can possibly change the set of
+    // frames.
+    NSEnumerator *e = [[self _internalChildFrames] objectEnumerator];
+    WebFrame *childFrame;
+    while ((childFrame = [e nextObject])) {
+        if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading])
+            break;
+    }
+
+    [pool drain];
+    
+    return childFrame != nil;
+}
+
 @end
 
 @implementation WebFormState : NSObject
@@ -3086,13 +3127,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)stopLoading
 {
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
-    if (_private->isStoppingLoad) {
+    if (_private->isStoppingLoad)
         return;
-    }
+
     _private->isStoppingLoad = YES;
     
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
+    [self _stopLoadingSubframes];
     [_private->provisionalDataSource _stopLoading];
     [_private->dataSource _stopLoading];
 
@@ -3106,9 +3148,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)reload
 {
     WebDataSource *dataSource = [self dataSource];
-    if (dataSource == nil) {
+    if (dataSource == nil)
         return;
-    }
 
     NSMutableURLRequest *initialRequest = [dataSource request];
     

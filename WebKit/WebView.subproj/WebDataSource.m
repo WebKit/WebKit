@@ -133,6 +133,8 @@
 
 - (WebArchive *)_archiveWithMarkupString:(NSString *)markupString nodes:(NSArray *)nodes
 { 
+    ASSERT(_private->committed);
+
     WebFrame *frame = [self webFrame];
     NSURLResponse *response = [self response];
     WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
@@ -174,23 +176,27 @@
     return archive;
 }
 
+- (NSArray *)_subframeArchivesWithCurrentState:(BOOL)currentState
+{
+    NSEnumerator *enumerator = [[[self webFrame] childFrames] objectEnumerator];
+    NSMutableArray *subframeArchives = [NSMutableArray array];
+    WebFrame *childFrame;
+    while ((childFrame = [enumerator nextObject])) {
+        [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:currentState]];
+    }
+    return subframeArchives;
+}
+
 - (WebArchive *)_archiveWithCurrentState:(BOOL)currentState
 {
-    if (currentState && [[self representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
+    ASSERT(_private->committed);
+
+    if (currentState && [[self representation] conformsToProtocol:@protocol(WebDocumentDOM)])
         return [[(id <WebDocumentDOM>)[self representation] DOMDocument] webArchive];
-    } else {
-        NSEnumerator *enumerator = [[[self webFrame] childFrames] objectEnumerator];
-        NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
-        WebFrame *childFrame;
-        while ((childFrame = [enumerator nextObject]) != nil) {
-            [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:currentState]];
-        }
-        WebArchive *archive = [[[WebArchive alloc] initWithMainResource:[self mainResource] 
-                                                           subresources:[_private->subresources allValues]
-                                                       subframeArchives:subframeArchives] autorelease];
-        [subframeArchives release];
-        return archive;
-    }
+    else
+        return [[[WebArchive alloc] initWithMainResource:[self mainResource] 
+                                            subresources:[_private->subresources allValues]
+                                        subframeArchives:[self _subframeArchivesWithCurrentState:currentState]] autorelease];
 }
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
@@ -308,7 +314,7 @@
     [self _setLoading:_private->mainResourceLoader || [_private->subresourceLoaders count]];
 }
 
-- (void)_setWebView: (WebView *)webView
+- (void)_setWebView:(WebView *)webView
 {
     if (_private->loading) {
         [webView retain];
@@ -317,6 +323,8 @@
     _private->webView = webView;
     
     [self _defersCallbacksChanged];
+    // no need to do _defersCallbacksChanged for subframes since they too
+    // will be or have been told of their WebView
 }
 
 - (void)_setData:(NSData *)data
@@ -348,25 +356,55 @@
 
 - (void)_startLoading
 {
-    [self _startLoading: nil];
+    [self _startLoading:nil];
 }
 
 
 // Cancels any pending loads.  A data source is conceptually only ever loading
 // one document at a time, although one document may have many related
 // resources.  stopLoading will stop all loads related to the data source.  This
-// method will also stop loads that may be loading in child frames.
+// method will not stop loads that may be happening in child frames, that is the 
+// WebFrame's job
 - (void)_stopLoading
 {
-    [self _recursiveStopLoading];
+    [self retain];
+
+    // Always attempt to stop the icon loader because it may still be loading after the data source
+    // is done loading and not stopping it can cause a world leak.
+    [_private->iconLoader stopLoading];
+
+    // The same goes for the bridge/part, which may still be parsing.
+    if (_private->committed)
+        [[self _bridge] stopLoading];
+
+    if (!_private->loading)
+	return;
+
+    _private->stopping = YES;
+
+    if (_private->mainResourceLoader) {
+        // Stop the main handle and let it set the cancelled error.
+        [_private->mainResourceLoader cancel];
+    } else {
+        // Main handle is already done. Set the cancelled error.
+        NSError *cancelledError = [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                             code:NSURLErrorCancelled
+                                                              URL:[self _URL]];
+        [self _setMainDocumentError:cancelledError];
+    }
+    
+    NSArray *loaders = [_private->subresourceLoaders copy];
+    [loaders makeObjectsPerformSelector:@selector(cancel)];
+    [loaders release];
+
+    [self release];
 }
 
-
-- (void)_startLoading: (NSDictionary *)pageCache
+- (void)_startLoading:(NSDictionary *)pageCache
 {
-    ASSERT([self _isStopping] == NO);
+    ASSERT(![self _isStopping]);
 
-    [self _setPrimaryLoadComplete: NO];
+    [self _setPrimaryLoadComplete:NO];
     
     ASSERT([self webFrame] != nil);
     
@@ -446,50 +484,6 @@
     return _private->stopping;
 }
 
-- (void)_stopLoadingInternal
-{
-    // Always attempt to stop the icon loader because it may still be loading after the data source
-    // is done loading and not stopping it can cause a world leak.
-    [_private->iconLoader stopLoading];
-
-    // The same goes for the bridge/part, which may still be parsing.
-    if (_private->committed)
-        [[self _bridge] stopLoading];
-
-    if (!_private->loading) {
-	return;
-    }
-
-    _private->stopping = YES;
-
-    if(_private->mainResourceLoader){
-        // Stop the main handle and let it set the cancelled error.
-        [_private->mainResourceLoader cancel];
-    }else{
-        // Main handle is already done. Set the cancelled error.
-        NSError *cancelledError = [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                             code:NSURLErrorCancelled
-                                                              URL:[self _URL]];
-        [self _setMainDocumentError:cancelledError];
-    }
-    
-    NSArray *loaders = [_private->subresourceLoaders copy];
-    [loaders makeObjectsPerformSelector:@selector(cancel)];
-    [loaders release];
-}
-
-- (void)_recursiveStopLoading
-{
-    [self retain];
-    
-    // We depend on the WebView in the webFrame method and we release it in _stopLoading,
-    // so call webFrame first so we don't send a message the released WebView (3129503).
-    [[[self webFrame] childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
-    [self _stopLoadingInternal];
-    
-    [self release];
-}
-
 - (double)_loadingStartedTime
 {
     return _private->loadingStartedTime;
@@ -529,10 +523,10 @@
     if (!trimmed || [trimmed length] == 0)
         return;
         
-    [_private->webView _willChangeValueForKey: _WebMainFrameTitleKey];
+    [_private->webView _willChangeValueForKey:_WebMainFrameTitleKey];
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
-    [_private->webView _didChangeValueForKey: _WebMainFrameTitleKey];
+    [_private->webView _didChangeValueForKey:_WebMainFrameTitleKey];
     
     // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
@@ -906,11 +900,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     while ((loader = [e nextObject])) {
         [loader setDefersCallbacks:defers];
     }
-
-    // It's OK to use the internal version of getting the child
-    // frames, since undeferring callbacks will not do any immediate
-    // work, and so the set of frames can't change out from under us.
-    [[[self webFrame] _internalChildFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 - (NSURLRequest *)_originalRequest
@@ -929,7 +918,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     return [[_private->triggeringAction retain] autorelease];
 }
-
 
 - (NSURLRequest *)_lastCheckedRequest
 {
@@ -1179,26 +1167,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
             return YES;
     }
 
-    // Put in the auto-release pool because it's common to call this from a run loop source,
-    // and then the entire list of frames lasts until the next autorelease.
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-
-    // It's OK to use the internal version of getting the child
-    // frames, since nothing we do here can possibly change the set of
-    // frames.
-    NSEnumerator *e = [[[self webFrame] _internalChildFrames] objectEnumerator];
-    WebFrame *childFrame;
-    while ((childFrame = [e nextObject])) {
-        if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading]) {
-            break;
-        }
-    }
-
-    [pool drain];
-    
-    return childFrame != nil;
+    return [[self webFrame] _subframeIsLoading];
 }
-
 
 // Returns nil or the page title.
 - (NSString *)pageTitle
@@ -1213,6 +1183,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebArchive *)webArchive
 {
+    // it makes no sense to grab a WebArchive from an uncommitted document.
+    if (!_private->committed)
+        return nil;
+
     return [self _archiveWithCurrentState:NO];
 }
 
@@ -1238,11 +1212,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)addSubresource:(WebResource *)subresource
 {
-    if (subresource) {
+    if (subresource)
         [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
-    } else {
-        ASSERT_NOT_REACHED();
-    }
 }
 
 @end

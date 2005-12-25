@@ -1,3 +1,48 @@
+2005-12-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	- rearrange some code in WebDataSource so that more of the frame traversal logic
+	is in WebFrame, in preparation for moving it down to WebBridge.
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6239
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _archiveWithMarkupString:nodes:]): Assert that the
+	data source is committed, doesn't make sense to archive otherwise.
+        (-[WebDataSource _subframeArchivesWithCurrentState:]): New helper method.
+        (-[WebDataSource _archiveWithCurrentState:]): Assert that the data source
+	is committed. Use the helper.
+        (-[WebDataSource _setWebView:]): Comment that we won't tell subframes that
+	defers callback changed.
+        (-[WebDataSource _startLoading]): Remove stray space.
+        (-[WebDataSource _stopLoading]): Only handle local _stopLoading business.
+	Cound on WebFrame to tell subframes to stop loading. Fold in _stopLoadingInternal
+	and remove _recursiveStopLoading.
+        (-[WebDataSource _startLoading:]): Clean up an assert slightly.
+        (-[WebDataSource _setTitle:]): Remove stray spaces.
+        (-[WebDataSource _defersCallbacksChanged]): Don't call subframes. WebFrame
+	can do that.
+        (-[WebDataSource isLoading]): Move checking of subframes down to WebFrame.
+        (-[WebDataSource webArchive]): Return nil if the data source is not yet
+	committed. It makes no sense to archive a provisional data source since it
+	has no data yet.
+        (-[WebDataSource addSubresource:]): Replace an assert with an early return,
+	ASSERT is not an appropriate way to flag problems with the argument of a public
+	method.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setLoadType:]): Remove stray space.
+        (-[WebFrame _checkLoadCompleteForThisFrame]): Stop loading subframes
+	manually and add a FIXME about confusingness of stopping loading here.
+        (-[WebFrame _defersCallbacksChanged]): Tell our subframes.
+        (-[WebFrame _addChild:]): Remove stray space.
+        (-[WebFrame _stopLoadingSubframes]): New helper method.
+        (-[WebFrame _subframeIsLoading]): New helper method, code moved
+	from WebDataSource.
+        (-[WebFrame stopLoading]): Tell subframes to stop loading.
+        (-[WebFrame reload]): Remove extra braces.
+        * WebView.subproj/WebFrameInternal.h:
+
 2005-12-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

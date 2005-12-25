@@ -57,6 +57,7 @@
 - (void)_clearSelection;
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
+- (BOOL)_subframeIsLoading;
 
 @end
 
