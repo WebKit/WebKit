@@ -3,9 +3,10 @@ BASEDIR=.
 BINDIR=bin
 OBJDIR=obj
 KJSDIR=kjs
+KXMLCOREDIR=kxmlcore
 PCREDIR=pcre
 
-ICUDIR=$(BASEDIR)\..\..\icu
+ICUDIR=$(BASEDIR)\..\icu
 
 #
 # Define compiler flags
@@ -21,6 +22,8 @@ CFLAGS = $(CFLAGS) /wd4138 /wd4996 /wd4355
 CFLAGS = $(CFLAGS) /D "HAVE_CONFIG_H"
 CFLAGS = $(CFLAGS) /D "WIN32" /D "__STD_C"
 CFLAGS = $(CFLAGS) /D "_MBCS" /D "_REENTRANT" /EHsc /W1
+CFLAGS = $(CFLAGS) /I$(BASEDIR)
+CFLAGS = $(CFLAGS) /I$(KXMLCOREDIR)
 CFLAGS = $(CFLAGS) /I$(BASEDIR)\os-win32
 CFLAGS = $(CFLAGS) /I$(BASEDIR)\pcre
 CFLAGS = $(CFLAGS) /I$(KJSDIR)
@@ -56,10 +59,6 @@ LDFLAGS = $(LDFLAGS) /OPT:NOWIN98 /DEBUG
 #
 AR       = lib.exe
 ARFLAGS  = $(ARFLAGS) /nologo
-
-PCRE_OBJS=\
-    $(OBJDIR)\pcre.obj \
-    $(NULL)
 
 #
 # jscore.dll
