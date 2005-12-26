@@ -139,7 +139,7 @@ PassRefPtr<UString::Rep> Identifier::add(const char *c)
 
 struct UCharBuffer {
     const UChar *s;
-    uint length;
+    unsigned int length;
 };
 
 struct UCharBufferTranslator

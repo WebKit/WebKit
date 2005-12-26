@@ -18,6 +18,8 @@
 #define HAVE_FUNC__FINITE 1
 #define HAVE_SYS_TIMEB_H 1
 
+#include <assert.h>
+
 #else
 
 #define HAVE_ERRNO_H 1
