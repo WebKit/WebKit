@@ -367,8 +367,6 @@
 // WebFrame's job
 - (void)_stopLoading
 {
-    [self retain];
-
     // Always attempt to stop the icon loader because it may still be loading after the data source
     // is done loading and not stopping it can cause a world leak.
     [_private->iconLoader stopLoading];
@@ -379,6 +377,8 @@
 
     if (!_private->loading)
 	return;
+
+    [self retain];
 
     _private->stopping = YES;
 

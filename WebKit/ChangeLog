@@ -1,3 +1,14 @@
+2005-12-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+	- fixed REGRESSION: world leak of WebDataSource
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6242
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stopLoading]): don't retain self until after
+	the possible early return.
+
 2005-12-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
