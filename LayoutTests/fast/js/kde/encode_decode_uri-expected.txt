@@ -1,0 +1,4 @@
+FAIL checkWithFunctions(encodeURI,decodeURI) should be true. Was false
+FAIL checkWithFunctions(encodeURIComponent,decodeURIComponent) should be true. Was false
+PASS successfullyParsed is true
+

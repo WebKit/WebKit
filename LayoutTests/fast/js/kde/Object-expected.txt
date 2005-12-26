@@ -1,0 +1,14 @@
+PASS typeof Object() is 'object'
+PASS var o = Object(); o.x = 11; o.x; is 11
+PASS Object(1).valueOf() is 1
+PASS Object(true).valueOf() is true
+PASS Object('s').valueOf() is 's'
+PASS typeof (new Object()) is 'object'
+PASS (new Object(1)).valueOf() is 1
+PASS (new Object(true)).valueOf() is true
+PASS (new Object('s')).valueOf() is 's'
+PASS String(Object()) is '[object Object]'
+PASS Object().toString() is '[object Object]'
+PASS String(Object().valueOf()) is '[object Object]'
+PASS successfullyParsed is true
+

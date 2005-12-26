@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <!-- This file allows to run a javascript test in another browser.
+       Simply change the script inclusion at the end of the file -->
+<script src="resources/base.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function testPassed(msg)
+{
+    document.write("<b><font color=green>PASS</font></b> " + msg + "<br>");
+}
+
+function testFailed(msg)
+{
+    document.write("<b><font color=red>FAIL</font></b> " + msg + "<br>");
+}
+
+function debug(a) 
+{ 
+    document.write("<p> " + a + "</p>"); 
+}
+</script>
+
+<script src="resources/completion.js"></script>
+<script>
+shouldBeTrue("successfullyParsed");
+</script>
+</html>

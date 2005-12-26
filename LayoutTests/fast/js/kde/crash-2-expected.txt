@@ -1,0 +1,4 @@
+OK. Caught an exception
+
+PASS successfullyParsed is true
+

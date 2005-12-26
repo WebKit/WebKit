@@ -1,0 +1,4 @@
+PASS foo(), i is 2
+PASS caught is true
+PASS successfullyParsed is true
+

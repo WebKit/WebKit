@@ -1,0 +1,3 @@
+PASS f(2) is 22
+PASS successfullyParsed is true
+

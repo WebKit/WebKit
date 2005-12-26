@@ -1,0 +1,8 @@
+PASS true ? 1 : 2 is 1
+PASS false ? 1 : 2 is 2
+PASS 'abc' ? 1 : 2 is 1
+PASS null ? 1 : 2 is 2
+PASS undefined ? 1 : 2 is 2
+PASS /*var a=1;if (undefined) a = 2;*/ a is 1
+PASS successfullyParsed is true
+

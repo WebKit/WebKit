@@ -1,0 +1,10 @@
+PASS x is 1
+PASS 0x0 is 0
+PASS 0xF is 15
+PASS 0xFF is 255
+PASS 01 is 1
+PASS 010 is 8
+PASS 09 is 9
+PASS 019 is 19
+PASS successfullyParsed is true
+

@@ -1,0 +1,10 @@
+PASS Boolean() is false
+PASS Boolean(true) is true
+PASS Boolean(false) is false
+PASS (new Boolean(true)).valueOf() is true
+PASS (new Boolean(false)).valueOf() is false
+PASS (new Boolean(Boolean(true))).valueOf() is true
+PASS true.valueOf() === true is true
+PASS false.toString() === 'false' is true
+PASS successfullyParsed is true
+

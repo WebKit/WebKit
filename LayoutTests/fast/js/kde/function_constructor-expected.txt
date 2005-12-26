@@ -1,0 +1,8 @@
+PASS myfunc.prototype.constructor.__proto__ == Function.prototype is true
+PASS myfunc.prototype.constructor.__proto__.__proto__ == Object.prototype is true
+PASS myfunc.prototype.constructor == myfunc is true
+PASS Function.prototype.constructor == Function is true
+PASS myfunc.prototype.toString == Object.prototype.toString is true
+PASS myfunc.toString == Function.prototype.toString is true
+PASS successfullyParsed is true
+

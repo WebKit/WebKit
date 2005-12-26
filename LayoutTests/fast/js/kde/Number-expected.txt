@@ -1,0 +1,25 @@
+PASS Number() is 0
+PASS Number(1) is 1
+PASS Number(1.1) is 1.1
+PASS Number('1.2') is 1.2
+PASS isNaN(Number('a')) is true
+PASS (new Number()).valueOf() is 0
+PASS (new Number(.4)).valueOf() is 0.4
+PASS (new Number('1.')).valueOf() is 1
+PASS isNaN(new Number('a')) is true
+PASS isNaN(Number.NaN) is true
+PASS Number.NEGATIVE_INFINITY is -Infinity
+PASS Number.POSITIVE_INFINITY is Infinity
+PASS (1).toString() is '1'
+PASS typeof (1).toString() is 'string'
+PASS (10).toString(16) is 'a'
+FAIL (8.5).toString(16) should be 8.8. Was 8
+FAIL (-8.5).toString(16) should be -8.8. Was fffffff8
+FAIL Number.NaN.toString(16) should be NaN. Was 0
+FAIL Number.POSITIVE_INFINITY.toString(16) should be Infinity. Was 0
+FAIL Number.NEGATIVE_INFINITY.toString(16) should be -Infinity. Was 0
+FAIL Number.MAX_VALUE.toString(2).length should be 1024. Was 1
+PASS (1).valueOf() is 1
+PASS typeof (1).valueOf() is 'number'
+PASS Number(1234.567).toFixed(0) is "1235"
+

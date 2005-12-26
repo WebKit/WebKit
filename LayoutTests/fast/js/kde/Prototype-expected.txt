@@ -1,0 +1,6 @@
+PASS s.area() is 9
+PASS b.name is 'a book'
+PASS b.author is 'Fred'
+PASS delete Boolean.prototype is false
+PASS successfullyParsed is true
+

@@ -1,0 +1,17 @@
+PASS Object.length is 1
+PASS Function.length is 1
+PASS Array.length is 1
+PASS String.length is 1
+PASS Boolean.length is 1
+PASS Number.length is 1
+PASS Date.length is 7
+PASS RegExp.length is 2
+PASS Error.length is 1
+PASS EvalError.length is 1
+PASS RangeError.length is 1
+PASS ReferenceError.length is 1
+PASS SyntaxError.length is 1
+PASS TypeError.length is 1
+PASS URIError.length is 1
+PASS successfullyParsed is true
+

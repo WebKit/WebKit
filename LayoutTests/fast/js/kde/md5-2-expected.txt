@@ -1,0 +1,3 @@
+PASS hexMD5('kde') is '186cf28b76f2264e9fea8fcf91cb4f5d'
+PASS successfullyParsed is true
+

@@ -1,0 +1,11 @@
+PASS var i = 1; i is 1
+PASS j = k = 2 is 2
+PASS var i; i is undefined.
+PASS var i = 1; i <<= 2 is 4
+PASS var i = 8; i >>= 1 is 4
+PASS var i = 1; i >>= 2 is 0
+PASS var i = -8; i >>= 24 is -1
+PASS var i = 8; i >>>= 2 is 2
+PASS var i = -8; i >>>= 24 is 255
+PASS successfullyParsed is true
+

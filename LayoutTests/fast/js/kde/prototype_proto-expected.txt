@@ -1,0 +1,11 @@
+PASS Object.prototype.__proto__ == Object.prototype is false
+PASS Function.prototype.__proto__ is Object.prototype
+PASS Array.prototype.__proto__ is Object.prototype
+PASS String.prototype.__proto__ is Object.prototype
+PASS Boolean.prototype.__proto__ is Object.prototype
+PASS Number.prototype.__proto__ is Object.prototype
+PASS Date.prototype.__proto__ is Object.prototype
+PASS RegExp.prototype.__proto__ is Object.prototype
+PASS Error.prototype.__proto__ is Object.prototype
+PASS successfullyParsed is true
+

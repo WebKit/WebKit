@@ -1,0 +1,4 @@
+FAIL (new Error()).message should be undefined. Was Unknown error
+PASS ''.split(/.*/).length is 0
+FAIL window.successfullyParsed should be undefined. Was true
+

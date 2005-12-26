@@ -1,0 +1,61 @@
+PASS h.charCodeAt(1) is 239
+PASS u.charCodeAt(1) is 4660
+PASS escape(h) is 'a%EFc'
+PASS escape(u) is 'a%u1234c'
+PASS escape(z) is '%00'
+PASS unescape(escape(h)) is h
+PASS unescape(escape(u)) is u
+PASS unescape(escape(z)) is z
+PASS isNaN(NaN) is true
+PASS isNaN('NaN') is true
+PASS isNaN('1') is false
+PASS isFinite(1) is true
+PASS isFinite('1') is true
+PASS isFinite('a') is false
+PASS isNaN(parseInt("Hello", 8)) is true
+PASS isNaN(parseInt("FFF", 10)) is true
+PASS isNaN(parseInt(".5", 10)) is true
+PASS isFinite(Infinity) is false
+PASS isFinite('Infinity') is false
+PASS isNaN(parseInt()) is true
+PASS isNaN(parseInt('')) is true
+PASS isNaN(parseInt(' ')) is true
+PASS isNaN(parseInt('a')) is true
+PASS parseInt(1) is 1
+PASS parseInt(1234567890123456) is 1234567890123456
+PASS parseInt(1.2) is 1
+PASS parseInt(' 2.3') is 2
+PASS parseInt('0x10') is 16
+PASS parseInt('11', 0) is 11
+PASS parseInt('F', 16) is 15
+PASS isNaN(parseInt('10', 40)) is true
+PASS parseInt('3x') is 3
+PASS parseInt('3 x') is 3
+PASS isNaN(parseInt('Infinity')) is true
+PASS parseInt("15") is 15
+PASS parseInt("017") is 15
+PASS parseInt("0xf") is 15
+PASS parseInt("15", 0) is 15
+PASS parseInt("15", 10) is 15
+PASS parseInt("F", 16) is 15
+PASS parseInt("17", 8) is 15
+PASS parseInt("15.99", 10) is 15
+PASS parseInt("FXX123", 16) is 15
+PASS parseInt("1111", 2) is 15
+PASS parseInt("15*3", 10) is 15
+PASS parseInt("0x7", 10) is 0
+PASS parseInt("1x7", 10) is 1
+PASS isNaN(parseFloat()) is true
+PASS isNaN(parseFloat('')) is true
+PASS isNaN(parseFloat(' ')) is true
+PASS isNaN(parseFloat('a')) is true
+PASS parseFloat(1) is 1
+PASS parseFloat(' 2.3') is 2.3
+PASS parseFloat('3.1 x', 3) is 3.1
+PASS parseFloat('3.1x', 3) is 3.1
+PASS isFinite(parseFloat('Infinity')) is false
+PASS delete NaN is false
+PASS delete Infinity is false
+PASS delete undefined is false
+PASS successfullyParsed is true
+

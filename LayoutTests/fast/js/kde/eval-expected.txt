@@ -1,0 +1,8 @@
+PASS eval.length is 1
+PASS eval('this') is this
+PASS bx is 99
+PASS cx is 99
+PASS Skipping test for deprecated Object.prototype.eval()
+PASS lotto() is 0
+PASS successfullyParsed is true
+
