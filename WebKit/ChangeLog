@@ -1,5 +1,38 @@
 2005-12-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff
+
+        - Remove WebFrame's parent frame pointer, instead rely on WebCore's parent concept
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6241
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canTargetLoadInFrame:]): Use bridge parent method instead of needlessly
+	asking for parent via WebFrame
+        (-[WebBridge frameDetached]): Don't call _removeChild on the parent frame any more
+	because WebFame's _detachFromParent takes care of that now.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]): Fix stray spaces
+        (-[WebFrame _detachChildren]): Don't remove children as we loop any more, they
+	can remove themselves.
+        (-[WebFrame _detachFromParent]): Remove self from parent; don't nil out bridge
+	until we are done with it.
+        (-[WebFrame _transitionToCommitted:]): Remove some extra braces.
+        (-[WebFrame _goToItem:withLoadType:]): Use parentFrame method in assert instead of parent
+	field directly.
+        (-[WebFrame _addChild:]): Don't poke at parent frame pointer in _private
+	since it is not there any more.
+        (-[WebFrame _removeChild:]): Remove extra braces and don't clear parent pointer
+	explicitly any more.
+        (-[WebFrame _addFramePathToString:]): Get parentFrame from method, not field.
+        (-[WebFrame _loadDataSource:withLoadType:formState:]): Remove extra braces.
+        (-[WebFrame _nextFrameWithWrap:]): Get parent in the proper way and clean up the
+	coding style.
+        (-[WebFrame _previousFrameWithWrap:]): Ditto.
+        (-[WebFrame parentFrame]): Get parent from the bridge.
+
+2005-12-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Hyatt.
 
 	- fixed REGRESSION: world leak of WebDataSource

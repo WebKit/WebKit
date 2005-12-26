@@ -202,7 +202,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebView *webView;
     WebFrameState state;
     WebFrameLoadType loadType;
-    WebFrame *parent;
     NSMutableArray *children;
     WebHistoryItem *currentItem;	// BF item for our current content
     WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
@@ -513,7 +512,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 */
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [self _createItem: [self parentFrame]?YES:NO];
+    WebHistoryItem *bfItem = [self _createItem:[self parentFrame] ? YES : NO];
 
     [self _saveScrollPositionAndViewStateToItem:[_private previousItem]];
     if (!(doClip && self == targetFrame)) {
@@ -578,15 +577,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)_detachChildren
 {
-    // Note we have to be careful to remove the kids as we detach each one,
-    // since detaching stops loading, which checks loadComplete, which runs the whole
-    // frame tree, at which point we don't want to trip on already detached kids.
     if (_private->children) {
         int i;
-        for (i = [_private->children count]-1; i >=0; i--) {
+        for (i = [_private->children count]-1; i >=0; i--)
             [[_private->children objectAtIndex:i] _detachFromParent];
-            [_private->children removeObjectAtIndex:i];
-        }
         [_private->children release];
         _private->children = nil;
     }
@@ -608,7 +602,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_detachFromParent
 {
     WebBridge *bridge = _private->bridge;
-    _private->bridge = nil;
 
     [self stopLoading];
     [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
@@ -626,9 +619,14 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [self _setDataSource:nil];
     [_private setWebFrameView:nil];
 
+    [self retain]; // retain self temporarily because dealloc can re-enter this method
+
+    [[self parentFrame] _removeChild:self];
     [bridge close];
-    
     [bridge release];
+    _private->bridge = nil;
+
+    [self release];
 }
 
 - (void)_setDataSource:(WebDataSource *)ds
@@ -872,9 +870,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     WebHistoryItem *parentItem = [parentFrame->_private currentItem];
                     // The only case where parentItem==nil should be when a parent frame loaded an
                     // empty URL, which doesn't set up a current item in that parent.
-                    if (parentItem) {
+                    if (parentItem)
                         [parentItem addChildItem:[self _createItem: YES]];
-                    }
                 } else {
                     // See 3556159.  It's not clear if it's valid to be in WebFrameLoadTypeOnLoadEvent
                     // for a top-level frame, but that was a likely explanation for those crashes,
@@ -1527,9 +1524,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)
 // This includes recursion to handle loading into framesets properly
-- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type
 {
-    ASSERT(!_private->parent);
+    ASSERT(![self parentFrame]);
     // shouldGoToHistoryItem is a private delegate method. This is needed to fix:
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
@@ -2205,7 +2202,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         _private->children = [[NSMutableArray alloc] init];
     [_private->children addObject:child];
 
-    child->_private->parent = self;
     [[child _bridge] setParent:_private->bridge];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
  
@@ -2225,16 +2221,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     // move corresponding previous and next WebFrame sibling pointers to their new positions
     // when we remove a child we may have to reattach the previous frame's next frame and visa versa
-    if (child->_private->previousSibling) {
+    if (child->_private->previousSibling)
         child->_private->previousSibling->_private->nextSibling = child->_private->nextSibling;
-    }
     
-    if (child->_private->nextSibling) { 
+    if (child->_private->nextSibling)
         child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
-    }
 
     [_private->children removeObject:child];
-    child->_private->parent = nil;
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path
@@ -2245,9 +2238,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [path appendString:[_private->name substringWithRange:ourPathRange]];
     } else {
         // we don't have a generated name - just add our simple name to the end
-        if (_private->parent) {
-            [_private->parent _addFramePathToString:path];
-        }
+        [[self parentFrame] _addFramePathToString:path];
         [path appendString:@"/"];
         if (_private->name) {
             [path appendString:_private->name];
@@ -2440,9 +2431,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policyLoadType = loadType;
 
     WebFrame *parentFrame = [self parentFrame];
-    if (parentFrame) {
+    if (parentFrame)
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
-    }
     [newDataSource _setWebView:[self webView]];
     // FIXME: shouldn't this set the WebFrame too? who sets it?
 
@@ -2506,20 +2496,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // Return next frame to be traversed, visiting children after parent
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
 {
-    if (_private->children && [_private->children count]) {
+    if (_private->children && [_private->children count])
         return [_private->children objectAtIndex:0];
-    } else if (_private->parent) {
-        WebFrame *frame;
-        for (frame = self; frame->_private->parent; frame = frame->_private->parent) {
-            WebFrame *nextSibling = frame->_private->nextSibling;
-            if (nextSibling) {
-                return nextSibling;
-            }
-        }
-        return wrapFlag ? frame : nil;                // made it all the way to the top
-    } else {
-        return wrapFlag ? self : nil;                // self is the top and we have no kids
+
+    WebFrame * frame;
+    for (frame = self; [frame parentFrame]; frame = [frame parentFrame]) {
+        WebFrame *nextSibling = frame->_private->nextSibling;
+        if (nextSibling)
+            return nextSibling;
     }
+    
+    return wrapFlag ? frame : nil;                // made it all the way to the top
 }
 
 // Return previous frame to be traversed, exact reverse order of _nextFrame
@@ -2529,18 +2516,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (prevSibling) {
         WebFrame *prevSiblingLastChild = [prevSibling _lastChild];
         return prevSiblingLastChild ? prevSiblingLastChild : prevSibling;
-    } else if (_private->parent) {
-        return _private->parent;
-    } else {
-        // no siblings, no parent, self==top
-        if (wrapFlag) {
-            WebFrame *selfLastChild = [self _lastChild];
-            return selfLastChild ? selfLastChild : self;
-        } else {
-            // top view is always the last one in this ordering, so prev is nil without wrap
-            return nil;
-        }
+    } 
+    if ([self parentFrame])
+        return [self parentFrame];
+    
+    // no siblings, no parent, self==top
+    if (wrapFlag) {
+        WebFrame *selfLastChild = [self _lastChild];
+        return selfLastChild ? selfLastChild : self;
     }
+
+    // top view is always the last one in this ordering, so prev is nil without wrap
+    return nil;
 }
 
 - (void)_setShouldCreateRenderers:(BOOL)f
@@ -3310,7 +3297,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrame *)parentFrame
 {
-    return [[_private->parent retain] autorelease];
+    return [[[(WebBridge *)[[self _bridge] parent] webFrame] retain] autorelease];
 }
 
 - (NSArray *)childFrames

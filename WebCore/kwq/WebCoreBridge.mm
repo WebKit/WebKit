@@ -334,6 +334,14 @@ static bool initializedKJS = FALSE;
     _part->setParent([parent part]);
 }
 
+- (WebCoreBridge *)parent
+{
+    KWQKHTMLPart *parentPart = KWQ(_part->parentPart());
+    if (!parentPart)
+        return nil;
+    return parentPart->bridge();
+}
+
 - (void)provisionalLoadStarted
 {
     _part->provisionalLoadStarted();

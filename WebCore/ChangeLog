@@ -1,3 +1,15 @@
+2005-12-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - Remove WebFrame's parent frame pointer, instead rely on WebCore's parent concept
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6241
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge parent]): New method, relies on the KHTMLPart's
+	parent pointer.
+
 2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by eseidel.

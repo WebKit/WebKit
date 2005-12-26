@@ -694,9 +694,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
     
     // don't mess with navigation purely within the same frame
-    if ([[self webFrame] webView] == [targetFrame webView]) {
+    if ([[self webFrame] webView] == [targetFrame webView])
 	return YES;
-    }
 
     // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
     // Jaguar as well where the DOM API doesn't exist.
@@ -706,17 +705,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return YES;
     }
     
-    WebFrame *parentFrame = [targetFrame parentFrame];
-    if (parentFrame == nil) {
-        // Allow if target is an entire window.
+    WebBridge *parentBridge = (WebBridge *)[[targetFrame _bridge] parent];
+    // Allow if target is an entire window.
+    if (!parentBridge)
         return YES;
-    }
     
-    NSString *parentDomain = [[parentFrame _bridge] domain];
-    if (parentDomain != nil && [thisDomain _webkit_isCaseInsensitiveEqualToString:parentDomain]) {
-        // Allow if the domain of the parent of the targeted frame equals this domain.
+    NSString *parentDomain = [parentBridge domain];
+    // Allow if the domain of the parent of the targeted frame equals this domain.
+    if (parentDomain && [thisDomain _webkit_isCaseInsensitiveEqualToString:parentDomain])
         return YES;
-    }
 
     return NO;
 }
@@ -1329,13 +1326,8 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)frameDetached
 {
-    // Put _frame into a local variable because _detachFromParent
-    // will disconnect the bridge from the frame and make _frame nil.
-    WebFrame *frame = _frame;
-
-    [frame stopLoading];
-    [frame _detachFromParent];
-    [[frame parentFrame] _removeChild:frame];
+    [_frame stopLoading];
+    [_frame _detachFromParent];
 }
 
 - (void)setHasBorder:(BOOL)hasBorder
