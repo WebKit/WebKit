@@ -1,3 +1,33 @@
+2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4844
+        Render "simple" Hebrew using the CG codepath
+
+        * fast/text/international/bidi-AN-after-L-expected.checksum: Updated.
+        * fast/text/international/bidi-AN-after-L-expected.png: Updated.
+        * fast/text/international/bidi-L2-run-reordering-expected.checksum: Updated.
+        * fast/text/international/bidi-L2-run-reordering-expected.png: Updated.
+        * fast/text/international/bidi-LDB-2-CSS-expected.checksum: Updated.
+        * fast/text/international/bidi-LDB-2-CSS-expected.png: Updated.
+        * fast/text/international/bidi-LDB-2-HTML-expected.checksum: Updated.
+        * fast/text/international/bidi-LDB-2-HTML-expected.png: Updated.
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum: Updated.
+        * fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Updated.
+        * fast/text/international/bidi-explicit-embedding-expected.checksum: Updated.
+        * fast/text/international/bidi-explicit-embedding-expected.png: Updated.
+        * fast/text/international/bidi-fallback-font-weight-expected.checksum: Updated.
+        * fast/text/international/bidi-fallback-font-weight-expected.png: Updated.
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum: Updated.
+        * fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Updated.
+        * fast/text/international/bidi-innertext-expected.checksum: Updated.
+        * fast/text/international/bidi-innertext-expected.png: Updated.
+        * fast/text/international/bidi-layout-across-linebreak-expected.checksum: Updated.
+        * fast/text/international/bidi-layout-across-linebreak-expected.png: Updated.
+        * fast/text/international/bidi-override-expected.checksum: Updated.
+        * fast/text/international/bidi-override-expected.png: Updated.
+
 2005-12-27  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej, landed by Darin.

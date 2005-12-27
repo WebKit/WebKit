@@ -1,3 +1,12 @@
+2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4844
+        Render "simple" Hebrew using the CG codepath
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (shouldUseATSU): Exclude Hebrew letters and maqaf.
+
 2005-12-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff
