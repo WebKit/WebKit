@@ -50,12 +50,13 @@ namespace KJS {
 
   // ECMA 262-3 8.6.1
   // Property attributes
-  enum Attribute { None       = 0,
-                   ReadOnly   = 1 << 1, // property can be only read, not written
-                   DontEnum   = 1 << 2, // property doesn't appear in (for .. in ..)
-                   DontDelete = 1 << 3, // property can't be deleted
-                   Internal   = 1 << 4, // an internal property, set to bypass checks
-                   Function   = 1 << 5 }; // property is a function - only used by static hashtables
+  enum Attribute { None         = 0,
+                   ReadOnly     = 1 << 1, // property can be only read, not written
+                   DontEnum     = 1 << 2, // property doesn't appear in (for .. in ..)
+                   DontDelete   = 1 << 3, // property can't be deleted
+                   Internal     = 1 << 4, // an internal property, set to bypass checks
+                   Function     = 1 << 5, // property is a function - only used by static hashtables
+                   GetterSetter = 1 << 6 }; // property is a getter or setter
 
   /**
    * Class Information
@@ -502,7 +503,9 @@ namespace KJS {
         { return _prop.getLocation(propertyName); }
     void putDirect(const Identifier &propertyName, JSValue *value, int attr = 0);
     void putDirect(const Identifier &propertyName, int value, int attr = 0);
-    
+
+    void fillGetterPropertySlot(PropertySlot& slot, JSValue **location);
+
     void defineGetter(ExecState *exec, const Identifier& propertyName, JSObject *getterFunc);
     void defineSetter(ExecState *exec, const Identifier& propertyName, JSObject *setterFunc);
 
@@ -566,11 +569,6 @@ JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNum
 JSObject *throwError(ExecState *, ErrorType, const UString &message);
 JSObject *throwError(ExecState *, ErrorType, const char *message);
 JSObject *throwError(ExecState *, ErrorType);
-  
-inline bool JSCell::isObject(const ClassInfo *info) const
-{
-    return isObject() && static_cast<const JSObject *>(this)->inherits(info);
-}
 
 inline JSObject::JSObject(JSObject *proto)
     : _proto(proto), _internalValue(0)
@@ -612,6 +610,18 @@ inline bool JSObject::inherits(const ClassInfo *info) const
     return false;
 }
 
+// this method is here to be after the inline declaration of JSObject::inherits
+inline bool JSCell::isObject(const ClassInfo *info) const
+{
+    return isObject() && static_cast<const JSObject *>(this)->inherits(info);
+}
+
+// this method is here to be after the inline declaration of JSCell::isObject
+inline bool JSValue::isObject(const ClassInfo *c) const
+{
+    return !SimpleNumber::is(this) && downcast()->isObject(c);
+}
+
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
 inline bool JSObject::getPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -632,19 +642,13 @@ inline bool JSObject::getPropertySlot(ExecState *exec, const Identifier& propert
 // It may seem crazy to inline a function this large, especially a virtual function,
 // but it makes a big difference to property lookup that derived classes can inline their
 // base class call to this.
-inline bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValue **location = getDirectLocation(propertyName)) {
-        if ((*location)->type() == GetterSetterType) {
-            GetterSetterImp *gs = static_cast<GetterSetterImp *>(*location);
-            JSObject *getterFunc = gs->getGetter();
-            if (getterFunc)
-                slot.setGetterSlot(this, getterFunc);
-            else
-                slot.setUndefined(this);
-        } else {
+        if (_prop.hasGetterSetterProperties() && location[0]->type() == GetterSetterType)
+            fillGetterPropertySlot(slot, location);
+        else
             slot.setValueSlot(this, location);
-        }
         return true;
     }
 

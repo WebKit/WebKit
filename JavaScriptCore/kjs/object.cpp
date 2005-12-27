@@ -190,6 +190,11 @@ bool JSObject::getOwnPropertySlot(ExecState *exec, unsigned propertyName, Proper
   return getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
 }
 
+static void throwSetterError(ExecState *exec)
+{
+  throwError(exec, TypeError, "setting a property that has only a getter");
+}
+
 // ECMA 8.6.2.2
 void JSObject::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
@@ -215,12 +220,14 @@ void JSObject::put(ExecState *exec, const Identifier &propertyName, JSValue *val
 
   JSObject *obj = this;
   while (true) {
-    if (JSValue *gs = obj->_prop.get(propertyName)) {
-      if (gs->type() == GetterSetterType) {
+    JSValue *gs;
+    int attributes;
+    if (obj->_prop.hasGetterSetterProperties() && (gs = obj->_prop.get(propertyName, attributes))) {
+      if (attributes & GetterSetter) {
         JSObject *setterFunc = static_cast<GetterSetterImp *>(gs)->getSetter();
             
         if (!setterFunc) {
-          throwError(exec, TypeError, "setting a property that has only a getter");
+          throwSetterError(exec);
           return;
         }
             
@@ -236,7 +243,7 @@ void JSObject::put(ExecState *exec, const Identifier &propertyName, JSValue *val
       }
     }
      
-    if (!obj->_proto || !obj->_proto->isObject())
+    if (!obj->_proto->isObject())
       break;
         
     obj = static_cast<JSObject *>(obj->_proto);
@@ -287,6 +294,8 @@ bool JSObject::deleteProperty(ExecState */*exec*/, const Identifier &propertyNam
     if ((attributes & DontDelete))
       return false;
     _prop.remove(propertyName);
+    if (attributes & GetterSetter) 
+        _prop.setHasGetterSetterProperties(_prop.containsGettersOrSetters());
     return true;
   }
 
@@ -370,9 +379,10 @@ void JSObject::defineGetter(ExecState *exec, const Identifier& propertyName, JSO
         gs = static_cast<GetterSetterImp *>(o);
     } else {
         gs = new GetterSetterImp;
-        putDirect(propertyName, gs);
+        putDirect(propertyName, gs, GetterSetter);
     }
     
+    _prop.setHasGetterSetterProperties(true);
     gs->setGetter(getterFunc);
 }
 
@@ -386,8 +396,10 @@ void JSObject::defineSetter(ExecState *exec, const Identifier& propertyName, JSO
     } else {
         gs = new GetterSetterImp;
         putDirect(propertyName, gs);
+        putDirect(propertyName, gs, GetterSetter);
     }
     
+    _prop.setHasGetterSetterProperties(true);
     gs->setSetter(setterFunc);
 }
 
@@ -518,6 +530,16 @@ void JSObject::putDirect(const Identifier &propertyName, JSValue *value, int att
 void JSObject::putDirect(const Identifier &propertyName, int value, int attr)
 {
     _prop.put(propertyName, jsNumber(value), attr);
+}
+
+void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue **location)
+{
+    GetterSetterImp *gs = static_cast<GetterSetterImp *>(*location);
+    JSObject *getterFunc = gs->getGetter();
+    if (getterFunc)
+        slot.setGetterSlot(this, getterFunc);
+    else
+        slot.setUndefined(this);
 }
 
 // ------------------------------ Error ----------------------------------------

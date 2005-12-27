@@ -60,7 +60,8 @@ namespace KJS {
         PropertyMapHashTableEntry() : key(0) { }
         UString::Rep *key;
         JSValue *value;
-        int attributes;
+        short attributes;
+        short globalGetterSetterFlag;
         int index;
     };
 /**
@@ -87,6 +88,10 @@ namespace KJS {
         void save(SavedProperties &) const;
         void restore(const SavedProperties &p);
 
+        bool hasGetterSetterProperties() const { return _singleEntry.globalGetterSetterFlag; }
+        void setHasGetterSetterProperties(bool f) { _singleEntry.globalGetterSetterFlag = f; }
+
+        bool containsGettersOrSetters() const;
     private:
         static bool keysMatch(const UString::Rep *, const UString::Rep *);
         void expand();
@@ -105,8 +110,9 @@ namespace KJS {
         Entry _singleEntry;
     };
 
-inline PropertyMap::PropertyMap() : _table(NULL)
+inline PropertyMap::PropertyMap() : _table(0)
 {
+    _singleEntry.globalGetterSetterFlag = 0;
 }
 
 } // namespace

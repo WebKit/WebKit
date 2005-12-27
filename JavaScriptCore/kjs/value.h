@@ -313,11 +313,6 @@ inline bool JSValue::isObject() const
     return !SimpleNumber::is(this) && downcast()->isObject();
 }
 
-inline bool JSValue::isObject(const ClassInfo *c) const
-{
-    return !SimpleNumber::is(this) && downcast()->isObject(c);
-}
-
 inline bool JSValue::getBoolean(bool& v) const
 {
     return !SimpleNumber::is(this) && downcast()->getBoolean(v);

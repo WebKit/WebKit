@@ -566,6 +566,23 @@ static int comparePropertyMapEntryIndices(const void *a, const void *b)
     return 0;
 }
 
+bool PropertyMap::containsGettersOrSetters() const
+{
+    if (!_table) {
+#if USE_SINGLE_ENTRY
+        return _singleEntry.attributes & GetterSetter;
+#endif
+        return false;
+    }
+
+    for (int i = 0; i != _table->size; ++i) {
+        if (_table->entries[i].attributes & GetterSetter)
+            return true;
+    }
+    
+    return false;
+}
+
 void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, JSObject *base) const
 {
     if (!_table) {

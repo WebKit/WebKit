@@ -1,3 +1,44 @@
+2005-12-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+	Changes by me and Anders.
+
+	- mostly fixed REGRESSION: 5-10% performance regression on JS iBench from getter/setter change
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6083
+
+	- also fixed some warnings reported by -Winline
+	
+        * JavaScriptCorePrefix.h: Move new and delete definitions higher so there
+	aren't conflicts with use in standard C++ headers
+        * kjs/object.cpp:
+        (KJS::throwSetterError): Moved this piece of put into a seprate function
+	to avoid the PIC branch.
+        (KJS::JSObject::put): Use hasGetterSetterProperties to avoid expensive stuff
+	when not needed. Also use GetterSetter properties attribute.
+        (KJS::JSObject::deleteProperty): Recompute whether any properties are getter/setter
+	properties any more, if this one was one.
+        (KJS::JSObject::defineGetter): Let the PropertyMap know that it has getter/setter
+	properties now (and use the new attribute).
+        (KJS::JSObject::defineSetter): Ditto.
+        (KJS::JSObject::fillGetterPropertySlot): Out-of-line helper for getOwnPropertySlot,
+	to avoid global variable access in the hot code path.
+        * kjs/object.h:
+        (KJS::): Added GetterSetter attribute.
+        (KJS::JSCell::isObject): Moved lower to be after inline methods it uses.
+        (KJS::JSValue::isObject): ditto
+        (KJS::JSObject::getOwnPropertySlot): try to avoid impact of getters and setters
+	as much as possible in the case where they are not being used
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::containsGettersOrSetters): New method to help with this
+        * kjs/property_map.h:
+        (KJS::PropertyMap::hasGetterSetterProperties): Ditto
+        (KJS::PropertyMap::setHasGetterSetterProperties): Ditto
+        (KJS::PropertyMap::PropertyMap): Added a crazy hack to store the
+	global "has getter/setter properties" flag in the property map
+	single entry, to avoid making objects any bigger.
+        * kjs/value.h: Moved some things to object.h to make -Winline happier
+
 2005-12-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric and Dave Hyatt.
