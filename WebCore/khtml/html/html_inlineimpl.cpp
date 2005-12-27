@@ -25,20 +25,20 @@
 
 #include "config.h"
 #include "html/html_inlineimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_documentimpl.h"
 
-#include "khtmlview.h"
-#include "khtml_part.h"
 #include "css/csshelper.h"
 #include "css/cssproperties.h"
-#include "css/cssvalues.h"
 #include "css/cssstyleselector.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
+#include "css/cssvalues.h"
+#include "html/html_documentimpl.h"
+#include "html/html_imageimpl.h"
+#include "khtml_part.h"
+#include "khtmlview.h"
 #include "rendering/render_br.h"
+#include "rendering/render_flow.h"
 #include "rendering/render_image.h"
-
+#include "xml/EventNames.h"
+#include "xml/dom2_eventsimpl.h"
 #include <kdebug.h>
 
 using namespace khtml;

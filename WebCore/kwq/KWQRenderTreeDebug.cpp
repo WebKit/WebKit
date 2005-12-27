@@ -45,28 +45,12 @@
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
+#include "KWQPtrVector.h"
 
-using DOM::DocumentImpl;
-using DOM::JSEditor;
-using DOM::NodeImpl;
-using DOM::Position;
+using namespace DOM;
+using namespace khtml;
 
-using khtml::BorderValue;
-using khtml::EBorderStyle;
-using khtml::InlineTextBox;
-using khtml::RenderLayer;
-using khtml::RenderObject;
-using khtml::RenderTableCell;
-using khtml::RenderWidget;
-using khtml::RenderText;
-using khtml::RenderCanvas;
-using khtml::RenderBR;
-using khtml::SelectionController;
-using khtml::transparentColor;
-using khtml::UPSTREAM;
-
-static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
-                        const QRect& paintDirtyRect, int indent=0);
+static void writeLayers(QTextStream&, const RenderLayer* rootLayer, RenderLayer*, const QRect& paintDirtyRect, int indent = 0);
 
 #if !SVG_SUPPORT
 static QTextStream &operator<<(QTextStream &ts, const QRect &r)

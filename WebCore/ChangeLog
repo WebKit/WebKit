@@ -1,5 +1,42 @@
 2005-12-27  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff and Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6198
+          use RefPtr a few places in RenderText and related classes
+
+        * khtml/html/htmltokenizer.h: Use RefPtr for some data members in Token.
+        Also removed use of bitfields in Token, since there's no need to optimize storage here.
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken): Update for use of RefPtr in Token.
+        (HTMLParser::textCreateErrorCheck): Ditto.
+        (HTMLParser::commentCreateErrorCheck): Ditto.
+        (HTMLParser::handleIsindex): Ditto.
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::Token::addAttribute): Ditto.
+        (khtml::HTMLTokenizer::processToken): Ditto.
+
+        * khtml/rendering/render_text.h: Reduce the number of includes, change
+        SOFT_HYPHEN from a macro into a constant. Change originalString function
+        to return a PassRefPtr instead of a RefPtr. Make str and m_generatedContentStr
+        member be a RefPtr.
+        * khtml/rendering/render_text.cpp:
+        (khtml::RenderText::previousOffset): Update for use of RefPtr for str.
+        (khtml::RenderText::nextOffset): Ditto.
+        (khtml::RenderText::RenderText): Ditto.
+        (khtml::RenderText::originalString): Change to return PassRefPtr, even though
+        it's not necessary at this level (since it's a virtual function).
+        (khtml::RenderText::posOfChar): Update for use of RefPtr for str.
+        (khtml::RenderText::setText): Ditto.
+        (khtml::RenderTextFragment::RenderTextFragment): Ditto.
+        (khtml::RenderTextFragment::originalString): Change to return PassRefPtr.
+
+        * khtml/html/html_inlineimpl.cpp: Re-sorted list of includes, added newly-needed ones.
+        * kwq/KWQRenderTreeDebug.cpp: Added new include needed since QPtrVector is no longer
+        included by render_text.h.
+
+2005-12-27  Darin Adler  <darin@apple.com>
+
         Fix suggested by Mitz.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6240
@@ -432,6 +469,48 @@
         * khtml/ecma/xmlhttprequest.cpp:
         * khtml/ecma/xmlserializer.cpp:
         Update for changes to JSC.
+
+2005-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6198
+          use RefPtr a few places in RenderText and related classes
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken): Use get since text pointer is RefPtr now.
+        (HTMLParser::textCreateErrorCheck): Ditto.
+        (HTMLParser::commentCreateErrorCheck): Ditto.
+        (HTMLParser::handleIsindex): Get rid of explicit deref, no longer needed.
+
+        * khtml/html/htmltokenizer.h: Make attrs and text fields of Token use
+        RefPtr. Also stop using bit fields for the flags in Token -- there's no
+        evidence this makes things faster.
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::Token::addAttribute): Get rid of explicit ref, no longer needed.
+        (khtml::HTMLTokenizer::processToken): Ditto.
+
+        * khtml/rendering/render_block.cpp: (khtml::RenderBlock::updateFirstLetter):
+        Use a PassRefPtr.
+
+        * khtml/rendering/render_text.cpp:
+        (khtml::RenderText::previousOffset): Use get since str pointer is RefPtr now.
+        (khtml::RenderText::nextOffset): Ditto.
+        (khtml::RenderText::RenderText): Get rid of explicit ref, no longer needed.
+        Change to use initializer syntax instead of assignment.
+        (khtml::RenderText::setStyle): Use PassRefPtr.
+        (khtml::RenderText::originalString): Ditto.
+        (khtml::RenderText::setText): Get rid of explicit ref, no longer needed.
+        (khtml::RenderTextFragment::RenderTextFragment): Get rid of explicit ref,
+        no longer needed.
+        (khtml::RenderTextFragment::originalString): Use PassRefPtr.
+
+        * khtml/rendering/render_text.h: Change SOFT_HYPEN to be a constant rather than
+        a preprocessor macro. Used PassRefPtr in a couple places. Made RenderText's str
+        and RenderTextFragment's m_generatedContentStr be RefPtr.
+
+        * khtml/html/html_inlineimpl.cpp: Add a newly-needed include, sort them.
+        * kwq/KWQRenderTreeDebug.cpp: Add a newly-needed include.
 
 2005-12-22  Darin Adler  <darin@apple.com>
 

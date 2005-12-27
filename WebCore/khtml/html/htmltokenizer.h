@@ -64,47 +64,27 @@ class CachedScript;
 class Token
 {
 public:
-    Token() {
-        attrs = 0;
-        text = 0;
-        beginTag = true;
-        flat = false;
-        //qDebug("new token, creating %08lx", attrs);
-    }
+    Token() : beginTag(true), flat(false) { }
 
-    ~Token() {
-        if (attrs) attrs->deref();
-        if (text) text->deref();
-    }
-
-    void addAttribute(DOM::DocumentImpl* doc, const DOM::AtomicString& attrName, const DOM::AtomicString& v);
+    void addAttribute(DOM::DocumentImpl*, const DOM::AtomicString& attrName, const DOM::AtomicString& v);
 
     bool isOpenTag(const DOM::QualifiedName& fullName) const { return beginTag && fullName.localName() == tagName; }
     bool isCloseTag(const DOM::QualifiedName& fullName) const { return !beginTag && fullName.localName() == tagName; }
 
     void reset()
     {
-        if (attrs) {
-            attrs->deref();
-            attrs = 0;
-        }
-        
+        attrs = 0;
+        text = 0;        
         tagName = DOM::nullAtom;
-        
-        if (text) {
-            text->deref();
-            text = 0;
-        }
-        
         beginTag = true;
         flat = false;
     }
 
-    DOM::NamedMappedAttrMapImpl* attrs;
-    DOM::DOMStringImpl* text;
+    RefPtr<DOM::NamedMappedAttrMapImpl> attrs;
+    RefPtr<DOM::DOMStringImpl> text;
     DOM::AtomicString tagName;
-    bool beginTag : 1;
-    bool flat : 1;
+    bool beginTag;
+    bool flat;
 };
 
 //-----------------------------------------------------------------------------

@@ -671,32 +671,32 @@ unsigned InlineTextBox::caretMaxRenderedOffset() const
     return m_start + m_len;
 }
 
-static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
+static UBreakIterator* getCharacterBreakIterator(const DOMStringImpl* i)
 {
-    // The locale is currently ignored when determining character cluster breaks.  This may change
-    // in the future (according to Deborah Goldsmith).
+    // The locale is currently ignored when determining character cluster breaks.
+    // This may change in the future, according to Deborah Goldsmith.
     static bool createdIterator = false;
-    static UBreakIterator *iterator;
+    static UBreakIterator* iterator;
     UErrorCode status;
     if (!createdIterator) {
         status = U_ZERO_ERROR;
-        iterator = ubrk_open(UBRK_CHARACTER, "en_us", NULL, 0, &status);
+        iterator = ubrk_open(UBRK_CHARACTER, "en_us", 0, 0, &status);
         createdIterator = true;
     }
     if (!iterator)
-        return NULL;
+        return 0;
 
     status = U_ZERO_ERROR;
     ubrk_setText(iterator, reinterpret_cast<const UChar *>(i->s), i->l, &status);
     if (status != U_ZERO_ERROR)
-        return NULL;
+        return 0;
 
     return iterator;
 }
 
-int RenderText::previousOffset (int current) const
+int RenderText::previousOffset(int current) const
 {
-    UBreakIterator *iterator = getCharacterBreakIterator(str);
+    UBreakIterator* iterator = getCharacterBreakIterator(str.get());
     if (!iterator)
         return current - 1;
 
@@ -707,9 +707,9 @@ int RenderText::previousOffset (int current) const
     return result;
 }
 
-int RenderText::nextOffset (int current) const
+int RenderText::nextOffset(int current) const
 {
-    UBreakIterator *iterator = getCharacterBreakIterator(str);
+    UBreakIterator* iterator = getCharacterBreakIterator(str.get());
     if (!iterator)
         return current + 1;
     
@@ -760,27 +760,16 @@ int InlineTextBox::positionForOffset(int offset) const
 // -------------------------------------------------------------------------------------
 
 RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
-    : RenderObject(node), m_linesDirty(false), m_containsReversedText(false)
+     : RenderObject(node), str(_str), m_firstTextBox(0), m_lastTextBox(0)
+     , m_minWidth(-1), m_maxWidth(-1), m_selectionState(SelectionNone)
+     , m_linesDirty(false), m_containsReversedText(false)
+     , m_allAsciiChecked(false), m_allAscii(false)
+     , m_monospaceCharacterWidth(0)
 {
-    // init RenderObject attributes
-    setRenderText();   // our object inherits from RenderText
-
-    m_minWidth = -1;
-    m_maxWidth = -1;
-
-    m_monospaceCharacterWidth = 0;
-    m_allAsciiChecked = false;
-    m_allAscii = false;
-
-    str = _str;
-    if (str) {
+    setRenderText();
+    if (str)
         str = str->replace('\\', backslashAsCurrencySymbol());
-        str->ref();
-    }
     KHTMLAssert(!str || !str->l || str->s);
-
-    m_firstTextBox = m_lastTextBox = 0;
-    m_selectionState = SelectionNone;
 }
 
 void RenderText::setStyle(RenderStyle *_style)
@@ -800,11 +789,6 @@ void RenderText::setStyle(RenderStyle *_style)
         else
             cacheWidths();
     }
-}
-
-RenderText::~RenderText()
-{
-    if(str) str->deref();
 }
 
 void RenderText::destroy()
@@ -885,9 +869,9 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
-RefPtr<DOMStringImpl> RenderText::originalString() const
+PassRefPtr<DOMStringImpl> RenderText::originalString() const
 {
-    return element() ? RefPtr<DOMStringImpl>(element()->string()) : RefPtr<DOMStringImpl>();
+    return element() ? element()->string() : 0;
 }
 
 void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
@@ -1094,16 +1078,10 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
 
 void RenderText::posOfChar(int chr, int &x, int &y)
 {
-    absolutePosition( x, y, false );
-
-    //if( chr > (int) str->l )
-    //chr = str->l;
+    absolutePosition(x, y, false);
 
     int pos;
-    InlineTextBox * s = findNextInlineTextBox( chr, pos );
-
-    if ( s )
-    {
+    if (InlineTextBox* s = findNextInlineTextBox(chr, pos)) {
         // s is the line containing the character
         x += s->m_x; // this is the x of the beginning of the line, but it's good enough for now
         y += s->m_y;
@@ -1570,7 +1548,6 @@ void RenderText::setText(DOMStringImpl *text, bool force)
                 default:;
             }
         }
-        str->ref();
     }
 
     cacheWidths();
@@ -1816,28 +1793,14 @@ InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
     return 0;
 }
 
-RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
-                                       int startOffset, int length)
-:RenderText(_node, _str->substring(startOffset, length)), 
-m_start(startOffset), m_end(length), m_generatedContentStr(0)
-{}
-
-RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str)
-:RenderText(_node, _str), m_start(0)
+RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str, int startOffset, int length)
+    : RenderText(node, str ? str->substring(startOffset, length) : 0), m_start(startOffset), m_end(length)
 {
-    m_generatedContentStr = _str;
-    if (_str) {
-        _str->ref();
-        m_end = _str->l;
-    }
-    else
-        m_end = 0;
 }
-    
-RenderTextFragment::~RenderTextFragment()
+
+RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str)
+    : RenderText(node, str), m_start(0), m_end(str ? str->l : 0), m_generatedContentStr(str)
 {
-    if (m_generatedContentStr)
-        m_generatedContentStr->deref();
 }
 
 bool RenderTextFragment::isTextFragment() const
@@ -1845,7 +1808,7 @@ bool RenderTextFragment::isTextFragment() const
     return true;
 }
 
-RefPtr<DOMStringImpl> RenderTextFragment::originalString() const
+PassRefPtr<DOMStringImpl> RenderTextFragment::originalString() const
 {
     DOM::DOMStringImpl* result = 0;
     if (element())
@@ -1854,7 +1817,7 @@ RefPtr<DOMStringImpl> RenderTextFragment::originalString() const
         result = contentString();
     if (result && (start() > 0 || start() < result->l))
         result = result->substring(start(), end());
-    return RefPtr<DOMStringImpl>(result);
+    return result;
 }
 
 }
