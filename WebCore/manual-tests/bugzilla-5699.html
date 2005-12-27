@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+</head>
+<body>
+<p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5699">Bugzilla bug 5699</a> REGRESSION: incomplete repaint</p>
+
+<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
+Click the Test button below.
+</p>
+
+<p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
+The word &ldquo;Hello&rdquo; will move down.
+</p>
+
+<p id="failure" style="background-color:#FF3300; padding:3px;"><b>TEST FAIL:</b>  
+Another copy of the word &ldquo;Hello&rdquo; will appear.
+</p>
+
+<button onclick="document.getElementById('d').style.lineHeight = 3">Test</button>
+<p>
+<span id="d">&nbsp;</span><br>
+Hello<br>
+</p>
+</body>
+</html>

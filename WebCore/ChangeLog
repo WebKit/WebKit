@@ -1,3 +1,15 @@
+2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt, landed by Darin.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5699
+          REGRESSION: incomplete repaint
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaintAfterLayoutIfNeeded): Return false if only the
+        size changed and not everything was repainted.
+        * manual-tests/bugzilla-5699.html: Added.
+
 2005-12-27  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej, landed by Darin.

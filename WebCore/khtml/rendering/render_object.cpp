@@ -1452,6 +1452,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRec
                                           kMin(newBounds.y() + newBounds.height(), oldBounds.y() + oldBounds.height()),
                                           kMax(newBounds.width(), oldBounds.width()),
                                           height));
+        return false;
     }
     return true;
 }
