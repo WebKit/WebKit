@@ -2,6 +2,16 @@
 
         Reviewed, tweaked and landed by Maciej.
 
+	- test case for 4405: <button> not listed in form collections.
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
+
+        * fast/forms/button-in-forms-collection-expected.txt: Added.
+        * fast/forms/button-in-forms-collection.html: Added.
+
+2005-12-27  Maks Orlovich <maksim@kde.org>
+
+        Reviewed, tweaked and landed by Maciej.
+
 	- test case for 6234: Can delete array index property incorrectly.
 	http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
 

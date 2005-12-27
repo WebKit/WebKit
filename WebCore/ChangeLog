@@ -1,3 +1,15 @@
+2005-12-27  Maks Orlovich <maksim@kde.org>
+
+        Reviewed and landed by Maciej.
+
+	- fixed 4405: <button> not listed in form collections.
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
+
+	Test: fast/forms/button-in-forms-collection.html
+	
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLButtonElementImpl::isEnumeratable): override to return true
+
 2005-12-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

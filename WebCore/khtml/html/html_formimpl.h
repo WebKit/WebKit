@@ -249,6 +249,8 @@ public:
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool appendFormData(FormDataList&, bool);
 
+    virtual bool isEnumeratable() const { return true; } 
+
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);

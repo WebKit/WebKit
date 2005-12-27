@@ -1,0 +1,44 @@
+<!-- Based on testcase from KDE bug #110629, heavily modified -->
+<html>  <head> 
+
+<script src="../js/kde/resources/base.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function testPassed(msg)
+{
+    document.write("<b><font color=green>PASS</font></b> " + msg + "<br>");
+}
+
+function testFailed(msg)
+{
+    document.write("<b><font color=red>FAIL</font></b> " + msg + "<br>");
+}
+
+function debug(a) 
+{ 
+    document.write("<p> " + a + "</p>"); 
+}
+</script>
+   </head> 
+
+   <body> 
+<p>The following tests for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=4405">4405: &lt;button&gt; not listed in form collections.</a> You should see a series of lines starting with PASS.</p>
+   
+     <form name="test"> 
+     <input type="button" name="foo" id="foo" value="Button1"> 
+     <button type="button" name="bla" id="bla" value="Button2">Button2</button> 
+     </form> 
+
+<br>
+ <script> 
+    shouldBe("document.test.elements.length", "2");
+    shouldBe("document.test.elements[0].name", '"foo"');
+    shouldBe("document.test.elements[1].name", '"bla"');
+    shouldBe("document.test.foo.value", '"Button1"');
+    shouldBe("document.test.bla.value", '"Button2"');
+ </script> 
+
+   </body> 
+ </html> 
