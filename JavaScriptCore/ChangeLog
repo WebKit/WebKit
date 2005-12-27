@@ -1,3 +1,9 @@
+2005-12-27  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated test results for new JS 1.6 tests
+
+        * tests/mozilla/expected.html:
+
 2005-12-27  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
