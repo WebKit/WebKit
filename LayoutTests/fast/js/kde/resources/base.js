@@ -16,10 +16,18 @@ function shouldBe(_a, _b)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBe() expects string arguments");
-  var _av = eval(_a);
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
   var _bv = eval(_b);
 
-  if (_av === _bv)
+  if (exception)
+    testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+  else if (_av === _bv)
     testPassed(_a + " is " + _b);
   else
     testFailed(_a + " should be " + _bv + ". Was " + _av);
@@ -31,8 +39,17 @@ function shouldBeFalse(_a) { shouldBe(_a, "false"); }
 
 function shouldBeUndefined(_a)
 {
-  var _av = eval(_a);
-  if (typeof _av == "undefined")
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  if (exception)
+    testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+  else if (typeof _av == "undefined")
     testPassed(_a + " is undefined.");
   else
     testFailed(_a + " should be undefined. Was " + _av);

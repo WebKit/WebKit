@@ -84,4 +84,10 @@ PASS var r2 = reg; r2.x = 2; reg.x is 2
 PASS str.match(re).toString() is 'Chapter 3.4.5.1,Chapter 3.4.5.1,.1'
 PASS str.match(/d/gi).toString() is 'D,d'
 PASS /\u0061/.source is '\\u0061'
+FAIL 'abc'.match(/\u0062/).toString() should be b. Threw exception TypeError: Null value
+FAIL Object.prototype.toString.apply(RegExp.prototype) should be [object RegExp]. Was [object RegExpPrototype]
+PASS typeof RegExp.prototype.toString() is 'string'
+Done.
+
+PASS successfullyParsed is true
 
