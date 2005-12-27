@@ -1,3 +1,33 @@
+2005-12-27  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        Add Mozilla JS 1.6 tests.
+        
+        * tests/mozilla/js1_6/Array/browser.js: Added.
+        * tests/mozilla/js1_6/Array/regress-290592.js: Added.
+        * tests/mozilla/js1_6/Array/regress-304828.js: Added.
+        * tests/mozilla/js1_6/Array/regress-305002.js: Added.
+        * tests/mozilla/js1_6/Array/regress-310425-01.js: Added.
+        * tests/mozilla/js1_6/Array/regress-310425-02.js: Added.
+        * tests/mozilla/js1_6/Array/regress-320887.js: Added.
+        * tests/mozilla/js1_6/Array/shell.js: Added.
+        * tests/mozilla/js1_6/README: Added.
+        * tests/mozilla/js1_6/Regress/browser.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-301574.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-309242.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-311157-01.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-311157-02.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-314887.js: Added.
+        * tests/mozilla/js1_6/Regress/regress-320172.js: Added.
+        * tests/mozilla/js1_6/Regress/shell.js: Added.
+        * tests/mozilla/js1_6/String/browser.js: Added.
+        * tests/mozilla/js1_6/String/regress-306591.js: Added.
+        * tests/mozilla/js1_6/String/shell.js: Added.
+        * tests/mozilla/js1_6/browser.js: Added.
+        * tests/mozilla/js1_6/shell.js: Added.
+        * tests/mozilla/js1_6/template.js: Added.
+
 2005-12-27  Maks Orlovich <maksim@kde.org>
 
         Reviewed and landed by Maciej.
