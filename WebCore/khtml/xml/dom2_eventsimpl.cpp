@@ -258,8 +258,11 @@ void MouseRelatedEventImpl::computePositions()
 
     doc->updateRendering();
 
-    // Compute page position.
-    kv->viewportToContents(m_clientX, m_clientY, m_pageX, m_pageY);
+    // FIXME: clientX/Y should not be the same as pageX/Y!
+    // Currently the passed-in clientX and clientY are incorrectly actually
+    // pageX and pageY values, so we don't have any work to do here, but if
+    // we started passing in correct clientX and clientY, we'd want to compute
+    // pageX and pageY here.
 
     // Compute offset position.
     m_offsetX = m_pageX;

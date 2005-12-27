@@ -1,3 +1,15 @@
+2005-12-27  Darin Adler  <darin@apple.com>
+
+        Fix suggested by Mitz.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6240
+          REGRESSION: scrollbars in overflows don't work
+
+        * khtml/xml/dom2_eventsimpl.cpp: (DOM::MouseRelatedEventImpl::computePositions):
+        Remove the code to compute pageX/Y from clientX/Y, because clientX/Y are not passed
+        in correctly (in fact, what's passed in is pageX/Y)! I accidentally included part
+        of my fix for clientX/Y in the original patch.
+
 2005-12-27  Maks Orlovich <maksim@kde.org>
 
         Reviewed and landed by Maciej.
