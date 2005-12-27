@@ -1,3 +1,11 @@
+2005-12-27  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::defineSetter):
+        Remove duplicate call to putDirect.
+
 2005-12-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Geoff.
