@@ -161,7 +161,7 @@ bool ArrayInstance::deleteProperty(ExecState *exec, const Identifier &propertyNa
     return false;
   
   bool ok;
-  uint32_t index = propertyName.toUInt32(&ok);
+  uint32_t index = propertyName.toArrayIndex(&ok);
   if (ok) {
     if (index >= length)
       return true;

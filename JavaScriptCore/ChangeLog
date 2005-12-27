@@ -1,3 +1,14 @@
+2005-12-27  Maks Orlovich <maksim@kde.org>
+
+        Reviewed and landed by Maciej.
+
+	- fixed 6234: Can delete array index property incorrectly.
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
+
+        * kjs/array_object.cpp:
+        (ArrayInstance::deleteProperty): use toArrayIndex instead of toUInt32 when
+	looking for array properties.
+
 2005-12-27  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

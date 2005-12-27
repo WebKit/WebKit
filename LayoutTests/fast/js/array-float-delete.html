@@ -1,0 +1,37 @@
+<html>
+<body>
+<p>This test checks for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6234">6234: Can delete array index property incorrectly.</a></p>
+<p>On success, you will see a series of "PASS" messages.</p>
+
+<script src="kde/resources/base.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function testPassed(msg)
+{
+    document.write("<b><font color=green>PASS</font></b> " + msg + "<br>");
+}
+
+function testFailed(msg)
+{
+    document.write("<b><font color=red>FAIL</font></b> " + msg + "<br>");
+}
+
+function debug(a) 
+{ 
+    document.write("<p> " + a + "</p>"); 
+}
+</script>
+
+<pre>
+<script>
+var a = new Array();  
+a[1]     = "before";  
+a['1.0'] = "after";  
+delete a['1.0'];  
+shouldBe("a[1]", '"before"');
+</script>
+</pre>
+
+</body>
