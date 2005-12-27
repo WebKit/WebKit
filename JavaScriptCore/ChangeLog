@@ -1,3 +1,20 @@
+2005-12-27  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction):
+        Implement filter and map. Also, make the existing
+        array iteration functions not invoke the callback for
+        non-existing properties, just as Mozilla does now.
+        
+        * kjs/array_object.h:
+        (KJS::ArrayProtoFunc::):
+        Add filter and map.
+        
+        * tests/mozilla/expected.html:
+        Update, two 1.6 tests now pass.
+
 2005-12-27  Maciej Stachowiak  <mjs@apple.com>
 
         - updated test results for new JS 1.6 tests

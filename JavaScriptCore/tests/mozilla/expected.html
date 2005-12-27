@@ -7,11 +7,11 @@
 <p class='results_summary'>
 Test List: All tests<br>
 Skip List: (none)<br>
-1135 test(s) selected, 1127 test(s) completed, 83 failures reported (7.36% failed)<br>
-Engine command line: /Users/mjs/Work/symroots/Deployment/testkjs <br>
-OS type: Darwin 171.west-valley-02rh16rt-03rh15rt.ut.dial-access.att.net 8.3.0 Darwin Kernel Version 8.3.0: Mon Oct  3 20:04:04 PDT 2005; root:xnu-792.6.22.obj~2/RELEASE_PPC Power Macintosh powerpc<br>
-Testcase execution time: 1 minutes, 46 seconds.<br>
-Tests completed on Tue Dec 27 05:47:43 2005.<br><br>
+1135 test(s) selected, 1127 test(s) completed, 81 failures reported (7.18% failed)<br>
+Engine command line: /Users/andersca/Projects/Build/Development/testkjs <br>
+OS type: Darwin Samus-PowerBook-G4.local 8.3.0 Darwin Kernel Version 8.3.0: Mon Oct  3 20:04:04 PDT 2005; root:xnu-792.6.22.obj~2/RELEASE_PPC Power Macintosh powerpc<br>
+Testcase execution time: 6 minutes, 11 seconds.<br>
+Tests completed on Tue Dec 27 14:28:00 2005.<br><br>
 [ <a href='#fail_detail'>Failure Details</a> | <a href='#retest_list'>Retest List</a> | <a href='menu.html'>Test Selection Page</a> ]<br>
 <hr>
 <a name='fail_detail'></a>
@@ -44,6 +44,10 @@ Failure messages were:<br>
 --> parseFloat("1e2000") = NaN FAILED! expected: Infinity<br>
 --> -s2 == -Infinity || -s2 == -1.7976931348623157e+308  = false FAILED! expected: true<br>
 --> -s3 == -Infinity || -s3 == -1.7976931348623157e+308 = false FAILED! expected: true<br>
+--> parseInt(s1,10) == 1.7976931348623157e+308 || parseInt(s1,10) == Infinity = false FAILED! expected: true<br>
+--> parseInt(s2,10) == Infinity || parseInt(s2,10) == 1.7976931348623157e+308 = false FAILED! expected: true<br>
+--> parseInt(s1) == 1.7976931348623157e+308 || parseInt(s1) == Infinity = false FAILED! expected: true<br>
+--> parseInt(s2) == Infinity || parseInt(s2) == 1.7976931348623157e+308 = false FAILED! expected: true<br>
 --> 0x1000000000000081 = 1152921504606847000 FAILED! expected: 1152921504606847200<br>
 --> 0x1000000000000281 = 1152921504606847500 FAILED! expected: 1152921504606847700<br>
 --> parseInt("0000001000000001001000110100010101100111100010011010101111011",2) = 18054430506169720 FAILED! expected: 18054430506169724<br>
@@ -76,26 +80,27 @@ Exception, line 19: TypeError: Object /a||b/ (result of expression a||b) does no
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 --> RegExp/unicode-001.js new RegExp( pattern, flags )<br>
+KJS: pcre_compile() failed with 'PCRE does not support \L, \l, \N, \U, or \u'<br>
 Exception, line 34: TypeError: Null value<br>
 </tt><br>
 <a name='failure7'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/Date/15.9.5.7.js'>ecma_3/Date/15.9.5.7.js</a> failed</b> <br>
  [ <a href='#failure6'>Previous Failure</a> | <a href='#failure8'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt><br>
 Failure messages were:<br>
---> (Wed Dec 31 1969 17:00:00 GMT-0700).toLocaleTimeString() = 5:00:00 PM MST FAILED! expected: 17:00:00<br>
---> (Wed Dec 31 1969 10:00:00 GMT-0700).toLocaleTimeString() = 10:00:00 AM MST FAILED! expected: 10:00:00<br>
---> (Sun Dec 31 1899 17:00:00 GMT-0700).toLocaleTimeString() = 6:00:00 PM MDT FAILED! expected: 17:00:00<br>
---> (Mon Jan 01 1900 00:00:00 GMT-0700).toLocaleTimeString() = 1:00:00 AM MDT FAILED! expected: 00:00:00<br>
---> (Fri Dec 31 1999 17:00:00 GMT-0700).toLocaleTimeString() = 5:00:00 PM MST FAILED! expected: 17:00:00<br>
---> (Sat Jan 01 2000 00:00:00 GMT-0700).toLocaleTimeString() = 12:00:00 AM MST FAILED! expected: 00:00:00<br>
---> (Mon Feb 28 2000 17:00:00 GMT-0700).toLocaleTimeString() = 5:00:00 PM MST FAILED! expected: 17:00:00<br>
---> (Mon Feb 28 2000 16:59:59 GMT-0700).toLocaleTimeString() = 4:59:59 PM MST FAILED! expected: 16:59:59<br>
---> (Tue Feb 29 2000 00:00:00 GMT-0700).toLocaleTimeString() = 12:00:00 AM MST FAILED! expected: 00:00:00<br>
---> (Tue Dec 27 2005 05:47:25 GMT-0700).toLocaleTimeString() = 5:47:25 AM MST FAILED! expected: 05:47:25<br>
---> (Tue Dec 27 2005 12:47:25 GMT-0700).toLocaleTimeString() = 12:47:25 PM MST FAILED! expected: 12:47:25<br>
---> (Fri Dec 31 2004 17:00:00 GMT-0700).toLocaleTimeString() = 5:00:00 PM MST FAILED! expected: 17:00:00<br>
---> (Fri Dec 31 2004 16:59:59 GMT-0700).toLocaleTimeString() = 4:59:59 PM MST FAILED! expected: 16:59:59<br>
---> (Sat Jan 01 2005 00:00:00 GMT-0700).toLocaleTimeString() = 12:00:00 AM MST FAILED! expected: 00:00:00<br>
+--> (Thu Jan 01 1970 01:00:00 GMT+0100).toLocaleTimeString() = 01.00.00 GMT+01:00 FAILED! expected: 01:00:00<br>
+--> (Thu Jan 01 1970 02:00:00 GMT+0100).toLocaleTimeString() = 02.00.00 GMT+01:00 FAILED! expected: 02:00:00<br>
+--> (Mon Jan 01 1900 01:00:00 GMT+0100).toLocaleTimeString() = 02.00.00 GMT+02:00 FAILED! expected: 01:00:00<br>
+--> (Mon Jan 01 1900 00:00:00 GMT+0100).toLocaleTimeString() = 01.00.00 GMT+02:00 FAILED! expected: 00:00:00<br>
+--> (Sat Jan 01 2000 01:00:00 GMT+0100).toLocaleTimeString() = 01.00.00 GMT+01:00 FAILED! expected: 01:00:00<br>
+--> (Sat Jan 01 2000 00:00:00 GMT+0100).toLocaleTimeString() = 00.00.00 GMT+01:00 FAILED! expected: 00:00:00<br>
+--> (Tue Feb 29 2000 01:00:00 GMT+0100).toLocaleTimeString() = 01.00.00 GMT+01:00 FAILED! expected: 01:00:00<br>
+--> (Tue Feb 29 2000 00:59:59 GMT+0100).toLocaleTimeString() = 00.59.59 GMT+01:00 FAILED! expected: 00:59:59<br>
+--> (Tue Feb 29 2000 00:00:00 GMT+0100).toLocaleTimeString() = 00.00.00 GMT+01:00 FAILED! expected: 00:00:00<br>
+--> (Tue Dec 27 2005 14:27:14 GMT+0100).toLocaleTimeString() = 14.27.14 GMT+01:00 FAILED! expected: 14:27:14<br>
+--> (Tue Dec 27 2005 13:27:14 GMT+0100).toLocaleTimeString() = 13.27.14 GMT+01:00 FAILED! expected: 13:27:14<br>
+--> (Sat Jan 01 2005 01:00:00 GMT+0100).toLocaleTimeString() = 01.00.00 GMT+01:00 FAILED! expected: 01:00:00<br>
+--> (Sat Jan 01 2005 00:59:59 GMT+0100).toLocaleTimeString() = 00.59.59 GMT+01:00 FAILED! expected: 00:59:59<br>
+--> (Sat Jan 01 2005 00:00:00 GMT+0100).toLocaleTimeString() = 00.00.00 GMT+01:00 FAILED! expected: 00:00:00<br>
 </tt><br>
 <a name='failure8'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/FunExpr/fe-001.js'>ecma_3/FunExpr/fe-001.js</a> failed</b> <br>
  [ <a href='#failure7'>Previous Failure</a> | <a href='#failure9'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -1184,49 +1189,17 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value 'undefined', Actual value '1'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure76'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-290592.js'>js1_6/Array/regress-290592.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=290592' target='other_window'>Bug Number 290592</a><br>
+<a name='failure76'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-304828.js'>js1_6/Array/regress-304828.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=304828' target='other_window'>Bug Number 304828</a><br>
  [ <a href='#failure75'>Previous Failure</a> | <a href='#failure77'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>--> STATUS: Array extras: forEach, indexOf, filter, map<br>
-Failure messages were:<br>
---> FAILED!: Array.prototype.forEach.length == 1<br>
---> FAILED!: Expected value '1', Actual value '5'<br>
---> FAILED!: <br>
---> FAILED!: Array.forEach: mutate<br>
---> FAILED!: Expected value 'hello,mutated,', Actual value 'hello,mutated,undefined,'<br>
---> FAILED!: <br>
---> FAILED!: Array.forEach on sparse array<br>
---> FAILED!: Expected value 'sparse,', Actual value 'undefined,undefined,sparse,'<br>
---> FAILED!: <br>
---> FAILED!: Array.prototype.every.length == 1<br>
---> FAILED!: Expected value '1', Actual value '5'<br>
---> FAILED!: <br>
---> FAILED!: sparsestrings: every element is a string<br>
---> FAILED!: Expected value 'true', Actual value 'false'<br>
---> FAILED!: <br>
---> FAILED!: sparsestrings: every element is a string, via object callback<br>
---> FAILED!: Expected value 'true', Actual value 'false'<br>
---> FAILED!: <br>
---> FAILED!: Array.prototype.some.length == 1<br>
---> FAILED!: Expected value '1', Actual value '5'<br>
---> FAILED!: <br>
-</tt><br>
-<a name='failure77'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-304828.js'>js1_6/Array/regress-304828.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=304828' target='other_window'>Bug Number 304828</a><br>
- [ <a href='#failure76'>Previous Failure</a> | <a href='#failure78'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Array Generic Methods<br>
 Failure messages were:<br>
 --> FAILED!: Array Generic Methods: lastIndexOf<br>
 --> FAILED!: Type mismatch, expected type number, actual type string<br>
 --> FAILED!: Expected value '4', Actual value 'TypeError: Undefined value'<br>
 --> FAILED!: <br>
---> FAILED!: Array Generic Methods: map<br>
---> FAILED!: Expected value 'A,B,C', Actual value 'TypeError: Undefined value'<br>
---> FAILED!: <br>
---> FAILED!: Array Generic Methods: filter<br>
---> FAILED!: Expected value '2,4,6,8,0', Actual value 'TypeError: Undefined value'<br>
---> FAILED!: <br>
 </tt><br>
-<a name='failure78'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-310425-01.js'>js1_6/Array/regress-310425-01.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=310425' target='other_window'>Bug Number 310425</a><br>
- [ <a href='#failure77'>Previous Failure</a> | <a href='#failure79'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure77'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-310425-01.js'>js1_6/Array/regress-310425-01.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=310425' target='other_window'>Bug Number 310425</a><br>
+ [ <a href='#failure76'>Previous Failure</a> | <a href='#failure78'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
@@ -1234,16 +1207,8 @@ Complete testcase output was:<br>
 --> STATUS: Array.indexOf/lastIndexOf edge cases<br>
 Exception, line 48: TypeError: Value undefined (result of expression [].lastIndexOf) is not object.<br>
 </tt><br>
-<a name='failure79'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Array/regress-320887.js'>js1_6/Array/regress-320887.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=320887' target='other_window'>Bug Number 320887</a><br>
- [ <a href='#failure78'>Previous Failure</a> | <a href='#failure80'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>--> STATUS: var x should not throw a ReferenceError<br>
-Failure messages were:<br>
---> FAILED!: var x should not throw a ReferenceError<br>
---> FAILED!: Expected value 'No error', Actual value 'TypeError: Value undefined (result of expression ["var x"].map) is not object.'<br>
---> FAILED!: <br>
-</tt><br>
-<a name='failure80'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-301574.js'>js1_6/Regress/regress-301574.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=301574' target='other_window'>Bug Number 301574</a><br>
- [ <a href='#failure79'>Previous Failure</a> | <a href='#failure81'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure78'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-301574.js'>js1_6/Regress/regress-301574.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=301574' target='other_window'>Bug Number 301574</a><br>
+ [ <a href='#failure77'>Previous Failure</a> | <a href='#failure79'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: E4X should be enabled even when e4x=1 not specified<br>
 Failure messages were:<br>
 --> FAILED!: E4X should be enabled even when e4x=1 not specified: XML()<br>
@@ -1253,22 +1218,22 @@ Failure messages were:<br>
 --> FAILED!: Expected value 'No error', Actual value 'error: ReferenceError: Can't find variable: XML'<br>
 --> FAILED!: <br>
 </tt><br>
-<a name='failure81'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-309242.js'>js1_6/Regress/regress-309242.js</a> failed</b> <br>
- [ <a href='#failure80'>Previous Failure</a> | <a href='#failure82'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure79'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-309242.js'>js1_6/Regress/regress-309242.js</a> failed</b> <br>
+ [ <a href='#failure78'>Previous Failure</a> | <a href='#failure80'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 71: SyntaxError: Parse error<br>
 </tt><br>
-<a name='failure82'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-314887.js'>js1_6/Regress/regress-314887.js</a> failed</b> <br>
- [ <a href='#failure81'>Previous Failure</a> | <a href='#failure83'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure80'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-314887.js'>js1_6/Regress/regress-314887.js</a> failed</b> <br>
+ [ <a href='#failure79'>Previous Failure</a> | <a href='#failure81'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 47: SyntaxError: Parse error<br>
 </tt><br>
-<a name='failure83'></a><dd><b>Testcase <a target='other_window' href='./js1_6/String/regress-306591.js'>js1_6/String/regress-306591.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=306591' target='other_window'>Bug Number 306591</a><br>
- [ <a href='#failure82'>Previous Failure</a> | <a href='#failure84'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure81'></a><dd><b>Testcase <a target='other_window' href='./js1_6/String/regress-306591.js'>js1_6/String/regress-306591.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=306591' target='other_window'>Bug Number 306591</a><br>
+ [ <a href='#failure80'>Previous Failure</a> | <a href='#failure82'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
@@ -1283,9 +1248,9 @@ Exception, line 49: TypeError: Value undefined (result of expression String.spli
 <pre>
 <a name='retest_list'></a>
 <h2>Retest List</h2><br>
-# Retest List, kjs, generated Tue Dec 27 05:47:43 2005.
+# Retest List, kjs, generated Tue Dec 27 14:28:00 2005.
 # Original test base was: All tests.
-# 1127 of 1135 test(s) were completed, 83 failures reported.
+# 1127 of 1135 test(s) were completed, 81 failures reported.
 ecma/GlobalObject/15.1.2.2-2.js
 ecma/LexicalConventions/7.7.3-1.js
 ecma/TypeConversion/9.3.1-3.js
@@ -1361,10 +1326,8 @@ js1_5/Regress/regress-185165.js
 js1_5/Scope/regress-185485.js
 js1_5/Scope/regress-220584.js
 js1_5/Scope/scope-001.js
-js1_6/Array/regress-290592.js
 js1_6/Array/regress-304828.js
 js1_6/Array/regress-310425-01.js
-js1_6/Array/regress-320887.js
 js1_6/Regress/regress-301574.js
 js1_6/Regress/regress-309242.js
 js1_6/Regress/regress-314887.js

@@ -389,10 +389,12 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
   sort           ArrayProtoFunc::Sort           DontEnum|Function 1
   splice         ArrayProtoFunc::Splice         DontEnum|Function 2
   unshift        ArrayProtoFunc::UnShift        DontEnum|Function 1
-  every          ArrayProtoFunc::Every          DontEnum|Function 5
-  forEach        ArrayProtoFunc::ForEach        DontEnum|Function 5
-  some           ArrayProtoFunc::Some           DontEnum|Function 5
-  indexOf        ArrayProtoFunc::IndexOf       DontEnum|Function 1
+  every          ArrayProtoFunc::Every          DontEnum|Function 1
+  forEach        ArrayProtoFunc::ForEach        DontEnum|Function 1
+  some           ArrayProtoFunc::Some           DontEnum|Function 1
+  indexOf        ArrayProtoFunc::IndexOf        DontEnum|Function 1
+  filter         ArrayProtoFunc::Filter         DontEnum|Function 1
+  map            ArrayProtoFunc::Map            DontEnum|Function 1
 @end
 */
 
@@ -770,6 +772,49 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
     thisObj->put(exec, lengthPropertyName, result, DontEnum | DontDelete);
     break;
   }
+  case Filter:
+  case Map: {
+    JSObject *eachFunction = args[0]->toObject(exec);
+    
+    if (!eachFunction->implementsCall())
+      return throwError(exec, TypeError);
+    
+    JSObject *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicInterpreter()->globalObject() :  args[1]->toObject(exec);
+    JSObject *resultArray;
+    
+    if (id == Filter) 
+      resultArray = static_cast<JSObject *>(exec->lexicalInterpreter()->builtinArray()->construct(exec, List::empty()));
+    else {
+      List args;
+      args.append(jsNumber(length));
+      resultArray = static_cast<JSObject *>(exec->lexicalInterpreter()->builtinArray()->construct(exec, args));
+    }
+    
+    unsigned filterIndex = 0;
+    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+      PropertySlot slot;
+
+      if (!thisObj->getPropertySlot(exec, k, slot))
+         continue;
+        
+      JSValue *v = slot.getValue(exec, thisObj, k);
+      
+      List eachArguments;
+      
+      eachArguments.append(v);
+      eachArguments.append(jsNumber(k));
+      eachArguments.append(thisObj);
+      
+      JSValue *result = eachFunction->call(exec, applyThis, eachArguments);
+      
+      if (id == Map)
+        resultArray->put(exec, k, result);
+      else if (result->toBoolean(exec)) 
+        resultArray->put(exec, filterIndex++, v);
+    }
+    
+    return resultArray;
+  }
   case Every:
   case ForEach:
   case Some: {
@@ -791,10 +836,14 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
       result = thisObj;
     
     for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+      PropertySlot slot;
+        
+      if (!thisObj->getPropertySlot(exec, k, slot))
+        continue;
       
       List eachArguments;
       
-      eachArguments.append(thisObj->get(exec, k));
+      eachArguments.append(slot.getValue(exec, thisObj, k));
       eachArguments.append(jsNumber(k));
       eachArguments.append(thisObj);
       
