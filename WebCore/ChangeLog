@@ -1,3 +1,18 @@
+2005-12-27  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Maciej, landed by Darin.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=4101>
+        CSS Fibonacci spiral using 4 images doesn't render correctly
+
+        Added layout tests:
+        * fast/replaced/absolute-image-sizing.html
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontalValues): Use calcReplacedWidth() instead of intrinsicWidth()
+        for replaced elements.
+        (RenderBox::calcAbsoluteVerticalValues): Same thing for height.
+
 2005-12-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff and Eric.
@@ -104,7 +119,7 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6231
 
         - Fixed assertion failure in QString::mid caused by my last checkin. 
-        parseWindowFeatuers() sometimes called QString::mid() with a start 
+        parseWindowFeatures() sometimes called QString::mid() with a start 
         index past the end of the string but a length of 0. There were two 
         problems there. (1) parseWindowFeatures() shouldn't have gotten past 
         the end of the string. (2) QString had range truncating code that was 
@@ -149,24 +164,39 @@
 
         This patch is long. Luckily, it's also complicated.
 
-        The main thing I've done is to change our parsing of the window.open 'features' argument to match Win IE. This is important because we now implement the correct defaults for window.open, and resizing and scrolling are turned off by default. So, if we parse the 'features' string incorrectly, we'll end up with an annoying, incorrectly sized window that can't resize or scroll.
+        The main thing I've done is to change our parsing of the window.open 'features' argument to match Win IE.
+        This is important because we now implement the correct defaults for window.open, and resizing and
+        scrolling are turned off by default. So, if we parse the 'features' string incorrectly, we'll end
+        up with an annoying, incorrectly sized window that can't resize or scroll.
 
-        To honor a long-standing request by Eric, I factored out the parsing into two new functions: parseWindowFeatures and constrainToScreen. I also added support for "innerWidth" and "innerHeight," since they're just synonyms for "width" and "height."
+        To honor a long-standing request by Eric, I factored out the parsing into two new functions:
+        parseWindowFeatures and constrainToScreen. I also added support for "innerWidth" and "innerHeight,"
+        since they're just synonyms for "width" and "height."
 
         * khtml/ecma/kjs_window.cpp: removed "emit" statements, since emit is #defined as ""
         (KJS::parseDialogFeatures): renamed from parseFeatures, since we now have a 'parseWindowFeatures'.
         (KJS::showModalDialog): ditto on parseFeatures. Also added some missing initializations for WindowArgs data members.
         (KJS::parseWindowFeatures): new function, all new functionality.
-        (KJS::constrainToScreen): new function, no new functionality -- just cut and pasted code that used to run as part of our parsing routine.
+        (KJS::constrainToScreen): new function, no new functionality -- just cut and pasted code that used to run as
+        part of our parsing routine.
         (KJS::WindowFunc::callAsFunction):
         (1) Factored out previous parsing code.
-        (2) Factored 17 lines of custom popup-blocking code into 3 lines that use pre-existing 'allowPopUp' function. Gratuitous, but it cried out to me.
-        (3) Changed URL parsing to substitute "" for undefined *and* null values (we already did this for undefined), to avoid trying to navigate to 'http://null'.
+        (2) Factored 17 lines of custom popup-blocking code into 3 lines that use pre-existing 'allowPopUp' function.
+            Gratuitous, but it cried out to me.
+        (3) Changed URL parsing to substitute "" for undefined *and* null values (we already did this for undefined),
+            to avoid trying to navigate to 'http://null'.
         (4) Factore a multiline if () { if () {}} into an if ( && )
-        (4) Removed the main body of code from a giant 'else' block by inserting early returns for the exceptional cases. This caused some things to show up in the diff even though they're just whitespace changes. I didn't actually change any code past the line "if (!str.isEmpty() && activePart)"
+        (4) Removed the main body of code from a giant 'else' block by inserting early returns for the exceptional cases.
+            This caused some things to show up in the diff even though they're just whitespace changes.
+            I didn't actually change any code past the line "if (!str.isEmpty() && activePart)"
         * kwq/KWQKHTMLPartBrowserExtension.mm:
-        (KHTMLPartBrowserExtension::createNewWindow): Added code to set toolbars to visible if toolBarVisible is true *or* locationBarVisible is true. The parser used to do this for us, but it's really the browser that's responsible for saying that the toolbar and the locationbar are the same thing. Hopefully, we can add a setLocationBarVisible delegate in the future so that other webkit clients can make their own UI decisions.
-        * kwq/KWQKPartsBrowserExtension.h: Added locationBarVisible data member to WindowArgs structure and renamed toolBarsVisible to toolBarVisible (see above). Removed initialization code from WindowArgs structure because this file is for platform-specific code, and what defaults to use for window arguments is purely engine stuff.
+        (KHTMLPartBrowserExtension::createNewWindow): Added code to set toolbars to visible if toolBarVisible is true *or*
+        locationBarVisible is true. The parser used to do this for us, but it's really the browser that's responsible for
+        saying that the toolbar and the locationbar are the same thing. Hopefully, we can add a setLocationBarVisible delegate
+        in the future so that other webkit clients can make their own UI decisions.
+        * kwq/KWQKPartsBrowserExtension.h: Added locationBarVisible data member to WindowArgs structure and renamed
+        toolBarsVisible to toolBarVisible (see above). Removed initialization code from WindowArgs structure because
+        this file is for platform-specific code, and what defaults to use for window arguments is purely engine stuff.
 
 2005-12-23  Eric Seidel  <eseidel@apple.com>
 

@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ *           (C) 2005 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -1441,7 +1442,7 @@ void RenderBox::calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* 
     if (!width.isIntrinsicOrAuto())
         w = calcContentBoxWidth(width.width(cw));
     else if (isReplaced())
-        w = intrinsicWidth();
+        w = calcReplacedWidth();
 
     if (l != AUTO && w != AUTO && r != AUTO) {
         // left, width, right all given, play with margins
@@ -1619,7 +1620,7 @@ void RenderBox::calcAbsoluteVerticalValues(HeightType heightType, RenderObject* 
             ourHeight = h + pab;
     }
     else if (isReplaced())
-        h = intrinsicHeight();
+        h = calcReplacedHeight();
 
     int static_top=0;
     if ((t == AUTO && b == AUTO) || style()->top().isStatic()) {

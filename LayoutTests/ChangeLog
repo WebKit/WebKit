@@ -1,3 +1,15 @@
+2005-12-27  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Maciej, landed by Darin.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=4101>
+        CSS Fibonacci spiral using 4 images doesn't render correctly
+
+        * fast/replaced/absolute-image-sizing-expected.checksum: Added.
+        * fast/replaced/absolute-image-sizing-expected.png: Added.
+        * fast/replaced/absolute-image-sizing-expected.txt: Added.
+        * fast/replaced/absolute-image-sizing.html: Added.
+
 2005-12-27  Maciej Stachowiak  <mjs@apple.com>
 
         No review, just a test harness change.
