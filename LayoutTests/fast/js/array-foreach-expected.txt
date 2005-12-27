@@ -16,11 +16,10 @@ The following tests forEach with two arguments, the callback and the applied "th
 These tests the affects of array mutation during execution of forEach.
 
 3.1 Array Element Removal
-This test removes elements from the array, these elements should thus appear as undefined when reached by forEach.
+This test removes elements from the array, these elements should thus not appear since forEach doesn't iterate over non-existing properties.
 
 [0] is 2
 [1] is 5
-[2] is undefined
 
 3.2 Array Element Addition
 This test adds elements to the array, these elements should not appear since forEach uses the original length to create the range it iterates over. It should be identical to 1.0.

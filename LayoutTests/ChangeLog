@@ -1,3 +1,17 @@
+2005-12-27  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6250
+        Implement Array.map and Array.filter
+        
+        * fast/js/array-every-expected.txt:
+        * fast/js/array-every.html:
+        * fast/js/array-foreach-expected.txt:
+        * fast/js/array-foreach.html:
+        Modify these tests since Array.every and Array.foreach now follow Mozilla
+        and treat arrays as sparse, not visiting non-existing properties.
+
 2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by Darin.

@@ -41,7 +41,7 @@ The following tests every with two arguments, the callback and the applied "this
 3.0 Array Mutation Tests<br/>
 These tests the affects of array mutation during execution of every.<br/><br/>
 3.1 Array Element Removal<br/>
-This test is equivalent to 1.0, with the exception that it removes elements from the array on each visit.  Both should thus yield "false" since undefined is not >= to 10.<br/><br/>
+This test is equivalent to 1.0, with the exception that it removes elements from the array on each visit.  The first test should thus yield "false" and the second test "true", since non-existing properties are not checked.<br/><br/>
 
 <script>
 function isBigEnoughAndPop(element, index, array) {

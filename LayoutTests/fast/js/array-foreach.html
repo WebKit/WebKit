@@ -45,7 +45,7 @@ The following tests forEach with two arguments, the callback and the applied "th
 3.0 Array Mutation Tests<br/>
 These tests the affects of array mutation during execution of forEach.<br/><br/>
 3.1 Array Element Removal<br/>
-This test removes elements from the array, these elements should thus appear as undefined when reached by forEach.<br/><br/>
+This test removes elements from the array, these elements should thus not appear since forEach doesn't iterate over non-existing properties.<br/><br/>
 
 <script>
 function printEltAndPop(element, index, array) {

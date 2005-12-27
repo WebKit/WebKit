@@ -14,10 +14,10 @@ true
 These tests the affects of array mutation during execution of every.
 
 3.1 Array Element Removal
-This test is equivalent to 1.0, with the exception that it removes elements from the array on each visit. Both should thus yield "false" since undefined is not >= to 10.
+This test is equivalent to 1.0, with the exception that it removes elements from the array on each visit. The first test should thus yield "false" and the second test "true", since non-existing properties are not checked.
 
 false
-false
+true
 
 3.3 Array Element Addition
 This test is equivalent to 1.0, with that it test whether elements are >= 131 and it adds elements greater than 131 to the end of the list. However, both results should be false since every uses the original length to create the range it iterates over.
