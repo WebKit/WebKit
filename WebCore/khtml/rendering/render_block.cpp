@@ -2000,7 +2000,7 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
-        right += style()->textIndent().minWidth(cw);
+        right -= style()->textIndent().minWidth(cw);
     }
     
     //kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
