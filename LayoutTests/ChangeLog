@@ -1,3 +1,14 @@
+2005-12-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6246
+          TextIterator::rangeFromLocationAndLength() returns nil range for an 
+          empty document
+
+        * editing/input/range-for-empty-document-expected.txt: Added.
+        * editing/input/range-for-empty-document.html: Added.
+
 2005-12-27  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
