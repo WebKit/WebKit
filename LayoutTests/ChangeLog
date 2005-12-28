@@ -1,5 +1,17 @@
 2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Eric, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6214
+          text-indent in RTL block does the opposite
+
+        * fast/block/basic/text-indent-rtl-expected.checksum: Added.
+        * fast/block/basic/text-indent-rtl-expected.png: Added.
+        * fast/block/basic/text-indent-rtl-expected.txt: Added.
+        * fast/block/basic/text-indent-rtl.html: Added.
+
+2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin, landed by ap.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5812
