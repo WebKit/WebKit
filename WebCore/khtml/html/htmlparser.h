@@ -62,7 +62,7 @@ public:
     /**
      * parses one token delivered by the tokenizer
      */
-    void parseToken(khtml::Token *_t);
+    DOM::NodeImpl *parseToken(khtml::Token *_t);
     
     /**
      * tokenizer says it's not going to be sending us any more tokens

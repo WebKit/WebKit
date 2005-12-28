@@ -253,6 +253,7 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
     // But some websites think their scripts are <some wrong mimetype here>
     // and refuse to serve them if we only accept application/x-javascript.
     setAccept( QString::fromLatin1("*/*") );
+    m_errorOccurred = false;
     // load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
@@ -265,6 +266,7 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
 CachedScript::CachedScript(const DOMString &url, const QString &script_data)
     : CachedObject(url, Script, KIO::CC_Verify, 0, script_data.length())
 {
+    m_errorOccurred = false;
     m_loading = false;
     m_status = Persistent;
     m_codec = 0;
@@ -323,6 +325,7 @@ void CachedScript::checkNotify()
 void CachedScript::error( int /*err*/, const char */*text*/ )
 {
     m_loading = false;
+    m_errorOccurred = true;
     checkNotify();
 }
 

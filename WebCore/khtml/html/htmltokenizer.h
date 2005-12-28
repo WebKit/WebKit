@@ -112,7 +112,7 @@ protected:
     void end();
 
     void reset();
-    void processToken();
+    DOM::NodeImpl *processToken();
 
     State processListing(TokenizerString, State);
     State parseComment(TokenizerString&, State);
@@ -324,6 +324,7 @@ protected:
     // the output of the script to be postponed until after the script has finished executing
     int m_executingScript;
     QPtrQueue<CachedScript> pendingScripts;
+    RefPtr<DOM::NodeImpl> scriptNode;
     // you can pause the tokenizer if you need to display a dialog or something
     bool onHold;
 

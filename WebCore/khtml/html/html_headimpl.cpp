@@ -28,6 +28,7 @@
 
 #include "html/html_documentimpl.h"
 #include "xml/dom_textimpl.h"
+#include "xml/EventNames.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -45,6 +46,7 @@
 
 using namespace DOM;
 using namespace HTMLNames;
+using namespace EventNames;
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentImpl *doc)
@@ -507,7 +509,8 @@ void HTMLScriptElementImpl::childrenChanged()
 
 void HTMLScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == srcAttr) {
+    const QualifiedName& attrName = attr->name();
+    if (attrName == srcAttr) {
         if (m_evaluated || m_cachedScript || m_createdByParser || !inDocument())
             return;
 
@@ -522,6 +525,10 @@ void HTMLScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_cachedScript = getDocument()->docLoader()->requestScript(url, charset);
             m_cachedScript->ref(this);
         }
+    } else if (attrName == onerrorAttr) {
+        setHTMLEventListener(errorEvent, attr);
+    } else if (attrName == onloadAttr) {
+        setHTMLEventListener(loadEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -532,6 +539,7 @@ void HTMLScriptElementImpl::closeRenderer()
     // allow dynamic loading later.
     if (getAttribute(srcAttr).isEmpty() && text().isEmpty())
         setCreatedByParser(false);
+    HTMLElementImpl::closeRenderer();
 }
 
 void HTMLScriptElementImpl::insertedIntoDocument()
@@ -581,7 +589,12 @@ void HTMLScriptElementImpl::notifyFinished(CachedObject* o)
 
     assert(cs == m_cachedScript);
 
-    evaluateScript(cs->url(), cs->script());
+    if (cs->errorOccurred())
+        dispatchHTMLEvent(errorEvent, false, false);
+    else {
+        evaluateScript(cs->url(), cs->script());
+        dispatchHTMLEvent(loadEvent, false, false);
+    }
 
     cs->deref(this);
     m_cachedScript = 0;

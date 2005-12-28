@@ -180,7 +180,7 @@ void HTMLParser::setCurrent(DOM::NodeImpl *newCurrent)
     currentIsReferenced = newCurrentIsReferenced;
 }
 
-void HTMLParser::parseToken(Token *t)
+NodeImpl *HTMLParser::parseToken(Token *t)
 {
     if (!discard_until.isNull()) {
         if (t->tagName == discard_until && !t->beginTag)
@@ -188,7 +188,7 @@ void HTMLParser::parseToken(Token *t)
 
         // do not skip </iframe>
         if (!discard_until.isNull() || (current->localName() != t->tagName))
-            return;
+            return 0;
     }
 
     // Apparently some sites use </br> instead of <br>.  Be compatible with IE and Firefox and treat this like <br>.
@@ -197,7 +197,7 @@ void HTMLParser::parseToken(Token *t)
 
     if (!t->beginTag) {
         processCloseTag(t);
-        return;
+        return 0;
     }
 
     // ignore spaces, if we're not inside a paragraph or other inline code
@@ -210,7 +210,7 @@ void HTMLParser::parseToken(Token *t)
     NodeImpl *n = getNode(t);
     // just to be sure, and to catch currently unimplemented stuff
     if (!n)
-        return;
+        return 0;
 
     RefPtr<NodeImpl> protectNode(n);
 
@@ -240,7 +240,10 @@ void HTMLParser::parseToken(Token *t)
 
         if (form == n)
             form = 0;
+        
+        return 0;
     }
+    return n;
 }
 
 static bool isTableSection(NodeImpl* n)

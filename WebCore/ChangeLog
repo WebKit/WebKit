@@ -1,3 +1,32 @@
+2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        Test: fast/dom/HTMLScriptElement/script-load-events.html
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5812
+          Generate load events for <script> elements
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::parseMappedAttribute): Parse the onload and onerror attributes.
+        (HTMLScriptElementImpl::closeRenderer): Call base class's implementation.
+        (HTMLScriptElementImpl::notifyFinished): Dispatch load and error events.
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken): Return the node that was inserted.
+        * khtml/html/htmltokenizer.h: Added scriptNode, a RefPtr to the node corresponding
+        to the current load request.
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::scriptHandler): Reset scriptNode if a load request was not made.
+        (HTMLTokenizer::parseTag): Set scriptNode to the node created from the script tag.
+        (HTMLTokenizer::processToken): Return the node that was inserted.
+        (HTMLTokenizer::notifyFinished): Reset scriptNode and dispatch load and error events.
+        * khtml/misc/loader.h:
+        (CachedScript::errorOccurred): Added.
+        * khtml/misc/loader.cpp:
+        (CachedScript::CachedScript):
+        (CachedScript::error):
+
 2005-12-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
