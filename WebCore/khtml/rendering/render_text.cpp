@@ -1531,8 +1531,6 @@ void RenderText::setText(DOMStringImpl *text, bool force)
         return;
     if (!force && str == text)
         return;
-    if (str)
-        str->deref();
 
     m_allAsciiChecked = false;
 

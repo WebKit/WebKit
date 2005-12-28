@@ -1,3 +1,14 @@
+2005-12-28  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6269
+        ToT memory corruption
+        
+        * khtml/rendering/render_text.cpp:
+        (khtml::RenderText::setText):
+        Remove deref().
+        
 2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt, landed by Darin.
