@@ -1,3 +1,17 @@
+2005-12-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6246
+          TextIterator::rangeFromLocationAndLength() returns nil range for an 
+          empty document
+
+        Test: editing/input/range-for-empty-document.html
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        Handle the case of an empty document and (0, 0) requested range.
+
 2005-12-28  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Geoff.

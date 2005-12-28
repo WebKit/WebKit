@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -994,7 +995,21 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
 
     RefPtr<RangeImpl> textRunRange;
 
-    for (TextIterator it(rangeOfContents(doc).get()); !it.atEnd(); it.advance()) {
+    TextIterator it(rangeOfContents(doc).get());
+    
+    if (rangeLocation == 0 && rangeLength == 0) {
+        int exception = 0;
+        textRunRange = it.range();
+        
+        resultRange->setStart(textRunRange->startContainer(exception), 0, exception);
+        assert(exception == 0);
+        resultRange->setEnd(textRunRange->startContainer(exception), 0, exception);
+        assert(exception == 0);
+        
+        return resultRange;
+    }
+
+    for (; !it.atEnd(); it.advance()) {
         int len = it.length();
         textRunRange = it.range();
 
