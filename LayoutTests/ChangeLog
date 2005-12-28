@@ -1,3 +1,14 @@
+2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5812
+          Generate load events for <script> elements
+
+        * fast/dom/HTMLScriptElement/resources/script-load.js: Added.
+        * fast/dom/HTMLScriptElement/script-load-events-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-load-events.html: Added.
+
 2005-12-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

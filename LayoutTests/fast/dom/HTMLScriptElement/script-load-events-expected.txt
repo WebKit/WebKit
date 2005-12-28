@@ -1,0 +1,4 @@
+This tests for regressions against http://bugzilla.opendarwin.org/show_bug.cgi?id=5812 Generate load events for <script> elements.
+Test result: PASS
+
+

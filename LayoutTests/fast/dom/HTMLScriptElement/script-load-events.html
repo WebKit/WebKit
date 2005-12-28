@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>&lt;SCRIPT&gt; load and error events</title>
+<script type="text/javascript">
+var status = new Array();
+
+function loaded(i)
+{
+    status[i-1] = "L";
+}
+
+function erred(i)
+{
+    status[i-1] = "E";
+}
+
+function endTest()
+{
+    var results = document.getElementById("results");
+    
+    if (status[0]=="E" &&
+        status[1]=="E" &&
+        status[2]=="L" &&
+        status[3]=="L" &&
+        status[4]=="L" &&
+        status[5]=="L")
+        results.innerText = "PASS";
+    else
+        results.innerText = "FAIL: " + status;
+}
+
+function loaded6()
+{
+    loaded(6);
+    endTest();
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+	var e = document.createElement( "script" ) ;
+	e.type	= "text/javascript" ;
+	document.getElementsByTagName("head")[0].appendChild( e ) ; 
+	
+	e.onload = loaded6;
+	endTest(); // called here in case the load even doesn't fire
+	e.src = 'resources/script-load.js' ;
+}
+</script>
+</head>
+<body onload="test()">
+<script type="text/javascript" onload="loaded(1)" onerror="erred(1)" src="resources/certainlydoesnotexist.js"></script>
+<script type="text/javascript" onload="loaded(2)" onerror="erred(2)" src="resources/certainlydoesnotexist.js"/>
+<script type="text/javascript" onload="loaded(3)" onerror="erred(3)" src="resources/script-load.js"></script>
+<script type="text/javascript" onload="loaded(4)" onerror="erred(4)" src="resources/script-load.js"/>
+<script type="text/javascript">
+    document.write('<script type="text/javascript" onload="loaded(5)" onerror="erred(5)" src="resources/script-load.js"></script'+'>');
+</script>
+This tests for regressions against <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5812">http://bugzilla.opendarwin.org/show_bug.cgi?id=5812</a>
+Generate load events for &lt;script&gt; elements</i>.
+<hr>
+<p>Test result: <span id="results"></span></p>
+</body>
+</html>
