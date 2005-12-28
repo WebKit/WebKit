@@ -1,3 +1,13 @@
+2005-12-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+	- proper length for Array concat function is 1, not 0; also add test
+	for String concat.
+	
+        * fast/js/kde/function_length-expected.txt:
+        * fast/js/kde/resources/function_length.js:
+
 2005-12-27  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

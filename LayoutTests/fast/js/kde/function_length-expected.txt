@@ -1,6 +1,6 @@
 PASS Array.prototype.toString.length is 0
 PASS Array.prototype.toLocaleString.length is 0
-FAIL Array.prototype.concat.length should be 0. Was 1
+PASS Array.prototype.concat.length is 1
 PASS Array.prototype.join.length is 1
 PASS Array.prototype.pop.length is 0
 PASS Array.prototype.push.length is 1
@@ -89,6 +89,7 @@ PASS RegExp.prototype.exec.length is 0
 PASS RegExp.prototype.test.length is 0
 PASS RegExp.prototype.toString.length is 0
 PASS String.fromCharCode.length is 1
+PASS String.prototype.concat.length is 1
 PASS String.prototype.toString.length is 0
 PASS String.prototype.valueOf.length is 0
 PASS String.prototype.charAt.length is 1

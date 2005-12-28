@@ -1,6 +1,6 @@
 shouldBe("Array.prototype.toString.length","0");
 shouldBe("Array.prototype.toLocaleString.length","0");
-shouldBe("Array.prototype.concat.length","0");
+shouldBe("Array.prototype.concat.length","1");
 shouldBe("Array.prototype.join.length","1");
 shouldBe("Array.prototype.pop.length","0");
 shouldBe("Array.prototype.push.length","1");
@@ -89,6 +89,7 @@ shouldBe("RegExp.prototype.exec.length","0");
 shouldBe("RegExp.prototype.test.length","0");
 shouldBe("RegExp.prototype.toString.length","0");
 shouldBe("String.fromCharCode.length","1");
+shouldBe("String.prototype.concat.length","1");
 shouldBe("String.prototype.toString.length","0");
 shouldBe("String.prototype.valueOf.length","0");
 shouldBe("String.prototype.charAt.length","1");
