@@ -160,6 +160,8 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   {
       JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
+      if (fractionDigits->isUndefined())
+            df = 0;
       if (!(df >= 0 && df <= 20)) // true for NaN
           return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
       int f = (int)df;
@@ -205,7 +207,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       
       JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
-      if (!(df >= 0 && df <= 20)) // true for NaN
+      if (!fractionDigits->isUndefined() && !(df >= 0 && df <= 20)) // true for NaN
           return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
       int f = (int)df;
       
