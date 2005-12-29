@@ -129,7 +129,7 @@ inline float Font::floatWidth(QChar *chs, int slen, int pos, int len, int tabWid
 
 inline int Font::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, QPainter::TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
 {
-    return fm.checkSelectionPoint(s + pos, slen - pos, 0, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, d == QPainter::RTL, visuallyOrdered, includePartialGlyphs);
+    return fm.checkSelectionPoint(s + pos, std::min(slen - pos, len), 0, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, d == QPainter::RTL, visuallyOrdered, includePartialGlyphs);
 }
 
 inline int Font::width(QChar *chs, int slen, int pos, int len, int tabWidth, int xpos) const

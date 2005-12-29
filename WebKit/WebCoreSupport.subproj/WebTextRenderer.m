@@ -117,6 +117,7 @@ typedef struct ATSULayoutParameters
     UniChar *charBuffer;
     bool hasSyntheticBold;
     bool syntheticBoldPass;
+    float padPerSpace;
 } ATSULayoutParameters;
 
 static WebTextRenderer *rendererForAlternateFont(WebTextRenderer *, WebCoreFont);
@@ -245,6 +246,8 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         bool syntheticBoldPass = params->syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
         ATSGlyphRef spaceGlyph = 0;
+        bool hasExtraSpacing = style->letterSpacing | style->wordSpacing | style->padding;
+        float padding = style->padding;
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
         ItemCount i;
@@ -262,12 +265,6 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                     spaceGlyph = renderer->spaceGlyph;
                 }
             }
-            ch = nextCh;
-            offset = layoutRecords[i].originalOffset;
-            // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
-            // We won't actually round unless the other conditions are satisfied.
-            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
-
             float width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
             lastNativePos = layoutRecords[i].realPos;
             if (shouldRound)
@@ -275,6 +272,31 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             width += renderer->syntheticBoldOffset;
             if (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
                 width = renderer->adjustedSpaceWidth;
+
+            if (hasExtraSpacing) {
+                if (width && style->letterSpacing)
+                    width +=style->letterSpacing;
+                if (isSpace(nextCh)) {
+                    if (style->padding) {
+                        if (padding < params->padPerSpace) {
+                            width += padding;
+                            padding = 0;
+                        } else {
+                            width += params->padPerSpace;
+                            padding -= params->padPerSpace;
+                        }
+                    }
+                    if (offset != 0 && !isSpace(ch) && style->wordSpacing)
+                        width += style->wordSpacing;
+                }
+            }
+
+            ch = nextCh;
+            offset = layoutRecords[i].originalOffset;
+            // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
+            // We won't actually round unless the other conditions are satisfied.
+            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
+
             if (isRoundingHackCharacter(ch))
                 width = ceilf(width);
             lastAdjustedPos = lastAdjustedPos + width;
@@ -1352,6 +1374,16 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
         }
         substituteOffset += substituteLength;
     }
+    if (style->padding) {
+        float numSpaces = 0;
+        unsigned k;
+        for (k = 0; k < totalLength; k++)
+            if (isSpace(run->characters[k]))
+                numSpaces++;
+
+        params->padPerSpace = ceilf((float)style->padding / numSpaces);
+    } else
+        params->padPerSpace = 0;
 }
 
 static void disposeATSULayoutParameters(ATSULayoutParameters *params)

@@ -1,3 +1,17 @@
+2005-12-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin
+
+        - WebCore part of fix for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=3922
+          Variable word/letter spacing and full justification not supported for
+          ATSUI-rendered text
+
+        * khtml/rendering/font.h:
+        (khtml::Font::checkSelectionPoint): Make sure the complete run, used for
+        counting spaces and determining padding per space does not go beyond the
+        text box.
+
 2005-12-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

@@ -1,3 +1,19 @@
+2005-12-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin 
+        
+        Test: fast/text/atsui-spacing-features.html
+
+        - WebKit part of fix for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=3922
+          Variable word/letter spacing and full justification not supported for
+          ATSUI-rendered text
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation): Add letter- and word-spacing and padding for
+        justification.
+        (createATSULayoutParameters): Compute padding per space.
+
 2005-12-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by Darin.
