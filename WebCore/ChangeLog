@@ -1,3 +1,29 @@
+2005-12-28  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6268
+        Add undetectable document.all
+        
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::getValueProperty):
+        If "all" has been set to a new value, return the new value.
+        
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        Allow "all" to be set to a new value.
+        
+        (KJS::HTMLAllCollection::toPrimitive):
+        Return jsNull() if the preferred type is NullType.
+        
+        (KJS::getAllHTMLCollection):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLAllCollection::HTMLAllCollection):
+        Add HTMLAllCollection, a subclass of HTMLCollection which should
+        be undetectable.
+        
+        (KJS::HTMLAllCollection::toBoolean):
+        Return false.
+        
 2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Eric, landed by ap.

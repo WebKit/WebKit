@@ -224,12 +224,7 @@ const ClassInfo KJS::HTMLDocument::info =
   forms			HTMLDocument::Forms		DontDelete|ReadOnly
   anchors		HTMLDocument::Anchors		DontDelete|ReadOnly
   scripts		HTMLDocument::Scripts		DontDelete|ReadOnly
-# We want no document.all at all, not just a function that returns undefined.
-# That means we lose the "document.all when spoofing as IE" feature, but we don't spoof in Safari.
-# And this makes sites that set document.all explicitly work when they otherwise wouldn't, 
-# e.g. https://corporateexchange.airborne.com
-# (Not in APPLE_CHANGES since we can't do #if in KJS identifier lists.)
-#  all			HTMLDocument::All		DontDelete|ReadOnly
+  all			HTMLDocument::All		
   clear			HTMLDocument::Clear		DontDelete|Function 0
   open			HTMLDocument::Open		DontDelete|Function 0
   close			HTMLDocument::Close		DontDelete|Function 0
@@ -332,10 +327,11 @@ JSValue *HTMLDocument::getValueProperty(ExecState *exec, int token) const
       return obj;
     }
   case All:
-    // Disable document.all when we try to be Netscape-compatible
-    if (exec->dynamicInterpreter()->compatMode() == Interpreter::NetscapeCompat)
-      return jsUndefined();
-    return getHTMLCollection(exec, doc.all().get());
+    // If "all" has been overwritten, return the overwritten value
+    if (JSValue *v = getDirect("all"))
+      return v;
+    else
+      return getAllHTMLCollection(exec, doc.all().get());
   case BgColor:
     if (!bodyElement)
       return jsUndefined();
@@ -494,6 +490,10 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
       doc.setDesignMode(mode);
       break;
     }
+  case All:
+    // Add "all" to the property map.
+    putDirect("all", value);
+    break;
   default:
     kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
   }
@@ -3426,6 +3426,16 @@ JSValue *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject 
 
 // -------------------------------------------------------------------------
 
+JSValue *HTMLAllCollection::toPrimitive(ExecState *exec, Type preferredType) const
+{
+    if (preferredType == NullType)
+        return jsNull();
+    else
+        return HTMLCollection::toPrimitive(exec, preferredType);
+}
+
+// -------------------------------------------------------------------------
+
 HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *c, HTMLSelectElementImpl *e)
   : HTMLCollection(exec, c), m_element(e)
 {
@@ -5285,6 +5295,10 @@ void ImagePattern::putValueProperty(ExecState *exec, int token, JSValue *value, 
 
 ////////////////////////////////////////////////////////////////
                      
+JSValue *getAllHTMLCollection(ExecState *exec, HTMLCollectionImpl *c)
+{
+    return cacheDOMObject<HTMLCollectionImpl, HTMLAllCollection>(exec, c);
+}
 
 JSValue *getHTMLCollection(ExecState *exec, HTMLCollectionImpl *c)
 {
