@@ -17,16 +17,20 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(OutputDir)\$(ConfigurationName)"
+			IntermediateDirectory="$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Constructing chartables.c"
+				CommandLine="mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(OutputDir)JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -40,11 +44,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;JAVASCRIPTCORE_EXPORTS"
+				AdditionalIncludeDirectories="&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				PreprocessorDefinitions="HAVE_CONFIG_H"
 				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
@@ -93,17 +99,21 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(OutputDir)\$(ConfigurationName)"
+			IntermediateDirectory="$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Constructing chartables.c"
+				CommandLine="mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(OutputDir)JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -116,9 +126,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;JAVASCRIPTCORE_EXPORTS"
+				AdditionalIncludeDirectories="&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				PreprocessorDefinitions="HAVE_CONFIG_H"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
@@ -540,6 +552,118 @@
 			</File>
 			<File
 				RelativePath="..\..\kxmlcore\RefPtr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kxmlcore\TCPageMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kxmlcore\TCSpinLock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kxmlcore\TCSystemAlloc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kxmlcore\TCSystemAlloc.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="PCRE"
+			>
+			<File
+				RelativePath="..\..\pcre\pcre-config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_compile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_config.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_exec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_fullinfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_get.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_globals.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_info.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_maketables.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_ord2utf8.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_printint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_refcount.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_study.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_tables.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_try_flipped.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_ucp_findchar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_version.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\pcre_xclass.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\ucp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\ucp_findchar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pcre\ucpinternal.h"
 				>
 			</File>
 		</Filter>
