@@ -1,3 +1,17 @@
+2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by Maks Orlovich, reviewed by mjs.
+
+        This has 2 very minor fixes, covered by KJS testsuite:    
+        1. Enumerates string indices in property list (with the same bug as array    
+           object has in corresponding code). This is a mozilla emulation thing. 
+        2. Permits properties with integer names in prototypes to be found    
+
+        * kjs/string_object.cpp:
+        (StringInstance::getOwnPropertySlot):
+        (StringInstanceImp::propList):
+        * kjs/string_object.h:
+
 2005-12-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

@@ -28,6 +28,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "operations.h"
+#include "reference_list.h"
 #include "regexp.h"
 #include "regexp_object.h"
 #include "error_object.h"
@@ -75,10 +76,10 @@ bool StringInstance::getOwnPropertySlot(ExecState *exec, const Identifier& prope
   if (ok) {
     const UString s = internalValue()->toString(exec);
     const unsigned length = s.size();
-    if (index >= length)
-      return false;
+    if (index < length) {
     slot.setCustomIndex(this, index, indexGetter);
     return true;
+  }
   }
 
   return JSObject::getOwnPropertySlot(exec, propertyName, slot);
@@ -96,6 +97,17 @@ bool StringInstance::deleteProperty(ExecState *exec, const Identifier &propertyN
   if (propertyName == lengthPropertyName)
     return false;
   return JSObject::deleteProperty(exec, propertyName);
+}
+
+ReferenceList StringInstance::propList(ExecState *exec, bool recursive)
+{
+  ReferenceList properties = JSObject::propList(exec,recursive);
+
+  //### FIXME: should avoid duplicates with prototype
+  UString str = internalValue()->toString(exec);
+  for (int i = 0; i < str.size(); i++)
+    properties.append(Reference(this, i));
+  return properties;
 }
 
 // ------------------------------ StringPrototype ---------------------------
