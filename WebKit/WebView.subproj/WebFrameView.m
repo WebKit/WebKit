@@ -87,8 +87,6 @@ enum {
     int marginWidth;
     int marginHeight;
     
-    NSArray *draggingTypes;
-    
     BOOL hasBorder;
 }
 @end
@@ -108,7 +106,6 @@ enum {
 - (void)dealloc
 {
     [frameScrollView release];
-    [draggingTypes release];
     [super dealloc];
 }
 
