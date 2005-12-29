@@ -23,6 +23,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 
 #include "value.h"
 #include "object.h"
@@ -150,6 +151,8 @@ JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
 
 // ------------------------------ MathObjectImp --------------------------------
 
+static bool randomSeeded = false;
+
 MathFuncImp::MathFuncImp(ExecState *exec, int i, int l)
   : InternalFunctionImp(
     static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
@@ -258,9 +261,12 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
       result = ::pow(arg, arg2);
     break;
   case MathObjectImp::Random:
-    result = ::rand();
-    result = result / RAND_MAX;
-    break;
+      if (!randomSeeded) {
+          sranddev();
+          randomSeeded = true;
+      }
+      result = (double)rand() / RAND_MAX;
+      break;
   case MathObjectImp::Round:
     if (signbit(arg) && arg >= -0.5)
         result = -0.0;

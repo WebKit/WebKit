@@ -1,5 +1,18 @@
 2005-12-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by mjs.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4026
+        Math.random() not seeded.
+
+        Added call to sranddev() -- it executes the first time a process
+        calls Math.random().
+
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction):
+
+2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by darin.
 
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6265
