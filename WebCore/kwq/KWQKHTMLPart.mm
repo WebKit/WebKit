@@ -177,20 +177,10 @@ KWQKHTMLPart::KWQKHTMLPart()
 
 KWQKHTMLPart::~KWQKHTMLPart()
 {
-    cleanupPluginRootObjects();
-    
+    setView(0);
     mutableInstances().remove(this);
-    if (d->m_view) {
-	d->m_view->deref();
-    }
     freeClipboard();
-    // these are all basic Foundation classes and our own classes - we
-    // know they will not raise in dealloc, so no need to block
-    // exceptions.
-    KWQRelease(_formValuesAboutToBeSubmitted);
-    KWQRelease(_formAboutToBeSubmitted);
-    
-    KWQRelease(_windowScriptObject);
+    clearRecordedFormValues();    
     
     delete _windowWidget;
 }
@@ -790,24 +780,27 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
 
     return NULL;
 }
-    
+
 void KWQKHTMLPart::setView(KHTMLView *view)
 {
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
-    if (d->m_doc && view == NULL) {
+    if (d->m_doc && view == 0)
 	d->m_doc->detach();
-    }
-
-    if (view) {
+    
+    if (view)
 	view->ref();
-    }
-    if (d->m_view) {
+    if (d->m_view)
 	d->m_view->deref();
-    }
     d->m_view = view;
     setWidget(view);
+    
+    // Delete old PlugIn data structures
+    cleanupPluginRootObjects();
+    _bindingRoot = 0;
+    KWQRelease(_windowScriptObject);
+    _windowScriptObject = 0;
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
@@ -3931,7 +3924,7 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
 
     KJS::Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {
-        root->removeAllNativeReferences ();
+        root->removeAllNativeReferences();
         rootObjects.removeLast();
     }
 }

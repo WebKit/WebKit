@@ -1,3 +1,38 @@
+2005-12-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        - Fixed <rdar://problem/4325722> crash in KJS::Bindings::dispatchJNICall
+        due to liveconnect call from Java after Java PlugInView has been 
+        deallocated @ www.binarybet.com
+        AKA
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5518
+
+        We had code that checked for whether a call came from a live PlugIn,
+        but the live PlugIn dictionary would only get cleared when the 
+        KWQKHTMLPart was destroyed. Since a single part can service multiple
+        loads, the dictionary needs to clear after each one.
+
+        No layout test because this bug is difficult to reproduce.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::~KWQKHTMLPart):
+        (1) Unrelated cleanup: Removed manual clearing of form values,
+        replaced with call to clearRecordedFormValues().
+        (2) Replaced PlugIn dictionary cleanup code and view deref call
+        with call to setView(0), since much of this code was duplicated in
+        setView, and the stuff that wasn't duplicated needed to be.
+
+        (KWQKHTMLPart::setView):
+        (1) Removed some unnecessary braces.
+        (2) Added PlugIn dictionary cleanup code.
+        (3) New behavior: clear _bindingRoot and _windowScriptObject after
+        each view change. This is needed because after a call to
+        clenaupPluginRootObjects(), both objects have stale references.
+        (4) Changed a NULL to a 0.
+
+        (KWQKHTMLPart::cleanupPluginRootObjects): Removed extra space.
+
 2005-12-28  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
