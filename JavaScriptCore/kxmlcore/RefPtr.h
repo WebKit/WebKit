@@ -44,6 +44,8 @@ namespace KXMLCore {
         
         T *get() const { return m_ptr; }
         
+        PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
+
         T& operator*() const { return *m_ptr; }
         T *operator->() const { return m_ptr; }
         

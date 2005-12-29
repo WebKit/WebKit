@@ -309,7 +309,7 @@ JSValue *ElementNode::evaluate(ExecState *exec)
 {
   JSObject *array = exec->lexicalInterpreter()->builtinArray()->construct(exec, List::empty());
   int length = 0;
-  for (ElementNode *n = this; n; n = n->list.get()) {
+  for (ElementNode *n = this; n; n = n->next.get()) {
     JSValue *val = n->node->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     length += n->elision;
@@ -360,7 +360,7 @@ JSValue *PropertyListNode::evaluate(ExecState *exec)
 {
   JSObject *obj = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   
-  for (PropertyListNode *p = this; p; p = p->list.get()) {
+  for (PropertyListNode *p = this; p; p = p->next.get()) {
     JSValue *n = p->node->name->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     JSValue *v = p->node->assign->evaluate(exec);
@@ -449,7 +449,7 @@ List ArgumentListNode::evaluateList(ExecState *exec)
 {
   List l;
 
-  for (ArgumentListNode *n = this; n; n = n->list.get()) {
+  for (ArgumentListNode *n = this; n; n = n->next.get()) {
     JSValue *v = n->expr->evaluate(exec);
     KJS_CHECKEXCEPTIONLIST
     l.append(v);
@@ -1415,15 +1415,15 @@ JSValue *CommaNode::evaluate(ExecState *exec)
 // ------------------------------ StatListNode ---------------------------------
 
 StatListNode::StatListNode(StatementNode *s)
-  : statement(s), list(this)
+  : statement(s), next(this)
 {
   setLoc(s->firstLine(), s->lastLine(), s->sourceId());
 }
  
 StatListNode::StatListNode(StatListNode *l, StatementNode *s)
-  : statement(s), list(l->list)
+  : statement(s), next(l->next)
 {
-  l->list = this;
+  l->next = this;
   setLoc(l->firstLine(), s->lastLine(), l->sourceId());
 }
 
@@ -1437,7 +1437,7 @@ Completion StatListNode::execute(ExecState *exec)
   
   JSValue *v = c.value();
   
-  for (StatListNode *n = list.get(); n; n = n->list.get()) {
+  for (StatListNode *n = next.get(); n; n = n->next.get()) {
     Completion c2 = n->statement->execute(exec);
     KJS_ABORTPOINT
     if (c2.complType() != Normal)
@@ -1453,7 +1453,7 @@ Completion StatListNode::execute(ExecState *exec)
 
 void StatListNode::processVarDecls(ExecState *exec)
 {
-  for (StatListNode *n = this; n; n = n->list.get())
+  for (StatListNode *n = this; n; n = n->next.get())
     n->statement->processVarDecls(exec);
 }
 
@@ -1526,7 +1526,7 @@ void VarDeclNode::processVarDecls(ExecState *exec)
 // ECMA 12.2
 JSValue *VarDeclListNode::evaluate(ExecState *exec)
 {
-  for (VarDeclListNode *n = this; n; n = n->list.get()) {
+  for (VarDeclListNode *n = this; n; n = n->next.get()) {
     n->var->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
   }
@@ -1535,7 +1535,7 @@ JSValue *VarDeclListNode::evaluate(ExecState *exec)
 
 void VarDeclListNode::processVarDecls(ExecState *exec)
 {
-  for (VarDeclListNode *n = this; n; n = n->list.get())
+  for (VarDeclListNode *n = this; n; n = n->next.get())
     n->var->processVarDecls(exec);
 }
 
@@ -1546,7 +1546,7 @@ Completion VarStatementNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  (void) list->evaluate(exec);
+  (void) next->evaluate(exec);
   KJS_CHECKEXCEPTION
 
   return Completion(Normal);
@@ -1554,7 +1554,7 @@ Completion VarStatementNode::execute(ExecState *exec)
 
 void VarStatementNode::processVarDecls(ExecState *exec)
 {
-  list->processVarDecls(exec);
+  next->processVarDecls(exec);
 }
 
 // ------------------------------ BlockNode ------------------------------------
@@ -1562,8 +1562,8 @@ void VarStatementNode::processVarDecls(ExecState *exec)
 BlockNode::BlockNode(SourceElementsNode *s)
 {
   if (s) {
-    source = s->elements;
-    s->elements = 0;
+    source = s->next;
+    s->next = 0;
     setLoc(s->firstLine(), s->lastLine(), s->sourceId());
   } else {
     source = 0;
@@ -1984,16 +1984,16 @@ JSValue *CaseClauseNode::evaluate(ExecState *exec)
 // ECMA 12.11
 Completion CaseClauseNode::evalStatements(ExecState *exec)
 {
-  if (list)
-    return list->execute(exec);
+  if (next)
+    return next->execute(exec);
   else
     return Completion(Normal, jsUndefined());
 }
 
 void CaseClauseNode::processVarDecls(ExecState *exec)
 {
-  if (list)
-    list->processVarDecls(exec);
+  if (next)
+    next->processVarDecls(exec);
 }
 
 // ------------------------------ ClauseListNode -------------------------------
@@ -2008,9 +2008,9 @@ JSValue *ClauseListNode::evaluate(ExecState *)
 // ECMA 12.11
 void ClauseListNode::processVarDecls(ExecState *exec)
 {
-  for (ClauseListNode *n = this; n; n = n->nx.get())
-    if (n->cl)
-      n->cl->processVarDecls(exec);
+  for (ClauseListNode *n = this; n; n = n->next.get())
+    if (n->clause)
+      n->clause->processVarDecls(exec);
 }
 
 // ------------------------------ CaseBlockNode --------------------------------
@@ -2019,8 +2019,8 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
                              ClauseListNode *l2)
 {
   if (l1) {
-    list1 = l1->nx;
-    l1->nx = 0;
+    list1 = l1->next;
+    l1->next = 0;
   } else {
     list1 = 0;
   }
@@ -2028,8 +2028,8 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
   def = d;
 
   if (l2) {
-    list2 = l2->nx;
-    l2->nx = 0;
+    list2 = l2->next;
+    l2->next = 0;
   } else {
     list2 = 0;
   }
@@ -2052,8 +2052,8 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
   CaseClauseNode *clause;
 
     while (a) {
-      clause = a->clause();
-      a = a->next();
+      clause = a->getClause();
+      a = a->getNext();
       v = clause->evaluate(exec);
       KJS_CHECKEXCEPTION
       if (strictEqual(exec, input, v)) {
@@ -2061,18 +2061,18 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
 	if (res.complType() != Normal)
 	  return res;
 	while (a) {
-	  res = a->clause()->evalStatements(exec);
+	  res = a->getClause()->evalStatements(exec);
 	  if (res.complType() != Normal)
 	    return res;
-	  a = a->next();
+	  a = a->getNext();
 	}
 	break;
       }
     }
 
   while (b) {
-    clause = b->clause();
-    b = b->next();
+    clause = b->getClause();
+    b = b->getNext();
     v = clause->evaluate(exec);
     KJS_CHECKEXCEPTION
     if (strictEqual(exec, input, v)) {
@@ -2092,11 +2092,11 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
   b = list2.get();
  step18:
   while (b) {
-    clause = b->clause();
+    clause = b->getClause();
     res = clause->evalStatements(exec);
     if (res.complType() != Normal)
       return res;
-    b = b->next();
+    b = b->getNext();
   }
 
   // bail out on error
@@ -2305,16 +2305,18 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
 
 // ------------------------------ SourceElementsNode ---------------------------
 
+int SourceElementsNode::count = 0;
+
 SourceElementsNode::SourceElementsNode(StatementNode *s1)
-  : element(s1), elements(this)
+  : node(s1), next(this)
 {
   setLoc(s1->firstLine(), s1->lastLine(), s1->sourceId());
 }
- 
+
 SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
-  : element(s2), elements(s1->elements)
+  : node(s2), next(s1->next)
 {
-  s1->elements = this;
+  s1->next = this;
   setLoc(s1->firstLine(), s2->lastLine(), s1->sourceId());
 }
 
@@ -2323,13 +2325,13 @@ Completion SourceElementsNode::execute(ExecState *exec)
 {
   KJS_CHECKEXCEPTION
 
-  Completion c1 = element->execute(exec);
+  Completion c1 = node->execute(exec);
   KJS_CHECKEXCEPTION;
   if (c1.complType() != Normal)
     return c1;
   
-  for (SourceElementsNode *n = elements.get(); n; n = n->elements.get()) {
-    Completion c2 = n->element->execute(exec);
+  for (SourceElementsNode *n = next.get(); n; n = n->next.get()) {
+    Completion c2 = n->node->execute(exec);
     if (c2.complType() != Normal)
       return c2;
     // The spec says to return c2 here, but it seems that mozilla returns c1 if
@@ -2344,14 +2346,14 @@ Completion SourceElementsNode::execute(ExecState *exec)
 // ECMA 14
 void SourceElementsNode::processFuncDecl(ExecState *exec)
 {
-  for (SourceElementsNode *n = this; n; n = n->elements.get())
-    n->element->processFuncDecl(exec);
+  for (SourceElementsNode *n = this; n; n = n->next.get())
+    n->node->processFuncDecl(exec);
 }
 
 void SourceElementsNode::processVarDecls(ExecState *exec)
 {
-  for (SourceElementsNode *n = this; n; n = n->elements.get())
-    n->element->processVarDecls(exec);
+  for (SourceElementsNode *n = this; n; n = n->next.get())
+    n->node->processVarDecls(exec);
 }
 
 ProgramNode::ProgramNode(SourceElementsNode *s) : FunctionBodyNode(s)

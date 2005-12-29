@@ -1,3 +1,89 @@
+2005-12-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        - Fixed <rdar://problem/4364705> run-javascriptcore-tests crashes in 
+        KJS::BlockNode::deref 
+        AKA 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6233
+        Reproducible stack-overflow crash in ~RefPtr<T> due to RefPtr<T> use in 
+        linked lists
+
+        This patch does four things: 
+        (1) Standardizes all our linked list nodes to use "next" as their next 
+        pointers. 
+        (2) Creates the ListRefPtr<T> class, a subclass of RefPtr<T> specialized
+        to iteratively deref "next" pointers.
+        (3) Standardizes our linked list nodes to use ListRefPtr<T> and 
+        implement the releaseNext() function used by ~ListRefPtr<T>().
+        (4) Adds to RefPtr<T> the release() method used by releaseNext().
+
+        - Modified existing mozilla test to ensure it would make deployment 
+        builds crash as well.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/nodes.cpp:
+        (ElementNode::evaluate):
+        (PropertyListNode::evaluate):
+        (ArgumentListNode::evaluateList):
+        (StatListNode::StatListNode):
+        (StatListNode::execute):
+        (StatListNode::processVarDecls):
+        (VarDeclListNode::evaluate):
+        (VarDeclListNode::processVarDecls):
+        (VarStatementNode::execute):
+        (VarStatementNode::processVarDecls):
+        (BlockNode::BlockNode):
+        (CaseClauseNode::evalStatements):
+        (CaseClauseNode::processVarDecls):
+        (ClauseListNode::processVarDecls):
+        (CaseBlockNode::CaseBlockNode):
+        (CaseBlockNode::evalBlock):
+        (SourceElementsNode::SourceElementsNode):
+        (SourceElementsNode::execute):
+        (SourceElementsNode::processFuncDecl):
+        (SourceElementsNode::processVarDecls):
+        * kjs/nodes.h:
+        (KJS::ElementNode::ElementNode):
+        (KJS::ElementNode::releaseNext):
+        (KJS::ArrayNode::ArrayNode):
+        (KJS::PropertyListNode::PropertyListNode):
+        (KJS::PropertyListNode::releaseNext):
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        (KJS::ArgumentListNode::ArgumentListNode):
+        (KJS::ArgumentListNode::releaseNext):
+        (KJS::ArgumentsNode::ArgumentsNode):
+        (KJS::StatListNode::releaseNext):
+        (KJS::VarDeclListNode::VarDeclListNode):
+        (KJS::VarDeclListNode::releaseNext):
+        (KJS::VarStatementNode::VarStatementNode):
+        (KJS::ForNode::ForNode):
+        (KJS::CaseClauseNode::CaseClauseNode):
+        (KJS::ClauseListNode::ClauseListNode):
+        (KJS::ClauseListNode::getClause):
+        (KJS::ClauseListNode::getNext):
+        (KJS::ClauseListNode::releaseNext):
+        (KJS::ParameterNode::ParameterNode):
+        (KJS::ParameterNode::releaseNext):
+        (KJS::SourceElementsNode::releaseNext):
+        * kjs/nodes2string.cpp:
+        (ElementNode::streamTo):
+        (PropertyListNode::streamTo):
+        (ArgumentListNode::streamTo):
+        (StatListNode::streamTo):
+        (VarDeclListNode::streamTo):
+        (VarStatementNode::streamTo):
+        (CaseClauseNode::streamTo):
+        (ClauseListNode::streamTo):
+        (CaseBlockNode::streamTo):
+        (SourceElementsNode::streamTo):
+        * kxmlcore/ListRefPtr.h: Added.
+        (KXMLCore::ListRefPtr::ListRefPtr):
+        (KXMLCore::ListRefPtr::~ListRefPtr):
+        (KXMLCore::ListRefPtr::operator=):
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::RefPtr::release):
+
 2005-12-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

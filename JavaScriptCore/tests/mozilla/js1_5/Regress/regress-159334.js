@@ -38,7 +38,7 @@
 * SUMMARY: Testing script with at least 64K of different string literals
 * See http://bugzilla.mozilla.org/show_bug.cgi?id=159334
 *
-* Testing that script engine can handle scripts with at least 64K of different
+* Testing that script engine can handle scripts with at least 128K of different
 * string literals. The following will evaluate, via eval(), a script like this:
 *
 *     f('0')
@@ -46,13 +46,13 @@
 *     ...
 *     f('N - 1')
 *
-* where N is 0xFFFE
+* where N is 0x20000
 *
 */
 //-----------------------------------------------------------------------------
 var UBound = 0;
 var bug = 159334;
-var summary = 'Testing script with at least 64K of different string literals';
+var summary = 'Testing script with at least 128K of different string literals';
 var status = '';
 var statusitems = [];
 var actual = '';
@@ -61,7 +61,7 @@ var expect= '';
 var expectedvalues = [];
 
 
-var N = 0xFFFE;
+var N = 0x20000;
 
 // Create big string for eval recursively to avoid N*N behavior
 // on string concatenation
