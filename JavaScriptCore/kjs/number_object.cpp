@@ -355,7 +355,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 
 // ------------------------------ NumberObjectImp ------------------------------
 
-const ClassInfo NumberObjectImp::info = {"Number", &InternalFunctionImp::info, &numberTable, 0};
+const ClassInfo NumberObjectImp::info = {"Function", &InternalFunctionImp::info, &numberTable, 0};
 
 /* Source for number_object.lut.h
 @begin numberTable 5
