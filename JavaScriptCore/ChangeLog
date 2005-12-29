@@ -1,3 +1,16 @@
+2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6265
+        Name change regression: Java doesn't know what JavaJSObject is
+
+        Changed strings passed to Java back to original "JSObject".
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+
 2005-12-28  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

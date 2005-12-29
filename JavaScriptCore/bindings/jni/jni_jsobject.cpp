@@ -380,11 +380,11 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
         // location and in the original Java 1.4.2 location.
         jclass JSObjectClass;
         
-        JSObjectClass = env->FindClass ("sun/plugin/javascript/webkit/JavaJSObject");
+        JSObjectClass = env->FindClass ("sun/plugin/javascript/webkit/JSObject");
         if (!JSObjectClass) {
             env->ExceptionDescribe();
             env->ExceptionClear();
-            JSObjectClass = env->FindClass ("apple/applet/JavaJSObject");
+            JSObjectClass = env->FindClass ("apple/applet/JSObject");
         }
             
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(J)V");
@@ -398,7 +398,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
 
 JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
 {
-    // Instances of netscape.javascript.JavaJSObject get converted back to
+    // Instances of netscape.javascript.JSObject get converted back to
     // JavaScript objects.  All other objects are wrapped.  It's not
     // possible to pass primitive types from the Java to JavaScript.
     // See section 22.7 of 'JavaScript:  The Definitive Guide, 4th Edition',
@@ -406,7 +406,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
         
-    if (strcmp(Bindings::JavaString(className).UTF8String(), "netscape.javascript.JavaJSObject") == 0) {
+    if (strcmp(Bindings::JavaString(className).UTF8String(), "netscape.javascript.JSObject") == 0) {
         // Pull the nativeJSObject value from the Java instance.  This is a
         // pointer to the JSObject.
         JNIEnv *env = getJNIEnv();
