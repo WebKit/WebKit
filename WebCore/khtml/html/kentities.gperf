@@ -25,9 +25,9 @@
     "gperf -a -L "ANSI-C" -C -G -c -o -t -k '*' -NfindEntity -D -s 2 khtmlentities.gperf > entities.c"   
     from kentities.gperf 
 
-*/  
+*/
 %}
-struct entity {
+struct Entity {
     const char *name;
     int code;
 };

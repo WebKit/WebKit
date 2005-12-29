@@ -48,6 +48,9 @@
 
 #include <qptrstack.h>
 
+#include "khtml/html/kentities.h"  // for xhtml entity name lookup
+#include <kxmlcore/Assertions.h>
+
 using namespace DOM;
 using namespace HTMLNames;
 
@@ -82,6 +85,9 @@ public:
     virtual void setOnHold(bool onHold);
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
+
+    void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
+    bool isXHTMLDocument() const { return m_isXHTMLDocument; }
 
 #ifdef KHTML_XSLT
     void setTransformSource(DocumentImpl* doc);
@@ -125,6 +131,7 @@ private:
 
     bool m_sawError;
     bool m_sawXSLTransform;
+    bool m_isXHTMLDocument;
     
     int m_errorCount;
     int m_lastErrorLine;
@@ -607,18 +614,46 @@ static void normalErrorHandler(void *closure, const char *message, ...)
     va_end(args);
 }
 
+// Using a global variable entity and marking it XML_INTERNAL_PREDEFINED_ENTITY is
+// a hack to avoid malloc/free. Using a global variable like this could cause trouble
+// if libxml implementation details were to change
+static xmlChar sharedXHTMLEntityResult[5] = {0,0,0,0,0};
+static xmlEntity sharedXHTMLEntity = {
+    0, XML_ENTITY_DECL, 0, 0, 0, 0, 0, 0, 0, 
+    sharedXHTMLEntityResult, sharedXHTMLEntityResult, 0,
+    XML_INTERNAL_PREDEFINED_ENTITY, 0, 0, 0, 0, 0
+};
+
+static xmlEntityPtr getXHTMLEntity(const xmlChar *name)
+{
+    const char *namePosition = (const char *)name;
+    const Entity *e = findEntity(namePosition, strlen(namePosition));
+    if (!e)
+        return 0;
+
+    QCString value = QString(QChar(e->code)).utf8();
+    assert(value.length() < 5);
+    sharedXHTMLEntity.length = value.length();
+    sharedXHTMLEntity.name = name;
+    memcpy(sharedXHTMLEntityResult, value.data(), sharedXHTMLEntity.length);
+
+    return &sharedXHTMLEntity;
+}
+
 static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
 {
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
     xmlEntityPtr ent = xmlGetPredefinedEntity(name);
-    if(ent)
+    if (ent)
         return ent;
 
-    // Work around a libxml SAX2 bug that causes charactersHandler to be called twice.
-    bool inAttr = ctxt->instate == XML_PARSER_ATTRIBUTE_VALUE;
     ent = xmlGetDocEntity(ctxt->myDoc, name);
+    if (!ent && getTokenizer(closure)->isXHTMLDocument())
+        ent = getXHTMLEntity(name);
+
+    // Work around a libxml SAX2 bug that causes charactersHandler to be called twice.
     if (ent)
-        ctxt->replaceEntities = inAttr || (ent->etype != XML_INTERNAL_GENERAL_ENTITY);
+        ctxt->replaceEntities = (ctxt->instate == XML_PARSER_ATTRIBUTE_VALUE) || (ent->etype != XML_INTERNAL_GENERAL_ENTITY);
     
     return ent;
 }
@@ -627,6 +662,12 @@ static void internalSubsetHandler(void *closure, const xmlChar *name, const xmlC
 {
     getTokenizer(closure)->internalSubset(name, externalID, systemID);
     xmlSAX2InternalSubset(closure, name, externalID, systemID);
+}
+
+static void externalSubsetHandler(void *closure, const xmlChar *name, const xmlChar *externalId, const xmlChar *systemId)
+{
+    if (toQString(name).contains("html"))
+        getTokenizer(closure)->setIsXHTMLDocument(true);
 }
 
 void XMLTokenizer::finish()
@@ -648,6 +689,7 @@ void XMLTokenizer::finish()
     sax.getEntity = getEntityHandler;
     sax.startDocument = xmlSAX2StartDocument;
     sax.internalSubset = internalSubsetHandler;
+    sax.externalSubset = externalSubsetHandler;
     sax.entityDecl = xmlSAX2EntityDecl;
     sax.initialized = XML_SAX2_MAGIC;
     

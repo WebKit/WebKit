@@ -1,3 +1,23 @@
+2005-12-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel, ggaren, darin.
+        
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=4301
+        Support HTML entities on pages parsed as XHTML
+
+        Added layout tests:
+        * fast/parser/entities-in-xhtml.xhtml
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::setIsXHTMLDocument): Track whether the XML document is XHTML.
+        (khtml::XMLTokenizer::isXHTMLDocument): Ditto.
+        (khtml::externalSubsetHandler): Ditto.
+        (khtml::XMLTokenizer::finish): Ditto.
+        (khtml::getXHTMLEntity): Look up the HTML entity.
+        (khtml::getEntityHandler): Look up the HTML entity if this is an XHTML document.
+        * khtml/html/kentities.h: Added.
+        * khtml/html/kentities.gperf: changed entity to Entity
+
 2005-12-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin
@@ -72,7 +92,7 @@
         
         (KJS::HTMLAllCollection::toBoolean):
         Return false.
-        
+
 2005-12-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Eric, landed by ap.
