@@ -1381,7 +1381,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
             if (isSpace(run->characters[k]))
                 numSpaces++;
 
-        params->padPerSpace = ceilf((float)style->padding / numSpaces);
+        params->padPerSpace = ceilf(style->padding / numSpaces);
     } else
         params->padPerSpace = 0;
 }
