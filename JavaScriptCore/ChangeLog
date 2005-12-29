@@ -1,3 +1,15 @@
+2005-12-28  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - The JSC part of http://bugzilla.opendarwin.org/show_bug.cgi?id=6268
+        Add undetectable document.all
+        
+        * kjs/operations.cpp:
+        (KJS::equal):
+        When comparing an object with null or undefined, call toPrimitive with 
+        NullType as the preferred type.
+
 2005-12-27  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
