@@ -1,0 +1,17 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x584
+      RenderBlock {P} at (0,0) size 70x50 [bgcolor=#008000]
+        RenderText {TEXT} at (0,0) size 70x36
+          text run at (0,0) width 70: "a         a"
+          text run at (0,18) width 39: "        a"
+      RenderBlock (anonymous) at (0,66) size 800x18
+        RenderText {TEXT} at (0,0) size 76x18
+          text run at (0,0) width 76: "63,582,6,18"
+      RenderBlock {P} at (0,100) size 800x18
+        RenderText {TEXT} at (0,0) size 54x18
+          text run at (0,0) width 54: "Success."
+caret: position 0 of child 0 {TEXT} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document

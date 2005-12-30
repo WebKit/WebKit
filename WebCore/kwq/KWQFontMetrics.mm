@@ -224,6 +224,39 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
     return [data->getRenderer() floatWidthForRun:&run style:&style];
 }
 
+QRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
+    const QChar *str, int len, int from, int to, int toAdd,
+    bool rtl, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps) const
+{
+    CREATE_FAMILY_ARRAY(data->font(), families);
+
+    if (from < 0)
+        from = 0;
+    if (to < 0)
+        to = len;
+        
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
+    style.rtl = rtl;
+    style.directionalOverride = visuallyOrdered;
+    style.letterSpacing = letterSpacing;
+    style.wordSpacing = wordSpacing;
+    style.smallCaps = smallCaps;
+    style.families = families;    
+    style.padding = toAdd;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
+    geometry.selectionY = y;
+    geometry.selectionHeight = h;
+    geometry.useFontMetricsForSelectionYAndHeight = false;
+    return QRect([data->getRenderer() selectionRectForRun:&run style:&style geometry:&geometry]);
+}
+
 int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
 {
     if (!data) {

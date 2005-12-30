@@ -1,3 +1,27 @@
+2005-12-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+        
+        Test: fast/text/justified-text-rect.html
+        
+        - WebCore part of fix for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=5461
+          Text width measured incorrectly when text-align: justify
+
+        * khtml/rendering/font.h:
+        * khtml/rendering/font.cpp:
+        (khtml::Font::selectionRectForText): Added.
+        * khtml/rendering/render_text.cpp:
+        (kthml::InlineTextBox::selectionRect): Use selectionRectForText. This
+        works for justified text as well, and avoids intermediate rounding which
+        resulted in selection rects narrower than AppKit's.
+        (khtml::InlineTextBox::positionForOffset): Use selectionRectForText,
+        which works for justified text as well.
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::selectionRectForText): Added.
+        * kwq/WebCoreTextRenderer.h:
+
 2005-12-30  Alexey Proskuryakov  <ap@nypop.com>
 
         - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6289

@@ -123,44 +123,11 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
 
     RootInlineBox* rootBox = root();
     RenderText* textObj = textObject();
-    int selStart = m_reversed ? m_x + m_width : m_x;
-    int selEnd = selStart;
     int selTop = rootBox->selectionTop();
     int selHeight = rootBox->selectionHeight();
-    int leadWidth = 0;
+    const Font *f = textObj->htmlFont(m_firstLine);
 
-    // FIXME: For justified text, just return the entire text box's rect.  At the moment there's still no easy
-    // way to get the width of a run including the justification padding.
-    if (sPos > 0 && !m_toAdd) {
-        // The selection begins in the middle of our run.
-        leadWidth = textObj->width(m_start, sPos, textPos(), m_firstLine);
-        if (m_reversed)
-            selStart -= leadWidth;
-        else
-            selStart += leadWidth;
-    }
-
-    if (m_toAdd || (sPos == 0 && ePos == m_len)) {
-        if (m_reversed)
-            selEnd = m_x;
-        else
-            selEnd = m_x + m_width;
-    }
-    else {
-        // Our run is partially selected, and so we need to measure.
-        int w = textObj->width(sPos + m_start, ePos - sPos, textPos() + leadWidth, m_firstLine);
-        if (sPos + m_start > 0 && textObj->str->s[sPos + m_start].isSpace() && !textObj->str->s[sPos + m_start - 1].isSpace())
-            w += textObj->style(m_firstLine)->wordSpacing();
-        if (m_reversed)
-            selEnd = selStart - w;
-        else
-            selEnd = selStart + w;
-    }
-    
-    int selLeft = m_reversed ? selEnd : selStart;
-    int selRight = m_reversed ? selStart : selEnd;
-
-    return QRect(selLeft + tx, selTop + ty, selRight - selLeft, selHeight);
+    return f->selectionRectForText(tx + m_x, ty + selTop, selHeight, textObj->tabWidth(), textPos(), textObj->str->s, textObj->str->l, m_start, m_len, m_toAdd, m_reversed, m_dirOverride, sPos, ePos);
 }
 
 void InlineTextBox::deleteLine(RenderArena* arena)
@@ -741,20 +708,11 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 int InlineTextBox::positionForOffset(int offset) const
 {
     RenderText *text = static_cast<RenderText *>(m_object);
-    const QFontMetrics &fm = text->metrics(m_firstLine);
-
-    int left;
-    if (m_reversed) {
-	int len = m_start + m_len - offset;
-	QString string(text->str->s + offset, len);
-	left = m_x + fm.boundingRect(string, text->tabWidth(), textPos(), len).right();
-    } else {
-	int len = offset - m_start;
-	QString string(text->str->s + m_start, len);
-	left = m_x + fm.boundingRect(string, text->tabWidth(), textPos(), len).right();
-    }
+    const Font *f = text->htmlFont(m_firstLine);
+    int from = m_reversed ? offset - m_start : 0;
+    int to = m_reversed ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return left;
+    return f->selectionRectForText(m_x, 0, 0, text->tabWidth(), textPos(), text->str->s, text->str->l, m_start, m_len, m_toAdd, m_reversed, m_dirOverride, from, to).right();
 }
 
 // -------------------------------------------------------------------------------------

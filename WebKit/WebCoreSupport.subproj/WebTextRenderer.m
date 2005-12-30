@@ -144,6 +144,10 @@ static int CG_pointToOffset(WebTextRenderer *, const WebCoreTextRun *, const Web
 static int ATSU_pointToOffset(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *,
     int x, bool includePartialGlyphs);
 
+// Selection rect.
+static NSRect CG_selectionRect(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
+static NSRect ATSU_selectionRect(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
+
 // Drawing highlight.
 static void CG_drawHighlight(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
 static void ATSU_drawHighlight(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
@@ -556,6 +560,14 @@ static void destroy(WebTextRenderer *renderer)
     [graphicsContext setShouldAntialias: flag];
 }
 
+- (NSRect)selectionRectForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
+{
+    if (shouldUseATSU(run))
+        return ATSU_selectionRect(self, run, style, geometry);
+    else
+        return CG_selectionRect(self, run, style, geometry);
+}
+
 - (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (shouldUseATSU(run))
@@ -871,7 +883,11 @@ static void CG_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun * r
         return;
 
     [style->backgroundColor set];
+    [NSBezierPath fillRect:CG_selectionRect(renderer, run, style, geometry)];
+}
 
+static NSRect CG_selectionRect(WebTextRenderer *renderer, const WebCoreTextRun * run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
+{
     float yPos = geometry->useFontMetricsForSelectionYAndHeight
         ? geometry->point.y - renderer->ascent - (renderer->lineGap / 2) : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight
@@ -886,20 +902,15 @@ static void CG_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun * r
     
     advanceWidthIterator(&it, run->from, 0, 0, 0);
     float beforeWidth = it.runWidthSoFar;
-    // apply rounding as if this is the end of the run, since that's how RenderText::selectionRect() works
-    if ((style->applyWordRounding && isRoundingHackCharacter(run->characters[run->from]))
-            || style->applyRunRounding)
-        beforeWidth = ceilf(beforeWidth);
     advanceWidthIterator(&it, run->to, 0, 0, 0);
-    float backgroundWidth = it.runWidthSoFar - beforeWidth;
+    float afterWidth = it.runWidthSoFar;
+    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
     if (style->rtl) {
         advanceWidthIterator(&it, run->length, 0, 0, 0);
         float totalWidth = it.runWidthSoFar;
-        if (style->applyRunRounding)
-            totalWidth = ceilf(totalWidth);
-        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + roundf(totalWidth - backgroundWidth - beforeWidth), yPos, roundf(backgroundWidth), height)];
+        return NSMakeRect(geometry->point.x + floorf(totalWidth - afterWidth), yPos, roundf(totalWidth - beforeWidth) - floorf(totalWidth - afterWidth), height);
     } else {
-        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + roundf(beforeWidth), yPos, roundf(backgroundWidth), height)];
+        return NSMakeRect(geometry->point.x + floorf(beforeWidth), yPos, roundf(afterWidth) - floorf(beforeWidth), height);
     }
 }
 
@@ -1457,53 +1468,62 @@ static void ATSU_drawHighlight(WebTextRenderer *renderer, const WebCoreTextRun *
 
     if (style->backgroundColor == nil)
         return;
+    if (run->to <= run->from)
+        return;
     
+    [style->backgroundColor set];
+    [NSBezierPath fillRect:ATSU_selectionRect(renderer, run, style, geometry)];
+}
+
+static NSRect ATSU_selectionRect(WebTextRenderer *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
+{
     int from = run->from;
     int to = run->to;
     if (from == -1)
         from = 0;
     if (to == -1)
         to = run->length;
-    int runLength = to - from;
-    if (runLength <= 0)
-        return;
-
-    WebCoreTextRun runWithLead = *run;
-    runWithLead.from = 0;
-    WebCoreTextRun *aRun = &runWithLead;
+        
+    WebCoreTextRun completeRun = *run;
+    completeRun.from = 0;
+    completeRun.to = run->length;
+    
+    WebCoreTextRun *aRun = &completeRun;
     WebCoreTextRun swappedRun;
-
+    
     if (style->directionalOverride) {
         swappedRun = addDirectionalOverride(aRun, style->rtl);
         aRun = &swappedRun;
+        from++;
+        to++;
     }
    
-    float selectedLeftX;
-    float widthWithLead = ATSU_floatWidthForRun(renderer, aRun, style);
+    ATSULayoutParameters params;
+    createATSULayoutParameters(&params, renderer, aRun, style);
     
-    aRun->to -= runLength;
-    float leadWidth = ATSU_floatWidthForRun(renderer, aRun, style);
+    ATSTrapezoid firstGlyphBounds;
+    ItemCount actualNumBounds;
     
-    float backgroundWidth = roundf(widthWithLead - leadWidth);
-
-    if (!style->rtl)
-        selectedLeftX = roundf(geometry->point.x + leadWidth);
-    else {
-        aRun->to += run->length - run->from;
-        float totalWidth = ATSU_floatWidthForRun(renderer, aRun, style);
-        selectedLeftX = roundf(geometry->point.x + totalWidth - widthWithLead);
+    OSStatus status = ATSUGetGlyphBounds(params.layout, 0, 0, from, to - from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);
+    if (status != noErr || actualNumBounds != 1) {
+        static ATSTrapezoid zeroTrapezoid = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
+        firstGlyphBounds = zeroTrapezoid;
     }
+    disposeATSULayoutParameters(&params);    
     
-    [style->backgroundColor set];
-
+    float beforeWidth = MIN(FixedToFloat(firstGlyphBounds.lowerLeft.x), FixedToFloat(firstGlyphBounds.upperLeft.x));
+    float afterWidth = MAX(FixedToFloat(firstGlyphBounds.lowerRight.x), FixedToFloat(firstGlyphBounds.upperRight.x));
     float yPos = geometry->useFontMetricsForSelectionYAndHeight
         ? geometry->point.y - renderer->ascent : geometry->selectionY;
     float height = geometry->useFontMetricsForSelectionYAndHeight
         ? renderer->lineSpacing : geometry->selectionHeight;
-    [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
+
+    NSRect rect = NSMakeRect(geometry->point.x + floorf(beforeWidth), yPos, roundf(afterWidth) - floorf(beforeWidth), height);
 
     if (style->directionalOverride)
         free((void *)swappedRun.characters);
+
+    return rect;
 }
 
 

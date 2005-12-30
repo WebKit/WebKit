@@ -1,3 +1,15 @@
+2005-12-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5461
+          Text width measured incorrectly when text-align: justify
+        
+        * fast/text/justified-text-rect-expected.checksum: Added.
+        * fast/text/justified-text-rect-expected.png: Added.
+        * fast/text/justified-text-rect-expected.txt: Added.
+        * fast/text/justified-text-rect.html: Added.
+
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

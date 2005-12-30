@@ -33,6 +33,14 @@
 
 namespace khtml {
 
+QRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
+                      QChar *str, int slen, int pos, int len, int toAdd,
+                      bool rtl, bool visuallyOrdered, int from, int to) const
+{
+    return fm.selectionRectForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, rtl, visuallyOrdered, letterSpacing, wordSpacing, fontDef.smallCaps);
+
+}
+
 void Font::drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
                      QChar *str, int slen, int pos, int len,
                      int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, QColor bg) const

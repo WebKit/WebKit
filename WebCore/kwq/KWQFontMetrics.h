@@ -54,6 +54,10 @@ public:
     int width(const QString &, int tabWidth, int xpos, int len=-1) const;
     int width(const QChar *, int len, int tabWidth, int xpos) const;
     float floatWidth(const QChar *, int slen, int pos, int len, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const;
+    QRect selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
+                            const QChar *str, int len, int from, int to, int toAdd,
+                            bool rtl, bool visuallyOrdered, int letterSpacing,
+                            int wordSpacing, bool smallCaps) const;
     int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const;
 
     QRect boundingRect(QChar) const;

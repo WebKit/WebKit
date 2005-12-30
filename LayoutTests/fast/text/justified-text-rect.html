@@ -1,0 +1,34 @@
+﻿<html>
+<head>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<p contenteditable id='test' STYLE="width: 70px; height: 50px; background-color: green; text-align: justify;">a         a         a</p>
+<script type="text/javascript">
+
+    if (window.layoutTestController) {
+        
+        try {
+        
+            window.getSelection().setPosition(document.getElementById("test"), 0);
+			
+			rect = textInputController.firstRectForCharacterRange(10, 1);
+            document.write(rect);
+        
+            // the second character 'a' should be at the right border of the box
+            if (rect[0] > 60)
+            	document.write("<p>Success.</p>");
+            else
+            	document.write("<p>Failure (rect: " + rect + ")</p>");
+
+		} catch (ex) {
+			document.write("Exception: " + ex.description);
+		}
+	} else {
+		document.write("(cannot run interactively)");
+	}
+</script>
+</body>
+</html>
