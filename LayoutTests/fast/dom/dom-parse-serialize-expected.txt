@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 83: "text to parse"
           RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {PRE} at (27,32) size 756x120
-          RenderText {TEXT} at (0,0) size 536x120
+          RenderText {TEXT} at (0,0) size 576x120
             text run at (0,0) width 168: "<?xml version=\"1.0\"?>"
             text run at (0,15) width 120: "<!DOCTYPE doc ["
             text run at (0,30) width 216: "<!ATTLIST d id ID #IMPLIED>"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
             text run at (0,60) width 40: "<doc>"
             text run at (0,75) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
             text run at (0,90) width 184: "  <d id=\"id3\">Three</d>"
-            text run at (0,105) width 392: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f></doc>"
+            text run at (0,105) width 576: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty></empty></doc>"
       RenderBlock {DIV} at (0,268) size 784x61 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x18
           RenderInline {SPAN} at (0,0) size 112x18 [color=#800000]
@@ -46,4 +46,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 40: "<doc>"
             text run at (0,15) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
             text run at (0,30) width 184: "  <d id=\"id3\">Three</d>"
-            text run at (0,45) width 392: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f></doc>"
+            text run at (0,45) width 520: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty/></doc>"
