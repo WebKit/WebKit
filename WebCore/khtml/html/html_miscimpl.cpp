@@ -98,6 +98,12 @@ HTMLCollectionImpl::CollectionInfo::CollectionInfo() :
     reset();
 }
 
+HTMLCollectionImpl::CollectionInfo::~CollectionInfo()
+{
+    deleteAllValues(idCache);
+    deleteAllValues(nameCache);
+}
+
 void HTMLCollectionImpl::CollectionInfo::reset()
 {
     current = 0;

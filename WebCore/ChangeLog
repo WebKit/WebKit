@@ -1,3 +1,14 @@
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Close leak in CollectionInfo due to HashMap migration
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6295
+
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::CollectionInfo::~CollectionInfo):
+        * khtml/html/html_miscimpl.h:
+
 2005-12-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

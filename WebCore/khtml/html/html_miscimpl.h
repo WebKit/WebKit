@@ -105,6 +105,7 @@ public:
 
     struct CollectionInfo {
         CollectionInfo();
+        ~CollectionInfo();
         void reset();
         unsigned int version;
         NodeImpl *current;
