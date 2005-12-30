@@ -134,13 +134,8 @@ int main(int argc, const char *argv[])
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
-
-    int width = 800;
-    int height = 600;
     
     struct option options[] = {
-        {"width", required_argument, NULL, 'w'},
-        {"height", required_argument, NULL, 'h'},
         {"pixel-tests", no_argument, &dumpPixels, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"notree", no_argument, &dumpTree, NO},
@@ -173,20 +168,6 @@ int main(int argc, const char *argv[])
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
         switch (option) {
-            case 'w':
-                width = strtol(optarg, NULL, 0);
-                if (width <= 0) {
-                    fprintf(stderr, "%s: invalid width\n", argv[0]);
-                    exit(1);
-                }
-                break;
-            case 'h':
-                height = strtol(optarg, NULL, 0);
-                if (height <= 0) {
-                    fprintf(stderr, "%s: invalid height\n", argv[0]);
-                    exit(1);
-                }
-                break;
             case '?':   // unknown or ambiguous option
             case ':':   // missing argument
                 exit(1);
@@ -203,7 +184,7 @@ int main(int argc, const char *argv[])
     
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
 
-    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
+    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setFrameLoadDelegate:delegate];
@@ -264,8 +245,14 @@ static void dump(void)
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             if ([documentElement isKindOfClass:[DOMHTMLElement class]])
                 result = [[(DOMHTMLElement *)documentElement innerText] stringByAppendingString:@"\n"];
-        } else
+        } else {
+            bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
+            if (isSVGW3CTest)
+                [[frame webView] setFrameSize:NSMakeSize(480, 360)];
+            else 
+                [[frame webView] setFrameSize:NSMakeSize(800, 600)];
             result = [frame renderTreeAsExternalRepresentation];
+        }
         
         if (!result)
             printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");

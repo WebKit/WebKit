@@ -1,5 +1,18 @@
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Move WebView width/height logic into DumpRenderTree to support
+        running the W3C SVG 1.1 tests along side other tests.  The W3C
+        SVG 1.1 tests require a 480x360 view.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): don't accept width/height
+        (dump): override width/height for SVG/W3C
+        * Scripts/run-webkit-tests: don't pass width/height
+
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
         No review, only removing dead code.
 
         * DumpKCanvasTree/DumpKCanvasTree.m: Removed.

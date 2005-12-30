@@ -61,8 +61,6 @@ my $testSVGs = '';
 my $pixelTests = '';
 my $checkLeaks = '';
 my $guardMalloc = '';
-my $maxWidth = '';
-my $maxHeight = '';
 my $verbose = 0;
 my $quiet = '';
 my $singly = 0;
@@ -72,8 +70,6 @@ GetOptions('svg' => \$testSVGs,
     'pixel-tests|p' => \$pixelTests,
     'leaks|l' => \$checkLeaks,
     'guard-malloc|g' => \$guardMalloc,
-    'max-width|w=s' => \$maxWidth,
-    'max-height|h=s' => \$maxHeight, 
     'verbose|v' => \$verbose,
     'quiet|q' => \$quiet,
     'singly|1' => \$singly,
@@ -84,9 +80,6 @@ my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
 if ($testSVGs) {
     $pixelTests = 1; # Pixel tests are always on for SVG.
-    # Temporary Hack: to pass w3c SVG layout tests which assume a smaller window size.
-    $maxWidth = 480 if (!$maxWidth);
-    $maxHeight = 360 if (!$maxHeight);
 }
 
 my $tool = "$productDir/$dumpToolName";
@@ -113,6 +106,8 @@ my $prunePart = "\\( -name resources \\! -prune \\)";
 my $extensionPart = "-name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
     $extensionPart = "-name '*.svg' -or -name '*.xml'";
+} elsif ($haveSVGSupport) { 
+	$extensionPart .= " -or -name '*.svg'";
 } else {
     $prunePart .= " -or \\( -name svg \\! -prune \\)";
 }
@@ -153,8 +148,6 @@ my @toolArgs = ();
 
 if ($pixelTests) {
     push @toolArgs, "--pixel-tests";
-    push @toolArgs, ("--width", $maxWidth) if $maxWidth;
-    push @toolArgs, ("--height", $maxHeight) if $maxHeight;
 }
 
 push @toolArgs, "-";
