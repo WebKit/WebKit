@@ -1,3 +1,15 @@
+2005-12-30  Joost de Valk  <webkit@joostdevalk.nl>
+
+        Reviewed by Darin, landed by Maciej.
+
+	- land test case documenting wontfix status for certain overflow/table behavior
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3505
+
+        * fast/overflow/overflow-auto-table-expected.checksum: Added.
+        * fast/overflow/overflow-auto-table-expected.png: Added.
+        * fast/overflow/overflow-auto-table-expected.txt: Added.
+        * fast/overflow/overflow-auto-table.html: Added.
+
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
         No review, updating stale results.
