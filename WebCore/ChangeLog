@@ -10,6 +10,17 @@
 
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Leaks in XSLTProcessorImpl due to early exit in failure case
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6101
+
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::xmlDocPtrFromNode): add "shouldDelete" argument
+        (DOM::XSLTProcessorImpl::transformToString): delete new'd xmlDoc
+
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
         File accidentally omitted from previous commit.
 
         Remove QDict from khtml/html
