@@ -66,7 +66,7 @@ PASS 'AbC2'.toLowerCase() is 'abc2'
 PASS 'abc'[0] is 'a'
 PASS 'abc'[-1] is undefined.
 PASS 'abc'[10] is undefined.
-FAIL 'abc'[10] should be x. Was undefined
+PASS 'abc'[10] is 'x'
 PASS bar is html
 PASS successfullyParsed is true
 

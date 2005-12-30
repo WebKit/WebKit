@@ -1,3 +1,27 @@
+2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+        
+        Updated test results for the last few JavaScriptCore patches
+        I checked in.
+
+        * ChangeLog:
+        * fast/js/array-float-delete-expected.txt: Added.
+        * fast/js/kde/Date-expected.txt:
+        * fast/js/kde/Number-expected.txt:
+        * fast/js/kde/StringObject-expected.txt:
+
+2005-12-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin, landed by Geoff
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3922
+          Variable word/letter spacing and full justification not supported for
+          ATSUI-rendered text
+
+        * fast/text/atsui-spacing-features-expected.checksum: Added.
+        * fast/text/atsui-spacing-features-expected.png: Added.
+        * fast/text/atsui-spacing-features-expected.txt: Added.
+        * fast/text/atsui-spacing-features.html: Added.
+
 2005-12-28  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

@@ -22,7 +22,7 @@ FAIL Number.MAX_VALUE.toString(2).length should be 1024. Was 1
 PASS (1).valueOf() is 1
 PASS typeof (1).valueOf() is 'number'
 PASS Number(1234.567).toFixed(0) is "1235"
-FAIL Number(1234.567).toFixed(undefined) should be 1235. Threw exception RangeError: toFixed() digits argument must be between 0 and 20
+PASS Number(1234.567).toFixed(undefined) is "1235"
 PASS Number(0).toFixed(7) is "0.0000000"
 PASS Number(0.003).toFixed(0) is "0"
 PASS Number(40.1234567890123).toFixed(7) is "40.1234568"
@@ -51,7 +51,7 @@ PASS Number(-Infinity).toExponential() is "-Infinity"
 PASS Number(NaN).toExponential(4) is "NaN"
 PASS Number(Infinity).toExponential(4) is "Infinity"
 PASS Number(-Infinity).toExponential(4) is "-Infinity"
-FAIL Number(123.456).toExponential() should be 1.23456e+2. Threw exception RangeError: toExponential() argument must between 0 and 20
+PASS Number(123.456).toExponential() is "1.23456e+2"
 PASS try { Number(123.456).toExponential(-1) } catch (e) { String(e).indexOf('Range') >= 0; } is true
 PASS Number(123.456).toExponential(0) is "1e+2"
 PASS Number(123.456).toExponential(1) is "1.2e+2"
@@ -75,7 +75,7 @@ PASS Number(123.456).toExponential(18) is "1.234560000000000000e+2"
 PASS Number(123.456).toExponential(19) is "1.2345600000000000000e+2"
 PASS Number(123.456).toExponential(20) is "1.23456000000000000000e+2"
 PASS try { Number(123.456).toExponential(21) } catch (e) { String(e).indexOf('Range') >= 0; } is true
-FAIL Number(.000123456).toExponential() should be 1.23456e-4. Threw exception RangeError: toExponential() argument must between 0 and 20
+PASS Number(.000123456).toExponential() is "1.23456e-4"
 PASS try { Number(.000123456).toExponential(-1) } catch (e) { String(e).indexOf('Range') >= 0; } is true
 PASS Number(.000123456).toExponential(0) is "1e-4"
 PASS Number(.000123456).toExponential(1) is "1.2e-4"
@@ -99,7 +99,7 @@ PASS Number(.000123456).toExponential(18) is "1.234560000000000000e-4"
 PASS Number(.000123456).toExponential(19) is "1.2345600000000000000e-4"
 PASS Number(.000123456).toExponential(20) is "1.23456000000000000000e-4"
 PASS try { Number(.000123456).toExponential(21) } catch (e) { String(e).indexOf('Range') >= 0; } is true
-FAIL Number(123.4567890123456789012).toExponential() should be 1.2345678901234568e+2. Threw exception RangeError: toExponential() argument must between 0 and 20
+PASS Number(123.4567890123456789012).toExponential() is "1.2345678901234568e+2"
 PASS try { Number(123.4567890123456789012).toExponential(-1) } catch (e) { String(e).indexOf('Range') >= 0; } is true
 PASS Number(123.4567890123456789012).toExponential(0) is "1e+2"
 PASS Number(123.4567890123456789012).toExponential(1) is "1.2e+2"
@@ -123,49 +123,49 @@ PASS Number(123.4567890123456789012).toExponential(18) is "1.234567890123457100e
 PASS Number(123.4567890123456789012).toExponential(19) is "1.2345678901234570000e+2"
 PASS Number(123.4567890123456789012).toExponential(20) is "1.23456789012345700000e+2"
 PASS try { Number(123.4567890123456789012).toExponential(21) } catch (e) { String(e).indexOf('Range') >= 0; } is true
-FAIL Number(.0000000000000000000001).toExponential() should be 1e-22. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000000012).toExponential() should be 1.2e-21. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000000123).toExponential() should be 1.23e-20. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000000123).toExponential() should be 1.23e-20. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000001234).toExponential() should be 1.234e-19. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000012345).toExponential() should be 1.2345e-18. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000000123456).toExponential() should be 1.23456e-17. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000001234567).toExponential() should be 1.234567e-16. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000012345678).toExponential() should be 1.2345678e-15. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000000123456789).toExponential() should be 1.23456789e-14. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000001234567890).toExponential() should be 1.23456789e-13. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000012345678901).toExponential() should be 1.2345678901e-12. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000000123456789012).toExponential() should be 1.23456789012e-11. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000001234567890123).toExponential() should be 1.234567890123e-10. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000012345678901234).toExponential() should be 1.2345678901234e-9. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000000123456789012345).toExponential() should be 1.23456789012345e-8. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000001234567890123456).toExponential() should be 1.234567890123456e-7. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000012345678901234567).toExponential() should be 1.2345678901234567e-6. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0000123456789012345678).toExponential() should be 1.2345678901234568e-5. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0001234567890123456789).toExponential() should be 1.2345678901234567e-4. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0012345678901234567890).toExponential() should be 1.2345678901234567e-3. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(.0123456789012345678901).toExponential() should be 1.2345678901234568e-2. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1.234567890123456789012).toExponential() should be 1.2345678901234567e+0. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12.34567890123456789012).toExponential() should be 1.2345678901234567e+1. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123.4567890123456789012).toExponential() should be 1.2345678901234568e+2. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234.567890123456789012).toExponential() should be 1.234567890123457e+3. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345.67890123456789012).toExponential() should be 1.2345678901234567e+4. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456.7890123456789012).toExponential() should be 1.2345678901234567e+5. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234567.890123456789012).toExponential() should be 1.2345678901234567e+6. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345678.90123456789012).toExponential() should be 1.2345678901234567e+7. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456789.0123456789012).toExponential() should be 1.2345678901234567e+8. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234567890.123456789012).toExponential() should be 1.2345678901234567e+9. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345678901.23456789012).toExponential() should be 1.2345678901234568e+10. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456789012.3456789012).toExponential() should be 1.2345678901234567e+11. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234567890123.456789012).toExponential() should be 1.2345678901234568e+12. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345678901234.56789012).toExponential() should be 1.2345678901234568e+13. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456789012345.6789012).toExponential() should be 1.2345678901234567e+14. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234567890123456.789012).toExponential() should be 1.2345678901234568e+15. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345678901234567.89012).toExponential() should be 1.2345678901234568e+16. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456789012345678.9012).toExponential() should be 1.2345678901234568e+17. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(1234567890123456789.012).toExponential() should be 1.2345678901234568e+18. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(12345678901234567890.12).toExponential() should be 1.2345678901234567e+19. Threw exception RangeError: toExponential() argument must between 0 and 20
-FAIL Number(123456789012345678901.2).toExponential() should be 1.2345678901234568e+20. Threw exception RangeError: toExponential() argument must between 0 and 20
+PASS Number(.0000000000000000000001).toExponential() is "1e-22"
+PASS Number(.0000000000000000000012).toExponential() is "1.2e-21"
+PASS Number(.0000000000000000000123).toExponential() is "1.23e-20"
+PASS Number(.0000000000000000000123).toExponential() is "1.23e-20"
+PASS Number(.0000000000000000001234).toExponential() is "1.234e-19"
+PASS Number(.0000000000000000012345).toExponential() is "1.2345e-18"
+PASS Number(.0000000000000000123456).toExponential() is "1.23456e-17"
+PASS Number(.0000000000000001234567).toExponential() is "1.234567e-16"
+PASS Number(.0000000000000012345678).toExponential() is "1.2345678e-15"
+PASS Number(.0000000000000123456789).toExponential() is "1.23456789e-14"
+PASS Number(.0000000000001234567890).toExponential() is "1.23456789e-13"
+PASS Number(.0000000000012345678901).toExponential() is "1.2345678901e-12"
+PASS Number(.0000000000123456789012).toExponential() is "1.23456789012e-11"
+PASS Number(.0000000001234567890123).toExponential() is "1.234567890123e-10"
+PASS Number(.0000000012345678901234).toExponential() is "1.2345678901234e-9"
+PASS Number(.0000000123456789012345).toExponential() is "1.23456789012345e-8"
+PASS Number(.0000001234567890123456).toExponential() is "1.234567890123456e-7"
+PASS Number(.0000012345678901234567).toExponential() is "1.2345678901234567e-6"
+PASS Number(.0000123456789012345678).toExponential() is "1.2345678901234568e-5"
+PASS Number(.0001234567890123456789).toExponential() is "1.2345678901234567e-4"
+PASS Number(.0012345678901234567890).toExponential() is "1.2345678901234567e-3"
+PASS Number(.0123456789012345678901).toExponential() is "1.2345678901234568e-2"
+PASS Number(1.234567890123456789012).toExponential() is "1.2345678901234567e+0"
+PASS Number(12.34567890123456789012).toExponential() is "1.2345678901234567e+1"
+PASS Number(123.4567890123456789012).toExponential() is "1.2345678901234568e+2"
+PASS Number(1234.567890123456789012).toExponential() is "1.234567890123457e+3"
+PASS Number(12345.67890123456789012).toExponential() is "1.2345678901234567e+4"
+PASS Number(123456.7890123456789012).toExponential() is "1.2345678901234567e+5"
+PASS Number(1234567.890123456789012).toExponential() is "1.2345678901234567e+6"
+PASS Number(12345678.90123456789012).toExponential() is "1.2345678901234567e+7"
+PASS Number(123456789.0123456789012).toExponential() is "1.2345678901234567e+8"
+PASS Number(1234567890.123456789012).toExponential() is "1.2345678901234567e+9"
+PASS Number(12345678901.23456789012).toExponential() is "1.2345678901234568e+10"
+PASS Number(123456789012.3456789012).toExponential() is "1.2345678901234567e+11"
+PASS Number(1234567890123.456789012).toExponential() is "1.2345678901234568e+12"
+PASS Number(12345678901234.56789012).toExponential() is "1.2345678901234568e+13"
+PASS Number(123456789012345.6789012).toExponential() is "1.2345678901234567e+14"
+PASS Number(1234567890123456.789012).toExponential() is "1.2345678901234568e+15"
+PASS Number(12345678901234567.89012).toExponential() is "1.2345678901234568e+16"
+PASS Number(123456789012345678.9012).toExponential() is "1.2345678901234568e+17"
+PASS Number(1234567890123456789.012).toExponential() is "1.2345678901234568e+18"
+PASS Number(12345678901234567890.12).toExponential() is "1.2345678901234567e+19"
+PASS Number(123456789012345678901.2).toExponential() is "1.2345678901234568e+20"
 PASS try { Number(1).toPrecision(-1); } catch (e) { String(e).indexOf('Range') >= 0; } is true
 PASS try { Number(1).toPrecision(0); } catch (e) { String(e).indexOf('Range') >= 0; } is true
 PASS try { Number(1).toPrecision(1); } catch (e) { String(e); } is "1"

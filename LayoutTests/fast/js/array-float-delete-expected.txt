@@ -1,0 +1,7 @@
+This test checks for regression against 6234: Can delete array index property incorrectly.
+
+On success, you will see a series of "PASS" messages.
+
+PASS a[1] is "before"
+
+
