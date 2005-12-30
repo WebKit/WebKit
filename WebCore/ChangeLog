@@ -1,3 +1,10 @@
+2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Added test case for <rdar://problem/4268278> Submitting a form in onUnload event
+        handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]
+
+        * manual-tests/onunload-form-submit-crash.html: Added.
+
 2005-12-30  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
@@ -195,6 +202,7 @@
         * ksvg2/svg/SVGRectElementImpl.cpp:
         (SVGRectElementImpl::toPathData): fixed round rect calculations
 
+>>>>>>> 1.66
 2005-12-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by eseidel, ggaren, darin.

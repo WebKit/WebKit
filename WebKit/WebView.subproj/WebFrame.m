@@ -691,11 +691,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     WebBridge *bridge = _private->bridge;
 
-    [self stopLoading];
-    [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
-
     [bridge closeURL];
+    [self stopLoading];
 
+    [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
     [self _detachChildren];
 
     [_private setWebView:nil];
@@ -850,8 +849,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 [_private setCurrentItem:[_private provisionalItem]];
                 [_private setProvisionalItem:nil];
             }
-
-            [[self _bridge] closeURL];
 
             // Set the committed data source on the frame.
             [self _setDataSource:_private->provisionalDataSource];
@@ -2400,21 +2397,36 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebHistoryItem *item = [_private provisionalItem];
 
     // Two reasons we can't continue:
-    //    1) navigation policy delegate said we can't so request is nil.
-    //    2) before unload event handler caused an alert to come up and the user said cancel.
+    //    1) Navigation policy delegate said we can't so request is nil. A primary case of this 
+    //       is the user responding Cancel to the form repost nag sheet.
+    //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
     BOOL canContinue = request && ([[self webView] mainFrame] != self || [_private->bridge shouldClose]);
 
+    // The call to closeURL below invokes the unload event handler, which can execute arbitrary
+    // JavaScript. If the script initiates a new load, we need to cancel the requested load,
+    // or the two will stomp each other.
+
+    // Cache the load type of the current request, since _private->policyLoadType will change 
+    // if the unload handler initiates a load. (We use this value to determine if we need to
+    // reset the back/forward cursor.)
+    WebFrameLoadType requestLoadType = _private->policyLoadType;
+    if (canContinue) {
+        [self stopLoading];
+        [[self _bridge] closeURL];
+        
+        canContinue = [self provisionalDataSource] == nil;
+    }
+    
     if (!canContinue) {
         [self _setPolicyDataSource:nil];
-        // If the delegate punts on the navigation, we have the problem that we have optimistically moved
-        // the b/f cursor already, so move it back.  For sanity we only do this if the navigation of the
-        // target frame or top-level frame is canceled.  A primary case of this is the user responding 
-        // Cancel to the form repost nag sheet.
+        // If the navigation request came from the back/forward menu, and we punt on it, we have the 
+        // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
+        // we only do this when punting a navigation for the target frame or top-level frame.  
         if (([item isTargetItem] || [[self webView] mainFrame] == self)
-            && (_private->policyLoadType == WebFrameLoadTypeForward
-                || _private->policyLoadType == WebFrameLoadTypeBack
-                || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward))
+            && (requestLoadType == WebFrameLoadTypeForward
+                || requestLoadType == WebFrameLoadTypeBack
+                || requestLoadType == WebFrameLoadTypeIndexedBackForward))
             [[[self webView] mainFrame] _resetBackForwardList];
         return;
     }
@@ -2422,7 +2434,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebFrameLoadType loadType = _private->policyLoadType;
     WebDataSource *dataSource = [_private->policyDataSource retain];
     
-    [self stopLoading];
     [self _setLoadType:loadType];
     [self _setProvisionalDataSource:dataSource];
     [dataSource release];
