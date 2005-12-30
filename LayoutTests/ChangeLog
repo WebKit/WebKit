@@ -1,3 +1,75 @@
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
+        No review, just updating results.
+
+        Updating results, after landing color-matching change.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6155
+
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg/custom/conditional-processing-outside-switch-expected.checksum:
+        * svg/custom/conditional-processing-outside-switch-expected.png:
+        * svg/custom/control-points-for-S-and-T-expected.checksum:
+        * svg/custom/control-points-for-S-and-T-expected.png:
+        * svg/custom/fill-update-expected.checksum:
+        * svg/custom/fill-update-expected.png:
+        * svg/custom/junk-data-expected.checksum:
+        * svg/custom/junk-data-expected.png:
+        * svg/custom/missing-xlink-expected.checksum:
+        * svg/custom/missing-xlink-expected.png:
+        * svg/custom/path-bad-data-expected.checksum:
+        * svg/custom/path-bad-data-expected.png:
+        * svg/custom/path-update-expected.checksum:
+        * svg/custom/path-update-expected.png:
+        * svg/custom/simpleCDF-expected.checksum:
+        * svg/custom/simpleCDF-expected.png:
+        * svg/custom/simpleCDF-expected.txt:
+        * svg/custom/transform-ignore-after-invalid-expected.checksum:
+        * svg/custom/transform-ignore-after-invalid-expected.png:
+        * svg/custom/transform-ignore-after-invalid.svg:
+        * svg/custom/transform-invalid-expected.checksum:
+        * svg/custom/transform-invalid-expected.png:
+        * svg/custom/transform-with-ending-space-expected.checksum:
+        * svg/custom/transform-with-ending-space-expected.png:
+        * svg/custom/use-forward-refs-expected.checksum:
+        * svg/custom/use-forward-refs-expected.png:
+
 2005-12-30  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.
