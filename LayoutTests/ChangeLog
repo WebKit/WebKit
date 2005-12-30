@@ -1,3 +1,13 @@
+2005-12-28  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4301
+        Support HTML entities on pages parsed as XHTML
+
+        * fast/parser/entities-in-xhtml-expected.txt: Added.
+        * fast/parser/entities-in-xhtml.xhtml: Added.
+
 2005-12-29  Geoffrey Garen  <ggaren@apple.com>
         
         Updated test results for the last few JavaScriptCore patches
