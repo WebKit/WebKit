@@ -90,10 +90,8 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
 
     KCanvasImage *cell = tile();
-    if (!cell) {
-        NSLog(@"No image associated with pattern: %p can't draw!", this);
+    if (!cell)
         return;
-    }
 	
     CGContextSaveGState(context);
 

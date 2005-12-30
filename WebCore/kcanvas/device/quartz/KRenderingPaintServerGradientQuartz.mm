@@ -62,7 +62,6 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
     
     // apply the gradient's own transform
     CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
-    //NSLog(@"localTransform: %@\ncurrent: %@", CFStringFromCGAffineTransform(transform), CFStringFromCGAffineTransform(CGContextGetCTM(context)));
     CGContextConcatCTM(context, gradientTransform);
     
     CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
@@ -219,7 +218,8 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
 {
     // cache our own copy of the stops for faster access.
     // this is legacy code, probably could be reworked.
-    if (!m_stopsCache) updateQuartzGradientStopsCache(server->gradientStops());
+    if (!m_stopsCache)
+        updateQuartzGradientStopsCache(server->gradientStops());
     
     if (!m_stopsCount)
         NSLog(@"Warning, no gradient stops, gradient (%p) will be all black!", this);

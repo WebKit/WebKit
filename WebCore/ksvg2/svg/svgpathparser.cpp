@@ -398,11 +398,8 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                     break;
                 }
                 default:
-                {
-                    fprintf(stderr, "ERROR: Unknown path command: %c (a: %d)\n", command, command);
-                    fprintf(stderr, "ERROR: Path Data parsing stopped at character position %d\n", ptr - d.latin1());
+                    // FIXME: An error should go to the JavaScript console, or the like.
                     return;
-                }
             }
             lastCommand = command;
 

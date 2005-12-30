@@ -70,14 +70,12 @@ KCanvasMatrix KRenderingDeviceContextQuartz::ctm() const
 
 QRect KRenderingDeviceContextQuartz::mapFromVisual(const QRect &rect)
 {
-	NSLog(@"mapFromVisual not yet for Quartz");
-	return QRect();
+    return QRect();
 }
 
 QRect KRenderingDeviceContextQuartz::mapToVisual(const QRect &rect)
 {
-	NSLog(@"mapToVisual not yet for Quartz");
-	return QRect();
+    return QRect();
 }
 
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
@@ -209,15 +207,18 @@ RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::Render
 
 KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &type) const
 {
-	switch(type)
-	{
-		case RS_CLIPPER: return new KCanvasClipperQuartz();
-		case RS_MARKER: return new KCanvasMarker(); // Use default implementation...
-		case RS_IMAGE: return new KCanvasImageQuartz();
-		case RS_FILTER: return new KCanvasFilterQuartz();
-	}
-	NSLog(@"ERROR: Failed to create resource of type: %i", type);
-	return NULL;
+    switch (type) {
+    case RS_CLIPPER:
+        return new KCanvasClipperQuartz();
+    case RS_MARKER:
+        return new KCanvasMarker();
+    case RS_IMAGE:
+        return new KCanvasImageQuartz();
+    case RS_FILTER:
+        return new KCanvasFilterQuartz();
+    }
+    ERROR("Failed to create resource of type: %i", type);
+    return 0;
 }
 
 KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEffectType &type) const
@@ -246,8 +247,7 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
 	case FE_TILE: return new KCanvasFETileQuartz();
 //	case FE_TURBULENCE: 
 	default:
-		NSLog(@"Unsupported filter of type: %i!", type);
-		return NULL;
+            return 0;
 	}
 }
 

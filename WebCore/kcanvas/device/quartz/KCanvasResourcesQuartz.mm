@@ -190,10 +190,8 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
 
 void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) const
 {
-    if (m_clipData.count() < 1) {
-        NSLog(@"WARNING: Applying empty clipper, ignoring.");
+    if (m_clipData.count() < 1)
         return;
-    }
 
     BOOL heterogenousClipRules = NO;
     KCWindRule clipRule = m_clipData[0].windRule;
@@ -209,8 +207,6 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
         
         KCanvasPathQuartz *path = static_cast<KCanvasPathQuartz*>(data.path.get());        
         CGPathRef clipPath = static_cast<KCanvasPathQuartz*>(path)->cgPath();
-        if (CGPathIsEmpty(clipPath)) // FIXME: occasionally we get empty clip paths...
-            NSLog(@"WARNING: Asked to clip an empty path, ignoring.");
 
         if (data.bboxUnits) {
             CGMutablePathRef transformedPath = CGPathCreateMutable();
@@ -225,17 +221,13 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
         // FIXME!
         // We don't currently allow for heterogenous clip rules.
         // we would have to detect such, draw to a mask, and then clip
-        // to that mask
-        if (heterogenousClipRules)
-            NSLog(@"WARNING: Quartz does not yet support heterogenous clip rules, clipping will be incorrect.");
-                
+        // to that mask                
         if (!CGContextIsPathEmpty(context)) {
             if (clipRule == RULE_EVENODD)
                 CGContextEOClip(context);
             else
                 CGContextClip(context);
-        } else
-            NSLog(@"ERROR: Final clip path empty, ignoring.");
+        }
     }
 }
 

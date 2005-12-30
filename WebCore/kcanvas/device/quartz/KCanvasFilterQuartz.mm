@@ -80,10 +80,8 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &b
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
 
-    if (m_effects.isEmpty()) {
-        NSLog(@"WARNING: No effects, ignoring filter (%p).", this);
+    if (m_effects.isEmpty())
         return;
-    }
     
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(device);
     CGContextRef cgContext = quartzDevice->currentCGContext();
@@ -128,10 +126,8 @@ void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRect &bbo
             destOrigin.y += bboxOrigin.y;
             
             [m_filterCIContext drawImage:outputImage atPoint:destOrigin fromRect:sourceRect];
-        } else
-            NSLog(@"Failed to get ouputImage from filter stack, can't draw.");
-    } else
-        NSLog(@"No filter stack, can't draw filter.");
+        }
+    }
     
     CGLayerRelease(m_filterCGLayer);
     [m_filterCIContext release];
@@ -161,23 +157,16 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
         CIFilter *filter = (*it)->getCIFilter(this);
         if (filter)
             [filterEffects addObject:filter];
-        else
-            NSLog(@"Failed to build filter for element: %p.", (*it));
     }
     if ([filterEffects count] != m_effects.count())
-    NSLog(@"WARNING: Built stack of only %i filters from %i filter elements", [filterEffects count], m_effects.count());
     [m_imagesByName removeAllObjects]; // clean up before next time.
 
     return filterEffects;
 }
 
-CIImage *KCanvasFilterQuartz::imageForName(const QString &name) const
+CIImage *KCanvasFilterQuartz::imageForName(const QString& name) const
 {
-    NSString *imageName = name.getNSString();
-    CIImage *foundImage = [m_imagesByName valueForKey:imageName];
-    if (!foundImage && ![imageName isEqualToString:@"SourceAlpha"])
-        NSLog(@"Failed to find image for name: %@", imageName);
-    return foundImage;
+    return [m_imagesByName valueForKey:name.getNSString()];
 }
 
 void KCanvasFilterQuartz::setImageForName(CIImage *image, const QString &name)
@@ -238,10 +227,8 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
     [filter setValue:inputImage forKey:@"inputImage"];
 
 #define FE_QUARTZ_CHECK_INPUT(input) \
-    if (!input) { \
-        NSLog(@"ERROR: Can't apply filter (%p) w/o input image.", this); \
-        return nil; \
-    }
+    if (!input) \
+        return nil;
 
 #define FE_QUARTZ_OUTPUT_RETURN \
     quartzFilter->setOutputImage(this, [filter valueForKey:@"outputImage"]); \
@@ -281,7 +268,7 @@ CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
         filter = [CIFilter filterWithName:@"CILightenBlendMode"];
         break;
     default:
-        NSLog(@"ERROR: Unhandled blend mode: %i", blendMode());
+        ERROR("Unhandled blend mode: %i", blendMode());
         return nil;
     }
 
@@ -360,7 +347,7 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFil
         break;
     }
     default:
-        NSLog(@"ERROR: Unhandled ColorMatrix type: %i", type());
+        ERROR("Unhandled ColorMatrix type: %i", type());
         return nil;
     }
     CIImage *inputImage = quartzFilter->inputImage(this);
@@ -598,8 +585,7 @@ CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFi
     float inputRadius = stdDeviationX();
     if (inputRadius != stdDeviationY()) {
         float inputAspectRatio = stdDeviationX()/stdDeviationY();
-        if ( (inputAspectRatio < .5) || (inputAspectRatio > 2.0) )
-                NSLog(@"WARNING: inputAspectRatio outside range supported by quartz for asymmetric Gaussian blurs! (x: %f  y: %f ratio: %f)", stdDeviationX(), stdDeviationY(), inputAspectRatio);
+        // FIXME: inputAspectRatio only support the range .5 to 2.0!
         [filter setValue:[NSNumber numberWithFloat:inputAspectRatio] forKey:@"inputAspectRatio"];
     }
     [filter setValue:[NSNumber numberWithFloat:inputRadius] forKey:@"inputRadius"];

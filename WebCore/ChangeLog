@@ -1,3 +1,35 @@
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        No functional changes, thus no layout test.
+
+        Just removes debug NSLog() calls from ksvg2/kcanvas.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6299
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter):
+        (KCanvasFilterQuartz::applyFilter):
+        (KCanvasFilterQuartz::getCIFilterStack):
+        (KCanvasFilterQuartz::imageForName):
+        (KCanvasFEBlendQuartz::getCIFilter):
+        (KCanvasFEColorMatrixQuartz::getCIFilter):
+        (KCanvasFEGaussianBlurQuartz::getCIFilter):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::mapFromVisual):
+        (KRenderingDeviceContextQuartz::mapToVisual):
+        (KRenderingDeviceQuartz::createResource):
+        (KRenderingDeviceQuartz::createFilterEffect):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (drawShadingWithStyle):
+        (KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::draw):
+        * ksvg2/svg/svgpathparser.cpp:
+        (SVGPathParser::parseSVG):
+
 2005-12-29  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Hyatt.
