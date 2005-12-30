@@ -2,6 +2,25 @@
 
         Reviewed by mjs.
 
+        Remove QDict from khtml/html
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6230
+        Uses HashMap instead.
+
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::CollectionInfo::CollectionInfo):
+        (DOM::HTMLCollectionImpl::CollectionInfo::reset):
+        (DOM::HTMLCollectionImpl::namedItem):
+        (DOM::HTMLCollectionImpl::updateNameCache):
+        (DOM::HTMLCollectionImpl::namedItems):
+        (DOM::HTMLCollectionImpl::nextNamedItem):
+        (DOM::HTMLFormCollectionImpl::nextNamedItemInternal):
+        (DOM::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_miscimpl.h:
+
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         DOMString/DOMStringImpl/AtomicString need enhancements before replacing QString
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6228
         Added find(), contains(), startsWith() and endsWith() to DOMString
