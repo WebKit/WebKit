@@ -218,37 +218,53 @@ void JSObject::put(ExecState *exec, const Identifier &propertyName, JSValue *val
     return;
   }
 
+  // Check if there are any setters or getters in the prototype chain
   JSObject *obj = this;
+  bool hasGettersOrSetters = false;
   while (true) {
-    JSValue *gs;
-    int attributes;
-    if (obj->_prop.hasGetterSetterProperties() && (gs = obj->_prop.get(propertyName, attributes))) {
-      if (attributes & GetterSetter) {
-        JSObject *setterFunc = static_cast<GetterSetterImp *>(gs)->getSetter();
-            
-        if (!setterFunc) {
-          throwSetterError(exec);
-          return;
-        }
-            
-        List args;
-        args.append(value);
-        
-        setterFunc->call(exec, this, args);
-        return;
-      } else  {
-        // If there's an existing property on the object or one of its 
-        // prototype it should be replaced, so we just break here.
-        break;
-      }
+    if (obj->_prop.hasGetterSetterProperties()) {
+      hasGettersOrSetters = true;
+      break;
     }
-     
+      
     if (!obj->_proto->isObject())
       break;
-        
+      
     obj = static_cast<JSObject *>(obj->_proto);
   }
-
+  
+  if (hasGettersOrSetters) {
+    obj = this;
+    while (true) {
+      int attributes;
+      if (JSValue *gs = obj->_prop.get(propertyName, attributes)) {
+        if (attributes & GetterSetter) {
+          JSObject *setterFunc = static_cast<GetterSetterImp *>(gs)->getSetter();
+        
+          if (!setterFunc) {
+            throwSetterError(exec);
+            return;
+          }
+            
+          List args;
+          args.append(value);
+        
+          setterFunc->call(exec, this, args);
+          return;
+        } else {
+          // If there's an existing property on the object or one of its 
+          // prototype it should be replaced, so we just break here.
+          break;
+        }
+      }
+     
+      if (!obj->_proto->isObject())
+        break;
+        
+      obj = static_cast<JSObject *>(obj->_proto);
+    }
+  }
+  
   _prop.put(propertyName,value,attr);
 }
 
