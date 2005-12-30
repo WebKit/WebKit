@@ -168,21 +168,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return _frame;
 }
 
-- (NSArray *)childFrames
-{
-    ASSERT(_frame != nil);
-    NSArray *frames = [_frame childFrames];
-    NSEnumerator *e = [frames objectEnumerator];
-    NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
-    WebFrame *childFrame;
-    while ((childFrame = [e nextObject])) {
-        id frameBridge = [childFrame _bridge];
-        if (frameBridge)
-            [frameBridges addObject:frameBridge];
-    }
-    return frameBridges;
-}
-
 - (WebCoreBridge *)mainFrame
 {
     ASSERT(_frame != nil);

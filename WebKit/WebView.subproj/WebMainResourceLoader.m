@@ -329,7 +329,7 @@
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
         if (!supportsMultipartContent) {
             [dataSource _removeSubresourceLoader:self];
-            [[[dataSource _webView] mainFrame] _checkLoadComplete];
+            [[dataSource webFrame] _checkLoadComplete];
             [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                              code:NSURLErrorUnsupportedURL
                                                               URL:[r URL]]];

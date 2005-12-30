@@ -191,9 +191,12 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @interface WebFrame (FrameTraversal)
 - (WebFrame *)_firstChildFrame;
 - (WebFrame *)_lastChildFrame;
+- (unsigned)_childFrameCount;
 - (WebFrame *)_previousSiblingFrame;
 - (WebFrame *)_nextSiblingFrame;
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
+- (void)_appendChild:(WebFrame *)child;
+- (void)_removeChild:(WebFrame *)child;
 @end
 
 @interface WebFramePrivate : NSObject
@@ -386,6 +389,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return [_private->children lastObject];
 }
 
+- (unsigned)_childFrameCount
+{
+    return [_private->children count];
+}
+
 - (WebFrame *)_previousSiblingFrame;
 {
     return _private->previousSibling;
@@ -425,6 +433,39 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     }
 
     return nil;
+}
+
+- (void)_appendChild:(WebFrame *)child
+{
+    [[child _bridge] setParent:_private->bridge];
+
+    if (_private->children == nil)
+        _private->children = [[NSMutableArray alloc] init];
+
+    WebFrame *previousFrame = [self _lastChildFrame];
+    if (previousFrame) {
+        previousFrame->_private->nextSibling = child;
+        child->_private->previousSibling = previousFrame;
+    }
+    ASSERT(child->_private->nextSibling == nil);
+
+    [_private->children addObject:child];
+}
+
+- (void)_removeChild:(WebFrame *)child
+{
+    // move corresponding previous and next WebFrame sibling pointers to their new positions
+    // when we remove a child we may have to reattach the previous frame's next frame and visa versa
+    if (child->_private->previousSibling)
+        child->_private->previousSibling->_private->nextSibling = child->_private->nextSibling;
+    
+    if (child->_private->nextSibling)
+        child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
+
+    child->_private->previousSibling = nil;
+    child->_private->nextSibling = nil;
+
+    [_private->children removeObject:child];
 }
 
 @end
@@ -633,9 +674,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebFrame *prev = [child _previousSiblingFrame];
     for (; child; child = prev, prev = [child _previousSiblingFrame])
         [child _detachFromParent];
-
-    [_private->children release];
-    _private->children = nil;
 }
 
 - (void)_closeOldDataSources
@@ -713,7 +751,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
         [_private->dataSource _setWebFrame:nil];
     } else {
-        ASSERT(!_private->children);
+        ASSERT(![self _childFrameCount]);
     }
 
     [_private setDataSource:ds];
@@ -1140,6 +1178,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[_private currentItem] setHasPageCache: NO];
 
         [[self dataSource] _setPrimaryLoadComplete: YES];
+        // why only this frame and not parent frames?
         [self _checkLoadCompleteForThisFrame];
     }
 }
@@ -1297,22 +1336,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didHandleOnloadEventsForFrame:self];
 }
 
-- (void)_recursiveCheckLoadComplete
-{
-    // Checking for load complete may indeed alter the set of child
-    // frames. However, _web_safeMakeObjectsPerformSelector: makes
-    // sure to copy the array so it is safe against changes.
-    [[self _internalChildFrames] _web_safeMakeObjectsPerformSelector:@selector(_recursiveCheckLoadComplete)];
-    [self _checkLoadCompleteForThisFrame];
-}
-
 // Called every time a resource is completely loaded, or an error is received.
 - (void)_checkLoadComplete
 {
     ASSERT([self webView] != nil);
 
-    // Now walk the frame tree to see if any frame that may have initiated a load is done.
-    [[[self webView] mainFrame] _recursiveCheckLoadComplete];
+    for (WebFrame *frame = self; frame; frame = [frame parentFrame])
+        [frame _checkLoadCompleteForThisFrame];
 }
 
 - (WebBridge *)_bridge
@@ -1340,7 +1370,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     NSArray *childItems = [item children];
     int numChildItems = [childItems count];
-    int numChildFrames = [_private->children count];
+    int numChildFrames = [self _childFrameCount];
     if (numChildFrames != numChildItems)
         return NO;
 
@@ -2240,39 +2270,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_addChild:(WebFrame *)child
 {
-    if (_private->children == nil)
-        _private->children = [[NSMutableArray alloc] init];
-    [_private->children addObject:child];
-
-    [[child _bridge] setParent:_private->bridge];
+    [self _appendChild:child];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
- 
-    unsigned currentIndex = [_private->children count] - 1;
-    // we keep track of sibling pointers to avoid the overhead of a lookup in the children array
-    
-    if (currentIndex > 0) {
-        WebFrame *previousFrame = [_private->children objectAtIndex:currentIndex - 1];
-        previousFrame->_private->nextSibling = child;
-        child->_private->previousSibling = previousFrame;
-        ASSERT(child->_private->nextSibling == nil);
-    }
-    
-}
-
-- (void)_removeChild:(WebFrame *)child
-{
-    // move corresponding previous and next WebFrame sibling pointers to their new positions
-    // when we remove a child we may have to reattach the previous frame's next frame and visa versa
-    if (child->_private->previousSibling)
-        child->_private->previousSibling->_private->nextSibling = child->_private->nextSibling;
-    
-    if (child->_private->nextSibling)
-        child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
-
-    child->_private->previousSibling = nil;
-    child->_private->nextSibling = nil;
-
-    [_private->children removeObject:child];
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path
@@ -2303,7 +2302,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _addFramePathToString:path];
     // The new child's path component is all but the 1st char and the last 3 chars
     // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
-    [path appendFormat:@"/<!--frame%d-->-->", [_private->children count]];
+    [path appendFormat:@"/<!--frame%d-->-->", [self _childFrameCount]];
     return path;
 }
 
@@ -2616,11 +2615,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (NSArray *)_internalChildFrames
-{
-    return _private->children;
-}
-
 - (void)_attachScriptDebugger
 {
     if (!_private->scriptDebugger) {
@@ -2906,7 +2900,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_stopLoadingSubframes
 {
-    [[self childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
+    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
+        [child stopLoading];
 }
 
 - (BOOL)_subframeIsLoading
@@ -3262,30 +3257,26 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (WebFrame *)findFrameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
-    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
+    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
         return self;
-    }
     
-    if ([name isEqualToString:@"_top"]) {
+    if ([name isEqualToString:@"_top"])
         return [[self webView] mainFrame];
-    }
     
     if ([name isEqualToString:@"_parent"]) {
         WebFrame *parent = [self parentFrame];
         return parent ? parent : self;
     }
     
-    if ([name isEqualToString:@"_blank"]) {
+    if ([name isEqualToString:@"_blank"])
         return nil;
-    }
 
     // Search from this frame down.
     WebFrame *frame = [self _descendantFrameNamed:name sourceFrame:self];
 
-    if (!frame) {
-        // Search in the main frame for this window then in others.
+    // Search in the main frame for this window then in others.
+    if (!frame)
         frame = [[[self webView] mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
-    }
 
     return frame;
 }
@@ -3297,7 +3288,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSArray *)childFrames
 {
-    return [[_private->children copy] autorelease];
+    NSMutableArray *children = [NSMutableArray arrayWithCapacity:[self _childFrameCount]];
+    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
+        [children addObject:child];
+
+    return children;
 }
 
 @end

@@ -128,7 +128,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 
 - (void)_addChild:(WebFrame *)child;
-- (void)_removeChild:(WebFrame *)child;
 
 - (NSString *)_generateFrameName;
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
@@ -166,8 +165,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (NSColor *)_bodyBackgroundColor;
 
 - (void)_reloadForPluginChanges;
-
-- (NSArray *)_internalChildFrames;
 
 - (BOOL)_isDescendantOfFrame:(WebFrame *)frame;
 - (BOOL)_isFrameSet;

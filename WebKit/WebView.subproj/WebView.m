@@ -572,7 +572,7 @@ static bool debugWidget = true;
     return newFrame;
 }
 
-- (void)_finishedLoadingResourceFromDataSource: (WebDataSource *)dataSource
+- (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
     
@@ -585,7 +585,7 @@ static bool debugWidget = true;
     }
 }
 
-- (void)_mainReceivedBytesSoFar: (unsigned)bytesSoFar fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete: (BOOL)isComplete
 {
     WebFrame *frame = [dataSource webFrame];
     
@@ -595,11 +595,11 @@ static bool debugWidget = true;
     if (frame == nil)
         return;
         
-    // This resource has completed, so check if the load is complete for all frames.
+    // This resource has completed, so check if the load is complete for this frame and its ancestors
     if (isComplete){
         // If the load is complete, mark the primary load as done.  The primary load is the load
         // of the main document.  Other resources may still be arriving.
-        [dataSource _setPrimaryLoadComplete: YES];
+        [dataSource _setPrimaryLoadComplete:YES];
         [frame _checkLoadComplete];
     }
     else {
@@ -611,7 +611,7 @@ static bool debugWidget = true;
     }
 }
 
-- (void)_receivedError: (NSError *)error fromDataSource: (WebDataSource *)dataSource
+- (void)_receivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
 

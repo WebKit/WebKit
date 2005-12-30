@@ -1,5 +1,51 @@
 2005-12-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - finished frame traversal cleanup
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6293
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge childFrames]): Removed (this was unused)
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _removeChild::]): Moved to FrameTraversal category.
+        (-[WebFrame _childFrameCount]): New frame traversal method to avoid
+	getting the count from the array directly.
+        (-[WebFrame _appendChild:]): Factored out the parts of addChild: that
+	seem directly relevant to adding a child.
+        (-[WebFrame _removeChild:]): Moved to FrameTraversal category.
+        (-[WebFrame _detachChildren]): Don't deallocate children array because
+	there's no particular need to.
+        (-[WebFrame _setDataSource:]): make the assert use _childFrameCount
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadComplete]): Instead of checking all frames starting
+	from the main frame, check this frame and all ancestors. If a resource
+	for a frame completes, that con only possibly finish loading for that
+	frame and its ancestors, not any other frame in the tree.
+	(-[WebFrame _recursiveCheckLoadComplete]): Removed, no longer needed.
+        (-[WebFrame _childFramesMatchItem:]): Get child frame count in the new 
+	approved way.
+        (-[WebFrame _internalChildFrames]): removed
+	(-[WebFrame _addChild:]): Use _appendChild: for most of the work.
+        (-[WebFrame _generateFrameName]): Get child frame count in the new 
+	approved way.
+        (-[WebFrame _stopLoadingSubframes]): Use new frame traversal mechanisms,
+	upon further consideration there's no need to copy part of the frame tree here.
+        (-[WebFrame findFrameNamed:]): Remove extra braces.
+        (-[WebFrame childFrames]): Make a new array using the frame traversal methods.
+        * WebView.subproj/WebFramePrivate.h: Remove some methods.
+        * WebView.subproj/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader didReceiveResponse:]): Do _checkLoadComplete on the current
+	frame not the main frame (before there was no difference and now the new version is
+	what is desired).
+        * WebView.subproj/WebView.m:
+        (-[WebView _finishedLoadingResourceFromDataSource:]): Remove stray space
+        (-[WebView _mainReceivedBytesSoFar:fromDataSource:complete:]): Remove stray spaces
+	and update FIXME comment.
+        (-[WebView _receivedError:fromDataSource:]): Remove stray space
+
+2005-12-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- abstract frame traversal in WebFrame more

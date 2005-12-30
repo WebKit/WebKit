@@ -1,3 +1,13 @@
+2005-12-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - finished frame traversal cleanup
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6293
+        
+        * kwq/WebCoreBridge.h: Removed childFrames method from WebCoreBridge protocol
+	since it is not actually used.
+
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
         File accidentally omitted from previous commit.
