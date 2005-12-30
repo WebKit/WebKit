@@ -286,7 +286,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                             padding -= params->padPerSpace;
                         }
                     }
-                    if (offset != 0 && !isSpace(ch) && style->wordSpacing)
+                    if (offset != 0 && !isSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && style->wordSpacing)
                         width += style->wordSpacing;
                 }
             }

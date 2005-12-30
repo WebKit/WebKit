@@ -1,3 +1,14 @@
+2005-12-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Eric, committed by Maciej.
+        
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6288
+          HEAD build broken 12/29/2005
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (overrideLayoutOperation): Use previous character from the buffer
+        instead of ch which may be uninitialized on the first iteration.
+
 2005-12-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
