@@ -1,14 +1,20 @@
+2005-12-30  Maciej Stachowiak  <mjs@apple.com>
+
+        No review, just test result update.
+
+        * tests/mozilla/expected.html: Updated for newly passing test from recent fixes.
+
 2005-12-30  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
 
-		- Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6298
-		Getter setter test is failing
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6298
+        Getter setter test is failing
 		
         * kjs/object.cpp:
         (KJS::JSObject::put):
-		Rework the getter setter part. We now walk the prototype chain, checking for
-		getter/setter properties and only take the slow path if any are found. 
+        Rework the getter setter part. We now walk the prototype chain, checking for
+        getter/setter properties and only take the slow path if any are found. 
 
 2005-12-30  Maks Orlovich <maksim@kde.org>
 
