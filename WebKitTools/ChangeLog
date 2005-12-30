@@ -1,5 +1,12 @@
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
+        No review, only removing dead code.
+
+        * DumpKCanvasTree/DumpKCanvasTree.m: Removed.
+        * DumpKCanvasTree/DumpKCanvasTree.xcodeproj/project.pbxproj: Removed.
+
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         DumpRenderTree should set a consistent color profile while running
