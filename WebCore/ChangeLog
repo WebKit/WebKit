@@ -2,6 +2,16 @@
 
         Reviewed by mjs.
 
+        XML documents with "html" in dtd name use XHTML entities when they shouldn't
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6290
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::externalSubsetHandler): check for exact xhtml types
+
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Close leak in CollectionInfo due to HashMap migration
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6295
 
