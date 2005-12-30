@@ -1,5 +1,5 @@
-layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
     KCanvasContainer {svg} at (49,33) size 150x217
       KCanvasItem {path} at (49,33) size 150x100 [stroke={[type=SOLID] [color=#FF0000]}] [data="M50.00,50.00C66.67,116.67,100.00,133.33,150.00,100.00C150.00,100.00,175.00,0.00,200.00,50.00"]
       KCanvasItem {path} at (49,137) size 150x113 [stroke={[type=SOLID] [color=#008000]}] [data="M50.00,150.00C75.00,100.00,75.00,250.00,150.00,200.00C150.00,200.00,166.67,216.67,200.00,250.00"]

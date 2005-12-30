@@ -1,4 +1,4 @@
-layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 90x90
-      KCanvasItem {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 150x150
+      KCanvasItem {rect} at (0,0) size 150x150 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]

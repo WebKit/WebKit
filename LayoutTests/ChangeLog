@@ -1,3 +1,45 @@
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
+        No review, updating stale results.
+        I went over all the interesting ones with mjs and hyatt.
+
+        * css2.1/t040304-c64-uri-00-a-g-expected.checksum:
+        * css2.1/t040304-c64-uri-00-a-g-expected.png:
+        * css2.1/t0905-c414-flt-wrap-01-d-g-expected.checksum:
+        * css2.1/t0905-c414-flt-wrap-01-d-g-expected.png:
+        * css2.1/t100801-c544-valgn-02-d-agi-expected.checksum:
+        * css2.1/t100801-c544-valgn-02-d-agi-expected.png:
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.checksum:
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.png:
+        * dom/xhtml/level2/html/frame-expected.checksum:
+        * dom/xhtml/level2/html/frame-expected.png:
+        * dom/xhtml/level2/html/iframe-expected.checksum:
+        * dom/xhtml/level2/html/iframe-expected.png:
+        * editing/selection/extend-by-word-002-expected.checksum:
+        * editing/selection/extend-by-word-002-expected.png:
+        * fast/css/imageTileOpacity-expected.checksum:
+        * fast/css/imageTileOpacity-expected.png:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/frames/empty-frame-src-expected.checksum:
+        * fast/frames/empty-frame-src-expected.png:
+        * fast/frames/invalid-expected.checksum:
+        * fast/frames/invalid-expected.png:
+        * fast/frames/valid-expected.checksum:
+        * fast/frames/valid-expected.png:
+        * svg/custom/conditional-processing-outside-switch-expected.txt:
+        * svg/custom/control-points-for-S-and-T-expected.txt:
+        * svg/custom/fill-update-expected.txt:
+        * svg/custom/junk-data-expected.txt:
+        * svg/custom/missing-xlink-expected.txt:
+        * svg/custom/path-bad-data-expected.txt:
+        * svg/custom/path-update-expected.txt:
+        * svg/custom/simpleCDF-expected.txt:
+        * svg/custom/transform-ignore-after-invalid-expected.txt:
+        * svg/custom/transform-invalid-expected.txt:
+        * svg/custom/transform-with-ending-space-expected.txt:
+        * svg/custom/use-forward-refs-expected.txt:
+
 2005-12-30  Maciej Stachowiak  <mjs@apple.com>
 
         No review.
