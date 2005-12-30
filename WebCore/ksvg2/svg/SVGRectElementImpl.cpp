@@ -105,9 +105,12 @@ KCanvasPath* SVGRectElementImpl::toPathData() const
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
 
-    if(hasAttribute(KDOM::DOMString("rx").impl()) || hasAttribute(KDOM::DOMString("ry").impl()))
+    bool hasRx = hasAttribute(KDOM::DOMString("rx").impl());
+    bool hasRy = hasAttribute(KDOM::DOMString("ry").impl());
+    if(hasRx || hasRy)
     {
-        float _rx = rx()->baseVal()->value(), _ry = rx()->baseVal()->value();
+        float _rx = hasRx ? rx()->baseVal()->value() : ry()->baseVal()->value();
+        float _ry = hasRy ? ry()->baseVal()->value() : rx()->baseVal()->value();
         return KCanvasCreator::self()->createRoundedRectangle(_x, _y, _width, _height, _rx, _ry);
     }
 

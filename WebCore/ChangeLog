@@ -1,3 +1,13 @@
+2005-12-29  Rob Buis  <rwlbuis@xs4all.nl>
+
+        Reviewed by eseidel.
+
+        WebCore+SVG has some problems with rounded rectangles
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+
+        * ksvg2/svg/SVGRectElementImpl.cpp:
+        (SVGRectElementImpl::toPathData): fixed round rect calculations
+
 2005-12-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by eseidel, ggaren, darin.
