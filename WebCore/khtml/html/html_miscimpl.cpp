@@ -32,6 +32,7 @@
 #include "dom/dom_node.h"
 
 #include <kdebug.h>
+#include <kxmlcore/HashSet.h>
 
 namespace DOM {
 

@@ -24,6 +24,7 @@
 
 #include "misc/loader.h"
 #include "dom/dom_exception.h"
+#include "xml/dom_atomicstring.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include "xml/dom_textimpl.h"
@@ -64,76 +65,9 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+using namespace DOM;
 using namespace DOM::HTMLNames;
 using namespace DOM::EventNames;
-
-using DOM::DOMString;
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::EventImpl;
-using DOM::HTMLAnchorElementImpl;
-using DOM::HTMLAppletElementImpl;
-using DOM::HTMLAreaElementImpl;
-using DOM::HTMLBRElementImpl;
-using DOM::HTMLBaseElementImpl;
-using DOM::HTMLBaseFontElementImpl;
-using DOM::HTMLBlockquoteElementImpl;
-using DOM::HTMLBodyElementImpl;
-using DOM::HTMLButtonElementImpl;
-using DOM::HTMLCanvasElementImpl;
-using DOM::HTMLCollectionImpl;
-using DOM::HTMLDListElementImpl;
-using DOM::HTMLDirectoryElementImpl;
-using DOM::HTMLDivElementImpl;
-using DOM::HTMLDocumentImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLFieldSetElementImpl;
-using DOM::HTMLFontElementImpl;
-using DOM::HTMLFormElementImpl;
-using DOM::HTMLFrameElementImpl;
-using DOM::HTMLFrameSetElementImpl;
-using DOM::HTMLGenericFormElementImpl;
-using DOM::HTMLHRElementImpl;
-using DOM::HTMLHeadElementImpl;
-using DOM::HTMLHeadingElementImpl;
-using DOM::HTMLHtmlElementImpl;
-using DOM::HTMLIFrameElementImpl;
-using DOM::HTMLIFrameElementImpl;
-using DOM::HTMLImageElementImpl;
-using DOM::HTMLInputElementImpl;
-using DOM::HTMLIsIndexElementImpl;
-using DOM::HTMLLIElementImpl;
-using DOM::HTMLLabelElementImpl;
-using DOM::HTMLLegendElementImpl;
-using DOM::HTMLLinkElementImpl;
-using DOM::HTMLMapElementImpl;
-using DOM::HTMLMenuElementImpl;
-using DOM::HTMLMetaElementImpl;
-using DOM::HTMLModElementImpl;
-using DOM::HTMLOListElementImpl;
-using DOM::HTMLObjectElementImpl;
-using DOM::HTMLOptGroupElementImpl;
-using DOM::HTMLOptionElementImpl;
-using DOM::HTMLParagraphElementImpl;
-using DOM::HTMLParamElementImpl;
-using DOM::HTMLPreElementImpl;
-using DOM::HTMLQuoteElementImpl;
-using DOM::HTMLScriptElementImpl;
-using DOM::HTMLSelectElementImpl;
-using DOM::HTMLStyleElementImpl;
-using DOM::HTMLTableCaptionElementImpl;
-using DOM::HTMLTableCellElementImpl;
-using DOM::HTMLTableColElementImpl;
-using DOM::HTMLTableElementImpl;
-using DOM::HTMLTableRowElementImpl;
-using DOM::HTMLTableSectionElementImpl;
-using DOM::HTMLTextAreaElementImpl;
-using DOM::HTMLTitleElementImpl;
-using DOM::HTMLUListElementImpl;
-using DOM::NodeImpl;
-using DOM::NodeListImpl;
-using DOM::TextImpl;
-
 using khtml::RenderCanvasImage;
 
 #include "kjs_html.lut.h"
@@ -3386,24 +3320,15 @@ JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const 
 
 JSValue *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
-#endif
-  DOM::DOMString pstr = propertyName.domString();
+    QValueList< RefPtr<NodeImpl> > namedItems = m_impl->namedItems(AtomicString(propertyName.domString()));
 
-  QValueList< RefPtr<NodeImpl> > namedItems = m_impl->namedItems(pstr);
+    if (namedItems.isEmpty())
+        return jsUndefined();
 
-  if (namedItems.isEmpty()) {
-#ifdef KJS_VERBOSE
-    kdDebug(6070) << "not found" << endl;
-#endif
-    return jsUndefined();
-  }
+    if (namedItems.count() == 1)
+        return getDOMNode(exec, namedItems[0].get());
 
-  if (namedItems.count() == 1)
-    return getDOMNode(exec, namedItems[0].get());
-  
-  return new DOMNamedNodesCollection(exec, namedItems);
+    return new DOMNamedNodesCollection(exec, namedItems);
 }
 
 JSValue *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)

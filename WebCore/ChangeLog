@@ -1,5 +1,15 @@
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
+        File accidentally omitted from previous commit.
+
+        Remove QDict from khtml/html
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6230
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLCollection::getNamedItems):
+
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Remove QDict from khtml/html
