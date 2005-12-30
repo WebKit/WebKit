@@ -35,12 +35,12 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 
-#import <Carbon/Carbon.h> // for GetCurrentEventTime()
-
-#import <objc/objc-runtime.h> // for class_poseAs
+#import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
+#import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
+#import <objc/objc-runtime.h>                       // for class_poseAs
 
 #define COMMON_DIGEST_FOR_OPENSSL
-#import <CommonCrypto/CommonDigest.h> // for MD5 functions
+#import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
 #import <getopt.h>
 
@@ -82,6 +82,52 @@ static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
 static NSPasteboard *localPasteboard;
+
+static CMProfileRef currentColorProfile = 0;
+static void restoreColorSpace(int ignored)
+{
+    if (currentColorProfile) {
+        int error = CMSetDefaultProfileByUse(cmDisplayUse, currentColorProfile);
+        if (error)
+            fprintf(stderr, "Failed to retore previous color profile!  You may need to open System Preferences : Displays : Color and manually restore your color settings.  (Error: %i)", error);
+        currentColorProfile = 0;
+    }
+}
+
+static void setDefaultColorProfileToRGB(void)
+{
+    CMProfileRef genericProfile = [[NSColorSpace genericRGBColorSpace] colorSyncProfile];
+    CMProfileRef previousProfile;
+    int error = CMGetDefaultProfileByUse(cmDisplayUse, &previousProfile);
+    if (error) {
+        fprintf(stderr, "Failed to get current color profile.  I will not be able to restore your current profile, thus I'm not changing it.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
+        return;
+    }
+    if (previousProfile == genericProfile)
+        return;
+    CFStringRef previousProfileName;
+    CFStringRef genericProfileName;
+    CMCopyProfileDescriptionString(previousProfile, &previousProfileName);
+    CMCopyProfileDescriptionString(genericProfile, &genericProfileName);
+    
+    fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n",
+        CFStringGetCStringPtr(previousProfileName, kCFStringEncodingMacRoman),
+        CFStringGetCStringPtr(genericProfileName, kCFStringEncodingMacRoman));
+    fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
+    fprintf(stderr, "The colors on your screen will change for the duration of the testing.\n\n");
+    
+    if ((error = CMSetDefaultProfileByUse(cmDisplayUse, genericProfile)))
+        fprintf(stderr, "Failed to set color profile to \"%s\"! Many pixel tests will fail as a result.  (Error: %i)",
+            CFStringGetCStringPtr(genericProfileName, kCFStringEncodingMacRoman), error);
+    else {
+        currentColorProfile = previousProfile;
+        signal(SIGINT, restoreColorSpace);
+        signal(SIGHUP, restoreColorSpace);
+        signal(SIGTERM, restoreColorSpace);
+    }
+    CFRelease(genericProfileName);
+    CFRelease(previousProfileName);
+}
 
 int main(int argc, const char *argv[])
 {
@@ -152,6 +198,9 @@ int main(int argc, const char *argv[])
         exit(1);
     }
     
+    if (dumpPixels)
+        setDefaultColorProfileToRGB();
+    
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
 
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
@@ -198,6 +247,9 @@ int main(int argc, const char *argv[])
 
     [localPasteboard releaseGlobally];
     localPasteboard = nil;
+    
+    if (dumpPixels)
+        restoreColorSpace(0);
     
     [pool release];
 

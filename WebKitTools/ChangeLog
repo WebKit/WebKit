@@ -1,3 +1,24 @@
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        DumpRenderTree should set a consistent color profile while running
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6155
+
+        Creates consistent colormatched renderings on every test machine
+        using the only way possible with Tiger APIs: by setting the
+        system color profile on the test machine for the duration of the
+        tests.  This will (unfortunately) cause colors to change while
+        running DumpRenderTree.  This can also cause "permanent" color
+        changes to occur if DRT is to crash (SIGSEGV, etc.) while running.
+        This is far from ideal, but it's be best way we've found to deal
+        with the issue for now.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (restoreColorSpace):
+        (setDefaultColorProfileToRGB):
+        (main):
+
 2005-12-20  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin Adler.
