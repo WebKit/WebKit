@@ -188,6 +188,14 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_stopLoadingSubframes;
 @end
 
+@interface WebFrame (FrameTraversal)
+- (WebFrame *)_firstChildFrame;
+- (WebFrame *)_lastChildFrame;
+- (WebFrame *)_previousSiblingFrame;
+- (WebFrame *)_nextSiblingFrame;
+- (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
+@end
+
 @interface WebFramePrivate : NSObject
 {
 @public
@@ -364,6 +372,63 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
+@implementation WebFrame (FrameTraversal)
+- (WebFrame *)_firstChildFrame
+{
+    if (![_private->children count])
+        return nil;
+
+    return [_private->children objectAtIndex:0];
+}
+
+- (WebFrame *)_lastChildFrame
+{
+    return [_private->children lastObject];
+}
+
+- (WebFrame *)_previousSiblingFrame;
+{
+    return _private->previousSibling;
+}
+
+- (WebFrame *)_nextSiblingFrame;
+{
+    return _private->nextSibling;
+}
+
+- (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin
+{
+    WebFrame *firstChild = [self _firstChildFrame];
+    if (firstChild) {
+        ASSERT(!stayWithin || [firstChild _isDescendantOfFrame:stayWithin]);
+        return firstChild;
+    }
+
+    if (self == stayWithin)
+        return 0;
+
+    WebFrame *nextSibling = [self _nextSiblingFrame];
+    if (nextSibling) {
+        assert(!stayWithin || [nextSibling  _isDescendantOfFrame:stayWithin]);
+	return nextSibling;
+    }
+
+    WebFrame *frame = self;
+    while (frame && !nextSibling && (!stayWithin || [frame parentFrame] != stayWithin)) {
+        frame = [frame parentFrame];
+        nextSibling = [frame _nextSiblingFrame];
+    }
+
+    if (frame) {
+        ASSERT(!stayWithin || !nextSibling || [nextSibling _isDescendantOfFrame:stayWithin]);
+        return nextSibling;
+    }
+
+    return nil;
+}
+
+@end
+
 @implementation WebFrame (WebPrivate)
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -519,54 +584,40 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         // save frame state for items that aren't loading (khtml doesn't save those)
         [_private->bridge saveDocumentState];
 
-        if (_private->children) {
-            unsigned i;
-            for (i = 0; i < [_private->children count]; i++) {
-                WebFrame *child = [_private->children objectAtIndex:i];
-                WebHistoryItem *childItem = [child _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip];
-                [bfItem addChildItem:childItem];
-            }
-        }
+        for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
+            [bfItem addChildItem:[child _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip]];
     }
-    if (self == targetFrame) {
+    if (self == targetFrame)
         [bfItem setIsTargetItem:YES];
-    }
+
     return bfItem;
 }
 
 - (WebFrame *)_immediateChildFrameNamed:(NSString *)name
 {
-    int i;
-    for (i = [_private->children count]-1; i >= 0; i--) {
-        WebFrame *frame = [_private->children objectAtIndex:i];
-        if ([[frame name] isEqualToString:name]) {
-            return frame;
-        }
-    }
+    // FIXME: with a better data structure this could be O(1) instead of O(n) in number 
+    // of child frames
+    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
+        if ([[child name] isEqualToString:name])
+            return child;
+
     return nil;
 }
 
 - (void)_setName:(NSString *)name
 {
-    // It's wrong to name a frame "_blank".
-    if (![name isEqualToString:@"_blank"]) {
+    // "_blank" is not a legal frame name
+    if (![name isEqualToString:@"_blank"])
         [_private setName:name];
-    }
 }
 
-- (BOOL)_isDescendantOfFrame:(WebFrame *)frame
+// FIXME: this exists only as a convenience for Safari, consider moving there
+- (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
 {
-    if (self == frame)
-        return YES;
-    
-    NSArray *children = [frame _internalChildFrames];
-    unsigned i;
-    for (i = 0; i < [children count]; i++) {
-        WebFrame *child = [children objectAtIndex:i];
-        if (self == child || [self _isDescendantOfFrame:child]) {
+    for (WebFrame *frame = self; frame; frame = [frame parentFrame])
+        if (frame == ancestor)
             return YES;
-        }
-    }
+
     return NO;
 }
 
@@ -577,26 +628,25 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)_detachChildren
 {
-    if (_private->children) {
-        int i;
-        for (i = [_private->children count]-1; i >=0; i--)
-            [[_private->children objectAtIndex:i] _detachFromParent];
-        [_private->children release];
-        _private->children = nil;
-    }
+    // FIXME: is it really necessary to do this in reverse order any more?
+    WebFrame *child = [self _lastChildFrame];
+    WebFrame *prev = [child _previousSiblingFrame];
+    for (; child; child = prev, prev = [child _previousSiblingFrame])
+        [child _detachFromParent];
+
+    [_private->children release];
+    _private->children = nil;
 }
 
 - (void)_closeOldDataSources
 {
-    if (_private->children) {
-        int i;
-        for (i = [_private->children count]-1; i >=0; i--) {
-            [[_private->children objectAtIndex:i] _closeOldDataSources];
-        }
-    }
-    if (_private->dataSource) {
+    // FIXME: is it important for this traversal to be postorder instead of preorder?
+    // FIXME: add helpers for postorder traversal?
+    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
+        [child _closeOldDataSources];
+
+    if (_private->dataSource)
         [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView willCloseFrame:self];
-    }
 }
 
 - (void)_detachFromParent
@@ -1289,21 +1339,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)_childFramesMatchItem:(WebHistoryItem *)item
 {
     NSArray *childItems = [item children];
-    int numChildItems = childItems ? [childItems count] : 0;
-    int numChildFrames = _private->children ? [_private->children count] : 0;
-    if (numChildFrames != numChildItems) {
+    int numChildItems = [childItems count];
+    int numChildFrames = [_private->children count];
+    if (numChildFrames != numChildItems)
         return NO;
-    } else {
-        int i;
-        for (i = 0; i < numChildItems; i++) {
-            NSString *itemTargetName = [[childItems objectAtIndex:i] target];
-            //Search recursive here?
-            if (![self _immediateChildFrameNamed:itemTargetName]) {
-                return NO; // couldn't match the i'th itemTarget
-            }
-        }
-        return YES; // found matches for all itemTargets
+
+    int i;
+    for (i = 0; i < numChildItems; i++) {
+        NSString *itemTargetName = [[childItems objectAtIndex:i] target];
+        //Search recursive here?
+        if (![self _immediateChildFrameNamed:itemTargetName])
+            return NO; // couldn't match the i'th itemTarget
     }
+
+    return YES; // found matches for all itemTargets
 }
 
 - (BOOL)_shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
@@ -2148,29 +2197,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_defersCallbacksChanged
 {
-    [[self provisionalDataSource] _defersCallbacksChanged];
-    [[self dataSource] _defersCallbacksChanged];
-
-    // It's OK to use the internal version of getting the child
-    // frames, since undeferring callbacks will not do any immediate
-    // work, and so the set of frames can't change out from under us.
-    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        [[frame provisionalDataSource] _defersCallbacksChanged];
+        [[frame dataSource] _defersCallbacksChanged];
+    }
 }
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
-    [[[self frameView] documentView] viewWillMoveToHostWindow:hostWindow];
-    // It's OK to use the internal version because this method is
-    // guaranteed not to change the set of frames.
-    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        [[[frame frameView] documentView] viewWillMoveToHostWindow:hostWindow];
 }
 
 - (void)_viewDidMoveToHostWindow
 {
-    [[[self frameView] documentView] viewDidMoveToHostWindow];
-    // It's OK to use the internal version because this method is
-    // guaranteed not to change the set of frames.
-    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        [[[frame frameView] documentView] viewDidMoveToHostWindow];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -2209,7 +2251,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // we keep track of sibling pointers to avoid the overhead of a lookup in the children array
     
     if (currentIndex > 0) {
-        WebFrame *previousFrame = [[self childFrames] objectAtIndex:currentIndex - 1];
+        WebFrame *previousFrame = [_private->children objectAtIndex:currentIndex - 1];
         previousFrame->_private->nextSibling = child;
         child->_private->previousSibling = previousFrame;
         ASSERT(child->_private->nextSibling == nil);
@@ -2226,6 +2268,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     if (child->_private->nextSibling)
         child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
+
+    child->_private->previousSibling = nil;
+    child->_private->nextSibling = nil;
 
     [_private->children removeObject:child];
 }
@@ -2258,7 +2303,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _addFramePathToString:path];
     // The new child's path component is all but the 1st char and the last 3 chars
     // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
-    [path appendFormat:@"/<!--frame%d-->-->", _private->children ? [_private->children count] : 0];
+    [path appendFormat:@"/<!--frame%d-->-->", [_private->children count]];
     return path;
 }
 
@@ -2329,12 +2374,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // history item.
 - (void)_saveDocumentAndScrollState
 {
-    [_private->bridge saveDocumentState];
-    [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
-
-    // It's OK to use the internal version because this method is
-    // guaranteed not to change the set of frames.
-    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_saveDocumentAndScrollState)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        [[frame _bridge] saveDocumentState];
+        [frame _saveScrollPositionAndViewStateToItem:[frame->_private currentItem]];
+    }
 }
 
 // Called after the FormsDelegate is done processing willSubmitForm:
@@ -2482,49 +2525,41 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
-// Returns the last child of us and any children, or nil
-- (WebFrame *)_lastChild
+// Returns the last child of us and any children, or self
+- (WebFrame *)_deepLastChildFrame
 {
-    if (_private->children && [_private->children count]) {
-        WebFrame *ourLastKid = [_private->children lastObject];
-        WebFrame *kidsLastKid = [ourLastKid _lastChild];
-        return kidsLastKid ? kidsLastKid : ourLastKid;
-    }
-    return nil;                // no kids
+    WebFrame *result = self;
+    for (WebFrame *lastChild = [self _lastChildFrame]; lastChild; lastChild = [lastChild _lastChildFrame])
+        result = lastChild;
+
+    return result;
 }
 
 // Return next frame to be traversed, visiting children after parent
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
 {
-    if (_private->children && [_private->children count])
-        return [_private->children objectAtIndex:0];
+    WebFrame *result = [self _traverseNextFrameStayWithin:nil];
 
-    WebFrame * frame;
-    for (frame = self; [frame parentFrame]; frame = [frame parentFrame]) {
-        WebFrame *nextSibling = frame->_private->nextSibling;
-        if (nextSibling)
-            return nextSibling;
-    }
-    
-    return wrapFlag ? frame : nil;                // made it all the way to the top
+    if (!result && wrapFlag)
+        return [[self webView] mainFrame];
+
+    return result;
 }
 
 // Return previous frame to be traversed, exact reverse order of _nextFrame
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
 {
-    WebFrame *prevSibling = _private->previousSibling;
-    if (prevSibling) {
-        WebFrame *prevSiblingLastChild = [prevSibling _lastChild];
-        return prevSiblingLastChild ? prevSiblingLastChild : prevSibling;
-    } 
+    // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
+
+    WebFrame *prevSibling = [self _previousSiblingFrame];
+    if (prevSibling)
+        return [prevSibling _deepLastChildFrame];
     if ([self parentFrame])
         return [self parentFrame];
     
     // no siblings, no parent, self==top
-    if (wrapFlag) {
-        WebFrame *selfLastChild = [self _lastChild];
-        return selfLastChild ? selfLastChild : self;
-    }
+    if (wrapFlag)
+        return [self _deepLastChildFrame];
 
     // top view is always the last one in this ordering, so prev is nil without wrap
     return nil;
@@ -2542,21 +2577,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
 {
-    int num;
-
     if (!recurse)
         return [[self _bridge] numPendingOrLoadingRequests];
 
-    num = [[self _bridge] numPendingOrLoadingRequests];
-    // It's OK to use the internal version because this method is
-    // guaranteed not to change the set of frames.
-    NSArray *children = [self _internalChildFrames];
-    int i, count = [children count];
-    WebFrame *child;
-    for (i = 0; i < count; i++){
-        child = [children objectAtIndex: 0];
-        num += [child _numPendingOrLoadingRequests:recurse];
-    }
+    int num = 0;
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        num += [[self _bridge] numPendingOrLoadingRequests];
+
     return num;
 }
 
@@ -2567,25 +2594,25 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_reloadForPluginChanges
 {
-    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
-    if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]] ||
-        [documentView isKindOfClass:[WebPluginDocumentView class]]) {
-        [self reload];
-    } else if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        NSEnumerator *viewEnumerator = [[documentView subviews] objectEnumerator];
-        NSView *view;
-        // FIXME:  We should ask the frame if it contains plugins, rather
-        // than doing this check.
-        while ((view = [viewEnumerator nextObject]) != nil) {
-            if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
-                [view isKindOfClass:[WebNullPluginView class]] ||
-                [WebPluginController isPlugInView:view]) {
-                [self reload];
-                break;
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+        if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]] ||
+            [documentView isKindOfClass:[WebPluginDocumentView class]]) {
+            [frame reload];
+        } else if ([documentView isKindOfClass:[WebHTMLView class]]) {
+            NSEnumerator *viewEnumerator = [[documentView subviews] objectEnumerator];
+            NSView *view;
+            // FIXME:  We should ask the frame if it contains plugins, rather
+            // than doing this check.
+            while ((view = [viewEnumerator nextObject]) != nil) {
+                if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
+                    [view isKindOfClass:[WebNullPluginView class]] ||
+                    [WebPluginController isPlugInView:view]) {
+                    [frame reload];
+                    break;
+                }
             }
         }
-    } else {
-        [[self childFrames] makeObjectsPerformSelector:@selector(_reloadForPluginChanges)];
     }
 }
 
@@ -2603,52 +2630,53 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins
 {
-    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    
-    [[self childFrames] makeObjectsPerformSelector:@selector(_recursive_pauseNullEventsForAllNetscapePlugins)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+        // FIXME: what about plugin document view?
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
+    }
 }
 
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {
-    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
-
-    [[self childFrames] makeObjectsPerformSelector:@selector(_recursive_resumeNullEventsForAllNetscapePlugins)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        // FIXME: what about plugin document view?
+        NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
+    }
 }
 
 @end
 
 @implementation WebFrame (WebInternal)
 
-- (void)_accumulateDocumentViews:(NSMutableArray *)result
-{
-    id docView = [[self frameView] documentView];
-    if (docView) {
-        [result addObject:docView];
-    }
-    [_private->children makeObjectsPerformSelector:@selector(_accumulateDocumentViews:) withObject:result];
-}
-
 - (NSArray *)_documentViews
 {
     NSMutableArray *result = [NSMutableArray array];
-    [self _accumulateDocumentViews:result];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        id docView = [[frame frameView] documentView];
+        if (docView)
+            [result addObject:docView];
+    }
+        
     return result;
 }
 
 - (void)_updateDrawsBackground
 {
     BOOL drawsBackground = [[self webView] drawsBackground];
-    if (!drawsBackground)
-        [[[self frameView] _scrollView] setDrawsBackground:NO];
-    id documentView = [[self frameView] documentView];
-    if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
-        [documentView setDrawsBackground:drawsBackground];
-    [[self _bridge] setDrawsBackground:drawsBackground];
-    [_private->children makeObjectsPerformSelector:@selector(_updateDrawsBackground)];
+
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        // FIXME: why not the other way for scroll view?
+        if (!drawsBackground)
+            [[[frame frameView] _scrollView] setDrawsBackground:NO];
+        id documentView = [[frame frameView] documentView];
+        if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
+            [documentView setDrawsBackground:drawsBackground];
+        [[frame _bridge] setDrawsBackground:drawsBackground];
+    }
 }
 
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate
@@ -2761,8 +2789,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_unmarkAllMisspellings
 {
-    [[self _bridge] unmarkAllMisspellings];
-    [_private->children makeObjectsPerformSelector:@selector(_unmarkAllMisspellings)];
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        [[frame _bridge] unmarkAllMisspellings];
 }
 
 - (void)_didFirstLayout
@@ -2835,25 +2863,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 #ifndef NDEBUG
-- (void)_accumulateFramesWithSelection:(NSMutableArray *)framesWithSelection
-{
-    if ([self _hasSelection])
-        [framesWithSelection addObject:self];
-    
-    NSArray *frames = [self _internalChildFrames];
-    int i;
-    int count = [frames count];
-    for (i = 0; i < count; i++) {
-        [[frames objectAtIndex:i] _accumulateFramesWithSelection:framesWithSelection];
-    }
-}
 
 - (BOOL)_atMostOneFrameHasSelection;
 {
     // FIXME: 4186050 is one known case that makes this debug check fail
-    NSMutableArray *framesWithSelection = [NSMutableArray array];
-    [self _accumulateFramesWithSelection:framesWithSelection];
-    return [framesWithSelection count] <= 1;
+    BOOL found = NO;
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
+        if ([frame _hasSelection]) {
+            if (found)
+                return NO;
+            found = YES;
+        }
+    }
+
+    return YES;
 }
 #endif
 
@@ -2861,18 +2884,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     ASSERT([self _atMostOneFrameHasSelection]);
 
-    if ([self _hasSelection])
-        return self;
-    
-    NSArray *frames = [self _internalChildFrames];
-    int i;
-    int count = [frames count];
-    for (i = 0; i < count; i++) {
-        WebFrame *frameWithSelection = [[frames objectAtIndex:i] _findFrameWithSelection];
-        if (frameWithSelection)
-            return frameWithSelection;
-    }
-    
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        if ([frame _hasSelection])
+            return frame;
+
     return nil;
 }
 
@@ -2891,30 +2906,25 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_stopLoadingSubframes
 {
-    [[self  childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
+    [[self childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
 }
 
 - (BOOL)_subframeIsLoading
 {
     // Put in the auto-release pool because it's common to call this from a run loop source,
     // and then the entire list of frames lasts until the next autorelease.
-    // FIXME: is this really still true? we use _internalChildFrames now which does not
-    // make a copy.
+    // FIXME: is this really still true? we use _firstChildFrame/_nextSiblingFrame now 
+    // which does not make a copy.
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
-    // It's OK to use the internal version of getting the child
-    // frames, since nothing we do here can possibly change the set of
-    // frames.
-    NSEnumerator *e = [[self _internalChildFrames] objectEnumerator];
-    WebFrame *childFrame;
-    while ((childFrame = [e nextObject])) {
-        if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading])
+    WebFrame *frame;
+    for (frame = [self _firstChildFrame]; frame; frame = [frame _nextSiblingFrame])
+        if ([[frame dataSource] isLoading] || [[frame provisionalDataSource] isLoading])
             break;
-    }
 
     [pool drain];
     
-    return childFrame != nil;
+    return frame != nil;
 }
 
 @end
@@ -3217,26 +3227,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrame *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
 {
-    // for security reasons, we do not want to even make frames visible to frames that
-    // can't access them 
-    if ([[self name] isEqualToString: name] && [self _shouldAllowAccessFrom:source]) {
-        return self;
-    }
-
-    // It's OK to use the internal version of getting the child
-    // frames, since we know this method won't change the set of
-    // frames
-    NSArray *children = [self _internalChildFrames];
-    WebFrame *frame;
-    unsigned i;
-
-    for (i = 0; i < [children count]; i++){
-        frame = [children objectAtIndex: i];
-        frame = [frame _descendantFrameNamed:name sourceFrame:source];
-        if (frame){
-            return frame;
-        }
-    }
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        // for security reasons, we do not want to even make frames visible to frames that
+        // can't access them 
+        if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
+            return self;
 
     return nil;
 }

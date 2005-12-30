@@ -1845,6 +1845,7 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1909,6 +1910,7 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -1972,6 +1974,7 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2036,6 +2039,7 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_OPTIMIZATION_LEVEL = s;

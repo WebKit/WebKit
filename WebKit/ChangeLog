@@ -1,3 +1,69 @@
+2005-12-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- abstract frame traversal in WebFrame more
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6283
+	
+	Rewrote most of the frame traversal code in WebFrame to use DOM-style 
+	first/last/next/previous methods, to abstract access better in preparation 
+	for moving it down. 
+
+	As an added bonus, many formerly recursive methods are now iterative.
+
+        * WebKit.xcodeproj/project.pbxproj: Use gnu99 dialect of C, so that
+	variables can be declared in for loop initializers.
+
+	- added new frame traversal methods, to avoid dealing with the children array
+	directly:
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _firstChildFrame]): New method.
+        (-[WebFrame _lastChildFrame]): New method.
+        (-[WebFrame _previousSiblingFrame]): New method.
+        (-[WebFrame _nextSiblingFrame]): New method.
+        (-[WebFrame _traverseNextFrameStayWithin:]): Like traverseNextNode() in the DOM;
+	uses some of the previous.
+
+	- apply the new methods
+	
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]): Rewrite loop
+	to use new traversal methods.
+        (-[WebFrame _immediateChildFrameNamed:]): ditto, also added FIXME
+        (-[WebFrame _setName:]): Improved comment, removed gratuitous brace
+        (-[WebFrame _isDescendantOfFrame:]): Rewrote to chase parent pointers instead
+	of looking in child arrays (duh)
+        (-[WebFrame _detachChildren]): Rewrite loop to use new traversal methods,
+	still walk backwards for now.
+        (-[WebFrame _closeOldDataSources]): Rewrite using new traversal methods.
+        (-[WebFrame _childFramesMatchItem:]): ditto
+        (-[WebFrame _defersCallbacksChanged]): ditto
+        (-[WebFrame _viewWillMoveToHostWindow:]): ditto
+        (-[WebFrame _viewDidMoveToHostWindow]): ditto
+        (-[WebFrame _addChild:]): don't use childFrames method
+        (-[WebFrame _removeChild:]): Clear out the sibling pointers after unlinking from the list, 
+	not obvious if anything needs this but it seems like the right thing to do.
+        (-[WebFrame _generateFrameName]): don't bother to nil-check children array, since
+	calling count on nil still gives 0.
+        (-[WebFrame _saveDocumentAndScrollState]): Rewrite to use frame traversal methods
+        (-[WebFrame _deepLastChildFrame]): renamed from _lastChildFrame, rewrite to use child
+	traversal methods.
+        (-[WebFrame _nextFrameWithWrap:]): Use new frame traversal stuff (mostly just
+	a thin wrapper on _traverseNextFrameStayWithin: 
+        (-[WebFrame _previousFrameWithWrap:]): Use new traversal functions
+        (-[WebFrame _numPendingOrLoadingRequests:]): Rewrite loop with new tracrsal functions
+        (-[WebFrame _reloadForPluginChanges]): ditto
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]): ditto
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]): ditto
+        (-[WebFrame _documentViews]): ditto
+        (-[WebFrame _updateDrawsBackground]): ditto
+        (-[WebFrame _unmarkAllMisspellings]): ditto
+        (-[WebFrame _atMostOneFrameHasSelection]): ditto
+        (-[WebFrame _findFrameWithSelection]): ditto
+        (-[WebFrame _stopLoadingSubframes]): ditto
+        (-[WebFrame _subframeIsLoading]): ditto
+        (-[WebFrame _descendantFrameNamed:sourceFrame:]): ditto
+
 2005-12-29  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFrameView.m: (-[WebFrameViewPrivate dealloc]):
