@@ -1,3 +1,13 @@
+2005-12-29  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3579
+          In-place style-switching is leaving junk behind, messing up styles
+
+        * khtml/rendering/render_block.h: (khtml::RenderBlock::initMaxMarginValues):
+        Set all margin values in all cases.
+
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

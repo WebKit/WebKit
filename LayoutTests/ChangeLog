@@ -1,3 +1,15 @@
+2005-12-29  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed and refined by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3579
+          In-place style-switching is leaving junk behind, messing up styles
+
+        * fast/css/margin-top-bottom-dynamic-expected.checksum: Added.
+        * fast/css/margin-top-bottom-dynamic-expected.png: Added.
+        * fast/css/margin-top-bottom-dynamic-expected.txt: Added.
+        * fast/css/margin-top-bottom-dynamic.html: Added.
+
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -90,14 +90,20 @@ public:
     }
 
     void initMaxMarginValues() {
-        if (m_marginTop >= 0)
+        if (m_marginTop >= 0) {
             m_maxTopPosMargin = m_marginTop;
-        else
+            m_maxTopNegMargin = 0;
+        } else {
             m_maxTopNegMargin = -m_marginTop;
-        if (m_marginBottom >= 0)
+            m_maxTopPosMargin = 0;
+        }
+        if (m_marginBottom >= 0) {
             m_maxBottomPosMargin = m_marginBottom;
-        else
+            m_maxBottomNegMargin = 0;
+        } else {
             m_maxBottomNegMargin = -m_marginBottom;
+            m_maxBottomPosMargin = 0;
+        }
     }
 
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
