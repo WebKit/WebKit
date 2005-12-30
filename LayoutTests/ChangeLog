@@ -1,3 +1,13 @@
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        XML documents with "html" in dtd name use XHTML entities when they shouldn't
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6290
+
+        * fast/parser/xhtml-alternate-entities-expected.txt: Added.
+        * fast/parser/xhtml-alternate-entities.xml: Added.
+
 2005-12-28  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by eseidel.
