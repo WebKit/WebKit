@@ -1,3 +1,12 @@
+2005-12-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6289
+        REGRESSION: firstCharacterForRange(0, 0) returns a 0x0 rect
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        Only special-case (0, 0) ranges for empty documents.
+
 2005-12-29  Geoffrey Garen  <ggaren@apple.com>
 
         Added test case for <rdar://problem/4268278> Submitting a form in onUnload event

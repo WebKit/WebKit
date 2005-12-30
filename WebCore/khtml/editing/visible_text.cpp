@@ -997,7 +997,8 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
 
     TextIterator it(rangeOfContents(doc).get());
     
-    if (rangeLocation == 0 && rangeLength == 0) {
+    // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugzilla.opendarwin.org/show_bug.cgi?id=6289>.
+    if (rangeLocation == 0 && rangeLength == 0 && it.atEnd()) {
         int exception = 0;
         textRunRange = it.range();
         
