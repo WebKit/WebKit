@@ -202,7 +202,6 @@
         * ksvg2/svg/SVGRectElementImpl.cpp:
         (SVGRectElementImpl::toPathData): fixed round rect calculations
 
->>>>>>> 1.66
 2005-12-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by eseidel, ggaren, darin.
