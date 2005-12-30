@@ -1,3 +1,15 @@
+2005-12-30  Eric Seidel  <eseidel@apple.com>
+
+        No review, just adding a couple missing results.
+
+        One missing pixel test.
+        One result which never was updated properly after rounded rect fix:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+
+        * svg/W3C-SVG-1.1/shapes-rect-01-t-expected.txt:
+        * fast/parser/xhtml-alternate-entities-expected.checksum: Added.
+        * fast/parser/xhtml-alternate-entities-expected.png: Added.
+
 2005-12-30  Joost de Valk  <webkit@joostdevalk.nl>
 
         Reviewed by Darin, landed by Maciej.
