@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -140,14 +140,46 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       dradix = args[0]->toInteger(exec);
     if (dradix >= 2 && dradix <= 36 && dradix != 10) { // false for NaN
       int radix = static_cast<int>(dradix);
-      unsigned i = v->toUInt32(exec);
-      char s[33];
-      char *p = s + sizeof(s);
-      *--p = '\0';
+      const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+      // INT_MAX results in 1024 characters left of the dot with radix 2
+      // give the same space on the right side. safety checks are in place
+      // unless someone finds a precise rule.
+      char s[2048 + 3];
+      double x = v->toNumber(exec);
+      if (isNaN(x) || isInf(x))
+        return jsString(UString::from(x));
+
+      // apply algorithm on absolute value. add sign later.
+      bool neg = false;
+      if (x < 0.0) {
+        neg = true;
+        x = -x;
+      }
+      // convert integer portion
+      double f = floor(x);
+      double d = f;
+      char *dot = s + sizeof(s) / 2;
+      char *p = dot;
+      *p = '\0';
       do {
-        *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[i % radix];
-        i /= radix;
-      } while (i);
+        *--p = digits[static_cast<int>(fmod(d, radix))];
+        d /= radix;
+      } while ((d <= -1.0 || d >= 1.0) && p > s);
+      // any decimal fraction ?
+      d = x - f;
+      const double eps = 0.001; // TODO: guessed. base on radix ?
+      if (d < -eps || d > eps) {
+        *dot++ = '.';
+        do {
+          d *= radix;
+          *dot++ = digits[static_cast<int>(d)];
+          d -= static_cast<int>(d);
+        } while ((d < -eps || d > eps) && dot - s < static_cast<int>(sizeof(s)) - 1);
+        *dot = '\0';
+      }
+      // add sign if negative
+      if (neg)
+        *--p = '-';
       return jsString(p);
     } else
       return jsString(v->toString(exec));
@@ -223,7 +255,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
           else
               x = cx;
           
-          decimalAdjust = int(logx);
+          decimalAdjust = static_cast<int>(logx);
       }
       
       char buf[80];
@@ -310,7 +342,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       int p = (int)dp;
       
       if (x != 0) {
-          e = int(log10(x));
+          e = static_cast<int>(log10(x));
           double n = floor(x / pow(10.0, e - p + 1));
           if (n < pow(10.0, p - 1)) {
               e = e - 1;
