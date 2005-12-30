@@ -13,12 +13,12 @@ PASS Number.POSITIVE_INFINITY is Infinity
 PASS (1).toString() is '1'
 PASS typeof (1).toString() is 'string'
 PASS (10).toString(16) is 'a'
-FAIL (8.5).toString(16) should be 8.8. Was 8
-FAIL (-8.5).toString(16) should be -8.8. Was fffffff8
-FAIL Number.NaN.toString(16) should be NaN. Was 0
-FAIL Number.POSITIVE_INFINITY.toString(16) should be Infinity. Was 0
-FAIL Number.NEGATIVE_INFINITY.toString(16) should be -Infinity. Was 0
-FAIL Number.MAX_VALUE.toString(2).length should be 1024. Was 1
+PASS (8.5).toString(16) is '8.8'
+PASS (-8.5).toString(16) is '-8.8'
+PASS Number.NaN.toString(16) is 'NaN'
+PASS Number.POSITIVE_INFINITY.toString(16) is 'Infinity'
+PASS Number.NEGATIVE_INFINITY.toString(16) is '-Infinity'
+PASS Number.MAX_VALUE.toString(2).length is 1024
 PASS (1).valueOf() is 1
 PASS typeof (1).valueOf() is 'number'
 PASS Number(1234.567).toFixed(0) is "1235"

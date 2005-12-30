@@ -1,3 +1,12 @@
+2005-12-30  Maciej Stachowiak  <mjs@apple.com>
+
+        No review.
+
+	- updated test results for Number.toString() fixes:
+	<http://bugzilla.opendarwin.org/show_bug.cgi?id=6259>
+
+        * fast/js/kde/Number-expected.txt:
+
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
         No review, just updating results.
