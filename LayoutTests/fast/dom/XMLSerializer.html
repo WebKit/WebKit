@@ -30,18 +30,23 @@ function runTests() {
 	child2 = child1.nextSibling
 	comment = child2.nextSibling;
 	
+	fragment = doc.createDocumentFragment();
+	fragment.appendChild(doc.documentElement.cloneNode(true))
+	
 	serializer = new XMLSerializer();
 	
 	debug(serializer.serializeToString(child1));
 	debug(serializer.serializeToString(child2));
 	debug(serializer.serializeToString(comment));	
 	debug(serializer.serializeToString(doc));
+	debug(serializer.serializeToString(fragment));
+	
 }
 
 </script>
 </head>
 <body onload="runTests()">
-This tests XMLSerializer on different node types. If the test is successful, there should be four lines of output. The first line should be the child1 tag. The second should be the child2 tag. The third one should be a comment and the fourth one should be the complete document.
+This tests XMLSerializer on different node types. If the test is successful, there should be five lines of output. The first line should be the child1 tag. The second should be the child2 tag. The third one should be a comment, the fourth one should be the complete document and the fifth one should be the complete document but serialized from a document fragment node.
 <ul id="console">
 </ul>
 </body>

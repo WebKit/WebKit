@@ -1,3 +1,21 @@
+2005-12-30  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+		- Update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6297
+        XMLSerializer should use createMarkup
+		
+        * fast/dom/XMLSerializer.html:
+        * fast/dom/XMLSerializer-expected.txt:
+        Create a document fragment and serialize it.
+		
+        * fast/dom/dom-parse-serialize.html:
+        * fast/dom/dom-parse-serialize-expected.txt:
+        Add some entities to attributes and text nodes.
+
+        * fast/xsl/xslt-processer-expected.txt:
+        Update test results.
+
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
         No review, just adding a couple missing results.

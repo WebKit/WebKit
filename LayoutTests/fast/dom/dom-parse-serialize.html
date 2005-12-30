@@ -40,7 +40,7 @@ function execute()
 {
   var parser = new DOMParser();
   var str = 
-    '<?xml version="1.0"?>\n<!DOCTYPE doc [\n<!ATTLIST d id ID #IMPLIED>\n]>\n<doc>\n  <foo xmlns="foobar">One</foo> <x:bar xmlns:x="barfoo">Two</x:bar>\n  <d id="id3">Three</d>\n</doc>\n';
+    '<?xml version="1.0"?>\n<!DOCTYPE doc [\n<!ATTLIST d id ID #IMPLIED>\n]>\n<doc>\n  <foo xmlns="foobar">One</foo> <x:bar xmlns:x="barfoo">Two</x:bar>\n  <d id="id3">Three</d>\n<f id="&amp;&lt;&gt;">Four&amp;&lt;&gt;</f><empty/><empty></empty></doc>\n';
   var doc = parser.parseFromString(str,"text/xml");
   
   document.getElementById("id1").firstChild.nodeValue = str;
