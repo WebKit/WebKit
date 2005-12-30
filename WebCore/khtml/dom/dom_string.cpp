@@ -105,19 +105,6 @@ const QChar &DOMString::operator [](unsigned int i) const
     return *(m_impl->s+i);
 }
 
-int DOMString::find(const QChar c, int start) const
-{
-    unsigned int l = start;
-    if (!m_impl || l >= m_impl->l )
-        return -1;
-    while(l < m_impl->l) {
-	if (*(m_impl->s+l) == c)
-            return l;
-	l++;
-    }
-    return -1;
-}
-
 uint DOMString::length() const
 {
     if (!m_impl)

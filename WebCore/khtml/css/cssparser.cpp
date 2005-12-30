@@ -204,11 +204,6 @@ CSSRuleImpl *CSSParser::parseRule(CSSStyleSheetImpl *sheet, const DOMString &str
 bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id, const DOMString &string,
 			    bool _important)
 {
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "CSSParser::parseValue: id=" << _id << " important=" << _important
-		    << " value='" << string.qstring() << "'" << endl;
-#endif
-
     styleElement = declaration->stylesheet();
 
     setupParser ("@-khtml-value{", string, "} ");
@@ -281,10 +276,6 @@ bool CSSParser::parseColor( CSSMutableStyleDeclarationImpl *declaration, const D
 
 bool CSSParser::parseDeclaration( CSSMutableStyleDeclarationImpl *declaration, const DOMString &string )
 {
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "CSSParser::parseDeclaration:value='" << string.qstring() << "'" << endl;
-#endif
-
     styleElement = declaration->stylesheet();
 
     setupParser ( "@-khtml-decls{", string, "} ");
@@ -1507,9 +1498,6 @@ bool CSSParser::parseContent( int propId, bool important )
 	    DOMString value = parseURL(domString(val->string));
             parsedValue = new CSSImageValueImpl(
 		DOMString(KURL( styleElement->baseURL().qstring(), value.qstring()).url() ), styleElement );
-#ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "content, url=" << value.qstring() << " base=" << styleElement->baseURL().qstring() << endl;
-#endif
         } else if ( val->unit == Value::Function ) {
 	    // attr( X )
             ValueList *args = val->function->args;

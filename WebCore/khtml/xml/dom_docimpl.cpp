@@ -1862,11 +1862,13 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             pos++;
             while(pos < (int)str.length() && str[pos].isSpace()) pos++;
             str = str.mid(pos);
-            if(str.find("url", 0,  false ) == 0)  str = str.mid(3);
+            if (str.find("url", 0,  false ) == 0)
+                str = str.mid(3);
             str = str.stripWhiteSpace();
-            if ( str.length() && str[0] == '=' ) str = str.mid( 1 ).stripWhiteSpace();
-            str = parseURL( DOMString(str) ).qstring();
-            if ( ok && part )
+            if (str.length() && str[0] == '=')
+                str = str.mid(1).stripWhiteSpace();
+            str = parseURL(DOMString(str)).qstring();
+            if (ok && part)
                 // We want a new history item if the refresh timeout > 1 second
                 part->scheduleRedirection(delay, completeURL( str ), delay <= 1);
         }
@@ -1883,9 +1885,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         QString str = content.qstring().lower().stripWhiteSpace();
         KURL url = part->url();
         if ((str == "no-cache") && url.protocol().startsWith("http"))
-        {
            KIO::http_update_cache(url, true, 0);
-        }
     }
     else if( (strcasecmp(equiv, "set-cookie") == 0))
     {

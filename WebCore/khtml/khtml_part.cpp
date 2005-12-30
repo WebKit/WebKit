@@ -1711,12 +1711,9 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                               const QStringList &paramNames, const QStringList &paramValues, bool isIFrame )
 {
-//  kdDebug( 6050 ) << "childRequest( ..., " << url << ", " << frameName << " )" << endl;
   FrameIt it = d->m_frames.find( frameName );
-  if ( it == d->m_frames.end() )
-  {
+  if (it == d->m_frames.end()) {
     khtml::ChildFrame child;
-//    kdDebug( 6050 ) << "inserting new frame into frame map " << frameName << endl;
     child.m_name = frameName;
     it = d->m_frames.append( child );
   }
@@ -1727,8 +1724,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
   (*it).m_paramNames = paramValues;
 
   // Support for <frame src="javascript:string">
-  if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
-  {
+  if (url.startsWith("javascript:", false)) {
     if (!processObjectRequest(&(*it), "about:blank", "text/html" ))
       return false;
 
@@ -1923,23 +1919,18 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const FormDa
   kdDebug(6000) << this << ": KHTMLPart::submitForm target=" << _target << " url=" << url << endl;
   KURL u = completeURL( url );
 
-  if ( !u.isValid() )
-  {
+  if (!u.isValid())
     // ### ERROR HANDLING!
     return;
-  }
-
 
   QString urlstring = u.url();
-
-  if ( urlstring.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
+  if (urlstring.startsWith("javascript:", false)) {
     urlstring = KURL::decode_string(urlstring);
     d->m_executingJavaScriptFormAction = true;
     executeScript( urlstring.right( urlstring.length() - 11) );
     d->m_executingJavaScriptFormAction = false;
     return;
   }
-
 
   KParts::URLArgs args;
 

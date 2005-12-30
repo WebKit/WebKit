@@ -407,20 +407,16 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
     return true;
 }
 
-void HTMLFormElementImpl::parseEnctype( const DOMString& type )
+void HTMLFormElementImpl::parseEnctype(const DOMString& type)
 {
-    if(type.qstring().find("multipart", 0, false) != -1 || type.qstring().find("form-data", 0, false) != -1)
-    {
+    if(type.contains("multipart", false) || type.contains("form-data", false)) {
         m_enctype = "multipart/form-data";
         m_multipart = true;
         m_post = true;
-    } else if (type.qstring().find("text", 0, false) != -1 || type.qstring().find("plain", 0, false) != -1)
-    {
+    } else if (type.contains("text", false) || type.contains("plain", false)) {
         m_enctype = "text/plain";
         m_multipart = false;
-    }
-    else
-    {
+    } else {
         m_enctype = "application/x-www-form-urlencoded";
         m_multipart = false;
     }

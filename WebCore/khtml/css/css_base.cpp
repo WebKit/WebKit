@@ -95,12 +95,8 @@ StyleListImpl::~StyleListImpl()
 
 void CSSSelector::print(void)
 {
-    kdDebug( 6080 ) << "[Selector: tag = " <<       tag.localName().qstring() << ", attr = \"" << attr.localName().qstring() << "\", match = \"" << match
-		    << "\" value = \"" << value.qstring().latin1() << "\" relation = " << (int)relation
-		    << "]" << endl;
-    if ( tagHistory )
+    if (tagHistory)
         tagHistory->print();
-    kdDebug( 6080 ) << "    specificity = " << specificity() << endl;
 }
 
 unsigned int CSSSelector::specificity()

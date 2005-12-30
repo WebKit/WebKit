@@ -71,8 +71,23 @@ public:
      * character returned will be 0.
      */
     const QChar &operator [](unsigned int i) const;
+    
+    // NOTE: contains returns bool, eventually we'll add count() which returns an int.
+    bool contains(QChar c) const { return (find(c) != -1); }
+    bool contains(const char *str, bool caseSensitive = true) const { return (find(str, 0, caseSensitive) != -1); }
 
-    int find(const QChar c, int start = 0) const;
+    int find(const QChar c, int start = 0) const
+        { if (m_impl) return m_impl->find(c, start); return -1; }
+    int find(const char *str, int start = 0, bool caseSensitive = true) const
+        { if (m_impl) return m_impl->find(str, start, caseSensitive); return -1; }
+    int find(const DOMString& str, int start = 0, bool caseSensitive = true) const
+        { if (m_impl) return m_impl->find(str.impl(), start, caseSensitive); return -1; }
+    
+    bool startsWith(const DOMString &s, bool caseSensitive = true) const
+        { if (m_impl) return m_impl->startsWith(s.impl(), caseSensitive); return false; }
+    bool endsWith(const DOMString &s, bool caseSensitive = true) const
+        { if (m_impl) return m_impl->endsWith(s.impl(), caseSensitive); return false; }
+
     DOMString &replace(QChar a, QChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
 
     uint length() const;
@@ -87,12 +102,9 @@ public:
     DOMString split(unsigned int pos);
 
     /**
-     * Returns a lowercase version of the string
+     * Returns a lowercase/uppercase version of the string
      */
     DOMString lower() const;
-    /**
-     * Returns an uppercase version of the string
-     */
     DOMString upper() const;
 
     QChar *unicode() const;
@@ -108,10 +120,6 @@ public:
     bool isNull()  const { return (m_impl == 0); }
     bool isEmpty()  const;
 
-    /**
-     * @internal get a handle to the imlementation of the DOMString
-     * Use at own risk!!!
-     */
     DOMStringImpl *impl() const { return m_impl.get(); }
 
 #ifdef __OBJC__

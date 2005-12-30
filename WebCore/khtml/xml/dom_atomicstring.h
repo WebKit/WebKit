@@ -45,9 +45,20 @@ public:
     DOMStringImpl* impl() const { return m_string.impl(); }
     
     const QChar *unicode() const { return m_string.unicode(); }
-    int length() const { return m_string.length(); }
+    uint length() const { return m_string.length(); }
     
+    const QChar &operator [](unsigned int i) const { return m_string[i]; }
+    
+    bool contains(const QChar c) const { return m_string.contains(c); }
+    bool contains(const AtomicString &s, bool caseSentitive = true) const { return (find(s, 0, caseSentitive) != -1); }
+
     int find(const QChar c, int start = 0) const { return m_string.find(c, start); }
+    int find(const AtomicString &s, int start = 0, bool caseSentitive = true) const
+        { return m_string.find(s.domString(), start, caseSentitive); }
+    
+    bool startsWith(const AtomicString &s, bool caseSensitive = true) const { return (find(s, 0, caseSensitive) == 0); }
+    bool endsWith(const AtomicString &s, bool caseSensitive = true) const
+        { return m_string.endsWith(s.domString(), caseSensitive); }
     
     int toInt() const { return m_string.toInt(); }
     bool percentage(int &_percentage) const { return m_string.percentage(_percentage); }

@@ -155,7 +155,7 @@ void CSSStyleDeclarationImpl::setProperty(const DOMString &propertyName, const D
     int propID = propertyID(propertyName);
     if (!propID) // set exception?
         return;
-    bool important = priority.qstring().find("important", 0, false) != -1;
+    bool important = priority.find("important", 0, false) != -1;
     setProperty(propID, value, important, exception);
 }
 

@@ -30,6 +30,7 @@
 
 #include <string.h>
 #include "dom_atomicstring.h"
+#include <kxmlcore/Assertions.h>
 
 using namespace khtml;
 
@@ -446,6 +447,163 @@ int DOMStringImpl::toInt(bool *ok) const
     }
     
     return QConstString(s, i).string().toInt(ok);
+}
+
+static bool equal(const QChar *a, const char *b, int l)
+{
+    ASSERT(l >= 0);
+    while (l--) {
+        if (*a != *b)
+            return false;
+	a++; b++;
+    }
+    return true;
+}
+
+static bool equalCaseInsensitive(const QChar *a, const char *b, int l)
+{
+    ASSERT(l >= 0);
+    while (l--) {
+        if (tolower(a->unicode()) != tolower(*b))
+            return false;
+	a++; b++;
+    }
+    return true;
+}
+
+static bool equalCaseInsensitive(const QChar *a, const QChar *b, int l)
+{
+    ASSERT(l >= 0);
+    while (l--) {
+        if (tolower(a->unicode()) != tolower(b->unicode()))
+            return false;
+	a++; b++;
+    }
+    return true;
+}
+
+// This function should be as fast as possible, every little bit helps.
+// Our usage patterns are typically small strings.  In time trials
+// this simplistic algorithm is much faster than Boyer-Moore or hash
+// based algorithms.
+// NOTE: Those time trials were done when this function was part of QString
+// It was copied here and changed slightly since.
+int DOMStringImpl::find(const char *chs, int index, bool caseSensitive) const
+{
+    if (!chs || index < 0)
+        return -1;
+
+    int chsLength = strlen(chs);
+    int n = l - index;
+    if (n < 0)
+        return -1;
+    n -= chsLength - 1;
+    if (n <= 0)
+        return -1;
+
+    const char *chsPlusOne = chs + 1;
+    int chsLengthMinusOne = chsLength - 1;
+    
+    const QChar *ptr = s + index - 1;
+    if (caseSensitive) {
+        QChar c = *chs;
+        do {
+            if (*++ptr == c && equal(ptr + 1, chsPlusOne, chsLengthMinusOne))
+                return l - chsLength - n + 1;
+        } while (--n);
+    } else {
+        int lc = tolower((unsigned char)*chs);
+        do {
+            if (tolower((++ptr)->unicode()) == lc && equalCaseInsensitive(ptr + 1, chsPlusOne, chsLengthMinusOne))
+                return l - chsLength - n + 1;
+        } while (--n);
+    }
+
+    return -1;
+}
+
+int DOMStringImpl::find(const QChar c, int start) const
+{
+    unsigned int index = start;
+    if (index >= l )
+        return -1;
+    while(index < l) {
+	if (s[index] == c)
+            return index;
+	index++;
+    }
+    return -1;
+}
+
+// This was copied from QString and made to work here w/ small modifications.
+// FIXME comments were from the QString version.
+int DOMStringImpl::find(const DOMStringImpl *str, int index, bool caseSensitive) const
+{
+    // FIXME, use the first character algorithm
+    /*
+      We use some weird hashing for efficiency's sake.  Instead of
+      comparing strings, we compare the sum of str with that of
+      a part of this QString.  Only if that matches, we call memcmp
+      or ucstrnicmp.
+
+      The hash value of a string is the sum of the cells of its
+      QChars.
+    */
+    ASSERT(str);
+    if (index < 0)
+	index += l;
+    int lstr = str->l;
+    int lthis = l - index;
+    if ((uint)lthis > l)
+	return -1;
+    int delta = lthis - lstr;
+    if (delta < 0)
+	return -1;
+
+    const QChar *uthis = s + index;
+    const QChar *ustr = str->s;
+    uint hthis = 0;
+    uint hstr = 0;
+    if (caseSensitive) {
+	for (int i = 0; i < lstr; i++) {
+	    hthis += uthis[i].unicode();
+	    hstr += ustr[i].unicode();
+	}
+	int i = 0;
+	while (1) {
+	    if (hthis == hstr && memcmp(uthis + i, ustr, lstr * sizeof(QChar)) == 0)
+		return index + i;
+	    if (i == delta)
+		return -1;
+	    hthis += uthis[i + lstr].unicode();
+	    hthis -= uthis[i].unicode();
+	    i++;
+	}
+    } else {
+	for (int i = 0; i < lstr; i++ ) {
+	    hthis += tolower(uthis[i].unicode());
+	    hstr += tolower(ustr[i].unicode());
+	}
+	int i = 0;
+	while (1) {
+	    if (hthis == hstr && equalCaseInsensitive(uthis + i, ustr, lstr))
+		return index + i;
+	    if (i == delta)
+		return -1;
+	    hthis += tolower(uthis[i + lstr].unicode());
+	    hthis -= tolower(uthis[i].unicode());
+	    i++;
+	}
+    }
+}
+
+bool DOMStringImpl::endsWith(const DOMStringImpl *s, bool caseSensitive) const
+{
+    ASSERT(s);
+    int start = l - s->l;
+    if (start >= 0)
+        return (find(s, start, caseSensitive) == start);
+    return -1;
 }
 
 DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)

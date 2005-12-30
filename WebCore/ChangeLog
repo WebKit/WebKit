@@ -1,3 +1,62 @@
+2005-12-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        DOMString/DOMStringImpl/AtomicString need enhancements before replacing QString
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6228
+        Added find(), contains(), startsWith() and endsWith() to DOMString
+        Uses the above functions throughout the code.
+        Small performance boost.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::print):
+        * khtml/css/css_ruleimpl.cpp:
+        (DOM::CSSImportRuleImpl::init):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSStyleDeclarationImpl::setProperty):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseDeclaration):
+        (CSSParser::parseContent):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::setEncodedURL):
+        (khtml::parseUASheet):
+        (khtml::cleanpath):
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSRuleSet::addRulesFromSheet):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/dom/dom_string.cpp:
+        * khtml/dom/dom_string.h:
+        (DOM::DOMString::contains):
+        (DOM::DOMString::find):
+        (DOM::DOMString::startsWith):
+        (DOM::DOMString::endsWith):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseEnctype):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestFrame):
+        (KHTMLPart::submitForm):
+        * khtml/misc/decoder.cpp:
+        (Decoder::decode):
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::AtomicString::length):
+        (DOM::AtomicString::operator []):
+        (DOM::AtomicString::contains):
+        (DOM::AtomicString::find):
+        (DOM::AtomicString::startsWith):
+        (DOM::AtomicString::endsWith):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::equal):
+        (DOM::equalCaseInsensitive):
+        (DOM::DOMStringImpl::find):
+        (DOM::DOMStringImpl::endsWith):
+        * khtml/xml/dom_stringimpl.h:
+        (DOM::DOMStringImpl::startsWith):
+
 2005-12-29  Rob Buis  <rwlbuis@xs4all.nl>
 
         Reviewed by eseidel.

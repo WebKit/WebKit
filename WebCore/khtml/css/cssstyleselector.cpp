@@ -248,9 +248,6 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
 
     m_ruleList = 0;
     m_collectRulesOnly = false;
-
-    //kdDebug( 6080 ) << "number of style sheets in document " << authorStyleSheets.count() << endl;
-    //kdDebug( 6080 ) << "CSSStyleSelector: author style has " << authorStyle->count() << " elements"<< endl;
 }
 
 CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
@@ -288,8 +285,6 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
     }
     u.setPath( QString::null );
     encodedurl.host = u.url();
-
-    //kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
 }
 
 CSSStyleSelector::~CSSStyleSelector()
@@ -310,11 +305,8 @@ static CSSStyleSheetImpl* parseUASheet(const char* sheetName)
     if (readbytes >= 0)
         file[readbytes] = '\0';
 
-    QString style = QString::fromLatin1(file.data());
-    DOMString str(style);
-
     CSSStyleSheetImpl* sheet = new CSSStyleSheetImpl((CSSStyleSheetImpl*)0);
-    sheet->parseString(str);
+    sheet->parseString(DOMString(file.data()));
     return sheet;
 }
 
@@ -559,7 +551,7 @@ static void cleanpath(QString &path)
     int refPos = -2;
     while ( (pos = path.find( "//", pos )) != -1) {
         if (refPos == -2)
-            refPos = path.find("#", 0);
+            refPos = path.find("#");
         if (refPos > 0 && pos >= refPos)
             break;
         
@@ -570,7 +562,6 @@ static void cleanpath(QString &path)
     }
     while ( (pos = path.find( "/./" )) != -1)
         path.remove( pos, 2 );
-    //kdDebug() << "checkPseudoState " << path << endl;
 }
 
 static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
@@ -1111,13 +1102,14 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
     bool havePseudo = pseudoStyle != RenderStyle::NOPSEUDO;
     
     // first selector has to match
-    if (!checkOneSelector(sel, e)) return false;
+    if (!checkOneSelector(sel, e))
+        return false;
 
     // check the subselectors
     CSSSelector::Relation relation = sel->relation;
-    while((sel = sel->tagHistory))
-    {
-        if (!n->isElementNode()) return false;
+    while((sel = sel->tagHistory)) {
+        if (!n->isElementNode())
+            return false;
         if (relation != CSSSelector::SubSelector) {
             subject = false;
             if (havePseudo && dynamicPseudo != pseudoStyle)
@@ -1127,26 +1119,23 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
         switch(relation)
         {
         case CSSSelector::Descendant:
-        {
             // FIXME: This match needs to know how to backtrack and be non-deterministic.
-            bool found = false;
-            while(!found)
-            {
+            do {
                 n = n->parentNode();
-                if(!n || !n->isElementNode()) return false;
-                ElementImpl *elem = static_cast<ElementImpl *>(n);
-                if (checkOneSelector(sel, elem)) found = true;
-            }
+                if (!n || !n->isElementNode())
+                    return false;
+            } while (!checkOneSelector(sel, static_cast<ElementImpl *>(n)));
             break;
-        }
         case CSSSelector::Child:
         {
             n = n->parentNode();
             if (!strictParsing)
-                while (n && n->implicitNode()) n = n->parentNode();
-            if(!n || !n->isElementNode()) return false;
-            ElementImpl *elem = static_cast<ElementImpl *>(n);
-            if (!checkOneSelector(sel, elem)) return false;
+                while (n && n->implicitNode())
+                    n = n->parentNode();
+            if (!n || !n->isElementNode())
+                return false;
+            if (!checkOneSelector(sel, static_cast<ElementImpl *>(n)))
+                return false;
             break;
         }
         case CSSSelector::DirectAdjacent:
@@ -1154,26 +1143,22 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
             n = n->previousSibling();
             while (n && !n->isElementNode())
                 n = n->previousSibling();
-            if (!n) return false;
-            ElementImpl *elem = static_cast<ElementImpl*>(n);
-            if (!checkOneSelector(sel, elem))
+            if (!n)
+                return false;
+            if (!checkOneSelector(sel, static_cast<ElementImpl*>(n)))
                 return false;
             break;
         }
         case CSSSelector::IndirectAdjacent:
-        {
             // FIXME: This match needs to know how to backtrack and be non-deterministic.
-            ElementImpl *elem = 0;
             do {
                 n = n->previousSibling();
                 while (n && !n->isElementNode())
                     n = n->previousSibling();
                 if (!n)
                     return false;
-                elem = static_cast<ElementImpl*>(n);
-            } while (!checkOneSelector(sel, elem));
+            } while (!checkOneSelector(sel, static_cast<ElementImpl*>(n)));
             break;
-        }
        case CSSSelector::SubSelector:
        {
             if (onlyHoverActive)
@@ -1181,13 +1166,12 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                                    (sel->pseudoType() == CSSSelector::PseudoHover ||
                                     sel->pseudoType() == CSSSelector::PseudoActive));
             
-	    //kdDebug() << "CSSOrderedRule::checkSelector" << endl;
 	    ElementImpl *elem = static_cast<ElementImpl *>(n);
 	    // a selector is invalid if something follows :first-xxx
 	    if (elem == element && dynamicPseudo != RenderStyle::NOPSEUDO)
 		return false;
-	    if (!checkOneSelector(sel, elem)) return false;
-	    //kdDebug() << "CSSOrderedRule::checkSelector: passed" << endl;
+	    if (!checkOneSelector(sel, elem))
+                return false;
 	    break;
         }
         }
@@ -1245,94 +1229,57 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             style->setAffectedByAttributeSelectors(); // Special-case the "type" attribute so input form controls can share style.
 
         const AtomicString& value = e->getAttribute(sel->attr);
-        if (value.isNull()) return false; // attribute is not set
+        if (value.isNull())
+            return false; // attribute is not set
 
         switch(sel->match) {
         case CSSSelector::Exact:
-	    if ((isXMLDoc && sel->value != value) ||
-                (!isXMLDoc && !equalsIgnoreCase(sel->value, value)))
+	    if ((isXMLDoc && sel->value != value) || (!isXMLDoc && !equalsIgnoreCase(sel->value, value)))
                 return false;
             break;
         case CSSSelector::List:
         {
-            int spacePos = value.find(' ', 0);
-            if (spacePos == -1) {
-                // There is no list, just a single item.  We can avoid
-                // allocing QStrings and just treat this as an exact
-                // match check.
-                if ((isXMLDoc && sel->value != value) ||
-                    (!isXMLDoc && !equalsIgnoreCase(sel->value, value)))
-                    return false;
-                break;
-            }
-
             // The selector's value can't contain a space, or it's totally bogus.
-            spacePos = sel->value.find(' ');
-            if (spacePos != -1)
+            if (sel->value.contains(' '))
                 return false;
 
-            QString str = value.qstring();
-            QString selStr = sel->value.qstring();
             int startSearchAt = 0;
             while (true) {
-                int foundPos = str.find(selStr, startSearchAt, isXMLDoc);
-                if (foundPos == -1) return false;
-                if (foundPos == 0 || str[foundPos-1] == ' ') {
-                    uint endStr = foundPos + selStr.length();
-                    if (endStr == str.length() || str[endStr] == ' ')
+                int foundPos = value.find(sel->value, startSearchAt, isXMLDoc);
+                if (foundPos == -1)
+                    return false;
+                if (foundPos == 0 || value[foundPos-1] == ' ') {
+                    uint endStr = foundPos + sel->value.length();
+                    if (endStr == value.length() || value[endStr] == ' ')
                         break; // We found a match.
                 }
                 
                 // No match.  Keep looking.
                 startSearchAt = foundPos + 1;
             }
-
             break;
         }
         case CSSSelector::Contain:
-        {
-            //kdDebug( 6080 ) << "checking for contains match" << endl;
-            QString str = value.qstring();
-            QString selStr = sel->value.qstring();
-            int pos = str.find(selStr, 0, isXMLDoc);
-            if(pos == -1) return false;
+            if (!value.contains(sel->value, isXMLDoc))
+                return false;
             break;
-        }
         case CSSSelector::Begin:
-        {
-            //kdDebug( 6080 ) << "checking for beginswith match" << endl;
-            QString str = value.qstring();
-            QString selStr = sel->value.qstring();
-            int pos = str.find(selStr, 0, isXMLDoc);
-            if(pos != 0) return false;
+            if (!value.startsWith(sel->value, isXMLDoc))
+                return false;
             break;
-        }
         case CSSSelector::End:
-        {
-            //kdDebug( 6080 ) << "checking for endswith match" << endl;
-            QString str = value.qstring();
-            QString selStr = sel->value.qstring();
-	    if (isXMLDoc && !str.endsWith(selStr)) return false;
-	    if (!isXMLDoc) {
-	        int pos = str.length() - selStr.length();
-		if (pos < 0 || pos != str.find(selStr, pos, false) )
-		    return false;
-	    }
+	    if (!value.endsWith(sel->value, isXMLDoc))
+                return false;
             break;
-        }
         case CSSSelector::Hyphen:
-        {
-            //kdDebug( 6080 ) << "checking for hyphen match" << endl;
-            QString str = value.qstring();
-            QString selStr = sel->value.qstring();
-            if(str.length() < selStr.length()) return false;
-            // Check if str begins with selStr:
-            if(str.find(selStr, 0, isXMLDoc) != 0) return false;
-            // It does. Check for exact match or following '-':
-            if(str.length() != selStr.length()
-                && str[selStr.length()] != '-') return false;
+            if (value.length() < sel->value.length())
+                return false;
+            if (!value.startsWith(sel->value, isXMLDoc))
+                return false;
+            // It they start the same, check for exact match or following '-':
+            if (value.length() != sel->value.length() && value[sel->value.length()] != '-')
+                return false;
             break;
-        }
         case CSSSelector::PseudoClass:
         case CSSSelector::PseudoElement:
         default:
@@ -1343,7 +1290,6 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
     {
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
-//        kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
             switch (sel->pseudoType()) {
                 // Pseudo classes:
             case CSSSelector::PseudoEmpty:
@@ -1636,7 +1582,8 @@ void CSSRuleSet::addRule(CSSStyleRuleImpl* rule, CSSSelector* sel)
 
 void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &medium)
 {
-    if (!sheet || !sheet->isCSSStyleSheet()) return;
+    if (!sheet || !sheet->isCSSStyleSheet())
+        return;
 
     // No media implies "all", but if a media list exists it must
     // contain our current medium
@@ -1654,10 +1601,6 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
         }
         else if(item->isImportRule()) {
             CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(item);
-
-            //kdDebug( 6080 ) << "@import: Media: "
-            //                << import->media()->mediaText().qstring() << endl;
-
             if (!import->media() || import->media()->contains(medium))
                 addRulesFromSheet(import->styleSheet(), medium);
         }
@@ -1665,15 +1608,9 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
             CSSMediaRuleImpl *r = static_cast<CSSMediaRuleImpl*>(item);
             CSSRuleListImpl *rules = r->cssRules();
 
-            //DOMString mediaText = media->mediaText();
-            //kdDebug( 6080 ) << "@media: Media: "
-            //                << r->media()->mediaText().qstring() << endl;
-
             if ((!r->media() || r->media()->contains(medium)) && rules) {
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < rules->length(); j++) {
-                    //kdDebug( 6080 ) << "*** Rule #" << j << endl;
-
                     CSSRuleImpl *childItem = rules->item(j);
                     if (childItem->isStyleRule()) {
                         // It is a StyleRule, so append it to our list
@@ -1682,20 +1619,9 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
                             addRule(rule, s);
                         
                     }
-                    else
-                    {
-                        //kdDebug( 6080 ) << "Ignoring child rule of "
-                        //    "ImportRule: rule is not a StyleRule!" << endl;
-                    }
                 }   // for rules
             }   // if rules
-            else
-            {
-                //kdDebug( 6080 ) << "CSSMediaRule not rendered: "
-                //                << "rule empty or wrong medium!" << endl;
-            }
         }
-        // ### include other rules
     }
 }
 
@@ -1835,8 +1761,6 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
 
 void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 {
-    //kdDebug( 6080 ) << "applying property " << prop->m_id << endl;
-
     CSSPrimitiveValueImpl *primitiveValue = 0;
     if(value->isPrimitiveValue()) primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
 
