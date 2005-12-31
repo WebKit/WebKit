@@ -707,14 +707,14 @@ void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
     } else if (attr->name() == alignAttr) {
-        DOMString v = attr->value();
-        if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
+        const AtomicString& v = attr->value();
+        if (equalIgnoringCase(v, "middle") || equalIgnoringCase(v, "center"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
-        else if (strcasecmp(attr->value(), "absmiddle") == 0)
+        else if (equalIgnoringCase(v, "absmiddle"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL_CENTER);
-        else if (strcasecmp(attr->value(), "left") == 0)
+        else if (equalIgnoringCase(v, "left"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
-        else if (strcasecmp(attr->value(), "right") == 0)
+        else if (equalIgnoringCase(v, "right"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);

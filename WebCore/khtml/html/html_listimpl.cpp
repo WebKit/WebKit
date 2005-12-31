@@ -111,15 +111,15 @@ bool HTMLOListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLOListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == typeAttr) {
-        if ( strcmp( attr->value(), "a" ) == 0 )
+        if (attr->value() == "a")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
-        else if ( strcmp( attr->value(), "A" ) == 0 )
+        else if (attr->value() == "A")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
-        else if ( strcmp( attr->value(), "i" ) == 0 )
+        else if (attr->value() == "i")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
-        else if ( strcmp( attr->value(), "I" ) == 0 )
+        else if (attr->value() == "I")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
-        else if ( strcmp( attr->value(), "1" ) == 0 )
+        else if (attr->value() == "1")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
     } else if (attr->name() == startAttr) {
         _start = !attr->isNull() ? attr->value().toInt() : 1;
@@ -178,15 +178,15 @@ void HTMLLIElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             list->setValue(requestedValue);
         }
     } else if (attr->name() == typeAttr) {
-        if ( strcmp( attr->value(), "a" ) == 0 )
+        if (attr->value() == "a")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
-        else if ( strcmp( attr->value(), "A" ) == 0 )
+        else if (attr->value() == "A")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
-        else if ( strcmp( attr->value(), "i" ) == 0 )
+        else if (attr->value() == "i")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
-        else if ( strcmp( attr->value(), "I" ) == 0 )
+        else if (attr->value() == "I")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
-        else if ( strcmp( attr->value(), "1" ) == 0 )
+        else if (attr->value() == "1")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
         else
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());

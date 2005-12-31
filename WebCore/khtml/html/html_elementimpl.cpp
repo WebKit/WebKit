@@ -142,7 +142,7 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
     DOMString indexstring;
     if (attr->name() == alignAttr) {
-        if (strcasecmp(attr->value(), "middle" ) == 0)
+        if (equalIgnoringCase(attr->value(), "middle"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, "center");
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
@@ -430,25 +430,25 @@ void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
     int propfloat = -1;
     int propvalign = -1;
     const AtomicString& alignment = attr->value();
-    if ( strcasecmp( alignment, "absmiddle" ) == 0 ) {
+    if (equalIgnoringCase(alignment, "absmiddle")) {
         propvalign = CSS_VAL_MIDDLE;
-    } else if ( strcasecmp( alignment, "absbottom" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "absbottom")) {
         propvalign = CSS_VAL_BOTTOM;
-    } else if ( strcasecmp( alignment, "left" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "left")) {
 	propfloat = CSS_VAL_LEFT;
 	propvalign = CSS_VAL_TOP;
-    } else if ( strcasecmp( alignment, "right" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "right")) {
 	propfloat = CSS_VAL_RIGHT;
 	propvalign = CSS_VAL_TOP;
-    } else if ( strcasecmp( alignment, "top" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "top")) {
 	propvalign = CSS_VAL_TOP;
-    } else if ( strcasecmp( alignment, "middle" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "middle")) {
 	propvalign = CSS_VAL__KHTML_BASELINE_MIDDLE;
-    } else if ( strcasecmp( alignment, "center" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "center")) {
 	propvalign = CSS_VAL_MIDDLE;
-    } else if ( strcasecmp( alignment, "bottom" ) == 0 ) {
+    } else if (equalIgnoringCase(alignment, "bottom")) {
 	propvalign = CSS_VAL_BASELINE;
-    } else if ( strcasecmp ( alignment, "texttop") == 0 ) {
+    } else if (equalIgnoringCase(alignment, "texttop")) {
 	propvalign = CSS_VAL_TEXT_TOP;
     }
     
@@ -502,17 +502,15 @@ void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr)
 {
     KHTMLPart *part = getDocument()->part();
     const AtomicString& enabled = attr->value();
-    if (enabled.isEmpty() || strcasecmp(enabled, "true") == 0) {
+    if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
         if (part)
             part->applyEditingStyleToElement(this);    
-    }
-    else if (strcasecmp(enabled, "false") == 0) {
+    } else if (equalIgnoringCase(enabled, "false")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
         if (part)
             part->removeEditingStyleFromElement(this);    
-    }
-    else if (strcasecmp(enabled, "inherit") == 0) {
+    } else if (equalIgnoringCase(enabled, "inherit")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
         if (part)
             part->removeEditingStyleFromElement(this);    

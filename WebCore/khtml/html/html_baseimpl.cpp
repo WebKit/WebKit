@@ -112,7 +112,7 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == textAttr) {
         addCSSColor(attr, CSS_PROP_COLOR, attr->value());
     } else if (attr->name() == bgpropertiesAttr) {
-        if (strcasecmp( attr->value(), "fixed" ) == 0)
+        if (equalIgnoringCase(attr->value(), "fixed"))
             addCSSProperty(attr, CSS_PROP_BACKGROUND_ATTACHMENT, CSS_VAL_FIXED);
     } else if (attr->name() == vlinkAttr ||
                attr->name() == alinkAttr ||
@@ -403,13 +403,10 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         m_noResize = true;
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == scrollingAttr) {
-        kdDebug( 6031 ) << "set scroll mode" << endl;
-	// Auto and yes both simply mean "allow scrolling."  No means
-	// "don't allow scrolling."
-        if( strcasecmp( attr->value(), "auto" ) == 0 ||
-            strcasecmp( attr->value(), "yes" ) == 0 )
+        // Auto and yes both simply mean "allow scrolling." No means "don't allow scrolling."
+        if (equalIgnoringCase(attr->value(), "auto") || equalIgnoringCase(attr->value(), "yes"))
             m_scrolling = QScrollView::Auto;
-        else if( strcasecmp( attr->value(), "no" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "no"))
             m_scrolling = QScrollView::AlwaysOff;
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == onloadAttr) {

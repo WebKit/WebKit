@@ -1172,10 +1172,10 @@ void RenderSlider::calcMinMaxWidth()
 
 void RenderSlider::updateFromElement()
 {
-    const DOMString& value = element()->value();
-    const DOMString& min = element()->getAttribute(minAttr);
-    const DOMString& max = element()->getAttribute(maxAttr);
-    const DOMString& precision = element()->getAttribute(precisionAttr);
+    DOMString value = element()->value();
+    const AtomicString& min = element()->getAttribute(minAttr);
+    const AtomicString& max = element()->getAttribute(maxAttr);
+    const AtomicString& precision = element()->getAttribute(precisionAttr);
     
     double minVal = min.isNull() ? 0.0 : min.qstring().toDouble();
     double maxVal = max.isNull() ? 100.0 : max.qstring().toDouble();
@@ -1184,8 +1184,8 @@ void RenderSlider::updateFromElement()
     double val = value.isNull() ? (maxVal + minVal)/2.0 : value.qstring().toDouble();
     val = kMax(minVal, kMin(val, maxVal)); // Make sure val is within min/max.
     
-    // Force integer value if not float (strcasecmp returns confusingly backward boolean).
-    if (strcasecmp(precision, "float"))
+    // Force integer value if not float.
+    if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
     element()->setValue(QString::number(val));
@@ -1204,10 +1204,10 @@ void RenderSlider::slotSliderValueChanged()
     QSlider* slider = (QSlider*)widget();
 
     double val = slider->value();
-    const DOMString& precision = element()->getAttribute(precisionAttr);
+    const AtomicString& precision = element()->getAttribute(precisionAttr);
 
-    // Force integer value if not float (strcasecmp returns confusingly backward boolean).
-    if (strcasecmp(precision, "float"))
+    // Force integer value if not float.
+    if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
     element()->setValue(QString::number(val));

@@ -80,11 +80,11 @@ void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == alignAttr) {
         DOMString v = attr->value();
-	if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
+	if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
-        else if (strcasecmp(attr->value(), "left") == 0)
+        else if (equalIgnoringCase(attr->value(), "left"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
-        else if (strcasecmp(attr->value(), "right") == 0)
+        else if (equalIgnoringCase(attr->value(), "right"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
@@ -129,15 +129,13 @@ bool HTMLHRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
 void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == alignAttr) {
-        if (strcasecmp(attr->value(), "left") == 0) {
+        if (equalIgnoringCase(attr->value(), "left")) {
             addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, "0");
 	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
-	}
-        else if (strcasecmp(attr->value(), "right") == 0) {
+	} else if (equalIgnoringCase(attr->value(), "right")) {
 	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
 	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, "0");
-	}
-	else {
+	} else {
       	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
             addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
 	}
@@ -265,11 +263,11 @@ void HTMLParagraphElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == alignAttr) {
         DOMString v = attr->value();
-        if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
+        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
-        else if (strcasecmp(attr->value(), "left") == 0)
+        else if (equalIgnoringCase(attr->value(), "left"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
-        else if (strcasecmp(attr->value(), "right") == 0)
+        else if (equalIgnoringCase(attr->value(), "right"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
@@ -396,7 +394,7 @@ void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_SPEED, attr->value());
     } else if (attr->name() == loopAttr) {
         if (!attr->value().isEmpty()) {
-            if (attr->value() == "-1" || strcasecmp(attr->value(), "infinite") == 0)
+            if (attr->value() == "-1" || equalIgnoringCase(attr->value(), "infinite"))
                 addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, CSS_VAL_INFINITE);
             else
                 addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, attr->value());

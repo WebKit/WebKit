@@ -167,13 +167,13 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
     DOMString valueText(property->value()->cssText());
     switch (property->id()) {
         case CSS_PROP_FONT_WEIGHT:
-            if (strcasecmp(valueText, "bold") == 0) {
+            if (equalIgnoringCase(valueText, "bold")) {
                 m_applyBold = true;
                 return true;
             }
             break;
         case CSS_PROP_FONT_STYLE:
-            if (strcasecmp(valueText, "italic") == 0 || strcasecmp(valueText, "oblique") == 0) {
+            if (equalIgnoringCase(valueText, "italic") || equalIgnoringCase(valueText, "oblique")) {
                 m_applyItalic = true;
                 return true;
             }
@@ -224,7 +224,7 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
     RefPtr<CSSValueImpl> value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
     if (!value)
         return false;
-    return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
+    return equalIgnoringCase(value->cssText(), property->value()->cssText());
 }
 
 static DOMString &styleSpanClassString()
@@ -725,7 +725,7 @@ static bool hasTextDecorationProperty(NodeImpl *node)
     ElementImpl *element = static_cast<ElementImpl *>(node);
     CSSComputedStyleDeclarationImpl style(element);
     RefPtr<CSSValueImpl> value = style.getPropertyCSSValue(CSS_PROP_TEXT_DECORATION, DoNotUpdateLayout);
-    return value && strcasecmp(value->cssText(), "none") != 0;
+    return value && !equalIgnoringCase(value->cssText(), "none");
 }
 
 static NodeImpl* highestAncestorWithTextDecoration(NodeImpl *node)
@@ -758,7 +758,7 @@ CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractTextDecorationStyle(No
     CSSMutableStyleDeclarationImpl *textDecorationStyle = style->copyPropertiesInSet(properties, 1);
 
     RefPtr<CSSValueImpl> property = style->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
-    if (property && strcasecmp(property->cssText(), "none") != 0)
+    if (property && !equalIgnoringCase(property->cssText(), "none"))
         removeCSSProperty(style.get(), CSS_PROP_TEXT_DECORATION);
 
     return textDecorationStyle;
@@ -781,7 +781,7 @@ CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractAndNegateTextDecoratio
     CSSMutableStyleDeclarationImpl *textDecorationStyle = computedStyle->copyPropertiesInSet(properties, 1);
 
     RefPtr<CSSValueImpl> property = computedStyle->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
-    if (property && strcasecmp(property->cssText(), "none") != 0) {
+    if (property && !equalIgnoringCase(property->cssText(), "none")) {
         RefPtr<CSSMutableStyleDeclarationImpl> newStyle = textDecorationStyle->copy();
         newStyle->setProperty(CSS_PROP_TEXT_DECORATION, "none");
         applyTextDecorationStyle(node, newStyle.get());

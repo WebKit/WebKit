@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,17 +20,17 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_DOMStringImpl_h_
-#define _DOM_DOMStringImpl_h_
 
-#include <qstring.h>
+#ifndef DOM_DOMStringImpl_h
+#define DOM_DOMStringImpl_h
 
-#include "misc/khtmllayout.h"
 #include "misc/shared.h"
 #include <kxmlcore/RefPtr.h>
+#include <qstring.h>
 
-#define QT_ALLOC_QCHAR_VEC(N) static_cast<QChar*>(fastMalloc(sizeof(QChar)*(N)))
-#define QT_DELETE_QCHAR_VEC(P) fastFree(P)
+namespace khtml {
+    struct Length;
+}
 
 namespace DOM {
 
@@ -37,57 +38,55 @@ class DOMStringImpl : public khtml::Shared<DOMStringImpl>
 {
 private:
     struct WithOneRef { };
-    DOMStringImpl(WithOneRef) { s = 0; l = 0; _hash = 0; _inTable = false; ref(); }
+    DOMStringImpl(WithOneRef) : l(0), s(0), _hash(0), _inTable(false) { ref(); }
 
 protected:
-    DOMStringImpl() { s = 0, l = 0; _hash = 0; _inTable = false; }
+    DOMStringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
 public:
-    DOMStringImpl(const QChar *str, unsigned int len);
-    DOMStringImpl(const char *str);
-    DOMStringImpl(const char *str, unsigned int len);
-    DOMStringImpl(const QChar &ch);
-    DOMStringImpl(const QString &str);
+    DOMStringImpl(const QChar*, unsigned len);
+    DOMStringImpl(const char*);
+    DOMStringImpl(const char*, unsigned len);
+    DOMStringImpl(const QString&);
     ~DOMStringImpl();
+
+    unsigned length() const { return l; }
     
     unsigned hash() const { if (_hash == 0) _hash = computeHash(s, l); return _hash; }
-    static unsigned computeHash(const QChar *, int length);
-    static unsigned computeHash(const char *);
+    static unsigned computeHash(const QChar*, unsigned len);
+    static unsigned computeHash(const char*);
     
-    void append(DOMStringImpl *str);
-    void insert(DOMStringImpl *str, unsigned int pos);
+    void append(const DOMStringImpl*);
+    void insert(const DOMStringImpl*, unsigned pos);
     void truncate(int len);
-    void remove(unsigned int pos, int len=1);
-    DOMStringImpl *split(unsigned int pos);
-    DOMStringImpl *copy() const {
-        return new DOMStringImpl(s,l);
-    };
+    void remove(unsigned pos, int len = 1);
+    DOMStringImpl* split(unsigned pos);
+    DOMStringImpl* copy() const { return new DOMStringImpl(s, l); }
 
-    DOMStringImpl *substring(unsigned int pos, unsigned int len);
+    DOMStringImpl *substring(unsigned pos, unsigned len);
 
-    const QChar &operator [] (int pos)
-	{ return *(s+pos); }
+    const QChar& operator[] (int pos) const { return s[pos]; }
 
     khtml::Length toLength() const;
     
     bool containsOnlyWhitespace() const;
-    bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
+    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     
     // ignores trailing garbage, unlike QString
-    int toInt(bool* ok=0) const;
+    int toInt(bool* ok = 0) const;
 
     khtml::Length* toCoordsArray(int& len) const;
     khtml::Length* toLengthArray(int& len) const;
     bool isLower() const;
-    DOMStringImpl *lower() const;
-    DOMStringImpl *upper() const;
-    DOMStringImpl *capitalize() const;
+    DOMStringImpl* lower() const;
+    DOMStringImpl* upper() const;
+    DOMStringImpl* capitalize() const;
 
-    int find(const char *chs, int index = 0, bool caseSensitive = true) const;
-    int find(QChar c, int index = 0) const;
-    int find(const DOMStringImpl *str, int index, bool caseSensitive = true) const;
+    int find(const char *, int index = 0, bool caseSensitive = true) const;
+    int find(QChar, int index = 0) const;
+    int find(const DOMStringImpl*, int index, bool caseSensitive = true) const;
 
-    bool startsWith(const DOMStringImpl *s, bool caseSensitive = true) const { return (find(s, 0, caseSensitive) == 0); }
-    bool endsWith(const DOMStringImpl *s, bool caseSensitive = true) const;
+    bool startsWith(const DOMStringImpl* s, bool caseSensitive = true) const { return find(s, 0, caseSensitive) == 0; }
+    bool endsWith(const DOMStringImpl*, bool caseSensitive = true) const;
 
     // This modifies the string in place if there is only one ref, makes a new string otherwise.
     DOMStringImpl *replace(QChar, QChar);
@@ -95,13 +94,21 @@ public:
     static DOMStringImpl* empty();
 
     // For debugging only, leaks memory.
-    const char *ascii() const;
+    const char* ascii() const;
 
-    unsigned int l;
-    QChar *s;
+    unsigned l;
+    QChar* s;
     mutable unsigned _hash;
     bool _inTable;
 };
+
+bool equal(const DOMStringImpl*, const DOMStringImpl*);
+bool equal(const DOMStringImpl*, const char*);
+bool equal(const char*, const DOMStringImpl*);
+
+bool equalIgnoringCase(const DOMStringImpl*, const DOMStringImpl*);
+bool equalIgnoringCase(const DOMStringImpl*, const char*);
+bool equalIgnoringCase(const char*, const DOMStringImpl*);
 
 }
 
@@ -116,16 +123,16 @@ namespace KXMLCore {
             if (a == b) return true;
             if (!a || !b) return false;
             
-            uint aLength = a->l;
-            uint bLength = b->l;
+            unsigned aLength = a->l;
+            unsigned bLength = b->l;
             if (aLength != bLength)
                 return false;
             
             const uint32_t *aChars = reinterpret_cast<const uint32_t *>(a->s);
             const uint32_t *bChars = reinterpret_cast<const uint32_t *>(b->s);
             
-            uint halfLength = aLength >> 1;
-            for (uint i = 0; i != halfLength; ++i) {
+            unsigned halfLength = aLength >> 1;
+            for (unsigned i = 0; i != halfLength; ++i) {
                 if (*aChars++ != *bChars++)
                     return false;
             }
@@ -186,16 +193,62 @@ namespace KXMLCore {
             return hash;
         }
         
+        static unsigned hash(const char* str, unsigned length)
+        {
+            // This hash is designed to work on 16-bit chunks at a time. But since the normal case
+            // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
+            // were 16-bit chunks, which will give matching results.
+
+            unsigned l = length;
+            const char* s = str;
+            uint32_t hash = PHI;
+            uint32_t tmp;
+            
+            int rem = l & 1;
+            l >>= 1;
+            
+            // Main loop
+            for (; l > 0; l--) {
+                hash += QChar(s[0]).lower().unicode();
+                tmp = (QChar(s[1]).lower().unicode() << 11) ^ hash;
+                hash = (hash << 16) ^ tmp;
+                s += 2;
+                hash += hash >> 11;
+            }
+            
+            // Handle end case
+            if (rem) {
+                hash += QChar(s[0]).lower().unicode();
+                hash ^= hash << 11;
+                hash += hash >> 17;
+            }
+            
+            // Force "avalanching" of final 127 bits
+            hash ^= hash << 3;
+            hash += hash >> 5;
+            hash ^= hash << 2;
+            hash += hash >> 15;
+            hash ^= hash << 10;
+            
+            // this avoids ever returning a hash code of 0, since that is used to
+            // signal "hash not computed yet", using a value that is likely to be
+            // effectively the same as 0 when the low bits are masked
+            if (hash == 0)
+                hash = 0x80000000;
+            
+            return hash;
+        }
+        
         static bool equal(const DOM::DOMStringImpl *a, const DOM::DOMStringImpl *b)
         {
             if (a == b) return true;
             if (!a || !b) return false;
-            uint length = a->l;
+            unsigned length = a->l;
             if (length != b->l)
                 return false;
             const QChar *as = a->s;
             const QChar *bs = b->s;
-            for (uint i = 0; i != length; ++i)
+            for (unsigned i = 0; i != length; ++i)
                 if (as[i].lower() != bs[i].lower())
                     return false;
             return true;
@@ -216,8 +269,7 @@ namespace KXMLCore {
     
     template <typename T> class HashTraits;
 
-    template<>
-    struct HashTraits<RefPtr<DOM::DOMStringImpl> > {
+    template<> struct HashTraits<RefPtr<DOM::DOMStringImpl> > {
         typedef RefPtr<DOM::DOMStringImpl> TraitType;
 
         static const bool emptyValueIsZero = true;

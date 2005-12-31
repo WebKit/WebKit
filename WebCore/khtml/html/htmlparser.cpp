@@ -386,8 +386,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             else if (!current->isDocumentNode())
                 return false;
         } else if (h->hasLocalName(inputTag)) {
-            DOMString type = h->getAttribute(typeAttr);
-            if (strcasecmp(type, "hidden") == 0 && form) {
+            if (equalIgnoringCase(h->getAttribute(typeAttr), "hidden") && form) {
                 form->addChild(n);
                 if (!n->attached() && HTMLWidget)
                     n->attach();

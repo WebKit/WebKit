@@ -531,13 +531,13 @@ HTMLAreaElementImpl::~HTMLAreaElementImpl()
 void HTMLAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == shapeAttr) {
-        if ( strcasecmp( attr->value(), "default" ) == 0 )
+        if (equalIgnoringCase(attr->value(), "default"))
             m_shape = Default;
-        else if ( strcasecmp( attr->value(), "circle" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "circle"))
             m_shape = Circle;
-        else if ( strcasecmp( attr->value(), "poly" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "poly"))
             m_shape = Poly;
-        else if ( strcasecmp( attr->value(), "rect" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "rect"))
             m_shape = Rect;
     } else if (attr->name() == coordsAttr) {
         delete [] m_coords;

@@ -398,14 +398,14 @@ bool HTMLBRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
 void HTMLBRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == clearAttr) {
-        DOMString str = attr->value();
         // If the string is empty, then don't add the clear property. 
-        // <br clear> and <br clear=""> are just treated like <br> by Gecko,
-        // Mac IE, etc. -dwh
+        // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
+        const AtomicString& str = attr->value();
         if (!str.isEmpty()) {
-            if (strcasecmp(str,"all") == 0) 
-                str = "both";
-            addCSSProperty(attr, CSS_PROP_CLEAR, str);
+            if (equalIgnoringCase(str, "all"))
+                addCSSProperty(attr, CSS_PROP_CLEAR, "both");
+            else
+                addCSSProperty(attr, CSS_PROP_CLEAR, str);
         }
     } else
         HTMLElementImpl::parseMappedAttribute(attr);

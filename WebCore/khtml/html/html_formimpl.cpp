@@ -553,9 +553,9 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     else if (attr->name() == targetAttr) {
         m_target = attr->value();
     } else if (attr->name() == methodAttr) {
-        if ( strcasecmp( attr->value(), "post" ) == 0 )
+        if (equalIgnoringCase(attr->value(), "post"))
             m_post = true;
-        else if ( strcasecmp( attr->value(), "get" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "get"))
             m_post = false;
     } else if (attr->name() == enctypeAttr) {
         parseEnctype(attr->value());
@@ -566,7 +566,7 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == acceptAttr) {
         // ignore this one for the moment...
     } else if (attr->name() == autocompleteAttr) {
-        m_autocomplete = strcasecmp( attr->value(), "off" );
+        m_autocomplete = !equalIgnoringCase(attr->value(), "off");
     } else if (attr->name() == onsubmitAttr) {
         setHTMLEventListener(submitEvent, attr);
     } else if (attr->name() == onresetAttr) {
@@ -1049,11 +1049,11 @@ DOMString HTMLButtonElementImpl::type() const
 void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() ==  typeAttr) {
-        if ( strcasecmp( attr->value(), "submit" ) == 0 )
+        if (equalIgnoringCase(attr->value(), "submit"))
             m_type = SUBMIT;
-        else if ( strcasecmp( attr->value(), "reset" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "reset"))
             m_type = RESET;
-        else if ( strcasecmp( attr->value(), "button" ) == 0 )
+        else if (equalIgnoringCase(attr->value(), "button"))
             m_type = BUTTON;
     } else if (attr->name() == valueAttr) {
         m_value = attr->value();
@@ -1263,29 +1263,29 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
 {
     typeEnum newType;
     
-    if ( strcasecmp( t, "password" ) == 0 )
+    if (equalIgnoringCase(t, "password"))
         newType = PASSWORD;
-    else if ( strcasecmp( t, "checkbox" ) == 0 )
+    else if (equalIgnoringCase(t, "checkbox"))
         newType = CHECKBOX;
-    else if ( strcasecmp( t, "radio" ) == 0 )
+    else if (equalIgnoringCase(t, "radio"))
         newType = RADIO;
-    else if ( strcasecmp( t, "submit" ) == 0 )
+    else if (equalIgnoringCase(t, "submit"))
         newType = SUBMIT;
-    else if ( strcasecmp( t, "reset" ) == 0 )
+    else if (equalIgnoringCase(t, "reset"))
         newType = RESET;
-    else if ( strcasecmp( t, "file" ) == 0 )
+    else if (equalIgnoringCase(t, "file"))
         newType = FILE;
-    else if ( strcasecmp( t, "hidden" ) == 0 )
+    else if (equalIgnoringCase(t, "hidden"))
         newType = HIDDEN;
-    else if ( strcasecmp( t, "image" ) == 0 )
+    else if (equalIgnoringCase(t, "image"))
         newType = IMAGE;
-    else if ( strcasecmp( t, "button" ) == 0 )
+    else if (equalIgnoringCase(t, "button"))
         newType = BUTTON;
-    else if ( strcasecmp( t, "khtml_isindex" ) == 0 )
+    else if (equalIgnoringCase(t, "khtml_isindex"))
         newType = ISINDEX;
-    else if ( strcasecmp( t, "search" ) == 0 )
+    else if (equalIgnoringCase(t, "search"))
         newType = SEARCH;
-    else if ( strcasecmp( t, "range" ) == 0 )
+    else if (equalIgnoringCase(t, "range"))
         newType = RANGE;
     else
         newType = TEXT;
@@ -1595,7 +1595,7 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (m_type == RADIO && checked())
             getDocument()->radioButtonChecked(this, m_form);
     } else if (attr->name() == autocompleteAttr) {
-        m_autocomplete = strcasecmp( attr->value(), "off" );
+        m_autocomplete = !equalIgnoringCase(attr->value(), "off");
     } else if (attr->name() ==  typeAttr) {
         setInputType(attr->value());
     } else if (attr->name() == valueAttr) {
@@ -2986,13 +2986,11 @@ void HTMLKeygenElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
 {
     // Only RSA is supported at this time.
-    if (!m_keyType.isNull() && strcasecmp(m_keyType, "rsa")) {
+    if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
         return false;
-    }
     QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.qstring(), getDocument()->part()->baseURL());
-    if (value.isNull()) {
+    if (value.isNull())
         return false;
-    }
     encoded_values.appendData(name(), value.utf8());
     return true;
 }
@@ -3325,13 +3323,13 @@ void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == wrapAttr) {
         // virtual / physical is Netscape extension of HTML 3.0, now deprecated
         // soft/ hard / off is recommendation for HTML 4 extension by IE and NS 4
-        if ( strcasecmp( attr->value(), "virtual" ) == 0  || strcasecmp( attr->value(), "soft") == 0)
+        if (equalIgnoringCase(attr->value(), "virtual") || equalIgnoringCase(attr->value(), "soft"))
             m_wrap = ta_Virtual;
-        else if ( strcasecmp ( attr->value(), "physical" ) == 0 || strcasecmp( attr->value(), "hard") == 0)
+        else if (equalIgnoringCase(attr->value(), "physical") || equalIgnoringCase(attr->value(), "hard"))
             m_wrap = ta_Physical;
-        else if(strcasecmp( attr->value(), "on" ) == 0)
+        else if (equalIgnoringCase(attr->value(), "on" ))
             m_wrap = ta_Physical;
-        else if(strcasecmp( attr->value(), "off") == 0)
+        else if (equalIgnoringCase(attr->value(), "off"))
             m_wrap = ta_NoWrap;
         if (renderer())
             renderer()->setNeedsLayoutAndMinMaxRecalc();

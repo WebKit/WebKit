@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,17 +26,28 @@
 #include "config.h"
 #include "dom_stringimpl.h"
 
-#include <kdebug.h>
-
-#include <string.h>
 #include "dom_atomicstring.h"
+#include "khtmllayout.h"
+#include <kdebug.h>
 #include <kxmlcore/Assertions.h>
+#include <string.h>
 
 using namespace khtml;
+using namespace KXMLCore;
 
 namespace DOM {
 
 using khtml::Fixed;
+
+static inline QChar* newQCharVector(unsigned n)
+{
+    return static_cast<QChar*>(fastMalloc(sizeof(QChar) * n));
+}
+
+static inline void deleteQCharVector(QChar* p)
+{
+    fastFree(p);
+}
 
 DOMStringImpl* DOMStringImpl::empty()
 {
@@ -50,7 +61,7 @@ DOMStringImpl::DOMStringImpl(const QChar *str, unsigned len)
     _hash = 0;
     _inTable = false;
     bool havestr = str && len;
-    s = QT_ALLOC_QCHAR_VEC(havestr ? len : 1);
+    s = newQCharVector(havestr ? len : 1);
     if (havestr) {
         memcpy( s, str, len * sizeof(QChar) );
         l = len;
@@ -68,7 +79,7 @@ DOMStringImpl::DOMStringImpl(const QString &string)
     _hash = 0;
     _inTable = false;
     bool havestr = str && len;
-    s = QT_ALLOC_QCHAR_VEC(havestr ? len : 1);
+    s = newQCharVector(havestr ? len : 1);
     if (havestr) {
         memcpy( s, str, len * sizeof(QChar) );
         l = len;
@@ -86,7 +97,7 @@ DOMStringImpl::DOMStringImpl(const char *str)
     if(str && *str)
     {
         l = strlen(str);
-        s = QT_ALLOC_QCHAR_VEC( l );
+        s = newQCharVector( l );
         int i = l;
         QChar* ptr = s;
         while( i-- )
@@ -94,7 +105,7 @@ DOMStringImpl::DOMStringImpl(const char *str)
     }
     else
     {
-        s = QT_ALLOC_QCHAR_VEC( 1 );  // crash protection
+        s = newQCharVector( 1 );  // crash protection
         s[0] = 0x0; // == QChar::null;
         l = 0;
     }
@@ -108,60 +119,50 @@ DOMStringImpl::DOMStringImpl(const char *str, unsigned int len)
     if (!l || !str)
         return;
     
-    s = QT_ALLOC_QCHAR_VEC(l);
+    s = newQCharVector(l);
     int i = l;
     QChar* ptr = s;
     while( i-- )
         *ptr++ = *str++;
 }
 
-DOMStringImpl::DOMStringImpl(const QChar &ch) {
-    _hash = 0;
-    _inTable = false;
-    s = QT_ALLOC_QCHAR_VEC( 1 );
-    s[0] = ch;
-    l = 1;
-}
-
 DOMStringImpl::~DOMStringImpl()
 {
     if (_inTable)
         AtomicString::remove(this);
-    if (s)
-        QT_DELETE_QCHAR_VEC(s);
+    deleteQCharVector(s);
 }
 
-void DOMStringImpl::append(DOMStringImpl *str)
+void DOMStringImpl::append(const DOMStringImpl *str)
 {
     assert(!_inTable);
     if(str && str->l != 0)
     {
         int newlen = l+str->l;
-        QChar *c = QT_ALLOC_QCHAR_VEC(newlen);
+        QChar *c = newQCharVector(newlen);
         memcpy(c, s, l*sizeof(QChar));
         memcpy(c+l, str->s, str->l*sizeof(QChar));
-        if(s) QT_DELETE_QCHAR_VEC(s);
+        deleteQCharVector(s);
         s = c;
         l = newlen;
     }
 }
 
-void DOMStringImpl::insert(DOMStringImpl *str, uint pos)
+void DOMStringImpl::insert(const DOMStringImpl *str, uint pos)
 {
     assert(!_inTable);
-    if(pos > l)
-    {
+    if (pos >= l) {
         append(str);
         return;
     }
     if(str && str->l != 0)
     {
         int newlen = l+str->l;
-        QChar *c = QT_ALLOC_QCHAR_VEC(newlen);
+        QChar *c = newQCharVector(newlen);
         memcpy(c, s, pos*sizeof(QChar));
         memcpy(c+pos, str->s, str->l*sizeof(QChar));
         memcpy(c+pos+str->l, s+pos, (l-pos)*sizeof(QChar));
-        if(s) QT_DELETE_QCHAR_VEC(s);
+        deleteQCharVector(s);
         s = c;
         l = newlen;
     }
@@ -173,9 +174,9 @@ void DOMStringImpl::truncate(int len)
     if(len > (int)l) return;
 
     int nl = len < 1 ? 1 : len;
-    QChar *c = QT_ALLOC_QCHAR_VEC(nl);
+    QChar *c = newQCharVector(nl);
     memcpy(c, s, nl*sizeof(QChar));
-    if(s) QT_DELETE_QCHAR_VEC(s);
+    deleteQCharVector(s);
     s = c;
     l = len;
 }
@@ -189,10 +190,10 @@ void DOMStringImpl::remove(uint pos, int len)
     len = l - pos;
 
     uint newLen = l-len;
-    QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+    QChar *c = newQCharVector(newLen);
     memcpy(c, s, pos*sizeof(QChar));
     memcpy(c+pos, s+pos+len, (l-len-pos)*sizeof(QChar));
-    if(s) QT_DELETE_QCHAR_VEC(s);
+    deleteQCharVector(s);
     s = c;
     l = newLen;
 }
@@ -203,7 +204,7 @@ DOMStringImpl *DOMStringImpl::split(uint pos)
     if( pos >=l ) return new DOMStringImpl();
 
     uint newLen = l-pos;
-    QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+    QChar *c = newQCharVector(newLen);
     memcpy(c, s+pos, newLen*sizeof(QChar));
 
     DOMStringImpl *str = new DOMStringImpl(s + pos, newLen);
@@ -369,7 +370,7 @@ DOMStringImpl *DOMStringImpl::lower() const
     if (!l)
         return c;
 
-    c->s = QT_ALLOC_QCHAR_VEC(l);
+    c->s = newQCharVector(l);
     c->l = l;
 
     for (unsigned int i = 0; i < l; i++)
@@ -383,7 +384,7 @@ DOMStringImpl *DOMStringImpl::upper() const
     DOMStringImpl *c = new DOMStringImpl;
     if(!l) return c;
 
-    c->s = QT_ALLOC_QCHAR_VEC(l);
+    c->s = newQCharVector(l);
     c->l = l;
 
     for (unsigned int i = 0; i < l; i++)
@@ -398,7 +399,7 @@ DOMStringImpl *DOMStringImpl::capitalize() const
     bool haveCapped = false;
     if(!l) return c;
 
-    c->s = QT_ALLOC_QCHAR_VEC(l);
+    c->s = newQCharVector(l);
     c->l = l;
 
     if ( l ) c->s[0] = s[0].upper();
@@ -619,7 +620,7 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
 
     DOMStringImpl *c = new DOMStringImpl;
 
-    c->s = QT_ALLOC_QCHAR_VEC(l);
+    c->s = newQCharVector(l);
     c->l = l;
 
     for (i = 0; i != l; ++i) {
@@ -632,13 +633,103 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
     return c;
 }
 
+bool equal(const DOMStringImpl* a, const DOMStringImpl* b)
+{
+    return DefaultHash<DOM::DOMStringImpl*>::equal(a, b);
+}
+
+bool equal(const DOMStringImpl* a, const char* b)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return !a;
+
+    uint length = a->l;
+    const QChar* as = a->s;
+    for (uint i = 0; i != length; ++i) {
+        char c = b[i];
+        if (!c)
+            return false;
+        if (as[i] != c)
+            return false;
+    }
+
+    return !b[length];
+}
+
+bool equal(const char* a, const DOMStringImpl* b)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return !a;
+
+    uint length = b->l;
+    const QChar* bs = b->s;
+    for (uint i = 0; i != length; ++i) {
+        char c = a[i];
+        if (!c)
+            return false;
+        if (c != bs[i])
+            return false;
+    }
+
+    return !a[length];
+}
+
+bool equalIgnoringCase(const DOMStringImpl* a, const DOMStringImpl* b)
+{
+    return CaseInsensitiveHash::equal(a, b);
+}
+
+bool equalIgnoringCase(const DOMStringImpl* a, const char* b)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return !a;
+
+    uint length = a->l;
+    const QChar* as = a->s;
+    for (uint i = 0; i != length; ++i) {
+        char c = b[i];
+        if (!c)
+            return false;
+        if (as[i].lower() != QChar(c).lower())
+            return false;
+    }
+
+    return !b[length];
+}
+
+bool equalIgnoringCase(const char* a, const DOMStringImpl* b)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return !a;
+
+    uint length = b->l;
+    const QChar* bs = b->s;
+    for (uint i = 0; i != length; ++i) {
+        char c = a[i];
+        if (!c)
+            return false;
+        if (QChar(c).lower() != bs[i].lower())
+            return false;
+    }
+
+    return !a[length];
+}
+
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
 // or anything like that.
 const unsigned PHI = 0x9e3779b9U;
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
-unsigned DOMStringImpl::computeHash(const QChar *s, int len)
+unsigned DOMStringImpl::computeHash(const QChar *s, unsigned len)
 {
     unsigned l = len;
     uint32_t hash = PHI;

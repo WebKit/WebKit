@@ -1,3 +1,89 @@
+2005-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=4557
+          rename unusual strcmp and strcasecmp for DOMString family
+
+        Added new functions named equal and equalIgnoringCase.
+
+        * khtml/xml/dom_stringimpl.h: Changed the type of the length parameter to computeHash to unsigned
+        to match the rest of the interface. Added equal and equalIgnoringCase functions. Added a
+        version of the hash function that works on char* to CaseInsensitiveHash as preparation for an
+        atomic string change.
+        * khtml/xml/dom_stringimpl.cpp: Moved the QT_ALLOC_QCHAR_VEC and QT_DELETE_QCHAR_VEC macros
+        here, and changed them into inline functions.
+        (DOM::equal): Implemented.
+        (DOM::equalIgnoringCase): Implemented.
+        (DOM::DOMStringImpl::computeHash): Changed parameter type to unsigned to match other similar
+        functions.
+
+        * khtml/dom/dom_string.h: Removed unnecessary friend declarations. Changed operator
+        overloads for == and != to call through inline to DOMStringImpl. Replaced strcasecmp
+        with equalIgnoringCase, overloaded for one more combination of parameters. Removed strcmp.
+        * khtml/dom/dom_string.cpp: Removed functions that are now implemented in DOMStringImpl*.
+
+        * khtml/xml/dom_atomicstring.h: Removed a redundant const. Removed unnecessary
+        friend declarations. Removed AtomicString::equal. Filled out a larger set of == and
+        != operator implementations, mostly with inlines calling through to DOMStringImpl.
+        Renamed equalsIgnoreCase to equalIgnoringCase and filled out a larger set as above.
+        * khtml/xml/dom_atomicstring.cpp: Renamed AtomicString::equal to just ==.
+        Removed some implementation of == and equalsIgnoreCase that are replaced by inlines.
+
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLOListElementImpl::parseMappedAttribute):
+        (DOM::HTMLLIElementImpl::parseMappedAttribute):
+        Use the "==" operator instead of strcmp.
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::checkOneSelector):
+        Use equalIgnoringCase instead of equalsIgnoreCase.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSlider::updateFromElement): Fixed bug where a temporary DOMString was put into
+        a const DOMString&. Changed some DOMString to AtomicString as appropriate, and also
+        used equalIgnoringCase instead of strcasecmp.
+        (RenderSlider::slotSliderValueChanged): More of the same.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::processHttpEquiv): Replaced use of strcasecmp
+        with equalIgnoringCase. Added parentheses to fix incorrect operator precedence in one case
+        (&& binds tighter than ||) which fixes a crash when using a http-equiv pragma when there
+        is no part (not sure how to reproduce that).
+
+        * khtml/khtml_part.cpp:
+        (updateState):
+        (KHTMLPart::selectionStartHasStyle):
+        * khtml/ecma/kjs_html.cpp: (KJS::KJS::HTMLDocument::putValueProperty):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::StyleChange::checkForLegacyHTMLStyleChange):
+        (khtml::StyleChange::currentlyHasStyle):
+        (khtml::hasTextDecorationProperty):
+        (khtml::ApplyStyleCommand::extractTextDecorationStyle):
+        (khtml::ApplyStyleCommand::extractAndNegateTextDecorationStyle):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::parseMappedAttribute):
+        (HTMLHRElementImpl::parseMappedAttribute):
+        (HTMLParagraphElementImpl::parseMappedAttribute):
+        (HTMLMarqueeElementImpl::parseMappedAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::addHTMLAlignment):
+        (HTMLElementImpl::setContentEditable):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::setInputType):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLKeygenElementImpl::appendFormData):
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute):
+        * khtml/html/html_imageimpl.cpp: (DOM::HTMLAreaElementImpl::parseMappedAttribute):
+        * khtml/html/html_inlineimpl.cpp: (DOM::HTMLBRElementImpl::parseMappedAttribute):
+        * khtml/html/html_tableimpl.cpp: (DOM::HTMLTablePartElementImpl::parseMappedAttribute):
+        * khtml/html/htmlparser.cpp: (HTMLParser::handleError):
+        Use equalIgnoringCase instead of strcasecmp.
+
 2005-12-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.
@@ -31,7 +117,7 @@
         (khtml::TextIterator::rangeFromLocationAndLength):
         Only special-case (0, 0) ranges for empty documents.
 
-2005-12-29  Geoffrey Garen  <ggaren@apple.com>
+2005-12-30  Geoffrey Garen  <ggaren@apple.com>
 
         Added test case for <rdar://problem/4268278> Submitting a form in onUnload event
         handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]
@@ -42,16 +128,16 @@
 
         Reviewed by Eric.
 
-		- Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6297
-		XMLSerializer should use createMarkup.
-				
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6297
+        XMLSerializer should use createMarkup.
+
         * khtml/ecma/xmlserializer.cpp:
         (KJS::XMLSerializerProtoFunc::callAsFunction):
-		Use createMarkup instead of NodeImpl::toString.
-		
+        Use createMarkup instead of NodeImpl::toString.
+
         * khtml/editing/markup.cpp:
         (khtml::startMarkup):
-		escape attribute values and ignore document fragment nodes.
+        escape attribute values and ignore document fragment nodes.
 
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
@@ -124,7 +210,7 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6293
         
         * kwq/WebCoreBridge.h: Removed childFrames method from WebCoreBridge protocol
-	since it is not actually used.
+        since it is not actually used.
 
 2005-12-29  Eric Seidel  <eseidel@apple.com>
 
@@ -476,11 +562,11 @@
 
         Reviewed and landed by Maciej.
 
-	- fixed 4405: <button> not listed in form collections.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
+        - fixed 4405: <button> not listed in form collections.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
 
-	Test: fast/forms/button-in-forms-collection.html
-	
+        Test: fast/forms/button-in-forms-collection.html
+
         * khtml/html/html_formimpl.h:
         (DOM::HTMLButtonElementImpl::isEnumeratable): override to return true
 
@@ -494,7 +580,7 @@
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
         (-[WebCoreBridge parent]): New method, relies on the KHTMLPart's
-	parent pointer.
+        parent pointer.
 
 2005-12-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
@@ -513,8 +599,8 @@
         Reviewed by Eric.
 
         - replaced QPtrDict for Accessors structs with HashMap (also renamed some
-	stray getSetInfo methods)
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6223
+        stray getSetInfo methods)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6223
 
         * khtml/ecma/kjs_html.cpp:
         (KJS::HTMLElement::accessors):
@@ -822,18 +908,18 @@
         Reviewed by Eric.
 
         - made RefPtr<DOMStringImpl> usable as a hashtable key/value
-	- changed XSLTProcessorImpl to make use of this instead of a QDict.
-	- partially fixed broken param handling for xslt
+        - changed XSLTProcessorImpl to make use of this instead of a QDict.
+        - partially fixed broken param handling for xslt
 
-	See LayoutTests for updated test case.
+        See LayoutTests for updated test case.
 
         * khtml/xml/dom_stringimpl.cpp:
         * khtml/xml/dom_stringimpl.h:
         (KXMLCore::): Set things up so you can use RefPtr<DOMStringImpl> as
-	a hashtable key (should already be usable as a value).
+        a hashtable key (should already be usable as a value).
         * khtml/xsl/xslt_processorimpl.cpp:
         (DOM::xsltParamArrayFromParameterMap): Updated to use a HashMap of RefPtrs instead
-	of QDict. Also, fixed bugs that would have kept this from ever working at all.
+        of QDict. Also, fixed bugs that would have kept this from ever working at all.
         (DOM::XSLTProcessorImpl::transformToString): ditto
         (DOM::XSLTProcessorImpl::setParameter): ditto
         (DOM::XSLTProcessorImpl::getParameter): ditto
@@ -1302,18 +1388,18 @@
         Reviewed by Darin.
 
         - fixed leak in createAttributeMap
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6162
-	
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6162
+
         * khtml/xml/dom_elementimpl.cpp:
         (StyledElementImpl::createAttributeMap): the new attribute map
-	is going in a RefPtr, don't also ref it manually.
+        is going in a RefPtr, don't also ref it manually.
 
 2005-12-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
         - change an assignment to a contructor declaration to build with PassRefPtr
-	leak fix changes
+        leak fix changes
 
         * ksvg2/svg/SVGTransformableImpl.cpp:
         (SVGTransformableImpl::parseTransformAttribute):
@@ -1565,14 +1651,14 @@
 
         Reviewed by Beth
 
-	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6149
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6149
           REGRESSION (WebCore-417.5): horizontal scrollbar in overflow with top
           border doesn't receive mouse events
 
         * khtml/rendering/render_block.cpp:
         (khtml::RenderBlock::isPointInScrollbar):
-	Removed borderTop() from horizontal scrollbar rect computation.
-	* manual-tests/scrollbar-hittest2.html: Added.
+        Removed borderTop() from horizontal scrollbar rect computation.
+        * manual-tests/scrollbar-hittest2.html: Added.
 
 2005-12-19  Alexey Proskuryakov  <ap@nypop.com>
 

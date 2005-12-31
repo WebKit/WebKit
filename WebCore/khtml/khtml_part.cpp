@@ -3008,7 +3008,7 @@ static void updateState(CSSMutableStyleDeclarationImpl *desiredStyle, CSSCompute
         int propertyID = (*it).id();
         DOMString desiredProperty = desiredStyle->getPropertyValue(propertyID);
         DOMString computedProperty = computedStyle->getPropertyValue(propertyID);
-        KHTMLPart::TriState propertyState = strcasecmp(desiredProperty, computedProperty) == 0
+        KHTMLPart::TriState propertyState = equalIgnoringCase(desiredProperty, computedProperty)
             ? KHTMLPart::trueTriState : KHTMLPart::falseTriState;
         if (atStart) {
             state = propertyState;
@@ -3075,9 +3075,7 @@ bool KHTMLPart::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
         int propertyID = (*it).id();
-        DOMString desiredProperty = mutableStyle->getPropertyValue(propertyID);
-        DOMString selectionProperty = selectionStyle->getPropertyValue(propertyID);
-        if (strcasecmp(selectionProperty, desiredProperty) != 0) {
+        if (!equalIgnoringCase(mutableStyle->getPropertyValue(propertyID), selectionStyle->getPropertyValue(propertyID))) {
             match = false;
             break;
         }

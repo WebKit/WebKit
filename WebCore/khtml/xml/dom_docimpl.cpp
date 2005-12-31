@@ -1828,7 +1828,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
 
     KHTMLPart *part = this->part();
 
-    if (strcasecmp(equiv, "default-style") == 0) {
+    if (equalIgnoringCase(equiv, "default-style")) {
         // The preferred style set has been overridden as per section 
         // 14.3.2 of the HTML4.0 specification.  We need to update the
         // sheet used variable and then update our style selector. 
@@ -1839,7 +1839,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         m_preferredStylesheetSet = content;
         updateStyleSelector();
     }
-    else if(strcasecmp(equiv, "refresh") == 0 && part->metaRefreshEnabled())
+    else if (equalIgnoringCase(equiv, "refresh") && part->metaRefreshEnabled())
     {
         // get delay and url
         QString str = content.qstring().stripWhiteSpace();
@@ -1873,25 +1873,25 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
                 part->scheduleRedirection(delay, completeURL( str ), delay <= 1);
         }
     }
-    else if(strcasecmp(equiv, "expires") == 0)
+    else if (equalIgnoringCase(equiv, "expires"))
     {
         QString str = content.qstring().stripWhiteSpace();
         time_t expire_date = str.toInt();
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);
     }
-    else if(strcasecmp(equiv, "pragma") == 0 || strcasecmp(equiv, "cache-control") == 0 && part)
+    else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && part)
     {
         QString str = content.qstring().lower().stripWhiteSpace();
         KURL url = part->url();
         if ((str == "no-cache") && url.protocol().startsWith("http"))
            KIO::http_update_cache(url, true, 0);
     }
-    else if( (strcasecmp(equiv, "set-cookie") == 0))
+    else if (equalIgnoringCase(equiv, "set-cookie"))
     {
         // ### make setCookie work on XML documents too; e.g. in case of <html:meta .....>
-        HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(this);
-        d->setCookie(content);
+        if (isHTMLDocument())
+            static_cast<HTMLDocumentImpl *>(this)->setCookie(content);
     }
 }
 

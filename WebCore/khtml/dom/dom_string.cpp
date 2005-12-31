@@ -252,20 +252,6 @@ const char *DOMString::ascii() const
 
 //-----------------------------------------------------------------------------
 
-bool operator==( const DOMString &a, const DOMString &b )
-{
-    if (a.m_impl == b.m_impl)
-        return true;
-    
-    unsigned int l = a.length();
-
-    if ( l != b.length() ) return false;
-
-    if (!memcmp(a.unicode(), b.unicode(), l*sizeof(QChar)))
-        return true;
-    return false;
-}
-
 bool operator==( const DOMString &a, const QString &b )
 {
     unsigned int l = a.length();
@@ -275,25 +261,6 @@ bool operator==( const DOMString &a, const QString &b )
     if (!memcmp(a.unicode(), b.unicode(), l*sizeof(QChar)))
         return true;
     return false;
-}
-
-bool operator==( const DOMString &a, const char *b )
-{
-    DOMStringImpl *aimpl = a.m_impl.get();
-    
-    if (!b)
-        return !aimpl;
-    
-    if (aimpl) {
-        int alen = aimpl->l;
-        const QChar *aptr = aimpl->s;
-        while (alen--) {
-            unsigned char c = *b++;
-            if (!c || (*aptr++).unicode() != c)
-                return false;
-        }
-    }
-    return *b == 0;
 }
 
 }
