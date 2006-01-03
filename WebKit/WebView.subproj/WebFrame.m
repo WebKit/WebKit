@@ -128,36 +128,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
-@interface NSArray (WebSafeMakePerform)
-
-- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector;
-
-@end
-
-
-@implementation NSArray (WebSafeMakePerform)
-
-- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector
-{
-    unsigned count = [self count];
-    if (0 == count)
-        return;
-
-    if (count > 128) {
-        [[self copy] makeObjectsPerformSelector:aSelector];
-        return;
-    }
- 
-    id batch[128];
-    [self getObjects:batch range:NSMakeRange(0, count)];
-    unsigned i;
-    for (i = 0; i < count; i++) {
-        objc_msgSend(batch[i], aSelector);
-    }
-}
-
-@end
-
 // One day we might want to expand the use of this kind of class such that we'd receive one
 // over the bridge, and possibly hand it on through to the FormsDelegate.
 // Today it is just used internally to keep some state as we make our way through a bunch
@@ -202,9 +172,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @interface WebFramePrivate : NSObject
 {
 @public
-    WebFrame *nextSibling;
-    WebFrame *previousSibling;
-
     NSString *name;
     WebFrameView *webFrameView;
     WebDataSource *dataSource;
@@ -213,7 +180,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebView *webView;
     WebFrameState state;
     WebFrameLoadType loadType;
-    NSMutableArray *children;
     WebHistoryItem *currentItem;	// BF item for our current content
     WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
                                         // (only known when navigating to a pre-existing BF item)
@@ -284,8 +250,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [webFrameView release];
     [dataSource release];
     [provisionalDataSource release];
-    [bridge release];
-    [children release];
 
     [currentItem release];
     [provisionalItem release];
@@ -378,94 +342,42 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @implementation WebFrame (FrameTraversal)
 - (WebFrame *)_firstChildFrame
 {
-    if (![_private->children count])
-        return nil;
-
-    return [_private->children objectAtIndex:0];
+    return [[[self _bridge] firstChild] webFrame];
 }
 
 - (WebFrame *)_lastChildFrame
 {
-    return [_private->children lastObject];
+    return [[[self _bridge] lastChild] webFrame];
 }
 
 - (unsigned)_childFrameCount
 {
-    return [_private->children count];
+    return [[self _bridge] childCount];
 }
 
 - (WebFrame *)_previousSiblingFrame;
 {
-    return _private->previousSibling;
+    return [[[self _bridge] previousSibling] webFrame];
 }
 
 - (WebFrame *)_nextSiblingFrame;
 {
-    return _private->nextSibling;
+    return [[[self _bridge] nextSibling] webFrame];
 }
 
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin
 {
-    WebFrame *firstChild = [self _firstChildFrame];
-    if (firstChild) {
-        ASSERT(!stayWithin || [firstChild _isDescendantOfFrame:stayWithin]);
-        return firstChild;
-    }
-
-    if (self == stayWithin)
-        return 0;
-
-    WebFrame *nextSibling = [self _nextSiblingFrame];
-    if (nextSibling) {
-        assert(!stayWithin || [nextSibling  _isDescendantOfFrame:stayWithin]);
-	return nextSibling;
-    }
-
-    WebFrame *frame = self;
-    while (frame && !nextSibling && (!stayWithin || [frame parentFrame] != stayWithin)) {
-        frame = [frame parentFrame];
-        nextSibling = [frame _nextSiblingFrame];
-    }
-
-    if (frame) {
-        ASSERT(!stayWithin || !nextSibling || [nextSibling _isDescendantOfFrame:stayWithin]);
-        return nextSibling;
-    }
-
-    return nil;
+    return [[[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]] webFrame];
 }
 
 - (void)_appendChild:(WebFrame *)child
 {
-    [[child _bridge] setParent:_private->bridge];
-
-    if (_private->children == nil)
-        _private->children = [[NSMutableArray alloc] init];
-
-    WebFrame *previousFrame = [self _lastChildFrame];
-    if (previousFrame) {
-        previousFrame->_private->nextSibling = child;
-        child->_private->previousSibling = previousFrame;
-    }
-    ASSERT(child->_private->nextSibling == nil);
-
-    [_private->children addObject:child];
+    [[self _bridge] appendChild:[child _bridge]];
 }
 
 - (void)_removeChild:(WebFrame *)child
 {
-    // move corresponding previous and next WebFrame sibling pointers to their new positions
-    // when we remove a child we may have to reattach the previous frame's next frame and visa versa
-    if (child->_private->previousSibling)
-        child->_private->previousSibling->_private->nextSibling = child->_private->nextSibling;
-    
-    if (child->_private->nextSibling)
-        child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
-
-    child->_private->previousSibling = nil;
-    child->_private->nextSibling = nil;
-
-    [_private->children removeObject:child];
+    [[self _bridge] removeChild:[child _bridge]];
 }
 
 @end
@@ -655,11 +567,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 // FIXME: this exists only as a convenience for Safari, consider moving there
 - (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
 {
-    for (WebFrame *frame = self; frame; frame = [frame parentFrame])
-        if (frame == ancestor)
-            return YES;
-
-    return NO;
+    return [[self _bridge] isDescendantOfFrame:[ancestor _bridge]];
 }
 
 - (BOOL)_isFrameSet
@@ -708,9 +616,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
     [self retain]; // retain self temporarily because dealloc can re-enter this method
 
-    [[self parentFrame] _removeChild:self];
     [bridge close];
-    [bridge release];
+    [[self parentFrame] _removeChild:self];
+
     _private->bridge = nil;
 
     [self release];
@@ -2657,6 +2565,29 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFrame (WebInternal)
 
+- (id)_initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _private = [[WebFramePrivate alloc] init];
+
+    [self _setWebView:v];
+    [self _setName:n];
+    _private->bridge = bridge;
+
+    if (fv) {
+        [_private setWebFrameView:fv];
+        [fv _setWebView:v];
+        [fv _setWebFrame:self];
+    }
+    
+    ++WebFrameCount;
+    
+    return self;
+}
+
 - (NSArray *)_documentViews
 {
     NSMutableArray *result = [NSMutableArray array];
@@ -2976,33 +2907,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFrame
 
-- init
+- (id)init
 {
     return [self initWithName:nil webFrameView:nil webView:nil];
 }
 
-- initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
+// FIXME: this method can't work any more and should be marked deprecated
+- (id)initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
 {
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _private = [[WebFramePrivate alloc] init];
-
-    [self _setWebView:v];
-    [self _setName:n];
-
-    _private->bridge = [[WebBridge alloc] initWithWebFrame:self];
-    
-    if (fv) {
-        [_private setWebFrameView:fv];
-        [fv _setWebView:v];
-        [fv _setWebFrame:self];
-    }
-    
-    ++WebFrameCount;
-    
-    return self;
+    return [self _initWithName:n webFrameView:fv webView:v bridge:nil];
 }
 
 - (void)dealloc

@@ -115,20 +115,17 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 @implementation WebBridge
 
-- (id)initWithWebFrame:(WebFrame *)webFrame
+- (id)initWithFrameName:(NSString *)name view:(WebFrameView *)view 
 {
     self = [super init];
 
     ++WebBridgeCount;
     
-    WebView *webView = [webFrame webView];
-    
-    // Non-retained because data source owns representation owns bridge.
-    // But WebFrame will call close on us before it goes away, which
-    // guarantees we will not have a stale reference.
-    _frame = webFrame;
+    WebView *webView = [view _webView];
 
-    [self setName:[webFrame name]];
+    _frame = [[WebFrame alloc] _initWithName:name webFrameView:view webView:webView bridge:self];
+
+    [self setName:[_frame name]];
     [self initializeSettings:[webView _settings]];
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 
@@ -152,6 +149,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)dealloc
 {
     [lastDashboardRegions release];
+    [_frame release];
+    [_children release];
     
     [self fini];
     [super dealloc];
@@ -641,6 +640,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)close
 {
+    [_frame release];
     _frame = nil;
 }
 
@@ -1724,6 +1724,105 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (void)handledOnloadEvents
 {
     [_frame _handledOnloadEvents];
+}
+
+- (WebBridge *)firstChild
+{
+    if (![_children count])
+        return nil;
+
+    return [_children objectAtIndex:0];
+}
+
+- (WebBridge *)lastChild
+{
+    return [_children lastObject];
+}
+
+- (unsigned)childCount
+{
+    return [_children count];
+}
+
+- (WebBridge *)previousSibling;
+{
+    return _previousSibling;
+}
+
+- (WebBridge *)nextSibling;
+{
+    return _nextSibling;
+}
+
+- (BOOL)isDescendantOfFrame:(WebBridge *)ancestor
+{
+    for (WebBridge *frame = self; frame; frame = (WebBridge *)[frame parent])
+        if (frame == ancestor)
+            return YES;
+
+    return NO;
+}
+
+- (WebBridge *)traverseNextFrameStayWithin:(WebBridge *)stayWithin
+{
+    WebBridge *firstChild = [self firstChild];
+    if (firstChild) {
+        ASSERT(!stayWithin || [firstChild isDescendantOfFrame:stayWithin]);
+        return firstChild;
+    }
+
+    if (self == stayWithin)
+        return 0;
+
+    WebBridge *nextSibling = [self nextSibling];
+    if (nextSibling) {
+        assert(!stayWithin || [nextSibling isDescendantOfFrame:stayWithin]);
+        return nextSibling;
+    }
+
+    WebBridge *frame = self;
+    while (frame && !nextSibling && (!stayWithin || [frame parent] != stayWithin)) {
+        frame = (WebBridge *)[frame parent];
+        nextSibling = [frame nextSibling];
+    }
+
+    if (frame) {
+        ASSERT(!stayWithin || !nextSibling || [nextSibling isDescendantOfFrame:stayWithin]);
+        return nextSibling;
+    }
+
+    return nil;
+}
+
+- (void)appendChild:(WebBridge *)child
+{
+    [child setParent:self];
+
+    if (_children == nil)
+        _children = [[NSMutableArray alloc] init];
+
+    WebBridge *previous = [self lastChild];
+    if (previous) {
+        previous->_nextSibling = child;
+        child->_previousSibling = previous;
+    }
+    ASSERT(child->_nextSibling == nil);
+
+    [_children addObject:child];
+}
+
+- (void)removeChild:(WebBridge *)child
+{
+    if (child->_previousSibling)
+        child->_previousSibling->_nextSibling = child->_nextSibling;
+    
+    if (child->_nextSibling)
+        child->_nextSibling->_previousSibling = child->_previousSibling; 
+
+    child->_previousSibling = nil;
+    child->_nextSibling = nil;
+
+    [_children removeObject:child];
 }
 
 @end

@@ -207,7 +207,7 @@ macro(yankAndSelect) \
 @interface WebViewPrivate : NSObject
 {
 @public
-    WebFrame *mainFrame;
+    WebBridge *mainFrameBridge;
     
     id UIDelegate;
     id UIDelegateForwarder;
@@ -369,7 +369,7 @@ static BOOL shouldUseFontSmoothing = YES;
 
 - (void)dealloc
 {
-    ASSERT(mainFrame == nil);
+    ASSERT(mainFrameBridge == nil);
     ASSERT(draggingDocumentView == nil);
     ASSERT(dragCaretBridge == nil);
     
@@ -540,9 +540,9 @@ static bool debugWidget = true;
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
     
-    [_private->mainFrame _detachFromParent];
-    [_private->mainFrame release];
-    _private->mainFrame = nil;
+    [[self mainFrame] _detachFromParent];
+    [_private->mainFrameBridge release];
+    _private->mainFrameBridge = nil;
     
     // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
     // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
@@ -561,15 +561,14 @@ static bool debugWidget = true;
     [childView _setWebView:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webFrameView:childView webView:self];
+    WebBridge *newBridge = [[WebBridge alloc] initWithFrameName:fname view:childView];
 
-    [childView release];
-
-    [parent _addChild:newFrame];
+    [parent _addChild:[newBridge webFrame]];
     
-    [newFrame release];
+    [childView release];
+    [newBridge release];
         
-    return newFrame;
+    return [newBridge webFrame];
 }
 
 - (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource
@@ -691,7 +690,7 @@ static bool debugWidget = true;
     }
 
     _private->defersCallbacks = defers;
-    [_private->mainFrame _defersCallbacksChanged];
+    [[self mainFrame] _defersCallbacksChanged];
 }
 
 - (void)_setTopLevelFrameName:(NSString *)name
@@ -1554,11 +1553,13 @@ NSMutableDictionary *countInvocations;
 
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
+    [wv _setWebView:self];
     [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: wv];
     [wv release];
 
-    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
+    _private->mainFrameBridge = [[WebBridge alloc] initWithFrameName:frameName view:wv];
+
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
     
@@ -1817,9 +1818,9 @@ NS_ENDHANDLER
 - (WebFrame *)mainFrame
 {
     // This can be called in initialization, before _private has been set up (3465613)
-    if (_private != nil) {
-        return _private->mainFrame;
-    }
+    if (_private != nil)
+        return [_private->mainFrameBridge webFrame];
+
     return nil;
 }
 

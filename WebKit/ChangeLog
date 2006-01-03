@@ -1,3 +1,62 @@
+2006-01-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- moved frame traversal logic from WebFrame to WebBridge
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6341
+
+	To do this, I had to invert the ownership so that WebBridge now
+	owns WebFrame instead of vice versa. As a result, WebView now owns
+	a WebBridge pointer and does not have a direct WebFrame pointer.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge initWithFrameName:view:]): The initializer is now responsible for creating
+	the frame, so pass it what it needs to do that.
+        (-[WebBridge dealloc]): The bridge now owns the frame, so release it.
+        (-[WebBridge close]): ditto
+        (-[WebBridge firstChild]): Moved from WebFrame
+        (-[WebBridge lastChild]): ditto
+        (-[WebBridge childCount]): ditto
+        (-[WebBridge previousSibling]): ditto
+        (-[WebBridge nextSibling]): ditto
+        (-[WebBridge isDescendantOfFrame:]): ditto
+        (-[WebBridge traverseNextFrameStayWithin:]): ditto
+        (-[WebBridge appendChild:]): ditto
+        (-[WebBridge removeChild:]): ditto
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _removeChild::]): Call WebBridge version
+        (-[WebFramePrivate dealloc]): ditto
+        (-[WebFrame _firstChildFrame]): ditto
+        (-[WebFrame _lastChildFrame]): ditto
+        (-[WebFrame _childFrameCount]): ditto
+        (-[WebFrame _previousSiblingFrame]): ditto
+        (-[WebFrame _nextSiblingFrame]): ditto
+        (-[WebFrame _traverseNextFrameStayWithin:]): ditto
+        (-[WebFrame _appendChild:]): ditto
+        (-[WebFrame _removeChild:]): ditto
+        (-[WebFrame _isDescendantOfFrame:]): ditto,
+        (-[WebFrame _detachFromParent]): reorder a bit to avoid losing our bridge
+	pointer before the bridge is due to release us, and don't release the
+	bridge any more since it now owns us
+        (-[WebFrame _initWithName:webFrameView:webView:bridge:]): new initializer,
+	we no longer create the bridge, instead it is passed in
+        (-[WebFrame initWithName:webFrameView:webView:]): Call the new designated
+	initializer, but this method is no longer viable and should be deprecated.
+        * WebView.subproj/WebFrameInternal.h:
+        
+	* WebView.subproj/WebView.m: WebView was changed to hold onto
+	the WebBridge for the main frame instead of the WebFrame.
+	
+        (-[WebViewPrivate dealloc]): update for the fact that we hold
+	a bridge now, not a frame.
+        (-[WebView _close]): ditto
+        (-[WebView _createFrameNamed:inParent:allowsScrolling:]): Create
+	a bridge, not a frame.
+        (-[WebView _commonInitializationWithFrameName:groupName:]): ditto.
+        (-[WebView setDefersCallbacks:]): get mainFrame via method
+        (-[WebView mainFrame]): Update to get the main frame properly
+
 2005-12-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.
