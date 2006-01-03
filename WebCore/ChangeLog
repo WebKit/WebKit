@@ -1,3 +1,19 @@
+2006-01-02  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+ 
+	- fix for <rdar://problem/4389622> *Pan EU2* iframe swallows events for overlapping elements (part 2)
+
+	We originally added a call to passSubframeEventToSubframe here to fix the hand cursor updating problem
+	reported in <rdar://problem/4316201> REGRESSION: cursor and text in status bar is not updated when 
+	mousing over links in a frame (5509). However, when we return early after passSubframeEventToSubframe,
+	we fail to fire onmouseout events.  Since the call to passSubframeEventToSubframe was originally added
+	to fix the hand cursor updating problem, remove the early return and make cursor updating conditional
+	on passSubframeEventToSubframe.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent):
+
 2005-12-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

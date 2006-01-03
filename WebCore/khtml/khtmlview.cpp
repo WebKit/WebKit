@@ -669,17 +669,15 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseMove );
     m_part->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_part->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
-    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
-        return;
 
+    if (!KWQ(m_part)->passSubframeEventToSubframe(mev))
+        viewport()->setCursor(selectCursor(mev, m_part, d->mousePressed));
+        
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
                                            0,_mouse,true,NodeImpl::MouseMove);
 
-
     // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
     m_part->executeScheduledScript();
-
-    viewport()->setCursor(selectCursor(mev, m_part, d->mousePressed));
 
     d->prevMouseX = xm;
     d->prevMouseY = ym;
