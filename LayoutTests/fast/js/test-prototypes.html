@@ -1,0 +1,48 @@
+<html>
+<head>
+<script>
+function debug(str) {
+    var c = document.getElementById('console')
+    c.innerHTML += (str + "<br>")
+}
+
+var numErrors = 0;
+
+function testPrototype(name)
+{
+    func = eval(name);
+    
+    if (!func.prototype) {
+        debug("FAILURE: " + name + " did not have a prototype defined.")
+        numErrors++;        
+        return;
+    }
+    
+    // Create an object
+    o = new func()
+    if (!func.prototype.isPrototypeOf(o)) {
+        debug('FAILURE: Newly created object of type ' + name + " does not have " + name + ".prototype in it's prototype chain.");
+        numErrors++;
+    }
+}
+
+function runTests() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    testPrototype("DOMParser");
+    testPrototype("XMLHttpRequest");
+    testPrototype("XMLSerializer");
+    testPrototype("XSLTProcessor");
+        
+    if (numErrors == 0)
+        debug('SUCCESS!')
+}
+</script>
+</head>
+<body onload="runTests();">
+This checks that DOMParser, XMLHttpRequest, XMLSerializer and XSLTProcessor have their prototypes set correctly. If this test is successful, the text "SUCCESS" will be shown below.
+<pre id="console"></pre>
+</body>
+</html>
+

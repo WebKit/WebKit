@@ -1,5 +1,15 @@
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
+        Reviewed by Eric.
+
+        - add tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6358
+        JS objects missing "prototype" properties
+        
+        * fast/js/test-prototypes-expected.txt: Added.
+        * fast/js/test-prototypes.html: Added.
+
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Darin.
 
         - Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6357
