@@ -37,16 +37,16 @@ class RemoveNodeAttributeCommand : public EditCommand
 {
 public:
     RemoveNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute);
-    virtual ~RemoveNodeAttributeCommand();
+    virtual ~RemoveNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::ElementImpl *element() const { return m_element; }
+    DOM::ElementImpl *element() const { return m_element.get(); }
     const DOM::QualifiedName& attribute() const { return m_attribute; }
     
 private:
-    DOM::ElementImpl *m_element;
+    RefPtr<DOM::ElementImpl> m_element;
     DOM::QualifiedName m_attribute;
     DOM::DOMString m_oldValue;
 };

@@ -39,19 +39,7 @@ AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *appendChi
     : EditCommand(document), m_appendChild(appendChild), m_parentNode(parentNode)
 {
     ASSERT(m_appendChild);
-    m_appendChild->ref();
-
     ASSERT(m_parentNode);
-    m_parentNode->ref();
-}
-
-AppendNodeCommand::~AppendNodeCommand()
-{
-    ASSERT(m_appendChild);
-    m_appendChild->deref();
-
-    ASSERT(m_parentNode);
-    m_parentNode->deref();
 }
 
 void AppendNodeCommand::doApply()
@@ -60,7 +48,7 @@ void AppendNodeCommand::doApply()
     ASSERT(m_parentNode);
 
     int exceptionCode = 0;
-    m_parentNode->appendChild(m_appendChild, exceptionCode);
+    m_parentNode->appendChild(m_appendChild.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -71,7 +59,7 @@ void AppendNodeCommand::doUnapply()
     ASSERT(state() == Applied);
 
     int exceptionCode = 0;
-    m_parentNode->removeChild(m_appendChild, exceptionCode);
+    m_parentNode->removeChild(m_appendChild.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 

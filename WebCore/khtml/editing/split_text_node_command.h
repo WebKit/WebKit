@@ -38,17 +38,17 @@ class SplitTextNodeCommand : public EditCommand
 {
 public:
     SplitTextNodeCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
-    virtual ~SplitTextNodeCommand();
+    virtual ~SplitTextNodeCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_text2; }
+    DOM::TextImpl *node() const { return m_text2.get(); }
     int offset() const { return m_offset; }
 
 private:
-    DOM::TextImpl *m_text1;
-    DOM::TextImpl *m_text2;
+    RefPtr<DOM::TextImpl> m_text1;
+    RefPtr<DOM::TextImpl> m_text2;
     unsigned m_offset;
 };
 

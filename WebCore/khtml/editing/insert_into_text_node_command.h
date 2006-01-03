@@ -41,17 +41,17 @@ class InsertIntoTextNodeCommand : public EditCommand
 {
 public:
     InsertIntoTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *, int, const DOM::DOMString &);
-    virtual ~InsertIntoTextNodeCommand();
+    virtual ~InsertIntoTextNodeCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_node; }
+    DOM::TextImpl *node() const { return m_node.get(); }
     int offset() const { return m_offset; }
     DOM::DOMString text() const { return m_text; }
 
 private:
-    DOM::TextImpl *m_node;
+    RefPtr<DOM::TextImpl> m_node;
     int m_offset;
     DOM::DOMString m_text;
 };

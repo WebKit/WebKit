@@ -37,24 +37,10 @@ using DOM::NodeImpl;
 namespace khtml {
 
 SplitElementCommand::SplitElementCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element, DOM::NodeImpl *atChild)
-    : EditCommand(document), m_element1(0), m_element2(element), m_atChild(atChild)
+    : EditCommand(document), m_element2(element), m_atChild(atChild)
 {
     ASSERT(m_element2);
     ASSERT(m_atChild);
-
-    m_element2->ref();
-    m_atChild->ref();
-}
-
-SplitElementCommand::~SplitElementCommand()
-{
-    if (m_element1)
-        m_element1->deref();
-
-    ASSERT(m_element2);
-    m_element2->deref();
-    ASSERT(m_atChild);
-    m_atChild->deref();
 }
 
 void SplitElementCommand::doApply()
@@ -69,10 +55,9 @@ void SplitElementCommand::doApply()
         // if reapplying, this object will already exist.
         m_element1 = static_cast<ElementImpl *>(m_element2->cloneNode(false));
         ASSERT(m_element1);
-        m_element1->ref();
     }
 
-    m_element2->parent()->insertBefore(m_element1, m_element2, exceptionCode);
+    m_element2->parent()->insertBefore(m_element1.get(), m_element2.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
     while (m_element2->firstChild() != m_atChild) {
@@ -98,7 +83,7 @@ void SplitElementCommand::doUnapply()
         ASSERT(exceptionCode == 0);
     }
 
-    m_element2->parentNode()->removeChild(m_element1, exceptionCode);
+    m_element2->parentNode()->removeChild(m_element1.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 

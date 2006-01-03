@@ -45,10 +45,6 @@ RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(DocumentImpl *document, c
 {
 }
 
-RebalanceWhitespaceCommand::~RebalanceWhitespaceCommand()
-{
-}
-
 static inline bool isWhitespace(const QChar &c)
 {
     return c.unicode() == 0xa0 || isCollapsibleWhitespace(c);

@@ -26,7 +26,8 @@
 #ifndef KHTML_EDITING_VISIBLE_POSITION_H
 #define KHTML_EDITING_VISIBLE_POSITION_H
 
-#include <qstring.h>
+#include <qstring.h> // for QChar
+#include <kxmlcore/PassRefPtr.h>
 
 #include "xml/dom_position.h"
 #include "text_affinity.h"
@@ -128,7 +129,7 @@ inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
     return !(a == b);
 }
 
-RefPtr<DOM::RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end);
+PassRefPtr<DOM::RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end);
 bool setStart(DOM::RangeImpl *, const VisiblePosition &start);
 bool setEnd(DOM::RangeImpl *, const VisiblePosition &start);
 VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);

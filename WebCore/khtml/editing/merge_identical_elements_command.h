@@ -34,15 +34,15 @@ class MergeIdenticalElementsCommand : public EditCommand
 {
 public:
     MergeIdenticalElementsCommand(DOM::DocumentImpl *, DOM::ElementImpl *first, DOM::ElementImpl *second);
-    virtual ~MergeIdenticalElementsCommand();
+    virtual ~MergeIdenticalElementsCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    DOM::ElementImpl *m_element1;
-    DOM::ElementImpl *m_element2;
-    DOM::NodeImpl *m_atChild;
+    RefPtr<DOM::ElementImpl> m_element1;
+    RefPtr<DOM::ElementImpl> m_element2;
+    RefPtr<DOM::NodeImpl> m_atChild;
 };
 
 } // namespace khtml

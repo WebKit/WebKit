@@ -39,19 +39,7 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(DocumentImpl *document, NodeImp
     : EditCommand(document), m_insertChild(insertChild), m_refChild(refChild)
 {
     ASSERT(m_insertChild);
-    m_insertChild->ref();
-
     ASSERT(m_refChild);
-    m_refChild->ref();
-}
-
-InsertNodeBeforeCommand::~InsertNodeBeforeCommand()
-{
-    ASSERT(m_insertChild);
-    m_insertChild->deref();
-
-    ASSERT(m_refChild);
-    m_refChild->deref();
 }
 
 void InsertNodeBeforeCommand::doApply()
@@ -61,7 +49,7 @@ void InsertNodeBeforeCommand::doApply()
     ASSERT(m_refChild->parentNode());
 
     int exceptionCode = 0;
-    m_refChild->parentNode()->insertBefore(m_insertChild, m_refChild, exceptionCode);
+    m_refChild->parentNode()->insertBefore(m_insertChild.get(), m_refChild.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -72,7 +60,7 @@ void InsertNodeBeforeCommand::doUnapply()
     ASSERT(m_refChild->parentNode());
 
     int exceptionCode = 0;
-    m_refChild->parentNode()->removeChild(m_insertChild, exceptionCode);
+    m_refChild->parentNode()->removeChild(m_insertChild.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 

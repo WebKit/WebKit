@@ -38,17 +38,17 @@ class JoinTextNodesCommand : public EditCommand
 {
 public:
     JoinTextNodesCommand(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
-    virtual ~JoinTextNodesCommand();
+    virtual ~JoinTextNodesCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *firstNode() const { return m_text1; }
-    DOM::TextImpl *secondNode() const { return m_text2; }
+    DOM::TextImpl *firstNode() const { return m_text1.get(); }
+    DOM::TextImpl *secondNode() const { return m_text2.get(); }
 
 private:
-    DOM::TextImpl *m_text1;
-    DOM::TextImpl *m_text2;
+    RefPtr<DOM::TextImpl> m_text1;
+    RefPtr<DOM::TextImpl> m_text2;
     unsigned m_offset;
 };
 

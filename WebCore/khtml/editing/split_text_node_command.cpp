@@ -38,21 +38,10 @@ using DOM::NodeImpl;
 namespace khtml {
 
 SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *text, int offset)
-    : EditCommand(document), m_text1(0), m_text2(text), m_offset(offset)
+    : EditCommand(document), m_text2(text), m_offset(offset)
 {
     ASSERT(m_text2);
     ASSERT(m_text2->length() > 0);
-
-    m_text2->ref();
-}
-
-SplitTextNodeCommand::~SplitTextNodeCommand()
-{
-    if (m_text1)
-        m_text1->deref();
-
-    ASSERT(m_text2);
-    m_text2->deref();
 }
 
 void SplitTextNodeCommand::doApply()
@@ -72,14 +61,13 @@ void SplitTextNodeCommand::doApply()
         m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
         ASSERT(exceptionCode == 0);
         ASSERT(m_text1);
-        m_text1->ref();
     }
 
-    document()->copyMarkers(m_text2, 0, m_offset, m_text1, 0);
+    document()->copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
     m_text2->deleteData(0, m_offset, exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parentNode()->insertBefore(m_text1, m_text2, exceptionCode);
+    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
         
     ASSERT(m_text2->previousSibling()->isTextNode());
@@ -96,9 +84,9 @@ void SplitTextNodeCommand::doUnapply()
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    document()->copyMarkers(m_text1, 0, m_offset, m_text2, 0);
+    document()->copyMarkers(m_text1.get(), 0, m_offset, m_text2.get(), 0);
 
-    m_text2->parentNode()->removeChild(m_text1, exceptionCode);
+    m_text2->parentNode()->removeChild(m_text1.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();

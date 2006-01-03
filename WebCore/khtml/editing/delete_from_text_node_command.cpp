@@ -42,14 +42,6 @@ DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(DocumentImpl *document, Tex
     ASSERT(m_offset >= 0);
     ASSERT(m_offset < (int)m_node->length());
     ASSERT(m_count >= 0);
-    
-    m_node->ref();
-}
-
-DeleteFromTextNodeCommand::~DeleteFromTextNodeCommand()
-{
-    ASSERT(m_node);
-    m_node->deref();
 }
 
 void DeleteFromTextNodeCommand::doApply()

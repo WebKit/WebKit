@@ -37,24 +37,10 @@ using DOM::ElementImpl;
 namespace khtml {
 
 MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(DOM::DocumentImpl *document, DOM::ElementImpl *first, DOM::ElementImpl *second)
-    : EditCommand(document), m_element1(first), m_element2(second), m_atChild(0)
+    : EditCommand(document), m_element1(first), m_element2(second)
 {
     ASSERT(m_element1);
     ASSERT(m_element2);
-
-    m_element1->ref();
-    m_element2->ref();
-}
-
-MergeIdenticalElementsCommand::~MergeIdenticalElementsCommand()
-{
-    if (m_atChild)
-        m_atChild->deref();
-
-    ASSERT(m_element1);
-    m_element1->deref();
-    ASSERT(m_element2);
-    m_element2->deref();
 }
 
 void MergeIdenticalElementsCommand::doApply()
@@ -65,17 +51,15 @@ void MergeIdenticalElementsCommand::doApply()
 
     int exceptionCode = 0;
 
-    if (!m_atChild) {
+    if (!m_atChild)
         m_atChild = m_element2->firstChild();
-        m_atChild->ref();
-    }
 
     while (m_element1->lastChild()) {
         m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), exceptionCode);
         ASSERT(exceptionCode == 0);
     }
 
-    m_element2->parentNode()->removeChild(m_element1, exceptionCode);
+    m_element2->parentNode()->removeChild(m_element1.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -86,7 +70,7 @@ void MergeIdenticalElementsCommand::doUnapply()
 
     int exceptionCode = 0;
 
-    m_element2->parent()->insertBefore(m_element1, m_element2, exceptionCode);
+    m_element2->parent()->insertBefore(m_element1.get(), m_element2.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
     while (m_element2->firstChild() != m_atChild) {

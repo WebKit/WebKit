@@ -41,13 +41,6 @@ RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, E
     : EditCommand(document), m_element(element), m_attribute(attribute)
 {
     ASSERT(m_element);
-    m_element->ref();
-}
-
-RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand()
-{
-    ASSERT(m_element);
-    m_element->deref();
 }
 
 void RemoveNodeAttributeCommand::doApply()

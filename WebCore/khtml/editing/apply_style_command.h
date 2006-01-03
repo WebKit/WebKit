@@ -27,6 +27,7 @@
 #define __apply_style_command_h__
 
 #include "composite_edit_command.h"
+#include <kxmlcore/PassRefPtr.h>
 
 namespace DOM {
     class HTMLElementImpl;
@@ -55,7 +56,7 @@ private:
     void removeHTMLFontStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
     void removeCSSStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
     void removeBlockStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
-    void removeInlineStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
+    void removeInlineStyle(PassRefPtr<DOM::CSSMutableStyleDeclarationImpl>, const DOM::Position &start, const DOM::Position &end);
     bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
     bool nodeFullyUnselected(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end) const;
     DOM::CSSMutableStyleDeclarationImpl *extractTextDecorationStyle(DOM::NodeImpl *node);

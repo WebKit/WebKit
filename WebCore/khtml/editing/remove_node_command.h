@@ -34,17 +34,17 @@ class RemoveNodeCommand : public EditCommand
 {
 public:
     RemoveNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
-    virtual ~RemoveNodeCommand();
+    virtual ~RemoveNodeCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *node() const { return m_removeChild; }
+    DOM::NodeImpl *node() const { return m_removeChild.get(); }
 
 private:
-    DOM::NodeImpl *m_parent;    
-    DOM::NodeImpl *m_removeChild;
-    DOM::NodeImpl *m_refChild;    
+    RefPtr<DOM::NodeImpl> m_removeChild;
+    RefPtr<DOM::NodeImpl> m_parent;
+    RefPtr<DOM::NodeImpl> m_refChild;    
 };
 
 } // namespace khtml

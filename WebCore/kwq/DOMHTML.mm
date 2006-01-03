@@ -552,13 +552,13 @@ using DOM::NodeImpl;
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    DocumentFragmentImpl *fragment = createFragmentFromMarkup([self _documentImpl], QString::fromNSString(markupString), QString::fromNSString(baseURLString));
-    return [DOMDocumentFragment _documentFragmentWithImpl:fragment];
+    RefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup([self _documentImpl], QString::fromNSString(markupString), QString::fromNSString(baseURLString));
+    return [DOMDocumentFragment _documentFragmentWithImpl:fragment.get()];
 }
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text
 {
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText([self _documentImpl], QString::fromNSString(text))];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText([self _documentImpl], QString::fromNSString(text)).get()];
 }
 
 @end

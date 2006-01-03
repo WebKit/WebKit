@@ -38,17 +38,17 @@ class AppendNodeCommand : public EditCommand
 {
 public:
     AppendNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
-    virtual ~AppendNodeCommand();
+    virtual ~AppendNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *appendChild() const { return m_appendChild; }
-    DOM::NodeImpl *parentNode() const { return m_parentNode; }
+    DOM::NodeImpl *appendChild() const { return m_appendChild.get(); }
+    DOM::NodeImpl *parentNode() const { return m_parentNode.get(); }
 
 private:
-    DOM::NodeImpl *m_appendChild;
-    DOM::NodeImpl *m_parentNode;    
+    RefPtr<DOM::NodeImpl> m_appendChild;
+    RefPtr<DOM::NodeImpl> m_parentNode;
 };
 
 } // namespace khtml

@@ -1881,8 +1881,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl())
         return 0;
 
-    DocumentFragmentImpl *fragment = createFragmentFromMarkup(_part->xmlDocImpl(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
-    return [DOMDocumentFragment _documentFragmentWithImpl:fragment];
+    PassRefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup(_part->xmlDocImpl(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
+    return [DOMDocumentFragment _documentFragmentWithImpl:fragment.get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
@@ -1890,7 +1890,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!partHasSelection(self) || !text)
         return 0;
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text))];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
@@ -1906,7 +1906,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         nodeList.append([node _nodeImpl]);
     }
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(_part->xmlDocImpl(), nodeList)];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(_part->xmlDocImpl(), nodeList).get()];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle

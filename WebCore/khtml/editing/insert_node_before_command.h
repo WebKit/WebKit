@@ -34,17 +34,17 @@ class InsertNodeBeforeCommand : public EditCommand
 {
 public:
     InsertNodeBeforeCommand(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    virtual ~InsertNodeBeforeCommand();
+    virtual ~InsertNodeBeforeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *insertChild() const { return m_insertChild; }
-    DOM::NodeImpl *refChild() const { return m_refChild; }
+    DOM::NodeImpl *insertChild() const { return m_insertChild.get(); }
+    DOM::NodeImpl *refChild() const { return m_refChild.get(); }
 
 private:
-    DOM::NodeImpl *m_insertChild;
-    DOM::NodeImpl *m_refChild; 
+    RefPtr<DOM::NodeImpl> m_insertChild;
+    RefPtr<DOM::NodeImpl> m_refChild; 
 };
 
 } // namespace khtml

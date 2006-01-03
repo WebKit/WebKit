@@ -34,14 +34,14 @@ class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
 {
 public:
     RemoveNodePreservingChildrenCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
-    virtual ~RemoveNodePreservingChildrenCommand();
+    virtual ~RemoveNodePreservingChildrenCommand() { }
 	
     virtual void doApply();
 
-    DOM::NodeImpl *node() const { return m_node; }
+    DOM::NodeImpl *node() const { return m_node.get(); }
 
 private:
-    DOM::NodeImpl *m_node;
+    RefPtr<DOM::NodeImpl> m_node;
 };
 
 } // namespace khtml

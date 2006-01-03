@@ -53,8 +53,6 @@ private:
     void calculateTypingStyleAfterDelete(DOM::NodeImpl *insertedPlaceholder);
     void clearTransientState();
 
-    void setStartNode(DOM::NodeImpl *);
-
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
     bool m_mergeBlocksAfterDelete;
@@ -69,11 +67,11 @@ private:
     DOM::Position m_endingPosition;
     DOM::Position m_leadingWhitespace;
     DOM::Position m_trailingWhitespace;
-    DOM::NodeImpl *m_startBlock;
-    DOM::NodeImpl *m_endBlock;
-    DOM::NodeImpl *m_startNode;
-    DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
-    DOM::CSSMutableStyleDeclarationImpl *m_deleteIntoBlockquoteStyle;
+    RefPtr<DOM::NodeImpl> m_startBlock;
+    RefPtr<DOM::NodeImpl> m_endBlock;
+    RefPtr<DOM::NodeImpl> m_startNode;
+    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_typingStyle;
+    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_deleteIntoBlockquoteStyle;
 };
 
 } // namespace khtml

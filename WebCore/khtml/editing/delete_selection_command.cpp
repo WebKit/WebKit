@@ -204,11 +204,8 @@ void DeleteSelectionCommand::initializePositionData()
     // Handle setting start and end blocks and the start node.
     //
     m_startBlock = m_downstreamStart.node()->enclosingBlockFlowElement();
-    m_startBlock->ref();
     m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowElement();
-    m_endBlock->ref();
     m_startNode = m_upstreamStart.node();
-    m_startNode->ref();
 
     //
     // Handle detecting if the line containing the selection end is itself fully selected.
@@ -227,9 +224,9 @@ void DeleteSelectionCommand::initializePositionData()
     debugPosition("m_downstreamEnd      ", m_downstreamEnd);
     debugPosition("m_leadingWhitespace  ", m_leadingWhitespace);
     debugPosition("m_trailingWhitespace ", m_trailingWhitespace);
-    debugNode(    "m_startBlock         ", m_startBlock);
-    debugNode(    "m_endBlock           ", m_endBlock);    
-    debugNode(    "m_startNode          ", m_startNode);    
+    debugNode(    "m_startBlock         ", m_startBlock.get());
+    debugNode(    "m_endBlock           ", m_endBlock.get());    
+    debugNode(    "m_startNode          ", m_startNode.get());    
 }
 
 void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
@@ -272,20 +269,14 @@ void DeleteSelectionCommand::saveTypingStyleState()
     // Figure out the typing style in effect before the delete is done.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSComputedStyleDeclarationImpl *computedStyle = positionBeforeTabSpan(m_selectionToDelete.start()).computedStyle();
-    computedStyle->ref();
+    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = positionBeforeTabSpan(m_selectionToDelete.start()).computedStyle();
     m_typingStyle = computedStyle->copyInheritableProperties();
-    m_typingStyle->ref();
-    computedStyle->deref();
     
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
     if (nearestMailBlockquote(m_selectionToDelete.start().node())) {
         computedStyle = m_selectionToDelete.end().computedStyle();
-        computedStyle->ref();
         m_deleteIntoBlockquoteStyle = computedStyle->copyInheritableProperties();
-        m_deleteIntoBlockquoteStyle->ref();
-        computedStyle->deref();
     } else
         m_deleteIntoBlockquoteStyle = 0;
 }
@@ -312,16 +303,6 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     return false;
 }
 
-void DeleteSelectionCommand::setStartNode(NodeImpl *node)
-{
-    NodeImpl *old = m_startNode;
-    m_startNode = node;
-    if (m_startNode)
-        m_startNode->ref();
-    if (old)
-        old->deref();
-}
-
 void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
@@ -343,13 +324,13 @@ void DeleteSelectionCommand::handleGeneralDelete()
     // end of a block other than the block containing the selection start, then do not delete the 
     // start block, otherwise delete the start block.
     if (startOffset == 1 && m_startNode && m_startNode->hasTagName(brTag)) {
-        setStartNode(m_startNode->traverseNextNode());
+        m_startNode = m_startNode->traverseNextNode();
         startOffset = 0;
     }
     if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()))) {
-        if (!m_startBlock->isAncestor(m_endBlock) && !isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
+        if (!m_startBlock->isAncestor(m_endBlock.get()) && !isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
             // Delete all the children of the block, but not the block itself.
-            setStartNode(m_startBlock->firstChild());
+            m_startNode = m_startBlock->firstChild();
             startOffset = 0;
         }
     }
@@ -362,13 +343,13 @@ void DeleteSelectionCommand::handleGeneralDelete()
         // Also, before moving on, delete any insignificant text that may be present in a text node.
         if (m_startNode->isTextNode()) {
             // Delete any insignificant text from this node.
-            TextImpl *text = static_cast<TextImpl *>(m_startNode);
+            TextImpl *text = static_cast<TextImpl *>(m_startNode.get());
             if (text->length() > (unsigned)m_startNode->caretMaxOffset())
                 deleteTextFromNode(text, m_startNode->caretMaxOffset(), text->length() - m_startNode->caretMaxOffset());
         }
         
         // shift the start node to the next
-        setStartNode(m_startNode->traverseNextNode());
+        m_startNode = m_startNode->traverseNextNode();
         startOffset = 0;
     }
 
@@ -379,24 +360,24 @@ void DeleteSelectionCommand::handleGeneralDelete()
     if (m_startNode == m_downstreamEnd.node()) {
         // The selection to delete is all in one node.
         if (!m_startNode->renderer() || 
-            (startOffset == 0 && m_downstreamEnd.offset() >= maxDeepOffset(m_startNode))) {
+            (startOffset == 0 && m_downstreamEnd.offset() >= maxDeepOffset(m_startNode.get()))) {
             // just delete
-            removeFullySelectedNode(m_startNode);
+            removeFullySelectedNode(m_startNode.get());
         } else if (m_downstreamEnd.offset() - startOffset > 0) {
             if (m_startNode->isTextNode()) {
                 // in a text node that needs to be trimmed
-                TextImpl *text = static_cast<TextImpl *>(m_startNode);
+                TextImpl *text = static_cast<TextImpl *>(m_startNode.get());
                 deleteTextFromNode(text, startOffset, m_downstreamEnd.offset() - startOffset);
                 m_trailingWhitespaceValid = false;
             } else {
-                removeChildrenInRange(m_startNode, startOffset, m_downstreamEnd.offset());
+                removeChildrenInRange(m_startNode.get(), startOffset, m_downstreamEnd.offset());
                 m_endingPosition = m_upstreamStart;
             }
         }
     }
     else {
         // The selection to delete spans more than one node.
-        NodeImpl *node = m_startNode;
+        NodeImpl *node = m_startNode.get();
         
         if (startOffset > 0) {
             if (m_startNode->isTextNode()) {
@@ -614,11 +595,11 @@ void DeleteSelectionCommand::calculateEndingPosition()
     if (m_endingPosition.node()->inDocument())
         return;
 
-    m_endingPosition = Position(m_startBlock, 0);
+    m_endingPosition = Position(m_startBlock.get(), 0);
     if (m_endingPosition.node()->inDocument())
         return;
 
-    m_endingPosition = Position(m_endBlock, 0);
+    m_endingPosition = Position(m_endBlock.get(), 0);
     if (m_endingPosition.node()->inDocument())
         return;
 
@@ -635,25 +616,15 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     
-    if (m_deleteIntoBlockquoteStyle) {
-        // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
-        if (!nearestMailBlockquote(m_endingPosition.node())) {
-            CSSMutableStyleDeclarationImpl *oldStyle = m_typingStyle;
-            m_typingStyle = m_deleteIntoBlockquoteStyle;
-            m_deleteIntoBlockquoteStyle = 0;
-            oldStyle->deref();
-        } else {
-            m_deleteIntoBlockquoteStyle->deref();
-            m_deleteIntoBlockquoteStyle = 0;
-        }
-    }
+    // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
+    if (m_deleteIntoBlockquoteStyle && !nearestMailBlockquote(m_endingPosition.node()))
+        m_typingStyle = m_deleteIntoBlockquoteStyle;
+    m_deleteIntoBlockquoteStyle = 0;
     
-    CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
-    endingStyle.diff(m_typingStyle);
-    if (!m_typingStyle->length()) {
-        m_typingStyle->deref();
+    RefPtr<CSSComputedStyleDeclarationImpl> endingStyle = new CSSComputedStyleDeclarationImpl(m_endingPosition.node());
+    endingStyle->diff(m_typingStyle.get());
+    if (!m_typingStyle->length())
         m_typingStyle = 0;
-    }
     if (insertedPlaceholder && m_typingStyle) {
         // Apply style to the placeholder. This makes sure that the single line in the
         // paragraph has the right height, and that the paragraph takes on the style
@@ -662,15 +633,13 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
         // is not retained until the next typing action.
 
         setEndingSelection(SelectionController(Position(insertedPlaceholder, 0), DOWNSTREAM));
-        applyStyle(m_typingStyle, EditActionUnspecified);
-
-        m_typingStyle->deref();
+        applyStyle(m_typingStyle.get(), EditActionUnspecified);
         m_typingStyle = 0;
     }
     // Set m_typingStyle as the typing style.
     // It's perfectly OK for m_typingStyle to be null.
-    document()->part()->setTypingStyle(m_typingStyle);
-    setTypingStyle(m_typingStyle);
+    document()->part()->setTypingStyle(m_typingStyle.get());
+    setTypingStyle(m_typingStyle.get());
 }
 
 void DeleteSelectionCommand::clearTransientState()
@@ -683,27 +652,6 @@ void DeleteSelectionCommand::clearTransientState()
     m_endingPosition.clear();
     m_leadingWhitespace.clear();
     m_trailingWhitespace.clear();
-
-    if (m_startBlock) {
-        m_startBlock->deref();
-        m_startBlock = 0;
-    }
-    if (m_endBlock) {
-        m_endBlock->deref();
-        m_endBlock = 0;
-    }
-    if (m_startNode) {
-        m_startNode->deref();
-        m_startNode = 0;
-    }
-    if (m_typingStyle) {
-        m_typingStyle->deref();
-        m_typingStyle = 0;
-    }
-    if (m_deleteIntoBlockquoteStyle) {
-        m_deleteIntoBlockquoteStyle->deref();
-        m_deleteIntoBlockquoteStyle = 0;
-    }
 }
 
 void DeleteSelectionCommand::doApply()

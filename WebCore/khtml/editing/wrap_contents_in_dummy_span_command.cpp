@@ -37,20 +37,9 @@ using DOM::ElementImpl;
 namespace khtml {
 
 WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element)
-    : EditCommand(document), m_element(element), m_dummySpan(0)
+    : EditCommand(document), m_element(element)
 {
     ASSERT(m_element);
-
-    m_element->ref();
-}
-
-WrapContentsInDummySpanCommand::~WrapContentsInDummySpanCommand()
-{
-    if (m_dummySpan)
-        m_dummySpan->deref();
-
-    ASSERT(m_element);
-    m_element->deref();
 }
 
 void WrapContentsInDummySpanCommand::doApply()
@@ -59,17 +48,15 @@ void WrapContentsInDummySpanCommand::doApply()
 
     int exceptionCode = 0;
 
-    if (!m_dummySpan) {
+    if (!m_dummySpan)
         m_dummySpan = createStyleSpanElement(document());
-        m_dummySpan->ref();
-    }
-
+ 
     while (m_element->firstChild()) {
         m_dummySpan->appendChild(m_element->firstChild(), exceptionCode);
         ASSERT(exceptionCode == 0);
     }
 
-    m_element->appendChild(m_dummySpan, exceptionCode);
+    m_element->appendChild(m_dummySpan.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -88,7 +75,7 @@ void WrapContentsInDummySpanCommand::doUnapply()
         ASSERT(exceptionCode == 0);
     }
 
-    m_element->removeChild(m_dummySpan, exceptionCode);
+    m_element->removeChild(m_dummySpan.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 

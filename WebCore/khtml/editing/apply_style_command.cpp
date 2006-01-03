@@ -90,7 +90,7 @@ public:
     bool usesLegacyStyles() const { return m_usesLegacyStyles; }
 
 private:
-    void init(CSSStyleDeclarationImpl *, const Position &);
+    void init(PassRefPtr<CSSStyleDeclarationImpl>, const Position &);
     bool checkForLegacyHTMLStyleChange(const CSSProperty *);
     static bool currentlyHasStyle(const Position &, const CSSProperty *);
     
@@ -117,13 +117,11 @@ StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &positio
     init(style, position);
 }
 
-void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
+void StyleChange::init(PassRefPtr<CSSStyleDeclarationImpl> style, const Position &position)
 {
-    style->ref();
     RefPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
-    style->deref();
     
-    QString styleText("");
+    DOMString styleText("");
 
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
@@ -143,14 +141,13 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
         if (property->id() == CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT) {
             // we have to special-case text decorations
             CSSProperty alteredProperty = CSSProperty(CSS_PROP_TEXT_DECORATION, property->value(), property->isImportant());
-            styleText += alteredProperty.cssText().qstring();
-        } else {
-            styleText += property->cssText().qstring();
-        }
+            styleText += alteredProperty.cssText();
+        } else
+            styleText += property->cssText();
     }
 
     // Save the result for later
-    m_cssStyle = styleText.stripWhiteSpace();
+    m_cssStyle = styleText.qstring().stripWhiteSpace();
 }
 
 StyleChange::ELegacyHTMLStyles StyleChange::styleModeForParseMode(bool isQuirksMode)
@@ -876,7 +873,7 @@ static int maxRangeOffset(NodeImpl *n)
     return 1;
 }
 
-void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style, const Position &start, const Position &end)
+void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclarationImpl> style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
@@ -905,12 +902,12 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             NodeImpl *prev = elem->traversePreviousNodePostOrder();
             NodeImpl *next = elem->traverseNextNode();
-            if (isHTMLStyleNode(style, elem)) {
+            if (isHTMLStyleNode(style.get(), elem)) {
                 removeHTMLStyleNode(elem);
             }
             else {
-                removeHTMLFontStyle(style, elem);
-                removeCSSStyle(style, elem);
+                removeHTMLFontStyle(style.get(), elem);
+                removeCSSStyle(style.get(), elem);
             }
             if (!elem->inDocument()) {
                 if (s.node() == elem) {
@@ -931,11 +928,6 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
         if (node == end.node())
             break;
         node = next;
-    }
-
-
-    if (textDecorationSpecialProperty) {
-        style->deref();
     }
     
     ASSERT(s.node()->inDocument());

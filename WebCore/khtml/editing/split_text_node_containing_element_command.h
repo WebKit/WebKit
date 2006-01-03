@@ -34,12 +34,12 @@ class SplitTextNodeContainingElementCommand : public CompositeEditCommand
 {
 public:
     SplitTextNodeContainingElementCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
-    virtual ~SplitTextNodeContainingElementCommand();
+    virtual ~SplitTextNodeContainingElementCommand() { }
 	
     virtual void doApply();
 
 private:
-    DOM::TextImpl *m_text;
+    RefPtr<DOM::TextImpl> m_text;
     int m_offset;
 };
 

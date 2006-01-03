@@ -43,14 +43,7 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(DocumentImpl *document, Tex
     ASSERT(m_offset >= 0);
     ASSERT(!text.isEmpty());
     
-    m_node->ref();
     m_text = text.copy(); // make a copy to ensure that the string never changes
-}
-
-InsertIntoTextNodeCommand::~InsertIntoTextNodeCommand()
-{
-    if (m_node)
-        m_node->deref();
 }
 
 void InsertIntoTextNodeCommand::doApply()

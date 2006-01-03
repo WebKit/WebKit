@@ -59,20 +59,6 @@ EditCommandPtr::EditCommandPtr(EditCommand *impl) : RefPtr<EditCommand>(impl)
 {
 }
 
-EditCommandPtr::EditCommandPtr(const EditCommandPtr &o) : RefPtr<EditCommand>(o)
-{
-}
-
-EditCommandPtr::~EditCommandPtr()
-{
-}
-
-EditCommandPtr &EditCommandPtr::operator=(const EditCommandPtr &c)
-{
-    static_cast<RefPtr<EditCommand> &>(*this) = c;
-    return *this;
-}
-
 bool EditCommandPtr::isCompositeStep() const
 {
     IF_IMPL_NULL_RETURN_ARG(false);        
@@ -202,21 +188,16 @@ EditCommandPtr &EditCommandPtr::emptyCommand()
 }
 
 EditCommand::EditCommand(DocumentImpl *document) 
-    : m_document(document), m_state(NotApplied), m_typingStyle(0), m_parent(0)
+    : m_document(document), m_state(NotApplied), m_parent(0)
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
-    m_document->ref();
     m_startingSelection = m_document->part()->selection();
     m_endingSelection = m_startingSelection;
 }
 
 EditCommand::~EditCommand()
 {
-    ASSERT(m_document);
-    m_document->deref();
-    if (m_typingStyle)
-        m_typingStyle->deref();
 }
 
 void EditCommand::apply()
@@ -335,25 +316,12 @@ void EditCommand::setEndingSelection(const Position &p, EAffinity affinity)
         cmd->m_endingSelection = s;
 }
 
-void EditCommand::assignTypingStyle(CSSMutableStyleDeclarationImpl *style)
-{
-    if (m_typingStyle == style)
-        return;
-        
-    CSSMutableStyleDeclarationImpl *old = m_typingStyle;
-    m_typingStyle = style;
-    if (m_typingStyle)
-        m_typingStyle->ref();
-    if (old)
-        old->deref();
-}
-
 void EditCommand::setTypingStyle(CSSMutableStyleDeclarationImpl *style)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->assignTypingStyle(style);
+        cmd->m_typingStyle = style;
 }
 
 bool EditCommand::preservesTypingStyle() const
@@ -373,10 +341,8 @@ bool EditCommand::isTypingCommand() const
 
 CSSMutableStyleDeclarationImpl *EditCommand::styleAtPosition(const Position &pos)
 {
-    CSSComputedStyleDeclarationImpl *computedStyle = positionBeforeTabSpan(pos).computedStyle();
-    computedStyle->ref();
+    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = positionBeforeTabSpan(pos).computedStyle();
     CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-    computedStyle->deref();
  
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement

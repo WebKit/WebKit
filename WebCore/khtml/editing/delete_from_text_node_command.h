@@ -40,17 +40,17 @@ class DeleteFromTextNodeCommand : public EditCommand
 {
 public:
     DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, int offset, int count);
-    virtual ~DeleteFromTextNodeCommand();
+    virtual ~DeleteFromTextNodeCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_node; }
+    DOM::TextImpl *node() const { return m_node.get(); }
     int offset() const { return m_offset; }
     int count() const { return m_count; }
 
 private:
-    DOM::TextImpl *m_node;
+    RefPtr<DOM::TextImpl> m_node;
     int m_offset;
     int m_count;
     DOM::DOMString m_text;

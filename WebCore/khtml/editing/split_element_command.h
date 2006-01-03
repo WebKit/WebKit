@@ -34,15 +34,15 @@ class SplitElementCommand : public EditCommand
 {
 public:
     SplitElementCommand(DOM::DocumentImpl *, DOM::ElementImpl *element, DOM::NodeImpl *atChild);
-    virtual ~SplitElementCommand();
+    virtual ~SplitElementCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    DOM::ElementImpl *m_element1;
-    DOM::ElementImpl *m_element2;
-    DOM::NodeImpl *m_atChild;
+    RefPtr<DOM::ElementImpl> m_element1;
+    RefPtr<DOM::ElementImpl> m_element2;
+    RefPtr<DOM::NodeImpl> m_atChild;
 };
 
 } // namespace khtml

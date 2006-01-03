@@ -43,14 +43,7 @@ SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, Element
     : EditCommand(document), m_element(element), m_attribute(attribute), m_value(value)
 {
     ASSERT(m_element);
-    m_element->ref();
     ASSERT(!m_value.isNull());
-}
-
-SetNodeAttributeCommand::~SetNodeAttributeCommand()
-{
-    ASSERT(m_element);
-    m_element->deref();
 }
 
 void SetNodeAttributeCommand::doApply()

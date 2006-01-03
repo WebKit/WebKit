@@ -44,14 +44,6 @@ SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(Doc
 {
     ASSERT(m_text);
     ASSERT(m_text->length() > 0);
-
-    m_text->ref();
-}
-
-SplitTextNodeContainingElementCommand::~SplitTextNodeContainingElementCommand()
-{
-    ASSERT(m_text);
-    m_text->deref();
 }
 
 void SplitTextNodeContainingElementCommand::doApply()
@@ -59,7 +51,7 @@ void SplitTextNodeContainingElementCommand::doApply()
     ASSERT(m_text);
     ASSERT(m_offset > 0);
 
-    splitTextNode(m_text, m_offset);
+    splitTextNode(m_text.get(), m_offset);
     
     NodeImpl *parentNode = m_text->parentNode();
     if (!parentNode->renderer() || !parentNode->renderer()->isInline()) {
@@ -67,7 +59,7 @@ void SplitTextNodeContainingElementCommand::doApply()
         parentNode = parentNode->firstChild();
     }
 
-    splitElement(static_cast<ElementImpl *>(parentNode), m_text);
+    splitElement(static_cast<ElementImpl *>(parentNode), m_text.get());
 }
 
 } // namespace khtml

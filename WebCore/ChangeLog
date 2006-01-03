@@ -1,3 +1,189 @@
+2006-01-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        No functionality changes, no tests possible.
+
+        khtml/editing should use RefPtr instead of manual ref/deref
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6109
+
+        Results in a slight performance gain < 1% on the PLT.
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::toRange):
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/append_node_command.cpp:
+        (khtml::AppendNodeCommand::AppendNodeCommand):
+        (khtml::AppendNodeCommand::doApply):
+        (khtml::AppendNodeCommand::doUnapply):
+        * khtml/editing/append_node_command.h:
+        (khtml::AppendNodeCommand::~AppendNodeCommand):
+        (khtml::AppendNodeCommand::appendChild):
+        (khtml::AppendNodeCommand::parentNode):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::StyleChange::init):
+        (khtml::ApplyStyleCommand::removeInlineStyle):
+        * khtml/editing/apply_style_command.h:
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantText):
+        * khtml/editing/delete_from_text_node_command.cpp:
+        (khtml::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand):
+        * khtml/editing/delete_from_text_node_command.h:
+        (khtml::DeleteFromTextNodeCommand::~DeleteFromTextNodeCommand):
+        (khtml::DeleteFromTextNodeCommand::node):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        (khtml::DeleteSelectionCommand::calculateEndingPosition):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::clearTransientState):
+        * khtml/editing/delete_selection_command.h:
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::EditCommand):
+        (khtml::EditCommand::~EditCommand):
+        (khtml::EditCommand::setTypingStyle):
+        (khtml::EditCommand::styleAtPosition):
+        * khtml/editing/edit_command.h:
+        (khtml::EditCommand::document):
+        (khtml::EditCommand::typingStyle):
+        * khtml/editing/insert_into_text_node_command.cpp:
+        (khtml::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        * khtml/editing/insert_into_text_node_command.h:
+        (khtml::InsertIntoTextNodeCommand::~InsertIntoTextNodeCommand):
+        (khtml::InsertIntoTextNodeCommand::node):
+        * khtml/editing/insert_node_before_command.cpp:
+        (khtml::InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        (khtml::InsertNodeBeforeCommand::doApply):
+        (khtml::InsertNodeBeforeCommand::doUnapply):
+        * khtml/editing/insert_node_before_command.h:
+        (khtml::InsertNodeBeforeCommand::~InsertNodeBeforeCommand):
+        (khtml::InsertNodeBeforeCommand::insertChild):
+        (khtml::InsertNodeBeforeCommand::refChild):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand):
+        (khtml::InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand):
+        (khtml::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion):
+        (khtml::InsertParagraphSeparatorCommand::applyStyleAfterInsertion):
+        * khtml/editing/insert_paragraph_separator_command.h:
+        * khtml/editing/join_text_nodes_command.cpp:
+        (khtml::JoinTextNodesCommand::JoinTextNodesCommand):
+        (khtml::JoinTextNodesCommand::doApply):
+        (khtml::JoinTextNodesCommand::doUnapply):
+        * khtml/editing/join_text_nodes_command.h:
+        (khtml::JoinTextNodesCommand::~JoinTextNodesCommand):
+        (khtml::JoinTextNodesCommand::firstNode):
+        (khtml::JoinTextNodesCommand::secondNode):
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup):
+        (khtml::createFragmentFromMarkup):
+        (khtml::createFragmentFromText):
+        (khtml::createFragmentFromNodeList):
+        * khtml/editing/markup.h:
+        * khtml/editing/merge_identical_elements_command.cpp:
+        (khtml::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand):
+        (khtml::MergeIdenticalElementsCommand::doApply):
+        (khtml::MergeIdenticalElementsCommand::doUnapply):
+        * khtml/editing/merge_identical_elements_command.h:
+        (khtml::MergeIdenticalElementsCommand::~MergeIdenticalElementsCommand):
+        * khtml/editing/move_selection_command.cpp:
+        (khtml::MoveSelectionCommand::MoveSelectionCommand):
+        (khtml::MoveSelectionCommand::~MoveSelectionCommand):
+        (khtml::MoveSelectionCommand::doApply):
+        * khtml/editing/move_selection_command.h:
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/rebalance_whitespace_command.h:
+        (khtml::RebalanceWhitespaceCommand::~RebalanceWhitespaceCommand):
+        * khtml/editing/remove_css_property_command.cpp:
+        (khtml::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand):
+        * khtml/editing/remove_css_property_command.h:
+        (khtml::RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand):
+        (khtml::RemoveCSSPropertyCommand::styleDeclaration):
+        * khtml/editing/remove_node_attribute_command.cpp:
+        (khtml::RemoveNodeAttributeCommand::RemoveNodeAttributeCommand):
+        * khtml/editing/remove_node_attribute_command.h:
+        (khtml::RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand):
+        (khtml::RemoveNodeAttributeCommand::element):
+        * khtml/editing/remove_node_command.cpp:
+        (khtml::RemoveNodeCommand::RemoveNodeCommand):
+        (khtml::RemoveNodeCommand::doApply):
+        (khtml::RemoveNodeCommand::doUnapply):
+        * khtml/editing/remove_node_command.h:
+        (khtml::RemoveNodeCommand::~RemoveNodeCommand):
+        (khtml::RemoveNodeCommand::node):
+        * khtml/editing/remove_node_preserving_children_command.cpp:
+        (khtml::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        * khtml/editing/remove_node_preserving_children_command.h:
+        (khtml::RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand):
+        (khtml::RemoveNodePreservingChildrenCommand::node):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment):
+        (khtml::ReplacementFragment::~ReplacementFragment):
+        (khtml::ReplacementFragment::enclosingBlock):
+        (khtml::ReplacementFragment::removeNodePreservingChildren):
+        (khtml::ReplacementFragment::removeNode):
+        (khtml::ReplacementFragment::insertFragmentForTestRendering):
+        (khtml::ReplacementFragment::restoreTestRenderingNodesToFragment):
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles):
+        (khtml::computeAndStoreNodeDesiredStyle):
+        (khtml::NodeDesiredStyle::NodeDesiredStyle):
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement):
+        (khtml::ReplaceSelectionCommand::updateNodesInserted):
+        * khtml/editing/replace_selection_command.h:
+        (khtml::NodeDesiredStyle::node):
+        (khtml::NodeDesiredStyle::style):
+        (khtml::ReplacementFragment::root):
+        * khtml/editing/set_node_attribute_command.cpp:
+        (khtml::SetNodeAttributeCommand::SetNodeAttributeCommand):
+        * khtml/editing/set_node_attribute_command.h:
+        (khtml::SetNodeAttributeCommand::~SetNodeAttributeCommand):
+        (khtml::SetNodeAttributeCommand::element):
+        * khtml/editing/split_element_command.cpp:
+        (khtml::SplitElementCommand::SplitElementCommand):
+        (khtml::SplitElementCommand::doApply):
+        (khtml::SplitElementCommand::doUnapply):
+        * khtml/editing/split_element_command.h:
+        (khtml::SplitElementCommand::~SplitElementCommand):
+        * khtml/editing/split_text_node_command.cpp:
+        (khtml::SplitTextNodeCommand::SplitTextNodeCommand):
+        (khtml::SplitTextNodeCommand::doApply):
+        (khtml::SplitTextNodeCommand::doUnapply):
+        * khtml/editing/split_text_node_command.h:
+        (khtml::SplitTextNodeCommand::~SplitTextNodeCommand):
+        (khtml::SplitTextNodeCommand::node):
+        * khtml/editing/split_text_node_containing_element.cpp:
+        (khtml::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand):
+        (khtml::SplitTextNodeContainingElementCommand::doApply):
+        * khtml/editing/split_text_node_containing_element_command.h:
+        (khtml::SplitTextNodeContainingElementCommand::~SplitTextNodeContainingElementCommand):
+        * khtml/editing/visible_position.cpp:
+        (khtml::makeRange):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::range):
+        (khtml::SimplifiedBackwardsTextIterator::range):
+        (khtml::CharacterIterator::range):
+        (khtml::findPlainText):
+        * khtml/editing/visible_text.h:
+        (khtml::WordAwareIterator::range):
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp:
+        (khtml::WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand):
+        (khtml::WrapContentsInDummySpanCommand::doApply):
+        (khtml::WrapContentsInDummySpanCommand::doUnapply):
+        * khtml/editing/wrap_contents_in_dummy_span_command.h:
+        (khtml::WrapContentsInDummySpanCommand::~WrapContentsInDummySpanCommand):
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]):
+        (-[DOMHTMLDocument _createDocumentFragmentWithText:]):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebCoreBridge documentFragmentWithText:]):
+        (-[WebCoreBridge documentFragmentWithNodesAsParagraphs:]):
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

@@ -34,14 +34,14 @@ class WrapContentsInDummySpanCommand : public EditCommand
 {
 public:
     WrapContentsInDummySpanCommand(DOM::DocumentImpl *, DOM::ElementImpl *);
-    virtual ~WrapContentsInDummySpanCommand();
+    virtual ~WrapContentsInDummySpanCommand() { }
 	
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    DOM::ElementImpl *m_element;
-    DOM::ElementImpl *m_dummySpan;
+    RefPtr<DOM::ElementImpl> m_element;
+    RefPtr<DOM::ElementImpl> m_dummySpan;
 };
 
 } // namespace khtml

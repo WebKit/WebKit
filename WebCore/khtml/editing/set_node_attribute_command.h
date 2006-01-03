@@ -37,17 +37,17 @@ class SetNodeAttributeCommand : public EditCommand
 {
 public:
     SetNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute, const DOM::DOMString &value);
-    virtual ~SetNodeAttributeCommand();
+    virtual ~SetNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::ElementImpl *element() const { return m_element; }
+    DOM::ElementImpl *element() const { return m_element.get(); }
     const DOM::QualifiedName& attribute() const { return m_attribute; }
     DOM::DOMString value() const { return m_value; }
     
 private:
-    DOM::ElementImpl *m_element;
+    RefPtr<DOM::ElementImpl> m_element;
     DOM::QualifiedName m_attribute;
     DOM::DOMString m_value;
     DOM::DOMString m_oldValue;

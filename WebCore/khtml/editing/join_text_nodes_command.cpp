@@ -44,17 +44,6 @@ JoinTextNodesCommand::JoinTextNodesCommand(DocumentImpl *document, TextImpl *tex
     ASSERT(m_text1->nextSibling() == m_text2);
     ASSERT(m_text1->length() > 0);
     ASSERT(m_text2->length() > 0);
-
-    m_text1->ref();
-    m_text2->ref();
-}
-
-JoinTextNodesCommand::~JoinTextNodesCommand()
-{
-    ASSERT(m_text1);
-    m_text1->deref();
-    ASSERT(m_text2);
-    m_text2->deref();
 }
 
 void JoinTextNodesCommand::doApply()
@@ -67,7 +56,7 @@ void JoinTextNodesCommand::doApply()
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parentNode()->removeChild(m_text1, exceptionCode);
+    m_text2->parentNode()->removeChild(m_text1.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();
@@ -83,7 +72,7 @@ void JoinTextNodesCommand::doUnapply()
     m_text2->deleteData(0, m_offset, exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parentNode()->insertBefore(m_text1, m_text2, exceptionCode);
+    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), exceptionCode);
     ASSERT(exceptionCode == 0);
         
     ASSERT(m_text2->previousSibling()->isTextNode());

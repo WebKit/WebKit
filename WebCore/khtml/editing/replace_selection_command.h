@@ -27,6 +27,7 @@
 #define __replace_selection_command_h__
 
 #include "composite_edit_command.h"
+#include <kxmlcore/PassRefPtr.h>
 
 namespace DOM {
     class DocumentFragmentImpl;
@@ -38,17 +39,13 @@ class NodeDesiredStyle
 {
 public:
     NodeDesiredStyle(DOM::NodeImpl *, DOM::CSSMutableStyleDeclarationImpl *);
-    NodeDesiredStyle(const NodeDesiredStyle &);
-    ~NodeDesiredStyle();
     
-    DOM::NodeImpl *node() const { return m_node; }
-    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style; }
-
-    NodeDesiredStyle &operator=(const NodeDesiredStyle &);
+    DOM::NodeImpl *node() const { return m_node.get(); }
+    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
 
 private:
-    DOM::NodeImpl *m_node;
-    DOM::CSSMutableStyleDeclarationImpl *m_style;
+    RefPtr<DOM::NodeImpl> m_node;
+    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_style;
 };
 
 // --- ReplacementFragment helper class
@@ -61,7 +58,7 @@ public:
 
     enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 
-    DOM::DocumentFragmentImpl *root() const { return m_fragment; }
+    DOM::DocumentFragmentImpl *root() const { return m_fragment.get(); }
     DOM::NodeImpl *firstChild() const;
     DOM::NodeImpl *lastChild() const;
 
@@ -86,7 +83,7 @@ private:
     static bool isInterchangeNewlineNode(const DOM::NodeImpl *);
     static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
 
-    DOM::NodeImpl *insertFragmentForTestRendering();
+    PassRefPtr<DOM::NodeImpl> insertFragmentForTestRendering();
     void restoreTestRenderingNodesToFragment(DOM::NodeImpl *);
     void computeStylesUsingTestRendering(DOM::NodeImpl *);
     void removeUnrenderedNodesUsingTestRendering(DOM::NodeImpl *);
@@ -95,13 +92,13 @@ private:
 
     // A couple simple DOM helpers
     DOM::NodeImpl *enclosingBlock(DOM::NodeImpl *) const;
-    void removeNode(DOM::NodeImpl *);
+    void removeNode(PassRefPtr<DOM::NodeImpl>);
     void removeNodePreservingChildren(DOM::NodeImpl *);
     void insertNodeBefore(DOM::NodeImpl *node, DOM::NodeImpl *refNode);
 
     EFragmentType m_type;
-    DOM::DocumentImpl *m_document;
-    DOM::DocumentFragmentImpl *m_fragment;
+    RefPtr<DOM::DocumentImpl> m_document;
+    RefPtr<DOM::DocumentFragmentImpl> m_fragment;
     QValueList<NodeDesiredStyle> m_styles;
     bool m_matchStyle;
     bool m_hasInterchangeNewlineAtStart;
@@ -130,10 +127,10 @@ private:
     void removeLinePlaceholderIfNeeded(DOM::NodeImpl *);
 
     ReplacementFragment m_fragment;
-    DOM::NodeImpl *m_firstNodeInserted;
-    DOM::NodeImpl *m_lastNodeInserted;
-    DOM::NodeImpl *m_lastTopNodeInserted;
-    DOM::CSSMutableStyleDeclarationImpl *m_insertionStyle;
+    RefPtr<DOM::NodeImpl> m_firstNodeInserted;
+    RefPtr<DOM::NodeImpl> m_lastNodeInserted;
+    RefPtr<DOM::NodeImpl> m_lastTopNodeInserted;
+    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;
     bool m_matchStyle;
