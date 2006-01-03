@@ -1,3 +1,20 @@
+2006-01-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4609>
+        window.getSelection().toString() is undefined (range object 
+        returned from window.getSelection() is useless)
+
+        toString was defined as a method on the JS Selection object, 
+        but it didn't return anything.
+
+        Added layout test:
+        * editing/selection/toString.html
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::SelectionFunc::callAsFunction):
+
 2006-01-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by timo.

@@ -2422,7 +2422,8 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
                 break;
             case Selection::GetRangeAt:
                 return getDOMRange(exec, s.getRangeAt(args[0]->toInt32(exec)).get());
-                break;
+            case Selection::ToString:
+                return jsString(s.toString());
         }
         
         part->setSelection(s);
