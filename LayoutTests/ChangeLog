@@ -1,3 +1,14 @@
+2006-01-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        REGRESSION: repro crash w/ invalid charset attribute on <script>
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6345
+
+        * fast/loader/invalid-charset-on-script-crashes-loader-expected.txt: Added.
+        * fast/loader/invalid-charset-on-script-crashes-loader.html: Added.
+        * fast/loader/resources/invalid-charset-on-script-crashes-loader.js: Added.
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
