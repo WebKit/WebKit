@@ -1,3 +1,16 @@
+2006-01-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5609
+          XSLT document() doesn't handle relative paths
+        
+        * fast/xsl/xslt-relative-path.xml: Added.
+        * fast/xsl/resources/findme.xml: Added.
+        * fast/xsl/xslt-relative-path-expected.txt: Added.
+        * fast/xsl/xslt-relative-path-expected.checksum: Added.
+        * fast/xsl/xslt-relative-path-expected.png: Added.
+
 2005-12-30  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

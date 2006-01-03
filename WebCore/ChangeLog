@@ -1,3 +1,16 @@
+2006-01-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5609
+          XSLT document() doesn't handle relative paths
+
+        Test case: fast/xsl/xslt-relative-path.xml
+
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::docLoaderFunc): Renamed from stylesheetLoadFunc. Use base URL when constructing URLs.
+        (DOM::XSLTProcessorImpl::transformToString):
+
 2006-01-02  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.
