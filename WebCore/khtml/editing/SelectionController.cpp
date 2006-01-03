@@ -363,8 +363,51 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(ETextGranularity g
     return pos;
 }
 
+bool SelectionController::modify(const DOMString &alterString, const DOMString &directionString, const DOMString &granularityString)
+{
+    DOMString alterStringLower = alterString.lower();
+    EAlter alter;
+    if (alterStringLower == "extend")
+        alter = EXTEND;
+    else if (alterStringLower == "move")
+        alter = MOVE;
+    else 
+        return false;
+    
+    DOMString directionStringLower = directionString.lower();
+    EDirection direction;
+    if (directionStringLower == "forward")
+        direction = FORWARD;
+    else if (directionStringLower == "backward")
+        direction = BACKWARD;
+    else if (directionStringLower == "left")
+        direction = LEFT;
+    else if (directionStringLower == "right")
+        direction = RIGHT;
+    else
+        return false;
+        
+    DOMString granularityStringLower = granularityString.lower();
+    ETextGranularity granularity;
+    if (granularityStringLower == "character")
+        granularity = CHARACTER;
+    else if (granularityStringLower == "word")
+        granularity = WORD;
+    else if (granularityStringLower == "line")
+        granularity = LINE;
+    else if (granularityStringLower == "paragraph")
+        granularity = PARAGRAPH;
+    else
+        return false;
+                
+    return modify(alter, direction, granularity);
+}
+
 bool SelectionController::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
 {
+    if (part())
+        part()->setSelectionGranularity(granularity);
+    
     setModifyBias(alter, dir);
 
     VisiblePosition pos;
@@ -563,15 +606,6 @@ void SelectionController::setExtent(const VisiblePosition &pos)
     validate();
 }
 
-void SelectionController::setBaseAndExtent(const VisiblePosition &base, const VisiblePosition &extent)
-{
-    // FIXME: Support extentAffinity
-    m_affinity = base.affinity();
-    m_base = base.deepEquivalent();
-    m_extent = extent.deepEquivalent();
-    validate();
-}
-
 void SelectionController::setBase(const Position &pos, EAffinity baseAffinity)
 {
     m_affinity = baseAffinity;
@@ -584,15 +618,6 @@ void SelectionController::setExtent(const Position &pos, EAffinity extentAffinit
     // FIXME: Support extentAffinity for real
     m_affinity = extentAffinity;
     m_extent = pos;
-    validate();
-}
-
-void SelectionController::setBaseAndExtent(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity)
-{
-    // FIXME: extentAffinity
-    m_affinity = baseAffinity;
-    m_base = base;
-    m_extent = extent;
     validate();
 }
 
@@ -659,6 +684,64 @@ PassRefPtr<RangeImpl> SelectionController::toRange() const
         return 0;
     }
     return result;
+}
+
+DOMString SelectionController::type() const
+{
+    if (isNone())
+        return DOMString("None");
+    else if (isCaret())
+        return DOMString("Caret");
+    else
+        return DOMString("Range");
+}
+
+DOMString SelectionController::toString() const
+{
+    return DOMString(plainText(toRange().get()));
+}
+
+PassRefPtr<RangeImpl> SelectionController::getRangeAt(int index) const
+{
+    return index == 0 ? PassRefPtr<RangeImpl>(toRange()) : PassRefPtr<RangeImpl>();
+}
+
+void SelectionController::setBaseAndExtent(NodeImpl *baseNode, int baseOffset, NodeImpl *extentNode, int extentOffset)
+{
+    VisiblePosition visibleBase = VisiblePosition(baseNode, baseOffset, DOWNSTREAM);
+    VisiblePosition visibleExtent = VisiblePosition(extentNode, extentOffset, DOWNSTREAM);
+    
+    moveTo(visibleBase, visibleExtent);
+}
+
+void SelectionController::setPosition(NodeImpl *node, int offset)
+{
+    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
+}
+
+void SelectionController::collapse(NodeImpl *node, int offset)
+{
+    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
+}
+
+void SelectionController::collapseToEnd()
+{
+    moveTo(VisiblePosition(m_end, DOWNSTREAM));
+}
+
+void SelectionController::collapseToStart()
+{
+    moveTo(VisiblePosition(m_start, DOWNSTREAM));
+}
+
+void SelectionController::empty()
+{
+    moveTo(SelectionController());
+}
+
+void SelectionController::extend(NodeImpl *node, int offset)
+{
+    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
 void SelectionController::layout()
@@ -832,17 +915,12 @@ void SelectionController::validate(ETextGranularity granularity)
     // Move the selection to rendered positions, if possible.
     Position originalBase(m_base);
     bool baseAndExtentEqual = m_base == m_extent;
-    bool updatedLayout = false;
     if (m_base.isNotNull()) {
-        m_base.node()->getDocument()->updateLayout();
-        updatedLayout = true;
         m_base = VisiblePosition(m_base, m_affinity).deepEquivalent();
         if (baseAndExtentEqual)
             m_extent = m_base;
     }
     if (m_extent.isNotNull() && !baseAndExtentEqual) {
-        if (!updatedLayout)
-            m_extent.node()->getDocument()->updateLayout();
         m_extent = VisiblePosition(m_extent, m_affinity).deepEquivalent();
     }
 

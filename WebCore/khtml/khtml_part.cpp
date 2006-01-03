@@ -2459,9 +2459,9 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
                 Position start = sel.start();
                 short before = RangeImpl::compareBoundaryPoints(pos.node(), pos.offset(), start.node(), start.offset());
                 if (before <= 0) {
-                    sel.setBaseAndExtent(pos, visiblePos.affinity(), sel.end(), sel.endAffinity());
+                    sel.setBaseAndExtent(pos.node(), pos.offset(), sel.end().node(), sel.end().offset());
                 } else {
-                    sel.setBaseAndExtent(start, sel.startAffinity(), pos, visiblePos.affinity());
+                    sel.setBaseAndExtent(start.node(), start.offset(), pos.node(), pos.offset());
                 }
 
                 if (d->m_selectionGranularity != CHARACTER) {

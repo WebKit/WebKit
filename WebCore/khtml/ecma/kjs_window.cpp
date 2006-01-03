@@ -2314,10 +2314,10 @@ const ClassInfo Selection::info = { "Selection", 0, 0, 0 };
   anchorOffset              Selection::AnchorOffset	             DontDelete|ReadOnly
   focusNode                 Selection::FocusNode		         DontDelete|ReadOnly
   focusOffset               Selection::FocusOffset		         DontDelete|ReadOnly
-  baseNode                  Selection::AnchorNode		         DontDelete|ReadOnly
-  baseOffset                Selection::AnchorOffset              DontDelete|ReadOnly
-  extentNode                Selection::FocusNode                 DontDelete|ReadOnly
-  extentOffset              Selection::FocusOffset		         DontDelete|ReadOnly
+  baseNode                  Selection::BaseNode		         DontDelete|ReadOnly
+  baseOffset                Selection::BaseOffset              DontDelete|ReadOnly
+  extentNode                Selection::ExtentNode                 DontDelete|ReadOnly
+  extentOffset              Selection::ExtentOffset		         DontDelete|ReadOnly
   isCollapsed               Selection::IsCollapsed		         DontDelete|ReadOnly
   type                      Selection::_Type                     DontDelete|ReadOnly
   [[==]]	            Selection::EqualEqual	             DontDelete|ReadOnly
@@ -2329,6 +2329,7 @@ const ClassInfo Selection::info = { "Selection", 0, 0, 0 };
   setBaseAndExtent          Selection::SetBaseAndExtent          DontDelete|Function 4
   setPosition               Selection::SetPosition               DontDelete|Function 2
   modify                    Selection::Modify                    DontDelete|Function 3
+  getRangeAt                Selection::GetRangeAt                DontDelete|Function 1
 @end
 */
 KJS_IMPLEMENT_PROTOFUNC(SelectionFunc)
@@ -2338,44 +2339,36 @@ Selection::Selection(KHTMLPart *p) : m_part(p)
 
 JSValue *Selection::getValueProperty(ExecState *exec, int token) const
 {
-  const Window* window = Window::retrieveWindow(m_part);
-  if (!window) {
-      return jsUndefined();
-  }
-
-  DocumentImpl *docimpl = m_part->xmlDocImpl();
-  if (docimpl)
-      docimpl->updateLayoutIgnorePendingStylesheets();
-
-  switch (token) {
-  case AnchorNode:
-  case BaseNode:
-      return getDOMNode(exec, m_part->selection().base().node());
-  case AnchorOffset:
-  case BaseOffset:
-      return jsNumber(m_part->selection().base().offset());
-  case FocusNode:
-  case ExtentNode:
-      return getDOMNode(exec, m_part->selection().extent().node());
-  case FocusOffset:
-  case ExtentOffset:
-      return jsNumber(m_part->selection().extent().offset());
-  case IsCollapsed:
-      return jsBoolean(!m_part->selection().isRange());
-  case _Type: {
-      switch (m_part->selection().state()) {
-      case khtml::SelectionController::NONE:
-          return jsString("None");
-      case khtml::SelectionController::CARET:
-          return jsString("Caret");
-      case khtml::SelectionController::RANGE:
-          return jsString("Range");
-      }
-  }
-  default:
-    assert(0);
-    return jsUndefined();
-  }
+    SelectionController s = m_part->selection();
+    const Window* window = Window::retrieveWindow(m_part);
+    if (!window)
+        return jsUndefined();
+        
+    switch (token) {
+    case AnchorNode:
+        return getDOMNode(exec, s.anchorNode());
+    case BaseNode:
+        return getDOMNode(exec, s.baseNode());
+    case AnchorOffset:
+        return jsNumber(s.anchorOffset());
+    case BaseOffset:
+        return jsNumber(s.baseOffset());
+    case FocusNode:
+        return getDOMNode(exec, s.focusNode());
+    case ExtentNode:
+        return getDOMNode(exec, s.extentNode());
+    case FocusOffset:
+        return jsNumber(s.focusOffset());
+    case ExtentOffset:
+        return jsNumber(s.extentOffset());
+    case IsCollapsed:
+        return jsBoolean(s.isCollapsed());
+    case _Type:
+        return jsString(s.type());
+    default:
+        assert(0);
+        return jsUndefined();
+    }
 }
 
 bool Selection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -2393,7 +2386,7 @@ JSValue *Selection::toPrimitive(ExecState *exec, Type) const
 
 UString Selection::toString(ExecState *) const
 {
-    return UString(m_part->selectedText());
+    return UString((m_part->selection()).toString());
 }
 
 JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -2403,65 +2396,36 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     Selection *selection = static_cast<Selection *>(thisObj);
     KHTMLPart *part = selection->part();
     if (part) {
-        DocumentImpl *docimpl = part->xmlDocImpl();
-        if (docimpl)
-            docimpl->updateLayoutIgnorePendingStylesheets();
-            
+        SelectionController s = part->selection();
+        
         switch (id) {
             case Selection::Collapse:
-                TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::SelectionController(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
+                s.collapse(toNode(args[0]), args[1]->toInt32(exec));
                 break;
             case Selection::CollapseToEnd:
-                TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::SelectionController(part->selection().end(), part->selection().endAffinity()));
+                s.collapseToEnd();
                 break;
             case Selection::CollapseToStart:
-                TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::SelectionController(part->selection().start(), part->selection().startAffinity()));
+                s.collapseToStart();
                 break;
             case Selection::Empty:
-                TypingCommand::closeTyping(part->lastEditCommand());
-                part->clearSelection();
+                s.empty();
                 break;
-            case Selection::SetBaseAndExtent: {
-                TypingCommand::closeTyping(part->lastEditCommand());
-                Position base(toNode(args[0]), args[1]->toInt32(exec));
-                Position extent(toNode(args[2]), args[3]->toInt32(exec));
-                part->setSelection(khtml::SelectionController(base, khtml::SEL_DEFAULT_AFFINITY, extent, khtml::SEL_DEFAULT_AFFINITY));
+            case Selection::SetBaseAndExtent:
+                s.setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec));
                 break;
-            }
             case Selection::SetPosition:
-                TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::SelectionController(Position(toNode(args[0]), args[1]->toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
+                s.setPosition(toNode(args[0]), args[1]->toInt32(exec));
                 break;
-            case Selection::Modify: {
-                TypingCommand::closeTyping(part->lastEditCommand());
-                khtml::SelectionController s(part->selection());
-                khtml::SelectionController::EAlter alter = khtml::SelectionController::MOVE;
-                if (args[0]->toString(exec).domString().lower() == "extend")
-                    alter = khtml::SelectionController::EXTEND;
-                DOMString directionString = args[1]->toString(exec).domString().lower();
-                khtml::SelectionController::EDirection direction = khtml::SelectionController::FORWARD;
-                if (directionString == "backward")
-                    direction = khtml::SelectionController::BACKWARD;
-                else if (directionString == "left")
-                    direction = khtml::SelectionController::LEFT;
-                if (directionString == "right")
-                    direction = khtml::SelectionController::RIGHT;
-                khtml::ETextGranularity granularity = khtml::CHARACTER;
-                DOMString granularityString = args[2]->toString(exec).domString().lower();
-                if (granularityString == "word")
-                    granularity = khtml::WORD;
-                else if (granularityString == "line")
-                    granularity = khtml::LINE;
-                else if (granularityString == "paragraph")
-                    granularity = khtml::PARAGRAPH;
-                s.modify(alter, direction, granularity);
-                part->setSelection(s);
-                part->setSelectionGranularity(granularity);
-            }
+            case Selection::Modify:
+                s.modify(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), args[2]->toString(exec).domString());
+                break;
+            case Selection::GetRangeAt:
+                return getDOMRange(exec, s.getRangeAt(args[0]->toInt32(exec)).get());
+                break;
         }
+        
+        part->setSelection(s);
     }
 
     return jsUndefined();

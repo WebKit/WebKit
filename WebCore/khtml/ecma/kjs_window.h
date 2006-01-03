@@ -266,7 +266,7 @@ namespace KJS {
     virtual UString toString(ExecState*) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, EqualEqual, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
-           SetBaseAndExtent, SetPosition, Modify };
+           SetBaseAndExtent, SetPosition, Modify, GetRangeAt };
     KHTMLPart *part() const { return m_part; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

@@ -71,8 +71,13 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
 {
     m_affinity = affinity;
     
+    if (pos.isNull()) {
+        m_deepPosition = Position();
+        return;
+    }
+    
+    pos.node()->getDocument()->updateLayoutIgnorePendingStylesheets();
     Position deepPos = deepEquivalent(pos);
-
     if (isCandidate(deepPos)) {
         m_deepPosition = deepPos;
         Position previous = previousVisiblePosition(deepPos);
@@ -217,7 +222,6 @@ bool VisiblePosition::isCandidate(const Position &pos)
         return false;
 
     if (renderer->isReplaced())
-        // return true for replaced elements
         return pos.offset() == 0 || pos.offset() == 1;
 
     if (renderer->isBR()) {

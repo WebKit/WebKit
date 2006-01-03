@@ -31,6 +31,7 @@
 #include "xml/dom_position.h"
 #include "text_granularity.h"
 #include "misc/shared.h"
+#include "editing/visible_text.h"
 
 class KHTMLPart;
 class QPainter;
@@ -50,6 +51,7 @@ public:
 
     typedef DOM::Position Position;
     typedef DOM::RangeImpl RangeImpl;
+    typedef DOM::NodeImpl NodeImpl;
 
     SelectionController();
     SelectionController(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
@@ -83,12 +85,9 @@ public:
     void clear();
 
     void setBase(const VisiblePosition &);
-    void setExtent(const VisiblePosition &);
-    void setBaseAndExtent(const VisiblePosition &base, const VisiblePosition &extent);
-
     void setBase(const Position &pos, EAffinity affinity);
+    void setExtent(const VisiblePosition &);
     void setExtent(const Position &pos, EAffinity affinity);
-    void setBaseAndExtent(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity);
 
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
@@ -112,6 +111,47 @@ public:
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
     friend class ::KHTMLPart;
+    
+    KHTMLPart *part() const { return !isNone() ? m_start.node()->getDocument()->part() : 0; }
+
+    // Safari Selection Object API
+    NodeImpl *baseNode() const { return m_base.node(); }
+    NodeImpl *extentNode() const { return m_extent.node(); }
+    int baseOffset() const { return m_base.offset(); }
+    int extentOffset() const { return m_extent.offset(); }
+    DOM::DOMString type() const;
+    void setBaseAndExtent(NodeImpl *baseNode, int baseOffset, NodeImpl *extentNode, int extentOffset);
+    void setPosition(NodeImpl *node, int offset);
+    bool modify(const DOM::DOMString &alterString, const DOM::DOMString &directionString, const DOM::DOMString &granularityString);
+    
+    // Mozilla Selection Object API
+    // In FireFox, anchor/focus are the equal to the start/end of the selection,
+    // but reflect the direction in which the selection was made by the user.  That does
+    // not mean that they are base/extent, since the base/extent don't reflect
+    // expansion.
+    NodeImpl *anchorNode() const { return m_baseIsFirst ? m_start.node() : m_end.node(); }
+    int anchorOffset() const { return m_baseIsFirst ? m_start.offset() : m_end.offset(); }
+    NodeImpl *focusNode() const { return m_baseIsFirst ? m_end.node() : m_start.node(); }
+    int focusOffset() const { return m_baseIsFirst ? m_end.offset() : m_start.offset(); }
+    bool isCollapsed() const { return !isRange(); }
+    DOM::DOMString toString() const;
+    void collapse(NodeImpl *node, int offset);
+    void collapseToEnd();
+    void collapseToStart();
+    void extend(NodeImpl *node, int offset);
+    PassRefPtr<RangeImpl> getRangeAt(int index) const;
+    //void deleteFromDocument();
+    //bool containsNode(NodeImpl *node, bool entirelyContained);
+    //int rangeCount() const;
+    //void addRange(const RangeImpl *);
+    //void selectAllChildren(const NodeImpl *);
+    //void removeRange(const RangeImpl *);
+    //void removeAllRanges();
+    
+    // Microsoft Selection Object API
+    void empty();
+    //void clear();
+    //TextRange *createRange();
 
 #ifndef NDEBUG
     void formatForDebugger(char *buffer, unsigned length) const;

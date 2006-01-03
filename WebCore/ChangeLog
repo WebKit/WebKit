@@ -1,3 +1,63 @@
+2006-01-03  Justin Garcia  <justin.garcia@apple.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4904>
+        Bug with baseOffset and extentOffset in selections (for writely.com)
+        <rdar://problem/4259818>
+        selection object incorrect after double-clicking a word
+        
+        Reviewed by harrison
+
+        Changed the Selection object's anchor/focus properties to match 
+        Mozilla's Selection object API, added getRangeAt and outlined the 
+        rest of the API.
+        Cleaned up the JS Selection object (to do less work in the DOM binding).
+        Added an updateLayout call to VisiblePosition::init and removed some 
+        updateLayout calls from other parts of the editing code.
+        
+        Added layout tests:
+        * editing/selection/getRangeAt.html
+        * editing/selection/anchor-focus1.html
+        * editing/selection/anchor-focus2.html
+        * editing/selection/anchor-focus3.html
+        Updated expected results:
+        * editing/selection/unrendered-001-expected.txt
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Selection::getValueProperty):
+        (KJS::Selection::toString):
+        (KJS::SelectionFunc::callAsFunction):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Selection::):
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::modify):
+        (khtml::SelectionController::type):
+        (khtml::SelectionController::toString):
+        (khtml::SelectionController::getRangeAt):
+        (khtml::SelectionController::setBaseAndExtent):
+        (khtml::SelectionController::setPosition):
+        (khtml::SelectionController::collapse):
+        (khtml::SelectionController::collapseToEnd):
+        (khtml::SelectionController::collapseToStart):
+        (khtml::SelectionController::empty):
+        (khtml::SelectionController::extend):
+        (khtml::SelectionController::validate):
+        * khtml/editing/SelectionController.h:
+        (khtml::SelectionController::part):
+        (khtml::SelectionController::baseNode):
+        (khtml::SelectionController::extentNode):
+        (khtml::SelectionController::baseOffset):
+        (khtml::SelectionController::extentOffset):
+        (khtml::SelectionController::anchorNode):
+        (khtml::SelectionController::anchorOffset):
+        (khtml::SelectionController::focusNode):
+        (khtml::SelectionController::focusOffset):
+        (khtml::SelectionController::isCollapsed):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::isCandidate):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventSingleClick):
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
