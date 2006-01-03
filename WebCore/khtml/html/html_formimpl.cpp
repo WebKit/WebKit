@@ -1917,6 +1917,15 @@ void HTMLInputElementImpl::setIndeterminate(bool _indeterminate)
         theme()->stateChanged(renderer(), CheckedState);
 }
 
+void HTMLInputElementImpl::copyNonAttributeProperties(const ElementImpl *source)
+{
+    const HTMLInputElementImpl *sourceElem = static_cast<const HTMLInputElementImpl *>(source);
+
+    m_value = sourceElem->m_value;
+    m_checked = sourceElem->m_checked;
+    m_indeterminate = sourceElem->m_indeterminate;
+}
+
 DOMString HTMLInputElementImpl::value() const
 {
     DOMString value = m_value;

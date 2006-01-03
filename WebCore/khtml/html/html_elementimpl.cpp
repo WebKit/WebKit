@@ -114,6 +114,8 @@ NodeImpl *HTMLElementImpl::cloneNode(bool deep)
     if (m_inlineStyleDecl)
         *clone->getInlineStyleDecl() = *m_inlineStyleDecl;
 
+    clone->copyNonAttributeProperties(this);
+
     if (deep)
         cloneChildNodes(clone);
 

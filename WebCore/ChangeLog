@@ -1,3 +1,31 @@
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5177
+        Javascript cloneNode(deep) does not clone form elements correctly
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::cloneNode):
+        Call copyNonAttributeProperties on the new node.
+        
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::copyNonAttributeProperties):
+        * khtml/html/html_formimpl.h:
+        Copy m_value, m_checked and m_indeterminate here.
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode):
+        Call copyNonAttributeProperties on the new node.
+        
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::cloneNode):
+        Call copyNonAttributeProperties on the new node.
+        
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::copyNonAttributeProperties):
+        Add function declaration.
+
 2006-01-02  Maciej Stachowiak  <mjs@apple.com>
 
 	Rubber stamped by Eric.

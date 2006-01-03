@@ -283,6 +283,8 @@ NodeImpl *ElementImpl::cloneNode(bool deep)
     if (namedAttrMap)
         *clone->attributes() = *namedAttrMap;
 
+    clone->copyNonAttributeProperties(this);
+    
     if (deep)
         cloneChildNodes(clone);
 

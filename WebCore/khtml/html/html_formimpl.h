@@ -376,6 +376,8 @@ public:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
+    virtual void copyNonAttributeProperties(const ElementImpl *source);
+
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
