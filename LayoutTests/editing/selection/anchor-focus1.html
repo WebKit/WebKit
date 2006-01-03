@@ -1,0 +1,79 @@
+<html> 
+<head>
+<script>
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function runTest() {
+    var elem = document.getElementById("test");
+    var selection = window.getSelection();
+
+    var anchorNode = selection.anchorNode;
+    var anchorOffset = selection.anchorOffset;
+    var focusNode = selection.focusNode;
+    var focusOffset = selection.focusOffset;
+
+    var anchorString = "Anchor (" + anchorNode + ", " + anchorOffset + ")";
+    var anchorCorrect = (anchorNode == elem || anchorNode == elem.firstChild) && anchorOffset == 0;
+    if (anchorCorrect)
+        log(anchorString + " is correct.");
+    else
+        throw(anchorString + " is incorrect.");
+
+    var focusString = "Focus (" + focusNode + ", " + focusOffset + ")";
+    var focusCorrect = (focusNode == elem && focusOffset == 1 || focusNode == elem.firstChild && focusOffset == elem.firstChild.length);
+    if (focusCorrect)
+        log(focusString + " is correct.");
+    else
+        throw(focusString + " is incorrect.");
+}
+
+function manualTest() {
+    try {
+        runTest();
+    } catch(e) {
+        log("Test Failed.  Error was: " + e);
+    }
+}
+
+function automaticTest() {
+    try {
+        if (!window.layoutTestController)
+            throw("This test uses the layoutTestController's eventSender to do mouse clicks.  To run it manually, double click on the text inside the blue box and click the 'Run Test' button.");
+        
+        window.layoutTestController.dumpAsText();
+            
+        var elem = document.getElementById("test");
+    
+        // x, y should be in the middle of elem.
+        x = elem.offsetLeft + elem.offsetWidth / 2;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        
+        runTest();
+        
+    } catch(e) {
+        log("Test Failed.  Error was: " + e);
+    }
+}
+
+</script>
+</head>
+<body>
+<p>This tests the anchorNode, anchorOffset, focusNode and focusOffset properties of the Selection object.  These properties are part of Mozilla's Selection object API, and so their values should be consistent in both browsers.</p>
+<input type="button" onclick="manualTest();" value="Run Test">
+<div style="border: 1px solid blue; padding: 1em;"><span id="test">text</span></div>
+<ul id="console"></ul>
+<script>automaticTest();</script>
+</body>
+</html>

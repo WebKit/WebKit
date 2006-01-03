@@ -1,3 +1,21 @@
+2006-01-03  Justin Garcia  <justin.garcia@apple.com>
+        
+        New/updated layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4904>
+        Bug with baseOffset and extentOffset in selections (for writely.com)
+        <rdar://problem/4259818>
+        selection object incorrect after double-clicking a word
+
+        * editing/selection/anchor-focus1-expected.txt: Added.
+        * editing/selection/anchor-focus1.html: Added.
+        * editing/selection/anchor-focus2-expected.txt: Added.
+        * editing/selection/anchor-focus2.html: Added.
+        * editing/selection/anchor-focus3-expected.txt: Added.
+        * editing/selection/anchor-focus3.html: Added.
+        * editing/selection/getRangeAt-expected.txt: Added.
+        * editing/selection/getRangeAt.html: Added.
+        * editing/selection/unrendered-001-expected.txt:
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
