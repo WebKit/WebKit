@@ -1,3 +1,11 @@
+2006-01-02  Maciej Stachowiak  <mjs@apple.com>
+
+	Rubber stamped by Eric.
+
+        - remove the no longer used QIntDict
+
+        * kwq/KWQIntDict.h: Removed.
+
 2006-01-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.
