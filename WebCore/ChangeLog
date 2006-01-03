@@ -1,3 +1,23 @@
+2006-01-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        REGRESSION: repro crash w/ invalid charset attribute on <script>
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6345
+        I also made some small spacing cleanup here.
+        I did *not* fix the usage in formData, as the move from KCharSet to
+        QTextCodec actually fixed a bug whereby if the first listed charset
+        in accept-charsets was invalid, we would assume latin1 instead of
+        checking for the next valid one before assuming system encoding.
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData): cleanup
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::CachedCSSStyleSheet): null check
+        (CachedScript::CachedScript): cleanup
+        (CachedXSLStyleSheet::CachedXSLStyleSheet): null check
+        (CachedXBLDocument::CachedXBLDocument): cleanup
+
 2006-01-03  Justin Garcia  <justin.garcia@apple.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=4904>

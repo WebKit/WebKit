@@ -307,21 +307,19 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
     QStringList charsets = QStringList::split(' ', str);
     QTextCodec* codec = 0;
     KHTMLPart *part = getDocument()->part();
-    for ( QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it )
-    {
+    for (QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it) {
         QString enc = (*it);
-        if(enc.contains("UNKNOWN"))
-        {
+        if (enc.contains("UNKNOWN")) {
             // use standard document encoding
             enc = "ISO-8859-1";
             if (part)
                 enc = part->encoding();
         }
-        if((codec = QTextCodec::codecForName(enc.latin1())))
+        if ((codec = QTextCodec::codecForName(enc.latin1())))
             break;
     }
 
-    if(!codec)
+    if (!codec)
         codec = QTextCodec::codecForLocale();
 
 
