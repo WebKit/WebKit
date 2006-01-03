@@ -263,41 +263,37 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
 {
     exceptioncode = 0;
 
-    // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
-    if (qualifiedName.isNull()) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
-        return 0;
+    if (!qualifiedName.isEmpty()) {
+        // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
+        DOMString prefix, localName;
+        if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
+            exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+            return 0;
+        }
+
+        // NAMESPACE_ERR:
+        // - Raised if the qualifiedName is malformed,
+        // - if the qualifiedName has a prefix and the namespaceURI is null, or
+        // - if the qualifiedName has a prefix that is "xml" and the namespaceURI is different
+        //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
+        int colonpos = -1;
+        uint i;
+        DOMStringImpl *qname = qualifiedName.impl();
+        for (i = 0; i < qname->l && colonpos < 0; i++) {
+            if ((*qname)[i] == ':')
+                colonpos = i;
+        }
+    
+        if (qualifiedNameIsMalformed(qualifiedName) ||
+            (colonpos >= 0 && namespaceURI.isNull()) ||
+            (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
+             namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
+
+            exceptioncode = DOMException::NAMESPACE_ERR;
+            return 0;
+        }
     }
-
-    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    DOMString prefix, localName;
-    if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
-        return 0;
-    }
-
-    // NAMESPACE_ERR:
-    // - Raised if the qualifiedName is malformed,
-    // - if the qualifiedName has a prefix and the namespaceURI is null, or
-    // - if the qualifiedName has a prefix that is "xml" and the namespaceURI is different
-    //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
-    int colonpos = -1;
-    uint i;
-    DOMStringImpl *qname = qualifiedName.impl();
-    for (i = 0; i < qname->l && colonpos < 0; i++) {
-        if ((*qname)[i] == ':')
-            colonpos = i;
-    }
-
-    if (qualifiedNameIsMalformed(qualifiedName) ||
-        (colonpos >= 0 && namespaceURI.isNull()) ||
-        (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
-         namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
-
-        exceptioncode = DOMException::NAMESPACE_ERR;
-        return 0;
-    }
-
+    
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
     if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
@@ -312,8 +308,10 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     if (doctype)
         doc->setDocType(new DocumentTypeImpl(doc, *doctype));
 
-    ElementImpl *rootElement = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
-    doc->addChild(rootElement);
+    if (!qualifiedName.isEmpty()) {
+        ElementImpl *rootElement = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
+        doc->addChild(rootElement);
+    }
     
     return doc;
 }

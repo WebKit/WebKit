@@ -1346,8 +1346,8 @@ JSValue *DOMDOMImplementationProtoFunc::callAsFunction(ExecState *exec, JSObject
     return getDOMNode(exec, implementation.createDocumentType(args[0]->toString(exec).domString(),
         args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception));
   case DOMDOMImplementation::CreateDocument: // DOM2
-    return getDOMNode(exec, implementation.createDocument(args[0]->toString(exec).domString(),
-        args[1]->toString(exec).domString(), toDocumentType(args[2]), exception));
+    return getDOMNode(exec, implementation.createDocument(valueToStringWithNullCheck(exec, args[0]),
+        valueToStringWithNullCheck(exec, args[1]), toDocumentType(args[2]), exception));
   case DOMDOMImplementation::CreateCSSStyleSheet: // DOM2
     return getDOMStyleSheet(exec, implementation.createCSSStyleSheet(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
   case DOMDOMImplementation::CreateHTMLDocument: // DOM2-HTML
