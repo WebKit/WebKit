@@ -40,9 +40,10 @@ KJS_DEFINE_PROTOTYPE(DOMParserProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMParserProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMParser",DOMParserProto,DOMParserProtoFunc)
 
-DOMParserConstructorImp::DOMParserConstructorImp(ExecState *, DOM::DocumentImpl *d)
+DOMParserConstructorImp::DOMParserConstructorImp(ExecState *exec, DOM::DocumentImpl *d)
     : doc(d)
 {
+    putDirect(prototypePropertyName, DOMParserProto::self(exec), DontEnum|DontDelete|ReadOnly);
 }
 
 bool DOMParserConstructorImp::implementsConstruct() const

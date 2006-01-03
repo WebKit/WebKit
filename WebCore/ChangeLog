@@ -1,3 +1,21 @@
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6358
+        JS objects missing "prototype" properties
+        
+        * khtml/ecma/XSLTProcessor.cpp:
+        (KJS::XSLTProcessorConstructorImp::XSLTProcessorConstructorImp):
+        * khtml/ecma/XSLTProcessor.h:
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserConstructorImp::DOMParserConstructorImp):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp):
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerConstructorImp::XMLSerializerConstructorImp):
+        Add "prototype" property in constructors.
+
 2006-01-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
