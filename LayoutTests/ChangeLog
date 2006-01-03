@@ -1,3 +1,13 @@
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Add tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5177
+        Javascript cloneNode(deep) does not clone form elements correctly
+        
+        * fast/dom/clone-node-form-elements-expected.txt: Added.
+        * fast/dom/clone-node-form-elements.html: Added.
+
 2006-01-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.
