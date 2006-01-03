@@ -1,3 +1,13 @@
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6357
+        REGRESSION: iframe and target is broken
+        
+        * fast/frames/iframe-target-expected.txt: Added.
+        * fast/frames/iframe-target.html: Added.
+
 2006-01-03  Justin Garcia  <justin.garcia@apple.com>
         
         New/updated layout tests for:
