@@ -801,6 +801,7 @@ void KWQKHTMLPart::setView(KHTMLView *view)
     _bindingRoot = 0;
     KWQRelease(_windowScriptObject);
     _windowScriptObject = 0;
+    _windowScriptNPObject = 0;
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being

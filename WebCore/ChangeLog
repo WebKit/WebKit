@@ -1,3 +1,19 @@
+2006-01-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by timo.
+
+        - Fixed: http://bugzilla.opendarwin.org/show_bug.cgi?id=6318
+        REGRESSION: Repro crash in JS called from Flash on bdash.net.nz
+
+        Since we clear all the plugin data structures in setView, we need to
+        clear the windowScriptObject as well. I had already done this in my
+        previous patch, but I didn't realize there are two windowScriptObjects 
+        -- one for Netscape PlugIns, and one for WebKit PlugIns.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setView): Clear the Netscape PlugIn windowScriptObject
+        as well.
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.
