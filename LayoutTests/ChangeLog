@@ -1,5 +1,19 @@
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
+        Reviewed by Maciej.
+
+        - Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5378
+        createDocument fails with DOM Exception 5 when passed empty qname
+        
+        * dom/html/level2/core/createDocument08-expected.txt:
+        * dom/xhtml/level2/core/createDocument08-expected.txt:
+        These now fail.
+        
+        * fast/dom/createDocument-empty-expected.txt: Added.
+        * fast/dom/createDocument-empty.html: Added.
+
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Darin.
 
         - Add tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5177
