@@ -1,13 +1,24 @@
+2006-01-03  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6357
+        REGRESSION: iframe and target is broken
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _descendantFrameNamed:sourceFrame:]):
+        Return the correct frame.
+
 2006-01-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
 
-	- moved frame traversal logic from WebFrame to WebBridge
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6341
+	    - moved frame traversal logic from WebFrame to WebBridge
+	    http://bugzilla.opendarwin.org/show_bug.cgi?id=6341
 
-	To do this, I had to invert the ownership so that WebBridge now
-	owns WebFrame instead of vice versa. As a result, WebView now owns
-	a WebBridge pointer and does not have a direct WebFrame pointer.
+	    To do this, I had to invert the ownership so that WebBridge now
+	    owns WebFrame instead of vice versa. As a result, WebView now owns
+	    a WebBridge pointer and does not have a direct WebFrame pointer.
 
         * WebCoreSupport.subproj/WebBridge.h:
         * WebCoreSupport.subproj/WebBridge.m:

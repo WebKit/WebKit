@@ -3150,7 +3150,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // for security reasons, we do not want to even make frames visible to frames that
         // can't access them 
         if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
-            return self;
+            return frame;
 
     return nil;
 }
