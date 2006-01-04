@@ -5,8 +5,8 @@ KCanvasResource {id="markerMiddle" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00
 KCanvasResource {id="markerEnd" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (0,0) size 310x288
+    KCanvasContainer {svg} at (0,0) size 479.50x359.50
+      KCanvasContainer {g} at (0,0) size 311.31x288
         KCanvasContainer {marker} at (0,0) size 10x10
           KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
         KCanvasContainer {marker} at (0,0) size 10x10
@@ -36,12 +36,12 @@ layer at (0,0) size 480x360
           KCanvasContainer {g} at (364,177) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,177.00)}]
             KCanvasItem {path} at (364,177) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
         KCanvasItem {path} at (130,226) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=#marker2] [middle marker=#marker2] [end marker=#marker2] [data="M130.00,230.00L180.00,230.00L180.00,280.00"]
-        KCanvasContainer {g} at (242,218) size 68x70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
+        KCanvasContainer {g} at (242,218.69) size 69.31x69.31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
           KCanvasItem {path} at (250,226) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M130.00,230.00L180.00,230.00L180.00,280.00"]
           KCanvasContainer {g} at (314,222) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(122.00,222.00)}]
             KCanvasItem {path} at (314,222) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
-          KCanvasContainer {g} at (304,354) size 22x22 [transform={m=((1.13,1.13)(-1.13,1.13)) t=(180.00,218.69)}]
-            KCanvasItem {path} at (304,354) size 22x22 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
-          KCanvasContainer {g} at (171,464) size 16x16 [transform={m=((-0.00,1.60)(-1.60,-0.00)) t=(188.00,272.00)}]
-            KCanvasItem {path} at (171,464) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+          KCanvasContainer {g} at (304.45,354.45) size 22.63x22.63 [transform={m=((1.13,1.13)(-1.13,1.13)) t=(180.00,218.69)}]
+            KCanvasItem {path} at (304.45,354.45) size 22.63x22.63 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
+          KCanvasContainer {g} at (172.00,464) size 16x16 [transform={m=((-0.00,1.60)(-1.60,-0.00)) t=(188.00,272.00)}]
+            KCanvasItem {path} at (172.00,464) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

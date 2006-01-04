@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (240,180) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [data="M240.00,180.00L480.00,180.00L480.00,360.00L240.00,360.00"]
         KCanvasContainer {g} at (240,0) size 240x180
           KCanvasItem {rect} at (240,0) size 240x180 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,0.00L480.00,0.00L480.00,180.00L240.00,180.00"]
-        KCanvasContainer {g} at (76,196) size 70x103
-          KCanvasContainer {g} at (76,196) size 70x103 [transform={m=((0.94,-0.34)(0.34,0.94)) t=(0.00,0.00)}]
-            KCanvasItem {rect} at (76,196) size 51x51 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,224.00L40.00,224.00L40.00,264.00L0.00,264.00"]
-            KCanvasItem {rect} at (95,249) size 51x51 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,280.00L40.00,280.00L40.00,320.00L0.00,320.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+        KCanvasContainer {g} at (76.61,196.81) size 70.42x103.89
+          KCanvasContainer {g} at (76.61,196.81) size 70.42x103.89 [transform={m=((0.94,-0.34)(0.34,0.94)) t=(0.00,0.00)}]
+            KCanvasItem {rect} at (76.61,196.81) size 51.27x51.27 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,224.00L40.00,224.00L40.00,264.00L0.00,264.00"]
+            KCanvasItem {rect} at (95.77,249.43) size 51.27x51.27 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,280.00L40.00,280.00L40.00,320.00L0.00,320.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -9,9 +9,9 @@ layer at (0,0) size 480x360
                 KCanvasItem {image} at (45,0) size 150x150 [fill={[type=IMAGE] [bounding box=at (0,0) size 240x160]}] [data="M0.00,0.00L1000.00,0.00L1000.00,1000.00L0.00,1000.00"]
           KCanvasContainer {use} at (240,150) size 1000x1000
             KCanvasContainer {g} at (240,150) size 1000x1000 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
-              KCanvasContainer {svg} at (81,22) size 150x150
-                KCanvasItem {rect} at (81,22) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
-                KCanvasItem {rect} at (156,22) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
-                KCanvasItem {rect} at (81,97) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
-                KCanvasItem {rect} at (156,97) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+              KCanvasContainer {svg} at (81,22.50) size 150x150
+                KCanvasItem {rect} at (81,22.50) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
+                KCanvasItem {rect} at (156,22.50) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
+                KCanvasItem {rect} at (81,97.50) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
+                KCanvasItem {rect} at (156,97.50) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

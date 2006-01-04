@@ -4,28 +4,48 @@ KCanvasResource {id="dilate1" [type=FILTER]  [bounding box=at (0,0) size 100x100
 KCanvasResource {id="dilate2" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (0,0) size 0x0
-        KCanvasContainer {g} at (0,-6) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
-          KCanvasContainer {g} at (0,-6) size 0x0
-            KCanvasContainer {g} at (0,-6) size 0x0
-              KCanvasContainer {use} at (0,-6) size 0x0 [filter=#erode1]
-                KCanvasContainer {g} at (35,19) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
-                  KCanvasContainer {g} at (35,19) size 0x0
-                    KCanvasContainer {g} at (35,19) size 0x0
-            KCanvasContainer {g} at (255,-6) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,0.00)}]
-              KCanvasContainer {use} at (255,-6) size 0x0 [filter=#erode2]
-                KCanvasContainer {g} at (290,19) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
-                  KCanvasContainer {g} at (290,19) size 0x0
-                    KCanvasContainer {g} at (290,19) size 0x0
-            KCanvasContainer {g} at (0,134) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
-              KCanvasContainer {use} at (0,134) size 0x0 [filter=#dilate1]
-                KCanvasContainer {g} at (35,159) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
-                  KCanvasContainer {g} at (35,159) size 0x0
-                    KCanvasContainer {g} at (35,159) size 0x0
-            KCanvasContainer {g} at (255,134) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,140.00)}]
-              KCanvasContainer {use} at (255,134) size 0x0 [filter=#dilate2]
-                KCanvasContainer {g} at (290,159) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
-                  KCanvasContainer {g} at (290,159) size 0x0
-                    KCanvasContainer {g} at (290,159) size 0x0
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (35.00,19.00) size 403.93x263.29
+        KCanvasContainer {g} at (35.00,19.00) size 403.93x263.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
+          KCanvasContainer {g} at (35.00,19.00) size 403.93x263.29
+            KCanvasContainer {g} at (35.00,19.00) size 148.93x123.29
+              KCanvasContainer {use} at (35.00,19.00) size 148.93x123.29 [filter=#erode1]
+                KCanvasContainer {g} at (35.00,19.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (35.00,19.00) size 148.93x123.29
+                    KCanvasContainer {g} at (35.00,19.00) size 148.93x123.29
+                      KCanvasContainer {g} at (35.00,19.00) size 148.93x123.29
+                        KCanvasItem {path} at (35.00,28.95) size 84.99x71.92 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29L3.59,78.29L3.59,13.54L81.40,13.54L81.40,78.29"]
+                        KCanvasItem {path} at (41.67,50.79) size 90.18x91.50 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54C93.26,100.82,74.68,119.70,51.76,119.70C28.84,119.70,10.26,100.82,10.26,77.54C10.26,54.25,28.84,35.37,51.76,35.37C74.68,35.37,93.26,54.25,93.26,77.54"]
+                        KCanvasItem {path} at (82.69,39.24) size 101.25x97.90 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44L111.60,55.80L141.31,60.18L119.81,81.48L124.89,111.54L98.31,97.35L71.73,111.54L76.81,81.48L55.31,60.18L85.02,55.80L98.31,28.44"]
+                        KCanvasItem {path} at (71.36,19.00) size 98.79x81.63 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34C131.56,54.90,108.77,78.05,80.66,78.05C58.17,78.05,39.94,59.53,39.94,36.68C39.94,18.40,54.53,3.59,72.52,3.59C86.91,3.59,98.58,15.44,98.58,30.06C98.58,41.76,89.25,51.24,77.73,51.24C68.52,51.24,61.05,43.65,61.05,34.30C61.05,26.81,67.03,20.74,74.39,20.74C80.29,20.74,85.07,25.60,85.07,31.59C85.07,36.38,81.25,40.26,76.53,40.26C72.75,40.26,69.70,37.15,69.70,33.32"]
+            KCanvasContainer {g} at (290.00,19.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,0.00)}]
+              KCanvasContainer {use} at (290.00,19.00) size 148.93x123.29 [filter=#erode2]
+                KCanvasContainer {g} at (290.00,19.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (290.00,19.00) size 148.93x123.29
+                    KCanvasContainer {g} at (290.00,19.00) size 148.93x123.29
+                      KCanvasContainer {g} at (290.00,19.00) size 148.93x123.29
+                        KCanvasItem {path} at (290.00,28.95) size 84.99x71.92 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29L3.59,78.29L3.59,13.54L81.40,13.54L81.40,78.29"]
+                        KCanvasItem {path} at (296.67,50.79) size 90.18x91.50 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54C93.26,100.82,74.68,119.70,51.76,119.70C28.84,119.70,10.26,100.82,10.26,77.54C10.26,54.25,28.84,35.37,51.76,35.37C74.68,35.37,93.26,54.25,93.26,77.54"]
+                        KCanvasItem {path} at (337.69,39.24) size 101.25x97.90 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44L111.60,55.80L141.31,60.18L119.81,81.48L124.89,111.54L98.31,97.35L71.73,111.54L76.81,81.48L55.31,60.18L85.02,55.80L98.31,28.44"]
+                        KCanvasItem {path} at (326.36,19.00) size 98.79x81.63 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34C131.56,54.90,108.77,78.05,80.66,78.05C58.17,78.05,39.94,59.53,39.94,36.68C39.94,18.40,54.53,3.59,72.52,3.59C86.91,3.59,98.58,15.44,98.58,30.06C98.58,41.76,89.25,51.24,77.73,51.24C68.52,51.24,61.05,43.65,61.05,34.30C61.05,26.81,67.03,20.74,74.39,20.74C80.29,20.74,85.07,25.60,85.07,31.59C85.07,36.38,81.25,40.26,76.53,40.26C72.75,40.26,69.70,37.15,69.70,33.32"]
+            KCanvasContainer {g} at (35.00,159.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
+              KCanvasContainer {use} at (35.00,159.00) size 148.93x123.29 [filter=#dilate1]
+                KCanvasContainer {g} at (35.00,159.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (35.00,159.00) size 148.93x123.29
+                    KCanvasContainer {g} at (35.00,159.00) size 148.93x123.29
+                      KCanvasContainer {g} at (35.00,159.00) size 148.93x123.29
+                        KCanvasItem {path} at (35.00,168.95) size 84.99x71.92 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29L3.59,78.29L3.59,13.54L81.40,13.54L81.40,78.29"]
+                        KCanvasItem {path} at (41.67,190.79) size 90.18x91.50 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54C93.26,100.82,74.68,119.70,51.76,119.70C28.84,119.70,10.26,100.82,10.26,77.54C10.26,54.25,28.84,35.37,51.76,35.37C74.68,35.37,93.26,54.25,93.26,77.54"]
+                        KCanvasItem {path} at (82.69,179.24) size 101.25x97.90 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44L111.60,55.80L141.31,60.18L119.81,81.48L124.89,111.54L98.31,97.35L71.73,111.54L76.81,81.48L55.31,60.18L85.02,55.80L98.31,28.44"]
+                        KCanvasItem {path} at (71.36,159.00) size 98.79x81.63 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34C131.56,54.90,108.77,78.05,80.66,78.05C58.17,78.05,39.94,59.53,39.94,36.68C39.94,18.40,54.53,3.59,72.52,3.59C86.91,3.59,98.58,15.44,98.58,30.06C98.58,41.76,89.25,51.24,77.73,51.24C68.52,51.24,61.05,43.65,61.05,34.30C61.05,26.81,67.03,20.74,74.39,20.74C80.29,20.74,85.07,25.60,85.07,31.59C85.07,36.38,81.25,40.26,76.53,40.26C72.75,40.26,69.70,37.15,69.70,33.32"]
+            KCanvasContainer {g} at (290.00,159.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,140.00)}]
+              KCanvasContainer {use} at (290.00,159.00) size 148.93x123.29 [filter=#dilate2]
+                KCanvasContainer {g} at (290.00,159.00) size 148.93x123.29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                  KCanvasContainer {g} at (290.00,159.00) size 148.93x123.29
+                    KCanvasContainer {g} at (290.00,159.00) size 148.93x123.29
+                      KCanvasContainer {g} at (290.00,159.00) size 148.93x123.29
+                        KCanvasItem {path} at (290.00,168.95) size 84.99x71.92 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29L3.59,78.29L3.59,13.54L81.40,13.54L81.40,78.29"]
+                        KCanvasItem {path} at (296.67,190.79) size 90.18x91.50 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54C93.26,100.82,74.68,119.70,51.76,119.70C28.84,119.70,10.26,100.82,10.26,77.54C10.26,54.25,28.84,35.37,51.76,35.37C74.68,35.37,93.26,54.25,93.26,77.54"]
+                        KCanvasItem {path} at (337.69,179.24) size 101.25x97.90 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44L111.60,55.80L141.31,60.18L119.81,81.48L124.89,111.54L98.31,97.35L71.73,111.54L76.81,81.48L55.31,60.18L85.02,55.80L98.31,28.44"]
+                        KCanvasItem {path} at (326.36,159.00) size 98.79x81.63 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34C131.56,54.90,108.77,78.05,80.66,78.05C58.17,78.05,39.94,59.53,39.94,36.68C39.94,18.40,54.53,3.59,72.52,3.59C86.91,3.59,98.58,15.44,98.58,30.06C98.58,41.76,89.25,51.24,77.73,51.24C68.52,51.24,61.05,43.65,61.05,34.30C61.05,26.81,67.03,20.74,74.39,20.74C80.29,20.74,85.07,25.60,85.07,31.59C85.07,36.38,81.25,40.26,76.53,40.26C72.75,40.26,69.70,37.15,69.70,33.32"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

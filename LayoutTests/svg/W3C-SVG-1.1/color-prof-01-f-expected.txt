@@ -1,9 +1,9 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
+    KCanvasContainer {svg} at (0.50,0) size 479x359.50
       KCanvasContainer {g} at (30,0) size 420x280
         KCanvasContainer {g} at (30,0) size 190x190
           KCanvasItem {image} at (30,0) size 190x190 [fill={[type=IMAGE] [bounding box=at (0,0) size 190x190]}] [data="M30.00,0.00L220.00,0.00L220.00,190.00L30.00,190.00"]
         KCanvasContainer {g} at (260,90) size 190x190
           KCanvasItem {image} at (260,90) size 190x190 [fill={[type=IMAGE] [bounding box=at (0,0) size 190x190]}] [data="M260.00,90.00L450.00,90.00L450.00,280.00L260.00,280.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

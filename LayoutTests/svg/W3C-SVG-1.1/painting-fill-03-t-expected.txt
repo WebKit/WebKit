@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (30,75) size 415x160
         KCanvasItem {path} at (30,75) size 160x160 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M110.00,75.00L160.00,235.00L30.00,135.00L190.00,135.00L60.00,235.00"]
         KCanvasItem {path} at (285,75) size 160x160 [fill={[type=SOLID] [color=#FF0000]}] [data="M365.00,75.00L415.00,235.00L285.00,135.00L445.00,135.00L315.00,235.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

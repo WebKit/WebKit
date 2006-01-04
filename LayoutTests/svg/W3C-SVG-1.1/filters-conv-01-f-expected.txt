@@ -6,7 +6,7 @@ KCanvasResource {id="convolve5" [type=FILTER]  [bounding box=at (0,0) size 100x1
 KCanvasResource {id="convolve6" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (30,70) size 350x156
         KCanvasContainer {g} at (30,70) size 350x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
           KCanvasContainer {g} at (30,70) size 350x156
@@ -22,4 +22,4 @@ layer at (0,0) size 480x360
               KCanvasItem {image} at (180,163) size 50x63 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x63]}] [filter=#convolve5] [data="M10.00,30.00L60.00,30.00L60.00,93.00L10.00,93.00"]
             KCanvasContainer {g} at (330,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
               KCanvasItem {image} at (330,163) size 50x63 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x63]}] [filter=#convolve6] [data="M10.00,30.00L60.00,30.00L60.00,93.00L10.00,93.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -6,7 +6,7 @@ KCanvasResource {id="Turb5" [type=FILTER]  [bounding box=at (0,0) size 100x100] 
 KCanvasResource {id="Turb6" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (25,25) size 400x230
         KCanvasContainer {g} at (25,25) size 400x230
           KCanvasItem {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb1] [data="M25.00,25.00L125.00,25.00L125.00,100.00L25.00,100.00"]
@@ -15,4 +15,4 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb4] [data="M25.00,180.00L125.00,180.00L125.00,255.00L25.00,255.00"]
           KCanvasItem {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb5] [data="M175.00,180.00L275.00,180.00L275.00,255.00L175.00,255.00"]
           KCanvasItem {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb6] [data="M325.00,180.00L425.00,180.00L425.00,255.00L325.00,255.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

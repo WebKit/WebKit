@@ -1,21 +1,21 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (77,45) size 330x213
-        KCanvasContainer {g} at (77,45) size 330x213
-          KCanvasContainer {g} at (77,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,45.00)}]
-            KCanvasItem {rect} at (77,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-          KCanvasContainer {g} at (202,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,45.00)}]
-            KCanvasItem {rect} at (202,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-          KCanvasContainer {g} at (327,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,45.00)}]
-            KCanvasContainer {g} at (327,45) size 80x80
-              KCanvasItem {rect} at (327,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-          KCanvasContainer {g} at (77,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,178.00)}]
-            KCanvasContainer {svg} at (77,178) size 80x80
-              KCanvasItem {rect} at (77,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-          KCanvasContainer {g} at (202,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,178.00)}]
-            KCanvasContainer {g} at (202,178) size 80x80
-              KCanvasItem {rect} at (202,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-          KCanvasContainer {g} at (327,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,178.00)}]
-            KCanvasItem {rect} at (327,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (77.50,45) size 330x213
+        KCanvasContainer {g} at (77.50,45) size 330x213
+          KCanvasContainer {g} at (77.50,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,45.00)}]
+            KCanvasItem {rect} at (77.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+          KCanvasContainer {g} at (202.50,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,45.00)}]
+            KCanvasItem {rect} at (202.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+          KCanvasContainer {g} at (327.50,45) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,45.00)}]
+            KCanvasContainer {g} at (327.50,45) size 80x80
+              KCanvasItem {rect} at (327.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+          KCanvasContainer {g} at (77.50,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,178.00)}]
+            KCanvasContainer {svg} at (77.50,178) size 80x80
+              KCanvasItem {rect} at (77.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+          KCanvasContainer {g} at (202.50,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,178.00)}]
+            KCanvasContainer {g} at (202.50,178) size 80x80
+              KCanvasItem {rect} at (202.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+          KCanvasContainer {g} at (327.50,178) size 80x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,178.00)}]
+            KCanvasItem {rect} at (327.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

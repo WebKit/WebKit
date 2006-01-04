@@ -12,10 +12,10 @@ KCanvasResource {id="arithmetic" [type=FILTER]  [bounding box=at (0,0) size 100x
 KCanvasResource {id="arithmetic50" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="blue"], [type=IMAGE]  [result="red"], [type=COMPOSITE] [in="red"] [in2="blue"] [k1=0.50 k2=0.50 k3=0.50 k4=0.50]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (20,10) size 439x289 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,-60.00)}]
-        KCanvasContainer {g} at (11,46) size 439x289 [transform={m=((0.40,0.00)(0.00,0.40)) t=(5.00,70.00)}]
-          KCanvasItem {rect} at (11,46) size 439x289 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L1099.00,1.00L1099.00,724.00L1.00,724.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (20.20,10.20) size 439.60x289.60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,-60.00)}]
+        KCanvasContainer {g} at (11.20,46.20) size 439.60x289.60 [transform={m=((0.40,0.00)(0.00,0.40)) t=(5.00,70.00)}]
+          KCanvasItem {rect} at (11.20,46.20) size 439.60x289.60 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L1099.00,1.00L1099.00,724.00L1.00,724.00"]
           KCanvasContainer {g} at (26,276) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,230.00)}]
             KCanvasItem {rect} at (26,276) size 60x60 [fill={[type=SOLID] [color=#000000]}] [filter=#over] [data="M0.00,0.00L150.00,0.00L150.00,150.00L0.00,150.00"]
           KCanvasContainer {g} at (26,476) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,430.00)}]
@@ -40,4 +40,4 @@ layer at (0,0) size 480x360
             KCanvasItem {rect} at (926,276) size 60x60 [fill={[type=SOLID] [color=#000000]}] [filter=#arithmetic] [data="M0.00,0.00L150.00,0.00L150.00,150.00L0.00,150.00"]
           KCanvasContainer {g} at (926,476) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,430.00)}]
             KCanvasItem {rect} at (926,476) size 60x60 [fill={[type=SOLID] [color=#000000]}] [filter=#arithmetic50] [data="M0.00,0.00L150.00,0.00L150.00,150.00L0.00,150.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

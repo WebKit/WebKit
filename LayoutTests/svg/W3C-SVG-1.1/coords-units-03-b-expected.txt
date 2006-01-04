@@ -15,4 +15,4 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (20,220) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L110.00,160.00L110.00,161.00L20.00,161.00"]
           KCanvasItem {rect} at (20,240) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L110.00,180.00L110.00,181.00L20.00,181.00"]
           KCanvasItem {rect} at (20,260) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L110.00,200.00L110.00,201.00L20.00,201.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

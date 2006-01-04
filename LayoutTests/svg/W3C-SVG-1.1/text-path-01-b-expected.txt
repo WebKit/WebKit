@@ -1,19 +1,19 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (16,22) size 401x269
-        KCanvasContainer {g} at (198,22) size 219x84
-          KCanvasContainer {use} at (198,22) size 219x84
-            KCanvasContainer {g} at (198,22) size 219x84
-              KCanvasItem {path} at (198,22) size 219x84 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30C206.60,66.60,235.80,13.20,270.00,30.30C286.60,38.60,298.90,59.40,310.00,73.30C321.70,87.90,338.60,99.00,356.00,103.30C387.30,111.10,396.60,90.40,418.00,74.30"]
-        KCanvasContainer {g} at (16,78) size 275x132
-          KCanvasContainer {use} at (33,78) size 219x84
-            KCanvasContainer {g} at (33,78) size 219x84
-              KCanvasItem {path} at (33,78) size 219x84 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80C41.00,123.00,70.30,69.70,104.50,86.80C121.00,95.00,133.00,116.00,144.50,129.80C156.20,144.40,173.00,155.50,190.50,159.80C221.80,167.60,231.00,146.90,252.50,130.80"]
-          KCanvasItem {rect} at (16,168) size 275x42 [stroke={[type=SOLID] [color=#000000]}] [data="M17.00,169.00L291.00,169.00L291.00,210.00L17.00,210.00"]
-        KCanvasContainer {g} at (113,231) size 300x60
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (16.50,22.02) size 401.80x269.48
+        KCanvasContainer {g} at (198.53,22.02) size 219.77x84.55
+          KCanvasContainer {use} at (198.53,22.02) size 219.77x84.55
+            KCanvasContainer {g} at (198.53,22.02) size 219.77x84.55
+              KCanvasItem {path} at (198.53,22.02) size 219.77x84.55 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30C206.60,66.60,235.80,13.20,270.00,30.30C286.60,38.60,298.90,59.40,310.00,73.30C321.70,87.90,338.60,99.00,356.00,103.30C387.30,111.10,396.60,90.40,418.00,74.30"]
+        KCanvasContainer {g} at (16.50,78.52) size 275x131.98
+          KCanvasContainer {use} at (33.03,78.52) size 219.77x84.55
+            KCanvasContainer {g} at (33.03,78.52) size 219.77x84.55
+              KCanvasItem {path} at (33.03,78.52) size 219.77x84.55 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80C41.00,123.00,70.30,69.70,104.50,86.80C121.00,95.00,133.00,116.00,144.50,129.80C156.20,144.40,173.00,155.50,190.50,159.80C221.80,167.60,231.00,146.90,252.50,130.80"]
+          KCanvasItem {rect} at (16.50,168.50) size 275x42 [stroke={[type=SOLID] [color=#000000]}] [data="M17.00,169.00L291.00,169.00L291.00,210.00L17.00,210.00"]
+        KCanvasContainer {g} at (113,231) size 300x60.50
           KCanvasContainer {use} at (113,231) size 300x4
             KCanvasContainer {g} at (113,231) size 300x4
               KCanvasItem {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M113.00,233.00L413.00,233.00"]
-          KCanvasItem {rect} at (117,249) size 261x42 [stroke={[type=SOLID] [color=#000000]}] [data="M118.00,250.00L378.00,250.00L378.00,291.00L118.00,291.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+          KCanvasItem {rect} at (117.50,249.50) size 261x42 [stroke={[type=SOLID] [color=#000000]}] [data="M118.00,250.00L378.00,250.00L378.00,291.00L118.00,291.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -2,33 +2,33 @@ KCanvasResource {id="blur" [type=FILTER]  [bounding box=at (-10,-10) size 120x12
 KCanvasResource {id="blurxy" [type=FILTER]  [bounding box=at (-10,-10) size 120x120] [effect bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR]  [std dev. x=20.00 y=1.00]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (0,0) size 459x349
+    KCanvasContainer {svg} at (0,0) size 479.50x359.50
+      KCanvasContainer {g} at (0,0) size 458.75x348.75
         KCanvasContainer {use} at (0,0) size 135x135
           KCanvasContainer {g} at (0,0) size 135x135
             KCanvasContainer {g} at (0,0) size 135x135
               KCanvasItem {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]
               KCanvasItem {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00L135.00,45.00L135.00,135.00L45.00,135.00"]
-        KCanvasContainer {g} at (297,2) size 162x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,15.00)}]
+        KCanvasContainer {g} at (296.25,1.25) size 162.50x162.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,15.00)}]
           KCanvasContainer {use} at (310,15) size 135x135 [filter=#blur]
             KCanvasContainer {g} at (310,15) size 135x135
               KCanvasContainer {g} at (310,15) size 135x135
                 KCanvasItem {rect} at (310,15) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]
                 KCanvasItem {rect} at (355,60) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00L135.00,45.00L135.00,135.00L45.00,135.00"]
-          KCanvasContainer {use} at (297,2) size 162x162
-            KCanvasContainer {g} at (297,2) size 162x162
-              KCanvasContainer {g} at (297,2) size 162x162
-                KCanvasItem {rect} at (310,15) size 135x135 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00L135.00,0.00L135.00,135.00L0.00,135.00"]
-                KCanvasItem {rect} at (297,2) size 162x162 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50L148.50,-13.50L148.50,148.50L-13.50,148.50"]
-        KCanvasContainer {g} at (297,187) size 162x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,200.00)}]
+          KCanvasContainer {use} at (296.25,1.25) size 162.50x162.50
+            KCanvasContainer {g} at (296.25,1.25) size 162.50x162.50
+              KCanvasContainer {g} at (296.25,1.25) size 162.50x162.50
+                KCanvasItem {rect} at (309.75,14.75) size 135.50x135.50 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00L135.00,0.00L135.00,135.00L0.00,135.00"]
+                KCanvasItem {rect} at (296.25,1.25) size 162.50x162.50 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50L148.50,-13.50L148.50,148.50L-13.50,148.50"]
+        KCanvasContainer {g} at (296.25,186.25) size 162.50x162.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,200.00)}]
           KCanvasContainer {use} at (310,200) size 135x135 [filter=#blurxy]
             KCanvasContainer {g} at (310,200) size 135x135
               KCanvasContainer {g} at (310,200) size 135x135
                 KCanvasItem {rect} at (310,200) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]
                 KCanvasItem {rect} at (355,245) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00L135.00,45.00L135.00,135.00L45.00,135.00"]
-          KCanvasContainer {use} at (297,187) size 162x162
-            KCanvasContainer {g} at (297,187) size 162x162
-              KCanvasContainer {g} at (297,187) size 162x162
-                KCanvasItem {rect} at (310,200) size 135x135 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00L135.00,0.00L135.00,135.00L0.00,135.00"]
-                KCanvasItem {rect} at (297,187) size 162x162 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50L148.50,-13.50L148.50,148.50L-13.50,148.50"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+          KCanvasContainer {use} at (296.25,186.25) size 162.50x162.50
+            KCanvasContainer {g} at (296.25,186.25) size 162.50x162.50
+              KCanvasContainer {g} at (296.25,186.25) size 162.50x162.50
+                KCanvasItem {rect} at (309.75,199.75) size 135.50x135.50 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00L135.00,0.00L135.00,135.00L0.00,135.00"]
+                KCanvasItem {rect} at (296.25,186.25) size 162.50x162.50 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50L148.50,-13.50L148.50,148.50L-13.50,148.50"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

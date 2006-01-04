@@ -3,9 +3,9 @@ KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[]] [center=(20,
 KRenderingPaintServer {id="Grad3" [type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(25,215)] [focal=(25,215)] [radius=25.00]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479x359
-      KCanvasContainer {g} at (9,35) size 461x224
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (10.00,35) size 460x225
         KCanvasItem {rect} at (10,35) size 460x50 [fill={[type=RADIAL-GRADIENT] [stops=[]] [center=(50,50)] [focal=(50,50)] [radius=50.00]}] [data="M10.00,35.00L470.00,35.00L470.00,85.00L10.00,85.00"]
         KCanvasItem {rect} at (10,125) size 460x50 [fill={[type=RADIAL-GRADIENT] [stops=[]] [center=(20,20)] [focal=(20,20)] [radius=50.00]}] [data="M10.00,125.00L470.00,125.00L470.00,175.00L10.00,175.00"]
-        KCanvasItem {rect} at (9,209) size 460x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(25,215)] [focal=(25,215)] [radius=25.00]}] [data="M0.00,0.00L50.00,0.00L50.00,460.00L0.00,460.00"]
-      KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+        KCanvasItem {rect} at (10.00,210.00) size 460x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(25,215)] [focal=(25,215)] [radius=25.00]}] [data="M0.00,0.00L50.00,0.00L50.00,460.00L0.00,460.00"]
+      KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
