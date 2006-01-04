@@ -1,3 +1,21 @@
+2006-01-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        Based on a patch by Eric.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6180
+        "text" output in fragment produced by XSLTProccessor is wrong (has xhtml garbage)
+        
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::xsltParamArrayFromParameterMap):
+        (DOM::freeXsltParamArray):
+        Use fastMalloc/fastFree.
+        
+        (DOM::createFragmentFromSource):
+        If the output is "text", just create a text node and add
+        it to the fragment.
+
 2006-01-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.
