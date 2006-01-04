@@ -1,3 +1,37 @@
+2005-12-30  Geoffrey Garen  <ggaren@apple.com>
+ 
+         Reviewed by darin.
+ 
+         - Fixed <rdar://problem/4214080> document.embeds: embeds[0].Play() 
+         undefined at languageguide.org prevents audio playing on mouseover
+ 
+         - Layout test: fast/dom/object-embed-plugin-scripting.html
+ 
+         A common idiom the kids like to use these days for plugins is to nest 
+         an <embed> inside an <object>, and assume that IE will honor the first,
+         Mozilla the second. We happen to honor both, but the rules dictate that
+         only the outer <object> gets a plugin/renderer. (A plugin is a 
+        renderer.) This is a problem because sites ID us as Mozilla and 
+        therefore attempt to script their plugins through the <embed>, which 
+        has no plugin/renderer. The fix here is to have an <embed> return its 
+        parent node's plugin/renderer when queried, if and only if it has no 
+        renderer of its own and its parent node is an <object>. We may decide
+        to restrict this further in the future.
+
+        One happy consequence of this patch is that all the apple.com Quicktime
+        websites we had previously broken with TOT are now fixed. 
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLEmbedElementImpl::getEmbedInstance): The "if (!r)" clause 
+        implements the logic I just described. The code below it I changed 
+        just for style, to match the style in getObjectInstance().
+
+        (DOM::HTMLEmbedElementImpl::rendererIsNeeded): Assert that an <object>
+        parent has a renderer because we're going to use it later.
+
+        (DOM::HTMLObjectElementImpl::rendererIsNeeded): Changed to match style 
+        of HTMLEmbedElementImpl counterpart.
+
 2006-01-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

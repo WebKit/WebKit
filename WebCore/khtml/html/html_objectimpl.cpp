@@ -377,16 +377,23 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
     if (embedInstance)
         return embedInstance;
     
-    RenderPartObject *r = static_cast<RenderPartObject*>(m_render);
-    if (r) {
-        if (r->widget()){
-            // Call into the part (and over the bridge) to pull the Bindings::Instance
-            // from the guts of the Java VM.
-            void *_view = r->widget()->getView();
-            embedInstance = KWQ(part)->getEmbedInstanceForView((NSView *)_view);
-            // Applet may specified with <embed> tag.
-            if (!embedInstance)
-                embedInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
+    RenderObject *r = m_render;
+    if (!r) {
+        NodeImpl *p = parentNode();
+        if (p && p->hasTagName(objectTag))
+            r = p->renderer();
+    }
+
+    if (r && r->isWidget()){
+        if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
+            if (NSView *view = widget->getView())  {
+                // Call into the part (and over the bridge) to pull the Bindings::Instance
+                // from the guts of the Java VM.
+                embedInstance = KWQ(part)->getEmbedInstanceForView(view);
+                // Applet may specified with <embed> tag.
+                if (!embedInstance)
+                    embedInstance = KWQ(part)->getAppletInstanceForView(view);
+            }
         }
     }
     return embedInstance;
@@ -471,9 +478,16 @@ void HTMLEmbedElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 bool HTMLEmbedElementImpl::rendererIsNeeded(RenderStyle *style)
 {
     KHTMLPart *part = getDocument()->part();
-    if (!part)
-	return false;
-    return part->pluginsEnabled() && !parentNode()->hasTagName(objectTag);
+    if (!part || !part->pluginsEnabled())
+        return false;
+
+    NodeImpl *p = parentNode();
+    if (p && p->hasTagName(objectTag)) {
+        assert(p->renderer());
+        return false;
+    }
+
+    return true;
 }
 
 RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -669,11 +683,9 @@ bool HTMLObjectElementImpl::rendererIsNeeded(RenderStyle *style)
         return HTMLElementImpl::rendererIsNeeded(style);
 
     KHTMLPart* part = getDocument()->part();
-    if (!part || !part->pluginsEnabled()) {
+    if (!part || !part->pluginsEnabled())
         return false;
-    }
-    // Eventually we will merge with the better version of this check on the tip of tree.
-    // Until then, just leave it out.
+    
     return true;
 }
 

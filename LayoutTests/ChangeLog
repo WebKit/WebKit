@@ -1,3 +1,13 @@
+2005-01-04  Geoffrey Garen  <ggaren@apple.com>
+ 
+         Layout test for <rdar://problem/4214080> document.embeds: 
+         embeds[0].Play() undefined at languageguide.org prevents audio playing 
+         on mouseover
+ 
+         * fast/dom/object-embed-plugin-scripting-expected.txt: Added.
+         * fast/dom/object-embed-plugin-scripting.html: Added.
+         * fast/dom/resources/articles.m4a: Added.
+ 
 2006-01-04  Kimmo Kinnunen  <kimmo.kinnunen@nokia.com>
 
         Reviewed by eseidel.
