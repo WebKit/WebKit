@@ -1,3 +1,25 @@
+2006-01-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+        - moved frame traversal code across from bridge, also dropped the children
+	array
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge firstChild]): Moved from WebBridge. Use new _firstChild
+	pointer.
+        (-[WebCoreBridge lastChild]): Moved from WebBridge. Use new _lastChild pointer.
+        (-[WebCoreBridge childCount]): Moved from WebBridge. Use _childCount variable.
+        (-[WebCoreBridge previousSibling]): Moved from WebBridge.
+        (-[WebCoreBridge nextSibling]): ditt
+        (-[WebCoreBridge isDescendantOfFrame:]): ditto
+        (-[WebCoreBridge traverseNextFrameStayWithin:]): ditto
+        (-[WebCoreBridge appendChild:]): Moved from WebBridge, maintain count and first/last
+	pointers.
+        (-[WebCoreBridge removeChild:]): Moved from WebBridge, maintain count and first/last
+	pointers.
+
 2006-01-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

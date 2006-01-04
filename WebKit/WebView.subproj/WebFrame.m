@@ -339,15 +339,20 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
+static inline WebFrame *Frame(WebCoreBridge *bridge)
+{
+    return [(WebBridge *)bridge webFrame];
+}
+
 @implementation WebFrame (FrameTraversal)
 - (WebFrame *)_firstChildFrame
 {
-    return [[[self _bridge] firstChild] webFrame];
+    return Frame([[self _bridge] firstChild]);
 }
 
 - (WebFrame *)_lastChildFrame
 {
-    return [[[self _bridge] lastChild] webFrame];
+    return Frame([[self _bridge] lastChild]);
 }
 
 - (unsigned)_childFrameCount
@@ -357,17 +362,17 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (WebFrame *)_previousSiblingFrame;
 {
-    return [[[self _bridge] previousSibling] webFrame];
+    return Frame([[self _bridge] previousSibling]);
 }
 
 - (WebFrame *)_nextSiblingFrame;
 {
-    return [[[self _bridge] nextSibling] webFrame];
+    return Frame([[self _bridge] nextSibling]);
 }
 
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin
 {
-    return [[[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]] webFrame];
+    return Frame([[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]]);
 }
 
 - (void)_appendChild:(WebFrame *)child

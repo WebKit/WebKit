@@ -150,7 +150,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     [lastDashboardRegions release];
     [_frame release];
-    [_children release];
     
     [self fini];
     [super dealloc];
@@ -788,7 +787,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [newFrame _bridge];
 }
 
-- (void)saveDocumentState: (NSArray *)documentState
+- (void)saveDocumentState:(NSArray *)documentState
 {
     WebHistoryItem *item = [_frame _itemForSavingDocState];
     LOG(Loading, "%@: saving form state from to 0x%x", [_frame name], item);
@@ -1724,105 +1723,6 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (void)handledOnloadEvents
 {
     [_frame _handledOnloadEvents];
-}
-
-- (WebBridge *)firstChild
-{
-    if (![_children count])
-        return nil;
-
-    return [_children objectAtIndex:0];
-}
-
-- (WebBridge *)lastChild
-{
-    return [_children lastObject];
-}
-
-- (unsigned)childCount
-{
-    return [_children count];
-}
-
-- (WebBridge *)previousSibling;
-{
-    return _previousSibling;
-}
-
-- (WebBridge *)nextSibling;
-{
-    return _nextSibling;
-}
-
-- (BOOL)isDescendantOfFrame:(WebBridge *)ancestor
-{
-    for (WebBridge *frame = self; frame; frame = (WebBridge *)[frame parent])
-        if (frame == ancestor)
-            return YES;
-
-    return NO;
-}
-
-- (WebBridge *)traverseNextFrameStayWithin:(WebBridge *)stayWithin
-{
-    WebBridge *firstChild = [self firstChild];
-    if (firstChild) {
-        ASSERT(!stayWithin || [firstChild isDescendantOfFrame:stayWithin]);
-        return firstChild;
-    }
-
-    if (self == stayWithin)
-        return 0;
-
-    WebBridge *nextSibling = [self nextSibling];
-    if (nextSibling) {
-        assert(!stayWithin || [nextSibling isDescendantOfFrame:stayWithin]);
-        return nextSibling;
-    }
-
-    WebBridge *frame = self;
-    while (frame && !nextSibling && (!stayWithin || [frame parent] != stayWithin)) {
-        frame = (WebBridge *)[frame parent];
-        nextSibling = [frame nextSibling];
-    }
-
-    if (frame) {
-        ASSERT(!stayWithin || !nextSibling || [nextSibling isDescendantOfFrame:stayWithin]);
-        return nextSibling;
-    }
-
-    return nil;
-}
-
-- (void)appendChild:(WebBridge *)child
-{
-    [child setParent:self];
-
-    if (_children == nil)
-        _children = [[NSMutableArray alloc] init];
-
-    WebBridge *previous = [self lastChild];
-    if (previous) {
-        previous->_nextSibling = child;
-        child->_previousSibling = previous;
-    }
-    ASSERT(child->_nextSibling == nil);
-
-    [_children addObject:child];
-}
-
-- (void)removeChild:(WebBridge *)child
-{
-    if (child->_previousSibling)
-        child->_previousSibling->_nextSibling = child->_nextSibling;
-    
-    if (child->_nextSibling)
-        child->_nextSibling->_previousSibling = child->_previousSibling; 
-
-    child->_previousSibling = nil;
-    child->_nextSibling = nil;
-
-    [_children removeObject:child];
 }
 
 @end

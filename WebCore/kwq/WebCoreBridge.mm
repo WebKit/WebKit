@@ -224,6 +224,113 @@ static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
 static bool initializedObjectCacheSize = FALSE;
 static bool initializedKJS = FALSE;
 
+- (WebCoreBridge *)firstChild
+{
+    return _firstChild;
+}
+
+- (WebCoreBridge *)lastChild
+{
+    return _lastChild;
+}
+
+- (unsigned)childCount
+{
+    return _childCount;
+}
+
+- (WebCoreBridge *)previousSibling;
+{
+    return _previousSibling;
+}
+
+- (WebCoreBridge *)nextSibling;
+{
+    return _nextSibling;
+}
+
+- (BOOL)isDescendantOfFrame:(WebCoreBridge *)ancestor
+{
+    for (WebCoreBridge *frame = self; frame; frame = (WebCoreBridge *)[frame parent])
+        if (frame == ancestor)
+            return YES;
+
+    return NO;
+}
+
+- (WebCoreBridge *)traverseNextFrameStayWithin:(WebCoreBridge *)stayWithin
+{
+    WebCoreBridge *firstChild = [self firstChild];
+    if (firstChild) {
+        ASSERT(!stayWithin || [firstChild isDescendantOfFrame:stayWithin]);
+        return firstChild;
+    }
+
+    if (self == stayWithin)
+        return 0;
+
+    WebCoreBridge *nextSibling = [self nextSibling];
+    if (nextSibling) {
+        assert(!stayWithin || [nextSibling isDescendantOfFrame:stayWithin]);
+        return nextSibling;
+    }
+
+    WebCoreBridge *frame = self;
+    while (frame && !nextSibling && (!stayWithin || [frame parent] != stayWithin)) {
+        frame = (WebCoreBridge *)[frame parent];
+        nextSibling = [frame nextSibling];
+    }
+
+    if (frame) {
+        ASSERT(!stayWithin || !nextSibling || [nextSibling isDescendantOfFrame:stayWithin]);
+        return nextSibling;
+    }
+
+    return nil;
+}
+
+- (void)appendChild:(WebCoreBridge *)child
+{
+    [child retain];
+
+    [child setParent:self];
+
+    WebCoreBridge *last = _lastChild;
+
+    if (last) {
+        last->_nextSibling = child;
+        child->_previousSibling = last;
+    } else {
+        _firstChild = child;
+    }
+
+    _lastChild = child;
+
+    _childCount++;
+
+    ASSERT(child->_nextSibling == nil);
+}
+
+- (void)removeChild:(WebCoreBridge *)child
+{
+    if (child->_previousSibling)
+        child->_previousSibling->_nextSibling = child->_nextSibling;
+    else
+        _firstChild = child->_nextSibling;
+    
+    if (child->_nextSibling)
+        child->_nextSibling->_previousSibling = child->_previousSibling; 
+    else
+        _lastChild = child->_previousSibling;
+
+    child->_previousSibling = nil;
+    child->_nextSibling = nil;
+
+    _childCount--;
+
+    [child release];
+}
+
 + (NSArray *)supportedMIMETypes
 {
     return [NSArray arrayWithObjects:

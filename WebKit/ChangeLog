@@ -1,3 +1,25 @@
+2006-01-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+        - moved frame traversal code across from bridge, also dropped the children
+	array
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dealloc]): Don't release children array, that was moved
+	down to WebCore.
+        (-[WebBridge saveDocumentState:]):
+	- many methods moved to WebCore.
+        * WebView.subproj/WebFrame.m:
+        (Frame): New convenience method to get a WebFrame * from a method that
+	returns WebCoreBridge *.
+        (-[WebFrame _firstChildFrame]): use Frame()
+        (-[WebFrame _lastChildFrame]): ditto
+        (-[WebFrame _previousSiblingFrame]): ditto
+        (-[WebFrame _nextSiblingFrame]): ditto
+        (-[WebFrame _traverseNextFrameStayWithin:]): ditto
+
 2006-01-03  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

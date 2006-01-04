@@ -190,6 +190,12 @@ typedef enum
     KHTMLRenderPart *_renderPart;
     RenderArena *_renderPartArena;
     BOOL _shouldCreateRenderers;
+
+    WebCoreBridge *_nextSibling;
+    WebCoreBridge *_previousSibling;
+    WebCoreBridge *_firstChild;
+    WebCoreBridge *_lastChild;
+    int _childCount;
 }
 
 + (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document;
@@ -208,6 +214,18 @@ typedef enum
 
 - (void)setParent:(WebCoreBridge *)parent;
 - (WebCoreBridge *)parent;
+
+- (WebCoreBridge *)firstChild;
+- (WebCoreBridge *)lastChild;
+- (WebCoreBridge *)previousSibling;
+- (WebCoreBridge *)nextSibling;
+
+- (void)appendChild:(WebCoreBridge *)child;
+- (void)removeChild:(WebCoreBridge *)child;
+
+- (unsigned)childCount;
+- (BOOL)isDescendantOfFrame:(WebCoreBridge *)ancestor;
+- (WebCoreBridge *)traverseNextFrameStayWithin:(WebCoreBridge *)stayWithin;
 
 - (void)provisionalLoadStarted;
 
