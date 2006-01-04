@@ -1,3 +1,13 @@
+2006-01-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        - update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6180
+        "text" output in fragment produced by XSLTProccessor is wrong (has xhtml garbage)
+        
+        * fast/xsl/xslt-processer-expected.txt:
+        Update.
+
 2006-01-04  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6311

@@ -9,7 +9,7 @@
 </xsl:text></xsl:template>
 
 <xsl:template>
-<xsl:value-of select="."/>	
+		<xsl:value-of select="."/>
 </xsl:template>
 
 </xsl:stylesheet>
@@ -66,14 +66,9 @@ Success
 2.4 transform to same fragment twice:
 Success
 2.5 transformed fragment containing only text:
-****Failure**** (expected: "SUCCESS" actual: "<html xmlns="http://www.w3.org/1999/xhtml">
-<head><title></title></head>
-<body>
-<pre></pre>
-</body>
-</html>")
+****Failure**** (expected: "SUCCESS" actual: "")
 2.6 fragment using passed parameters:
-****Failure**** (expected: "SUCCESS" actual: "null")
+****Failure**** (expected: "SUCCESS" actual: "")
 
 3.0 DOMDocument transformToDocument(in DOMNode source):
 
