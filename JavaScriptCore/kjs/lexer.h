@@ -47,8 +47,12 @@ namespace KJS {
     bool prevTerminator() const { return terminator; }
 
     enum State { Start,
+                 IdentifierOrKeyword,
                  Identifier,
+                 InIdentifierOrKeyword,
                  InIdentifier,
+                 InIdentifierUnicodeEscapeStart,
+                 InIdentifierUnicodeEscape,
                  InSingleLineComment,
                  InMultiLineComment,
                  InNum,
@@ -112,8 +116,8 @@ namespace KJS {
     static unsigned char convertHex(unsigned short c1, unsigned short c2);
     static UChar convertUnicode(unsigned short c1, unsigned short c2,
                                 unsigned short c3, unsigned short c4);
-    static bool isIdentLetter(unsigned short c);
-    static bool isDecimalDigit(unsigned short c);
+    static bool isIdentStart(unsigned short c);
+    static bool isIdentPart(unsigned short c);
     static bool isHexDigit(unsigned short c);
 
 #ifdef KJS_DEBUG_MEM

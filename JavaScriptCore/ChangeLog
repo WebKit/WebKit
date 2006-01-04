@@ -1,3 +1,26 @@
+2006-01-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by kimmo.t.kinnunen@nokia.com, reviewed by darin, tweaked by me.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4921
+        \u escape sequences in JavaScript identifiers
+
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/lexer.cpp:
+        (Lexer::shift):
+        (Lexer::lex):
+        (Lexer::isWhiteSpace):
+        (Lexer::isLineTerminator):
+        (Lexer::isIdentStart):
+        (Lexer::isIdentPart):
+        (isDecimalDigit):
+        (Lexer::scanRegExp):
+        * kjs/lexer.h:
+        (KJS::Lexer::):
+
+        * tests/mozilla/expected.html: Updated test results.
+
 2005-12-30  Maciej Stachowiak  <mjs@apple.com>
 
         No review, just test result update.

@@ -41,6 +41,8 @@
 #include "internal.h"
 #include <unicode/uchar.h>
 
+static bool isDecimalDigit(unsigned short c);
+
 // we can't specify the namespace in yacc's C output, so do it here
 using namespace KJS;
 
@@ -133,8 +135,8 @@ void Lexer::shift(unsigned int p)
     next2 = next3;
     do {
       if (pos >= length) {
-	next3 = 0;
-	break;
+        next3 = 0;
+        break;
       }
       next3 = code[pos++].uc;
     } while (u_charType(next3) == U_FORMAT_CHAR);
@@ -214,9 +216,11 @@ int Lexer::lex()
       } else if (current == '"' || current == '\'') {
         state = InString;
         stringType = current;
-      } else if (isIdentLetter(current)) {
+      } else if (isIdentStart(current)) {
         record16(current);
-        state = InIdentifier;
+        state = InIdentifierOrKeyword;
+      } else if (current == '\\') {
+        state = InIdentifierUnicodeEscapeStart;
       } else if (current == '0') {
         record8(current);
         state = InNum0;
@@ -305,8 +309,7 @@ int Lexer::lex()
       }
       break;
     case InUnicodeEscape:
-      if (isHexDigit(current) && isHexDigit(next1) &&
-          isHexDigit(next2) && isHexDigit(next3)) {
+      if (isHexDigit(current) && isHexDigit(next1) && isHexDigit(next2) && isHexDigit(next3)) {
         record16(convertUnicode(current, next1, next2, next3));
         shift(3);
         state = InString;
@@ -341,12 +344,14 @@ int Lexer::lex()
         shift(1);
       }
       break;
+    case InIdentifierOrKeyword:
     case InIdentifier:
-      if (isIdentLetter(current) || isDecimalDigit(current)) {
+      if (isIdentPart(current))
         record16(current);
-        break;
-      }
-      setDone(Identifier);
+      else if (current == '\\')
+        state = InIdentifierUnicodeEscapeStart;
+      else
+        setDone(state == InIdentifierOrKeyword ? IdentifierOrKeyword : Identifier);
       break;
     case InNum0:
       if (current == 'x' || current == 'X') {
@@ -421,6 +426,21 @@ int Lexer::lex()
       } else
         setDone(Number);
       break;
+    case InIdentifierUnicodeEscapeStart:
+      if (current == 'u')
+        state = InIdentifierUnicodeEscape;
+      else
+        setDone(Bad);
+      break;
+    case InIdentifierUnicodeEscape:
+      if (isHexDigit(current) && isHexDigit(next1) && isHexDigit(next2) && isHexDigit(next3)) {
+        record16(convertUnicode(current, next1, next2, next3));
+        shift(3);
+        state = InIdentifier;
+      } else {
+        setDone(Bad);
+      }
+      break;
     default:
       assert(!"Unhandled state in switch statement");
     }
@@ -435,8 +455,7 @@ int Lexer::lex()
   }
 
   // no identifiers allowed directly after numeric literal, e.g. "3in" is bad
-  if ((state == Number || state == Octal || state == Hex)
-      && isIdentLetter(current))
+  if ((state == Number || state == Octal || state == Hex) && isIdentStart(current))
     state = Bad;
 
   // terminate string
@@ -506,8 +525,9 @@ int Lexer::lex()
       delimited = true;
     }
     break;
-  case Identifier:
+  case IdentifierOrKeyword:
     if ((token = Lookup::find(&mainTable, buffer16, pos16)) < 0) {
+  case Identifier:
       // Lookup for keyword failed, means this is an identifier
       // Apply anonymous-function hack below (eat the identifier)
       if (eatNextIdentifier) {
@@ -552,8 +572,7 @@ int Lexer::lex()
 
 bool Lexer::isWhiteSpace() const
 {
-  return (current == ' ' || current == '\t' ||
-          current == 0x0b || current == 0x0c || current == 0xa0);
+  return (current == '\t' || current == 0x0b || current == 0x0c || u_charType(current) == U_SPACE_SEPARATOR);
 }
 
 bool Lexer::isLineTerminator()
@@ -564,18 +583,20 @@ bool Lexer::isLineTerminator()
       skipLF = true;
   else if (lf)
       skipCR = true;
-  return cr || lf;
+  return cr || lf || current == 0x2028 || current == 0x2029;
 }
 
-bool Lexer::isIdentLetter(unsigned short c)
+bool Lexer::isIdentStart(unsigned short c)
 {
-  /* TODO: allow other legitimate unicode chars */
-  return (c >= 'a' && c <= 'z' ||
-          c >= 'A' && c <= 'Z' ||
-          c == '$' || c == '_');
+  return (U_GET_GC_MASK(c) & (U_GC_L_MASK | U_GC_NL_MASK)) || c == '$' || c == '_';
 }
 
-bool Lexer::isDecimalDigit(unsigned short c)
+bool Lexer::isIdentPart(unsigned short c)
+{
+  return (U_GET_GC_MASK(c) & (U_GC_L_MASK | U_GC_NL_MASK | U_GC_MN_MASK | U_GC_MC_MASK | U_GC_ND_MASK | U_GC_PC_MASK)) || c == '$' || c == '_';
+}
+
+static bool isDecimalDigit(unsigned short c)
 {
   return (c >= '0' && c <= '9');
 }
@@ -822,7 +843,7 @@ bool Lexer::scanRegExp()
     shift(1);
   }
 
-  while (isIdentLetter(current)) {
+  while (isIdentPart(current)) {
     record16(current);
     shift(1);
   }

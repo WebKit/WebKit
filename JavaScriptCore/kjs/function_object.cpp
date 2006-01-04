@@ -221,9 +221,8 @@ JSObject *FunctionObjectImp::construct(ExecState *exec, const List &args, const 
   scopeChain.push(exec->dynamicInterpreter()->globalObject());
   FunctionBodyNode *bodyNode = progNode.get();
 
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), bodyNode,
-					      scopeChain);
-
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), bodyNode, scopeChain);
+  
   // parse parameter list. throw syntax error on illegal identifiers
   int len = p.size();
   const UChar *c = p.data();
@@ -231,31 +230,30 @@ JSObject *FunctionObjectImp::construct(ExecState *exec, const List &args, const 
   UString param;
   while (i < len) {
       while (*c == ' ' && i < len)
-	  c++, i++;
-      if (Lexer::isIdentLetter(c->uc)) {  // else error
-	  param = UString(c, 1);
-	  c++, i++;
-	  while (i < len && (Lexer::isIdentLetter(c->uc) ||
-			     Lexer::isDecimalDigit(c->uc))) {
-	      param += UString(c, 1);
-	      c++, i++;
-	  }
-	  while (i < len && *c == ' ')
-	      c++, i++;
-	  if (i == len) {
-	      fimp->addParameter(Identifier(param));
-	      params++;
-	      break;
-	  } else if (*c == ',') {
-	      fimp->addParameter(Identifier(param));
-	      params++;
-	      c++, i++;
-	      continue;
-	  } // else error
+          c++, i++;
+      if (Lexer::isIdentStart(c->uc)) {  // else error
+          param = UString(c, 1);
+          c++, i++;
+          while (i < len && (Lexer::isIdentPart(c->uc))) {
+              param += UString(c, 1);
+              c++, i++;
+          }
+          while (i < len && *c == ' ')
+              c++, i++;
+          if (i == len) {
+              fimp->addParameter(Identifier(param));
+              params++;
+              break;
+          } else if (*c == ',') {
+              fimp->addParameter(Identifier(param));
+              params++;
+              c++, i++;
+              continue;
+          } // else error
       }
       return throwError(exec, SyntaxError, "Syntax error in parameter list");
   }
-
+  
   List consArgs;
 
   JSObject *objCons = exec->lexicalInterpreter()->builtinObject();
