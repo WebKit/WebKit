@@ -1,3 +1,16 @@
+2006-01-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        Created by Eric.
+        Tweaked and tested by me.
+
+        New scripts to work with Subversion when the switch happens.
+        These will replace cvs-apply, cvs-unapply, and cvs-create-patch.
+
+        * Scripts/svn-apply: Added.
+        * Scripts/svn-create-patch: Added.
+        * Scripts/svn-unapply: Added.
+
 2005-12-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
