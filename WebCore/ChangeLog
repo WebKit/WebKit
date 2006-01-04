@@ -1,4 +1,13 @@
-2005-12-30  Geoffrey Garen  <ggaren@apple.com>
+2006-01-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6311
+        document.plugins doesn't exist
+
+        * khtml/ecma/kjs_html.cpp: Added 'plugins' as synonym for 'embeds'
+
+2006-01-04  Geoffrey Garen  <ggaren@apple.com>
  
          Reviewed by darin.
  
