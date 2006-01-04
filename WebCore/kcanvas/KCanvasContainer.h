@@ -59,18 +59,18 @@ public:
     virtual bool isKCanvasContainer() const { return true; }
     virtual const char *renderName() const { return "KCanvasContainer"; }
 
-    virtual bool fillContains(const QPoint &p) const;
-    virtual bool strokeContains(const QPoint &p) const;
-    virtual QRect relativeBBox(bool includeStroke = true) const;
+    virtual bool fillContains(const QPointF &p) const;
+    virtual bool strokeContains(const QPointF &p) const;
+    virtual QRectF relativeBBox(bool includeStroke = true) const;
     
     virtual QMatrix localTransform() const;
     virtual void setLocalTransform(const QMatrix &matrix);
     
-    virtual void setViewport(const QRect &viewport) = 0;
-    virtual QRect viewport() const = 0;
+    virtual void setViewport(const QRectF& viewport) = 0;
+    virtual QRectF viewport() const = 0;
 
-    virtual void setViewBox(const QRect &viewBox) = 0;
-    virtual QRect viewBox() const = 0;
+    virtual void setViewBox(const QRectF& viewBox) = 0;
+    virtual QRectF viewBox() const = 0;
 
     virtual void setAlign(KCAlign align) = 0;
     virtual KCAlign align() const = 0;
@@ -79,7 +79,7 @@ public:
     bool slice() const;
     
 protected:
-    KCanvasMatrix getAspectRatio(const QRect logical, const QRect physical) const;
+    KCanvasMatrix getAspectRatio(const QRectF logical, const QRectF physical) const;
 
 private:
     class Private;

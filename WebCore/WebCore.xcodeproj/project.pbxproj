@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
+		4756536509652C5D00BD9F29 /* KWQPointF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756535F09652C5D00BD9F29 /* KWQPointF.h */; };
+		4756536609652C5D00BD9F29 /* KWQPointF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536009652C5D00BD9F29 /* KWQPointF.mm */; };
+		4756536709652C5D00BD9F29 /* KWQRectF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756536109652C5D00BD9F29 /* KWQRectF.h */; };
+		4756536809652C5D00BD9F29 /* KWQRectF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536209652C5D00BD9F29 /* KWQRectF.mm */; };
+		4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756536309652C5D00BD9F29 /* KWQSizeF.h */; };
+		4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536409652C5D00BD9F29 /* KWQSizeF.mm */; };
+		475658CB096A728100BD9F29 /* KCanvasHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 475658CA096A728100BD9F29 /* KCanvasHelper.h */; };
 		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
 		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
@@ -1620,6 +1627,13 @@
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		4756535F09652C5D00BD9F29 /* KWQPointF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPointF.h; sourceTree = "<group>"; };
+		4756536009652C5D00BD9F29 /* KWQPointF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPointF.mm; sourceTree = "<group>"; };
+		4756536109652C5D00BD9F29 /* KWQRectF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRectF.h; sourceTree = "<group>"; };
+		4756536209652C5D00BD9F29 /* KWQRectF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRectF.mm; sourceTree = "<group>"; };
+		4756536309652C5D00BD9F29 /* KWQSizeF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQSizeF.h; sourceTree = "<group>"; };
+		4756536409652C5D00BD9F29 /* KWQSizeF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQSizeF.mm; sourceTree = "<group>"; };
+		475658CA096A728100BD9F29 /* KCanvasHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasHelper.h; sourceTree = "<group>"; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51111AC007BD812C00B7162C /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3355,6 +3369,7 @@
 				A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */,
 				A8C0FB8B089701F800BA5114 /* KCanvasResources.h */,
 				A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */,
+				475658CA096A728100BD9F29 /* KCanvasHelper.h */,
 				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
 				A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */,
 			);
@@ -4172,6 +4187,12 @@
 				F58786BA02DE3B8601EA4122 /* KWQStringList.h */,
 				F587853202DE375901EA4122 /* KWQStringList.mm */,
 				F58786BB02DE3B8601EA4122 /* KWQStyle.h */,
+				4756535F09652C5D00BD9F29 /* KWQPointF.h */,
+				4756536009652C5D00BD9F29 /* KWQPointF.mm */,
+				4756536109652C5D00BD9F29 /* KWQRectF.h */,
+				4756536209652C5D00BD9F29 /* KWQRectF.mm */,
+				4756536309652C5D00BD9F29 /* KWQSizeF.h */,
+				4756536409652C5D00BD9F29 /* KWQSizeF.mm */,
 				F57B0EE002EBC78B018635CA /* KWQStyle.mm */,
 				F58786BC02DE3B8601EA4122 /* KWQStyleSheet.h */,
 				F58786BD02DE3B8601EA4122 /* KWQTextCodec.h */,
@@ -4698,6 +4719,10 @@
 				A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */,
 				A88AD5190952499F001DD196 /* KDOMHeaders.h in Headers */,
 				A88AD51A0952499F001DD196 /* KDOMSettings.h in Headers */,
+				4756536509652C5D00BD9F29 /* KWQPointF.h in Headers */,
+				4756536709652C5D00BD9F29 /* KWQRectF.h in Headers */,
+				4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */,
+				475658CB096A728100BD9F29 /* KCanvasHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6536,6 +6561,9 @@
 				A88AD51D0952499F001DD196 /* XLinkNamesWrapper.cpp in Sources */,
 				A88AD51E0952499F001DD196 /* SVGNamesWrapper.cpp in Sources */,
 				A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */,
+				4756536609652C5D00BD9F29 /* KWQPointF.mm in Sources */,
+				4756536809652C5D00BD9F29 /* KWQRectF.mm in Sources */,
+				4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

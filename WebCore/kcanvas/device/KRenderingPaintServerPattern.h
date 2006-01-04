@@ -38,23 +38,14 @@ public:
 
     virtual KCPaintServerType type() const;
 
-    // Pattern bbox (should be QRectF!)
-    float x() const;
-    void setX(float x);
-    
-    float y() const;
-    void setY(float y);
+    // Pattern bbox
+    void setBbox(const QRectF &rect);
+    QRectF bbox() const;
     
     // Pattern x,y phase points are relative when in boundingBoxMode
     // BoundingBox mode is true by default.
     bool boundingBoxMode() const;
     void setBoundingBoxMode(bool mode = true);
-    
-    float width() const;
-    void setWidth(float width);
-    
-    float height() const;
-    void setHeight(float height);
     
     // 'Pattern' interface
     KCanvasImage *tile() const;

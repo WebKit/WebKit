@@ -114,7 +114,7 @@ public:
     float scaleY() const;
 
      // Draw onto the canvas
-    void draw(const QRect &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
+    void draw(const QRectF &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 private:

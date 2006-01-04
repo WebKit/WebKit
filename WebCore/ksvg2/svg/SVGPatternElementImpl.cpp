@@ -223,11 +223,8 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
 
     KRenderingDeviceContext *patternContext = device->contextForImage(m_tile);
     device->pushContext(patternContext);
-    
-    m_paintServer->setX(x()->baseVal()->value());
-    m_paintServer->setY(y()->baseVal()->value());
-    m_paintServer->setWidth(width()->baseVal()->value());
-    m_paintServer->setHeight(height()->baseVal()->value());
+    QRectF rect(x()->baseVal()->value(), y()->baseVal()->value(), width()->baseVal()->value(), height()->baseVal()->value());
+    m_paintServer->setBbox(rect);
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(m_tile);
 

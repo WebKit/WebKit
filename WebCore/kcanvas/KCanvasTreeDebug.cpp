@@ -27,6 +27,7 @@
 #include "config.h"
 #include "KCanvasTreeDebug.h"
 
+#include <math.h>
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/RenderPath.h>
@@ -56,6 +57,7 @@
 #include "htmlnames.h"
 
 #include <qtextstream.h>
+#include <QSizeF>
 
 using namespace KSVG;
 
@@ -94,6 +96,70 @@ QTextStream &operator<<(QTextStream &ts, const QRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
+
+bool hasFractions(double val)
+{
+    double epsilon = 0.0001;
+    int ival = int(val);
+    double dval = double(ival);    
+    return (fabs(val-dval) > epsilon);
+}
+
+QTextStream &operator<<(QTextStream &ts, const QRectF &r)
+{
+    ts << "at ("; 
+    if (hasFractions(r.x())) 
+        ts << r.x();
+    else 
+        ts << int(r.x());
+    ts << ",";
+    if (hasFractions(r.y())) 
+        ts << r.y();
+    else 
+        ts << int(r.y());
+    ts << ") size ";
+    if (hasFractions(r.width())) 
+        ts << r.width(); 
+    else 
+        ts << int(r.width()); 
+    ts << "x";
+    if (hasFractions(r.height())) 
+        ts << r.height();
+    else 
+        ts << int(r.height());
+    return ts;
+}
+
+QTextStream &operator<<(QTextStream &ts, const QPointF &p)
+{
+    ts << "(";    
+    if (hasFractions(p.x()))
+        ts << p.x();
+    else 
+        ts << int(p.x());    
+    ts << ",";
+    if (hasFractions(p.y())) 
+        ts << p.y();
+    else 
+        ts << int(p.y());    
+    return ts << ")";
+}
+
+QTextStream &operator<<(QTextStream &ts, const QSizeF &s)
+{   
+    ts << "width=";
+    if (hasFractions(s.width()))
+        ts << s.width();
+    else
+        ts << int(s.width());
+    ts << " height=";
+    if (hasFractions(s.height())) 
+        ts << s.height();
+    else
+        ts << int(s.height());
+     return ts;
+}
+
 
 QTextStream &operator<<(QTextStream &ts, const QMatrix &m)
 {

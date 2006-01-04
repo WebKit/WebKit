@@ -104,7 +104,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     CGAffineTransform transform = CGAffineTransform(patternTransform().qmatrix());
     transform = CGAffineTransformConcat(transform, ctm);
 
-    CGSize phase = CGSizeMake(x(), y());
+    CGSize phase = CGSizeMake(bbox().x(), bbox().y());
     CGContextSetPatternPhase(context, phase);
 		
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
@@ -112,8 +112,8 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
         tile(),
         CGRectMake(0,0,cellSize.width,cellSize.height),
         transform,
-        width(), //cellSize.width,
-        height(), //cellSize.height,
+        bbox().width(), //cellSize.width,
+        bbox().height(), //cellSize.height,
         kCGPatternTilingConstantSpacing,  // FIXME: should ask CG guys.
         true, // has color
         &callbacks );

@@ -181,9 +181,9 @@ KCanvasFilter *SVGFilterElementImpl::canvasResource()
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
     if(filterBBoxMode)
-        m_filter->setFilterRect(QRect(int(_x * 100.f), int(_y * 100.f), int(_width * 100.f), int(_height * 100.f)));
+        m_filter->setFilterRect(QRectF(_x * 100.f, _y * 100.f, _width * 100.f, _height * 100.f));
     else
-        m_filter->setFilterRect(QRect(int(_x), int(_y), int(_width), int(_height)));
+        m_filter->setFilterRect(QRectF(_x, _y, _width, _height));
     
     bool primitiveBBoxMode = primitiveUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);

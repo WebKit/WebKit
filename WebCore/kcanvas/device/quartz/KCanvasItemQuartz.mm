@@ -104,7 +104,7 @@ void drawMarkerWithData(MarkerData &data)
     else // (data.type == End)
         angle = inslope;
     
-    data.marker->draw(QRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
+    data.marker->draw(QRectF(), data.origin.x, data.origin.y, data.strokeWidth, angle);
 }
 
 static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const CGPathElement *element)
@@ -158,7 +158,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
     data.elementIndex++;
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(const QRect &rect, CGPathRef path) const
+void KCanvasItemQuartz::drawMarkersIfNeeded(const QRectF &rect, CGPathRef path) const
 {
     KDOM::DocumentImpl *doc = document();
     const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
@@ -200,7 +200,7 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     paintInfo.p->save();
     CGContextRef context = quartzDevice->currentCGContext();
 
-    QRect dirtyRect = paintInfo.r;
+    QRectF dirtyRect = paintInfo.r;
     
     RenderPath::setupForDraw();
 
@@ -262,7 +262,7 @@ bool KCanvasItemQuartz::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int
     if (hitTestAction != HitTestForeground)
         return false;
 
-    if (hitsPath(QPoint(_x, _y), true)) {
+    if (hitsPath(QPointF(_x, _y), true)) {
         setInnerNode(info);
         return true;
     }
@@ -287,7 +287,7 @@ CGContextRef getSharedContext()
 }
 
 
-QRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
+QRectF KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 {
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
@@ -312,10 +312,10 @@ QRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
         // the easy (and efficient) case:
         bbox = CGPathGetBoundingBox(cgPath);
     
-    return QRect(bbox);
+    return QRectF(bbox);
 }
 
-bool KCanvasItemQuartz::hitsPath(const QPoint &hitPoint, bool fill) const
+bool KCanvasItemQuartz::hitsPath(const QPointF &hitPoint, bool fill) const
 {
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);

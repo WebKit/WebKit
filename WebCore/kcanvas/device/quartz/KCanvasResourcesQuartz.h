@@ -42,21 +42,21 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
     
-    virtual QRect getAbsoluteRepaintRect() { return absoluteTransform().mapRect(relativeBBox(true)); }
+    virtual QRect getAbsoluteRepaintRect() { return enclosingQRect(absoluteTransform().mapRect(relativeBBox(true))); }
     virtual QMatrix absoluteTransform() const;
 
-    virtual void setViewport(const QRect &viewport);
-    virtual QRect viewport() const;
+    virtual void setViewport(const QRectF&);
+    virtual QRectF viewport() const;
 
-    virtual void setViewBox(const QRect &viewBox);
-    virtual QRect viewBox() const;
+    virtual void setViewBox(const QRectF&);
+    virtual QRectF viewBox() const;
 
     virtual void setAlign(KCAlign align);
     virtual KCAlign align() const;
     
 private:
-    QRect m_viewport;
-    QRect m_viewBox;
+    QRectF m_viewport;
+    QRectF m_viewBox;
     KCAlign m_align;
 };
 

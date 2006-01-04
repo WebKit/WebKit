@@ -60,6 +60,11 @@ QRect QWMatrix::mapRect(const QRect &rect) const
     return QRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
+QRectF QWMatrix::mapRect(const QRectF &rect) const
+{
+    return QRectF(CGRectApplyAffineTransform(CGRect(rect), m_transform));
+}
+
 bool QWMatrix::isIdentity() const
 {
     return CGAffineTransformIsIdentity(m_transform);

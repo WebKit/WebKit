@@ -29,6 +29,7 @@
 #include <qrect.h>
 #include <assert.h>
 #include <qwmatrix.h>
+#include <QRectF>
 
 #include "editing/text_affinity.h"
 #include "misc/khtmllayout.h"
@@ -279,7 +280,7 @@ public:
 #if SVG_SUPPORT
     virtual bool isKCanvasContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
-    virtual QRect relativeBBox(bool includeStroke = true) const { return QRect(); }
+    virtual QRectF relativeBBox(bool includeStroke = true) const { return QRectF(); }
     // We may eventually want to make these non-virtual
     virtual QMatrix localTransform() const { return QMatrix(1, 0, 0, 1, xPos(), yPos()); }
     virtual void setLocalTransform(const QMatrix&) { }

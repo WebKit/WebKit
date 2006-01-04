@@ -81,7 +81,7 @@ SVGRectImpl *SVGLocatableImpl::getBBox(const SVGStyledElementImpl *e)
 
     if(e && e->renderer())
     {
-        QRect bboxRect = e->renderer()->relativeBBox(false);
+        QRectF bboxRect = e->renderer()->relativeBBox(false);
         rect = new SVGRectImpl(0);
         rect->setX(bboxRect.x());
         rect->setY(bboxRect.y());

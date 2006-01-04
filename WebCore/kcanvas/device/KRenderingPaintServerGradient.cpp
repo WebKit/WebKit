@@ -172,7 +172,7 @@ public:
     Private() { }
     ~Private() { }
 
-    QPoint start, end;
+    QPointF start, end;
 };
 
 KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient() : KRenderingPaintServerGradient(), d(new Private())
@@ -184,22 +184,22 @@ KRenderingPaintServerLinearGradient::~KRenderingPaintServerLinearGradient()
     delete d;
 }
 
-QPoint KRenderingPaintServerLinearGradient::gradientStart() const
+QPointF KRenderingPaintServerLinearGradient::gradientStart() const
 {
     return d->start;
 }
 
-void KRenderingPaintServerLinearGradient::setGradientStart(const QPoint &start)
+void KRenderingPaintServerLinearGradient::setGradientStart(const QPointF &start)
 {
     d->start = start;
 }
 
-QPoint KRenderingPaintServerLinearGradient::gradientEnd() const
+QPointF KRenderingPaintServerLinearGradient::gradientEnd() const
 {
     return d->end;
 }
 
-void KRenderingPaintServerLinearGradient::setGradientEnd(const QPoint &end)
+void KRenderingPaintServerLinearGradient::setGradientEnd(const QPointF &end)
 {
     d->end = end;
 }
@@ -226,7 +226,7 @@ public:
     ~Private() { }
 
     float radius;
-    QPoint center, focal;
+    QPointF center, focal;
 };
 
 KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient() : KRenderingPaintServerGradient(), d(new Private())
@@ -238,22 +238,22 @@ KRenderingPaintServerRadialGradient::~KRenderingPaintServerRadialGradient()
     delete d;
 }
 
-QPoint KRenderingPaintServerRadialGradient::gradientCenter() const
+QPointF KRenderingPaintServerRadialGradient::gradientCenter() const
 {
     return d->center;
 }
 
-void KRenderingPaintServerRadialGradient::setGradientCenter(const QPoint &center)
+void KRenderingPaintServerRadialGradient::setGradientCenter(const QPointF &center)
 {
     d->center = center;
 }
 
-QPoint KRenderingPaintServerRadialGradient::gradientFocal() const
+QPointF KRenderingPaintServerRadialGradient::gradientFocal() const
 {
     return d->focal;
 }
 
-void KRenderingPaintServerRadialGradient::setGradientFocal(const QPoint &focal)
+void KRenderingPaintServerRadialGradient::setGradientFocal(const QPointF &focal)
 {
     d->focal = focal;
 }

@@ -1,3 +1,106 @@
+2005-12-30  Kimmo Kinnunen  <kimmo.kinnunen@nokia.com>
+
+        Reviewed by eseidel.
+
+	Changed use of QRect to QRectF in the points where SVG can have
+	fractional numbers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4462
+
+        Added test cases:
+	* svg/custom/fractional-rects.svg: copy of rounded-rects.svg with
+	fractional coordinates.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kwq/KWQWMatrix.h:
+        * kwq/KWQWMatrix.mm:
+        (QWMatrix::mapRect): mapRect for QRectF
+        * kwq/KWQRectF.h:
+        * kwq/KWQRectF.mm:  Added. QRectF impl
+        * kwq/KWQSizeF.h:
+        * kwq/KWQSizeF.mm:  Added.QSizeF impl
+        * kwq/KWQPointF.h:
+        * kwq/KWQPointF.mm: Added. QPointF impl
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::fillContains):
+        (KCanvasContainer::strokeContains):
+        (KCanvasContainer::relativeBBox):
+        (KCanvasContainer::getAspectRatio): QRect -> QRectF
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFilterEffect::subRegion):
+        (KCanvasFilterEffect::setSubRegion): QRect -> QRectF
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFilter::filterRect):
+        (KCanvasFilter::setFilterRect):	QRect -> QRectF
+        (KCanvasFEConvolveMatrix::kernelSize):
+        (KCanvasFEConvolveMatrix::setKernelSize):
+        (KCanvasFEConvolveMatrix::targetOffset):
+        (KCanvasFEConvolveMatrix::setTargetOffset): QSize -> QSizeF
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::fillContains):
+        (RenderPath::strokeContains):
+        (RenderPath::relativeBBox): QRect -> QRectF
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasMarker::draw): QRect -> QRectF
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (hasFractions): helper function
+        (operator<<): QSizeF operator, QRectF operator
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KRenderingPaintServerLinearGradient::gradientStart):
+        (KRenderingPaintServerLinearGradient::setGradientStart):
+        (KRenderingPaintServerLinearGradient::gradientEnd):
+        (KRenderingPaintServerLinearGradient::setGradientEnd):
+        (KRenderingPaintServerRadialGradient::gradientCenter):
+        (KRenderingPaintServerRadialGradient::setGradientCenter):
+        (KRenderingPaintServerRadialGradient::gradientFocal):
+        (KRenderingPaintServerRadialGradient::setGradientFocal): QPoint -> QPointF
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (KRenderingPaintServerPattern::Private::Private): x, y, width, height -> QRectF
+        (KRenderingPaintServerPattern::setBbox): replaced get/set methods
+        (KRenderingPaintServerPattern::bbox): replaced get/set methods
+        (KRenderingPaintServerPattern::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter):
+        (KCanvasFilterQuartz::applyFilter): QRect -> QRectF
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        (KCanvasItemQuartz::getAbsoluteRepaintRect): QRect -> QRectF
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (drawMarkerWithData):
+        (KCanvasItemQuartz::drawMarkersIfNeeded):
+        (KCanvasItemQuartz::paint): QRect -> QRectF
+        (KCanvasItemQuartz::nodeAtPoint): QPoint -> QPointF
+        (KCanvasItemQuartz::bboxForPath) :QRect -> QRectF
+        (KCanvasItemQuartz::hitsPath):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasContainerQuartz::getAbsoluteRepaintRect): QRect -> QRectF
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::draw): QRect -> QRectF
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::relativeBBox):QRect -> QRectF
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::canvasResource): QRect -> QRectF
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::setStandardAttributes):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::value): QRect -> QRectF
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::buildGradient): QPoint -> QPointF, removed integer conversions
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::getBBox): Rect -> QRectF
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::drawPatternContentIntoTile): QRect -> QRectF
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::buildGradient): QPoint -> QPointF, removed integer conversions
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::checkIntersection): QRect -> QRectF, removed integer conversions
+        (SVGSVGElementImpl::checkEnclosure): QRect -> QRectF, removed integer conversions
+
 2006-01-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.

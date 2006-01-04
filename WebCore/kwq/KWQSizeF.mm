@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +24,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#import "KWQSizeF.h"
+#import "KWQSize.h"
 
-#import "kcanvas/RenderPath.h"
+QSizeF::QSizeF() : w(-1.0f), h(-1.0f)
+{
+}
 
-class KCanvasItemQuartz : public RenderPath {
-public:
-    KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node);
-    virtual ~KCanvasItemQuartz() { }
-    
-    virtual QRectF bboxForPath(bool includeStroke) const;
-    virtual bool hitsPath(const QPointF &p, bool fill /* false means stroke */) const;
-    
-    virtual QRect getAbsoluteRepaintRect() { return enclosingQRect(absoluteTransform().mapRect(relativeBBox(true))); }
-    
-    virtual bool requiresLayer() { return false; }
-    virtual void layout() { setNeedsLayout(false); }
-    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
-    virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                            HitTestAction hitTestAction);
-private:
-    void drawMarkersIfNeeded(const QRectF &rect, CGPathRef path) const;
-};
+QSizeF::QSizeF(float width, float height) : w(width), h(height)
+{
+}
+
+QSizeF::QSizeF(const QSize& o) : w(o.width()), h(o.height())
+{
+}
+
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+QSizeF::QSizeF(const NSSize& s) : w(s.width), h(s.height)
+{
+}
+#endif
+
+QSizeF::QSizeF(const CGSize& s) : w(s.width), h(s.height)
+{
+}
+
+bool QSizeF::isValid() const
+{
+    return w >= 0.0f && h >= 0.0f;
+}
+
+QSizeF QSizeF::expandedTo(const QSizeF& o) const
+{
+    return QSizeF(w > o.w ? w : o.w, h > o.h ? h : o.h);
+}
+
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+QSizeF::operator NSSize() const
+{
+    return NSMakeSize(w, h);
+}
+#endif
+
+QSizeF::operator CGSize() const
+{
+    return CGSizeMake(w, h);
+}
+
+QSizeF operator+(const QSizeF& a, const QSizeF& b)
+{
+    return QSizeF(a.w + b.w, a.h + b.h);
+}
+
+bool operator==(const QSizeF& a, const QSizeF& b)
+{
+    return a.w == b.w && a.h == b.h;
+}
+
+bool operator!=(const QSizeF& a, const QSizeF& b)
+{
+    return a.w != b.w || a.h != b.h;
+}

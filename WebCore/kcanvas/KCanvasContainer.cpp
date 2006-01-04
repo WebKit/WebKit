@@ -68,7 +68,7 @@ void KCanvasContainer::setLocalTransform(const QMatrix &matrix)
     d->matrix = matrix;
 }
 
-bool KCanvasContainer::fillContains(const QPoint &p) const
+bool KCanvasContainer::fillContains(const QPointF &p) const
 {
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling())
@@ -80,7 +80,7 @@ bool KCanvasContainer::fillContains(const QPoint &p) const
     return false;
 }
 
-bool KCanvasContainer::strokeContains(const QPoint &p) const
+bool KCanvasContainer::strokeContains(const QPointF &p) const
 {
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling())
@@ -92,14 +92,14 @@ bool KCanvasContainer::strokeContains(const QPoint &p) const
     return false;
 }
 
-QRect KCanvasContainer::relativeBBox(bool includeStroke) const
+QRectF KCanvasContainer::relativeBBox(bool includeStroke) const
 {
-    QRect rect(0,0,0,0);
+    QRectF rect;
     
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling()) {
-        QRect childBBox = current->relativeBBox(includeStroke);
-        QRect mappedBBox = current->localTransform().mapRect(childBBox);
+        QRectF childBBox = current->relativeBBox(includeStroke);
+        QRectF mappedBBox = current->localTransform().mapRect(childBBox);
         rect = rect.unite(mappedBBox);
     }
 
@@ -116,7 +116,7 @@ bool KCanvasContainer::slice() const
     return d->slice;
 }
 
-KCanvasMatrix KCanvasContainer::getAspectRatio(const QRect logical, const QRect physical) const
+KCanvasMatrix KCanvasContainer::getAspectRatio(const QRectF logical, const QRectF physical) const
 {
     KCanvasMatrix temp;
 

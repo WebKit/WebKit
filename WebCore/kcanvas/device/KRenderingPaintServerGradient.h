@@ -102,11 +102,11 @@ public:
     virtual KCPaintServerType type() const;
 
     // 'Linear Gradient' interface
-    QPoint gradientStart() const;
-    void setGradientStart(const QPoint &start);
+    QPointF gradientStart() const;
+    void setGradientStart(const QPointF &start);
 
-    QPoint gradientEnd() const;
-    void setGradientEnd(const QPoint &end);
+    QPointF gradientEnd() const;
+    void setGradientEnd(const QPointF &end);
 
     QTextStream &externalRepresentation(QTextStream &) const;
 private:
@@ -123,11 +123,11 @@ public:
     virtual KCPaintServerType type() const;
 
     // 'Radial Gradient' interface
-    QPoint gradientCenter() const;
-    void setGradientCenter(const QPoint &center);
+    QPointF gradientCenter() const;
+    void setGradientCenter(const QPointF &center);
 
-    QPoint gradientFocal() const;
-    void setGradientFocal(const QPoint &focal);
+    QPointF gradientFocal() const;
+    void setGradientFocal(const QPointF &focal);
 
     float gradientRadius() const;
     void setGradientRadius(float radius);

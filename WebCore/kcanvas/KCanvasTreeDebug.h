@@ -28,9 +28,12 @@
 #include <q3valuelist.h>
 
 class QMatrix;
+class QSizeF;
 class QRect;
 class QPoint;
 class QColor;
+class QRectF;
+class QPointF;
 class QStringList;
 class KCClipData;
 class KCPathData;
@@ -52,6 +55,9 @@ QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const QRect &);
 QTextStream &operator<<(QTextStream &ts, const QColor &);
 QTextStream &operator<<(QTextStream &ts, const QPoint &);
+QTextStream &operator<<(QTextStream &ts, const QSizeF &);
+QTextStream &operator<<(QTextStream &ts, const QRectF &);
+QTextStream &operator<<(QTextStream &ts, const QPointF &);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.

@@ -75,7 +75,7 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
     [m_imagesByName release];
 }
 
-void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &bbox)
+void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRectF &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
@@ -99,10 +99,10 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRect &b
     CGContext *filterCGContext = CGLayerGetContext(m_filterCGLayer);
     device->pushContext(new KRenderingDeviceContextQuartz(filterCGContext));
     
-    CGContextConcatCTM(filterCGContext, CGAffineTransformMakeTranslation(float(-1 * bbox.x()), float(-1 * bbox.y())));
+    CGContextConcatCTM(filterCGContext, CGAffineTransformMakeTranslation(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
 
-void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRect &bbox)
+void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRectF &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;

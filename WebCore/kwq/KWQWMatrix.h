@@ -27,6 +27,7 @@
 #define QWMATRIX_H_
 
 #include <ApplicationServices/ApplicationServices.h>
+#include <QRectF>
 
 class QRect;
 
@@ -39,6 +40,7 @@ public:
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
     QRect QWMatrix::mapRect(const QRect &rect) const;
+    QRectF QWMatrix::mapRect(const QRectF &rect) const;
     
     bool isIdentity() const;
     

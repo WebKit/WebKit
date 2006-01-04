@@ -25,7 +25,7 @@
 #define KCanvasFilters_H
 
 #include "KCanvasResources.h"
-
+#include <QSizeF>
 // Enumerations
 typedef enum
 {
@@ -75,41 +75,6 @@ private:
     float m_z;
 };
 
-// FIXME: QPointF and QSizeF will be removed from this file when
-// http://bugzilla.opendarwin.org/show_bug.cgi?id=4462 is resolved.
-
-class QPointF {
-public:
-    QPointF(float x, float y) : m_x(x), m_y(y) { }
-    // this constructor is needed for building on gcc 3.3
-    QPointF() { }
-
-    float x() const { return m_x; }
-    void setX(float x) { m_x = x; }
-    
-    float y() const { return m_y; }
-    void setY(float y) { m_y = y; }
-    
-private:
-    float m_x;
-    float m_y;
-};
-
-class QSizeF {
-public:
-    QSizeF(float w, float h) : m_width(w), m_height(h) { }
-
-    float width() const { return m_width; }
-    void setWidth(float width) { m_width = width; }
-    
-    float height() const { return m_height; }
-    void setHeight(float height) { m_height = height; }
-    
-private:
-    float m_width;
-    float m_height;
-};
-
 class KCanvasFilterEffect;
 class KRenderingDevice;
 
@@ -127,18 +92,18 @@ public:
     bool effectBoundingBoxMode() const { return m_effectBBoxMode; }
     void setEffectBoundingBoxMode(bool bboxMode) { m_effectBBoxMode = bboxMode; }    
 
-    QRect filterRect() const { return m_filterRect; }
-    void setFilterRect(const QRect &rect) { m_filterRect = rect; }
+    QRectF filterRect() const { return m_filterRect; }
+    void setFilterRect(const QRectF &rect) { m_filterRect = rect; }
 
     void addFilterEffect(KCanvasFilterEffect *effect);
 
-    virtual void prepareFilter(KRenderingDevice *device, const QRect &bbox) = 0;
-    virtual void applyFilter(KRenderingDevice *device, const QRect &bbox) = 0;
+    virtual void prepareFilter(KRenderingDevice *device, const QRectF &bbox) = 0;
+    virtual void applyFilter(KRenderingDevice *device, const QRectF &bbox) = 0;
 
     QTextStream &externalRepresentation(QTextStream &) const;
 
 protected:
-    QRect m_filterRect;
+    QRectF m_filterRect;
     Q3ValueList<KCanvasFilterEffect *> m_effects;
     bool m_filterBBoxMode;
     bool m_effectBBoxMode;
@@ -165,8 +130,8 @@ public:
 
     virtual KCFilterEffectType effectType() const { return FE_TURBULENCE; }
 
-    QRect subRegion() const;
-    void setSubRegion(const QRect &subregion);
+    QRectF subRegion() const;
+    void setSubRegion(const QRectF &subregion);
 
     QString in() const;
     void setIn(const QString &in);
@@ -181,7 +146,7 @@ public:
     virtual QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-    QRect m_subregion;
+    QRectF m_subregion;
     QString m_in;
     QString m_result;
 };
@@ -327,8 +292,8 @@ class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
 public:
     KCanvasFEConvolveMatrix() { };
 
-    QSize kernelSize() const { return m_kernelSize; }
-    void setKernelSize(QSize kernelSize) { m_kernelSize = kernelSize; }
+    QSizeF kernelSize() const { return m_kernelSize; }
+    void setKernelSize(QSizeF kernelSize) { m_kernelSize = kernelSize; }
     
     Q3ValueList<float> kernel() const { return m_kernelMatrix; }
     void setKernel(Q3ValueList<float> kernel) { m_kernelMatrix = kernel; }
@@ -339,8 +304,8 @@ public:
     float bias() const { return m_bias; }
     void setBias(float bias) { m_bias = bias; }
     
-    QSize targetOffset() const { return m_targetOffset; }
-    void setTargetOffset(QSize targetOffset) { m_targetOffset = targetOffset; }
+    QSizeF targetOffset() const { return m_targetOffset; }
+    void setTargetOffset(QSizeF targetOffset) { m_targetOffset = targetOffset; }
     
     KCEdgeModeType edgeMode() const { return m_edgeMode; }
     void setEdgeMode(KCEdgeModeType edgeMode) { m_edgeMode = edgeMode; }
@@ -354,11 +319,11 @@ public:
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-    QSize m_kernelSize;
+    QSizeF m_kernelSize;
     Q3ValueList<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
-    QSize m_targetOffset;
+    QSizeF m_targetOffset;
     KCEdgeModeType m_edgeMode;
     QPointF m_kernelUnitLength;
     bool m_preserveAlpha;

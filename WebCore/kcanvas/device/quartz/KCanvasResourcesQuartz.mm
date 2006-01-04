@@ -124,9 +124,9 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         filter->prepareFilter(quartzDevice, relativeBBox(true));
     
     if (!viewBox().isNull()) {
-        QRect viewportRect = viewport();
+        QRectF viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
-            viewportRect = QRect(viewport().x(), viewport().y(), width(), height());
+            viewportRect = QRectF(viewport().x(), viewport().y(), width(), height());
         CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), viewportRect).qmatrix()));
     }
     
@@ -146,22 +146,22 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     }
 }
 
-void KCanvasContainerQuartz::setViewport(const QRect &viewport)
+void KCanvasContainerQuartz::setViewport(const QRectF& viewport)
 {
     m_viewport = viewport;
 }
 
-QRect KCanvasContainerQuartz::viewport() const
+QRectF KCanvasContainerQuartz::viewport() const
 {
    return m_viewport;
 }
 
-void KCanvasContainerQuartz::setViewBox(const QRect &viewBox)
+void KCanvasContainerQuartz::setViewBox(const QRectF& viewBox)
 {
     m_viewBox = viewBox;
 }
 
-QRect KCanvasContainerQuartz::viewBox() const
+QRectF KCanvasContainerQuartz::viewBox() const
 {
     return m_viewBox;
 }
@@ -180,9 +180,9 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
 {
     QMatrix transform = KCanvasContainer::absoluteTransform();
     if (!viewBox().isNull()) {
-        QRect viewportRect = viewport();
+        QRectF viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
-            viewportRect = QRect(viewport().x(), viewport().y(), width(), height());
+            viewportRect = QRectF(viewport().x(), viewport().y(), width(), height());
         transform *= getAspectRatio(viewBox(), viewportRect).qmatrix();
     }
     return transform;

@@ -97,7 +97,7 @@ float SVGLengthImpl::value() const
     khtml::RenderObject *item = (m_context ? m_context->renderer() : 0);
     if(item)
     {
-        QRect bbox = item->relativeBBox();
+        QRectF bbox = item->relativeBBox();
 
         float result = 0;
         if(m_mode == LM_WIDTH)
