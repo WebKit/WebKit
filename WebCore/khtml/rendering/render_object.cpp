@@ -1442,16 +1442,16 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRec
         // two rectangles (but typically only one).
         int width = abs(newBounds.width() - oldBounds.width());
         if (width)
-            c->repaintViewRectangle(QRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()),
+            c->repaintViewRectangle(QRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()) - borderRight(),
                                     newBounds.y(), 
-                                    width,
+                                    width + borderRight(),
                                     kMax(newBounds.height(), oldBounds.height())));
         int height = abs(newBounds.height() - oldBounds.height());
         if (height)
             c->repaintViewRectangle(QRect(newBounds.x(),
-                                          kMin(newBounds.y() + newBounds.height(), oldBounds.y() + oldBounds.height()),
+                                          kMin(newBounds.y() + newBounds.height(), oldBounds.y() + oldBounds.height()) - borderBottom(),
                                           kMax(newBounds.width(), oldBounds.width()),
-                                          height));
+                                          height + borderBottom()));
         return false;
     }
     return true;

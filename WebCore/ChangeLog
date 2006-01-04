@@ -1,3 +1,15 @@
+2006-01-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6301
+          REGRESSION: Border repaint glitch
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaintAfterLayoutIfNeeded): Repaint parts of the
+        border that moved.
+        * manual-tests/border-repaint-glitch.html: Added.
+
 2005-12-30  Kimmo Kinnunen  <kimmo.kinnunen@nokia.com>
 
         Reviewed by eseidel.
