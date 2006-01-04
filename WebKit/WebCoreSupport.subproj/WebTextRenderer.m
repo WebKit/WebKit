@@ -515,49 +515,74 @@ static void destroy(WebTextRenderer *renderer)
     return CG_floatWidthForRun(self, run, style, 0, 0, 0, 0, 0);
 }
 
-- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width:(int)width color:(NSColor *)color thickness:(float)thickness
+static void drawHorizontalLine(float x, float y, float width, NSColor *color, float thickness, bool shouldAntialias)
 {
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-
-    bool flag = [graphicsContext shouldAntialias];
-
-    // We don't want antialiased lines on screen, but we do when printing (else they are too thick).
-    if ([graphicsContext isDrawingToScreen]) {
-        [graphicsContext setShouldAntialias:NO];
-    }
-    
-    [color set];
-
     CGContextRef cgContext = (CGContextRef)[graphicsContext graphicsPort];
 
-    // Hack to make thickness 2 underlines for international text input look right
-    if (thickness > 1.5F && thickness < 2.5F) {
-        yOffset += .5F;
-    }
+    CGContextSaveGState(cgContext);
 
-    if (thickness == 0.0F) {
-        if ([graphicsContext isDrawingToScreen]) {
-            CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0F, 1.0F), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
-            CGContextSetLineWidth(cgContext, size.width);
-        } else {
-            // See bugzilla bug 4255 for details of why we do this when printing
-            CGContextSetLineWidth(cgContext, 0.5F);
-        }
-    } else {
-        CGContextSetLineWidth(cgContext, thickness);
-    }
-    
-    // Use CGContextStrokeLineSegments.
-    // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
-    // Tiger shipped with Q2DX disabled, tho, so we can use CGContextStrokeLineSegments.
+    [color set];
+    CGContextSetLineWidth(cgContext, thickness);
+    CGContextSetShouldAntialias(cgContext, shouldAntialias);
+
+    float halfThickness = thickness / 2;
+
     CGPoint linePoints[2];
-    linePoints[0].x = point.x;
-    linePoints[0].y = point.y + 1.5F + yOffset;
-    linePoints[1].x = point.x - 1.0F + width;
-    linePoints[1].y = linePoints[0].y;
+    linePoints[0].x = x + halfThickness;
+    linePoints[0].y = y + halfThickness;
+    linePoints[1].x = x + width - halfThickness;
+    linePoints[1].y = y + halfThickness;
     CGContextStrokeLineSegments(cgContext, linePoints, 2);
 
-    [graphicsContext setShouldAntialias: flag];
+    CGContextRestoreGState(cgContext);
+}
+
+- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width:(int)width color:(NSColor *)color thickness:(float)thickness
+{
+    // Note: This function assumes that point.x and point.y are integers (and that's currently always the case).
+
+    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+    CGContextRef cgContext = (CGContextRef)[graphicsContext graphicsPort];
+
+    bool printing = ![graphicsContext isDrawingToScreen];
+
+    float x = point.x;
+    float y = point.y + yOffset;
+
+    // Leave 1.0 in user space between the baseline of the text and the top of the underline.
+    // FIXME: Is this the right distance for space above the underline? Even for thick underlines on large sized text?
+    y += 1;
+
+    if (printing) {
+        // When printing, use a minimum thickness of 0.5 in user space.
+        // See bugzilla bug 4255 for details of why 0.5 is the right minimum thickness to use while printing.
+        if (thickness < 0.5)
+            thickness = 0.5;
+
+        // When printing, use antialiasing instead of putting things on integral pixel boundaries.
+    } else {
+        // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
+        if (thickness < 1)
+            thickness = 1;
+
+        // On screen, round all parameters to integer boundaries in device space.
+        CGRect lineRect = CGContextConvertRectToDeviceSpace(cgContext, CGRectMake(x, y, width, thickness));
+        lineRect.origin.x = roundf(lineRect.origin.x);
+        lineRect.origin.y = roundf(lineRect.origin.y);
+        lineRect.size.width = roundf(lineRect.size.width);
+        lineRect.size.height = roundf(lineRect.size.height);
+        if (lineRect.size.height == 0) // don't let thickness round down to 0 pixels
+            lineRect.size.height = 1;
+        lineRect = CGContextConvertRectToUserSpace(cgContext, lineRect);
+        x = lineRect.origin.x;
+        y = lineRect.origin.y;
+        width = lineRect.size.width;
+        thickness = lineRect.size.height;
+    }
+
+    // FIXME: How about using a rectangle fill instead of drawing a line?
+    drawHorizontalLine(x, y, width, color, thickness, printing);
 }
 
 - (NSRect)selectionRectForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry

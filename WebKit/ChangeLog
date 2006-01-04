@@ -1,3 +1,22 @@
+2006-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+	This is a fix for <rdar://problem/3710994> HiDPI: Link underlines are 
+	still one pixel high even if the UI resolution is > 100%
+
+	This fix refactors -drawLineForCharacters to make its organization
+	more logical. It changes behavior when printing to the screen by
+	rounding the parameters of the line (x- and y-values, width, and 
+	thickness) to integer boundaries in device space. Previously,
+	this part of the routine just hardcoded a 1 pixel line.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (drawHorizontalLine): This just takes care of drawing the line once everything
+	has been calculated in -drawLineForCharacters
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]):
+	Now takes device space into account. Calls drawHorizontalLine
+
 2006-01-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
