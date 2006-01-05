@@ -8,8 +8,8 @@ layer at (0,0) size 800x118
           text run at (0,0) width 324: "There should be a solid vertical bar of green below."
       RenderBlock {DIV} at (0,34) size 784x60
         RenderBlock {DIV} at (0,0) size 784x15
-          RenderText {TEXT} at (0,0) size 105x15
-            text run at (0,0) width 105: "\x{C2} \x{C2} \x{C2} X"
+          RenderText {TEXT} at (0,0) size 60x15
+            text run at (0,0) width 60: "   X"
         RenderBlock {DIV} at (45,15) size 739x15
           RenderText {TEXT} at (0,0) size 15x15
             text run at (0,0) width 15: "X"

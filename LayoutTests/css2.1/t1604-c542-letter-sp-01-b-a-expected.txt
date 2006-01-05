@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x226
-  RenderBlock {HTML} at (0,0) size 800x226
-    RenderBody {BODY} at (8,16) size 784x202
+layer at (0,0) size 800x202
+  RenderBlock {HTML} at (0,0) size 800x202
+    RenderBody {BODY} at (8,16) size 784x178
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 708x18
           text run at (0,0) width 708: "There should be a stripy pattern of yellow and aqua below (each vertical stripe should be straight and unbroken)."
       RenderBlock {DIV} at (48,34) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {TEXT} at (0,0) size 480x24
-          text run at (0,0) width 480: "x\x{C2} \x{C2} x\x{C2} \x{C2} \x{C2} \x{C2} xx\x{C2} xx"
+        RenderText {TEXT} at (0,0) size 312x24
+          text run at (0,0) width 312: "x  x    xx xx"
       RenderBlock {DIV} at (48,58) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {TEXT} at (0,0) size 480x24
-          text run at (0,0) width 480: "x\x{C2} \x{C2} x\x{C2} \x{C2} \x{C2} \x{C2} xx\x{C2} xx"
+        RenderText {TEXT} at (0,0) size 312x24
+          text run at (0,0) width 312: "x  x    xx xx"
       RenderBlock {DIV} at (48,82) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {TEXT} at (0,0) size 480x24
-          text run at (0,0) width 480: "x\x{C2} \x{C2} x\x{C2} \x{C2} \x{C2} \x{C2} xx\x{C2} xx"
+        RenderText {TEXT} at (0,0) size 312x24
+          text run at (0,0) width 312: "x  x    xx xx"
       RenderBlock {DIV} at (48,106) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
         RenderText {TEXT} at (0,0) size 216x24
           text run at (0,0) width 216: "xx "
@@ -22,10 +22,9 @@ layer at (0,0) size 800x226
           RenderText {TEXT} at (216,0) size 120x24
             text run at (216,0) width 120: "xx xx"
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (48,130) size 360x48 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {TEXT} at (0,0) size 312x48
-          text run at (0,0) width 312: "x \x{C2} x\x{C2}  \x{C2}  xx"
-          text run at (0,24) width 48: "xx"
-      RenderBlock {DIV} at (48,178) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {TEXT} at (0,0) size 528x24
-          text run at (0,0) width 528: "x\x{C2} \x{C2} \x{C2} \x{C2} \x{C2} x\x{C2} \x{C2} \x{C2} \x{C2} \x{C2} \x{C2} \x{C2} \x{C2} \x{C2} x\x{C2} x\x{C2} \x{C2} \x{C2} x\x{C2} x"
+      RenderBlock {DIV} at (48,130) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {TEXT} at (0,0) size 312x24
+          text run at (0,0) width 312: "x  x    xx xx"
+      RenderBlock {DIV} at (48,154) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {TEXT} at (0,0) size 300x24
+          text run at (0,0) width 300: "x     x         x x   x x"

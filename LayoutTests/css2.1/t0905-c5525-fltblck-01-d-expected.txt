@@ -11,5 +11,5 @@ layer at (0,0) size 800x133
               text run at (0,18) width 81: "and spill out "
               text run at (81,18) width 171: "onto the blue area below it."
         RenderBlock {P} at (3,3) size 778x18
-          RenderText {TEXT} at (0,0) size 263x18
-            text run at (0,0) width 263: "You should see a teal box to the right. \x{E2}\x{2021}\x{A8}"
+          RenderText {TEXT} at (0,0) size 259x18
+            text run at (0,0) width 259: "You should see a teal box to the right. \x{21E8}"

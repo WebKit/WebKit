@@ -7,6 +7,6 @@ layer at (0,0) size 800x476
         RenderText {TEXT} at (0,0) size 769x36
           text run at (0,0) width 396: "Below this paragraph there should be a big teal square half the "
           text run at (396,0) width 373: "width of the window, aligned flush with the right hand side"
-          text run at (0,18) width 34: "(\x{E2}\x{2021}\x{A8})."
+          text run at (0,18) width 30: "(\x{21E8})."
       RenderBlock {P} at (0,52) size 784x392 [color=#000080]
         RenderImage {IMG} at (392,0) size 392x392

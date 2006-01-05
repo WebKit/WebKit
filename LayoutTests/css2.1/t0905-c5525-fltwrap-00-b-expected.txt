@@ -6,7 +6,7 @@ layer at (0,0) size 800x291
       RenderBlock (floating) {DIV} at (0,0) size 196x275 [color=#FFFFFF] [bgcolor=#000080]
         RenderBlock {P} at (0,0) size 196x275
           RenderText {TEXT} at (0,0) size 185x275
-            text run at (0,0) width 152: "\x{E2}\x{2021}\x{A6} This"
+            text run at (0,0) width 145: "\x{21E6} This"
             text run at (0,55) width 166: "blue box"
             text run at (0,110) width 185: "should be"
             text run at (0,165) width 118: "on the"
@@ -18,11 +18,11 @@ layer at (0,0) size 800x291
             text run at (0,55) width 72: "box"
             text run at (0,110) width 185: "should be"
             text run at (0,165) width 118: "on the"
-            text run at (0,220) width 175: "right. \x{E2}\x{2021}\x{A8}"
+            text run at (0,220) width 162: "right. \x{21E8}"
       RenderBlock {P} at (0,0) size 784x275
         RenderText {TEXT} at (196,0) size 365x275
           text run at (196,0) width 365: "This text should be"
           text run at (196,55) width 335: "in between a blue"
-          text run at (196,110) width 332: "box on the \x{E2}\x{2021}\x{A6}left"
+          text run at (196,110) width 325: "box on the \x{21E6}left"
           text run at (196,165) width 326: "and a teal box on"
-          text run at (196,220) width 233: "the right\x{E2}\x{2021}\x{A8}."
+          text run at (196,220) width 220: "the right\x{21E8}."

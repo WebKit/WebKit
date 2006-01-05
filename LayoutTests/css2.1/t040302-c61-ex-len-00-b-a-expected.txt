@@ -6,12 +6,12 @@ layer at (0,0) size 800x118
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {TEXT} at (0,0) size 327x18
           text run at (0,0) width 327: "The two blocks below should have the same height."
-      RenderTable {TABLE} at (80,34) size 142x52
+      RenderTable {TABLE} at (80,34) size 102x52
         RenderTableSection {TBODY} at (0,0) size 0x52
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 88x48 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (4,4) size 80x40 [color=#000080]
-                RenderText {TEXT} at (0,0) size 80x40
-                  text run at (0,0) width 80: "\x{C3}\x{2030}"
-            RenderTableCell {TD} at (92,2) size 48x48 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 48x48 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 40x40 [color=#000080]
+                RenderText {TEXT} at (0,0) size 40x40
+                  text run at (0,0) width 40: "\x{C9}"
+            RenderTableCell {TD} at (52,2) size 48x48 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (4,4) size 40x40 [border: (40px solid #000080) none]

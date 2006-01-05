@@ -12,14 +12,14 @@ layer at (0,0) size 800x8
               text run at (94,18) width 200: "tightly squeezed in between the"
               text run at (0,36) width 193: "edge of the teal box and the "
               text run at (193,36) width 101: "outside edge of"
-              text run at (0,54) width 117: "the blue block. \x{E2}\x{2021}\x{A8}"
+              text run at (0,54) width 113: "the blue block. \x{21E8}"
         RenderBlock {P} at (0,0) size 588x252
           RenderText {TEXT} at (0,0) size 277x36
             text run at (0,0) width 277: "Inside this blue block on the right there"
-            text run at (0,18) width 160: "should be a teal box. \x{E2}\x{2021}\x{A8} "
+            text run at (0,18) width 159: "should be a teal box. \x{21E8} "
           RenderInline {SPAN} at (0,0) size 588x234 [color=#000080]
-            RenderText {TEXT} at (160,18) size 588x234
-              text run at (160,18) width 117: "FAIL FAIL FAIL"
+            RenderText {TEXT} at (159,18) size 588x234
+              text run at (159,18) width 118: "FAIL FAIL FAIL"
               text run at (0,36) width 277: "FAIL FAIL FAIL FAIL FAIL FAIL FAIL"
               text run at (0,54) width 80: "FAIL FAIL "
               text run at (80,54) width 197: "FAIL FAIL FAIL FAIL FAIL"

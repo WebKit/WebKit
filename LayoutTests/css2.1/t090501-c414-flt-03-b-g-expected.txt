@@ -4,15 +4,15 @@ layer at (0,0) size 800x155
   RenderBlock {HTML} at (0,0) size 800x155
     RenderBody {BODY} at (8,16) size 784x123
       RenderBlock {P} at (0,0) size 784x37 [color=#000080]
-        RenderText {TEXT} at (0,1) size 401x18
+        RenderText {TEXT} at (0,1) size 399x18
           text run at (0,1) width 246: "In the following test, the purple square "
-          text run at (246,1) width 155: "should be on the left (\x{E2}\x{2021}\x{A6}"
-        RenderImage {IMG} at (401,0) size 19x19
-        RenderText {TEXT} at (420,1) size 215x18
-          text run at (420,1) width 215: "), and the teal square on the right ("
-        RenderImage {IMG} at (635,0) size 19x19
-        RenderText {TEXT} at (654,1) size 750x36
-          text run at (654,1) width 96: "\x{E2}\x{2021}\x{A8}) of the blue"
+          text run at (246,1) width 153: "should be on the left (\x{21E6}"
+        RenderImage {IMG} at (399,0) size 19x19
+        RenderText {TEXT} at (418,1) size 215x18
+          text run at (418,1) width 215: "), and the teal square on the right ("
+        RenderImage {IMG} at (633,0) size 19x19
+        RenderText {TEXT} at (652,1) size 744x36
+          text run at (652,1) width 92: "\x{21E8}) of the blue"
           text run at (0,19) width 61: "rectangle."
       RenderBlock {DIV} at (0,53) size 784x70
         RenderBlock {DIV} at (16,0) size 752x70 [color=#0000FF] [bgcolor=#000080]

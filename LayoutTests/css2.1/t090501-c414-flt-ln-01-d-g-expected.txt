@@ -15,23 +15,23 @@ layer at (0,0) size 800x484
       RenderBlock {DIV} at (16,70) size 752x382 [color=#C0C0C0] [border: (5px solid #800080)]
         RenderText {TEXT} at (133,22) size 474x20
           text run at (133,22) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 24x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
-          RenderText {TEXT} at (610,22) size 18x20
-            text run at (610,22) width 18: "\x{E2}\x{2021}\x{A6}"
-        RenderText {TEXT} at (631,22) size 4x20
-          text run at (631,22) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+          RenderText {TEXT} at (610,22) size 16x20
+            text run at (610,22) width 16: "\x{21E6}"
+        RenderText {TEXT} at (629,22) size 4x20
+          text run at (629,22) width 4: " "
         RenderImage {IMG} at (21,21) size 112x112 [color=#FF0000]
-        RenderText {TEXT} at (635,22) size 577x40
-          text run at (635,22) width 75: "dummy text"
+        RenderText {TEXT} at (633,22) size 575x40
+          text run at (633,22) width 75: "dummy text"
           text run at (133,42) width 395: "dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 26x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
-          RenderText {TEXT} at (531,42) size 20x20
-            text run at (531,42) width 20: "\x{E2}\x{2021}\x{A8}"
-        RenderText {TEXT} at (554,42) size 4x20
-          text run at (554,42) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
+          RenderText {TEXT} at (531,42) size 16x20
+            text run at (531,42) width 16: "\x{21E8}"
+        RenderText {TEXT} at (550,42) size 4x20
+          text run at (550,42) width 4: " "
         RenderImage {IMG} at (619,41) size 112x112 [color=#FF0000]
-        RenderText {TEXT} at (558,42) size 707x320
-          text run at (558,42) width 48: "dummy"
+        RenderText {TEXT} at (554,42) size 707x320
+          text run at (554,42) width 48: "dummy"
           text run at (133,62) width 422: "text dummy text dummy text dummy text dummy text dummy text "
           text run at (555,62) width 48: "dummy"
           text run at (133,82) width 422: "text dummy text dummy text dummy text dummy text dummy text "

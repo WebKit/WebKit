@@ -12,44 +12,44 @@ layer at (0,0) size 800x68
           text run at (408,18) width 71: "alignment.)"
       RenderBlock {DIV} at (16,52) size 320x0
         RenderBlock (floating) {P} at (4,4) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 46x18
-            text run at (7,7) width 46: "\x{E2}\x{2021}\x{A6} A 1"
+          RenderText {TEXT} at (7,7) size 44x18
+            text run at (7,7) width 44: "\x{21E6} A 1"
         RenderBlock (floating) {P} at (138,4) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 45x18
-            text run at (7,7) width 45: "\x{E2}\x{2021}\x{A6} B 2"
+          RenderText {TEXT} at (7,7) size 43x18
+            text run at (7,7) width 43: "\x{21E6} B 2"
         RenderBlock (floating) {P} at (4,44) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 46x18
-            text run at (7,7) width 46: "\x{E2}\x{2021}\x{A6} A 3"
+          RenderText {TEXT} at (7,7) size 44x18
+            text run at (7,7) width 44: "\x{21E6} A 3"
         RenderBlock (floating) {P} at (190,44) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (72,7) size 47x18
-            text run at (72,7) width 47: "B 4 \x{E2}\x{2021}\x{A8}"
+          RenderText {TEXT} at (76,7) size 43x18
+            text run at (76,7) width 43: "B 4 \x{21E8}"
         RenderBlock (floating) {P} at (4,84) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 46x18
-            text run at (7,7) width 46: "\x{E2}\x{2021}\x{A6} A 5"
+          RenderText {TEXT} at (7,7) size 44x18
+            text run at (7,7) width 44: "\x{21E6} A 5"
         RenderBlock (floating) {P} at (190,84) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (72,7) size 47x18
-            text run at (72,7) width 47: "B 6 \x{E2}\x{2021}\x{A8}"
+          RenderText {TEXT} at (76,7) size 43x18
+            text run at (76,7) width 43: "B 6 \x{21E8}"
         RenderBlock (floating) {P} at (4,124) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 46x18
-            text run at (7,7) width 46: "\x{E2}\x{2021}\x{A6} A 7"
+          RenderText {TEXT} at (7,7) size 44x18
+            text run at (7,7) width 44: "\x{21E6} A 7"
         RenderBlock (floating) {P} at (138,124) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 45x18
-            text run at (7,7) width 45: "\x{E2}\x{2021}\x{A6} B 8"
+          RenderText {TEXT} at (7,7) size 43x18
+            text run at (7,7) width 43: "\x{21E6} B 8"
         RenderBlock (floating) {P} at (4,164) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 46x18
-            text run at (7,7) width 46: "\x{E2}\x{2021}\x{A6} A 9"
+          RenderText {TEXT} at (7,7) size 44x18
+            text run at (7,7) width 44: "\x{21E6} A 9"
         RenderBlock (floating) {P} at (190,164) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (64,7) size 55x18
-            text run at (64,7) width 55: "B 10 \x{E2}\x{2021}\x{A8}"
+          RenderText {TEXT} at (68,7) size 51x18
+            text run at (68,7) width 51: "B 10 \x{21E8}"
         RenderBlock (floating) {P} at (4,204) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 54x18
-            text run at (7,7) width 54: "\x{E2}\x{2021}\x{A6} A 11"
+          RenderText {TEXT} at (7,7) size 52x18
+            text run at (7,7) width 52: "\x{21E6} A 11"
         RenderBlock (floating) {P} at (190,204) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (64,7) size 55x18
-            text run at (64,7) width 55: "B 12 \x{E2}\x{2021}\x{A8}"
+          RenderText {TEXT} at (68,7) size 51x18
+            text run at (68,7) width 51: "B 12 \x{21E8}"
         RenderBlock (floating) {P} at (4,244) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 54x18
-            text run at (7,7) width 54: "\x{E2}\x{2021}\x{A6} A 13"
+          RenderText {TEXT} at (7,7) size 52x18
+            text run at (7,7) width 52: "\x{21E6} A 13"
         RenderBlock (floating) {P} at (138,244) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {TEXT} at (7,7) size 53x18
-            text run at (7,7) width 53: "\x{E2}\x{2021}\x{A6} B 14"
+          RenderText {TEXT} at (7,7) size 51x18
+            text run at (7,7) width 51: "\x{21E6} B 14"

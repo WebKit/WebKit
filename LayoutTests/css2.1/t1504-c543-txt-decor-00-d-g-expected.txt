@@ -35,14 +35,14 @@ layer at (0,0) size 800x394
         RenderInline {STRONG} at (0,0) size 4x18 [color=#FF0000]
           RenderText {TEXT} at (285,0) size 4x18
             text run at (285,0) width 4: " "
-        RenderText {TEXT} at (289,0) size 16x18
-          text run at (289,0) width 16: "\x{C2} "
+        RenderText {TEXT} at (289,0) size 4x18
+          text run at (289,0) width 4: " "
       RenderBlock {P} at (0,272) size 784x19 [color=#000080]
         RenderText {TEXT} at (0,1) size 285x18
           text run at (0,1) width 285: "There should be no red at the end of this line."
         RenderImage {IMG} at (285,0) size 15x15
-        RenderText {TEXT} at (300,1) size 16x18
-          text run at (300,1) width 16: "\x{C2} "
+        RenderText {TEXT} at (300,1) size 4x18
+          text run at (300,1) width 4: " "
       RenderBlock {P} at (0,307) size 784x21 [color=#000080]
         RenderText {TEXT} at (0,3) size 202x18
           text run at (0,3) width 202: "This sentence and all its images "
