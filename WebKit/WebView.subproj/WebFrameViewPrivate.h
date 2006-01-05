@@ -44,4 +44,17 @@
 */
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
 
+/*!
+    @method _largestChildWithScrollBars
+    @abstract Of the child WebFrameViews that are displaying scroll bars, determines which has the largest area.
+    @result A child WebFrameView that is displaying scroll bars, or nil if none.
+*/
+- (WebFrameView *)_largestChildWithScrollBars;
+
+/*!
+    @method _hasScrollBars
+    @result YES if at least one scroll bar is currently displayed
+ */
+- (BOOL)_hasScrollBars;
+
 @end

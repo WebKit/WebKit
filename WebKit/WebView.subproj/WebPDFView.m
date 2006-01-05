@@ -499,6 +499,45 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     [PDFSubview scrollSelectionToVisible:nil];
 }
 
+- (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey
+{
+    NSString *keyAsString = [NSString stringWithCharacters:&functionKey length:1];
+    return [NSEvent keyEventWithType:NSKeyDown
+                            location:NSZeroPoint
+                       modifierFlags:0
+                           timestamp:0
+                        windowNumber:0
+                             context:nil
+                          characters:keyAsString
+         charactersIgnoringModifiers:keyAsString
+                           isARepeat:NO
+                             keyCode:0];
+}
+
+- (void)scrollPageDown:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSPageDownFunctionKey]];
+}
+
+- (void)scrollPageUp:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSPageUpFunctionKey]];
+}
+
+- (void)scrollToBeginningOfDocument:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSHomeFunctionKey]];
+}
+
+- (void)scrollToEndOfDocument:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSEndFunctionKey]];
+}
+
 // jumpToSelection is the old name for what AppKit now calls centerSelectionInVisibleArea. Safari
 // was using the old jumpToSelection selector in its menu. Newer versions of Safari will us the
 // selector centerSelectionInVisibleArea. We'll leave this old selector in place for two reasons:

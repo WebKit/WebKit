@@ -178,6 +178,8 @@ macro(scrollLineDown) \
 macro(scrollLineUp) \
 macro(scrollPageDown) \
 macro(scrollPageUp) \
+macro(scrollToBeginningOfDocument) \
+macro(scrollToEndOfDocument) \
 macro(selectAll) \
 macro(selectLine) \
 macro(selectParagraph) \
