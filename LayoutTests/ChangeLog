@@ -1,3 +1,12 @@
+2006-01-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6318
+        REGRESSION: Repro crash in JS called from Flash on bdash.net.nz
+
+        * fast/plugins/netscape-back-forward-expected.txt: Added.
+        * fast/plugins/netscape-back-forward.html: Added.
+        * fast/plugins/resources/go-back.html: Added.
+
 2006-01-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

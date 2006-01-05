@@ -1,0 +1,14 @@
+Bug: REGRESSION: Repro crash in JS called from Flash on bdash.net.nz
+
+If this test passes, you will see a PASS messge below.
+
+
+----- AFTER back/forward navigation: -----
+
+plugin.property is 'property'
+
+callback received from plugin
+
+PASS
+
+

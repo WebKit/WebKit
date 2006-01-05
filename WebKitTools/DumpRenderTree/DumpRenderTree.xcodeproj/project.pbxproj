@@ -28,6 +28,7 @@
 			dependencies = (
 				A84F609108B1370E00E9745F /* PBXTargetDependency */,
 				A84F608F08B1370E00E9745F /* PBXTargetDependency */,
+				141BF238096A451E00E0753C /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -35,6 +36,15 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		141BF435096A455900E0753C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
+		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
+		141BF437096A455900E0753C /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
+		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
+		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
+		141BF44A096A45C800E0753C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF445096A45C800E0753C /* main.c */; };
+		141BF44B096A45C800E0753C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF446096A45C800E0753C /* PluginObject.c */; };
+		141BF44C096A45C800E0753C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 141BF448096A45C800E0753C /* Info.plist */; };
+		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */; settings = {ATTRIBUTES = (); }; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
@@ -68,6 +78,13 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
+		141BF237096A451E00E0753C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 141BF21E096A441D00E0753C;
+			remoteInfo = TestNetscapePlugIn;
+		};
 		A84F608E08B1370E00E9745F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -86,6 +103,11 @@
 
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpRenderTree.m; sourceTree = "<group>"; };
+		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		141BF445096A45C800E0753C /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../TestNetscapePlugIn.subproj/main.c; sourceTree = "<group>"; };
+		141BF446096A45C800E0753C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = PluginObject.c; path = ../TestNetscapePlugIn.subproj/PluginObject.c; sourceTree = "<group>"; };
+		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PluginObject.h; path = ../TestNetscapePlugIn.subproj/PluginObject.h; sourceTree = "<group>"; };
+		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; name = Info.plist; path = ../TestNetscapePlugIn.subproj/Info.plist; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +123,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		141BF21D096A441D00E0753C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
+				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
+				141BF437096A455900E0753C /* WebCore.framework in Frameworks */,
+				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
+				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9340994F08540CAE007F3BC8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +163,7 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
+				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
 				08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
@@ -145,11 +180,23 @@
 			name = DumpRenderTree;
 			sourceTree = "<group>";
 		};
+		141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */ = {
+			isa = PBXGroup;
+			children = (
+				141BF445096A45C800E0753C /* main.c */,
+				141BF446096A45C800E0753C /* PluginObject.c */,
+				141BF447096A45C800E0753C /* PluginObject.h */,
+				141BF448096A45C800E0753C /* Info.plist */,
+			);
+			path = TestNetscapePlugIn.subproj;
+			sourceTree = "<group>";
+		};
 		9340995508540CAF007F3BC8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				9340995408540CAF007F3BC8 /* DumpRenderTree */,
 				B5A7526708AF4A4A00138E45 /* ImageDiff */,
+				141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,6 +204,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		141BF44E096A45DD00E0753C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9340994B08540CAE007F3BC8 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -176,6 +231,71 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		141BF21E096A441D00E0753C /* TestNetscapePlugIn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 141BF221096A441E00E0753C /* Build configuration list for PBXNativeTarget "TestNetscapePlugIn" */;
+			buildPhases = (
+				141BF21B096A441D00E0753C /* Resources */,
+				141BF44E096A45DD00E0753C /* Headers */,
+				141BF21C096A441D00E0753C /* Sources */,
+				141BF21D096A441D00E0753C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = "TestNetscapePlugIn.plugin-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = TestNetscapePlugIn.plugin;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			dependencies = (
+			);
+			name = TestNetscapePlugIn;
+			productName = TestNetscapePlugIn.plugin;
+			productReference = 141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>TestNetscapePlugIn.plugin</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.TestNetscapePlugIn_plugin</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>CSResourcesFileMapped</key>
+	<string>yes</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.bundle";
+		};
 		9340994A08540CAE007F3BC8 /* DumpRenderTree */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C29BF08902C6D008A9EFC /* Build configuration list for PBXNativeTarget "DumpRenderTree" */;
@@ -254,11 +374,32 @@
 				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
 				B5A7525A08AF4A4A00138E45 /* ImageDiff */,
+				141BF21E096A441D00E0753C /* TestNetscapePlugIn */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		141BF21B096A441D00E0753C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				141BF44C096A45C800E0753C /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		141BF21C096A441D00E0753C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				141BF44A096A45C800E0753C /* main.c in Sources */,
+				141BF44B096A45C800E0753C /* PluginObject.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9340994D08540CAE007F3BC8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -279,6 +420,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		141BF238096A451E00E0753C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 141BF21E096A441D00E0753C /* TestNetscapePlugIn */;
+			targetProxy = 141BF237096A451E00E0753C /* PBXContainerItemProxy */;
+		};
 		A84F608F08B1370E00E9745F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B5A7525A08AF4A4A00138E45 /* ImageDiff */;
@@ -292,6 +438,66 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		141BF222096A441E00E0753C /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = TestNetscapePlugin.subproj/Info.plist;
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = TestNetscapePlugIn;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = plugin;
+			};
+			name = Development;
+		};
+		141BF223096A441E00E0753C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = TestNetscapePlugin.subproj/Info.plist;
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = TestNetscapePlugIn;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = plugin;
+			};
+			name = Deployment;
+		};
 		149C29C008902C6D008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -402,6 +608,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		141BF221096A441E00E0753C /* Build configuration list for PBXNativeTarget "TestNetscapePlugIn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				141BF222096A441E00E0753C /* Development */,
+				141BF223096A441E00E0753C /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		149C29BF08902C6D008A9EFC /* Build configuration list for PBXNativeTarget "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

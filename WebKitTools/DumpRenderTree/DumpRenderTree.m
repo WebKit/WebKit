@@ -34,6 +34,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebPluginDatabase.h>
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -185,6 +186,16 @@ int main(int argc, const char *argv[])
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
 
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSZeroRect 
+                                                   styleMask:NSBorderlessWindowMask 
+                                                     backing:NSBackingStoreNonretained 
+                                                       defer:YES];
+    [window setContentView:webView];
+    
+    NSString *pwd = [[NSString stringWithCString:argv[0]] stringByDeletingLastPathComponent];
+    [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
+    [[WebPluginDatabase installedPlugins] refresh];    
+
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setFrameLoadDelegate:delegate];
@@ -223,6 +234,7 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:nil];
 
     [webView release];
+    [window release];
     [delegate release];
     [editingDelegate release];
 

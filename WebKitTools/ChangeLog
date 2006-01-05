@@ -1,3 +1,58 @@
+2006-01-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6361
+        Add plugin support to DumpRenderTree
+
+        Also wrote first test plugin.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+        (1) Put the WebView in an invisible window, because PlugIns are
+        optimized not to load if there's no parent window.
+        (2) Tell WebKit to load any PlugIns in the directory from which we 
+        loaded. This means we can build nasty PlugIns alongside DumpRenderTree 
+        and they'll load automagically during layout testing, but they won't be
+        added to the user's system, hosing apps like Safari.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added new
+        test PlugIn to project.
+
+        PlugIn added to project:
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/Info.plist: Added.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c: Added.
+        (getPluginClass):
+        (initializeIdentifiers):
+        (pluginHasProperty):
+        (pluginHasMethod):
+        (pluginGetProperty):
+        (pluginSetProperty):
+        (pluginInvoke):
+        (pluginInvokeDefault):
+        (pluginInvalidate):
+        (pluginAllocate):
+        (pluginDeallocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: Added.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+
 2006-01-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
