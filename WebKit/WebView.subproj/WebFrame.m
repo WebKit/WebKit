@@ -64,7 +64,6 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebScriptDebugDelegatePrivate.h>
-#import <WebKit/WebControllerSets.h>
 
 #import <objc/objc-runtime.h>
 
@@ -165,14 +164,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebFrame *)_previousSiblingFrame;
 - (WebFrame *)_nextSiblingFrame;
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
-- (void)_appendChild:(WebFrame *)child;
-- (void)_removeChild:(WebFrame *)child;
 @end
 
 @interface WebFramePrivate : NSObject
 {
 @public
-    NSString *name;
     WebFrameView *webFrameView;
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
@@ -207,8 +203,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSString *frameNamespace;
 }
 
-- (void)setName:(NSString *)name;
-- (NSString *)name;
 - (void)setWebView:(WebView *)wv;
 - (WebView *)webView;
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -246,7 +240,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)dealloc
 {
-    [name release];
     [webFrameView release];
     [dataSource release];
     [provisionalDataSource release];
@@ -266,14 +259,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(frameNamespace == nil);
 
     [super dealloc];
-}
-
-- (NSString *)name { return name; }
-- (void)setName:(NSString *)n 
-{
-    NSString *newName = [n copy];
-    [name release];
-    name = newName;
 }
 
 - (WebFrameView *)webFrameView { return webFrameView; }
@@ -375,16 +360,6 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
     return Frame([[self _bridge] traverseNextFrameStayWithin:[stayWithin _bridge]]);
 }
 
-- (void)_appendChild:(WebFrame *)child
-{
-    [[self _bridge] appendChild:[child _bridge]];
-}
-
-- (void)_removeChild:(WebFrame *)child
-{
-    [[self _bridge] removeChild:[child _bridge]];
-}
-
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -477,7 +452,7 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
     }
 }
 
-- (WebHistoryItem *)_createItem: (BOOL)useOriginal
+- (WebHistoryItem *)_createItem:(BOOL)useOriginal
 {
     WebDataSource *dataSrc = [self dataSource];
     NSURLRequest *request;
@@ -553,20 +528,7 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
 
 - (WebFrame *)_immediateChildFrameNamed:(NSString *)name
 {
-    // FIXME: with a better data structure this could be O(1) instead of O(n) in number 
-    // of child frames
-    for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
-        if ([[child name] isEqualToString:name])
-            return child;
-
-    return nil;
-}
-
-- (void)_setName:(NSString *)name
-{
-    // "_blank" is not a legal frame name
-    if (![name isEqualToString:@"_blank"])
-        [_private setName:name];
+    return Frame([[self _bridge] childFrameNamed:name]);
 }
 
 // FIXME: this exists only as a convenience for Safari, consider moving there
@@ -622,7 +584,7 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
     [self retain]; // retain self temporarily because dealloc can re-enter this method
 
     [bridge close];
-    [[self parentFrame] _removeChild:self];
+    [[[self parentFrame] _bridge] removeChild:bridge];
 
     _private->bridge = nil;
 
@@ -1858,9 +1820,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     else
         webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
         
-    [webView _setTopLevelFrameName:frameName];
-    [[webView _UIDelegateForwarder] webViewShow:webView];
+
     WebFrame *frame = [webView mainFrame];
+    [[frame _bridge] setName:frameName];
+
+    [[webView _UIDelegateForwarder] webViewShow:webView];
 
     [[self _bridge] setOpener:[frame _bridge]];
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
@@ -2180,40 +2144,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_addChild:(WebFrame *)child
 {
-    [self _appendChild:child];
+    [[self _bridge] appendChild:[child _bridge]];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
-}
-
-- (void)_addFramePathToString:(NSMutableString *)path
-{
-    if ([_private->name hasPrefix:@"<!--framePath "]) {
-        // we have a generated name - take the path from our name
-        NSRange ourPathRange = {14, [_private->name length] - 14 - 3};
-        [path appendString:[_private->name substringWithRange:ourPathRange]];
-    } else {
-        // we don't have a generated name - just add our simple name to the end
-        [[self parentFrame] _addFramePathToString:path];
-        [path appendString:@"/"];
-        if (_private->name) {
-            [path appendString:_private->name];
-        }
-    }
-}
-
-// Generate a repeatable name for a child about to be added to us.  The name must be
-// unique within the frame tree.  The string we generate includes a "path" of names
-// from the root frame down to us.  For this path to be unique, each set of siblings must
-// contribute a unique name to the path, which can't collide with any HTML-assigned names.
-// We generate this path component by index in the child list along with an unlikely frame name.
-- (NSString *)_generateFrameName
-{
-    NSMutableString *path = [NSMutableString stringWithCapacity:256];
-    [path insertString:@"<!--framePath " atIndex:0];
-    [self _addFramePathToString:path];
-    // The new child's path component is all but the 1st char and the last 3 chars
-    // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
-    [path appendFormat:@"/<!--frame%d-->-->", [self _childFrameCount]];
-    return path;
 }
 
 - (void)_resetBackForwardList
@@ -2448,44 +2380,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
-// Returns the last child of us and any children, or self
-- (WebFrame *)_deepLastChildFrame
-{
-    WebFrame *result = self;
-    for (WebFrame *lastChild = [self _lastChildFrame]; lastChild; lastChild = [lastChild _lastChildFrame])
-        result = lastChild;
-
-    return result;
-}
-
 // Return next frame to be traversed, visiting children after parent
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
 {
-    WebFrame *result = [self _traverseNextFrameStayWithin:nil];
-
-    if (!result && wrapFlag)
-        return [[self webView] mainFrame];
-
-    return result;
+    return Frame([[self _bridge] nextFrameWithWrap:wrapFlag]);
 }
 
 // Return previous frame to be traversed, exact reverse order of _nextFrame
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
 {
-    // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
-
-    WebFrame *prevSibling = [self _previousSiblingFrame];
-    if (prevSibling)
-        return [prevSibling _deepLastChildFrame];
-    if ([self parentFrame])
-        return [self parentFrame];
-    
-    // no siblings, no parent, self==top
-    if (wrapFlag)
-        return [self _deepLastChildFrame];
-
-    // top view is always the last one in this ordering, so prev is nil without wrap
-    return nil;
+    return Frame([[self _bridge] previousFrameWithWrap:wrapFlag]);
 }
 
 - (void)_setShouldCreateRenderers:(BOOL)f
@@ -2570,7 +2474,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFrame (WebInternal)
 
-- (id)_initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge
 {
     self = [super init];
     if (!self)
@@ -2579,7 +2483,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private = [[WebFramePrivate alloc] init];
 
     [self _setWebView:v];
-    [self _setName:n];
     _private->bridge = bridge;
 
     if (fv) {
@@ -2760,22 +2663,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_setFrameNamespace:(NSString *)namespace
 {
-    ASSERT(self == [[self webView] mainFrame]);
-
-    if (namespace != _private->frameNamespace){
-        [WebFrameNamespaces removeFrame:self fromNamespace:_private->frameNamespace];
-        namespace = [namespace copy];
-        [_private->frameNamespace release];
-        _private->frameNamespace = namespace;
-        [WebFrameNamespaces addFrame:self toNamespace:_private->frameNamespace];
-    }
+    [[self _bridge] setFrameNamespace:namespace];
 }
 
 - (NSString *)_frameNamespace
 {
-    ASSERT(self == [[self webView] mainFrame]);
-
-    return _private->frameNamespace;
+    return [[self _bridge] frameNamespace];
 }
 
 - (BOOL)_hasSelection
@@ -2788,9 +2681,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return selectedDOMRange && ![selectedDOMRange collapsed];
     }
     
-    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         return [[documentView selectedString] length] > 0;
-    }
     
     return NO;
 }
@@ -2798,9 +2690,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_clearSelection
 {
     id documentView = [[self frameView] documentView];    
-    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         [documentView deselectAll];
-    }
 }
 
 #ifndef NDEBUG
@@ -2920,7 +2811,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // FIXME: this method can't work any more and should be marked deprecated
 - (id)initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
 {
-    return [self _initWithName:n webFrameView:fv webView:v bridge:nil];
+    return [self _initWithWebFrameView:fv webView:v bridge:nil];
 }
 
 - (void)dealloc
@@ -2952,7 +2843,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSString *)name
 {
-    return [_private name];
+    return [[self _bridge] name];
 }
 
 - (WebFrameView *)frameView
@@ -3065,7 +2956,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->isStoppingLoad = NO;
 }
 
-
 - (void)reload
 {
     WebDataSource *dataSource = [self dataSource];
@@ -3105,114 +2995,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [newDataSource release];
 }
 
-
-- (BOOL)_shouldAllowAccessFrom:(WebFrame *)source
-{
-    // if no source frame, allow access
-    if (source == nil) {
-        return YES;
-    }
-
-    //   - allow access if the two frames are in the same window
-    if ([self webView] == [source webView]) {
-        return YES;
-    }
-
-    //   - allow if the request is made from a local file.
-    NSString *sourceDomain = [[source _bridge] domain];
-    if ([sourceDomain length] == 0) {
-        return YES;
-    }
-
-    //   - allow access if this frame or one of its ancestors
-    //     has the same origin as source
-    WebFrame *ancestor = self;
-    while (ancestor != nil) {
-        NSString *ancestorDomain = [[ancestor _bridge] domain];
-        if (ancestorDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:ancestorDomain]) {
-            return YES;
-        }
-        ancestor = [ancestor parentFrame];
-    }
-
-    //   - allow access if this frame is a toplevel window and the source
-    //     can access its opener. Note that we only allow one level of
-    //     recursion here.
-    if ([self parentFrame] == nil) {
-        NSString *openerDomain = [[[self _bridge] opener] domain];
-        if (openerDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:openerDomain]) {
-            return YES;
-        }
-    }
-
-    // otherwise deny access
-    return NO;
-}
-
-- (WebFrame *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
-{
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        // for security reasons, we do not want to even make frames visible to frames that
-        // can't access them 
-        if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
-            return frame;
-
-    return nil;
-}
-
-- (WebFrame *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source
-{
-    ASSERT(self == [[self webView] mainFrame]);
-
-    // Try this WebView first.
-    WebFrame *frame = [self _descendantFrameNamed:name sourceFrame:source];
-
-    if (frame != nil) {
-        return frame;
-    }
-
-    // Try other WebViews in the same set
-    if ([self _frameNamespace] != nil) {
-        NSEnumerator *enumerator = [WebFrameNamespaces framesInNamespace:[self _frameNamespace]];
-        WebFrame *searchFrame;
-        while ((searchFrame = [enumerator nextObject])) {
-	    frame = [searchFrame _descendantFrameNamed:name sourceFrame:source];
-        }
-    }
-
-    return frame;
-}
-
 - (WebFrame *)findFrameNamed:(NSString *)name
 {
-    // First, deal with 'special' names.
-    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
-        return self;
-    
-    if ([name isEqualToString:@"_top"])
-        return [[self webView] mainFrame];
-    
-    if ([name isEqualToString:@"_parent"]) {
-        WebFrame *parent = [self parentFrame];
-        return parent ? parent : self;
-    }
-    
-    if ([name isEqualToString:@"_blank"])
-        return nil;
-
-    // Search from this frame down.
-    WebFrame *frame = [self _descendantFrameNamed:name sourceFrame:self];
-
-    // Search in the main frame for this window then in others.
-    if (!frame)
-        frame = [[[self webView] mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
-
-    return frame;
+    return Frame([[self _bridge] findFrameNamed:name]);
 }
 
 - (WebFrame *)parentFrame
 {
-    return [[[(WebBridge *)[[self _bridge] parent] webFrame] retain] autorelease];
+    return [[Frame([[self _bridge] parent]) retain] autorelease];
 }
 
 - (NSArray *)childFrames

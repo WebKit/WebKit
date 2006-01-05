@@ -26,12 +26,67 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "WebCoreFrameNamespaces.h"
 
-@class WebFrame;
+static CFSetCallBacks NonRetainingSetCallbacks = {
+0,
+NULL,
+NULL,
+CFCopyDescription,
+CFEqual,
+CFHash
+};
 
-@interface WebFrameNamespaces : NSObject
-+ (void)addFrame:(WebFrame *)frame toNamespace:(NSString *)name;
-+ (void)removeFrame:(WebFrame *)frame fromNamespace:(NSString *)name;
-+ (NSEnumerator *)framesInNamespace:(NSString *)name;
+@implementation WebCoreFrameNamespaces
+
+NSMutableDictionary *namespaces = nil;
+
++(void)addFrame:(WebCoreBridge *)frame toNamespace:(NSString *)name
+{
+    if (!name)
+        return;
+
+    if (!namespaces)
+	namespaces = [[NSMutableDictionary alloc] init];
+
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
+
+    if (!namespace) {
+	namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+	[namespaces setObject:(id)namespace forKey:name];
+	CFRelease(namespace);
+    }
+    
+    CFSetSetValue(namespace, frame);
+}
+
++(void)removeFrame:(WebCoreBridge *)frame fromNamespace:(NSString *)name
+{
+    if (!name)
+        return;
+
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
+
+    if (!namespace)
+	return;
+
+    CFSetRemoveValue(namespace, frame);
+
+    if (CFSetGetCount(namespace) == 0)
+	[namespaces removeObjectForKey:name];
+}
+
++(NSEnumerator *)framesInNamespace:(NSString *)name;
+{
+    if (!name)
+	return [[[NSEnumerator alloc] init] autorelease];
+
+    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
+
+    if (!namespace)
+	return [[[NSEnumerator alloc] init] autorelease];
+    
+    return [(NSSet *)namespace objectEnumerator];
+}
+
 @end

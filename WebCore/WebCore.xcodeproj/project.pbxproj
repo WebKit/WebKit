@@ -68,6 +68,8 @@
 		65436082083DB9FC00C20475 /* wrap_contents_in_dummy_span_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6543606E083DB9FB00C20475 /* wrap_contents_in_dummy_span_command.cpp */; };
 		654D87B70831973B0082DCA1 /* edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654D87B50831973B0082DCA1 /* edit_command.cpp */; };
 		654D87B80831973B0082DCA1 /* edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 654D87B60831973B0082DCA1 /* edit_command.h */; };
+		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */; };
 		65AC79A10831ED6D009385CE /* append_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC799F0831ED6D009385CE /* append_node_command.cpp */; };
 		65AC79A20831ED6D009385CE /* append_node_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A00831ED6D009385CE /* append_node_command.h */; };
 		65AC79A90831F006009385CE /* apply_style_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC79A70831F006009385CE /* apply_style_command.cpp */; };
@@ -1700,6 +1702,8 @@
 		654D87B60831973B0082DCA1 /* edit_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = edit_command.h; path = editing/edit_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654E7EE10569FD4600358BD2 /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
+		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreFrameNamespaces.m; sourceTree = "<group>"; };
 		65732B68054EF483007B42F8 /* KWQKPartsPart.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsPart.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0E0586921000123A69 /* xmlserializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlserializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3945,6 +3949,8 @@
 		F58785E902DE378A01EA4122 /* WebCore SPI */ = {
 			isa = PBXGroup;
 			children = (
+				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
+				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
 				F587854702DE375901EA4122 /* WebCoreBridge.h */,
 				F587854802DE375901EA4122 /* WebCoreBridge.mm */,
 				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
@@ -4719,6 +4725,7 @@
 				A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */,
 				A88AD5190952499F001DD196 /* KDOMHeaders.h in Headers */,
 				A88AD51A0952499F001DD196 /* KDOMSettings.h in Headers */,
+				6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */,
 				4756536509652C5D00BD9F29 /* KWQPointF.h in Headers */,
 				4756536709652C5D00BD9F29 /* KWQRectF.h in Headers */,
 				4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */,
@@ -6561,6 +6568,7 @@
 				A88AD51D0952499F001DD196 /* XLinkNamesWrapper.cpp in Sources */,
 				A88AD51E0952499F001DD196 /* SVGNamesWrapper.cpp in Sources */,
 				A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */,
+				6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */,
 				4756536609652C5D00BD9F29 /* KWQPointF.mm in Sources */,
 				4756536809652C5D00BD9F29 /* KWQRectF.mm in Sources */,
 				4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */,

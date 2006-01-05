@@ -153,8 +153,6 @@ typedef enum {
 - (BOOL)defersCallbacks;
 - (void)setDefersCallbacks:(BOOL)defers;
 
-- (void)_setTopLevelFrameName:(NSString *)name;
-
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;

@@ -84,6 +84,7 @@
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreSettings.h"
+#import "WebCoreFrameNamespaces.h"
 
 @class NSView;
 
@@ -146,13 +147,13 @@ using KJS::Bindings::RootObject;
 
 NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
-NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
+NSString *WebCoreElementImageAltStringKey =     @"WebElementImageAltString";
 NSString *WebCoreElementImageRendererKey =      @"WebCoreElementImageRenderer";
 NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
 NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
 NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
 NSString *WebCoreElementLinkURLKey =            @"WebElementLinkURL";
-NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
+NSString *WebCoreElementLinkTargetFrameKey =    @"WebElementTargetFrame";
 NSString *WebCoreElementLinkLabelKey =          @"WebElementLinkLabel";
 NSString *WebCoreElementLinkTitleKey =          @"WebElementLinkTitle";
 NSString *WebCoreElementNameKey =               @"WebElementName";
@@ -217,6 +218,11 @@ static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
 {
     return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location !=
         NSNotFound;
+}
+
+static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
+{
+    return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
 
 @implementation WebCoreBridge
@@ -300,9 +306,8 @@ static bool initializedKJS = FALSE;
     if (last) {
         last->_nextSibling = child;
         child->_previousSibling = last;
-    } else {
+    } else
         _firstChild = child;
-    }
 
     _lastChild = child;
 
@@ -329,6 +334,175 @@ static bool initializedKJS = FALSE;
     _childCount--;
 
     [child release];
+}
+
+- (WebCoreBridge *)childFrameNamed:(NSString *)name
+{
+    // FIXME: with a better data structure this could be O(1) instead of O(n) in number 
+    // of child frames
+    for (WebCoreBridge *child = [self firstChild]; child; child = [child nextSibling])
+        if ([[child name] isEqualToString:name])
+            return child;
+
+    return nil;
+}
+
+// Returns the last child of us and any children, or self
+- (WebCoreBridge *)_deepLastChildFrame
+{
+    WebCoreBridge *result = self;
+    for (WebCoreBridge *lastChild = [self lastChild]; lastChild; lastChild = [lastChild lastChild])
+        result = lastChild;
+
+    return result;
+}
+
+// Return next frame to be traversed, visiting children after parent
+- (WebCoreBridge *)nextFrameWithWrap:(BOOL)wrapFlag
+{
+    WebCoreBridge *result = [self traverseNextFrameStayWithin:nil];
+
+    if (!result && wrapFlag)
+        return [self mainFrame];
+
+    return result;
+}
+
+// Return previous frame to be traversed, exact reverse order of _nextFrame
+- (WebCoreBridge *)previousFrameWithWrap:(BOOL)wrapFlag
+{
+    // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
+
+    WebCoreBridge *prevSibling = [self previousSibling];
+    if (prevSibling)
+        return [prevSibling _deepLastChildFrame];
+    if ([self parent])
+        return [self parent];
+    
+    // no siblings, no parent, self==top
+    if (wrapFlag)
+        return [self _deepLastChildFrame];
+
+    // top view is always the last one in this ordering, so prev is nil without wrap
+    return nil;
+}
+
+- (void)setFrameNamespace:(NSString *)ns
+{
+    ASSERT(self == [self mainFrame]);
+
+    if (ns != _frameNamespace){
+        [WebCoreFrameNamespaces removeFrame:self fromNamespace:_frameNamespace];
+        ns = [ns copy];
+        [_frameNamespace release];
+        _frameNamespace = ns;
+        [WebCoreFrameNamespaces addFrame:self toNamespace:_frameNamespace];
+    }
+}
+
+- (NSString *)frameNamespace
+{
+    ASSERT(self == [self mainFrame]);
+    return _frameNamespace;
+}
+
+- (BOOL)_shouldAllowAccessFrom:(WebCoreBridge *)source
+{
+    // if no source frame, allow access
+    if (source == nil)
+        return YES;
+
+    //   - allow access if the two frames are in the same window
+    if ([self mainFrame] == [source mainFrame])
+        return YES;
+
+    //   - allow if the request is made from a local file.
+    NSString *sourceDomain = [self domain];
+    if ([sourceDomain length] == 0)
+        return YES;
+
+    //   - allow access if this frame or one of its ancestors
+    //     has the same origin as source
+    for (WebCoreBridge *ancestor = self; ancestor; ancestor = [ancestor parent]) {
+        NSString *ancestorDomain = [ancestor domain];
+        if (ancestorDomain != nil && 
+            isCaseSensitiveEqual(sourceDomain, ancestorDomain))
+            return YES;
+        
+        ancestor = [ancestor parent];
+    }
+
+    //   - allow access if this frame is a toplevel window and the source
+    //     can access its opener. Note that we only allow one level of
+    //     recursion here.
+    if ([self parent] == nil) {
+        NSString *openerDomain = [[self opener] domain];
+        if (openerDomain != nil && isCaseSensitiveEqual(sourceDomain, openerDomain))
+            return YES;
+    }
+    
+    // otherwise deny access
+    return NO;
+}
+
+- (WebCoreBridge *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebCoreBridge *)source
+{
+    for (WebCoreBridge *frame = self; frame; frame = [frame traverseNextFrameStayWithin:self])
+        // for security reasons, we do not want to even make frames visible to frames that
+        // can't access them 
+        if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
+            return frame;
+
+    return nil;
+}
+
+- (WebCoreBridge *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebCoreBridge *)source
+{
+    ASSERT(self == [self mainFrame]);
+
+    // Try this WebView first.
+    WebCoreBridge *frame = [self _descendantFrameNamed:name sourceFrame:source];
+
+    if (frame != nil)
+        return frame;
+
+    // Try other WebViews in the same set
+
+    if ([self frameNamespace] != nil) {
+        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:[self frameNamespace]];
+        WebCoreBridge *searchFrame;
+        while ((searchFrame = [enumerator nextObject]))
+            frame = [searchFrame _descendantFrameNamed:name sourceFrame:source];
+    }
+
+    return frame;
+}
+
+- (WebCoreBridge *)findFrameNamed:(NSString *)name
+{
+    // First, deal with 'special' names.
+    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
+        return self;
+    
+    if ([name isEqualToString:@"_top"])
+        return [self mainFrame];
+    
+    if ([name isEqualToString:@"_parent"]) {
+        WebCoreBridge *parent = [self parent];
+        return parent ? parent : self;
+    }
+    
+    if ([name isEqualToString:@"_blank"])
+        return nil;
+
+    // Search from this frame down.
+    WebCoreBridge *frame = [self _descendantFrameNamed:name sourceFrame:self];
+
+    // Search in the main frame for this window then in others.
+    if (!frame)
+        frame = [[self mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
+
+    return frame;
 }
 
 + (NSArray *)supportedMIMETypes
@@ -459,7 +633,7 @@ static bool initializedKJS = FALSE;
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
         _part->openURLFromPageCache(state);
-	[state invalidate];
+        [state invalidate];
         return;
     }
         
@@ -794,7 +968,7 @@ static bool initializedKJS = FALSE;
     if (doc) {
         static QPaintDevice screen;
         static QPrinter printer;
-    	doc->setPaintDevice(deviceType == WebCoreDeviceScreen ? &screen : &printer);
+        doc->setPaintDevice(deviceType == WebCoreDeviceScreen ? &screen : &printer);
     }
     return _part->reparseConfiguration();
 }
@@ -875,7 +1049,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
         ERROR("printHeight has bad value %.2f", printHeight);
         return pages;
     }
-	
+
     if (!_part || !_part->xmlDocImpl() || !_part->view()) return pages;
     RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
     if (!root) return pages;
@@ -884,7 +1058,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     NSView* documentView = view->getDocumentView();
     if (!documentView)
         return pages;
-	
+
     float currPageHeight = printHeight;
     float docHeight = root->layer()->height();
     float docWidth = root->layer()->width();
@@ -1115,7 +1289,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (formElement) {
         QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
         for (unsigned int i = 0; i < elements.count(); i++) {
-            if (elements.at(i)->isEnumeratable()) {		// Skip option elements, other duds
+            if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
                 DOMElement *de = [DOMElement _elementWithImpl:elements.at(i)];
                 if (!results) {
                     results = [NSMutableArray arrayWithObject:de];
@@ -1450,12 +1624,44 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setName:(NSString *)name
 {
-    _part->KHTMLPart::setName(QString::fromNSString(name));
+    _part->setName(QString::fromNSString(name));
 }
 
 - (NSString *)name
 {
     return _part->name().getNSString();
+}
+
+- (void)_addFramePathToString:(NSMutableString *)path
+{
+    NSString *name = [self name];
+    if ([name hasPrefix:@"<!--framePath "]) {
+        // we have a generated name - take the path from our name
+        NSRange ourPathRange = {14, [name length] - 14 - 3};
+        [path appendString:[name substringWithRange:ourPathRange]];
+    } else {
+        // we don't have a generated name - just add our simple name to the end
+        [[self parent] _addFramePathToString:path];
+        [path appendString:@"/"];
+        if (name)
+            [path appendString:name];
+    }
+}
+
+// Generate a repeatable name for a child about to be added to us.  The name must be
+// unique within the frame tree.  The string we generate includes a "path" of names
+// from the root frame down to us.  For this path to be unique, each set of siblings must
+// contribute a unique name to the path, which can't collide with any HTML-assigned names.
+// We generate this path component by index in the child list along with an unlikely frame name.
+- (NSString *)generateFrameName
+{
+    NSMutableString *path = [NSMutableString stringWithCapacity:256];
+    [path insertString:@"<!--framePath " atIndex:0];
+    [self _addFramePathToString:path];
+    // The new child's path component is all but the 1st char and the last 3 chars
+    // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
+    [path appendFormat:@"/<!--frame%d-->-->", [self childCount]];
+    return path;
 }
 
 - (NSURL *)URL

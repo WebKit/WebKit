@@ -176,6 +176,36 @@
 
 2006-01-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+	- move frame management and finding code from WebKit to WebCore
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6368
+
+        * WebCore.exp: export WebCoreFrameNamespace
+        * WebCore.xcodeproj/project.pbxproj: add new files
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setName): Don't call to bridge any more, not needed
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (isCaseSensitiveEqual): helper function
+        (-[WebCoreBridge appendChild:]): remove excess braces
+        (-[WebCoreBridge childFrameNamed:]): moved here from WebFrame
+        (-[WebCoreBridge _deepLastChildFrame]): ditto
+        (-[WebCoreBridge nextFrameWithWrap:]): ditto
+        (-[WebCoreBridge previousFrameWithWrap:]): ditto
+        (-[WebCoreBridge setFrameNamespace:]): ditto
+        (-[WebCoreBridge frameNamespace]): ditto
+        (-[WebCoreBridge _shouldAllowAccessFrom:]): ditto
+        (-[WebCoreBridge _descendantFrameNamed:sourceFrame:]): ditto
+        (-[WebCoreBridge _frameInAnyWindowNamed:sourceFrame:]): ditto
+        (-[WebCoreBridge findFrameNamed:]): ditto
+        (-[WebCoreBridge setName:]): don't call KHTMLPart setName directly,
+	the kwq version is fine
+        (-[WebCoreBridge _addFramePathToString:]): moved from WebFrame
+        (-[WebCoreBridge generateFrameName]): ditto
+
+2006-01-03  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Vicki.
 
         - moved frame traversal code across from bridge, also dropped the children

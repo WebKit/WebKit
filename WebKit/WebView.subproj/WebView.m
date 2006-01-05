@@ -34,7 +34,6 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDashboardRegion.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -691,11 +690,6 @@ static bool debugWidget = true;
 
     _private->defersCallbacks = defers;
     [[self mainFrame] _defersCallbacksChanged];
-}
-
-- (void)_setTopLevelFrameName:(NSString *)name
-{
-    [[self mainFrame] _setName:name];
 }
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request

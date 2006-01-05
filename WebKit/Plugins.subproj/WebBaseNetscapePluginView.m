@@ -1522,7 +1522,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
             }
             
-            [newWebView _setTopLevelFrameName:frameName];
+            [[[newWebView mainFrame] _bridge] setName:frameName];
             [[newWebView _UIDelegateForwarder] webViewShow:newWebView];
             frame = [newWebView mainFrame];
         }

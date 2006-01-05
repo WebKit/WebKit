@@ -106,6 +106,7 @@
 .objc_class_name_WebCoreCache
 .objc_class_name_WebCoreCookieAdapter
 .objc_class_name_WebCoreEncodings
+.objc_class_name_WebCoreFrameNamespaces
 .objc_class_name_WebCoreGraphicsBridge
 .objc_class_name_WebCoreHistory
 .objc_class_name_WebCoreImageRendererFactory

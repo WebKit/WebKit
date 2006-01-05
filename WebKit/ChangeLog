@@ -1,3 +1,51 @@
+2006-01-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- move frame management and finding code from WebKit to WebCore
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6368
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): Set frame name straight on the bridge,
+	instead of having it bubble through the view and frame.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge initWithFrameName:view:]): don't pass name to frame, we own it now; set it
+	on ourselves directly
+	(-[WebBridge findFrameNamed:]): removed
+        (-[WebBridge createWindowWithURL:frameName:]): set name on bridge, not webview
+        (-[WebBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge runModal]): remove excess braces
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView.subproj/WebControllerSets.h: Removed.
+        * WebView.subproj/WebControllerSets.m: Removed.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate name]): removed
+        (-[WebFramePrivate setName:]): removed
+        (-[WebFramePrivate dealloc]): don't release name, we no longer have one
+        (-[WebFrame _appendChild:]): removed
+        (-[WebFrame _removeChild:]): removed
+        (-[WebFrame _createItem:]): removed stray space
+        (-[WebFrame _immediateChildFrameNamed:]): Just call the bridge
+        (-[WebFrame _setName:]): removed
+        (-[WebFrame _detachFromParent]): remove bridge from parent note self
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrame _addChild:]): Call appendChild: on bridge, not self
+        (-[WebFrame _nextFrameWithWrap:]): just call bridge (and moved helpers there)
+        (-[WebFrame _previousFrameWithWrap:]): just call bridge (and moved helpers there)
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]): don't take a name any more
+        (-[WebFrame _setFrameNamespace:]): just call bridge
+        (-[WebFrame _frameNamespace]): just call bridge
+        (-[WebFrame _hasSelection]): remove excess braces
+        (-[WebFrame _clearSelection]): ditto
+        (-[WebFrame initWithName:webFrameView:webView:]): no more name
+        (-[WebFrame name]): just call bridge
+        (-[WebFrame findFrameNamed:]): just call bridge (and moved helpers there)
+        (-[WebFrame parentFrame]): fixed for new style
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 2006-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.

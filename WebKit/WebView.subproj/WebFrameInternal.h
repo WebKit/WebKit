@@ -58,7 +58,7 @@
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
 - (BOOL)_subframeIsLoading;
-- (id)_initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge;
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge;
 
 @end
 

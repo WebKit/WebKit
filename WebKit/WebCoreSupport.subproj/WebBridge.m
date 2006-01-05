@@ -33,7 +33,6 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebLoader.h>
-#import "WebControllerSets.h"
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebEditingDelegate.h>
@@ -75,6 +74,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKitSystemInterface.h>
+
+#import <WebCore/WebCoreFrameNamespaces.h>
 
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLConnection.h>
@@ -123,9 +124,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     WebView *webView = [view _webView];
 
-    _frame = [[WebFrame alloc] _initWithName:name webFrameView:view webView:webView bridge:self];
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView bridge:self];
 
-    [self setName:[_frame name]];
+    [self setName:name];
     [self initializeSettings:[webView _settings]];
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 
@@ -172,12 +173,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[[_frame webView] mainFrame] _bridge];
 }
 
-- (WebCoreBridge *)findFrameNamed:(NSString *)name;
-{
-    ASSERT(_frame != nil);
-    return [[_frame findFrameNamed:name] _bridge];
-}
-
 - (WebView *)webView
 {
     ASSERT(_frame != nil);
@@ -209,8 +204,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         newWebView = [wd webView:currentWebView createWebViewWithRequest:request];
     else
         newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
-    [newWebView _setTopLevelFrameName:name];
-    return [[newWebView mainFrame] _bridge];
+    WebBridge *resultBridge = [[newWebView mainFrame] _bridge];
+    [resultBridge setName:name];
+    return resultBridge;
 }
 
 - (void)showWindow
@@ -754,11 +750,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 }
 
-- (NSString *)generateFrameName
-{
-    return [_frame _generateFrameName];
-}
-
 - (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName 
                                  withURL:(NSURL *)URL
                                 referrer:(NSString *)referrer
@@ -773,9 +764,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     ASSERT(_frame != nil);
     WebFrame *newFrame = [[_frame webView] _createFrameNamed:frameName inParent:_frame allowsScrolling:allowsScrolling];
-    if (newFrame == nil) {
+    if (newFrame == nil)
         return nil;
-    }
     
     [[newFrame _bridge] setRenderPart:childRenderPart];
 
@@ -1358,11 +1348,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return _keyboardUIMode;
 }
 
-- (void)didSetName:(NSString *)name
-{
-    [_frame _setName:name];
-}
-
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL
 {
     return [[_frame dataSource] _fileWrapperForURL:URL];
@@ -1698,7 +1683,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     NSMutableArray *deferredWebViews = [NSMutableArray array];
     NSString *namespace = [webView groupName];
     if (namespace) {
-        NSEnumerator *enumerator = [WebFrameNamespaces framesInNamespace:namespace];
+        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:namespace];
         WebView *otherWebView;
         while ((otherWebView = [[enumerator nextObject] webView]) != nil) {
             if (otherWebView != webView && ![otherWebView defersCallbacks]) {
