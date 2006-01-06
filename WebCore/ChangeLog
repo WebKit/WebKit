@@ -1,5 +1,24 @@
 2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5291
+          FORM multipart/form-data with GET method issue
+
+        Test cases: 
+        * fast/forms/form-get-multipart.html
+        * fast/forms/form-get-multipart2.html
+        * fast/forms/form-get-multipart3.html
+        * fast/forms/form-post-urlencoded.html
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::submit):
+        Reset m_multipart to false if not posting.
+        (DOM::HTMLFormElementImpl::parseEnctype):
+        multipart/form-data doesn't imply POST method.
+
+2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5792

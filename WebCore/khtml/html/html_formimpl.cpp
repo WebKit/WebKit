@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005 Apple Computer, Inc.
+ *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -410,7 +411,6 @@ void HTMLFormElementImpl::parseEnctype(const DOMString& type)
     if(type.contains("multipart", false) || type.contains("form-data", false)) {
         m_enctype = "multipart/form-data";
         m_multipart = true;
-        m_post = true;
     } else if (type.contains("text", false) || type.contains("plain", false)) {
         m_enctype = "text/plain";
         m_multipart = false;
@@ -493,6 +493,9 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
     }
 
+    if (!m_post)
+        m_multipart = false;
+    
     FormData form_data;
     if (formData(form_data)) {
         if(m_post) {

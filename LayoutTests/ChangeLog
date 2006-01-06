@@ -1,5 +1,21 @@
 2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5291
+          FORM multipart/form-data with GET method issue
+        
+        * fast/forms/form-get-multipart.html: Added.
+        * fast/forms/form-get-multipart-expected.txt: Added.
+        * fast/forms/form-get-multipart2.html: Added.
+        * fast/forms/form-get-multipart2-expected.txt: Added.
+        * fast/forms/form-get-multipart3.html: Added.
+        * fast/forms/form-get-multipart3-expected.txt: Added.
+        * fast/forms/form-post-urlencoded.html: Added.
+        * fast/forms/form-post-urlencoded-expected.txt: Added.
+
+2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5792
