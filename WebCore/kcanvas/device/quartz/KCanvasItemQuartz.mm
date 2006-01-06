@@ -39,6 +39,7 @@
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasResourcesQuartz.h"
+#import "KCanvasMaskerQuartz.h"
 #import "QuartzSupport.h"
 
 #import "SVGRenderStyle.h"
@@ -221,6 +222,11 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
     if (clipper)
         clipper->applyClip(context, CGRect(relativeBBox(true)));
+
+    QString maskname = style()->svgStyle()->maskElement().mid(1);
+    KCanvasMaskerQuartz *masker = static_cast<KCanvasMaskerQuartz *>(getMaskerById(document(), maskname));
+    if (masker)
+        masker->applyMask(context, CGRect(relativeBBox(true)));
 
     CGContextBeginPath(context);
 

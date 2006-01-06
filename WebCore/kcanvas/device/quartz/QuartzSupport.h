@@ -31,6 +31,12 @@ namespace KSVG {
     class SVGRenderStyle;
 }
 
+#ifndef NDEBUG
+void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height);
+void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height);
+void debugDumpCIImageToFile(NSString *filename, CIImage *ciImage, int width, int height);
+#endif
+
 CFStringRef CFStringFromCGPath(CGPathRef path);
 CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);

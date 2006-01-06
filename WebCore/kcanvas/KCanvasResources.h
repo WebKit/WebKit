@@ -39,7 +39,8 @@ typedef enum
     RS_CLIPPER = 0,
     RS_MARKER = 1,
     RS_IMAGE = 2,
-    RS_FILTER = 3
+    RS_FILTER = 3,
+    RS_MASKER = 4
 } KCResourceType;
 
 class KCanvasMatrix;
@@ -63,6 +64,7 @@ public:
     virtual bool isFilter() const { return false; }
     virtual bool isClipper() const { return false; }
     virtual bool isMarker() const { return false; }
+    virtual bool isMasker() const { return false; }
     
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
@@ -86,6 +88,23 @@ public:
     QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
     KCClipDataList m_clipData;
+};
+
+class KCanvasImage;
+
+class KCanvasMasker : public KCanvasResource
+{
+public:
+    KCanvasMasker();
+    virtual ~KCanvasMasker();
+    
+    virtual bool isMasker() const { return true; }
+    void setMask(KCanvasImage *mask);
+    KCanvasImage *mask() const { return m_mask; }
+
+    QTextStream& externalRepresentation(QTextStream &) const; 
+protected:
+    KCanvasImage *m_mask;
 };
 
 class KCanvasMarker : public KCanvasResource
@@ -129,6 +148,7 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
 KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
 KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
 KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
 KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
 
 #endif

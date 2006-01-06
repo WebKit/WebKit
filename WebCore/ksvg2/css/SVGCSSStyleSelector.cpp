@@ -581,6 +581,22 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
             svgstyle->setFilter(s);
             break;
         }
+        case SVGCSS_PROP_MASK:
+        {
+            HANDLE_INHERIT_AND_INITIAL(maskElement, MaskElement)
+            if (!primitiveValue)
+                return;
+
+            QString s;
+            int type = primitiveValue->primitiveType();
+            if (type == KDOM::CSSPrimitiveValue::CSS_URI)
+                s = primitiveValue->getStringValue().qstring();
+            else
+                return;
+
+            svgstyle->setMaskElement(s);
+            break;
+        }
         case SVGCSS_PROP_CLIP_PATH:
         {
             HANDLE_INHERIT_AND_INITIAL(clipPath, ClipPath)

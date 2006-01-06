@@ -33,8 +33,48 @@
 #import "KRenderingStrokePainter.h"
 #import "kxmlcore/Assertions.h"
 
+#import <QuartzCore/CoreImage.h>
+
 #import "SVGRenderStyle.h"
 
+#ifndef NDEBUG
+void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height)
+{
+    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
+    [fileImage lockFocus];
+    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextDrawImage(fileImageContext, CGRectMake(0, 0, width, height), image); 
+    [fileImage unlockFocus];
+    NSData *tiff = [fileImage TIFFRepresentation];
+    [tiff writeToFile:filename atomically:YES];
+    [fileImage release];
+}
+
+void debugDumpCGLayerToFile(NSString *filename, CGLayerRef layer, int width, int height)
+{
+    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
+    [fileImage lockFocus];
+    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextDrawLayerAtPoint(fileImageContext, CGPointMake(0, 0), layer); 
+    [fileImage unlockFocus];
+    NSData *tiff = [fileImage TIFFRepresentation];
+    [tiff writeToFile:filename atomically:YES];
+    [fileImage release];
+}
+
+void debugDumpCIImageToFile(NSString *filename, CIImage *ciImage, int width, int height)
+{
+    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
+    [fileImage lockFocus];
+    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CIContext *ciContext = [CIContext contextWithCGContext:fileImageContext options:nil];
+    [ciContext drawImage:ciImage atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
+    [fileImage unlockFocus];
+    NSData *tiff = [fileImage TIFFRepresentation];
+    [tiff writeToFile:filename atomically:YES];
+    [fileImage release];
+}
+#endif
 
 CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t)
 {

@@ -26,6 +26,7 @@
 
 #include "kcanvas/KCanvas.h"
 #include "kcanvas/RenderPath.h"
+#include "kcanvas/KCanvasImage.h"
 #include "KCanvasMatrix.h"
 #include "KCanvasContainer.h"
 #include "KCanvasResources.h"
@@ -116,6 +117,30 @@ QTextStream& KCanvasClipper::externalRepresentation(QTextStream &ts) const
 {
     ts << "[type=CLIPPER]";
     ts << " [clip data=" << clipData() << "]";
+    return ts;
+}
+
+// KCanvasMasker
+KCanvasMasker::KCanvasMasker() : KCanvasResource(), m_mask(0)
+{
+}
+
+KCanvasMasker::~KCanvasMasker()
+{
+    delete m_mask;
+}
+
+void KCanvasMasker::setMask(KCanvasImage *mask)
+{
+    if (m_mask != mask) {
+        delete m_mask;
+        m_mask = mask;
+    }
+}
+
+QTextStream& KCanvasMasker::externalRepresentation(QTextStream &ts) const
+{
+    ts << "[type=MASKER]";
     return ts;
 }
 
@@ -261,6 +286,14 @@ KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMStri
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isClipper())
         return static_cast<KCanvasClipper *>(resource);
+    return 0;
+}
+
+KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+{
+    KCanvasResource *resource = getResourceById(document, id);
+    if (resource && resource->isMasker())
+        return static_cast<KCanvasMasker *>(resource);
     return 0;
 }
 

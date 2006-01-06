@@ -78,6 +78,7 @@
 #include "SVGAnimateElement.h"
 #include "SVGPolygonElement.h"
 #include "SVGPatternElement.h"
+#include "SVGMaskElement.h"
 #include "SVGPolylineElement.h"
 #include "SVGClipPathElement.h"
 #include "SVGPathSegClosePath.h"
@@ -260,6 +261,11 @@ KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
         case ID_PATTERN:
         {
             ret = SVGPatternElement(n).bridge(exec);
+            break;
+        }
+        case ID_MASK:
+        {
+            ret = SVGMaskElement(n).bridge(exec);
             break;
         }
         case ID_ANIMATECOLOR:

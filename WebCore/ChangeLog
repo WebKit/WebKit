@@ -1,3 +1,80 @@
+2006-01-06  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Basic support for <mask> tag.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5969
+        Still missing attribute support for: maskUnits, maskContentUnits.
+        
+        Mask pixel tests do not work in DumpRenderTree due to:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6327
+        Added test cases anyway.
+
+        This also tickles a (known) gradient update issue:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6052
+
+        * WebCore.xcodeproj/project.pbxproj: added Mask files
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasMasker::KCanvasMasker): added.
+        (KCanvasMasker::~KCanvasMasker): added.
+        (KCanvasMasker::setMask): added.
+        (KCanvasMasker::externalRepresentation): added.
+        (getMaskerById): added.
+        * kcanvas/KCanvasResources.h:
+        (KCanvasResource::isMasker): added.
+        (KCanvasMasker::isMasker): added.
+        (KCanvasMasker::mask): added.
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): added mask support
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h: Added.
+        (KCanvasMaskerQuartz::KCanvasMaskerQuartz): added.
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm: Added.
+        (applyLuminanceToAlphaFilter): added.
+        (applyExpandAlphatoGrayscaleFilter): added.
+        (transformImageIntoGrayscaleMask): added.
+        (KCanvasMaskerQuartz::applyMask): added.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): added mask support.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::createResource): added mask support.
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (debugDumpCGImageToFile): added, debug only.
+        (debugDumpCGLayerToFile): added, debug only.
+        (debugDumpCIImageToFile): added, debug only.
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty): added mask support.
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::SVGRenderStyle): added mask support.
+        (SVGRenderStyle::operator==): added mask support.
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleMaskData::StyleMaskData): added mask support.
+        (StyleMaskData::operator==): added mask support.
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        (KSVG::StyleMaskData::operator!=): added mask support.
+        * ksvg2/ecma/Ecma.cpp:
+        (Ecma::inheritedGetDOMNode): added mask support.
+        * ksvg2/svg/SVGMaskElementImpl.cpp: Added.
+        (KSVG::SVGMaskElementImpl::SVGMaskElementImpl): added.
+        (KSVG::SVGMaskElementImpl::~SVGMaskElementImpl): added.
+        (KSVG::SVGMaskElementImpl::x): added.
+        (KSVG::SVGMaskElementImpl::y): added.
+        (KSVG::SVGMaskElementImpl::width): added.
+        (KSVG::SVGMaskElementImpl::height): added.
+        (KSVG::SVGMaskElementImpl::attributeChanged): added.
+        (KSVG::SVGMaskElementImpl::childrenChanged): added.
+        (KSVG::SVGMaskElementImpl::parseMappedAttribute): added.
+        (KSVG::SVGMaskElementImpl::drawMaskerContent): added.
+        (KSVG::SVGMaskElementImpl::createRenderer): added.
+        (KSVG::SVGMaskElementImpl::canvasResource): added.
+        * ksvg2/svg/SVGMaskElementImpl.h: Added.
+        (KSVG::SVGMaskElementImpl::isValid): added.
+        (KSVG::SVGMaskElementImpl::rendererIsNeeded): added.
+        * ksvg2/svg/svgtags.in: added <mask> support.
+
 2006-01-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

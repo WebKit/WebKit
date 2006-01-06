@@ -109,6 +109,7 @@ namespace KSVG
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, stops, color, StopColor, stopColor, QColor(Qt::black))    
         
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, clip, clipPath, ClipPath, clipPath, QString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, mask, maskElement, MaskElement, maskElement, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, startMarker, StartMarker, startMarker, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, midMarker, MidMarker, midMarker, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, endMarker, EndMarker, endMarker, QString())
@@ -179,6 +180,7 @@ namespace KSVG
 
         // non-inherited attributes
         KDOM::DataRef<StyleClipData> clip;
+        KDOM::DataRef<StyleMaskData> mask;
 
         // static default style
         static SVGRenderStyle *s_defaultStyle;

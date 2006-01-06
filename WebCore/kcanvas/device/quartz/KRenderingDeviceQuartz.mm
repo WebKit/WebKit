@@ -27,6 +27,7 @@
 #include "config.h"
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
+#import "KCanvasMaskerQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "KRenderingPaintServerQuartz.h"
@@ -216,6 +217,8 @@ KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &ty
         return new KCanvasImageQuartz();
     case RS_FILTER:
         return new KCanvasFilterQuartz();
+    case RS_MASKER:
+        return new KCanvasMaskerQuartz();
     }
     ERROR("Failed to create resource of type: %i", type);
     return 0;

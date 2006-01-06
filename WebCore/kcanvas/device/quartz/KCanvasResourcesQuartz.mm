@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *               2005 Alexander Kellett <lypanov@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,7 @@
 
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
+#import "KCanvasMaskerQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "QuartzSupport.h"
 
@@ -115,7 +117,12 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
     if (clipper)
         clipper->applyClip(context, CGRect(relativeBBox(true)));
-    
+
+    QString maskname = style()->svgStyle()->maskElement().mid(1);
+    KCanvasMaskerQuartz *masker = static_cast<KCanvasMaskerQuartz *>(getMaskerById(document(), maskname));
+    if (masker)
+        masker->applyMask(context, CGRect(relativeBBox(true)));
+
     float opacity = style()->opacity();
     if (opacity < 1.0f)
         paintInfo.p->beginTransparencyLayer(opacity);
@@ -230,7 +237,6 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
         }
     }
 }
-
 
 KCanvasImageQuartz::~KCanvasImageQuartz()
 {

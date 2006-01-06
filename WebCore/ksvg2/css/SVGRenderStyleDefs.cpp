@@ -129,6 +129,21 @@ bool StyleClipData::operator==(const StyleClipData &other) const
     return (clipPath == other.clipPath);
 }
 
+StyleMaskData::StyleMaskData() : KDOM::Shared<StyleMaskData>()
+{
+    maskElement = SVGRenderStyle::initialMaskElement();
+}
+
+StyleMaskData::StyleMaskData(const StyleMaskData &other) : KDOM::Shared<StyleMaskData>()
+{
+    maskElement = other.maskElement;
+}
+
+bool StyleMaskData::operator==(const StyleMaskData &other) const
+{
+    return (maskElement == other.maskElement);
+}
+
 StyleMarkerData::StyleMarkerData() : KDOM::Shared<StyleMarkerData>()
 {
     startMarker = SVGRenderStyle::initialStartMarker();
