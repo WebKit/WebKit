@@ -41,7 +41,9 @@
 #include <string.h> // for strlen
 #include <new> // for placement new
 
+#ifdef WIN32
 template struct KJS::UString::Rep * const & KXMLCore::identityExtract<struct KJS::UString::Rep *>(struct KJS::UString::Rep * const &);
+#endif
 
 namespace KXMLCore {
 

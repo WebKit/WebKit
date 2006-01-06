@@ -38,7 +38,9 @@
 #include <stdio.h>
 #include <assert.h>
 
+#ifdef WIN32
 template class KJS::JSObject * const & KXMLCore::identityExtract<class KJS::JSObject *>(class KJS::JSObject * const &);
+#endif
 
 using namespace KJS;
 
