@@ -1,3 +1,14 @@
+2006-01-06  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+
+        - update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5142
+        parseXMLDocumentFragment can't parse fragments correctly
+        
+        * fast/dom/set-innerHTML-expected.txt:
+        * fast/dom/set-innerHTML.xhtml:
+        Update these with the attached test case.
+
 2006-01-06  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.
@@ -491,6 +502,7 @@
         * css2.1/t1605-c545-txttrans-00-b-ag.html:
         * css2.1/t1606-c562-white-sp-00-b-ag.html:
 
+>>>>>>> 1.227
 2006-01-04  Darin Adler  <darin@apple.com>
 
         - added a missing test result
