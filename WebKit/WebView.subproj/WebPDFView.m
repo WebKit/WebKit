@@ -501,6 +501,8 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey
 {
+    // FIXME 4400480: when PDFView implements the four standard scrolling selectors that this
+    // method is used to mimic, we can eliminate this method and call them directly.
     NSString *keyAsString = [NSString stringWithCharacters:&functionKey length:1];
     return [NSEvent keyEventWithType:NSKeyDown
                             location:NSZeroPoint

@@ -1,5 +1,11 @@
 2006-01-05  John Sullivan  <sullivan@apple.com>
 
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView _fakeKeyEventWithFunctionKey:]):
+        Just added a FIXME comment about how to clean up this minor hack in the future.
+
+2006-01-05  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Tim O.
         
         - fixed these bugs:
