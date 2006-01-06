@@ -1356,7 +1356,7 @@ return FALSE;
 
 #if PCRE_UTF16
 
-static inline BOOL strequal(const pcre_uchar *str1, int len, const char *str2)
+static __inline BOOL strequal(const pcre_uchar *str1, int len, const char *str2)
 {
   int i;
   for (i = 0; i < len; i++)
@@ -4893,11 +4893,14 @@ while ((c = *(++ptr)) != 0)
           c = DECODE_SURROGATE_PAIR(c, *ptr);
           ++ptr;
           }
-        int i;
-        for (i = 0; i < _pcre_utf8_table1_size; i++)
-          if (c <= _pcre_utf8_table1[i]) break;
-        length += i;
-        lastitemlength += i;
+	
+        {
+	  int i;
+          for (i = 0; i < _pcre_utf8_table1_size; i++)
+            if (c <= _pcre_utf8_table1[i]) break;
+          length += i;
+	  lastitemlength += i;
+	}
       }
 #else
 #ifdef SUPPORT_UTF8

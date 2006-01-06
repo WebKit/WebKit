@@ -52,6 +52,8 @@
 #define copysign(a, b) _copysign(a, b)
 #endif
 
+template void * const & KXMLCore::extractFirst<struct std::pair<void *,void *>>(struct std::pair<void *, void *> const &);
+
 extern int kjsyyparse();
 
 namespace KJS {

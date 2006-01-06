@@ -23,10 +23,14 @@
 #ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
 #define KXMLCORE_FAST_MALLOC_INTERNAL_H
 
+#ifndef WIN32
+
 #include <pthread.h>
 
 namespace KXMLCore {
     void fastMallocRegisterThread(pthread_t thread);
 }
+
+#endif
 
 #endif //  KXMLCORE_FAST_MALLOC_INTERNAL_H

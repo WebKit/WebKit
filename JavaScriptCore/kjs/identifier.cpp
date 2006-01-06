@@ -41,6 +41,8 @@
 #include <string.h> // for strlen
 #include <new> // for placement new
 
+template struct KJS::UString::Rep * const & KXMLCore::identityExtract<struct KJS::UString::Rep *>(struct KJS::UString::Rep * const &);
+
 namespace KXMLCore {
 
     template<typename T> class DefaultHash;

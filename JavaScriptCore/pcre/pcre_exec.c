@@ -1807,21 +1807,23 @@ for (;;)
       ecode++;
       GETUTF8CHARLEN(fc, ecode, length);
 #if PCRE_UTF16
-      int dc;
-      ecode += length;
-      switch (md->end_subject - eptr)
       {
-        case 0:
-          RRETURN(MATCH_NOMATCH);
-        case 1:
-          dc = *eptr++;
-          if (IS_LEADING_SURROGATE(dc))
+	int dc;
+        ecode += length;
+        switch (md->end_subject - eptr)
+        {
+          case 0:
             RRETURN(MATCH_NOMATCH);
-          break;
-        default:
-          GETCHARINC(dc, eptr);
-      }
-      if (fc != dc) RRETURN(MATCH_NOMATCH);
+          case 1:
+            dc = *eptr++;
+            if (IS_LEADING_SURROGATE(dc))
+              RRETURN(MATCH_NOMATCH);
+            break;
+          default:
+            GETCHARINC(dc, eptr);
+        }
+        if (fc != dc) RRETURN(MATCH_NOMATCH);
+     }  
 #else
       if (length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
       while (length-- > 0) if (*ecode++ != *eptr++) RRETURN(MATCH_NOMATCH);
@@ -1945,8 +1947,10 @@ for (;;)
     REPEATCHAR:
 #ifdef SUPPORT_UTF8
 #if PCRE_UTF16
-      length = 1;
+
+	  length = 1;
       GETUTF8CHARLEN(fc, ecode, length);
+	  {
       int utf16Length; // don't initialize on this line as workaround for Win32 compile problem
       utf16Length = fc > 0xFFFF ? 2 : 1;
       if (min * utf16Length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
@@ -2050,6 +2054,7 @@ for (;;)
           /* Control never gets here */
         }
         /* Control never gets here */
+	  }
 #else
     if (utf8)
       {

@@ -38,6 +38,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+template class KJS::JSObject * const & KXMLCore::identityExtract<class KJS::JSObject *>(class KJS::JSObject * const &);
+
 using namespace KJS;
 
 // ------------------------------ ArrayInstance -----------------------------

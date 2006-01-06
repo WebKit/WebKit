@@ -59,7 +59,18 @@
 #define copysign(x, y) _copysign(x, y)
 #define isfinite(x) _finite(x)
 #define strncasecmp(x, y, z) strnicmp(x, y, z)
+#define snprintf _snprintf
 #endif
+
+inline int gmtoffset(const tm& t)
+{
+#if WIN32
+    // FIXME: This might not be completely correct if the time is not the current timezone.
+    return -(timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 )) * 60;
+#else
+    return t.tm_gmtoff;
+#endif
+}
 
 namespace KJS {
 
@@ -218,13 +229,13 @@ static UString formatDateUTCVariant(const tm &t)
 static UString formatTime(const tm &t)
 {
     char buffer[100];
-    if (t.tm_gmtoff == 0) {
+    if (gmtoffset(t) == 0) {
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
     } else {
-        int offset = abs(t.tm_gmtoff);
+        int offset = abs(gmtoffset(t));
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
             t.tm_hour, t.tm_min, t.tm_sec,
-            t.tm_gmtoff < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
+            gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
     }
     return UString(buffer);
 }
@@ -547,8 +558,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   time_t tv = (time_t) floor(milli / msPerSecond);
   double ms = milli - tv * msPerSecond;
 
-  tm t;
-  utc ? gmtime_r(&tv, &t) : localtime_r(&tv, &t);
+  tm t = *(utc ? gmtime(&tv) : localtime(&tv));
   // We had an out of range year. Restore the year (plus/minus offset
   // found by calculating tm_year) and fix the week day calculation.
   if (realYearOffset != 0) {
@@ -769,8 +779,7 @@ bool DateObjectImp::implementsCall() const
 JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
 {
     time_t t = time(0);
-    tm ts;
-    localtime_r(&t, &ts);
+    tm ts = *localtime(&t);
     return jsString(formatDate(ts) + " " + formatTime(ts));
 }
 
@@ -899,8 +908,7 @@ static double makeTime(tm *t, double ms, bool utc)
     // produce incorrect results, but there's no other option when calling localtime_r().
     if (!utc) { 
         time_t tval = mktime(t) + (time_t)((ms + yearOffset) / 1000);  
-        struct tm t3;  
-        localtime_r(&tval, &t3);  
+        tm t3 = *localtime(&tval);  
         t->tm_isdst = t3.tm_isdst;  
     }
 

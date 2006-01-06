@@ -38,9 +38,11 @@
 #else
 #include <sys/types.h>
 #endif
+#ifndef WIN32
 #include <unistd.h>
-#include <fcntl.h>
 #include <sys/mman.h>
+#endif
+#include <fcntl.h>
 #include "TCSystemAlloc.h"
 #include "TCSpinLock.h"
 

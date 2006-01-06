@@ -42,6 +42,7 @@
 
 #elif WIN32
 
+#undef ERROR
 #include <windows.h>
 
 #else
@@ -158,7 +159,6 @@ void* Collector::allocate(size_t s)
   } else {
 allocateNewBlock:
     // didn't find one, need to allocate a new block
-
     size_t numBlocks = heap.numBlocks;
     if (usedBlocks == numBlocks) {
       numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
@@ -590,7 +590,7 @@ size_t Collector::numReferencedObjects()
   return protectedValues().size();
 }
 
-#if APPLE_CHANGES
+#if __APPLE__
 
 static const char *className(JSCell *val)
 {
