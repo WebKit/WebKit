@@ -1,3 +1,10 @@
+2006-01-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolling out this layout test for now, until we can get plugin testing
+        working.
+
+        * fast/plugins/netscape-back-forward.html: Removed.
+
 2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

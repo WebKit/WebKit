@@ -1,5 +1,13 @@
 2006-01-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Temporarily rolling out plugin support from DumpRenderTree because it
+        caused lots of layout test regressions.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Remove invisible window added to support plugins.
+
+2006-01-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by darin.
 
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6361
