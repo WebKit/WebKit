@@ -2264,6 +2264,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     if (!canContinue) {
+        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
+        // need to report that the client redirect was cancelled.
+        if (_private->quickRedirectComing)
+            [self _clientRedirectCancelled:NO];
+
         [self _setPolicyDataSource:nil];
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
