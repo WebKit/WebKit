@@ -75,7 +75,7 @@ namespace KJS {
 
         void clear();
         
-        void put(const Identifier &name, JSValue *value, int attributes);
+        void put(const Identifier &name, JSValue *value, int attributes, bool roCheck = false);
         void remove(const Identifier &name);
         JSValue *get(const Identifier &name) const;
         JSValue *get(const Identifier &name, int &attributes) const;

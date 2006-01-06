@@ -1,3 +1,25 @@
+2006-01-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fix remaining performance regression from Getter/Setter change
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6249
+
+	- Activation objects should not have __proto__ property
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot): Implement directly, thus
+	skipping getter/setter handling and __proto__ handling, as well
+	as inlining needed superclass stuff.
+        (KJS::ActivationImp::put): Implement directly, skipping getter/setter,
+	__proto__, and do canPut directly in PropertyMap::put since there's no
+	static property table either.
+        * kjs/function.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::put): Allow optionally inlining canPut check.
+        * kjs/property_map.h:
+
 2006-01-04  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by kimmo.t.kinnunen@nokia.com, reviewed by darin, tweaked by me.

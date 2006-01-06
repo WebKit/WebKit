@@ -126,6 +126,7 @@ namespace KJS {
     ActivationImp(FunctionImp *function, const List &arguments);
 
     virtual bool getOwnPropertySlot(ExecState *exec, const Identifier &, PropertySlot&);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }

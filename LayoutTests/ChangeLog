@@ -1,3 +1,13 @@
+2006-01-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- test case for 6396: Activation objects should not have __proto__ property
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
+
+        * fast/js/activation-proto-expected.txt: Added.
+        * fast/js/activation-proto.html: Added.
+
 2006-01-06  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6318

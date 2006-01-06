@@ -508,8 +508,13 @@ PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
 bool ActivationImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // do this first so property map arguments property wins over the below
-    if (JSObject::getOwnPropertySlot(exec, propertyName, slot))
+    // we don't call JSObject because we won't have getter/setter properties
+    // and we don't want to support __proto__
+
+    if (JSValue **location = getDirectLocation(propertyName)) {
+        slot.setValueSlot(this, location);
         return true;
+    }
 
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier()) {
         slot.setCustom(this, getArgumentsGetter());
@@ -524,6 +529,15 @@ bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyNa
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier())
         return false;
     return JSObject::deleteProperty(exec, propertyName);
+}
+
+void ActivationImp::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+{
+  // There's no way that an activation object can have a prototype or getter/setter properties
+  assert(!_prop.hasGetterSetterProperties());
+  assert(!_proto);
+
+  _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
 
 void ActivationImp::mark()
