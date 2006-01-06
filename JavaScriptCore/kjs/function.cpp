@@ -535,7 +535,7 @@ void ActivationImp::put(ExecState *exec, const Identifier &propertyName, JSValue
 {
   // There's no way that an activation object can have a prototype or getter/setter properties
   assert(!_prop.hasGetterSetterProperties());
-  assert(!prototype());
+  assert(prototype() == jsNull());
 
   _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
