@@ -1,3 +1,14 @@
+2006-01-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by Mitz, reviwed by Darin, layout tested and landed by me.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6382
+        REGRESSION: Repro crash when clicking link with target="_blank"
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setName):
+        * manual-tests/empty-link-target.html: Added.
+
 2006-01-06  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

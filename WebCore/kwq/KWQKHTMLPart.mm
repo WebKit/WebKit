@@ -3826,7 +3826,7 @@ void KWQKHTMLPart::setName(const QString &name)
     KWQKHTMLPart *parent = KWQ(parentPart());
 
     // FIXME: is the blank rule needed or useful?
-    if (parent && (name.isEmpty() || parent->frameExists(name)) || name == "_blank")
+    if (parent && (name.isEmpty() || parent->frameExists(name) || name == "_blank"))
 	n = parent->requestFrameName();
 
     KHTMLPart::setName(n);
