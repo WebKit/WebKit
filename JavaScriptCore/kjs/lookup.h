@@ -38,6 +38,7 @@ namespace KJS {
      * s is the key (e.g. a property name)
      */
     const char *s;
+
     /**
      * value is the result value (usually an enum value)
      */
@@ -102,6 +103,7 @@ namespace KJS {
     static int find(const struct HashTable *table,
 		    const UChar *c, unsigned int len);
 
+
     /**
      * Find an entry in the table, and return the entry
      * This variant gives access to the other attributes of the entry,
@@ -109,15 +111,7 @@ namespace KJS {
      */
     static const HashEntry* findEntry(const struct HashTable *table,
                                       const Identifier &s);
-    static const HashEntry* findEntry(const struct HashTable *table,
-                                      const UChar *c, unsigned int len);
 
-    /**
-     * Calculate the hash value for a given key
-     */
-    static unsigned int hash(const Identifier &key);
-    static unsigned int hash(const UChar *c, unsigned int len);
-    static unsigned int hash(const char *s);
   };
 
   class ExecState;

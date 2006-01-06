@@ -182,9 +182,7 @@ UString StringImp::toString(ExecState *) const
 
 JSObject *StringImp::toObject(ExecState *exec) const
 {
-  List args;
-  args.append(const_cast<StringImp*>(this));
-  return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinString()->construct(exec, args));
+    return new StringInstance(exec->lexicalInterpreter()->builtinStringPrototype(), val);
 }
 
 // ------------------------------ NumberImp ------------------------------------

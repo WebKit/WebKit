@@ -181,14 +181,15 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
   if (param) {
     ListIterator it = args.begin();
     Parameter *p = param;
+    JSValue  *v = *it;
     while (p) {
       if (it != args.end()) {
 #ifdef KJS_VERBOSE
 	fprintf(stderr, "setting parameter %s ", p->name.ascii());
 	printInfo(exec,"to", *it);
 #endif
-	variable->put(exec, p->name, *it);
-	it++;
+	variable->put(exec, p->name, v);
+	v = ++it;
       } else
 	variable->put(exec, p->name, jsUndefined());
       p = p->next;
@@ -485,7 +486,7 @@ const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
     : _function(function), _arguments(true), _argumentsObject(0)
 {
-  _arguments = arguments.copy();
+  _arguments.copyFrom(arguments);
   // FIXME: Do we need to support enumerating the arguments property?
 }
 

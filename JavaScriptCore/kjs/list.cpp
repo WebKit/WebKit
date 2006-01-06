@@ -288,21 +288,24 @@ void List::append(JSValue *v)
 List List::copy() const
 {
     List copy;
+    copy.copyFrom(*this);
+    return copy;
+}
 
-    ListImp *imp = static_cast<ListImp *>(_impBase);
+void List::copyFrom(const List& other)
+{
+    ListImp *imp = static_cast<ListImp *>(other._impBase);
 
     int size = imp->size;
 
     int inlineSize = min(size, inlineValuesSize);
     for (int i = 0; i != inlineSize; ++i)
-        copy.append(imp->values[i]);
+        append(imp->values[i]);
 
     JSValue **overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i != overflowSize; ++i)
-        copy.append(overflow[i]);
-
-    return copy;
+        append(overflow[i]);
 }
 
 

@@ -1,5 +1,31 @@
 2006-01-06  Maciej Stachowiak  <mjs@apple.com>
 
+	Reviewed by Darin.
+
+	- miscellaneous changes for 4% speedup on the JavaScript iBench
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=6396
+	
+        Changes mostly thanks to Maks Orlovich, tweaked a little by me.
+
+        * kjs/create_hash_table: Use the same hash as the one used buy Identifier.
+        * kjs/function.cpp:
+        (KJS::FunctionImp::processParameters): Use the new List::copyFrom
+        (KJS::ActivationImp::ActivationImp): track variable while iterating
+        * kjs/internal.cpp:
+        (KJS::StringImp::toObject): create StringInstance directly
+        * kjs/list.cpp:
+        (KJS::List::copy): implement in terms of copyFrom
+        (KJS::List::copyFrom): more efficient way to copy in another list
+        * kjs/list.h:
+        * kjs/lookup.cpp:
+        (keysMatch): updated to work with identifier hash
+        (findEntry): ditto
+        (Lookup::findEntry): ditto
+        (Lookup::find): ditto
+        * kjs/lookup.h:
+
+2006-01-06  Maciej Stachowiak  <mjs@apple.com>
+
 	- fix development build failure from the previous checkin
 
         * kjs/function.cpp:

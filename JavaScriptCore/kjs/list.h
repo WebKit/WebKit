@@ -74,6 +74,11 @@ namespace KJS {
         List copy() const;
 
         /**
+         * Copy all elements from the second list here
+         */
+        void copyFrom(const List& other);
+
+        /**
          * Make a copy of the list, omitting the first element.
          */
         List copyTail() const;
