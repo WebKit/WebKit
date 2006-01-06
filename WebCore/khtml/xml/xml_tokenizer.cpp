@@ -914,27 +914,63 @@ void XMLTokenizer::stopParsing()
     xmlStopParser(m_context);
 }
 
+static void balancedStartElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
+{
+   static_cast<XMLTokenizer *>(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
+}
+
+static void balancedEndElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri)
+{
+    static_cast<XMLTokenizer *>(closure)->endElementNs();
+}
+
+static void balancedCharactersHandler(void *closure, const xmlChar *s, int len)
+{
+    static_cast<XMLTokenizer *>(closure)->characters(s, len);
+}
+
+static void balancedProcessingInstructionHandler(void *closure, const xmlChar *target, const xmlChar *data)
+{
+    static_cast<XMLTokenizer *>(closure)->processingInstruction(target, data);
+}
+
+static void balancedCdataBlockHandler(void *closure, const xmlChar *s, int len)
+{
+    static_cast<XMLTokenizer *>(closure)->cdataBlock(s, len);
+}
+
+static void balancedCommentHandler(void *closure, const xmlChar *comment)
+{
+    static_cast<XMLTokenizer *>(closure)->comment(comment);
+}
+
+static void balancedWarningHandler(void *closure, const char *message, ...)
+{
+    va_list args;
+    va_start(args, message);
+    static_cast<XMLTokenizer *>(closure)->error(XMLTokenizer::warning, message, args);
+    va_end(args);
+}
+
 bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fragment, ElementImpl *parent)
 {
     XMLTokenizer tokenizer(fragment, parent);
     
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
-    sax.characters = charactersHandler;
-    sax.processingInstruction = processingInstructionHandler;
-    sax.startElementNs = startElementNsHandler;
-    sax.endElementNs = endElementNsHandler;
-    sax.cdataBlock = cdataBlockHandler;
-    sax.comment = commentHandler;
-    sax.warning = warningHandler;
+
+    sax.characters = balancedCharactersHandler;
+    sax.processingInstruction = balancedProcessingInstructionHandler;
+    sax.startElementNs = balancedStartElementNsHandler;
+    sax.endElementNs = balancedEndElementNsHandler;
+    sax.cdataBlock = balancedCdataBlockHandler;
+    sax.ignorableWhitespace = balancedCdataBlockHandler;
+    sax.comment = balancedCommentHandler;
+    sax.warning = balancedWarningHandler;
     sax.initialized = XML_SAX2_MAGIC;
     
-    xmlParserCtxtPtr parser = createQStringParser(&sax, &tokenizer);
-    int result = parseQString(parser, string.qstring());
-    if (parser->myDoc)
-        xmlFreeDoc(parser->myDoc);
-    xmlFreeParserCtxt(parser);
-
+    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, 
+                                            (const xmlChar*)(const char*)(string.qstring().utf8()), 0);
     return result == 0;
 }
 
