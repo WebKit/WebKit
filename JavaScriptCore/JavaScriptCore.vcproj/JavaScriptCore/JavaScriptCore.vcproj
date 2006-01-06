@@ -17,15 +17,15 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(OutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
-			ConfigurationType="2"
+			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			ConfigurationType="4"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Constructing chartables.c"
-				CommandLine="mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(OutputDir)JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;"
+				Description="Constructing generated files..."
+				CommandLine="if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\array_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\array_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\bool_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\bool_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\date_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\date_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\error_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\error_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\function_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\function_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\math_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\math_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\number_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\number_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\object_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\object_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\regexp_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\regexp_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\string_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\string_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\keywords.table&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\lexer.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\bison.exe&quot; -d -p kjsyy &quot;$(InputDir)\..\..\kjs\grammar.y&quot; -o &quot;$(InputDir)\..\..\kjs\grammar.cpp&quot;&#x0D;&#x0A;move &quot;$(InputDir)\..\..\kjs\grammar.hpp&quot; &quot;$(InputDir)\..\..\kjs\grammar.h&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -43,18 +43,21 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="&#x0D;&#x0A;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
-				PreprocessorDefinitions="HAVE_CONFIG_H"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
-				Detect64BitPortabilityProblems="true"
+				WarningLevel="1"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4138; 4996; 4355"
+				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -66,17 +69,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -88,27 +84,23 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copying ICU DLLS..."
+				CommandLine="cp ..\..\..\icu\bin\icudt34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;cp ..\..\..\icu\bin\icuuc34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(OutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
-			ConfigurationType="2"
+			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Constructing chartables.c"
-				CommandLine="mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;mkdir &quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(OutputDir)JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;"
+				Description="Constructing generated files..."
+				CommandLine="if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot;&#x0D;&#x0A;if not exist &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate&quot; mkdir &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\array_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\array_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\bool_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\bool_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\date_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\date_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\error_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\error_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\function_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\function_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\math_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\math_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\number_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\number_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\object_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\object_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\regexp_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\regexp_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\string_object.cpp&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\string_object.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\perl.exe&quot; &quot;$(InputDir)\..\..\kjs\create_hash_table&quot; &quot;$(InputDir)\..\..\kjs\keywords.table&quot; &gt; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\lexer.lut.h&quot; -i&#x0D;&#x0A;&quot;$(WebKitToolsDir)\bison.exe&quot; -d -p kjsyy &quot;$(InputDir)\..\..\kjs\grammar.y&quot; -o &quot;$(InputDir)\..\..\kjs\grammar.cpp&quot;&#x0D;&#x0A;move &quot;$(InputDir)\..\..\kjs\grammar.hpp&quot; &quot;$(InputDir)\..\..\kjs\grammar.h&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -126,15 +118,18 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(OutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
-				PreprocessorDefinitions="HAVE_CONFIG_H"
+				AdditionalOptions="&#x0D;&#x0A;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
-				Detect64BitPortabilityProblems="true"
+				WarningLevel="1"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4138; 4996; 4355"
+				ForcedIncludeFiles=""
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -146,19 +141,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -170,13 +156,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copying ICU DLLS..."
+				CommandLine="cp ..\..\..\icu\bin\icudt34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;cp ..\..\..\icu\bin\icuuc34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -554,22 +536,6 @@
 				RelativePath="..\..\kxmlcore\RefPtr.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\kxmlcore\TCPageMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kxmlcore\TCSpinLock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kxmlcore\TCSystemAlloc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kxmlcore\TCSystemAlloc.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="PCRE"
@@ -664,6 +630,14 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\ucpinternal.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			>
+			<File
+				RelativePath="..\..\kjs\grammar.cpp"
 				>
 			</File>
 		</Filter>

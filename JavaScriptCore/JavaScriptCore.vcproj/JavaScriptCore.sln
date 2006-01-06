@@ -8,6 +8,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScrip
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dftables", "dftables\dftables.vcproj", "{BC2981C0-67A5-4A3C-879B-784BCBDE2541}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testkjs", "testkjs\testkjs.vcproj", "{C59E5129-B453-49B7-A52B-1E104715F76E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,6 +27,10 @@ Global
 		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Debug|Win32.Build.0 = Debug|Win32
 		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Release|Win32.ActiveCfg = Release|Win32
 		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Release|Win32.Build.0 = Release|Win32
+		{C59E5129-B453-49B7-A52B-1E104715F76E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C59E5129-B453-49B7-A52B-1E104715F76E}.Debug|Win32.Build.0 = Debug|Win32
+		{C59E5129-B453-49B7-A52B-1E104715F76E}.Release|Win32.ActiveCfg = Release|Win32
+		{C59E5129-B453-49B7-A52B-1E104715F76E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
