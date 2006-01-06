@@ -1,3 +1,13 @@
+2006-01-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki Murley (full credit) and Tim Omernick (half credit).
+        
+        - fixed <rdar://problem/4401102> REGRESSION (420+): When displaying a PDF, tabbing around stops working after reaching page
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView setNextKeyView:]):
+        Use [PDFSubview documentView] rather than PDFSubview here, since that's the view that we now hand off first-responderhood to.
+
 2006-01-05  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

@@ -822,10 +822,19 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 - (void)setNextKeyView:(NSView *)aView
 {
     // This works together with becomeFirstResponder to splice PDFSubview into
-    // the key loop similar to the way NSScrollView does this.
-    if (PDFSubview)
-        [PDFSubview setNextKeyView:aView];
-    else
+    // the key loop similar to the way NSScrollView and NSClipView do this.
+    NSView *documentView = [PDFSubview documentView];
+    if (documentView) {
+        [documentView setNextKeyView:aView];
+        
+        // We need to make the documentView be the next view in the keyview loop.
+        // It would seem more sensible to do this in our init method, but it turns out
+        // that [NSClipView setDocumentView] won't call this method if our next key view
+        // is already set, so we wait until we're called before adding this connection.
+        // We'll also clear it when we're called with nil, so this could go through the
+        // same code path more than once successfully.
+        [super setNextKeyView: aView ? documentView : nil];
+    } else
         [super setNextKeyView:aView];
 }
 
