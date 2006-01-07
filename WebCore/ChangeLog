@@ -1,3 +1,17 @@
+2006-01-07  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6373
+        REGRESSION: JavaScript hang when comparing large array to null
+        
+        * khtml/ecma/kjs_html.cpp:
+        Remove toPrimitive.
+        
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLAllCollection::isEqualToNull):
+        Implement isEqualToNull and have it return true.
+
 2006-01-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

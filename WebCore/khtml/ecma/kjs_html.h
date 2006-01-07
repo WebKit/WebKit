@@ -335,7 +335,7 @@ namespace KJS {
     HTMLAllCollection(ExecState *exec, DOM::HTMLCollectionImpl *c) :
       HTMLCollection(exec, c) { }
     virtual bool toBoolean(ExecState *) const { return false; }
-    virtual JSValue *toPrimitive(ExecState *exec, Type preferredType) const;
+    virtual bool isEqualToNull(ExecState *) const { return true; }
   };
   
   ////////////////////// Option Object ////////////////////////
