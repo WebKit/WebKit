@@ -491,8 +491,11 @@ namespace KJS {
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
     JSObject *toObject(ExecState *exec) const;
-
+    
     bool getPropertyAttributes(const Identifier& propertyName, int& attributes) const;
+    
+    // Returns whether the object should be treated as null when doing equality comparisons
+    virtual bool isEqualToNull(ExecState *) const { return false; }
     
     // This get function only looks at the property map.
     // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want

@@ -1,9 +1,25 @@
+2006-01-07  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6373
+        REGRESSION: JavaScript hang when comparing large array to null
+        
+        * kjs/object.h:
+        (KJS::JSObject::isEqualToNull):
+        Add new function which returns true if an object should be treated as null when
+        doing comparisons.
+        
+        * kjs/operations.cpp:
+        (KJS::equal):
+        Use isEqualToNull.
+
 2006-01-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
 
-	- Fix WebCore development build
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6408
+	    - Fix WebCore development build
+	    http://bugzilla.opendarwin.org/show_bug.cgi?id=6408
 
         * kxmlcore/Assertions.h: Use __VA_ARGS__ in variadic macros.
 
@@ -16,7 +32,7 @@
 	
         Changes mostly thanks to Maks Orlovich, tweaked a little by me.
 
-        * kjs/create_hash_table: Use the same hash as the one used buy Identifier.
+        * kjs/create_hash_table: Use the same hash as the one used by Identifier.
         * kjs/function.cpp:
         (KJS::FunctionImp::processParameters): Use the new List::copyFrom
         (KJS::ActivationImp::ActivationImp): track variable while iterating
