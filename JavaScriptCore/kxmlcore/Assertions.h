@@ -105,7 +105,7 @@ void KXCLog(const char *file, int line, const char *function, KXCLogChannel *cha
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs, ...) ((void)0)
+#define ASSERT_WITH_MESSAGE(assertion, ...) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
 
 #else
@@ -116,9 +116,9 @@ void KXCLog(const char *file, int line, const char *function, KXCLogChannel *cha
         CRASH(); \
     } \
 while (0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs, ...) do \
+#define ASSERT_WITH_MESSAGE(assertion, ...) do \
     if (!(assertion)) { \
-        KXCReportAssertionFailureWithMessage(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion, formatAndArgs); \
+        KXCReportAssertionFailureWithMessage(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         CRASH(); \
     } \
 while (0)
@@ -149,10 +149,10 @@ while (0)
 // FATAL
 
 #if FATAL_DISABLED
-#define FATAL(formatAndArgs, ...) ((void)0)
+#define FATAL(...) ((void)0)
 #else
-#define FATAL(formatAndArgs, ...) do { \
-    KXCReportFatalError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, formatAndArgs); \
+#define FATAL(...) do { \
+    KXCReportFatalError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__); \
     CRASH(); \
 } while (0)
 #endif
@@ -160,17 +160,17 @@ while (0)
 // ERROR
 
 #if ERROR_DISABLED
-#define ERROR(formatAndArgs, ...) ((void)0)
+#define ERROR(...) ((void)0)
 #else
-#define ERROR(formatAndArgs, ...) KXCReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, formatAndArgs)
+#define ERROR(...) KXCReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
 #endif
 
 // LOG
 
 #if LOG_DISABLED
-#define LOG(channel, formatAndArgs, ...) ((void)0)
+#define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, formatAndArgs, ...) KXCLog(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), formatAndArgs)
+#define LOG(channel, ...) KXCLog(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
 #endif
