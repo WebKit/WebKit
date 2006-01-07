@@ -507,7 +507,9 @@ CIFilter *KCanvasFEDiffuseLightingQuartz::getCIFilter(KCanvasFilterQuartz *quart
         return nil;
     
     [filter setDefaults];
-    CIFilter *normals = getNormalMap(quartzFilter->inputImage(this), surfaceScale());
+    CIImage *inputImage = quartzFilter->inputImage(this);
+    FE_QUARTZ_CHECK_INPUT(inputImage);
+    CIFilter *normals = getNormalMap(inputImage, surfaceScale());
     if (!normals) 
         return nil;
     
@@ -636,7 +638,9 @@ CIFilter *KCanvasFESpecularLightingQuartz::getCIFilter(KCanvasFilterQuartz *quar
     KWQ_BLOCK_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKSpecularLighting"];
     [filter setDefaults];
-    CIFilter *normals = getNormalMap(quartzFilter->inputImage(this), surfaceScale());
+    CIImage *inputImage = quartzFilter->inputImage(this);
+    FE_QUARTZ_CHECK_INPUT(inputImage);
+    CIFilter *normals = getNormalMap(inputImage, surfaceScale());
     if (!normals) 
         return nil;
     CIFilter *lightVectors = getLightVectors(normals, light, surfaceScale());

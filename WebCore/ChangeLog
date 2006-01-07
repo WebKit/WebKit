@@ -1,3 +1,13 @@
+2006-01-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        <rdar://problem/4386652> Crash: SVG filter crash at w3schools.com
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEDiffuseLightingQuartz::getCIFilter): nil check
+        (KCanvasFESpecularLightingQuartz::getCIFilter): nil check
+
 2006-01-06  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by Mitz, reviwed by Darin, layout tested and landed by me.
