@@ -1386,7 +1386,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
             if (style->smallCaps) {
                 UniChar c = charBuffer[i];
                 UniChar newC;
-                if (!u_isbase(c))
+                if (U_GET_GC_MASK(c) & U_GC_M_MASK)
                     renderers[i] = isSmallCap ? getSmallCapsRenderer(r) : r;
                 else if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
                     charBuffer[i] = newC;

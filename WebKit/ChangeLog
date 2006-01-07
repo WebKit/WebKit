@@ -1,3 +1,16 @@
+2006-01-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+        
+        Test: fast/text/atsui-small-caps-punctuation-size.html
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6397
+          ATSUI small caps use small punctuation
+          
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (createATSULayoutParameters): Changed the characters for which size must
+        not change from !u_isbase() to the M* categories.
+
 2006-01-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Vicki Murley (full credit) and Tim Omernick (half credit).

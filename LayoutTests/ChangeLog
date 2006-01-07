@@ -1,3 +1,18 @@
+2006-01-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+        
+        Reviewed by Darin. landed by ap.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6397
+          ATSUI small caps use small punctuation
+          
+        * fast/text/atsui-multiple-renderers-expected.checksum: Updated.
+        * fast/text/atsui-multiple-renderers-expected.png: Updated.
+        * fast/text/atsui-multiple-renderers-expected.txt: Updated.
+        * fast/text/atsui-small-caps-punctuation-size-expected.checksum: Added.
+        * fast/text/atsui-small-caps-punctuation-size-expected.png: Added.
+        * fast/text/atsui-small-caps-punctuation-size-expected.txt: Added.
+        * fast/text/atsui-small-caps-punctuation-size.html: Added.
+
 2006-01-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
