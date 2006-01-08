@@ -1,3 +1,12 @@
+2005-01-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        build-webkit should pass on build arguments from command line
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5854
+
+        * Scripts/build-webkit:
+
 2006-01-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs & xenon.

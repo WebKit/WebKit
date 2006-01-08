@@ -78,13 +78,13 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result;
     if (!$svgSupport && ($dir eq "WebCore")) {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "$dir-no-SVG";
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "$dir-no-SVG", @options, @ARGV;
     } else {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options;
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
     }
     exit $result if $result;
     if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, "-target", "testkjs";
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "testkjs", @options, @ARGV;
         exit $result if $result;
     }
     chdir ".." or die;
