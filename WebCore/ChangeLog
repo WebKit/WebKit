@@ -1,3 +1,11 @@
+2006-01-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed WebCore build
+
+        * khtml/rendering/render_canvasimage.h: Remove unneeded extern declarations.
+
 2006-01-07  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
