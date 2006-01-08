@@ -69,6 +69,8 @@
 		654D87B80831973B0082DCA1 /* edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 654D87B60831973B0082DCA1 /* edit_command.h */; };
 		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */; };
+		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
+		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
 		65AC79A10831ED6D009385CE /* append_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC799F0831ED6D009385CE /* append_node_command.cpp */; };
 		65AC79A20831ED6D009385CE /* append_node_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A00831ED6D009385CE /* append_node_command.h */; };
 		65AC79A90831F006009385CE /* apply_style_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC79A70831F006009385CE /* apply_style_command.cpp */; };
@@ -1707,6 +1709,8 @@
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
 		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreFrameNamespaces.m; sourceTree = "<group>"; };
 		65732B68054EF483007B42F8 /* KWQKPartsPart.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsPart.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
+		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0E0586921000123A69 /* xmlserializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlserializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65A640F00533BB1F0085E777 /* KWQExceptions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQExceptions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3340,6 +3344,8 @@
 		A8C0FB51089701F700BA5114 /* kcanvas */ = {
 			isa = PBXGroup;
 			children = (
+				65743B50097076F8001E7CEF /* RenderSVGText.cpp */,
+				65743B51097076F8001E7CEF /* RenderSVGText.h */,
 				A8C0FB53089701F700BA5114 /* device */,
 				A8C0FB7A089701F800BA5114 /* KCanvasContainer.cpp */,
 				A8C0FB7B089701F800BA5114 /* KCanvasContainer.h */,
@@ -4718,6 +4724,7 @@
 				4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */,
 				A81655D4096BBEAC00601058 /* KCanvasMaskerQuartz.h in Headers */,
 				A81655E5096BC13900601058 /* SVGMaskElementImpl.h in Headers */,
+				65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6562,6 +6569,7 @@
 				4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */,
 				A81655D5096BBEAC00601058 /* KCanvasMaskerQuartz.mm in Sources */,
 				A81655E4096BC13900601058 /* SVGMaskElementImpl.cpp in Sources */,
+				65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,9 +2,24 @@ layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (-34.85,-66.71) size 511.85x423.71
       KCanvasContainer {g} at (-34.85,-66.71) size 457.85x327.71
+        RenderSVGText {text} at (0,0) size 465x10
+          RenderText {TEXT} at (0,0) size 77x10
+            text run at (0,0) width 77: "Test a motion path"
+        RenderSVGText {text} at (0,0) size 465x10
+          RenderText {TEXT} at (0,0) size 62x10
+            text run at (0,0) width 62: "'path' attribute."
         KCanvasContainer {g} at (-34.85,-66.71) size 457.85x327.71
           KCanvasItem {path} at (87.78,160.76) size 303.44x99.26 [stroke={[type=SOLID] [color=#000000]}] [data="M15.00,43.00C15.00,43.00,36.00,20.00,65.00,33.00"]
           KCanvasItem {rect} at (57,195) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M10.00,33.00L20.00,33.00L20.00,43.00L10.00,43.00"]
+          RenderSVGText {text} at (0,0) size 465x10
+            RenderText {TEXT} at (0,0) size 26x10
+              text run at (0,0) width 26: "0 sec."
           KCanvasItem {rect} at (357,135) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M60.00,23.00L70.00,23.00L70.00,33.00L60.00,33.00"]
+          RenderSVGText {text} at (0,0) size 465x10
+            RenderText {TEXT} at (0,0) size 31x10
+              text run at (0,0) width 31: "6+ sec."
           KCanvasItem {path} at (-34.85,-66.71) size 69.71x69.71 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M-5.00,0.00L0.00,-10.00L5.00,0.00"]
+      RenderSVGText {text} at (0,0) size 465x10
+        RenderText {TEXT} at (0,0) size 77x10
+          text run at (0,0) width 77: "$Revision$"
       KCanvasItem {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L79.00,1.00L79.00,59.00L1.00,59.00"]

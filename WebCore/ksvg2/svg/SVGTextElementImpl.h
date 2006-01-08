@@ -46,6 +46,10 @@ namespace KSVG
         virtual SVGMatrixImpl *getScreenCTM() const;
         virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const { return 0; }
 
+        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool childShouldCreateRenderer(DOM::NodeImpl *) const;
+
         virtual SVGAnimatedTransformListImpl *transform() const { return 0; }
         virtual SVGMatrixImpl *localMatrix() const { return 0; }
         

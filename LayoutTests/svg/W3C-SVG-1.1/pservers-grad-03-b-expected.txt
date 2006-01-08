@@ -11,5 +11,14 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
         KCanvasContainer {pattern} at (0,0) size 0x0
         KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
+        RenderSVGText {text} at (0,0) size 465x34
+          RenderText {TEXT} at (0,0) size 142x34
+            text run at (0,0) width 142: "Pattern fill."
         KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
+        RenderSVGText {text} at (0,0) size 465x34
+          RenderText {TEXT} at (0,0) size 399x34
+            text run at (0,0) width 399: "Referencing pattern fill below."
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

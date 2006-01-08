@@ -1,3 +1,34 @@
+2006-01-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - added basic SVG text support using CSS-based rendering
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4883
+ 
+        Affects many test results in LayoutTests/svg.
+
+        * kcanvas/RenderSVGText.cpp: Added. Simple subclass of RenderBlock for SVG text.
+        (RenderSVGText::RenderSVGText): just call superclass constructor.
+        (RenderSVGText::translateTopToBaseline): helper to account for the fact that
+	y coordinates for <text> give the baseline position, but the render tree expects
+	current y to be the top.
+        (RenderSVGText::translateForAttributes): translate to account for x and y
+	attributes.
+        (RenderSVGText::paint): Apply appropriate CTM transform and then just let
+	RenderBlock paint.
+        * kcanvas/RenderSVGText.h: Added.
+        (RenderSVGText::renderName):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::nsGraphicsContext): We want the context flipped.
+        * ksvg2/css/svg.css: Give <svg:text> display: block
+        * ksvg2/svg/SVGTextElementImpl.cpp:
+        (SVGTextElementImpl::createRenderer): Create a RenderSVGText renderer.
+        (SVGTextElementImpl::childShouldCreateRenderer): Let child text nodes make
+	renderers, but nothing else (for now).
+        * ksvg2/svg/SVGTextElementImpl.h:
+        (KSVG::SVGTextElementImpl::rendererIsNeeded): It sure is! :-)
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
 2006-01-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs

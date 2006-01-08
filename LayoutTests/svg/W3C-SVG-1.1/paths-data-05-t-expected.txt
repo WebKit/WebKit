@@ -3,6 +3,15 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (14.47,68.40) size 401.26x169.20
         KCanvasContainer {g} at (14.47,68.40) size 401.26x169.20 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 52x14
+              text run at (0,0) width 52: "m, l, l, l, z,"
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 44x14
+              text run at (0,0) width 44: "subpath"
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 49x14
+              text run at (0,0) width 49: "m, l, l, l, z"
           KCanvasItem {path} at (16.51,70.20) size 190.18x164.70 [stroke={[type=SOLID] [color=#000000]}] [data="M62.00,190.00L113.96,280.00L10.04,280.00L62.00,190.00M62.00,205.00L100.97,272.50L23.06,272.50L62.03,205.00"]
           KCanvasItem {rect} at (108,68.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M60.00,188.00L64.00,188.00L64.00,192.00L60.00,192.00"]
           KCanvasItem {rect} at (201.53,230.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M111.96,278.00L115.96,278.00L115.96,282.00L111.96,282.00"]
@@ -17,4 +26,7 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (315,95.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M175.00,203.00L179.00,203.00L179.00,207.00L175.00,207.00"]
           KCanvasItem {rect} at (385.15,216.90) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M213.97,270.50L217.97,270.50L217.97,274.50L213.97,274.50"]
           KCanvasItem {rect} at (244.85,216.90) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M136.03,270.50L140.03,270.50L140.03,274.50L136.03,274.50"]
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

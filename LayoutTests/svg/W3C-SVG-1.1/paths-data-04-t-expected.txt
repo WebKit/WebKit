@@ -3,6 +3,15 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (14.47,97.20) size 401.26x169.20
         KCanvasContainer {g} at (14.47,97.20) size 401.26x169.20 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 65x14
+              text run at (0,0) width 65: "M, L, L, L, Z,"
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 44x14
+              text run at (0,0) width 44: "subpath"
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 62x14
+              text run at (0,0) width 62: "M, L, L, L, Z"
           KCanvasItem {path} at (16.51,99) size 190.18x164.70 [stroke={[type=SOLID] [color=#000000]}] [data="M62.00,56.00L113.96,146.00L10.04,146.00L62.00,56.00M62.00,71.00L100.97,138.50L23.03,138.50L62.00,71.00"]
           KCanvasItem {rect} at (108,97.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M60.00,54.00L64.00,54.00L64.00,58.00L60.00,58.00"]
           KCanvasItem {rect} at (201.53,259.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M111.96,144.00L115.96,144.00L115.96,148.00L111.96,148.00"]
@@ -10,6 +19,9 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (108,124.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M60.00,69.00L64.00,69.00L64.00,73.00L60.00,73.00"]
           KCanvasItem {rect} at (178.15,245.70) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M98.97,136.50L102.97,136.50L102.97,140.50L98.97,140.50"]
           KCanvasItem {rect} at (37.85,245.70) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M21.03,136.50L25.03,136.50L25.03,140.50L21.03,140.50"]
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 40x14
+              text run at (0,0) width 40: "stroked"
           KCanvasItem {path} at (225.07,100.80) size 187.06x162 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M177.00,56.00L228.96,146.00L125.04,146.00L177.00,56.00M177.00,71.00L215.97,138.50L138.03,138.50L177.00,71.00"]
           KCanvasItem {rect} at (315,97.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M175.00,54.00L179.00,54.00L179.00,58.00L175.00,58.00"]
           KCanvasItem {rect} at (408.53,259.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M226.96,144.00L230.96,144.00L230.96,148.00L226.96,148.00"]
@@ -17,4 +29,10 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (315,124.20) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M175.00,69.00L179.00,69.00L179.00,73.00L175.00,73.00"]
           KCanvasItem {rect} at (385.15,245.70) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M213.97,136.50L217.97,136.50L217.97,140.50L213.97,140.50"]
           KCanvasItem {rect} at (244.85,245.70) size 7.20x7.20 [fill={[type=SOLID] [color=#00C000]}] [data="M136.03,136.50L140.03,136.50L140.03,140.50L136.03,140.50"]
+          RenderSVGText {text} at (0,0) size 465x14
+            RenderText {TEXT} at (0,0) size 26x14
+              text run at (0,0) width 26: "filled"
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

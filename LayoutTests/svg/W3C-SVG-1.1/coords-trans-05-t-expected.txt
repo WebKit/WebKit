@@ -8,7 +8,13 @@ layer at (0,0) size 480x360
               KCanvasItem {rect} at (-550,-1575) size 150x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L20.00,0.00L20.00,1.00L0.00,1.00"]
               KCanvasItem {rect} at (-550,-1575) size 5.03x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L0.67,0.00L0.67,20.00L0.00,20.00"]
           KCanvasContainer {g} at (30,145) size 162.50x112.50 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-90.00,-450.00)}]
+            RenderSVGText {text} at (0,0) size 465x18
+              RenderText {TEXT} at (0,0) size 180x18
+                text run at (0,0) width 180: "scale(25, 95) - translate(2, 2)"
             KCanvasItem {rect} at (30,145) size 12.50x12.50 [fill={[type=SOLID] [color=#000000]}] [data="M48.00,208.00L53.00,208.00L53.00,213.00L48.00,213.00"]
             KCanvasItem {rect} at (180,145) size 12.50x12.50 [fill={[type=SOLID] [color=#0000FF]}] [data="M108.00,208.00L113.00,208.00L113.00,213.00L108.00,213.00"]
             KCanvasItem {rect} at (30,245) size 12.50x12.50 [fill={[type=SOLID] [color=#FF0000]}] [data="M48.00,248.00L53.00,248.00L53.00,253.00L48.00,253.00"]
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

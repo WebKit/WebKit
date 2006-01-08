@@ -2,9 +2,27 @@ layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (9.50,54.50) size 461x231
+        RenderSVGText {text} at (0,0) size 465x45
+          RenderText {TEXT} at (0,0) size 318x45
+            text run at (0,0) width 318: "Event bubbling - c"
         KCanvasContainer {g} at (9.50,54.50) size 461x231
           KCanvasItem {rect} at (9.50,54.50) size 461x231 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M10.00,55.00L470.00,55.00L470.00,285.00L10.00,285.00"]
         KCanvasContainer {g} at (0,0) size 0x0
           KCanvasContainer {a} at (0,0) size 0x0
+            RenderSVGText {text} at (0,0) size 465x45
+              RenderText {TEXT} at (0,0) size 415x45
+                text run at (0,0) width 415: "String turns red on click"
             KCanvasContainer {g} at (0,0) size 0x0
+              RenderSVGText {text} at (0,0) size 465x45
+                RenderText {TEXT} at (0,0) size 338x45
+                  text run at (0,0) width 338: "String hyperlinks to"
+              RenderSVGText {text} at (0,0) size 465x38
+                RenderText {TEXT} at (0,0) size 387x38
+                  text run at (0,0) width 387: "interact-order-03b-targ.svg"
+            RenderSVGText {text} at (0,0) size 465x45
+              RenderText {TEXT} at (0,0) size 442x45
+                text run at (0,0) width 442: "All strings are selectable."
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

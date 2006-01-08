@@ -4,6 +4,18 @@ layer at (0,0) size 480x360
       KCanvasContainer {g} at (140,38) size 312x214
         KCanvasContainer {g} at (140,38) size 312x214
           KCanvasContainer {g} at (140,38) size 82x214 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,50.00)}]
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 0 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 3 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 6 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 98x34
+                text run at (0,0) width 98: "9+ sec."
             KCanvasContainer {g} at (140,48) size 50x204
               KCanvasItem {line} at (140,248) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,200.00L170.00,200.00"]
               KCanvasItem {line} at (140,215) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,167.00L170.00,167.00"]
@@ -11,10 +23,25 @@ layer at (0,0) size 480x360
               KCanvasItem {line} at (140,48) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,0.00L170.00,0.00"]
             KCanvasItem {rect} at (158,38) size 64x214 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [data="M140.00,-10.00L200.00,-10.00L200.00,200.00L140.00,200.00"]
           KCanvasContainer {g} at (370,38) size 82x214 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,50.00)}]
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 0 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 3 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 113x34
+                text run at (0,0) width 113: "at 6 sec."
+            RenderSVGText {text} at (0,0) size 465x34
+              RenderText {TEXT} at (0,0) size 98x34
+                text run at (0,0) width 98: "9+ sec."
             KCanvasContainer {g} at (370,48) size 50x204
               KCanvasItem {line} at (370,248) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,200.00L170.00,200.00"]
               KCanvasItem {line} at (370,215) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,167.00L170.00,167.00"]
               KCanvasItem {line} at (370,159) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,111.00L170.00,111.00"]
               KCanvasItem {line} at (370,48) size 50x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M120.00,0.00L170.00,0.00"]
             KCanvasItem {rect} at (388,38) size 64x14 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [data="M140.00,-10.00L200.00,-10.00L200.00,0.00L140.00,0.00"]
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

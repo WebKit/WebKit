@@ -82,7 +82,7 @@ QRect KRenderingDeviceContextQuartz::mapToVisual(const QRect &rect)
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
 {
     if (!m_nsGraphicsContext && m_cgContext)
-        m_nsGraphicsContext = [[NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:NO] retain];
+        m_nsGraphicsContext = [[NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES] retain];
     return m_nsGraphicsContext;
 }
 

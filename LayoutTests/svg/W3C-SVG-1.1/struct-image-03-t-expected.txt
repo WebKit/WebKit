@@ -8,4 +8,10 @@ layer at (0,0) size 480x360
         KCanvasItem {image} at (25,91) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,91.00L455.00,91.00L455.00,139.00L25.00,139.00"]
         KCanvasItem {image} at (25,139) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,139.00L455.00,139.00L455.00,187.00L25.00,187.00"]
         KCanvasItem {image} at (25,187) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,187.00L455.00,187.00L455.00,235.00L25.00,235.00"]
+        RenderSVGText {text} at (0,0) size 465x46
+          RenderText {TEXT} at (0,0) size 299x46
+            text run at (0,0) width 299: "Gamma correction"
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -5,14 +5,80 @@ layer at (0,0) size 480x360
         KCanvasContainer {g} at (0,0) size 2000x2000
           KCanvasItem {rect} at (0,0) size 2000x2000 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L2000.00,0.00L2000.00,2000.00L0.00,2000.00"]
           KCanvasItem {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
+        RenderSVGText {text} at (0,0) size 465x14
+          RenderText {TEXT} at (0,0) size 181x14
+            text run at (0,0) width 181: "Initial viewport and CSS units test"
         KCanvasContainer {g} at (20,80) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 21x15
+              text run at (0,0) width 21: "200"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 161x15
+              text run at (0,0) width 161: "User space units (no specifier)"
           KCanvasItem {rect} at (20,80) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,20.00L220.00,20.00L220.00,21.00L20.00,21.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 38x15
+              text run at (0,0) width 38: "200 px"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 58x15
+              text run at (0,0) width 58: "Pixels (px)"
           KCanvasItem {rect} at (20,100) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,40.00L220.00,40.00L220.00,41.00L20.00,41.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 177x15
+              text run at (0,0) width 177: "20 em = 200 px (font-size=10px)"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 136x15
+              text run at (0,0) width 136: "Relative to font size (em)"
           KCanvasContainer {g} at (0,60) size 0x0
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 30x15
+              text run at (0,0) width 30: "40 ex"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 158x15
+              text run at (0,0) width 158: "Relative to font x-height (ex)"
           KCanvasContainer {g} at (0,60) size 0x0
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 93x15
+              text run at (0,0) width 93: "41.67% = 200 px"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 81x15
+              text run at (0,0) width 81: "Percentage (%)"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 21x15
+              text run at (0,0) width 21: "1 in"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 57x15
+              text run at (0,0) width 57: "Inches (in)"
           KCanvasItem {rect} at (20,180) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,120.00L110.00,120.00L110.00,121.00L20.00,121.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 77x15
+              text run at (0,0) width 77: "2.54 cm = 1 in"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 92x15
+              text run at (0,0) width 92: "Centimeters (cm)"
           KCanvasItem {rect} at (20,200) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,140.00L110.00,140.00L110.00,141.00L20.00,141.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 81x15
+              text run at (0,0) width 81: "25.4 mm = 1 in"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 94x15
+              text run at (0,0) width 94: "Millimeters (mm)"
           KCanvasItem {rect} at (20,220) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L110.00,160.00L110.00,161.00L20.00,161.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 59x15
+              text run at (0,0) width 59: "72pt = 1 in"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 56x15
+              text run at (0,0) width 56: "Points (pt)"
           KCanvasItem {rect} at (20,240) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L110.00,180.00L110.00,181.00L20.00,181.00"]
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 54x15
+              text run at (0,0) width 54: "6pc = 1 in"
+          RenderSVGText {text} at (0,0) size 465x15
+            RenderText {TEXT} at (0,0) size 52x15
+              text run at (0,0) width 52: "Picas (pc)"
           KCanvasItem {rect} at (20,260) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L110.00,200.00L110.00,201.00L20.00,201.00"]
+      RenderSVGText {text} at (0,0) size 465x46
+        RenderText {TEXT} at (0,0) size 314x46
+          text run at (0,0) width 314: "$Revision$"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
