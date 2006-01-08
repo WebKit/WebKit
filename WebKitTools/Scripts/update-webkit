@@ -37,17 +37,15 @@ use webkitdirs;
 # Handle options
 my $quiet ='';
 my $svnoptions = '';
-my $includeTests = 1;
-GetOptions('quiet|q' => \$quiet,
-           'tests!' => \$includeTests); 
+GetOptions('quiet|q' => \$quiet); 
 $svnoptions = '-q' if $quiet;
 
 chdirWebKit();
+print "Updating OpenSource\n" unless $quiet;
+system "svn $svnoptions up";
 
-my @sources = ("WebKitTools", "JavaScriptCore", "WebCore", "WebKitLibraries", "WebKit");
-push @sources, "LayoutTests" if $includeTests;
-
-for my $dir (@sources) {
-	print "Updating $dir\n" unless $quiet;
-	system "svn $svnoptions up $dir";
+if (-x "../Internal") {
+	chdir("../Internal");
+        print "Updating Internal\n" unless $quiet;
+	system "svn $svnoptions up";
 }
