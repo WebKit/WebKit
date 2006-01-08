@@ -1,8 +1,28 @@
+2006-01-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs
+
+        Removed old, unneeded code.
+
+        * WebCore+SVG/DrawCanvasItem.h: Removed.
+        * WebCore+SVG/DrawCanvasItem.mm: Removed.
+        * WebCore+SVG/DrawCanvasItemPrivate.h: Removed.
+        * WebCore+SVG/DrawDocument.h: Removed.
+        * WebCore+SVG/DrawDocument.mm: Removed.
+        * WebCore+SVG/DrawDocumentPrivate.h: Removed.
+        * WebCore+SVG/DrawView.h: Removed.
+        * WebCore+SVG/DrawView.mm: Removed.
+        * WebCore+SVG/DrawViewPrivate.h: Removed.
+        * WebCore+SVG/NSSVGImageRep.h: Removed.
+        * WebCore+SVG/NSSVGImageRep.m: Removed.
+        * WebCore.xcodeproj/project.pbxproj: remove files
+
 2006-01-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
 
         - fixed WebCore build
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6404
 
         * khtml/rendering/render_canvasimage.h: Remove unneeded extern declarations.
 

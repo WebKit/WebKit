@@ -1943,17 +1943,6 @@
 		A890DF1E0930974800513F88 /* SVGStyledLocatableElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledLocatableElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8ABC99909445EC00013945F /* KCanvasPathQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasPathQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8ABC99A09445EC00013945F /* KCanvasPathQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasPathQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6DD089701F100BA5114 /* DrawCanvasItem.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawCanvasItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6DE089701F100BA5114 /* DrawCanvasItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawCanvasItem.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6DF089701F100BA5114 /* DrawCanvasItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawCanvasItemPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E0089701F100BA5114 /* DrawDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E1089701F100BA5114 /* DrawDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawDocument.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E2089701F100BA5114 /* DrawDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawDocumentPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E3089701F100BA5114 /* DrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E4089701F100BA5114 /* DrawView.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E6089701F100BA5114 /* DrawViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DrawViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E7089701F100BA5114 /* NSSVGImageRep.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = NSSVGImageRep.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6E8089701F100BA5114 /* NSSVGImageRep.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = NSSVGImageRep.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasRenderingStyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasRenderingStyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KSVGTimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3019,17 +3008,6 @@
 			isa = PBXGroup;
 			children = (
 				A88427FC093081AD00B6D461 /* KDOM Support */,
-				A8C0F6DD089701F100BA5114 /* DrawCanvasItem.h */,
-				A8C0F6DE089701F100BA5114 /* DrawCanvasItem.mm */,
-				A8C0F6DF089701F100BA5114 /* DrawCanvasItemPrivate.h */,
-				A8C0F6E0089701F100BA5114 /* DrawDocument.h */,
-				A8C0F6E1089701F100BA5114 /* DrawDocument.mm */,
-				A8C0F6E2089701F100BA5114 /* DrawDocumentPrivate.h */,
-				A8C0F6E3089701F100BA5114 /* DrawView.h */,
-				A8C0F6E4089701F100BA5114 /* DrawView.mm */,
-				A8C0F6E6089701F100BA5114 /* DrawViewPrivate.h */,
-				A8C0F6E7089701F100BA5114 /* NSSVGImageRep.h */,
-				A8C0F6E8089701F100BA5114 /* NSSVGImageRep.m */,
 			);
 			path = "WebCore+SVG";
 			sourceTree = "<group>";
