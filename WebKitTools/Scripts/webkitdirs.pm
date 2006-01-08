@@ -35,7 +35,7 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &passedConfiguration &setConfiguration &safariPath &checkFrameworks);
+   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &XcodeOptionString &XcodeOptionStringNoConfig &passedConfiguration &setConfiguration &safariPath &checkFrameworks);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -124,6 +124,16 @@ sub XcodeOptions
     determineBaseProductDir();
     determineConfiguration();
     return (@baseProductDirOption, "-configuration", $configuration);
+}
+
+sub XcodeOptionString
+{
+	return join " ", XcodeOptions();
+}
+
+sub XcodeOptionStringNoConfig
+{
+	return join " ", @baseProductDirOption;
 }
 
 my $passedConfiguration;

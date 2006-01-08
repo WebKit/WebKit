@@ -22,7 +22,7 @@
 
 
 # Perl script to create a ChangeLog entry with names of files
-# and functions from a cvs diff.
+# and functions from a diff.
 #
 # Darin Adler <darin@bentspoon.com>, started 20 April 2000
 # Java support added by Maciej Stachowiak <mjs@eazel.com>
@@ -40,10 +40,7 @@
 #     already a partly written ChangeLog entry.
 #   Add command line option to put the ChangeLog into a separate
 #     file or just spew it out stdout.
-#   Figure out how to allow -z options from .cvsrc to work without
-#     letting other bad options work. Currently the -f disables
-#     everything from the .cvsrc.
-#   Add CVS version numbers for each file too (can't do that until
+#   Add SVN version numbers for commit (can't do that until
 #     the changes are checked in, though).
 #   Work around diff stupidity where deleting a function that starts
 #     with a comment makes diff think that the following function
@@ -60,7 +57,7 @@ use Getopt::Long;
 my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $openChangeLogs = 0;
 GetOptions("diff|d!" => \$spewDiff,
-	   "open|o!" => \$openChangeLogs);
+           "open|o!" => \$openChangeLogs);
 
 # Find the list of modified files
 my @changed_files;
@@ -69,25 +66,26 @@ my %changed_line_ranges;
 my %function_lists;
 my @conflict_files;
 
-my $CVS = "cvs";
+my $SVN = "svn";
 
-print STDERR "  Running cvs -n update to find changed, added, or removed files.\n";
-open UPDATE, "$CVS -qn update 2> /dev/stdout |" or die "The cvs update failed: $!.\n";
+print STDERR "  Running 'svn status' to find changed, added, or removed files.\n";
+open UPDATE, "$SVN status 2> /dev/stdout |" or die "The svn status failed: $!.\n";
 while (<UPDATE>)
   {
-    if (/^[MA] (.+)$/)
+    if (/^[MA].+\s+(.+)$/)
       {
         my $file = $1;
         $function_lists{$file} = "";
         push @changed_files, $file if $file ne "ChangeLog";
       }
 
-    push @conflict_files, $1 if /^[C] (.+)$/;
+    push @conflict_files, $1 if /^C.+\s+(.+)$/;
 
-    $function_lists{$1} = " Added." if /^A (.+)$/;
-    $function_lists{$1} = " Removed." if /^R (.+)$/;
-    
-    print unless /^[A-Z] ./ || /^cvs server: New directory/;
+    $function_lists{$1} = " Added." if /^A.+\s+(.+)$/;
+    $function_lists{$1} = " Removed." if /^D.+\s+(.+)$/;
+    $function_lists{$1} = " Replaced." if /^R.+\s+(.+)$/;
+
+    print unless /^[A-Z]/;
   }
 close UPDATE;
 
@@ -104,19 +102,19 @@ if (@changed_files)
 
     # For each file, build a list of modified lines.
     # Use line numbers from the "after" side of each diff.
-    print STDERR "  Running cvs diff to determine which lines changed.\n";
+    print STDERR "  Running 'svn diff' to determine which lines changed.\n";
     my $file;
-    open DIFF, "$CVS -fq diff -N $changed_files_string |" or die "The cvs diff failed: $!.\n";
+    open DIFF, "$SVN diff --diff-cmd diff -x -N $changed_files_string |" or die "The svn diff failed: $!.\n";
     while (<DIFF>)
       {
         $file = $1 if /^Index: (\S+)$/;
         if (defined $file) {
-          if (/^\d+(,\d+)?[acd](\d+)(,(\d+))?/)
-            { push @{$changed_line_ranges{$file}}, [ $2, $4 || $2 ]; }
-	  elsif (/DO_NOT_COMMIT/) {
-	    print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
-	  }
-	}
+          if (/^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
+            push @{$changed_line_ranges{$file}}, [ $2, $4 || $2 ];
+          } elsif (/DO_NOT_COMMIT/) {
+            print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
+          }
+        }
       }
     close DIFF;
   }
@@ -225,7 +223,7 @@ foreach my $file (sort keys %function_lists)
       }
   }
 
-# Get the latest ChangeLog files from cvs.
+# Get the latest ChangeLog files from svn.
 my $logs = "";
 foreach my $prefix (sort keys %files)
   {
@@ -233,8 +231,8 @@ foreach my $prefix (sort keys %files)
   }
 if ($logs)
   {
-    print STDERR "  Running cvs update to update ChangeLog files.\n";
-    open ERRORS, "$CVS update$logs |" or die "The cvs update of ChangeLog files failed: $!.\n";
+    print STDERR "  Running 'svn update' to update ChangeLog files.\n";
+    open ERRORS, "$SVN update -q$logs |" or die "The svn update of ChangeLog files failed: $!.\n";
     print STDERR "    $_" while <ERRORS>;
     close ERRORS;
   }
@@ -254,7 +252,7 @@ foreach my $prefix (sort keys %files)
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         my $testsDir = "../LayoutTests";
         $testsDir = "$prefix/$testsDir" if length($prefix);
-        my $haveNewTests = ((-x "$testsDir/../LayoutTests") && (system("find \"$testsDir/../LayoutTests\" -path \"*/CVS/Entries\" | xargs grep -q \"/0/dummy timestamp//\"") == 0));
+        my $haveNewTests = ((-x "$testsDir/../LayoutTests") && (system("svn status \"$testsDir/../LayoutTests\" | grep -q \"^A\"") == 0));
         print CHANGE_LOG "        WARNING: NO TEST CASES ADDED\n\n" unless $haveNewTests;
     }
 
@@ -270,8 +268,8 @@ foreach my $prefix (sort keys %files)
 # Write out another diff.
 if ($spewDiff && @changed_files)
   {
-    print STDERR "  Running cvs diff -u to help you write the ChangeLog entries.\n";
-    open DIFF, "$CVS -q diff -uN $changed_files_string |" or die "The cvs diff failed: $!.\n";
+    print STDERR "  Running 'svn diff' to help you write the ChangeLog entries.\n";
+    open DIFF, "$SVN diff $changed_files_string |" or die "The svn diff failed: $!.\n";
     while (<DIFF>) { print; }
     close DIFF;
   }
@@ -312,7 +310,7 @@ sub method_decl_to_selector
 
     if ((my $comment_stripped) = m-([^/]*)(//|/*).*-) 
       {
-	$_ = $comment_stripped;
+        $_ = $comment_stripped;
       }
 
     s/,\s*...//;
@@ -320,11 +318,11 @@ sub method_decl_to_selector
     if (/:/) 
       {
         my @components = split /:/;
-	pop @components if (scalar @components > 1);
-	$_ = (join ':', map {s/.*[^[:word:]]//; scalar $_;} @components) . ':';
+        pop @components if (scalar @components > 1);
+        $_ = (join ':', map {s/.*[^[:word:]]//; scalar $_;} @components) . ':';
       } else {
         s/\s*$//;
-	s/.*[^[:word:]]//;
+        s/.*[^[:word:]]//;
       }
 
     return $_;

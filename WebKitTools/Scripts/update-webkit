@@ -36,32 +36,18 @@ use webkitdirs;
 
 # Handle options
 my $quiet ='';
-my $cvsoptions = '';
+my $svnoptions = '';
 my $includeTests = 1;
 GetOptions('quiet|q' => \$quiet,
            'tests!' => \$includeTests); 
-$cvsoptions = '-q' if $quiet;
+$svnoptions = '-q' if $quiet;
 
 chdirWebKit();
-
-# Read the CVS root out of one project that's guaranteed to already be checked out (this one).
-open ROOT, "WebKitTools/CVS/Root" or die;
-my $root = <ROOT>;
-chomp $root;
-close ROOT;
 
 my @sources = ("WebKitTools", "JavaScriptCore", "WebCore", "WebKitLibraries", "WebKit");
 push @sources, "LayoutTests" if $includeTests;
 
-# Check out all the sources.
-print "CVS root is $root\n" unless $quiet;
-
-my $directories = join ", ", @sources;
-$directories =~ s/, ([^,]+)$/, and $1/;
-print "Updating $directories\n" unless $quiet;
-
-open CVS, "cvs $cvsoptions -d '$root' co -P @sources |" or die;
-while (<CVS>) {
-    print;
+for my $dir (@sources) {
+	print "Updating $dir\n" unless $quiet;
+	system "svn $svnoptions up $dir";
 }
-close CVS;
