@@ -1,5 +1,19 @@
 2006-01-08  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs & xenon.
+
+        Renamed a few in kwq/ from .mm to .cpp
+
+        * WebCore.xcodeproj/project.pbxproj: updated paths
+        * kwq/KWQDictImpl.cpp: Added.
+        * kwq/KWQDictImpl.mm: Removed.
+        * kwq/KWQKPartsEvent.cpp: Added.
+        * kwq/KWQKPartsEvent.mm: Removed.
+        * kwq/KWQListImpl.cpp: Added.
+        * kwq/KWQListImpl.mm: Removed.
+
+2006-01-08  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Renamed several files in kwq/ from .mm to .cpp
