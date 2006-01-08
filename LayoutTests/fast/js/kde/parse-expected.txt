@@ -1,2 +1,4 @@
-FAIL successfullyParsed should be true. Threw exception ReferenceError: Can't find variable: successfullyParsed
+PASS res is 11
+PASS caught is true
+PASS successfullyParsed is true
 
