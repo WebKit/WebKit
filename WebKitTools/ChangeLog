@@ -1,5 +1,11 @@
 2006-01-08  Timothy Hatcher  <timothy@apple.com>
 
+        Removed this script, no longer needs with the Subversion switch.
+
+        * checkout: Removed.
+
+2006-01-08  Timothy Hatcher  <timothy@apple.com>
+
         Removes some stray tabs.
 
         * Scripts/update-webkit:
