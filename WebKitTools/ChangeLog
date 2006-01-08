@@ -1,3 +1,9 @@
+2006-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Removes some stray tabs.
+
+        * Scripts/update-webkit:
+
 2005-01-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

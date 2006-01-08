@@ -45,7 +45,7 @@ print "Updating OpenSource\n" unless $quiet;
 system "svn $svnoptions up";
 
 if (-x "../Internal") {
-	chdir("../Internal");
-        print "Updating Internal\n" unless $quiet;
-	system "svn $svnoptions up";
+    chdir("../Internal");
+    print "Updating Internal\n" unless $quiet;
+    system "svn $svnoptions up";
 }
