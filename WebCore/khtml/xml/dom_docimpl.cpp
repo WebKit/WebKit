@@ -1884,8 +1884,6 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     {
         QString str = content.qstring().lower().stripWhiteSpace();
         KURL url = part->url();
-        if ((str == "no-cache") && url.protocol().startsWith("http"))
-           KIO::http_update_cache(url, true, 0);
     }
     else if (equalIgnoringCase(equiv, "set-cookie"))
     {

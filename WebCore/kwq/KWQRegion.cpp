@@ -25,7 +25,8 @@
 
 #include "config.h"
 #import "KWQRegion.h"
-#import "KWQFoundationExtras.h"
+
+#include <ApplicationServices/ApplicationServices.h>
 
 QRegion::QRegion(const QRect &rect)
 {

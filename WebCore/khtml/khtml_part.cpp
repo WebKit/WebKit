@@ -834,11 +834,6 @@ void KHTMLPart::slotFinished( KIO::Job * job )
     checkCompleted();
     return;
   }
-  //kdDebug( 6050 ) << "slotFinished" << endl;
-
-
-  if ( d->m_doc && d->m_doc->docLoader()->expireDate() && m_url.protocol().lower().startsWith("http"))
-      KIO::http_update_cache(m_url, false, d->m_doc->docLoader()->expireDate());
 
   d->m_workingURL = KURL();
   d->m_job = 0L;

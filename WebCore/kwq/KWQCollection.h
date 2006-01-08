@@ -40,7 +40,7 @@ class QPtrCollection {
 
  protected:
     QPtrCollection() : del_item(false) { }
-    virtual ~QPtrCollection();
+    virtual ~QPtrCollection() { }
 
     bool del_item;
 };

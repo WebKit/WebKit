@@ -26,15 +26,15 @@
 #ifndef KGLOBALSETTINGS_H_
 #define KGLOBALSETTINGS_H_
 
-class QFont;
+#include "KWQFont.h"
 
 class KGlobalSettings {
 public:
-    static QFont generalFont();
-    static QFont windowTitleFont();
-    static QFont menuFont();
+    static QFont generalFont() { return QFont(); }
+    static QFont windowTitleFont() { return QFont(); }
+    static QFont menuFont() { return QFont(); }
 
-    static int contrast();
+    static int contrast() { return 0; }
 };
 
 #endif

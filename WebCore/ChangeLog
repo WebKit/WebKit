@@ -1,3 +1,86 @@
+2006-01-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Renamed several files in kwq/ from .mm to .cpp
+        Removed a few pieces of unused KWQ code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::continueProcessing): removed KWQUIEventTime
+        (khtml::HTMLTokenizer::write): removed KWQUIEventTime
+        * khtml/html/htmltokenizer.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotFinished): removed KWQUIEventTime
+        * khtml/misc/loader.cpp:
+        (CachedObject::finish): removed KWQUIEventTime
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv): removed KWQUIEventTime
+        * kwq/KWQArrayImpl.cpp: Added.
+        * kwq/KWQArrayImpl.mm: Removed.
+        * kwq/KWQBuffer.cpp: Added.
+        * kwq/KWQBuffer.mm: Removed.
+        * kwq/KWQCString.cpp: Added.
+        * kwq/KWQCString.mm: Removed.
+        * kwq/KWQCharsets.cpp: Added.
+        * kwq/KWQCharsets.mm: Removed.
+        * kwq/KWQCollection.h:
+        (QPtrCollection::~QPtrCollection): made inline
+        * kwq/KWQCollection.mm: Removed.
+        * kwq/KWQDateTime.cpp: Added, removed KWQUIEventTime
+        * kwq/KWQDateTime.h:
+        * kwq/KWQDateTime.mm: Removed.
+        * kwq/KWQGlobal.cpp: Added.
+        * kwq/KWQGlobal.mm: Removed.
+        * kwq/KWQGuardedPtr.cpp: Added.
+        * kwq/KWQGuardedPtr.mm: Removed.
+        * kwq/KWQKCharsets.cpp: Added.
+        * kwq/KWQKCharsets.mm: Removed.
+        * kwq/KWQKGlobalSettings.h:
+        (KGlobalSettings::generalFont): made inline
+        (KGlobalSettings::windowTitleFont): made inline
+        (KGlobalSettings::menuFont): made inline
+        (KGlobalSettings::contrast): made inline
+        * kwq/KWQKGlobalSettings.mm: Removed.
+        * kwq/KWQKHTMLFactory.cpp: Added.
+        * kwq/KWQKHTMLFactory.mm: Removed.
+        * kwq/KWQKHTMLView.cpp: Added.
+        * kwq/KWQKHTMLView.mm: Removed.
+        * kwq/KWQKJob.h:
+        * kwq/KWQKJob.mm: Removed.
+        * kwq/KWQKWin.cpp: Added.
+        * kwq/KWQKWin.mm: Removed.
+        * kwq/KWQMapImpl.cpp: Added.
+        * kwq/KWQMapImpl.mm: Removed.
+        * kwq/KWQObject.cpp: Added.
+        * kwq/KWQObject.mm: Removed.
+        * kwq/KWQPen.cpp: Added.
+        * kwq/KWQPen.mm: Removed.
+        * kwq/KWQPointArray.cpp: Added.
+        * kwq/KWQPointArray.mm: Removed.
+        * kwq/KWQPtrDictImpl.cpp: Added.
+        * kwq/KWQPtrDictImpl.mm: Removed.
+        * kwq/KWQRegExp.cpp: Added.
+        * kwq/KWQRegExp.mm: Removed.
+        * kwq/KWQRegion.cpp: Added.
+        * kwq/KWQRegion.mm: Removed.
+        * kwq/KWQStyle.cpp: Added.
+        * kwq/KWQStyle.mm: Removed.
+        * kwq/KWQTextCodec.cpp: Added.
+        * kwq/KWQTextCodec.mm: Removed.
+        * kwq/KWQTextStream.cpp: Added.
+        * kwq/KWQTextStream.mm: Removed.
+        * kwq/KWQTimer.cpp: Added.
+        * kwq/KWQTimer.mm: Removed.
+        * kwq/KWQValueListImpl.cpp: Added.
+        * kwq/KWQValueListImpl.mm: Removed.
+        * kwq/KWQVariant.cpp: Added.
+        * kwq/KWQVariant.mm: Removed.
+        * kwq/KWQVectorImpl.cpp: Added.
+        * kwq/KWQVectorImpl.mm: Removed.
+        * kwq/KWQWMatrix.cpp: Added.
+        * kwq/KWQWMatrix.mm: Removed.
+
 2006-01-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

@@ -77,10 +77,4 @@ private:
     CFAbsoluteTime dateInSeconds;
 };
 
-class KWQUIEventTime {
-public:
-    bool uiEventPending() const;
-};
-
-
 #endif

@@ -91,10 +91,8 @@ void CachedObject::finish()
     else
         m_status = Cached;
     KURL url(m_url.qstring());
-    if (m_expireDateChanged && url.protocol().startsWith("http")) {
+    if (m_expireDateChanged && url.protocol().startsWith("http"))
         m_expireDateChanged = false;
-        KIO::http_update_cache(url, false, m_expireDate);
-    }
 }
 
 void CachedObject::setExpireDate(time_t _expireDate, bool changeHttpCache)

@@ -33,8 +33,6 @@
 
 namespace KIO {
 
-void http_update_cache(const KURL &, bool, time_t);
-
 inline TransferJob *get(const KURL &url, bool reload, bool, bool deliverAllData=false)
     { return new TransferJob(url, reload, deliverAllData); }
 

@@ -142,7 +142,7 @@ protected:
     void enlargeBuffer(int len);
     void enlargeScriptBuffer(int len);
 
-    bool continueProcessing(int& processedCount, const QTime& startTime, const KWQUIEventTime& eventTime, State &state);
+    bool continueProcessing(int& processedCount, const QTime& startTime, State &state);
     void timerEvent(QTimerEvent*);
     void allDataProcessed();
 
