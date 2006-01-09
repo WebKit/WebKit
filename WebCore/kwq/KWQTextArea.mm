@@ -30,7 +30,7 @@
 #import "DOMHTML.h"
 #import "EventNames.h"
 #import <kxmlcore/Assertions.h>
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQTextEdit.h"
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
@@ -216,7 +216,7 @@ const float LargeNumberForText = 1.0e7;
     if (widget)
         widget->textChanged();
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textDidChangeInTextArea:(DOMHTMLTextAreaElement *)[bridge elementForView:self]];
 }
 
@@ -388,7 +388,7 @@ const float LargeNumberForText = 1.0e7;
     // the part isn't reachable, hence the settings aren't reachable, until the event filter has
     // been installed.
     if (!resizableByUserComputed) {
-        resizableByUser = [KWQKHTMLPart::bridgeForWidget(widget) part]->settings()->textAreasAreResizable();
+        resizableByUser = [MacFrame::bridgeForWidget(widget) part]->settings()->textAreasAreResizable();
         resizableByUserComputed = YES;
     }
     return resizableByUser;
@@ -616,21 +616,21 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (BOOL)becomeFirstResponder
 {
     if (widget)
-        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:textView];
+        [MacFrame::bridgeForWidget(widget) makeFirstResponder:textView];
     return YES;
 }
 
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView && widget
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView && widget
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 
@@ -674,7 +674,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
     [[NSCursor arrowCursor] set];
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     DOMHTMLTextAreaElement *element = (DOMHTMLTextAreaElement *)[bridge elementForView:self];
     ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
     
@@ -778,7 +778,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
             // floating in space. Maybe we want to use a slightly larger resize image here that fits the scroller
             // width better.
         }
-        if (widget && [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
+        if (widget && [MacFrame::bridgeForWidget(widget) firstResponder] == textView) {
             NSSetFocusRingStyle(NSFocusRingOnly);
             NSRectFill([self bounds]);
         }
@@ -929,7 +929,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 {
     NSView *view = [[self delegate] nextValidKeyView];
     if (view && view != self && view != [self delegate] && widget) {
-        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
+        [MacFrame::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
 
@@ -937,7 +937,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 {
     NSView *view = [[self delegate] previousValidKeyView];
     if (view && view != self && view != [self delegate] && widget) {
-        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
+        [MacFrame::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
 
@@ -961,7 +961,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     --inResponderChange;
 
     if (become) {
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+        if (!MacFrame::currentEventIsMouseDownInWidget(widget)) {
             RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
             RenderLayer *layer = w->enclosingLayer();
             if (layer)
@@ -993,7 +993,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
             QFocusEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-                [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
             }
         }        
     }
@@ -1003,12 +1003,12 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (BOOL)shouldDrawInsertionPoint
 {
-    return widget && self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] && [super shouldDrawInsertionPoint];
+    return widget && self == [MacFrame::bridgeForWidget(widget) firstResponder] && [super shouldDrawInsertionPoint];
 }
 
 - (NSDictionary *)selectedTextAttributes
 {
-    if (widget && self != [KWQKHTMLPart::bridgeForWidget(widget) firstResponder])
+    if (widget && self != [MacFrame::bridgeForWidget(widget) firstResponder])
         return nil;
     return [super selectedTextAttributes];
 }
@@ -1120,14 +1120,14 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         return;
     }
 
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     if ([bridge interceptKeyEvent:event toView:self]) {
         return;
     }
     
     // Don't let option-tab insert a character since we use it for
     // tabbing between links
-    if (KWQKHTMLPart::handleKeyboardOptionTabInView(self)) {
+    if (MacFrame::handleKeyboardOptionTabInView(self)) {
         return;
     }
     
@@ -1139,7 +1139,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled || !widget)
         return;
 
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     if (![[NSInputManager currentInputManager] hasMarkedText]) {
 	[bridge interceptKeyEvent:event toView:self];
     }

@@ -26,7 +26,7 @@
 #include "config.h"
 #import "khtmlview.h"
 
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQWindowWidget.h"
 
 /*
@@ -36,7 +36,7 @@
 
 QWidget *KHTMLView::topLevelWidget() const 
 {
-    return KWQ(part())->topLevelWidget();
+    return Mac(frame())->topLevelWidget();
 }
 
 QPoint KHTMLView::viewportToGlobal(const QPoint &p) const

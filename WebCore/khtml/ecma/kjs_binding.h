@@ -28,7 +28,7 @@
 
 #include <JavaScriptCore/runtime.h>
 
-class KHTMLPart;
+class Frame;
 
 namespace DOM {
     class DocumentImpl;
@@ -71,7 +71,7 @@ namespace KJS {
   class ScriptInterpreter : public Interpreter
   {
   public:
-    ScriptInterpreter(JSObject *global, KHTMLPart* part);
+    ScriptInterpreter(JSObject *global, Frame *frame);
     virtual ~ScriptInterpreter();
 
     static DOMObject* getDOMObject(void* objectHandle);
@@ -84,7 +84,7 @@ namespace KJS {
     static void forgetAllDOMNodesForDocument(DOM::DocumentImpl *document);
     static void updateDOMNodeDocument(DOM::NodeImpl *nodeHandle, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc);
 
-    KHTMLPart* part() const { return m_part; }
+    Frame* frame() const { return m_frame; }
 
     virtual int rtti() { return 1; }
 
@@ -110,7 +110,7 @@ namespace KJS {
     void *createObjcInstanceForValue (ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 
   private:
-    KHTMLPart* m_part;
+    Frame* m_frame;
 
     DOM::EventImpl *m_evt;
     bool m_inlineCode;

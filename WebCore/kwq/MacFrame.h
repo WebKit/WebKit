@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQKHTMLPart_H
-#define KWQKHTMLPart_H
+#ifndef MacFrame_H
+#define MacFrame_H
 
-#import "khtml_part.h"
+#import "Frame.h"
 
 #import "text_affinity.h"
 
@@ -119,11 +119,11 @@ enum KWQSelectionDirection {
     KWQSelectingPrevious
 };
 
-class KWQKHTMLPart : public KHTMLPart
+class MacFrame : public Frame
 {
 public:
-    KWQKHTMLPart();
-    ~KWQKHTMLPart();
+    MacFrame();
+    ~MacFrame();
     
     void clear();
 
@@ -219,7 +219,7 @@ public:
     void createEmptyDocument();
 
     static WebCoreBridge *bridgeForWidget(const QWidget *);
-    static KWQKHTMLPart *partForWidget(const QWidget *);
+    static MacFrame *frameForWidget(const QWidget *);
     
     QString requestedURLString() const;
     QString incomingReferrer() const;
@@ -291,7 +291,7 @@ public:
     
     void redirectionTimerStartedOrStopped();
     
-    static const QPtrList<KWQKHTMLPart> &instances() { return mutableInstances(); }
+    static const QPtrList<MacFrame> &instances() { return mutableInstances(); }
 
     void clearRecordedFormValues();
     void recordFormValue(const QString &name, const QString &value, DOM::HTMLFormElementImpl *element);
@@ -419,7 +419,7 @@ private:
 
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static DOM::NodeImpl *nodeForWidget(const QWidget *);
-    static KWQKHTMLPart *partForNode(DOM::NodeImpl *);
+    static MacFrame *frameForNode(DOM::NodeImpl *);
     static NSView *documentViewForNode(DOM::NodeImpl *);
     
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
@@ -432,7 +432,7 @@ private:
 
     khtml::RenderStyle *styleForSelectionStart(DOM::NodeImpl *&nodeToRemove) const;
 
-    virtual bool isKHTMLPart() const;
+    virtual bool isFrame() const;
 
     void registerCommandForUndoOrRedo(const khtml::EditCommandPtr &cmd, bool isRedo);
 
@@ -461,7 +461,7 @@ private:
     NSMutableDictionary *_formValuesAboutToBeSubmitted;
     ObjCDOMElement *_formAboutToBeSubmitted;
 
-    static QPtrList<KWQKHTMLPart> &mutableInstances();
+    static QPtrList<MacFrame> &mutableInstances();
 
     KWQWindowWidget *_windowWidget;
 
@@ -470,7 +470,7 @@ private:
     
     QDict<char> urlsBridgeKnowsAbout;
 
-    friend class KHTMLPart;
+    friend class Frame;
 
     KJS::Bindings::RootObject *_bindingRoot;  // The root object used for objects
                                             // bound outside the context of a plugin.
@@ -495,7 +495,7 @@ private:
     bool m_windowHasFocus;
 };
 
-inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }
-inline const KWQKHTMLPart *KWQ(const KHTMLPart *part) { return static_cast<const KWQKHTMLPart *>(part); }
+inline MacFrame *Mac(Frame *frame) { return static_cast<MacFrame *>(frame); }
+inline const MacFrame *Mac(const Frame *frame) { return static_cast<const MacFrame *>(frame); }
 
 #endif

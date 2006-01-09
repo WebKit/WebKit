@@ -29,7 +29,7 @@
 #import <kxmlcore/Assertions.h>
 
 #import "dom_docimpl.h"
-#import "khtml_part.h"
+#import "Frame.h"
 #import "kjs_window.h"
 #import "render_form.h"
 #import "render_layer.h"
@@ -85,9 +85,9 @@ enum FunctionNumber {
     slotWidgetDestructed,
     slotData_Loader,
     slotData_XMLHttpRequest,
-    slotRedirection_KHTMLPart,
+    slotRedirection_Frame,
     slotRedirection_XMLHttpRequest,
-    slotFinished_KHTMLPart,
+    slotFinished_Frame,
     slotFinished_Loader,
     slotFinished_XMLHttpRequest,
     slotReceivedResponse,
@@ -104,15 +104,15 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
         } else
     
     CASE(slotClicked, (), RenderFormElement)
-    CASE(slotChildCompleted, (), KHTMLPart)
-    CASE(slotChildStarted, (KIO::Job *), KHTMLPart)
-    CASE(slotEndLifeSupport, (), KHTMLPart)
-    CASE(slotFinishedParsing, (), KHTMLPart)
-    CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), KHTMLPart)
-    CASE(slotLoaderRequestStarted, (khtml::DocLoader *, khtml::CachedObject *), KHTMLPart)
-    CASE(slotParentCompleted, (), KHTMLPart)
+    CASE(slotChildCompleted, (), Frame)
+    CASE(slotChildStarted, (KIO::Job *), Frame)
+    CASE(slotEndLifeSupport, (), Frame)
+    CASE(slotFinishedParsing, (), Frame)
+    CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), Frame)
+    CASE(slotLoaderRequestStarted, (khtml::DocLoader *, khtml::CachedObject *), Frame)
+    CASE(slotParentCompleted, (), Frame)
     CASE(slotPerformSearch, (), RenderLineEdit)
-    CASE(slotRedirect, (), KHTMLPart)
+    CASE(slotRedirect, (), Frame)
     CASE(slotReturnPressed, (), RenderLineEdit)
     CASE(slotSelected, (int), RenderSelect)
     CASE(slotSelectionChanged, (), RenderFormElement)
@@ -143,16 +143,16 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
 	    m_function = slotData_XMLHttpRequest;
 	}
     } else if (KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL&)))) {
-	if (object->isKHTMLPart()) {
-	    m_function = slotRedirection_KHTMLPart;
+	if (object->isFrame()) {
+	    m_function = slotRedirection_Frame;
 	} else {
 	    m_function = slotRedirection_XMLHttpRequest;
 	}
     } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *, NSData *)))) {
 	m_function = slotFinished_Loader;        
     } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))) {
-	if (object->isKHTMLPart()) {
-	    m_function = slotFinished_KHTMLPart;
+	if (object->isFrame()) {
+	    m_function = slotFinished_Frame;
 	} else {
 	    m_function = slotFinished_XMLHttpRequest;
 	}
@@ -179,18 +179,18 @@ void KWQSlot::call() const
     
     switch (m_function) {
         CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
-        CASE(slotChildCompleted, KHTMLPart, slotChildCompleted)
+        CASE(slotChildCompleted, Frame, slotChildCompleted)
         CASE(slotClicked, RenderFormElement, slotClicked)
-        CASE(slotEndLifeSupport, KHTMLPart, slotEndLifeSupport)
-        CASE(slotFinishedParsing, KHTMLPart, slotFinishedParsing)
-        CASE(slotParentCompleted, KHTMLPart, slotParentCompleted)
+        CASE(slotEndLifeSupport, Frame, slotEndLifeSupport)
+        CASE(slotFinishedParsing, Frame, slotFinishedParsing)
+        CASE(slotParentCompleted, Frame, slotParentCompleted)
         CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
         CASE(slotPerformSearch, RenderLineEdit, slotPerformSearch)
-        CASE(slotRedirect, KHTMLPart, slotRedirect)
+        CASE(slotRedirect, Frame, slotRedirect)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderFormElement, slotSelectionChanged)
         CASE(slotSliderValueChanged, RenderSlider, slotSliderValueChanged)
-        CASE(slotSubmitFormAgain, KHTMLPart, submitFormAgain)
+        CASE(slotSubmitFormAgain, Frame, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
 #ifdef SVG_SUPPORT
@@ -213,7 +213,7 @@ void KWQSlot::call(bool b) const
             return;
     
     switch (m_function) {
-        CASE(slotChildCompletedWithBool, KHTMLPart, slotChildCompleted)
+        CASE(slotChildCompletedWithBool, Frame, slotChildCompleted)
     }
     
     #undef CASE
@@ -261,10 +261,10 @@ void KWQSlot::call(Job *job) const
     
     switch (m_function) {
         case slotChildStarted:
-            static_cast<KHTMLPart *>(m_object.pointer())->slotChildStarted(job);
+            static_cast<Frame *>(m_object.pointer())->slotChildStarted(job);
             return;
-        case slotFinished_KHTMLPart:
-            static_cast<KHTMLPart *>(m_object.pointer())->slotFinished(job);
+        case slotFinished_Frame:
+            static_cast<Frame *>(m_object.pointer())->slotFinished(job);
             return;
         case slotFinished_XMLHttpRequest:
             static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotFinished(job);
@@ -299,8 +299,8 @@ void KWQSlot::call(Job *job, const KURL &url) const
     }
     
     switch (m_function) {
-        case slotRedirection_KHTMLPart:
-	    static_cast<KHTMLPart *>(m_object.pointer())->slotRedirection(job, url);
+        case slotRedirection_Frame:
+	    static_cast<Frame *>(m_object.pointer())->slotRedirection(job, url);
 	    return;
         case slotRedirection_XMLHttpRequest:
 	    static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotRedirection(job, url);
@@ -348,10 +348,10 @@ void KWQSlot::call(DocLoader *loader, CachedObject *cachedObject) const
     
     switch (m_function) {
         case slotLoaderRequestDone:
-            static_cast<KHTMLPart *>(m_object.pointer())->slotLoaderRequestDone(loader, cachedObject);
+            static_cast<Frame *>(m_object.pointer())->slotLoaderRequestDone(loader, cachedObject);
             return;
         case slotLoaderRequestStarted:
-            static_cast<KHTMLPart *>(m_object.pointer())->slotLoaderRequestStarted(loader, cachedObject);
+            static_cast<Frame *>(m_object.pointer())->slotLoaderRequestStarted(loader, cachedObject);
             return;
     }
     

@@ -27,7 +27,7 @@
 #import "KWQFrame.h"
 
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "WebCoreBridge.h"
 #import "khtmlview.h"
 
@@ -37,9 +37,9 @@ void QFrame::setFrameStyle(int s)
 
     // Tell the other side of the bridge about the frame style change.
     if (isKHTMLView()) {
-        if (KHTMLPart *part = static_cast<KHTMLView *>(this)->part()) {
+        if (Frame *frame = static_cast<KHTMLView *>(this)->frame()) {
 	    KWQ_BLOCK_EXCEPTIONS;
-            [KWQ(part)->bridge() setHasBorder:(s != NoFrame)];
+            [Mac(frame)->bridge() setHasBorder:(s != NoFrame)];
 	    KWQ_UNBLOCK_EXCEPTIONS;
         }
     }

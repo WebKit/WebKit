@@ -50,7 +50,7 @@
 #include "render_theme.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 #include <kstandarddirs.h>
 #include <qfile.h>
@@ -220,7 +220,7 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
 
     view = doc->view();
     strictParsing = _strictParsing;
-    settings = view ? view->part()->settings() : 0;
+    settings = view ? view->frame()->settings() : 0;
     if (!defaultStyle)
         loadDefaultStyle();
     m_medium = view ? view->mediaType() : QString("all");
@@ -513,8 +513,8 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
         parentStyle = (parentNode && parentNode->renderer()) ? parentNode->renderer()->style() : 0;
     view = element->getDocument()->view();
     isXMLDoc = !element->getDocument()->isHTMLDocument();
-    part = element->getDocument()->part();
-    settings = part ? part->settings() : 0;
+    frame = element->getDocument()->frame();
+    settings = frame ? frame->settings() : 0;
     paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
     
     style = 0;
@@ -1430,7 +1430,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
                 break;
             }
             case CSSSelector::PseudoFocus:
-                if (e && e->focused() && e->getDocument()->part()->displaysWithFocusAttributes()) {
+                if (e && e->focused() && e->getDocument()->frame()->displaysWithFocusAttributes()) {
                     return true;
                 }
                 break;
@@ -2950,8 +2950,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             double multiplier = 1.0;
             // Scale for the font zoom factor only for types other than "em" and "ex", since those are
             // already based on the font size.
-            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && view && view->part()) {
-                multiplier = view->part()->zoomFactor() / 100.0;
+            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && view && view->frame()) {
+                multiplier = view->frame()->zoomFactor() / 100.0;
             }
             lineHeight = Length(primitiveValue->computeLength(style, paintDeviceMetrics, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -4175,7 +4175,7 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     int minSize = settings->minFontSize();
     int minLogicalSize = settings->minLogicalFontSize();
 
-    float zoomPercent = (!printpainter && view) ? view->part()->zoomFactor()/100.0f : 1.0f;
+    float zoomPercent = (!printpainter && view) ? view->frame()->zoomFactor()/100.0f : 1.0f;
     float zoomedSize = specifiedSize * zoomPercent;
 
     // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.

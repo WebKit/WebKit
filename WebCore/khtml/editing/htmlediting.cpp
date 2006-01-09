@@ -43,8 +43,6 @@
 #include "html_imageimpl.h"
 #include "html_interchange.h"
 #include "htmlnames.h"
-#include "khtml_part.h"
-#include "khtml_part.h"
 #include "khtmlview.h"
 #include "qcolor.h"
 #include "qptrlist.h"
@@ -86,7 +84,7 @@ using DOM::TreeWalkerImpl;
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
-#include "KWQKHTMLPart.h"
+#include "MacFrame.h"
 #include "KWQRegExp.h"
 
 namespace khtml {

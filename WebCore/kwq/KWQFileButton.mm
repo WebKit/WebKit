@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "render_form.h"
@@ -50,7 +50,7 @@ using khtml::RenderLayer;
 
 @end
 
-KWQFileButton::KWQFileButton(KHTMLPart *part)
+KWQFileButton::KWQFileButton(Frame *frame)
     : _clicked(this, SIGNAL(clicked()))
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter(0)
@@ -58,7 +58,7 @@ KWQFileButton::KWQFileButton(KHTMLPart *part)
     KWQ_BLOCK_EXCEPTIONS;
 
     _adapter = KWQRetainNSRelease([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this]);
-    setView([KWQ(part)->bridge() fileButtonWithDelegate:_adapter]);
+    setView([Mac(frame)->bridge() fileButtonWithDelegate:_adapter]);
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -138,7 +138,7 @@ QWidget::FocusPolicy KWQFileButton::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(this);
     if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
         return NoFocus;
     }
@@ -156,7 +156,7 @@ void KWQFileButton::filenameChanged(const QString &filename)
 void KWQFileButton::focusChanged(bool nowHasFocus)
 {
     if (nowHasFocus) {
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(this)) {
+        if (!MacFrame::currentEventIsMouseDownInWidget(this)) {
             RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(eventFilterObject()));
             RenderLayer *layer = widget->enclosingLayer();
             layer = layer->renderer()->enclosingLayer();

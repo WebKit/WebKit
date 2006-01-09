@@ -30,7 +30,7 @@
 #include "dom_string.h"
 #include "qdict.h"
 
-class KHTMLPart;
+class Frame;
 class QString;
 
 namespace DOM {

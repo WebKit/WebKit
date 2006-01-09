@@ -32,7 +32,7 @@
 #include "css/cssvalues.h"
 #include "html/html_documentimpl.h"
 #include "html/html_imageimpl.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "khtmlview.h"
 #include "rendering/render_br.h"
 #include "rendering/render_flow.h"
@@ -104,10 +104,10 @@ bool HTMLAnchorElementImpl::isKeyboardFocusable() const
     if (!isFocusable())
         return false;
     
-    if (!getDocument()->part())
+    if (!getDocument()->frame())
 	return false;
 
-    return getDocument()->part()->tabsToLinks();
+    return getDocument()->frame()->tabsToLinks();
 }
 
 void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
@@ -203,8 +203,8 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 state |= Qt::ControlButton;
 	    }
 
-            if (getDocument() && getDocument()->view() && getDocument()->part()) {
-                getDocument()->part()->
+            if (getDocument() && getDocument()->view() && getDocument()->frame()) {
+                getDocument()->frame()->
                     urlSelected( url, button, state, utarget );
             }
         }

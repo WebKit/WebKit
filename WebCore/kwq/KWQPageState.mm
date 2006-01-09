@@ -35,7 +35,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 
 using namespace DOM;
 
@@ -52,7 +52,7 @@ using namespace KJS;
     doc->ref();
     document = doc;
     doc->setInPageCache(YES);
-    mousePressNode = static_cast<KWQKHTMLPart *>(doc->part())->mousePressNode();
+    mousePressNode = static_cast<MacFrame *>(doc->frame())->mousePressNode();
     if (mousePressNode)
         mousePressNode->ref();
     URL = new KURL(u);
@@ -125,7 +125,7 @@ using namespace KJS;
 
         KHTMLView *view = document->view();
 
-        KWQKHTMLPart::clearTimers(view);
+        MacFrame::clearTimers(view);
 
         bool detached = document->renderer() == 0;
         document->setInPageCache(NO);
@@ -158,7 +158,7 @@ using namespace KJS;
 
         KHTMLView *view = document->view();
 
-        KWQKHTMLPart::clearTimers(view);
+        MacFrame::clearTimers(view);
 
         bool detached = document->renderer() == 0;
         document->setInPageCache(NO);

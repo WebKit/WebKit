@@ -37,7 +37,6 @@
 #include "khtml_ext.h"
 #include "khtmlview.h"
 #include "xml/dom2_eventsimpl.h"
-#include "khtml_part.h"
 #include "xml/dom_docimpl.h" // ### remove dependency
 #include "xml/dom_position.h"
 #include "xml/EventNames.h"
@@ -421,10 +420,6 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
            //kdDebug(6000) << "RenderWidget::eventFilter captures FocusOut" << endl;
             if (elem->getDocument()->focusNode() == elem)
                 elem->getDocument()->setFocusNode(0);
-//             if (  elem->isEditable() ) {
-//                 KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>( elem->view->part()->browserExtension() );
-//                 if ( ext )  ext->editableWidgetBlurred( m_widget );
-//             }
             handleFocusOut();
         }
         break;

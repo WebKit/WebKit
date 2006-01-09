@@ -32,7 +32,7 @@
 
 #include "dom/dom_node.h"
 #include "dom/dom_string.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "khtmlview.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
@@ -405,8 +405,8 @@ bool SelectionController::modify(const DOMString &alterString, const DOMString &
 
 bool SelectionController::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
 {
-    if (part())
-        part()->setSelectionGranularity(granularity);
+    if (frame())
+        frame()->setSelectionGranularity(granularity);
     
     setModifyBias(alter, dir);
 
@@ -562,11 +562,11 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
             break;
     }
 
-    KHTMLPart *part = pos.node()->getDocument()->part();
-    if (!part)
+    Frame *frame = pos.node()->getDocument()->frame();
+    if (!frame)
         return x;
         
-    if (recalc || part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
+    if (recalc || frame->xPosForVerticalArrowNavigation() == Frame::NoXPosForVerticalArrowNavigation) {
         switch (m_affinity) {
             case DOWNSTREAM:
                 pos = VisiblePosition(pos, m_affinity).downstreamDeepEquivalent();
@@ -576,10 +576,10 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
                 break;
         }
         x = pos.node()->renderer()->caretRect(pos.offset(), m_affinity).x();
-        part->setXPosForVerticalArrowNavigation(x);
+        frame->setXPosForVerticalArrowNavigation(x);
     }
     else {
-        x = part->xPosForVerticalArrowNavigation();
+        x = frame->xPosForVerticalArrowNavigation();
     }
     return x;
 }

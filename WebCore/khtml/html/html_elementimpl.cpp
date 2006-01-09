@@ -38,7 +38,7 @@
 #include "editing/visible_text.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 #include "dom/dom_exception.h"
 #include "rendering/render_object.h"
@@ -467,7 +467,7 @@ bool HTMLElementImpl::isFocusable() const
 
 bool HTMLElementImpl::isContentEditable() const 
 {
-    if (getDocument()->part() && getDocument()->part()->isContentEditable())
+    if (getDocument()->frame() && getDocument()->frame()->isContentEditable())
         return true;
 
     getDocument()->updateRendering();
@@ -502,20 +502,20 @@ DOMString HTMLElementImpl::contentEditable() const
 
 void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr) 
 {
-    KHTMLPart *part = getDocument()->part();
+    Frame *frame = getDocument()->frame();
     const AtomicString& enabled = attr->value();
     if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
-        if (part)
-            part->applyEditingStyleToElement(this);    
+        if (frame)
+            frame->applyEditingStyleToElement(this);    
     } else if (equalIgnoringCase(enabled, "false")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
-        if (part)
-            part->removeEditingStyleFromElement(this);    
+        if (frame)
+            frame->removeEditingStyleFromElement(this);    
     } else if (equalIgnoringCase(enabled, "inherit")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
-        if (part)
-            part->removeEditingStyleFromElement(this);    
+        if (frame)
+            frame->removeEditingStyleFromElement(this);    
     }
 }
 

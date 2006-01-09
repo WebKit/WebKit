@@ -24,7 +24,7 @@
 #include "config.h"
 #include "khtmlview.h"
 
-#include "khtml_part.h"
+#include "Frame.h"
 #include "khtml_events.h"
 
 #include "html/html_documentimpl.h"
@@ -161,14 +161,14 @@ public:
     RefPtr<NodeImpl> dragTarget;
 };
 
-KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
+KHTMLView::KHTMLView( Frame *frame, QWidget *parent, const char *name)
     : QScrollView( parent, name, WResizeNoErase | WRepaintNoErase | WPaintUnclipped ),
       _refCount(1)
 {
     m_medium = "screen";
 
-    m_part = part;
-    m_part->ref();
+    m_frame = frame;
+    m_frame->ref();
     d = new KHTMLViewPrivate;
 
     connect(this, SIGNAL(contentsMoving(int, int)), this, SLOT(slotScrollBarMoved()));
@@ -186,15 +186,15 @@ KHTMLView::~KHTMLView()
 
     assert(_refCount == 0);
 
-    if (m_part)
+    if (m_frame)
     {
         //WABA: Is this Ok? Do I need to deref it as well?
         //Does this need to be done somewhere else?
-        DocumentImpl *doc = m_part->xmlDocImpl();
+        DocumentImpl *doc = m_frame->xmlDocImpl();
         if (doc)
             doc->detach();
 
-        m_part->deref();
+        m_frame->deref();
     }
 
     delete d; d = 0;
@@ -202,9 +202,9 @@ KHTMLView::~KHTMLView()
 
 void KHTMLView::clearPart()
 {
-    if (m_part){
-        m_part->deref();
-        m_part = 0;
+    if (m_frame){
+        m_frame->deref();
+        m_frame = 0;
     }
 }
 
@@ -237,13 +237,13 @@ void KHTMLView::clear()
 
     setStaticBackground(false);
     
-    m_part->clearSelection();
+    m_frame->clearSelection();
 
     d->reset();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (d->layoutTimerId && m_part->xmlDocImpl() && !m_part->xmlDocImpl()->ownerElement())
-        printf("Killing the layout timer from a clear at %d\n", m_part->xmlDocImpl()->elapsedTime());
+    if (d->layoutTimerId && m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
+        printf("Killing the layout timer from a clear at %d\n", m_frame->xmlDocImpl()->elapsedTime());
 #endif
     
     killTimers();
@@ -254,8 +254,8 @@ void KHTMLView::clear()
 
 void KHTMLView::resizeEvent(QResizeEvent* e)
 {
-    if (m_part && m_part->xmlDocImpl())
-        m_part->xmlDocImpl()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
+    if (m_frame && m_frame->xmlDocImpl())
+        m_frame->xmlDocImpl()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
 }
 
 void KHTMLView::initScrollBars()
@@ -280,8 +280,8 @@ void KHTMLView::setMarginHeight(int h)
 
 void KHTMLView::adjustViewSize()
 {
-    if( m_part->xmlDocImpl() ) {
-        DocumentImpl *document = m_part->xmlDocImpl();
+    if( m_frame->xmlDocImpl() ) {
+        DocumentImpl *document = m_frame->xmlDocImpl();
 
         RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
         if ( !root )
@@ -350,14 +350,14 @@ void KHTMLView::layout()
     d->layoutTimerId = 0;
     d->delayedLayout = false;
 
-    if (!m_part) {
+    if (!m_frame) {
         // FIXME: Do we need to set _width here?
         // FIXME: Should we set _height here too?
         _width = visibleWidth();
         return;
     }
 
-    DocumentImpl* document = m_part->xmlDocImpl();
+    DocumentImpl* document = m_frame->xmlDocImpl();
     if (!document) {
         // FIXME: Should we set _height here too?
         _width = visibleWidth();
@@ -455,7 +455,7 @@ void KHTMLView::layout()
 
     root->layout();
 
-    m_part->invalidateSelection();
+    m_frame->invalidateSelection();
    
     d->layoutSchedulingEnabled=true;
     d->layoutSuppressed = false;
@@ -493,18 +493,18 @@ void KHTMLView::layout()
     setStaticBackground(d->useSlowRepaints);
 
     if (didFirstLayout) {
-        m_part->didFirstLayout();
+        m_frame->didFirstLayout();
     }
 }
 
 void KHTMLView::updateDashboardRegions()
 {
-    DocumentImpl* document = m_part->xmlDocImpl();
+    DocumentImpl* document = m_frame->xmlDocImpl();
     if (document->hasDashboardRegions()) {
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
 	document->setDashboardRegions(newRegions);
-	KWQ(m_part)->dashboardRegionsChanged();
+	Mac(m_frame)->dashboardRegionsChanged();
     }
 }
 
@@ -515,7 +515,7 @@ void KHTMLView::updateDashboardRegions()
 
 void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
-    if(!m_part->xmlDocImpl()) return;
+    if(!m_frame->xmlDocImpl()) return;
 
     RefPtr<KHTMLView> protector(this);
 
@@ -525,9 +525,9 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     d->mousePressed = true;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MousePress );
-    m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (KWQ(m_part)->passSubframeEventToSubframe(mev)) {
+    if (Mac(m_frame)->passSubframeEventToSubframe(mev)) {
         invalidateClick();
         return;
     }
@@ -544,13 +544,13 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     if (!swallowEvent) {
 	MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_part, &event );
+	QApplication::sendEvent( m_frame, &event );
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
         // the khtml state with this mouseUp, which khtml never saw.
         // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
         // is a hole here if the widget consumes the mouseUp and subsequent events.
-        if (KWQ(m_part)->lastEventIsMouseUp()) {
+        if (Mac(m_frame)->lastEventIsMouseUp()) {
             d->mousePressed = false;
         }
     }
@@ -558,7 +558,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
 void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
-    if(!m_part->xmlDocImpl()) return;
+    if(!m_frame->xmlDocImpl()) return;
 
     RefPtr<KHTMLView> protector(this);
 
@@ -569,9 +569,9 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     d->mousePressed = false;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseDblClick );
-    m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+    if (Mac(m_frame)->passSubframeEventToSubframe(mev))
         return;
 
     d->clickCount = _mouse->clickCount();
@@ -585,10 +585,10 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
 	MouseReleaseEvent event1( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_part, &event1 );
+	QApplication::sendEvent( m_frame, &event1 );
 
 	MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_part, &event2 );
+	QApplication::sendEvent( m_frame, &event2 );
     }
 
     invalidateClick();
@@ -599,10 +599,10 @@ static bool isSubmitImage(NodeImpl *node)
     return node && node->hasTagName(inputTag) && static_cast<HTMLInputElementImpl*>(node)->inputType() == HTMLInputElementImpl::IMAGE;
 }
 
-static QCursor selectCursor(const NodeImpl::MouseEvent &event, KHTMLPart *part, bool mousePressed)
+static QCursor selectCursor(const NodeImpl::MouseEvent &event, Frame *frame, bool mousePressed)
 {
     // During selection, use an I-beam no matter what we're over
-    if (mousePressed && part->hasSelection())
+    if (mousePressed && frame->hasSelection())
         return KCursor::ibeamCursor();
 
     NodeImpl *node = event.innerNode.get();
@@ -615,14 +615,14 @@ static QCursor selectCursor(const NodeImpl::MouseEvent &event, KHTMLPart *part, 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO:
             if (!event.url.isNull() || isSubmitImage(node))
-                return part->urlCursor();
+                return frame->urlCursor();
             if ((node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()))
                 return KCursor::ibeamCursor();
             break;
         case CURSOR_CROSS:
             return KCursor::crossCursor();
         case CURSOR_POINTER:
-            return part->urlCursor();
+            return frame->urlCursor();
         case CURSOR_MOVE:
             return KCursor::sizeAllCursor();
         case CURSOR_E_RESIZE:
@@ -659,8 +659,8 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // part being null here, which seems impossible, so check for nil
     // but also assert so that we can try to figure this out in debug
     // builds, if it happens.
-    assert(m_part);
-    if(!m_part || !m_part->xmlDocImpl()) return;
+    assert(m_frame);
+    if(!m_frame || !m_frame->xmlDocImpl()) return;
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -670,23 +670,23 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // This means that :hover and :active freeze in the state they were in when the mouse
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseMove );
-    m_part->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_part->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
+    m_frame->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_frame->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
 
-    if (!KWQ(m_part)->passSubframeEventToSubframe(mev))
-        viewport()->setCursor(selectCursor(mev, m_part, d->mousePressed));
+    if (!Mac(m_frame)->passSubframeEventToSubframe(mev))
+        viewport()->setCursor(selectCursor(mev, m_frame, d->mousePressed));
         
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
                                            0,_mouse,true,NodeImpl::MouseMove);
 
     // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
-    m_part->executeScheduledScript();
+    m_frame->executeScheduledScript();
 
     d->prevMouseX = xm;
     d->prevMouseY = ym;
 
     if (!swallowEvent) {
         MouseMoveEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
-        QApplication::sendEvent(m_part, &event);
+        QApplication::sendEvent(m_frame, &event);
     }
 }
 
@@ -701,7 +701,7 @@ void KHTMLView::invalidateClick()
 
 void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
-    if ( !m_part->xmlDocImpl() ) return;
+    if ( !m_frame->xmlDocImpl() ) return;
 
     RefPtr<KHTMLView> protector(this);
 
@@ -711,9 +711,9 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     d->mousePressed = false;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseRelease );
-    m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+    if (Mac(m_frame)->passSubframeEventToSubframe(mev))
         return;
 
     bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
@@ -726,7 +726,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     if (!swallowEvent) {
 	MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_part, &event );
+	QApplication::sendEvent( m_frame, &event );
     }
 
     invalidateClick();
@@ -734,8 +734,8 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 {
-    if (m_part->xmlDocImpl() && m_part->xmlDocImpl()->focusNode()) {
-        if (m_part->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
+    if (m_frame->xmlDocImpl() && m_frame->xmlDocImpl()->focusNode()) {
+        if (m_frame->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
         {
             _ke->accept();
             return;
@@ -757,7 +757,7 @@ bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragT
     bool metaKey = 0;
     
     MouseEventImpl *me = new MouseEventImpl(eventType,
-                                            true, true, m_part->xmlDocImpl()->defaultView(),
+                                            true, true, m_frame->xmlDocImpl()->defaultView(),
                                             0, screenX, screenY, clientX, clientY,
                                             ctrlKey, altKey, shiftKey, metaKey,
                                             0, 0, clipboard);
@@ -775,7 +775,7 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
     int xm, ym;
     viewportToContents(loc.x(), loc.y(), xm, ym);
     NodeImpl::MouseEvent mev(0, NodeImpl::MouseMove);
-    m_part->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
+    m_frame->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
     NodeImpl *newTarget = mev.innerNode.get();
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
@@ -904,7 +904,7 @@ void KHTMLView::focusNextPrevNode(bool next)
     // used is that specified in the HTML spec (see DocumentImpl::nextFocusNode() and DocumentImpl::previousFocusNode()
     // for details).
 
-    DocumentImpl *doc = m_part->xmlDocImpl();
+    DocumentImpl *doc = m_frame->xmlDocImpl();
     NodeImpl *oldFocusNode = doc->focusNode();
     NodeImpl *newFocusNode;
 
@@ -971,7 +971,7 @@ void KHTMLView::focusNextPrevNode(bool next)
         }
     }
     // Set focus node on the document
-    m_part->xmlDocImpl()->setFocusNode(newFocusNode);
+    m_frame->xmlDocImpl()->setFocusNode(newFocusNode);
 }
 
 void KHTMLView::setMediaType( const QString &medium )
@@ -982,7 +982,7 @@ void KHTMLView::setMediaType( const QString &medium )
 QString KHTMLView::mediaType() const
 {
     // See if we have an override type.
-    QString overrideType = KWQ(m_part)->overrideMediaType();
+    QString overrideType = Mac(m_frame)->overrideMediaType();
     if (!overrideType.isNull())
         return overrideType;
     return m_medium;
@@ -1059,7 +1059,7 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
             RefPtr<NodeImpl> oldUnder;
             if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
                 NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
-                m_part->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
+                m_frame->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
                 oldUnder = mev.innerNode;
                 if (oldUnder && oldUnder->isTextNode())
                     oldUnder = oldUnder->parentNode();
@@ -1090,10 +1090,10 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
         if (node && node->isMouseFocusable()) {
-            if (!m_part->xmlDocImpl()->setFocusNode(node))
+            if (!m_frame->xmlDocImpl()->setFocusNode(node))
                 swallowEvent = true;
         } else if (!node || !node->focused()) {
-            if (!m_part->xmlDocImpl()->setFocusNode(0))
+            if (!m_frame->xmlDocImpl()->setFocusNode(0))
             swallowEvent = true;
         }
     }
@@ -1108,7 +1108,7 @@ void KHTMLView::setIgnoreWheelEvents( bool e )
 
 void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 {
-    DocumentImpl *doc = m_part->xmlDocImpl();
+    DocumentImpl *doc = m_frame->xmlDocImpl();
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
@@ -1119,7 +1119,7 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
             doc->renderer()->layer()->hitTest(hitTestResult, x, y); 
             NodeImpl *node = hitTestResult.innerNode();
 
-           if (KWQ(m_part)->passWheelEventToChildWidget(node)) {
+           if (Mac(m_frame)->passWheelEventToChildWidget(node)) {
                 e->accept();
                 return;
             }
@@ -1135,13 +1135,13 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 
 void KHTMLView::focusInEvent( QFocusEvent *e )
 {
-    m_part->setCaretVisible();
+    m_frame->setCaretVisible();
 }
 
 void KHTMLView::focusOutEvent( QFocusEvent *e )
 {
-    m_part->stopAutoScroll();
-    m_part->setCaretVisible(false);
+    m_frame->stopAutoScroll();
+    m_frame->setCaretVisible(false);
 }
 
 void KHTMLView::slotScrollBarMoved()
@@ -1159,8 +1159,8 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
 {
     if (e->timerId()==d->layoutTimerId) {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_part->xmlDocImpl() && !m_part->xmlDocImpl()->ownerElement())
-            printf("Layout timer fired at %d\n", m_part->xmlDocImpl()->elapsedTime());
+        if (m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
+            printf("Layout timer fired at %d\n", m_frame->xmlDocImpl()->elapsedTime());
 #endif
         layout();
     }
@@ -1171,10 +1171,10 @@ void KHTMLView::scheduleRelayout()
     if (!d->layoutSchedulingEnabled)
         return;
 
-    if (!m_part->xmlDocImpl() || !m_part->xmlDocImpl()->shouldScheduleLayout())
+    if (!m_frame->xmlDocImpl() || !m_frame->xmlDocImpl()->shouldScheduleLayout())
         return;
 
-    int delay = m_part->xmlDocImpl()->minimumLayoutDelay();
+    int delay = m_frame->xmlDocImpl()->minimumLayoutDelay();
     if (d->layoutTimerId && d->delayedLayout && !delay)
         unscheduleRelayout();
     if (d->layoutTimerId)
@@ -1183,7 +1183,7 @@ void KHTMLView::scheduleRelayout()
     d->delayedLayout = delay != 0;
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_part->xmlDocImpl()->ownerElement())
+    if (!m_frame->xmlDocImpl()->ownerElement())
         printf("Scheduling layout for %d\n", delay);
 #endif
 
@@ -1206,8 +1206,8 @@ void KHTMLView::unscheduleRelayout()
         return;
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (m_part->xmlDocImpl() && !m_part->xmlDocImpl()->ownerElement())
-        printf("Layout timer unscheduled at %d\n", m_part->xmlDocImpl()->elapsedTime());
+    if (m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
+        printf("Layout timer unscheduled at %d\n", m_frame->xmlDocImpl()->elapsedTime());
 #endif
     
     killTimer(d->layoutTimerId);

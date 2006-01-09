@@ -32,7 +32,7 @@
 
 #ifdef __cplusplus
 
-class KWQKHTMLPart;
+class MacFrame;
 class KHTMLView;
 class RenderArena;
 
@@ -45,7 +45,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 #else
 
-@class KWQKHTMLPart;
+@class MacFrame;
 @class KHTMLView;
 @class KHTMLRenderPart;
 @class RenderArena;
@@ -180,13 +180,13 @@ typedef enum
 // used in the opposite direction, for simple access to WebCore functions without dealing
 // directly with the KHTML C++ classes.
 
-// A WebCoreBridge creates and holds a reference to a KHTMLPart.
+// A WebCoreBridge creates and holds a reference to a Frame.
 
 // The WebCoreBridge interface contains methods for use by the non-WebCore side of the bridge.
 
 @interface WebCoreBridge : NSObject
 {
-    KWQKHTMLPart *_part;
+    MacFrame *m_frame;
     KHTMLRenderPart *_renderPart;
     RenderArena *_renderPartArena;
     BOOL _shouldCreateRenderers;
@@ -214,7 +214,7 @@ typedef enum
 /* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
 - (NSString *)generateFrameName;
 
-- (KWQKHTMLPart *)part;
+- (MacFrame *)part;
 
 - (void)setParent:(WebCoreBridge *)parent;
 - (WebCoreBridge *)parent;

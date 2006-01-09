@@ -283,8 +283,8 @@ void QObject::setDefersTimers(bool defers)
 
 bool QObject::inherits(const char *className) const
 {
-    if (strcmp(className, "KHTMLPart") == 0) {
-        return isKHTMLPart();
+    if (strcmp(className, "Frame") == 0) {
+        return isFrame();
     }
     if (strcmp(className, "KHTMLView") == 0) {
         return isKHTMLView();
@@ -310,7 +310,7 @@ bool QObject::isKHTMLLoader() const
     return false;
 }
 
-bool QObject::isKHTMLPart() const
+bool QObject::isFrame() const
 {
     return false;
 }

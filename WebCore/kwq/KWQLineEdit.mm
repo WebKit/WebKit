@@ -27,7 +27,7 @@
 #import "KWQLineEdit.h"
 
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQLogging.h"
 #import "KWQPalette.h"
 #import "KWQTextField.h"

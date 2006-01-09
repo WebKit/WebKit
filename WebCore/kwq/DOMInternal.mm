@@ -37,7 +37,7 @@
 #import "kjs_proxy.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/runtime_root.h>
@@ -183,14 +183,14 @@ DOMString::DOMString(NSString *str)
     NodeImpl *nodeImpl = [n _nodeImpl];
 
     // Dig up Interpreter and ExecState.
-    KHTMLPart *part = nodeImpl->getDocument()->part();
-    Interpreter *interpreter = part->jScript()->interpreter();
+    Frame *frame = nodeImpl->getDocument()->frame();
+    Interpreter *interpreter = frame->jScript()->interpreter();
     ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
     JSObject *scriptImp = static_cast<JSObject *>(getDOMNode(exec, nodeImpl));
 
-    const RootObject *executionContext = KWQ(part)->bindingRootObject();
+    const RootObject *executionContext = Mac(frame)->bindingRootObject();
 
     [self _initializeWithObjectImp:scriptImp originExecutionContext:executionContext executionContext:executionContext];
 }

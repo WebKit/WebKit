@@ -51,7 +51,7 @@
 #include <kxmlcore/HashSet.h>
 #include "html/htmltokenizer.h"
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 
@@ -739,7 +739,7 @@ bool HTMLParser::noframesCreateErrorCheck(Token* t, NodeImpl*& result)
 
 bool HTMLParser::noscriptCreateErrorCheck(Token* t, NodeImpl*& result)
 {
-    if (HTMLWidget && HTMLWidget->part()->jScriptEnabled())
+    if (HTMLWidget && HTMLWidget->frame()->jScriptEnabled())
         setSkipMode(noscriptTag);
     return true;
 }

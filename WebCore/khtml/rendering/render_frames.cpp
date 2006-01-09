@@ -37,7 +37,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "render_arena.h"
 
 #include <kcursor.h>
@@ -737,16 +737,16 @@ static bool isURLAllowed(DOM::DocumentImpl *doc, const QString &url)
     KURL newURL(doc->completeURL(url));
     newURL.setRef(QString::null);
     
-    if (doc->part()->topLevelFrameCount() >= 200)
+    if (doc->frame()->topLevelFrameCount() >= 200)
 	return false;
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;
-    for (KHTMLPart *part = doc->part(); part; part = part->parentPart()) {
-        KURL partURL = part->url();
-        partURL.setRef(QString::null);
-        if (partURL == newURL) {
+    for (Frame *frame = doc->frame(); frame; frame = frame->parentFrame()) {
+        KURL frameURL = frame->url();
+        frameURL.setRef(QString::null);
+        if (frameURL == newURL) {
             if (foundSelfReference)
                 return false;
             foundSelfReference = true;
@@ -785,7 +785,7 @@ void RenderPartObject::updateWidget()
   QString serviceType;
   QStringList paramNames;
   QStringList paramValues;
-  KHTMLPart *part = m_view->part();
+  Frame *frame = m_view->frame();
 
   setNeedsLayoutAndMinMaxRecalc();
 
@@ -903,7 +903,7 @@ void RenderPartObject::updateWidget()
               (child->isTextNode() && !static_cast<TextImpl*>(child)->containsOnlyWhitespace()))
               m_hasFallbackContent = true;
       }
-      bool success = part->requestObject( this, url, serviceType, paramNames, paramValues );
+      bool success = frame->requestObject( this, url, serviceType, paramNames, paramValues );
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
   } else if (element()->hasTagName(embedTag)) {
@@ -926,7 +926,7 @@ void RenderPartObject::updateWidget()
               paramValues.append(it->value().qstring());
           }
       }
-      part->requestObject( this, url, serviceType, paramNames, paramValues );
+      frame->requestObject( this, url, serviceType, paramNames, paramValues );
   } else {
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
@@ -936,11 +936,11 @@ void RenderPartObject::updateWidget()
       if (url.isEmpty())
 	  url = "about:blank";
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
-      bool requestSucceeded = v->part()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
+      bool requestSucceeded = v->frame()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
-	  KHTMLPart *newPart = v->part()->findFrame( o->m_name.qstring() );
+	  Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
 	  if (newPart && newPart->xmlDocImpl()) {
-	      newPart->xmlDocImpl()->setBaseURL( v->part()->baseURL().url() );
+	      newPart->xmlDocImpl()->setBaseURL( v->frame()->baseURL().url() );
 	  }
       }
   }

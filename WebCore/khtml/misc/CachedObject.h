@@ -47,7 +47,7 @@
 #include <dom/dom_string.h>
 #include "DocPtr.h"
 
-class KHTMLPart;
+class Frame;
 
 namespace KIO {
   class Job;

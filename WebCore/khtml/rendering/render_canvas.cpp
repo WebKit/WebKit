@@ -27,8 +27,6 @@
 #include "khtmlview.h"
 #include <kdebug.h>
 
-#include "khtml_part.h"
-
 using namespace khtml;
 
 //#define BOX_DEBUG

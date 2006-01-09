@@ -32,7 +32,6 @@
 #include "dom/dom_node.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
 
 #include "css/cssstyleselector.h"
 #include "css/cssproperties.h"

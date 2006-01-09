@@ -27,7 +27,7 @@
 #import "WebCoreSettings.h"
 
 #import "KWQFoundationExtras.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQKHTMLSettings.h"
 #import "WebCoreBridge.h"
 
@@ -63,10 +63,10 @@
 
 - (void)_updateAllViews
 {
-    for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
-        KWQKHTMLPart *part = it.current();
-        if (part->settings() == settings) {
-            [part->bridge() setNeedsReapplyStyles];
+    for (QPtrListIterator<MacFrame> it(MacFrame::instances()); it.current(); ++it) {
+        MacFrame *frame = it.current();
+        if (frame->settings() == settings) {
+            [frame->bridge() setNeedsReapplyStyles];
         }
     }
 }

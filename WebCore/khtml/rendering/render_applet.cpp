@@ -29,7 +29,7 @@
 #include "rendering/render_canvas.h"
 #include "xml/dom_docimpl.h"
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
 
@@ -91,7 +91,7 @@ void RenderApplet::createWidgetIfNecessary()
                 child = child->nextSibling();
             }
         
-            setQWidget(new KJavaAppletWidget(QSize(width, height), element()->getDocument()->part(), m_args));
+            setQWidget(new KJavaAppletWidget(QSize(width, height), element()->getDocument()->frame(), m_args));
         }
     }
 }

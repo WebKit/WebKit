@@ -531,7 +531,7 @@ void RenderFieldset::setStyle(RenderStyle* _style)
 RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
     : RenderFormElement(element)
 {
-    KWQFileButton *w = new KWQFileButton(view()->part());
+    KWQFileButton *w = new KWQFileButton(view()->frame());
     connect(w, SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const DOMString &)));
     connect(w, SIGNAL(clicked()), this, SLOT(slotClicked()));
     setQWidget(w);

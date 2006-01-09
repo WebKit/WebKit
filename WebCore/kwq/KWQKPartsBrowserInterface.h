@@ -29,20 +29,20 @@
 #include "KWQObject.h"
 #include "KWQVariant.h"
 
-class KWQKHTMLPart;
+class MacFrame;
 
 namespace KParts {
 
 class BrowserInterface : public QObject {
 public:
-    BrowserInterface(KWQKHTMLPart *part) : _part(part) { }
+    BrowserInterface(MacFrame *frame) : m_frame(frame) { }
     
     QVariant property(const char *name) const;
     void callMethod(const char *name, const QVariant &argument);
     
 
 private:
-    KWQKHTMLPart *_part;
+    MacFrame *m_frame;
 };
 
 } // namespace KParts

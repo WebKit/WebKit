@@ -31,7 +31,7 @@
 #include "xml/dom2_viewsimpl.h"
 #include "misc/shared.h"
 
-class KHTMLPart;
+class Frame;
 class QKeyEvent;
 class QPixmap;
 class QPoint;

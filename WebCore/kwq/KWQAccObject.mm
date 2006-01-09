@@ -49,7 +49,7 @@
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "khtmlview.h"
-#import "khtml_part.h"
+#import "Frame.h"
 #import "render_canvas.h"
 #import "render_image.h"
 #import "render_list.h"
@@ -501,7 +501,7 @@ using khtml::VisiblePosition;
     NodeImpl* e = m_renderer->element();
     DocumentImpl* d = m_renderer->document();
     if (e && d) {
-        KHTMLPart* p = d->part();
+        Frame* p = d->frame();
         if (p) {
             // catch stale KWQAccObject (see <rdar://problem/3960196>)
             if (p->xmlDocImpl() != d)
@@ -525,7 +525,7 @@ using khtml::VisiblePosition;
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
 
     if (m_renderer->isCanvas()) {
-        KWQKHTMLPart *docPart = KWQ(m_renderer->document()->part());
+        MacFrame *docPart = Mac(m_renderer->document()->frame());
         if (!docPart)
             return nil;
         
@@ -771,9 +771,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 
         DocumentImpl* d = actionElement->getDocument();
         if (d) {
-            KHTMLPart* p = d->part();
+            Frame* p = d->frame();
             if (p) {
-                KWQ(p)->prepareForUserAction();
+                Mac(p)->prepareForUserAction();
             }
         }
 
@@ -946,9 +946,9 @@ static QRect boundingBoxRect(RenderObject* obj)
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
         // (there is a web archive of this page attached to <rdar://problem/3888973>)
         // Trouble is we need to know which document view to ask.
-        SelectionController   sel = [self topView]->part()->selection();
+        SelectionController   sel = [self topView]->frame()->selection();
         if (sel.isNone()) {
-            sel = m_renderer->document()->renderer()->canvas()->view()->part()->selection();
+            sel = m_renderer->document()->renderer()->canvas()->view()->frame()->selection();
             if (sel.isNone())
                 return nil;
         }
@@ -1133,10 +1133,10 @@ static QRect boundingBoxRect(RenderObject* obj)
         QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
         if (!widget || !widget->inherits("KHTMLView"))
             break;
-        KHTMLPart *part = static_cast<KHTMLView *>(widget)->part();
-        if (!part)
+        Frame *frame = static_cast<KHTMLView *>(widget)->frame();
+        if (!frame)
             break;
-        DocumentImpl *document = part->xmlDocImpl();
+        DocumentImpl *document = frame->xmlDocImpl();
         if (!document)
             break;
         renderer = document->renderer();
@@ -1844,9 +1844,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (RenderObject *) rendererForView:(NSView *)view
 {
     // check for WebCore NSView that lets us find its widget
-    KHTMLPart* docPart = m_renderer->document()->part();
+    Frame* docPart = m_renderer->document()->frame();
     if (docPart) {
-        DOMElement *domElement = [KWQ(docPart)->bridge() elementForView:view];
+        DOMElement *domElement = [Mac(docPart)->bridge() elementForView:view];
         if (domElement)
             return [domElement _elementImpl]->renderer();
     }
@@ -1858,11 +1858,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    KWQKHTMLPart *part = [bridge part];
-    if (!part)
+    MacFrame *frame = [bridge part];
+    if (!frame)
         return NULL;
         
-    DocumentImpl *document = part->xmlDocImpl();
+    DocumentImpl *document = frame->xmlDocImpl();
     if (!document)
         return NULL;
         
@@ -1930,7 +1930,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // make selection and tell the document to use it
     // NOTE: BUG support nested WebAreas
     SelectionController sel = SelectionController(startVisiblePosition, endVisiblePosition);
-    [self topDocument]->part()->setSelection(sel);
+    [self topDocument]->frame()->setSelection(sel);
 }
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName;

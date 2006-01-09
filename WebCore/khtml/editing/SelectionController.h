@@ -33,7 +33,7 @@
 #include "misc/shared.h"
 #include "editing/visible_text.h"
 
-class KHTMLPart;
+class Frame;
 class QPainter;
 
 namespace khtml {
@@ -110,9 +110,9 @@ public:
     void debugPosition() const;
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
-    friend class ::KHTMLPart;
+    friend class ::Frame;
     
-    KHTMLPart *part() const { return !isNone() ? m_start.node()->getDocument()->part() : 0; }
+    Frame *frame() const { return !isNone() ? m_start.node()->getDocument()->frame() : 0; }
 
     // Safari Selection Object API
     NodeImpl *baseNode() const { return m_base.node(); }

@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "WebCoreBridge.h"
 
 namespace KParts {
@@ -36,7 +36,7 @@ namespace KParts {
 QVariant BrowserInterface::property(const char *name) const
 {
     if (strcmp(name, "historyLength") == 0) {
-        return QVariant((uint)[_part->bridge() historyLength]);
+        return QVariant((uint)[m_frame->bridge() historyLength]);
     }
     ERROR("property %s not implemented", name);
     return QVariant();
@@ -47,7 +47,7 @@ void BrowserInterface::callMethod(const char *name, const QVariant &argument)
     if (strcmp(name, "goHistory(int)") == 0) {
         int distance = argument.toInt();
 	KWQ_BLOCK_EXCEPTIONS;
-	[_part->bridge() goBackOrForward:distance];
+	[m_frame->bridge() goBackOrForward:distance];
 	KWQ_UNBLOCK_EXCEPTIONS;
         return;
     }

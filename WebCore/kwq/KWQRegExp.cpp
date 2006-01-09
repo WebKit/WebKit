@@ -97,7 +97,7 @@ void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     }
     // Note we don't honor the Qt syntax for various character classes.  If we convert
     // to a different underlying engine, we may need to change client code that relies
-    // on the regex syntax (see KWQKHTMLPart.mm for a couple examples).
+    // on the regex syntax (see MacFrame.mm for a couple examples).
     
     const char *errorMessage;
     int errorOffset;

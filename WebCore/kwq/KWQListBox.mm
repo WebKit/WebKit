@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 #import "WebCoreScrollView.h"
@@ -401,7 +401,7 @@ void QListBox::setFont(const QFont &font)
 {
     KWQTableView *documentView = [self documentView];
     QWidget *widget = [documentView widget];
-    [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:documentView];
+    [MacFrame::bridgeForWidget(widget) makeFirstResponder:documentView];
     return YES;
 }
 
@@ -503,7 +503,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (!_box)  {
         return;
     }
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(_box);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
     [super keyDown:event];
     }
@@ -515,7 +515,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         return;
     }
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(_box);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
         [super keyUp:event];
         NSString *string = [event characters];
@@ -569,7 +569,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     BOOL become = [super becomeFirstResponder];
     
     if (become) {
-        if (_box && !KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
+        if (_box && !MacFrame::currentEventIsMouseDownInWidget(_box)) {
             RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(_box->eventFilterObject()));
             RenderLayer *layer = widget->enclosingLayer();
             if (layer)
@@ -595,7 +595,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
         if (_box->eventFilterObject()) {
             const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
-            [KWQKHTMLPart::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
+            [MacFrame::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
         }
     }
     return resign;
@@ -611,14 +611,14 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 - (NSView *)nextKeyView
 {
     return _box && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(_box, KWQSelectingNext)
+        ? MacFrame::nextKeyViewForWidget(_box, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
     return _box && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(_box, KWQSelectingPrevious)
+        ? MacFrame::nextKeyViewForWidget(_box, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

@@ -101,48 +101,9 @@ namespace KParts
   class PartManager;
 };
 
-/**
- * This class is khtml's main class. It features an almost complete
- * web browser, and html renderer.
- *
- * The easiest way to use this class (if you just want to display an HTML
- * page at some URL) is the following:
- *
- * <pre>
- * KURL url = "http://www.kde.org";
- * KHTMLPart *w = new KHTMLPart();
- * w->openURL(url);
- * w->view()->resize(500, 400);
- * w->show();
- * </pre>
- *
- * By default Java and JavaScript support are disabled. You can enable them by
- * using the @ref setJavaEnabled() and @ref setJScriptEnabled() methods.
- *
- * Some apps want to write their HTML code directly into the widget instead of
- * it opening an url. You can also do that in the following way:
- *
- * <pre>
- * QString myHTMLCode = ...;
- * KHTMLPart *w = new KHTMLPart();
- * w->begin();
- * w->write(myHTMLCode);
- * ...
- * w->end();
- * </pre>
- *
- * You can do as many calls to write as you want. But there are two
- * @ref write() methods, one accepting a @ref QString one accepting a
- * @p char @p * argument. You should use one or the other
- * (but not both) since the method using
- * the @p char @p * argument does an additional decoding step to convert the
- * written data to Unicode.
- *
- * @short HTML Browser Widget
- * @author Lars Knoll (knoll@kde.org)
- * */
-class KHTMLPart : public KParts::ReadOnlyPart
+class Frame : public KParts::ReadOnlyPart
 {
+  Q_OBJECT
   friend class KHTMLView;
   friend class DOM::HTMLTitleElementImpl;
   friend class DOM::HTMLFrameElementImpl;
@@ -162,6 +123,7 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class KHTMLPartBrowserExtension;
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
+  friend class KHTMLPartBrowserHostExtension;
   friend class khtml::HTMLTokenizer;
   friend class khtml::XMLTokenizer;
   friend class khtml::RenderWidget;
@@ -179,25 +141,13 @@ class KHTMLPart : public KParts::ReadOnlyPart
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
-  /**
-   * Constructs a new KHTMLPart.
-   *
-   * KHTML basically consists of two objects: The KHTMLPart itself,
-   * holding the document data (DOM document), and the @ref KHTMLView,
-   * derived from @ref QScrollView, in which the document content is
-   * rendered in. You can specify two different parent objects for a
-   * KHTMLPart, one parent for the KHTMLPart document and on parent
-   * for the @ref KHTMLView. If the second @p parent argument is 0L, then
-   * @p parentWidget is used as parent for both objects, the part and
-   * the view.
-   */
-  KHTMLPart(QWidget *parentWidget = 0, const char *widgetname = 0, QObject *parent = 0, const char *name = 0);
-  KHTMLPart(KHTMLView *view, QObject *parent = 0, const char *name = 0);
+  Frame(QWidget *parentWidget = 0, const char *widgetname = 0, QObject *parent = 0, const char *name = 0);
+  Frame(KHTMLView *view, QObject *parent = 0, const char *name = 0);
 
   /**
    * Destructor.
    */
-  virtual ~KHTMLPart();
+  virtual ~Frame();
 
   /**
    * Opens the specified URL @p url.
@@ -559,7 +509,7 @@ public:
   /**
    * Sets the granularity of the selection (character, word, line, paragraph).
    */
-  void KHTMLPart::setSelectionGranularity(khtml::ETextGranularity granularity) const;
+  void setSelectionGranularity(khtml::ETextGranularity granularity) const;
 
   /**
    * Returns the drag caret of the HTML.
@@ -731,12 +681,11 @@ public:
   const KHTMLSettings *settings() const;
 
   /**
-   * Returns a pointer to the parent KHTMLPart if the part is a frame
-   * in an HTML frameset.
+   * Returns a pointer to the parent Frame, if any.
    *
    *  Returns 0L otherwise.
    */
-  KHTMLPart *parentPart() const;
+  Frame *parentFrame() const;
 
   /**
    * Returns a list of names of all frame (including iframe) objects of
@@ -747,12 +696,12 @@ public:
 
   QPtrList<KParts::ReadOnlyPart> frames() const;
 
-  KHTMLPart *childFrameNamed(const QString &name) const;
+  Frame *childFrameNamed(const QString &name) const;
 
   /**
    * Finds a frame by name. Returns 0L if frame can't be found.
    */
-  KHTMLPart *findFrame( const QString &f );
+  Frame *findFrame( const QString &f );
 
   /**
    * Return the current frame (the one that has focus)
@@ -833,7 +782,7 @@ public:
   int topLevelFrameCount();
 
   // Editing operations.
-  // Not clear if these will be wanted in KHTMLPart by KDE,
+  // Not clear if these will be wanted in Frame by KDE,
   // but for now these bridge so we don't have to pepper the
   // KHTML code with WebCore-specific stuff.
   enum TriState { falseTriState, trueTriState, mixedTriState };
@@ -1175,8 +1124,8 @@ private:
 
  public:
   KJSProxyImpl *jScript();
-  KHTMLPart *opener();
-  void setOpener(KHTMLPart *_opener);
+  Frame *opener();
+  void setOpener(Frame *_opener);
   bool openedByJS();
   void setOpenedByJS(bool _openedByJS);
  private:
@@ -1209,7 +1158,7 @@ private:
   friend class khtml::SelectionController;
 
 public:  
-  friend class KWQKHTMLPart;
+  friend class MacFrame;
 
   void completed();
   void completed(bool);
@@ -1221,7 +1170,5 @@ public:
 
   int frameCount;
 };
-
-#include "KWQKHTMLPart.h"
 
 #endif

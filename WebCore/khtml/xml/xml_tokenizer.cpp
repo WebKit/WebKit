@@ -36,7 +36,7 @@
 #include <kxmlcore/HashMap.h>
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -504,7 +504,7 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
         pi->attach();
 
     // don't load stylesheets for standalone documents
-    if (m_doc->part()) {
+    if (m_doc->frame()) {
         m_sawXSLTransform = !pi->checkStyleSheet();
 #ifdef KHTML_XSLT
         // Pretend we didn't see this PI if we're the result of a transform.
@@ -832,7 +832,7 @@ void XMLTokenizer::executeScripts()
             scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
 #endif
         // don't load external scripts for standalone documents (for now)
-        if (!scriptHref.isEmpty() && m_doc->part()) {
+        if (!scriptHref.isEmpty() && m_doc->frame()) {
             // we have a src attribute
             QString charset = scriptElement->getAttribute(charsetAttr).qstring();
             m_cachedScript = m_doc->docLoader()->requestScript(scriptHref, charset);
@@ -850,7 +850,7 @@ void XMLTokenizer::executeScripts()
             // another page, etc. (also in notifyFinished())
             // ### the script may add another script node after this one which should be executed
             if (m_view)
-                m_view->part()->executeScript(scriptCode);
+                m_view->frame()->executeScript(scriptCode);
         }
     }
 
@@ -868,7 +868,7 @@ void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
         DOMString scriptSource = m_cachedScript->script();
         m_cachedScript->deref(this);
         m_cachedScript = 0;
-        m_view->part()->executeScript(scriptSource.qstring());
+        m_view->frame()->executeScript(scriptSource.qstring());
         executeScripts();
     }
 }

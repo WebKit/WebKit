@@ -33,7 +33,7 @@
 #include "DocLoader.h"
 #include "markup.h"
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "KWQLoader.h"
 
 #include <kio/job.h>
@@ -203,8 +203,8 @@ RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &
     // in place. We have to do this only if we're rendering the result document.
     if (view) {
         view->clear();
-        result->setTransformSourceDocument(view->part()->xmlDocImpl());
-        view->part()->replaceDocImpl(result.get());
+        result->setTransformSourceDocument(view->frame()->xmlDocImpl());
+        view->frame()->replaceDocImpl(result.get());
     }
     
     result->open();
@@ -222,7 +222,7 @@ RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &
     result->finishParsing();
     result->setParsing(false);
     if (view)
-        view->part()->checkCompleted();
+        view->frame()->checkCompleted();
     else
         result->close(); // FIXME: Even viewless docs can load subresources. onload will fire too early.
                          // This is probably a bug in XMLHttpRequestObjects as well.

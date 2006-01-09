@@ -23,22 +23,22 @@
 
 #include <kjs/object.h>
 
-class KHTMLPart;
+class Frame;
 
 namespace KJS {
 
   class Navigator : public JSObject {
   public:
-    Navigator(ExecState *exec, KHTMLPart *p);
+    Navigator(ExecState *exec, Frame *p);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { AppCodeName, AppName, AppVersion, Language, UserAgent, Platform,
            _Plugins, _MimeTypes, Product, ProductSub, Vendor, CookieEnabled, JavaEnabled };
-    KHTMLPart *part() const { return m_part; }
+    Frame *frame() const { return m_frame; }
   private:
-    KHTMLPart *m_part;
+    Frame *m_frame;
   };
 }; // namespace
 

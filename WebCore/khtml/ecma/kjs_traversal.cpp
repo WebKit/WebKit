@@ -25,7 +25,7 @@
 #include <xml/dom_nodeimpl.h>
 #include <xml/dom_docimpl.h>
 #include <khtmlview.h>
-#include <khtml_part.h>
+#include "Frame.h"
 #include <kdebug.h>
 #include <kjs/protect.h>
 
@@ -316,8 +316,8 @@ JSNodeFilterCondition::JSNodeFilterCondition(JSObject * _filter) : filter( _filt
 short JSNodeFilterCondition::acceptNode(NodeImpl* filterNode) const
 {
     NodeImpl *node = filterNode;
-    KHTMLPart *part = node->getDocument()->part();
-    KJSProxyImpl *proxy = part->jScript();
+    Frame *frame = node->getDocument()->frame();
+    KJSProxyImpl *proxy = frame->jScript();
     if (proxy && filter->implementsCall()) {
         JSLock lock;
         ExecState *exec = proxy->interpreter()->globalExec();

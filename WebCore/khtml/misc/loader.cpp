@@ -39,7 +39,7 @@
 #include <kxmlcore/Assertions.h>
 #include "KWQLoader.h"
 #include "html_documentimpl.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 using namespace DOM;
 
@@ -202,8 +202,8 @@ void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
         ASSERT(r->object->isImage());
         static_cast<CachedImage *>(r->object)->clear();
         r->m_buffer = QBuffer();
-        if (r->m_docLoader->part())
-            r->m_docLoader->part()->checkCompleted();
+        if (r->m_docLoader->frame())
+            r->m_docLoader->frame()->checkCompleted();
         
     } else if (KWQResponseIsMultipart(response)) {
         r->multipart = true;

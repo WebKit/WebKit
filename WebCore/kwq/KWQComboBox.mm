@@ -29,7 +29,7 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQLineEdit.h"
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQFoundationExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
@@ -407,7 +407,7 @@ void QComboBox::populate()
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    WebCoreBridge *bridge = box ? [KWQKHTMLPart::bridgeForWidget(box) retain] : nil;
+    WebCoreBridge *bridge = box ? [MacFrame::bridgeForWidget(box) retain] : nil;
 
     // we need to retain the event because it is the [NSApp currentEvent], which can change
     // and therefore be released during [super trackMouse:...]
@@ -491,7 +491,7 @@ void QComboBox::populate()
     if (become) {
         QWidget *widget = [self widget];
         if (widget) {
-            if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+            if (!MacFrame::currentEventIsMouseDownInWidget(widget)) {
                 RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
                 RenderLayer *layer = w->enclosingLayer();
                 if (layer)
@@ -514,7 +514,7 @@ void QComboBox::populate()
             QFocusEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-                [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
             }
         }
     }
@@ -538,7 +538,7 @@ void QComboBox::populate()
 {
     QWidget *widget = [self widget];
     return widget && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
@@ -546,7 +546,7 @@ void QComboBox::populate()
 {
     QWidget *widget = [self widget];
     return widget && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

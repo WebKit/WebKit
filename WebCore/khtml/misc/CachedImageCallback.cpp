@@ -58,14 +58,14 @@ void CachedImageCallback::notifyUpdate()
         // layout and dispatching the image's onload handler.  Removing the request from
         // the list of background decoding requests will ensure that Loader::numRequests() 
         // does not count this background request.  Further numRequests() can
-        // be correctly used by the part to determine if loading is sufficiently
+        // be correctly used by the frame to determine if loading is sufficiently
         // complete to dispatch the page's onload handler.
         Request *r = cachedImage->m_request;
         DocLoader *dl = r->m_docLoader;
 
         khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
 
-        // Poke the part to get it to do a checkCompleted().  Only do this for
+        // Poke the frame to get it to do a checkCompleted().  Only do this for
         // the first update to minimize work.  Note that we are guaranteed to have
         // read the header when we received this first update, which is triggered
         // by the first kCGImageStatusIncomplete status from CG. kCGImageStatusIncomplete
@@ -92,7 +92,7 @@ void CachedImageCallback::notifyFinished()
 
         khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
 
-        // Poke the part to get it to do a checkCompleted().
+        // Poke the frame to get it to do a checkCompleted().
         emit khtml::Cache::loader()->requestDone( dl, cachedImage );
         
         delete r;
@@ -126,7 +126,7 @@ void CachedImageCallback::clear()
 
         khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
 
-        // Poke the part to get it to do a checkCompleted().
+        // Poke the frame to get it to do a checkCompleted().
         emit khtml::Cache::loader()->requestFailed( dl, cachedImage );
 
         delete r;

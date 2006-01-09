@@ -27,11 +27,11 @@
 #include "KWQKPartsBrowserInterface.h"
 
 class QWidget;
-class KHTMLPart;
+class Frame;
 
 class KHTMLPartBrowserExtension : public KParts::BrowserExtension {
 public:
-    KHTMLPartBrowserExtension(KHTMLPart *);
+    KHTMLPartBrowserExtension(Frame *);
     
     virtual KParts::BrowserInterface *browserInterface() { return &_browserInterface; }
 
@@ -59,6 +59,6 @@ private:
 			  const KParts::WindowArgs &winArgs, 
 			  KParts::ReadOnlyPart **part);
 
-     KWQKHTMLPart *_part;
+     MacFrame *m_frame;
      KParts::BrowserInterface _browserInterface;
 };

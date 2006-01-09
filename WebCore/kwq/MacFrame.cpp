@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "KWQKHTMLPart.h"
+#include "MacFrame.h"
 
 #include "html_documentimpl.h"
 #include "html_elementimpl.h"
@@ -38,7 +38,7 @@ using DOM::HTMLDocumentImpl;
 using DOM::NodeImpl;
 
 // FIXME: What on earth is this single tiny file with only this method doing here?
-bool KWQKHTMLPart::isFrameSet() const
+bool MacFrame::isFrameSet() const
 {
     DocumentImpl *document = d->m_doc;
     if (!document || !document->isHTMLDocument())

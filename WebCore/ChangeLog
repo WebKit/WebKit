@@ -1,3 +1,1026 @@
+2006-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - renamed KHTMLPart to Frame (and KWQKHTMLPart to MacFrame for now)
+
+        * ForwardingHeaders/ksvg2/KSVGPart.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/Frame.cpp: Added.
+        (khtml::PartStyleSheetLoader::PartStyleSheetLoader):
+        (khtml::PartStyleSheetLoader::setStyleSheet):
+        (Frame::Frame):
+        (Frame::init):
+        (Frame::~Frame):
+        (Frame::restoreURL):
+        (Frame::didOpenURL):
+        (Frame::didExplicitOpen):
+        (Frame::stopLoading):
+        (Frame::closeURL):
+        (Frame::browserExtension):
+        (Frame::view):
+        (Frame::setJScriptEnabled):
+        (Frame::jScriptEnabled):
+        (Frame::setMetaRefreshEnabled):
+        (Frame::metaRefreshEnabled):
+        (Frame::jScript):
+        (Frame::replaceContentsWithScriptResult):
+        (Frame::executeScript):
+        (Frame::scheduleScript):
+        (Frame::executeScheduledScript):
+        (Frame::setJavaEnabled):
+        (Frame::javaEnabled):
+        (Frame::setPluginsEnabled):
+        (Frame::pluginsEnabled):
+        (Frame::slotDebugDOMTree):
+        (Frame::slotDebugRenderTree):
+        (Frame::setAutoloadImages):
+        (Frame::autoloadImages):
+        (Frame::clear):
+        (Frame::openFile):
+        (Frame::xmlDocImpl):
+        (Frame::replaceDocImpl):
+        (Frame::receivedFirstData):
+        (Frame::slotFinished):
+        (Frame::childBegin):
+        (Frame::begin):
+        (Frame::write):
+        (Frame::end):
+        (Frame::endIfNotLoading):
+        (Frame::stop):
+        (Frame::stopAnimations):
+        (Frame::gotoAnchor):
+        (Frame::slotFinishedParsing):
+        (Frame::slotLoaderRequestStarted):
+        (Frame::slotLoaderRequestDone):
+        (Frame::checkCompleted):
+        (Frame::checkEmitLoadEvent):
+        (Frame::settings):
+        (Frame::baseURL):
+        (Frame::baseTarget):
+        (Frame::completeURL):
+        (Frame::scheduleRedirection):
+        (Frame::scheduleLocationChange):
+        (Frame::isScheduledLocationChangePending):
+        (Frame::scheduleHistoryNavigation):
+        (Frame::cancelRedirection):
+        (Frame::changeLocation):
+        (Frame::slotRedirect):
+        (Frame::slotRedirection):
+        (Frame::encoding):
+        (Frame::setUserStyleSheet):
+        (Frame::setStandardFont):
+        (Frame::setFixedFont):
+        (Frame::urlCursor):
+        (Frame::onlyLocalReferences):
+        (Frame::setOnlyLocalReferences):
+        (Frame::selectedText):
+        (Frame::hasSelection):
+        (Frame::selection):
+        (Frame::selectionGranularity):
+        (Frame::setSelectionGranularity):
+        (Frame::dragCaret):
+        (Frame::mark):
+        (Frame::setMark):
+        (Frame::setSelection):
+        (Frame::setDragCaret):
+        (Frame::clearSelection):
+        (Frame::invalidateSelection):
+        (Frame::setCaretVisible):
+        (Frame::clearCaretRectIfNeeded):
+        (isFrameElement):
+        (Frame::setFocusNodeIfNeeded):
+        (Frame::selectionLayoutChanged):
+        (Frame::setXPosForVerticalArrowNavigation):
+        (Frame::xPosForVerticalArrowNavigation):
+        (Frame::timerEvent):
+        (Frame::paintCaret):
+        (Frame::paintDragCaret):
+        (Frame::urlSelected):
+        (Frame::requestFrame):
+        (Frame::requestFrameName):
+        (Frame::requestObject):
+        (Frame::processObjectRequest):
+        (Frame::submitFormAgain):
+        (Frame::submitForm):
+        (Frame::slotParentCompleted):
+        (Frame::slotChildStarted):
+        (Frame::slotChildCompleted):
+        (Frame::childFrame):
+        (Frame::findFrame):
+        (Frame::frameExists):
+        (Frame::parentFrame):
+        (Frame::zoomFactor):
+        (Frame::slotIncZoom):
+        (Frame::slotDecZoom):
+        (Frame::setZoomFactor):
+        (Frame::setJSStatusBarText):
+        (Frame::setJSDefaultStatusBarText):
+        (Frame::jsStatusBarText):
+        (Frame::jsDefaultStatusBarText):
+        (Frame::referrer):
+        (Frame::lastModified):
+        (Frame::reparseConfiguration):
+        (Frame::frameNames):
+        (Frame::frames):
+        (Frame::childFrameNamed):
+        (Frame::setDNDEnabled):
+        (Frame::dndEnabled):
+        (Frame::shouldDragAutoNode):
+        (Frame::customEvent):
+        (Frame::isPointInsideSelection):
+        (Frame::selectClosestWordFromMouseEvent):
+        (Frame::handleMousePressEventDoubleClick):
+        (Frame::handleMousePressEventTripleClick):
+        (Frame::handleMousePressEventSingleClick):
+        (Frame::khtmlMousePressEvent):
+        (Frame::khtmlMouseDoubleClickEvent):
+        (Frame::handleMouseMoveEventSelection):
+        (Frame::khtmlMouseMoveEvent):
+        (Frame::khtmlMouseReleaseEvent):
+        (Frame::khtmlDrawContentsEvent):
+        (Frame::startAutoScroll):
+        (Frame::stopAutoScroll):
+        (Frame::selectAll):
+        (Frame::selectContentsOfNode):
+        (Frame::shouldChangeSelection):
+        (Frame::shouldBeginEditing):
+        (Frame::shouldEndEditing):
+        (Frame::isContentEditable):
+        (Frame::lastEditCommand):
+        (Frame::appliedEditing):
+        (Frame::unappliedEditing):
+        (Frame::reappliedEditing):
+        (Frame::typingStyle):
+        (Frame::setTypingStyle):
+        (Frame::clearTypingStyle):
+        (Frame::slotPartRemoved):
+        (Frame::createHTMLEventListener):
+        (Frame::opener):
+        (Frame::setOpener):
+        (Frame::openedByJS):
+        (Frame::setOpenedByJS):
+        (Frame::preloadStyleSheet):
+        (Frame::preloadScript):
+        (Frame::restored):
+        (Frame::incrementFrameCount):
+        (Frame::decrementFrameCount):
+        (Frame::topLevelFrameCount):
+        (Frame::tabsToLinks):
+        (Frame::tabsToAllControls):
+        (Frame::copyToPasteboard):
+        (Frame::cutToPasteboard):
+        (Frame::pasteFromPasteboard):
+        (Frame::pasteAndMatchStyle):
+        (Frame::transpose):
+        (Frame::redo):
+        (Frame::undo):
+        (Frame::computeAndSetTypingStyle):
+        (Frame::applyStyle):
+        (Frame::applyParagraphStyle):
+        (updateState):
+        (Frame::selectionHasStyle):
+        (Frame::selectionStartHasStyle):
+        (Frame::selectionStartStylePropertyValue):
+        (Frame::selectionComputedStyle):
+        (Frame::applyEditingStyleToBodyElement):
+        (Frame::removeEditingStyleFromBodyElement):
+        (Frame::applyEditingStyleToElement):
+        (Frame::removeEditingStyleFromElement):
+        (Frame::isCharacterSmartReplaceExempt):
+        (Frame::connectChild):
+        (Frame::disconnectChild):
+        (Frame::keepAlive):
+        (Frame::slotEndLifeSupport):
+        (Frame::selectFrameElementInParentIfFullySelected):
+        (Frame::handleFallbackContent):
+        * khtml/Frame.h: Added.
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        (KJS::ScriptInterpreter::~ScriptInterpreter):
+        * khtml/ecma/kjs_binding.h:
+        (KJS::ScriptInterpreter::frame):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::getDOMDocumentNode):
+        (KJS::checkNodeSecurity):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::parseCode):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::callAsFunction):
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLDocument::getValueProperty):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::HTMLElement::framesetNameGetter):
+        (KJS::HTMLElement::frameWindowPropertyGetter):
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::KJS::HTMLElement::implementsCall):
+        (KJS::Image::notifyFinished):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::Navigator):
+        (KJS::Navigator::getValueProperty):
+        (KJS::NavigatorFunc::callAsFunction):
+        * khtml/ecma/kjs_navigator.h:
+        (KJS::Navigator::frame):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::KJSProxyImpl):
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::clear):
+        (KJSProxyImpl::createHTMLEventHandler):
+        (KJSProxyImpl::interpreter):
+        (KJSProxyImpl::initScript):
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::History::History):
+        (KJS::FrameArray::FrameArray):
+        (KJS::Screen::getValueProperty):
+        (KJS::Window::Window):
+        (KJS::Window::interpreter):
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieve):
+        (KJS::Window::location):
+        (KJS::Window::selection):
+        (KJS::Window::locationbar):
+        (KJS::Window::menubar):
+        (KJS::Window::personalbar):
+        (KJS::Window::statusbar):
+        (KJS::Window::toolbar):
+        (KJS::Window::scrollbars):
+        (KJS::allowPopUp):
+        (KJS::createNewWindow):
+        (KJS::canShowModalDialog):
+        (KJS::canShowModalDialogNow):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::namedFrameGetter):
+        (KJS::Window::indexGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::Window::toBoolean):
+        (KJS::Window::scheduleClose):
+        (KJS::Window::isSafeScript):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::Window::setCurrentEvent):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Window::updateLayout):
+        (KJS::ScheduledAction::execute):
+        (KJS::WindowQObject::WindowQObject):
+        (KJS::FrameArray::getValueProperty):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        (KJS::FrameArray::getOwnPropertySlot):
+        (KJS::Location::Location):
+        (KJS::Location::getValueProperty):
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::Location::put):
+        (KJS::Location::toString):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::Selection::Selection):
+        (KJS::Selection::getValueProperty):
+        (KJS::Selection::getOwnPropertySlot):
+        (KJS::Selection::toString):
+        (KJS::SelectionFunc::callAsFunction):
+        (KJS::BarInfo::BarInfo):
+        (KJS::BarInfo::getValueProperty):
+        (KJS::BarInfo::getOwnPropertySlot):
+        (KJS::History::getValueProperty):
+        (KJS::HistoryFunc::callAsFunction):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::frame):
+        (KJS::Location::frame):
+        (KJS::Selection::frame):
+        (KJS::BarInfo::frame):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::changeState):
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::modify):
+        (khtml::SelectionController::xPosForVerticalArrowNavigation):
+        * khtml/editing/SelectionController.h:
+        (khtml::SelectionController::frame):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::EditCommand):
+        (khtml::EditCommand::apply):
+        (khtml::EditCommand::unapply):
+        (khtml::EditCommand::reapply):
+        (khtml::EditCommand::styleAtPosition):
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::input):
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::execCommand):
+        (DOM::JSEditor::queryCommandEnabled):
+        (DOM::JSEditor::queryCommandIndeterm):
+        (DOM::JSEditor::queryCommandState):
+        (DOM::JSEditor::queryCommandValue):
+        * khtml/editing/jsediting.h:
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/text_granularity.h:
+        * khtml/editing/typing_command.cpp:
+        (khtml::TypingCommand::deleteKeyPressed):
+        (khtml::TypingCommand::forwardDeleteKeyPressed):
+        (khtml::TypingCommand::insertText):
+        (khtml::TypingCommand::insertLineBreak):
+        (khtml::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (khtml::TypingCommand::insertParagraphSeparator):
+        (khtml::TypingCommand::markMisspellingsAfterTyping):
+        (khtml::TypingCommand::typingAddedToOpenCommand):
+        (khtml::TypingCommand::insertTextRunWithoutNewlines):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::isURLAllowed):
+        (HTMLFrameElementImpl::openURL):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::close):
+        (HTMLFrameElementImpl::contentPart):
+        (HTMLFrameElementImpl::contentDocument):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::lastModified):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isContentEditable):
+        (HTMLElementImpl::setContentEditable):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::prepareSubmit):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::reset):
+        (DOM::HTMLGenericFormElementImpl::isKeyboardFocusable):
+        (DOM::HTMLKeygenElementImpl::appendFormData):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::process):
+        (HTMLLinkElementImpl::process):
+        (HTMLScriptElementImpl::parseMappedAttribute):
+        (HTMLScriptElementImpl::insertedIntoDocument):
+        (HTMLScriptElementImpl::evaluateScript):
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::isKeyboardFocusable):
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::createRenderer):
+        (DOM::HTMLAppletElementImpl::getAppletInstance):
+        (DOM::HTMLEmbedElementImpl::getEmbedInstance):
+        (DOM::HTMLEmbedElementImpl::rendererIsNeeded):
+        (DOM::HTMLObjectElementImpl::getObjectInstance):
+        (DOM::HTMLObjectElementImpl::rendererIsNeeded):
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::noscriptCreateErrorCheck):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::scriptExecution):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::stopParsing):
+        (khtml::HTMLTokenizer::timerEvent):
+        (khtml::HTMLTokenizer::processToken):
+        * khtml/khtml_part.cpp: Removed.
+        * khtml/khtml_part.h: Removed.
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::KHTMLView):
+        (KHTMLView::~KHTMLView):
+        (KHTMLView::clearPart):
+        (KHTMLView::clear):
+        (KHTMLView::resizeEvent):
+        (KHTMLView::adjustViewSize):
+        (KHTMLView::layout):
+        (KHTMLView::updateDashboardRegions):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (selectCursor):
+        (KHTMLView::viewportMouseMoveEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::keyPressEvent):
+        (KHTMLView::dispatchDragEvent):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::focusNextPrevNode):
+        (KHTMLView::mediaType):
+        (KHTMLView::dispatchMouseEvent):
+        (KHTMLView::viewportWheelEvent):
+        (KHTMLView::focusInEvent):
+        (KHTMLView::focusOutEvent):
+        (KHTMLView::timerEvent):
+        (KHTMLView::scheduleRelayout):
+        (KHTMLView::unscheduleRelayout):
+        * khtml/khtmlview.h:
+        (KHTMLView::frame):
+        * khtml/misc/CachedImageCallback.cpp:
+        (khtml::CachedImageCallback::notifyUpdate):
+        (khtml::CachedImageCallback::notifyFinished):
+        (khtml::CachedImageCallback::clear):
+        * khtml/misc/CachedObject.h:
+        * khtml/misc/DocLoader.cpp:
+        (khtml::DocLoader::DocLoader):
+        (khtml::DocLoader::requestImage):
+        (khtml::DocLoader::requestStyleSheet):
+        (khtml::DocLoader::requestScript):
+        (khtml::DocLoader::requestXSLStyleSheet):
+        (khtml::DocLoader::requestXBLDocument):
+        * khtml/misc/DocLoader.h:
+        (khtml::DocLoader::frame):
+        * khtml/misc/loader.cpp:
+        (khtml::Loader::slotReceivedResponse):
+        * khtml/rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paint):
+        (khtml::InlineTextBox::paintMarkedTextUnderline):
+        * khtml/rendering/InlineTextBox.h:
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintCaret):
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_form.cpp:
+        (RenderFileButton::RenderFileButton):
+        * khtml/rendering/render_frames.cpp:
+        (isURLAllowed):
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_layer.cpp:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::draggableNode):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::eventFilter):
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::updateTitle):
+        (DocumentImpl::frame):
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::open):
+        (DocumentImpl::close):
+        (DocumentImpl::implicitClose):
+        (DocumentImpl::processHttpEquiv):
+        (DocumentImpl::selectedStylesheetSet):
+        (DocumentImpl::setSelectedStylesheetSet):
+        (DocumentImpl::recalcStyleSelector):
+        (DocumentImpl::relinquishesEditingFocus):
+        (DocumentImpl::acceptsEditingFocus):
+        (DocumentImpl::clearSelectionIfNeeded):
+        (DocumentImpl::createHTMLEventListener):
+        (DocumentImpl::ownerElement):
+        (DocumentImpl::referrer):
+        (DocumentImpl::parentDocument):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::focus):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchEvent):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::processingInstruction):
+        (khtml::XMLTokenizer::executeScripts):
+        (khtml::XMLTokenizer::notifyFinished):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::defaultEventHandler):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::notifyFinished):
+        * kwq/DOM.mm:
+        (-[DOMNode KJS::Bindings::]):
+        * kwq/DOMHTML.mm:
+        * kwq/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        (-[KWQAccObject rendererForView:]):
+        (-[KWQAccObject doSetAXSelectedTextMarkerRange:]):
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::KWQClipboard):
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+        (-[KWQPopUpButton becomeFirstResponder]):
+        (-[KWQPopUpButton resignFirstResponder]):
+        (-[KWQPopUpButton nextKeyView]):
+        (-[KWQPopUpButton previousKeyView]):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton):
+        (KWQFileButton::focusPolicy):
+        (KWQFileButton::focusChanged):
+        * kwq/KWQFrame.mm:
+        (QFrame::setFrameStyle):
+        * kwq/KWQKHTMLFactory.h:
+        * kwq/KWQKHTMLPart.cpp: Removed.
+        * kwq/KWQKHTMLPart.h: Removed.
+        * kwq/KWQKHTMLPart.mm: Removed.
+        * kwq/KWQKHTMLPartBrowserExtension.h:
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::KHTMLPartBrowserExtension):
+        (KHTMLPartBrowserExtension::openURLRequest):
+        (KHTMLPartBrowserExtension::createNewWindow):
+        (KHTMLPartBrowserExtension::setIconURL):
+        (KHTMLPartBrowserExtension::setTypedIconURL):
+        (KHTMLPartBrowserExtension::canRunModal):
+        (KHTMLPartBrowserExtension::canRunModalNow):
+        (KHTMLPartBrowserExtension::runModal):
+        * kwq/KWQKHTMLView.cpp:
+        (KHTMLView::topLevelWidget):
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget):
+        * kwq/KWQKPartsBrowserInterface.h:
+        (KParts::BrowserInterface::BrowserInterface):
+        * kwq/KWQKPartsBrowserInterface.mm:
+        (KParts::BrowserInterface::property):
+        (KParts::BrowserInterface::callMethod):
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQListBox.mm:
+        (-[KWQListBoxScrollView becomeFirstResponder]):
+        (-[KWQTableView keyDown:]):
+        (-[KWQTableView keyUp:]):
+        (-[KWQTableView becomeFirstResponder]):
+        (-[KWQTableView resignFirstResponder]):
+        (-[KWQTableView nextKeyView]):
+        (-[KWQTableView previousKeyView]):
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        (KWQServeSynchronousRequest):
+        (KWQCheckIfReloading):
+        (KWQCheckCacheObjectStatus):
+        (KWQCacheObjectExpiresTime):
+        * kwq/KWQObject.cpp:
+        (QObject::inherits):
+        (QObject::isFrame):
+        * kwq/KWQObject.h:
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState dealloc]):
+        (-[KWQPageState finalize]):
+        * kwq/KWQRegExp.cpp:
+        (QRegExp::KWQRegExpPrivate::compile):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        (writeSelection):
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]):
+        (-[KWQSlider resignFirstResponder]):
+        (-[KWQSlider nextKeyView]):
+        (-[KWQSlider previousKeyView]):
+        (-[KWQSlider canBecomeKeyView]):
+        (QSlider::focusPolicy):
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView textDidChange:]):
+        (-[KWQTextAreaTextView _isResizableByUser]):
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+        (-[KWQTextAreaTextView nextKeyView]):
+        (-[KWQTextAreaTextView previousKeyView]):
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        (-[KWQTextAreaTextView drawRect:]):
+        (-[KWQTextAreaTextView insertTab:]):
+        (-[KWQTextAreaTextView insertBacktab:]):
+        (-[KWQTextAreaTextView resignFirstResponder]):
+        (-[KWQTextAreaTextView shouldDrawInsertionPoint]):
+        (-[KWQTextAreaTextView selectedTextAttributes]):
+        (-[KWQTextAreaTextView keyDown:]):
+        (-[KWQTextAreaTextView keyUp:]):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController controlTextDidBeginEditing:]):
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        (-[KWQTextFieldController controlTextDidChange:]):
+        (-[KWQTextFieldController control:textView:doCommandBySelector:]):
+        (-[KWQTextFieldController textView:shouldHandleEvent:]):
+        (-[KWQTextFieldController setHasFocus:]):
+        (-[KWQTextField nextKeyView]):
+        (-[KWQTextField previousKeyView]):
+        (-[KWQSecureTextField nextKeyView]):
+        (-[KWQSecureTextField previousKeyView]):
+        (-[KWQSearchField nextKeyView]):
+        (-[KWQSearchField previousKeyView]):
+        * kwq/KWQTimer.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::setActiveWindow):
+        (QWidget::hasFocus):
+        (QWidget::setFocus):
+        (QWidget::clearFocus):
+        (QWidget::isVisible):
+        (QWidget::mapFromGlobal):
+        (QWidget::setIsSelected):
+        * kwq/MacFrame.cpp: Added.
+        (MacFrame::isFrameSet):
+        * kwq/MacFrame.h: Added.
+        (MacFrame::instances):
+        (Mac):
+        * kwq/MacFrame.mm: Added.
+        (Frame::completed):
+        (Frame::openURL):
+        (Frame::onURL):
+        (Frame::setStatusBarText):
+        (Frame::started):
+        (redirectionTimerMonitor):
+        (MacFrame::MacFrame):
+        (MacFrame::~MacFrame):
+        (MacFrame::freeClipboard):
+        (MacFrame::setSettings):
+        (MacFrame::generateFrameName):
+        (MacFrame::provisionalLoadStarted):
+        (MacFrame::userGestureHint):
+        (MacFrame::openURL):
+        (MacFrame::openURLRequest):
+        (MacFrame::didNotOpenURL):
+        (MacFrame::currentForm):
+        (MacFrame::searchForLabelsAboveCell):
+        (MacFrame::searchForLabelsBeforeElement):
+        (MacFrame::matchLabelsAgainstElement):
+        (MacFrame::findString):
+        (MacFrame::clearRecordedFormValues):
+        (MacFrame::recordFormValue):
+        (MacFrame::submitForm):
+        (MacFrame::setEncoding):
+        (MacFrame::addData):
+        (Frame::frameDetached):
+        (MacFrame::urlSelected):
+        (MacFrame::createPart):
+        (MacFrame::setView):
+        (MacFrame::view):
+        (MacFrame::setTitle):
+        (MacFrame::setStatusBarText):
+        (MacFrame::scheduleClose):
+        (MacFrame::unfocusWindow):
+        (MacFrame::revealSelection):
+        (MacFrame::advanceToNextMisspelling):
+        (MacFrame::scrollOverflow):
+        (MacFrame::wheelEvent):
+        (MacFrame::redirectionTimerStartedOrStopped):
+        (MacFrame::paint):
+        (MacFrame::adjustPageHeight):
+        (MacFrame::renderer):
+        (MacFrame::userAgent):
+        (MacFrame::mimeTypeForFileName):
+        (MacFrame::nextKeyViewInFrame):
+        (MacFrame::nextKeyViewInFrameHierarchy):
+        (MacFrame::nextKeyView):
+        (MacFrame::nextKeyViewForWidget):
+        (MacFrame::currentEventIsMouseDownInWidget):
+        (MacFrame::currentEventIsKeyboardOptionTab):
+        (MacFrame::handleKeyboardOptionTabInView):
+        (MacFrame::tabsToLinks):
+        (MacFrame::tabsToAllControls):
+        (MacFrame::executionContextForDOM):
+        (MacFrame::bindingRootObject):
+        (MacFrame::windowScriptObject):
+        (MacFrame::windowScriptNPObject):
+        (MacFrame::partClearedInBegin):
+        (MacFrame::pauseTimeouts):
+        (MacFrame::resumeTimeouts):
+        (MacFrame::canCachePage):
+        (MacFrame::saveWindowProperties):
+        (MacFrame::saveLocationProperties):
+        (MacFrame::restoreWindowProperties):
+        (MacFrame::restoreLocationProperties):
+        (MacFrame::saveInterpreterBuiltins):
+        (MacFrame::restoreInterpreterBuiltins):
+        (MacFrame::openURLFromPageCache):
+        (MacFrame::frameForWidget):
+        (MacFrame::bridgeForWidget):
+        (MacFrame::frameForNode):
+        (MacFrame::documentViewForNode):
+        (MacFrame::nodeForWidget):
+        (MacFrame::setDocumentFocus):
+        (MacFrame::clearDocumentFocus):
+        (MacFrame::saveDocumentState):
+        (MacFrame::restoreDocumentState):
+        (MacFrame::mutableInstances):
+        (MacFrame::updatePolicyBaseURL):
+        (MacFrame::setPolicyBaseURL):
+        (MacFrame::requestedURLString):
+        (MacFrame::incomingReferrer):
+        (MacFrame::forceLayout):
+        (MacFrame::forceLayoutWithPageWidthRange):
+        (MacFrame::sendResizeEvent):
+        (MacFrame::sendScrollEvent):
+        (MacFrame::runJavaScriptAlert):
+        (MacFrame::runJavaScriptConfirm):
+        (MacFrame::runJavaScriptPrompt):
+        (MacFrame::locationbarVisible):
+        (MacFrame::menubarVisible):
+        (MacFrame::personalbarVisible):
+        (MacFrame::scrollbarsVisible):
+        (MacFrame::statusbarVisible):
+        (MacFrame::toolbarVisible):
+        (MacFrame::addMessageToConsole):
+        (MacFrame::createEmptyDocument):
+        (MacFrame::addMetaData):
+        (MacFrame::keyEvent):
+        (MacFrame::scrollToAnchor):
+        (MacFrame::closeURL):
+        (MacFrame::canMouseDownStartSelect):
+        (MacFrame::khtmlMousePressEvent):
+        (MacFrame::khtmlMouseDoubleClickEvent):
+        (MacFrame::passWidgetMouseDownEventToWidget):
+        (MacFrame::lastEventIsMouseUp):
+        (MacFrame::mouseDownViewIfStillGood):
+        (MacFrame::dragHysteresisExceeded):
+        (MacFrame::dispatchDragSrcEvent):
+        (MacFrame::eventMayStartDrag):
+        (MacFrame::khtmlMouseMoveEvent):
+        (MacFrame::dragSourceMovedTo):
+        (MacFrame::dragSourceEndedAt):
+        (MacFrame::dispatchCPPEvent):
+        (MacFrame::mayCut):
+        (MacFrame::mayCopy):
+        (MacFrame::mayPaste):
+        (MacFrame::tryCut):
+        (MacFrame::tryCopy):
+        (MacFrame::tryPaste):
+        (MacFrame::khtmlMouseReleaseEvent):
+        (MacFrame::clearTimers):
+        (MacFrame::passSubframeEventToSubframe):
+        (MacFrame::passWheelEventToChildWidget):
+        (MacFrame::mouseDown):
+        (MacFrame::mouseDragged):
+        (MacFrame::mouseUp):
+        (MacFrame::sendFakeEventsAfterWidgetTracking):
+        (MacFrame::mouseMoved):
+        (MacFrame::shouldDragAutoNode):
+        (MacFrame::sendContextMenuEvent):
+        (MacFrame::fileWrapperForElement):
+        (MacFrame::attributedString):
+        (MacFrame::selectionRect):
+        (MacFrame::visibleSelectionRect):
+        (MacFrame::centerSelectionInVisibleArea):
+        (MacFrame::imageFromRect):
+        (MacFrame::selectionImage):
+        (MacFrame::snapshotDragImage):
+        (MacFrame::styleForSelectionStart):
+        (MacFrame::fontForSelection):
+        (MacFrame::fontAttributesForSelectionStart):
+        (MacFrame::baseWritingDirectionForSelectionStart):
+        (MacFrame::topLevelWidget):
+        (MacFrame::tokenizerProcessedData):
+        (MacFrame::selectionStartOffset):
+        (MacFrame::selectionEndOffset):
+        (MacFrame::selectionStart):
+        (MacFrame::selectionEnd):
+        (MacFrame::setBridge):
+        (MacFrame::overrideMediaType):
+        (MacFrame::setMediaType):
+        (MacFrame::setSelectionFromNone):
+        (MacFrame::setDisplaysWithFocusAttributes):
+        (MacFrame::displaysWithFocusAttributes):
+        (MacFrame::setWindowHasFocus):
+        (MacFrame::backslashAsCurrencySymbol):
+        (MacFrame::bodyBackgroundColor):
+        (MacFrame::keyboardUIMode):
+        (MacFrame::setName):
+        (MacFrame::didTellBridgeAboutLoad):
+        (MacFrame::haveToldBridgeAboutLoad):
+        (MacFrame::clear):
+        (Frame::print):
+        (MacFrame::getAppletInstanceForWidget):
+        (MacFrame::getEmbedInstanceForWidget):
+        (MacFrame::getObjectInstanceForWidget):
+        (MacFrame::addPluginRootObject):
+        (MacFrame::cleanupPluginRootObjects):
+        (MacFrame::registerCommandForUndoOrRedo):
+        (MacFrame::registerCommandForUndo):
+        (MacFrame::registerCommandForRedo):
+        (MacFrame::clearUndoRedoOperations):
+        (MacFrame::issueUndoCommand):
+        (MacFrame::issueRedoCommand):
+        (MacFrame::issueCutCommand):
+        (MacFrame::issueCopyCommand):
+        (MacFrame::issuePasteCommand):
+        (MacFrame::issuePasteAndMatchStyleCommand):
+        (MacFrame::issueTransposeCommand):
+        (Frame::canUndo):
+        (Frame::canRedo):
+        (Frame::canPaste):
+        (MacFrame::markMisspellingsInAdjacentWords):
+        (MacFrame::markMisspellings):
+        (MacFrame::respondToChangedSelection):
+        (MacFrame::shouldChangeSelection):
+        (MacFrame::respondToChangedContents):
+        (MacFrame::isContentEditable):
+        (MacFrame::shouldBeginEditing):
+        (MacFrame::shouldEndEditing):
+        (convertAttributesToUnderlines):
+        (MacFrame::setMarkedTextRange):
+        (MacFrame::markedTextUsesUnderlines):
+        (MacFrame::markedTextUnderlines):
+        (MacFrame::canGoBackOrForward):
+        (MacFrame::prepareForUserAction):
+        (MacFrame::didFirstLayout):
+        (MacFrame::dashboardRegionsDictionary):
+        (MacFrame::dashboardRegionsChanged):
+        (MacFrame::isCharacterSmartReplaceExempt):
+        (MacFrame::isFrame):
+        (MacFrame::mousePressNode):
+        (MacFrame::handledOnloadEvents):
+        (MacFrame::shouldClose):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (updateRenderingForBindings):
+        (frameHasSelection):
+        (+[WebCoreBridge bridgeForDOMDocument:]):
+        (-[WebCoreBridge init]):
+        (-[WebCoreBridge initializeSettings:]):
+        (-[WebCoreBridge dealloc]):
+        (-[WebCoreBridge finalize]):
+        (-[WebCoreBridge part]):
+        (-[WebCoreBridge setParent:]):
+        (-[WebCoreBridge parent]):
+        (-[WebCoreBridge provisionalLoadStarted]):
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+        (-[WebCoreBridge setEncoding:userChosen:]):
+        (-[WebCoreBridge addData:]):
+        (-[WebCoreBridge closeURL]):
+        (-[WebCoreBridge stopLoading]):
+        (-[WebCoreBridge didNotOpenURL:pageCache:]):
+        (-[WebCoreBridge saveDocumentState]):
+        (-[WebCoreBridge restoreDocumentState]):
+        (-[WebCoreBridge scrollToAnchorWithURL:]):
+        (-[WebCoreBridge scrollOverflowInDirection:granularity:]):
+        (-[WebCoreBridge sendScrollWheelEvent:]):
+        (-[WebCoreBridge saveDocumentToPageCache]):
+        (-[WebCoreBridge canCachePage]):
+        (-[WebCoreBridge clear]):
+        (-[WebCoreBridge end]):
+        (-[WebCoreBridge stop]):
+        (-[WebCoreBridge handleFallbackContent]):
+        (-[WebCoreBridge createKHTMLViewWithNSView:marginWidth:marginHeight:]):
+        (-[WebCoreBridge scrollToAnchor:]):
+        (-[WebCoreBridge isSelectionEditable]):
+        (-[WebCoreBridge selectionState]):
+        (-[WebCoreBridge _documentTypeString]):
+        (-[WebCoreBridge selectedString]):
+        (-[WebCoreBridge stringForRange:]):
+        (-[WebCoreBridge selectAll]):
+        (-[WebCoreBridge deselectAll]):
+        (-[WebCoreBridge deselectText]):
+        (-[WebCoreBridge isFrameSet]):
+        (-[WebCoreBridge reapplyStylesForDeviceType:]):
+        (nowPrinting):
+        (-[WebCoreBridge _setupRootForPrinting:]):
+        (-[WebCoreBridge forceLayoutAdjustingViewSize:]):
+        (-[WebCoreBridge forceLayoutWithMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        (-[WebCoreBridge sendResizeEvent]):
+        (-[WebCoreBridge sendScrollEvent]):
+        (-[WebCoreBridge drawRect:withPainter:]):
+        (-[WebCoreBridge drawRect:]):
+        (-[WebCoreBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        (-[WebCoreBridge adjustPageHeightNew:top:bottom:limit:]):
+        (-[WebCoreBridge copyDOMTree:]):
+        (-[WebCoreBridge copyRenderTree:]):
+        (-[WebCoreBridge removeFromFrame]):
+        (-[WebCoreBridge installInFrame:]):
+        (-[WebCoreBridge setActivationEventNumber:]):
+        (-[WebCoreBridge mouseDown:]):
+        (-[WebCoreBridge mouseDragged:]):
+        (-[WebCoreBridge mouseUp:]):
+        (-[WebCoreBridge mouseMoved:]):
+        (-[WebCoreBridge sendContextMenuEvent:]):
+        (-[WebCoreBridge currentForm]):
+        (-[WebCoreBridge searchForLabels:beforeElement:]):
+        (-[WebCoreBridge matchLabels:againstElement:]):
+        (-[WebCoreBridge elementAtPoint:]):
+        (-[WebCoreBridge URLWithAttributeString:]):
+        (-[WebCoreBridge searchFor:direction:caseSensitive:wrap:]):
+        (-[WebCoreBridge advanceToNextMisspelling]):
+        (-[WebCoreBridge advanceToNextMisspellingStartingJustBeforeSelection]):
+        (-[WebCoreBridge unmarkAllMisspellings]):
+        (-[WebCoreBridge setTextSizeMultiplier:]):
+        (-[WebCoreBridge textEncoding]):
+        (-[WebCoreBridge nextKeyView]):
+        (-[WebCoreBridge previousKeyView]):
+        (-[WebCoreBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreBridge previousKeyViewInsideWebFrameViews]):
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebCoreBridge windowScriptObject]):
+        (-[WebCoreBridge windowScriptNPObject]):
+        (-[WebCoreBridge DOMDocument]):
+        (-[WebCoreBridge selectedAttributedString]):
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]):
+        (-[WebCoreBridge selectionRect]):
+        (-[WebCoreBridge visibleSelectionRect]):
+        (-[WebCoreBridge centerSelectionInVisibleArea]):
+        (-[WebCoreBridge selectionImage]):
+        (-[WebCoreBridge setName:]):
+        (-[WebCoreBridge name]):
+        (-[WebCoreBridge URL]):
+        (-[WebCoreBridge baseURL]):
+        (-[WebCoreBridge referrer]):
+        (-[WebCoreBridge domain]):
+        (-[WebCoreBridge opener]):
+        (-[WebCoreBridge setOpener:]):
+        (-[WebCoreBridge needsLayout]):
+        (-[WebCoreBridge setNeedsLayout]):
+        (-[WebCoreBridge interceptKeyEvent:toView:]):
+        (-[WebCoreBridge renderTreeAsExternalRepresentation]):
+        (-[WebCoreBridge setSelectionFromNone]):
+        (-[WebCoreBridge setDisplaysWithFocusAttributes:]):
+        (-[WebCoreBridge setWindowHasFocus:]):
+        (-[WebCoreBridge numPendingOrLoadingRequests]):
+        (-[WebCoreBridge doneProcessingData]):
+        (-[WebCoreBridge shouldClose]):
+        (-[WebCoreBridge bodyBackgroundColor]):
+        (-[WebCoreBridge selectionColor]):
+        (-[WebCoreBridge adjustViewSize]):
+        (-[WebCoreBridge accessibilityTree]):
+        (-[WebCoreBridge setDrawsBackground:]):
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:verticalDistance:]):
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]):
+        (-[WebCoreBridge selectionGranularity]):
+        (-[WebCoreBridge setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebCoreBridge selectedDOMRange]):
+        (-[WebCoreBridge convertToNSRange:DOM::]):
+        (-[WebCoreBridge convertToDOMRange:]):
+        (-[WebCoreBridge selectNSRange:]):
+        (-[WebCoreBridge selectedNSRange]):
+        (-[WebCoreBridge selectionAffinity]):
+        (-[WebCoreBridge setMarkDOMRange:]):
+        (-[WebCoreBridge markDOMRange]):
+        (-[WebCoreBridge setMarkedTextDOMRange:customAttributes:ranges:]):
+        (-[WebCoreBridge markedTextDOMRange]):
+        (-[WebCoreBridge markedTextNSRange]):
+        (-[WebCoreBridge replaceMarkedTextWithText:]):
+        (-[WebCoreBridge smartDeleteRangeForProposedRange:]):
+        (-[WebCoreBridge smartInsertForString:replacingRange:beforeString:afterString:]):
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebCoreBridge documentFragmentWithText:]):
+        (-[WebCoreBridge documentFragmentWithNodesAsParagraphs:]):
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreBridge insertLineBreak]):
+        (-[WebCoreBridge insertParagraphSeparator]):
+        (-[WebCoreBridge insertParagraphSeparatorInQuotedContent]):
+        (-[WebCoreBridge insertText:selectInsertedText:]):
+        (-[WebCoreBridge setSelectionToDragCaret]):
+        (-[WebCoreBridge moveSelectionToDragCaret:smartMove:]):
+        (-[WebCoreBridge _visiblePositionForPoint:]):
+        (-[WebCoreBridge moveDragCaretToPoint:]):
+        (-[WebCoreBridge removeDragCaret]):
+        (-[WebCoreBridge dragCaretDOMRange]):
+        (-[WebCoreBridge deleteSelectionWithSmartDelete:]):
+        (-[WebCoreBridge deleteKeyPressedWithSmartDelete:]):
+        (-[WebCoreBridge forwardDeleteKeyPressedWithSmartDelete:]):
+        (-[WebCoreBridge typingStyle]):
+        (-[WebCoreBridge setTypingStyle:withUndoAction:]):
+        (-[WebCoreBridge applyStyle:withUndoAction:]):
+        (-[WebCoreBridge applyParagraphStyle:withUndoAction:]):
+        (-[WebCoreBridge selectionStartHasStyle:]):
+        (-[WebCoreBridge selectionHasStyle:]):
+        (-[WebCoreBridge applyEditingStyleToBodyElement]):
+        (-[WebCoreBridge removeEditingStyleFromBodyElement]):
+        (-[WebCoreBridge applyEditingStyleToElement:]):
+        (-[WebCoreBridge removeEditingStyleFromElement:]):
+        (-[WebCoreBridge fontForSelection:]):
+        (-[WebCoreBridge fontAttributesForSelectionStart]):
+        (-[WebCoreBridge baseWritingDirectionForSelectionStart]):
+        (-[WebCoreBridge ensureSelectionVisible]):
+        (-[WebCoreBridge eventMayStartDrag:]):
+        (-[WebCoreBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreBridge concludeDragForDraggingInfo:]):
+        (-[WebCoreBridge dragSourceMovedTo:]):
+        (-[WebCoreBridge dragSourceEndedAt:operation:]):
+        (-[WebCoreBridge mayDHTMLCut]):
+        (-[WebCoreBridge mayDHTMLCopy]):
+        (-[WebCoreBridge mayDHTMLPaste]):
+        (-[WebCoreBridge tryDHTMLCut]):
+        (-[WebCoreBridge tryDHTMLCopy]):
+        (-[WebCoreBridge tryDHTMLPaste]):
+        (-[WebCoreBridge rangeOfCharactersAroundCaret]):
+        (-[WebCoreBridge dashboardRegions]):
+        (-[WebCoreBridge executionContextForView:]):
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings _updateAllViews]):
+        * kwq/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory clearCaches]):
+
 2006-01-09  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Removed.

@@ -48,8 +48,6 @@
 #import "html_elementimpl.h"
 #import <kxmlcore/HashMap.h>
 
-#import "khtml_part.h"
-
 #import "render_object.h"
 
 #import "DOMEventsInternal.h"
@@ -58,7 +56,7 @@
 #import "DOMPrivate.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 
 using namespace DOM::HTMLNames;
 
@@ -644,7 +642,7 @@ static ListenerMap *listenerMap;
     if (!doc)
         return 0;
     
-    KWQKHTMLPart *p = KWQ(doc->part());
+    MacFrame *p = Mac(doc->frame());
     if (!p)
         return 0;
         

@@ -42,7 +42,7 @@
 #include "CachedScript.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "xml/dom_docimpl.h"
 #include "xml/EventNames.h"
 #include "css/csshelper.h"
@@ -367,7 +367,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
   
     CachedScript* cs = 0;
     // don't load external scripts for standalone documents (for now)
-    if (!scriptSrc.isEmpty() && parser->doc()->part()) {
+    if (!scriptSrc.isEmpty() && parser->doc()->frame()) {
         // forget what we just got; load from src url instead
         if (!parser->skipMode() && !followingFrameset) {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -473,14 +473,14 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State state, 
                                                     QString scriptURL, int baseLine)
 {
-    if (!view || !view->part())
+    if (!view || !view->frame())
         return state;
     bool oldscript = state.inScript();
     m_executingScript++;
     state.setInScript(false);
     QString url;    
     if (scriptURL.isNull())
-      url = view->part()->xmlDocImpl()->URL();
+      url = view->frame()->xmlDocImpl()->URL();
     else
       url = scriptURL;
 
@@ -494,7 +494,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
 #endif
 
     m_state = state;
-    view->part()->executeScript(url,baseLine,0,str);
+    view->frame()->executeScript(url,baseLine,0,str);
     state = m_state;
 
     state.setAllowYield(true);
@@ -1196,8 +1196,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                 scriptSrc = QString::null;
                 scriptSrcCharset = QString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
-		     parser->doc()->part() &&
-                     parser->doc()->part()->jScriptEnabled() && /* jscript allowed at all? */
+		     parser->doc()->frame() &&
+                     parser->doc()->frame()->jScriptEnabled() && /* jscript allowed at all? */
                      view /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
@@ -1205,7 +1205,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(TokenizerString &src, State state)
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().qstring().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
-                        scriptSrcCharset = parser->doc()->part()->encoding();
+                        scriptSrcCharset = parser->doc()->frame()->encoding();
                     /* Check type before language, since language is deprecated */
                     if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
                         foundTypeAttribute = true;
@@ -1396,11 +1396,11 @@ bool HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     QTime startTime;
     startTime.start();
 
-    KHTMLPart* part = parser->doc()->part();
+    Frame *frame = parser->doc()->frame();
 
     State state = m_state;
 
-    while (!src.isEmpty() && (!part || !part->isScheduledLocationChangePending())) {
+    while (!src.isEmpty() && (!frame || !frame->isScheduledLocationChangePending())) {
         if (!continueProcessing(processedCount, startTime, state))
             break;
 
@@ -1537,8 +1537,8 @@ void HTMLTokenizer::stopParsing()
 
     // The part needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
-    if (view && view->part())
-      view->part()->tokenizerProcessedData();
+    if (view && view->frame())
+      view->frame()->tokenizerProcessedData();
 }
 
 bool HTMLTokenizer::processingData() const
@@ -1571,9 +1571,9 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
       
         // If we called end() during the write,  we need to let WebKit know that we're done processing the data.
         if (didCallEnd && savedView) {
-            KHTMLPart *part = savedView->part();
-            if (part) {
-                part->tokenizerProcessedData();
+            Frame *frame = savedView->frame();
+            if (frame) {
+                frame->tokenizerProcessedData();
             }
         }
     }
@@ -1651,7 +1651,7 @@ void HTMLTokenizer::finish()
 
 NodeImpl *HTMLTokenizer::processToken()
 {
-    KJSProxyImpl *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;    
+    KJSProxyImpl *jsProxy = (view && view->frame()) ? view->frame()->jScript() : 0L;    
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if ( dest > buffer )

@@ -43,7 +43,7 @@
 #include "KCanvasContainer.h"
 #endif
 
-#include "KWQKHTMLPart.h"
+#include "MacFrame.h"
 #include "KWQTextStream.h"
 #include "KWQPtrVector.h"
 
@@ -295,7 +295,7 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
         QWidget *widget = static_cast<const RenderWidget &>(o).widget();
         if (widget && widget->inherits("KHTMLView")) {
             KHTMLView *view = static_cast<KHTMLView *>(widget);
-            RenderObject *root = KWQ(view->part())->renderer();
+            RenderObject *root = Mac(view->frame())->renderer();
             if (root) {
                 view->layout();
                 RenderLayer* l = root->layer();
@@ -399,11 +399,11 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
         return;
 
     DocumentImpl *doc = static_cast<DocumentImpl *>(n);
-    KHTMLPart *part = doc->part();
-    if (!part)
+    Frame *frame = doc->frame();
+    if (!frame)
         return;
 
-    SelectionController selection = part->selection();
+    SelectionController selection = frame->selection();
     if (selection.isCaret()) {
         ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node());
         if (selection.startAffinity() == UPSTREAM)

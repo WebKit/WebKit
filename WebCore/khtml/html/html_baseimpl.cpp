@@ -30,7 +30,7 @@
 #include "html/html_documentimpl.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 #include "rendering/render_frames.h"
 #include "css/cssstyleselector.h"
@@ -305,22 +305,22 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     // FIXME: This limit could be higher, but WebKit has some
     // algorithms that happen while loading which appear to be N^2 or
     // worse in the number of frames
-    if (w->part()->topLevelFrameCount() >= 200) {
+    if (w->frame()->topLevelFrameCount() >= 200) {
 	return false;
     }
 
     // Prohibit non-file URLs if we are asked to.
-    if (w->part()->onlyLocalReferences() && newURL.protocol().lower() != "file") {
+    if (w->frame()->onlyLocalReferences() && newURL.protocol().lower() != "file") {
         return false;
     }
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;
-    for (KHTMLPart *part = w->part(); part; part = part->parentPart()) {
-        KURL partURL = part->url();
-        partURL.setRef(QString::null);
-        if (partURL == newURL) {
+    for (Frame *frame = w->frame(); frame; frame = frame->parentFrame()) {
+        KURL frameURL = frame->url();
+        frameURL.setRef(QString::null);
+        if (frameURL == newURL) {
             if (foundSelfReference) {
                 return false;
             }
@@ -366,12 +366,12 @@ void HTMLFrameElementImpl::openURL()
     }
 
     // Load the frame contents.
-    KHTMLPart *part = w->part();
-    KHTMLPart *framePart = part->findFrame(m_name.qstring());
+    Frame *frame = w->frame();
+    Frame *framePart = frame->findFrame(m_name.qstring());
     if (framePart) {
         framePart->openURL(getDocument()->completeURL(relativeURL.qstring()));
     } else {
-        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.qstring(), m_name.qstring());
+        frame->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.qstring(), m_name.qstring());
     }
 }
 
@@ -452,12 +452,12 @@ void HTMLFrameElementImpl::attach()
     if (!m_render)
         return;
 
-    KHTMLPart *part = getDocument()->part();
+    Frame *frame = getDocument()->frame();
 
-    if (!part)
+    if (!frame)
 	return;
 
-    part->incrementFrameCount();
+    frame->incrementFrameCount();
     
     AtomicString relativeURL = m_URL;
     if (relativeURL.isEmpty()) {
@@ -465,20 +465,20 @@ void HTMLFrameElementImpl::attach()
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if (m_name.isEmpty() || part->frameExists(m_name.qstring()))
-        m_name = AtomicString(part->requestFrameName());
+    if (m_name.isEmpty() || frame->frameExists(m_name.qstring()))
+        m_name = AtomicString(frame->requestFrameName());
 
     // load the frame contents
-    part->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.qstring(), m_name.qstring());
+    frame->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.qstring(), m_name.qstring());
 }
 
 void HTMLFrameElementImpl::close()
 {
-    KHTMLPart *part = getDocument()->part();
+    Frame *frame = getDocument()->frame();
 
-    if (m_render && part) {
-	part->decrementFrameCount();
-        KHTMLPart *framePart = part->findFrame(m_name.qstring());
+    if (m_render && frame) {
+	frame->decrementFrameCount();
+        Frame *framePart = frame->findFrame(m_name.qstring());
         if (framePart)
             framePart->frameDetached();
     }
@@ -529,10 +529,10 @@ void HTMLFrameElementImpl::setFocus(bool received)
 	renderFrame->widget()->clearFocus();
 }
 
-KHTMLPart* HTMLFrameElementImpl::contentPart() const
+Frame* HTMLFrameElementImpl::contentPart() const
 {
     // Start with the part that contains this element, our ownerDocument.
-    KHTMLPart* ownerDocumentPart = getDocument()->part();
+    Frame* ownerDocumentPart = getDocument()->frame();
     if (!ownerDocumentPart) {
         return 0;
     }
@@ -543,13 +543,13 @@ KHTMLPart* HTMLFrameElementImpl::contentPart() const
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
 {
-    KHTMLPart* part = contentPart();
-    if (!part) {
+    Frame *frame = contentPart();
+    if (!frame) {
         return 0;
     }
 
     // Return the document for that part, which is our contentDocument.
-    return part->xmlDocImpl();
+    return frame->xmlDocImpl();
 }
 
 bool HTMLFrameElementImpl::isURLAttribute(AttributeImpl *attr) const
@@ -938,12 +938,12 @@ void HTMLIFrameElementImpl::attach()
     
     HTMLElementImpl::attach();
 
-    KHTMLPart *part = getDocument()->part();
-    if (m_render && part) {
+    Frame *frame = getDocument()->frame();
+    if (m_render && frame) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
-        part->incrementFrameCount();
-        if (m_name.isEmpty() || part->frameExists(m_name.qstring()))
-            m_name = AtomicString(part->requestFrameName());
+        frame->incrementFrameCount();
+        if (m_name.isEmpty() || frame->frameExists(m_name.qstring()))
+            m_name = AtomicString(frame->requestFrameName());
 
         static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;

@@ -47,7 +47,7 @@
 class QPaintDevice;
 class QPaintDeviceMetrics;
 class KHTMLView;
-class KHTMLPart;
+class Frame;
 class RenderArena;
 
 class KWQAccObjectCache;
@@ -287,7 +287,7 @@ public:
     QStringList &restoreState( ) { return m_state; }
 
     KHTMLView *view() const { return m_view; }
-    KHTMLPart *part() const;
+    Frame *frame() const;
 
     RangeImpl *createRange();
 

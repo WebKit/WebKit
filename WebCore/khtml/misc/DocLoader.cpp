@@ -35,7 +35,7 @@
 #include "loader.h"
 #include "dom_docimpl.h"
 #include "KWQLoader.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 #include <kurl.h>
 
@@ -43,13 +43,13 @@ using namespace DOM;
 
 namespace khtml {
 
-DocLoader::DocLoader(KHTMLPart* part, DocumentImpl* doc)
+DocLoader::DocLoader(Frame *frame, DocumentImpl* doc)
 {
     m_cachePolicy = KIO::CC_Verify;
     m_expireDate = 0;
     m_bautoloadImages = true;
     m_showAnimations = KHTMLSettings::KAnimationEnabled;
-    m_part = part;
+    m_frame = frame;
     m_doc = doc;
     m_loadInProgress = false;
 
@@ -102,7 +102,7 @@ bool DocLoader::needReload(const KURL &fullURL)
 CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 {
     KURL fullURL = m_doc->completeURL(url.qstring());
-    if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    if ( m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
     if (KWQCheckIfReloading(this)) {
         setCachePolicy(KIO::CC_Reload);
@@ -118,7 +118,7 @@ CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, const QString& charset)
 {
     KURL fullURL = m_doc->completeURL(url.qstring());
-    if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    if ( m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
     if (KWQCheckIfReloading(this)) {
         setCachePolicy(KIO::CC_Reload);
@@ -134,7 +134,7 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, co
 CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString& charset)
 {
     KURL fullURL = m_doc->completeURL(url.qstring());
-    if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    if ( m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
     if (KWQCheckIfReloading(this)) {
         setCachePolicy(KIO::CC_Reload);
@@ -152,7 +152,7 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const DOM::DOMString &url)
 {
     KURL fullURL = m_doc->completeURL(url.qstring());
     
-    if (m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    if (m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
     
     if (KWQCheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
@@ -171,7 +171,7 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const DOM::DOMString &url)
     KURL fullURL = m_doc->completeURL(url.qstring());
     
     // FIXME: Is this right for XBL?
-    if (m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    if (m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
     
     if (KWQCheckIfReloading(this)) {
         setCachePolicy(KIO::CC_Reload);

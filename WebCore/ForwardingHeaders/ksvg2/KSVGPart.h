@@ -1,8 +1,8 @@
-#include "khtml/khtml_part.h"
-class KHTMLPart;
+#include "khtml/Frame.h"
+class Frame;
 namespace KDOM {
-    using ::KHTMLPart;
+    using ::Frame;
 }
 namespace KSVG {
-    using ::KHTMLPart;
+    using ::Frame;
 }

@@ -31,7 +31,7 @@
 #include "kjs_navigator.h"
 #include "kjs/lookup.h"
 #include "kjs_binding.h"
-#include "khtml_part.h"
+#include "MacFrame.h"
 
 #include "KWQKCookieJar.h"
 
@@ -157,8 +157,8 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 */
 KJS_IMPLEMENT_PROTOFUNC(NavigatorFunc)
 
-Navigator::Navigator(ExecState *exec, KHTMLPart *p)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), m_part(p) { }
+Navigator::Navigator(ExecState *exec, Frame *p)
+  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), m_frame(p) { }
 
 bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
@@ -167,7 +167,7 @@ bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 
 JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
 {
-  QString userAgent = KWQ(m_part)->userAgent();
+  QString userAgent = Mac(m_frame)->userAgent();
   switch (token) {
   case AppCodeName:
     return jsString("Mozilla");
@@ -551,7 +551,7 @@ JSValue *NavigatorFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return throwError(exec, TypeError);
   Navigator *nav = static_cast<Navigator *>(thisObj);
   // javaEnabled()
-  return jsBoolean(nav->part()->javaEnabled());
+  return jsBoolean(nav->frame()->javaEnabled());
 }
 
 } // namespace

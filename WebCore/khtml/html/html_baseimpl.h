@@ -31,7 +31,7 @@
 
 #include <qscrollview.h>
 
-class KHTMLPart;
+class Frame;
 class KHTMLView;
 
 namespace khtml {
@@ -115,7 +115,7 @@ public:
     virtual bool isFocusable() const;
     virtual void setFocus(bool);
 
-    KHTMLPart* contentPart() const;
+    Frame* contentPart() const;
     DocumentImpl* contentDocument() const;
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;

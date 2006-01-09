@@ -31,7 +31,7 @@
 #include "html/html_formimpl.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "MacFrame.h"
 #include "html/html_documentimpl.h"
 #include "html_imageimpl.h"
 #include "khtml_settings.h"
@@ -305,14 +305,14 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
     str.replace(',', ' ');
     QStringList charsets = QStringList::split(' ', str);
     QTextCodec* codec = 0;
-    KHTMLPart *part = getDocument()->part();
+    Frame *frame = getDocument()->frame();
     for (QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it) {
         QString enc = (*it);
         if (enc.contains("UNKNOWN")) {
             // use standard document encoding
             enc = "ISO-8859-1";
-            if (part)
-                enc = part->encoding();
+            if (frame)
+                enc = frame->encoding();
         }
         if ((codec = QTextCodec::codecForName(enc.latin1())))
             break;
@@ -371,7 +371,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
 
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())
                         {
-                            QString mimeType = part ? KWQ(part)->mimeTypeForFileName(path) : QString();
+                            QString mimeType = frame ? Mac(frame)->mimeTypeForFileName(path) : QString();
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
                                 hstr += mimeType.ascii();
@@ -425,8 +425,8 @@ void HTMLFormElementImpl::setBoundary( const DOMString& bound )
 
 bool HTMLFormElementImpl::prepareSubmit()
 {
-    KHTMLPart *part = getDocument()->part();
-    if(m_insubmit || !part || part->onlyLocalReferences())
+    Frame *frame = getDocument()->frame();
+    if(m_insubmit || !frame || frame->onlyLocalReferences())
         return m_insubmit;
 
     m_insubmit = true;
@@ -446,8 +446,8 @@ bool HTMLFormElementImpl::prepareSubmit()
 void HTMLFormElementImpl::submit( bool activateSubmitButton )
 {
     KHTMLView *view = getDocument()->view();
-    KHTMLPart *part = getDocument()->part();
-    if (!view || !part) {
+    Frame *frame = getDocument()->frame();
+    if (!view || !frame) {
         return;
     }
 
@@ -461,7 +461,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
     
-    KWQ(part)->clearRecordedFormValues();
+    Mac(frame)->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.count(); ++i) {
         HTMLGenericFormElementImpl* current = formElements[i];
         // Our app needs to get form values for password fields for doing password autocomplete,
@@ -472,7 +472,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
                 || input->inputType() ==  HTMLInputElementImpl::PASSWORD
                 || input->inputType() == HTMLInputElementImpl::SEARCH)
             {
-                KWQ(part)->recordFormValue(input->name().qstring(), input->value().qstring(), this);
+                Mac(frame)->recordFormValue(input->name().qstring(), input->value().qstring(), this);
                 if (input->renderer() && input->inputType() == HTMLInputElementImpl::SEARCH)
                     static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
             }
@@ -497,13 +497,13 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     FormData form_data;
     if (formData(form_data)) {
         if(m_post) {
-            part->submitForm( "post", m_url.qstring(), form_data,
+            frame->submitForm( "post", m_url.qstring(), form_data,
                                       m_target.qstring(),
                                       enctype().qstring(),
                                       boundary().qstring() );
         }
         else {
-            part->submitForm( "get", m_url.qstring(), form_data,
+            frame->submitForm( "get", m_url.qstring(), form_data,
                                       m_target.qstring() );
         }
     }
@@ -517,8 +517,8 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
 
 void HTMLFormElementImpl::reset(  )
 {
-    KHTMLPart *part = getDocument()->part();
-    if(m_inreset || !part) return;
+    Frame *frame = getDocument()->frame();
+    if(m_inreset || !frame) return;
 
     m_inreset = true;
 
@@ -926,8 +926,8 @@ bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
             return static_cast<RenderWidget*>(m_render)->widget() &&
                 (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() & QWidget::TabFocus);
         }
-	if (getDocument()->part())
-	    return getDocument()->part()->tabsToAllControls();
+	if (getDocument()->frame())
+	    return getDocument()->frame()->tabsToAllControls();
     }
     return false;
 }
@@ -2996,7 +2996,7 @@ bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
     // Only RSA is supported at this time.
     if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
         return false;
-    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.qstring(), getDocument()->part()->baseURL());
+    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.qstring(), getDocument()->frame()->baseURL());
     if (value.isNull())
         return false;
     encoded_values.appendData(name(), value.utf8());

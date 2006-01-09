@@ -31,7 +31,7 @@
 #include "insert_paragraph_separator_command.h"
 #include "break_blockquote_command.h"
 
-#include "khtml_part.h"
+#include "Frame.h"
 #include "xml/dom_docimpl.h"
 #include "visible_position.h"
 #include "visible_units.h"
@@ -59,15 +59,15 @@ void TypingCommand::deleteKeyPressed(DocumentImpl *document, bool smartDelete)
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->deleteKeyPressed();
     }
     else {
-        SelectionController selection = part->selection();
+        SelectionController selection = frame->selection();
         if (selection.isCaret() && VisiblePosition(selection.start(), selection.startAffinity()).previous().isNull()) {
             // do nothing for a delete key at the start of an editable element.
         }
@@ -84,15 +84,15 @@ void TypingCommand::forwardDeleteKeyPressed(DocumentImpl *document, bool smartDe
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->forwardDeleteKeyPressed();
     }
     else {
-        SelectionController selection = part->selection();
+        SelectionController selection = frame->selection();
         if (selection.isCaret() && isEndOfDocument(VisiblePosition(selection.start(), selection.startAffinity()))) {
             // do nothing for a delete key at the start of an editable element.
         }
@@ -109,10 +109,10 @@ void TypingCommand::insertText(DocumentImpl *document, const DOMString &text, bo
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->insertText(text, selectInsertedText);
     }
@@ -126,10 +126,10 @@ void TypingCommand::insertLineBreak(DocumentImpl *document)
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->insertLineBreak();
     }
@@ -143,10 +143,10 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(DocumentImpl *docume
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->insertParagraphSeparatorInQuotedContent();
     }
@@ -160,10 +160,10 @@ void TypingCommand::insertParagraphSeparator(DocumentImpl *document)
 {
     ASSERT(document);
     
-    KHTMLPart *part = document->part();
-    ASSERT(part);
+    Frame *frame = document->frame();
+    ASSERT(frame);
     
-    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand *>(lastEditCommand.get())->insertParagraphSeparator();
     }
@@ -231,20 +231,20 @@ void TypingCommand::markMisspellingsAfterTyping()
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
-            KWQ(document()->part())->markMisspellingsInAdjacentWords(p1);
+            Mac(document()->frame())->markMisspellingsInAdjacentWords(p1);
     }
 }
 
 void TypingCommand::typingAddedToOpenCommand()
 {
     markMisspellingsAfterTyping();
-    // Do not apply editing to the part on the first time through.
-    // The part will get told in the same way as all other commands.
+    // Do not apply editing to the frame on the first time through.
+    // The frame will get told in the same way as all other commands.
     // But since this command stays open and is used for additional typing, 
-    // we need to tell the part here as other commands are added.
+    // we need to tell the frame here as other commands are added.
     if (m_applyEditing) {
         EditCommandPtr cmd(this);
-        document()->part()->appliedEditing(cmd);
+        document()->frame()->appliedEditing(cmd);
     }
     m_applyEditing = true;
 }
@@ -279,7 +279,7 @@ void TypingCommand::insertTextRunWithoutNewlines(const DOMString &text, bool sel
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (document()->part()->typingStyle() || m_cmds.count() == 0) {
+    if (document()->frame()->typingStyle() || m_cmds.count() == 0) {
         InsertTextCommand *impl = new InsertTextCommand(document());
         EditCommandPtr cmd(impl);
         applyCommandToComposite(cmd);

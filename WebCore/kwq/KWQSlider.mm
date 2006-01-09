@@ -28,7 +28,7 @@
 
 #import "KWQLineEdit.h"
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 #import "render_form.h"
@@ -102,7 +102,7 @@ using khtml::RenderLayer;
 {
     BOOL become = [super becomeFirstResponder];
     if (become && slider) {
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(slider)) {
+        if (!MacFrame::currentEventIsMouseDownInWidget(slider)) {
             RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(slider->eventFilterObject()));
             RenderLayer *layer = widget->enclosingLayer();
             if (layer)
@@ -125,7 +125,7 @@ using khtml::RenderLayer;
         QFocusEvent event(QEvent::FocusOut);
         if (slider->eventFilterObject()) {
             const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
-            [KWQKHTMLPart::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
+            [MacFrame::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
         }
     }
     return resign;
@@ -141,7 +141,7 @@ using khtml::RenderLayer;
         // we tab to it
         [self resignFirstResponder];
         if (slider) {
-            view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingNext);
+            view = MacFrame::nextKeyViewForWidget(slider, KWQSelectingNext);
         } else {
             view = [super nextKeyView];
         }
@@ -161,7 +161,7 @@ using khtml::RenderLayer;
         // we tab to it
         [self resignFirstResponder];
         if (slider) {
-            view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingPrevious);
+            view = MacFrame::nextKeyViewForWidget(slider, KWQSelectingPrevious);
         } else {
             view = [super previousKeyView];
         }
@@ -175,7 +175,7 @@ using khtml::RenderLayer;
 {
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
-    if (slider && !KWQKHTMLPart::partForWidget(slider)->tabsToAllControls()) {
+    if (slider && !MacFrame::frameForWidget(slider)->tabsToAllControls()) {
         return NO;
     }
     return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
@@ -241,7 +241,7 @@ QWidget::FocusPolicy QSlider::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(this);
     if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
         return NoFocus;
     }

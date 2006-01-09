@@ -29,10 +29,10 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "WebCoreBridge.h"
-#import "khtml_part.h"
+#import "MacFrame.h"
 
-KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
-    : _part(KWQ(part)), _browserInterface(_part)
+KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(Frame *frame)
+    : m_frame(Mac(frame)), _browserInterface(m_frame)
 {
 }
 
@@ -40,10 +40,10 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
 					       const KParts::URLArgs &args)
 {
     if (url.protocol().lower() == "javascript") {
-	_part->createEmptyDocument();
-	_part->replaceContentsWithScriptResult(url);
+	m_frame->createEmptyDocument();
+	m_frame->replaceContentsWithScriptResult(url);
      } else {
-	_part->openURLRequest(url, args);
+	m_frame->openURLRequest(url, args);
     }
 }
 
@@ -79,15 +79,15 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
     NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
     if (frameName) {
-        // FIXME: Can't you just use _part->findFrame?
-        if (WebCoreBridge *bridge = [_part->bridge() findFrameNamed:frameName]) {
+        // FIXME: Can't you just use m_frame->findFrame?
+        if (WebCoreBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
                 QString argsReferrer = urlArgs.metaData()["referrer"];
                 NSString *referrer;
                 if (argsReferrer.length() > 0)
                     referrer = argsReferrer.getNSString();
                 else
-                    referrer = [_part->bridge() referrer];
+                    referrer = [m_frame->bridge() referrer];
 
                 [bridge loadURL:url.getNSURL() 
                        referrer:referrer 
@@ -110,9 +110,9 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     
     WebCoreBridge *bridge;
     if (winArgs.dialog)
-        bridge = [_part->bridge() createModalDialogWithURL:url.getNSURL()];
+        bridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
     else
-        bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
+        bridge = [m_frame->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
 
     if (!bridge)
         return;
@@ -169,21 +169,21 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [_part->bridge() setIconURL:url.getNSURL()];
+    [m_frame->bridge() setIconURL:url.getNSURL()];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [_part->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    [m_frame->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool KHTMLPartBrowserExtension::canRunModal()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [_part->bridge() canRunModal];
+    return [m_frame->bridge() canRunModal];
     KWQ_UNBLOCK_EXCEPTIONS;
     return false;
 }
@@ -191,7 +191,7 @@ bool KHTMLPartBrowserExtension::canRunModal()
 bool KHTMLPartBrowserExtension::canRunModalNow()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [_part->bridge() canRunModalNow];
+    return [m_frame->bridge() canRunModalNow];
     KWQ_UNBLOCK_EXCEPTIONS;
     return false;
 }
@@ -199,6 +199,6 @@ bool KHTMLPartBrowserExtension::canRunModalNow()
 void KHTMLPartBrowserExtension::runModal()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [_part->bridge() runModal];
+    [m_frame->bridge() runModal];
     KWQ_UNBLOCK_EXCEPTIONS;
 }

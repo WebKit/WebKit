@@ -31,7 +31,7 @@
 
 class QTimer;
 class KHTMLView;
-class KHTMLPart;
+class Frame;
 
 namespace DOM {
     class AtomicString;
@@ -108,31 +108,31 @@ namespace KJS {
   };
 
   class Window : public JSObject {
-    friend QGuardedPtr<KHTMLPart> getInstance();
+    friend QGuardedPtr<Frame> getInstance();
     friend class Location;
     friend class WindowFunc;
     friend class WindowQObject;
     friend class ScheduledAction;
   public:
-    Window(KHTMLPart *p);
+    Window(Frame *p);
   public:
     ~Window();
     /**
      * Returns and registers a window object. In case there's already a Window
-     * for the specified part p this will be returned in order to have unique
+     * for the specified frame p this will be returned in order to have unique
      * bindings.
      */
-    static JSValue *retrieve(KHTMLPart *p);
+    static JSValue *retrieve(Frame *p);
     /**
-     * Returns the Window object for a given HTML part
+     * Returns the Window object for a given HTML frame
      */
-    static Window *retrieveWindow(KHTMLPart *p);
+    static Window *retrieveWindow(Frame *p);
     /**
      * returns a pointer to the Window object this javascript interpreting instance
      * was called from.
      */
     static Window *retrieveActive(ExecState*);
-    QGuardedPtr<KHTMLPart> part() const { return m_part; }
+    QGuardedPtr<Frame> frame() const { return m_frame; }
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -202,7 +202,7 @@ namespace KJS {
 
     void updateLayout() const;
 
-    QGuardedPtr<KHTMLPart> m_part;
+    QGuardedPtr<Frame> m_frame;
     mutable Screen *screen;
     mutable History *history;
     mutable FrameArray *frames;
@@ -249,13 +249,13 @@ namespace KJS {
     virtual UString toString(ExecState*) const;
     enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, EqualEqual,
            Replace, Reload, ToString, Assign };
-    KHTMLPart *part() const { return m_part; }
+    Frame *frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
     friend class Window;
-    Location(KHTMLPart *p);
-    QGuardedPtr<KHTMLPart> m_part;
+    Location(Frame *p);
+    QGuardedPtr<Frame> m_frame;
   };
 
   class Selection : public JSObject {
@@ -267,13 +267,13 @@ namespace KJS {
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, EqualEqual, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
            SetBaseAndExtent, SetPosition, Modify, GetRangeAt };
-    KHTMLPart *part() const { return m_part; }
+    Frame *frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
     friend class Window;
-    Selection(KHTMLPart *p);
-    QGuardedPtr<KHTMLPart> m_part;
+    Selection(Frame *p);
+    QGuardedPtr<Frame> m_frame;
   };
 
   class BarInfo : public JSObject {
@@ -282,13 +282,13 @@ namespace KJS {
     JSValue *getValueProperty(ExecState *exec, int token) const;
     enum { Visible };
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
-    KHTMLPart *part() const { return m_part; }
+    Frame *frame() const { return m_frame; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
     friend class Window;
-    BarInfo(ExecState *exec, KHTMLPart *p, Type barType);
-    QGuardedPtr<KHTMLPart> m_part;
+    BarInfo(ExecState *exec, Frame *p, Type barType);
+    QGuardedPtr<Frame> m_frame;
     Type m_type;
   };
 

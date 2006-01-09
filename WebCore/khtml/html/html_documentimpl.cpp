@@ -64,7 +64,7 @@
 #include "htmlfactory.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "khtmlpart_p.h"
 #include "khtml_settings.h"
 
@@ -118,8 +118,8 @@ ElementImpl* HTMLDocumentImpl::documentElement() const
 
 DOMString HTMLDocumentImpl::lastModified() const
 {
-    if ( part() )
-        return part()->lastModified();
+    if ( frame() )
+        return frame()->lastModified();
     return DOMString();
 }
 

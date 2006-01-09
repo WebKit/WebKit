@@ -60,7 +60,7 @@ namespace khtml {
     void applyRule(DOM::CSSProperty *prop);
 };
 
-class KHTMLPart;
+class Frame;
 class KHTMLViewPrivate;
 
 /**
@@ -78,7 +78,7 @@ class KHTMLView : public QScrollView
     friend class DOM::HTMLFormElementImpl;
     friend class DOM::HTMLAnchorElementImpl;
     friend class DOM::DocumentImpl;
-    friend class KHTMLPart;
+    friend class Frame;
     friend class khtml::RenderCanvas;
     friend class khtml::RenderObject;
     friend class khtml::RenderBox;
@@ -88,20 +88,20 @@ class KHTMLView : public QScrollView
     friend class khtml::RenderWidget;
     friend class khtml::CSSStyleSelector;
     friend void khtml::applyRule(DOM::CSSProperty *prop);
-    friend class KWQKHTMLPart;
+    friend class MacFrame;
 
 public:
     /**
      * Constructs a KHTMLView.
      */
-    KHTMLView( KHTMLPart *part, QWidget *parent, const char *name=0 );
+    KHTMLView( Frame *frame, QWidget *parent, const char *name=0 );
     virtual ~KHTMLView();
 
     /**
-     * Returns a pointer to the KHTMLPart that is
+     * Returns a pointer to the Frame that is
      * rendering the page.
      **/
-    KHTMLPart *part() const { return m_part; }
+    Frame *frame() const { return m_frame; }
 
     int frameWidth() const { return _width; }
 
@@ -278,7 +278,7 @@ private:
     int _marginWidth;
     int _marginHeight;
 
-    KHTMLPart *m_part;
+    Frame *m_frame;
     KHTMLViewPrivate *d;
 
     QString m_medium;   // media type

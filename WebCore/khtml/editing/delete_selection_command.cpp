@@ -28,7 +28,7 @@
 
 #include "css/css_computedstyle.h"
 #include "htmlediting.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "htmlnames.h"
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
@@ -609,9 +609,9 @@ void DeleteSelectionCommand::calculateEndingPosition()
 void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedPlaceholder)
 {
     // Compute the difference between the style before the delete and the style now
-    // after the delete has been done. Set this style on the part, so other editing
+    // after the delete has been done. Set this style on the frame, so other editing
     // commands being composed with this one will work, and also cache it on the command,
-    // so the KHTMLPart::appliedEditing can set it after the whole composite command 
+    // so the Frame::appliedEditing can set it after the whole composite command 
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -638,7 +638,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
     }
     // Set m_typingStyle as the typing style.
     // It's perfectly OK for m_typingStyle to be null.
-    document()->part()->setTypingStyle(m_typingStyle.get());
+    document()->frame()->setTypingStyle(m_typingStyle.get());
     setTypingStyle(m_typingStyle.get());
 }
 

@@ -57,7 +57,6 @@
 #include "render_arena.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
 
 #include <kglobalsettings.h>
 #include "khtml_settings.h"
@@ -407,7 +406,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_accCache = 0;
     
     if ( v ) {
-        m_docLoader = new DocLoader(v->part(), this );
+        m_docLoader = new DocLoader(v->frame(), this );
         setPaintDevice( m_view );
     }
     else
@@ -903,11 +902,11 @@ ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
 
 void DocumentImpl::updateTitle()
 {
-    KHTMLPart *p = part();
+    Frame *p = frame();
     if (!p)
         return;
 
-    KWQ(p)->setTitle(m_title);
+    Mac(p)->setTitle(m_title);
 }
 
 void DocumentImpl::setTitle(DOMString title, NodeImpl *titleElement)
@@ -974,9 +973,9 @@ QStringList DocumentImpl::docState()
     return s;
 }
 
-KHTMLPart *DocumentImpl::part() const 
+Frame *DocumentImpl::frame() const 
 {
-    return m_view ? m_view->part() : 0; 
+    return m_view ? m_view->frame() : 0; 
 }
 
 RangeImpl *DocumentImpl::createRange()
@@ -1048,7 +1047,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
         bool printing = m_paintDevice && (m_paintDevice->devType() == QInternal::Printer);
         fontDef.usePrinterFont = printing;
         if (m_view) {
-            const KHTMLSettings *settings = m_view->part()->settings();
+            const KHTMLSettings *settings = m_view->frame()->settings();
             if (printing && !settings->shouldPrintBackgrounds()) {
                 _style->setForceBackgroundsToWhite(true);
             }
@@ -1296,7 +1295,7 @@ void DocumentImpl::updateSelection()
         return;
     
     RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
-    SelectionController s = part()->selection();
+    SelectionController s = frame()->selection();
     if (!s.isRange()) {
         canvas->clearSelection();
     }
@@ -1339,12 +1338,12 @@ void DocumentImpl::open(  )
 
     implicitOpen();
 
-    if (part()) {
-        part()->didExplicitOpen();
+    if (frame()) {
+        frame()->didExplicitOpen();
     }
 
     // This is work that we should probably do in clear(), but we can't have it
-    // happen when implicitOpen() is called unless we reorganize KHTMLPart code.
+    // happen when implicitOpen() is called unless we reorganize Frame code.
     setURL(QString());
     DocumentImpl *parent = parentDocument();
     if (parent) {
@@ -1383,8 +1382,8 @@ HTMLElementImpl* DocumentImpl::body()
 
 void DocumentImpl::close()
 {
-    if (part())
-        part()->endIfNotLoading();
+    if (frame())
+        frame()->endIfNotLoading();
     implicitClose();
 }
 
@@ -1396,7 +1395,7 @@ void DocumentImpl::implicitClose()
         return;
     }
 
-    bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
+    bool wasLocationChangePending = frame() && frame()->isScheduledLocationChangePending();
     bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent && !wasLocationChangePending;
     
     if (!doload)
@@ -1431,8 +1430,8 @@ void DocumentImpl::implicitClose()
     if (onloadTarget) {
         dispatchImageLoadEventsNow();
         onloadTarget->dispatchWindowEvent(loadEvent, false, false);
-        if (KHTMLPart *p = part())
-            KWQ(p)->handledOnloadEvents();
+        if (Frame *p = frame())
+            Mac(p)->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!ownerElement())
             printf("onload fired at %d\n", elapsedTime());
@@ -1445,15 +1444,15 @@ void DocumentImpl::implicitClose()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (part() && part()->isScheduledLocationChangePending() && m_startTime.elapsed() < cLayoutScheduleThreshold) {
+    if (frame() && frame()->isScheduledLocationChangePending() && m_startTime.elapsed() < cLayoutScheduleThreshold) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         view()->unscheduleRelayout();
         return;
     }
 
-    if (part())
-        part()->checkEmitLoadEvent();
+    if (frame())
+        frame()->checkEmitLoadEvent();
 
     // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
     // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 
@@ -1827,7 +1826,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
 {
     assert(!equiv.isNull() && !content.isNull());
 
-    KHTMLPart *part = this->part();
+    Frame *frame = this->frame();
 
     if (equalIgnoringCase(equiv, "default-style")) {
         // The preferred style set has been overridden as per section 
@@ -1836,11 +1835,11 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         // For more info, see the test at:
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
-        part->d->m_sheetUsed = content.qstring();
+        frame->d->m_sheetUsed = content.qstring();
         m_preferredStylesheetSet = content;
         updateStyleSelector();
     }
-    else if (equalIgnoringCase(equiv, "refresh") && part->metaRefreshEnabled())
+    else if (equalIgnoringCase(equiv, "refresh") && frame->metaRefreshEnabled())
     {
         // get delay and url
         QString str = content.qstring().stripWhiteSpace();
@@ -1854,7 +1853,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             int delay = 0;
 	    delay = str.toInt(&ok);
 	    // We want a new history item if the refresh timeout > 1 second
-	    if(ok && part) part->scheduleRedirection(delay, part->url().url(), delay <= 1);
+	    if(ok && frame) frame->scheduleRedirection(delay, frame->url().url(), delay <= 1);
         } else {
             double delay = 0;
             bool ok = false;
@@ -1869,9 +1868,9 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             if (str.length() && str[0] == '=')
                 str = str.mid(1).stripWhiteSpace();
             str = parseURL(DOMString(str)).qstring();
-            if (ok && part)
+            if (ok && frame)
                 // We want a new history item if the refresh timeout > 1 second
-                part->scheduleRedirection(delay, completeURL( str ), delay <= 1);
+                frame->scheduleRedirection(delay, completeURL( str ), delay <= 1);
         }
     }
     else if (equalIgnoringCase(equiv, "expires"))
@@ -1881,10 +1880,10 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);
     }
-    else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && part)
+    else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && frame)
     {
         QString str = content.qstring().lower().stripWhiteSpace();
-        KURL url = part->url();
+        KURL url = frame->url();
     }
     else if (equalIgnoringCase(equiv, "set-cookie"))
     {
@@ -1987,14 +1986,14 @@ DOMString DocumentImpl::preferredStylesheetSet()
 
 DOMString DocumentImpl::selectedStylesheetSet()
 {
-  return view() ? view()->part()->d->m_sheetUsed : DOMString();
+  return view() ? view()->frame()->d->m_sheetUsed : DOMString();
 }
 
 void 
 DocumentImpl::setSelectedStylesheetSet(const DOMString& aString)
 {
   if (view()) {
-    view()->part()->d->m_sheetUsed = aString.qstring();
+    view()->frame()->d->m_sheetUsed = aString.qstring();
     updateStyleSelector();
     if (renderer())
       renderer()->repaint();
@@ -2130,7 +2129,7 @@ void DocumentImpl::recalcStyleSelector()
                     // this sheet.
                     QString rel = e->getAttribute(relAttr).qstring();
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
-                        m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
+                        m_preferredStylesheetSet = view()->frame()->d->m_sheetUsed = title;
                 }
                       
                 if (!m_availableSheets.contains( title ) )
@@ -2152,7 +2151,7 @@ void DocumentImpl::recalcStyleSelector()
             }
 
             if (!title.isEmpty() && m_preferredStylesheetSet.isEmpty())
-                m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
+                m_preferredStylesheetSet = view()->frame()->d->m_sheetUsed = title;
 
             if (!title.isEmpty()) {
                 if (title != m_preferredStylesheetSet)
@@ -2211,10 +2210,10 @@ bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
     assert(node->isContentEditable());
 
     NodeImpl *root = node->rootEditableElement();
-    if (!part() || !root)
+    if (!frame() || !root)
         return false;
 
-    return part()->shouldEndEditing(rangeOfContents(root).get());
+    return frame()->shouldEndEditing(rangeOfContents(root).get());
 }
 
 bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
@@ -2223,10 +2222,10 @@ bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
     assert(node->isContentEditable());
 
     NodeImpl *root = node->rootEditableElement();
-    if (!part() || !root)
+    if (!frame() || !root)
         return false;
 
-    return part()->shouldBeginEditing(rangeOfContents(root).get());
+    return frame()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
 const QValueList<DashboardRegionValue> & DocumentImpl::dashboardRegions() const
@@ -2342,14 +2341,14 @@ SetFocusNodeDone:
 
 void DocumentImpl::clearSelectionIfNeeded(NodeImpl *newFocusNode)
 {
-    if (!part())
+    if (!frame())
         return;
 
     // Clear the selection when changing the focus node to null or to a node that is not 
     // contained by the current selection.
-    NodeImpl *startContainer = part()->selection().start().node();
+    NodeImpl *startContainer = frame()->selection().start().node();
     if (!newFocusNode || (startContainer && startContainer != newFocusNode && !startContainer->isAncestor(newFocusNode)))
-        part()->clearSelection();
+        frame()->clearSelection();
 }
 
 void DocumentImpl::setCSSTarget(NodeImpl* n)
@@ -2509,8 +2508,8 @@ bool DocumentImpl::hasWindowEventListener(const AtomicString &eventType)
 
 EventListener *DocumentImpl::createHTMLEventListener(const DOMString& code, NodeImpl *node)
 {
-    if (part()) {
-	return part()->createHTMLEventListener(code, node);
+    if (frame()) {
+	return frame()->createHTMLEventListener(code, node);
     } else {
 	return NULL;
     }
@@ -2579,10 +2578,10 @@ ElementImpl *DocumentImpl::ownerElement()
     KHTMLView *childView = view();
     if (!childView)
         return 0;
-    KHTMLPart *childPart = childView->part();
+    Frame *childPart = childView->frame();
     if (!childPart)
         return 0;
-    KHTMLPart *parent = childPart->parentPart();
+    Frame *parent = childPart->parentFrame();
     if (!parent)
         return 0;
     ChildFrame *childFrame = parent->childFrame(childPart);
@@ -2596,8 +2595,8 @@ ElementImpl *DocumentImpl::ownerElement()
 
 DOMString DocumentImpl::referrer() const
 {
-    if ( part() )
-        return KWQ(part())->incomingReferrer();
+    if ( frame() )
+        return Mac(frame())->incomingReferrer();
     
     return DOMString();
 }
@@ -3155,10 +3154,10 @@ bool DocumentImpl::inDesignMode() const
 
 DocumentImpl *DocumentImpl::parentDocument() const
 {
-    KHTMLPart *childPart = part();
+    Frame *childPart = frame();
     if (!childPart)
         return 0;
-    KHTMLPart *parent = childPart->parentPart();
+    Frame *parent = childPart->parentFrame();
     if (!parent)
         return 0;
     return parent->xmlDocImpl();

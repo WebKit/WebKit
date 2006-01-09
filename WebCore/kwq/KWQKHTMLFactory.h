@@ -26,10 +26,9 @@
 #ifndef __khtml_factory_h__
 #define __khtml_factory_h__
 
-#include "khtml_part.h"
 #include "KWQKPartsHistoryProvider.h"
 
-class KHTMLPart;
+class Frame;
 class KHTMLSettings;
 
 class KHTMLFactory

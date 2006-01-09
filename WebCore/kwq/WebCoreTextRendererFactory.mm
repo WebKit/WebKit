@@ -27,7 +27,7 @@
 #import "WebCoreTextRendererFactory.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQListBox.h"
 #import "WebCoreBridge.h"
 #import "WebCoreTextRenderer.h"
@@ -113,7 +113,7 @@ static WebCoreTextRendererFactory *sharedFactory;
 - (void)clearCaches
 {
     QListBox::clearCachedTextRenderers();
-    for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
+    for (QPtrListIterator<MacFrame> it(MacFrame::instances()); it.current(); ++it) {
         [it.current()->bridge() setNeedsReapplyStyles];
     }
 }

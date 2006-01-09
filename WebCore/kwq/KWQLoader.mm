@@ -33,7 +33,7 @@
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
 #import "WebCoreBridge.h"
-#import "khtml_part.h"
+#import "MacFrame.h"
 #import "loader.h"
 #include "Cache.h"
 #include "CachedObject.h"
@@ -50,7 +50,7 @@ using KIO::TransferJob;
 bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
     LOG(Loading, "Serving request for base %s, url %s", 
-        request->m_docLoader->part()->baseURL().url().latin1(),
+        request->m_docLoader->frame()->baseURL().url().latin1(),
         request->object->url().qstring().latin1());
     
     return KWQServeRequest(loader, request->m_docLoader, job);
@@ -113,10 +113,10 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 
 bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 {
-    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
-    WebCoreBridge *bridge = part->bridge();
+    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    WebCoreBridge *bridge = frame->bridge();
 
-    part->didTellBridgeAboutLoad(job->url().url());
+    frame->didTellBridgeAboutLoad(job->url().url());
 
     KWQ_BLOCK_EXCEPTIONS;
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithJob:job];
@@ -170,10 +170,10 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 
 QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
 {
-    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
-    WebCoreBridge *bridge = part->bridge();
+    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    WebCoreBridge *bridge = frame->bridge();
 
-    part->didTellBridgeAboutLoad(job->url().url());
+    frame->didTellBridgeAboutLoad(job->url().url());
 
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -219,7 +219,7 @@ int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
 bool KWQCheckIfReloading(DocLoader *loader)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [static_cast<KWQKHTMLPart *>(loader->part())->bridge() isReloading];
+    return [static_cast<MacFrame *>(loader->frame())->bridge() isReloading];
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
@@ -245,10 +245,10 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     ASSERT(cachedObject->response());
     
     // Notify the caller that we "loaded".
-    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(loader->part());
+    MacFrame *frame = static_cast<MacFrame *>(loader->frame());
 
-    if (!part->haveToldBridgeAboutLoad(cachedObject->url().qstring())) {
-        WebCoreBridge *bridge = part->bridge();
+    if (!frame->haveToldBridgeAboutLoad(cachedObject->url().qstring())) {
+        WebCoreBridge *bridge = frame->bridge();
         
         KWQ_BLOCK_EXCEPTIONS;
         [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
@@ -256,7 +256,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
                                         data:(NSData *)cachedObject->allData()];
         KWQ_UNBLOCK_EXCEPTIONS;
 
-        part->didTellBridgeAboutLoad(cachedObject->url().qstring());
+        frame->didTellBridgeAboutLoad(cachedObject->url().qstring());
     }
 }
 
@@ -331,8 +331,8 @@ time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *res
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
-    WebCoreBridge *bridge = part->bridge();
+    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    WebCoreBridge *bridge = frame->bridge();
     return [bridge expiresTimeForResponse:(NSURLResponse *)response];
     
     KWQ_UNBLOCK_EXCEPTIONS;

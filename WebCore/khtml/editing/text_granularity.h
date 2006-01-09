@@ -29,7 +29,7 @@
 namespace khtml {
 
 // FIXME: This really should be broken up into more than one concept.
-// KHTMLPart doesn't neeed the 3 boundaries in this enum.
+// Frame doesn't neeed the 3 boundaries in this enum.
 enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH, LINE_BOUNDARY, PARAGRAPH_BOUNDARY, DOCUMENT_BOUNDARY };
 
 }

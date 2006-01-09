@@ -31,7 +31,7 @@
 #include "xml/EventNames.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "kjs_proxy.h"
 
 #include "CachedCSSStyleSheet.h"
@@ -93,8 +93,8 @@ void HTMLBaseElementImpl::process()
     if (!inDocument())
 	return;
 
-    if(!m_href.isEmpty() && getDocument()->part())
-	getDocument()->setBaseURL( KURL( getDocument()->part()->url(), m_href.qstring() ).url() );
+    if(!m_href.isEmpty() && getDocument()->frame())
+	getDocument()->setBaseURL( KURL( getDocument()->frame()->url(), m_href.qstring() ).url() );
 
     if(!m_target.isEmpty())
 	getDocument()->setBaseTarget( m_target.qstring() );
@@ -220,19 +220,19 @@ void HTMLLinkElementImpl::process()
 
     QString type = m_type.qstring().lower();
     
-    KHTMLPart* part = getDocument()->part();
+    Frame *frame = getDocument()->frame();
 
     // IE extension: location of small icon for locationbar / bookmarks
-    if (part && m_isIcon && !m_url.isEmpty() && !part->parentPart()) {
+    if (frame && m_isIcon && !m_url.isEmpty() && !frame->parentFrame()) {
         if (!type.isEmpty()) // Mozilla extension to IE extension: icon specified with type
-            part->browserExtension()->setTypedIconURL(KURL(m_url.qstring()), type);
+            frame->browserExtension()->setTypedIconURL(KURL(m_url.qstring()), type);
         else 
-            part->browserExtension()->setIconURL(KURL(m_url.qstring()));
+            frame->browserExtension()->setIconURL(KURL(m_url.qstring()));
     }
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && getDocument()->part()) {
+    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && getDocument()->frame()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
 	// also, don't load style sheets for standalone documents
@@ -518,7 +518,7 @@ void HTMLScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
         // FIXME: Evaluate scripts in viewless documents.
         // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
-        if (!getDocument()->part())
+        if (!getDocument()->frame())
             return;
     
         const AtomicString& url = attr->value();
@@ -556,7 +556,7 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
     // viewless document but this'll do for now.
     // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
-    if (!getDocument()->part())
+    if (!getDocument()->frame())
         return;
     
     const AtomicString& url = getAttribute(srcAttr);
@@ -607,9 +607,9 @@ void HTMLScriptElementImpl::evaluateScript(const DOMString& URL, const DOMString
     if (m_evaluated)
         return;
     
-    KHTMLPart *part = getDocument()->part();
-    if (part) {
-        KJSProxyImpl *proxy = part->jScript();
+    Frame *frame = getDocument()->frame();
+    if (frame) {
+        KJSProxyImpl *proxy = frame->jScript();
         if (proxy) {
             m_evaluated = true;
             proxy->evaluate(URL, 0, script, 0);

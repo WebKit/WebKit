@@ -31,7 +31,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 
-#include "khtml_part.h"
+#include "Frame.h"
 #include "khtmlview.h"
 
 #include <kdebug.h>
@@ -277,14 +277,14 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   if (state != newState) {
     state = newState;
     
-    if (doc && doc->part() && onReadyStateChangeListener) {
+    if (doc && doc->frame() && onReadyStateChangeListener) {
       int ignoreException;
       RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->initEvent(readystatechangeEvent, true, true);
       onReadyStateChangeListener->handleEventImpl(ev.get(), true);
     }
     
-    if (doc && doc->part() && state == Completed && onLoadListener) {
+    if (doc && doc->frame() && state == Completed && onLoadListener) {
       int ignoreException;
       RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->initEvent(loadEvent, true, true);
@@ -718,7 +718,7 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
       }
     
       QString method = args[0]->toString(exec).qstring();
-      KURL url = KURL(Window::retrieveActive(exec)->part()->xmlDocImpl()->completeURL(args[1]->toString(exec).qstring()));
+      KURL url = KURL(Window::retrieveActive(exec)->frame()->xmlDocImpl()->completeURL(args[1]->toString(exec).qstring()));
 
       bool async = true;
       if (args.size() >= 3) {

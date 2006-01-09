@@ -97,7 +97,7 @@ public:
     static void setDefersTimers(bool defers);
 
     virtual bool isKHTMLLoader() const;
-    virtual bool isKHTMLPart() const;
+    virtual bool isFrame() const;
     virtual bool isKHTMLView() const;
     virtual bool isKPartsReadOnlyPart() const;
     virtual bool isQFrame() const;

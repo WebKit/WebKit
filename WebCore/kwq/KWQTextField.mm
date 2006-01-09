@@ -27,7 +27,7 @@
 #import "KWQTextField.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQLineEdit.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
@@ -168,7 +168,7 @@ using khtml::RenderLayer;
     
     [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
 
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
 }
 
@@ -177,7 +177,7 @@ using khtml::RenderLayer;
     if (!widget)
 	return;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
     
     if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
@@ -189,11 +189,11 @@ using khtml::RenderLayer;
     if (!widget)
 	return;
     
-    if (KWQKHTMLPart::handleKeyboardOptionTabInView(field))
+    if (MacFrame::handleKeyboardOptionTabInView(field))
         return;
     
     if (![[field _KWQ_currentEditor] hasMarkedText]) {
-        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
         [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
     }
     
@@ -235,7 +235,7 @@ using khtml::RenderLayer;
     if (!widget)
 	return NO;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     return [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] doCommandBySelector:commandSelector];
 }
 
@@ -282,7 +282,7 @@ using khtml::RenderLayer;
     
     NSEventType type = [event type];
     if ((type == NSKeyDown || type == NSKeyUp) && ![[NSInputManager currentInputManager] hasMarkedText]) {
-        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
 
         QWidget::setDeferFirstResponderChanges(true);
 
@@ -397,7 +397,7 @@ using khtml::RenderLayer;
         
         hasFocusAndSelectionSet = YES;
 
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget) && widget) {
+        if (!MacFrame::currentEventIsMouseDownInWidget(widget) && widget) {
             RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
             RenderLayer *layer = w->enclosingLayer();
             if (layer)
@@ -428,7 +428,7 @@ using khtml::RenderLayer;
             QFocusEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-                [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
+                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
             }
         }
     }
@@ -549,7 +549,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super nextKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -559,7 +559,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -715,7 +715,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super nextKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -725,7 +725,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -943,7 +943,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super nextKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -953,7 +953,7 @@ using khtml::RenderLayer;
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
-    return KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView

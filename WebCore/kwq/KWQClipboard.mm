@@ -27,7 +27,7 @@
 #import "KWQClipboard.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQStringList.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
@@ -37,9 +37,9 @@
 using DOM::DOMString;
 using DOM::NodeImpl;
 
-KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part)
+KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, MacFrame *frame)
   : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging),
-    m_policy(policy), m_dragStarted(false), m_part(part)
+    m_policy(policy), m_dragStarted(false), m_frame(frame)
 {
     m_changeCount = [m_pasteboard changeCount];
 }
@@ -332,10 +332,10 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
 {
     NSImage *result = nil;
     if (m_dragImageElement) {
-        if (m_part) {
+        if (m_frame) {
             NSRect imageRect;
             NSRect elementRect;
-            result = m_part->snapshotDragImage(m_dragImageElement.get(), &imageRect, &elementRect);
+            result = m_frame->snapshotDragImage(m_dragImageElement.get(), &imageRect, &elementRect);
             if (loc) {
                 // Client specifies point relative to element, not the whole image, which may include child
                 // layers spread out all over the place.

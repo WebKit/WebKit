@@ -26,7 +26,7 @@
 #include "config.h"
 #include "edit_command.h"
 #include "SelectionController.h"
-#include "khtml_part.h"
+#include "Frame.h"
 #include "htmlediting.h"
 
 #include "xml/dom_position.h"
@@ -191,8 +191,8 @@ EditCommand::EditCommand(DocumentImpl *document)
     : m_document(document), m_state(NotApplied), m_parent(0)
 {
     ASSERT(m_document);
-    ASSERT(m_document->part());
-    m_startingSelection = m_document->part()->selection();
+    ASSERT(m_document->frame());
+    m_startingSelection = m_document->frame()->selection();
     m_endingSelection = m_startingSelection;
 }
 
@@ -203,10 +203,10 @@ EditCommand::~EditCommand()
 void EditCommand::apply()
 {
     ASSERT(m_document);
-    ASSERT(m_document->part());
+    ASSERT(m_document->frame());
     ASSERT(state() == NotApplied);
  
-    KHTMLPart *part = m_document->part();
+    Frame *frame = m_document->frame();
 
     doApply();
     
@@ -220,19 +220,19 @@ void EditCommand::apply()
     if (!isCompositeStep()) {
         updateLayout();
         EditCommandPtr cmd(this);
-        part->appliedEditing(cmd);
+        frame->appliedEditing(cmd);
     }
 }
 
 void EditCommand::unapply()
 {
     ASSERT(m_document);
-    ASSERT(m_document->part());
+    ASSERT(m_document->frame());
     ASSERT(state() == Applied);
 
     bool topLevel = !isCompositeStep();
  
-    KHTMLPart *part = m_document->part();
+    Frame *frame = m_document->frame();
     
     doUnapply();
     
@@ -241,19 +241,19 @@ void EditCommand::unapply()
     if (topLevel) {
         updateLayout();
         EditCommandPtr cmd(this);
-        part->unappliedEditing(cmd);
+        frame->unappliedEditing(cmd);
     }
 }
 
 void EditCommand::reapply()
 {
     ASSERT(m_document);
-    ASSERT(m_document->part());
+    ASSERT(m_document->frame());
     ASSERT(state() == NotApplied);
     
     bool topLevel = !isCompositeStep();
  
-    KHTMLPart *part = m_document->part();
+    Frame *frame = m_document->frame();
     
     doReapply();
     
@@ -262,7 +262,7 @@ void EditCommand::reapply()
     if (topLevel) {
         updateLayout();
         EditCommandPtr cmd(this);
-        part->reappliedEditing(cmd);
+        frame->reappliedEditing(cmd);
     }
 }
 
@@ -346,7 +346,7 @@ CSSMutableStyleDeclarationImpl *EditCommand::styleAtPosition(const Position &pos
  
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->frame()->typingStyle();
     if (typingStyle)
         style->merge(typingStyle);
     

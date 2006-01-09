@@ -28,7 +28,7 @@
 
 #import "KWQExceptions.h"
 #import "KWQFoundationExtras.h"
-#import "KWQKHTMLPart.h"
+#import "MacFrame.h"
 #import "KWQLogging.h"
 #import "KWQStyle.h"
 #import "KWQView.h"
@@ -110,7 +110,7 @@ void QWidget::resize(int w, int h)
 void QWidget::setActiveWindow() 
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [KWQKHTMLPart::bridgeForWidget(this) focusWindow];
+    [MacFrame::bridgeForWidget(this) focusWindow];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -207,7 +207,7 @@ bool QWidget::hasFocus() const
 
     NSView *view = [getView() _webcore_effectiveFirstResponder];
 
-    id firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
+    id firstResponder = [MacFrame::bridgeForWidget(this) firstResponder];
 
     if (!firstResponder) {
         return false;
@@ -247,7 +247,7 @@ void QWidget::setFocus()
     KWQ_BLOCK_EXCEPTIONS;
     NSView *view = [getView() _webcore_effectiveFirstResponder];
     if ([view superview] && [view acceptsFirstResponder]) {
-        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+        WebCoreBridge *bridge = MacFrame::bridgeForWidget(this);
         NSResponder *oldFirstResponder = [bridge firstResponder];
 
         [bridge makeFirstResponder:view];
@@ -270,7 +270,7 @@ void QWidget::clearFocus()
         return;
     }
     
-    KWQKHTMLPart::clearDocumentFocus(this);
+    MacFrame::clearDocumentFocus(this);
 }
 
 bool QWidget::checksDescendantsForFocus() const
@@ -346,7 +346,7 @@ bool QWidget::isVisible() const
     // FIXME - rewrite interms of top level widget?
     
     KWQ_BLOCK_EXCEPTIONS;
-    return [[KWQKHTMLPart::bridgeForWidget(this) window] isVisible];
+    return [[MacFrame::bridgeForWidget(this) window] isVisible];
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
@@ -412,7 +412,7 @@ QPoint QWidget::mapFromGlobal(const QPoint &p) const
     NSPoint bp = {0,0};
 
     KWQ_BLOCK_EXCEPTIONS;
-    bp = [[KWQKHTMLPart::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
+    bp = [[MacFrame::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
     return QPoint(bp);
     KWQ_UNBLOCK_EXCEPTIONS;
     return QPoint();
@@ -516,7 +516,7 @@ void QWidget::sendConsumedMouseUp()
 
 void QWidget::setIsSelected(bool isSelected)
 {
-    [KWQKHTMLPart::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
+    [MacFrame::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
 }
 
 void QWidget::addToSuperview(NSView *superview)

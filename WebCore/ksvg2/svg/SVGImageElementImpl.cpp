@@ -208,9 +208,6 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 #endif
     if(finishedObj == m_cachedImage)
     {
-        KRenderingFillPainter *fillPainter = canvasStyle->fillPainter();
-        ASSERT(fillPainter);
-
         KRenderingPaintServer *fillPaintServer = canvasStyle->fillPaintServer(canvasStyle->renderStyle(), imagePath);
         ASSERT(fillPaintServer->type() == PS_IMAGE);
         

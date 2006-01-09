@@ -22,7 +22,7 @@
 #include "kjs_dom.h"
 
 #include <kdebug.h>
-#include <khtml_part.h>
+#include "Frame.h"
 #include <khtmlview.h>
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"
@@ -965,8 +965,8 @@ JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
       return jsString(decoder->encoding());
     return jsNull();
   case DefaultCharset:
-    if (KHTMLPart* part = doc.part())
-        return jsString(part->settings()->encoding());
+    if (Frame *frame = doc.frame())
+        return jsString(frame->settings()->encoding());
     return jsUndefined();
   case StyleSheets:
     //kdDebug() << "DOMDocument::StyleSheets, returning " << doc.styleSheets().length() << " stylesheets" << endl;
@@ -976,8 +976,8 @@ JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
   case SelectedStylesheetSet:
     return jsStringOrNull(doc.selectedStylesheetSet());
   case ReadyState:
-    if (KHTMLPart* part = doc.part()) {
-      if (part->d->m_bComplete) return jsString("complete");
+    if (Frame *frame = doc.frame()) {
+      if (frame->d->m_bComplete) return jsString("complete");
       if (doc.parsing()) return jsString("loading");
       return jsString("loaded");
       // What does the interactive value mean ?
@@ -1654,7 +1654,7 @@ JSValue *getDOMDocumentNode(ExecState *exec, DocumentImpl *n)
   // Make sure the document is kept around by the window object, and works right with the
   // back/forward cache.
   if (n->view())
-    Window::retrieveWindow(n->view()->part())->putDirect("document", ret, DontDelete|ReadOnly);
+    Window::retrieveWindow(n->view()->frame())->putDirect("document", ret, DontDelete|ReadOnly);
 
   interp->putDOMObject(n, ret);
 
@@ -1667,10 +1667,10 @@ bool checkNodeSecurity(ExecState *exec, NodeImpl *n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  KHTMLPart *part = n->getDocument()->part();
-  if (!part)
+  Frame *frame = n->getDocument()->frame();
+  if (!frame)
     return false;
-  Window *win = Window::retrieveWindow(part);
+  Window *win = Window::retrieveWindow(frame);
   return win && win->isSafeScript(exec);
 }
 

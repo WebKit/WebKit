@@ -37,7 +37,7 @@
 #include "render_theme.h"
 
 #include "khtmlview.h"
-#include "khtml_part.h"
+#include "Frame.h"
 
 using namespace DOM;
 using namespace HTMLNames;
@@ -1264,14 +1264,14 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 
 void RenderBlock::paintCaret(PaintInfo& i, CaretType type)
 {
-    const SelectionController &s = type == CursorCaret ? document()->part()->selection() : document()->part()->dragCaret();
+    const SelectionController &s = type == CursorCaret ? document()->frame()->selection() : document()->frame()->dragCaret();
     NodeImpl *caretNode = s.start().node();
     RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
     if (renderer && (renderer == this || renderer->containingBlock() == this) && caretNode && caretNode->isContentEditable()) {
         if (type == CursorCaret) {
-            document()->part()->paintCaret(i.p, i.r);
+            document()->frame()->paintCaret(i.p, i.r);
         } else {
-            document()->part()->paintDragCaret(i.p, i.r);
+            document()->frame()->paintDragCaret(i.p, i.r);
         }
     }
 }
