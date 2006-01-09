@@ -1,3 +1,15 @@
+2006-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix layout tests that I broke
+
+        * fast/forms/button-in-forms-collection.html:
+        * fast/js/date-parse-comments-test-expected.txt:
+        * fast/js/date-parse-test-expected.txt:
+        * fast/js/kde/Date-expected.txt:
+        * fast/js/kde/resources/Date.js:
+        * fast/js/resources/date-parse-comments-test.js:
+        * fast/js/resources/date-parse-test.js:
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

@@ -295,8 +295,7 @@ shouldBeTrue("isNaN(new Date(-8.6400001E15))");;
 // other browsers don't mind the missing space
 shouldBe("(new Date('January29,2005')).getDate()", "29");
 
-shouldBe("(new Date('12/25/1995 ::')).valueOf()",
-	 "(new Date('12/25/1995')).valueOf()");
+shouldBeTrue("(new Date('12/25/1995 ::')).valueOf() == (new Date('12/25/1995')).valueOf()");
 
 debug("End Of Test");
 successfullyParsed = true

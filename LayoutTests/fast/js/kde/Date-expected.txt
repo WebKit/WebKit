@@ -165,7 +165,7 @@ PASS Number(new Date(-8.64E15)) is -8.64E15
 PASS isNaN(new Date(8.6400001E15)) is true
 PASS isNaN(new Date(-8.6400001E15)) is true
 PASS (new Date('January29,2005')).getDate() is 29
-FAIL (new Date('12/25/1995 ::')).valueOf() should be 819878400000. Was NaN
+FAIL (new Date('12/25/1995 ::')).valueOf() == (new Date('12/25/1995')).valueOf() should be true. Was false
 End Of Test
 PASS successfullyParsed is true
 
