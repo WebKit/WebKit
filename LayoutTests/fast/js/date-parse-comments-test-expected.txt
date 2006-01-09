@@ -1,3 +1,147 @@
-Testing complete. No failures.
+test of JavaScript date parsing (comments in parentheses)
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Date.parse("Dec ((27) 26 (24)) 25 1995 1:30 PM UTC") is 819898200000
+PASS Date.parse("DEC ((27) 26 (24)) 25 1995 1:30 PM UTC") is 819898200000
+PASS Date.parse("dec ((27) 26 (24)) 25 1995 1:30 pm utc") is 819898200000
+PASS Date.parse("Dec 25 1995 1:30 PM UTC (") is 819898200000
+PASS Date.parse("DEC 25 1995 1:30 PM UTC (") is 819898200000
+PASS Date.parse("dec 25 1995 1:30 pm utc (") is 819898200000
+PASS Date.parse("Dec 25 1995 1:30 (PM)) UTC") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 (PM)) UTC") is NaN.
+PASS Date.parse("dec 25 1995 1:30 (pm)) utc") is NaN.
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) GMT (EST)") is 819849600000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) GMT (EST)") is 819849600000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) gmt (est)") is 819849600000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996)") is 819878400000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996)") is 819878400000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996)") is 819878400000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) GMT (EST)") is 819855000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 (1:40) GMT (EST)") is 819855000000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 (1:40) gmt (est)") is 819855000000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40)") is 819883800000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 (1:40)") is 819883800000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 (1:40)") is 819883800000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 ") is 819883800000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 ") is 819883800000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 ") is 819883800000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM) GMT (EST)") is 819855000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM) GMT (EST)") is 819855000000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 am (1:40 pm) gmt (est)") is 819855000000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM)") is 819883800000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 AM (1:40 PM)") is 819883800000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 am (1:40 pm)") is 819883800000
+PASS Date.parse("Dec 25 1995 1:30( )AM (PM)") is NaN.
+PASS Date.parse("DEC 25 1995 1:30( )AM (PM)") is NaN.
+PASS Date.parse("dec 25 1995 1:30( )am (pm)") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 AM (PM)") is 819883800000
+PASS Date.parse("DEC 25 1995 1:30 AM (PM)") is 819883800000
+PASS Date.parse("dec 25 1995 1:30 am (pm)") is 819883800000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40) GMT (PST)") is 819898200000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 13:30 (13:40) GMT (PST)") is 819898200000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 13:30 (13:40) gmt (pst)") is 819898200000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40)") is 819927000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 13:30 (13:40)") is 819927000000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 13:30 (13:40)") is 819927000000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 13:30 (13:40) 1995 (1996)") is 819927000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 13:30 (13:40) 1995 (1996)") is 819927000000
+PASS Date.parse("(nov) dec (24) 25 (26) 13:30 (13:40) 1995 (1996)") is 819927000000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 13:30 (13:40) ") is 819927000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 13:30 (13:40) ") is 819927000000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 13:30 (13:40) ") is 819927000000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM) GMT (PST)") is 819898200000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM) GMT (PST)") is 819898200000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 (1:40) pm (am) gmt (pst)") is 819898200000
+PASS Date.parse("(Nov) Dec (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM)") is 819927000000
+PASS Date.parse("(NOV) DEC (24) 25 (26) 1995 (1996) 1:30 (1:40) PM (AM)") is 819927000000
+PASS Date.parse("(nov) dec (24) 25 (26) 1995 (1996) 1:30 (1:40) pm (am)") is 819927000000
+PASS Date.parse("Dec 25 1995 1:30(AM)PM") is NaN.
+PASS Date.parse("DEC 25 1995 1:30(AM)PM") is NaN.
+PASS Date.parse("dec 25 1995 1:30(am)pm") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 (AM)PM ") is 819927000000
+PASS Date.parse("DEC 25 1995 1:30 (AM)PM ") is 819927000000
+PASS Date.parse("dec 25 1995 1:30 (am)pm ") is 819927000000
+PASS Date.parse("Dec 25 1995 (PDT)UTC(PST)") is 819849600000
+PASS Date.parse("DEC 25 1995 (PDT)UTC(PST)") is 819849600000
+PASS Date.parse("dec 25 1995 (pdt)utc(pst)") is 819849600000
+PASS Date.parse("Dec 25 1995 (PDT)UT(PST)") is 819849600000
+PASS Date.parse("DEC 25 1995 (PDT)UT(PST)") is 819849600000
+PASS Date.parse("dec 25 1995 (pdt)ut(pst)") is 819849600000
+PASS Date.parse("Dec 25 1995 (UTC)PST(GMT)") is 819878400000
+PASS Date.parse("DEC 25 1995 (UTC)PST(GMT)") is 819878400000
+PASS Date.parse("dec 25 1995 (utc)pst(gmt)") is 819878400000
+PASS Date.parse("Dec 25 1995 (UTC)PDT(GMT)") is 819874800000
+PASS Date.parse("DEC 25 1995 (UTC)PDT(GMT)") is 819874800000
+PASS Date.parse("dec 25 1995 (utc)pdt(gmt)") is 819874800000
+PASS Date.parse("Dec 25 1995 1:30 (PDT)UTC(PST)") is 819855000000
+PASS Date.parse("DEC 25 1995 1:30 (PDT)UTC(PST)") is 819855000000
+PASS Date.parse("dec 25 1995 1:30 (pdt)utc(pst)") is 819855000000
+PASS Date.parse("Dec 25 1995 1:30 (PDT)UT(PST)") is 819855000000
+PASS Date.parse("DEC 25 1995 1:30 (PDT)UT(PST)") is 819855000000
+PASS Date.parse("dec 25 1995 1:30 (pdt)ut(pst)") is 819855000000
+PASS Date.parse("Dec 25 1995 1:30 (UTC)PST(GMT)") is 819883800000
+PASS Date.parse("DEC 25 1995 1:30 (UTC)PST(GMT)") is 819883800000
+PASS Date.parse("dec 25 1995 1:30 (utc)pst(gmt)") is 819883800000
+PASS Date.parse("Dec 25 1995 1:30 (UTC)PDT(GMT)") is 819880200000
+PASS Date.parse("DEC 25 1995 1:30 (UTC)PDT(GMT)") is 819880200000
+PASS Date.parse("dec 25 1995 1:30 (utc)pdt(gmt)") is 819880200000
+PASS Date.parse("Dec 25 1995 1:30 (AM) PM (PST) UTC") is 819898200000
+PASS Date.parse("DEC 25 1995 1:30 (AM) PM (PST) UTC") is 819898200000
+PASS Date.parse("dec 25 1995 1:30 (am) pm (pst) utc") is 819898200000
+PASS Date.parse("Dec 25 1995 1:30 PM (AM) (PST) UT") is 819898200000
+PASS Date.parse("DEC 25 1995 1:30 PM (AM) (PST) UT") is 819898200000
+PASS Date.parse("dec 25 1995 1:30 pm (am) (pst) ut") is 819898200000
+PASS Date.parse("Dec 25 1995 1:30 PM (AM) (UTC) PST") is 819927000000
+PASS Date.parse("DEC 25 1995 1:30 PM (AM) (UTC) PST") is 819927000000
+PASS Date.parse("dec 25 1995 1:30 pm (am) (utc) pst") is 819927000000
+PASS Date.parse("Dec 25 1995 1:30 (AM) PM PDT (UTC)") is 819923400000
+PASS Date.parse("DEC 25 1995 1:30 (AM) PM PDT (UTC)") is 819923400000
+PASS Date.parse("dec 25 1995 1:30 (am) pm pdt (utc)") is 819923400000
+PASS Date.parse("Dec 25 1995 XXX (GMT)") is NaN.
+PASS Date.parse("DEC 25 1995 XXX (GMT)") is NaN.
+PASS Date.parse("dec 25 1995 xxx (gmt)") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 XXX (GMT)") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 XXX (GMT)") is NaN.
+PASS Date.parse("dec 25 1995 1:30 xxx (gmt)") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 U(TC)") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 U(TC)") is NaN.
+PASS Date.parse("dec 25 1995 1:30 u(tc)") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 V(UTC)") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 V(UTC)") is NaN.
+PASS Date.parse("dec 25 1995 1:30 v(utc)") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 (UTC)W") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 (UTC)W") is NaN.
+PASS Date.parse("dec 25 1995 1:30 (utc)w") is NaN.
+PASS Date.parse("Dec 25 1995 1:30 (GMT)X") is NaN.
+PASS Date.parse("DEC 25 1995 1:30 (GMT)X") is NaN.
+PASS Date.parse("dec 25 1995 1:30 (gmt)x") is NaN.
+PASS Date.parse("Dec 25 1995 0:30 (PM) GMT") is 819851400000
+PASS Date.parse("DEC 25 1995 0:30 (PM) GMT") is 819851400000
+PASS Date.parse("dec 25 1995 0:30 (pm) gmt") is 819851400000
+PASS Date.parse("Dec 25 1995 (1)0:30 AM GMT") is 819851400000
+PASS Date.parse("DEC 25 1995 (1)0:30 AM GMT") is 819851400000
+PASS Date.parse("dec 25 1995 (1)0:30 am gmt") is 819851400000
+PASS Date.parse("Dec 25 1995 (1)0:30 PM GMT") is 819894600000
+PASS Date.parse("DEC 25 1995 (1)0:30 PM GMT") is 819894600000
+PASS Date.parse("dec 25 1995 (1)0:30 pm gmt") is 819894600000
+PASS Date.parse("Anf(Dec) 25 1995 GMT") is NaN.
+PASS Date.parse("ANF(DEC) 25 1995 GMT") is NaN.
+PASS Date.parse("anf(dec) 25 1995 gmt") is NaN.
+PASS Date.parse("(Sat) Wed (Nov) Dec (Nov) 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("(SAT) WED (NOV) DEC (NOV) 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("(sat) wed (nov) dec (nov) 25 1995 1:30 gmt") is 819855000000
+PASS Date.parse("Wed (comment 1) (comment 2) Dec 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("WED (COMMENT 1) (COMMENT 2) DEC 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("wed (comment 1) (comment 2) dec 25 1995 1:30 gmt") is 819855000000
+PASS Date.parse("Wed(comment 1) (comment 2) Dec 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("WED(COMMENT 1) (COMMENT 2) DEC 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("wed(comment 1) (comment 2) dec 25 1995 1:30 gmt") is 819855000000
+PASS Date.parse("We(comment 1) (comment 2) Dec 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("WE(COMMENT 1) (COMMENT 2) DEC 25 1995 1:30 GMT") is 819855000000
+PASS Date.parse("we(comment 1) (comment 2) dec 25 1995 1:30 gmt") is 819855000000
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

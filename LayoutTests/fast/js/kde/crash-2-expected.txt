@@ -1,4 +1,10 @@
-OK. Caught an exception
+KDE JS Test
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+OK. Caught an exception
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

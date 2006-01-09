@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS typeof Object() is 'object'
 PASS var o = Object(); o.x = 11; o.x; is 11
 PASS Object(1).valueOf() is 1
@@ -11,4 +16,6 @@ PASS String(Object()) is '[object Object]'
 PASS Object().toString() is '[object Object]'
 PASS String(Object().valueOf()) is '[object Object]'
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

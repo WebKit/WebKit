@@ -1,25 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script>
-    function debug(s) {
-        document.getElementById('console').innerHTML += s + '<br>';
-    }
-    
-    function test() {
-        for (j in index) {
-            testProperty(index[j]);
-        }
-    }
-    function runTests() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText()
-        debug(test)
-    }
-    </script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onLoad="runTests()">
-This tests that JavaScriptCore ForInNodes are converted correctly to text. If this test is successful, part of the text below should say "for (j in index)".
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/for-in-to-text.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
-<pre id="console">
-</pre>
 </html>

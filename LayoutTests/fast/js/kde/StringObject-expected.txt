@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS 'abc'.length is 3
 PASS (new String('abcd')).length is 4
 PASS String('abcde').length is 5
@@ -14,7 +19,7 @@ PASS ''.indexOf('') is 0
 PASS 'ab'.indexOf('a', -1) is 0
 PASS 'ab'.indexOf('b', 1) is 1
 PASS 'ab'.indexOf('a', 1) is -1
-PASS ' '.indexOf('', 1) is 1
+PASS '  '.indexOf('', 1) is 1
 PASS String('abc').search(/b/) is 1
 PASS String('xyz').search(/b/) is -1
 PASS String('abcb').match(/b/) + '' is 'b'
@@ -30,7 +35,7 @@ PASS var reg = /ab/g; 'aabab'.match(reg); reg.lastIndex is 0
 PASS var reg = /ab/g; 'aabab'.match(reg).length is 2
 PASS var reg = /ab/g; 'xxx'.match(reg); reg.lastIndex is 0
 PASS var reg = /ab/g; 'xxx'.match(reg) is null
-PASS myRe=/d(b+)d/g; 'cdbbdbsbz'.match(myRe)[0] is 'dbbd'
+PASS myRe=/d(b+)d/g;  'cdbbdbsbz'.match(myRe)[0] is 'dbbd'
 PASS 'abcd'.replace(/b./, 'xy') is 'axyd'
 PASS 'abcd'.replace('bc', 'x') is 'axd'
 PASS 'abcd'.replace('x', 'y') is 'abcd'
@@ -69,4 +74,6 @@ PASS 'abc'[10] is undefined.
 PASS 'abc'[10] is 'x'
 PASS bar is html
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

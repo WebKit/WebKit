@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Object.prototype.toString.__proto__ is Function.prototype
 PASS Object.prototype.valueOf.__proto__ is Function.prototype
 PASS Array.prototype.toString.__proto__ is Function.prototype
@@ -92,4 +97,6 @@ PASS RegExp.prototype.test.__proto__ is Function.prototype
 PASS RegExp.prototype.toString.__proto__ is Function.prototype
 PASS Error.prototype.toString.__proto__ is Function.prototype
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

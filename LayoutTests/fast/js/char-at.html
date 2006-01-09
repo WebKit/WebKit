@@ -1,84 +1,13 @@
-<script>
-
-function test() {
-
-    var undefined;
-
-    var cases = [
-        ["", "omitted"],
-        ["", undefined],
-        ["", 0],
-        ["", null],
-        ["", false],
-        ["", true],
-        ["", 0.0],
-        ["", 0.1],
-        ["", 999],
-        ["", 1/0],
-        ["", -1],
-        ["", -1/0],
-        ["", 0/0],
-
-        ["x", "omitted"],
-        ["x", undefined],
-        ["x", 0],
-        ["x", null],
-        ["x", false],
-        ["x", true],
-        ["x", 0.0],
-        ["x", 0.1],
-        ["x", 999],
-        ["x", 1/0],
-        ["x", -1],
-        ["x", -1/0],
-        ["x", 0/0],
-
-        ["xy", "omitted"],
-        ["xy", undefined],
-        ["xy", 0],
-        ["xy", null],
-        ["xy", false],
-        ["xy", true],
-        ["xy", 0.0],
-        ["xy", 0.1],
-        ["xy", 999],
-        ["xy", 1/0],
-        ["xy", -1],
-        ["xy", -1/0],
-        ["xy", 0/0],
-    ];
-
-    for (var i = 0; i < cases.length; ++i)
-    {
-        var item = cases[i];
-        if (item[1] == "omitted") {
-            var string = item[0].charAt();
-            var code = item[0].charCodeAt();
-        } else {
-            var string = item[0].charAt(item[1]);
-            var code = item[0].charCodeAt(item[1]);
-        }
-
-        var item0String = item[0];
-        if (typeof item0String == "string")
-            item0String = '"' + item0String + '"';
-        var item1String = item[1];
-        if (typeof item1String == "string" && item[1] != "omitted")
-            item1String = '"' + item1String + '"';
-        var message = item0String + ', ' + item1String + ': "' + string + '", ' + code;
-
-        var div = document.createElement('div');
-        div.innerHTML = message;
-        document.body.appendChild(div);
-    }
-
-}
-
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-}
-
-</script>
-
-<body onload="test()">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/char-at.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

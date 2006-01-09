@@ -1,7 +1,11 @@
-Tests: Object.prototype.toLocaleString()
+Tests: Object.prototype.toLocaleString(). Related bug: 3989 JSC doesn't implement Object.prototype.toLocaleString()
 
-Related bug: 3989 JSC doesn't implement Object.prototype.toLocaleString()
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-Object.toLocaleString() (should be "[object Object]"): [object Object]
 
-Object.toLocaleString() (should be "Dynamic toLocaleString()"): Dynamic toLocaleString()
+PASS o.toLocaleString() is o.toString()
+PASS o.toLocaleString() is "Dynamic toLocaleString()"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS empty1() is undefined
 PASS empty2() is undefined
 PASS obj.func(11) is 66
@@ -27,7 +32,11 @@ PASS arr[0] is 99
 PASS typeof orgFuncClone is 'function'
 PASS orgFuncClone('world') is 'Hello world'
 PASS groupClone(1, 2) is 9
-FAIL String(Math.sin) should be function sin() { [native code] } . Was (Internal Function)
+FAIL String(Math.sin) should be 
+function sin() {
+    [native code]
+}
+. Was (Internal Function)
 PASS shadow() is 2
 PASS nestedret is 'outer nest'
 PASS not_nestedret is 'global nest'
@@ -36,4 +45,6 @@ PASS sample.prototype.constructor == sample is true
 PASS caught is true
 PASS functionWithVarOverride(1) is 2
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

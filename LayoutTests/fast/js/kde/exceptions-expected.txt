@@ -1,21 +1,18 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 Except a lot of errors. They should all be caught and lead to PASS
-
 testing throw() .......... PASS
-
 testing throw() .......... PASS
-
 ReferenceError .......... PASS
-
 error propagation in functions .......... PASS
-
 catch
-
 finally
-
 Math() error .......... PASS
-
 Abort while() on error .......... PASS
-
 undefined .......... FAIL
 
+TEST COMPLETE
 

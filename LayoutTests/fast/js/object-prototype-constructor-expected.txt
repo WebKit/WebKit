@@ -1,11 +1,15 @@
-This is a test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=3537. Below you should see 3 tests, each of which should evaluate true. 
+This is a test case for bug 3537.
 
-f.constructor == Foo.Bar : true
-f.constructor: function () { }
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-f2.constructor == Foo2.Bar : true
-f2.constructor: function F() { }
 
-f3.constructor == Foo3.Bar : true
-f3.constructor: function () { ; }
+PASS f.constructor is Foo.Bar
+PASS typeof f.constructor is "function"
+PASS f2.constructor is Foo2.Bar
+PASS typeof f2.constructor is "function"
+PASS f3.constructor is Foo3.Bar
+PASS typeof f3.constructor is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

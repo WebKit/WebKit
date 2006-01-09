@@ -1,71 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-Bug 4698 - kjs does not allow named functions in function expressions<br>
-You should see 7 lines with OK in them below this line.<br>
-<script type="text/javascript">
-if (window.layoutTestController) {
-	layoutTestController.dumpAsText();
-}
-
-function Test(lambda, expect) {
-	try {
-		var v = lambda();
-		if(v == expect)
-			document.write("OK<br>");
-		else
-			document.write("NOT OK: " + v + " != " + expect + "<br>");
-	}
-	catch(e) { document.write("ERROR: " + e + "<br>"); }
-}
-
-Test(function(){
-	// anonymous function expression
-	var x = (function(a,b){ return a + b; });
-	return x(1,2);
-}, 3);
-
-Test(function(){
-	// named function expression
-	var x = (function Named(a,b){ return a + b; });
-	return x(2,3);
-}, 5);
-
-Test(function(){
-	// eval'd code should be able to access scoped variables
-	var z = 6;
-	var x = eval("(function(a,b){ return a + b + z; })");
-	return x(3,4);
-}, 13);
-
-Test(function(){
-	// eval'd code + self-check
-	var z = 10;
-	var x = eval("(function Named(a,b){ return (!!Named) ? (a + b + z) : -999; })");
-	return x(4,5);
-}, 19);
-
-Test(function(){
-	// named function expressions are not saved in the current context
-	(function Foo(){ return 1; });
-	try { Foo(); throw "FuncExpr was stored"; } catch(e) { if(typeof(e)=="string") throw e; }
-	return 1;
-}, 1);
-
-Test(function(){
-	// recursion is possible, though
-	var ctr = 3;
-	var x = (function Named(a,b){ if(--ctr) return 2 * Named(a,b); else return a + b; });
-	return x(5,6);
-}, 44);
-
-Test(function(){
-	// regression test where kjs regarded an anonymous function declaration (which is illegal)
-	// as a FunctionExpr
-	try {
-		eval("function(){ return 2; };");
-		return 0;
-	} catch(e) { return 1; /* should bomb */ }
-}, 1);
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/named-function-expression.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

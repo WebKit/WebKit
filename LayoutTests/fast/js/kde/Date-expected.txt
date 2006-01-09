@@ -1,5 +1,9 @@
-Start Of Test
+KDE JS Test
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Start Of Test
 PASS isNaN(Date.prototype.valueOf()) is true
 PASS d.getMinutes() is 45
 PASS d.getUTCMinutes() is 45
@@ -163,6 +167,7 @@ PASS isNaN(new Date(-8.6400001E15)) is true
 PASS (new Date('January29,2005')).getDate() is 29
 FAIL (new Date('12/25/1995 ::')).valueOf() should be 819878400000. Was NaN
 End Of Test
-
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

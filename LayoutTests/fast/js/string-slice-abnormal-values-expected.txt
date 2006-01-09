@@ -1,7 +1,11 @@
 This test checks for handling of abnormal values passed to String.slice
 
-If it passes, you will see two results of "abc"
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-"abc".slice(0): abc
 
-"abc".slice(0, Infinity): abc
+PASS "abc".slice(0) is "abc"
+PASS "abc".slice(0, Infinity) is "abc"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

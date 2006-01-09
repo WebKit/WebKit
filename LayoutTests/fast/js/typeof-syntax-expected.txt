@@ -1,21 +1,27 @@
-This test checks whether various forms of typeof expression are allowed. It should printf number 12 times and unknown 6 times on separate lines, and nothing else (besides this paragraph). In particular it should not say FAIL.
+This test checks whether various forms of typeof expression are allowed.
 
-number
-number
-number
-number
-number
-number
-number
-number
-number
-number
-number
-number
-undefined
-undefined
-undefined
-undefined
-undefined
-undefined
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof x is 'number'
+PASS typeof window.x is 'number'
+PASS typeof window["x"] is 'number'
+PASS typeof (x) is 'number'
+PASS typeof (window.x) is 'number'
+PASS typeof (window["x"]) is 'number'
+PASS (y, typeof x) is 'number'
+PASS typeof ((x)) is 'number'
+PASS typeof ((window.x)) is 'number'
+PASS typeof ((window["x"])) is 'number'
+PASS typeof (y, x) is 'number'
+PASS typeof (true ? x : y) is 'number'
+PASS typeof nonexistent is 'undefined'
+PASS typeof window.nonexistent is 'undefined'
+PASS typeof window["nonexistent"] is 'undefined'
+PASS typeof (nonexistent) is 'undefined'
+PASS typeof (window.nonexistent) is 'undefined'
+PASS typeof (window["nonexistent"]) is 'undefined'
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

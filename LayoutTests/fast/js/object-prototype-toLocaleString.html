@@ -1,34 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-function print(message) {
-	var paragraph = document.createElement("p");
-	paragraph.appendChild(document.createTextNode(message));
-	document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-	if (window.layoutTestController) {
-		layoutTestController.dumpAsText();
-	}
-
-    try {
-        var o = new Object();
-        print("Object.toLocaleString() (should be \"" + o.toString() + "\"): " + o.toLocaleString());
-        
-        o.toLocaleString = function () { return "Dynamic toLocaleString()"; }
-        print("Object.toLocaleString() (should be \"Dynamic toLocaleString()\"): " + o.toLocaleString());
-    }
-    catch (e) {
-        print("Test failed. Threw exception: " + e);
-    }
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>Tests: Object.prototype.toLocaleString()</p>
-<p>Related bug: <a href = "http://bugzilla.opendarwin.org/show_bug.cgi?id=3989">3989 JSC doesn't implement Object.prototype.toLocaleString()</a></p>
-<hr>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/object-prototype-toLocaleString.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

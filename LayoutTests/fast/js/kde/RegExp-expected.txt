@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS (new RegExp()).source is ''
 PASS Boolean(new RegExp()) is true
 PASS isNaN(Number(new RegExp())) is true
@@ -88,6 +93,7 @@ FAIL 'abc'.match(/\u0062/).toString() should be b. Threw exception TypeError: Nu
 FAIL Object.prototype.toString.apply(RegExp.prototype) should be [object RegExp]. Was [object RegExpPrototype]
 PASS typeof RegExp.prototype.toString() is 'string'
 Done.
-
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

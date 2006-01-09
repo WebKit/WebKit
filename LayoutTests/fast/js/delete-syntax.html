@@ -1,72 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-<p>
-This test checks whether various forms of delete expression are
-allowed. It should print the numbers 1-10 on separate lines, and
-nothing else (besides this paragraph).
-<p>
-<hr>
-<pre id="console">
-</pre>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-function log(s)
-{
-    document.getElementById('console').innerHTML += s + '<br>';
-}
-
-window.x = 0;
-window.y = 0;
-
-try { eval ('log(delete x);'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete window.x);'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete window["x"]);'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete (x));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete (window.x));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete (window["x"]));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log((y, delete x));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete ((x)));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete ((window.x)));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete ((window["x"])));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete (y, x));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-try { eval ('log(delete (true ? x : y));'); } catch (e) { log("FAIL"); }
-window.x = 0;
-window.y = 0;
-
-try { eval ('log(delete nonexistent)'); } catch (e) { log("FAIL"); }
-try { eval ('log(delete window.nonexistent)'); } catch (e) { log("FAIL"); }
-try { eval ('log(delete window["nonexistent"])'); } catch (e) { log("FAIL");}
-try { eval ('log(delete (nonexistent))'); } catch (e) { log("FAIL");}
-try { eval ('log(delete (window.nonexistent))'); } catch (e) { log("FAIL"); }
-try { eval ('log(delete (window["nonexistent"]))'); } catch (e) { log("FAIL"); }
-
-try { eval ('log(delete "x")'); } catch (e) { log("FAIL"); }
-try { eval ('log(delete (2 + 3))'); } catch (e) { log("FAIL"); }
-
-
-</script>
-
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/delete-syntax.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

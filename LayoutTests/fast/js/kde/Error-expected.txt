@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Error('msg').message is 'msg'
 PASS (new Error('msg')).message is 'msg'
 PASS (new Error('msg')).name is 'Error'
@@ -5,4 +10,6 @@ PASS Object.prototype.toString.apply(Error()) is '[object Error]'
 PASS Object.prototype.toString.apply(Error) is '[object Function]'
 PASS Object.prototype.toString.apply(EvalError) is '[object Function]'
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

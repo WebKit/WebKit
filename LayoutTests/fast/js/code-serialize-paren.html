@@ -1,29 +1,13 @@
-<body> 
-<div> This test checks whether converting function code to a
-string preserves semantically significant parentheses. The results
-should say PASS.
-</div>
-<hr>
-
-<div id="console">
-</dic>
-
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-function log(s)
-{
-    document.getElementById("console").innerHTML += s + "<br>";
-}
-
-var functionStr = (function () { return (x + y) * z; }).toString();
-
-if (functionStr.search('return.*\\(') < 0) {
-    log("FAIL (functionStr == \"" + functionStr + "\")");
-} else {
-    log("PASS");
-}
-
-</script>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/code-serialize-paren.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

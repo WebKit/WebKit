@@ -1,47 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-<h3>This test checks regular expressions using extended (> 255) characters and character classes.</h3>
-<hr>
-<script>
-function test(s)
-{
-    var result = eval(s);
-    document.write("<p>" + s + ": " + result + "</p>");
-}
-
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-document.write("<h3>These regular expressions should return null:</h3>");
-
-//test('var r = new RegExp("[\u0101-\u0100]"); r.exec("a")');
-
-test('var r = new RegExp("[\u0100-\u0101]"); r.exec("a")');
-
-test('var r = new RegExp("[\u0100]"); r.exec("a")');
-
-test('var r = new RegExp("\u0100"); r.exec("a")');
-
-document.write("<h3>These regular expressions should return \"a\"</h3>");
-
-test('var r = new RegExp("[\u0061]"); r.exec("a")');
-
-test('var r = new RegExp("[\u0100-\u0101a]"); r.exec("a")');
-
-test('var r = new RegExp("[\u0100a]"); r.exec("a")');
-
-test('var r = new RegExp("\u0061"); r.exec("a")');
-
-test('var r = new RegExp("[a-\u0100]"); r.exec("a")');
-
-document.write("<h3>These regular expressions should return \"\u0100\":</h3>");
-
-test('var r = new RegExp("[\u0100]"); r.exec("\u0100")');
-
-test('var r = new RegExp("[\u0100-\u0101]"); r.exec("\u0100")');
-
-test('var r = new RegExp("\u0100"); r.exec("\u0100")');
-
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/regexp-extended-characters-match.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

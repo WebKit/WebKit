@@ -1,5 +1,10 @@
-This test checks for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5280 Date.setMonth fails with negative values.
+This test checks for a regression against Date.setMonth fails with negative values.
 
-If the test passes, you will see a "PASSED" message below.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASSED: date is Fri Oct 15 2004
+
+PASS d.valueOf() is new Date(2004, 9, 15).valueOf()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

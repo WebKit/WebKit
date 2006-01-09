@@ -1,10 +1,23 @@
-Bug 4698 - kjs does not allow named functions in function expressions
-You should see 7 lines with OK in them below this line.
-OK
-OK
-OK
-OK
-OK
-OK
-OK
+Bug 4698 - kjs does not allow named functions in function expressions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+anonymous function expression
+PASS var x = (function(a,b){ return a + b; }); x(1,2) is 3
+named function expression
+PASS var x = (function Named(a,b){ return a + b; }); x(2,3) is 5
+eval'd code should be able to access scoped variables
+PASS var z = 6; var x = eval('(function(a,b){ return a + b + z; })'); x(3,4) is 13
+eval'd code + self-check
+PASS var z = 10; var x = eval('(function Named(a,b){ return (!!Named) ? (a + b + z) : -999; })'); x(4,5) is 19
+named function expressions are not saved in the current context
+PASS (function Foo(){ return 1; }); try { Foo(); throw "FuncExpr was stored"; } catch(e) { if(typeof(e)=="string") throw e; } 1 is 1
+recursion is possible, though
+PASS var ctr = 3; var x = (function Named(a,b){ if(--ctr) return 2 * Named(a,b); else return a + b; }); x(5,6) is 44
+regression test where kjs regarded an anonymous function declaration (which is illegal) as a FunctionExpr
+PASS try { eval("function(){ return 2; };"); return 0; } catch(e) { 1; } is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

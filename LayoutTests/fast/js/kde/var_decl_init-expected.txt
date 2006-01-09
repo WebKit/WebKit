@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS varInFunction() is true
 PASS varInVarList() is true
 PASS varListOrder() is true
@@ -20,4 +25,6 @@ PASS varGlobal is 1
 PASS overrideVar is 1
 PASS overrideVar2 is 2
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -1,38 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-<p>
-This test checks whether various forms of postincrement expression are
-allowed. It should print the numbers 0-9 on separate lines, and
-nothing else (besides this paragraph).
-<p>
-<hr>
-<pre id="console">
-</pre>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-function log(s)
-{
-    document.getElementById('console').innerHTML += s + '<br>';
-}
-
-var x = 0;
-var y = 0;
-
-try { eval ('log(x++);'); } catch (e) {}
-try { eval ('log(window.x++);'); } catch (e) {}
-try { eval ('log(window["x"]++);'); } catch (e) {}
-try { eval ('log((x)++);'); } catch (e) {}
-try { eval ('log((window.x)++);'); } catch (e) {}
-try { eval ('log((window["x"])++);'); } catch (e) {}
-try { eval ('log((y, x++));'); } catch (e) {}
-try { eval ('log(((x))++);'); } catch (e) {}
-try { eval ('log(((window.x))++);'); } catch (e) {}
-try { eval ('log(((window["x"]))++);'); } catch (e) {}
-try { eval ('log((y, x)++);'); } catch (e) {}
-try { eval ('log((true ? x : y)++);'); } catch (e) {}
-try { eval ('log(x++++);'); } catch (e) {}
-
-</script>
-
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/postfix-syntax.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

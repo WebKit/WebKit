@@ -1,3 +1,35 @@
-This performs a number of different tests on JavaScript getters and setters. If this test is successful, the text "SUCCESS" should be shown below. Otherwise, "FAILURE" and the reason for the failure is shown.
-SUCCESS!
+This performs a number of different tests on JavaScript getters and setters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+the get set object declaration syntax
+PASS o1.b is 8
+PASS o1.b is 11
+__defineGetter__ and __defineSetter__
+PASS o2.b is 8
+PASS o2.b is 11
+Setting a value without having a setter
+PASS o3.x = 10; threw exception TypeError: setting a property that has only a getter.
+Getting a value without having a getter
+PASS o4.x is undefined.
+__lookupGetter__ and __lookupSetter__
+PASS o4.__lookupGetter__('b') is getB
+PASS o4.__lookupSetter__('b') is setB
+__defineGetter__ and __defineSetter__ with various invalid arguments
+PASS o5.__defineSetter__('a', null) threw exception SyntaxError: invalid setter usage.
+PASS o5.__defineSetter__('a', o5) threw exception SyntaxError: invalid setter usage.
+PASS o5.__defineGetter__('a', null) threw exception SyntaxError: invalid getter usage.
+PASS o5.__defineGetter__('a', o5) threw exception SyntaxError: invalid getter usage.
+setters and getters with exceptions
+PASS x = o6.x threw exception Exception in get.
+PASS x is 0
+PASS o6.x = 42 threw exception Exception in set.
+Defining a setter should also define a getter for the same property which returns undefined. Thus, a getter defined on the prototype should not be called.
+PASS o7.x is undefined.
+If an object has a property and its prototype has a setter function for that property, then setting the property should set the property directly and not call the setter function.
+PASS o8.numSets is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

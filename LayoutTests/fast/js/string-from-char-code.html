@@ -1,10 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-This test should not crash and should display an X on the next line:<br>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-document.write(String.fromCharCode(88));
-document.write('<br>');
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/string-from-char-code.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

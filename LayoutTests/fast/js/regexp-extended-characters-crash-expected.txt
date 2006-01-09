@@ -1,5 +1,14 @@
-This test checks for a regression against rdar://problem/4161606 JavaScript regular expressions with certain ranges of Unicode characters cause a crash.
+This test checks for a regression against JavaScript regular expressions with certain ranges of Unicode characters cause a crash. If it fails, it may crash.
 
-If the test passes, you will see the word "PASSED" below. Otherwise, it will crash.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASSED
+
+PASS new RegExp("[À-Ὅ]").toString() is /[À-Ὅ]/.toString()
+PASS new RegExp("[ぁ-ゔ]").toString() is /[ぁ-ゔ]/.toString()
+PASS new RegExp("[䴀-䶵]").toString() is /[䴀-䶵]/.toString()
+PASS new RegExp("[一-龥]").toString() is /[一-龥]/.toString()
+PASS new RegExp("[-Ὅ]").toString() is /[-Ὅ]/.toString()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

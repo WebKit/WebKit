@@ -1,6 +1,15 @@
 2006-01-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
+        
+        - script to generate HTML wrappers for JS tests
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6441
+
+        * Scripts/make-js-test-wrappers: Added.
+
+2006-01-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
 
         * Scripts/svn-create-patch: Fix to work when passed directory names.
 

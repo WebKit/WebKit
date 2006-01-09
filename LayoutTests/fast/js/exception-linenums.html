@@ -1,84 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-    <head>
-        <script type="text/javascript">
-            function print(message)
-            {
-                var paragraph = document.createElement("li");
-                paragraph.appendChild(document.createTextNode(message));
-                document.getElementById("console").appendChild(paragraph);
-            }
-
-            function exceptionInFunction()
-            {
-                throw Exception();
-            }
-
-            function writeException(e)
-            {
-                var type = 'unset';
-                if (e.sourceURL)
-                    type = 'set';
-                
-                print('Exception at line ' + e.line + ' with sourceURL ' + type);
-            }
-
-            function expectedException()
-            {
-                print('An exception was expected but not thrown.');
-            }
-
-            function test() {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                }
-
-                try {
-                    // Raises an exception that gets picked up by KJS_CHECKEXCEPTION
-                    document.documentElement.innerHTML(foo);
-                    expectedException();
-                } catch (e) {
-                    writeException(e);
-                }  
-
-                try {
-                    // Raises an exception that gets picked up by KJS_CHECKEXCEPTIONVALUE
-                    document.documentElement.appendChild('').prefix = '';
-                    expectedException();
-                } catch (e) {
-                    writeException(e);
-                }
-
-                try {
-                    // Raises an exception that gets picked up by KJS_CHECKEXCEPTIONREFERENCE
-                    document.documentElement.appendChild('').innerHTML = '';
-                    expectedException();
-                } catch (e) {
-                    writeException(e);
-                }
-
-                try {
-                    // Raises an exception that gets picked up by KJS_CHECKEXCEPTIONLIST
-                    document.getElementById(1());
-                    expectedException();
-                } catch (e) {
-                    writeException(e);
-                }
-
-                try {
-                    // Raises an exception inside a function to check that its line number
-                    // isn't overwritten in the assignment node.
-                    var a = exceptionInFunction();
-                    expectedException();
-                } catch (e) {
-                    writeException(e);
-                }
-            }
-        </script>
-    </head>
-    <body onload="test()">
-        <p>This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console.</p>
-        <p>If the test passes, you should see five exceptions caught below, with the appropriate line number for each (increasing except for the last one).</p>
-        <hr>
-        <p><ol id=console></ol></p>
-    </body>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/exception-linenums.js"></script>
+<script src="resources/js-test-post.js"></script>
+</body>
 </html>

@@ -1,35 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-	<title>Testcase for bug 3537</title>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-
 <body>
-This is a test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=3537. Below you should see 3 tests, each of which should evaluate true.
-<br><br>
-<script type="text/javascript">
-	if (window.layoutTestController)
-		layoutTestController.dumpAsText();
-	
-	var Foo = { Bar: function () {}};
-	var f = new Foo.Bar();
-	document.write("f.constructor == Foo.Bar : " + (f.constructor == Foo.Bar) + "<br>");
-	document.write("f.constructor: " + f.constructor + "<br>");
-	
-	document.write("<br>");
-	
-	function F() {};
-	var Foo2 = { Bar: F};
-	var f2 = new Foo2.Bar();
-	document.write("f2.constructor == Foo2.Bar : " + (f2.constructor == Foo2.Bar) + "<br>");
-	document.write("f2.constructor: " + f2.constructor + "<br>");
-	
-	document.write("<br>");
-	
-	var Foo3 = { Bar: new Function("")};
-	var f3 = new Foo3.Bar();
-	document.write("f3.constructor == Foo3.Bar : " + (f3.constructor == Foo3.Bar) + "<br>");
-	document.write("f3.constructor: " + f3.constructor + "<br>");
-
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/object-prototype-constructor.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

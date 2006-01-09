@@ -1,32 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<title>RegExp regression</title>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
 <body>
-<script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
-</script>
-<p>
-Test for regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5602
-REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches
-</p>
-<p>
-The following line should be "abcdefg;".
-</p>
-<script type="text/javascript">
-var re = new RegExp("[^\\s$]+", "g");
-var match;
-while (match = re.exec("  abcdefg"))
-document.write(match + "; ");
-</script>
-<p>
-The following line should be "1; 2; 3; 4; 5; 6; 7; 8; 9;".
-</p>
-<script>
-var re = new RegExp(/\d/g);
-var match
-while (match = re.exec("123456789"))
-    document.write(match + "; ");
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/regexp-lastindex.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
+</html>

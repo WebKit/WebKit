@@ -34,7 +34,6 @@ shouldBe("StripSpaces(isNaN.toString())","\"functionisNaN(){[nativecode]}\"");
 shouldBe("StripSpaces(isFinite.toString())","\"functionisFinite(){[nativecode]}\"");
 shouldBe("StripSpaces(escape.toString())","\"functionescape(){[nativecode]}\"");
 shouldBe("StripSpaces(unescape.toString())","\"functionunescape(){[nativecode]}\"");
-shouldBe("StripSpaces(kjsprint.toString())","\"functionkjsprint(){[nativecode]}\"");
 
 shouldBe("StripSpaces(Object.prototype.toString.toString())","\"functiontoString(){[nativecode]}\"");
 shouldBe("StripSpaces(Object.prototype.toLocaleString.toString())","\"functiontoLocaleString(){[nativecode]}\"");

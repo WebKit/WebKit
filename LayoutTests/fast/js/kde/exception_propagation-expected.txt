@@ -1,2 +1,9 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 FAIL successfullyParsed should be true. Threw exception ReferenceError: Can't find variable: successfullyParsed
+
+TEST COMPLETE
 

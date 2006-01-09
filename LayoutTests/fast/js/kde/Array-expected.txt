@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Array().length is 0
 PASS (new Array()).length is 0
 PASS (new Array(3)).length is 3
@@ -65,4 +70,6 @@ PASS propnames[0] is '0'
 PASS propnames[1] is '1'
 FAIL propnames[2] should be 2. Was 1
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

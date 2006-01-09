@@ -1,44 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-function print(message) {
-    var paragraph = document.createElement("p");
-    paragraph.appendChild(document.createTextNode(message));
-    document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-    }
-
-    print("-1: " + -1);
-    print("0: " + 0);
-    print("-0: " + -0);
-    
-    for (var valueBits = 8; valueBits <= 128; valueBits++) {
-        print("-----");
-        print("bits used to store value: " + valueBits);
-        var max = Math.pow(2, valueBits - 1) - 1;
-        var min = -Math.pow(2, valueBits - 1);
-        print("min: " + min);
-        print("min - 1: " + (min - 1));
-        print("max: " + max);
-        print("max + 1: " + (max + 1));
-    }
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>This test verifies that the bit twiddling done in JavaScriptCore's integer machinery works correctly on the current platform.</p>
-<p>Below, you will see a listing of the extremes related to representing integers using a certain number of bits. If the test succeeds, you should see:</p>
-<ul>
-<li> 0, -0, and -1</li>
-<li> max: 2 ^ ([number of bits] - 1) - 1</li>
-<li> min: -(max + 1)</li>
-<li> a corresponding max + 1 and min - 1</li>
-</ul>
-<hr>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/integer-extremes.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

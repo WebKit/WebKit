@@ -1,31 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-function print(message) {
-    var paragraph = document.createElement("p");
-    paragraph.appendChild(document.createTextNode(message));
-    document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-    }
-
-    var d = new Date(1970, 0, 1);
-    var status = "FAILED: ";
-    d.setMonth(128);
-    if (d.valueOf() == new Date(1980, 8, 1).valueOf()) {
-        status = "PASSED: ";
-    }
-    print(status + "date is " + d.toDateString());
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>This test checks for a regression against <i>http://bugzilla.opendarwin.org/show_bug.cgi?id=4781 Date.setMonth fails with big values due to overflow</i>.</p>
-<p>If the test passes, you will see a "PASSED" message below.</p>
-<hr>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/date-big-setmonth.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

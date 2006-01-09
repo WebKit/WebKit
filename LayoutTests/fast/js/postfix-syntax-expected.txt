@@ -1,14 +1,22 @@
-This test checks whether various forms of postincrement expression are allowed. It should print the numbers 0-9 on separate lines, and nothing else (besides this paragraph).
+This test checks whether various forms of postincrement expression are allowed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
+PASS x++ is 0
+PASS window.x++ is 1
+PASS window["x"]++ is 2
+PASS (x)++ is 3
+PASS (window.x)++ is 4
+PASS (window["x"])++ is 5
+PASS (y, x++) is 6
+PASS ((x))++ is 7
+PASS ((window.x))++ is 8
+PASS ((window["x"]))++ is 9
+PASS (y, x)++ threw exception SyntaxError: Parse error.
+PASS (true ? x : y)++ threw exception SyntaxError: Parse error.
+PASS x++++ threw exception SyntaxError: Parse error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

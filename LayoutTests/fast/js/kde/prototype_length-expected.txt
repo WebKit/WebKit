@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Object.prototype.length is undefined
 PASS Function.prototype.length is 0
 PASS Array.prototype.length is 0
@@ -17,4 +22,6 @@ PASS foundArrayPrototypeLength is false
 PASS foundFunctionPrototypeLength is false
 PASS foundStringPrototypeLength is false
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

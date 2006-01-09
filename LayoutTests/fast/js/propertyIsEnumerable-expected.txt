@@ -1,0 +1,12 @@
+This tests that propertyIsEnumerable works according to the ECMA spec.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a.propertyIsEnumerable('length') is false
+PASS a.propertyIsEnumerable ('foo') is true
+PASS a.propertyIsEnumerable ('non-existant') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

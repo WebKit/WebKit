@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS _array.toString() is "[object Array]"
 PASS _string.toString() is "[object String]"
 PASS _boolean.toString() is "[object Boolean]"
@@ -8,4 +13,6 @@ PASS _regexp.toString() is "[object RegExp]"
 PASS _error.toString() is "[object Error]"
 PASS _function.toString() is "[object Function]"
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -1,31 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-function print(message) {
-    var paragraph = document.createElement("p");
-    paragraph.appendChild(document.createTextNode(message));
-    document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-    }
-
-    var d = new Date(2005, 6, 15);
-    var status = "FAILED: ";
-    d.setMonth(-3);
-    if (d.valueOf() == new Date(2004, 9, 15).valueOf()) {
-        status = "PASSED: ";
-    }
-    print(status + "date is " + d.toDateString());
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>This test checks for a regression against <i>http://bugzilla.opendarwin.org/show_bug.cgi?id=5280 Date.setMonth fails with negative values</i>.</p>
-<p>If the test passes, you will see a "PASSED" message below.</p>
-<hr>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/date-negative-setmonth.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

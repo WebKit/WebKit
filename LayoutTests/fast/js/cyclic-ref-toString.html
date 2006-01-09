@@ -1,46 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<title>test cyclic references and Array.toString</title>
-<script language="javascript">
-function init(){
-  if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-  }
-  var ary1=[1,2];
-  ary1.push(ary1);
-  document.getElementById("r0c1").firstChild.nodeValue = ary1;
-  ary1=[1,2];
-  var ary2=[3,4];
-  ary1.push(ary2);
-  ary2.push(ary1);
-  document.getElementById("r1c1").firstChild.nodeValue = ary1;
-  ary1.push(5);
-  document.getElementById("r2c1").firstChild.nodeValue = ary1;
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="init()">
-    This will test Array.toString with circular references.  If an element contains a reference to 
-    itself or one of its children (at any depth) contains a reference to it, it will be skipped.
-    This can result in either a trailing ',' (if the self reference is at the end of the array) or ',,' 
-    if the self reference is contained at some mid point in the array.
-    <table cellpadding="2" cellspacing="2" border="1">
-		<tbody>
-			<tr>
-				<td>Array Contents</td><td>Expected Output</td><td>Actual Output</td>
-			</tr>
-			<tr>
-				<td>[1, 2, self]</td><td id="r0c0">1,2,</td><td id="r0c1">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>[1, 2, [3, 4, parent]]</td><td id="r1c0">1,2,3,4,</td><td id="r1c1">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>[1, 2, [3, 4, parent], 5]</td><td id="r2c0">1,2,3,4,,5</td><td id="r2c1">&nbsp;</td>
-			</tr>
-		</tbody>
-	</table>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/cyclic-ref-toString.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

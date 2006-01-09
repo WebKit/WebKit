@@ -1,2 +1,9 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS window.successfullyParsed is undefined.
+
+TEST COMPLETE
 

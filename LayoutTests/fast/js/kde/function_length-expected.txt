@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Array.prototype.toString.length is 0
 PASS Array.prototype.toLocaleString.length is 0
 PASS Array.prototype.concat.length is 1
@@ -122,4 +127,6 @@ PASS Number.prototype.toString.length is 1
 PASS Number.prototype.valueOf.length is 0
 PASS Number.prototype.toFixed.length is 1
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

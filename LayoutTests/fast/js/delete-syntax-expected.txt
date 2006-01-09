@@ -1,24 +1,29 @@
-This test checks whether various forms of delete expression are allowed. It should print the numbers 1-10 on separate lines, and nothing else (besides this paragraph).
+This test checks whether various forms of delete expression are allowed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
-true
+PASS delete x is true
+PASS delete window.x is true
+PASS delete window["x"] is true
+PASS delete (x) is true
+PASS delete (window.x) is true
+PASS delete (window["x"]) is true
+PASS (y, delete x) is true
+PASS delete ((x)) is true
+PASS delete ((window.x)) is true
+PASS delete ((window["x"])) is true
+PASS delete (y, x) is true
+PASS delete (true ? x : y) is true
+PASS delete nonexistent is true
+PASS delete window.nonexistent is true
+PASS delete window["nonexistent"] is true
+PASS delete (nonexistent) is true
+PASS delete (window.nonexistent) is true
+PASS delete (window["nonexistent"]) is true
+PASS delete "x" is true
+PASS delete (2 + 3) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

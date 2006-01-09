@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS Number() is 0
 PASS Number(1) is 1
 PASS Number(1.1) is 1.1
@@ -260,4 +265,6 @@ PASS Number(0).toPrecision(19) is "0.000000000000000000"
 PASS Number(0).toPrecision(20) is "0.0000000000000000000"
 PASS Number(0).toPrecision(21) is "0.00000000000000000000"
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -4,66 +4,66 @@ Properties of RegExp at startup:
 
 input: {} (read-write)
 
-rightContext: {} (read-only)
-
-$1: {} (read-only)
-
-$2: {} (read-only)
+$5: {} (read-only)
 
 $3: {} (read-only)
 
-leftContext: {} (read-only)
-
-lastMatch: {} (read-only)
-
-$6: {} (read-only)
-
-$9: {} (read-only)
+$1: {} (read-only)
 
 multiline: {false} (read-write)
 
 lastParen: {} (read-only)
 
+rightContext: {} (read-only)
+
+lastMatch: {} (read-only)
+
 $4: {} (read-only)
 
-$5: {} (read-only)
+leftContext: {} (read-only)
+
+$2: {} (read-only)
+
+$6: {} (read-only)
 
 $7: {} (read-only)
 
 $8: {} (read-only)
+
+$9: {} (read-only)
 
 
 Properties of RegExp after /(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/.exec(<1234567890>):
 
 input: {<1234567890>}
 
-rightContext: {>}
-
-$1: {1}
-
-$2: {2}
+$5: {5}
 
 $3: {3}
 
-leftContext: {<}
-
-lastMatch: {1234567890}
-
-$6: {6}
-
-$9: {9}
+$1: {1}
 
 multiline: {false}
 
 lastParen: {0}
 
+rightContext: {>}
+
+lastMatch: {1234567890}
+
 $4: {4}
 
-$5: {5}
+leftContext: {<}
+
+$2: {2}
+
+$6: {6}
 
 $7: {7}
 
 $8: {8}
+
+$9: {9}
 
 
 RegExp.$0 does not exist
@@ -81,33 +81,33 @@ Properties of RegExp after /(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/.exec(XXX):
 
 input: {0}
 
-rightContext: {}
-
-$1: {}
-
-$2: {}
+$5: {}
 
 $3: {}
 
-leftContext: {0}
-
-lastMatch: {}
-
-$6: {}
-
-$9: {}
+$1: {}
 
 multiline: {true}
 
 lastParen: {}
 
+rightContext: {}
+
+lastMatch: {}
+
 $4: {}
 
-$5: {}
+leftContext: {0}
+
+$2: {}
+
+$6: {}
 
 $7: {}
 
 $8: {}
+
+$9: {}
 
 
 ---------- [Cleared RegExp values] ----------
@@ -116,33 +116,33 @@ Properties of RegExp after <1234567890>.search(/(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/)
 
 input: {<1234567890>}
 
-rightContext: {>}
-
-$1: {1}
-
-$2: {2}
+$5: {5}
 
 $3: {3}
 
-leftContext: {<}
-
-lastMatch: {1234567890}
-
-$6: {6}
-
-$9: {9}
+$1: {1}
 
 multiline: {true}
 
 lastParen: {0}
 
+rightContext: {>}
+
+lastMatch: {1234567890}
+
 $4: {4}
 
-$5: {5}
+leftContext: {<}
+
+$2: {2}
+
+$6: {6}
 
 $7: {7}
 
 $8: {8}
+
+$9: {9}
 
 
 ---------- [Cleared RegExp values] ----------
@@ -151,30 +151,30 @@ Properties of RegExp after <1234567890>.replace(/(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/
 
 input: {<1234567890>}
 
-rightContext: {>}
-
-$1: {1}
-
-$2: {2}
+$5: {5}
 
 $3: {3}
 
-leftContext: {<}
-
-lastMatch: {1234567890}
-
-$6: {6}
-
-$9: {9}
+$1: {1}
 
 multiline: {true}
 
 lastParen: {0}
 
+rightContext: {>}
+
+lastMatch: {1234567890}
+
 $4: {4}
 
-$5: {5}
+leftContext: {<}
+
+$2: {2}
+
+$6: {6}
 
 $7: {7}
 
 $8: {8}
+
+$9: {9}

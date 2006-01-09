@@ -1,51 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<title>JavaScript Date tests -- setDate for values >= 128</title>
-<script type='text/javascript' charset='utf-8'>
-function print(message) {
-	var paragraph = document.createElement("p");
-	paragraph.appendChild(document.createTextNode(message));
-	document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-	if (window.layoutTestController) {
-		layoutTestController.dumpAsText();
-	}
-
-    var validVars = false;
-	var curValue;
-	var success = true;
-	var millisecondsPerDay = 1000 * 60 * 60 * 24;
-	
-    for (var i = 120; i < 130; i++) {
-        var d = new Date(0);
-        d.setDate(i);
-        
-        if (validVars &&
-        	d.valueOf() - curValue != millisecondsPerDay) {
-        	success = false;
-        	break;
-        }
-
-		curValue = d.valueOf();        
-        validVars = true;
-    }
-    
-    if (success)
-    	print("Success!");
-    else
-    	print("Failure!");
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>
-This test checks for regression against: <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3381">
-3381 Date.prototype.setDate() incorrect for values >=128.</a>
-</p>
-<p>If the test passes, "Success" will be printed below.</p>
-<hr>
-<div id='console'/ style="font-family: courier; font-size: 12">
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/date-big-setdate.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

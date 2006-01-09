@@ -1,1 +1,10 @@
-hellothere You should see "hellothere", with no space between the two words (3649789).
+This test checks for correct handling ofr backslash-newline in JS strings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mystring is "hellothere"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

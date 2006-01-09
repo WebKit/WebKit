@@ -1,3 +1,304 @@
+2006-01-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - Update JavaScript tests so they use KDE style
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6441
+
+        * fast/js/Plug-ins-expected.checksum: Removed.
+        * fast/js/Plug-ins-expected.png: Removed.
+        * fast/js/Plug-ins-expected.txt: Removed.
+        * fast/js/Plug-ins.html: Removed.
+        * fast/js/activation-proto-expected.txt:
+        * fast/js/activation-proto.html:
+        * fast/js/array-every-expected.txt:
+        * fast/js/array-every.html:
+        * fast/js/array-float-delete-expected.txt:
+        * fast/js/array-float-delete.html:
+        * fast/js/array-special-accessors-should-ignore-items-expected.txt: Removed.
+        * fast/js/array-special-accessors-should-ignore-items.html: Removed.
+        * fast/js/assign-expected.txt:
+        * fast/js/assign.html:
+        * fast/js/char-at-expected.txt:
+        * fast/js/char-at.html:
+        * fast/js/code-serialize-paren-expected.txt:
+        * fast/js/code-serialize-paren.html:
+        * fast/js/const-expected.txt:
+        * fast/js/const.html:
+        * fast/js/cyclic-ref-toString-expected.txt:
+        * fast/js/cyclic-ref-toString.html:
+        * fast/js/date-DST-pre-1970-expected.txt:
+        * fast/js/date-DST-pre-1970.html:
+        * fast/js/date-big-constructor-expected.txt:
+        * fast/js/date-big-constructor.html:
+        * fast/js/date-big-setdate-expected.txt:
+        * fast/js/date-big-setdate.html:
+        * fast/js/date-big-setmonth-expected.txt:
+        * fast/js/date-big-setmonth.html:
+        * fast/js/date-negative-setmonth-expected.txt:
+        * fast/js/date-negative-setmonth.html:
+        * fast/js/date-parse-comments-test-expected.txt:
+        * fast/js/date-parse-comments-test.html:
+        * fast/js/date-parse-test-expected.txt:
+        * fast/js/date-parse-test.html:
+        * fast/js/date-preserve-milliseconds-expected.txt:
+        * fast/js/date-preserve-milliseconds.html:
+        * fast/js/declaration-in-block-expected.txt:
+        * fast/js/declaration-in-block.html:
+        * fast/js/delete-syntax-expected.txt:
+        * fast/js/delete-syntax.html:
+        * fast/js/eval-var-decl-expected.txt:
+        * fast/js/eval-var-decl.html:
+        * fast/js/exception-linenums-expected.txt:
+        * fast/js/exception-linenums.html:
+        * fast/js/for-in-to-text-expected.txt:
+        * fast/js/for-in-to-text.html:
+        * fast/js/global-opener-function-expected.txt: Removed.
+        * fast/js/global-opener-function.html: Removed.
+        * fast/js/has-own-property-expected.txt:
+        * fast/js/has-own-property.html:
+        * fast/js/integer-extremes-expected.txt:
+        * fast/js/integer-extremes.html:
+        * fast/js/isPrototypeOf-expected.txt: Added.
+        * fast/js/isPrototypeOf.html: Added.
+        * fast/js/kde/Array-expected.txt:
+        * fast/js/kde/Array.html:
+        * fast/js/kde/Boolean-expected.txt:
+        * fast/js/kde/Boolean.html:
+        * fast/js/kde/Date-expected.txt:
+        * fast/js/kde/Date.html:
+        * fast/js/kde/Error-expected.txt:
+        * fast/js/kde/Error.html:
+        * fast/js/kde/GlobalObject-expected.txt:
+        * fast/js/kde/GlobalObject.html:
+        * fast/js/kde/Number-expected.txt:
+        * fast/js/kde/Number.html:
+        * fast/js/kde/Object-expected.txt:
+        * fast/js/kde/Object.html:
+        * fast/js/kde/Prototype-expected.txt:
+        * fast/js/kde/Prototype.html:
+        * fast/js/kde/RegExp-expected.txt:
+        * fast/js/kde/RegExp.html:
+        * fast/js/kde/StringObject-expected.txt:
+        * fast/js/kde/StringObject.html:
+        * fast/js/kde/assignments-expected.txt:
+        * fast/js/kde/assignments.html:
+        * fast/js/kde/cast-expected.txt:
+        * fast/js/kde/cast.html:
+        * fast/js/kde/comment-1-expected.txt:
+        * fast/js/kde/comment-1.html:
+        * fast/js/kde/comment-2-expected.txt:
+        * fast/js/kde/comment-2.html:
+        * fast/js/kde/completion-expected.txt:
+        * fast/js/kde/completion.html:
+        * fast/js/kde/conditional-expected.txt:
+        * fast/js/kde/conditional.html:
+        * fast/js/kde/const-expected.txt:
+        * fast/js/kde/const.html:
+        * fast/js/kde/constructor_length-expected.txt:
+        * fast/js/kde/constructor_length.html:
+        * fast/js/kde/crash-1-expected.txt:
+        * fast/js/kde/crash-1.html:
+        * fast/js/kde/crash-2-expected.txt:
+        * fast/js/kde/crash-2.html:
+        * fast/js/kde/delete-expected.txt:
+        * fast/js/kde/delete.html:
+        * fast/js/kde/empty-expected.txt:
+        * fast/js/kde/empty.html:
+        * fast/js/kde/encode_decode_uri-expected.txt:
+        * fast/js/kde/encode_decode_uri.html:
+        * fast/js/kde/eval-expected.txt:
+        * fast/js/kde/eval.html:
+        * fast/js/kde/evil-n-expected.txt:
+        * fast/js/kde/evil-n.html:
+        * fast/js/kde/exception_propagation-expected.txt:
+        * fast/js/kde/exception_propagation.html:
+        * fast/js/kde/exceptions-expected.txt:
+        * fast/js/kde/exceptions.html:
+        * fast/js/kde/function-expected.txt:
+        * fast/js/kde/function.html:
+        * fast/js/kde/function_arguments-expected.txt:
+        * fast/js/kde/function_arguments.html:
+        * fast/js/kde/function_constructor-expected.txt:
+        * fast/js/kde/function_constructor.html:
+        * fast/js/kde/function_length-expected.txt:
+        * fast/js/kde/function_length.html:
+        * fast/js/kde/garbage-n-expected.txt:
+        * fast/js/kde/garbage-n.html:
+        * fast/js/kde/inbuilt_function_proto-expected.txt:
+        * fast/js/kde/inbuilt_function_proto.html:
+        * fast/js/kde/inbuilt_function_tostring-expected.txt:
+        * fast/js/kde/inbuilt_function_tostring.html:
+        * fast/js/kde/iteration-expected.txt:
+        * fast/js/kde/iteration.html:
+        * fast/js/kde/j-comment-3-expected.txt:
+        * fast/js/kde/j-comment-3.html:
+        * fast/js/kde/j-comment-4-expected.txt:
+        * fast/js/kde/j-comment-4.html:
+        * fast/js/kde/literals-expected.txt:
+        * fast/js/kde/literals.html:
+        * fast/js/kde/math-expected.txt:
+        * fast/js/kde/math.html:
+        * fast/js/kde/md5-1-expected.txt:
+        * fast/js/kde/md5-1.html:
+        * fast/js/kde/md5-2-expected.txt:
+        * fast/js/kde/md5-2.html:
+        * fast/js/kde/object_prototype-expected.txt:
+        * fast/js/kde/object_prototype.html:
+        * fast/js/kde/object_prototype_tostring-expected.txt:
+        * fast/js/kde/object_prototype_tostring.html:
+        * fast/js/kde/operators-expected.txt:
+        * fast/js/kde/operators.html:
+        * fast/js/kde/parse-expected.txt:
+        * fast/js/kde/parse.html:
+        * fast/js/kde/prototype_length-expected.txt:
+        * fast/js/kde/prototype_length.html:
+        * fast/js/kde/prototype_proto-expected.txt:
+        * fast/js/kde/prototype_proto.html:
+        * fast/js/kde/resources/TEMPLATE-n.html: Added.
+        * fast/js/kde/resources/TEMPLATE.html: Added.
+        * fast/js/kde/resources/base.js: Removed.
+        * fast/js/kde/resources/inbuilt_function_tostring.js:
+        * fast/js/kde/resources/shell.js: Removed.
+        * fast/js/kde/scope-expected.txt:
+        * fast/js/kde/scope.html:
+        * fast/js/kde/statements-expected.txt:
+        * fast/js/kde/statements.html:
+        * fast/js/kde/string-1-n-expected.txt:
+        * fast/js/kde/string-1-n.html:
+        * fast/js/kde/string-2-n-expected.txt:
+        * fast/js/kde/string-2-n.html:
+        * fast/js/kde/var_decl_init-expected.txt:
+        * fast/js/kde/var_decl_init.html:
+        * fast/js/location-assign-expected.txt: Removed.
+        * fast/js/location-assign.html: Removed.
+        * fast/js/named-function-expression-expected.txt:
+        * fast/js/named-function-expression.html:
+        * fast/js/objc-big-method-name-expected.txt: Removed.
+        * fast/js/objc-big-method-name.html: Removed.
+        * fast/js/object-by-name-or-id-expected.txt: Removed.
+        * fast/js/object-by-name-or-id.html: Removed.
+        * fast/js/object-prototype-constructor-expected.txt:
+        * fast/js/object-prototype-constructor.html:
+        * fast/js/object-prototype-toLocaleString-expected.txt:
+        * fast/js/object-prototype-toLocaleString.html:
+        * fast/js/postfix-syntax-expected.txt:
+        * fast/js/postfix-syntax.html:
+        * fast/js/prefix-syntax-expected.txt:
+        * fast/js/prefix-syntax.html:
+        * fast/js/property-getters-and-setters-expected.txt:
+        * fast/js/property-getters-and-setters.html:
+        * fast/js/propertyIsEnumerable-expected.txt: Added.
+        * fast/js/propertyIsEnumerable.html: Added.
+        * fast/js/regexp-caching-expected.txt:
+        * fast/js/regexp-extended-characters-crash-expected.txt:
+        * fast/js/regexp-extended-characters-crash.html:
+        * fast/js/regexp-extended-characters-match-expected.txt:
+        * fast/js/regexp-extended-characters-match.html:
+        * fast/js/regexp-lastindex-expected.txt:
+        * fast/js/regexp-lastindex.html:
+        * fast/js/replace-child-siblings-expected.txt: Removed.
+        * fast/js/replace-child-siblings.html: Removed.
+        * fast/js/resources/TEMPLATE.html: Added.
+        * fast/js/resources/activation-proto.js: Added.
+        * fast/js/resources/array-every.js: Added.
+        * fast/js/resources/array-float-delete.js: Added.
+        * fast/js/resources/assign.js: Added.
+        * fast/js/resources/char-at.js: Added.
+        * fast/js/resources/child.html: Removed.
+        * fast/js/resources/code-serialize-paren.js: Added.
+        * fast/js/resources/const.js: Added.
+        * fast/js/resources/cyclic-ref-toString.js: Added.
+        * fast/js/resources/date-DST-pre-1970.js: Added.
+        * fast/js/resources/date-big-constructor.js: Added.
+        * fast/js/resources/date-big-setdate.js: Added.
+        * fast/js/resources/date-big-setmonth.js: Added.
+        * fast/js/resources/date-negative-setmonth.js: Added.
+        * fast/js/resources/date-parse-comments-test.js: Added.
+        * fast/js/resources/date-parse-test.js: Added.
+        * fast/js/resources/date-preserve-milliseconds.js: Added.
+        * fast/js/resources/declaration-in-block.js: Added.
+        * fast/js/resources/delete-syntax.js: Added.
+        * fast/js/resources/eval-var-decl.js: Added.
+        * fast/js/resources/exception-linenums.js: Added.
+        * fast/js/resources/for-in-to-text.js: Added.
+        * fast/js/resources/has-own-property.js: Added.
+        * fast/js/resources/integer-extremes.js: Added.
+        * fast/js/resources/isPrototypeOf.js: Added.
+        * fast/js/resources/js-test-post-n.js: Added.
+        * fast/js/resources/js-test-post.js: Added.
+        * fast/js/resources/js-test-pre.js: Added.
+        * fast/js/resources/js-test-style.css: Added.
+        * fast/js/resources/named-function-expression.js: Added.
+        * fast/js/resources/new-location.html: Removed.
+        * fast/js/resources/object-prototype-constructor.js: Added.
+        * fast/js/resources/object-prototype-toLocaleString.js: Added.
+        * fast/js/resources/postfix-syntax.js: Added.
+        * fast/js/resources/prefix-syntax.js: Added.
+        * fast/js/resources/property-getters-and-setters.js: Added.
+        * fast/js/resources/propertyIsEnumerable.js: Added.
+        * fast/js/resources/regexp-extended-characters-crash.js: Added.
+        * fast/js/resources/regexp-extended-characters-match.js: Added.
+        * fast/js/resources/regexp-lastindex.js: Added.
+        * fast/js/resources/slash-lineterminator-parse.js: Added.
+        * fast/js/resources/string-from-char-code.js: Added.
+        * fast/js/resources/string-index-overflow.js: Added.
+        * fast/js/resources/string-replace-2.js: Added.
+        * fast/js/resources/string-slice-abnormal-values.js: Added.
+        * fast/js/resources/string-split-ignore-case.js: Added.
+        * fast/js/resources/string_replace.js: Added.
+        * fast/js/resources/toString-overrides.js: Added.
+        * fast/js/resources/toString-stack-overflow.js: Added.
+        * fast/js/resources/typeof-syntax.js: Added.
+        * fast/js/slash-lineterminator-parse-expected.txt:
+        * fast/js/slash-lineterminator-parse.html:
+        * fast/js/string-from-char-code-expected.txt:
+        * fast/js/string-from-char-code.html:
+        * fast/js/string-index-overflow-expected.txt:
+        * fast/js/string-index-overflow.html:
+        * fast/js/string-replace-2-expected.txt:
+        * fast/js/string-replace-2.html:
+        * fast/js/string-slice-abnormal-values-expected.txt:
+        * fast/js/string-slice-abnormal-values.html:
+        * fast/js/string-split-ignore-case-expected.txt:
+        * fast/js/string-split-ignore-case.html:
+        * fast/js/string_replace-expected.txt:
+        * fast/js/string_replace.html:
+        * fast/js/toString-overrides-expected.txt:
+        * fast/js/toString-overrides.html:
+        * fast/js/toString-stack-overflow-expected.txt:
+        * fast/js/toString-stack-overflow.html:
+        * fast/js/typeof-syntax-expected.txt:
+        * fast/js/typeof-syntax.html:
+        
+        - move DOM tests from fast/js to fast/dom
+
+        * fast/dom/HTMLDocument/object-by-name-or-id-expected.txt: Added.
+        * fast/dom/HTMLDocument/object-by-name-or-id.html: Added.
+        * fast/dom/Window/Plug-ins-expected.checksum: Added.
+        * fast/dom/Window/Plug-ins-expected.png: Added.
+        * fast/dom/Window/Plug-ins-expected.txt: Added.
+        * fast/dom/Window/Plug-ins.html: Added.
+        * fast/dom/Window/global-opener-function-expected.txt: Added.
+        * fast/dom/Window/global-opener-function.html: Added.
+        * fast/dom/array-special-accessors-should-ignore-items-expected.txt: Added.
+        * fast/dom/array-special-accessors-should-ignore-items.html: Added.
+        * fast/dom/location-assign-expected.txt: Added.
+        * fast/dom/location-assign.html: Added.
+        * fast/dom/objc-big-method-name-expected.txt: Added.
+        * fast/dom/objc-big-method-name.html: Added.
+        * fast/dom/replace-child-siblings-expected.txt: Added.
+        * fast/dom/replace-child-siblings.html: Added.
+        * fast/dom/resources/child.html: Added.
+        * fast/dom/resources/new-location.html: Added.
+        * fast/dom/resources/xmlhttprequest-get-data.xml: Added.
+        * fast/dom/test-prototypes-expected.txt: Added.
+        * fast/dom/test-prototypes.html: Added.
+        * fast/dom/window-object-cross-frame-calls-expected.txt: Added.
+        * fast/dom/window-object-cross-frame-calls.html: Added.
+        * fast/dom/xmlhttprequest-get-expected.txt: Added.
+        * fast/dom/xmlhttprequest-get.xhtml: Added.
+
 2006-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Rubber stamped by Eric.

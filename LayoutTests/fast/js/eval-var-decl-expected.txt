@@ -1,7 +1,13 @@
-This test case checks whether variables cause properties to be defined even before reaching the declaration statement in various cases. It should print true true true false on separate lines.
+This test case checks whether variables cause properties to be defined even before reaching the declaration statement in various cases.
 
-true
-true
-true
-false
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasOwnProperty("foo") is true
+PASS hasOwnProperty("bar") is true
+PASS firstEvalResult is true
+PASS secondEvalResult is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

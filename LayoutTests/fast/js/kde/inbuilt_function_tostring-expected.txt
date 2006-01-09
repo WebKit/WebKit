@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 FAIL StripSpaces(eval.toString()) should be functioneval(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(parseInt.toString()) should be functionparseInt(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(parseFloat.toString()) should be functionparseFloat(){[nativecode]}. Was (InternalFunction)
@@ -5,7 +10,6 @@ FAIL StripSpaces(isNaN.toString()) should be functionisNaN(){[nativecode]}. Was 
 FAIL StripSpaces(isFinite.toString()) should be functionisFinite(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(escape.toString()) should be functionescape(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(unescape.toString()) should be functionunescape(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(kjsprint.toString()) should be functionkjsprint(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(Object.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(Object.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(Object.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
@@ -132,4 +136,6 @@ FAIL StripSpaces(RegExp.prototype.test.toString()) should be functiontest(){[nat
 FAIL StripSpaces(RegExp.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
 FAIL StripSpaces(Error.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

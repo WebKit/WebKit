@@ -1,19 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
 <body>
-<p>This test checks for handling of abnormal values passed to String.slice</p>
-<p>If it passes, you will see two results of "abc"</p>
-<hr>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-function test(s) {
-    var result = eval(s);
-    document.write("<p>" + s + ": " + result);
-}
-
-test('"abc".slice(0)');
-test('"abc".slice(0, Infinity)');
-</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/string-slice-abnormal-values.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>

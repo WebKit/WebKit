@@ -1,44 +1,15 @@
 String.replace(…) test
 
-Support for String.replace('…','…')
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-var foo = 'It\'s the end of the world as we know it, and I feel fine.';
-var result = foo.replace('end','BEGINNING');
-Expected result: "It's the BEGINNING of the world as we know it, and I feel fine."
-Your result: "It's the BEGINNING of the world as we know it, and I feel fine."
 
-Support for String.replace(/…/,'…')
+PASS testString is "It's the end of the world as we know it, and I feel fine."
+PASS testString.replace('end','BEGINNING') is "It's the BEGINNING of the world as we know it, and I feel fine."
+PASS testString.replace(/[aeiou]/gi,'-') is "-t's th- -nd -f th- w-rld -s w- kn-w -t, -nd - f--l f-n-."
+PASS testString.replace(/[aeiou]/gi, function Capitalize(s){ return s.toUpperCase(); }) is "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
+PASS testString.replace(/([aeiou])([a-z])/g, function Capitalize(){ return RegExp.$1.toUpperCase()+RegExp.$2; }) is "It's the End Of the wOrld As we knOw It, And I fEel fIne."
+PASS testString.replace(/([aeiou])([a-z])/g, function Capitalize(orig,re1,re2) { return re1.toUpperCase()+re2; }) is "It's the End Of the wOrld As we knOw It, And I fEel fIne."
+PASS successfullyParsed is true
 
-var vowels = /[aeiou]/gi;
-result = foo.replace(vowels,'-');
-Expected result: "-t's th- -nd -f th- w-rld -s w- kn-w -t, -nd - f--l f-n-."
-Your result: "-t's th- -nd -f th- w-rld -s w- kn-w -t, -nd - f--l f-n-."
-
-Support for String.replace(/…/,myFunction)
-
-function Capitalize(s){
-	return s.toUpperCase();
-}
-result = foo.replace(vowels,Capitalize);
-Expected result: "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
-Your result: "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
-
-Support for String.replace(/…/,myFunction), using RegExp
-
-function Capitalize(){
-	return RegExp.$1.toUpperCase()+RegExp.$2;
-}
-result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
-Expected result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
-Your result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
-
-Support for String.replace(/…/,myFunction), using parameters
-
-function Capitalize(orig,re1,re2){
-	return re1.toUpperCase()+re2;
-}
-result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
-Expected result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
-Your result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
-
+TEST COMPLETE
 

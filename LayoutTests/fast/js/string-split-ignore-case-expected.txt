@@ -1,7 +1,10 @@
-This test checks for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=6119 split() function ignores case insensitive modifier.
+This test checks for a regression against split() function ignores case insensitive modifier.
 
-If the test passes, you will see a "success" message below.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-success
 
-"1s2S3".split(/s/i) yielded 1,2,3
+PASS "1s2S3".split(/s/i).toString() is "1,2,3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,8 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS h.charCodeAt(1) is 239
 PASS u.charCodeAt(1) is 4660
 PASS escape(h) is 'a%EFc'
@@ -58,4 +63,6 @@ PASS delete NaN is false
 PASS delete Infinity is false
 PASS delete undefined is false
 PASS successfullyParsed is true
+
+TEST COMPLETE
 

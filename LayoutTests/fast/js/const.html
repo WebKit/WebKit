@@ -1,30 +1,13 @@
-<div>
-This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT twice.
-</div>
-<br>
-<div>
-<script>
-if (window.layoutTestController) {
-   layoutTestController.dumpAsText();
-}
-
-try {
-    const x = "RIGHT";
-    x = "WRONG";
-    document.write(x);
-} catch (exc) {
-   document.write("EXCEPTION");
-}
-</script>
-</div>
-<div>
-<script>
-try {
-    const x = "RIGHT", y = "RIGHT";
-    y = "WRONG";
-    document.write(y);
-} catch (exc) {
-   document.write("EXCEPTION");
-}
-</script>
-</div>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/const.js"></script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

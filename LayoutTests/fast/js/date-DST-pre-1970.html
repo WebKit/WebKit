@@ -1,36 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-function print(message) {
-    var paragraph = document.createElement("p");
-    paragraph.appendChild(document.createTextNode(message));
-    document.getElementById("console").appendChild(paragraph);
-}
-
-function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-    }
-
-    var dates = [
-        new Date(1970, 0, 1),   // fails in NZ
-        new Date(1969, 8, 1),   // fails in CET, Asia/Jerusalem
-        new Date(1969, 9, 28),  // fails in US/Eastern, Mountain, Pacific, Central
-    ];
-    while (d = dates.shift()) {
-        if (d.getHours() != 0) {
-            print("FAILED: " + d);
-            break;
-        }
-    }
-    if (!d)
-        print("SUCCESS!  (This tests time zones: US/Pacific, US/Central, US/Mountain, US/Eastern, CET, Asia/Jerusalem and NZ.)");
-}
-</script>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
 </head>
-<body onload="test();">
-<p>This tests the DST status in dates earlier than 1970-01-01 00:00 UTC. Regardless of your time zone, it should not fail.</p>
-<hr>
-<div id='console'/>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/date-DST-pre-1970.js"></script>
+<script src="resources/js-test-post.js"></script>
 </body>
 </html>
