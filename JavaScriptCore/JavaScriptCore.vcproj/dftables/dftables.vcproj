@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
-			IntermediateDirectory="$(WebKitDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
-			IntermediateDirectory="$(WebKitDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
