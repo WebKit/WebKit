@@ -18,7 +18,7 @@
 
 */
 
-// $Id$
+// $Id: md5-1.js 11771 2005-12-26 23:07:31Z mjs $
 
 function array(n) {
     for(i=0;i<n;i++) this[i]=0;

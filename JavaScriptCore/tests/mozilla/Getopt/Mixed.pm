@@ -5,7 +5,7 @@ package Getopt::Mixed;
 #
 # Author: Christopher J. Madsen <ac608@yfn.ysu.edu>
 # Created: 1 Jan 1995
-# Version: $Revision$ ($Date$)
+# Version: $Revision: 7020 $ ($Date: 2004-07-13 17:57:30 -0700 (Tue, 13 Jul 2004) $)
 #    Note that RCS revision 1.23 => $Getopt::Mixed::VERSION = "1.023"
 #
 # This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ BEGIN
     $typeChars   = 'sif';                      # Match type characters
 
     # Convert RCS revision number (must be main branch) to d.ddd format:
-    ' $Revision$ ' =~ / (\d+)\.(\d{1,3}) /
+    ' $Revision: 7020 $ ' =~ / (\d+)\.(\d{1,3}) /
         or die "Invalid version number";
     $VERSION = sprintf("%d.%03d",$1,$2);
 } # end BEGIN

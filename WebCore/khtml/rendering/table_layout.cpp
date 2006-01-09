@@ -20,7 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: table_layout.cpp 11588 2005-12-14 23:32:02Z eseidel $
  */
 #include "config.h"
 #include "table_layout.h"
