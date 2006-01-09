@@ -1,3 +1,8 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Fix broken build (CachedObject.cpp was still including kcharsets.h).
+        Proposed and reviewed by Eric Seidel.
+
 2006-01-09  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

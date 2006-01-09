@@ -33,7 +33,6 @@
 #include <qasyncio.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kcharsets.h>
 #include <kdebug.h>
 #include "decoder.h"
 
