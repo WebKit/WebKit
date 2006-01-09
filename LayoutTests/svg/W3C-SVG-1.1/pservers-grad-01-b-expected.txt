@@ -1,14 +1,14 @@
-KRenderingPaintServer {id="Grad1a" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}
-KRenderingPaintServer {id="Grad1b" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="Grad1a" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="Grad1b" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (20,20) size 440x210
-        KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
+        KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {TEXT} at (0,0) size 211x34
             text run at (0,0) width 211: "Linear gradient."
-        KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
+        KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(100,0)]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {TEXT} at (0,0) size 378x34
             text run at (0,0) width 378: "Referencing gradient below."

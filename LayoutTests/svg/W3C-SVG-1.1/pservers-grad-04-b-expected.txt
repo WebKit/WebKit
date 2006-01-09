@@ -1,14 +1,14 @@
-KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,100)]}
-KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}
+KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#EE82EE), (0.20,#0000FF), (0.40,#00FF00), (0.60,#FFFF00), (0.80,#FFA500), (1.00,#FF0000)]] [start=(0,0)] [end=(100,100)]}
+KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (0.20,#FFFF00), (0.40,#FF0000), (0.60,#0000FF), (0.80,#FFFFFF), (1.00,#008000)]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (20,20) size 440x210
-        KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,100)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
+        KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#EE82EE), (0.20,#0000FF), (0.40,#00FF00), (0.60,#FFFF00), (0.80,#FFA500), (1.00,#FF0000)]] [start=(0,0)] [end=(100,100)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {TEXT} at (0,0) size 349x34
             text run at (0,0) width 349: "Multi-color linear gradient."
-        KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
+        KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (0.20,#FFFF00), (0.40,#FF0000), (0.60,#0000FF), (0.80,#FFFFFF), (1.00,#008000)]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {TEXT} at (0,0) size 349x34
             text run at (0,0) width 349: "Multi-color radial gradient."

@@ -1,9 +1,9 @@
-KRenderingPaintServer {id="linearBoundingBoxPercentage" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}
-KRenderingPaintServer {id="linearBoundingBoxFraction" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}
-KRenderingPaintServer {id="linearUserSpace" [type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}
-KRenderingPaintServer {id="radialBoundingBoxPercentage" [type=RADIAL-GRADIENT] [stops=[]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
-KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [stops=[]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
-KRenderingPaintServer {id="radialUserSpace" [type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}
+KRenderingPaintServer {id="linearBoundingBoxPercentage" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="linearBoundingBoxFraction" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="linearUserSpace" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}
+KRenderingPaintServer {id="radialBoundingBoxPercentage" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
+KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
+KRenderingPaintServer {id="radialUserSpace" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}
 KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (0,0) size 0x0]}
@@ -15,9 +15,9 @@ layer at (0,0) size 480x360
           RenderText {TEXT} at (0,0) size 378x18
             text run at (0,0) width 378: "Bounding box relative coordinates (percentage and fraction)"
         KCanvasContainer {g} at (30,40) size 50x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,40.00)}]
-          KCanvasItem {rect} at (30,40) size 50x20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-          KCanvasItem {rect} at (30,60) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-          KCanvasItem {rect} at (30,80) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+          KCanvasItem {rect} at (30,40) size 50x20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+          KCanvasItem {rect} at (30,60) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+          KCanvasItem {rect} at (30,80) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
           KCanvasItem {line} at (30,59.50) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,20.00L50.00,20.00"]
           KCanvasItem {line} at (30,79.50) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,40.00L50.00,40.00"]
           RenderSVGText {text} at (0,0) size 465x18
@@ -33,9 +33,9 @@ layer at (0,0) size 480x360
           RenderText {TEXT} at (0,0) size 345x18
             text run at (0,0) width 345: "Bounding box relative length (percentage and fraction)"
         KCanvasContainer {g} at (30,140) size 182x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}]
-          KCanvasItem {rect} at (30,140) size 60x60 [fill={[type=RADIAL-GRADIENT] [stops=[]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-          KCanvasItem {rect} at (91,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-          KCanvasItem {rect} at (152,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(122.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+          KCanvasItem {rect} at (30,140) size 60x60 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+          KCanvasItem {rect} at (91,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+          KCanvasItem {rect} at (152,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(122.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 51x18
               text run at (0,0) width 51: "Percent."

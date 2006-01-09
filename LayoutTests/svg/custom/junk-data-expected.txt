@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,18) size 784x130
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock (anonymous) at (0,0) size 784x94
+        RenderBlock {H3} at (0,0) size 784x22
+          RenderText {TEXT} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {DIV} at (0,40) size 784x14
+          RenderText {TEXT} at (0,0) size 420x14
+            text run at (0,0) width 420: "error on line 6 at column 48: StartTag: invalid element name"
+        RenderBlock {H3} at (0,72) size 784x22
+          RenderText {TEXT} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,112) size 784x18
+        RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        KCanvasContainer {svg} at (8,130) size 100x100
+          RenderSVGText {text} at (0,0) size 769x18
+            RenderText {TEXT} at (0,0) size 193x18
+              text run at (0,0) width 193: "You should see an error above"
+          KCanvasItem {rect} at (8,130) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

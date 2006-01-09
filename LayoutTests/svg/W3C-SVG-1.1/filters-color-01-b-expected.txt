@@ -1,4 +1,4 @@
-KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}
+KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}
 KCanvasResource {id="Matrix" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=COLOR-MATRIX] [in="SourceGraphic"] [color matrix type=CMT_MATRIX] [values=[0.33, 0.33, 0.33, 0.00, 0.00, 0.33, 0.33, 0.33, 0.00, 0.00, 0.33, 0.33, 0.33, 0.00, 0.00, 0.33, 0.33, 0.33, 0.00, 0.00]]]]}
 KCanvasResource {id="Saturate40" [type=FILTER]  [bounding box=at (-5,-5) size 110x110] [effect bounding box mode=0] [effects=[[type=COLOR-MATRIX] [in="SourceGraphic"] [color matrix type=CMT_SATURATE] [values=[0.25]]]]}
 KCanvasResource {id="HueRotate90" [type=FILTER]  [bounding box=at (-5,-5) size 110x110] [effect bounding box mode=0] [effects=[[type=COLOR-MATRIX] [in="SourceGraphic"] [color matrix type=HUE-ROTATE] [values=[90.00]]]]}
@@ -10,26 +10,26 @@ layer at (0,0) size 480x360
         KCanvasContainer {svg} at (18.29,0.29) size 463.42x289.42
           KCanvasContainer {g} at (18.29,0.29) size 463.42x289.42
             KCanvasItem {rect} at (18.29,0.29) size 463.42x289.42 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L799.00,1.00L799.00,499.00L1.00,499.00"]
-            KCanvasItem {rect} at (29.60,11.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [data="M20.00,20.00L780.00,20.00L780.00,60.00L20.00,60.00"]
+            KCanvasItem {rect} at (29.60,11.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [data="M20.00,20.00L780.00,20.00L780.00,60.00L20.00,60.00"]
             RenderSVGText {text} at (0,0) size 465x48
               RenderText {TEXT} at (0,0) size 196x48
                 text run at (0,0) width 196: "Unfiltered"
-            KCanvasItem {rect} at (29.60,69.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Matrix] [data="M20.00,120.00L780.00,120.00L780.00,160.00L20.00,160.00"]
+            KCanvasItem {rect} at (29.60,69.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Matrix] [data="M20.00,120.00L780.00,120.00L780.00,160.00L20.00,160.00"]
             RenderSVGText {text} at (0,0) size 465x96
               RenderText {TEXT} at (0,0) size 372x96
                 text run at (0,0) width 289: "type=\"matrix\""
                 text run at (0,48) width 372: "(grayscale matrix)"
-            KCanvasItem {rect} at (29.60,127.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Saturate40] [data="M20.00,220.00L780.00,220.00L780.00,260.00L20.00,260.00"]
+            KCanvasItem {rect} at (29.60,127.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Saturate40] [data="M20.00,220.00L780.00,220.00L780.00,260.00L20.00,260.00"]
             RenderSVGText {text} at (0,0) size 465x96
               RenderText {TEXT} at (0,0) size 325x96
                 text run at (0,0) width 325: "type=\"saturate\""
                 text run at (0,48) width 238: "values=\".4\""
-            KCanvasItem {rect} at (29.60,185.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#HueRotate90] [data="M20.00,320.00L780.00,320.00L780.00,360.00L20.00,360.00"]
+            KCanvasItem {rect} at (29.60,185.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#HueRotate90] [data="M20.00,320.00L780.00,320.00L780.00,360.00L20.00,360.00"]
             RenderSVGText {text} at (0,0) size 465x96
               RenderText {TEXT} at (0,0) size 364x96
                 text run at (0,0) width 364: "type=\"hueRotate\""
                 text run at (0,48) width 248: "values=\"90\""
-            KCanvasItem {rect} at (29.60,243.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#LuminanceToAlpha] [data="M20.00,420.00L780.00,420.00L780.00,460.00L20.00,460.00"]
+            KCanvasItem {rect} at (29.60,243.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#LuminanceToAlpha] [data="M20.00,420.00L780.00,420.00L780.00,460.00L20.00,460.00"]
             RenderSVGText {text} at (0,0) size 465x48
               RenderText {TEXT} at (0,0) size 524x48
                 text run at (0,0) width 524: "type=\"luminanceToAlpha\""
