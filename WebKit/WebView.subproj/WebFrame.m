@@ -725,6 +725,14 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
                 [_private setProvisionalItem:nil];
             }
 
+            // The call to closeURL invokes the unload event handler, which can execute arbitrary
+            // JavaScript. If the script initiates a new load, we need to abandon the current load,
+            // or the two will stomp each other.
+            WebDataSource *pd = _private->provisionalDataSource;
+            [[self _bridge] closeURL];
+            if (pd != _private->provisionalDataSource)
+                return;
+
             // Set the committed data source on the frame.
             [self _setDataSource:_private->provisionalDataSource];
                 
@@ -2248,21 +2256,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // The "before unload" event handler runs only for the main frame.
     BOOL canContinue = request && ([[self webView] mainFrame] != self || [_private->bridge shouldClose]);
 
-    // The call to closeURL below invokes the unload event handler, which can execute arbitrary
-    // JavaScript. If the script initiates a new load, we need to cancel the requested load,
-    // or the two will stomp each other.
-
-    // Cache the load type of the current request, since _private->policyLoadType will change 
-    // if the unload handler initiates a load. (We use this value to determine if we need to
-    // reset the back/forward cursor.)
-    WebFrameLoadType requestLoadType = _private->policyLoadType;
-    if (canContinue) {
-        [self stopLoading];
-        [[self _bridge] closeURL];
-        
-        canContinue = [self provisionalDataSource] == nil;
-    }
-    
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
         // need to report that the client redirect was cancelled.
@@ -2274,9 +2267,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if (([item isTargetItem] || [[self webView] mainFrame] == self)
-            && (requestLoadType == WebFrameLoadTypeForward
-                || requestLoadType == WebFrameLoadTypeBack
-                || requestLoadType == WebFrameLoadTypeIndexedBackForward))
+            && (_private->policyLoadType == WebFrameLoadTypeForward
+                || _private->policyLoadType == WebFrameLoadTypeBack
+                || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward))
             [[[self webView] mainFrame] _resetBackForwardList];
         return;
     }
@@ -2284,6 +2277,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebFrameLoadType loadType = _private->policyLoadType;
     WebDataSource *dataSource = [_private->policyDataSource retain];
     
+    [self stopLoading];
     [self _setLoadType:loadType];
     [self _setProvisionalDataSource:dataSource];
     [dataSource release];
@@ -2955,9 +2949,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->provisionalDataSource _stopLoading];
     [_private->dataSource _stopLoading];
 
-    // Release the provisional data source because there's no point in keeping it around since it is unused in this case.
     [self _setProvisionalDataSource:nil];
-    
+
     _private->isStoppingLoad = NO;
 }
 

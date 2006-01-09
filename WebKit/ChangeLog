@@ -1,3 +1,41 @@
+2006-01-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        - Second cut at fixing <rdar://problem/4268278> Submitting a form 
+        in onUnload event handler causes crash in 
+        -[WebDataSource(WebPrivate) _commitIfReady:].)
+
+        - Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=6331
+        REGRESSION: form events don't fire after back/forward navigation, 
+        due to inconsistent load state
+        
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stopLoading]): 
+        (1) If there are no resource loaders to signal the WebView that we've
+        been canceled, manufacture the signal. Otherwise, the cancel gets 
+        ignored and nobody cleans up after the load. (We signal the WebView but
+        not the WebFrame because we don't want the WebFrame to tear down the 
+        DataSource.  Unlike most canceled DataSources, this one has valid data 
+        because it's in the back/forward cache.)
+        (2) Update _private->stopping before returning because if the 
+        DataSource is in the back/forward cache it can be reused, so it 
+        needs to be in a consistent state. (We never encountered this 
+        situation before because we would always crash first.)
+        (-[WebDataSource _commitLoadWithData:]): Move _commitIfReady call 
+        inside retain block because the commit may cause an unload event 
+        to fire, which may start a new load, deallocating the current 
+        DataSource. (This is the same reason the rest of the function is 
+        in the retain block.)
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]): If the unload handler 
+        started a new load, return early to avoid stomping it.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): 
+        Undo previous incorrect fix.
+        (-[WebFrame stopLoading]): Remove misleading comment. Setting 
+        provisionalDataSource to nil is not optional but required for 
+        internal consistency.
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

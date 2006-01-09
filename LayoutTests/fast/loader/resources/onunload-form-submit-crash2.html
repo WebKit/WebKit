@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script>
+            function print(message) {
+                var paragraph = document.createElement("p");
+                paragraph.appendChild(document.createTextNode(message));
+                document.getElementById("console").appendChild(paragraph);
+            }
+
+            function continueTestAfterNavigation()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+
+    <body onload="continueTestAfterNavigation()">
+        <p>Bug: rdar://problem/4268278 Submitting a form in onUnload event handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]</p> 
+        <p>If this test passes, you'll see a PASS message below.</p>
+        <hr>
+        <p>PASS: Safari didn't crash.</p>
+    </body>
+<html>

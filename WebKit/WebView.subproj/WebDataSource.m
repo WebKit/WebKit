@@ -359,12 +359,17 @@
     [self _startLoading:nil];
 }
 
+- (NSError *)_cancelledError
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                      code:NSURLErrorCancelled
+                                       URL:[self _URL]];
+}
 
-// Cancels any pending loads.  A data source is conceptually only ever loading
-// one document at a time, although one document may have many related
-// resources.  stopLoading will stop all loads related to the data source.  This
-// method will not stop loads that may be happening in child frames, that is the 
-// WebFrame's job
+// Cancels the DataSource's pending loads.  Conceptually, a data source only loads
+// one document at a time, but one document may have many related resources. 
+// _stopLoading will stop all loads initiated by the DataSource, 
+// but not loads initiated by child frames' DataSources -- that's the WebFrame's job.
 - (void)_stopLoading
 {
     // Always attempt to stop the icon loader because it may still be loading after the data source
@@ -381,22 +386,28 @@
     [self retain];
 
     _private->stopping = YES;
-
+    
     if (_private->mainResourceLoader) {
-        // Stop the main handle and let it set the cancelled error.
+        // Stop the main resource loader and let it send the cancelled message.
         [_private->mainResourceLoader cancel];
+    } else if ([_private->subresourceLoaders count] > 0) {
+        // The main resource loader already finished loading. Set the cancelled error on the 
+        // document and let the subresourceLoaders send individual cancelled messages below.
+        [self _setMainDocumentError:[self _cancelledError]];
     } else {
-        // Main handle is already done. Set the cancelled error.
-        NSError *cancelledError = [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                             code:NSURLErrorCancelled
-                                                              URL:[self _URL]];
-        [self _setMainDocumentError:cancelledError];
+        // If there are no resource loaders, we need to manufacture a cancelled message.
+        // (A back/forward navigation has no resource loaders because its resources are cached.)
+        [[self _webView] _mainReceivedError:[self _cancelledError]
+                             fromDataSource:self
+                                   complete:YES];
     }
     
     NSArray *loaders = [_private->subresourceLoaders copy];
     [loaders makeObjectsPerformSelector:@selector(cancel)];
     [loaders release];
 
+    _private->stopping = NO;
+    
     [self release];
 }
 
@@ -1014,9 +1025,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_commitLoadWithData:(NSData *)data
 {
-    [self _commitIfReady];
-    // Parsing the page may result in running a script which could destroy the datasource, so retain temporarily
+    // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
+    // by starting a new load, so retain temporarily.
     [self retain];
+    [self _commitIfReady];
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
     [self release];

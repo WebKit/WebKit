@@ -1,3 +1,22 @@
+2006-01-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout tests for
+
+        <rdar://problem/4268278> Submitting a form in onUnload event handler 
+        causes crash in -[WebDataSource(WebPrivate) _commitIfReady:].)
+
+        and
+
+        -  http://bugzilla.opendarwin.org/show_bug.cgi?id=6331
+        REGRESSION: form events don't fire after back/forward navigation, 
+        due to inconsistent load state
+
+        * fast/loader/form-events-back-forward-expected.txt: Added.
+        * fast/loader/form-events-back-forward.html: Added.
+        * fast/loader/onunload-form-submit-crash-expected.txt: Added.
+        * fast/loader/onunload-form-submit-crash.html: Added.
+        * fast/loader/resources/onunload-form-submit-crash2.html: Added.
+
 2006-01-09  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.  Committed by eseidel
