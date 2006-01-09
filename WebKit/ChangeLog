@@ -1,3 +1,7 @@
+2006-01-09  Darin Adler  <darin@apple.com>
+
+        * Makefile.am: Removed.
+
 2006-01-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin.
