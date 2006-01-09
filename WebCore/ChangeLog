@@ -1,3 +1,23 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6402
+          Implement frameElement.width and frameElement.height
+
+        Test case: fast/frames/frameElement-widthheight.html
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::frameGetter):
+        * khtml/ecma/kjs_html.h:
+        Add FrameWidth, FrameHeight
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::frameWidth):
+        (HTMLFrameElementImpl::frameHeight):
+        * khtml/html/html_baseimpl.h:
+        Add frameWidth, frameHeight
+
 2006-01-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by ap.

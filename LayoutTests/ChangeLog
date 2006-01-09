@@ -1,3 +1,13 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6402
+          Implement frameElement.width and frameElement.height
+
+        * fast/frames/frameElement-widthheight.html: Added.
+        * fast/frames/frameElement-widthheight-expected.txt: Added.
+
 2006-01-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
         
         Reviewed by Maciej, landed by ap.

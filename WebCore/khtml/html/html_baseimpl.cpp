@@ -632,6 +632,26 @@ void HTMLFrameElementImpl::setSrc(const DOMString &value)
     setAttribute(srcAttr, value);
 }
 
+int HTMLFrameElementImpl::frameWidth() const
+{
+    DocumentImpl* d = getDocument();
+    if (!d || !m_render)
+        return 0;
+    
+    d->updateLayoutIgnorePendingStylesheets();
+    return m_render->width();
+}
+
+int HTMLFrameElementImpl::frameHeight() const
+{
+    DocumentImpl* d = getDocument();
+    if (!d || !m_render)
+        return 0;
+    
+    d->updateLayoutIgnorePendingStylesheets();
+    return m_render->height();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentImpl *doc)

@@ -1153,6 +1153,8 @@ const HTMLElement::Accessors* HTMLElement::accessors() const
   marginWidth	  KJS::HTMLElement::FrameMarginWidth		DontDelete
   name		  KJS::HTMLElement::FrameName			DontDelete
   noResize	  KJS::HTMLElement::FrameNoResize		DontDelete
+  width		  KJS::HTMLElement::FrameWidth			DontDelete|ReadOnly
+  height	  KJS::HTMLElement::FrameHeight			DontDelete|ReadOnly
   scrolling	  KJS::HTMLElement::FrameScrolling		DontDelete
   src		  KJS::HTMLElement::FrameSrc			DontDelete
   location	  KJS::HTMLElement::FrameLocation		DontDelete
@@ -2117,6 +2119,8 @@ JSValue *HTMLElement::frameGetter(ExecState* exec, int token) const
         case FrameMarginWidth:     return jsString(frameElement.marginWidth());
         case FrameName:            return jsString(frameElement.name());
         case FrameNoResize:        return jsBoolean(frameElement.noResize());
+        case FrameWidth:           return jsNumber(frameElement.frameWidth());
+        case FrameHeight:          return jsNumber(frameElement.frameHeight());
         case FrameScrolling:       return jsString(frameElement.scrolling());
         case FrameSrc:
         case FrameLocation:        return jsString(frameElement.src());

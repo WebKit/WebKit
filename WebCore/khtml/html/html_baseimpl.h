@@ -147,6 +147,9 @@ public:
     virtual DOMString src() const;
     void setSrc(const DOMString &);
 
+    int frameWidth() const;
+    int frameHeight() const;
+
 protected:
     bool isURLAllowed(const AtomicString &) const;
     virtual void openURL();
