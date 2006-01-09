@@ -31,6 +31,9 @@
 #include "css/css_ruleimpl.h"
 
 #include "misc/loader.h"
+#include "Cache.h"
+#include "CachedCSSStyleSheet.h"
+#include "DocLoader.h"
 #include "xml/dom_docimpl.h"
 
 #include <kdebug.h>

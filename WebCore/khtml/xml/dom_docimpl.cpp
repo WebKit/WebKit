@@ -41,6 +41,7 @@
 #include "css/css_stylesheetimpl.h"
 #include "css/css_valueimpl.h"
 #include "misc/helper.h"
+#include "DocLoader.h"
 #include "ecma/kjs_proxy.h"
 #include "ecma/kjs_binding.h"
 

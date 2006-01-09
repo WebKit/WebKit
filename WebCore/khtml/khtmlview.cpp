@@ -57,6 +57,8 @@
 
 #include "KWQAccObjectCache.h"
 
+#include "CachedImage.h"
+
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 using namespace DOM;

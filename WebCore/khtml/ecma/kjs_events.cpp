@@ -32,7 +32,7 @@
 #include "xml/dom2_viewsimpl.h"
 #include "xml/EventNames.h"
 #include "rendering/render_object.h"
-#include "misc/loader.h"
+#include "CachedImage.h"
 
 #include <kdebug.h>
 

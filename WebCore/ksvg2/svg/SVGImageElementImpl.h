@@ -29,7 +29,6 @@
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 #include <kdom/cache/KDOMCachedImage.h>
-#include <kdom/cache/KDOMCachedDocument.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KSVG

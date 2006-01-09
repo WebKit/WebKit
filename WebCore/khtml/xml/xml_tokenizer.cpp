@@ -31,7 +31,8 @@
 #include "html/html_headimpl.h"
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"
-#include "misc/loader.h"
+#include "CachedScript.h"
+#include "DocLoader.h"
 #include <kxmlcore/HashMap.h>
 
 #include "khtmlview.h"

@@ -34,7 +34,9 @@
 #include "khtml_part.h"
 #include "kjs_proxy.h"
 
-#include "misc/loader.h"
+#include "CachedCSSStyleSheet.h"
+#include "CachedScript.h"
+#include "DocLoader.h"
 #include "misc/helper.h"
 
 #include "css/cssstyleselector.h"

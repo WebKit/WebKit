@@ -29,7 +29,6 @@
 
 #include "dom/dom_string.h"
 #include "css/css_base.h"
-#include "misc/loader_client.h"
 
 namespace khtml {
     class CachedCSSStyleSheet;

@@ -38,7 +38,8 @@
 #include "html/html_documentimpl.h"
 #include "html/htmlparser.h"
 
-#include "misc/loader.h"
+#include "DocLoader.h"
+#include "CachedScript.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -56,19 +57,7 @@
 using namespace DOM::HTMLNames;
 using namespace DOM::EventNames;
 
-using DOM::AtomicString;
-using DOM::AttributeImpl;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::DocumentImpl;
-using DOM::emptyAtom;
-using DOM::commentAtom;
-using DOM::nullAtom;
-using DOM::textAtom;
-using DOM::QualifiedName;
-using DOM::MappedAttributeImpl;
-using DOM::NamedMappedAttrMapImpl;
-using DOM::NodeImpl;
+using namespace DOM;
 
 #include "kentities.c"
 

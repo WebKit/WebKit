@@ -35,6 +35,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
 #include "xml/EventNames.h"
+#include "CachedImage.h"
 #include "css/cssstyleselector.h"
 #include <kdebug.h>
 #include <qpainter.h>

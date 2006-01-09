@@ -35,15 +35,16 @@
 #import "WebCoreBridge.h"
 #import "khtml_part.h"
 #import "loader.h"
+#include "Cache.h"
+#include "CachedObject.h"
+#include "CachedImage.h"
+#include "DocLoader.h"
+#include "loader.h"
+#include "Request.h"
 
 #import <Foundation/NSURLResponse.h>
 
-using khtml::Cache;
-using khtml::CachedObject;
-using khtml::CachedImage;
-using khtml::DocLoader;
-using khtml::Loader;
-using khtml::Request;
+using namespace khtml;
 using KIO::TransferJob;
 
 bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)

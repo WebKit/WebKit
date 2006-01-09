@@ -27,6 +27,7 @@
 #include "rendering/render_canvas.h"
 
 #include "xml/dom_docimpl.h"
+#include "CachedImage.h"
 
 #include "htmlnames.h"
 

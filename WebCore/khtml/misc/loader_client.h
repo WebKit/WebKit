@@ -25,19 +25,19 @@ namespace khtml {
     class CachedObjectClient
     {
     public:
-        virtual ~CachedObjectClient();
+        virtual ~CachedObjectClient() { }
 
         // clipped pixmap (if it is not yet completely loaded,
         // size of the complete (finished loading) pixmap
         // rectangle of the part that has been loaded very recently
         // pointer to us
         // return whether we need manual update
-	virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
-	virtual void setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/);
+	virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *) { }
+	virtual void setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/) { }
 #ifndef KHTML_NO_XBL
-        virtual void setXBLDocument(const DOM::DOMString& url, XBL::XBLDocumentImpl* doc);
+        virtual void setXBLDocument(const DOM::DOMString& url, XBL::XBLDocumentImpl* doc) { }
 #endif
-	virtual void notifyFinished(CachedObject * /*finishedObj*/);
+	virtual void notifyFinished(CachedObject * /*finishedObj*/) { }
     };
 };
 

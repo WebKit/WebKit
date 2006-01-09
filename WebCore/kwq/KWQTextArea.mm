@@ -34,13 +34,11 @@
 #import "KWQTextEdit.h"
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
+#import "KWQKHTMLSettings.h"
 
-using DOM::AtomicString;
-using DOM::EventImpl;
+using namespace DOM;
 using namespace DOM::EventNames;
-using DOM::NodeImpl;
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace khtml;
 
 @interface NSTextView (WebCoreKnowsCertainAppKitSecrets)
 - (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;

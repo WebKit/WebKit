@@ -22,7 +22,7 @@
 #include "config.h"
 #include "kjs_html.h"
 
-#include "misc/loader.h"
+#include "DocLoader.h"
 #include "dom/dom_exception.h"
 #include "xml/dom_atomicstring.h"
 #include "xml/dom2_eventsimpl.h"

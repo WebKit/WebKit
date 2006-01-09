@@ -23,6 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/DocumentImpl.h>
+#include "DocLoader.h"
 #include <kdebug.h>
 
 #include "SVGNames.h"

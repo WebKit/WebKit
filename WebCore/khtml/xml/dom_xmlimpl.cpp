@@ -29,7 +29,9 @@
 #ifdef KHTML_XSLT
 #include "xsl_stylesheetimpl.h"
 #endif
-#include "misc/loader.h"
+#include "CachedXSLStyleSheet.h"
+#include "CachedCSSStyleSheet.h"
+#include "DocLoader.h"
 #include "xml/xml_tokenizer.h"
 
 using khtml::parseAttributes;

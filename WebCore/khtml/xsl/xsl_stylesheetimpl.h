@@ -25,12 +25,15 @@
 #ifdef KHTML_XSLT
 
 #include "css/css_stylesheetimpl.h"
-#include "misc/loader.h"
-
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
+#include "loader_client.h"
 
 #include <libxslt/transform.h>
+
+namespace khtml {
+    class CachedXSLStyleSheet;
+};
 
 namespace DOM {
 

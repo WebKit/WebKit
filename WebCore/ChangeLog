@@ -1,3 +1,78 @@
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
+        Rubber stamped by mjs.
+
+        Broke out loader.{h,cpp} into multiple files, one per class.
+        This patch also updates all files which previously included
+        loader.h to only include the necessary renamed headers.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6444
+
+        * ForwardingHeaders/kdom/cache/KDOMCachedDocument.h: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMCachedImage.h: updated include
+        * ForwardingHeaders/kdom/cache/KDOMCachedObject.h: updated include
+        * ForwardingHeaders/kdom/cache/KDOMCachedScript.h: updated include
+        * WebCore.xcodeproj/project.pbxproj: added files
+        * khtml/css/css_computedstyle.cpp: updated includes
+        * khtml/css/css_ruleimpl.cpp: updated includes
+        * khtml/css/css_stylesheetimpl.h: updated includes
+        * khtml/css/css_valueimpl.cpp: updated includes
+        * khtml/css/cssstyleselector.cpp: updated includes
+        * khtml/ecma/kjs_events.cpp: updated includes
+        * khtml/ecma/kjs_html.cpp: updated includes
+        * khtml/ecma/xmlhttprequest.cpp: updated includes
+        * khtml/html/html_headimpl.cpp: updated includes
+        * khtml/html/html_imageimpl.cpp: updated includes
+        * khtml/html/html_imageimpl.h: updated includes
+        * khtml/html/htmltokenizer.cpp: updated includes
+        * khtml/khtml_part.cpp: updated includes
+        * khtml/khtmlview.cpp: updated includes
+        * khtml/misc/Cache.cpp: Added.
+        * khtml/misc/Cache.h: Added.
+        * khtml/misc/CachedCSSStyleSheet.cpp: Added.
+        * khtml/misc/CachedCSSStyleSheet.h: Added.
+        * khtml/misc/CachedImage.cpp: Added.
+        * khtml/misc/CachedImage.h: Added.
+        * khtml/misc/CachedImageCallback.cpp: Added.
+        * khtml/misc/CachedImageCallback.h: Added.
+        * khtml/misc/CachedObject.cpp: Added.
+        * khtml/misc/CachedObject.h: Added, fixed tabs -> spaces.
+        * khtml/misc/CachedObjectClientWalker.cpp: Added.
+        * khtml/misc/CachedObjectClientWalker.h: Added.
+        * khtml/misc/CachedScript.cpp: Added.
+        * khtml/misc/CachedScript.h: Added.
+        * khtml/misc/CachedXBLDocument.cpp: Added.
+        * khtml/misc/CachedXBLDocument.h: Added.
+        * khtml/misc/CachedXSLStyleSheet.cpp: Added.
+        * khtml/misc/CachedXSLStyleSheet.h: Added.
+        * khtml/misc/DocLoader.cpp: Added.
+        * khtml/misc/DocLoader.h: Added.
+        * khtml/misc/Request.cpp: Added.
+        * khtml/misc/Request.h: Added.
+        * khtml/misc/loader.cpp: updated includes
+        * khtml/misc/loader.h: updated includes
+        * khtml/misc/loader_client.h: updated includes
+        * khtml/rendering/render_box.cpp: updated includes
+        * khtml/rendering/render_line.cpp: updated includes
+        * khtml/rendering/render_list.cpp: updated includes
+        * khtml/rendering/render_object.cpp: updated includes
+        * khtml/xml/dom_docimpl.cpp: updated includes
+        * khtml/xml/dom_xmlimpl.cpp: updated includes
+        * khtml/xml/xml_tokenizer.cpp: updated includes
+        * khtml/xsl/xsl_stylesheetimpl.cpp: updated includes
+        * khtml/xsl/xsl_stylesheetimpl.h: updated includes
+        * khtml/xsl/xslt_processorimpl.cpp: updated includes
+        * ksvg2/svg/SVGCursorElementImpl.cpp: updated includes
+        * ksvg2/svg/SVGDocumentImpl.cpp: updated includes
+        * ksvg2/svg/SVGFEImageElementImpl.cpp: updated includes
+        * ksvg2/svg/SVGImageElementImpl.cpp: updated includes
+        * ksvg2/svg/SVGImageElementImpl.h: updated includes
+        * kwq/KWQKHTMLPart.mm: updated includes
+        * kwq/KWQLoader.mm: updated includes
+        * kwq/KWQPixmap.mm: updated includes
+        * kwq/KWQTextArea.mm: updated includes
+        * kwq/WebCoreBridge.mm: updated includes
+        * kwq/WebCoreCache.mm: updated includes
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

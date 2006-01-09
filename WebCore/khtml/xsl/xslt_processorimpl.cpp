@@ -29,6 +29,8 @@
 #include "htmltokenizer.h"
 #include "html_documentimpl.h"
 #include "loader.h"
+#include "Cache.h"
+#include "DocLoader.h"
 #include "markup.h"
 #include "khtmlview.h"
 #include "khtml_part.h"

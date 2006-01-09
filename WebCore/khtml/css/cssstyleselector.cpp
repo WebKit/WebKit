@@ -44,6 +44,7 @@
 #include "khtml_settings.h"
 #include "misc/helper.h"
 #include "misc/loader.h"
+#include "CachedImage.h"
 
 #include "rendering/font.h"
 #include "render_theme.h"

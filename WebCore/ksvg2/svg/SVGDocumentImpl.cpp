@@ -33,6 +33,7 @@
 #include <kdom/Namespace.h>
 #include <kdom/core/domattrs.h>
 #include <kdom/cache/KDOMLoader.h>
+#include "DocLoader.h"
 #include <kdom/cache/KDOMCachedObject.h>
 #include <kdom/css/CSSStyleSelector.h>
 #include <kdom/css/CSSStyleSheetImpl.h>

@@ -28,6 +28,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/cache/KDOMCachedObject.h>
+#include "DocLoader.h"
 
 #include "SVGNames.h"
 #include "SVGHelper.h"

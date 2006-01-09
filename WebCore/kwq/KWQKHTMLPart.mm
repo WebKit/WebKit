@@ -41,6 +41,7 @@
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
+#import "KWQTextCodec.h"
 
 #import "WebCoreBridge.h"
 #import "WebCoreGraphicsBridge.h"
@@ -74,6 +75,7 @@
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
+#import "Cache.h"
 
 #import <JavaScriptCore/identifier.h>
 #import <JavaScriptCore/property_map.h>

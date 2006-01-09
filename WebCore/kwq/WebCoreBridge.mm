@@ -44,6 +44,7 @@
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
+#import "Cache.h"
 #import "markup.h"
 #import "render_canvas.h"
 #import "render_frames.h"

@@ -28,6 +28,8 @@
 #include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
 #include "misc/loader.h"
+#include "CachedXSLStyleSheet.h"
+#include "DocLoader.h"
 #include "xsl_stylesheetimpl.h"
 
 #include <kdebug.h>

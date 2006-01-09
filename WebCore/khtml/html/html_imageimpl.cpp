@@ -40,6 +40,7 @@
 #include "css/csshelper.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
+#include "DocLoader.h"
 
 #include <qstring.h>
 #include <qregion.h>

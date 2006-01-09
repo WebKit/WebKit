@@ -69,6 +69,9 @@ using namespace HTMLNames;
 #include "ecma/xmlhttprequest.h"
 #include "khtml_settings.h"
 #include "khtmlpart_p.h"
+#include "Cache.h"
+#include "CachedCSSStyleSheet.h"
+#include "DocLoader.h"
 
 #include <sys/types.h>
 #include <assert.h>
@@ -81,9 +84,6 @@ using namespace HTMLNames;
 #include <klocale.h>
 #include <kcharsets.h>
 #include <kglobalsettings.h>
-#if !defined(QT_NO_DRAGANDDROP)
-#include <kmultipledrag.h>
-#endif
 
 #include <qfile.h>
 #include <qptrlist.h>
@@ -91,30 +91,7 @@ using namespace HTMLNames;
 #include <CoreServices/CoreServices.h>
 
 using namespace DOM::EventNames;
-
-using khtml::ApplyStyleCommand;
-using khtml::CHARACTER;
-using khtml::ChildFrame;
-using khtml::Decoder;
-using khtml::DocLoader;
-using khtml::EAffinity;
-using khtml::EditAction;
-using khtml::EditCommandPtr;
-using khtml::ETextGranularity;
-using khtml::FormData;
-using khtml::isEndOfDocument;
-using khtml::isStartOfDocument;
-using khtml::PARAGRAPH;
-using khtml::plainText;
-using khtml::RenderObject;
-using khtml::RenderText;
-using khtml::RenderLayer;
-using khtml::RenderWidget;
-using khtml::SelectionController;
-using khtml::Tokenizer;
-using khtml::TypingCommand;
-using khtml::VisiblePosition;
-using khtml::WORD;
+using namespace khtml;
 
 using KParts::BrowserInterface;
 

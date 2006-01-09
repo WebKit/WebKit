@@ -29,13 +29,13 @@
 #include "rendering/render_object.h"
 
 #include <loader.h>
+#include "CachedImage.h"
 
 #include <qregion.h>
 #include <qmap.h>
 #include <qpixmap.h>
 
 namespace khtml {
-    class CachedImage;
     class CachedObjectClient;
 }
 

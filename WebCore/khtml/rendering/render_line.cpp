@@ -31,6 +31,7 @@
 #include "rendering/render_table.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "CachedImage.h"
 #include "html/html_formimpl.h"
 #include "render_inline.h"
 #include "render_block.h"

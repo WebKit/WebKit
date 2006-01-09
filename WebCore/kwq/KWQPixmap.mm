@@ -25,8 +25,10 @@
 
 #include "config.h"
 #import "KWQPixmap.h"
+#import "KWQSize.h"
+#import "KWQRect.h"
 
-#import "loader.h"
+#import "CachedImageCallback.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"

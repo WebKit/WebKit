@@ -30,7 +30,7 @@
 #include "dom_string.h"
 #include "font.h"
 #include "khtmllayout.h"
-#include "loader.h"
+#include "CachedImage.h"
 #include "rendering/render_style.h"
 #include "rendering/render_object.h"
 

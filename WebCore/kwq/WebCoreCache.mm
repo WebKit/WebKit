@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebCoreCache.h"
 
-#import "loader.h"
+#include "Cache.h"
 
 using khtml::Cache;
 

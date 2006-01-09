@@ -1,1 +1,1 @@
-#include "loader.h"
+#include "CachedImage.h"

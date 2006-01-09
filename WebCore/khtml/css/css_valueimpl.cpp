@@ -39,7 +39,9 @@
 #include "xml/dom_docimpl.h"
 #include "html/html_elementimpl.h"
 
-#include "misc/loader.h"
+#include "Cache.h"
+#include "CachedImage.h"
+#include "DocLoader.h"
 
 #include "rendering/font.h"
 #include "rendering/render_style.h"

@@ -26,7 +26,7 @@
 
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
-#include "misc/loader.h"
+#include "Cache.h"
 #include "html/html_documentimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
@@ -38,6 +38,7 @@
 #include <kio/job.h>
 #include <qobject.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 
 #include "KWQLoader.h"
 

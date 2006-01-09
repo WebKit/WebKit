@@ -42,6 +42,7 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_elementimpl.h"
+#include "CachedImage.h"
 
 #include "render_line.h"
 
