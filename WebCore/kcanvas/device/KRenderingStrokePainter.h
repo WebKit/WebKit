@@ -37,9 +37,6 @@ public:
     KRenderingStrokePainter();
     virtual ~KRenderingStrokePainter();
 
-    KRenderingPaintServer *paintServer() const;
-    void setPaintServer(KRenderingPaintServer *pserver);
-
     // Common interface for fill and stroke parameters
     float strokeWidth() const;
     void setStrokeWidth(float width);
@@ -65,9 +62,6 @@ public:
     // Helpers
     bool dirty() const;
     void setDirty(bool dirty = true);
-
-    // Actual rendering function
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const;
 
 private:
     class Private;

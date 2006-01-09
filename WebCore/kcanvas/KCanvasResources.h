@@ -53,7 +53,7 @@ public:
     virtual ~KCanvasResource();
 
     virtual void invalidate();
-    void addClient(RenderPath *item);
+    void addClient(const RenderPath *item);
 
     const KCanvasItemList &clients() const;
     

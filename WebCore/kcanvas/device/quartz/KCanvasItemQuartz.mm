@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,8 +203,6 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     CGContextRef context = quartzDevice->currentCGContext();
 
     QRectF dirtyRect = paintInfo.r;
-    
-    RenderPath::setupForDraw();
 
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
@@ -232,14 +231,17 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     KCanvasCommonArgs args = commonArgs();
 
-    // Fill and stroke as needed.
-    if(canvasStyle()->isFilled()) {
+    KRenderingPaintServer *fillPaintServer = canvasStyle()->fillPaintServer(canvasStyle()->renderStyle(), this);
+    if (fillPaintServer) {
         CGContextAddPath(context, cgPath);
-        canvasStyle()->fillPainter()->draw(quartzDevice->currentContext(), args);
+        fillPaintServer->setActiveClient(this);
+        fillPaintServer->draw(quartzDevice->currentContext(), args, APPLY_TO_FILL);
     }
-    if(canvasStyle()->isStroked()) {
+    KRenderingPaintServer *strokePaintServer = canvasStyle()->strokePaintServer(canvasStyle()->renderStyle(), this);
+    if (strokePaintServer) {
         CGContextAddPath(context, cgPath); // path is cleared when filled.
-        canvasStyle()->strokePainter()->draw(quartzDevice->currentContext(), args);
+        strokePaintServer->setActiveClient(this);
+        strokePaintServer->draw(quartzDevice->currentContext(), args, APPLY_TO_STROKE);
     }
 
     drawMarkersIfNeeded(dirtyRect, cgPath);
@@ -337,10 +339,10 @@ bool KCanvasItemQuartz::hitsPath(const QPointF &hitPoint, bool fill) const
     /* we transform the hit point locally, instead of translating the shape to the hit point. */
     CGPoint localHitPoint = CGPointApplyAffineTransform(CGPoint(hitPoint), CGAffineTransformInvert(transform));
 
-    if (fill && canvasStyle()->fillPainter()->paintServer()) {
+    if (fill && canvasStyle()->fillPaintServer(style(), this)) {
         CGPathDrawingMode drawMode = (canvasStyle()->fillPainter()->fillRule() == RULE_EVENODD) ? kCGPathEOFill : kCGPathFill;
         hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, drawMode);
-    } else if (!fill && canvasStyle()->strokePainter()->paintServer())
+    } else if (!fill && canvasStyle()->strokePaintServer(style(), this))
         hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, kCGPathStroke);
 
     CGContextRestoreGState(sharedContext);

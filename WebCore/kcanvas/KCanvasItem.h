@@ -56,9 +56,6 @@ public:
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
     virtual QRectF relativeBBox(bool includeStroke = true) const;
 
-    // Drawing
-    void setupForDraw() const;
-
     // Update
     void changePath(KCanvasPath* newPath);
 

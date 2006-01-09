@@ -57,6 +57,7 @@ class KCanvasFilter;
 class KCanvasMarker;
 class KRenderingFillPainter;
 class KRenderingStrokePainter;
+class KRenderingPaintServer;
 class RenderPath;
 
 namespace KSVG
@@ -67,16 +68,14 @@ namespace KSVG
         KCanvasRenderingStyle(const khtml::RenderStyle *style);
         ~KCanvasRenderingStyle();
 
-        void updateFill(RenderPath *item);
-        void updateStroke(RenderPath *item);
-
         void updateStyle(const khtml::RenderStyle *style, RenderPath *item);
 
         // Stroke (aka Pen) properties
         bool isStroked() const;
 
         KRenderingStrokePainter *strokePainter();
-        void disableStrokePainter();
+        KRenderingPaintServer *strokePaintServer(const khtml::RenderStyle *style, const RenderPath*);
+        void overrideStrokePaintServer(KRenderingPaintServer *pserver);
 
         static double cssPrimitiveToLength(const RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0);
 
@@ -84,8 +83,9 @@ namespace KSVG
         bool isFilled() const;
 
         KRenderingFillPainter *fillPainter();
-        void disableFillPainter();
-        
+        KRenderingPaintServer *fillPaintServer(const khtml::RenderStyle *style, const RenderPath*);
+        void overrideFillPaintServer(KRenderingPaintServer *pserver);
+
         const khtml::RenderStyle *renderStyle() const { return m_style; }
         
     private:
@@ -96,6 +96,9 @@ namespace KSVG
         // KCanvas stuff
         KRenderingFillPainter *m_fillPainter;
         KRenderingStrokePainter *m_strokePainter;
+
+        KRenderingPaintServer *m_fillPainterPaintServerOverride;
+        KRenderingPaintServer *m_strokePainterPaintServerOverride;
     };
 };
 

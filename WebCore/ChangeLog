@@ -1,3 +1,50 @@
+2006-01-08  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        First set of refactors to fix
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5748.
+
+        Refactors to delay paintserver creation until usage and thereby
+        simplify much code in the process. Causes several changes in rendertree 
+        output all of which are improvements rather than regressions.
+
+        * kcanvas/KCanvasItem.cpp: setupForDraw() logic moved to KCanvasItemQuartz
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasResource::addClient): const-ify
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (writeStyle): minor refactor/inline - keeps most output the same after
+        patch, some minor const'ifications
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        setter
+        (KRenderingFillPainter::Private::Private):
+        * kcanvas/device/KRenderingFillPainter.h: refactor out paintserver and
+        draw()
+        * kcanvas/device/KRenderingStrokePainter.cpp: refactor out paintserver
+        and draw()
+        (KRenderingStrokePainter::Private::Private):
+        * kcanvas/device/KRenderingStrokePainter.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint):
+        (KCanvasItemQuartz::hitsPath):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::KCanvasRenderingStyle):
+        (KCanvasRenderingStyle::~KCanvasRenderingStyle):
+        (KCanvasRenderingStyle::overrideFillPaintServer):
+        (KCanvasRenderingStyle::isFilled):
+        (KCanvasRenderingStyle::fillPaintServer):
+        (KCanvasRenderingStyle::overrideStrokePaintServer):
+        (KCanvasRenderingStyle::isStroked):
+        (KCanvasRenderingStyle::strokePaintServer):
+        (KCanvasRenderingStyle::updateStyle): remove paintserver constructions
+        from update notification and instead create on usage, removing
+        disable.*Painter() methods
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::notifyFinished): use paintserver override logic
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Fix broken build (CachedObject.cpp was still including kcharsets.h).

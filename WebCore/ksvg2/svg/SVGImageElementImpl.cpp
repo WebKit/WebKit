@@ -169,11 +169,8 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
     KCanvasRenderingStyle *canvasStyle = imagePath->canvasStyle();
 
     // Set up image paint server
-    canvasStyle->disableFillPainter();
-    canvasStyle->disableStrokePainter();
-
     KRenderingPaintServer *fillPaintServer = QPainter::renderingDevice()->createPaintServer(PS_IMAGE);
-    canvasStyle->fillPainter()->setPaintServer(fillPaintServer);
+    canvasStyle->overrideFillPaintServer(fillPaintServer);
 
 #if 0
     if(finishedObj == m_cachedDocument)
@@ -214,7 +211,7 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
         KRenderingFillPainter *fillPainter = canvasStyle->fillPainter();
         ASSERT(fillPainter);
 
-        KRenderingPaintServer *fillPaintServer = fillPainter->paintServer();
+        KRenderingPaintServer *fillPaintServer = canvasStyle->fillPaintServer(canvasStyle->renderStyle(), imagePath);
         ASSERT(fillPaintServer->type() == PS_IMAGE);
         
         KRenderingPaintServerImage *fillPaintServerImage = static_cast<KRenderingPaintServerImage *>(fillPaintServer);

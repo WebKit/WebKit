@@ -121,18 +121,6 @@ QRectF RenderPath::relativeBBox(bool includeStroke) const
     return result;
 }
 
-void RenderPath::setupForDraw() const
-{
-    if(d->path && d->style)
-    {
-        if(d->style->fillPainter() && d->style->fillPainter()->paintServer())
-            d->style->fillPainter()->paintServer()->setActiveClient(this);
-
-        if(d->style->strokePainter() && d->style->strokePainter()->paintServer())
-            d->style->strokePainter()->paintServer()->setActiveClient(this);
-    }
-}
-
 void RenderPath::changePath(KCanvasPath* newPath)
 {
     d->path = newPath;

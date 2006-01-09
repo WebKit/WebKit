@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *           (C) 2005 Rob Buis <buis@kde.org>
+ *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,57 +227,6 @@ static QTextStream &operator<<(QTextStream &ts, KCJoinStyle style)
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, const KRenderingStrokePainter *p)
-{
-    QTextStreamSeparator s(" ");
-    ts << "{";
-    if (p->paintServer()) 
-    {
-        if (!p->paintServer()->idInRegistry().isEmpty())
-            ts << s << "[id=\"" << p->paintServer()->idInRegistry() << "\"]";
-        else
-            ts << s << *(p->paintServer());
-    } 
-
-    if (p->opacity() != 1.0f)
-        ts << s << "[opacity=" << p->opacity() << "]";
-    if (p->strokeWidth() != 1.0f)
-        ts << s << "[stroke width=" << p->strokeWidth() << "]";
-    if (p->strokeMiterLimit() != 4)
-        ts << s << "[miter limit=" << p->strokeMiterLimit() << "]";
-    if (p->strokeCapStyle() != 1)
-        ts << s << "[line cap=" << p->strokeCapStyle() << "]";
-    if (p->strokeJoinStyle() != 1)
-        ts << s << "[line join=" << p->strokeJoinStyle() << "]";
-    if (p->dashOffset() != 0.0f)
-        ts << s << "[dash offset=" << p->dashOffset() << "]";
-    if (!p->dashArray().isEmpty())
-        ts << s << "[dash array=" << p->dashArray() << "]";        
-    ts << "}";
-    return ts;
-}
-
-static QTextStream &operator<<(QTextStream &ts, const KRenderingFillPainter *p)
-{
-    QTextStreamSeparator s(" ");
-    
-    ts << "{";
-    if (p->paintServer())
-    {
-        if (!p->paintServer()->idInRegistry().isEmpty())
-            ts << s << "[id=\""<< p->paintServer()->idInRegistry() << "\"]"; 
-        else
-            ts << s << *(p->paintServer());
-    } 
-
-    if (p->opacity() != 1.0f)
-        ts << s << "[opacity=" << p->opacity() << "]";
-    if (p->fillRule() != RULE_NONZERO)
-        ts << s << "[fill rule=" << p->fillRule() << "]";
-    ts << "}";
-    return ts;
-}
-
 #define DIFFERS_FROM_PARENT(path) (!parentStyle || (parentStyle->path != childStyle->path))
 // avoids testing path if pred is false. This is used with tests that have side-effects
 // for the parent object
@@ -284,7 +234,7 @@ static QTextStream &operator<<(QTextStream &ts, const KRenderingFillPainter *p)
 
 static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
 {
-    khtml::RenderStyle *style = object.style();
+    const khtml::RenderStyle *style = object.style();
     const SVGRenderStyle *svgStyle = style->svgStyle();
     
     if (!object.localTransform().isIdentity())
@@ -296,10 +246,50 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
     if (object.isRenderPath()) {
         const RenderPath &path = static_cast<const RenderPath &>(object);
         KCanvasRenderingStyle *canvasStyle = path.canvasStyle();
-        if (canvasStyle->isStroked())
-            ts << " [stroke=" << canvasStyle->strokePainter() << "]";
-        if (canvasStyle->isFilled())
-            ts << " [fill=" << canvasStyle->fillPainter() << "]";
+        if (canvasStyle->isStroked()) {
+            QTextStreamSeparator s(" ");
+            ts << " [stroke={";
+            KRenderingPaintServer *strokePaintServer = canvasStyle->strokePaintServer(style, &path);
+            if (strokePaintServer) {
+                if (!strokePaintServer->idInRegistry().isEmpty())
+                    ts << s << "[id=\""<< strokePaintServer->idInRegistry() << "\"]"; 
+                else
+                    ts << s << *strokePaintServer;
+            } 
+            KRenderingStrokePainter *p = canvasStyle->strokePainter();
+            if (p->opacity() != 1.0f)
+                ts << s << "[opacity=" << p->opacity() << "]";
+            if (p->strokeWidth() != 1.0f)
+                ts << s << "[stroke width=" << p->strokeWidth() << "]";
+            if (p->strokeMiterLimit() != 4)
+                ts << s << "[miter limit=" << p->strokeMiterLimit() << "]";
+            if (p->strokeCapStyle() != 1)
+                ts << s << "[line cap=" << p->strokeCapStyle() << "]";
+            if (p->strokeJoinStyle() != 1)
+                ts << s << "[line join=" << p->strokeJoinStyle() << "]";
+            if (p->dashOffset() != 0.0f)
+                ts << s << "[dash offset=" << p->dashOffset() << "]";
+            if (!p->dashArray().isEmpty())
+                ts << s << "[dash array=" << p->dashArray() << "]";        
+            ts << "}]";
+        }
+        if (canvasStyle->isFilled()) {
+            QTextStreamSeparator s(" ");
+            ts << " [fill={";
+            KRenderingPaintServer *fillPaintServer = canvasStyle->fillPaintServer(style, &path);
+            if (fillPaintServer) {
+                if (!fillPaintServer->idInRegistry().isEmpty())
+                    ts << s << "[id=\"" << fillPaintServer->idInRegistry() << "\"]";
+                else
+                    ts << s << *fillPaintServer;
+            }
+            KRenderingFillPainter *p = canvasStyle->fillPainter();
+            if (p->opacity() != 1.0f)
+                ts << s << "[opacity=" << p->opacity() << "]";
+            if (p->fillRule() != RULE_NONZERO)
+                ts << s << "[fill rule=" << p->fillRule() << "]";
+            ts << "}]";
+        }
     }
     if (!svgStyle->clipPath().isEmpty())
         ts << " [clip path=\"" << svgStyle->clipPath() << "\"]";

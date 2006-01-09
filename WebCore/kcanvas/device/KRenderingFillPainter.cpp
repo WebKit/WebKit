@@ -30,21 +30,12 @@ class KRenderingFillPainter::Private
 public:
     Private()
     {
-        pserver = 0;
         opacity = 1.0;
         fillRule = RULE_NONZERO;
     }
 
-    ~Private()
-    {
-        if(pserver && (pserver->type() == PS_SOLID || pserver->type() == PS_IMAGE))
-            delete pserver;
-    }
-
     float opacity;
     KCWindRule fillRule;
-
-    KRenderingPaintServer *pserver;
 };
 
 KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
@@ -54,18 +45,6 @@ KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
 KRenderingFillPainter::~KRenderingFillPainter()
 {
     delete d;
-}
-
-KRenderingPaintServer *KRenderingFillPainter::paintServer() const
-{
-    return d->pserver;
-}
-
-void KRenderingFillPainter::setPaintServer(KRenderingPaintServer *pserver)
-{
-    if(d->pserver && (d->pserver->type() == PS_SOLID || d->pserver->type() == PS_IMAGE))
-        delete d->pserver;
-    d->pserver = pserver;
 }
 
 KCWindRule KRenderingFillPainter::fillRule() const
@@ -86,12 +65,6 @@ float KRenderingFillPainter::opacity() const
 void KRenderingFillPainter::setOpacity(float opacity)
 {
     d->opacity = opacity;
-}
-
-void KRenderingFillPainter::draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const
-{
-    if(d->pserver)
-        d->pserver->draw(context, args, APPLY_TO_FILL);
 }
 
 // vim:ts=4:noet
