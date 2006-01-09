@@ -1,3 +1,15 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        Affects many layout tests (when running with primary Russian language).
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4759
+        'ex' length unit calculation (Some layout tests fail if the system primary language is Russian)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer xHeight]): Use glyphForCharacter() instead of -[NSFont glyphWithName:].
+
 2006-01-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

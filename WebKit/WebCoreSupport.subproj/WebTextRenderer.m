@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,6 +129,7 @@ static void updateGlyphMapEntry(WebTextRenderer *, UChar32, ATSGlyphRef, WebText
 
 static void freeWidthMap(WidthMap *);
 static void freeGlyphMap(GlyphMap *);
+static inline ATSGlyphRef glyphForCharacter(WebTextRenderer **, UChar32);
 
 // Measuring runs.
 static float CG_floatWidthForRun(WebTextRenderer *, const WebCoreTextRun *, const WebCoreTextStyle *,
@@ -487,7 +489,8 @@ static void destroy(WebTextRenderer *renderer)
 {
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
-    NSGlyph xGlyph = [font.font glyphWithName:@"x"];
+    WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+    NSGlyph xGlyph = glyphForCharacter(&renderer, 'x');
     if (xGlyph) {
         NSRect xBox = [font.font boundingRectForGlyph:xGlyph];
         // Use the maximum of either width or height because "x" is nearly square
