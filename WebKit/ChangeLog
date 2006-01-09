@@ -51,16 +51,16 @@
         been canceled, manufacture the signal. Otherwise, the cancel gets 
         ignored and nobody cleans up after the load. (We signal the WebView but
         not the WebFrame because we don't want the WebFrame to tear down the 
-        DataSource.  Unlike most canceled DataSources, this one has valid data 
+        data source.  Unlike most canceled data sources, this one has valid data 
         because it's in the back/forward cache.)
         (2) Update _private->stopping before returning because if the 
-        DataSource is in the back/forward cache it can be reused, so it 
+        data source is in the back/forward cache it can be reused, so it 
         needs to be in a consistent state. (We never encountered this 
         situation before because we would always crash first.)
         (-[WebDataSource _commitLoadWithData:]): Move _commitIfReady call 
         inside retain block because the commit may cause an unload event 
         to fire, which may start a new load, deallocating the current 
-        DataSource. (This is the same reason the rest of the function is 
+        data source. (This is the same reason the rest of the function is 
         in the retain block.)
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _transitionToCommitted:]): If the unload handler 

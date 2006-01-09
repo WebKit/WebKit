@@ -1331,7 +1331,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private setCurrentItem:item];
         [self _restoreScrollPositionAndViewState];
 
-        // Fake the URL change by updating the datasource's request.  This will no longer
+        // Fake the URL change by updating the data source's request.  This will no longer
         // be necessary if we do the better fix described above.
         NSMutableURLRequest *hackedRequest = [[[self dataSource] request] mutableCopy];
         [hackedRequest setURL: itemURL];

@@ -366,10 +366,10 @@
                                        URL:[self _URL]];
 }
 
-// Cancels the DataSource's pending loads.  Conceptually, a data source only loads
+// Cancels the data source's pending loads.  Conceptually, a data source only loads
 // one document at a time, but one document may have many related resources. 
-// _stopLoading will stop all loads initiated by the DataSource, 
-// but not loads initiated by child frames' DataSources -- that's the WebFrame's job.
+// _stopLoading will stop all loads initiated by the data source, 
+// but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 - (void)_stopLoading
 {
     // Always attempt to stop the icon loader because it may still be loading after the data source
