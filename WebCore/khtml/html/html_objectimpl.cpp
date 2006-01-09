@@ -218,12 +218,10 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
     RenderApplet *r = static_cast<RenderApplet*>(m_render);
     if (r) {
         r->createWidgetIfNecessary();
-        if (r->widget()){
+        if (r->widget())
             // Call into the part (and over the bridge) to pull the Bindings::Instance
             // from the guts of the plugin.
-            void *_view = r->widget()->getView();
-            appletInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
-        }
+            appletInstance = KWQ(part)->getAppletInstanceForWidget(r->widget());
     }
     return appletInstance;
 }
@@ -386,14 +384,12 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
 
     if (r && r->isWidget()){
         if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
-            if (NSView *view = widget->getView())  {
-                // Call into the part (and over the bridge) to pull the Bindings::Instance
-                // from the guts of the Java VM.
-                embedInstance = KWQ(part)->getEmbedInstanceForView(view);
-                // Applet may specified with <embed> tag.
-                if (!embedInstance)
-                    embedInstance = KWQ(part)->getAppletInstanceForView(view);
-            }
+            // Call into the part (and over the bridge) to pull the Bindings::Instance
+            // from the guts of the Java VM.
+            embedInstance = KWQ(part)->getEmbedInstanceForWidget(widget);
+            // Applet may specified with <embed> tag.
+            if (!embedInstance)
+                embedInstance = KWQ(part)->getAppletInstanceForWidget(widget);
         }
     }
     return embedInstance;
@@ -562,14 +558,12 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
     if (RenderObject *r = m_render) {
         if (r->isWidget()) {
             if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
-                if (NSView *view = widget->getView())  {
-                    // Call into the part (and over the bridge) to pull the Bindings::Instance
-                    // from the guts of the plugin.
-                    objectInstance = KWQ(part)->getObjectInstanceForView(view);
-                    // Applet may specified with <object> tag.
-                    if (!objectInstance)
-                        objectInstance = KWQ(part)->getAppletInstanceForView(view);
-                }
+                // Call into the part (and over the bridge) to pull the Bindings::Instance
+                // from the guts of the plugin.
+                objectInstance = KWQ(part)->getObjectInstanceForWidget(widget);
+                // Applet may specified with <object> tag.
+                if (!objectInstance)
+                    objectInstance = KWQ(part)->getAppletInstanceForWidget(widget);
             }
         }
     }

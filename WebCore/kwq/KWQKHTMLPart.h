@@ -331,9 +331,9 @@ public:
     void didTellBridgeAboutLoad(const QString &urlString);
     bool haveToldBridgeAboutLoad(const QString &urlString);
 
-    KJS::Bindings::Instance *getEmbedInstanceForView(NSView *aView);
-    KJS::Bindings::Instance *getObjectInstanceForView(NSView *aView);
-    KJS::Bindings::Instance *getAppletInstanceForView(NSView *aView);
+    KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*);
+    KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*);
+    KJS::Bindings::Instance *getAppletInstanceForWidget(QWidget*);
     void addPluginRootObject(const KJS::Bindings::RootObject *root);
     void cleanupPluginRootObjects();
     

@@ -3855,8 +3855,11 @@ void KHTMLPart::print()
     [KWQ(this)->_bridge print];
 }
 
-KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
+KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForWidget(QWidget *widget)
 {
+    NSView *aView = widget->getView();
+    if (!aView)
+        return 0;
     jobject applet;
     
     // Get a pointer to the actual Java applet instance.
@@ -3900,14 +3903,14 @@ static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
     return 0;
 }
 
-KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
+KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForWidget(QWidget *widget)
 {
-    return getInstanceForView(aView);
+    return getInstanceForView(widget->getView());
 }
 
-KJS::Bindings::Instance *KWQKHTMLPart::getObjectInstanceForView (NSView *aView)
+KJS::Bindings::Instance *KWQKHTMLPart::getObjectInstanceForWidget(QWidget *widget)
 {
-    return getInstanceForView(aView);
+    return getInstanceForView(widget->getView());
 }
 
 void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)

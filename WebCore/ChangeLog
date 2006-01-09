@@ -1,5 +1,21 @@
 2006-01-08  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by ggaren.
+
+        Remove all mention of NSView from khtml.
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::getAppletInstance): call w/ widget
+        (DOM::HTMLEmbedElementImpl::getEmbedInstance): call w/ widget
+        (DOM::HTMLObjectElementImpl::getObjectInstance): call w/ widget
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getAppletInstanceForWidget): renamed.
+        (KWQKHTMLPart::getEmbedInstanceForWidget): renamed.
+        (KWQKHTMLPart::getObjectInstanceForWidget): renamed.
+
+2006-01-08  Eric Seidel  <eseidel@apple.com>
+
         Rubber stamped by ggaren.
 
         * ForwardingHeaders/qsortedlist.h: Added. (a khtml file was referencing KWQ directly.)
