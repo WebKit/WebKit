@@ -1,3 +1,33 @@
+2006-01-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        - Added back/forward navigation support to DumpRenderTree. Hopefully we
+        can start writing automated loader tests now. I have one in the works.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Construct global navigationController on entry, destroy on exit.
+        Set frame to nil on exit too, to match all the other global objects. 
+        (Probably academic, since the process is exiting, anyway.)
+        (-[WaitUntilDoneDelegate webView:didFinishLoadForFrame:]): Notify the
+        navigationController, in case it wants to kick off a load.
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]): Expose
+        the navigationController to scripting.
+
+        New class, should be straightforward:
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/NavigationController.h: Added.
+        * DumpRenderTree/NavigationController.m: Added.
+
+        (+[NavigationController isSelectorExcludedFromWebScript:]):
+        (+[NavigationController webScriptNameForSelector:]):
+        (-[NavigationController setPendingScript:]):
+        (-[NavigationController setPendingRequest:]):
+        (-[NavigationController evaluateWebScript:afterBackForwardNavigation:]):
+        (-[NavigationController webView:didFinishLoadForFrame:]):
+        (-[NavigationController dealloc]):
+
 2006-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Removed this script, no longer needs with the Subversion switch.

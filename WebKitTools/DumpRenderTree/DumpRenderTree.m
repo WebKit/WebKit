@@ -45,6 +45,7 @@
 #import <getopt.h>
 
 #import "TextInputController.h"
+#import "NavigationController.h"
 
 @interface DumpRenderTreePasteboard : NSPasteboard
 @end
@@ -73,6 +74,7 @@ static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
 
 static volatile BOOL done;
 static WebFrame *frame;
+static NavigationController *navigationController;
 static BOOL readyToDump;
 static BOOL waitToDump;
 static BOOL dumpAsText;
@@ -183,6 +185,7 @@ int main(int argc, const char *argv[])
         setDefaultColorProfileToRGB();
     
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
+    navigationController = [[NavigationController alloc] init];
 
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
@@ -196,7 +199,7 @@ int main(int argc, const char *argv[])
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
     NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
     [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
-
+    
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
         printSeparators = YES;
@@ -221,6 +224,7 @@ int main(int argc, const char *argv[])
     [webView setFrameLoadDelegate:nil];
     [webView setEditingDelegate:nil];
     [webView setUIDelegate:nil];
+    frame = nil;
 
     [webView release];
     [delegate release];
@@ -228,6 +232,9 @@ int main(int argc, const char *argv[])
 
     [localPasteboard releaseGlobally];
     localPasteboard = nil;
+    
+    [navigationController release];
+    navigationController = nil;
     
     if (dumpPixels)
         restoreColorSpace(0);
@@ -319,6 +326,7 @@ static void dump(void)
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     [self webView:sender locationChangeDone:nil forDataSource:[frame dataSource]];
+    [navigationController webView:sender didFinishLoadForFrame:frame];
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -337,6 +345,7 @@ static void dump(void)
     TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
+    [obj setValue:navigationController forKey:@"navigationController"];
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
