@@ -160,7 +160,6 @@ void KHTMLPart::init(KHTMLView *view)
   setWidget( d->m_view );
   
   d->m_extension = new KHTMLPartBrowserExtension( this );
-  d->m_hostExtension = new KHTMLPartBrowserHostExtension( this );
 
   d->m_bSecurityInQuestion = false;
   d->m_bMousePressed = false;
@@ -201,15 +200,12 @@ KHTMLPart::~KHTMLPart()
 
   clear();
 
-  if ( d->m_view )
-  {
+  if (d->m_view) {
     d->m_view->hide();
     d->m_view->viewport()->hide();
     d->m_view->m_part = 0;
   }
   
-  delete d->m_hostExtension;
-
   delete d; d = 0;
 }
 
@@ -547,27 +543,6 @@ bool KHTMLPart::javaEnabled() const
 #endif
 }
 
-KJavaAppletContext *KHTMLPart::javaContext()
-{
-#ifndef Q_WS_QWS
-  return d->m_javaContext;
-#else
-  return 0;
-#endif
-}
-
-KJavaAppletContext *KHTMLPart::createJavaContext()
-{
-#ifndef Q_WS_QWS
-  if (!d->m_javaContext)
-      d->m_javaContext = new KJavaAppletContext(this);
-
-  return d->m_javaContext;
-#else
-  return 0;
-#endif
-}
-
 void KHTMLPart::setPluginsEnabled( bool enable )
 {
   d->m_bPluginsForce = enable;
@@ -670,11 +645,6 @@ void KHTMLPart::clear()
     }
   }
   d->m_objects.clear();
-
-#ifndef Q_WS_QWS
-  delete d->m_javaContext;
-  d->m_javaContext = 0;
-#endif
 
   d->m_scheduledRedirection = noRedirectionScheduled;
   d->m_delayRedirect = 0;

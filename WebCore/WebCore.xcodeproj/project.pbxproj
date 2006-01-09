@@ -182,7 +182,6 @@
 		93F1993308245E59001E9ABC /* KWQDef.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DA02DE375901EA4122 /* KWQDef.h */; };
 		93F1993408245E59001E9ABC /* KWQDict.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868602DE3B8601EA4122 /* KWQDict.h */; };
 		93F1993508245E59001E9ABC /* KWQDictImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DB02DE375901EA4122 /* KWQDictImpl.h */; };
-		93F1993608245E59001E9ABC /* KWQDummyView.h in Headers */ = {isa = PBXBuildFile; fileRef = 931C8A160380288B008635CE /* KWQDummyView.h */; };
 		93F1993708245E59001E9ABC /* KWQEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868802DE3B8601EA4122 /* KWQEvent.h */; };
 		93F1993808245E59001E9ABC /* KWQFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868902DE3B8601EA4122 /* KWQFile.h */; };
 		93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF7D4033BD43C008635CE /* KWQFileButton.h */; };
@@ -201,14 +200,12 @@
 		93F1994708245E59001E9ABC /* KWQKDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F402DE382001EA4122 /* KWQKDebug.h */; };
 		93F1994908245E59001E9ABC /* KWQKGlobalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F602DE382001EA4122 /* KWQKGlobalSettings.h */; };
 		93F1994A08245E59001E9ABC /* KWQKHTMLFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863402DE3A1401EA4122 /* KWQKHTMLFactory.h */; };
-		93F1994B08245E59001E9ABC /* KWQKHTMLFind.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863502DE3A1401EA4122 /* KWQKHTMLFind.h */; };
 		93F1994D08245E59001E9ABC /* KWQKHTMLPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784FA02DE375901EA4122 /* KWQKHTMLPart.h */; };
 		93F1994E08245E59001E9ABC /* KWQKHTMLPartBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863302DE3A1401EA4122 /* KWQKHTMLPartBrowserExtension.h */; };
 		93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */; };
 		93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */; };
 		93F1995108245E59001E9ABC /* KWQKImageIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864D02DE3A9A01EA4122 /* KWQKImageIO.h */; };
 		93F1995208245E59001E9ABC /* KWQKInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F802DE382001EA4122 /* KWQKInstance.h */; };
-		93F1995308245E59001E9ABC /* KWQKJavaAppletContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864402DE3A7701EA4122 /* KWQKJavaAppletContext.h */; };
 		93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */; };
 		93F1995508245E59001E9ABC /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
@@ -525,7 +522,6 @@
 		93F19ACB08245E59001E9ABC /* KWQLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 93861DE0032C2E52008635CE /* KWQLogging.m */; };
 		93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF7D5033BD43C008635CE /* KWQFileButton.mm */; };
 		93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
-		93F19ACF08245E59001E9ABC /* KWQDummyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 931C8A170380288B008635CE /* KWQDummyView.m */; };
 		93F19AD008245E59001E9ABC /* arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294F703804B3C00A80166 /* arena.cpp */; };
 		93F19AD108245E59001E9ABC /* render_arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294FB03804B5600A80166 /* render_arena.cpp */; };
 		93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
@@ -755,7 +751,6 @@
 		A88AD17A0952480A001DD196 /* KWQDef.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DA02DE375901EA4122 /* KWQDef.h */; };
 		A88AD17B0952480A001DD196 /* KWQDict.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868602DE3B8601EA4122 /* KWQDict.h */; };
 		A88AD17C0952480A001DD196 /* KWQDictImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DB02DE375901EA4122 /* KWQDictImpl.h */; };
-		A88AD17D0952480A001DD196 /* KWQDummyView.h in Headers */ = {isa = PBXBuildFile; fileRef = 931C8A160380288B008635CE /* KWQDummyView.h */; };
 		A88AD17E0952480A001DD196 /* KWQEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868802DE3B8601EA4122 /* KWQEvent.h */; };
 		A88AD17F0952480A001DD196 /* KWQFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868902DE3B8601EA4122 /* KWQFile.h */; };
 		A88AD1800952480A001DD196 /* KWQFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF7D4033BD43C008635CE /* KWQFileButton.h */; };
@@ -774,14 +769,12 @@
 		A88AD18D0952480A001DD196 /* KWQKDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F402DE382001EA4122 /* KWQKDebug.h */; };
 		A88AD18F0952480A001DD196 /* KWQKGlobalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F602DE382001EA4122 /* KWQKGlobalSettings.h */; };
 		A88AD1900952480A001DD196 /* KWQKHTMLFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863402DE3A1401EA4122 /* KWQKHTMLFactory.h */; };
-		A88AD1910952480A001DD196 /* KWQKHTMLFind.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863502DE3A1401EA4122 /* KWQKHTMLFind.h */; };
 		A88AD1920952480A001DD196 /* KWQKHTMLPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784FA02DE375901EA4122 /* KWQKHTMLPart.h */; };
 		A88AD1930952480A001DD196 /* KWQKHTMLPartBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863302DE3A1401EA4122 /* KWQKHTMLPartBrowserExtension.h */; };
 		A88AD1940952480A001DD196 /* KWQKHTMLSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */; };
 		A88AD1950952480A001DD196 /* KWQKIOGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */; };
 		A88AD1960952480A001DD196 /* KWQKImageIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864D02DE3A9A01EA4122 /* KWQKImageIO.h */; };
 		A88AD1970952480A001DD196 /* KWQKInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F802DE382001EA4122 /* KWQKInstance.h */; };
-		A88AD1980952480A001DD196 /* KWQKJavaAppletContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864402DE3A7701EA4122 /* KWQKJavaAppletContext.h */; };
 		A88AD1990952480A001DD196 /* KWQKJavaAppletWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */; };
 		A88AD19A0952480A001DD196 /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		A88AD19B0952480A001DD196 /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
@@ -1140,7 +1133,6 @@
 		A88AD3090952480A001DD196 /* KWQLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 93861DE0032C2E52008635CE /* KWQLogging.m */; };
 		A88AD30A0952480A001DD196 /* KWQFileButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF7D5033BD43C008635CE /* KWQFileButton.mm */; };
 		A88AD30B0952480A001DD196 /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
-		A88AD30C0952480A001DD196 /* KWQDummyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 931C8A170380288B008635CE /* KWQDummyView.m */; };
 		A88AD30D0952480A001DD196 /* arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294F703804B3C00A80166 /* arena.cpp */; };
 		A88AD30E0952480A001DD196 /* render_arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294FB03804B5600A80166 /* render_arena.cpp */; };
 		A88AD30F0952480A001DD196 /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
@@ -1789,8 +1781,6 @@
 		84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = southWestResizeCursor.tiff; path = Resources/southWestResizeCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2D052B966D000440A1 /* waitCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = waitCursor.tiff; path = Resources/waitCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = westResizeCursor.tiff; path = Resources/westResizeCursor.tiff; sourceTree = "<group>"; };
-		931C8A160380288B008635CE /* KWQDummyView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQDummyView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		931C8A170380288B008635CE /* KWQDummyView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = KWQDummyView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		931D712B065FB91800C966E1 /* DOMEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMEventsInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		931D7224065FC25900C966E1 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMViewsInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		931D722A065FC40800C966E1 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMViews.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2717,9 +2707,7 @@
 		F587862202DE398401EA4122 /* KWQKListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKListBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863302DE3A1401EA4122 /* KWQKHTMLPartBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLPartBrowserExtension.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863402DE3A1401EA4122 /* KWQKHTMLFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587863502DE3A1401EA4122 /* KWQKHTMLFind.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLFind.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587864402DE3A7701EA4122 /* KWQKJavaAppletContext.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJavaAppletContext.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJavaAppletWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKIOGlobal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864A02DE3A9A01EA4122 /* KWQKJob.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJob.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3644,8 +3632,6 @@
 				2D90660C0665D937006B6F1A /* KWQClipboard.mm */,
 				F58784CD02DE375901EA4122 /* KWQCharsets.cpp */,
 				F58784DA02DE375901EA4122 /* KWQDef.h */,
-				931C8A160380288B008635CE /* KWQDummyView.h */,
-				931C8A170380288B008635CE /* KWQDummyView.m */,
 				BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */,
 				BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */,
 				65A640F00533BB1F0085E777 /* KWQExceptions.h */,
@@ -4138,9 +4124,7 @@
 				F587863302DE3A1401EA4122 /* KWQKHTMLPartBrowserExtension.h */,
 				F587863402DE3A1401EA4122 /* KWQKHTMLFactory.h */,
 				F58784F702DE375901EA4122 /* KWQKHTMLFactory.cpp */,
-				F587863502DE3A1401EA4122 /* KWQKHTMLFind.h */,
 				F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */,
-				F587864402DE3A7701EA4122 /* KWQKJavaAppletContext.h */,
 				F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */,
 				F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */,
 			);
@@ -4418,7 +4402,6 @@
 				93F1993308245E59001E9ABC /* KWQDef.h in Headers */,
 				93F1993408245E59001E9ABC /* KWQDict.h in Headers */,
 				93F1993508245E59001E9ABC /* KWQDictImpl.h in Headers */,
-				93F1993608245E59001E9ABC /* KWQDummyView.h in Headers */,
 				93F1993708245E59001E9ABC /* KWQEvent.h in Headers */,
 				93F1993808245E59001E9ABC /* KWQFile.h in Headers */,
 				93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */,
@@ -4437,14 +4420,12 @@
 				93F1994708245E59001E9ABC /* KWQKDebug.h in Headers */,
 				93F1994908245E59001E9ABC /* KWQKGlobalSettings.h in Headers */,
 				93F1994A08245E59001E9ABC /* KWQKHTMLFactory.h in Headers */,
-				93F1994B08245E59001E9ABC /* KWQKHTMLFind.h in Headers */,
 				93F1994D08245E59001E9ABC /* KWQKHTMLPart.h in Headers */,
 				93F1994E08245E59001E9ABC /* KWQKHTMLPartBrowserExtension.h in Headers */,
 				93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */,
 				93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */,
 				93F1995108245E59001E9ABC /* KWQKImageIO.h in Headers */,
 				93F1995208245E59001E9ABC /* KWQKInstance.h in Headers */,
-				93F1995308245E59001E9ABC /* KWQKJavaAppletContext.h in Headers */,
 				93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */,
 				93F1995508245E59001E9ABC /* KWQKJob.h in Headers */,
 				93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */,
@@ -4938,7 +4919,6 @@
 				A88AD17A0952480A001DD196 /* KWQDef.h in Headers */,
 				A88AD17B0952480A001DD196 /* KWQDict.h in Headers */,
 				A88AD17C0952480A001DD196 /* KWQDictImpl.h in Headers */,
-				A88AD17D0952480A001DD196 /* KWQDummyView.h in Headers */,
 				A88AD17E0952480A001DD196 /* KWQEvent.h in Headers */,
 				A88AD17F0952480A001DD196 /* KWQFile.h in Headers */,
 				A88AD1800952480A001DD196 /* KWQFileButton.h in Headers */,
@@ -4957,14 +4937,12 @@
 				A88AD18D0952480A001DD196 /* KWQKDebug.h in Headers */,
 				A88AD18F0952480A001DD196 /* KWQKGlobalSettings.h in Headers */,
 				A88AD1900952480A001DD196 /* KWQKHTMLFactory.h in Headers */,
-				A88AD1910952480A001DD196 /* KWQKHTMLFind.h in Headers */,
 				A88AD1920952480A001DD196 /* KWQKHTMLPart.h in Headers */,
 				A88AD1930952480A001DD196 /* KWQKHTMLPartBrowserExtension.h in Headers */,
 				A88AD1940952480A001DD196 /* KWQKHTMLSettings.h in Headers */,
 				A88AD1950952480A001DD196 /* KWQKIOGlobal.h in Headers */,
 				A88AD1960952480A001DD196 /* KWQKImageIO.h in Headers */,
 				A88AD1970952480A001DD196 /* KWQKInstance.h in Headers */,
-				A88AD1980952480A001DD196 /* KWQKJavaAppletContext.h in Headers */,
 				A88AD1990952480A001DD196 /* KWQKJavaAppletWidget.h in Headers */,
 				A88AD19A0952480A001DD196 /* KWQKJob.h in Headers */,
 				A88AD19B0952480A001DD196 /* KWQKJobClasses.h in Headers */,
@@ -6414,7 +6392,6 @@
 				93F19ACB08245E59001E9ABC /* KWQLogging.m in Sources */,
 				93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */,
 				93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */,
-				93F19ACF08245E59001E9ABC /* KWQDummyView.m in Sources */,
 				93F19AD008245E59001E9ABC /* arena.cpp in Sources */,
 				93F19AD108245E59001E9ABC /* render_arena.cpp in Sources */,
 				93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */,
@@ -6860,7 +6837,6 @@
 				A88AD3090952480A001DD196 /* KWQLogging.m in Sources */,
 				A88AD30A0952480A001DD196 /* KWQFileButton.mm in Sources */,
 				A88AD30B0952480A001DD196 /* KWQResourceLoader.mm in Sources */,
-				A88AD30C0952480A001DD196 /* KWQDummyView.m in Sources */,
 				A88AD30D0952480A001DD196 /* arena.cpp in Sources */,
 				A88AD30E0952480A001DD196 /* render_arena.cpp in Sources */,
 				A88AD30F0952480A001DD196 /* KWQPageState.mm in Sources */,

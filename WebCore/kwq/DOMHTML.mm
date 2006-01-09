@@ -49,71 +49,8 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 
+using namespace DOM;
 using namespace DOM::HTMLNames;
-
-using DOM::Document;
-using DOM::DocumentFragmentImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::HTMLAnchorElementImpl;
-using DOM::HTMLAppletElementImpl;
-using DOM::HTMLAreaElementImpl;
-using DOM::HTMLBaseElementImpl;
-using DOM::HTMLBaseFontElementImpl;
-using DOM::HTMLBodyElementImpl;
-using DOM::HTMLBRElementImpl;
-using DOM::HTMLButtonElementImpl;
-using DOM::HTMLCollectionImpl;
-using DOM::HTMLDirectoryElementImpl;
-using DOM::HTMLDivElementImpl;
-using DOM::HTMLDListElementImpl;
-using DOM::HTMLDocumentImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLEmbedElementImpl;
-using DOM::HTMLFieldSetElementImpl;
-using DOM::HTMLFontElementImpl;
-using DOM::HTMLFormCollectionImpl;
-using DOM::HTMLFormElementImpl;
-using DOM::HTMLFrameElementImpl;
-using DOM::HTMLFrameSetElementImpl;
-using DOM::HTMLGenericFormElementImpl;
-using DOM::HTMLHeadElementImpl;
-using DOM::HTMLHeadingElementImpl;
-using DOM::HTMLHRElementImpl;
-using DOM::HTMLHtmlElementImpl;
-using DOM::HTMLIFrameElementImpl;
-using DOM::HTMLImageElementImpl;
-using DOM::HTMLInputElementImpl;
-using DOM::HTMLIsIndexElementImpl;
-using DOM::HTMLLabelElementImpl;
-using DOM::HTMLLegendElementImpl;
-using DOM::HTMLLIElementImpl;
-using DOM::HTMLLinkElementImpl;
-using DOM::HTMLMapElementImpl;
-using DOM::HTMLMenuElementImpl;
-using DOM::HTMLMetaElementImpl;
-using DOM::HTMLObjectElementImpl;
-using DOM::HTMLOListElementImpl;
-using DOM::HTMLOptGroupElementImpl;
-using DOM::HTMLOptionElementImpl;
-using DOM::HTMLOptionsCollectionImpl;
-using DOM::HTMLParagraphElementImpl;
-using DOM::HTMLParamElementImpl;
-using DOM::HTMLPreElementImpl;
-using DOM::HTMLScriptElementImpl;
-using DOM::HTMLSelectElementImpl;
-using DOM::HTMLStyleElementImpl;
-using DOM::HTMLTableElementImpl;
-using DOM::HTMLTableCaptionElementImpl;
-using DOM::HTMLTableCellElementImpl;
-using DOM::HTMLTableColElementImpl;
-using DOM::HTMLTableRowElementImpl;
-using DOM::HTMLTableSectionElementImpl;
-using DOM::HTMLTextAreaElementImpl;
-using DOM::HTMLTitleElementImpl;
-using DOM::HTMLUListElementImpl;
-using DOM::NameNodeListImpl;
-using DOM::NodeImpl;
 
 // FIXME: This code should be using the impl methods instead of doing so many get/setAttribute calls.
 // FIXME: This code should be generated.

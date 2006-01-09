@@ -55,7 +55,6 @@ public:
     { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
 
 private:
-    KJavaAppletContext *m_context;
     QMap<QString, QString> m_args;
 };
 

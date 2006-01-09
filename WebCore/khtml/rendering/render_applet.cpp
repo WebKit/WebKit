@@ -41,19 +41,10 @@ using namespace DOM;
 using namespace HTMLNames;
 
 RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString> &args )
-    : RenderWidget(applet)
+    : RenderWidget(applet), m_args(args)
 {
     // init RenderObject attributes
     setInline(true);
-
-    KJavaAppletContext *context = 0;
-    KHTMLPart *part = applet->getDocument()->part();
-    if ( part ) {
-        context = part->createJavaContext();
-    }
-
-    m_context = context;
-    m_args = args;
 }
 
 RenderApplet::~RenderApplet()
@@ -100,7 +91,7 @@ void RenderApplet::createWidgetIfNecessary()
                 child = child->nextSibling();
             }
         
-            setQWidget(new KJavaAppletWidget(QSize(width, height), m_context, m_args));
+            setQWidget(new KJavaAppletWidget(QSize(width, height), element()->getDocument()->part(), m_args));
         }
     }
 }

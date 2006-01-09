@@ -29,10 +29,10 @@
 #import "dom_docimpl.h"
 #import "khtmlview.h"
 #import "KWQExceptions.h"
-#import "KWQKJavaAppletContext.h"
 #import "WebCoreBridge.h"
+#import "khtml_part.h"
 
-KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, const QMap<QString, QString> &args)
+KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KHTMLPart *part, const QMap<QString, QString> &args)
 {
     KWQ_BLOCK_EXCEPTIONS;
     
@@ -50,11 +50,9 @@ KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, c
         ++it;
     }
     
-    KWQKHTMLPart *part = KWQ(c->part());
-    if (baseURLString.isEmpty()) {
+    if (baseURLString.isEmpty())
         baseURLString = part->xmlDocImpl()->baseURL();
-    }
-    setView([part->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+    setView([KWQ(part)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                                         attributeNames:attributeNames
                                        attributeValues:attributeValues
                                                baseURL:part->completeURL(baseURLString).getNSURL()]);

@@ -31,14 +31,12 @@
 #include <kaction.h>
 #include <kio/global.h>
 
-#include "khtml_find.h"
 #include "khtml_factory.h"
 #include "khtml_events.h"
 #include "khtml_ext.h"
 #include "khtml_settings.h"
 #include "misc/decoder.h"
 #include "misc/formdata.h"
-#include "java/kjavaappletcontext.h"
 #include "ecma/kjs_proxy.h"
 #include "css/css_valueimpl.h"
 #include "editing/edit_command.h"
@@ -115,9 +113,6 @@ public:
     m_bDnd = true;
     m_haveEncoding = false;
     m_activeFrame = 0L;
-#ifndef Q_WS_QWS
-    m_javaContext = 0;
-#endif
     m_frameNameId = 1;
 
     m_restored = false;
@@ -182,9 +177,6 @@ public:
   {
     delete m_extension;
     delete m_jscript;
-#ifndef Q_WS_QWS
-    delete m_javaContext;
-#endif
     if (m_typingStyle)
         m_typingStyle->deref();
   }
@@ -194,7 +186,6 @@ public:
 
   QGuardedPtr<KHTMLView> m_view;
   KHTMLPartBrowserExtension *m_extension;
-  KHTMLPartBrowserHostExtension *m_hostExtension;
   DOM::DocumentImpl *m_doc;
   RefPtr<khtml::Decoder> m_decoder;
   QString m_encoding;
@@ -216,10 +207,6 @@ public:
   bool m_bPluginsOverride :1;
   bool m_restored :1;
   int m_frameNameId;
-
-#ifndef Q_WS_QWS
-  KJavaAppletContext *m_javaContext;
-#endif
 
   KHTMLSettings *m_settings;
 

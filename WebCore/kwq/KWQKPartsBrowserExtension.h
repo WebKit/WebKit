@@ -37,8 +37,6 @@
 
 #include "formdata.h"
 
-class KXMLGUIClient { };
-
 namespace KParts {
 
 struct URLArgs {
@@ -69,7 +67,6 @@ private:
     bool m_doPost;
     bool m_lockHistory;
     QMap<QString, QString> m_metadata;
-
 };
 
 struct WindowArgs {
@@ -117,8 +114,6 @@ private:
     URLArgs m_args;
 };
 
-class BrowserHostExtension : public QObject { };
-
-} // namespace KParts
+};
 
 #endif

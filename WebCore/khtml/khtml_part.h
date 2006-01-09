@@ -38,7 +38,6 @@ class KHTMLPartBrowserExtension;
 class KJSProxyImpl;
 class KHTMLView;
 class KHTMLSettings;
-class KJavaAppletContext;
 
 namespace DOM
 {
@@ -144,7 +143,6 @@ namespace KParts
  * */
 class KHTMLPart : public KParts::ReadOnlyPart
 {
-  Q_OBJECT
   friend class KHTMLView;
   friend class DOM::HTMLTitleElementImpl;
   friend class DOM::HTMLFrameElementImpl;
@@ -164,7 +162,6 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class KHTMLPartBrowserExtension;
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
-  friend class KHTMLPartBrowserHostExtension;
   friend class khtml::HTMLTokenizer;
   friend class khtml::XMLTokenizer;
   friend class khtml::RenderWidget;
@@ -292,17 +289,6 @@ public:
    * Return if Java applet support is enabled/disabled.
    */
   bool javaEnabled() const;
-
-  /**
-   * Returns the java context of the applets. If no applet exists, 0 is returned.
-   */
-  KJavaAppletContext *javaContext();
-
-  /**
-   * Returns the java context of the applets. If no context exists yet, a new one is
-   * created.
-   */
-  KJavaAppletContext *createJavaContext();
 
   /**
    * Enables or disables plugins via, default is enabled

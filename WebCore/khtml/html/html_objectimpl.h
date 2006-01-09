@@ -26,7 +26,6 @@
 
 #include "html_imageimpl.h"
 #include "xml/dom_stringimpl.h"
-#include "java/kjavaappletcontext.h"
 
 #include <JavaScriptCore/runtime.h>
 

@@ -44,7 +44,6 @@
 #include <qpoint.h>
 #include <qregion.h>
 #include <qptrstack.h>
-#include <qimage.h>
 #include <qpointarray.h>
 
 using namespace DOM;

@@ -21,7 +21,6 @@
 */
 
 #include "config.h"
-#include <qimage.h>
 
 #include <kdom/core/AttrImpl.h>
 #include <kdom/cache/KDOMLoader.h>

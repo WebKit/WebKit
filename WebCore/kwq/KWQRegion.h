@@ -27,7 +27,6 @@
 #define QREGION_H_
 
 #include "KWQPointArray.h"
-#include "KWQImage.h"
 #include "KWQRect.h"
 
 typedef struct CGPath *CGMutablePathRef;

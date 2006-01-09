@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include <qimage.h>
 #include <qbuffer.h>
 
 #include <kdom/core/AttrImpl.h>

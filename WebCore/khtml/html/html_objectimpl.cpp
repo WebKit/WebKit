@@ -45,10 +45,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 
-#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
 #include "java/kjavaappletwidget.h"
-#include "java/kjavaappletcontext.h"
-#endif
 
 #include "KWQKHTMLPart.h"
 

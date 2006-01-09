@@ -44,7 +44,6 @@
 
 #include <qstring.h>
 #include <qregion.h>
-#include <qimage.h>
 #include <qpointarray.h>
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1

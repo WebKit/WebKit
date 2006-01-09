@@ -29,7 +29,6 @@
 #import "DOMInternal.h"
 
 #import "KWQClipboard.h"
-#import "KWQDummyView.h"
 #import "KWQEditCommand.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"

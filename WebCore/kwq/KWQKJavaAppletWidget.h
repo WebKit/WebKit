@@ -27,10 +27,10 @@
 #include "KWQWidget.h"
 #include "KWQString.h"
 
-class KJavaAppletContext;
+class KHTMLPart;
 
 class KJavaAppletWidget : public QWidget
 {
 public:
-    KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, const QMap<QString, QString> &args);
+    KJavaAppletWidget(const QSize &size, KHTMLPart *c, const QMap<QString, QString> &args);
 };

@@ -1,5 +1,51 @@
 2006-01-09  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Removing more unused parts of KWQ.
+
+        * ForwardingHeaders/java/kjavaappletcontext.h: Removed.
+        * ForwardingHeaders/khtml_find.h: Removed.
+        * ForwardingHeaders/qimage.h: Removed.
+        * ForwardingHeaders/rendering/break_lines.h: Removed.
+        * ForwardingHeaders/rendering/render_text.h: Removed.
+        * ForwardingHeaders/xbl/xbl_docimpl.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_objectimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::~KHTMLPart):
+        (KHTMLPart::clear):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::RenderApplet):
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_applet.h:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        * kwq/DOMHTML.mm:
+        * kwq/KWQDummyView.h: Removed.
+        * kwq/KWQDummyView.m: Removed.
+        * kwq/KWQImage.h: Removed.
+        * kwq/KWQKHTMLFind.h: Removed.
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQKHTMLPartBrowserExtension.h:
+        * kwq/KWQKJavaAppletContext.h: Removed.
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget):
+        * kwq/KWQKPartsBrowserExtension.h:
+        * kwq/KWQObject.h:
+        * kwq/KWQRegion.h:
+
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
         Rubber stamped by mjs.
 
         Broke out loader.{h,cpp} into multiple files, one per class.

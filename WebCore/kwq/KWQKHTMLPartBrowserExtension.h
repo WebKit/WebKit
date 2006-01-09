@@ -62,8 +62,3 @@ private:
      KWQKHTMLPart *_part;
      KParts::BrowserInterface _browserInterface;
 };
-
-class KHTMLPartBrowserHostExtension {
-public:
-    KHTMLPartBrowserHostExtension(KHTMLPart *) { }
-};
