@@ -1,3 +1,13 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+        
+        Reviewed by Eric.
+        
+        - Updated tests broken by SVN conversion (CR/LF translation)
+          
+        * fast/encoding/utf-16-big-endian.html:
+        * fast/encoding/utf-16-little-endian.html:
+        * css1/text_properties/text-transCapitalize.html:
+
 2006-01-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
