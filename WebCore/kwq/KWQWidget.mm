@@ -137,11 +137,6 @@ bool QWidget::isEnabled() const
     return true;
 }
 
-long QWidget::winId() const
-{
-    return (long)this;
-}
-
 int QWidget::x() const
 {
     return frameGeometry().topLeft().x();

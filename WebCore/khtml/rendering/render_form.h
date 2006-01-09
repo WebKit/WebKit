@@ -31,16 +31,12 @@
 #include "html/html_formimpl.h"
 
 class QWidget;
-class QLineEdit;
 class QListboxItem;
+class QListBox;
 
 #include <qtextedit.h>
-#include <klineedit.h>
-#include <klistbox.h>
-#include <kcombobox.h>
-
-typedef class QTextEdit KTextEdit;
-class KHTMLPartBrowserExtension;
+#include <qlineedit.h>
+#include <qcombobox.h>
 
 namespace DOM {
     class HTMLFormElementImpl;
@@ -58,7 +54,6 @@ class DocLoader;
 
 class RenderFormElement : public khtml::RenderWidget
 {
-    Q_OBJECT
 public:
     RenderFormElement(DOM::HTMLGenericFormElementImpl* node);
     virtual ~RenderFormElement();
@@ -124,7 +119,6 @@ public:
 
 class RenderLineEdit : public RenderFormElement
 {
-    Q_OBJECT
 public:
     RenderLineEdit(DOM::HTMLInputElementImpl *element);
 
@@ -144,7 +138,7 @@ public:
     void select();
     void setSelectionRange(int, int);
 
-    KLineEdit *widget() const { return static_cast<KLineEdit*>(m_widget); }
+    QLineEdit *widget() const { return static_cast<QLineEdit*>(m_widget); }
     DOM::HTMLInputElementImpl* element() const
     { return static_cast<DOM::HTMLInputElementImpl*>(RenderObject::element()); }
 
@@ -167,7 +161,7 @@ private:
 
 // -------------------------------------------------------------------------
 
-class LineEditWidget : public KLineEdit
+class LineEditWidget : public QLineEdit
 {
 public:
     LineEditWidget(QWidget *parent);
@@ -200,7 +194,6 @@ protected:
 
 class RenderFileButton : public RenderFormElement
 {
-    Q_OBJECT
 public:
     RenderFileButton(DOM::HTMLInputElementImpl *element);
 
@@ -249,7 +242,7 @@ public:
 
 // -------------------------------------------------------------------------
 
-class ComboBoxWidget : public KComboBox
+class ComboBoxWidget : public QComboBox
 {
 public:
     ComboBoxWidget(QWidget *parent);
@@ -263,7 +256,6 @@ protected:
 
 class RenderSelect : public RenderFormElement
 {
-    Q_OBJECT
 public:
     RenderSelect(DOM::HTMLSelectElementImpl *element);
 
@@ -289,7 +281,7 @@ public:
     { return static_cast<DOM::HTMLSelectElementImpl*>(RenderObject::element()); }
 
 protected:
-    KListBox *createListBox();
+    QListBox *createListBox();
     ComboBoxWidget *createComboBox();
     void setWidgetWritingDirection();
 
@@ -307,7 +299,7 @@ protected slots:
 
 // -------------------------------------------------------------------------
 
-class TextAreaWidget : public KTextEdit
+class TextAreaWidget : public QTextEdit
 {
 public:
     TextAreaWidget(QWidget* parent);

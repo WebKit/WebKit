@@ -42,7 +42,6 @@
 #define id id_AVOID_KEYWORD
 #endif
 
-class KCharsets;
 class HTMLParser;
 class KHTMLView;
 
@@ -348,14 +347,10 @@ protected:
 #define CBUFLEN 1024
     char cBuffer[CBUFLEN+2];
     unsigned int m_cBufferPos;
-
-    TokenizerString src;
-
-    KCharsets *charsets;
-    HTMLParser *parser;
-
-    QGuardedPtr<KHTMLView> view;
     
+    TokenizerString src;
+    HTMLParser *parser;
+    QGuardedPtr<KHTMLView> view;    
     bool inWrite;
 };
 

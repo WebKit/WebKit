@@ -26,9 +26,6 @@
 #include <qpaintdevice.h>
 #include <qpaintdevicemetrics.h>
 
-#include <kcharsets.h>
-#include <kdebug.h>
-
 #include "rendering/render_style.h"
 #include "css_valueimpl.h"
 #include "dom/css_value.h"

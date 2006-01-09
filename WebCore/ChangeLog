@@ -2,6 +2,68 @@
 
         Reviewed by mjs.
 
+        Remove more unused code from kwq.
+
+        * ForwardingHeaders/dcopclient.h: Removed.
+        * ForwardingHeaders/kaction.h: Removed.
+        * ForwardingHeaders/kcharsets.h: Removed.
+        * ForwardingHeaders/kcombobox.h: Removed.
+        * ForwardingHeaders/klineedit.h: Removed.
+        * ForwardingHeaders/klistbox.h: Removed.
+        * ForwardingHeaders/kwin.h: Removed.
+        * ForwardingHeaders/qcombobox.h: Added.
+        * ForwardingHeaders/qlineedit.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: remove files.
+        * khtml/css/csshelper.cpp:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLOptionElementImpl::index):
+        (DOM::HTMLOptionElementImpl::setIndex):
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/html/htmltokenizer.h:
+        * khtml/khtml_part.cpp:
+        * khtml/khtmlpart_p.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit):
+        (RenderLineEdit::setStyle):
+        (RenderLineEdit::updateFromElement):
+        (RenderLineEdit::selectionStart):
+        (RenderLineEdit::selectionEnd):
+        (RenderLineEdit::setSelectionStart):
+        (RenderLineEdit::setSelectionEnd):
+        (RenderLineEdit::select):
+        (RenderLineEdit::setSelectionRange):
+        (ComboBoxWidget::ComboBoxWidget):
+        (ComboBoxWidget::event):
+        (ComboBoxWidget::eventFilter):
+        (RenderSelect::setWidgetWritingDirection):
+        (RenderSelect::updateFromElement):
+        (RenderSelect::layout):
+        (RenderSelect::slotSelectionChanged):
+        (RenderSelect::createListBox):
+        (RenderSelect::updateSelection):
+        (RenderTextArea::RenderTextArea):
+        * khtml/rendering/render_form.h:
+        (khtml::RenderLineEdit::widget):
+        * kwq/KWQDCOPClient.h: Removed.
+        * kwq/KWQKCharsets.cpp: Removed.
+        * kwq/KWQKCharsets.h: Removed.
+        * kwq/KWQKComboBox.h: Removed.
+        * kwq/KWQKKAction.h: Removed.
+        * kwq/KWQKLineEdit.h: Removed.
+        * kwq/KWQKListBox.h: Removed.
+        * kwq/KWQKWin.cpp: Removed.
+        * kwq/KWQKWin.h: Removed.
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Removing more unused parts of KWQ.
 
         * ForwardingHeaders/java/kjavaappletcontext.h: Removed.

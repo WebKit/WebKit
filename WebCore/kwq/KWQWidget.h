@@ -72,7 +72,6 @@ public:
     
     void setActiveWindow();
 
-    long winId() const;
     int x() const;
     int y() const;
     int width() const;

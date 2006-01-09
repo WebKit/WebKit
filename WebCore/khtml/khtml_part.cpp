@@ -82,7 +82,6 @@ using namespace HTMLNames;
 #include <kio/global.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kcharsets.h>
 #include <kglobalsettings.h>
 
 #include <qfile.h>

@@ -47,7 +47,6 @@
 #include "xml/EventNames.h"
 #include "css/csshelper.h"
 #include "ecma/kjs_proxy.h"
-#include <kcharsets.h>
 #include <ctype.h>
 #include <assert.h>
 #include <qvariant.h>

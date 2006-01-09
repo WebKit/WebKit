@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kparts/browserinterface.h>
-#include <kwin.h>
 #include <kwinmodule.h>
 #include <kconfig.h>
 #include <assert.h>
@@ -737,9 +736,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case OuterWidth:
     {
       if (m_part->view()) {
-        KWin::Info inf = KWin::info(m_part->view()->topLevelWidget()->winId());
-        return jsNumber(token == OuterHeight ?
-                      inf.geometry.height() : inf.geometry.width());
+        QRect frame = m_part->view()->topLevelWidget()->frameGeometry();
+        return jsNumber(token == OuterHeight ? frame.height() : frame.width());
       } else
         return jsNumber(0);
     }

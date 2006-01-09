@@ -75,10 +75,7 @@
 #include "rendering/render_object.h"
 #include "dom/dom_exception.h"
 
-#include <dcopclient.h>
-#include <kdebug.h>
 #include <kurl.h>
-#include <kcharsets.h>
 #include <kglobalsettings.h>
 
 #include "css/cssproperties.h"

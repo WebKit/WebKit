@@ -28,7 +28,6 @@
 #define khtmlpart_p_h
 
 #include <kcursor.h>
-#include <kaction.h>
 #include <kio/global.h>
 
 #include "khtml_factory.h"

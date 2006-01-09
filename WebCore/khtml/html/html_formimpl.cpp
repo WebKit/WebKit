@@ -50,8 +50,6 @@
 #include "render_button.h"
 #include "render_theme.h"
 
-#include <kcharsets.h>
-#include <kdebug.h>
 #include <klocale.h>
 #include <qfile.h>
 #include <qtextcodec.h>
@@ -3163,14 +3161,12 @@ int HTMLOptionElementImpl::index() const
             }
         }
     }
-    kdWarning() << "HTMLOptionElementImpl::index(): option not found!" << endl;
     return 0;
 }
 
 void HTMLOptionElementImpl::setIndex(int, int &exception)
 {
     exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-    kdWarning() << "Unimplemented HTMLOptionElementImpl::setIndex(int) called" << endl;
     // ###
 }
 

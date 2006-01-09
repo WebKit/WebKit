@@ -53,7 +53,6 @@
 #include "khtml_part.h"
 
 #include <kstandarddirs.h>
-#include <kcharsets.h>
 #include <qfile.h>
 #include <qvaluelist.h>
 #include <qstring.h>
