@@ -32,8 +32,6 @@ using namespace khtml;
 #include <qregexp.h>
 #include <qtextcodec.h>
 
-#include <kcharsets.h>
-
 #include <ctype.h>
 #include <kdebug.h>
 #include <klocale.h>
