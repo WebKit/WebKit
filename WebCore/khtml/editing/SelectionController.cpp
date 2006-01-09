@@ -36,7 +36,7 @@
 #include "khtmlview.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "visible_position.h"
 #include "visible_units.h"
 #include "xml/dom_docimpl.h"

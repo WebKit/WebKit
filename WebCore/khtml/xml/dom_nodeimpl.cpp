@@ -42,7 +42,7 @@
 #include <kdebug.h>
 
 #include "rendering/render_object.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "render_theme.h"
 
 #include "ecma/kjs_binding.h"

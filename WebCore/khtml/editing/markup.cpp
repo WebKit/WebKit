@@ -36,7 +36,7 @@
 #include "xml/dom_position.h"
 #include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "htmlnames.h"
 
 using namespace DOM::HTMLNames;

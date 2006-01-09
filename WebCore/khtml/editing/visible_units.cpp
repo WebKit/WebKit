@@ -30,7 +30,7 @@
 
 #include "htmlnames.h"
 #include "misc/helper.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "rendering/render_block.h"
 #include "visible_position.h"
 #include "visible_text.h"

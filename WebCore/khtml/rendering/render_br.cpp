@@ -25,6 +25,7 @@
 #include "dom_position.h"
 #include "render_block.h"
 #include "render_line.h"
+#include "InlineTextBox.h"
 
 using namespace DOM;
 

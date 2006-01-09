@@ -55,7 +55,7 @@
 #import "render_list.h"
 #import "render_object.h"
 #import "render_style.h"
-#import "render_text.h"
+#import "RenderText.h"
 #import "render_theme.h"
 #import "SelectionController.h"
 #import "kjs_html.h"

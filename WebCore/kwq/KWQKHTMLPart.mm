@@ -68,7 +68,7 @@
 #import "render_list.h"
 #import "render_style.h"
 #import "render_table.h"
-#import "render_text.h"
+#import "InlineTextBox.h"
 #import "render_theme.h"
 #import "SelectionController.h"
 #import "visible_position.h"

@@ -28,7 +28,7 @@
 #include <qpainter.h>
 
 #include "rendering/render_flow.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "rendering/render_table.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"

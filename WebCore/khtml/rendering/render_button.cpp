@@ -22,7 +22,7 @@
 
 #include "config.h"
 #include "render_button.h"
-#include "render_text.h"
+#include "RenderText.h"
 #include "htmlnames.h"
 #include "html_formimpl.h"
 

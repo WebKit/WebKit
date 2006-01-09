@@ -30,7 +30,7 @@
 #include "render_arena.h"
 #include "render_block.h"
 #include "render_canvas.h"
-#include "render_text.h"
+#include "InlineTextBox.h"
 
 using namespace DOM;
 

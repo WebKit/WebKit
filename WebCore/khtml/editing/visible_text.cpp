@@ -28,7 +28,7 @@
 #include "visible_text.h"
 
 #include "htmlnames.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"

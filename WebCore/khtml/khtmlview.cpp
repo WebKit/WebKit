@@ -36,7 +36,7 @@
 #include "rendering/render_style.h"
 #include "rendering/render_replaced.h"
 #include "rendering/render_line.h"
-#include "rendering/render_text.h"
+#include "RenderText.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"

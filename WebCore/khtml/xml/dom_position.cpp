@@ -43,7 +43,7 @@
 #include "rendering/render_flow.h"
 #include "rendering/render_line.h"
 #include "rendering/render_style.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "editing/visible_text.h"
 #include "htmlnames.h"
 

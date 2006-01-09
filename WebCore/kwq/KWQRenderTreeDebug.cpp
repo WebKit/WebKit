@@ -33,7 +33,7 @@
 #include "render_canvas.h"
 #include "render_replaced.h"
 #include "render_table.h"
-#include "render_text.h"
+#include "InlineTextBox.h"
 #include "render_br.h"
 #include "SelectionController.h"
 

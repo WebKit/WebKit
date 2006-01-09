@@ -49,7 +49,7 @@
 #include "html/html_imageimpl.h"
 #include "html/html_objectimpl.h"
 #include "rendering/render_block.h"
-#include "rendering/render_text.h"
+#include "RenderText.h"
 #include "rendering/render_frames.h"
 #include "misc/loader.h"
 #include "xml/dom2_eventsimpl.h"
@@ -102,7 +102,6 @@ using khtml::EditAction;
 using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::FormData;
-using khtml::InlineTextBox;
 using khtml::isEndOfDocument;
 using khtml::isStartOfDocument;
 using khtml::PARAGRAPH;

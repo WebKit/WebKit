@@ -23,12 +23,10 @@
  *
  */
 
-//#define DEBUG_LAYOUT
-
 #include "config.h"
 #include "render_container.h"
 #include "render_table.h"
-#include "render_text.h"
+#include "RenderTextFragment.h"
 #include "render_image.h"
 #include "render_canvas.h"
 #include "xml/dom_docimpl.h"

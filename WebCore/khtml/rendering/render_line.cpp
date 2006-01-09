@@ -27,7 +27,7 @@
 #include <qpen.h>
 
 #include "rendering/render_flow.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "rendering/render_table.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"

@@ -2897,7 +2897,7 @@ void DocumentImpl::removeMarkers(RangeImpl *range, DocumentMarker::MarkerType ma
 }
 
 // Markers are stored in order sorted by their location.  They do not overlap each other, as currently
-// required by the drawing code in render_text.cpp.
+// required by the drawing code in RenderText.cpp.
 
 void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker) 
 {

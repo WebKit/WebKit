@@ -22,14 +22,10 @@
  *
  */
 
-//#define DEBUG
-//#define DEBUG_LAYOUT
-//#define BOX_DEBUG
-//#define FLOAT_DEBUG
-
 #include "config.h"
 #include <kdebug.h>
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
+#include "RenderTextFragment.h"
 #include "rendering/render_table.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"

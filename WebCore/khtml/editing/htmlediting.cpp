@@ -50,7 +50,7 @@
 #include "qptrlist.h"
 #include "render_object.h"
 #include "render_style.h"
-#include "render_text.h"
+#include "RenderText.h"
 #include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"

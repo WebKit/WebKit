@@ -1,5 +1,47 @@
 2006-01-08  Eric Seidel  <eseidel@apple.com>
 
+        Rubber stamped by ggaren.
+
+        * ForwardingHeaders/qsortedlist.h: Added. (a khtml file was referencing KWQ directly.)
+        * WebCore.xcodeproj/project.pbxproj: added new files.
+        * khtml/editing/SelectionController.cpp: updated includes
+        * khtml/editing/composite_edit_command.cpp: updated includes
+        * khtml/editing/htmlediting.cpp: updated includes
+        * khtml/editing/markup.cpp: updated includes
+        * khtml/editing/visible_position.cpp: updated includes
+        * khtml/editing/visible_text.cpp: updated includes
+        * khtml/editing/visible_text.h: updated includes
+        * khtml/editing/visible_units.cpp: updated includes
+        * khtml/khtml_part.cpp: updated includes
+        * khtml/khtmlview.cpp: updated includes
+        * khtml/rendering/InlineTextBox.cpp: Split out from render_text
+        * khtml/rendering/InlineTextBox.h: Split out from render_text
+        * khtml/rendering/RenderText.cpp: Split out from render_text
+        (khtml::RenderText::position): removed DEBUG_LAYOUT
+        * khtml/rendering/RenderText.h: Split out from render_text
+        * khtml/rendering/RenderTextFragment.cpp: Split out from render_text
+        * khtml/rendering/RenderTextFragment.h: Split out from render_text
+        * khtml/rendering/bidi.cpp: updated includes
+        * khtml/rendering/render_block.cpp: updated includes
+        * khtml/rendering/render_br.cpp: updated includes
+        * khtml/rendering/render_br.h: updated includes
+        * khtml/rendering/render_button.cpp: updated includes
+        * khtml/rendering/render_container.cpp: updated includes
+        * khtml/rendering/render_flow.cpp: updated includes
+        * khtml/rendering/render_line.cpp: updated includes
+        * khtml/rendering/render_object.cpp: updated includes
+        * khtml/rendering/render_text.cpp: Removed.
+        * khtml/rendering/render_text.h: Removed.
+        * khtml/xml/dom_docimpl.cpp: updated includes
+        * khtml/xml/dom_nodeimpl.cpp: updated includes
+        * khtml/xml/dom_position.cpp: updated includes
+        * khtml/xml/dom_textimpl.cpp: updated includes
+        * kwq/KWQAccObject.mm: updated includes
+        * kwq/KWQKHTMLPart.mm: updated includes
+        * kwq/KWQRenderTreeDebug.cpp: updated includes
+
+2006-01-08  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs & xenon.
 
         Renamed a few in kwq/ from .mm to .cpp

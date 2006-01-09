@@ -27,14 +27,12 @@
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
 #include "xml/dom2_rangeimpl.h"
-#include "render_text.h"
-#include "../kwq/KWQSortedList.h"
+#include "InlineTextBox.h"
+#include "qsortedlist.h"
 
 #include <qstring.h>
 
 namespace khtml {
-
-class InlineTextBox;
 
 // FIXME: Can't really answer this question without knowing the white-space mode.
 // FIXME: Move this along with the white-space position functions above

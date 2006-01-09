@@ -48,7 +48,7 @@
 #include "wrap_contents_in_dummy_span_command.h"
 
 #include "htmlnames.h"
-#include "rendering/render_text.h"
+#include "InlineTextBox.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_textimpl.h"
 

@@ -29,7 +29,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/EventNames.h"
 
-#include "rendering/render_text.h"
+#include "RenderText.h"
 
 #include <kdebug.h>
 

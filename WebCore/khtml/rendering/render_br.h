@@ -22,7 +22,7 @@
 #ifndef RENDER_BR_H
 #define RENDER_BR_H
 
-#include "render_text.h"
+#include "RenderText.h"
 
 namespace DOM {
     class Position;
