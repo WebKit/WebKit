@@ -119,7 +119,6 @@ sub diff
             $indexPath = $1;
             if ($dir ne ".") {
                 $indexPath = "$dir/$indexPath";
-                $indexPath = getWebKitRelativePath($indexPath);
                 s/Index: .*/Index: $indexPath/;
             }
         }
