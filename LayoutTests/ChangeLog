@@ -1,3 +1,15 @@
+2006-01-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+        
+        Reviewed by Maciej, landed by ap.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6276
+          Image thumbnails are misplaced on forum.2ostrov.ru
+          
+        * fast/replaced/inline-box-wrapper-handover-expected.checksum: Added.
+        * fast/replaced/inline-box-wrapper-handover-expected.png: Added.
+        * fast/replaced/inline-box-wrapper-handover-expected.txt: Added.
+        * fast/replaced/inline-box-wrapper-handover.html: Added.
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
         
         Reviewed by Eric.
