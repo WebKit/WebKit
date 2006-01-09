@@ -29,7 +29,7 @@
 <!--======================================================================-->
 <svg id="svg-root" width="100%" height="100%" viewBox="0 0 80 60" zoomAndPan="disable" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny">
   <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-    <OperatorScript version="$Revision$" testname="interact-zoom-01-t.svg">
+    <OperatorScript version="$Revision: 1.1 $" testname="interact-zoom-01-t.svg">
       <Paragraph>
 Verify correct handling by Dynamic (interactive) viewers for the
 "zoomAndPan" attribute on the 'svg' element.  This is one of a pair of
@@ -66,6 +66,6 @@ possible variations in the labelling text (per CSS2 rules).
       <circle cx="40" cy="32" r="10"/>
     </g>
   </g>
-  <text id="revision" x="4" y="56" font-size="7" stroke="none" fill="black">$Revision$</text>
+  <text id="revision" x="4" y="56" font-size="7" stroke="none" fill="black">$Revision: 1.1 $</text>
   <rect id="test-frame" x="1" y="1" width="79" height="59" fill="none" stroke="#000000"/>
 </svg>

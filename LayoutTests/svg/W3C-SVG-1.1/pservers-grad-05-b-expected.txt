@@ -13,6 +13,6 @@ layer at (0,0) size 480x360
             text run at (0,1) width 318: "Background"
         KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [stops=[]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 314x46
-          text run at (0,0) width 314: "$Revision$"
+        RenderText {TEXT} at (0,0) size 264x46
+          text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

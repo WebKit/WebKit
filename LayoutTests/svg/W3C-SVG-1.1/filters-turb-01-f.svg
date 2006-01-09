@@ -15,7 +15,7 @@
 <!--======================================================================-->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="filters-turb-01-f.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="filters-turb-01-f.svg">
 			<Paragraph>
 				Test which verifies the basic facilities of feTurbulence. Six rectangular areas showing the 
 				effects of various parameter settings for feTurbulence. The sample image indicates the 
@@ -81,6 +81,6 @@
 			<text x="375" y="296">numOctaves=1</text>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

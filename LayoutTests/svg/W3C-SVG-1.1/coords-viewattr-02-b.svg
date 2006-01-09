@@ -20,7 +20,7 @@ fill='none' stroke='blue'/>">
 <!--======================================================================-->
 <svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
     <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-      <OperatorScript version="$Revision$" testname="coords-viewattr-01-b.svg">
+      <OperatorScript version="$Revision: 1.1 $" testname="coords-viewattr-01-b.svg">
          <Paragraph>
              This test verifies the implementation of the preserveAspectRatio attribute on &lt;image&gt; 
              referencing raster content.
@@ -694,6 +694,6 @@ k/X6PA9f/wCdO4/tj1vTnT/Q/L0/YsNJJdTy381H+a/6j8n0YDv1+qkkklMhSSSSSn//2Q==" preser
             </g>
         </g>
     </g>
-    <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+    <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
     <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

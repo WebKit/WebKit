@@ -30,7 +30,7 @@
 <!--======================================================================-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" viewBox="0 0 480 360" width="100%" height="100%" version="1.1" baseProfile="tiny">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="struct-group-01-t.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="struct-group-01-t.svg">
 			<Paragraph>
 				The test checks to see that graphics elements (g) can be nested and that the like attributes can be passed to the children.  All the g elements for this test are in the g element whose id=allGs.  The two red rectangles and the yellow are in the g labeled rects.  The reds inherit a fill color the green rect  has a fill specified and it should not be overwritten.   The two yellow rectangles should inherit the fill color and the transform attribute, they should be yellow and rotated at -20 degrees.  These two rectangles are in g "yellowNrotate", that g is nested inside g "gratuitiousG".  The black rectangle in the upper right, has no attributes inherited from its parent.  The focus is nesting of g elements and passing on of attributes.
 			</Paragraph>
@@ -65,7 +65,6 @@
 			</g>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
-

@@ -44,7 +44,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" 
 baseProfile="tiny"  width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="struct-defs-01-t.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="struct-defs-01-t.svg">
 			<Paragraph>
 				Test to verify that the defs element is used as a container correctly.
 			</Paragraph>
@@ -80,6 +80,6 @@ baseProfile="tiny"  width="100%" height="100%" viewBox="0 0 480 360">
 			<rect x="160" y="100" width="160" height="160" fill="#008000"/>
 		</defs>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

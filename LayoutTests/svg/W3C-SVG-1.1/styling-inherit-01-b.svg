@@ -54,6 +54,6 @@
     </radialGradient>
     <rect width="180" height="120" x="40" y="160" stroke="none" fill="url(#yrw)"/>
   </g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>

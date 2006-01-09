@@ -1,3 +1,13 @@
+2006-01-08  Eric Seidel  <eseidel@apple.com>
+
+        Rubber stamped by mjs.
+
+        Remove svn:keywords property from all SVG tests.
+        Check in new results using old .svg files from CVS HEAD.
+        Enable previously disabled SVG tests.
+        Disable SVG <image> tests which fail intermittently due to:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5965
+
 2006-01-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by eric.

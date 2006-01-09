@@ -30,7 +30,7 @@
 <!--======================================================================-->
 <svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="masking-path-04-t.svg">
+		<OperatorScript version="$Revision: 1.3 $" testname="masking-path-04-t.svg">
 			<Paragraph>
 				This test exercises basic user-specified clip paths, using a text
 				string (i.e., content of a 'text' element) as the clip path.
@@ -72,7 +72,7 @@
          <image xlink:href="resources/bluesquidj.png" preserveAspectRatio="none" x="20" y="170" width="410" height="160" clip-path="url(#sample)"/>
      </g>
    </g>
-   <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+   <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.3 $</text>
    <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

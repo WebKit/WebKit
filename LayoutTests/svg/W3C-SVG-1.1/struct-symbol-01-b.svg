@@ -36,7 +36,7 @@
 <svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
 <!--nav data here-->
-		<OperatorScript version="$Revision$" testname="struct-symbol-01-b.svg">
+		<OperatorScript version="$Revision: 1.3 $" testname="struct-symbol-01-b.svg">
 			<Paragraph>
 				The purpose of the symbol test case is to create some symbols and then 
 				have them rendered when instantiated by the use element.  This file 
@@ -89,7 +89,7 @@
 			<use id="lowerRight" x="240" y="150" width="240" height="150" xlink:href="#drawRects"/>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.3 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

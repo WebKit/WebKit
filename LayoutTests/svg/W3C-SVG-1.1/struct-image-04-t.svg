@@ -65,7 +65,7 @@
 <svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
 <!--nav data here-->
-		<OperatorScript version="$Revision$" testname="struct-image-04-t.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="struct-image-04-t.svg">
 			<Paragraph>
 				The image test case checks to see if the basic image formats allowed in 
             the tiny profile are supported using the data: URI schema and base64 encoding.. 
@@ -116,7 +116,7 @@ ccC5au1FXckbRWvtPtSfq608A4Gw9Q1ZiPDbxhGdCsVVV2PtwICUxAyXWiaNHS0txm0XgU8cKj57IOtb
 
     </g>
 
-    <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+    <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 
     <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 

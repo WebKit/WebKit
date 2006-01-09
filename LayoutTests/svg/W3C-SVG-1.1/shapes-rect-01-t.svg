@@ -31,7 +31,7 @@
 <svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
   <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
 <!--nav data here-->
-		<OperatorScript version="$Revision$" testname="shapes-rect-01-t.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="shapes-rect-01-t.svg">
             <Paragraph>
                 The rendered picture should match the reference image, except
                 for possible variations in the labelling text (per CSS2 rules).
@@ -66,7 +66,7 @@
 		<rect id="rect-05" fill="none" stroke="#0000FF" stroke-width="8"  x="250" y="196" width="50" height="80" rx="30" ry="50"/>
 		<rect id="rect-06" fill="#00FF00"  x="350" y="196" width="50" height="80" rx="30" ry="50"/>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

@@ -35,6 +35,6 @@ layer at (0,0) size 480x360
             RenderText {TEXT} at (0,0) size 91x34
               text run at (0,0) width 91: "anim.8"
         RenderSVGText {text} at (0,0) size 785x45
-          RenderText {TEXT} at (0,0) size 340x45
-            text run at (0,0) width 340: "$Revision$"
+          RenderText {TEXT} at (0,0) size 285x45
+            text run at (0,0) width 285: "$Revision: 1.1 $"
         KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

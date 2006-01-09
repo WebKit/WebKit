@@ -36,7 +36,7 @@
 <!--======================================================================-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" viewBox="0 0 480 360" width="100%" height="100%" version="1.1" baseProfile="tiny">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="render-elems-01-t-b.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="render-elems-01-t-b.svg">
 			<Paragraph>
 				Verifies that shapes can be stroked.
 			</Paragraph>
@@ -69,7 +69,7 @@
 			<text x="110" y="-30" font-size="28">Shape stroke</text>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

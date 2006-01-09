@@ -32,7 +32,7 @@
 <svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 
     	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="shapes-polyline-01-t.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="shapes-polyline-01-t.svg">
             <Paragraph>
                 The rendered picture should match the reference image, except
                 for possible variations in the labelling text (per CSS2 rules).
@@ -78,7 +78,7 @@
 		<polyline id="polyline-06" fill="#FF00FF" stroke="none" stroke-width="8"  points="270,225 300,245 320,225 340,245 280,280                   390,280 420,240 280,185"/>
 		<!--text font-family="Arial" font-size="12"  x="330" y="175">filled</text-->
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
 

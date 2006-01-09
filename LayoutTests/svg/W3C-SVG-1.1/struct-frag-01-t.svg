@@ -31,7 +31,7 @@
 <!--======================================================================-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-        <OperatorScript version="$Revision$" testname="struct-frag-01-t.svg">
+        <OperatorScript version="$Revision: 1.1 $" testname="struct-frag-01-t.svg">
 			<Paragraph>
                 This is an empty SVG document.  Nothing should be rendered by the User Agent.
 			</Paragraph>

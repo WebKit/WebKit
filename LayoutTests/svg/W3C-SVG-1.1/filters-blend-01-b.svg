@@ -23,7 +23,7 @@
 <!--======================================================================-->
 <svg id="svg-root" width="100%" height="100%" viewBox="0 0 160 120" version="1.1" baseProfile="basic" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="filters-blend-01-b.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="filters-blend-01-b.svg">
 			<Paragraph>
                 Verify correct operation of the five compositing modes
                 of the feBlend filter primitive. Seven rectangles are
@@ -101,6 +101,6 @@
 			<text x="5" y="95">Lighten</text>
 		</g>
 	</g>
-	<text id="revision" x="3" y="112" font-size="12" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="3" y="112" font-size="12" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="158" height="118" fill="none" stroke="#000000" stroke-width="0.5"/>
 </svg>

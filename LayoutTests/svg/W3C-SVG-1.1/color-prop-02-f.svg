@@ -18,7 +18,7 @@
 <!--======================================================================-->
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 	<SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
-		<OperatorScript version="$Revision$" testname="color-prop-02-f.svg">
+		<OperatorScript version="$Revision: 1.1 $" testname="color-prop-02-f.svg">
 			<Paragraph>
 				Purpose of test is to determine if the color datatype is supported. There are multiple syntaxes for 
 				specifying the same color, such as #37F and #3377FF. For each of the nine groups shown here, 
@@ -93,6 +93,6 @@
 			<circle cx="365" cy="270" r="20" fill="rgb(28.235294117647058823529411764706%,81.960784313725490196078431372549%,80%)"/>
 		</g>
 	</g>
-	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision$</text>
+	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.1 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 </svg>
