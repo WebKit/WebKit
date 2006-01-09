@@ -2587,7 +2587,7 @@ ElementImpl *DocumentImpl::ownerElement()
     ChildFrame *childFrame = parent->childFrame(childPart);
     if (!childFrame)
         return 0;
-    RenderPart *renderPart = childFrame->m_frame;
+    RenderPart *renderPart = childFrame->m_renderer;
     if (!renderPart)
         return 0;
     return static_cast<ElementImpl *>(renderPart->element());

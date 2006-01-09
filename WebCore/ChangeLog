@@ -1,7 +1,44 @@
+2006-01-10  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - renamed ChildFrame::m_frame to m_renderer and
+        ChildFrame::m_part to m_frame which makes more sense.
+        
+        This also fixes some bugs which were introduced in Maciej's
+        previous commit.
+        
+        * khtml/Frame.cpp:
+        (Frame::stopLoading):
+        (Frame::clear):
+        (Frame::stopAnimations):
+        (Frame::checkEmitLoadEvent):
+        (Frame::requestFrame):
+        (Frame::requestObject):
+        (Frame::processObjectRequest):
+        (Frame::childFrame):
+        (Frame::findFrame):
+        (Frame::frameExists):
+        (Frame::setZoomFactor):
+        (Frame::frames):
+        (Frame::childFrameNamed):
+        (Frame::connectChild):
+        (Frame::disconnectChild):
+        (Frame::handleFallbackContent):
+        * khtml/khtmlpart_p.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::ownerElement):
+        * kwq/MacFrame.mm:
+        (Frame::frameDetached):
+        (MacFrame::createPart):
+        (MacFrame::nextKeyViewInFrameHierarchy):
+        (MacFrame::setPolicyBaseURL):
+
 2006-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6450
         - renamed KHTMLPart to Frame (and KWQKHTMLPart to MacFrame for now)
 
         * ForwardingHeaders/ksvg2/KSVGPart.h:

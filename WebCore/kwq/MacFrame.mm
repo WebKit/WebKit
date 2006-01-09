@@ -688,7 +688,7 @@ void Frame::frameDetached()
         FrameIt end = parentFrames.end();
         for (FrameIt it = parentFrames.begin(); it != end; ++it) {
             ChildFrame &child = *it;
-            if (child.m_part == this) {
+            if (child.m_frame == this) {
                 parent->disconnectChild(&child);
                 parentFrames.remove(it);
                 deref();
@@ -756,7 +756,7 @@ ReadOnlyPart *MacFrame::createPart(const ChildFrame &child, const KURL &url, con
         int marginWidth = -1;
         int marginHeight = -1;
         if (child.m_type != ChildFrame::Object) {
-            HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(child.m_frame->element());
+            HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(child.m_renderer->element());
             allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
             marginWidth = o->getMarginWidth();
             marginHeight = o->getMarginHeight();
@@ -764,7 +764,7 @@ ReadOnlyPart *MacFrame::createPart(const ChildFrame &child, const KURL &url, con
         WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
                                                             withURL:url.getNSURL()
                                                            referrer:child.m_args.metaData()["referrer"].getNSString()
-                                                         renderPart:child.m_frame
+                                                         renderPart:child.m_renderer
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
                                                        marginHeight:marginHeight];
@@ -1218,7 +1218,7 @@ NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirect
     if (!next) {
         MacFrame *parent = Mac(parentFrame());
         if (parent) {
-            next = parent->nextKeyViewInFrameHierarchy(parent->childFrame(this)->m_frame->element(), direction);
+            next = parent->nextKeyViewInFrameHierarchy(parent->childFrame(this)->m_renderer->element(), direction);
         }
     }
     
@@ -1683,7 +1683,7 @@ void MacFrame::setPolicyBaseURL(const DOMString &s)
         xmlDocImpl()->setPolicyBaseURL(s);
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
-        ReadOnlyPart *subpart = (*it).m_part;
+        ReadOnlyPart *subpart = (*it).m_frame;
         static_cast<MacFrame *>(subpart)->setPolicyBaseURL(s);
     }
 }
