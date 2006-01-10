@@ -30,7 +30,6 @@
 #include "css/css_base.h"
 #include "misc/loader_client.h"
 #include "misc/shared.h"
-#include <kxmlcore/FastMalloc.h>
 #include "css_valueimpl.h"
 
 namespace khtml {

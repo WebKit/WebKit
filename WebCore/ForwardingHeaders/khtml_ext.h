@@ -1,1 +1,1 @@
-#import "KWQKHTMLPartBrowserExtension.h"
+#include "KWQKHTMLPartBrowserExtension.h"

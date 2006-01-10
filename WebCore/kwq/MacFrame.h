@@ -26,19 +26,21 @@
 #ifndef MacFrame_H
 #define MacFrame_H
 
-#import "Frame.h"
+#include "Frame.h"
 
-#import "text_affinity.h"
+#include "text_affinity.h"
 
-#import "dom_nodeimpl.h"
+#include "dom_nodeimpl.h"
 
-#import "WebCoreKeyboardAccess.h"
+#include "WebCoreKeyboardAccess.h"
 
+#if __APPLE__
 #import <CoreFoundation/CoreFoundation.h>
+#endif
 
-#import "KWQDict.h"
-#import "KWQClipboard.h"
-#import "KWQScrollBar.h"
+#include "KWQDict.h"
+#include "KWQClipboard.h"
+#include "KWQScrollBar.h"
 
 class KHTMLPartPrivate;
 class KWQWindowWidget;

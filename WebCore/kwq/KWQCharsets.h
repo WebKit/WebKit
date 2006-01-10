@@ -26,7 +26,9 @@
 #ifndef KWQCHARSETS_H_
 #define KWQCHARSETS_H_
 
+#if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 enum KWQEncodingFlags {
     NoEncodingFlags = 0,
@@ -36,7 +38,9 @@ enum KWQEncodingFlags {
     IsJapanese = 8
 };
 
+#if __APPLE__
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *, KWQEncodingFlags *flags = 0);
 const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding);
+#endif
 
 #endif /* KWQCHARSETS_H_ */

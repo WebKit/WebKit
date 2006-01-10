@@ -1,1 +1,1 @@
-#import "KWQPtrDict.h"
+#include "KWQPtrDict.h"

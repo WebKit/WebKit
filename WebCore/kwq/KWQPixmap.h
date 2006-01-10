@@ -30,6 +30,7 @@
 #include "KWQPaintDevice.h"
 #include "KWQString.h"
 
+#if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 
 #ifdef __OBJC__
@@ -40,7 +41,9 @@ typedef id <WebCoreImageRenderer> WebCoreImageRendererPtr;
 class WebCoreImageRenderer;
 typedef WebCoreImageRenderer *WebCoreImageRendererPtr;
 class NSString;
-#endif
+#endif // __OBJC__
+
+#endif // __APPLE__
 
 class QWMatrix;
 class QPainter;
@@ -61,9 +64,13 @@ public:
     QPixmap(void *MIMEType);
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
+#if __APPLE__
     QPixmap(const QByteArray&, NSString *MIMEType);
+#endif
     QPixmap(int, int);
+#if __APPLE__
     QPixmap(WebCoreImageRendererPtr);
+#endif
     QPixmap(const QPixmap &);
     ~QPixmap();
     
@@ -76,8 +83,6 @@ public:
     void resize(const QSize &);
     void resize(int, int);
 
-    QPixmap xForm(const QWMatrix &) const;
-    
     bool mask() const;
 
     QPixmap &operator=(const QPixmap &);
@@ -85,24 +90,27 @@ public:
     bool receivedData(const QByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback);
     void stopAnimations();
 
+#if __APPLE__
     WebCoreImageRendererPtr imageRenderer() const { return m_imageRenderer; }
+    CGImageRef imageRef() const;
+#endif
 
     void increaseUseCount() const;
     void decreaseUseCount() const;
     
     void flushRasterCache();
-    
-    CGImageRef imageRef() const;
-    
+   
     static bool shouldUseThreadedDecoding();
 
     void resetAnimation();
     void setAnimationRect(const QRect&) const;
 
 private:
+#if __APPLE__
     WebCoreImageRendererPtr m_imageRenderer;
-    mutable bool m_needCopyOnWrite;
     NSString *m_MIMEType;
+#endif
+    mutable bool m_needCopyOnWrite;
     
     friend class QPainter;
 

@@ -27,7 +27,7 @@
 #define QVARIANT_H_
 
 #include "KWQDef.h"
-#include "kxmlcore/RefPtr.h"
+#include <kxmlcore/RefPtr.h>
 
 class QString;
 

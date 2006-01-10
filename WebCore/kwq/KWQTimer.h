@@ -30,10 +30,19 @@
 
 class QTimer : public QObject {
 public:
-    QTimer() : m_runLoopTimer(0), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout())) { }
+    QTimer() : 
+#if __APPLE__
+      m_runLoopTimer(0), 
+#endif
+      m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout())) { }
     ~QTimer() { stop(); }
     
+#if __APPLE__
     bool isActive() const { return m_runLoopTimer; }
+#else
+    bool isActive() const { return false; }
+#endif
+
     void start(int msec, bool singleShot = false);
     void stop();
     void fire();
@@ -45,10 +54,14 @@ public:
     // but not when the timer fires.
     void setMonitor(void (*monitorFunction)(void *context), void *context);
 
+#if __APPLE__
     CFAbsoluteTime fireDate() const { return CFRunLoopTimerGetNextFireDate(m_runLoopTimer); }
+#endif
 
 private:
+#if __APPLE__
     CFRunLoopTimerRef m_runLoopTimer;
+#endif
     void (*m_monitorFunction)(void *context);
     void *m_monitorFunctionContext;
     KWQSignal m_timeoutSignal;

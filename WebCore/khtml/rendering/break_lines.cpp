@@ -25,14 +25,18 @@
 
 #include <qstring.h>
 
+#if __APPLE__
 #include <CoreServices/CoreServices.h>
+#endif
 
 namespace khtml {
 
 int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
 {
+#if __APPLE__
     OSStatus status = 0, findStatus = -1;
     static TextBreakLocatorRef breakLocator = 0;
+#endif
     int nextUCBreak = -1;
     int i;
     unsigned short ch, lastCh;
@@ -45,6 +49,8 @@ int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
         // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
         if (lastCh == '-' || lastCh == '?')
             break;
+#if __APPLE__
+        // FIXME: Rewrite break location using ICU.
         // If current character, or the previous character aren't simple latin1 then
         // use the UC line break locator.  UCFindTextBreak will report false if we
         // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
@@ -59,6 +65,7 @@ int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
             if (findStatus == 0 && i == nextUCBreak && !(lastCh == ' ' || lastCh == '\n' || lastCh == '\t' || (breakNBSP && lastCh == 0xa0)))
                 break;
         }
+#endif
         lastCh = ch;
     }
     return i;

@@ -34,7 +34,11 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 #endif
 
+#if WIN32
+typedef unsigned long long Q_UINT64;
+#else
 typedef uint64_t Q_UINT64;
+#endif
 
 typedef int Q_INT32;
 typedef unsigned int Q_UINT32;

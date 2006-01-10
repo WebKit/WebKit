@@ -251,17 +251,6 @@ void QPixmap::resize(int w, int h)
     [m_imageRenderer resize:NSMakeSize(w, h)];
 }
 
-QPixmap QPixmap::xForm(const QWMatrix& xmatrix) const
-{
-    // This function is only called when an image needs to be scaled.  
-    // We can depend on render_image.cpp to call resize AFTER
-    // creating a copy of the image to be scaled. So, this
-    // implementation simply returns a copy of the image. Note,
-    // this assumption depends on the implementation of
-    // RenderImage::printObject.   
-    return *this;
-}
-
 QPixmap& QPixmap::operator=(const QPixmap& assignFrom)
 {
     id <WebCoreImageRenderer> oldImageRenderer = m_imageRenderer;

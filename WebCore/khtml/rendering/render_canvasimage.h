@@ -26,6 +26,8 @@
 #ifndef RENDER_CANVASIMAGE_H
 #define RENDER_CANVASIMAGE_H
 
+#if __APPLE__
+
 #include "html/html_elementimpl.h"
 #include "rendering/render_image.h"
 #include "dom/dom_string.h"
@@ -73,5 +75,7 @@ private:
 
 
 }; //namespace
+
+#endif
 
 #endif

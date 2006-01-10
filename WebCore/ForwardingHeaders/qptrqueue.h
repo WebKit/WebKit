@@ -1,1 +1,1 @@
-#import "KWQPtrQueue.h"
+#include "KWQPtrQueue.h"

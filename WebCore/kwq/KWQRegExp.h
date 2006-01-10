@@ -28,7 +28,7 @@
 
 #include "KWQString.h"
 
-#include "kxmlcore/RefPtr.h"
+#include <kxmlcore/RefPtr.h>
 
 class QRegExp {
 public:

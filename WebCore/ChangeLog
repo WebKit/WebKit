@@ -1,3 +1,118 @@
+2006-01-10  hyatt@apple.com
+
+	Fix for bugzilla bug 6458, get rendering dir of WebCore
+	compiling on Windows.
+	
+        Reviewed by darin
+
+        * ForwardingHeaders/QRectF:
+        * ForwardingHeaders/java/kjavaappletwidget.h:
+        * ForwardingHeaders/kcursor.h:
+        * ForwardingHeaders/kdebug.h:
+        * ForwardingHeaders/kglobalsettings.h:
+        * ForwardingHeaders/khtml_ext.h:
+        * ForwardingHeaders/khtml_factory.h:
+        * ForwardingHeaders/khtml_settings.h:
+        * ForwardingHeaders/kio/global.h:
+        * ForwardingHeaders/klocale.h:
+        * ForwardingHeaders/kparts/browserextension.h:
+        * ForwardingHeaders/kparts/event.h:
+        * ForwardingHeaders/kparts/part.h:
+        * ForwardingHeaders/kurl.h:
+        * ForwardingHeaders/qapplication.h:
+        * ForwardingHeaders/qbuffer.h:
+        * ForwardingHeaders/qcolor.h:
+        * ForwardingHeaders/qdatetime.h:
+        * ForwardingHeaders/qdict.h:
+        * ForwardingHeaders/qevent.h:
+        * ForwardingHeaders/qfont.h:
+        * ForwardingHeaders/qfontmetrics.h:
+        * ForwardingHeaders/qlist.h:
+        * ForwardingHeaders/qmap.h:
+        * ForwardingHeaders/qmemarray.h:
+        * ForwardingHeaders/qobject.h:
+        * ForwardingHeaders/qpaintdevicemetrics.h:
+        * ForwardingHeaders/qpainter.h:
+        * ForwardingHeaders/qpalette.h:
+        * ForwardingHeaders/qpen.h:
+        * ForwardingHeaders/qpixmap.h:
+        * ForwardingHeaders/qptrdict.h:
+        * ForwardingHeaders/qptrlist.h:
+        * ForwardingHeaders/qptrqueue.h:
+        * ForwardingHeaders/qptrstack.h:
+        * ForwardingHeaders/qptrvector.h:
+        * ForwardingHeaders/qrect.h:
+        * ForwardingHeaders/qregexp.h:
+        * ForwardingHeaders/qregion.h:
+        * ForwardingHeaders/qscrollbar.h:
+        * ForwardingHeaders/qscrollview.h:
+        * ForwardingHeaders/qsortedlist.h:
+        * ForwardingHeaders/qstring.h:
+        * ForwardingHeaders/qstringlist.h:
+        * ForwardingHeaders/qstyle.h:
+        * ForwardingHeaders/qtextcodec.h:
+        * ForwardingHeaders/qtextedit.h:
+        * ForwardingHeaders/qtimer.h:
+        * ForwardingHeaders/qvaluelist.h:
+        * ForwardingHeaders/qvariant.h:
+        * ForwardingHeaders/qwidget.h:
+        * ForwardingHeaders/qwmatrix.h:
+        * khtml/config.h:
+        * khtml/css/css_ruleimpl.h:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/html/html_objectimpl.h:
+        * khtml/rendering/RenderText.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/break_lines.cpp:
+        (khtml::nextBreakablePosition):
+        * khtml/rendering/font.h:
+        (khtml::Font::width):
+        * khtml/rendering/render_arena.cpp:
+        * khtml/rendering/render_canvasimage.cpp:
+        * khtml/rendering/render_canvasimage.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::remove):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::mouseEventHandler):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchEvent):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::endsWith):
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQArrayImpl.h:
+        (KWQArrayImpl::size):
+        * kwq/KWQCharsets.h:
+        * kwq/KWQDateTime.h:
+        (CFAbsoluteTimeGetCurrent):
+        * kwq/KWQDef.h:
+        * kwq/KWQFontFamily.h:
+        * kwq/KWQKPartsPart.h:
+        * kwq/KWQKURL.h:
+        * kwq/KWQLogging.h:
+        * kwq/KWQMapImpl.h:
+        * kwq/KWQMemArray.h:
+        (QMemArray::operator[]):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        * kwq/KWQPtrDictImpl.h:
+        * kwq/KWQRegExp.h:
+        * kwq/KWQString.h:
+        * kwq/KWQTextCodec.h:
+        * kwq/KWQTimer.h:
+        (QTimer::QTimer):
+        (QTimer::isActive):
+        * kwq/KWQValueListImpl.h:
+        * kwq/KWQVariant.h:
+        * kwq/KWQWMatrix.h:
+        * kwq/MacFrame.h:
+
 2006-01-10  Eric Seidel  <eseidel@apple.com>
 
         No review needed, build (linking deployment) fix only.

@@ -33,6 +33,10 @@
  */
 
 #include "config.h"
+
+#include <string.h>
+#include <stdlib.h>
+
 #include "render_arena.h"
 
 #ifndef NDEBUG

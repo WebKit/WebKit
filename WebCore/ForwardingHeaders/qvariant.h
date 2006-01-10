@@ -1,1 +1,1 @@
-#import "KWQVariant.h"
+#include "KWQVariant.h"

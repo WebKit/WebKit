@@ -514,14 +514,14 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 
     evt->setTarget(this);
 
-    // We've had at least one report of a crash on a page where document is nil here.
+    // We've had at least one report of a crash on a page where document is null here.
     // Unfortunately that page no longer exists, but we'll make this code robust against
     // that anyway.
     // FIXME: Much code in this class assumes document is non-null; it would be better to
     // ensure that document can never be null.
     Frame *frame = 0;
     KHTMLView *view = 0;
-    
+
     if (DocumentImpl *doc = getDocument()) {
         frame = doc->frame();
         view = doc->view();

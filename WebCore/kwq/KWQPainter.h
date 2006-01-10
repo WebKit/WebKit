@@ -30,7 +30,9 @@
 #include "KWQNamespace.h"
 #include "KWQRect.h"
 
+#if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+#endif
 
 class QBrush;
 class QFont;
@@ -89,6 +91,7 @@ public:
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &, const QString &);
+#if __APPLE__
     void drawPixmap( int x, int y, const QPixmap &,
 			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
     void drawPixmap( int x, int y, int w, int h, const QPixmap &,
@@ -98,6 +101,16 @@ public:
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0, CGContextRef context=0);
     void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH,
                                   CGContextRef context=0);
+#else
+    void drawPixmap( int x, int y, const QPixmap &,
+			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1);
+    void drawPixmap( int x, int y, int w, int h, const QPixmap &,
+			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1);
+    void drawFloatPixmap( float x, float y, float w, float h, const QPixmap &,
+			    float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1);
+    void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0);
+    void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH);
+#endif
 
     void addClip(const QRect &);
     void addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
@@ -139,17 +152,21 @@ public:
     void drawFocusRing();
     void clearFocusRing();
     
+#if __APPLE__
     CGContextRef currentContext();
-    
+#endif
+
 #if SVG_SUPPORT
     KRenderingDeviceContext *createRenderingDeviceContext();
     static KRenderingDevice *renderingDevice();
 #endif
     
+#if __APPLE__
     static int compositeOperatorFromString (const QString &aString);
     static int getCompositeOperation(CGContextRef context);
     static void setCompositeOperation (CGContextRef context, const QString &operation);
     static void setCompositeOperation (CGContextRef context, int operation);
+#endif
 
 private:
     // no copying or assignment

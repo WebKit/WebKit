@@ -1,1 +1,1 @@
-#import "KWQKPartsPart.h"
+#include "KWQKPartsPart.h"

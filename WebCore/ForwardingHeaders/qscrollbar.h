@@ -1,1 +1,1 @@
-#import "KWQScrollBar.h"
+#include "KWQScrollBar.h"

@@ -1,1 +1,1 @@
-#import "KWQBuffer.h"
+#include "KWQBuffer.h"

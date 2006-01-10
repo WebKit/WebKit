@@ -38,7 +38,9 @@ public:
     static QTextCodec *codecForNameEightBitOnly(const char *);
     static QTextCodec *codecForLocale();
 
+#if __APPLE__
     explicit QTextCodec(CFStringEncoding e, KWQEncodingFlags f = NoEncodingFlags) : _encoding(e), _flags(f) { }
+#endif
 
     const char *name() const;
     bool usesVisualOrdering() const { return _flags & VisualOrdering; }
@@ -57,7 +59,9 @@ public:
     unsigned hash() const;
     
 private:
+#if __APPLE__
     CFStringEncoding _encoding;
+#endif
     KWQEncodingFlags _flags;
 };
 

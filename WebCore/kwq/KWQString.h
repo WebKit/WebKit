@@ -26,9 +26,11 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
+#include <ctype.h>
 #include <unicode/uchar.h>
+#if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
-#include "kxmlcore/FastMalloc.h"
+#endif
 #include "KWQCString.h"
 
 // Make htmltokenizer.cpp happy
@@ -36,10 +38,12 @@
 
 class QRegExp;
 
+#if __APPLE__
 #ifdef __OBJC__
 @class NSString;
 #else
 class NSString;
+#endif
 #endif
 
 class QChar {
@@ -110,7 +114,7 @@ public:
     friend bool operator<=(char, QChar);
 
 private:
-    UniChar c;
+    unsigned short c;
 
     friend class QString;
     friend class QConstString;
@@ -421,9 +425,10 @@ public:
     static QString fromLatin1(const char *, int len);
     static QString fromUtf8(const char *);
     static QString fromUtf8(const char *, int len);
+#if __APPLE__
     static QString fromCFString(CFStringRef);
     static QString fromNSString(NSString *);
-    
+#endif
     QString &operator=(char);
     QString &operator=(QChar);
     QString &operator=(const char *);
@@ -515,7 +520,11 @@ public:
     QString &setNum(ulong);
     QString &setNum(double);
 
-    QString &sprintf(const char *, ...) __attribute__ ((format (printf, 2, 3)));
+    QString &sprintf(const char *, ...) 
+#if __GNUC
+    __attribute__ ((format (printf, 2, 3)))
+#endif
+    ;
 
     QString &append(const QString &);
     QString &append(QChar);
@@ -553,10 +562,11 @@ public:
     QString &operator+=(QChar c) { return append(c); }
     QString &operator+=(char c) { return append(c); }
 
+#if __APPLE__
     CFStringRef getCFString() const;
     NSString *getNSString() const;
-
     void setBufferFromCFString(CFStringRef);
+#endif
 
 private:
     // Used by QConstString.
@@ -623,10 +633,12 @@ inline const QChar *QString::unicode() const
     return dataHandle[0]->unicode();
 }
 
+#if __APPLE__
 inline CFStringRef QString::getCFString() const
 {
     return (CFStringRef)getNSString();
 }
+#endif
 
 inline QString QString::fromLatin1(const char *chs)
 {

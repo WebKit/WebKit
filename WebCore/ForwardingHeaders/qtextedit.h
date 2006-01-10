@@ -1,1 +1,1 @@
-#import "KWQTextEdit.h"
+#include "KWQTextEdit.h"

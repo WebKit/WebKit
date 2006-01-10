@@ -28,8 +28,7 @@
 
 #include <new>
 
-#include "kxmlcore/FastMalloc.h"
-#include "kxmlcore/RefPtr.h"
+#include <kxmlcore/RefPtr.h>
 
 class KWQMapImpl;
 

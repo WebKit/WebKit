@@ -28,8 +28,7 @@
 
 #include "KWQDef.h"
 #include <stddef.h>
-#include "kxmlcore/RefPtr.h"
-#include "kxmlcore/FastMalloc.h"
+#include <kxmlcore/RefPtr.h>
 #include "misc/shared.h"
 
 class KWQArrayImpl
@@ -44,7 +43,7 @@ class KWQArrayImpl
     void *at(size_t pos) const { return &d->data[pos * d->itemSize]; }
 
     void *data() const;
-    uint size() const;
+    unsigned size() const;
     bool resize(size_t size);
     void duplicate(const void *data, size_t size);
     bool fill(const void *item, int size = -1);
@@ -67,7 +66,7 @@ class KWQArrayImpl
     RefPtr<KWQArrayPrivate> d;
 };
 
-inline uint KWQArrayImpl::size() const
+inline unsigned KWQArrayImpl::size() const
 {
     return d->numItems;
 }

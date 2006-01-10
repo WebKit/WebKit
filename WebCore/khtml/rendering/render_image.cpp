@@ -292,10 +292,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 //                  kdDebug( 6040 ) << "have to scale: " << endl;
 //                  qDebug("cw=%d ch=%d  pw=%d ph=%d  rcw=%d, rch=%d",
 //                          cWidth, cHeight, intrinsicWidth(), intrinsicHeight(), resizeCache.width(), resizeCache.height());
-                QWMatrix matrix;
-                matrix.scale( (float)(cWidth)/intrinsicWidth(),
-                              (float)(cHeight)/intrinsicHeight() );
-                resizeCache = pix.xForm( matrix );
+                resizeCache = pix;
                 scaledrect.setWidth( ( cWidth*scaledrect.width() ) / intrinsicWidth() );
                 scaledrect.setHeight( ( cHeight*scaledrect.height() ) / intrinsicHeight() );
 //                   qDebug("resizeCache size: %d/%d", resizeCache.width(), resizeCache.height());

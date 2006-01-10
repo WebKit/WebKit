@@ -2055,8 +2055,10 @@ RenderArena* RenderObject::renderArena() const
 
 void RenderObject::remove()
 {
+#if __APPLE__
     // Delete our accessibility object if we have one.
     document()->getAccObjectCache()->detach(this);
+#endif
 
     removeFromObjectLists();
 

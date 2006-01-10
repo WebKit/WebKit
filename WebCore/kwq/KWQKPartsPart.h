@@ -32,7 +32,7 @@
 #include "KWQPtrList.h"
 #include "KWQStringList.h"
 #include "KWQValueList.h"
-#import "KWQTimer.h"
+#include "KWQTimer.h"
 
 class QWidget;
 

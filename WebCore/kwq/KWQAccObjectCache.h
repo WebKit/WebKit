@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __APPLE__
+
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "visible_position.h"
@@ -79,3 +81,5 @@ private:
     CFMutableDictionaryRef accCacheByID;
     KWQAccObjectID accObjectIDSource;
 };
+
+#endif

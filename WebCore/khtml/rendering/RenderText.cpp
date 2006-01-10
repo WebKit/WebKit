@@ -282,7 +282,9 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
+#if __GNUC
 static RenderObject *firstRendererOnNextLine(InlineBox *box) __attribute__ ((unused));
+#endif
 static RenderObject *firstRendererOnNextLine(InlineBox *box)
 {
     if (!box)

@@ -30,14 +30,21 @@
 
 #include <stddef.h>
 
+#if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
-    
+#endif
+
 class KWQPtrDictPrivate;
 
 class KWQPtrDictImpl
 {
  public:
+#if __APPLE__
     KWQPtrDictImpl(int size, void (*deleteFunc)(void *), const CFDictionaryKeyCallBacks *cfdkcb = NULL);
+#else
+    KWQPtrDictImpl(int size, void (*deleteFunc)(void *));
+#endif
+
     KWQPtrDictImpl(const KWQPtrDictImpl &pdi);
     ~KWQPtrDictImpl();
     

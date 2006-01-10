@@ -23,10 +23,9 @@
 
 #include "config.h"
 #include "bidi.h"
-
 #include "break_lines.h"
 #include "khtmlview.h"
-#include "kxmlcore/AlwaysInline.h"
+#include <kxmlcore/AlwaysInline.h>
 #include "render_arena.h"
 #include "render_block.h"
 #include "render_canvas.h"
@@ -2529,3 +2528,4 @@ void RenderBlock::checkLinesForTextOverflow()
 }
 
 }
+

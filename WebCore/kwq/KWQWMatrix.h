@@ -26,6 +26,9 @@
 #ifndef QWMATRIX_H_
 #define QWMATRIX_H_
 
+#if __APPLE__
+// FIXME: Just comment out the entire file, since its implementation is completely CG-specific.
+
 #include <ApplicationServices/ApplicationServices.h>
 #include <QRectF>
 
@@ -36,7 +39,7 @@ public:
     QWMatrix();
     QWMatrix(double a, double b, double c, double d, double tx, double ty);
     QWMatrix(CGAffineTransform transform);
-    
+
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
     QRect QWMatrix::mapRect(const QRect &rect) const;
@@ -61,9 +64,9 @@ public:
     double det() const;
     bool isInvertible() const;
     QWMatrix invert() const;
-    
+
     operator CGAffineTransform() const;
-    
+
     bool operator== (const QWMatrix &) const;
     QWMatrix &operator*= (const QWMatrix &);
     QWMatrix operator* (const QWMatrix &m2);
@@ -73,5 +76,7 @@ private:
 };
 
 #define QMatrix QWMatrix
+
+#endif // __APPLE__
 
 #endif

@@ -25,7 +25,6 @@
 
 #include "KWQString.h"
 #include "dom_atomicstring.h"
-#include "kxmlcore/FastMalloc.h"
 
 #ifdef __OBJC__
 @class NSString;
@@ -69,7 +68,9 @@ private:
     DOM::AtomicString _family;
     KWQFontFamily *_next;
     int _refCnt;
+#if __APPLE__
     mutable CFStringRef _CFFamily;
+#endif
 };
 
 

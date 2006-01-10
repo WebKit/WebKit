@@ -1,1 +1,1 @@
-#import "KWQKJavaAppletWidget.h"
+#include "KWQKJavaAppletWidget.h"

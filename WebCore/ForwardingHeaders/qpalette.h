@@ -1,1 +1,1 @@
-#import "KWQPalette.h"
+#include "KWQPalette.h"

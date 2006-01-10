@@ -1,1 +1,1 @@
-#import "KWQWidget.h"
+#include "KWQWidget.h"

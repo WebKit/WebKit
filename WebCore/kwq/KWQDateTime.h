@@ -27,7 +27,12 @@
 #define QDATETIME_H_
 
 #include "KWQDef.h"
+#if __APPLE__
 #include <CoreFoundation/CFDate.h>
+#else
+typedef double CFAbsoluteTime;
+inline CFAbsoluteTime CFAbsoluteTimeGetCurrent() { return 0; } // FIXME: Temporary until we port this class.
+#endif
 
 class QTime {
 public:

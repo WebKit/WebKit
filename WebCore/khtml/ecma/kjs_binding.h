@@ -26,7 +26,9 @@
 #include <qvariant.h>
 #include <kjs/lookup.h>
 
+#if __APPLE__
 #include <JavaScriptCore/runtime.h>
+#endif
 
 class Frame;
 

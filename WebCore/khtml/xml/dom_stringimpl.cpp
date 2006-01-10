@@ -604,7 +604,7 @@ bool DOMStringImpl::endsWith(const DOMStringImpl *s, bool caseSensitive) const
     int start = l - s->l;
     if (start >= 0)
         return (find(s, start, caseSensitive) == start);
-    return -1;
+    return false;
 }
 
 DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
