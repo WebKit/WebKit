@@ -68,7 +68,6 @@ enum FunctionNumber {
     slotEndLifeSupport,
     slotFinishedParsing,
     slotLoaderRequestDone,
-    slotLoaderRequestStarted,
     slotParentCompleted,
     slotParentDestroyed,
     slotPerformSearch,
@@ -109,7 +108,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotEndLifeSupport, (), Frame)
     CASE(slotFinishedParsing, (), Frame)
     CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), Frame)
-    CASE(slotLoaderRequestStarted, (khtml::DocLoader *, khtml::CachedObject *), Frame)
     CASE(slotParentCompleted, (), Frame)
     CASE(slotPerformSearch, (), RenderLineEdit)
     CASE(slotRedirect, (), Frame)
@@ -349,9 +347,6 @@ void KWQSlot::call(DocLoader *loader, CachedObject *cachedObject) const
     switch (m_function) {
         case slotLoaderRequestDone:
             static_cast<Frame *>(m_object.pointer())->slotLoaderRequestDone(loader, cachedObject);
-            return;
-        case slotLoaderRequestStarted:
-            static_cast<Frame *>(m_object.pointer())->slotLoaderRequestStarted(loader, cachedObject);
             return;
     }
     

@@ -2,6 +2,28 @@
 
         Reviewed by mjs.
 
+        Further code removal (and build fix!)
+
+        * khtml/Frame.cpp:
+        (Frame::init):
+        (Frame::~Frame):
+        (Frame::restoreURL):
+        (Frame::didOpenURL):
+        (Frame::baseURL):
+        (Frame::baseTarget):
+        * khtml/Frame.h:
+        (Frame::khtmlMouseDoubleClickEvent):
+        (Frame::khtmlDrawContentsEvent):
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Remove unused code from Frame.
 
         * khtml/Frame.cpp:

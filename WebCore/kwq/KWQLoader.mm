@@ -48,11 +48,7 @@ using namespace khtml;
 using KIO::TransferJob;
 
 bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
-{
-    LOG(Loading, "Serving request for base %s, url %s", 
-        request->m_docLoader->frame()->baseURL().url().latin1(),
-        request->object->url().qstring().latin1());
-    
+{    
     return KWQServeRequest(loader, request->m_docLoader, job);
 }
 

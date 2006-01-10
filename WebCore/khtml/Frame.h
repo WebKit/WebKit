@@ -129,10 +129,7 @@ public:
 
   Frame(QWidget *parentWidget = 0, const char *widgetname = 0, QObject *parent = 0, const char *name = 0);
   Frame(KHTMLView *view, QObject *parent = 0, const char *name = 0);
-
-  /**
-   * Destructor.
-   */
+  
   virtual ~Frame();
 
   /**
@@ -781,10 +778,10 @@ public:
 
   virtual void customEvent( QCustomEvent *event );
   virtual void khtmlMousePressEvent( khtml::MousePressEvent *event );
-  virtual void khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * );
+  virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent*) { }
   virtual void khtmlMouseMoveEvent( khtml::MouseMoveEvent *event );
   virtual void khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event );
-  virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+  virtual void khtmlDrawContentsEvent(khtml::DrawContentsEvent*) { }
   
   void selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::NodeImpl *innerNode, int x, int y);
 
@@ -836,8 +833,6 @@ private slots:
   void slotChildCompleted( bool );
   void slotParentCompleted();
   void slotChildURLRequest( const KURL &url, const KParts::URLArgs &args );
-
-  void slotLoaderRequestStarted( khtml::DocLoader*, khtml::CachedObject* obj);
   void slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *obj );
   void checkCompleted();
   
