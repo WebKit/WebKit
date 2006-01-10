@@ -116,16 +116,6 @@ void Frame::completed(bool arg)
     Mac(this)->_completed.call(arg);
 }
 
-bool Frame::openURL(const KURL &URL)
-{
-    ASSERT_NOT_REACHED();
-    return true;
-}
-
-void Frame::onURL(const QString &)
-{
-}
-
 void Frame::setStatusBarText(const QString &status)
 {
     Mac(this)->setStatusBarText(status);
@@ -159,13 +149,10 @@ MacFrame::MacFrame()
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
-    , _drawSelectionOnly(false)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
     , _dragClipboard(0)
-    , m_markedTextUsesUnderlines(false)
-    , m_windowHasFocus(false)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -196,11 +183,6 @@ void MacFrame::freeClipboard()
     }
 }
 
-void MacFrame::setSettings (KHTMLSettings *settings)
-{
-    d->m_settings = settings;
-}
-
 QString MacFrame::generateFrameName()
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -208,27 +190,6 @@ QString MacFrame::generateFrameName()
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return QString();
-}
-
-void MacFrame::provisionalLoadStarted()
-{
-    // we don't want to wait until we get an actual http response back
-    // to cancel pending redirects, otherwise they might fire before
-    // that happens.
-    cancelRedirection(true);
-}
-
-bool MacFrame::userGestureHint()
-{
-    if (jScript() && jScript()->interpreter()) {
-        Frame *rootPart = this;
-        while (rootPart->parentFrame() != 0)
-            rootPart = rootPart->parentFrame();
-        KJS::ScriptInterpreter *interpreter = rootPart->jScript()->interpreter();
-        return interpreter->wasRunByUserGesture();
-    } else
-        // if no JS, assume the user initiated this nav
-        return true;
 }
 
 bool MacFrame::openURL(const KURL &url)
@@ -276,57 +237,6 @@ void MacFrame::openURLRequest(const KURL &url, const URLArgs &args)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::didNotOpenURL(const KURL &URL)
-{
-    if (_submittedFormURL == URL) {
-        _submittedFormURL = KURL();
-    }
-}
-
-// Scans logically forward from "start", including any child frames
-static HTMLFormElementImpl *scanForForm(NodeImpl *start)
-{
-    NodeImpl *n;
-    for (n = start; n; n = n->traverseNextNode()) {
-        if (n->hasTagName(formTag)) {
-            return static_cast<HTMLFormElementImpl *>(n);
-        } else if (n->isHTMLElement()
-                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
-            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
-        } else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
-            NodeImpl *childDoc = static_cast<HTMLFrameElementImpl *>(n)->contentDocument();
-            HTMLFormElementImpl *frameResult = scanForForm(childDoc);
-            if (frameResult) {
-                return frameResult;
-            }
-        }
-    }
-    return 0;
-}
-
-// We look for either the form containing the current focus, or for one immediately after it
-HTMLFormElementImpl *MacFrame::currentForm() const
-{
-    // start looking either at the active (first responder) node, or where the selection is
-    NodeImpl *start = d->m_doc ? d->m_doc->focusNode() : 0;
-    if (!start) {
-        start = selectionStart();
-    }
-
-    // try walking up the node tree to find a form element
-    NodeImpl *n;
-    for (n = start; n; n = n->parentNode()) {
-        if (n->hasTagName(formTag)) {
-            return static_cast<HTMLFormElementImpl *>(n);
-        } else if (n->isHTMLElement()
-                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
-            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
-        }
-    }
-
-    // try walking forward in the node tree to find a form element
-    return start ? scanForForm(start) : 0;
-}
 
 // Either get cached regexp or build one that matches any of the labels.
 // The regexp we build is of the form:  (STR1|STR2|STRN)
@@ -657,23 +567,6 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::setEncoding(const QString &name, bool userChosen)
-{
-    if (!d->m_workingURL.isEmpty()) {
-        receivedFirstData();
-    }
-    d->m_encoding = name;
-    d->m_haveEncoding = userChosen;
-}
-
-void MacFrame::addData(const char *bytes, int length)
-{
-    ASSERT(d->m_workingURL.isEmpty());
-    ASSERT(d->m_doc);
-    ASSERT(d->m_doc->parsing());
-    write(bytes, length);
-}
-
 void Frame::frameDetached()
 {
     // FIXME: This should be a virtual function, with the first part in MacFrame, and the second
@@ -811,11 +704,6 @@ void MacFrame::setView(KHTMLView *view)
     _submittedFormURL = KURL();
 }
 
-KHTMLView *MacFrame::view() const
-{
-    return d->m_view;
-}
-
 void MacFrame::setTitle(const DOMString &title)
 {
     QString text = title.qstring();
@@ -848,33 +736,6 @@ void MacFrame::unfocusWindow()
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge unfocusWindow];
     KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void MacFrame::revealSelection()
-{
-    QRect rect;
-    
-    switch (selection().state()) {
-        case SelectionController::NONE:
-            return;
-            
-        case SelectionController::CARET:
-            rect = selection().caretRect();
-            break;
-
-        case SelectionController::RANGE:
-            rect = selectionRect();
-            break;
-    }
-    
-    ASSERT(d->m_selection.start().isNotNull());
-    if (selectionStart() && selectionStart()->renderer()) {
-        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
-        if (layer) {
-            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
-            layer->scrollRectToVisible(rect);
-        }
-    }
 }
 
 QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
@@ -987,27 +848,6 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
     return QString();
 }
 
-bool MacFrame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity)
-{
-    if (!xmlDocImpl()) {
-        return false;
-    }
-    
-    NodeImpl *node = xmlDocImpl()->focusNode();
-    if (node == 0) {
-        node = d->m_mousePressNode.get();
-    }
-    
-    if (node != 0) {
-        RenderObject *r = node->renderer();
-        if (r != 0) {
-            return r->scroll(direction, granularity);
-        }
-    }
-    
-    return false;
-}
-
 bool MacFrame::wheelEvent(NSEvent *event)
 {
     KHTMLView *v = d->m_view;
@@ -1092,71 +932,6 @@ void MacFrame::redirectionTimerStartedOrStopped()
         [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
     }
     KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void MacFrame::paint(QPainter *p, const QRect &rect)
-{
-#ifndef NDEBUG
-    bool fillWithRed;
-    if (p->device()->devType() == QInternal::Printer)
-        fillWithRed = false; // Printing, don't fill with red (can't remember why).
-    else if (!xmlDocImpl() || xmlDocImpl()->ownerElement())
-        fillWithRed = false; // Subframe, don't fill with red.
-    else if (view() && view()->isTransparent())
-        fillWithRed = false; // Transparent, don't fill with red.
-    else if (_drawSelectionOnly)
-        fillWithRed = false; // Selections are transparent, don't fill with red.
-    else if (_elementToDraw)
-        fillWithRed = false; // Element images are transparent, don't fill with red.
-    else
-        fillWithRed = true;
-
-    if (fillWithRed) {
-        p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
-    }
-#endif
-
-    if (renderer()) {
-        // _elementToDraw is used to draw only one element
-        RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
-        renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
-
-#if APPLE_CHANGES
-        // Regions may have changed as a result of the visibility/z-index of element changing.
-        if (renderer()->document()->dashboardRegionsDirty()){
-            renderer()->canvas()->view()->updateDashboardRegions();
-        }
-#endif
-    } else {
-        ERROR("called MacFrame::paint with nil renderer");
-    }
-}
-
-void MacFrame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
-{
-    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
-    if (root) {
-        // Use a printer device, with painting disabled for the pagination phase
-        QPainter painter(true);
-        painter.setPaintingDisabled(true);
-
-        root->setTruncatedAt((int)floor(oldBottom));
-        QRect dirtyRect(0, (int)floor(oldTop),
-                        root->docWidth(), (int)ceil(oldBottom-oldTop));
-        root->layer()->paint(&painter, dirtyRect);
-        *newBottom = root->bestTruncatedAt();
-        if (*newBottom == 0) {
-            *newBottom = oldBottom;
-        }
-    } else {
-        *newBottom = oldBottom;
-    }
-}
-
-RenderObject *MacFrame::renderer() const
-{
-    DocumentImpl *doc = xmlDocImpl();
-    return doc ? doc->renderer() : 0;
 }
 
 QString MacFrame::userAgent() const
@@ -1266,7 +1041,7 @@ NSView *MacFrame::nextKeyViewForWidget(QWidget *startingWidget, KWQSelectionDire
     // Then get the next key view in the order determined by the DOM.
     NodeImpl *node = nodeForWidget(startingWidget);
     ASSERT(node);
-    return frameForNode(node)->nextKeyView(node, direction);
+    return Mac(frameForNode(node))->nextKeyView(node, direction);
 }
 
 bool MacFrame::currentEventIsMouseDownInWidget(QWidget *candidate)
@@ -1412,92 +1187,6 @@ void MacFrame::partClearedInBegin()
     [_bridge windowObjectCleared];
 }
 
-PausedTimeouts *MacFrame::pauseTimeouts()
-{
-    if (d->m_doc && d->m_jscript) {
-        Window *w = Window::retrieveWindow(this);
-        if (w)
-            return w->pauseTimeouts();
-    }
-    return 0;
-}
-
-void MacFrame::resumeTimeouts(PausedTimeouts *t)
-{
-    if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
-        Window *w = Window::retrieveWindow(this);
-        if (w)
-            w->resumeTimeouts(t);
-    }
-}
-
-bool MacFrame::canCachePage()
-{
-    // Only save page state if:
-    // 1.  We're not a frame or frameset.
-    // 2.  The page has no unload handler.
-    // 3.  The page has no password fields.
-    // 4.  The URL for the page is not https.
-    // 5.  The page has no applets.
-    if (d->m_frames.count() ||
-        parentFrame() ||
-        m_url.protocol().startsWith("https") || 
-	(d->m_doc && (d->m_doc->applets()->length() != 0 ||
-                      d->m_doc->hasWindowEventListener(unloadEvent) ||
-		      d->m_doc->hasPasswordField()))) {
-        return false;
-    }
-    return true;
-}
-
-void MacFrame::saveWindowProperties(SavedProperties *windowProperties)
-{
-    Window *window = Window::retrieveWindow(this);
-    if (window)
-        window->saveProperties(*windowProperties);
-}
-
-void MacFrame::saveLocationProperties(SavedProperties *locationProperties)
-{
-    Window *window = Window::retrieveWindow(this);
-    if (window) {
-        JSLock lock;
-        Location *location = window->location();
-        location->saveProperties(*locationProperties);
-    }
-}
-
-void MacFrame::restoreWindowProperties(SavedProperties *windowProperties)
-{
-    Window *window = Window::retrieveWindow(this);
-    if (window)
-        window->restoreProperties(*windowProperties);
-}
-
-void MacFrame::restoreLocationProperties(SavedProperties *locationProperties)
-{
-    Window *window = Window::retrieveWindow(this);
-    if (window) {
-        JSLock lock;
-        Location *location = window->location();
-        location->restoreProperties(*locationProperties);
-    }
-}
-
-void MacFrame::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
-{
-    if (jScript() && jScript()->interpreter()) {
-	jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
-    }
-}
-
-void MacFrame::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
-{
-    if (jScript() && jScript()->interpreter()) {
-	jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
-    }
-}
-
 void MacFrame::openURLFromPageCache(KWQPageState *state)
 {
     // It's safe to assume none of the KWQPageState methods will raise
@@ -1583,66 +1272,19 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     checkCompleted();
 }
 
-MacFrame *MacFrame::frameForWidget(const QWidget *widget)
-{
-    ASSERT_ARG(widget, widget);
-    
-    NodeImpl *node = nodeForWidget(widget);
-    if (node) {
-	return frameForNode(node);
-    }
-    
-    // Assume all widgets are either form controls, or KHTMLViews.
-    ASSERT(widget->isKHTMLView());
-    return Mac(static_cast<const KHTMLView *>(widget)->frame());
-}
-
 WebCoreBridge *MacFrame::bridgeForWidget(const QWidget *widget)
 {
     ASSERT_ARG(widget, widget);
     
-    MacFrame *frame = frameForWidget(widget);
+    MacFrame *frame = Mac(frameForWidget(widget));
     ASSERT(frame);
     return frame->bridge();
 }
 
-MacFrame *MacFrame::frameForNode(NodeImpl *node)
-{
-    ASSERT_ARG(node, node);
-    return Mac(node->getDocument()->frame());
-}
-
 NSView *MacFrame::documentViewForNode(NodeImpl *node)
 {
-    WebCoreBridge *bridge = frameForNode(node)->bridge();
+    WebCoreBridge *bridge = Mac(frameForNode(node))->bridge();
     return [bridge documentView];
-}
-
-NodeImpl *MacFrame::nodeForWidget(const QWidget *widget)
-{
-    ASSERT_ARG(widget, widget);
-    const QObject *o = widget->eventFilterObject();
-    return o ? static_cast<const RenderWidget *>(o)->element() : 0;
-}
-
-void MacFrame::setDocumentFocus(QWidget *widget)
-{
-    NodeImpl *node = nodeForWidget(widget);
-    if (node) {
-        node->getDocument()->setFocusNode(node);
-    } else {
-        ERROR("unable to clear focus because widget had no corresponding node");
-    }
-}
-
-void MacFrame::clearDocumentFocus(QWidget *widget)
-{
-    NodeImpl *node = nodeForWidget(widget);
-    if (node) {
-    	node->getDocument()->setFocusNode(0);
-    } else {
-        ERROR("unable to clear focus because widget had no corresponding node");
-    }
 }
 
 void MacFrame::saveDocumentState()
@@ -1663,32 +1305,6 @@ void MacFrame::restoreDocumentState()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QPtrList<MacFrame> &MacFrame::mutableInstances()
-{
-    static QPtrList<MacFrame> instancesList;
-    return instancesList;
-}
-
-void MacFrame::updatePolicyBaseURL()
-{
-    if (parentFrame() && parentFrame()->xmlDocImpl()) {
-        setPolicyBaseURL(parentFrame()->xmlDocImpl()->policyBaseURL());
-    } else {
-        setPolicyBaseURL(m_url.url());
-    }
-}
-
-void MacFrame::setPolicyBaseURL(const DOMString &s)
-{
-    if (xmlDocImpl())
-        xmlDocImpl()->setPolicyBaseURL(s);
-    ConstFrameIt end = d->m_frames.end();
-    for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
-        ReadOnlyPart *subpart = (*it).m_frame;
-        static_cast<MacFrame *>(subpart)->setPolicyBaseURL(s);
-    }
-}
-
 QString MacFrame::requestedURLString() const
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -1705,66 +1321,6 @@ QString MacFrame::incomingReferrer() const
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return QString();
-}
-
-void MacFrame::forceLayout()
-{
-    KHTMLView *v = d->m_view;
-    if (v) {
-        v->layout();
-        // We cannot unschedule a pending relayout, since the force can be called with
-        // a tiny rectangle from a drawRect update.  By unscheduling we in effect
-        // "validate" and stop the necessary full repaint from occurring.  Basically any basic
-        // append/remove DHTML is broken by this call.  For now, I have removed the optimization
-        // until we have a better invalidation stategy. -dwh
-        //v->unscheduleRelayout();
-    }
-}
-
-void MacFrame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth)
-{
-    // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
-    // the state of things before and after the layout
-    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
-    if (root) {
-        // This magic is basically copied from khtmlview::print
-        int pageW = (int)ceil(minPageWidth);
-        root->setWidth(pageW);
-        root->setNeedsLayoutAndMinMaxRecalc();
-        forceLayout();
-        
-        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
-        // maximum page width, we will lay out to the maximum page width and clip extra content.
-        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
-        // implementation should not do this!
-        int rightmostPos = root->rightmostPosition();
-        if (rightmostPos > minPageWidth) {
-            pageW = kMin(rightmostPos, (int)ceil(maxPageWidth));
-            root->setWidth(pageW);
-            root->setNeedsLayoutAndMinMaxRecalc();
-            forceLayout();
-        }
-    }
-}
-
-void MacFrame::sendResizeEvent()
-{
-    KHTMLView *v = d->m_view;
-    if (v) {
-	QResizeEvent e;
-	v->resizeEvent(&e);
-    }
-}
-
-void MacFrame::sendScrollEvent()
-{
-    KHTMLView *v = d->m_view;
-    if (v) {
-        DocumentImpl *doc = xmlDocImpl();
-        if (!doc)
-            return;
-        doc->dispatchHTMLEvent(scrollEvent, true, false);
-    }
 }
 
 void MacFrame::runJavaScriptAlert(const DOMString& message)
@@ -1829,17 +1385,6 @@ bool MacFrame::personalbarVisible()
     return [_bridge areToolbarsVisible];
 }
 
-bool MacFrame::scrollbarsVisible()
-{
-    if (!view())
-	return false;
-
-    if (view()->hScrollBarMode() == QScrollView::AlwaysOff || view()->vScrollBarMode() == QScrollView::AlwaysOff)
-	return false;
-
-    return true;
-}
-
 bool MacFrame::statusbarVisible()
 {
     return [_bridge isStatusbarVisible];
@@ -1875,11 +1420,6 @@ void MacFrame::createEmptyDocument()
 	    d->m_doc->setBaseURL(parentFrame()->d->m_doc->baseURL());
 	}
     }
-}
-
-void MacFrame::addMetaData(const QString &key, const QString &value)
-{
-    d->m_job->addMetaData(key, value);
 }
 
 bool MacFrame::keyEvent(NSEvent *event)
@@ -1935,45 +1475,6 @@ bool MacFrame::keyEvent(NSEvent *event)
     return false;
 }
 
-// This does the same kind of work that Frame::openURL does, except it relies on the fact
-// that a higher level already checked that the URLs match and the scrolling is the right thing to do.
-void MacFrame::scrollToAnchor(const KURL &URL)
-{
-    m_url = URL;
-    started(0);
-
-    gotoAnchor();
-
-    // It's important to model this as a load that starts and immediately finishes.
-    // Otherwise, the parent frame may think we never finished loading.
-    d->m_bComplete = false;
-    checkCompleted();
-}
-
-bool MacFrame::closeURL()
-{
-    saveDocumentState();
-    return Frame::closeURL();
-}
-
-bool MacFrame::canMouseDownStartSelect(NodeImpl* node)
-{
-    if (!node || !node->renderer())
-        return true;
-
-    // Check to see if khtml-user-select has been set to none
-    if (!node->renderer()->canSelect())
-        return false;
-
-    // Some controls and images can't start a select on a mouse down.
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (curr->style()->userSelect() == SELECT_IGNORE)
-            return false;
-    }
-
-    return true;
-}
-
 void MacFrame::khtmlMousePressEvent(MousePressEvent *event)
 {
     bool singleClick = [_currentEvent clickCount] <= 1;
@@ -2004,43 +1505,7 @@ void MacFrame::khtmlMousePressEvent(MousePressEvent *event)
     }
 }
 
-void MacFrame::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
-{
-    if (!passWidgetMouseDownEventToWidget(event)) {
-        Frame::khtmlMouseDoubleClickEvent(event);
-    }
-}
-
-bool MacFrame::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
-{
-    // Figure out which view to send the event to.
-    RenderObject *target = event->innerNode() ? event->innerNode()->renderer() : 0;
-    if (!target)
-        return false;
-
-    QWidget* widget = RenderLayer::gScrollBar;
-    if (!widget) {
-        if (!target->isWidget())
-            return false;
-        widget = static_cast<RenderWidget *>(target)->widget();
-    }
-
-    // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will
-    // just pass _currentEvent down to the widget,  we don't want to call it for events that
-    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
-    // part of the pressed/released handling.
-    if (!MouseDoubleClickEvent::test(event))
-        return passWidgetMouseDownEventToWidget(widget);
-    else
-        return true;
-}
-
-bool MacFrame::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
-{
-    return passWidgetMouseDownEventToWidget(renderWidget->widget());
-}
-
-bool MacFrame::passWidgetMouseDownEventToWidget(QWidget* widget)
+bool MacFrame::passMouseDownEventToWidget(QWidget* widget)
 {
     // FIXME: this method always returns true
 
@@ -2173,41 +1638,6 @@ NSView *MacFrame::mouseDownViewIfStillGood()
     return mouseDownView;
 }
 
-// The link drag hysteresis is much larger than the others because there
-// needs to be enough space to cancel the link press without starting a link drag,
-// and because dragging links is rare.
-#define LinkDragHysteresis              40.0
-#define ImageDragHysteresis              5.0
-#define TextDragHysteresis               3.0
-#define GeneralDragHysteresis            3.0
-
-#define TextDragDelay                    0.15
-
-bool MacFrame::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
-{
-    int dragX, dragY;
-    d->m_view->viewportToContents((int)dragLocationX, (int)dragLocationY, dragX, dragY);
-    float deltaX = QABS(dragX - _mouseDownX);
-    float deltaY = QABS(dragY - _mouseDownY);
-
-    float threshold = GeneralDragHysteresis;
-    if (_dragSrcIsImage) {
-        threshold = ImageDragHysteresis;
-    } else if (_dragSrcIsLink) {
-        threshold = LinkDragHysteresis;
-    } else if (_dragSrcInSelection) {
-        threshold = TextDragHysteresis;
-    }
-    return deltaX >= threshold || deltaY >= threshold;
-}
-
-// returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const QPoint &loc) const
-{
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
-    return !noDefaultProc;
-}
-
 bool MacFrame::eventMayStartDrag(NSEvent *event) const
 {
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
@@ -2231,6 +1661,33 @@ bool MacFrame::eventMayStartDrag(NSEvent *event) const
     renderer()->layer()->hitTest(nodeInfo, mouseDownX, mouseDownY);
     bool srcIsDHTML;
     return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
+}
+
+// The link drag hysteresis is much larger than the others because there
+// needs to be enough space to cancel the link press without starting a link drag,
+// and because dragging links is rare.
+const float LinkDragHysteresis = 40.0;
+const float ImageDragHysteresis = 5.0;
+const float TextDragHysteresis = 3.0;
+const float GeneralDragHysteresis = 3.0;
+const float TextDragDelay = 0.15;
+
+bool MacFrame::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
+{
+    int dragX, dragY;
+    d->m_view->viewportToContents((int)dragLocationX, (int)dragLocationY, dragX, dragY);
+    float deltaX = QABS(dragX - _mouseDownX);
+    float deltaY = QABS(dragY - _mouseDownY);
+    
+    float threshold = GeneralDragHysteresis;
+    if (_dragSrcIsImage) {
+        threshold = ImageDragHysteresis;
+    } else if (_dragSrcIsLink) {
+        threshold = LinkDragHysteresis;
+    } else if (_dragSrcInSelection) {
+        threshold = TextDragHysteresis;
+    }
+    return deltaX >= threshold || deltaY >= threshold;
 }
 
 void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
@@ -2387,25 +1844,6 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::dragSourceMovedTo(const QPoint &loc)
-{
-    if (_dragSrc && _dragSrcMayBeDHTML) {
-        // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragEvent, loc);
-    }
-}
-
-void MacFrame::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
-{
-    if (_dragSrc && _dragSrcMayBeDHTML) {
-        _dragClipboard->setDestinationOperation(operation);
-        // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragendEvent, loc);
-    }
-    freeClipboard();
-    _dragSrc = 0;
-}
-
 // Returns whether caller should continue with "the default processing", which is the same as 
 // the event handler NOT setting the return value to false
 bool MacFrame::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::AccessPolicy policy)
@@ -2498,23 +1936,6 @@ void MacFrame::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
     [view mouseUp:_currentEvent];
     KWQ_UNBLOCK_EXCEPTIONS;
     _sendingEventToSubview = false;
-}
-
-void MacFrame::clearTimers(KHTMLView *view)
-{
-    if (view) {
-        view->unscheduleRelayout();
-        if (view->frame()) {
-            DocumentImpl* document = view->frame()->xmlDocImpl();
-            if (document && document->renderer() && document->renderer()->layer())
-                document->renderer()->layer()->suspendMarquees();
-        }
-    }
-}
-
-void MacFrame::clearTimers()
-{
-    clearTimers(d->m_view);
 }
 
 bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
@@ -3343,20 +2764,6 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
     return nil;
 }
 
-QRect MacFrame::selectionRect() const
-{
-    if(!xmlDocImpl()){
-        return QRect();
-    }
-
-    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
-    if (!root) {
-        return QRect();
-    }
-
-    return root->selectionRect();
-}
-
 // returns NSRect because going through QRect would truncate any floats
 NSRect MacFrame::visibleSelectionRect() const
 {
@@ -3368,33 +2775,6 @@ NSRect MacFrame::visibleSelectionRect() const
         return NSZeroRect;
     }
     return NSIntersectionRect(selectionRect(), [documentView visibleRect]);     
-}
-
-void MacFrame::centerSelectionInVisibleArea() const
-{
-    QRect rect;
-    
-    switch (selection().state()) {
-        case SelectionController::NONE:
-            return;
-            
-        case SelectionController::CARET:
-            rect = selection().caretRect();
-            break;
-
-        case SelectionController::RANGE:
-            rect = selectionRect();
-            break;
-    }
-    
-    ASSERT(d->m_selection.start().isNotNull());
-    if (selectionStart() && selectionStart()->renderer()) {
-        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
-        if (layer) {
-            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
-            layer->scrollRectToVisible(rect, RenderLayer::gAlignCenterAlways, RenderLayer::gAlignCenterAlways);
-        }
-    }
 }
 
 NSImage *MacFrame::imageFromRect(NSRect rect) const
@@ -3466,47 +2846,6 @@ NSImage *MacFrame::snapshotDragImage(NodeImpl *node, NSRect *imageRect, NSRect *
         *imageRect = paintingRect;
     }
     return result;
-}
-
-RenderStyle *MacFrame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
-{
-    nodeToRemove = 0;
-
-    if (!xmlDocImpl())
-        return 0;
-    if (d->m_selection.isNone())
-        return 0;
-    
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
-    if (!pos.inRenderedContent())
-        return 0;
-    NodeImpl *node = pos.node();
-    if (!node)
-        return 0;
-    
-    if (!d->m_typingStyle)
-        return node->renderer()->style();
-
-    int exceptionCode = 0;
-    ElementImpl *styleElement = xmlDocImpl()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    styleElement->ref();
-
-    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-    
-    TextImpl *text = xmlDocImpl()->createEditingTextNode("");
-    styleElement->appendChild(text, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    node->parentNode()->appendChild(styleElement, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    styleElement->deref();
-
-    nodeToRemove = styleElement;    
-    return styleElement->renderer()->style();
 }
 
 NSFont *MacFrame::fontForSelection(bool *hasMultipleFonts) const
@@ -3660,26 +2999,6 @@ void MacFrame::tokenizerProcessedData()
     [_bridge tokenizerProcessedData];
 }
 
-int MacFrame::selectionStartOffset() const
-{
-    return d->m_selection.start().offset();
-}
-
-int MacFrame::selectionEndOffset() const
-{
-    return d->m_selection.end().offset();
-}
-
-NodeImpl *MacFrame::selectionStart() const
-{
-    return d->m_selection.start().node();
-}
-
-NodeImpl *MacFrame::selectionEnd() const
-{
-    return d->m_selection.end().node();
-}
-
 void MacFrame::setBridge(WebCoreBridge *p)
 { 
     if (_bridge != p) {
@@ -3695,33 +3014,6 @@ QString MacFrame::overrideMediaType() const
     if (overrideType)
         return QString::fromNSString(overrideType);
     return QString();
-}
-
-void MacFrame::setMediaType(const QString &type)
-{
-    if (d->m_view) {
-        d->m_view->setMediaType(type);
-    }
-}
-
-void MacFrame::setSelectionFromNone()
-{
-    // Put the caret someplace if the selection is empty and the part is editable.
-    // This has the effect of flashing the caret in a contentEditable view automatically 
-    // without requiring the programmer to set a selection explicitly.
-    DocumentImpl *doc = xmlDocImpl();
-    if (doc && selection().isNone() && isContentEditable()) {
-        NodeImpl *node = doc->documentElement();
-        while (node) {
-            // Look for a block flow, but skip over the HTML element, since we really
-            // want to get at least as far as the the BODY element in a document.
-            if (node->isBlockFlow() && node->hasTagName(htmlTag))
-                break;
-            node = node->traverseNextNode();
-        }
-        if (node)
-            setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
-    }
 }
 
 void MacFrame::setDisplaysWithFocusAttributes(bool flag)
@@ -3768,39 +3060,6 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
     }
 }
 
-bool MacFrame::displaysWithFocusAttributes() const
-{
-    return d->m_isFocused;
-}
-
-void MacFrame::setWindowHasFocus(bool flag)
-{
-    if (m_windowHasFocus == flag)
-        return;
-    m_windowHasFocus = flag;
-
-    if (DocumentImpl *doc = xmlDocImpl())
-        if (NodeImpl *body = doc->body())
-            body->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
-}
-
-QChar MacFrame::backslashAsCurrencySymbol() const
-{
-    DocumentImpl *doc = xmlDocImpl();
-    if (!doc) {
-        return '\\';
-    }
-    Decoder *decoder = doc->decoder();
-    if (!decoder) {
-        return '\\';
-    }
-    const QTextCodec *codec = decoder->codec();
-    if (!codec) {
-        return '\\';
-    }
-    return codec->backslashAsCurrencySymbol();
-}
-
 NSColor *MacFrame::bodyBackgroundColor() const
 {
     if (xmlDocImpl() && xmlDocImpl()->body() && xmlDocImpl()->body()->renderer()) {
@@ -3819,19 +3078,6 @@ WebCoreKeyboardUIMode MacFrame::keyboardUIMode() const
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return WebCoreKeyboardAccessDefault;
-}
-
-void MacFrame::setName(const QString &name)
-{
-    QString n = name;
-
-    MacFrame *parent = Mac(parentFrame());
-
-    // FIXME: is the blank rule needed or useful?
-    if (parent && (name.isEmpty() || parent->frameExists(name) || name == "_blank"))
-	n = parent->requestFrameName();
-
-    Frame::setName(n);
 }
 
 void MacFrame::didTellBridgeAboutLoad(const QString &urlString)
@@ -4220,26 +3466,9 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
     }
 }
 
-bool MacFrame::markedTextUsesUnderlines() const
-{
-    return m_markedTextUsesUnderlines;
-}
-
-QValueList<MacFrame::MarkedTextUnderline> MacFrame::markedTextUnderlines() const
-{
-    return m_markedTextUnderlines;
-}
-
 bool MacFrame::canGoBackOrForward(int distance) const
 {
     return [_bridge canGoBackOrForward:distance];
-}
-
-void MacFrame::prepareForUserAction()
-{
-    // Reset the multiple form submission protection code.
-    // We'll let you submit the same form twice if you do two separate user actions.
-    _submittedFormURL = KURL();
 }
 
 void MacFrame::didFirstLayout()
@@ -4305,16 +3534,6 @@ bool MacFrame::isCharacterSmartReplaceExempt(const QChar &c, bool isPreviousChar
     return [_bridge isCharacterSmartReplaceExempt:c.unicode() isPreviousCharacter:isPreviousChar];
 }
 
-bool MacFrame::isFrame() const
-{
-    return true;
-}
-
-NodeImpl *MacFrame::mousePressNode()
-{
-    return d->m_mousePressNode.get();
-}
-
 void MacFrame::handledOnloadEvents()
 {
     [_bridge handledOnloadEvents];
@@ -4352,3 +3571,30 @@ bool MacFrame::shouldClose()
 
     return true;
 }
+
+void MacFrame::dragSourceMovedTo(const QPoint &loc)
+{
+    if (_dragSrc && _dragSrcMayBeDHTML) {
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(dragEvent, loc);
+    }
+}
+
+void MacFrame::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
+{
+    if (_dragSrc && _dragSrcMayBeDHTML) {
+        _dragClipboard->setDestinationOperation(operation);
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(dragendEvent, loc);
+    }
+    freeClipboard();
+    _dragSrc = 0;
+}
+
+// returns if we should continue "default processing", i.e., whether eventhandler canceled
+bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const QPoint &loc) const
+{
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
+    return !noDefaultProc;
+}
+

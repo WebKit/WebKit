@@ -63,8 +63,8 @@
 
 - (void)_updateAllViews
 {
-    for (QPtrListIterator<MacFrame> it(MacFrame::instances()); it.current(); ++it) {
-        MacFrame *frame = it.current();
+    for (QPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
+        MacFrame *frame = Mac(it.current());
         if (frame->settings() == settings) {
             [frame->bridge() setNeedsReapplyStyles];
         }

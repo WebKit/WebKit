@@ -21,7 +21,6 @@
 		550A0BCE085F604D007353D6 /* htmlnames.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BCC085F604D007353D6 /* htmlnames.h */; };
 		651E7D5D097279EF0064F054 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E7D5B097279EF0064F054 /* Frame.cpp */; };
 		651E7D5E097279EF0064F054 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 651E7D5C097279EF0064F054 /* Frame.h */; };
-		651E7D6209727BAB0064F054 /* MacFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E7D5F09727BAB0064F054 /* MacFrame.cpp */; };
 		651E7D6309727BAB0064F054 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 651E7D6009727BAB0064F054 /* MacFrame.h */; };
 		651E7D6409727BAB0064F054 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 651E7D6109727BAB0064F054 /* MacFrame.mm */; };
 		652C6E9B08331AE400714969 /* delete_from_text_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652C6E9708331AE400714969 /* delete_from_text_node_command.cpp */; };
@@ -1725,7 +1724,6 @@
 		55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQAccObjectCache.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		651E7D5B097279EF0064F054 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		651E7D5C097279EF0064F054 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
-		651E7D5F09727BAB0064F054 /* MacFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MacFrame.cpp; sourceTree = "<group>"; };
 		651E7D6009727BAB0064F054 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		651E7D6109727BAB0064F054 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
 		652C6E9708331AE400714969 /* delete_from_text_node_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = delete_from_text_node_command.cpp; path = editing/delete_from_text_node_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3689,7 +3687,6 @@
 				93D1FEF6067EBF89009CE68A /* KWQFoundationExtras.h */,
 				F58784EE02DE375901EA4122 /* KWQKCookieJar.h */,
 				F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */,
-				651E7D5F09727BAB0064F054 /* MacFrame.cpp */,
 				651E7D6009727BAB0064F054 /* MacFrame.h */,
 				651E7D6109727BAB0064F054 /* MacFrame.mm */,
 				F58784FC02DE375901EA4122 /* KWQKHTMLView.cpp */,
@@ -6302,6 +6299,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				651E7D5D097279EF0064F054 /* Frame.cpp in Sources */,
+				651E7D6409727BAB0064F054 /* MacFrame.mm in Sources */,
+				93F19A5B08245E59001E9ABC /* WebCoreBridge.mm in Sources */,
 				937C34ED0868E4B4006F4B22 /* parser.y in Sources */,
 				93F19A0D08245E59001E9ABC /* KWQApplication.mm in Sources */,
 				93F19A0E08245E59001E9ABC /* KWQArrayImpl.cpp in Sources */,
@@ -6367,7 +6367,6 @@
 				93F19A5808245E59001E9ABC /* KWQVectorImpl.cpp in Sources */,
 				93F19A5908245E59001E9ABC /* KWQWidget.mm in Sources */,
 				93F19A5A08245E59001E9ABC /* KWQWindowWidget.mm in Sources */,
-				93F19A5B08245E59001E9ABC /* WebCoreBridge.mm in Sources */,
 				93F19A5C08245E59001E9ABC /* WebCoreCookieAdapter.m in Sources */,
 				93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */,
 				93F19A5E08245E59001E9ABC /* WebCoreTextRendererFactory.mm in Sources */,
@@ -6723,9 +6722,6 @@
 				A82B8CAD09712C2C0027E3DE /* RenderTextFragment.cpp in Sources */,
 				A82B8CB009712C2C0027E3DE /* InlineTextBox.cpp in Sources */,
 				A82B8CB109712C2C0027E3DE /* RenderText.cpp in Sources */,
-				651E7D5D097279EF0064F054 /* Frame.cpp in Sources */,
-				651E7D6209727BAB0064F054 /* MacFrame.cpp in Sources */,
-				651E7D6409727BAB0064F054 /* MacFrame.mm in Sources */,
 				A8135B8D0972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */,
 				A8135B8F0972403A00D74463 /* Cache.cpp in Sources */,
 				A8135B920972403A00D74463 /* Request.cpp in Sources */,

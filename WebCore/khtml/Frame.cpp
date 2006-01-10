@@ -45,9 +45,11 @@
 #include "html/html_miscimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_objectimpl.h"
+#include "html/html_formimpl.h"
 #include "rendering/render_block.h"
 #include "RenderText.h"
 #include "rendering/render_frames.h"
+#include "rendering/render_canvas.h"
 #include "misc/Cache.h"
 #include "misc/CachedCSSStyleSheet.h"
 #include "misc/DocLoader.h"
@@ -60,12 +62,15 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #endif
+#include "kxmlcore/Assertions.h"
 
 using namespace DOM;
 using namespace HTMLNames;
+using namespace KJS;
 
 #include "khtmlview.h"
 #include "ecma/kjs_proxy.h"
+#include "ecma/kjs_window.h"
 #include "ecma/xmlhttprequest.h"
 #include "khtml_settings.h"
 #include "khtmlpart_p.h"
@@ -146,6 +151,10 @@ void Frame::init(KHTMLView *view)
   XLinkNames::init();
 #endif
 
+  _drawSelectionOnly = false;
+  m_markedTextUsesUnderlines = false;
+  m_windowHasFocus = false;
+  
   frameCount = 0;
 
   d = new KHTMLPartPrivate(parent());
@@ -385,13 +394,6 @@ void Frame::stopLoading(bool sendUnload)
 
   // Stop any started redirections as well!! (DA)
   cancelRedirection();
-}
-
-bool Frame::closeURL()
-{    
-  stopLoading(true);
-
-  return true;
 }
 
 KParts::BrowserExtension *Frame::browserExtension() const
@@ -3112,4 +3114,734 @@ void Frame::handleFallbackContent()
     if (!node || !node->hasTagName(objectTag))
         return;
     static_cast<HTMLObjectElementImpl *>(node)->renderFallbackContent();
+}
+
+void Frame::setSettings(KHTMLSettings *settings)
+{
+    d->m_settings = settings;
+}
+
+void Frame::provisionalLoadStarted()
+{
+    // we don't want to wait until we get an actual http response back
+    // to cancel pending redirects, otherwise they might fire before
+    // that happens.
+    cancelRedirection(true);
+}
+
+bool Frame::userGestureHint()
+{
+    if (jScript() && jScript()->interpreter()) {
+        Frame *rootPart = this;
+        while (rootPart->parentFrame() != 0)
+            rootPart = rootPart->parentFrame();
+        KJS::ScriptInterpreter *interpreter = rootPart->jScript()->interpreter();
+        return interpreter->wasRunByUserGesture();
+    } else
+        // if no JS, assume the user initiated this nav
+        return true;
+}
+
+RenderObject *Frame::renderer() const
+{
+    DocumentImpl *doc = xmlDocImpl();
+    return doc ? doc->renderer() : 0;
+}
+
+QRect Frame::selectionRect() const
+{
+    RenderCanvas *root = static_cast<RenderCanvas *>(renderer());
+    if (!root)
+        return QRect();
+
+    return root->selectionRect();
+}
+
+bool Frame::isFrameSet() const
+{
+    DocumentImpl *document = d->m_doc;
+    if (!document || !document->isHTMLDocument())
+        return false;
+    NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
+    return body && body->renderer() && body->hasTagName(framesetTag);
+}
+
+bool Frame::openURL(const KURL &URL)
+{
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void Frame::didNotOpenURL(const KURL &URL)
+{
+    if (_submittedFormURL == URL) {
+        _submittedFormURL = KURL();
+    }
+}
+
+NodeImpl *Frame::selectionStart() const
+{
+    return d->m_selection.start().node();
+}
+
+// Scans logically forward from "start", including any child frames
+static HTMLFormElementImpl *scanForForm(NodeImpl *start)
+{
+    NodeImpl *n;
+    for (n = start; n; n = n->traverseNextNode()) {
+        if (n->hasTagName(formTag)) {
+            return static_cast<HTMLFormElementImpl *>(n);
+        } else if (n->isHTMLElement()
+                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
+            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
+        } else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
+            NodeImpl *childDoc = static_cast<HTMLFrameElementImpl *>(n)->contentDocument();
+            HTMLFormElementImpl *frameResult = scanForForm(childDoc);
+            if (frameResult) {
+                return frameResult;
+            }
+        }
+    }
+    return 0;
+}
+
+// We look for either the form containing the current focus, or for one immediately after it
+HTMLFormElementImpl *Frame::currentForm() const
+{
+    // start looking either at the active (first responder) node, or where the selection is
+    NodeImpl *start = d->m_doc ? d->m_doc->focusNode() : 0;
+    if (!start)
+        start = selectionStart();
+    
+    // try walking up the node tree to find a form element
+    NodeImpl *n;
+    for (n = start; n; n = n->parentNode()) {
+        if (n->hasTagName(formTag))
+            return static_cast<HTMLFormElementImpl *>(n);
+        else if (n->isHTMLElement()
+                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement())
+            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
+    }
+    
+    // try walking forward in the node tree to find a form element
+    return start ? scanForForm(start) : 0;
+}
+
+void Frame::setEncoding(const QString &name, bool userChosen)
+{
+    if (!d->m_workingURL.isEmpty())
+        receivedFirstData();
+    d->m_encoding = name;
+    d->m_haveEncoding = userChosen;
+}
+
+void Frame::addData(const char *bytes, int length)
+{
+    ASSERT(d->m_workingURL.isEmpty());
+    ASSERT(d->m_doc);
+    ASSERT(d->m_doc->parsing());
+    write(bytes, length);
+}
+
+// FIXME: should this go in SelectionController?
+void Frame::revealSelection()
+{
+    QRect rect;
+    
+    switch (selection().state()) {
+        case SelectionController::NONE:
+            return;
+            
+        case SelectionController::CARET:
+            rect = selection().caretRect();
+            break;
+            
+        case SelectionController::RANGE:
+            rect = selectionRect();
+            break;
+    }
+    
+    ASSERT(d->m_selection.start().isNotNull());
+    if (selectionStart() && selectionStart()->renderer()) {
+        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+        if (layer) {
+            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+            layer->scrollRectToVisible(rect);
+        }
+    }
+}
+
+// FIXME: should this be here?
+bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity)
+{
+    if (!xmlDocImpl()) {
+        return false;
+    }
+    
+    NodeImpl *node = xmlDocImpl()->focusNode();
+    if (node == 0) {
+        node = d->m_mousePressNode.get();
+    }
+    
+    if (node != 0) {
+        RenderObject *r = node->renderer();
+        if (r != 0) {
+            return r->scroll(direction, granularity);
+        }
+    }
+    
+    return false;
+}
+
+// FIXME: why is this here instead of on the KHTMLView?
+void Frame::paint(QPainter *p, const QRect& rect)
+{
+#ifndef NDEBUG
+    bool fillWithRed;
+    if (p->device()->devType() == QInternal::Printer)
+        fillWithRed = false; // Printing, don't fill with red (can't remember why).
+    else if (!xmlDocImpl() || xmlDocImpl()->ownerElement())
+        fillWithRed = false; // Subframe, don't fill with red.
+    else if (view() && view()->isTransparent())
+        fillWithRed = false; // Transparent, don't fill with red.
+    else if (_drawSelectionOnly)
+        fillWithRed = false; // Selections are transparent, don't fill with red.
+    else if (_elementToDraw)
+        fillWithRed = false; // Element images are transparent, don't fill with red.
+    else
+        fillWithRed = true;
+    
+    if (fillWithRed)
+        p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
+#endif
+    
+    if (renderer()) {
+        // _elementToDraw is used to draw only one element
+        RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
+        renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
+        
+#if APPLE_CHANGES
+        // Regions may have changed as a result of the visibility/z-index of element changing.
+        if (renderer()->document()->dashboardRegionsDirty())
+            renderer()->canvas()->view()->updateDashboardRegions();
+#endif
+    } else
+        ERROR("called Frame::paint with nil renderer");
+}
+
+void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
+{
+    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
+    if (root) {
+        // Use a printer device, with painting disabled for the pagination phase
+        QPainter painter(true);
+        painter.setPaintingDisabled(true);
+        
+        root->setTruncatedAt((int)floor(oldBottom));
+        QRect dirtyRect(0, (int)floor(oldTop),
+                        root->docWidth(), (int)ceil(oldBottom-oldTop));
+        root->layer()->paint(&painter, dirtyRect);
+        *newBottom = root->bestTruncatedAt();
+        if (*newBottom == 0)
+            *newBottom = oldBottom;
+    } else
+        *newBottom = oldBottom;
+}
+
+PausedTimeouts *Frame::pauseTimeouts()
+{
+    if (d->m_doc && d->m_jscript) {
+        Window *w = Window::retrieveWindow(this);
+        if (w)
+            return w->pauseTimeouts();
+    }
+    return 0;
+}
+
+void Frame::resumeTimeouts(PausedTimeouts *t)
+{
+    if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
+        Window *w = Window::retrieveWindow(this);
+        if (w)
+            w->resumeTimeouts(t);
+    }
+}
+
+bool Frame::canCachePage()
+{
+    // Only save page state if:
+    // 1.  We're not a frame or frameset.
+    // 2.  The page has no unload handler.
+    // 3.  The page has no password fields.
+    // 4.  The URL for the page is not https.
+    // 5.  The page has no applets.
+    if (d->m_frames.count() ||
+        parentFrame() ||
+        m_url.protocol().startsWith("https") || 
+	(d->m_doc && (d->m_doc->applets()->length() != 0 ||
+                      d->m_doc->hasWindowEventListener(unloadEvent) ||
+		      d->m_doc->hasPasswordField()))) {
+        return false;
+    }
+    return true;
+}
+
+void Frame::saveWindowProperties(KJS::SavedProperties *windowProperties)
+{
+    Window *window = Window::retrieveWindow(this);
+    if (window)
+        window->saveProperties(*windowProperties);
+}
+
+void Frame::saveLocationProperties(SavedProperties *locationProperties)
+{
+    Window *window = Window::retrieveWindow(this);
+    if (window) {
+        JSLock lock;
+        Location *location = window->location();
+        location->saveProperties(*locationProperties);
+    }
+}
+
+void Frame::restoreWindowProperties(SavedProperties *windowProperties)
+{
+    Window *window = Window::retrieveWindow(this);
+    if (window)
+        window->restoreProperties(*windowProperties);
+}
+
+void Frame::restoreLocationProperties(SavedProperties *locationProperties)
+{
+    Window *window = Window::retrieveWindow(this);
+    if (window) {
+        JSLock lock;
+        Location *location = window->location();
+        location->restoreProperties(*locationProperties);
+    }
+}
+
+void Frame::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
+{
+    if (jScript() && jScript()->interpreter())
+	jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+}
+
+void Frame::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
+{
+    if (jScript() && jScript()->interpreter())
+	jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+}
+
+Frame *Frame::frameForWidget(const QWidget *widget)
+{
+    ASSERT_ARG(widget, widget);
+    
+    NodeImpl *node = nodeForWidget(widget);
+    if (node) {
+	return frameForNode(node);
+    }
+    
+    // Assume all widgets are either form controls, or KHTMLViews.
+    ASSERT(widget->isKHTMLView());
+    return static_cast<const KHTMLView *>(widget)->frame();
+}
+
+Frame *Frame::frameForNode(NodeImpl *node)
+{
+    ASSERT_ARG(node, node);
+    return node->getDocument()->frame();
+}
+
+NodeImpl *Frame::nodeForWidget(const QWidget *widget)
+{
+    ASSERT_ARG(widget, widget);
+    const QObject *o = widget->eventFilterObject();
+    return o ? static_cast<const RenderWidget *>(o)->element() : 0;
+}
+
+void Frame::setDocumentFocus(QWidget *widget)
+{
+    NodeImpl *node = nodeForWidget(widget);
+    ASSERT(node);
+    node->getDocument()->setFocusNode(node);
+}
+
+void Frame::clearDocumentFocus(QWidget *widget)
+{
+    NodeImpl *node = nodeForWidget(widget);
+    ASSERT(node);
+    node->getDocument()->setFocusNode(0);
+}
+
+QPtrList<Frame> &Frame::mutableInstances()
+{
+    static QPtrList<Frame> instancesList;
+    return instancesList;
+}
+
+void Frame::updatePolicyBaseURL()
+{
+    if (parentFrame() && parentFrame()->xmlDocImpl())
+        setPolicyBaseURL(parentFrame()->xmlDocImpl()->policyBaseURL());
+    else
+        setPolicyBaseURL(m_url.url());
+}
+
+void Frame::setPolicyBaseURL(const DOMString &s)
+{
+    if (xmlDocImpl())
+        xmlDocImpl()->setPolicyBaseURL(s);
+    ConstFrameIt end = d->m_frames.end();
+    for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
+        ReadOnlyPart *subpart = (*it).m_frame;
+        static_cast<Frame *>(subpart)->setPolicyBaseURL(s);
+    }
+}
+
+void Frame::forceLayout()
+{
+    KHTMLView *v = d->m_view;
+    if (v) {
+        v->layout();
+        // We cannot unschedule a pending relayout, since the force can be called with
+        // a tiny rectangle from a drawRect update.  By unscheduling we in effect
+        // "validate" and stop the necessary full repaint from occurring.  Basically any basic
+        // append/remove DHTML is broken by this call.  For now, I have removed the optimization
+        // until we have a better invalidation stategy. -dwh
+        //v->unscheduleRelayout();
+    }
+}
+
+void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth)
+{
+    // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
+    // the state of things before and after the layout
+    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
+    if (root) {
+        // This magic is basically copied from khtmlview::print
+        int pageW = (int)ceil(minPageWidth);
+        root->setWidth(pageW);
+        root->setNeedsLayoutAndMinMaxRecalc();
+        forceLayout();
+        
+        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
+        // maximum page width, we will lay out to the maximum page width and clip extra content.
+        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
+        // implementation should not do this!
+        int rightmostPos = root->rightmostPosition();
+        if (rightmostPos > minPageWidth) {
+            pageW = kMin(rightmostPos, (int)ceil(maxPageWidth));
+            root->setWidth(pageW);
+            root->setNeedsLayoutAndMinMaxRecalc();
+            forceLayout();
+        }
+    }
+}
+
+void Frame::sendResizeEvent()
+{
+    KHTMLView *v = d->m_view;
+    if (v) {
+	QResizeEvent e;
+	v->resizeEvent(&e);
+    }
+}
+
+void Frame::sendScrollEvent()
+{
+    KHTMLView *v = d->m_view;
+    if (v) {
+        DocumentImpl *doc = xmlDocImpl();
+        if (!doc)
+            return;
+        doc->dispatchHTMLEvent(scrollEvent, true, false);
+    }
+}
+
+bool Frame::scrollbarsVisible()
+{
+    if (!view())
+	return false;
+    
+    if (view()->hScrollBarMode() == QScrollView::AlwaysOff || view()->vScrollBarMode() == QScrollView::AlwaysOff)
+	return false;
+    
+    return true;
+}
+
+void Frame::addMetaData(const QString &key, const QString &value)
+{
+    d->m_job->addMetaData(key, value);
+}
+
+// This does the same kind of work that Frame::openURL does, except it relies on the fact
+// that a higher level already checked that the URLs match and the scrolling is the right thing to do.
+void Frame::scrollToAnchor(const KURL &URL)
+{
+    m_url = URL;
+    started(0);
+    
+    gotoAnchor();
+    
+    // It's important to model this as a load that starts and immediately finishes.
+    // Otherwise, the parent frame may think we never finished loading.
+    d->m_bComplete = false;
+    checkCompleted();
+}
+
+bool Frame::closeURL()
+{
+    saveDocumentState();
+    stopLoading(true);
+    return true;
+}
+
+bool Frame::canMouseDownStartSelect(NodeImpl* node)
+{
+    if (!node || !node->renderer())
+        return true;
+    
+    // Check to see if khtml-user-select has been set to none
+    if (!node->renderer()->canSelect())
+        return false;
+    
+    // Some controls and images can't start a select on a mouse down.
+    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
+        if (curr->style()->userSelect() == SELECT_IGNORE)
+            return false;
+    }
+    
+    return true;
+}
+
+void Frame::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
+{
+    passWidgetMouseDownEventToWidget(event);
+}
+
+bool Frame::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
+{
+    // Figure out which view to send the event to.
+    RenderObject *target = event->innerNode() ? event->innerNode()->renderer() : 0;
+    if (!target)
+        return false;
+    
+    QWidget* widget = RenderLayer::gScrollBar;
+    if (!widget) {
+        if (!target->isWidget())
+            return false;
+        widget = static_cast<RenderWidget *>(target)->widget();
+    }
+    
+    // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will
+    // just pass _currentEvent down to the widget,  we don't want to call it for events that
+    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
+    // part of the pressed/released handling.
+    if (!MouseDoubleClickEvent::test(event))
+        return passMouseDownEventToWidget(widget);
+    else
+        return true;
+}
+
+bool Frame::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
+{
+    return passMouseDownEventToWidget(renderWidget->widget());
+}
+
+void Frame::clearTimers(KHTMLView *view)
+{
+    if (view) {
+        view->unscheduleRelayout();
+        if (view->frame()) {
+            DocumentImpl* document = view->frame()->xmlDocImpl();
+            if (document && document->renderer() && document->renderer()->layer())
+                document->renderer()->layer()->suspendMarquees();
+        }
+    }
+}
+
+void Frame::clearTimers()
+{
+    clearTimers(d->m_view);
+}
+
+// FIXME: selection controller?
+void Frame::centerSelectionInVisibleArea() const
+{
+    QRect rect;
+    
+    switch (selection().state()) {
+        case SelectionController::NONE:
+            return;
+            
+        case SelectionController::CARET:
+            rect = selection().caretRect();
+            break;
+            
+        case SelectionController::RANGE:
+            rect = selectionRect();
+            break;
+    }
+    
+    ASSERT(d->m_selection.start().isNotNull());
+    if (selectionStart() && selectionStart()->renderer()) {
+        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+        if (layer) {
+            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+            layer->scrollRectToVisible(rect, RenderLayer::gAlignCenterAlways, RenderLayer::gAlignCenterAlways);
+        }
+    }
+}
+
+RenderStyle *Frame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
+{
+    nodeToRemove = 0;
+    
+    if (!xmlDocImpl())
+        return 0;
+    if (d->m_selection.isNone())
+        return 0;
+    
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
+    if (!pos.inRenderedContent())
+        return 0;
+    NodeImpl *node = pos.node();
+    if (!node)
+        return 0;
+    
+    if (!d->m_typingStyle)
+        return node->renderer()->style();
+    
+    int exceptionCode = 0;
+    ElementImpl *styleElement = xmlDocImpl()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    styleElement->ref();
+    
+    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    TextImpl *text = xmlDocImpl()->createEditingTextNode("");
+    styleElement->appendChild(text, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    node->parentNode()->appendChild(styleElement, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    styleElement->deref();
+    
+    nodeToRemove = styleElement;    
+    return styleElement->renderer()->style();
+}
+
+int Frame::selectionStartOffset() const
+{
+    return d->m_selection.start().offset();
+}
+
+int Frame::selectionEndOffset() const
+{
+    return d->m_selection.end().offset();
+}
+
+NodeImpl *Frame::selectionEnd() const
+{
+    return d->m_selection.end().node();
+}
+
+void Frame::setMediaType(const QString &type)
+{
+    if (d->m_view)
+        d->m_view->setMediaType(type);
+}
+
+void Frame::setSelectionFromNone()
+{
+    // Put the caret someplace if the selection is empty and the part is editable.
+    // This has the effect of flashing the caret in a contentEditable view automatically 
+    // without requiring the programmer to set a selection explicitly.
+    DocumentImpl *doc = xmlDocImpl();
+    if (doc && selection().isNone() && isContentEditable()) {
+        NodeImpl *node = doc->documentElement();
+        while (node) {
+            // Look for a block flow, but skip over the HTML element, since we really
+            // want to get at least as far as the the BODY element in a document.
+            if (node->isBlockFlow() && node->hasTagName(htmlTag))
+                break;
+            node = node->traverseNextNode();
+        }
+        if (node)
+            setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
+    }
+}
+
+bool Frame::displaysWithFocusAttributes() const
+{
+    return d->m_isFocused;
+}
+
+void Frame::setWindowHasFocus(bool flag)
+{
+    if (m_windowHasFocus == flag)
+        return;
+    m_windowHasFocus = flag;
+    
+    if (DocumentImpl *doc = xmlDocImpl())
+        if (NodeImpl *body = doc->body())
+            body->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
+}
+
+QChar Frame::backslashAsCurrencySymbol() const
+{
+    DocumentImpl *doc = xmlDocImpl();
+    if (!doc)
+        return '\\';
+    Decoder *decoder = doc->decoder();
+    if (!decoder)
+        return '\\';
+    const QTextCodec *codec = decoder->codec();
+    if (!codec)
+        return '\\';
+
+    return codec->backslashAsCurrencySymbol();
+}
+
+void Frame::setName(const QString &name)
+{
+    QString n = name;
+    
+    Frame *parent = parentFrame();
+    
+    // FIXME: is the blank rule needed or useful?
+    if (parent && (name.isEmpty() || parent->frameExists(name) || name == "_blank"))
+	n = parent->requestFrameName();
+    
+    ReadOnlyPart::setName(n);
+}
+
+bool Frame::markedTextUsesUnderlines() const
+{
+    return m_markedTextUsesUnderlines;
+}
+
+QValueList<Frame::MarkedTextUnderline> Frame::markedTextUnderlines() const
+{
+    return m_markedTextUnderlines;
+}
+
+void Frame::prepareForUserAction()
+{
+    // Reset the multiple form submission protection code.
+    // We'll let you submit the same form twice if you do two separate user actions.
+    _submittedFormURL = KURL();
+}
+
+bool Frame::isFrame() const
+{
+    return true;
+}
+
+NodeImpl *Frame::mousePressNode()
+{
+    return d->m_mousePressNode.get();
 }

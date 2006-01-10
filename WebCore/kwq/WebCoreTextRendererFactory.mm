@@ -113,8 +113,8 @@ static WebCoreTextRendererFactory *sharedFactory;
 - (void)clearCaches
 {
     QListBox::clearCachedTextRenderers();
-    for (QPtrListIterator<MacFrame> it(MacFrame::instances()); it.current(); ++it) {
-        [it.current()->bridge() setNeedsReapplyStyles];
+    for (QPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
+        [Mac(it.current())->bridge() setNeedsReapplyStyles];
     }
 }
 

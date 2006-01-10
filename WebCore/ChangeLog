@@ -1,3 +1,86 @@
+2006-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - move C++-only methods down from Frame to MacFrame
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/Frame.cpp:
+        (Frame::init):
+        (Frame::setSettings):
+        (Frame::provisionalLoadStarted):
+        (Frame::userGestureHint):
+        (Frame::renderer):
+        (Frame::selectionRect):
+        (Frame::isFrameSet):
+        (Frame::openURL):
+        (Frame::didNotOpenURL):
+        (Frame::selectionStart):
+        (scanForForm):
+        (Frame::currentForm):
+        (Frame::setEncoding):
+        (Frame::addData):
+        (Frame::revealSelection):
+        (Frame::scrollOverflow):
+        (Frame::paint):
+        (Frame::adjustPageHeight):
+        (Frame::pauseTimeouts):
+        (Frame::resumeTimeouts):
+        (Frame::canCachePage):
+        (Frame::saveWindowProperties):
+        (Frame::saveLocationProperties):
+        (Frame::restoreWindowProperties):
+        (Frame::restoreLocationProperties):
+        (Frame::saveInterpreterBuiltins):
+        (Frame::restoreInterpreterBuiltins):
+        (Frame::frameForWidget):
+        (Frame::frameForNode):
+        (Frame::nodeForWidget):
+        (Frame::setDocumentFocus):
+        (Frame::clearDocumentFocus):
+        (Frame::mutableInstances):
+        (Frame::updatePolicyBaseURL):
+        (Frame::setPolicyBaseURL):
+        (Frame::forceLayout):
+        (Frame::forceLayoutWithPageWidthRange):
+        (Frame::sendResizeEvent):
+        (Frame::sendScrollEvent):
+        (Frame::scrollbarsVisible):
+        (Frame::addMetaData):
+        (Frame::scrollToAnchor):
+        (Frame::closeURL):
+        (Frame::canMouseDownStartSelect):
+        (Frame::khtmlMouseDoubleClickEvent):
+        (Frame::passWidgetMouseDownEventToWidget):
+        (Frame::clearTimers):
+        (Frame::centerSelectionInVisibleArea):
+        (Frame::styleForSelectionStart):
+        (Frame::selectionStartOffset):
+        (Frame::selectionEndOffset):
+        (Frame::selectionEnd):
+        (Frame::setMediaType):
+        (Frame::setSelectionFromNone):
+        (Frame::displaysWithFocusAttributes):
+        (Frame::setWindowHasFocus):
+        (Frame::backslashAsCurrencySymbol):
+        (Frame::setName):
+        (Frame::markedTextUsesUnderlines):
+        (Frame::markedTextUnderlines):
+        (Frame::prepareForUserAction):
+        (Frame::isFrame):
+        (Frame::mousePressNode):
+        * khtml/Frame.h:
+        (Frame::instances):
+        (Frame::MarkedTextUnderline::MarkedTextUnderline):
+        * kwq/MacFrame.cpp: Removed.
+        * kwq/MacFrame.h:
+        (MacFrame::markedTextRange):
+        * kwq/MacFrame.mm: - humped a bunch of stuff down to Frame
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings _updateAllViews]): use Mac calls
+        * kwq/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory clearCaches]): ditto
+
 2006-01-10  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.
