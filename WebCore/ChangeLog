@@ -1,5 +1,11 @@
 2006-01-10  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, build (linking deployment) fix only.
+
+        * kwq/MacFrame.h: remove bogus KHTMLView *view() const delcaration
+
+2006-01-10  Eric Seidel  <eseidel@apple.com>
+
         Roll out local changes committed by accident w/ Mitz's patch.
 
         * kwq/KWQAccObjectCache.h:

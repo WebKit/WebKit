@@ -130,7 +130,6 @@ public:
     void setBridge(WebCoreBridge *p);
     WebCoreBridge *bridge() const { return _bridge; }
     void setView(KHTMLView *view);
-    KHTMLView *view() const;
 
     virtual bool openURL(const KURL &);
     
