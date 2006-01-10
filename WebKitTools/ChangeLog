@@ -3,7 +3,6 @@
         Reviewed by Timothy.
 
         * DumpRenderTree/DumpRenderTree.m:
-        (main):
         Set the default language to "en", so language tests will work.
 
 2006-01-08  Maciej Stachowiak  <mjs@apple.com>
