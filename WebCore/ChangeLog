@@ -1,5 +1,25 @@
 2006-01-09  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Remove unused code from Frame.
+
+        * khtml/Frame.cpp:
+        (Frame::clear):
+        (Frame::receivedFirstData):
+        (Frame::checkCompleted):
+        (Frame::completeURL):
+        (Frame::khtmlMousePressEvent):
+        (Frame::handleMouseMoveEventSelection):
+        (Frame::khtmlMouseReleaseEvent):
+        * khtml/Frame.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportWheelEvent):
+        (KHTMLView::focusOutEvent):
+
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Remove khtml-specific forwarding headers.
