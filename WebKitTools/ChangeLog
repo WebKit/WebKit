@@ -1,3 +1,24 @@
+2006-01-10  Eric Seidel  <eseidel@apple.com>
+
+        Restored corrupted nibs from TOT CVS.
+
+        * DrawTest/English.lproj/DrawTestDocument.nib: Replaced.
+        * DrawTest/English.lproj/DrawTestDocument.nib/classes.nib: Replaced.
+        * DrawTest/English.lproj/DrawTestDocument.nib/info.nib: Replaced.
+        * DrawTest/English.lproj/DrawTestDocument.nib/keyedobjects.nib: Replaced.
+        * DrawTest/English.lproj/Inspector.nib: Replaced.
+        * DrawTest/English.lproj/Inspector.nib/classes.nib: Replaced.
+        * DrawTest/English.lproj/Inspector.nib/info.nib: Replaced.
+        * DrawTest/English.lproj/Inspector.nib/keyedobjects.nib: Replaced.
+        * DrawTest/English.lproj/MainMenu.nib: Replaced.
+        * DrawTest/English.lproj/MainMenu.nib/classes.nib: Replaced.
+        * DrawTest/English.lproj/MainMenu.nib/info.nib: Replaced.
+        * DrawTest/English.lproj/MainMenu.nib/keyedobjects.nib: Replaced.
+        * DrawTest/English.lproj/TestViewer.nib: Replaced.
+        * DrawTest/English.lproj/TestViewer.nib/classes.nib: Replaced.
+        * DrawTest/English.lproj/TestViewer.nib/info.nib: Replaced.
+        * DrawTest/English.lproj/TestViewer.nib/keyedobjects.nib: Replaced.
+
 2006-01-10  Nefaur Khandker  <nefaurk@gmail.com>
 
         Reviewed by eseidel.  Committed by eseidel.
