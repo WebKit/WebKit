@@ -792,9 +792,8 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(TokenizerString &src, QChar *&de
                 break;
         }
         case SearchSemicolon:
-            // Don't allow surrogate code points, or values that are more than 21 bits.
-            if ((EntityUnicodeValue > 0 && EntityUnicodeValue < 0xD800)
-                    || (EntityUnicodeValue >= 0xE000 && EntityUnicodeValue <= 0x1FFFFF)) {
+            // Don't allow values that are more than 21 bits.
+            if (EntityUnicodeValue > 0 && EntityUnicodeValue <= 0x1FFFFF) {
             
                 if (*src == ';')
                     ++src;

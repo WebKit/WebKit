@@ -1,3 +1,15 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6446
+          Allow surrogate pairs in numeric entities
+
+        Test case: fast/parser/entity-surrogate-pairs.html
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseEntity): Don't check if we got a surrogate.
+
 2006-01-09  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 562x18
+          text run at (0,0) width 562: "This tests parsing of numeric HTML entities that encode surrogates. Firefox allows these."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 604x18
+          text run at (0,0) width 604: "Should be the same character (DESERET CAPITAL LETTER LONG I), repeated three times:"
+      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,86) size 784x18
+        RenderText {TEXT} at (0,0) size 27x18
+          text run at (0,0) width 27: "\x{D801}\x{DC00}\x{D801}\x{DC00}\x{D801}\x{DC00}"

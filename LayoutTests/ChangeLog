@@ -1,3 +1,15 @@
+2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6446
+          Allow surrogate pairs in numeric entities
+
+        * fast/parser/entity-surrogate-pairs-expected.checksum: Added.
+        * fast/parser/entity-surrogate-pairs-expected.png: Added.
+        * fast/parser/entity-surrogate-pairs-expected.txt: Added.
+        * fast/parser/entity-surrogate-pairs.html: Added.
+
 2006-01-09  Geoffrey Garen  <ggaren@apple.com>
 
         Layout tests for
