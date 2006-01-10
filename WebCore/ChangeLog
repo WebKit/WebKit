@@ -1,3 +1,28 @@
+2006-01-10  Eric Seidel  <eseidel@apple.com>
+
+        Roll out local changes committed by accident w/ Mitz's patch.
+
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQAccObjectCache.mm:
+        (KWQAccObjectCache::KWQAccObjectCache):
+        (KWQAccObjectCache::~KWQAccObjectCache):
+        (KWQAccObjectCache::accObject):
+        (KWQAccObjectCache::setAccObject):
+        (KWQAccObjectCache::removeAccObject):
+        (KWQAccObjectCache::getAccObjectID):
+        (KWQAccObjectCache::removeAccObjectID):
+        (KWQAccObjectCache::textMarkerForVisiblePosition):
+        (KWQAccObjectCache::visiblePositionForTextMarker):
+        (KWQAccObjectCache::childrenChanged):
+        * kwq/KWQObject.cpp:
+        (QObject::restartTimer):
+        (QObject::timerIntervals):
+        (deleteTimer):
+        (QObject::killTimer):
+        (deleteOneTimer):
+        (QObject::killTimers):
+        (sendDeferredTimerEvent):
+
 2006-01-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         No tests possible, no functionality changes.

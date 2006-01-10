@@ -48,26 +48,34 @@ typedef struct KWQTextMarkerData  {
     EAffinity       affinity;
 };
 
-KWQAccObjectCache::KWQAccObjectCache() : m_accCache(0), m_accCacheByID(0), m_accObjectIDSource(0)
+KWQAccObjectCache::KWQAccObjectCache()
 {
+    accCache = NULL;
+    accCacheByID = NULL;
+    accObjectIDSource = 0;
 }
 
 KWQAccObjectCache::~KWQAccObjectCache()
 {
-    delete m_accCache;
-    if (m_accCacheByID) {
-        // m_accCacheByID should have been emptied by releasing m_accCache
-        ASSERT(m_accCacheByID->isEmpty());
-        delete m_accCacheByID;
+    // Destroy the dictionary
+    if (accCache)
+        CFRelease(accCache);
+        
+    // Destroy the ID lookup dictionary
+    if (accCacheByID) {
+        // accCacheByID should have been emptied by releasing accCache
+        ASSERT(CFDictionaryGetCount(accCacheByID) == 0);
+        CFRelease(accCacheByID);
     }
 }
 
 KWQAccObject* KWQAccObjectCache::accObject(RenderObject* renderer)
 {
-    if (!m_accCache)
-        m_accCache = new RenderObjectToAccObjectMap;
+    if (!accCache)
+        // No need to retain/free either impl key, or id value.
+        accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
-    KWQAccObject* obj = m_accCache->get(renderer);
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, renderer);
     if (!obj) {
         obj = [[KWQAccObject alloc] initWithRenderer: renderer]; // Initial ref happens here.
         setAccObject(renderer, obj);
@@ -78,26 +86,27 @@ KWQAccObject* KWQAccObjectCache::accObject(RenderObject* renderer)
 
 void KWQAccObjectCache::setAccObject(RenderObject* impl, KWQAccObject* accObject)
 {
-    if (!m_accCache)
-        m_accCache = new RenderObjectToAccObjectMap;
+    if (!accCache)
+        // No need to retain/free either impl key, or id value.
+        accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
-    m_accCache->set(impl, accObject);
-    ASSERT(!m_accCacheByID || m_accCache->size() >= m_accCacheByID->size());
+    CFDictionarySetValue(accCache, (const void *)impl, accObject);
+    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
 }
 
 void KWQAccObjectCache::removeAccObject(RenderObject* impl)
 {
-    if (!m_accCache)
+    if (!accCache)
         return;
 
-    KWQAccObject* obj = m_accCache->get(impl);
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, impl);
     if (obj) {
         [obj detach];
         [obj release];
-        m_accCache->remove(impl);
+        CFDictionaryRemoveValue(accCache, impl);
     }
 
-    ASSERT(!m_accCacheByID || m_accCache->size() >= m_accCacheByID->size());
+    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
 }
 
 KWQAccObjectID KWQAccObjectCache::getAccObjectID(KWQAccObject* accObject)
@@ -105,30 +114,30 @@ KWQAccObjectID KWQAccObjectCache::getAccObjectID(KWQAccObject* accObject)
     KWQAccObjectID  accObjectID;
 
     // create the ID table as needed
-    if (!m_accCacheByID)
-        m_accCacheByID = new AccIdToAccObjectMap;
+    if (accCacheByID == NULL)
+        accCacheByID = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
     // check for already-assigned ID
     accObjectID = [accObject accObjectID];
     if (accObjectID != 0) {
-        ASSERT(m_accCacheByID->contains(accObjectID));
+        ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)accObjectID));
         return accObjectID;
     }
     
     // generate a new ID
-    accObjectID = m_accObjectIDSource + 1;
-    while (accObjectID == 0 || m_accCacheByID->contains(accObjectID)) {
-        ASSERT(accObjectID != m_accObjectIDSource);   // check for exhaustion
+    accObjectID = accObjectIDSource + 1;
+    while (accObjectID == 0 || CFDictionaryContainsKey(accCacheByID, (const void *)accObjectID)) {
+        ASSERT(accObjectID != accObjectIDSource);   // check for exhaustion
         accObjectID += 1;
     }
-    m_accObjectIDSource = accObjectID;
+    accObjectIDSource = accObjectID;
 
     // assign the new ID to the object
     [accObject setAccObjectID:accObjectID];
     
     // add the object to the ID table
-    m_accCacheByID->set(accObjectID, accObject);
-    ASSERT(m_accCacheByID->contains(accObjectID));
+    CFDictionarySetValue(accCacheByID, (const void *)accObjectID, accObject);
+    ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)accObjectID));
     
     return accObjectID;
 }
@@ -142,12 +151,12 @@ void KWQAccObjectCache::removeAccObjectID(KWQAccObject* accObject)
     [accObject setAccObjectID:0];
     
     // remove the element from the lookup table
-    ASSERT(m_accCacheByID);
-    ASSERT(m_accCacheByID->contains(accObjectID));
-    m_accCacheByID->remove(accObjectID);
+    ASSERT(accCacheByID != NULL);
+    ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)accObjectID));
+    CFDictionaryRemoveValue(accCacheByID, (const void *)accObjectID);
 }
 
-WebCoreTextMarker *KWQAccObjectCache::textMarkerForVisiblePosition(const VisiblePosition &visiblePos)
+WebCoreTextMarker *KWQAccObjectCache::textMarkerForVisiblePosition (const VisiblePosition &visiblePos)
 {
     DOM::Position deepPos = visiblePos.deepEquivalent();
     DOM::NodeImpl* domNode = deepPos.node();
@@ -179,7 +188,7 @@ VisiblePosition KWQAccObjectCache::visiblePositionForTextMarker(WebCoreTextMarke
         return VisiblePosition();
     
     // return empty position if the text marker is no longer valid
-    if (!m_accCacheByID || !m_accCacheByID->contains(textMarkerData.accObjectID))
+    if (!accCacheByID || !CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData.accObjectID))
         return VisiblePosition();
 
     // return the position from the data we stored earlier
@@ -193,10 +202,10 @@ void KWQAccObjectCache::detach(RenderObject* renderer)
 
 void KWQAccObjectCache::childrenChanged(RenderObject* renderer)
 {
-    if (!m_accCache)
+    if (!accCache)
         return;
     
-    KWQAccObject* obj = m_accCache->get(renderer);
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, renderer);
     if (!obj)
         return;
     
