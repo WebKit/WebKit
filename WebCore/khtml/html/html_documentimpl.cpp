@@ -60,7 +60,6 @@
 #include "html/htmltokenizer.h"
 #include "html/html_miscimpl.h"
 #include "html/html_imageimpl.h"
-#include "html/html_formimpl.h"
 #include "htmlfactory.h"
 
 #include "khtmlview.h"

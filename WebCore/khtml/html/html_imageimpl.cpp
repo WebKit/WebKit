@@ -24,8 +24,8 @@
 #include "config.h"
 #include "html/html_imageimpl.h"
 
-#include "html/html_formimpl.h"
 #include "html/html_documentimpl.h"
+#include "HTMLFormElementImpl.h"
 
 #include "khtmlview.h"
 #include "Frame.h"

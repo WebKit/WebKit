@@ -28,7 +28,6 @@
 #include "rendering/render_replaced.h"
 #include "rendering/render_image.h"
 #include "rendering/render_block.h"
-#include "html/html_formimpl.h"
 
 class QWidget;
 class QListboxItem;
@@ -38,12 +37,13 @@ class QListBox;
 #include <qlineedit.h>
 #include <qcombobox.h>
 
+#include "HTMLInputElementImpl.h"
+#include "HTMLSelectElementImpl.h"
+#include "HTMLTextAreaElementImpl.h"
+
 namespace DOM {
     class HTMLFormElementImpl;
-    class HTMLInputElementImpl;
-    class HTMLSelectElementImpl;
     class HTMLGenericFormElementImpl;
-    class HTMLTextAreaElementImpl;
 };
 
 namespace khtml {

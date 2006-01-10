@@ -31,10 +31,10 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
-#include "html/html_formimpl.h"
 #include "render_block.h"
 #include "editing/SelectionController.h"
 #include "render_theme.h"
+#include "htmlnames.h"
 
 #include "khtmlview.h"
 #include "Frame.h"

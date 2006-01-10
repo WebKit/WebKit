@@ -24,7 +24,7 @@
 #include "render_button.h"
 #include "RenderText.h"
 #include "htmlnames.h"
-#include "html_formimpl.h"
+#include "HTMLInputElementImpl.h"
 
 using namespace DOM;
 using namespace HTMLNames;

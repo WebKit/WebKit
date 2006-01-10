@@ -29,7 +29,7 @@
 
 #include "html/html_documentimpl.h"
 #include "html/html_inlineimpl.h"
-#include "html/html_formimpl.h"
+#include "HTMLInputElementImpl.h"
 #include "rendering/render_arena.h"
 #include "rendering/render_object.h"
 #include "rendering/render_canvas.h"

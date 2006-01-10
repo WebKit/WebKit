@@ -28,13 +28,24 @@
 #include "html/html_blockimpl.h"
 #include "html/html_canvasimpl.h"
 #include "html/html_documentimpl.h"
-#include "html/html_formimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_listimpl.h"
 #include "html/html_miscimpl.h"
 #include "html/html_tableimpl.h"
 #include "html/html_objectimpl.h"
+
+#include "HTMLFormElementImpl.h"
+#include "HTMLInputElementImpl.h"
+#include "HTMLIsIndexElementImpl.h"
+#include "HTMLFieldSetElementImpl.h"
+#include "HTMLLabelElementImpl.h"
+#include "HTMLLegendElementImpl.h"
+#include "HTMLButtonElementImpl.h"
+#include "HTMLOptionElementImpl.h"
+#include "HTMLOptGroupElementImpl.h"
+#include "HTMLSelectElementImpl.h"
+#include "HTMLTextAreaElementImpl.h"
 
 #include <kxmlcore/HashMap.h>
 

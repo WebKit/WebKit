@@ -42,7 +42,7 @@
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
 #import "html_elementimpl.h"
-#import "html_formimpl.h"
+#import "HTMLInputElementImpl.h"
 #import "html_inlineimpl.h"
 #import "html_imageimpl.h"
 #import "dom_string.h"

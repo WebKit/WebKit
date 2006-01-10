@@ -1,3 +1,63 @@
+2006-01-10  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by mjs.
+
+        Split html_formimpl.{cpp,h} into multiple files (one per class)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6461
+
+        * WebCore.xcodeproj/project.pbxproj: added files
+        * khtml/ecma/kjs_html.cpp: updated includes
+        * khtml/html/FormDataList.h: Added.
+        * khtml/html/FormDataList.cpp: Added.
+        * khtml/html/HTMLButtonElementImpl.cpp: Added.
+        * khtml/html/HTMLButtonElementImpl.h: Added.
+        * khtml/html/HTMLFieldSetElementImpl.cpp: Added.
+        * khtml/html/HTMLFieldSetElementImpl.h: Added.
+        * khtml/html/HTMLFormElementImpl.cpp: Added.
+        * khtml/html/HTMLFormElementImpl.h: Added.
+        * khtml/html/HTMLGenericFormElementImpl.cpp: Added.
+        * khtml/html/HTMLGenericFormElementImpl.h: Added.
+        * khtml/html/HTMLInputElementImpl.cpp: Added.
+        * khtml/html/HTMLInputElementImpl.h: Added.
+        * khtml/html/HTMLIsIndexElementImpl.cpp: Added.
+        * khtml/html/HTMLIsIndexElementImpl.h: Added.
+        * khtml/html/HTMLKeygenElementImpl.cpp: Added.
+        * khtml/html/HTMLKeygenElementImpl.h: Added.
+        * khtml/html/HTMLLabelElementImpl.cpp: Added.
+        * khtml/html/HTMLLabelElementImpl.h: Added.
+        * khtml/html/HTMLLegendElementImpl.cpp: Added.
+        * khtml/html/HTMLLegendElementImpl.h: Added.
+        * khtml/html/HTMLOptGroupElementImpl.cpp: Added.
+        * khtml/html/HTMLOptGroupElementImpl.h: Added.
+        * khtml/html/HTMLOptionElementImpl.cpp: Added.
+        * khtml/html/HTMLOptionElementImpl.h: Added.
+        * khtml/html/HTMLOptionsCollectionImpl.h: Added.
+        * khtml/html/HTMLSelectElementImpl.cpp: Added.
+        * khtml/html/HTMLSelectElementImpl.h: Added.
+        * khtml/html/HTMLTextAreaElementImpl.cpp: Added.
+        * khtml/html/HTMLTextAreaElementImpl.h: Added.
+        * khtml/html/html_documentimpl.cpp: updated includes
+        * khtml/html/html_imageimpl.cpp: updated includes
+        * khtml/html/html_miscimpl.cpp: updated includes
+        * khtml/html/html_objectimpl.cpp: updated includes
+        * khtml/html/htmlfactory.cpp: updated includes
+        * khtml/html/htmlparser.cpp: updated includes
+        * khtml/khtmlview.cpp: updated includes
+        * khtml/rendering/render_block.cpp: updated includes
+        * khtml/rendering/render_button.cpp: updated includes
+        * khtml/rendering/render_canvasimage.cpp: updated includes
+        * khtml/rendering/render_flow.cpp: updated includes
+        * khtml/rendering/render_form.cpp: updated includes
+        * khtml/rendering/render_form.h: updated includes
+        * khtml/rendering/render_image.cpp: updated includes
+        * khtml/rendering/render_line.cpp: updated includes
+        * khtml/rendering/render_theme.cpp: updated includes
+        * khtml/xml/dom_docimpl.cpp: updated includes
+        * kwq/DOMHTML.mm: updated includes
+        * kwq/KWQAccObject.mm: updated includes
+        * kwq/MacFrame.mm: updated includes
+        * kwq/WebCoreBridge.mm: updated includes
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

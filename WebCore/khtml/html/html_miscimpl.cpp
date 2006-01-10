@@ -24,10 +24,11 @@
 // -------------------------------------------------------------------------
 #include "config.h"
 #include "html/html_miscimpl.h"
-#include "html/html_formimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/html_objectimpl.h"
+#include "HTMLFormElementImpl.h"
+#include "HTMLGenericFormElementImpl.h"
 
 #include "dom/dom_node.h"
 

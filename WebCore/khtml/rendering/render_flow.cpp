@@ -33,16 +33,16 @@
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
-#include "html/html_formimpl.h"
 #include "render_inline.h"
 #include "render_block.h"
 #include "render_arena.h"
 #include "render_line.h"
+#include "htmlnames.h"
 
 #include "khtmlview.h"
 
 using namespace DOM;
-using namespace HTMLNames;
+using namespace DOM::HTMLNames;
 using namespace khtml;
 
 RenderFlow* RenderFlow::createAnonymousFlow(DOM::DocumentImpl* doc, RenderStyle* style)

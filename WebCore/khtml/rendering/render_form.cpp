@@ -31,8 +31,13 @@
 #include <qstyle.h>
 
 #include "misc/helper.h"
+#include "HTMLInputElementImpl.h"
+#include "HTMLTextAreaElementImpl.h"
+#include "HTMLOptionElementImpl.h"
+#include "HTMLSelectElementImpl.h"
+#include "HTMLOptGroupElementImpl.h"
+#include "HTMLFormElementImpl.h"
 #include "xml/dom2_eventsimpl.h"
-#include "html/html_formimpl.h"
 
 #include "rendering/render_form.h"
 #include <assert.h>

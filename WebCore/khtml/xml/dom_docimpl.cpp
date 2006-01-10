@@ -66,7 +66,7 @@
 #include "html/html_documentimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
-#include "html/html_formimpl.h"
+#include "HTMLInputElementImpl.h"
 #include "htmlfactory.h"
 
 #include "cssvalues.h"

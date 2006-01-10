@@ -33,7 +33,6 @@
 
 #include "css/csshelper.h"
 #include "misc/helper.h"
-#include "html/html_formimpl.h"
 #include "html/html_canvasimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_documentimpl.h"

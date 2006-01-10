@@ -24,7 +24,7 @@
 
 #include "render_style.h"
 #include "htmlnames.h"
-#include "html_formimpl.h"
+#include "HTMLInputElementImpl.h"
 
 using namespace DOM::HTMLNames;
 

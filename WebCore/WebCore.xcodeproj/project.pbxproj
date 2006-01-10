@@ -116,7 +116,6 @@
 		93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		93F198E508245E59001E9ABC /* html_documentimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* html_documentimpl.h */; };
 		93F198E608245E59001E9ABC /* html_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* html_elementimpl.h */; };
-		93F198E708245E59001E9ABC /* html_formimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24102DE4396018635CA /* html_formimpl.h */; };
 		93F198E808245E59001E9ABC /* html_headimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24302DE4396018635CA /* html_headimpl.h */; };
 		93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
 		93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
@@ -460,7 +459,6 @@
 		93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		93F19A9108245E59001E9ABC /* html_documentimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* html_documentimpl.cpp */; };
 		93F19A9208245E59001E9ABC /* html_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* html_elementimpl.cpp */; };
-		93F19A9308245E59001E9ABC /* html_formimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24002DE4396018635CA /* html_formimpl.cpp */; };
 		93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24202DE4396018635CA /* html_headimpl.cpp */; };
 		93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
 		93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
@@ -624,6 +622,64 @@
 		A8135BB50972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */; };
 		A8135BB60972403A00D74463 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B8A0972403900D74463 /* CachedObject.h */; };
 		A8135BB70972403A00D74463 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B8B0972403900D74463 /* CachedObject.cpp */; };
+		A81369CA097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */; };
+		A81369CB097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */; };
+		A81369CC097374F600D74463 /* HTMLInputElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElementImpl.h */; };
+		A81369CD097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */; };
+		A81369CE097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */; };
+		A81369CF097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */; };
+		A81369D0097374F600D74463 /* HTMLFormElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B4097374F500D74463 /* HTMLFormElementImpl.h */; };
+		A81369D1097374F600D74463 /* HTMLFormElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */; };
+		A81369D2097374F600D74463 /* HTMLButtonElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */; };
+		A81369D3097374F600D74463 /* HTMLButtonElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */; };
+		A81369D4097374F600D74463 /* HTMLFieldSetElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */; };
+		A81369D5097374F600D74463 /* HTMLFieldSetElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */; };
+		A81369D6097374F600D74463 /* HTMLTextAreaElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */; };
+		A81369D7097374F600D74463 /* HTMLTextAreaElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */; };
+		A81369D8097374F600D74463 /* HTMLSelectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */; };
+		A81369D9097374F600D74463 /* HTMLSelectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */; };
+		A81369DA097374F600D74463 /* HTMLOptionsCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */; };
+		A81369DC097374F600D74463 /* HTMLOptionElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */; };
+		A81369DD097374F600D74463 /* HTMLOptionElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */; };
+		A81369DE097374F600D74463 /* HTMLOptGroupElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */; };
+		A81369DF097374F600D74463 /* HTMLOptGroupElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */; };
+		A81369E0097374F600D74463 /* HTMLLegendElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */; };
+		A81369E1097374F600D74463 /* HTMLLegendElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */; };
+		A81369E2097374F600D74463 /* HTMLLabelElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */; };
+		A81369E3097374F600D74463 /* HTMLLabelElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */; };
+		A81369E4097374F600D74463 /* HTMLKeygenElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */; };
+		A81369E5097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */; };
+		A81369E6097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */; };
+		A81369E7097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */; };
+		A81369E8097374F600D74463 /* HTMLInputElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElementImpl.h */; };
+		A81369E9097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */; };
+		A81369EA097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */; };
+		A81369EB097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */; };
+		A81369EC097374F600D74463 /* HTMLFormElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B4097374F500D74463 /* HTMLFormElementImpl.h */; };
+		A81369ED097374F600D74463 /* HTMLFormElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */; };
+		A81369EE097374F600D74463 /* HTMLButtonElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */; };
+		A81369EF097374F600D74463 /* HTMLButtonElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */; };
+		A81369F0097374F600D74463 /* HTMLFieldSetElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */; };
+		A81369F1097374F600D74463 /* HTMLFieldSetElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */; };
+		A81369F2097374F600D74463 /* HTMLTextAreaElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */; };
+		A81369F3097374F600D74463 /* HTMLTextAreaElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */; };
+		A81369F4097374F600D74463 /* HTMLSelectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */; };
+		A81369F5097374F600D74463 /* HTMLSelectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */; };
+		A81369F6097374F600D74463 /* HTMLOptionsCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */; };
+		A81369F8097374F600D74463 /* HTMLOptionElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */; };
+		A81369F9097374F600D74463 /* HTMLOptionElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */; };
+		A81369FA097374F600D74463 /* HTMLOptGroupElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */; };
+		A81369FB097374F600D74463 /* HTMLOptGroupElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */; };
+		A81369FC097374F600D74463 /* HTMLLegendElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */; };
+		A81369FD097374F600D74463 /* HTMLLegendElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */; };
+		A81369FE097374F600D74463 /* HTMLLabelElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */; };
+		A81369FF097374F600D74463 /* HTMLLabelElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */; };
+		A8136A00097374F600D74463 /* HTMLKeygenElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */; };
+		A8136A01097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */; };
+		A8136D380973A8E700D74463 /* FormDataList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8136D360973A8E700D74463 /* FormDataList.h */; };
+		A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8136D370973A8E700D74463 /* FormDataList.cpp */; };
+		A8136D3A0973A8E700D74463 /* FormDataList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8136D360973A8E700D74463 /* FormDataList.h */; };
+		A8136D3B0973A8E700D74463 /* FormDataList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8136D370973A8E700D74463 /* FormDataList.cpp */; };
 		A81655D4096BBEAC00601058 /* KCanvasMaskerQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A81655D2096BBEAC00601058 /* KCanvasMaskerQuartz.h */; };
 		A81655D5096BBEAC00601058 /* KCanvasMaskerQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A81655D3096BBEAC00601058 /* KCanvasMaskerQuartz.mm */; };
 		A81655E4096BC13900601058 /* SVGMaskElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81655E2096BC13900601058 /* SVGMaskElementImpl.cpp */; };
@@ -670,7 +726,6 @@
 		A88AD1320952480A001DD196 /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		A88AD1330952480A001DD196 /* html_documentimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* html_documentimpl.h */; };
 		A88AD1340952480A001DD196 /* html_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* html_elementimpl.h */; };
-		A88AD1350952480A001DD196 /* html_formimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24102DE4396018635CA /* html_formimpl.h */; };
 		A88AD1360952480A001DD196 /* html_headimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24302DE4396018635CA /* html_headimpl.h */; };
 		A88AD1370952480A001DD196 /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
 		A88AD1380952480A001DD196 /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
@@ -1056,7 +1111,6 @@
 		A88AD2D30952480A001DD196 /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		A88AD2D40952480A001DD196 /* html_documentimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* html_documentimpl.cpp */; };
 		A88AD2D50952480A001DD196 /* html_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* html_elementimpl.cpp */; };
-		A88AD2D60952480A001DD196 /* html_formimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24002DE4396018635CA /* html_formimpl.cpp */; };
 		A88AD2D70952480A001DD196 /* html_headimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24202DE4396018635CA /* html_headimpl.cpp */; };
 		A88AD2D80952480A001DD196 /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
 		A88AD2D90952480A001DD196 /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
@@ -1956,6 +2010,35 @@
 		A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObjectClientWalker.cpp; sourceTree = "<group>"; };
 		A8135B8A0972403900D74463 /* CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObject.h; sourceTree = "<group>"; };
 		A8135B8B0972403900D74463 /* CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObject.cpp; sourceTree = "<group>"; };
+		A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLIsIndexElementImpl.h; sourceTree = "<group>"; };
+		A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLIsIndexElementImpl.cpp; sourceTree = "<group>"; };
+		A81369B0097374F500D74463 /* HTMLInputElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLInputElementImpl.h; sourceTree = "<group>"; };
+		A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLInputElementImpl.cpp; sourceTree = "<group>"; };
+		A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLGenericFormElementImpl.h; sourceTree = "<group>"; };
+		A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLGenericFormElementImpl.cpp; sourceTree = "<group>"; };
+		A81369B4097374F500D74463 /* HTMLFormElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormElementImpl.h; sourceTree = "<group>"; };
+		A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormElementImpl.cpp; sourceTree = "<group>"; };
+		A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLButtonElementImpl.h; sourceTree = "<group>"; };
+		A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLButtonElementImpl.cpp; sourceTree = "<group>"; };
+		A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFieldSetElementImpl.h; sourceTree = "<group>"; };
+		A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFieldSetElementImpl.cpp; sourceTree = "<group>"; };
+		A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTextAreaElementImpl.h; sourceTree = "<group>"; };
+		A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextAreaElementImpl.cpp; sourceTree = "<group>"; };
+		A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLSelectElementImpl.h; sourceTree = "<group>"; };
+		A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSelectElementImpl.cpp; sourceTree = "<group>"; };
+		A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOptionsCollectionImpl.h; sourceTree = "<group>"; };
+		A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOptionElementImpl.h; sourceTree = "<group>"; };
+		A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionElementImpl.cpp; sourceTree = "<group>"; };
+		A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOptGroupElementImpl.h; sourceTree = "<group>"; };
+		A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptGroupElementImpl.cpp; sourceTree = "<group>"; };
+		A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLLegendElementImpl.h; sourceTree = "<group>"; };
+		A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLegendElementImpl.cpp; sourceTree = "<group>"; };
+		A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLLabelElementImpl.h; sourceTree = "<group>"; };
+		A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLabelElementImpl.cpp; sourceTree = "<group>"; };
+		A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLKeygenElementImpl.h; sourceTree = "<group>"; };
+		A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLKeygenElementImpl.cpp; sourceTree = "<group>"; };
+		A8136D360973A8E700D74463 /* FormDataList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormDataList.h; sourceTree = "<group>"; };
+		A8136D370973A8E700D74463 /* FormDataList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataList.cpp; sourceTree = "<group>"; };
 		A81655D2096BBEAC00601058 /* KCanvasMaskerQuartz.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KCanvasMaskerQuartz.h; sourceTree = "<group>"; };
 		A81655D3096BBEAC00601058 /* KCanvasMaskerQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasMaskerQuartz.mm; sourceTree = "<group>"; };
 		A81655E2096BC13900601058 /* SVGMaskElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMaskElementImpl.cpp; sourceTree = "<group>"; };
@@ -2472,8 +2555,6 @@
 		F523D23C02DE4396018635CA /* html_documentimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_documentimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23E02DE4396018635CA /* html_elementimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_elementimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23F02DE4396018635CA /* html_elementimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_elementimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24002DE4396018635CA /* html_formimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_formimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24102DE4396018635CA /* html_formimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_formimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24202DE4396018635CA /* html_headimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_headimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24302DE4396018635CA /* html_headimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_headimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24402DE4396018635CA /* html_imageimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_imageimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3761,8 +3842,6 @@
 				F523D23C02DE4396018635CA /* html_documentimpl.h */,
 				F523D23E02DE4396018635CA /* html_elementimpl.cpp */,
 				F523D23F02DE4396018635CA /* html_elementimpl.h */,
-				F523D24002DE4396018635CA /* html_formimpl.cpp */,
-				F523D24102DE4396018635CA /* html_formimpl.h */,
 				F523D24202DE4396018635CA /* html_headimpl.cpp */,
 				F523D24302DE4396018635CA /* html_headimpl.h */,
 				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
@@ -3781,6 +3860,35 @@
 				F523D25102DE4396018635CA /* htmlparser.h */,
 				F523D25202DE4396018635CA /* htmltokenizer.cpp */,
 				F523D25302DE4396018635CA /* htmltokenizer.h */,
+				A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */,
+				A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */,
+				A81369B0097374F500D74463 /* HTMLInputElementImpl.h */,
+				A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */,
+				A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */,
+				A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */,
+				A81369B4097374F500D74463 /* HTMLFormElementImpl.h */,
+				A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */,
+				A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */,
+				A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */,
+				A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */,
+				A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */,
+				A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */,
+				A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */,
+				A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */,
+				A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */,
+				A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */,
+				A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */,
+				A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */,
+				A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */,
+				A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */,
+				A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */,
+				A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */,
+				A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */,
+				A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */,
+				A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */,
+				A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */,
+				A8136D360973A8E700D74463 /* FormDataList.h */,
+				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -4276,7 +4384,6 @@
 				93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */,
 				93F198E508245E59001E9ABC /* html_documentimpl.h in Headers */,
 				93F198E608245E59001E9ABC /* html_elementimpl.h in Headers */,
-				93F198E708245E59001E9ABC /* html_formimpl.h in Headers */,
 				93F198E808245E59001E9ABC /* html_headimpl.h in Headers */,
 				93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */,
 				93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */,
@@ -4750,6 +4857,21 @@
 				A8135B9C0972403A00D74463 /* CachedScript.h in Headers */,
 				A8135B9E0972403A00D74463 /* CachedObjectClientWalker.h in Headers */,
 				A8135BA00972403A00D74463 /* CachedObject.h in Headers */,
+				A81369CA097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */,
+				A81369CC097374F600D74463 /* HTMLInputElementImpl.h in Headers */,
+				A81369CE097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */,
+				A81369D0097374F600D74463 /* HTMLFormElementImpl.h in Headers */,
+				A81369D2097374F600D74463 /* HTMLButtonElementImpl.h in Headers */,
+				A81369D4097374F600D74463 /* HTMLFieldSetElementImpl.h in Headers */,
+				A81369D6097374F600D74463 /* HTMLTextAreaElementImpl.h in Headers */,
+				A81369D8097374F600D74463 /* HTMLSelectElementImpl.h in Headers */,
+				A81369DA097374F600D74463 /* HTMLOptionsCollectionImpl.h in Headers */,
+				A81369DC097374F600D74463 /* HTMLOptionElementImpl.h in Headers */,
+				A81369DE097374F600D74463 /* HTMLOptGroupElementImpl.h in Headers */,
+				A81369E0097374F600D74463 /* HTMLLegendElementImpl.h in Headers */,
+				A81369E2097374F600D74463 /* HTMLLabelElementImpl.h in Headers */,
+				A81369E4097374F600D74463 /* HTMLKeygenElementImpl.h in Headers */,
+				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4785,7 +4907,6 @@
 				A88AD1320952480A001DD196 /* html_blockimpl.h in Headers */,
 				A88AD1330952480A001DD196 /* html_documentimpl.h in Headers */,
 				A88AD1340952480A001DD196 /* html_elementimpl.h in Headers */,
-				A88AD1350952480A001DD196 /* html_formimpl.h in Headers */,
 				A88AD1360952480A001DD196 /* html_headimpl.h in Headers */,
 				A88AD1370952480A001DD196 /* html_imageimpl.h in Headers */,
 				A88AD1380952480A001DD196 /* html_inlineimpl.h in Headers */,
@@ -5077,6 +5198,21 @@
 				A8135BB20972403A00D74463 /* CachedScript.h in Headers */,
 				A8135BB40972403A00D74463 /* CachedObjectClientWalker.h in Headers */,
 				A8135BB60972403A00D74463 /* CachedObject.h in Headers */,
+				A81369E6097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */,
+				A81369E8097374F600D74463 /* HTMLInputElementImpl.h in Headers */,
+				A81369EA097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */,
+				A81369EC097374F600D74463 /* HTMLFormElementImpl.h in Headers */,
+				A81369EE097374F600D74463 /* HTMLButtonElementImpl.h in Headers */,
+				A81369F0097374F600D74463 /* HTMLFieldSetElementImpl.h in Headers */,
+				A81369F2097374F600D74463 /* HTMLTextAreaElementImpl.h in Headers */,
+				A81369F4097374F600D74463 /* HTMLSelectElementImpl.h in Headers */,
+				A81369F6097374F600D74463 /* HTMLOptionsCollectionImpl.h in Headers */,
+				A81369F8097374F600D74463 /* HTMLOptionElementImpl.h in Headers */,
+				A81369FA097374F600D74463 /* HTMLOptGroupElementImpl.h in Headers */,
+				A81369FC097374F600D74463 /* HTMLLegendElementImpl.h in Headers */,
+				A81369FE097374F600D74463 /* HTMLLabelElementImpl.h in Headers */,
+				A8136A00097374F600D74463 /* HTMLKeygenElementImpl.h in Headers */,
+				A8136D3A0973A8E700D74463 /* FormDataList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6262,7 +6398,6 @@
 				93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* html_documentimpl.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* html_elementimpl.cpp in Sources */,
-				93F19A9308245E59001E9ABC /* html_formimpl.cpp in Sources */,
 				93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */,
 				93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */,
 				93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */,
@@ -6602,6 +6737,20 @@
 				A8135B9D0972403A00D74463 /* CachedScript.cpp in Sources */,
 				A8135B9F0972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */,
 				A8135BA10972403A00D74463 /* CachedObject.cpp in Sources */,
+				A81369CB097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */,
+				A81369CD097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */,
+				A81369CF097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */,
+				A81369D1097374F600D74463 /* HTMLFormElementImpl.cpp in Sources */,
+				A81369D3097374F600D74463 /* HTMLButtonElementImpl.cpp in Sources */,
+				A81369D5097374F600D74463 /* HTMLFieldSetElementImpl.cpp in Sources */,
+				A81369D7097374F600D74463 /* HTMLTextAreaElementImpl.cpp in Sources */,
+				A81369D9097374F600D74463 /* HTMLSelectElementImpl.cpp in Sources */,
+				A81369DD097374F600D74463 /* HTMLOptionElementImpl.cpp in Sources */,
+				A81369DF097374F600D74463 /* HTMLOptGroupElementImpl.cpp in Sources */,
+				A81369E1097374F600D74463 /* HTMLLegendElementImpl.cpp in Sources */,
+				A81369E3097374F600D74463 /* HTMLLabelElementImpl.cpp in Sources */,
+				A81369E5097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */,
+				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6705,7 +6854,6 @@
 				A88AD2D30952480A001DD196 /* html_blockimpl.cpp in Sources */,
 				A88AD2D40952480A001DD196 /* html_documentimpl.cpp in Sources */,
 				A88AD2D50952480A001DD196 /* html_elementimpl.cpp in Sources */,
-				A88AD2D60952480A001DD196 /* html_formimpl.cpp in Sources */,
 				A88AD2D70952480A001DD196 /* html_headimpl.cpp in Sources */,
 				A88AD2D80952480A001DD196 /* html_imageimpl.cpp in Sources */,
 				A88AD2D90952480A001DD196 /* html_inlineimpl.cpp in Sources */,
@@ -6872,6 +7020,20 @@
 				A8135BB30972403A00D74463 /* CachedScript.cpp in Sources */,
 				A8135BB50972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */,
 				A8135BB70972403A00D74463 /* CachedObject.cpp in Sources */,
+				A81369E7097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */,
+				A81369E9097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */,
+				A81369EB097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */,
+				A81369ED097374F600D74463 /* HTMLFormElementImpl.cpp in Sources */,
+				A81369EF097374F600D74463 /* HTMLButtonElementImpl.cpp in Sources */,
+				A81369F1097374F600D74463 /* HTMLFieldSetElementImpl.cpp in Sources */,
+				A81369F3097374F600D74463 /* HTMLTextAreaElementImpl.cpp in Sources */,
+				A81369F5097374F600D74463 /* HTMLSelectElementImpl.cpp in Sources */,
+				A81369F9097374F600D74463 /* HTMLOptionElementImpl.cpp in Sources */,
+				A81369FB097374F600D74463 /* HTMLOptGroupElementImpl.cpp in Sources */,
+				A81369FD097374F600D74463 /* HTMLLegendElementImpl.cpp in Sources */,
+				A81369FF097374F600D74463 /* HTMLLabelElementImpl.cpp in Sources */,
+				A8136A01097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */,
+				A8136D3B0973A8E700D74463 /* FormDataList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
