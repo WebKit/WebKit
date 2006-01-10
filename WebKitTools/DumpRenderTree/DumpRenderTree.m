@@ -154,6 +154,8 @@ int main(int argc, const char *argv[])
     [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     
+    [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
+    
     WebPreferences *preferences = [WebPreferences standardPreferences];
     
     [preferences setStandardFontFamily:@"Times"];
