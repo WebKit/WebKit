@@ -33,6 +33,7 @@ use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
+use POSIX;
 
 my $svgSupport = 1;
 GetOptions('svg!' => \$svgSupport);
@@ -82,10 +83,10 @@ for my $dir (@projects) {
     } else {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
     }
-    exit $result if $result;
+    exit WEXITSTATUS($result) if WEXITSTATUS($result);
     if ($dir eq "JavaScriptCore") {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "testkjs", @options, @ARGV;
-        exit $result if $result;
+        exit WEXITSTATUS($result) if WEXITSTATUS($result);
     }
     chdir ".." or die;
 }

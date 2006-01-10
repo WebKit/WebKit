@@ -1,3 +1,14 @@
+2006-01-10  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        - build-webkit should exit with non-zero status when build fails
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6459
+
+        * Scripts/build-webkit:
+        Use correct bits of subprocess exit code when passing back through
+        as build-webkit's exit code.
+
 2006-01-10  Eric Seidel  <eseidel@apple.com>
 
         Restored corrupted nibs from TOT CVS.
