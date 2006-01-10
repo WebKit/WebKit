@@ -65,6 +65,7 @@ my $verbose = 0;
 my $quiet = '';
 my $singly = 0;
 my $report10Slowest = 0;
+my $launchSafari = 1;
 
 GetOptions('svg' => \$testSVGs, 
     'pixel-tests|p' => \$pixelTests,
@@ -73,7 +74,8 @@ GetOptions('svg' => \$testSVGs,
     'verbose|v' => \$verbose,
     'quiet|q' => \$quiet,
     'singly|1' => \$singly,
-    'slowest' => \$report10Slowest);
+    'slowest' => \$report10Slowest,
+    'launch-safari!' => \$launchSafari);
 
 my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
@@ -531,7 +533,11 @@ if ($counts{match} && $counts{match} == $count) {
     print HTML "</html>\n";
     close HTML;
     
-    system "WebKitTools/Scripts/run-safari", "-NSOpen", $testResults;
+    if ($launchSafari) {
+        system "WebKitTools/Scripts/run-safari", "-NSOpen", $testResults;
+    }
+    
+    exit 1;
 }
 
 sub printLeaks

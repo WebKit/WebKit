@@ -2,6 +2,17 @@
 
         Reviewed by eseidel.  Committed by eseidel.
 
+        - run-webkit-tests always launches Safari when tests fail
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6456
+
+        * Scripts/run-webkit-tests:
+        Add a command-line flag to prevent Safari being launched to display failed
+        tests.  Always exit with non-zero status when tests have failed.
+
+2006-01-10  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
         - build-webkit should exit with non-zero status when build fails
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6459
 
