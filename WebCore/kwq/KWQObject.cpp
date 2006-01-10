@@ -27,9 +27,14 @@
 #import "KWQObject.h"
 
 #import <kxmlcore/Assertions.h>
-#import <kxmlcore/FastMalloc.h>
+#import <kxmlcore/HashMap.h>
 
 struct KWQObjectTimer {
+    KWQObjectTimer(QObject *target, int timerId, bool defered = false);
+    
+    void deleteTimer();
+    void takeRunLoopTimer(CFRunLoopTimerRef loopTimer); 
+
     QObject *target;
     int timerId;
     CFRunLoopTimerRef runLoopTimer; // non-0 for running timers
@@ -37,10 +42,23 @@ struct KWQObjectTimer {
     bool deleted;
 };
 
+KWQObjectTimer::KWQObjectTimer(QObject *tgt, int id, bool defer)
+    : target(tgt), timerId(id), runLoopTimer(0), deferred(defer), deleted(false)
+{
+}
+
+void KWQObjectTimer::takeRunLoopTimer(CFRunLoopTimerRef loopTimer)
+{
+    runLoopTimer = loopTimer;
+}
+
 const QObject *QObject::_sender;
 bool QObject::_defersTimers;
 
-static CFMutableDictionaryRef timerDictionaries;
+typedef HashMap<int, KWQObjectTimer*, PointerHash<int> > IdToTimerMap;
+typedef HashMap<const QObject*, IdToTimerMap*, PointerHash<const QObject*> > ObjectToTimersMap;
+
+static ObjectToTimersMap *timerMaps;
 static CFMutableArrayRef deferredTimers;
 static CFRunLoopTimerRef sendDeferredTimerEventsTimer;
 static int lastTimerIdUsed;
@@ -144,29 +162,23 @@ void QObject::restartTimer(int timerId, int nextFireInterval, int repeatInterval
     ASSERT(timerId > 0);
     ASSERT(timerId <= lastTimerIdUsed);
 
-    if (!timerDictionaries)
-        timerDictionaries = CFDictionaryCreateMutable(0, 0, 0, &kCFTypeDictionaryValueCallBacks);
+    if (!timerMaps)
+        timerMaps = new ObjectToTimersMap;
 
-    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    IdToTimerMap *timers = timerMaps->get(this);
     if (!timers) {
-        timers = CFDictionaryCreateMutable(0, 0, 0, 0);
-        CFDictionarySetValue(timerDictionaries, this, timers);
-        CFRelease(timers);
+        timers = new IdToTimerMap;
+        timerMaps->set(this, timers);
     }
 
-    ASSERT(!CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId)));
+    ASSERT(!timers->contains(timerId));
 
-    KWQObjectTimer *timer = static_cast<KWQObjectTimer *>(fastMalloc(sizeof(KWQObjectTimer)));
-    timer->target = this;
-    timer->timerId = timerId;
+    KWQObjectTimer *timer = new KWQObjectTimer(this, timerId);
     CFRunLoopTimerContext context = { 0, timer, 0, 0, 0 };
     CFRunLoopTimerRef runLoopTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + nextFireInterval * 0.001,
         repeatInterval * 0.001, 0, 0, timerFired, &context);
-    timer->runLoopTimer = runLoopTimer;
-    timer->deferred = false;
-    timer->deleted = false;
-
-    CFDictionarySetValue(timers, reinterpret_cast<void *>(timerId), timer);
+    timer->takeRunLoopTimer(runLoopTimer);
+    timers->set(timerId, timer);
 
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), runLoopTimer, kCFRunLoopDefaultMode);
 }
@@ -175,57 +187,56 @@ void QObject::timerIntervals(int timerId, int& nextFireInterval, int& repeatInte
 {
     nextFireInterval = -1;
     repeatInterval = -1;
-    if (!timerDictionaries)
+    if (!timerMaps)
         return;
-    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    IdToTimerMap *timers = timerMaps->get(this);
     if (!timers)
         return;
-    KWQObjectTimer *timer = (KWQObjectTimer *)CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId));
+    KWQObjectTimer *timer = timers->get(timerId);
     if (!timer)
         return;
     nextFireInterval = (int)((CFRunLoopTimerGetNextFireDate(timer->runLoopTimer) - CFAbsoluteTimeGetCurrent()) * 1000);
     repeatInterval = (int)(CFRunLoopTimerGetInterval(timer->runLoopTimer) * 1000);
 }
 
-static void deleteTimer(KWQObjectTimer *timer)
+void KWQObjectTimer::deleteTimer()
 {
-    CFRunLoopTimerInvalidate(timer->runLoopTimer);
-    CFRelease(timer->runLoopTimer);
+    CFRunLoopTimerInvalidate(runLoopTimer);
+    CFRelease(runLoopTimer);
 
-    if (timer->deferred)
-        timer->deleted = true;
+    if (deferred)
+        deleted = true;
     else
-        fastFree(timer);
+        delete this;
 }
 
 void QObject::killTimer(int timerId)
 {
-    if (!timerDictionaries)
+    if (!timerMaps)
         return;
-    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    IdToTimerMap *timers = timerMaps->get(this);
     if (!timers)
         return;
-    KWQObjectTimer *timer = (KWQObjectTimer *)CFDictionaryGetValue(timers, reinterpret_cast<void *>(timerId));
-    if (!timer)
-        return;
-    deleteTimer(timer);
-    CFDictionaryRemoveValue(timers, reinterpret_cast<void *>(timerId));
-}
-
-static void deleteOneTimer(const void *key, const void *value, void *context)
-{
-    deleteTimer((KWQObjectTimer *)value);
+    KWQObjectTimer *timer = timers->get(timerId);
+    if (timer) {
+        timer->deleteTimer();
+        timers->remove(timerId);
+    }
 }
 
 void QObject::killTimers()
 {
-    if (!timerDictionaries)
+    if (!timerMaps)
         return;
-    CFMutableDictionaryRef timers = (CFMutableDictionaryRef)CFDictionaryGetValue(timerDictionaries, this);
+    IdToTimerMap *timers = timerMaps->get(this);
     if (!timers)
         return;
-    CFDictionaryApplyFunction(timers, deleteOneTimer, 0);
-    CFDictionaryRemoveValue(timerDictionaries, this);
+    
+    IdToTimerMap::iterator end = timers->end();
+    for (IdToTimerMap::iterator it = timers->begin(); it != end; ++it)
+        it->second->deleteTimer();
+    timerMaps->remove(this);
+    delete timers;
 }
 
 static void sendDeferredTimerEvent(const void *value, void *context)
@@ -234,13 +245,13 @@ static void sendDeferredTimerEvent(const void *value, void *context)
     if (!timer)
         return;
     if (timer->deleted) {
-        fastFree(timer);
+        delete timer;
         return;
     }
     QTimerEvent event(timer->timerId);
     timer->target->timerEvent(&event);
     if (timer->deleted) {
-        fastFree(timer);
+        delete timer;
         return;
     }
     timer->deferred = false;

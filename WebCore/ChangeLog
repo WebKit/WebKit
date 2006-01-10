@@ -1,3 +1,17 @@
+2006-01-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        No tests possible, no functionality changes.
+
+        Reviewed by darin.  Committed by eseidel.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6410
+          Performance regression in text relayout due to bad BidiContext
+          equality testing
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::operator==): Return true if BidiContexts match and both
+        don't have a parent.
+
 2006-01-10  Eric Seidel  <eseidel@apple.com>
 
         Removed broken links in project file, no review need.
