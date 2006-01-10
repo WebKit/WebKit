@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +26,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class DrawDocument;
-
 @interface SVGTest : NSObject {
     NSString *_svgPath;
     NSString *_imagePath;
     
-    DrawDocument *_svgDocument;
     NSImage *_image;
     NSImage *_compositeImage;
     BOOL _hasPassed;
@@ -44,7 +42,6 @@
 - (NSString *)svgPath;
 
 - (NSImage *)image;
-- (DrawDocument *)svgDocument;
 - (NSImage *)compositeImage;
 - (NSString *)name;
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,74 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DrawTestView.h"
+#import <WebKit/WebFrame.h>
 
-#import <WebCore/DrawViewPrivate.h>
-#import <WebCore/DrawDocumentPrivate.h>
+#import "DrawTestView.h"
 
 @implementation DrawTestView
 
-- (id)initWithFrame:(NSRect)frame
+- (void)setDocument:(NSURL *)documentURL
 {
-    if (self = [super initWithFrame:frame]) {
-        //[self setValue:[NSNumber numberWithBool:YES] forKey:@"showDebugString"];
-        //[self setValue:[NSNumber numberWithBool:YES] forKey:@"showDebugAxes"];
-    }
-    return self;
-}
-
-- (void)drawAxes:(float)length
-{
-    NSBezierPath *xAxis = [NSBezierPath bezierPath];
-    [xAxis moveToPoint:NSMakePoint(-.5 * length, 0)];
-    [xAxis lineToPoint:NSMakePoint(length, 0)];
-    [[NSColor redColor] set];
-    [xAxis stroke];
-    
-    NSBezierPath *yAxis = [NSBezierPath bezierPath];
-    [yAxis moveToPoint:NSMakePoint(0, -.5 * length)];
-    [yAxis lineToPoint:NSMakePoint(0, length)];
-    [[NSColor greenColor] set];
-    [yAxis stroke];
-}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-    [super drawRect:dirtyRect];
-    
-    if (_showDebugString) {
-        // draw the current zoom/pan
-        NSString *infoString = [NSString stringWithFormat:@"viewport origin: %@ canvas size: %@ zoom: %f",
-            NSStringFromPoint([self canvasVisibleOrigin]),
-            NSStringFromSize([[self document] canvasSize]), [self canvasZoom]];
-        [infoString drawAtPoint:NSMakePoint(5, 13) withAttributes:nil];
-    }
-    
-    if (_showDebugAxes) {
-        CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSaveGState(context);
-        CGContextConcatCTM(context, CGAffineTransformInvert([self transformFromViewToCanvas]));
-        [self drawAxes:100];
-        CGContextRestoreGState(context);
-    }
-}
-
-- (IBAction)toggleShowDebugString:(id)sender
-{
-    [self setValue:[NSNumber numberWithBool:!_showDebugString] forKey:@"showDebugString"];
-    [self setNeedsDisplay:YES];
-}
-
-- (IBAction)toggleShowDebugAxes:(id)sender
-{
-    [self setValue:[NSNumber numberWithBool:!_showDebugAxes] forKey:@"showDebugAxes"];
-    [self setNeedsDisplay:YES];
-}
-
-- (IBAction)toggleFilterSupport:(id)sender
-{
-    [DrawView setFilterSupportEnabled:![DrawView isFilterSupportEnabled]];
-    [self setNeedsDisplay:YES];
+    [[self mainFrame] loadRequest:[NSURLRequest requestWithURL:documentURL]];
 }
 
 - (BOOL)acceptsFirstResponder

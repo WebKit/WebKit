@@ -25,13 +25,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class DrawView;
+@class WebView;
 
 @interface DrawTestToolbarController : NSObject {
-    DrawView *_drawView;
+    WebView *_drawView;
     NSMutableDictionary *_toolbarItems;
 }
 
-- (id)initWithDrawView:(DrawView *)drawView;
+- (id)initWithDrawView:(WebView *)drawView;
 
 @end

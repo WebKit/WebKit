@@ -34,8 +34,10 @@
     for (int x=0; x < subviewCount; x++) {
         NSView *subview = [subviews objectAtIndex:x];
         [subview drawRect:rect];
-//        NSString *label = [subviewLabels objectAtIndex:0];
-//        [label drawAtPoint:[subview frame].origin withAttributes:NULL];
+#if 0
+        NSString *label = [subviewLabels objectAtIndex:0];
+        [label drawAtPoint:[subview frame].origin withAttributes:NULL];
+#endif
     }
 }
 

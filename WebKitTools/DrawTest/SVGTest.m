@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +26,7 @@
 
 #import "SVGTest.h"
 
-#import <WebCore/DrawView.h>
-#import <WebCore/DrawDocument.h>
+#import <WebKit/WebView.h>
 
 @implementation SVGTest
 
@@ -36,11 +36,11 @@
     return [test autorelease];
 }
 
-static DrawView *__sharedDrawView = nil;
-+ (DrawView *)sharedDrawView
+static WebView *__sharedDrawView = nil;
++ (WebView *)sharedDrawView
 {
     if (!__sharedDrawView) {
-        __sharedDrawView = [[DrawView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+        __sharedDrawView = [[WebView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     }
     return __sharedDrawView;
 }
@@ -72,14 +72,6 @@ static DrawView *__sharedDrawView = nil;
     return _image;
 }
 
-- (DrawDocument *)svgDocument
-{
-    if (!_svgDocument && _svgPath) {
-        _svgDocument = [[DrawDocument alloc] initWithContentsOfFile:_svgPath];
-    }
-    return _svgDocument;
-}
-
 - (NSString *)name
 {
     NSMutableString *name = [[[[_svgPath lastPathComponent] stringByDeletingPathExtension] mutableCopy] autorelease];
@@ -90,9 +82,7 @@ static DrawView *__sharedDrawView = nil;
 - (void)generateCompositeIfNecessary
 {
     if (!_compositeImage) {
-        DrawView *view = [SVGTest sharedDrawView];
-        [view setDocument:[self svgDocument]];
-        [view sizeToFitViewBox];
+        WebView *view = [SVGTest sharedDrawView];
         NSSize svgSize = [view bounds].size;
         
         NSImage *image = [self image];

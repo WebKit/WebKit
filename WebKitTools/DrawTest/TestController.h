@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class DrawView;
+@class DrawTestView;
 @class SVGTest;
 @class TestViewerSplitView;
 
@@ -46,7 +47,7 @@
     NSArray *_tests;
     SVGTest *_selectedTest;
     
-    DrawView *_drawView;
+    DrawTestView *_drawView;
     NSImageView *_imageView;
 }
 

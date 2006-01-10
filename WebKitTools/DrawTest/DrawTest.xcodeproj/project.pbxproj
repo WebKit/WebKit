@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		78662E6D096B4E1600907EA7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78662E6C096B4E1600907EA7 /* WebKit.framework */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -23,7 +24,6 @@
 		A8C006F3089865E900BA5114 /* DrawTestDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006ED089865E900BA5114 /* DrawTestDocument.nib */; };
 		A8C006F4089865E900BA5114 /* Inspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006EF089865E900BA5114 /* Inspector.nib */; };
 		A8C006F5089865E900BA5114 /* TestViewer.nib in Resources */ = {isa = PBXBuildFile; fileRef = A8C006F1089865E900BA5114 /* TestViewer.nib */; };
-		A8C006FA0898665200BA5114 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C006F90898665200BA5114 /* WebCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -62,6 +62,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* DrawTest_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawTest_Prefix.pch; sourceTree = "<group>"; };
+		78662E6C096B4E1600907EA7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* DrawTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DrawTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8C006AF0898634600BA5114 /* TestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestController.h; sourceTree = "<group>"; };
@@ -85,7 +86,6 @@
 		A8C006EE089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/DrawTestDocument.nib; sourceTree = "<group>"; };
 		A8C006F0089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
 		A8C006F2089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TestViewer.nib; sourceTree = "<group>"; };
-		A8C006F90898665200BA5114 /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +94,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				A8C006FA0898665200BA5114 /* WebCore.framework in Frameworks */,
+				78662E6D096B4E1600907EA7 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A8C006F90898665200BA5114 /* WebCore.framework */,
+				78662E6C096B4E1600907EA7 /* WebKit.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";

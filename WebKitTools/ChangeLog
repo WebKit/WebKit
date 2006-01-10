@@ -1,3 +1,40 @@
+2006-01-10  Nefaur Khandker  <nefaurk@gmail.com>
+
+        Reviewed by eseidel.  Committed by eseidel.
+
+        DrawTestView now subclasses WebView instead of DrawView.
+
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj:
+        * DrawTest/DrawTestDocument.h:
+        * DrawTest/DrawTestDocument.m:
+        (-[DrawTestDocument dealloc]):
+        (-[DrawTestDocument readFromFile:ofType:]):
+        (-[DrawTestDocument windowControllerDidLoadNib:]):
+        (-[DrawTestDocument dumpSVGToConsole:]):
+        (-[DrawTestDocument openSourceForSelection:]):
+        (-[DrawTestDocument dataRepresentationOfType:]):
+        * DrawTest/DrawTestToolbarController.h:
+        * DrawTest/DrawTestToolbarController.m:
+        (-[DrawTestToolbarController initWithDrawView:]):
+        (-[DrawTestToolbarController clickedToolbarItem:]):
+        (-[DrawTestToolbarController validateToolbarItem:]):
+        * DrawTest/DrawTestView.h:
+        * DrawTest/DrawTestView.m:
+        (-[DrawTestView initWithFrame:]):
+        (-[DrawTestView setDocument:]):
+        * DrawTest/SVGTest.h:
+        * DrawTest/SVGTest.m:
+        (+[SVGTest sharedDrawView]):
+        (-[SVGTest generateCompositeIfNecessary]):
+        * DrawTest/TestController.h:
+        * DrawTest/TestController.m:
+        (-[TestController awakeFromNib]):
+        (-[TestController setSelectedTest:]):
+        (-[TestController openTestViewerForSelection:]):
+        (-[TestController toggleViewersScaleRule:]):
+        * DrawTest/TestViewerSplitView.m:
+        (-[TestViewerSplitView drawRect:]):
+
 2006-01-10  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Timothy.

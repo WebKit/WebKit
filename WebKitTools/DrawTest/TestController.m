@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +28,9 @@
 #import "SVGTest.h"
 #import "TestViewerSplitView.h"
 #import "ScalingImageView.h"
+#import "DrawTestView.h"
 
-#import <WebCore/DrawView.h>
+#import <WebKit/WebView.h>
 
 @interface NSArray (TestControllerAdditions)
 - (id)firstObject;
@@ -85,7 +87,7 @@ static TestController *__sharedInstance = nil;
 {
     [_testsTableView setTarget:self];
     [_testsTableView setDoubleAction:@selector(openTestViewerForSelection:)];
-    _drawView = [[DrawView alloc] initWithFrame:NSZeroRect];
+    _drawView = [[DrawTestView alloc] initWithFrame:NSZeroRect];
     _imageView = [[ScalingImageView alloc] initWithFrame:NSZeroRect];
     [_splitView addSubview:_drawView];
     [_splitView addSubview:_imageView];
@@ -144,7 +146,7 @@ static TestController *__sharedInstance = nil;
     
     if ([_testWindow isVisible]) {
         [_testWindow setTitle:[NSString stringWithFormat:@"Test Viewer - %@", [_selectedTest name]]]; 
-        [_drawView setDocument:[_selectedTest svgDocument]];
+        [_drawView setDocument:[NSURL fileURLWithPath:[_selectedTest svgPath]]];
         [_imageView setImage:[_selectedTest image]];
         if ([_compositeWindow isVisible])
             [_compositeImageView setImage:[_selectedTest compositeImage]];
@@ -159,7 +161,7 @@ static TestController *__sharedInstance = nil;
 - (IBAction)openTestViewerForSelection:(id)sender
 {
     [self showTestWindow:sender];
-    [_drawView setDocument:[_selectedTest svgDocument]];
+    [_drawView setDocument:[NSURL fileURLWithPath:[_selectedTest svgPath]]];
     [_imageView setImage:[_selectedTest image]];
 }
 
@@ -254,6 +256,7 @@ static TestController *__sharedInstance = nil;
 
 - (IBAction)toggleViewersScaleRule:(id)sender
 {
+#if 0
     if ([_drawView imageScaling] == NSScaleProportionally) {
         [_drawView setImageScaling:NSScaleNone];
         [_imageView setImageScaling:NSScaleNone];
@@ -261,6 +264,7 @@ static TestController *__sharedInstance = nil;
         [_drawView setImageScaling:NSScaleProportionally];
         [_imageView setImageScaling:NSScaleProportionally];
     }
+#endif
 }
 
 @end

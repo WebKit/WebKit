@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +25,6 @@
  */
 
 #import "DrawTestToolbarController.h"
-
-#import <WebCore/DrawViewPrivate.h>
 
 enum
 {
@@ -96,7 +95,7 @@ NSString *ToolbarMoveToBackImage = @"Toolbar_Back";
 
 @implementation DrawTestToolbarController
 
-- (id)initWithDrawView:(DrawView *)drawView
+- (id)initWithDrawView:(WebView *)drawView
 {
     if (self = [super init]){
         _drawView = [drawView retain];
@@ -224,6 +223,7 @@ NSString *ToolbarMoveToBackImage = @"Toolbar_Back";
     int tag = [sender tag];
     
     switch(tag) {
+#if 0
         case ToolbarBrowseToolTag:
             [_drawView setToolMode:DrawViewToolBrowse];
             break;
@@ -254,6 +254,7 @@ NSString *ToolbarMoveToBackImage = @"Toolbar_Back";
         case ToolbarDeleteSelectionTag:
             [_drawView deleteSelection:sender];
             break;
+#endif
         default:
             NSLog(@"Toolbar item: %i not implemented!", tag);
     }
@@ -335,7 +336,8 @@ NSString *ToolbarMoveToBackImage = @"Toolbar_Back";
 - (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
 {
     BOOL enabled = YES;
-    
+
+#if 0    
     switch([theItem tag]) {
         case ToolbarMoveForwardTag:
         case ToolbarMoveBackwardTag:
@@ -344,6 +346,7 @@ NSString *ToolbarMoveToBackImage = @"Toolbar_Back";
         case ToolbarDeleteSelectionTag:
             enabled = ([[_drawView selectedCanvasItems] count] != 0);
     }
+#endif
     
     return enabled;
 }

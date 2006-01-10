@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +26,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class DrawDocument;
 @class DrawTestView;
 @class DrawTestToolbarController;
 
@@ -34,14 +34,10 @@
     IBOutlet DrawTestView *drawView;
     IBOutlet NSDrawer *debugDrawer;
 
-    DrawDocument *document;
     DrawTestToolbarController *toolbarController;
 }
 
-- (void)setDrawDocument:(DrawDocument *)drawDocument;
-- (DrawDocument *)drawDocument;
-
-// debug menu.
+// Debug menu
 - (IBAction)dumpSVGToConsole:(id)sender;
 - (IBAction)toggleDebugDrawer:(id)sender;
 - (IBAction)runWindowResizeTest:(id)sender;

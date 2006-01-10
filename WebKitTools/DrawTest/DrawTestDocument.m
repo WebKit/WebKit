@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +27,9 @@
 #import "DrawTestDocument.h"
 #import "DrawTestView.h"
 #import "DrawTestToolbarController.h"
-
-#import <WebCore/DrawDocumentPrivate.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebDataSource.h>
 
 @implementation DrawTestDocument
 
@@ -47,7 +49,6 @@
 - (void)dealloc
 {
     [toolbarController release];
-    [document release];
     [super dealloc];
 }
 
@@ -56,66 +57,36 @@
     return @"DrawTestDocument";
 }
 
-- (IBAction)dumpSVGToConsole:(id)sender
+- (BOOL)readFromFile:(NSString *)filename ofType:(NSString *)docType
 {
-    NSLog(@"SVG: %@", [document svgText]);
-}
-
-- (void)sizeWindowToFitCanvas
-{
-    NSSize canvasSize = [document canvasSize];
-    if ((canvasSize.width > 10) && (canvasSize.height > 10)) {
-        NSWindow *window = [drawView window];
-        //canvasSize.height += [drawView frame].origin.y; // to accomidate the tool pallette
-        NSRect newFrame = [window frameRectForContentRect:NSMakeRect(0,0,canvasSize.width, canvasSize.height)];
-        newFrame = [window constrainFrameRect:newFrame toScreen:[window screen]];
-        // we really should not show margins here.
-        [window setFrame:newFrame display:YES];
-    }
+    // TODO: Check the validity of the document before returning YES.
+    return YES;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
     [super windowControllerDidLoadNib:aController];
     toolbarController = [[DrawTestToolbarController alloc] initWithDrawView:drawView];
-    [drawView setDocument:[self drawDocument]];
-    [self sizeWindowToFitCanvas];
+    [drawView setDocument:[self fileURL]];
+}
+
+- (IBAction)dumpSVGToConsole:(id)sender
+{
+    WebDataSource* dataSource = [[drawView mainFrame] dataSource];
+    NSLog(@"SVG Markup for file %@:\n%@", [self fileURL], [[dataSource representation] documentSource]);
 }
 
 - (IBAction)openSourceForSelection:(id)sender
 {
-    [[NSWorkspace sharedWorkspace] openFile:[self fileName] withApplication:@"TextEdit"];
-}
-
-- (IBAction)zoomToContent:(id)sender
-{
-    [document sizeCanvasToFitContent];
-    [drawView setNeedsDisplay:YES];
-    [self sizeWindowToFitCanvas];
+    // TODO: The "path" message (below) will not produce a valid pathname if we are dealing with a remote file.
+    NSString *filename = [[self fileURL] path];
+    [[NSWorkspace sharedWorkspace] openFile:filename withApplication:@"TextEdit"];
 }
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType
 {
-    return [[document svgText] dataUsingEncoding:NSUTF8StringEncoding];
-}
-
-- (BOOL)loadDataRepresentation:(NSData *)data ofType:(NSString *)aType
-{
-    [self setDrawDocument:[DrawDocument documentWithSVGData:data]];
-    return YES;
-}
-
-- (void)setDrawDocument:(DrawDocument *)drawDocument
-{
-    id oldDoc = document;
-    document = [drawDocument retain];
-    [oldDoc release];
-}
-
-- (DrawDocument *)drawDocument
-{
-    //if (!document) document = [[DrawDocument alloc] init];
-    return document;
+    WebDataSource* dataSource = [[drawView mainFrame] dataSource];
+    return [dataSource data];
 }
 
 #pragma mark -

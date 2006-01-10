@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Nefaur Khandker <nefaurk@gmail.com>  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +26,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebCore/DrawView.h>
+#import <WebKit/WebView.h>
 
+@interface DrawTestView : WebView
+{
 
-@interface DrawTestView : DrawView
-{    
-    BOOL _showDebugString;
-    BOOL _showDebugAxes;
 }
 
-- (IBAction)toggleShowDebugString:(id)sender;
-- (IBAction)toggleShowDebugAxes:(id)sender;
+- (void)setDocument:(NSURL *)documentURL;
 
 @end
