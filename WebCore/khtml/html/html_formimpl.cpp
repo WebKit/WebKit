@@ -39,8 +39,8 @@
 
 #include "dom/dom_exception.h"
 #include "css/cssstyleselector.h"
-#include "css/cssproperties.h"
-#include "css/csshelper.h"
+#include "cssproperties.h"
+#include "csshelper.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"

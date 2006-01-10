@@ -34,8 +34,8 @@
 #include "rendering/render_canvasimage.h"
 #include "rendering/render_flow.h"
 #include "css/cssstyleselector.h"
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 #include "css/csshelper.h"
 #include "xml/dom2_eventsimpl.h"
 

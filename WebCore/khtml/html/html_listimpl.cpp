@@ -23,8 +23,8 @@
 #include "config.h"
 #include "html_listimpl.h"
 
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 #include "rendering/render_list.h"
 #include "xml/dom_docimpl.h"
 

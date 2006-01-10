@@ -78,7 +78,7 @@
 #include <kurl.h>
 #include <kglobalsettings.h>
 
-#include "css/cssproperties.h"
+#include "cssproperties.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include <stdlib.h>

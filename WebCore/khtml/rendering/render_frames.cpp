@@ -25,10 +25,8 @@
 //#define DEBUG_LAYOUT
 
 #include "config.h"
-#include "rendering/render_frames.h"
-
-#include "css/cssproperties.h"
-#include "rendering/render_canvas.h"
+#include "render_frames.h"
+#include "render_canvas.h"
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
 #include "html/htmltokenizer.h"

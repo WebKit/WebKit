@@ -39,8 +39,7 @@
 
 #include "rendering/render_canvas.h"
 #include "css/css_valueimpl.h"
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssvalues.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssstyleselector.h"
 #include "xml/dom_xmlimpl.h"

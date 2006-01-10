@@ -6905,6 +6905,7 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -6964,6 +6965,7 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7023,6 +7025,7 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7082,6 +7085,7 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7175,6 +7179,8 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
+					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7233,6 +7239,8 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
+					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7291,6 +7299,8 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
+					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7349,6 +7359,8 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
+					.,
+					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,

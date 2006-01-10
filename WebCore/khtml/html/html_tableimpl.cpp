@@ -34,8 +34,8 @@
 #include "khtmlview.h"
 
 #include "css/cssstyleselector.h"
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 #include "css/csshelper.h"
 #include "css_valueimpl.h"
 #include "css/css_stylesheetimpl.h"

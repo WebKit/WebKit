@@ -31,8 +31,8 @@
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssparser.h"
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 #include "css/cssstyleselector.h"
 
 #include "xml/dom_stringimpl.h"

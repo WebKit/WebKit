@@ -37,8 +37,8 @@
 #include "khtml_factory.h"
 #include "khtmlpart_p.h"
 
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 
 #include "misc/khtmllayout.h"
 #include "khtml_settings.h"

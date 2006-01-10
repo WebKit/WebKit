@@ -27,9 +27,9 @@
 #include "html/html_inlineimpl.h"
 
 #include "css/csshelper.h"
-#include "css/cssproperties.h"
+#include "cssproperties.h"
 #include "css/cssstyleselector.h"
-#include "css/cssvalues.h"
+#include "cssvalues.h"
 #include "html/html_documentimpl.h"
 #include "html/html_imageimpl.h"
 #include "Frame.h"

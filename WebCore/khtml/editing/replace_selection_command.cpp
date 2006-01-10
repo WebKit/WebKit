@@ -40,7 +40,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "rendering/render_object.h"
 #include "css/css_computedstyle.h"
-#include "css/cssproperties.h"
+#include "cssproperties.h"
 
 #include <kxmlcore/Assertions.h>
 

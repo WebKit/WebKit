@@ -1,3 +1,131 @@
+2006-01-09  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Remove khtml-specific forwarding headers.
+
+        * ForwardingHeaders/css: Removed.
+        * ForwardingHeaders/css/css_base.h: Removed.
+        * ForwardingHeaders/css/css_computedstyle.h: Removed.
+        * ForwardingHeaders/css/css_ruleimpl.h: Removed.
+        * ForwardingHeaders/css/css_stylesheetimpl.h: Removed.
+        * ForwardingHeaders/css/css_valueimpl.h: Removed.
+        * ForwardingHeaders/css/csshelper.h: Removed.
+        * ForwardingHeaders/css/cssparser.h: Removed.
+        * ForwardingHeaders/css/cssproperties.h: Removed.
+        * ForwardingHeaders/css/cssstyleselector.h: Removed.
+        * ForwardingHeaders/css/cssvalues.h: Removed.
+        * ForwardingHeaders/dom: Removed.
+        * ForwardingHeaders/dom/css_rule.h: Removed.
+        * ForwardingHeaders/dom/css_stylesheet.h: Removed.
+        * ForwardingHeaders/dom/css_value.h: Removed.
+        * ForwardingHeaders/dom/dom2_events.h: Removed.
+        * ForwardingHeaders/dom/dom2_range.h: Removed.
+        * ForwardingHeaders/dom/dom2_traversal.h: Removed.
+        * ForwardingHeaders/dom/dom_exception.h: Removed.
+        * ForwardingHeaders/dom/dom_node.h: Removed.
+        * ForwardingHeaders/dom/dom_string.h: Removed.
+        * ForwardingHeaders/ecma: Removed.
+        * ForwardingHeaders/ecma/kjs_binding.h: Removed.
+        * ForwardingHeaders/ecma/kjs_dom.h: Removed.
+        * ForwardingHeaders/ecma/kjs_proxy.h: Removed.
+        * ForwardingHeaders/editing: Removed.
+        * ForwardingHeaders/editing/SelectionController.h: Removed.
+        * ForwardingHeaders/editing/edit_actions.h: Removed.
+        * ForwardingHeaders/editing/html_interchange.h: Removed.
+        * ForwardingHeaders/editing/htmlediting.h: Removed.
+        * ForwardingHeaders/editing/jsediting.h: Removed.
+        * ForwardingHeaders/editing/markup.h: Removed.
+        * ForwardingHeaders/editing/text_affinity.h: Removed.
+        * ForwardingHeaders/editing/text_granularity.h: Removed.
+        * ForwardingHeaders/editing/visible_position.h: Removed.
+        * ForwardingHeaders/editing/visible_text.h: Removed.
+        * ForwardingHeaders/editing/visible_units.h: Removed.
+        * ForwardingHeaders/html: Removed.
+        * ForwardingHeaders/html/html_baseimpl.h: Removed.
+        * ForwardingHeaders/html/html_blockimpl.h: Removed.
+        * ForwardingHeaders/html/html_canvasimpl.h: Removed.
+        * ForwardingHeaders/html/html_documentimpl.h: Removed.
+        * ForwardingHeaders/html/html_elementimpl.h: Removed.
+        * ForwardingHeaders/html/html_formimpl.h: Removed.
+        * ForwardingHeaders/html/html_headimpl.h: Removed.
+        * ForwardingHeaders/html/html_imageimpl.h: Removed.
+        * ForwardingHeaders/html/html_inlineimpl.h: Removed.
+        * ForwardingHeaders/html/html_listimpl.h: Removed.
+        * ForwardingHeaders/html/html_miscimpl.h: Removed.
+        * ForwardingHeaders/html/html_objectimpl.h: Removed.
+        * ForwardingHeaders/html/html_tableimpl.h: Removed.
+        * ForwardingHeaders/html/htmlparser.h: Removed.
+        * ForwardingHeaders/html/htmltokenizer.h: Removed.
+        * ForwardingHeaders/misc: Removed.
+        * ForwardingHeaders/misc/decoder.h: Removed.
+        * ForwardingHeaders/misc/formdata.h: Removed.
+        * ForwardingHeaders/misc/helper.h: Removed.
+        * ForwardingHeaders/misc/khtmllayout.h: Removed.
+        * ForwardingHeaders/misc/loader.h: Removed.
+        * ForwardingHeaders/misc/loader_client.h: Removed.
+        * ForwardingHeaders/misc/shared.h: Removed.
+        * ForwardingHeaders/misc/stringit.h: Removed.
+        * ForwardingHeaders/rendering: Removed.
+        * ForwardingHeaders/rendering/font.h: Removed.
+        * ForwardingHeaders/rendering/render_applet.h: Removed.
+        * ForwardingHeaders/rendering/render_block.h: Removed.
+        * ForwardingHeaders/rendering/render_box.h: Removed.
+        * ForwardingHeaders/rendering/render_br.h: Removed.
+        * ForwardingHeaders/rendering/render_canvas.h: Removed.
+        * ForwardingHeaders/rendering/render_canvasimage.h: Removed.
+        * ForwardingHeaders/rendering/render_flow.h: Removed.
+        * ForwardingHeaders/rendering/render_form.h: Removed.
+        * ForwardingHeaders/rendering/render_frames.h: Removed.
+        * ForwardingHeaders/rendering/render_image.h: Removed.
+        * ForwardingHeaders/rendering/render_layer.h: Removed.
+        * ForwardingHeaders/rendering/render_line.h: Removed.
+        * ForwardingHeaders/rendering/render_list.h: Removed.
+        * ForwardingHeaders/rendering/render_object.h: Removed.
+        * ForwardingHeaders/rendering/render_replaced.h: Removed.
+        * ForwardingHeaders/rendering/render_style.h: Removed.
+        * ForwardingHeaders/rendering/render_table.h: Removed.
+        * ForwardingHeaders/rendering/table_layout.h: Removed.
+        * ForwardingHeaders/xbl: Removed.
+        * ForwardingHeaders/xbl/xbl_binding_manager.h: Removed.
+        * ForwardingHeaders/xml: Removed.
+        * ForwardingHeaders/xml/EventNames.h: Removed.
+        * ForwardingHeaders/xml/dom2_eventsimpl.h: Removed.
+        * ForwardingHeaders/xml/dom2_rangeimpl.h: Removed.
+        * ForwardingHeaders/xml/dom2_traversalimpl.h: Removed.
+        * ForwardingHeaders/xml/dom2_viewsimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_atomicstring.h: Removed.
+        * ForwardingHeaders/xml/dom_docimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_elementimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_nodeimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_position.h: Removed.
+        * ForwardingHeaders/xml/dom_stringimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_textimpl.h: Removed.
+        * ForwardingHeaders/xml/dom_xmlimpl.h: Removed.
+        * ForwardingHeaders/xml/xml_tokenizer.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/css_valueimpl.cpp:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/html/html_blockimpl.cpp:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_elementimpl.cpp:
+        * khtml/html/html_formimpl.cpp:
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        * khtml/html/html_listimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/khtml_part.cpp:
+        * khtml/misc/decoder.cpp:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/xml/dom_elementimpl.cpp:
+
 2006-01-10  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

@@ -52,8 +52,8 @@
 #include "html/htmltokenizer.h"
 #include "khtmlview.h"
 #include "Frame.h"
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 
 #include "rendering/render_object.h"
 

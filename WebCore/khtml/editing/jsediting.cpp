@@ -27,7 +27,7 @@
 #include "jsediting.h"
 
 #include "css/css_valueimpl.h"
-#include "css/cssproperties.h"
+#include "cssproperties.h"
 
 #include "htmlediting.h"
 #include "Frame.h"

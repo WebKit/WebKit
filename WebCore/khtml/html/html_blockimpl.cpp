@@ -28,8 +28,8 @@
 #include "html_documentimpl.h"
 #include "css/cssstyleselector.h"
 
-#include "css/cssproperties.h"
-#include "css/cssvalues.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 
 #include <kdebug.h>
 

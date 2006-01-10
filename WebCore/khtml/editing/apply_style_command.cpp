@@ -31,7 +31,7 @@
 #include "css/css_valueimpl.h"
 #include "css/css_computedstyle.h"
 #include "css/cssparser.h"
-#include "css/cssproperties.h"
+#include "cssproperties.h"
 #include "dom/dom_string.h"
 #include "htmlediting.h"
 #include "html/html_elementimpl.h"
