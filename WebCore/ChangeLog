@@ -1,3 +1,9 @@
+2006-01-10  Eric Seidel  <eseidel@apple.com>
+
+        Removed broken links in project file, no review need.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
