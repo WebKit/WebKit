@@ -1,5 +1,20 @@
 2006-01-11  Ricci Adams  <ricciadams@apple.com>
 
+        Reviewed by Maciej, reworked and landed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5939
+          final comma in javascript object prevents parsing
+
+        * fast/js/resources/object-extra-comma.js: Added.
+        * fast/js/object-extra-comma.html: Added.
+        * fast/js/object-extra-comma-expected.txt: Added.
+
+        * fast/js/resources/js-test-pre.js: Fixed a typo.
+
+        * fast/js/*: Set some MIME types.
+
+2006-01-11  Ricci Adams  <ricciadams@apple.com>
+
         Reviewed by Geoff, reworked and landed by Darin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5308

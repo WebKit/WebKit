@@ -1,5 +1,15 @@
 2006-01-11  Ricci Adams  <ricciadams@apple.com>
 
+        Reviewed by Maciej and Darin, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5939
+          final comma in javascript object prevents parsing
+
+        * kjs/grammar.y: Added rule to allow trailing comma in
+        object construction.
+
+2006-01-11  Ricci Adams  <ricciadams@apple.com>
+
         Reviewed by Geoff, landed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5308

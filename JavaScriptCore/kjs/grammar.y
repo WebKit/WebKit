@@ -226,6 +226,8 @@ PrimaryExpr:
     PrimaryExprNoBrace
   | '{' '}'                             { $$ = new ObjectLiteralNode(); }
   | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2); }
+  /* allow extra comma, see http://bugzilla.opendarwin.org/show_bug.cgi?id=5939 */
+  | '{' PropertyList ',' '}'            { $$ = new ObjectLiteralNode($2); }
 ;
 
 PrimaryExprNoBrace:
@@ -985,10 +987,10 @@ static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier& ge
     return true;
 }
 
-int yyerror(const char * /* s */)  /* Called by yyparse on error */
+/* called by yyparse on error */
+int yyerror(const char *)
 {
-  // fprintf(stderr, "ERROR: %s at line %d\n", s, KJS::Lexer::curr()->lineNo());
-  return 1;
+    return 1;
 }
 
 /* may we automatically insert a semicolon ? */
