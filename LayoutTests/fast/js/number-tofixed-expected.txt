@@ -1,0 +1,16 @@
+This test checks a few Number.toFixed cases, including 5307: Number.toFixed does not round 0.5 up.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (0).toFixed(0) is '0'
+PASS 0.49.toFixed(0) is '0'
+PASS 0.5.toFixed(0) is '1'
+PASS 0.51.toFixed(0) is '1'
+PASS (-0.49).toFixed(0) is '-0'
+PASS (-0.5).toFixed(0) is '-1'
+PASS (-0.51).toFixed(0) is '-1'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

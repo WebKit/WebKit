@@ -1,3 +1,14 @@
+2006-01-11  Ricci Adams  <ricciadams@apple.com>
+
+        Reviewed by Geoff, reworked and landed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5307
+          Number.toFixed doesn't round 0.5 up
+
+        * fast/js/number-tofixed-expected.txt: Added.
+        * fast/js/number-tofixed.html: Added.
+        * fast/js/resources/number-tofixed.js: Added.
+
 2006-01-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
