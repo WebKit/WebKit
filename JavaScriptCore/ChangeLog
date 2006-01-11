@@ -1,3 +1,9 @@
+2006-01-10  Darin Adler  <darin@apple.com>
+
+        * Makefile: Took out unneeded "export" line.
+        * <many-files>: Changed a lot of flags (cleared bogus executable bits, set
+          MIME types, other small corrections).
+
 2006-01-09  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Removed.
@@ -22,8 +28,8 @@
 
         Reviewed by Maciej.
 
-	    - Fix WebCore development build
-	    http://bugzilla.opendarwin.org/show_bug.cgi?id=6408
+        - Fix WebCore development build
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6408
 
         * kxmlcore/Assertions.h: Use __VA_ARGS__ in variadic macros.
 
