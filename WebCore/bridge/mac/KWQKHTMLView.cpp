@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 
 #import "MacFrame.h"
 #import "KWQWindowWidget.h"

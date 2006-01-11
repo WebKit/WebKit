@@ -33,7 +33,6 @@
 #include "xml/dom_elementimpl.h"
 
 #include "MacFrame.h"
-#include "khtmlview.h"
 
 #include "html/htmlparser.h"
 

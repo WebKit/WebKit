@@ -30,7 +30,6 @@
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 
-#include "khtmlview.h"
 #include "Frame.h"
 #include "kjs_proxy.h"
 

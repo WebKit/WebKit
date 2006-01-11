@@ -25,7 +25,7 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include "dom/dom2_events.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "rendering/render_layer.h"
 #include "xml/EventNames.h"
 #include "xml/dom2_viewsimpl.h"

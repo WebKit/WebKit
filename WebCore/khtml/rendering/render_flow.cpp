@@ -39,8 +39,6 @@
 #include "render_line.h"
 #include "htmlnames.h"
 
-#include "khtmlview.h"
-
 using namespace DOM;
 using namespace DOM::HTMLNames;
 using namespace khtml;

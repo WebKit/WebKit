@@ -46,7 +46,7 @@
 
 #include <kdebug.h>
 #include <assert.h>
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "render_canvas.h"
 #include "render_arena.h"
 #include "render_theme.h"

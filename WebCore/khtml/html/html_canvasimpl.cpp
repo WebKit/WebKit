@@ -27,8 +27,6 @@
 #include "html/html_canvasimpl.h"
 #include "html/html_documentimpl.h"
 
-#include "khtmlview.h"
-
 #include <kdebug.h>
 
 #include "rendering/render_canvasimage.h"

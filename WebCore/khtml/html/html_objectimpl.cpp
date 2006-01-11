@@ -26,7 +26,6 @@
 
 #include "Frame.h"
 #include "dom/dom_string.h"
-#include "khtmlview.h"
 #include <qstring.h>
 #include <qmap.h>
 #include <kdebug.h>

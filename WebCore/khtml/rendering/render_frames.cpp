@@ -34,7 +34,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "render_arena.h"
 

@@ -51,7 +51,7 @@
 #include "xml/dom_nodeimpl.h"
 #include <kxmlcore/HashSet.h>
 #include "html/htmltokenizer.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "cssproperties.h"
 #include "cssvalues.h"

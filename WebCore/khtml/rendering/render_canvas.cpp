@@ -24,7 +24,7 @@
 #include "render_layer.h"
 #include "xml/dom_docimpl.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include <kdebug.h>
 
 using namespace khtml;

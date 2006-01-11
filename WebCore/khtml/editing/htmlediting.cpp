@@ -43,7 +43,6 @@
 #include "html_imageimpl.h"
 #include "html_interchange.h"
 #include "htmlnames.h"
-#include "khtmlview.h"
 #include "qcolor.h"
 #include "qptrlist.h"
 #include "render_object.h"

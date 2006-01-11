@@ -92,10 +92,10 @@ enum RedirectionScheduled {
     locationChangeScheduledDuringLoad
 };
 
-class KHTMLPartPrivate
+class FramePrivate
 {
 public:
-  KHTMLPartPrivate(QObject* parent)
+  FramePrivate(QObject* parent)
   {
     m_doc = 0L;
     m_jscript = 0L;
@@ -172,7 +172,7 @@ public:
     m_openedByJS = false;
     m_newJSInterpreterExists = false;
   }
-  ~KHTMLPartPrivate()
+  ~FramePrivate()
   {
     delete m_extension;
     delete m_jscript;
@@ -188,7 +188,6 @@ public:
   DOM::DocumentImpl *m_doc;
   RefPtr<khtml::Decoder> m_decoder;
   QString m_encoding;
-  QString m_sheetUsed;
   QString scheduledScript;
   RefPtr<DOM::NodeImpl> scheduledScriptNode;
 

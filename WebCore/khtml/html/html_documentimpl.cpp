@@ -62,9 +62,7 @@
 #include "html/html_imageimpl.h"
 #include "htmlfactory.h"
 
-#include "khtmlview.h"
 #include "Frame.h"
-#include "khtmlpart_p.h"
 #include "khtml_settings.h"
 
 #include "xml/xml_tokenizer.h"

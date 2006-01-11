@@ -30,7 +30,7 @@
 #import <JavaScriptCore/property_map.h>
 
 #import "dom_docimpl.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 #import "kjs_window.h"
 
 #import <kxmlcore/Assertions.h>

@@ -53,7 +53,7 @@
 #include "HTMLOptionsCollectionImpl.h"
 
 #include "Frame.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 
 #include "kjs_css.h"
 #include "kjs_window.h"

@@ -37,8 +37,6 @@
 #include "render_arena.h"
 #include "render_line.h"
 
-#include "khtmlview.h"
-
 using namespace DOM;
 
 #ifndef NDEBUG

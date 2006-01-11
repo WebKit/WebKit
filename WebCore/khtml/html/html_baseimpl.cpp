@@ -29,7 +29,7 @@
 
 #include "html/html_documentimpl.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 
 #include "rendering/render_frames.h"

@@ -27,7 +27,6 @@
 #include "html/html_documentimpl.h"
 #include "HTMLFormElementImpl.h"
 
-#include "khtmlview.h"
 #include "Frame.h"
 
 #include <kdebug.h>

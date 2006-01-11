@@ -31,8 +31,6 @@
 #include "dom/dom_exception.h"
 #include "dom/dom_node.h"
 
-#include "khtmlview.h"
-
 #include "css/cssstyleselector.h"
 #include "cssproperties.h"
 #include "cssvalues.h"

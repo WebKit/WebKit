@@ -28,7 +28,6 @@
 #include "rendering/render_applet.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_docimpl.h"
-#include "khtmlview.h"
 #include "Frame.h"
 
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded

@@ -41,7 +41,7 @@
 #include "DocLoader.h"
 #include "CachedScript.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "xml/dom_docimpl.h"
 #include "xml/EventNames.h"

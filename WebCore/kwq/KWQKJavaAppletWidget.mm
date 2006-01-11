@@ -27,7 +27,7 @@
 #import "KWQKJavaAppletWidget.h"
 
 #import "dom_docimpl.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 #import "KWQExceptions.h"
 #import "WebCoreBridge.h"
 #import "MacFrame.h"

@@ -48,7 +48,7 @@
 #import "dom_string.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 #import "Frame.h"
 #import "render_canvas.h"
 #import "render_image.h"

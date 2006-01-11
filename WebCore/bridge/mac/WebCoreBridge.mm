@@ -41,7 +41,7 @@
 #import "html_imageimpl.h"
 #import "htmlediting.h"
 #import "MacFrame.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"

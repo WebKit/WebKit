@@ -24,7 +24,7 @@
  */
  
 #include "config.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 #import "loader.h"
 #import "xml_tokenizer.h"
 

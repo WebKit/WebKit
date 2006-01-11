@@ -35,7 +35,6 @@
 #include "dom/css_rule.h"
 #include "dom/css_value.h"
 #include "khtml_factory.h"
-#include "khtmlpart_p.h"
 
 #include "cssproperties.h"
 #include "cssvalues.h"
@@ -49,7 +48,7 @@
 #include "rendering/font.h"
 #include "render_theme.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 
 #include <kstandarddirs.h>

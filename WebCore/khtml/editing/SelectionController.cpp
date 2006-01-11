@@ -33,7 +33,7 @@
 #include "dom/dom_node.h"
 #include "dom/dom_string.h"
 #include "Frame.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "InlineTextBox.h"

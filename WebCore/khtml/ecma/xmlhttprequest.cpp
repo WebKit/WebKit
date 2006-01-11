@@ -32,7 +32,6 @@
 #include "xml/EventNames.h"
 
 #include "Frame.h"
-#include "khtmlview.h"
 
 #include <kdebug.h>
 #include <kio/job.h>

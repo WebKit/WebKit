@@ -29,7 +29,7 @@
 #include "dom_docimpl.h"
 #include "dom_position.h"
 #include "jsediting.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "render_canvas.h"
 #include "render_replaced.h"
 #include "render_table.h"

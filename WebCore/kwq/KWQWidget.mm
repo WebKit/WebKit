@@ -36,7 +36,6 @@
 #import "WebCoreBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
-#import "khtmlview.h"
 #import "render_canvas.h"
 #import "render_replaced.h"
 #import "render_style.h"

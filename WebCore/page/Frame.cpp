@@ -68,12 +68,12 @@ using namespace DOM;
 using namespace HTMLNames;
 using namespace KJS;
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "ecma/kjs_proxy.h"
 #include "ecma/kjs_window.h"
 #include "ecma/xmlhttprequest.h"
 #include "khtml_settings.h"
-#include "khtmlpart_p.h"
+#include "FramePrivate.h"
 
 #include <sys/types.h>
 #include <assert.h>
@@ -157,7 +157,7 @@ void Frame::init(KHTMLView *view)
   
   frameCount = 0;
 
-  d = new KHTMLPartPrivate(parent());
+  d = new FramePrivate(parent());
 
   d->m_view = view;
   setWidget( d->m_view );
@@ -1866,7 +1866,7 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
       kdDebug(6000) << "Frame::submitForm ABORTING!" << endl;
       return;
     }
-    d->m_submitForm = new KHTMLPartPrivate::SubmitForm;
+    d->m_submitForm = new FramePrivate::SubmitForm;
     d->m_submitForm->submitAction = action;
     d->m_submitForm->submitUrl = url;
     d->m_submitForm->submitFormData = formData;
@@ -3844,4 +3844,9 @@ bool Frame::isFrame() const
 NodeImpl *Frame::mousePressNode()
 {
     return d->m_mousePressNode.get();
+}
+
+bool Frame::isComplete()
+{
+    return d->m_bComplete;
 }

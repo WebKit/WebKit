@@ -40,7 +40,7 @@
 #include <kdebug.h>
 #include <qpainter.h>
 #include <qpen.h>
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "render_arena.h"
 #include "render_inline.h"

@@ -35,7 +35,7 @@
 #include "DocLoader.h"
 #include <kxmlcore/HashMap.h>
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include <kdebug.h>
 #include <klocale.h>

@@ -27,7 +27,7 @@
 #import "render_style.h"
 #import "render_canvas.h"
 #import "dom_elementimpl.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 

@@ -33,7 +33,6 @@
 #include "html/html_documentimpl.h"
 #include "html/html_imageimpl.h"
 #include "Frame.h"
-#include "khtmlview.h"
 #include "rendering/render_br.h"
 #include "rendering/render_flow.h"
 #include "rendering/render_image.h"
@@ -203,7 +202,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 state |= Qt::ControlButton;
 	    }
 
-            if (getDocument() && getDocument()->view() && getDocument()->frame()) {
+            if (getDocument() && getDocument()->frame()) {
                 getDocument()->frame()->
                     urlSelected( url, button, state, utarget );
             }

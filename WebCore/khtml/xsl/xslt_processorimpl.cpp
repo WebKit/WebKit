@@ -32,7 +32,7 @@
 #include "Cache.h"
 #include "DocLoader.h"
 #include "markup.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "KWQLoader.h"
 

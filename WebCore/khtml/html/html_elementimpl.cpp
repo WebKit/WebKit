@@ -37,7 +37,6 @@
 #include <kxmlcore/HashSet.h>
 #include "editing/visible_text.h"
 
-#include "khtmlview.h"
 #include "Frame.h"
 
 #include "dom/dom_exception.h"

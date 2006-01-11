@@ -1,3 +1,91 @@
+2006-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - renamed KHTMLPartPrivate to FramePrivate and KHTMLView to FrameView
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6490
+
+        (also corresponding header renames, remove headers where not
+        needed, and a few substantive changes to allow more header removal)
+
+        * khtml/xml/dom_docimpl.h: moved m_selectedStylesheetSet here from
+        KHTMLPartPrivate, since this was the only class using it.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv): ditto
+        (DocumentImpl::selectedStylesheetSet): ditto
+        (DocumentImpl::setSelectedStylesheetSet): ditto
+        (DocumentImpl::recalcStyleSelector): ditto
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty): Use new isCompleted method
+        on Frame instead of accessing private field directly.
+        (KJS::getDOMDocumentNode): remove gratuitous use of view()
+        
+        Just the renames:
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/KWQKHTMLView.cpp:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        * bridge/mac/WebCoreBridge.mm:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/xmlhttprequest.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_elementimpl.cpp:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_applet.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_flow.cpp:
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/rendering/render_layer.cpp:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_object.cpp:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_table.cpp:
+        * khtml/rendering/render_theme_mac.mm:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        * khtml/xml/dom_elementimpl.cpp:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQFrame.mm:
+        * kwq/KWQKJavaAppletWidget.mm:
+        * kwq/KWQPageState.mm:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * kwq/KWQSignalStubs.mm:
+        * kwq/KWQWidget.mm:
+        * page/Frame.cpp:
+        (Frame::init):
+        (Frame::submitForm):
+        (Frame::isComplete):
+        * page/Frame.h:
+        * page/FramePrivate.h: Added.
+        (FramePrivate::FramePrivate):
+        (FramePrivate::~FramePrivate):
+        * page/FrameView.cpp: Added.
+        * page/FrameView.h: Added.
+        * page/khtmlpart_p.h: Removed.
+        * page/khtmlview.cpp: Removed.
+        * page/khtmlview.h: Removed.
+
 2006-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

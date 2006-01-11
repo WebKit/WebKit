@@ -41,8 +41,6 @@
 #include <kdebug.h>
 #include <assert.h>
 
-#include "khtmlview.h"
-
 using namespace khtml;
 using namespace DOM;
 using namespace HTMLNames;

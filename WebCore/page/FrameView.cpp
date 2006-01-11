@@ -22,7 +22,7 @@
  * Boston, MA 02111-1307, USA.
  */
 #include "config.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 
 #include "Frame.h"
 #include "khtml_events.h"
@@ -43,7 +43,7 @@
 #include "css/cssstyleselector.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
-#include "khtmlpart_p.h"
+#include "MacFrame.h"
 
 #include <kcursor.h>
 #include <kstandarddirs.h>

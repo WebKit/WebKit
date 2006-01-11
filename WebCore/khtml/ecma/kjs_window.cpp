@@ -52,7 +52,7 @@
 #endif
 #include "domparser.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 #include "khtml_ext.h"
 #include "dom/dom_string.h"

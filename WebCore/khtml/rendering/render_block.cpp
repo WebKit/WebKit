@@ -36,7 +36,7 @@
 #include "render_theme.h"
 #include "htmlnames.h"
 
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 
 using namespace DOM;

@@ -29,7 +29,7 @@
 #import "KWQExceptions.h"
 #import "MacFrame.h"
 #import "WebCoreBridge.h"
-#import "khtmlview.h"
+#import "FrameView.h"
 
 void QFrame::setFrameStyle(int s)
 {

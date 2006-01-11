@@ -47,7 +47,7 @@
 
 #include "ecma/kjs_binding.h"
 #include "ecma/kjs_proxy.h"
-#include "khtmlview.h"
+#include "FrameView.h"
 #include "Frame.h"
 
 // FIXME: Should not have to include this.  Cut the HTML dependency!

@@ -42,7 +42,7 @@
 #include "KWQClipboard.h"
 #include "KWQScrollBar.h"
 
-class KHTMLPartPrivate;
+class FramePrivate;
 class KWQWindowWidget;
 class NPObject;
 
