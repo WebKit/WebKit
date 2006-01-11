@@ -17,6 +17,7 @@
 #define HAVE_FLOAT_H 1
 #define HAVE_FUNC__FINITE 1
 #define HAVE_SYS_TIMEB_H 1
+#define USE_SYSTEM_MALLOC 1
 
 #include <assert.h>
 
