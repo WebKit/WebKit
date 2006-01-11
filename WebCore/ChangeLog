@@ -1,3 +1,9 @@
+2006-01-10  David Hyatt  <hyatt@apple.com>
+
+	Fix the broken ifdef in KWQString.h
+
+        * kwq/KWQString.h:
+
 2006-01-10  hyatt@apple.com
 
 	Fix for bugzilla bug 6458, get rendering dir of WebCore
