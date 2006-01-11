@@ -1,3 +1,48 @@
+2006-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - moved files related to the Frame class and the forthcoming Page class
+        to WebCore/page
+        
+        - moved files related to the MacFrame class and other bridging-related classes
+        to WebCore/bridge/mac
+
+        * ForwardingHeaders/ksvg2/KSVGPart.h:
+        * ForwardingHeaders/ksvg2/KSVGView.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge: Added.
+        * bridge/mac: Added.
+        * bridge/mac/KWQKHTMLPartBrowserExtension.h: Added.
+        * bridge/mac/KWQKHTMLPartBrowserExtension.mm: Added.
+        * bridge/mac/KWQKHTMLView.cpp: Added.
+        * bridge/mac/KWQKPartsBrowserExtension.h: Added.
+        * bridge/mac/KWQKPartsBrowserInterface.mm: Added.
+        * bridge/mac/MacFrame.h: Added.
+        * bridge/mac/MacFrame.mm: Added.
+        * bridge/mac/WebCoreBridge.h: Added.
+        * bridge/mac/WebCoreBridge.mm: Added.
+        * khtml/Frame.cpp: Removed.
+        * khtml/Frame.h: Removed.
+        * khtml/khtmlpart_p.h: Removed.
+        * khtml/khtmlview.cpp: Removed.
+        * khtml/khtmlview.h: Removed.
+        * kwq/KWQKHTMLPartBrowserExtension.h: Removed.
+        * kwq/KWQKHTMLPartBrowserExtension.mm: Removed.
+        * kwq/KWQKHTMLView.cpp: Removed.
+        * kwq/KWQKPartsBrowserExtension.h: Removed.
+        * kwq/KWQKPartsBrowserInterface.mm: Removed.
+        * kwq/MacFrame.h: Removed.
+        * kwq/MacFrame.mm: Removed.
+        * kwq/WebCoreBridge.h: Removed.
+        * kwq/WebCoreBridge.mm: Removed.
+        * page: Added.
+        * page/Frame.cpp: Added.
+        * page/Frame.h: Added.
+        * page/khtmlpart_p.h: Added.
+        * page/khtmlview.cpp: Added.
+        * page/khtmlview.h: Added.
+
 2006-01-10  David Hyatt  <hyatt@apple.com>
 
 	#if Win32 the KWQMemArray overloads, since they're working around

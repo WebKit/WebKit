@@ -1,4 +1,4 @@
-#include "khtml/Frame.h"
+#include "Frame.h"
 class Frame;
 namespace KDOM {
     using ::Frame;
