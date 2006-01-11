@@ -1,5 +1,5 @@
-#include "khtmlview.h"
-class KHTMLView;
+#include "FrameView.h"
+class FrameView;
 namespace KDOM {
-    using ::KHTMLView;
+    using ::FrameView;
 }
