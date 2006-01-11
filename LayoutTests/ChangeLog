@@ -2,6 +2,16 @@
 
         Reviewed by Geoff, reworked and landed by Darin.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5308
+          Number.toFixed doesn't include leading 0
+
+        * fast/js/resources/number-tofixed.js: Added some test cases for toFixed(1).
+        * fast/js/number-tofixed-expected.txt: Updated.
+
+2006-01-11  Ricci Adams  <ricciadams@apple.com>
+
+        Reviewed by Geoff, reworked and landed by Darin.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5307
           Number.toFixed doesn't round 0.5 up
 

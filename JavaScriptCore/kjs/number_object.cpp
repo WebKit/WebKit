@@ -218,7 +218,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       UString m = integer_part_noexp(n);
       
       int k = m.size();
-      if (m.size() < f) {
+      if (k <= f) {
           UString z = "";
           for (int i = 0; i < f+1-k; i++)
               z += "0";
