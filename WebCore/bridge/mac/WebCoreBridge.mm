@@ -786,7 +786,7 @@ static bool initializedKJS = FALSE;
     m_frame->saveInterpreterBuiltins(*interpreterBuiltins);
 
     KWQPageState *pageState = [[KWQPageState alloc] initWithDocument:doc
-                                                                 URL:m_frame->m_url
+                                                                 URL:m_frame->url()
                                                     windowProperties:windowProperties
                                                   locationProperties:locationProperties
                                                  interpreterBuiltins:interpreterBuiltins

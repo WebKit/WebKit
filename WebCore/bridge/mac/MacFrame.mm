@@ -616,15 +616,15 @@ void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-class KWQPluginPart : public ReadOnlyPart
+class KWQPluginPart : public ObjectContents
 {
     virtual bool openURL(const KURL &) { return true; }
     virtual bool closeURL() { return true; }
 };
 
-ReadOnlyPart *MacFrame::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
+ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    ReadOnlyPart *part;
+    ObjectContents *part;
     KWQ_BLOCK_EXCEPTIONS;
 
     ObjectElementType objectType = ObjectElementFrame;

@@ -292,8 +292,8 @@ bool QObject::inherits(const char *className) const
     if (strcmp(className, "KParts::Factory") == 0) {
         return false;
     }
-    if (strcmp(className, "KParts::ReadOnlyPart") == 0) {
-        return isKPartsReadOnlyPart();
+    if (strcmp(className, "ObjectContents") == 0) {
+        return isObjectContents();
     }
     if (strcmp(className, "QFrame") == 0) {
         return isQFrame();
@@ -320,7 +320,7 @@ bool QObject::isKHTMLView() const
     return false;
 }
 
-bool QObject::isKPartsReadOnlyPart() const
+bool QObject::isObjectContents() const
 {
     return false;
 }

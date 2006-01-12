@@ -1,3 +1,73 @@
+2006-01-12  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6496
+        - Merge KParts::Part with KParts::ReadOnly part and rename it to
+        ObjectContents.
+        
+        * ForwardingHeaders/kparts/part.h: Removed.
+        * kwq/KWQKPartsPart.h: Removed.
+        * kwq/KWQKPartsPart.mm: Removed.
+        * kwq/KWQObject.cpp:
+        
+        page/ObjectContents.h: Added
+        (ObjectContents::ObjectContents):
+        (ObjectContents::url):
+        (ObjectContents::setName):
+        (ObjectContents::widget):
+        (ObjectContents::setWidget):
+        (ObjectContents::ref):
+        (ObjectContents::deref):
+        (ObjectContents::event):
+        (ObjectContents::customEvent):
+        (ObjectContents::isObjectContents):
+
+        Renames:
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/KWQKHTMLPartBrowserExtension.h:
+        * bridge/mac/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+        * bridge/mac/KWQKPartsBrowserExtension.h:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::createPart):
+        * bridge/mac/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::Window::indexGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::FrameArray::getValueProperty):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        (KJS::FrameArray::getOwnPropertySlot):
+        (QObject::inherits):
+        (QObject::isObjectContents):
+        * kwq/KWQObject.h:
+        * page/Frame.cpp:
+        (Frame::stopLoading):
+        (Frame::stopAnimations):
+        (Frame::checkEmitLoadEvent):
+        (Frame::processObjectRequest):
+        (Frame::childFrame):
+        (Frame::findFrame):
+        (Frame::setZoomFactor):
+        (Frame::frames):
+        (Frame::customEvent):
+        (Frame::slotPartRemoved):
+        (Frame::connectChild):
+        (Frame::disconnectChild):
+        (Frame::setPolicyBaseURL):
+        (Frame::setName):
+        * page/Frame.h:
+        (Frame::Frame):
+        * page/FramePrivate.h:
+
 2006-01-12  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

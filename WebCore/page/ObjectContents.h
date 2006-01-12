@@ -23,68 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PART_H_
-#define PART_H_
+#ifndef ObjectContents_H
+#define ObjectContents_H
 
 #include "KWQKURL.h"
 #include "KWQObject.h"
-#include "KWQVariant.h"
-#include "KWQPtrList.h"
-#include "KWQStringList.h"
-#include "KWQValueList.h"
 #include "KWQTimer.h"
 
-class QWidget;
-
-namespace KIO {
-    class Job;
-}
-
-namespace KParts {
-
-class Part : public QObject {
+class ObjectContents : public QObject {
 public:
-    Part() : _widget(0), _ref(1) { }
-    
-    QWidget *widget() const { return _widget; }
-    void setWidget(QWidget *widget) { _widget = widget; }
-    
-    void ref() { ++_ref; }
-    void deref() { if (!--_ref) delete this; }
-
-    bool event(QEvent *event) { customEvent(event); return true; }
-    virtual void customEvent(QCustomEvent *);
-    
-private:
-    QWidget *_widget;
-    unsigned int _ref;
-};
-
-class ReadOnlyPart : public Part {
-public:
-    ReadOnlyPart(QObject *parent = 0, const char *name = 0) : _parent(parent), _name(name) { }
+    ObjectContents()
+        : _parent(0), _name(0), _widget(0), _ref(1) { }
     
     KURL url() const { return m_url; }
-    KURL m_url;
     
     void setParent(QObject *parent) { _parent = parent; }
     QObject *parent() const { return _parent; }
 
-    virtual void setName(const QString &name);
+    virtual void setName(const QString &name) { _name = name; }
     QString name() { return _name; }
     
     virtual bool openURL(const KURL &) = 0;
     virtual bool closeURL() = 0;
 
-private:
-    virtual bool isKPartsReadOnlyPart() const;
+    QWidget *widget() const { return _widget; }
+    void setWidget(QWidget *widget) { _widget = widget; }
+    
+    void ref() { ++_ref; }
+    void deref() { if (!--_ref) delete this; }
+    
+    bool event(QEvent *event) { customEvent(event); return true; }
+    virtual void customEvent(QCustomEvent *) { }
 
+protected:
+    KURL m_url;
+
+private:
+    virtual bool isObjectContents() const { return true; }
     QObject *_parent;
     QString _name;
+    QWidget *_widget;
+    unsigned int _ref;
 };
 
-class GUIActivateEvent { };
-
-} // namespace KParts
 
 #endif

@@ -265,7 +265,7 @@ void JSLazyEventListener::parseCode() const
         JSObject* constr = interpreter->builtinFunction();
         List args;
 
-        UString sourceURL(frame->m_url.url());
+        UString sourceURL(frame->url().url());
         args.append(eventParameterName());
         args.append(jsString(code));
         listener = constr->construct(exec, args, sourceURL, lineNumber); // ### is globalExec ok ?

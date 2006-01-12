@@ -44,7 +44,7 @@ public:
     virtual void createNewWindow(const KURL &url,
 				 const KParts::URLArgs &urlArgs, 
 				 const KParts::WindowArgs &winArgs, 
-				 KParts::ReadOnlyPart *&part);
+				 ObjectContents *&part);
 
     virtual void setIconURL(const KURL &url);
     virtual void setTypedIconURL(const KURL &url, const QString &type);
@@ -57,7 +57,7 @@ private:
      void createNewWindow(const KURL &url, 
 			  const KParts::URLArgs &urlArgs, 
 			  const KParts::WindowArgs &winArgs, 
-			  KParts::ReadOnlyPart **part);
+			  ObjectContents **part);
 
      MacFrame *m_frame;
      KParts::BrowserInterface _browserInterface;

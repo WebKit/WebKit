@@ -60,7 +60,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
 						const KParts::URLArgs &urlArgs, 
 						const KParts::WindowArgs &winArgs, 
-						KParts::ReadOnlyPart *&part)
+						ObjectContents *&part)
 {
     createNewWindow(url, urlArgs, winArgs, &part);
 }
@@ -68,7 +68,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
 						const KParts::URLArgs &urlArgs, 
 						const KParts::WindowArgs &winArgs, 
-						KParts::ReadOnlyPart **partResult)
+						ObjectContents **partResult)
 { 
     KWQ_BLOCK_EXCEPTIONS;
 

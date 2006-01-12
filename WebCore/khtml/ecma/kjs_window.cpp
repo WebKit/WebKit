@@ -557,17 +557,17 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const QStri
     // do an isSafeScript call using the window we create, which can't be done before creating it.
     // We'd have to resolve all those issues to pass the URL instead of "".
 
-    ReadOnlyPart *newReadOnlyPart = 0;
-    openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newReadOnlyPart);
+    ObjectContents *newPart = 0;
+    openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
 
-    if (!newReadOnlyPart || !newReadOnlyPart->inherits("Frame"))
+    if (!newPart || !newPart->inherits("Frame"))
         return 0;
 
-    Frame *newPart = static_cast<Frame *>(newReadOnlyPart);
-    Window *newWindow = Window::retrieveWindow(newPart);
+    Frame *newFrame = static_cast<Frame *>(newPart);
+    Window *newWindow = Window::retrieveWindow(newFrame);
 
-    newPart->setOpener(openerPart);
-    newPart->setOpenedByJS(true);
+    newFrame->setOpener(openerPart);
+    newFrame->setOpenedByJS(true);
     if (dialogArgs)
         newWindow->putDirect("dialogArguments", dialogArgs);
 
@@ -576,11 +576,11 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const QStri
         QString completedURL = activeDoc->completeURL(URL);
         if (!completedURL.startsWith("javascript:", false) || newWindow->isSafeScript(exec)) {
             bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            newPart->changeLocation(completedURL, activePart->referrer(), false, userGesture);
+            newFrame->changeLocation(completedURL, activePart->referrer(), false, userGesture);
         }
     }
 
-    return newPart;
+    return newFrame;
 }
 
 static bool canShowModalDialog(const Window *window)
@@ -918,8 +918,8 @@ JSValue *Window::indexGetter(ExecState *exec, JSObject *originalObject, const Id
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   
-  QPtrList<KParts::ReadOnlyPart> frames = thisObj->m_frame->frames();
-  KParts::ReadOnlyPart* frame = frames.at(slot.index());
+  QPtrList<ObjectContents> frames = thisObj->m_frame->frames();
+  ObjectContents* frame = frames.at(slot.index());
   assert(frame && frame->inherits("Frame"));
 
   return retrieve(static_cast<Frame*>(frame));
@@ -1012,10 +1012,10 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   bool ok;
   unsigned int i = propertyName.toArrayIndex(&ok);
   if (ok) {
-    QPtrList<KParts::ReadOnlyPart> frames = m_frame->frames();
+    QPtrList<ObjectContents> frames = m_frame->frames();
     unsigned int len = frames.count();
     if (i < len) {
-      KParts::ReadOnlyPart* frame = frames.at(i);
+      ObjectContents* frame = frames.at(i);
       if (frame && frame->inherits("Frame")) {
         slot.setCustomIndex(this, i, indexGetter);
         return true;
@@ -1643,7 +1643,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       uargs.serviceType = "text/html";
       
       // request window (new or existing if framename is set)
-      KParts::ReadOnlyPart *newPart = 0L;
+      ObjectContents *newPart = 0L;
       uargs.metaData()["referrer"] = activePart->referrer();
       frame->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
       if (!newPart || !newPart->inherits("Frame"))
@@ -2023,7 +2023,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case Length: {
-    QPtrList<KParts::ReadOnlyPart> frames = m_frame->frames();
+    QPtrList<ObjectContents> frames = m_frame->frames();
     unsigned int len = frames.count();
     return jsNumber(len);
   }
@@ -2041,7 +2041,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
 JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  KParts::ReadOnlyPart *frame = thisObj->m_frame->frames().at(slot.index());
+  ObjectContents *frame = thisObj->m_frame->frames().at(slot.index());
 
   if (frame && frame->inherits("Frame")) {
     Frame *khtml = static_cast<Frame*>(frame);
@@ -2054,7 +2054,7 @@ JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, cons
 JSValue *FrameArray::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  KParts::ReadOnlyPart *frame = thisObj->m_frame->findFrame(propertyName.qstring());
+  ObjectContents *frame = thisObj->m_frame->findFrame(propertyName.qstring());
 
   if (frame && frame->inherits("Frame")) {
     Frame *khtml = static_cast<Frame*>(frame);
@@ -2078,7 +2078,7 @@ bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   }
 
   // check for the name or number
-  KParts::ReadOnlyPart *frame = m_frame->findFrame(propertyName.qstring());
+  ObjectContents *frame = m_frame->findFrame(propertyName.qstring());
   if (frame) {
     slot.setCustom(this, nameGetter);
     return true;

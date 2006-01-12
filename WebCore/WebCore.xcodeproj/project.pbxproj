@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D8556097647B4002C85D1 /* ObjectContents.h */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
 		4756536509652C5D00BD9F29 /* KWQPointF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756535F09652C5D00BD9F29 /* KWQPointF.h */; };
@@ -216,7 +217,6 @@
 		93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
 		93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
-		93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		93F1996408245E59001E9ABC /* KWQKStandardDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */; };
 		93F1996708245E59001E9ABC /* KWQKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860202DE382001EA4122 /* KWQKURL.h */; };
@@ -525,7 +525,6 @@
 		93F19ADF08245E59001E9ABC /* KWQAccObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5B052B59CC0017A6C1 /* KWQAccObject.mm */; };
 		93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */; };
 		93F19AE108245E59001E9ABC /* KWQExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* KWQExceptions.mm */; };
-		93F19AE208245E59001E9ABC /* KWQKPartsPart.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65732B68054EF483007B42F8 /* KWQKPartsPart.mm */; };
 		93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
 		93F19AE408245E59001E9ABC /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
@@ -815,7 +814,6 @@
 		A88AD1A10952480A001DD196 /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		A88AD1A20952480A001DD196 /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
 		A88AD1A30952480A001DD196 /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
-		A88AD1A40952480A001DD196 /* KWQKPartsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */; };
 		A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		A88AD1A60952480A001DD196 /* KWQKStandardDirs.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FF02DE382001EA4122 /* KWQKStandardDirs.h */; };
 		A88AD1A90952480A001DD196 /* KWQKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860202DE382001EA4122 /* KWQKURL.h */; };
@@ -1166,7 +1164,6 @@
 		A88AD31B0952480A001DD196 /* KWQAccObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5B052B59CC0017A6C1 /* KWQAccObject.mm */; };
 		A88AD31C0952480A001DD196 /* KWQAccObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */; };
 		A88AD31D0952480A001DD196 /* KWQExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* KWQExceptions.mm */; };
-		A88AD31E0952480A001DD196 /* KWQKPartsPart.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65732B68054EF483007B42F8 /* KWQKPartsPart.mm */; };
 		A88AD31F0952480A001DD196 /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
 		A88AD3200952480A001DD196 /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */; };
 		A88AD3210952480A001DD196 /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
@@ -1688,6 +1685,7 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
+		1A3D8556097647B4002C85D1 /* ObjectContents.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjectContents.h; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1766,7 +1764,6 @@
 		654E7EE10569FD4600358BD2 /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
 		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreFrameNamespaces.m; sourceTree = "<group>"; };
-		65732B68054EF483007B42F8 /* KWQKPartsPart.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsPart.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2752,7 +2749,6 @@
 		F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserInterface.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsEvent.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsHistoryProvider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsPart.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587867602DE3B8601EA4122 /* KWQApplication.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = KWQApplication.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587867702DE3B8601EA4122 /* KWQMemArray.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQMemArray.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587867902DE3B8601EA4122 /* KWQAsyncIO.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQAsyncIO.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2934,6 +2930,7 @@
 				65BF022B0974816300C43196 /* FramePrivate.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
+				1A3D8556097647B4002C85D1 /* ObjectContents.h */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -4229,8 +4226,6 @@
 				F587850802DE375901EA4122 /* KWQKPartsEvent.cpp */,
 				F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */,
 				F58784F602DE375901EA4122 /* KWQKHistoryProvider.mm */,
-				F587866C02DE3B3201EA4122 /* KWQKPartsPart.h */,
-				65732B68054EF483007B42F8 /* KWQKPartsPart.mm */,
 			);
 			name = kparts;
 			sourceTree = "<group>";
@@ -4492,7 +4487,6 @@
 				93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */,
 				93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */,
 				93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */,
-				93F1996108245E59001E9ABC /* KWQKPartsPart.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
 				93F1996408245E59001E9ABC /* KWQKStandardDirs.h in Headers */,
 				93F1996708245E59001E9ABC /* KWQKURL.h in Headers */,
@@ -4890,6 +4884,7 @@
 				FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */,
 				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
+				1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5016,7 +5011,6 @@
 				A88AD1A10952480A001DD196 /* KWQKPartsBrowserInterface.h in Headers */,
 				A88AD1A20952480A001DD196 /* KWQKPartsEvent.h in Headers */,
 				A88AD1A30952480A001DD196 /* KWQKPartsHistoryProvider.h in Headers */,
-				A88AD1A40952480A001DD196 /* KWQKPartsPart.h in Headers */,
 				A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */,
 				A88AD1A60952480A001DD196 /* KWQKStandardDirs.h in Headers */,
 				A88AD1A90952480A001DD196 /* KWQKURL.h in Headers */,
@@ -6474,7 +6468,6 @@
 				93F19ADF08245E59001E9ABC /* KWQAccObject.mm in Sources */,
 				93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */,
 				93F19AE108245E59001E9ABC /* KWQExceptions.mm in Sources */,
-				93F19AE208245E59001E9ABC /* KWQKPartsPart.mm in Sources */,
 				93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */,
 				93F19AE408245E59001E9ABC /* xmlhttprequest.cpp in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
@@ -6930,7 +6923,6 @@
 				A88AD31B0952480A001DD196 /* KWQAccObject.mm in Sources */,
 				A88AD31C0952480A001DD196 /* KWQAccObjectCache.mm in Sources */,
 				A88AD31D0952480A001DD196 /* KWQExceptions.mm in Sources */,
-				A88AD31E0952480A001DD196 /* KWQKPartsPart.mm in Sources */,
 				A88AD31F0952480A001DD196 /* WebCoreGraphicsBridge.m in Sources */,
 				A88AD3200952480A001DD196 /* xmlhttprequest.cpp in Sources */,
 				A88AD3210952480A001DD196 /* WebCoreKeyGenerator.m in Sources */,

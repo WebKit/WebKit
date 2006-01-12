@@ -30,7 +30,7 @@
 #include "editing/text_granularity.h"
 #include "editing/edit_actions.h"
 
-#include <kparts/part.h>
+#include "ObjectContents.h"
 #include <kparts/browserextension.h>
 #include <qscrollbar.h>
 #include <qcolor.h>
@@ -119,8 +119,7 @@ struct MarkedTextUnderline {
   bool thick;
 };
 
-class Frame : public KParts::ReadOnlyPart
-{
+class Frame : public ObjectContents {
   friend class KHTMLView;
   friend class DOM::HTMLTitleElementImpl;
   friend class DOM::HTMLFrameElementImpl;
@@ -150,15 +149,13 @@ class Frame : public KParts::ReadOnlyPart
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
-  Frame(QWidget *parentWidget = 0, const char *widgetname = 0, QObject *parent = 0, const char *name = 0);
-  Frame(KHTMLView *view, QObject *parent = 0, const char *name = 0);
-  
+  Frame() : d(0) { }
   virtual ~Frame();
 
   /**
    * Opens the specified URL @p url.
    *
-   * Reimplemented from @ref KParts::ReadOnlyPart::openURL .
+   * Reimplemented from @ref ObjectContents::openURL .
    */
   virtual bool openURL( const KURL &url );
 
@@ -643,7 +640,7 @@ public:
    */
   QStringList frameNames() const;
 
-  QPtrList<KParts::ReadOnlyPart> frames() const;
+  QPtrList<ObjectContents> frames() const;
 
   Frame *childFrameNamed(const QString &name) const;
 
@@ -657,7 +654,7 @@ public:
    * Not necessarily a direct child of ours, framesets can be nested.
    * Returns "this" if this part isn't a frameset.
    */
-  KParts::ReadOnlyPart *currentFrame() const;
+  ObjectContents *currentFrame() const;
 
   /**
    * Returns whether a frame with the specified name is exists or not.
@@ -793,7 +790,7 @@ public:
   void selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::NodeImpl *innerNode, int x, int y);
 
   /**
-   * Internal empty reimplementation of @ref KParts::ReadOnlyPart::openFile .
+   * Internal empty reimplementation of @ref ObjectContents::openFile .
    */
   virtual bool openFile();
 
@@ -830,9 +827,9 @@ private slots:
 
   void updateActions();
 
-  void slotPartRemoved( KParts::Part *part );
+  void slotPartRemoved( ObjectContents *part );
 
-  void slotActiveFrameChanged( KParts::Part *part );
+  void slotActiveFrameChanged( ObjectContents *part );
 
   void slotChildStarted( KIO::Job *job );
 
