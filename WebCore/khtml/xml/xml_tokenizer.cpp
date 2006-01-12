@@ -50,7 +50,7 @@
 
 #include <qptrstack.h>
 
-#include "khtml/html/kentities.h"  // for xhtml entity name lookup
+#include "kentities.h"  // for xhtml entity name lookup
 #include <kxmlcore/Assertions.h>
 
 using namespace DOM;
@@ -467,10 +467,17 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
                 format = QString("error on line %2 at column %3: %1");
         }
 
+#if WIN32
+        char m[1024];
+        vsnprintf(m, sizeof(m) - 1, message, args);
+#else
         char *m;
         vasprintf(&m, message, args);
+#endif
         m_errorMessages += format.arg(m).arg(lineNumber()).arg(columnNumber());
+#if !WIN32
         free(m);
+#endif
 
         m_lastErrorLine = lineNumber();
         m_lastErrorColumn = columnNumber();

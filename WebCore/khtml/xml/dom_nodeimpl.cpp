@@ -2736,11 +2736,15 @@ void ContainerNodeImpl::setActive(bool down, bool pause)
             // Do an immediate repaint.
             m_render->repaint(true);
             
+#if !WIN32
+            // FIXME: Find a substitute for usleep.  Better yet, come up with a way of doing this that 
+            // doesn't use usleep at all.
             int remainingTime = 100 - startTime.elapsed();
             
             // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
             if (remainingTime > 0)
                 usleep(remainingTime * 1000);
+#endif
         }
     }
 }

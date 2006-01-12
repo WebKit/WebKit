@@ -1,3 +1,18 @@
+2006-01-11  David Hyatt  <hyatt@apple.com>
+
+	Changes to get the XML directory nearly compiling on Win32.
+	Down to just the gperf of cssvalues.in and a need to replace
+	usleep.
+
+        Reviewed by darin
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * khtml/config.h:
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::toCoordsArray):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::error):
+
 2006-01-11  Justin Garcia  <justin.garcia@apple.com>
 
         Replaced two asserts that I accidently removed in

@@ -301,7 +301,7 @@ Length DOMStringImpl::toLength() const
 
 khtml::Length* DOMStringImpl::toCoordsArray(int& len) const
 {
-    QChar spacified[l];
+    QChar* spacified = newQCharVector(l);
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
         QChar cc = s[i];
@@ -311,6 +311,8 @@ khtml::Length* DOMStringImpl::toCoordsArray(int& len) const
             spacified[i] = cc;
     }
     QString str(spacified, l);
+    deleteQCharVector(spacified);
+
     str = str.simplifyWhiteSpace();
 
     len = str.contains(' ') + 1;

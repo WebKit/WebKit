@@ -1,9 +1,11 @@
-#if !WIN32
+#if WIN32
+#define USE_SYSTEM_MALLOC 1
+#endif
+
 #ifdef __cplusplus
 #undef new
 #undef delete
 #include <kxmlcore/FastMalloc.h>
-#endif
 #endif
 
 #if WIN32
@@ -12,4 +14,5 @@ typedef unsigned uint;
 typedef unsigned short ushort;
 
 #include <assert.h>
+
 #endif
