@@ -55,7 +55,7 @@ public:
 
     virtual void setPixmap( const QPixmap &, const QRect&, CachedImage *);
 
-    QPixmap pixmap() const { return pix; }
+    const QPixmap& pixmap() const { return pix; }
     // don't even think about making this method virtual!
     DOM::HTMLElementImpl* element() const
     { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }

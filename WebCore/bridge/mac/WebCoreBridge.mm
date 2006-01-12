@@ -1408,7 +1408,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
             if (!r->isDisplayingError()) {
-                QPixmap p = r->pixmap();
+                const QPixmap& p = r->pixmap();
                 if (p.imageRenderer())
                     [element setObject:p.imageRenderer() forKey:WebCoreElementImageRendererKey];
             }
