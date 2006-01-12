@@ -1,3 +1,31 @@
+2006-01-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim H.
+        
+        - fixed <rdar://problem/4265966> PDFs continue to show a (secondary) selection 
+        when the focus moves elsewhere
+
+        * WebView.subproj/WebPDFView.h:
+        added trackedFirstResponder ivar
+        
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView dealloc]):
+        assert that trackedFirstResponder is nil, as it was released/cleared in viewWillMoveToWindow:
+        (-[WebPDFView _trackFirstResponder]):
+        If the tracked first responder was the PDFView's documentView, and the current first responder isn't,
+        deselect all. This is equivalent to overriding resignFirstResponder in the PDFView's 
+        documentView and deselecting all there, as other web document view classes do. Also, keep track of
+        the new first responder for next time.
+        (-[WebPDFView viewWillMoveToWindow:]):
+        stop observing NSWindowDidUpdateNotification on the old window
+        (-[WebPDFView viewDidMoveToWindow]):
+        start observing NSWindowDidUpdateNotification on the new window, with _trackFirstResponder
+        as the callback. Ideally we'd use a notification that tells us that the first responder is
+        changing, but there is no such notification, so we have to use this very frequent one instead.
+        The archaic 2573089 tracks the desire to have a responder-changed notification.
+        (-[WebPDFView becomeFirstResponder]):
+        removed comment about this bug that's now obsolete
+
 2006-01-11  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

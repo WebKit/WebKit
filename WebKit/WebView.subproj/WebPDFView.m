@@ -121,6 +121,7 @@ NSString *_NSPathForSystemFramework(NSString *framework);
 
 - (void)dealloc
 {
+    ASSERT(!trackedFirstResponder);
     [PDFSubview release];
     [path release];
     [PDFSubviewProxy release];
@@ -389,6 +390,56 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         // ever occurred, but the app was not hung.
         [self _readPDFDefaults];
     }
+}
+
+- (void)_trackFirstResponder
+{
+    ASSERT([self window]);
+    
+    id newFirstResponder = [[self window] firstResponder];
+    if (newFirstResponder == trackedFirstResponder)
+        return;
+    
+    // This next clause is the entire purpose of _trackFirstResponder. In other WebDocument
+    // view classes this is done in a resignFirstResponder override, but in this case the
+    // first responder view is a PDFKit class that we can't subclass.
+    if (trackedFirstResponder == [PDFSubview documentView] && ![[self _web_parentWebView] maintainsInactiveSelection])
+        [self deselectAll];
+
+    
+    [trackedFirstResponder release];
+    trackedFirstResponder = [newFirstResponder retain];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)window
+{
+    // FIXME 2573089: we can observe a notification for changes to the first responder
+    // instead of the very frequent NSWindowDidUpdateNotification if/when 2573089 is addressed.
+    NSWindow *oldWindow = [self window];
+    if (!oldWindow)
+        return;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSWindowDidUpdateNotification
+                                                  object:oldWindow];
+    
+    [trackedFirstResponder release];
+    trackedFirstResponder = nil;
+}
+
+- (void)viewDidMoveToWindow
+{
+    // FIXME 2573089: we can observe a notification for first responder changes
+    // instead of the very frequent NSWindowDidUpdateNotification if/when 2573089 is addressed.
+    NSWindow *newWindow = [self window];
+    if (!newWindow)
+        return;
+    
+    [self _trackFirstResponder];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_trackFirstResponder) 
+                                                 name:NSWindowDidUpdateNotification
+                                               object:newWindow];
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -812,9 +863,6 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
         return NO;
     
     [[dataSource webFrame] _clearSelectionInOtherFrames];
-
-    // FIXME 4265966: We don't currently have a way to notice when the PDFView (or subview) loses focus,
-    // so sometimes a secondary selection is left behind in the PDFView when the primary selection moves elsewhere.    
     
     return YES;
 }

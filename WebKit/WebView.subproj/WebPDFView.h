@@ -40,6 +40,7 @@
     PDFView *PDFSubview;
     WebDataSource *dataSource;
     NSString *path;
+    id trackedFirstResponder;
     BOOL written;
     BOOL firstLayoutDone;
     PDFView *PDFSubviewProxy;
