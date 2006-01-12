@@ -23,26 +23,24 @@
  */
 
 #include "config.h"
-#include "value.h"
-#include "object.h"
-#include "types.h"
 #include "interpreter.h"
-#if APPLE_CHANGES
-#include "runtime.h"
-#endif
 
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
 
-#include "internal.h"
 #include "collector.h"
-#include "operations.h"
-#include "error_object.h"
-#include "nodes.h"
 #include "context.h"
+#include "error_object.h"
+#include "internal.h"
+#include "nodes.h"
+#include "object.h"
+#include "operations.h"
+#include "runtime.h"
+#include "types.h"
+#include "value.h"
 
-using namespace KJS;
+namespace KJS {
 
 // ------------------------------ Context --------------------------------------
 
@@ -365,4 +363,6 @@ Interpreter *ExecState::lexicalInterpreter() const
   }
 
   return result->interpreter();
+}
+
 }

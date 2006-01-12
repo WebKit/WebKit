@@ -1,3 +1,41 @@
+2006-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6505
+          retire APPLE_CHANGES from JavaScriptCore
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed both
+        APPLE_CHANGES and HAVE_CONFIG_H from all targets.
+
+        * README: Removed. This had obsolete information in it
+        and it wasn't clear what to replace it with.
+
+        * kjs/collector.h: Removed an APPLE_CHANGES if around something
+        that's not really platform-specific (although it does use a
+        platform-specific API at the moment).
+        * kjs/collector.cpp: Removed a mistaken comment.
+
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        * kjs/object.h:
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+        * kjs/ustring.h:
+        Use __APPLE__ instead of APPLE_CHANGES for code that should be
+        used only on Mac OS X.
+
+        * kjs/interpreter.cpp: Removed APPLE_CHANGES ifdef around the include
+        of the runtime.h header. Even though that header isn't needed at the
+        moment on platforms other than Mac OS X, the conditional stuff should
+        be in the header itself, not in this one client.
+
+        * kjs/math_object.cpp: (MathFuncImp::callAsFunction): Removed some
+        code inside APPLE_CHANGES. I'm pretty sure this code isn't needed on
+        any platform where pow is implemented corrrectly according to the IEEE
+        standard. If it is needed on some, we can add it back with an appropriate
+        #if for the platforms where it is needed.
+
 2006-01-12  Justin Haygood  <justin@xiondigital.net>
 
         Reviewed, tweaked, and landed by Darin.

@@ -43,7 +43,7 @@
 
 namespace KJS {
 
-#if !APPLE_CHANGES
+#if !__APPLE__
 
 bool isNaN(double d)
 {

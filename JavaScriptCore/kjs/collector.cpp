@@ -642,6 +642,6 @@ const void *Collector::rootObjectClasses()
   return classes;
 }
 
-#endif // APPLE_CHANGES
+#endif
 
 } // namespace KJS

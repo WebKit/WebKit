@@ -22,9 +22,7 @@
  */
 
 #include "config.h"
-#include <stdio.h>
-#include <math.h>
-#include <assert.h>
+#include "internal.h"
 
 #include "array_object.h"
 #include "bool_object.h"
@@ -34,7 +32,6 @@
 #include "debugger.h"
 #include "error_object.h"
 #include "function_object.h"
-#include "internal.h"
 #include "lexer.h"
 #include "math_object.h"
 #include "nodes.h"
@@ -44,8 +41,10 @@
 #include "operations.h"
 #include "regexp_object.h"
 #include "string_object.h"
-
+#include <assert.h>
 #include <kxmlcore/HashMap.h>
+#include <math.h>
+#include <stdio.h>
 
 #if WIN32
 #include <float.h>
@@ -57,7 +56,7 @@ extern int kjsyyparse();
 
 namespace KJS {
 
-#if !APPLE_CHANGES
+#if !__APPLE__
  
 #ifdef WORDS_BIGENDIAN
   const unsigned char NaN_Bytes[] = { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 };
@@ -73,7 +72,7 @@ namespace KJS {
   const double NaN = *(const double*) NaN_Bytes;
   const double Inf = *(const double*) Inf_Bytes;
  
-#endif // APPLE_CHANGES
+#endif
 
 // ------------------------------ UndefinedImp ---------------------------------
 

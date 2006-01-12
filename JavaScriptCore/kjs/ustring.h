@@ -28,7 +28,7 @@
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/PassRefPtr.h>
 
-#if APPLE_CHANGES
+#if __APPLE__
 #include <sys/types.h>
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED
@@ -44,7 +44,7 @@ typedef unsigned long ulong;
  */
 namespace DOM {
   class DOMString;
-};
+}
 class KJScript;
 class QString;
 class QConstString;

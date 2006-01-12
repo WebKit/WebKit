@@ -37,7 +37,7 @@
 
 /* default values for bison */
 #define YYDEBUG 0
-#if !APPLE_CHANGES
+#if !__APPLE__ /* work around the fact that YYERROR_VERBOSE causes a compiler warning in bison code */
 #define YYERROR_VERBOSE
 #endif
 

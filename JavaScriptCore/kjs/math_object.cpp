@@ -237,26 +237,10 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, con
     // ECMA 15.8.2.1.13 (::pow takes care of most of the critera)
     if (isNaN(arg2))
       result = NaN;
-#if !APPLE_CHANGES
-    else if (arg2 == 0)
-      result = 1;
-#endif
     else if (isNaN(arg) && arg2 != 0)
       result = NaN;
-#if !APPLE_CHANGES
-    else if (::fabs(arg) > 1 && KJS::isPosInf(arg2))
-      result = Inf;
-    else if (::fabs(arg) > 1 && KJS::isNegInf(arg2))
-      result = +0;
-#endif
     else if (::fabs(arg) == 1 && KJS::isInf(arg2))
       result = NaN;
-#if !APPLE_CHANGES
-    else if (::fabs(arg) < 1 && KJS::isPosInf(arg2))
-      result = +0;
-    else if (::fabs(arg) < 1 && KJS::isNegInf(arg2))
-      result = Inf;
-#endif
     else
       result = ::pow(arg, arg2);
     break;
