@@ -36,7 +36,10 @@
 #import "dom2_rangeimpl.h"
 #import "dom2_traversal.h"
 #import "dom2_viewsimpl.h"
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
+#import "DOMImplementationImpl.h"
+#import "DocumentTypeImpl.h"
+#import "DocumentFragmentImpl.h"
 #import "dom_elementimpl.h"
 #import "dom_exception.h"
 #import "dom_node.h"
@@ -59,37 +62,7 @@
 #import "MacFrame.h"
 
 using namespace DOM::HTMLNames;
-
-using DOM::AttrImpl;
-using DOM::CharacterDataImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentType;
-using DOM::DocumentTypeImpl;
-using DOM::Document;
-using DOM::DocumentImpl;
-using DOM::DOMImplementationImpl;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::ElementImpl;
-using DOM::EntityImpl;
-using DOM::EventImpl;
-using DOM::EventListener;
-using DOM::HTMLElementImpl;
-using DOM::NamedNodeMapImpl;
-using DOM::Node;
-using DOM::NodeFilter;
-using DOM::NodeFilterCondition;
-using DOM::NodeFilterImpl;
-using DOM::NodeImpl;
-using DOM::NodeIteratorImpl;
-using DOM::NodeListImpl;
-using DOM::NotationImpl;
-using DOM::ProcessingInstructionImpl;
-using DOM::Range;
-using DOM::RangeException;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-using DOM::TreeWalkerImpl;
+using namespace DOM;
 
 using khtml::RenderObject;
 

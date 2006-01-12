@@ -31,7 +31,8 @@
 #include "xslt_processorimpl.h"
 #include "XSLTProcessor.lut.h"
 #include "kjs_dom.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
+#include "DocumentFragmentImpl.h"
 
 #include <JavaScriptCore/lookup.h>
 

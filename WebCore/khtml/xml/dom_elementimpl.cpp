@@ -28,7 +28,6 @@
 #include "dom/dom_exception.h"
 #include "dom/dom_node.h"
 #include "xml/dom_textimpl.h"
-#include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_elementimpl.h"
 

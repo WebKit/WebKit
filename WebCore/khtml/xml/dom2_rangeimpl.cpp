@@ -26,7 +26,7 @@
 #include "config.h"
 #include "dom2_rangeimpl.h"
 
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom/dom_exception.h"
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"

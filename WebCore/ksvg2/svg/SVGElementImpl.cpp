@@ -28,6 +28,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/css/CSSStyleSheetImpl.h>
 #include <kdom/events/EventListenerImpl.h>
+#include "DocumentImpl.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

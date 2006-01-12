@@ -31,7 +31,7 @@
 #import "dom2_events.h"
 #import "dom_exception.h"
 #import "dom_string.h"
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 
 #import "kjs_dom.h"
 #import "kjs_proxy.h"

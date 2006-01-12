@@ -23,7 +23,7 @@
 #include "dom/dom_exception.h"
 
 #include "xml/dom_xmlimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_stringimpl.h"
 #include "css/css_stylesheetimpl.h"
 #ifdef KHTML_XSLT

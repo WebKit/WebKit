@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,8 +22,9 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_DocumentImpl_h_
-#define _DOM_DocumentImpl_h_
+
+#ifndef DOM_DocumentImpl_h
+#define DOM_DocumentImpl_h
 
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_traversalimpl.h"
@@ -56,9 +57,7 @@ namespace khtml {
     class CSSStyleSelector;
     struct DashboardRegionValue;
     class DocLoader;
-    class RenderImage;
     class Tokenizer;
-    class XMLHandler;
 }
 
 #ifndef KHTML_NO_XBL
@@ -72,18 +71,15 @@ namespace DOM {
     class AttrImpl;
     class CDATASectionImpl;
     class CSSStyleSheetImpl;
-    class CSSMappedAttributeDeclarationImpl;
     class CommentImpl;
     class DocumentFragmentImpl;
-    class DocumentImpl;
-    class DocumentType;
+    class DOMImplementationImpl;
     class DocumentTypeImpl;
     class EditingTextImpl;
     class ElementImpl;
     class EntityReferenceImpl;
     class EventImpl;
     class EventListener;
-    class GenericRONamedNodeMapImpl;
     class HTMLCollectionImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
@@ -92,7 +88,6 @@ namespace DOM {
     class HTMLInputElementImpl;
     class HTMLMapElementImpl;
     class JSEditor;
-    class NodeFilter;
     class NodeFilterImpl;
     class NodeIteratorImpl;
     class NodeListImpl;
@@ -125,48 +120,8 @@ namespace DOM {
         }
     };
     
-class DOMImplementationImpl : public khtml::Shared<DOMImplementationImpl>
-{
-public:
-    DOMImplementationImpl();
-    ~DOMImplementationImpl();
-
-    // DOM methods & attributes for DOMImplementation
-    bool hasFeature(const DOMString& feature, const DOMString& version) const;
-    DocumentTypeImpl *createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
-                                          const DOMString &systemId, int &exceptioncode );
-    DocumentImpl *createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
-                                  DocumentTypeImpl *doctype, int &exceptioncode );
-
-    DOMImplementationImpl* getInterface(const DOMString& feature) const;
-
-    // From the DOMImplementationCSS interface
-    CSSStyleSheetImpl *createCSSStyleSheet(const DOMString &title, const DOMString &media, int &exceptioncode);
-
-    // From the HTMLDOMImplementation interface
-    HTMLDocumentImpl* createHTMLDocument( const DOMString& title);
-
-    // Other methods (not part of DOM)
-    DocumentImpl *createDocument( KHTMLView *v = 0 );
-    HTMLDocumentImpl *createHTMLDocument( KHTMLView *v = 0 );
-
-    // Returns the static instance of this class - only one instance of this class should
-    // ever be present, and is used as a factory method for creating DocumentImpl objects
-    static DOMImplementationImpl *instance();
-    
-    static bool isXMLMIMEType(const DOMString& mimeType);
-
-protected:
-    static DOMImplementationImpl *m_instance;
-};
-
-
-/**
- * @internal
- */
 class DocumentImpl : public QObject, public ContainerNodeImpl
 {
-    Q_OBJECT
 public:
     DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v);
     ~DocumentImpl();
@@ -602,7 +557,7 @@ public:
     void incDOMTreeVersion() { ++m_domtree_version; }
     unsigned int domTreeVersion() const { return m_domtree_version; }
 
-    void setDocType(DocumentTypeImpl *docType) { m_docType = docType; }
+    void setDocType(DocumentTypeImpl *docType);
 
 signals:
     void finishedParsing();
@@ -801,58 +756,6 @@ private:
     typedef HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> > NameToInputMap;
     typedef HashMap<HTMLFormElementImpl*, NameToInputMap*, PointerHash<HTMLFormElementImpl*> > FormToGroupMap;
     FormToGroupMap* m_selectedRadioButtons;
-};
-
-class DocumentFragmentImpl : public ContainerNodeImpl
-{
-public:
-    DocumentFragmentImpl(DocumentImpl *doc);
-
-    // DOM methods overridden from  parent classes
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep );
-
-    // Other methods (not part of DOM)
-    virtual bool childTypeAllowed( unsigned short type );
-
-    virtual DOMString toString() const;
-};
-
-class DocumentTypeImpl : public NodeImpl
-{
-public:
-    DocumentTypeImpl(DOMImplementationImpl *, DocumentImpl *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
-    DocumentTypeImpl(DocumentImpl *, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
-    DocumentTypeImpl(DocumentImpl *, const DocumentTypeImpl &);
-
-    // DOM methods & attributes for DocumentType
-    NamedNodeMapImpl *entities() const { return m_entities.get(); }
-    NamedNodeMapImpl *notations() const { return m_notations.get(); }
-
-    DOMString name() const { return m_name; }
-    DOMString publicId() const { return m_publicId; }
-    DOMString systemId() const { return m_systemId; }
-    DOMString internalSubset() const { return m_subset; }
-
-    // DOM methods overridden from parent classes
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep);
-
-    // Other methods (not part of DOM)
-    DOMImplementationImpl *implementation() const { return m_implementation.get(); }
-    virtual DOMString toString() const;
-
-private:
-    RefPtr<DOMImplementationImpl> m_implementation;
-    RefPtr<NamedNodeMapImpl> m_entities;
-    RefPtr<NamedNodeMapImpl> m_notations;
-
-    DOMString m_name;
-    DOMString m_publicId;
-    DOMString m_systemId;
-    DOMString m_subset;
 };
 
 } //namespace

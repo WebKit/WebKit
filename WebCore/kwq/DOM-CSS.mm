@@ -35,7 +35,7 @@
 #import "css_value.h"
 #import "css_valueimpl.h"
 #import "dom2_viewsimpl.h"
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 #import "dom_string.h"
 #import "dom_stringimpl.h"
 #import "dom_xmlimpl.h"

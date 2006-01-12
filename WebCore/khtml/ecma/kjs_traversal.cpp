@@ -22,8 +22,9 @@
 #include "kjs_traversal.lut.h"
 
 #include "kjs_proxy.h"
+#include "DocumentImpl.h"
 #include <xml/dom_nodeimpl.h>
-#include <xml/dom_docimpl.h>
+#include "dom2_traversalimpl.h"
 #include "Frame.h"
 #include <kdebug.h>
 #include <kjs/protect.h>

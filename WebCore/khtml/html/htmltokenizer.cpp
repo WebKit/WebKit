@@ -43,7 +43,8 @@
 
 #include "FrameView.h"
 #include "Frame.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
+#include "DocumentFragmentImpl.h"
 #include "xml/EventNames.h"
 #include "css/csshelper.h"
 #include "ecma/kjs_proxy.h"

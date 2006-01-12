@@ -23,6 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 #include <kdom/css/CSSStyleSelector.h>
+#include "DocumentImpl.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

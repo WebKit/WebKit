@@ -31,7 +31,7 @@
 #include "html/html_objectimpl.h"
 #include "html/htmltokenizer.h"
 #include "xml/dom2_eventsimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 #include "FrameView.h"

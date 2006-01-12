@@ -67,6 +67,7 @@
 
 #include "xml/xml_tokenizer.h"
 #include "xml/dom2_eventsimpl.h"
+#include "DocumentTypeImpl.h"
 
 #include "khtml_factory.h"
 #include "rendering/render_object.h"

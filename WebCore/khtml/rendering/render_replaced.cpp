@@ -37,7 +37,7 @@
 #include "khtml_ext.h"
 #include "FrameView.h"
 #include "xml/dom2_eventsimpl.h"
-#include "xml/dom_docimpl.h" // ### remove dependency
+#include "DocumentImpl.h" // ### remove dependency
 #include "xml/dom_position.h"
 #include "xml/EventNames.h"
 #include <kdebug.h>

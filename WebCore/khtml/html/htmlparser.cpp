@@ -49,6 +49,7 @@
 #include "htmlfactory.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_nodeimpl.h"
+#include "DocumentFragmentImpl.h"
 #include <kxmlcore/HashSet.h>
 #include "html/htmltokenizer.h"
 #include "FrameView.h"

@@ -41,7 +41,7 @@
 #include <kcanvas/KCanvasContainer.h>
 #include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 using namespace KSVG;
 

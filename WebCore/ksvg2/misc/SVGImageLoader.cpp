@@ -24,7 +24,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/cache/KDOMLoader.h>
 #include "DocLoader.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 #include "SVGNames.h"
 #include "SVGImageElementImpl.h"

@@ -24,7 +24,9 @@
 #include "config.h"
 #include "xml_tokenizer.h"
 
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
+#include "DocumentFragmentImpl.h"
+#include "DocumentTypeImpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"

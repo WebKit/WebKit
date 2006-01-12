@@ -32,7 +32,7 @@
 #include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom_textimpl.h"
 

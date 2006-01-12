@@ -44,7 +44,6 @@
 
 #include "FrameView.h"
 #include "khtml_ext.h"
-#include "xml/dom_docimpl.h"
 #include "xml/EventNames.h"
 
 #include <kdebug.h>

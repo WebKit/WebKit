@@ -28,6 +28,7 @@
 #include "dom_textimpl.h"
 #include "htmltokenizer.h"
 #include "html_documentimpl.h"
+#include "DOMImplementationImpl.h"
 #include "loader.h"
 #include "Cache.h"
 #include "DocLoader.h"

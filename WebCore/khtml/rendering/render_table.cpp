@@ -33,7 +33,7 @@
 #include "rendering/table_layout.h"
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 
 #include <qapplication.h>
 #include <qstyle.h>

@@ -27,9 +27,9 @@
 #include <kdom/DOMString.h>
 #include <kdom/Namespace.h>
 #include <kdom/core/ElementImpl.h>
-#include <kdom/core/DocumentImpl.h>
+#include "DocumentImpl.h"
 #include <kdom/core/DOMExceptionImpl.h>
-#include <kdom/core/DocumentTypeImpl.h>
+#include "DocumentTypeImpl.h"
 #include <kdom/css/MediaListImpl.h>
 #include <kdom/css/CSSStyleSheetImpl.h>
 

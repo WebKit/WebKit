@@ -33,7 +33,7 @@
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
 #include "htmlnames.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 

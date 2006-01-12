@@ -27,7 +27,7 @@
 #include "move_selection_command.h"
 #include "replace_selection_command.h"
 
-#include "xml/dom_docimpl.h"
+#include "DocumentFragmentImpl.h"
 
 #include <kxmlcore/Assertions.h>
 

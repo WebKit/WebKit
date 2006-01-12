@@ -26,7 +26,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "dom_atomicstring.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom_exception.h"
 #include "dom_string.h"
 #include "font.h"

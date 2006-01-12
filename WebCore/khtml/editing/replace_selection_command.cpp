@@ -28,7 +28,8 @@
 
 #include "visible_position.h"
 #include "htmlnames.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
+#include "DocumentFragmentImpl.h"
 #include "html_interchange.h"
 #include "xml/dom_textimpl.h"
 #include "html/html_elementimpl.h"

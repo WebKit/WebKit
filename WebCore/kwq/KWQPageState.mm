@@ -29,7 +29,7 @@
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/property_map.h>
 
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 #import "FrameView.h"
 #import "kjs_window.h"
 

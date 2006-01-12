@@ -37,7 +37,7 @@
 #include "html/html_elementimpl.h"
 #include "htmlnames.h"
 #include "rendering/render_object.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
 

@@ -30,7 +30,7 @@
 #include "htmlediting.h"
 
 #include "xml/dom_position.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "css/css_valueimpl.h"
 #include "css/css_computedstyle.h"
 

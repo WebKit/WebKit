@@ -30,6 +30,7 @@
 #include "html/html_documentimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
+#include "DOMImplementationImpl.h"
 
 #include "Frame.h"
 

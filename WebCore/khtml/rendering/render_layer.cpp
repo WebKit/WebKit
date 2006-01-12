@@ -50,7 +50,7 @@
 #include "render_canvas.h"
 #include "render_arena.h"
 #include "render_theme.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "html/html_blockimpl.h"

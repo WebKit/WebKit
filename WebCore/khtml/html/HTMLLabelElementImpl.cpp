@@ -31,7 +31,7 @@
 #include "rendering/render_form.h"
 #include "htmlnames.h"
 #include "EventNames.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 using namespace khtml;
 using namespace DOM::HTMLNames;

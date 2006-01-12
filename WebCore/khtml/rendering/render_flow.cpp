@@ -32,7 +32,7 @@
 #include "rendering/render_table.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "render_inline.h"
 #include "render_block.h"
 #include "render_arena.h"

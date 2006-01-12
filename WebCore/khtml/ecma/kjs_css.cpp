@@ -27,7 +27,7 @@
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_valueimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "html/html_headimpl.h" // for HTMLStyleElement
 #include "kjs_dom.h"
 #include "htmlnames.h"

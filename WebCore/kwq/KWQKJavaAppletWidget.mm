@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQKJavaAppletWidget.h"
 
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 #import "FrameView.h"
 #import "KWQExceptions.h"
 #import "WebCoreBridge.h"

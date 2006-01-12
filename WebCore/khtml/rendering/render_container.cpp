@@ -29,7 +29,7 @@
 #include "RenderTextFragment.h"
 #include "render_image.h"
 #include "render_canvas.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_position.h"
 
 #include <kdebug.h>

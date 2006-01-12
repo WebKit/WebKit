@@ -24,7 +24,7 @@
 #include "kjs_css.h"
 
 #include "xml/dom2_viewsimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_ruleimpl.h"
 

@@ -35,7 +35,7 @@
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 
-#include <kdom/core/DocumentImpl.h>
+#include "DocumentImpl.h"
 #include <kdom/DOMString.h>
 #include <kdom/css/RenderStyle.h>
 #include <kdom/css/CSSValueListImpl.h>

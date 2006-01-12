@@ -40,7 +40,7 @@
 #include "render_theme.h"
 
 #include "xml/dom_nodeimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "html/html_elementimpl.h"
 #include "CachedImage.h"
 

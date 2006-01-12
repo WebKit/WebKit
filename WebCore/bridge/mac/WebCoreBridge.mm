@@ -31,7 +31,7 @@
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
-#import "dom_docimpl.h"
+#import "DocumentTypeImpl.h"
 #import "dom_node.h"
 #import "dom_nodeimpl.h"
 #import "dom_position.h"

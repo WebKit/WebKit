@@ -39,7 +39,7 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreViewFactory.h"
 
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 #import "dom_elementimpl.h"
 #import "html_elementimpl.h"
 #import "HTMLInputElementImpl.h"

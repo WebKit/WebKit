@@ -33,7 +33,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
 #include "loader.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 #include <qpixmap.h>
 

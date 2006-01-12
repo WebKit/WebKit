@@ -23,7 +23,7 @@
 
 #include "config.h"
 #include "bidi.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "break_lines.h"
 #include "FrameView.h"
 #include <kxmlcore/AlwaysInline.h>

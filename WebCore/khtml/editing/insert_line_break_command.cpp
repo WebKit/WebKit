@@ -31,7 +31,7 @@
 #include "visible_units.h"
 
 #include "htmlnames.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_textimpl.h"

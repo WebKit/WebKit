@@ -36,7 +36,7 @@
 #include "css/cssstyleselector.h"
 
 #include "xml/dom_stringimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "html/html_elementimpl.h"
 
 #include "Cache.h"

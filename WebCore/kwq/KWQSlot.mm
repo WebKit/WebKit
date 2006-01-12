@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 
-#import "dom_docimpl.h"
+#include "DocumentImpl.h"
 #import "Frame.h"
 #import "kjs_window.h"
 #import "render_form.h"

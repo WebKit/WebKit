@@ -32,16 +32,10 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 using namespace DOM::HTMLNames;
-
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::offsetInCharacters;
-using DOM::RangeImpl;
+using namespace DOM;
 
 // FIXME: These classes should probably use the render tree and not the DOM tree, since elements could
 // be hidden using CSS, or additional generated content could be added.  For now, we just make sure

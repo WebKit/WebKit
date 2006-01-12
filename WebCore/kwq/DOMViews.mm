@@ -30,7 +30,7 @@
 #import "DOMViewsInternal.h"
 #import <kxmlcore/Assertions.h>
 
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 #import "dom2_viewsimpl.h"
 
 using DOM::AbstractViewImpl;

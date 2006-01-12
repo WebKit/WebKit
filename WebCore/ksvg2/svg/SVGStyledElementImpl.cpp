@@ -25,6 +25,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/domattrs.h>
 #include <kdom/DOMString.h>
+#include "DocumentImpl.h"
 
 #include <kxmlcore/Assertions.h>
 

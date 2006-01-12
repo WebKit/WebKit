@@ -37,7 +37,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom_textimpl.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 
 #include <kxmlcore/Assertions.h>

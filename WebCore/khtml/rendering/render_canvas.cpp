@@ -22,7 +22,7 @@
 #include "config.h"
 #include "rendering/render_canvas.h"
 #include "render_layer.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 
 #include "FrameView.h"
 #include <kdebug.h>

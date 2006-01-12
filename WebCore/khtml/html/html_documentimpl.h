@@ -25,7 +25,7 @@
 #ifndef HTML_DOCUMENTIMPL_H
 #define HTML_DOCUMENTIMPL_H
 
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "misc/loader_client.h"
 #include "html/html_miscimpl.h"
 #include <kxmlcore/HashMap.h>
@@ -39,7 +39,6 @@ class HTMLElementImpl;
 
 class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectClient
 {
-    Q_OBJECT
 public:
     HTMLDocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v = 0);
     ~HTMLDocumentImpl();

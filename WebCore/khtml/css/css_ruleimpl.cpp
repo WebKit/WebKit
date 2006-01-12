@@ -34,9 +34,6 @@
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
-#include "xml/dom_docimpl.h"
-
-#include <kdebug.h>
 
 namespace DOM {
 

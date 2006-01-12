@@ -25,7 +25,7 @@
 #include "config.h"
 #include "xml/dom2_traversalimpl.h"
 #include "dom/dom_exception.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 
 namespace DOM {
 

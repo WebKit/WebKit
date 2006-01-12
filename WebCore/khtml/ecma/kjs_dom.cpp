@@ -27,7 +27,9 @@
 #include "xml/dom2_viewsimpl.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentTypeImpl.h"
+#include "DOMImplementationImpl.h"
+#include "DocumentFragmentImpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 #include "xml/dom_xmlimpl.h"
@@ -48,34 +50,9 @@
 
 #include <JavaScriptCore/runtime_object.h>
 
+using namespace DOM;
 using namespace DOM::HTMLNames;
-
-using DOM::AtomicString;
-using DOM::AttrImpl;
-using DOM::CharacterDataImpl;
-using DOM::DocumentImpl;
-using DOM::DocumentTypeImpl;
-using DOM::DOMException;
-using DOM::DOMImplementationImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::EntityImpl;
-using DOM::EventImpl;
 using namespace DOM::EventNames;
-using DOM::HTMLAppletElementImpl;
-using DOM::HTMLDocumentImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLEmbedElementImpl;
-using DOM::HTMLObjectElementImpl;
-using DOM::NamedNodeMapImpl;
-using DOM::Node;
-using DOM::NodeFilterImpl;
-using DOM::NodeImpl;
-using DOM::NodeListImpl;
-using DOM::NotationImpl;
-using DOM::ProcessingInstructionImpl;
-using DOM::TextImpl;
-
 using namespace khtml;
 
 #include "kjs_dom.lut.h"

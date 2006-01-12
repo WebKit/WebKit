@@ -60,7 +60,6 @@
 #include "editing/SelectionController.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_rangeimpl.h"
-#include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_position.h"
 #include "xml/EventNames.h"

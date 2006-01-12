@@ -26,7 +26,7 @@
 #include "css/cssstyleselector.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_textimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/EventNames.h"
 
 #include "RenderText.h"

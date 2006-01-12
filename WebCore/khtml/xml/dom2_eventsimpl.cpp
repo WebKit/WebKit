@@ -29,7 +29,7 @@
 #include "rendering/render_layer.h"
 #include "xml/EventNames.h"
 #include "xml/dom2_viewsimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 
 using namespace khtml;
 

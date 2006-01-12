@@ -38,26 +38,10 @@
 #include "xml/dom2_rangeimpl.h"
 #include "InlineTextBox.h"
 #include "htmlnames.h"
+#include "DocumentImpl.h"
 
 using namespace DOM::HTMLNames;
-
-using DOM::AttributeImpl;
-using DOM::CommentImpl;
-using DOM::ProcessingInstructionImpl;
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::TagStatusForbidden;
-using DOM::HTMLElementImpl;
-using DOM::NamedAttrMapImpl;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-using DOM::TextImpl;
+using namespace DOM;
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"

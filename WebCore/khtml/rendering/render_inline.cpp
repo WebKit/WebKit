@@ -26,7 +26,7 @@
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_position.h"
 
 using DOM::Position;

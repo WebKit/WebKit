@@ -35,7 +35,7 @@
 #endif
 
 #include "css_stylesheetimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "css_valueimpl.h"
 using namespace DOM;
 

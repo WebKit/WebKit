@@ -28,7 +28,7 @@
 #include "HTMLKeygenElementImpl.h"
 #include "HTMLOptionElementImpl.h"
 #include "dom_textimpl.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "FormDataList.h"
 
 #include <ksslkeygen.h>

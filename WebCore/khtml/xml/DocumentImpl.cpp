@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +23,6 @@
  */
 
 #include "config.h"
-#include "dom_docimpl.h"
 
 #include "dom/dom_exception.h"
 #include "dom/dom2_events.h"
@@ -35,6 +34,9 @@
 #include "xml/dom2_viewsimpl.h"
 #include "xml/EventNames.h"
 #include "xml/xml_tokenizer.h"
+#include "DOMImplementationImpl.h"
+#include "DocumentTypeImpl.h"
+#include "DocumentFragmentImpl.h"
 
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
@@ -50,10 +52,8 @@
 #include <qregexp.h>
 #include <kdebug.h>
 
-#include "rendering/render_canvas.h"
-#include "rendering/render_frames.h"
-#include "rendering/render_image.h"
-#include "rendering/render_object.h"
+#include "render_canvas.h"
+#include "render_frames.h"
 #include "render_arena.h"
 
 #include "FrameView.h"
@@ -67,6 +67,7 @@
 #include "html/html_documentimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
+#include "html/html_baseimpl.h"
 #include "HTMLInputElementImpl.h"
 #include "htmlfactory.h"
 
@@ -75,8 +76,6 @@
 #include "editing/jsediting.h"
 #include "editing/visible_position.h"
 #include "editing/visible_text.h"
-
-#include <kio/job.h>
 
 #ifdef KHTML_XSLT
 #include "xsl_stylesheetimpl.h"
@@ -94,10 +93,8 @@ using XBL::XBLBindingManager;
 #if SVG_SUPPORT
 #include "SVGNames.h"
 #include "SVGElementFactory.h"
-#include "SVGElementImpl.h"
 #include "SVGZoomEventImpl.h"
 #include "SVGStyleElementImpl.h"
-#include "kcanvas/device/quartz/KRenderingDeviceQuartz.h"
 #endif
 
 using namespace DOM;
@@ -111,8 +108,6 @@ using namespace khtml;
 // FIXME: For faster machines this value can really be lowered to 200.  250 is adequate, but a little high
 // for dual G5s. :)
 const int cLayoutScheduleThreshold = 250;
-
-DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
 // Use 1 to represent the document's default form.
 HTMLFormElementImpl* const defaultForm = (HTMLFormElementImpl*) 1;
@@ -189,185 +184,6 @@ static inline bool isValidNamePart(UChar32 c)
 
     return true;
 }
-
-// FIXME: An implementation of this is still waiting for me to understand the distinction between
-// a "malformed" qualified name and one with bad characters in it. For example, is a second colon
-// an illegal character or a malformed qualified name? This will determine both what parameters
-// this function needs to take and exactly what it will do. Should also be exported so that
-// ElementImpl can use it too.
-static bool qualifiedNameIsMalformed(const DOMString &)
-{
-    return false;
-}
-
-DOMImplementationImpl::DOMImplementationImpl()
-{
-}
-
-DOMImplementationImpl::~DOMImplementationImpl()
-{
-}
-
-bool DOMImplementationImpl::hasFeature (const DOMString &feature, const DOMString &version) const
-{
-    DOMString lower = feature.lower();
-    if (lower == "core" || lower == "html" || lower == "xml" || lower == "xhtml")
-        return version.isEmpty() || version == "1.0" || version == "2.0";
-    if (lower == "css"
-            || lower == "css2"
-            || lower == "events"
-            || lower == "htmlevents"
-            || lower == "mouseevents"
-            || lower == "mutationevents"
-            || lower == "range"
-            || lower == "stylesheets"
-            || lower == "traversal"
-            || lower == "uievents"
-            || lower == "views")
-        return version.isEmpty() || version == "2.0";
-    return false;
-}
-
-DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
-                                                             const DOMString &systemId, int &exceptioncode )
-{
-    // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
-    if (qualifiedName.isNull()) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
-        return 0;
-    }
-
-    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    DOMString prefix, localName;
-    if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
-        return 0;
-    }
-
-    // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
-    if (qualifiedNameIsMalformed(qualifiedName)) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
-        return 0;
-    }
-
-    return new DocumentTypeImpl(this, 0, qualifiedName, publicId, systemId);
-}
-
-DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*feature*/) const
-{
-    // ###
-    return 0;
-}
-
-DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
-                                                     DocumentTypeImpl *doctype, int &exceptioncode )
-{
-    exceptioncode = 0;
-
-    if (!qualifiedName.isEmpty()) {
-        // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-        DOMString prefix, localName;
-        if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-            exceptioncode = DOMException::INVALID_CHARACTER_ERR;
-            return 0;
-        }
-
-        // NAMESPACE_ERR:
-        // - Raised if the qualifiedName is malformed,
-        // - if the qualifiedName has a prefix and the namespaceURI is null, or
-        // - if the qualifiedName has a prefix that is "xml" and the namespaceURI is different
-        //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
-        int colonpos = -1;
-        uint i;
-        DOMStringImpl *qname = qualifiedName.impl();
-        for (i = 0; i < qname->l && colonpos < 0; i++) {
-            if ((*qname)[i] == ':')
-                colonpos = i;
-        }
-    
-        if (qualifiedNameIsMalformed(qualifiedName) ||
-            (colonpos >= 0 && namespaceURI.isNull()) ||
-            (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
-             namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
-
-            exceptioncode = DOMException::NAMESPACE_ERR;
-            return 0;
-        }
-    }
-    
-    // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
-    // created from a different implementation.
-    if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
-        exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
-        return 0;
-    }
-
-    // ### this is completely broken.. without a view it will not work (Dirk)
-    DocumentImpl *doc = new DocumentImpl(this, 0);
-
-    // now get the interesting parts of the doctype
-    if (doctype)
-        doc->setDocType(new DocumentTypeImpl(doc, *doctype));
-
-    if (!qualifiedName.isEmpty()) {
-        ElementImpl *rootElement = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
-        doc->addChild(rootElement);
-    }
-    
-    return doc;
-}
-
-CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(const DOMString &/*title*/, const DOMString &media, int &/*exception*/)
-{
-    // ### TODO : title should be set, and media could have wrong syntax, in which case we should generate an exception.
-    CSSStyleSheetImpl * const nullSheet = 0;
-    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(nullSheet);
-    sheet->setMedia(new MediaListImpl(sheet, media));
-    return sheet;
-}
-
-DocumentImpl *DOMImplementationImpl::createDocument( KHTMLView *v )
-{
-    return new DocumentImpl(this, v);
-}
-
-HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument( KHTMLView *v )
-{
-    return new HTMLDocumentImpl(this, v);
-}
-
-DOMImplementationImpl *DOMImplementationImpl::instance()
-{
-    if (!m_instance) {
-        m_instance = new DOMImplementationImpl();
-        m_instance->ref();
-    }
-
-    return m_instance;
-}
-
-bool DOMImplementationImpl::isXMLMIMEType(const DOMString& mimeType)
-{
-    if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
-        mimeType == "text/xsl" || mimeType == "application/rss+xml" || mimeType == "application/atom+xml"
-#if SVG_SUPPORT
-        || mimeType == "image/svg+xml"
-#endif
-        )
-        return true;
-    return false;
-}
-
-HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument(const DOMString &title)
-{
-    HTMLDocumentImpl *d = createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
-    d->open();
-    // FIXME: Need to escape special characters in the title?
-    d->write("<html><head><title>" + title.qstring() + "</title></head>");
-    return d;
-}
-
-// ------------------------------------------------------------------------
 
 QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 
@@ -573,6 +389,11 @@ void DocumentImpl::resetVisitedLinkColor()
 void DocumentImpl::resetActiveLinkColor()
 {
     m_activeLinkColor.setNamedColor(QString("red"));
+}
+
+void DocumentImpl::setDocType(DocumentTypeImpl *docType)
+{
+    m_docType = docType;
 }
 
 DocumentTypeImpl *DocumentImpl::doctype() const
@@ -2829,8 +2650,6 @@ DOMString DocumentImpl::toString() const
     return result;
 }
 
-
-// ----------------------------------------------------------------------------
 // Support for Javascript execCommand, and related methods
 
 JSEditor *DocumentImpl::jsEditor()
@@ -2870,7 +2689,6 @@ DOMString DocumentImpl::queryCommandValue(const DOMString &command)
     return jsEditor()->queryCommandValue(command);
 }
 
-// ----------------------------------------------------------------------------
 
 void DocumentImpl::addMarker(RangeImpl *range, DocumentMarker::MarkerType type)
 {
@@ -3308,118 +3126,4 @@ RefPtr<HTMLCollectionImpl> DocumentImpl::documentNamedItems(DOMString &name)
 RefPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
 {
     return RefPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));
-}
-
-// ----------------------------------------------------------------------------
-
-DocumentFragmentImpl::DocumentFragmentImpl(DocumentImpl *doc) : ContainerNodeImpl(doc)
-{
-}
-
-DOMString DocumentFragmentImpl::nodeName() const
-{
-  return "#document-fragment";
-}
-
-unsigned short DocumentFragmentImpl::nodeType() const
-{
-    return Node::DOCUMENT_FRAGMENT_NODE;
-}
-
-// DOM Section 1.1.1
-bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
-{
-    switch (type) {
-        case Node::ELEMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::TEXT_NODE:
-        case Node::CDATA_SECTION_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
-            return true;
-        default:
-            return false;
-    }
-}
-
-DOMString DocumentFragmentImpl::toString() const
-{
-    DOMString result;
-
-    for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
-	result += child->toString();
-    }
-
-    return result;
-}
-
-
-NodeImpl *DocumentFragmentImpl::cloneNode (bool deep)
-{
-    DocumentFragmentImpl *clone = new DocumentFragmentImpl(getDocument());
-    if (deep)
-        cloneChildNodes(clone);
-    return clone;
-}
-
-
-// ----------------------------------------------------------------------------
-
-DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *i, DocumentImpl *doc, const DOMString &n, const DOMString &p, const DOMString &s)
-    : NodeImpl(doc), m_implementation(i), m_name(n), m_publicId(p), m_systemId(s)
-{
-}
-
-DocumentTypeImpl::DocumentTypeImpl(DocumentImpl *doc, const DOMString &n, const DOMString &p, const DOMString &s)
-    : NodeImpl(doc), m_name(n), m_publicId(p), m_systemId(s)
-{
-}
-
-DocumentTypeImpl::DocumentTypeImpl(DocumentImpl *doc, const DocumentTypeImpl &t)
-    : NodeImpl(doc), m_implementation(t.m_implementation)
-    , m_name(t.m_name), m_publicId(t.m_publicId), m_systemId(t.m_systemId), m_subset(t.m_subset)
-{
-}
-
-DOMString DocumentTypeImpl::toString() const
-{
-    if (m_name.isEmpty())
-        return "";
-
-    DOMString result = "<!DOCTYPE ";
-    result += m_name;
-    if (!m_publicId.isEmpty()) {
-	result += " PUBLIC \"";
-	result += m_publicId;
-	result += "\" \"";
-	result += m_systemId;
-	result += "\"";
-    } else if (!m_systemId.isEmpty()) {
-	result += " SYSTEM \"";
-	result += m_systemId;
-	result += "\"";
-    }
-    if (!m_subset.isEmpty()) {
-	result += " [";
-	result += m_subset;
-	result += "]";
-    }
-    result += ">";
-    return result;
-}
-
-DOMString DocumentTypeImpl::nodeName() const
-{
-    return name();
-}
-
-unsigned short DocumentTypeImpl::nodeType() const
-{
-    return Node::DOCUMENT_TYPE_NODE;
-}
-
-NodeImpl *DocumentTypeImpl::cloneNode(bool /*deep*/)
-{
-    // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
-    return 0;
 }

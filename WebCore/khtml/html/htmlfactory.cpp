@@ -22,7 +22,6 @@
 
 #include "config.h"
 #include "htmlfactory.h"
-#include "dom_docimpl.h"
 
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"

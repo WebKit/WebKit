@@ -26,7 +26,7 @@
 #include "config.h"
 #include "split_text_node_command.h"
 
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>

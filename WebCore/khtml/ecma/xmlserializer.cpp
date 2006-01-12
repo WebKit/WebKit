@@ -23,10 +23,7 @@
 #include "xmlserializer.lut.h"
 
 #include "kjs_dom.h"
-
 #include "dom/dom_exception.h"
-#include "xml/dom_docimpl.h"
-
 #include "markup.h"
 
 #include <kdebug.h>

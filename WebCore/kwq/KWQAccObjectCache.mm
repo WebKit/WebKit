@@ -32,7 +32,7 @@
 #import "KWQString.h"
 #import "render_object.h"
 #import "WebCoreViewFactory.h"
-#import "dom_docimpl.h"
+#import "DocumentImpl.h"
 
 using khtml::EAffinity;
 using khtml::RenderObject;

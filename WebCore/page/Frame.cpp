@@ -35,6 +35,7 @@
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
 #include "dom/dom_string.h"
+#include "DOMImplementationImpl.h"
 #include "editing/markup.h"
 #include "editing/htmlediting.h"
 #include "editing/SelectionController.h"
@@ -65,10 +66,6 @@
 #endif
 #include "kxmlcore/Assertions.h"
 
-using namespace DOM;
-using namespace HTMLNames;
-using namespace KJS;
-
 #include "FrameView.h"
 #include "ecma/kjs_proxy.h"
 #include "ecma/kjs_window.h"
@@ -90,6 +87,10 @@ using namespace KJS;
 #include <qfile.h>
 #include <qptrlist.h>
 
+
+using namespace DOM;
+using namespace HTMLNames;
+using namespace KJS;
 using namespace DOM::EventNames;
 using namespace khtml;
 

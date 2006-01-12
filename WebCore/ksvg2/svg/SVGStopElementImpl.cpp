@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
+#include "DocumentImpl.h"
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>

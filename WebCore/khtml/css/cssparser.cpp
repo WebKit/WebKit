@@ -36,7 +36,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "misc/helper.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "csshelper.h"
 
 #include <stdlib.h>

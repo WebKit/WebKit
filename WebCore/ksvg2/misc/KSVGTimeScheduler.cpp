@@ -23,6 +23,7 @@
 #include "config.h"
 #include <kcanvas/KCanvas.h>
 
+#include "DocumentImpl.h"
 #include "SVGNames.h"
 #include "SVGMatrixImpl.h"
 #include "KSVGTimeScheduler.h"

@@ -31,7 +31,7 @@
 #include "css_valueimpl.h"
 #include "cssparser.h"
 #include "cssproperties.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom_elementimpl.h"
 #include "dom_nodeimpl.h"
 #include "dom_position.h"

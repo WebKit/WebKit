@@ -1,5 +1,5 @@
 /*
- * This file is part of the KDE project.
+ * This file is part of the WebKit project.
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  *
@@ -42,4 +42,4 @@ public:
     void translateForAttributes();
 };
 
-#endif RenderSVGText_H
+#endif

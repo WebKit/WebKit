@@ -23,9 +23,9 @@
 #include "domparser.lut.h"
 
 #include "html/html_documentimpl.h"
+#include "DOMImplementationImpl.h"
 
-using DOM::DocumentImpl;
-using DOM::DOMImplementationImpl;
+using namespace DOM;
 
 ////////////////////// DOMParser Object ////////////////////////
 

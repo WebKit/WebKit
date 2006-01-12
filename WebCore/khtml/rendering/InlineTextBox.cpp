@@ -30,7 +30,7 @@
 #include "render_arena.h"
 #include "render_block.h"
 #include "xml/dom2_rangeimpl.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include <qpen.h>
 
 #include "MacFrame.h"

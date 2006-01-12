@@ -1,3 +1,150 @@
+2006-01-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by anders & mjs.
+
+        Split dom_docimpl.* out into separate files (one per class):
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6502
+
+        * ForwardingHeaders/kdom/core/DOMImplementationImpl.h: Removed.
+        * ForwardingHeaders/kdom/core/DocumentImpl.h: Removed.
+        * ForwardingHeaders/kdom/core/DocumentTypeImpl.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreBridge.mm:
+        * kcanvas/KCanvasResources.cpp:
+        * kcanvas/RenderSVGText.h:
+        * khtml/css/css_base.cpp:
+        * khtml/css/css_computedstyle.cpp:
+        * khtml/css/css_ruleimpl.cpp:
+        * khtml/css/css_valueimpl.cpp:
+        * khtml/css/cssparser.cpp:
+        * khtml/css/parser.y:
+        * khtml/ecma/XSLTProcessor.cpp:
+        * khtml/ecma/domparser.cpp:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/ecma/kjs_range.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/ecma/kjs_views.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/xmlhttprequest.cpp:
+        * khtml/ecma/xmlserializer.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/edit_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/insert_text_command.cpp:
+        * khtml/editing/join_text_nodes_command.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/markup.h:
+        * khtml/editing/merge_identical_elements_command.cpp:
+        * khtml/editing/move_selection_command.cpp:
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/split_text_node_command.cpp:
+        * khtml/editing/typing_command.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/visible_text.cpp:
+        * khtml/editing/visible_units.cpp:
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        * khtml/html/HTMLKeygenElementImpl.cpp:
+        * khtml/html/HTMLLabelElementImpl.cpp:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_listimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/htmlfactory.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/Cache.cpp:
+        * khtml/misc/DocLoader.cpp:
+        * khtml/rendering/InlineTextBox.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_applet.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        * khtml/rendering/render_br.cpp:
+        * khtml/rendering/render_button.cpp:
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_container.cpp:
+        * khtml/rendering/render_flow.cpp:
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/rendering/render_inline.cpp:
+        * khtml/rendering/render_layer.cpp:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_list.cpp:
+        * khtml/rendering/render_object.cpp:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_table.cpp:
+        * khtml/rendering/render_theme.cpp:
+        * khtml/rendering/render_theme_mac.mm:
+        * khtml/xml/DOMImplementationImpl.cpp: Added.
+        * khtml/xml/DOMImplementationImpl.h: Added.
+        * khtml/xml/DocumentFragmentImpl.cpp: Added.
+        * khtml/xml/DocumentFragmentImpl.h: Added.
+        * khtml/xml/DocumentImpl.cpp: Added.
+        (DocumentImpl::setDocType):
+        (DocumentImpl::getElementsByName):
+        * khtml/xml/DocumentImpl.h: Added.
+        * khtml/xml/DocumentTypeImpl.cpp: Added.
+        * khtml/xml/DocumentTypeImpl.h: Added.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        * khtml/xml/dom2_traversalimpl.cpp:
+        * khtml/xml/dom2_viewsimpl.cpp:
+        * khtml/xml/dom_docimpl.cpp: Removed.
+        * khtml/xml/dom_docimpl.h: Removed.
+        * khtml/xml/dom_elementimpl.cpp:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_textimpl.cpp:
+        * khtml/xml/dom_xmlimpl.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        * ksvg2/svg/SVGHelper.cpp:
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * ksvg2/svg/SVGStopElementImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        * kwq/DOM-CSS.mm:
+        * kwq/DOM.mm:
+        * kwq/DOMEvents.mm:
+        * kwq/DOMHTML.mm:
+        * kwq/DOMInternal.mm:
+        * kwq/DOMViews.mm:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQKJavaAppletWidget.mm:
+        * kwq/KWQPageState.mm:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * kwq/KWQSlot.mm:
+        * page/Frame.cpp:
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.

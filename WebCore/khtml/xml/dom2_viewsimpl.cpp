@@ -26,7 +26,7 @@
 
 #include "css/css_computedstyle.h"
 #include "dom_elementimpl.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "cssstyleselector.h"
 
 namespace DOM {

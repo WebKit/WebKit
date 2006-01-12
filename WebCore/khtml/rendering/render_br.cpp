@@ -22,7 +22,7 @@
 #include "config.h"
 #include "render_br.h"
 
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom_position.h"
 #include "render_block.h"
 #include "render_line.h"

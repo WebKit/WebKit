@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQRenderTreeDebug.h"
 
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom_position.h"
 #include "jsediting.h"
 #include "FrameView.h"

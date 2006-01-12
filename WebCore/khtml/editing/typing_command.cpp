@@ -32,7 +32,7 @@
 #include "break_blockquote_command.h"
 
 #include "MacFrame.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "visible_position.h"
 #include "visible_units.h"
 

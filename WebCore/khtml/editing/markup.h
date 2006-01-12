@@ -28,7 +28,11 @@
 
 #include "html_interchange.h"
 #include <kxmlcore/PassRefPtr.h>
-#include "dom_docimpl.h"
+#include "DocumentFragmentImpl.h"
+
+namespace DOM {
+    class RangeImpl;
+}
 
 namespace khtml {
 

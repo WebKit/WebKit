@@ -40,7 +40,7 @@
 #include "InlineTextBox.h"
 #include "visible_position.h"
 #include "visible_units.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_textimpl.h"

@@ -29,7 +29,7 @@
 #include "rendering/render_form.h"
 #include "dom_textimpl.h"
 #include "FormDataList.h"
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 
 #include "EventNames.h"
 

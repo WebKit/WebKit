@@ -30,7 +30,6 @@
 #include <qmap.h>
 #include <kdebug.h>
 
-#include "xml/dom_docimpl.h"
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
 #include "cssproperties.h"

@@ -25,7 +25,7 @@
 
 #include <q3ptrlist.h>
 
-#include <kdom/core/DocumentImpl.h>
+#include "DocumentImpl.h"
 #include <kdom/cache/KDOMCachedScript.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 

@@ -28,7 +28,7 @@
 #include "HTMLOptionElementImpl.h"
 #include "rendering/render_form.h"
 
-#include "dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "dom_textimpl.h"
 #include "dom_exception.h"
 

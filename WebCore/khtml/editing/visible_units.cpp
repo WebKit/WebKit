@@ -34,7 +34,7 @@
 #include "rendering/render_block.h"
 #include "visible_position.h"
 #include "visible_text.h"
-#include "xml/dom_docimpl.h"
+#include "DocumentImpl.h"
 #include "xml/dom_elementimpl.h"
 
 using namespace DOM::HTMLNames;

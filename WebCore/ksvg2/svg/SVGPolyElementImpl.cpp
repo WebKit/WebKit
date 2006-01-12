@@ -23,6 +23,7 @@
 #include "config.h"
 #include <kdom/core/AttrImpl.h>
 #include <kdom/Namespace.h>
+#include "DocumentImpl.h"
 
 #include "SVGNames.h"
 #include "SVGHelper.h"
