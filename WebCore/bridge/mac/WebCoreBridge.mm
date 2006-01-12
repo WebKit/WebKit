@@ -955,7 +955,7 @@ static bool initializedKJS = FALSE;
 
 - (void)deselectText
 {
-    m_frame->clearSelection();
+    m_frame->selection().clear();
 }
 
 - (BOOL)isFrameSet
@@ -1569,14 +1569,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSAttributedString *)selectedAttributedString
 {
-    return m_frame->attributedString(m_frame->selectionStart(), m_frame->selectionStartOffset(), m_frame->selectionEnd(), m_frame->selectionEndOffset());
+    // FIXME: should be a no-arg version of attributedString() that does this
+    return m_frame->attributedString(m_frame->selection().start().node(), m_frame->selection().start().offset(), m_frame->selection().end().node(), m_frame->selection().end().offset());
 }
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset
 {
-    DOMNode *startNode = start;
-    DOMNode *endNode = end;
-    return m_frame->attributedString([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
+    return m_frame->attributedString([start _nodeImpl], startOffset, [end _nodeImpl], endOffset);
 }
 
 - (NSRect)selectionRect

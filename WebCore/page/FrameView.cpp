@@ -25,6 +25,7 @@
 #include "FrameView.h"
 
 #include "Frame.h"
+#include "SelectionController.h"
 #include "khtml_events.h"
 
 #include "html/html_documentimpl.h"
@@ -237,7 +238,7 @@ void KHTMLView::clear()
 
     setStaticBackground(false);
     
-    m_frame->clearSelection();
+    m_frame->selection().clear();
 
     d->reset();
 

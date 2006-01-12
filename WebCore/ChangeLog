@@ -2,6 +2,32 @@
 
         Reviewed by Darin.
 
+        - remove some selection-related methods on Frame that are just simple wrappers
+        of Selection methods.
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::findString):
+        (MacFrame::advanceToNextMisspelling):
+        * bridge/mac/WebCoreBridge.mm:
+        (-[WebCoreBridge deselectText]):
+        (-[WebCoreBridge selectedAttributedString]):
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]):
+        * khtml/editing/jsediting.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::clearSelectionIfNeeded):
+        * page/Frame.cpp:
+        (Frame::selection):
+        (Frame::currentForm):
+        (Frame::revealSelection):
+        (Frame::centerSelectionInVisibleArea):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (KHTMLView::clear):
+
+2006-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
         - reduce the number of files that rebuild when you touch Frame.h
 
         * ForwardingHeaders/ksvg2/KSVGView.h:

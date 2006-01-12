@@ -445,7 +445,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     
     // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
     RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
-    if (selectionStart()) {
+    if (selection().start().node()) {
         if (forward) {
             setStart(searchRange.get(), VisiblePosition(selection().start(), selection().endAffinity()));
         } else {
@@ -455,7 +455,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     RefPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
     
     // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
-    if (selectionStart() && *resultRange == *selection().toRange()) {
+    if (selection().start().node() && *resultRange == *selection().toRange()) {
         searchRange = rangeOfContents(xmlDocImpl());
         if (forward) {
             setStart(searchRange.get(), VisiblePosition(selection().end(), selection().endAffinity()));
@@ -749,7 +749,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
     // repeated "check spelling" commands work.
     RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     bool startedWithSelection = false;
-    if (selectionStart()) {
+    if (selection().start().node()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
             VisiblePosition start(selection().start(), selection().startAffinity());

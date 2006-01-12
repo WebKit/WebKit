@@ -357,7 +357,7 @@ bool execUndo(Frame *frame, bool userInterface, const DOMString &value)
 
 bool execUnselect(Frame *frame, bool userInterface, const DOMString &value)
 {
-    frame->clearSelection();
+    frame->selection().clear();
     return true;
 }
 

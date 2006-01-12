@@ -1340,7 +1340,7 @@ bool Frame::hasSelection() const
     return d->m_selection.isCaretOrRange();
 }
 
-const SelectionController &Frame::selection() const
+SelectionController &Frame::selection() const
 {
     return d->m_selection;
 }
@@ -1406,11 +1406,6 @@ void Frame::setDragCaret(const SelectionController &dragCaret)
         d->m_dragCaret = dragCaret;
         d->m_dragCaret.needsCaretRepaint();
     }
-}
-
-void Frame::clearSelection()
-{
-    setSelection(SelectionController());
 }
 
 void Frame::invalidateSelection()
@@ -3180,11 +3175,6 @@ void Frame::didNotOpenURL(const KURL &URL)
     }
 }
 
-NodeImpl *Frame::selectionStart() const
-{
-    return d->m_selection.start().node();
-}
-
 // Scans logically forward from "start", including any child frames
 static HTMLFormElementImpl *scanForForm(NodeImpl *start)
 {
@@ -3212,7 +3202,7 @@ HTMLFormElementImpl *Frame::currentForm() const
     // start looking either at the active (first responder) node, or where the selection is
     NodeImpl *start = d->m_doc ? d->m_doc->focusNode() : 0;
     if (!start)
-        start = selectionStart();
+        start = selection().start().node();
     
     // try walking up the node tree to find a form element
     NodeImpl *n;
@@ -3262,11 +3252,12 @@ void Frame::revealSelection()
             break;
     }
     
-    ASSERT(d->m_selection.start().isNotNull());
-    if (selectionStart() && selectionStart()->renderer()) {
-        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+    ASSERT(selection().start().isNotNull());
+    if (selection().start().node() && selection().start().node()->renderer()) {
+        RenderLayer *layer = selection().start().node()->renderer()->enclosingLayer();
         if (layer) {
-            ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
+            ASSERT(!selection.end().node() || !selection().end().node()->renderer() 
+                   || (selection().end().node()->renderer()->enclosingLayer() == layer));
             layer->scrollRectToVisible(rect);
         }
     }
@@ -3685,8 +3676,8 @@ void Frame::centerSelectionInVisibleArea() const
     }
     
     ASSERT(d->m_selection.start().isNotNull());
-    if (selectionStart() && selectionStart()->renderer()) {
-        RenderLayer *layer = selectionStart()->renderer()->enclosingLayer();
+    if (selection().start().node() && selection().start().node()->renderer()) {
+        RenderLayer *layer = selection().start().node()->renderer()->enclosingLayer();
         if (layer) {
             ASSERT(!selectionEnd() || !selectionEnd()->renderer() || (selectionEnd()->renderer()->enclosingLayer() == layer));
             layer->scrollRectToVisible(rect, RenderLayer::gAlignCenterAlways, RenderLayer::gAlignCenterAlways);
@@ -3733,21 +3724,6 @@ RenderStyle *Frame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     
     nodeToRemove = styleElement;    
     return styleElement->renderer()->style();
-}
-
-int Frame::selectionStartOffset() const
-{
-    return d->m_selection.start().offset();
-}
-
-int Frame::selectionEndOffset() const
-{
-    return d->m_selection.end().offset();
-}
-
-NodeImpl *Frame::selectionEnd() const
-{
-    return d->m_selection.end().node();
 }
 
 void Frame::setMediaType(const QString &type)
