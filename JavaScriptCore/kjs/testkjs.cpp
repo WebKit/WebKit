@@ -31,7 +31,6 @@
 #include "object.h"
 #include "types.h"
 #include "interpreter.h"
-#include "collector.h"
 #include "JSLock.h"
 
 using namespace KJS;
@@ -67,7 +66,7 @@ JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/,
   case GC:
   {
     JSLock lock;
-    Collector::collect();
+    Interpreter::collect();
   }
     break;
   default:

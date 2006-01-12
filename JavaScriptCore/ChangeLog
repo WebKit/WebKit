@@ -1,5 +1,15 @@
 2006-01-12  George Staikos <staikos@kde.org>
 
+        Reviewed by Darin.
+
+        * kjs/interpreter.cpp:
+        * kjs/testkjs.cpp:
+        * kjs/interpreter.h:
+        Add helper to interpreter to call the collector in order to facilitate
+        visibility rules in KDE.
+
+2006-01-12  George Staikos <staikos@kde.org>
+
         Reviewed by Maciej.
 
         * kjs/kjs.pro: Updates to build the whole thing on Linux at least.

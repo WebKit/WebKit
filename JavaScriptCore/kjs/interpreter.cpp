@@ -291,6 +291,11 @@ Interpreter::CompatMode Interpreter::compatMode() const
   return rep->compatMode();
 }
 
+bool Interpreter::collect()
+{
+  return Collector::collect();
+}
+
 #ifdef KJS_DEBUG_MEM
 #include "lexer.h"
 void Interpreter::finalCheck()
