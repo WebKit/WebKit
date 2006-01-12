@@ -11,7 +11,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > BODY > HTML > #document to 0 of P > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > P > DIV > BODY > HTML > #document to 1 of #text > P > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -49,14 +49,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,268) size 784x18
         RenderText {TEXT} at (0,0) size 234x18
           text run at (0,0) width 234: "This div contains a self-closing p tag."
-      RenderBlock {DIV} at (0,302) size 707x52 [border: (1px dotted #0000FF)]
-        RenderBlock {P} at (1,17) size 705x18
+      RenderBlock {DIV} at (0,302) size 707x36 [border: (1px dotted #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 705x18
           RenderText {TEXT} at (0,0) size 7x18
             text run at (0,0) width 7: "c"
-      RenderBlock {P} at (0,370) size 784x18
+        RenderBlock {P} at (1,35) size 705x0
+      RenderBlock {P} at (0,354) size 784x18
         RenderText {TEXT} at (0,0) size 720x18
           text run at (0,0) width 720: "This div contains a self-closing p tag and some collapsable whitespace (two '\\n's before and after the self closing p."
-      RenderBlock {DIV} at (0,404) size 707x36 [border: (1px dotted #0000FF)]
+      RenderBlock {DIV} at (0,388) size 707x36 [border: (1px dotted #0000FF)]
         RenderBlock (anonymous) at (1,1) size 705x18
           RenderText {TEXT} at (0,0) size 7x18
             text run at (0,0) width 7: "c"

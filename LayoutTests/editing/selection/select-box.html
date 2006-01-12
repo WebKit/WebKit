@@ -1,0 +1,34 @@
+<html> 
+<head>
+
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (var i = 0; i < 50; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+    for (var i = 0; i < 50; i++) {
+        moveSelectionBackwardByCharacterCommand();
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<p>This tests caret movement across a select box.  The caret should skip over the select box as if it were an image.</p>
+<div contenteditable id="root" class="editing">
+<div id="test">
+select box: <select><option>1</option><option>2</option></select>
+the end ...
+</div>
+</div>
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

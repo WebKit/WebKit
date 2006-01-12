@@ -1,3 +1,29 @@
+2006-01-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        New/updated layout tests for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5870>
+        Double-clicking on an SVG dies in HTML editing code
+        <rdar://problem/4393815>
+        Assertion failure: result != *this (khtml::VisiblePosition::previous())
+
+        * editing/inserting/editing-empty-divs-expected.checksum:
+        * editing/inserting/editing-empty-divs-expected.png:
+        * editing/inserting/editing-empty-divs-expected.txt:
+        * editing/selection/iframe-expected.checksum: Added.
+        * editing/selection/iframe-expected.png: Added.
+        * editing/selection/iframe-expected.txt: Added.
+        * editing/selection/iframe.html: Added.
+        * editing/selection/inline-table-expected.checksum: Added.
+        * editing/selection/inline-table-expected.png: Added.
+        * editing/selection/inline-table-expected.txt: Added.
+        * editing/selection/inline-table.html: Added.
+        * editing/selection/select-box-expected.checksum: Added.
+        * editing/selection/select-box-expected.png: Added.
+        * editing/selection/select-box-expected.txt: Added.
+        * editing/selection/select-box.html: Added.
+
 2006-01-11  Ricci Adams  <ricciadams@apple.com>
 
         Reviewed by Maciej, reworked and landed by Darin.
