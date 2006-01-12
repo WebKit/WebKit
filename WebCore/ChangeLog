@@ -1,3 +1,42 @@
+2006-01-12  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5153
+        deleteRule and insertRule do not work
+        
+        This also makes updating the disabled flag on style sheets work.
+        It also adds the IE-only removeRule which is the counterpart to
+        the already existing addRule.
+        
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::insertRule):
+        (CSSStyleSheetImpl::deleteRule):
+        Call styleSheetChanged()
+        
+        (CSSStyleSheetImpl::styleSheetChanged):
+        Call DocumentImpl::updateStyleSelector()
+        
+        * khtml/css/css_stylesheetimpl.h:        
+        (DOM::StyleSheetImpl::setDisabled):
+        Call styleSheetChanged();
+        
+        (DOM::StyleSheetImpl::styleSheetChanged):
+        New function.
+        
+        (DOM::CSSStyleSheetImpl::removeRule):
+        New IE extension function, simply calls deleteRule.
+        
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        Ignore disabled style sheets.
+        
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_css.h:
+        (KJS::DOMCSSStyleSheet::):
+        Add removeRule.
+
 2006-01-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.

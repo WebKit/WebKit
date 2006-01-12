@@ -170,6 +170,9 @@ unsigned CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned index, i
     // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified index e.g. if an
     //@import rule is inserted after a standard rule set or other at-rule.
     m_lstChildren->insert(index, r);
+    
+    styleSheetChanged();
+    
     return index;
 }
 
@@ -194,6 +197,7 @@ void CSSStyleSheetImpl::deleteRule( unsigned index, int &exceptioncode )
         return;
     }
     b->deref();
+    styleSheetChanged();
 }
 
 void CSSStyleSheetImpl::addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri)
@@ -262,6 +266,16 @@ khtml::DocLoader *CSSStyleSheetImpl::docLoader()
 
     // ### remove? (clients just use sheet->doc()->docLoader())
     return m_doc->docLoader();
+}
+
+void CSSStyleSheetImpl::styleSheetChanged()
+{
+    /* FIXME: We don't need to do everything updateStyleSelector does,
+     * basically we just need to recreate the document's selector with the
+     * already existing style sheets.
+     */
+    if (m_doc)
+        m_doc->updateStyleSelector();
 }
 
 // ---------------------------------------------------------------------------

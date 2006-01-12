@@ -572,8 +572,9 @@ const ClassInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", 0, &DOMCSSStyleSheet
 @begin DOMCSSStyleSheetProtoTable 6
   insertRule	DOMCSSStyleSheet::InsertRule	DontDelete|Function 2
   deleteRule	DOMCSSStyleSheet::DeleteRule	DontDelete|Function 1
-# MSIE extension
+# MSIE extensions
   addRule	DOMCSSStyleSheet::AddRule	DontDelete|Function 2
+  removeRule    DOMCSSStyleSheet::RemoveRule    DontDelete|Function 1
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMCSSStyleSheetProto)
@@ -626,6 +627,11 @@ JSValue *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, JSObject *th
       styleSheet.addRule(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), index, exception);
       // As per Microsoft documentation, always return -1.
       return jsNumber(-1);
+    }
+    case DOMCSSStyleSheet::RemoveRule: {
+      int index = args.size() >= 1 ? args[0]->toInt32(exec) : 0;
+      styleSheet.removeRule(index, exception);
+      return jsUndefined();
     }
   }
   return jsUndefined();

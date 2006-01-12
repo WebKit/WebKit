@@ -142,7 +142,7 @@ namespace KJS {
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { OwnerRule, CssRules, Rules, InsertRule, DeleteRule, AddRule };
+    enum { OwnerRule, CssRules, Rules, InsertRule, DeleteRule, AddRule, RemoveRule };
   };
 
   class DOMCSSRuleList : public DOMObject {

@@ -62,7 +62,7 @@ public:
     virtual DOM::DOMString type() const { return DOMString(); }
 
     bool disabled() const { return m_disabled; }
-    void setDisabled( bool disabled ) { m_disabled = disabled; }
+    void setDisabled( bool disabled ) { m_disabled = disabled; styleSheetChanged(); }
 
     DOM::NodeImpl *ownerNode() const { return m_parentNode; }
     StyleSheetImpl *parentStyleSheet() const;
@@ -73,6 +73,8 @@ public:
 
     virtual bool isLoading() { return false; }
 
+    virtual void styleSheetChanged() { }
+    
 protected:
     DOM::NodeImpl *m_parentNode;
     DOM::DOMString m_strHref;
@@ -102,10 +104,13 @@ public:
     unsigned insertRule ( const DOM::DOMString &rule, unsigned index, int &exceptioncode );
     void deleteRule ( unsigned index, int &exceptioncode );
     unsigned addRule ( const DOMString &selector, const DOMString &style, int index, int &exceptioncode );
-
+    void removeRule(unsigned index, int& exceptioncode) { deleteRule(index, exceptioncode); }
+    
     void addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);
     
+    virtual void styleSheetChanged();
+
     virtual bool parseString( const DOMString &string, bool strict = true );
 
     virtual bool isLoading();
