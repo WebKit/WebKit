@@ -902,7 +902,16 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     for (i=0; i < [frameChildren count]; i++) {
         WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
         WebFrameView *scrollableFrameView = [childFrameView _hasScrollBars] ? childFrameView : [childFrameView _largestChildWithScrollBars];
-        if (scrollableFrameView && (!largest || ([scrollableFrameView _area] > [largest _area]))) {
+        if (!scrollableFrameView)
+            continue;
+        
+        // Some ads lurk in child frames of zero width and height, see radar 4406994. These don't count as scrollable.
+        // Maybe someday we'll discover that this minimum area check should be larger, but this covers the known cases.
+        float area = [scrollableFrameView _area];
+        if (area < 1.0)
+            continue;
+        
+        if (!largest || (area > [largest _area])) {
             largest = scrollableFrameView;
         }
     }

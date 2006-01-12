@@ -1,3 +1,14 @@
+2006-01-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim O.
+        
+        - fixed <rdar://problem/4406994> REGRESSION (TOT): zooming window at cnn.com 
+        makes window fill width of screen
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _largestChildWithScrollBars]):
+        now skips zero-area frames, used by some evil ads
+
 2006-01-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim H.
