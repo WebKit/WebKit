@@ -1,3 +1,15 @@
+2006-01-13  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * kjs/create_hash_table:
+        Don't create an empty entry array, instead add a entry with all fields
+        set to null and set the hash table size to 1.
+        
+        * kjs/lookup.cpp:
+        (findEntry):
+        Remove the hash table size check
+
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

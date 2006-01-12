@@ -205,26 +205,34 @@ sub output() {
   print "\nstatic const struct HashEntry ".$nameEntries."[] = {\n";
   my $i = 0;
   #print STDERR "writing out table with ".($#table+1)." entries\n";
-  foreach $entry (@table) {
-    if (defined($entry)) {
-      my $key = $keys[$entry];
-      print "   \{ \"" . $key . "\"";
-      print ", " . $values[$entry];
-      print ", " . $attrs[$entry];
-      print ", " . $params[$entry];
-      print ", ";
-      if (defined($links[$i])) {
-	print "&${nameEntries}[$links[$i]]" . " \}";
+  
+  if ($size eq 0) {
+    # To make the hash table lookup code fast, we don't allow tables of size 0.
+    #  hat way it can do a modulo by the size without a special case to avoid division by 0.
+    print "   \{ 0, 0, 0, 0, 0 \}\n";
+    $size = 1;
+  } else {
+    foreach $entry (@table) {
+      if (defined($entry)) {
+        my $key = $keys[$entry];
+        print "   \{ \"" . $key . "\"";
+        print ", " . $values[$entry];
+        print ", " . $attrs[$entry];
+        print ", " . $params[$entry];
+        print ", ";
+        if (defined($links[$i])) {
+          print "&${nameEntries}[$links[$i]]" . " \}";
+        } else {
+          print "0 \}"
+        }
+        print "/* " . $hashes[$entry] . " */ ";
       } else {
-	print "0 \}"
-      }
-      print "/* " . $hashes[$entry] . " */ ";
-    } else {
-      print "   \{ 0, 0, 0, 0, 0 \}";
+        print "   \{ 0, 0, 0, 0, 0 \}";
+      }    
+      print "," unless ($i == $size - 1);
+      print "\n";
+      $i++;
     }
-    print "," unless ($i == $size - 1);
-    print "\n";
-    $i++;
   }
   print "};\n\n";
   print "const struct HashTable $name = ";
