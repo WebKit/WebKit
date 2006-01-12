@@ -1,5 +1,13 @@
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+        
+        - fixed build breakage
+
+        * ksvg2/misc/SVGImageLoader.cpp: Add dom_docimpl.h include
+
+2006-01-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - remove dom_documentimpl.h include from other headers where possible,
