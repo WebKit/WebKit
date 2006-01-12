@@ -25,6 +25,7 @@
 
 #include "FastMalloc.h"
 #include "HashTraits.h"
+#include <assert.h>
 #include <utility>
 #include <algorithm>
 

@@ -13,14 +13,16 @@ unix {
 	!exists(number_object.lut.h):system(perl create_hash_table number_object.cpp -i >number_object.lut.h)
 	!exists(string_object.lut.h):system(perl create_hash_table string_object.cpp -i >string_object.lut.h)
 	!exists(regexp_object.lut.h):system(perl create_hash_table regexp_object.cpp -i >regexp_object.lut.h)
+	!exists(grammar.cpp):system(bison -d -p kjsyy grammar.y && mv grammar.tab.c grammar.cpp && mv grammar.tab.h grammar.h)
 }
 
 # QMakes YACC support is strange
-YACCSOURCES += grammar.y
+# YACCSOURCES += grammar.y
 
 SOURCES	+= \
 	../kxmlcore/FastMalloc.cpp \
 	../kxmlcore/TCSystemAlloc.cpp \
+	../kxmlcore/HashTable.cpp \
 	array_object.cpp \
 	function_object.cpp \
 	nodes2string.cpp \
@@ -53,17 +55,19 @@ SOURCES	+= \
 	ustring.cpp \
 	function.cpp \
 	math_object.cpp \
-	value.cpp
+	value.cpp \
+	JSLock.cpp \
+	grammar.cpp
 
 !macx:unix {
-	INCLUDEPATH += .. ../pcre ../kxmlcore
+	INCLUDEPATH += .. ../pcre ../kxmlcore ../bindings
 	MOC_DIR = .moc
 	OBJECTS_DIR = .obj
 	QMAKE_CXXFLAGS_DEBUG += -ansi
 }
 
 win32 {
-	INCLUDEPATH += .. ../pcre ../kxmlcore ../icu
+	INCLUDEPATH += .. ../pcre ../kxmlcore ../bindings ../icu
 	QMAKE_CXXFLAGS_RELEASE += /Zm1000
 	QMAKE_CXXFLAGS_DEBUG += /Zm1000
 }
