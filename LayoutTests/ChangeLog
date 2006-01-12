@@ -1,3 +1,13 @@
+2006-01-12  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Add tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5153
+        deleteRule and insertRule do not work
+        
+        * fast/dom/css-rule-functions-expected.txt: Added.
+        * fast/dom/css-rule-functions.html: Added.
+
 2006-01-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
