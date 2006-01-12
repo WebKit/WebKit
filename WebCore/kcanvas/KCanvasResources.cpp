@@ -37,6 +37,7 @@
 
 #include <qtextstream.h>
 #include "KCanvasTreeDebug.h"
+#include "dom_docimpl.h"
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r) 
 { 

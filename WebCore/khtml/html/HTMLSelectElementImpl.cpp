@@ -32,6 +32,7 @@
 #include "html_miscimpl.h" // for HTMLCollectionImpl
 #include "dom2_eventsimpl.h"
 #include "FormDataList.h"
+#include "dom_docimpl.h"
 
 #include "css/cssstyleselector.h"
 #include "cssproperties.h"

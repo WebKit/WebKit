@@ -1256,8 +1256,6 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
         d->m_decoder->deref();
     d->m_decoder = decoder;
 
-    doc->setParseMode([state parseMode]);
-    
     updatePolicyBaseURL();
 
     { // scope the lock

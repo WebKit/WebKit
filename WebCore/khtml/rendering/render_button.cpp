@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "render_button.h"
+#include "dom_docimpl.h"
 #include "RenderText.h"
 #include "htmlnames.h"
 #include "HTMLInputElementImpl.h"

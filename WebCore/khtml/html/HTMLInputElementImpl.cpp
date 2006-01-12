@@ -35,6 +35,7 @@
 #include "rendering/render_form.h"
 #include "rendering/render_button.h"
 #include "render_theme.h"
+#include "dom_docimpl.h"
 
 #include <klocale.h>
 

@@ -32,6 +32,7 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
+#include "dom_docimpl.h"
 
 using namespace DOM::HTMLNames;
 

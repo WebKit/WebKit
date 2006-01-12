@@ -28,7 +28,7 @@
 
 #include "css/css_valueimpl.h"
 #include "cssproperties.h"
-
+#include "dom_docimpl.h"
 #include "htmlediting.h"
 #include "Frame.h"
 #include "SelectionController.h"

@@ -26,6 +26,7 @@
 #import "font.h"
 #import "render_style.h"
 #import "render_canvas.h"
+#import "dom_docimpl.h"
 #import "dom_elementimpl.h"
 #import "FrameView.h"
 

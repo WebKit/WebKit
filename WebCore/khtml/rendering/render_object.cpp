@@ -30,6 +30,7 @@
 #include "rendering/render_line.h"
 #include "rendering/render_list.h"
 #include "rendering/render_canvas.h"
+#include "dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
@@ -2067,6 +2068,11 @@ void RenderObject::remove()
         parent()->removeChild(this);
     
     deleteLineBoxWrapper();
+}
+
+bool RenderObject::documentBeingDestroyed() const
+{
+    return !document()->renderer();
 }
 
 void RenderObject::destroy()

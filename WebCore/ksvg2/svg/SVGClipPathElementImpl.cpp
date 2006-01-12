@@ -27,6 +27,7 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kdom/css/CSSStyleSelector.h>
+#include "dom_docimpl.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

@@ -26,7 +26,6 @@
 #ifndef __jsediting_h__
 #define __jsediting_h__
 
-#include "dom_docimpl.h"
 #include "dom_string.h"
 #include "qdict.h"
 

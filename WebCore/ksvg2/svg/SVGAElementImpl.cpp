@@ -27,6 +27,7 @@
 #include <kdom/Helper.h>
 #include "xml/dom2_eventsimpl.h"
 #include "csshelper.h"
+#include "dom_docimpl.h"
 
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasContainer.h>

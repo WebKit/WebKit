@@ -24,6 +24,7 @@
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/DOMStringImpl.h>
 #include <kdom/core/NamedAttrMapImpl.h>
+#include "dom_docimpl.h"
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>

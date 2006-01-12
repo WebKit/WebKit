@@ -26,9 +26,9 @@
 #ifndef KHTML_EDITING_MARKUP_H
 #define KHTML_EDITING_MARKUP_H
 
-#include <xml/dom_docimpl.h>
 #include "html_interchange.h"
 #include <kxmlcore/PassRefPtr.h>
+#include "dom_docimpl.h"
 
 namespace khtml {
 

@@ -1,5 +1,4 @@
 #include "qptrdict.h"
-#include "xml/dom_docimpl.h"
 
 namespace DOM {
     class DOMString;

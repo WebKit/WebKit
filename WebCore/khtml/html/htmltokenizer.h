@@ -36,7 +36,6 @@
 #include "misc/loader_client.h"
 #include "xml/xml_tokenizer.h"
 #include "html/html_elementimpl.h"
-#include "xml/dom_docimpl.h"
 
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD

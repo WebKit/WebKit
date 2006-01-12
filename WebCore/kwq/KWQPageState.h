@@ -25,13 +25,18 @@
 
 #import <Foundation/Foundation.h>
 
-#import "dom_docimpl.h"
-
 namespace KJS {
     class SavedBuiltins;
     class SavedProperties;
     class PausedTimeouts;
 }
+
+namespace DOM {
+    class DocumentImpl;
+    class NodeImpl;
+}
+
+class KURL;
 
 @interface KWQPageState : NSObject
 {
@@ -42,13 +47,11 @@ namespace KJS {
     KJS::SavedProperties *locationProperties;
     KJS::SavedBuiltins *interpreterBuiltins;
     KJS::PausedTimeouts *pausedTimeouts;
-    DOM::DocumentImpl::ParseMode parseMode;
 }
 
 - initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
 
 - (DOM::DocumentImpl *)document;
-- (DOM::DocumentImpl::ParseMode)parseMode;
 - (DOM::NodeImpl *)mousePressNode;
 - (KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;

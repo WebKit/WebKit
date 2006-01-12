@@ -31,6 +31,7 @@
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
 #include "InlineTextBox.h"
+#include "dom_docimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_textimpl.h"

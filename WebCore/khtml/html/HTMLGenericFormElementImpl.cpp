@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLGenericFormElementImpl.h"
 #include "HTMLFormElementImpl.h"
+#include "dom_docimpl.h"
 
 #include "rendering/render_form.h"
 #include "render_theme.h"

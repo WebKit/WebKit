@@ -60,16 +60,10 @@ using namespace KJS;
     locationProperties = lp;
     interpreterBuiltins = ib;
     pausedTimeouts = pt;
-    parseMode = doc->parseMode();
 
     doc->view()->ref();
 
     return self;
-}
-
-- (DocumentImpl::ParseMode)parseMode
-{
-    return parseMode;
 }
 
 - (PausedTimeouts *)pausedTimeouts

@@ -112,7 +112,7 @@ public:
 
     friend class ::Frame;
     
-    Frame *frame() const { return !isNone() ? m_start.node()->getDocument()->frame() : 0; }
+    Frame *frame() const;
 
     // Safari Selection Object API
     NodeImpl *baseNode() const { return m_base.node(); }

@@ -28,6 +28,7 @@
 
 #include "append_node_command.h"
 #include "delete_from_text_node_command.h"
+#include "dom_docimpl.h"
 #include "htmlediting.h"
 #include "insert_into_text_node_command.h"
 #include "insert_node_before_command.h"

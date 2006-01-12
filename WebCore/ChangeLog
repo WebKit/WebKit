@@ -1,3 +1,52 @@
+2006-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - remove dom_documentimpl.h include from other headers where possible,
+        move down to impl files instead, so less rebuilds when you touch it
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::openURLFromPageCache):
+        * kcanvas/KCanvasResources.cpp:
+        * khtml/css/css_computedstyle.cpp:
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::frame):
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/jsediting.cpp:
+        * khtml/editing/jsediting.h:
+        * khtml/editing/markup.h:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/visible_text.cpp:
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        * khtml/html/HTMLLabelElementImpl.cpp:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        * khtml/html/htmltokenizer.h:
+        * khtml/rendering/InlineTextBox.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_br.cpp:
+        * khtml/rendering/render_button.cpp:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::documentBeingDestroyed):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_theme.cpp:
+        * khtml/rendering/render_theme_mac.mm:
+        * khtml/xbl/xbl_docimpl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        * ksvg2/svg/SVGHelper.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQPageState.h:
+        * kwq/KWQPageState.mm:
+
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
         Fix build
@@ -7,7 +56,7 @@
 
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Maciej
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6501
         - Merge KParts::BrowserInterface with KParts::BrowserExtension.

@@ -27,6 +27,7 @@
 #include "SVGSVGElementImpl.h"
 #include "SVGAnimatedRectImpl.h"
 #include "SVGAnimatedLengthImpl.h"
+#include "dom_docimpl.h"
 
 #include <kcanvas/KCanvas.h>
 
