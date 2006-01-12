@@ -1,5 +1,14 @@
 2006-01-11  Justin Garcia  <justin.garcia@apple.com>
 
+        Replaced two asserts that I accidently removed in
+        the build bustage fix.
+
+        * page/Frame.cpp:
+        (Frame::revealSelection):
+        (Frame::centerSelectionInVisibleArea):
+
+2006-01-11  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by kevin
 
         The removal of Frame::clearSelection() broke a layout 
