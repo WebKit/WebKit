@@ -20,9 +20,8 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "config.h"
+#include "lexer.h"
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -35,7 +34,6 @@
 #include "types.h"
 #include "interpreter.h"
 #include "nodes.h"
-#include "lexer.h"
 #include "identifier.h"
 #include "lookup.h"
 #include "internal.h"

@@ -21,9 +21,8 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "config.h"
+#include "ustring.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -36,7 +35,6 @@
 #include <strings.h>
 #endif
 
-#include "ustring.h"
 #include "operations.h"
 #include "identifier.h"
 #include <math.h>

@@ -1,3 +1,20 @@
+2006-01-12  Justin Haygood  <justin@xiondigital.net>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6416
+          lexer.cpp, grammar.y protect include of config.h with "HAVE_CONFIG_H"
+
+        * kjs/dtoa.cpp: Removed HAVE_CONFIG_H, changed config.h to use
+        quotes instead of angle brackets. Moved dtoa.h include to the top.
+        Changed system header includes to use angle brackets instead of quotes.
+        * kjs/grammar.y: Removed HAVE_CONFIG_H, changed config.h to use
+        quotes instead of angle brackets.
+        * kjs/lexer.cpp: Removed HAVE_CONFIG_H, changed config.h to use
+        quotes instead of angle brackets. Moved lexer.h include to the top.
+        * kjs/ustring.cpp: Removed HAVE_CONFIG_H, changed config.h to use
+        quotes instead of angle brackets. Moved ustring.h include to the top.
+
 2006-01-12  George Staikos <staikos@kde.org>
 
         Reviewed by Maciej
