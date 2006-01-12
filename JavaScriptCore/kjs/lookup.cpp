@@ -49,7 +49,11 @@ static inline const HashEntry* findEntry(const struct HashTable *table, unsigned
     return 0;
   }
 #endif
+  if (table->hashSize == 0)
+    return 0;
+
   hash %= table->hashSize;
+
   const HashEntry *e = &table->entries[hash];
 
   // empty bucket ?
