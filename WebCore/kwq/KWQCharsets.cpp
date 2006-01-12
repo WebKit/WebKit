@@ -25,10 +25,10 @@
  */
 
 #include "config.h"
-#import "KWQCharsets.h"
+#include "KWQCharsets.h"
 
-#import <unicode/ucnv.h>
-#import <unicode/utypes.h>
+#include <unicode/ucnv.h>
+#include <unicode/utypes.h>
 
 struct CharsetEntry {
     const char *name;

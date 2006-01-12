@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQDictImpl.h"
-#import <CoreFoundation/CoreFoundation.h>
+#include "KWQDictImpl.h"
+
+#include <CoreFoundation/CoreFoundation.h>
 
 KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *)) :
     KWQPtrDictImpl(size, deleteFunc, &kCFCopyStringDictionaryKeyCallBacks), m_caseSensitive(caseSensitive)

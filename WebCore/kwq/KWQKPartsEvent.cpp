@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#import "KWQKPartsEvent.h"
+#include "KWQKPartsEvent.h"
 
 namespace KParts {
 

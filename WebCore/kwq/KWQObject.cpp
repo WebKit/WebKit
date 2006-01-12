@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQObject.h"
+#include "KWQObject.h"
 
-#import <kxmlcore/Assertions.h>
-#import <kxmlcore/FastMalloc.h>
+#include <kxmlcore/Assertions.h>
 
 struct KWQObjectTimer {
     QObject *target;

@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQTimer.h"
+#include "KWQTimer.h"
 
-#import <kxmlcore/Assertions.h>
+#include <kxmlcore/Assertions.h>
 
 static void timerFired(CFRunLoopTimerRef, void *info)
 {

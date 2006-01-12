@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQKHTMLFactory.h"
+#include "KWQKHTMLFactory.h"
 
-#import "KWQKHTMLSettings.h"
+#include "KWQKHTMLSettings.h"
 
 KHTMLSettings *KHTMLFactory::defaultHTMLSettings()
 {

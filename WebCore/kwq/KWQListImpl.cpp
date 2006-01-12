@@ -24,13 +24,12 @@
  */
 
 #include "config.h"
-#import "KWQListImpl.h"
+#include "KWQListImpl.h"
 
-#import <cstddef>
-#import <algorithm>
-#import <CoreFoundation/CFArray.h>
-#import <kxmlcore/Assertions.h>
-#import "kxmlcore/FastMalloc.h"
+#include <cstddef>
+#include <algorithm>
+#include <CoreFoundation/CFArray.h>
+#include <kxmlcore/Assertions.h>
 
 class KWQListNode
 {

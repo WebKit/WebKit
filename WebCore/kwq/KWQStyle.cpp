@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQStyle.h"
+#include "KWQStyle.h"
 
-#import "KWQWidget.h"
+class QWidget;
 
 QSize QStyle::sizeFromContents(ContentType, QWidget *, const QSize &s) const
 {

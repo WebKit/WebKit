@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQWMatrix.h"
-#import "KWQRect.h"
+#include "KWQWMatrix.h"
+
+#include "KWQRect.h"
 
 static const double deg2rad = 0.017453292519943295769; // pi/180
 

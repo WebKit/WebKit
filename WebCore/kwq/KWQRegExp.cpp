@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#import "KWQRegExp.h"
-#import "KWQLogging.h"
+#include "KWQRegExp.h"
+#include "KWQLogging.h"
 
-#import <sys/types.h>
-#import <JavaScriptCore/pcre.h>
-#import "misc/shared.h"
+#include <sys/types.h>
+#include <pcre/pcre.h>
+#include "misc/shared.h"
 
 #define MAX_SUBSTRINGS  10
 #define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)
@@ -223,7 +223,7 @@ QString QRegExp::cap(int n) const
 {
     Q_ASSERT(!d->lastSearchString.isNull());
     const pcre_char *substring = NULL;
-    int substringLength =  pcre_get_substring(reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchOffsets, d->lastMatchCount, n, &substring);
+    int substringLength = pcre_get_substring(reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchOffsets, d->lastMatchCount, n, &substring);
     if (substringLength > 0) {
        QString capture(reinterpret_cast<const QChar *>(substring), substringLength);
        pcre_free_substring(substring);
@@ -231,4 +231,3 @@ QString QRegExp::cap(int n) const
     }
     return QString();
 }
-

@@ -24,14 +24,13 @@
  */
 
 #include "config.h"
-#import "KWQTextCodec.h"
+#include "KWQTextCodec.h"
 
-#import <kxmlcore/Assertions.h>
-#import "KWQCharsets.h"
-#import "KWQLogging.h"
-
-#import <unicode/ucnv.h>
-#import <unicode/utypes.h>
+#include <kxmlcore/Assertions.h>
+#include "KWQCharsets.h"
+#include "KWQLogging.h"
+#include <unicode/ucnv.h>
+#include <unicode/utypes.h>
 
 const UniChar replacementCharacter = 0xFFFD;
 const UniChar BOM = 0xFEFF;

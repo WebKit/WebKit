@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQPointArray.h"
-#import <stdarg.h>
+#include "KWQPointArray.h"
 
-#import "KWQRect.h"
+#include <stdarg.h>
+#include "KWQRect.h"
 
 QPointArray::QPointArray(int nPoints, const int *points)
 {

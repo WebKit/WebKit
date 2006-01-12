@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQVariant.h"
-#import "KWQString.h"
-#import "misc/shared.h"
+#include "KWQVariant.h"
+
+#include "KWQString.h"
+#include "misc/shared.h"
 
 class QVariant::QVariantPrivate : public khtml::Shared<QVariant::QVariantPrivate>
 {

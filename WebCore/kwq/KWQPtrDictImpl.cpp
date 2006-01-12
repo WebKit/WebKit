@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQPtrDictImpl.h"
+#include "KWQPtrDictImpl.h"
 
-#import <new>
+#include <new>
 
 typedef void (* DeleteFunction) (void *);
 

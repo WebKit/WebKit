@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQLogging.h"
+#include "KWQLogging.h"
 
-#import "KWQTextStream.h"
+#include "KWQTextStream.h"
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
 const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f" "%.6f"}; 

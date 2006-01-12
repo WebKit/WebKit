@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQCString.h"
+#include "KWQCString.h"
 
-#import <kxmlcore/Assertions.h>
-#import <ctype.h>
+#include <kxmlcore/Assertions.h>
+#include <ctype.h>
 
 using std::ostream;
 

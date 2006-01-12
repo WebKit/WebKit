@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQGuardedPtr.h"
+#include "KWQGuardedPtr.h"
 
-#import "KWQObject.h"
+#include "KWQObject.h"
 
 KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {

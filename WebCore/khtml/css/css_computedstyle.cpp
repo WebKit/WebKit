@@ -35,7 +35,7 @@
 #include "rendering/render_style.h"
 #include "rendering/render_object.h"
 
-#import <kxmlcore/Assertions.h>
+#include <kxmlcore/Assertions.h>
 
 using namespace khtml;
 

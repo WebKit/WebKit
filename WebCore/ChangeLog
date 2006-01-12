@@ -1,3 +1,44 @@
+2006-01-12  Justin Haygood  <justin@xiondigital.net>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6497
+          Use #include, not #import, in KWQ C++ files
+
+        * bridge/mac/KWQKHTMLView.cpp:
+        * kcanvas/RenderSVGText.cpp:
+        * khtml/css/css_computedstyle.cpp:
+        * kwq/KWQArrayImpl.cpp:
+        * kwq/KWQBuffer.cpp:
+        * kwq/KWQCString.cpp:
+        * kwq/KWQCharsets.cpp:
+        * kwq/KWQDateTime.cpp:
+        * kwq/KWQDictImpl.cpp:
+        * kwq/KWQGuardedPtr.cpp:
+        * kwq/KWQKHTMLFactory.cpp:
+        * kwq/KWQKPartsEvent.cpp:
+        * kwq/KWQListImpl.cpp:
+        * kwq/KWQMapImpl.cpp:
+        * kwq/KWQObject.cpp:
+        * kwq/KWQPen.cpp:
+        * kwq/KWQPointArray.cpp:
+        * kwq/KWQPtrDictImpl.cpp:
+        * kwq/KWQRegion.cpp:
+        * kwq/KWQStyle.cpp:
+        * kwq/KWQTextCodec.cpp:
+        * kwq/KWQTextStream.cpp:
+        * kwq/KWQTimer.cpp:
+        * kwq/KWQValueListImpl.cpp:
+        * kwq/KWQVariant.cpp:
+        * kwq/KWQVectorImpl.cpp:
+        * kwq/KWQWMatrix.cpp:
+        Replaced #import with #include.
+
+        * kwq/KWQRegExp.cpp: Replaced #import with #include.
+        Also changed <JavaScriptCore/pcre.h> to <pcre/pcre.h>.
+        * ForwardingHeaders/pcre: Added.
+        * ForwardingHeaders/pcre/pcre.h: Added.
+
 2006-01-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by anders & mjs.

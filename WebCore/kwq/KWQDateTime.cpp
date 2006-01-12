@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "KWQDateTime.h"
+#include "KWQDateTime.h"
 
-#import <time.h>
+#include <time.h>
 
 static CFTimeZoneRef systemTimeZone()
 {

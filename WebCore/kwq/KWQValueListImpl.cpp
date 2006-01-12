@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQValueListImpl.h"
-#import "misc/shared.h"
+#include "KWQValueListImpl.h"
 
-#import <stdlib.h>
+#include "misc/shared.h"
+#include <stdlib.h>
 
 class KWQValueListImpl::KWQValueListPrivate : public khtml::Shared<KWQValueListImpl::KWQValueListPrivate>
 {

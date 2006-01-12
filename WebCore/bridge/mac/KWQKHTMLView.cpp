@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "FrameView.h"
+#include "FrameView.h"
 
-#import "MacFrame.h"
-#import "KWQWindowWidget.h"
+#include "MacFrame.h"
+#include "KWQWindowWidget.h"
 
 /*
     Currently this file just extends the KDE implementation.

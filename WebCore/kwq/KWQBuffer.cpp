@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#import "KWQBuffer.h"
+#include "KWQBuffer.h"
 
 void QBuffer::open(int)
 {

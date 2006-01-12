@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQArrayImpl.h"
+#include "KWQArrayImpl.h"
 
-#import <new>
-#import <string.h>
+#include <new>
+#include <string.h>
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 

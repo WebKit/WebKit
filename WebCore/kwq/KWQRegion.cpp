@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#import "KWQRegion.h"
+#include "KWQRegion.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
