@@ -32,7 +32,7 @@
 #import "MacFrame.h"
 
 KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(Frame *frame)
-    : m_frame(Mac(frame)), _browserInterface(m_frame)
+    : m_frame(Mac(frame))
 {
 }
 
@@ -177,6 +177,18 @@ void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &
 {
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+int KHTMLPartBrowserExtension::getHistoryLength()
+{
+    return [m_frame->bridge() historyLength];
+}
+
+void KHTMLPartBrowserExtension::goBackOrForward(int distance)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    [m_frame->bridge() goBackOrForward:distance];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

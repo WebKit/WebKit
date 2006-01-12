@@ -51,6 +51,7 @@
 
 #include <qpainter.h>
 #include <qpaintdevicemetrics.h>
+#include <qvariant.h>
 
 #include <kimageio.h>
 #include <assert.h>

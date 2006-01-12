@@ -31,8 +31,7 @@
 #include "KWQPointArray.h"
 
 #include "KWQKURL.h"
-
-#include "KWQKPartsBrowserInterface.h"
+#include "KWQObject.h"
 
 #include "formdata.h"
 
@@ -92,7 +91,6 @@ struct WindowArgs {
 class BrowserExtension : public QObject {
 public:
     BrowserExtension() { }
-    virtual BrowserInterface *browserInterface() = 0;
     
     virtual void openURLRequest(const KURL &, const URLArgs &args = URLArgs()) = 0;
     virtual void openURLNotify() = 0;
@@ -107,6 +105,9 @@ public:
     
     virtual void setIconURL(const KURL &url) = 0;
     virtual void setTypedIconURL(const KURL &url, const QString &type) = 0;
+    
+    virtual int getHistoryLength() = 0;
+    virtual void goBackOrForward(int distance) = 0;
     
     void setURLArgs(const URLArgs &args) { m_args = args; }
     URLArgs urlArgs() const { return m_args; }

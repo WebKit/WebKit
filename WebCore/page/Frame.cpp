@@ -93,8 +93,6 @@ using namespace KJS;
 using namespace DOM::EventNames;
 using namespace khtml;
 
-using KParts::BrowserInterface;
-
 const int CARET_BLINK_FREQUENCY = 500;
 
 namespace khtml {
@@ -1196,9 +1194,7 @@ void Frame::slotRedirect()
             openURL( url() ); /// ## need args.reload=true?
         else {
             if (d->m_extension) {
-                BrowserInterface *interface = d->m_extension->browserInterface();
-                if (interface)
-                    interface->callMethod( "goHistory(int)", d->m_scheduledHistoryNavigationSteps );
+                d->m_extension->goBackOrForward(d->m_scheduledHistoryNavigationSteps);
             }
         }
         return;

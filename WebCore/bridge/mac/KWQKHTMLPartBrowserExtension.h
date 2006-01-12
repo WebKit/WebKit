@@ -24,17 +24,14 @@
  */
 
 #include "KWQKPartsBrowserExtension.h"
-#include "KWQKPartsBrowserInterface.h"
 
-class QWidget;
 class Frame;
+class MacFrame;
 
 class KHTMLPartBrowserExtension : public KParts::BrowserExtension {
 public:
     KHTMLPartBrowserExtension(Frame *);
     
-    virtual KParts::BrowserInterface *browserInterface() { return &_browserInterface; }
-
     virtual void openURLRequest(const KURL &, 
 				const KParts::URLArgs &args = KParts::URLArgs());
     virtual void openURLNotify();
@@ -49,6 +46,9 @@ public:
     virtual void setIconURL(const KURL &url);
     virtual void setTypedIconURL(const KURL &url, const QString &type);
 
+    virtual int getHistoryLength();
+    virtual void goBackOrForward(int distance);
+
     bool canRunModal();
     bool canRunModalNow();
     void runModal();
@@ -60,5 +60,4 @@ private:
 			  ObjectContents **part);
 
      MacFrame *m_frame;
-     KParts::BrowserInterface _browserInterface;
 };

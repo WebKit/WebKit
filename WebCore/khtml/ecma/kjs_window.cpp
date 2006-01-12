@@ -2498,19 +2498,10 @@ JSValue *History::getValueProperty(ExecState *, int token) const
   case Length:
   {
     KParts::BrowserExtension *ext = m_frame->browserExtension();
-    if ( !ext )
+    if (!ext)
       return jsNumber(0);
 
-    KParts::BrowserInterface *iface = ext->browserInterface();
-    if ( !iface )
-      return jsNumber(0);
-
-    QVariant length = iface->property( "historyLength" );
-
-    if ( length.type() != QVariant::UInt )
-      return jsNumber(0);
-
-    return jsNumber( length.toUInt() );
+    return jsNumber(ext->getHistoryLength());
   }
   default:
     kdWarning() << "Unhandled token in History::getValueProperty : " << token << endl;

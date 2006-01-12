@@ -39,6 +39,7 @@
 #include "Frame.h"
 #include <kdebug.h>
 #include <klocale.h>
+#include <qvariant.h>
 
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>

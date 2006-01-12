@@ -1,3 +1,31 @@
+2006-01-12  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6501
+        - Merge KParts::BrowserInterface with KParts::BrowserExtension.
+        
+        * ForwardingHeaders/kparts/browserinterface.h: Removed.
+        * bridge/mac/KWQKPartsBrowserInterface.mm: Removed.
+        * kwq/KWQKPartsBrowserInterface.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/KWQKHTMLPartBrowserExtension.h:
+        * bridge/mac/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::KHTMLPartBrowserExtension):
+        (KHTMLPartBrowserExtension::getHistoryLength):
+        (KHTMLPartBrowserExtension::goBackOrForward):        
+        * bridge/mac/KWQKPartsBrowserExtension.h:
+        (KParts::BrowserExtension::BrowserExtension):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::History::getValueProperty):
+        * khtml/xml/xml_tokenizer.cpp:
+        * page/Frame.cpp:
+        (Frame::slotRedirect):
+        * page/FrameView.cpp:
+        Add getHistoryLength and goBackOrForward to BrowserExtension and
+        use them.
+
 2006-01-12  Eric Seidel  <eseidel@apple.com>
 
         Build fix, files missing from previous <image> commit:

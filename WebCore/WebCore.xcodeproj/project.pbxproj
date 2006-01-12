@@ -83,7 +83,6 @@
 		65BF02400974819000C43196 /* KWQKHTMLPartBrowserExtension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */; };
 		65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02380974819000C43196 /* KWQKHTMLView.cpp */; };
 		65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */; };
-		65BF02430974819000C43196 /* KWQKPartsBrowserInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023A0974819000C43196 /* KWQKPartsBrowserInterface.mm */; };
 		65BF02440974819000C43196 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* MacFrame.h */; };
 		65BF02450974819000C43196 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* MacFrame.mm */; };
 		65BF02460974819000C43196 /* WebCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023D0974819000C43196 /* WebCoreBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -214,7 +213,6 @@
 		93F1995508245E59001E9ABC /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
 		93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
-		93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
 		93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
@@ -811,7 +809,6 @@
 		A88AD19A0952480A001DD196 /* KWQKJob.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864A02DE3A9A01EA4122 /* KWQKJob.h */; };
 		A88AD19B0952480A001DD196 /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
 		A88AD19F0952480A001DD196 /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
-		A88AD1A10952480A001DD196 /* KWQKPartsBrowserInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */; };
 		A88AD1A20952480A001DD196 /* KWQKPartsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */; };
 		A88AD1A30952480A001DD196 /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
 		A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
@@ -1780,7 +1777,6 @@
 		65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKHTMLPartBrowserExtension.mm; sourceTree = "<group>"; };
 		65BF02380974819000C43196 /* KWQKHTMLView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KWQKHTMLView.cpp; sourceTree = "<group>"; };
 		65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserExtension.h; sourceTree = "<group>"; };
-		65BF023A0974819000C43196 /* KWQKPartsBrowserInterface.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKPartsBrowserInterface.mm; sourceTree = "<group>"; };
 		65BF023B0974819000C43196 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
 		65BF023D0974819000C43196 /* WebCoreBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreBridge.h; sourceTree = "<group>"; };
@@ -2746,7 +2742,6 @@
 		F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJobClasses.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864D02DE3A9A01EA4122 /* KWQKImageIO.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKImageIO.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKSSLKeyGen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserInterface.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsEvent.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsHistoryProvider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587867602DE3B8601EA4122 /* KWQApplication.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = KWQApplication.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2950,7 +2945,6 @@
 				65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */,
 				65BF02380974819000C43196 /* KWQKHTMLView.cpp */,
 				65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */,
-				65BF023A0974819000C43196 /* KWQKPartsBrowserInterface.mm */,
 				65BF023B0974819000C43196 /* MacFrame.h */,
 				65BF023C0974819000C43196 /* MacFrame.mm */,
 				65BF023D0974819000C43196 /* WebCoreBridge.h */,
@@ -4221,7 +4215,6 @@
 		F587867502DE3B3301EA4122 /* kparts */ = {
 			isa = PBXGroup;
 			children = (
-				F587866802DE3B3201EA4122 /* KWQKPartsBrowserInterface.h */,
 				F587866902DE3B3201EA4122 /* KWQKPartsEvent.h */,
 				F587850802DE375901EA4122 /* KWQKPartsEvent.cpp */,
 				F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */,
@@ -4484,7 +4477,6 @@
 				93F1995508245E59001E9ABC /* KWQKJob.h in Headers */,
 				93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */,
 				93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */,
-				93F1995D08245E59001E9ABC /* KWQKPartsBrowserInterface.h in Headers */,
 				93F1995E08245E59001E9ABC /* KWQKPartsEvent.h in Headers */,
 				93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
@@ -5008,7 +5000,6 @@
 				A88AD19A0952480A001DD196 /* KWQKJob.h in Headers */,
 				A88AD19B0952480A001DD196 /* KWQKJobClasses.h in Headers */,
 				A88AD19F0952480A001DD196 /* KWQKLocale.h in Headers */,
-				A88AD1A10952480A001DD196 /* KWQKPartsBrowserInterface.h in Headers */,
 				A88AD1A20952480A001DD196 /* KWQKPartsEvent.h in Headers */,
 				A88AD1A30952480A001DD196 /* KWQKPartsHistoryProvider.h in Headers */,
 				A88AD1A50952480A001DD196 /* KWQKSSLKeyGen.h in Headers */,
@@ -6751,7 +6742,6 @@
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				65BF02400974819000C43196 /* KWQKHTMLPartBrowserExtension.mm in Sources */,
 				65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */,
-				65BF02430974819000C43196 /* KWQKPartsBrowserInterface.mm in Sources */,
 				65BF02450974819000C43196 /* MacFrame.mm in Sources */,
 				65BF02470974819000C43196 /* WebCoreBridge.mm in Sources */,
 				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,
