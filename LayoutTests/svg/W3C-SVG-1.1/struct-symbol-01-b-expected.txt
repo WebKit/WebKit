@@ -1,12 +1,12 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 1240x1150
-      KCanvasContainer {g} at (0,0) size 1240x1150
-        KCanvasContainer {g} at (0,0) size 1240x1150
-          KCanvasContainer {use} at (0,0) size 1000x1000
-            KCanvasContainer {g} at (0,0) size 1000x1000
-              KCanvasContainer {svg} at (45,0) size 150x150
-                KCanvasItem {image} at (45,0) size 150x150 [fill={[type=IMAGE] [bounding box=at (0,0) size 240x160]}] [data="M0.00,0.00L1000.00,0.00L1000.00,1000.00L0.00,1000.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 1239.50x1149.50
+      KCanvasContainer {g} at (240,150) size 1000x1000
+        KCanvasContainer {g} at (240,150) size 1000x1000
+          KCanvasContainer {use} at (0,0) size 0x0
+            KCanvasContainer {g} at (0,0) size 0x0
+              KCanvasContainer {svg} at (45,0) size 0x0
+                RenderImage {image} at (0,0) size 1000x1000
           KCanvasContainer {use} at (240,150) size 1000x1000
             KCanvasContainer {g} at (240,150) size 1000x1000 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
               KCanvasContainer {svg} at (81,22.50) size 150x150

@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0) size 479x359.50
-      KCanvasContainer {g} at (30,0) size 420x280
-        KCanvasContainer {g} at (30,0) size 190x190
-          KCanvasItem {image} at (30,0) size 190x190 [fill={[type=IMAGE] [bounding box=at (0,0) size 190x190]}] [data="M30.00,0.00L220.00,0.00L220.00,190.00L30.00,190.00"]
-        KCanvasContainer {g} at (260,90) size 190x190
-          KCanvasItem {image} at (260,90) size 190x190 [fill={[type=IMAGE] [bounding box=at (0,0) size 190x190]}] [data="M260.00,90.00L450.00,90.00L450.00,280.00L260.00,280.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (0,0) size 0x0
+        KCanvasContainer {g} at (0,0) size 0x0
+          RenderImage {image} at (0,0) size 190x190
+        KCanvasContainer {g} at (0,0) size 0x0
+          RenderImage {image} at (0,0) size 190x190
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {TEXT} at (0,0) size 208x14
             text run at (0,0) width 208: "Basic test of ICC profile with an image."

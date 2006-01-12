@@ -3,11 +3,11 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (23,13) size 434x224
         KCanvasItem {rect} at (23,13) size 434x224 [fill={[type=SOLID] [color=#000000]}] [data="M23.00,13.00L457.00,13.00L457.00,237.00L23.00,237.00"]
-        KCanvasItem {image} at (25,15) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,15.00L455.00,15.00L455.00,63.00L25.00,63.00"]
-        KCanvasItem {image} at (25,43) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,43.00L455.00,43.00L455.00,91.00L25.00,91.00"]
-        KCanvasItem {image} at (25,91) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,91.00L455.00,91.00L455.00,139.00L25.00,139.00"]
-        KCanvasItem {image} at (25,139) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,139.00L455.00,139.00L455.00,187.00L25.00,187.00"]
-        KCanvasItem {image} at (25,187) size 430x48 [fill={[type=IMAGE] [bounding box=at (0,0) size 430x48]}] [data="M25.00,187.00L455.00,187.00L455.00,235.00L25.00,235.00"]
+        RenderImage {image} at (0,0) size 430x48
+        RenderImage {image} at (0,0) size 430x48
+        RenderImage {image} at (0,0) size 430x48
+        RenderImage {image} at (0,0) size 430x48
+        RenderImage {image} at (0,0) size 430x48
         RenderSVGText {text} at (0,0) size 465x46
           RenderText {TEXT} at (0,0) size 299x46
             text run at (0,0) width 299: "Gamma correction"

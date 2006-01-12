@@ -10,31 +10,31 @@ KCanvasResource {id="lightingColorC" [type=FILTER]  [bounding box=at (0,0) size 
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (90,80) size 190x170
+      KCanvasContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {TEXT} at (0,0) size 140x14
             text run at (0,0) width 140: "Filters: feDiffuseLighting"
-        KCanvasContainer {g} at (90,80) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        KCanvasContainer {g} at (0,50) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 291x18
               text run at (0,0) width 291: "Various values for surfaceScale: 1, 10 and -10"
-          KCanvasItem {image} at (90,80) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#surfaceScaleA] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-          KCanvasItem {image} at (160,80) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#surfaceScaleB] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-          KCanvasItem {image} at (230,80) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#surfaceScaleC] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
-        KCanvasContainer {g} at (90,150) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
+        KCanvasContainer {g} at (0,120) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 296x18
               text run at (0,0) width 296: "Various values for diffuseConstants: 0, 1 and 2"
-          KCanvasItem {image} at (90,150) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#diffuseConstantA] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-          KCanvasItem {image} at (160,150) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#diffuseConstantB] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-          KCanvasItem {image} at (230,150) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#diffuseConstantC] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
-        KCanvasContainer {g} at (90,220) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
+        KCanvasContainer {g} at (0,190) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 341x18
               text run at (0,0) width 341: "Various values for lighting color: red, yellow and blue"
-          KCanvasItem {image} at (90,220) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#lightingColorA] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-          KCanvasItem {image} at (160,220) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#lightingColorB] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-          KCanvasItem {image} at (230,220) size 50x30 [fill={[type=IMAGE] [bounding box=at (0,0) size 50x30]}] [filter=#lightingColorC] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
+          RenderImage {image} at (0,0) size 50x30
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.3 $"

@@ -2,14 +2,14 @@ KCanvasResource {id="sample" [type=CLIPPER] [clip data=[]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (20,20) size 420x310
-        KCanvasContainer {g} at (30,20) size 410x140
-          KCanvasItem {image} at (30,20) size 410x140 [fill={[type=IMAGE] [bounding box=at (0,0) size 410x160]}] [data="M30.00,20.00L440.00,20.00L440.00,160.00L30.00,160.00"]
+      KCanvasContainer {g} at (0,0) size 0x0
+        KCanvasContainer {g} at (0,0) size 0x0
+          RenderImage {image} at (0,0) size 410x140
           RenderSVGText {text} at (0,0) size 465x122
             RenderText {TEXT} at (0,0) size 353x122
               text run at (0,0) width 353: "Clip Test"
-        KCanvasContainer {g} at (20,170) size 410x160
-          KCanvasItem {image} at (20,170) size 410x160 [fill={[type=IMAGE] [bounding box=at (0,0) size 410x160]}] [clip path="#sample"] [data="M20.00,170.00L430.00,170.00L430.00,330.00L20.00,330.00"]
+        KCanvasContainer {g} at (0,0) size 0x0
+          RenderImage {image} at (0,0) size 410x160
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.3 $"

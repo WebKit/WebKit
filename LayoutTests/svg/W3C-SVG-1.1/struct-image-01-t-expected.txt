@@ -1,9 +1,9 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0) size 479.50x359.50
-      KCanvasContainer {g} at (240,0) size 240x300
-        KCanvasItem {image} at (240,0) size 240x150 [fill={[type=IMAGE] [bounding box=at (0,0) size 240x150]}] [data="M240.00,0.00L480.00,0.00L480.00,150.00L240.00,150.00"]
-        KCanvasItem {image} at (240,150) size 240x150 [fill={[type=IMAGE] [bounding box=at (0,0) size 240x150]}] [data="M240.00,150.00L480.00,150.00L480.00,300.00L240.00,300.00"]
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (0,0) size 0x0
+        RenderImage {image} at (0,0) size 240x150
+        RenderImage {image} at (0,0) size 240x150
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.3 $"
