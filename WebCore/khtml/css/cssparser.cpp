@@ -1135,6 +1135,10 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
+    case CSS_PROP__KHTML_RTL_ORDERING:
+        if (id == CSS_VAL_LOGICAL || id == CSS_VAL_VISUAL)
+            valid_primitive = true;
+        break;
 
 	/* shorthand properties */
     case CSS_PROP_BACKGROUND:

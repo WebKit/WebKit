@@ -1,6 +1,25 @@
 2006-01-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
+        
+        Test: fast/css/rtl-ordering.html
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6334
+          REGRESSION: <input type="button"> text is reversed on "visual Hebrew" pages
+
+        * khtml/css/cssparser.cpp: (CSSParser::parseValue): Parse the new -khtml-rtl-ordering property.
+        * khtml/css/cssproperties.in: Added -khtml-rtl-ordering property.
+        * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::applyProperty): Apply the new property.
+        * khtml/css/cssvalues.in: Added "logical" and "visual" values for the -khtml-rtl-ordering property.
+        * khtml/css/html4.css: Force logical ordering in input-buttons.
+        * khtml/css/makeprop: Fixed maximum property length computation.
+        * khtml/rendering/render_style.h: Added initial value for visuallyOrdered.
+        * ksvg2/scripts/cssmakeprops: Ensure no overlap between KHTML and SVG CSS properties.
+        * ksvg2/scripts/cssmakevalues: Ensure no overlap between KHTML and SVG CSS values.
+
+2006-01-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6219
           Perf regression: -[NSImage initWithData:] called repeatedly while

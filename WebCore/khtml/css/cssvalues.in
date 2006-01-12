@@ -490,3 +490,9 @@ padding
 #
 border-box
 content-box
+
+#
+# CSS_PROP__KHTML_RTL_ORDERING
+#
+logical
+visual

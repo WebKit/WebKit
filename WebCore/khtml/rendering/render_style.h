@@ -1047,7 +1047,7 @@ protected:
 	inherited_flags._direction = initialDirection();
 	inherited_flags._border_collapse = initialBorderCollapse();
 	inherited_flags._white_space = initialWhiteSpace();
-	inherited_flags._visuallyOrdered = false;
+	inherited_flags._visuallyOrdered = initialVisuallyOrdered();
 	inherited_flags._htmlHacks=false;
         inherited_flags._box_direction = initialBoxDirection();
         inherited_flags._force_backgrounds_to_white = false;
@@ -1661,6 +1661,7 @@ public:
     static EKHTMLLineBreak initialKHTMLLineBreak() { return LBNORMAL; }
     static EMatchNearestMailBlockquoteColor initialMatchNearestMailBlockquoteColor() { return BCNORMAL; }
     static EAppearance initialAppearance() { return NoAppearance; }
+    static bool initialVisuallyOrdered() { return false; }
 
     // Keep these at the end.
     static int initialLineClamp() { return -1; }

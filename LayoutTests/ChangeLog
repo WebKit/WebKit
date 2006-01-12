@@ -1,3 +1,15 @@
+2006-01-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6334
+          REGRESSION: <input type="button"> text is reversed on "visual Hebrew" pages
+
+        * fast/css/rtl-ordering-expected.checksum: Added.
+        * fast/css/rtl-ordering-expected.png: Added.
+        * fast/css/rtl-ordering-expected.txt: Added.
+        * fast/css/rtl-ordering.html: Added.
+
 2006-01-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed and committed by John Sullivan.

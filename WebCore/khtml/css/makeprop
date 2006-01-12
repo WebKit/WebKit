@@ -37,7 +37,7 @@ print ""; \
 print "#define CSS_PROP_MAX CSS_PROP_Z_INDEX"; \
 print "#define CSS_PROP_TOTAL " i \
 }' >> cssproperties.h
-perl -e 'my $max = 0; while (<>) { chomp; $max = length if $ ax < length; } print "const size_t maxCSSPropertyNameLength = $max;\n"' < cssproperties.strip >> cssproperties.h
+perl -e 'my $max = 0; while (<>) { chomp; $max = length if $max < length; } print "const size_t maxCSSPropertyNameLength = $max;\n"' < cssproperties.strip >> cssproperties.h
 echo -e '#endif\n' >> cssproperties.h
 
 gperf -a -L 'ANSI-C' -E -C -c -o -t -k '*' -NfindProp -Hhash_prop -Wwordlist_prop -D -s 2 cssproperties.gperf > cssproperties.c || exit 1

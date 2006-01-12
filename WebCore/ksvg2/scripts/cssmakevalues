@@ -49,7 +49,7 @@ my %amap = ();
 
 $num = 0;
 if ($nsFull ne "KDOM") {
-	$num = 312; # ALWAYS KEEP IN SYNC WITH KDOM'S VAL_TOTAL_KEYWORDS
+	$num = 10001; # Bigger than all values from HTML CSS
 
 	print header "#define ${ns}CSS_VAL_INVALID 0\n";
 	print header "#define ${ns}CSS_VAL_MIN $num\n";

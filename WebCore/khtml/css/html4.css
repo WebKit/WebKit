@@ -309,6 +309,7 @@ input[type="radio"], input[type="checkbox"] {
 input[type="button"], input[type="submit"], input[type="reset"]
 {
     -khtml-appearance: push-button;
+    -khtml-rtl-ordering: logical;
     white-space: pre
 }
 

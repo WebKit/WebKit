@@ -3961,6 +3961,12 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         
         break;
     }   
+    case CSS_PROP__KHTML_RTL_ORDERING:
+        HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        style->setVisuallyOrdered(primitiveValue->getIdent() == CSS_VAL_VISUAL);
+        break;
 
     default:
 #if SVG_SUPPORT
