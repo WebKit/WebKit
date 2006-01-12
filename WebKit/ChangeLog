@@ -1,3 +1,7 @@
+2006-01-11  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2006-01-09  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Removed.
