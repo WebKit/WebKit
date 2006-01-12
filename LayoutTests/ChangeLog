@@ -1,5 +1,17 @@
 2006-01-11  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by bdash
+        
+        I used apple.com as the iframe src in the last checkin,
+        oops.  I just use another layout test for the src now.
+
+        * editing/selection/iframe-expected.checksum:
+        * editing/selection/iframe-expected.png:
+        * editing/selection/iframe-expected.txt:
+        * editing/selection/iframe.html:
+
+2006-01-11  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         New/updated layout tests for:
