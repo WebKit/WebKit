@@ -1,5 +1,12 @@
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
+        Fix build
+
+        * khtml/ecma/kjs_window.cpp:
+        Remove include.
+
+2006-01-12  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by NOBODY (OOPS!).
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6501

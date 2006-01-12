@@ -28,7 +28,6 @@
 #include <qapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kparts/browserinterface.h>
 #include <kwinmodule.h>
 #include <kconfig.h>
 #include <assert.h>
