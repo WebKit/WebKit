@@ -2346,7 +2346,8 @@ void DocumentImpl::clearSelectionIfNeeded(NodeImpl *newFocusNode)
     // contained by the current selection.
     NodeImpl *startContainer = frame()->selection().start().node();
     if (!newFocusNode || (startContainer && startContainer != newFocusNode && !startContainer->isAncestor(newFocusNode)))
-        frame()->selection().clear();
+        // FIXME: 6498 Should just be able to call m_frame->selection().clear()
+        frame()->setSelection(SelectionController());
 }
 
 void DocumentImpl::setCSSTarget(NodeImpl* n)

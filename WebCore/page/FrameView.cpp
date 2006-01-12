@@ -238,7 +238,8 @@ void KHTMLView::clear()
 
     setStaticBackground(false);
     
-    m_frame->selection().clear();
+    // FIXME: 6498 Should just be able to call m_frame->selection().clear()
+    m_frame->setSelection(SelectionController());
 
     d->reset();
 
