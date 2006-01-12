@@ -202,8 +202,6 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     paintInfo.p->save();
     CGContextRef context = quartzDevice->currentCGContext();
 
-    QRectF dirtyRect = paintInfo.r;
-
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
 
@@ -244,7 +242,7 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
         strokePaintServer->draw(quartzDevice->currentContext(), args, APPLY_TO_STROKE);
     }
 
-    drawMarkersIfNeeded(dirtyRect, cgPath);
+    drawMarkersIfNeeded(paintInfo.r, cgPath);
 
     // actually apply the filter
     if (filter) {

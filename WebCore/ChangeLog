@@ -1,3 +1,38 @@
+2006-01-12  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Refactor HTMLImageLoader to make subclassing possible. Implement
+        RenderSVGText-style RenderImage subclass. Use this to reimplement
+        SVGImageElementImpl.
+
+        As a side effect, this should fix:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5965 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/RenderSVGImage.cpp: Added.
+        (RenderSVGImage::RenderSVGImage):
+        (~RenderSVGImage::RenderSVGImage):
+        (RenderSVGImage::paint):
+        (RenderSVGImage::translateForAttributes):
+        * kcanvas/RenderSVGImage.h: Added.
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLImageLoader::setLoadingImage): trivial method extraction
+        (DOM::HTMLImageLoader::updateFromElement): make virtual
+        * khtml/html/html_imageimpl.h:
+        (DOM::):
+        * ksvg2/misc/SVGImageLoader.cpp: Added.
+        (SVGImageLoader::SVGImageLoader):
+        (~SVGImageLoader:SVGImageLoader):
+        (SVGImageLoader::updateFromElement):
+        * ksvg2/misc/SVGImageLoader.h: Added.
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::SVGImageElementImpl):
+        (SVGImageElementImpl::parseMappedAttribute):
+        (SVGImageElementImpl::createRenderer):
+        (SVGImageElementImpl::attach):
+        * ksvg2/svg/SVGImageElementImpl.h:
+
 2006-01-11  David Hyatt  <hyatt@apple.com>
 
 	Changes to get the XML directory nearly compiling on Win32.

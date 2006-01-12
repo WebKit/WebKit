@@ -24,12 +24,11 @@
 #define KSVG_SVGImageElementImpl_H
 
 #include "SVGTestsImpl.h"
+#include "SVGImageLoader.h"
 #include "SVGLangSpaceImpl.h"
 #include "SVGURIReferenceImpl.h"
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
-#include <kdom/cache/KDOMCachedImage.h>
-#include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KSVG
 {
@@ -41,8 +40,7 @@ namespace KSVG
                                 public SVGTestsImpl,
                                 public SVGLangSpaceImpl,
                                 public SVGExternalResourcesRequiredImpl,
-                                public SVGURIReferenceImpl,
-                                public KDOM::CachedObjectClient
+                                public SVGURIReferenceImpl
     {
     public:
         SVGImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
@@ -60,13 +58,10 @@ namespace KSVG
         SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-
         virtual void attach();
 
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
         virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
-
-        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
     private:
         mutable RefPtr<SVGAnimatedLengthImpl> m_x;
@@ -74,9 +69,8 @@ namespace KSVG
         mutable RefPtr<SVGAnimatedLengthImpl> m_width;
         mutable RefPtr<SVGAnimatedLengthImpl> m_height;
         mutable RefPtr<SVGAnimatedPreserveAspectRatioImpl> m_preserveAspectRatio;
-        //mutable KDOM::CachedDocument *m_cachedDocument;
-        KDOM::CachedImage *m_cachedImage;
-        RefPtr<SVGDocumentImpl> m_svgDoc;
+
+        SVGImageLoader m_imageLoader;
     };
 };
 

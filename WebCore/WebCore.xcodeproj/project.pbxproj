@@ -1614,6 +1614,10 @@
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
+		FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418909759694000540BE /* RenderSVGImage.h */; };
+		FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418A09759694000540BE /* RenderSVGImage.cpp */; };
+		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
+		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2821,6 +2825,10 @@
 		F690CFEA031C47F401CA2AC4 /* render_layer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_layer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F690CFEB031C47F401CA2AC4 /* render_layer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_layer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8216299029F4FB501000131 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAE0418909759694000540BE /* RenderSVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGImage.h; sourceTree = "<group>"; };
+		FAE0418A09759694000540BE /* RenderSVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGImage.cpp; sourceTree = "<group>"; };
+		FAE0418D097596C9000540BE /* SVGImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageLoader.cpp; sourceTree = "<group>"; };
+		FAE0418E097596C9000540BE /* SVGImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGImageLoader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3161,6 +3169,8 @@
 			children = (
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
 				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
+				FAE0418D097596C9000540BE /* SVGImageLoader.cpp */,
+				FAE0418E097596C9000540BE /* SVGImageLoader.h */,
 				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
 				A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */,
 				A8C32D89093D8BFA000B9CAC /* xlinkattrs.in */,
@@ -3471,6 +3481,8 @@
 			children = (
 				65743B50097076F8001E7CEF /* RenderSVGText.cpp */,
 				65743B51097076F8001E7CEF /* RenderSVGText.h */,
+				FAE0418909759694000540BE /* RenderSVGImage.h */,
+				FAE0418A09759694000540BE /* RenderSVGImage.cpp */,
 				A8C0FB53089701F700BA5114 /* device */,
 				A8C0FB7A089701F800BA5114 /* KCanvasContainer.cpp */,
 				A8C0FB7B089701F800BA5114 /* KCanvasContainer.h */,
@@ -4875,6 +4887,8 @@
 				65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */,
 				65BF02440974819000C43196 /* MacFrame.h in Headers */,
 				65BF02460974819000C43196 /* WebCoreBridge.h in Headers */,
+				FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */,
+				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6747,6 +6761,8 @@
 				65BF02430974819000C43196 /* KWQKPartsBrowserInterface.mm in Sources */,
 				65BF02450974819000C43196 /* MacFrame.mm in Sources */,
 				65BF02470974819000C43196 /* WebCoreBridge.mm in Sources */,
+				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,
+				FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */,
 				65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

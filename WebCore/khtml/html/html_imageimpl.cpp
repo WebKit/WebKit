@@ -65,6 +65,13 @@ HTMLImageLoader::~HTMLImageLoader()
         m_element->getDocument()->removeImage(this);
 }
 
+void HTMLImageLoader::setLoadingImage(CachedImage *loadingImage)
+{
+    m_firedLoad = false;
+    m_imageComplete = false;
+    m_image = loadingImage;
+}
+
 void HTMLImageLoader::updateFromElement()
 {
     // If we're not making renderers for the page, then don't load images.  We don't want to slow
@@ -87,9 +94,7 @@ void HTMLImageLoader::updateFromElement()
         if (!doc->ownerElement() && newImage)
             printf("Image requested at %d\n", doc->elapsedTime());
 #endif
-        m_firedLoad = false;
-        m_imageComplete = false;
-        m_image = newImage;
+        setLoadingImage(newImage);
         if (newImage)
             newImage->ref(this);
         if (oldImage)
