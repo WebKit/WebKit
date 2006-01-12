@@ -1,3 +1,20 @@
+2006-01-12  Eric Seidel  <eseidel@apple.com>
+
+        Build fix, files missing from previous <image> commit:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5965 
+
+        * kcanvas/RenderSVGImage.cpp: Added.
+        (RenderSVGImage::RenderSVGImage):
+        (RenderSVGImage::~RenderSVGImage):
+        (RenderSVGImage::paint):
+        (RenderSVGImage::translateForAttributes):
+        * kcanvas/RenderSVGImage.h: Added.
+        * ksvg2/misc/SVGImageLoader.cpp: Added.
+        (SVGImageLoader::SVGImageLoader):
+        (SVGImageLoader::~SVGImageLoader):
+        (SVGImageLoader::updateFromElement):
+        * ksvg2/misc/SVGImageLoader.h: Added.
+
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
