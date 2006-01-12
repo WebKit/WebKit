@@ -106,6 +106,19 @@ namespace KJS {
     class WindowFunc;
 }
 
+struct MarkedTextUnderline {
+  MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const QColor &_color, bool _thick) 
+    : startOffset(_startOffset)
+       , endOffset(_endOffset)
+       , color(_color)
+       , thick(_thick)
+  {}
+  unsigned startOffset;
+  unsigned endOffset;
+  QColor color;
+  bool thick;
+};
+
 class Frame : public KParts::ReadOnlyPart
 {
   friend class KHTMLView;
@@ -997,19 +1010,6 @@ private:
 
   QChar backslashAsCurrencySymbol() const;
   void setName(const QString &name);
-  
-  struct MarkedTextUnderline {
-      MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const QColor &_color, bool _thick) 
-      : startOffset(_startOffset)
-      , endOffset(_endOffset)
-      , color(_color)
-      , thick(_thick)
-  {}
-      unsigned startOffset;
-      unsigned endOffset;
-      QColor color;
-      bool thick;
-  };
   
   QValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;

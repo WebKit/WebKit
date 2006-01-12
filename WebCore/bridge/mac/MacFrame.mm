@@ -3402,9 +3402,9 @@ bool MacFrame::shouldEndEditing(const RangeImpl *range) const
     return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:const_cast<RangeImpl *>(range)]];
 }
 
-static QValueList<MacFrame::MarkedTextUnderline> convertAttributesToUnderlines(const RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
+static QValueList<MarkedTextUnderline> convertAttributesToUnderlines(const RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
-    QValueList<MacFrame::MarkedTextUnderline> result;
+    QValueList<MarkedTextUnderline> result;
 
     int exception = 0;
     int baseOffset = markedTextRange->startOffset(exception);
@@ -3427,10 +3427,10 @@ static QValueList<MacFrame::MarkedTextUnderline> convertAttributesToUnderlines(c
                                   (int)(255 * [deviceColor alphaComponent])));
         }
 
-        result.append(MacFrame::MarkedTextUnderline(range.location + baseOffset, 
-                                                        range.location + baseOffset + range.length, 
-                                                        qColor,
-                                                        [style intValue] > 1));
+        result.append(MarkedTextUnderline(range.location + baseOffset, 
+                                          range.location + baseOffset + range.length, 
+                                          qColor,
+                                          [style intValue] > 1));
     }
 
     return result;

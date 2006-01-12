@@ -1,3 +1,36 @@
+2006-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - reduce the number of files that rebuild when you touch Frame.h
+
+        * ForwardingHeaders/ksvg2/KSVGView.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        (convertAttributesToUnderlines):
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/typing_command.cpp:
+        * khtml/html/HTMLKeygenElementImpl.cpp:
+        (DOM::HTMLKeygenElementImpl::appendFormData):
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paint):
+        (khtml::InlineTextBox::paintMarkedTextUnderline):
+        * khtml/rendering/InlineTextBox.h:
+        * khtml/rendering/render_layer.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject value]):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        * page/Frame.cpp:
+        (Frame::markedTextUnderlines):
+        * page/Frame.h:
+        (MarkedTextUnderline::MarkedTextUnderline):
+
 2006-01-11  Anders Carlsson  <andersca@mac.com>
 
         Build fix.

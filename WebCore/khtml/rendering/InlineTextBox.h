@@ -25,13 +25,13 @@
 #ifndef KHTML_InlineTextBox_H
 #define KHTML_InlineTextBox_H
 
-#include "MacFrame.h"
 #include "rendering/render_line.h"
 #include <assert.h>
 #include "RenderText.h"
 
 class QPainter;
 class QFontMetrics;
+class MarkedTextUnderline;
 
 namespace DOM {
     class DOMString;
@@ -119,7 +119,7 @@ public:
     void paintSelection(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font);
     void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font, int startPos, int endPos);
     void paintMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker);
-    void paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, MacFrame::MarkedTextUnderline underline);
+    void paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, MarkedTextUnderline& underline);
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

@@ -29,7 +29,6 @@
 #include "HTMLOptionElementImpl.h"
 #include "dom_textimpl.h"
 #include "dom_docimpl.h"
-#include "Frame.h"
 #include "FormDataList.h"
 
 #include <ksslkeygen.h>
@@ -72,7 +71,7 @@ bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
     // Only RSA is supported at this time.
     if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
         return false;
-    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.qstring(), getDocument()->frame()->baseURL());
+    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.qstring(), getDocument()->baseURL());
     if (value.isNull())
         return false;
     encoded_values.appendData(name(), value.utf8());

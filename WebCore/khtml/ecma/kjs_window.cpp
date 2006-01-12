@@ -53,7 +53,7 @@
 #include "domparser.h"
 
 #include "FrameView.h"
-#include "Frame.h"
+#include "MacFrame.h"
 #include "khtml_ext.h"
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"

@@ -43,7 +43,7 @@
 #include "KCanvasContainer.h"
 #endif
 
-#include "MacFrame.h"
+#include "Frame.h"
 #include "KWQTextStream.h"
 #include "KWQPtrVector.h"
 
@@ -295,7 +295,7 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
         QWidget *widget = static_cast<const RenderWidget &>(o).widget();
         if (widget && widget->inherits("KHTMLView")) {
             KHTMLView *view = static_cast<KHTMLView *>(widget);
-            RenderObject *root = Mac(view->frame())->renderer();
+            RenderObject *root = view->frame()->renderer();
             if (root) {
                 view->layout();
                 RenderLayer* l = root->layer();

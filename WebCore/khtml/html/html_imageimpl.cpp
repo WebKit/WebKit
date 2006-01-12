@@ -27,8 +27,6 @@
 #include "html/html_documentimpl.h"
 #include "HTMLFormElementImpl.h"
 
-#include "Frame.h"
-
 #include <kdebug.h>
 
 #include "rendering/render_image.h"

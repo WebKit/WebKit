@@ -6300,6 +6300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A82B8CB009712C2C0027E3DE /* InlineTextBox.cpp in Sources */,
 				937C34ED0868E4B4006F4B22 /* parser.y in Sources */,
 				93F19A0D08245E59001E9ABC /* KWQApplication.mm in Sources */,
 				93F19A0E08245E59001E9ABC /* KWQArrayImpl.cpp in Sources */,
@@ -6714,7 +6715,6 @@
 				A81655E4096BC13900601058 /* SVGMaskElementImpl.cpp in Sources */,
 				65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */,
 				A82B8CAD09712C2C0027E3DE /* RenderTextFragment.cpp in Sources */,
-				A82B8CB009712C2C0027E3DE /* InlineTextBox.cpp in Sources */,
 				A82B8CB109712C2C0027E3DE /* RenderText.cpp in Sources */,
 				A8135B8D0972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */,
 				A8135B8F0972403A00D74463 /* Cache.cpp in Sources */,

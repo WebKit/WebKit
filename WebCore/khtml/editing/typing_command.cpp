@@ -31,7 +31,7 @@
 #include "insert_paragraph_separator_command.h"
 #include "break_blockquote_command.h"
 
-#include "Frame.h"
+#include "MacFrame.h"
 #include "xml/dom_docimpl.h"
 #include "visible_position.h"
 #include "visible_units.h"

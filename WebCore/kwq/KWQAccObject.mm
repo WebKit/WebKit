@@ -49,7 +49,7 @@
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "FrameView.h"
-#import "Frame.h"
+#import "MacFrame.h"
 #import "render_canvas.h"
 #import "render_image.h"
 #import "render_list.h"
@@ -525,8 +525,7 @@ using khtml::VisiblePosition;
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
 
     if (m_renderer->isCanvas()) {
-        MacFrame *docPart = Mac(m_renderer->document()->frame());
-        if (!docPart)
+        if (m_renderer->document()->frame())
             return nil;
         
         // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here

@@ -83,7 +83,6 @@ using DOM::TreeWalkerImpl;
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
-#include "MacFrame.h"
 #include "KWQRegExp.h"
 
 namespace khtml {

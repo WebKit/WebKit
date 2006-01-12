@@ -57,6 +57,7 @@
 #include "render_arena.h"
 
 #include "FrameView.h"
+#include "MacFrame.h"
 #include "FramePrivate.h"
 
 #include <kglobalsettings.h>

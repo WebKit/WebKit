@@ -62,8 +62,6 @@
 #include <qscrollbar.h>
 #include <qptrvector.h>
 
-#include "MacFrame.h" // For Dashboard.
-
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
 #define PAGE_KEEP   40
