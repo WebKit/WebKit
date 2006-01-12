@@ -1,3 +1,13 @@
+2006-01-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed and committed by John Sullivan.
+        
+        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=6500>
+        editing/selection/selection-actions layout test beeps annoyingly when run
+
+        * editing/selection/selection-actions.html:
+        Fixed two typos in selector names.
+
 2006-01-12  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.  Committed by eseidel.
