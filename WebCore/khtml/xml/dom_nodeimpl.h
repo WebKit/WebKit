@@ -121,7 +121,7 @@ public:
     virtual bool isCommentNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
     bool isBlockFlow() const;
-    bool isBlockFlowOrTable() const;
+    bool isBlockFlowOrBlockTable() const;
     
     // Used by <form> elements to indicate a malformed state of some kind, typically
     // used to keep from applying the bottom margin of the form.
@@ -136,7 +136,6 @@ public:
     virtual void setFirstChild(NodeImpl *child);
     virtual void setLastChild(NodeImpl *child);
 
-    bool isAtomicNode() const;
     NodeImpl *previousNodeConsideringAtomicNodes() const;
     NodeImpl *nextNodeConsideringAtomicNodes() const;
     
@@ -352,7 +351,6 @@ public:
 	virtual bool childAllowed(NodeImpl *newChild);				   // Error-checking during parsing that checks the DTD
 	
     virtual int maxOffset() const;
-    int maxDeepOffset() const;
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

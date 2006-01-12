@@ -87,6 +87,32 @@ using DOM::TreeWalkerImpl;
 
 namespace khtml {
 
+// Atomic means that the node has no children, or has children which are ignored for the
+// purposes of editing.
+bool isAtomicNode(const NodeImpl *node)
+{
+    return node && (!node->hasChildNodes() || node->renderer() && node->renderer()->isWidget());
+}
+
+// This method is used to create positions in the DOM. It returns the maximum valid offset
+// in a node.  It returns 1 for <br>s and replaced elements, which creates 
+// technically invalid DOM Positions.  Be sure to call equivalentRangeCompliantPosition
+// on a Position before using it to create a DOM Range, or an exception will be thrown.
+int maxDeepOffset(const NodeImpl *node)
+{
+    if (node->isTextNode())
+        return static_cast<const TextImpl*>(node)->length();
+        
+    if (node->hasChildNodes())
+        return node->childNodeCount();
+    
+    RenderObject *renderer = node->renderer();
+    if (node->hasTagName(brTag) || (renderer && renderer->isReplaced()))
+        return 1;
+
+    return 0;
+}
+
 void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned int length)
 {
     static QRegExp nonRegularWhitespace("[\xa0\n]");
@@ -234,7 +260,8 @@ Position positionBeforeContainingSpecialElement(const Position& pos)
 bool isLastVisiblePositionInSpecialElement(const Position& pos)
 {
     // make sure to get a range-compliant version of the position
-    Position rangePos = VisiblePosition(pos, DOWNSTREAM).position();
+    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
+    Position rangePos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent().equivalentRangeCompliantPosition();
 
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 
@@ -260,7 +287,8 @@ Position positionAfterContainingSpecialElement(const Position& pos)
     ASSERT(isLastVisiblePositionInSpecialElement(pos));
 
     // make sure to get a range-compliant version of the position
-    Position rangePos = VisiblePosition(pos, DOWNSTREAM).position();
+    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
+    Position rangePos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent().equivalentRangeCompliantPosition();
 
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 

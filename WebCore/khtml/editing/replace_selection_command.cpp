@@ -324,7 +324,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle>
         // If the desiredStyle is non-zero length, that means the current style differs
         // from the desired by the styles remaining in the desiredStyle declaration.
         if (desiredStyle->length() > 0)
-	    applyStyle(desiredStyle, Position(node, 0), Position(node, node->maxDeepOffset()));
+	    applyStyle(desiredStyle, Position(node, 0), Position(node, maxDeepOffset(node)));
     }
 }
 
@@ -794,10 +794,9 @@ void ReplaceSelectionCommand::doApply()
             NodeImpl *node = beyondEndNode;
             NodeImpl *refNode = m_lastNodeInserted.get();
             while (node) {
-                RenderObject *renderer = node->renderer();
-                // Stop at the first table or block.
-                if (renderer && (renderer->isBlockFlow() || renderer->isTable()))
+                if (node->isBlockFlowOrBlockTable())
                     break;
+                    
                 NodeImpl *next = node->nextSibling();
                 blocks.append(node->enclosingBlockFlowElement());
                 computeAndStoreNodeDesiredStyle(node, styles);

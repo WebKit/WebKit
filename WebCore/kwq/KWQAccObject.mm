@@ -1016,7 +1016,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
 
-    RenderObject * obj = visiblePos.position().node()->renderer();
+    RenderObject * obj = visiblePos.deepEquivalent().node()->renderer();
     if (!obj)
         return nil;
     

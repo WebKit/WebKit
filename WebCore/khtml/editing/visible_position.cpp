@@ -26,7 +26,7 @@
 #include "config.h"
 #include "visible_position.h"
 #include "visible_units.h"
-
+#include "htmlediting.h"
 #include "htmlnames.h"
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
@@ -157,15 +157,6 @@ Position VisiblePosition::previousVisiblePosition(const Position &pos)
     Position downstreamTest = test.downstream();
     bool acceptAnyVisiblePosition = !isCandidate(test);
 
-    // NOTE: The first position examined is the deepEquivalent of pos.  This,
-    // of course, is often after pos in the DOM.  Some care is taken to not return
-    // a position later than pos, but it is clearly possible to return pos
-    // itself (if it is a candidate) when iterating back from a deepEquivalent
-    // that is not a candidate.  That is wrong!  However, our clients seem to
-    // like it.  Gotta lose those clients! (initDownstream and initUpstream)
-    
-    // How about "if isCandidate(pos) back up to the previous candidate, else
-    // back up to the second previous candidate"?
     Position current = test;
     while (!current.atStart()) {
         current = current.previous(UsingComposedCharacters);
@@ -222,7 +213,7 @@ bool VisiblePosition::isCandidate(const Position &pos)
         return false;
 
     if (renderer->isReplaced())
-        return pos.offset() == 0 || pos.offset() == 1;
+        return pos.offset() == 0 || pos.offset() == maxDeepOffset(pos.node());
 
     if (renderer->isBR()) {
         if (pos.offset() == 0) {
@@ -237,22 +228,19 @@ bool VisiblePosition::isCandidate(const Position &pos)
         return false;
     }
     
+    // True if at a rendered offset inside a text node
     if (renderer->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(renderer);
         for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
             if (pos.offset() >= box->m_start && pos.offset() <= box->m_start + box->m_len) {
-                // return true if in a text node
                 return true;
             }
         }
     }
     
-    if (renderer->isBlockFlow() &&
-       !hasRenderedChildrenWithHeight(renderer) &&
-       (renderer->height() || pos.node()->hasTagName(bodyTag))) {
-        // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
-        return pos.offset() == 0;
-    }
+    if (renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
+       (renderer->height() || pos.node()->hasTagName(bodyTag)))
+       return pos.offset() == 0;
     
     return false;
 }
@@ -265,7 +253,7 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
     if (!node)
         return Position();
     
-    if (isAtomicNode(node))
+    if (isCandidate(pos) || isAtomicNode(node))
         return pos;
 
     if (offset >= (int)node->childNodeCount()) {
@@ -274,13 +262,13 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
             if (!child)
                 break;
             node = child;
-        } while (!isAtomicNode(node));
-        return Position(node, node->caretMaxOffset());
+        } while (!isCandidate(Position(node, maxDeepOffset(node))) && !isAtomicNode(node));
+        return Position(node, maxDeepOffset(node));
     }
     
     node = node->childNode(offset);
     ASSERT(node);
-    while (!isAtomicNode(node)) {
+    while (!isCandidate(Position(node, 0)) && !isAtomicNode(node)) {
         NodeImpl *child = node->firstChild();
         if (!child)
             break;
@@ -289,57 +277,14 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
     return Position(node, 0);
 }
 
-Position VisiblePosition::downstreamDeepEquivalent() const
-{
-    Position pos = m_deepPosition;
-    
-    if (pos.isNull() || pos.atEnd())
-        return pos;
-
-    Position downstreamTest = pos.downstream();
-
-    Position current = pos;
-    while (!current.atEnd()) {
-        current = current.next(UsingComposedCharacters);
-        if (isCandidate(current)) {
-            if (downstreamTest != current.downstream())
-                break;
-            pos = current;
-        }
-    }
-    
-    return pos;
-}
-
-Position VisiblePosition::rangeCompliantEquivalent(const Position &pos)
-{
-    NodeImpl *node = pos.node();
-    if (!node)
-        return Position();
-    
-    // FIXME: This clamps out-of-range values.
-    // Instead we should probably assert, and not use such values.
-
-    int offset = pos.offset();
-    if (!offsetInCharacters(node->nodeType()) && isAtomicNode(node) && offset > 0)
-        return Position(node->parentNode(), node->nodeIndex() + 1);
-
-    return Position(node, kMax(0, kMin(offset, maxOffset(node))));
-}
-
 int VisiblePosition::maxOffset(const NodeImpl *node)
 {
     return offsetInCharacters(node->nodeType()) ? (int)static_cast<const CharacterDataImpl *>(node)->length() : (int)node->childNodeCount();
 }
 
-bool VisiblePosition::isAtomicNode(const NodeImpl *node)
-{
-    return node && (!node->hasChildNodes() || (node->hasTagName(objectTag) && node->renderer() && node->renderer()->isReplaced()));
-}
-
 QChar VisiblePosition::character() const
 {
-    Position pos = position();
+    Position pos = m_deepPosition;
     NodeImpl *node = pos.node();
     if (!node || !node->isTextNode()) {
         return QChar();
@@ -393,8 +338,8 @@ void VisiblePosition::showTree() const
 
 PassRefPtr<RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end)
 {
-    Position s = start.position();
-    Position e = end.position();
+    Position s = start.deepEquivalent().equivalentRangeCompliantPosition();
+    Position e = end.deepEquivalent().equivalentRangeCompliantPosition();
     return new RangeImpl(s.node()->getDocument(), s.node(), s.offset(), e.node(), e.offset());
 }
 
@@ -410,49 +355,55 @@ VisiblePosition endVisiblePosition(const RangeImpl *r, EAffinity affinity)
     return VisiblePosition(r->endContainer(exception), r->endOffset(exception), affinity);
 }
 
-bool setStart(RangeImpl *r, const VisiblePosition &c)
+bool setStart(RangeImpl *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = c.position();
+    Position p = visiblePosition.deepEquivalent().equivalentRangeCompliantPosition();
     int code = 0;
     r->setStart(p.node(), p.offset(), code);
     return code == 0;
 }
 
-bool setEnd(RangeImpl *r, const VisiblePosition &c)
+bool setEnd(RangeImpl *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = c.position();
+    Position p = visiblePosition.deepEquivalent().equivalentRangeCompliantPosition();
     int code = 0;
     r->setEnd(p.node(), p.offset(), code);
     return code == 0;
 }
 
-DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &vp)
+DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &visiblePosition)
 {
-    if (vp.isNull())
+    if (visiblePosition.isNull())
         return NULL;
 
-    return vp.position().node()->enclosingBlockFlowElement();
+    return visiblePosition.deepEquivalent().node()->enclosingBlockFlowElement();
 }
 
-bool isFirstVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
+bool isFirstVisiblePositionInNode(const VisiblePosition &visiblePosition, const NodeImpl *node)
 {
-    if (pos.isNull())
+    if (visiblePosition.isNull())
+        return false;
+    
+    if (!visiblePosition.deepEquivalent().node()->isAncestor(node))
         return false;
         
-    VisiblePosition previous = pos.previous();
+    VisiblePosition previous = visiblePosition.previous();
     return previous.isNull() || !previous.deepEquivalent().node()->isAncestor(node);
 }
 
-bool isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
+bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const NodeImpl *node)
 {
-    if (pos.isNull())
+    if (visiblePosition.isNull())
         return false;
-        
-    VisiblePosition next = pos.next();
+    
+    if (!visiblePosition.deepEquivalent().node()->isAncestor(node))
+        return false;
+                
+    VisiblePosition next = visiblePosition.next();
     return next.isNull() || !next.deepEquivalent().node()->isAncestor(node);
 }
 

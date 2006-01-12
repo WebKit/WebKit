@@ -359,9 +359,9 @@ bool isEndOfLine(const VisiblePosition &p)
     return p.isNotNull() && p == endOfLine(p);
 }
 
-VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
+VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int x)
 {
-    Position p = c.affinity() == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
+    Position p = visiblePosition.deepEquivalent();
     NodeImpl *node = p.node();
     if (!node || !node->getDocument())
         return VisiblePosition();
@@ -374,7 +374,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = renderer->inlineBox(p.offset(), c.affinity());
+    InlineBox *box = renderer->inlineBox(p.offset(), visiblePosition.affinity());
     if (box) {
         root = box->root()->prevRootBox();
         if (root)
@@ -422,9 +422,9 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
     return VisiblePosition(node->rootEditableElement(), 0, DOWNSTREAM);
 }
 
-VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
+VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
 {
-    Position p = c.affinity() == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
+    Position p = visiblePosition.deepEquivalent();
     NodeImpl *node = p.node();
     if (!node || !node->getDocument())
         return VisiblePosition();
@@ -437,7 +437,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = renderer->inlineBox(p.offset(), c.affinity());
+    InlineBox *box = renderer->inlineBox(p.offset(), visiblePosition.affinity());
     if (box) {
         root = box->root()->nextRootBox();
         if (root)

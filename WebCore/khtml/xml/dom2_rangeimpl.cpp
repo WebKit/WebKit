@@ -1329,23 +1329,23 @@ Position RangeImpl::editingStartPosition() const
     // It is important to skip certain irrelevant content at the start of the selection, so we do not wind up 
     // with a spurious "mixed" style.
     
-    VisiblePosition pos(m_startContainer, m_startOffset, VP_DEFAULT_AFFINITY);
-    if (pos.isNull())
+    VisiblePosition visiblePosition(m_startContainer, m_startOffset, VP_DEFAULT_AFFINITY);
+    if (visiblePosition.isNull())
         return Position();
 
     int exceptionCode = 0;
     // if the selection is a caret, just return the position, since the style
     // behind us is relevant
     if (collapsed(exceptionCode))
-        return pos.position();
+        return visiblePosition.deepEquivalent();
 
     // if the selection starts just before a paragraph break, skip over it
-    if (isEndOfParagraph(pos))
-        return pos.next().position().downstream();
+    if (isEndOfParagraph(visiblePosition))
+        return visiblePosition.next().deepEquivalent().downstream();
 
     // otherwise, make sure to be at the start of the first selected node,
     // instead of possibly at the end of the last node before the selection
-    return pos.position().downstream();
+    return visiblePosition.deepEquivalent().downstream();
 }
 
 NodeImpl *RangeImpl::pastEndNode() const

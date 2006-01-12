@@ -1,3 +1,94 @@
+2006-01-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5870>
+        Double-clicking on an SVG dies in HTML editing code
+        <rdar://problem/4393815>
+        Assertion failure: result != *this (khtml::VisiblePosition::previous())
+        + build bustage fix from previous checkin
+
+        Tests added (+ expected results):
+        * editing/selection/iframe.html: Added.
+        * editing/selection/inline-table.html: Added.
+        * editing/selection/select-box.html: Added.
+        
+        Test results changed (change looks funny but is correct):
+        * editing/inserting/editing-empty-divs.html
+        
+        Account for replaced elements with children in isCandidate and maxDeepOffset
+        Stop at candidates in VisiblePosition::deepEquivalent, descending will
+        yield positions that aren't visually equivalent.
+        Fixed a caret painting regression (removed downstreamDeepEquivalent)
+        Moved isAtomicNode and maxDeepOffset out of NodeImpl
+        Removed redundant code
+        
+        Todo: 
+        Move more editing functions out of NodeImpl
+        Improve the selection of VP candidates to fix 6476
+
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::SelectionController):
+        (khtml::SelectionController::xPosForVerticalArrowNavigation):
+        (khtml::SelectionController::getRangeAt):
+        (khtml::SelectionController::layout):
+        (khtml::SelectionController::adjustForEditableContent):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isAtomicNode):
+        (khtml::maxDeepOffset):
+        (khtml::isLastVisiblePositionInSpecialElement):
+        (khtml::positionAfterContainingSpecialElement):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousVisiblePosition):
+        (khtml::VisiblePosition::isCandidate):
+        (khtml::VisiblePosition::deepEquivalent):
+        (khtml::VisiblePosition::character):
+        (khtml::makeRange):
+        (khtml::setStart):
+        (khtml::setEnd):
+        (khtml::enclosingBlockFlowElement):
+        (khtml::isFirstVisiblePositionInNode):
+        (khtml::isLastVisiblePositionInNode):
+        * khtml/editing/visible_position.h:
+        (khtml::VisiblePosition::setAffinity):
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousLinePosition):
+        (khtml::nextLinePosition):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::editingStartPosition):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::previousNodeConsideringAtomicNodes):
+        (DOM::NodeImpl::nextNodeConsideringAtomicNodes):
+        (DOM::NodeImpl::previousLeafNode):
+        (DOM::NodeImpl::nextLeafNode):
+        (DOM::NodeImpl::isBlockFlowOrBlockTable):
+        (DOM::NodeImpl::enclosingBlockFlowOrTableElement):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previous):
+        (DOM::Position::next):
+        (DOM::Position::atEnd):
+        (DOM::isStreamer):
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        * khtml/xml/dom_position.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject doAXUIElementForTextMarker:]):
+        * page/Frame.cpp:
+        (Frame::selectContentsOfNode):
+        
 2006-01-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

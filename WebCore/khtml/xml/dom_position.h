@@ -83,7 +83,6 @@ public:
     Position downstream() const;
     
     Position equivalentRangeCompliantPosition() const;
-    Position equivalentDeepPosition() const;
     bool inRenderedContent() const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position &pos) const;

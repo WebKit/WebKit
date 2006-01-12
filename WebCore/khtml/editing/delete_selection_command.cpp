@@ -69,17 +69,6 @@ static bool isListStructureNode(const NodeImpl *node)
         || node->hasTagName(menuTag);
 }
 
-static int maxDeepOffset(NodeImpl *n)
-{
-    if (n->isAtomicNode())
-        return n->caretMaxOffset();
-
-    if (n->isElementNode())
-        return n->childNodeCount();
-
-    return 1;
-}
-
 static void debugPosition(const char *prefix, const Position &pos)
 {
     if (!prefix)
@@ -290,7 +279,6 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     if (isBROnLineByItself) {
         m_endingPosition = Position(m_downstreamStart.node()->parentNode(), m_downstreamStart.node()->nodeIndex());
         removeNode(m_downstreamStart.node());
-        m_endingPosition = m_endingPosition.equivalentDeepPosition();
         m_mergeBlocksAfterDelete = false;
         return true;
     }
@@ -335,7 +323,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
     }
     else if (startOffset >= m_startNode->caretMaxOffset() &&
-             (m_startNode->isAtomicNode() || startOffset == 0)) {
+             (isAtomicNode(m_startNode.get()) || startOffset == 0)) {
         // Move the start node to the next node in the tree since the startOffset is equal to
         // or beyond the start node's caretMaxOffset This means there is nothing visible to delete. 
         // But don't do this if the node is not atomic - we don't want to move into the first child.

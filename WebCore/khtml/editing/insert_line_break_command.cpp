@@ -171,7 +171,7 @@ void InsertLineBreakCommand::doApply()
     
     if (typingStyle && typingStyle->length() > 0) {
         SelectionController selectionBeforeStyle = endingSelection();
-        applyStyle(typingStyle, Position(nodeToInsert, 0), Position(nodeToInsert, nodeToInsert->maxDeepOffset()));
+        applyStyle(typingStyle, Position(nodeToInsert, 0), Position(nodeToInsert, maxDeepOffset(nodeToInsert)));
         setEndingSelection(selectionBeforeStyle);
     }
 

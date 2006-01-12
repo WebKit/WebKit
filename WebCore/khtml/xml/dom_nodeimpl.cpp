@@ -36,6 +36,7 @@
 #include "xml/EventNames.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
+#include "editing/htmlediting.h"
 #include "editing/html_interchange.h"
 #include "editing/SelectionController.h"
 
@@ -1353,16 +1354,11 @@ RenderObject * NodeImpl::nextRenderer()
 }
 
 // FIXME: This code is used by editing.  Seems like it could move over there and not pollute NodeImpl.
-bool NodeImpl::isAtomicNode() const
-{
-    return !hasChildNodes() || (renderer() && renderer()->isWidget());
-}
-
 NodeImpl *NodeImpl::previousNodeConsideringAtomicNodes() const
 {
     if (previousSibling()) {
         NodeImpl *n = previousSibling();
-        while (!n->isAtomicNode() && n->lastChild())
+        while (!isAtomicNode(n) && n->lastChild())
             n = n->lastChild();
         return n;
     }
@@ -1376,7 +1372,7 @@ NodeImpl *NodeImpl::previousNodeConsideringAtomicNodes() const
 
 NodeImpl *NodeImpl::nextNodeConsideringAtomicNodes() const
 {
-    if (!isAtomicNode() && firstChild())
+    if (!isAtomicNode(this) && firstChild())
 	return firstChild();
     if (nextSibling())
 	return nextSibling();
@@ -1392,7 +1388,7 @@ NodeImpl *NodeImpl::previousLeafNode() const
 {
     NodeImpl *node = previousNodeConsideringAtomicNodes();
     while (node) {
-        if (node->isAtomicNode())
+        if (isAtomicNode(node))
             return node;
         node = node->previousNodeConsideringAtomicNodes();
     }
@@ -1403,7 +1399,7 @@ NodeImpl *NodeImpl::nextLeafNode() const
 {
     NodeImpl *node = nextNodeConsideringAtomicNodes();
     while (node) {
-        if (node->isAtomicNode())
+        if (isAtomicNode(node))
             return node;
         node = node->nextNodeConsideringAtomicNodes();
     }
@@ -1478,18 +1474,6 @@ int NodeImpl::maxOffset() const
 
 // FIXME: Shouldn't these functions be in the editing code?  Code that asks questions about HTML in the core DOM class
 // is obviously misplaced.
-// method for editing madness, which allows BR,1 as a position, though that is incorrect
-int NodeImpl::maxDeepOffset() const
-{
-    if (isTextNode())
-        return static_cast<const TextImpl*>(this)->length();
-        
-    if (hasTagName(brTag) || (renderer() && renderer()->isReplaced()))
-        return 1;
-
-    return childNodeCount();
-}
-
 int NodeImpl::caretMinOffset() const
 {
     return renderer() ? renderer()->caretMinOffset() : 0;
@@ -1520,9 +1504,9 @@ bool NodeImpl::isBlockFlow() const
     return renderer() && renderer()->isBlockFlow();
 }
 
-bool NodeImpl::isBlockFlowOrTable() const
+bool NodeImpl::isBlockFlowOrBlockTable() const
 {
-    return renderer() && (renderer()->isBlockFlow() || renderer()->isTable());
+    return renderer() && (renderer()->isBlockFlow() || renderer()->isTable() && !renderer()->isInline());
 }
 
 bool NodeImpl::isEditableBlock() const
@@ -1533,14 +1517,14 @@ bool NodeImpl::isEditableBlock() const
 ElementImpl *NodeImpl::enclosingBlockFlowOrTableElement() const
 {
     NodeImpl *n = const_cast<NodeImpl *>(this);
-    if (isBlockFlowOrTable())
+    if (isBlockFlowOrBlockTable())
         return static_cast<ElementImpl *>(n);
 
     while (1) {
         n = n->parentNode();
         if (!n)
             break;
-        if (n->isBlockFlowOrTable() || n->hasTagName(bodyTag))
+        if (n->isBlockFlowOrBlockTable() || n->hasTagName(bodyTag))
             return static_cast<ElementImpl *>(n);
     }
     return 0;

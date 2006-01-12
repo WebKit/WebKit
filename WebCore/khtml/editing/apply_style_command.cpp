@@ -1055,7 +1055,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
     NodeImpl *startNode = start.node();
     int startOffset = start.offset();
 
-    if (start.node()->isAtomicNode()) {
+    if (isAtomicNode(start.node())) {
         if (start.offset() != 0)
             return false;
 
@@ -1095,7 +1095,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
     NodeImpl *endNode = end.node();
     int endOffset = end.offset();
 
-    if (endNode->isAtomicNode()) {
+    if (isAtomicNode(endNode)) {
         if (endOffset < endNode->caretMaxOffset())
             return false;
 
