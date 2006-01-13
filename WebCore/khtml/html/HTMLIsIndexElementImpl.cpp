@@ -43,7 +43,7 @@ HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentImpl *doc, HTMLFormElemen
 void HTMLIsIndexElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 {
     if (attr->name() == promptAttr)
-	setValue(attr->value());
+        setValue(attr->value());
     else
         // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support

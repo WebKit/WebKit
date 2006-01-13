@@ -33,15 +33,15 @@ public:
     KHTMLPartBrowserExtension(Frame *);
     
     virtual void openURLRequest(const KURL &, 
-				const KParts::URLArgs &args = KParts::URLArgs());
+                                const KParts::URLArgs &args = KParts::URLArgs());
     virtual void openURLNotify();
      
     virtual void createNewWindow(const KURL &url, 
-				 const KParts::URLArgs &urlArgs = KParts::URLArgs());
+                                 const KParts::URLArgs &urlArgs = KParts::URLArgs());
     virtual void createNewWindow(const KURL &url,
-				 const KParts::URLArgs &urlArgs, 
-				 const KParts::WindowArgs &winArgs, 
-				 ObjectContents *&part);
+                                 const KParts::URLArgs &urlArgs, 
+                                 const KParts::WindowArgs &winArgs, 
+                                 ObjectContents *&part);
 
     virtual void setIconURL(const KURL &url);
     virtual void setTypedIconURL(const KURL &url, const QString &type);
@@ -55,9 +55,9 @@ public:
     
 private:
      void createNewWindow(const KURL &url, 
-			  const KParts::URLArgs &urlArgs, 
-			  const KParts::WindowArgs &winArgs, 
-			  ObjectContents **part);
+                          const KParts::URLArgs &urlArgs, 
+                          const KParts::WindowArgs &winArgs, 
+                          ObjectContents **part);
 
      MacFrame *m_frame;
 };

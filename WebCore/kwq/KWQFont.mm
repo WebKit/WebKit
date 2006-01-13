@@ -181,12 +181,12 @@ const WebCoreFont &QFont::getWebCoreFont() const
 {
     if (!m_webCoreFont.font) {
         CREATE_FAMILY_ARRAY(*this, families);
-	KWQ_BLOCK_EXCEPTIONS;
+        KWQ_BLOCK_EXCEPTIONS;
         m_webCoreFont = [[WebCoreTextRendererFactory sharedFactory] 
             fontWithFamilies:families traits:getNSTraits() size:getNSSize()];
         KWQRetain(m_webCoreFont.font);
         m_webCoreFont.forPrinter = _isPrinterFont;
-	KWQ_UNBLOCK_EXCEPTIONS;
+        KWQ_UNBLOCK_EXCEPTIONS;
     }
     return m_webCoreFont;
 }

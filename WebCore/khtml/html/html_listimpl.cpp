@@ -215,15 +215,15 @@ void HTMLLIElementImpl::attach()
         if (!listNode)
             render->setNotInList(true);
 
-	// If we are first, and the OL has a start attr, set the value.
-	if (listNode && listNode->hasTagName(olTag) && !m_render->previousSibling()) {
-	    HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(listNode);
+        // If we are first, and the OL has a start attr, set the value.
+        if (listNode && listNode->hasTagName(olTag) && !m_render->previousSibling()) {
+            HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(listNode);
             render->setValue(ol->start());
-	}
+        }
 
-	// If we had a value attr.
-	if (isValued)
-	    render->setValue(requestedValue);
+        // If we had a value attr.
+        if (isValued)
+            render->setValue(requestedValue);
     }
 }
 

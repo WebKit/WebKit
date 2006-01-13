@@ -238,7 +238,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 p->setPen (Qt::lightGray);
                 p->setBrush (Qt::NoBrush);
                 p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight);
-	    }
+            }
             
             bool errorPictureDrawn = false;
             int imageX = 0, imageY = 0;
@@ -383,9 +383,9 @@ void RenderImage::layout()
     // if they are variable width and we calculate a huge height or width, we assume they
     // actually wanted the intrinsic width.
     if ( m_width > 2048 && !style()->width().isFixed() )
-	m_width = intrinsicWidth();
+        m_width = intrinsicWidth();
     if ( m_height > 2048 && !style()->height().isFixed() )
-	m_height = intrinsicHeight();
+        m_height = intrinsicHeight();
 
 // We don't want to impose a constraint on image size here. But there also
 // is a bug somewhere that causes the scaled height to be used with the

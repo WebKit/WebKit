@@ -42,7 +42,7 @@ class CompositeEditCommand : public EditCommand
 {
 public:
     CompositeEditCommand(DOM::DocumentImpl *);
-	
+
     virtual void doUnapply();
     virtual void doReapply();
 

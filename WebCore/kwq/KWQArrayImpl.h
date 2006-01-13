@@ -54,13 +54,13 @@ class KWQArrayImpl
  private:
     class KWQArrayPrivate : public khtml::Shared<KWQArrayPrivate>
     {
-    public:	
-	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
-	~KWQArrayPrivate();
+    public:
+        KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
+        ~KWQArrayPrivate();
 
-	size_t numItems;
-	size_t itemSize;
-	char *data;
+        size_t numItems;
+        size_t itemSize;
+        char *data;
     };
 
     RefPtr<KWQArrayPrivate> d;

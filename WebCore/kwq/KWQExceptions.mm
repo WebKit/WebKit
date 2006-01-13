@@ -30,8 +30,8 @@
 void KWQReportBlockedException(NSException *localException)
 {
 #if ASSERT_DISABLED
-	NSLog(@"Uncaught exception - %@\n", localException);
+    NSLog(@"Uncaught exception - %@\n", localException);
 #else
-	ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException);
+    ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException);
 #endif
 }

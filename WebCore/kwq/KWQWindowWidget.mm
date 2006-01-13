@@ -60,7 +60,7 @@ QRect KWQWindowWidget::frameGeometry() const
 {
     NSRect frame = [d->bridge windowFrame];
     return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
-		 (int)frame.size.width, (int)frame.size.height);
+                 (int)frame.size.width, (int)frame.size.height);
 }
 
 QWidget *KWQWindowWidget::topLevelWidget() const

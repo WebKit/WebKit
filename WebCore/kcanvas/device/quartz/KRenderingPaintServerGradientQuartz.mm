@@ -91,10 +91,10 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
 //typedef vector unsigned char vUInt8;
 //vector float vec_loadAndSplatScalar( float *scalarPtr )
 //{
-//	vUInt8 splatMap = vec_lvsl( 0, scalarPtr );
-//	vector float result = vec_lde( 0, scalarPtr );
-//	splatMap = (vUInt8) vec_splat( (vector float) splatMap, 0 );
-//	return vec_perm( result, result, splatMap );
+//      vUInt8 splatMap = vec_lvsl( 0, scalarPtr );
+//      vector float result = vec_lde( 0, scalarPtr );
+//      splatMap = (vUInt8) vec_splat( (vector float) splatMap, 0 );
+//      return vec_perm( result, result, splatMap );
 //}
     
 static void cgGradientCallback(void *info, const float *inValues, float *outColor)

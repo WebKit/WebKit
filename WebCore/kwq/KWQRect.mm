@@ -143,11 +143,11 @@ QRect QRect::normalize() const
 {
     QRect newRect;
     
-    newRect.xp	= (w < 0) ? (xp - w) : xp;
-    newRect.w	= (w < 0) ? -w : w;
+    newRect.xp  = (w < 0) ? (xp - w) : xp;
+    newRect.w   = (w < 0) ? -w : w;
     
-    newRect.yp	= (h < 0) ? (yp - h) : yp;
-    newRect.h	= (h < 0) ? -h : h;
+    newRect.yp  = (h < 0) ? (yp - h) : yp;
+    newRect.h   = (h < 0) ? -h : h;
     
     return newRect;
 }

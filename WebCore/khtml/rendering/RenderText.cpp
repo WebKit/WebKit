@@ -977,7 +977,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     } else if (f == &style()->htmlFont()) {
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     } else {
-	w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
+        w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
     }
         
     //kdDebug( 6040 ) << "RenderText::width(" << from << ", " << len << ") = " << w << endl;

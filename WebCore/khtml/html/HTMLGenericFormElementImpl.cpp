@@ -47,9 +47,9 @@ HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(const QualifiedName& tagN
     m_disabled = m_readOnly = false;
 
     if (f)
-	m_form = f;
+        m_form = f;
     else
-	m_form = getForm();
+        m_form = getForm();
     if (m_form)
         m_form->registerFormElement(this);
 }
@@ -111,8 +111,8 @@ void HTMLGenericFormElementImpl::insertedIntoTree(bool deep)
         // setting a form, we will already have a non-null value for m_form, 
         // and so we don't need to do anything.
         m_form = getForm();
-	if (m_form)
-	    m_form->registerFormElement(this);
+        if (m_form)
+            m_form->registerFormElement(this);
         else {
             DocumentImpl *doc = getDocument();
             if (doc && isRadioButton() && !name().isEmpty() && isChecked())
@@ -233,8 +233,8 @@ bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
             return static_cast<RenderWidget*>(m_render)->widget() &&
                 (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() & QWidget::TabFocus);
         }
-	if (getDocument()->frame())
-	    return getDocument()->frame()->tabsToAllControls();
+        if (getDocument()->frame())
+            return getDocument()->frame()->tabsToAllControls();
     }
     return false;
 }

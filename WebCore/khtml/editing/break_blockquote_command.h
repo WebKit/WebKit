@@ -35,7 +35,7 @@ class BreakBlockquoteCommand : public CompositeEditCommand
 {
 public:
     BreakBlockquoteCommand(DOM::DocumentImpl *);
-	
+
     virtual void doApply();
 };
 

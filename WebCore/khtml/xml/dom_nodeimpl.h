@@ -344,12 +344,12 @@ public:
     void checkSetPrefix(const AtomicString &_prefix, int &exceptioncode);
     bool isAncestor(const NodeImpl *) const;
 
-	// These two methods are mutually exclusive.  The former is used to do strict error-checking
-	// when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
-	// to sanity-check against the DTD for error recovery.
-	void checkAddChild(NodeImpl *newChild, int &exceptioncode);    // Error-checking when adding via the DOM API
-	virtual bool childAllowed(NodeImpl *newChild);				   // Error-checking during parsing that checks the DTD
-	
+    // These two methods are mutually exclusive.  The former is used to do strict error-checking
+    // when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
+    // to sanity-check against the DTD for error recovery.
+    void checkAddChild(NodeImpl *newChild, int &exceptioncode);     // Error-checking when adding via the DOM API
+    virtual bool childAllowed(NodeImpl *newChild);                  // Error-checking during parsing that checks the DTD
+
     virtual int maxOffset() const;
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -458,7 +458,6 @@ public:
     void showNode(const char *prefix="") const;
     void showTree() const;
     void showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2) const;
-	
 #endif
 
     void registerNodeList(NodeListImpl *list);

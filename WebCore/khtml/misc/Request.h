@@ -36,14 +36,14 @@ namespace khtml
     class Request
     {
     public:
-	Request(DocLoader* dl, CachedObject *_object, bool _incremental);
-	~Request();
-	bool incremental;
-	QBuffer m_buffer;
-	CachedObject *object;
+        Request(DocLoader* dl, CachedObject *_object, bool _incremental);
+        ~Request();
+        bool incremental;
+        QBuffer m_buffer;
+        CachedObject *object;
         DocLoader* m_docLoader;
         bool multipart;
      };
-};
+}
 
 #endif

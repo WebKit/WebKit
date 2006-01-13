@@ -80,11 +80,11 @@ JSValue *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
   case XMLSerializer::SerializeToString:
     {
       if (args.size() != 1) {
-	return jsUndefined();
+        return jsUndefined();
       }
 
       if (!args[0]->toObject(exec)->inherits(&DOMNode::info)) {
-	return jsUndefined();
+        return jsUndefined();
       }
 
       NodeImpl *node = static_cast<NodeImpl *>(static_cast<DOMNode *>(args[0]->toObject(exec))->impl());

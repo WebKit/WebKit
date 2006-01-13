@@ -35,7 +35,7 @@ class DeleteSelectionCommand : public CompositeEditCommand
 public:
     DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     DeleteSelectionCommand(DOM::DocumentImpl *document, const SelectionController &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-	
+
     virtual void doApply();
     virtual EditAction editingAction() const;
     

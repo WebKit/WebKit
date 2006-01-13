@@ -1200,7 +1200,7 @@ static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existing
     // get color information assuming NSDeviceRGBColorSpace 
     NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     if (rgbColor == nil)
-	rgbColor = [NSColor blackColor];
+        rgbColor = [NSColor blackColor];
     float components[4];
     [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
     
@@ -1232,9 +1232,9 @@ static void AXAttributeStringSetColor(NSMutableAttributedString *attrString, NSS
 
 static void AXAttributeStringSetNumber(NSMutableAttributedString *attrString, NSString *attribute, NSNumber* number, NSRange range)
 {
-    if (number != nil) {
-	[attrString addAttribute:attribute value:number range:range];
-    } else
+    if (number != nil)
+        [attrString addAttribute:attribute value:number range:range];
+    else
         [attrString removeAttribute:attribute range:range];
 }
 

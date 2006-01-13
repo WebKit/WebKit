@@ -46,7 +46,7 @@ bool QFile::open(int mode)
     close();
 
     if (mode == IO_ReadOnly) {
-	fd = ::open(name, O_RDONLY);
+        fd = ::open(name, O_RDONLY);
     }
 
     return fd != -1;
@@ -55,7 +55,7 @@ bool QFile::open(int mode)
 void QFile::close()
 {
     if (fd != -1) {
-	::close(fd);
+        ::close(fd);
     }
 
     fd = -1;
@@ -64,9 +64,9 @@ void QFile::close()
 int QFile::readBlock(char *data, uint bytesToRead)
 {
     if (fd == -1) {
-	return -1;
+        return -1;
     } else {
-	return read(fd, data, bytesToRead);
+        return read(fd, data, bytesToRead);
     }
 }
 
@@ -75,9 +75,9 @@ uint QFile::size() const
     struct stat statbuf;
 
     if (stat(name, &statbuf) == 0) {
-	return statbuf.st_size;
+        return statbuf.st_size;
     } else {
-	return 0;
+        return 0;
     }
 }
 

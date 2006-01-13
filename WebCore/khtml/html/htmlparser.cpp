@@ -175,9 +175,9 @@ void HTMLParser::setCurrent(DOM::NodeImpl *newCurrent)
 {
     bool newCurrentIsReferenced = newCurrent && newCurrent != doc();
     if (newCurrentIsReferenced) 
-	newCurrent->ref(); 
+        newCurrent->ref(); 
     if (currentIsReferenced) 
-	current->deref(); 
+        current->deref(); 
     current = newCurrent;
     currentIsReferenced = newCurrentIsReferenced;
 }

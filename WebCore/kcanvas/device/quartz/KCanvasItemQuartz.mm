@@ -48,7 +48,6 @@
 
 KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderPath(style, node)
 {
-        
 }
 
 typedef enum {

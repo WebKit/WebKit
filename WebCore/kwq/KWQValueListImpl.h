@@ -148,7 +148,7 @@ inline const KWQValueListNodeImpl *KWQValueListIteratorImpl::node() const
 inline KWQValueListIteratorImpl& KWQValueListIteratorImpl::operator++()
 {
     if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->next;
+        nodeImpl = nodeImpl->next;
     }
     return *this;
 }
@@ -158,7 +158,7 @@ inline KWQValueListIteratorImpl KWQValueListIteratorImpl::operator++(int)
     KWQValueListIteratorImpl tmp(*this);
 
     if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->next;
+        nodeImpl = nodeImpl->next;
     }
 
     return tmp;
@@ -167,7 +167,7 @@ inline KWQValueListIteratorImpl KWQValueListIteratorImpl::operator++(int)
 inline KWQValueListIteratorImpl& KWQValueListIteratorImpl::operator--()
 {
     if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->prev;
+        nodeImpl = nodeImpl->prev;
     }
     return *this;
 }

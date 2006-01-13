@@ -233,7 +233,7 @@ DOMString HTMLInputElementImpl::type() const
 
 QString HTMLInputElementImpl::state( )
 {
-    assert(m_type != PASSWORD);		// should never save/restore password fields
+    assert(m_type != PASSWORD); // should never save/restore password fields
 
     QString state = HTMLGenericFormElementImpl::state();
     switch (m_type) {
@@ -247,7 +247,7 @@ QString HTMLInputElementImpl::state( )
 
 void HTMLInputElementImpl::restoreState(QStringList &states)
 {
-    assert(m_type != PASSWORD);		// should never save/restore password fields
+    assert(m_type != PASSWORD); // should never save/restore password fields
     
     QString state = HTMLGenericFormElementImpl::findMatchingState(states);
     if (state.isNull()) return;
@@ -975,7 +975,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
         xPos = me->clientX()-offsetX;
         yPos = me->clientY()-offsetY;
 
-	me->setDefaultHandled();
+        me->setDefaultHandled();
     }
 
     // DOMActivate events cause the input to be "activated" - in the case of image and submit inputs, this means

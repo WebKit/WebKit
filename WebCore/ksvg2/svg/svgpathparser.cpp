@@ -285,7 +285,7 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                          lastCommand == 's' || lastCommand == 'S')) {
                         contrlx = curx;
                         contrly = cury;
-					}
+                    }
 
                     if( process )
                     {
@@ -346,7 +346,7 @@ SVGPathParser::parseSVG( const QString &s, bool process )
                          lastCommand == 't' || lastCommand == 'T')) {
                         contrlx = curx;
                         contrly = cury;
-					}
+                    }
 
                     if( process )
                     {

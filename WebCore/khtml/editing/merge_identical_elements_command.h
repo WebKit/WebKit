@@ -35,7 +35,7 @@ class MergeIdenticalElementsCommand : public EditCommand
 public:
     MergeIdenticalElementsCommand(DOM::DocumentImpl *, DOM::ElementImpl *first, DOM::ElementImpl *second);
     virtual ~MergeIdenticalElementsCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

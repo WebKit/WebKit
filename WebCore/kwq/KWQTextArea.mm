@@ -114,7 +114,7 @@ const float LargeNumberForText = 1.0e7;
 {
     static NSImage *cornerImage = nil;
     if (cornerImage == nil) {
-	cornerImage = [[NSImage alloc] initWithContentsOfFile:
+        cornerImage = [[NSImage alloc] initWithContentsOfFile:
             [[NSBundle bundleForClass:[self class]]
             pathForResource:@"textAreaResizeCorner" ofType:@"tiff"]];
     }
@@ -967,7 +967,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
             if (layer)
                 layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
         }
-	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
+        [self _KWQ_setKeyboardFocusRingNeedsDisplay];
         if (widget) {
             QFocusEvent event(QEvent::FocusIn);
             if (widget->eventFilterObject())
@@ -987,7 +987,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     --inResponderChange;
 
     if (resign) {
-	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
+        [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
         if (widget) {
             QFocusEvent event(QEvent::FocusOut);
@@ -1141,7 +1141,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
     WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
     if (![[NSInputManager currentInputManager] hasMarkedText]) {
-	[bridge interceptKeyEvent:event toView:self];
+        [bridge interceptKeyEvent:event toView:self];
     }
     // Don't call super because NSTextView will simply pass the
     // event along the responder chain. This is arguably a bug in

@@ -52,7 +52,7 @@ public:
 
     enum ECommandState { NotApplied, Applied };
     
-    void apply();	
+    void apply();
     void unapply();
     void reapply();
 

@@ -38,9 +38,9 @@ void QFrame::setFrameStyle(int s)
     // Tell the other side of the bridge about the frame style change.
     if (isKHTMLView()) {
         if (Frame *frame = static_cast<KHTMLView *>(this)->frame()) {
-	    KWQ_BLOCK_EXCEPTIONS;
+            KWQ_BLOCK_EXCEPTIONS;
             [Mac(frame)->bridge() setHasBorder:(s != NoFrame)];
-	    KWQ_UNBLOCK_EXCEPTIONS;
+            KWQ_UNBLOCK_EXCEPTIONS;
         }
     }
 }

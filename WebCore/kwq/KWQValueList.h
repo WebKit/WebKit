@@ -134,7 +134,7 @@ private:
 
     static void deleteNode(KWQValueListNodeImpl *node) { delete (QValueListNode<T> *)node; }
     static bool nodesEqual(const KWQValueListNodeImpl *a, const KWQValueListNodeImpl *b)
-        { return ((QValueListNode<T> *)a)->value == ((QValueListNode<T> *)b)->value; }	
+        { return ((QValueListNode<T> *)a)->value == ((QValueListNode<T> *)b)->value; }
     static KWQValueListNodeImpl *copyNode(KWQValueListNodeImpl *node)
         { return new QValueListNode<T>(((QValueListNode<T> *)node)->value); }
 };

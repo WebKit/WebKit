@@ -56,7 +56,7 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
     if (!charset.isEmpty())
         m_codec = QTextCodec::codecForName(charset.latin1());
     if (!m_codec)
-	m_codec = QTextCodec::codecForName("iso8859-1");
+        m_codec = QTextCodec::codecForName("iso8859-1");
 }
 
 CachedScript::CachedScript(const DOMString &url, const QString &script_data)

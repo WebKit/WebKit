@@ -92,8 +92,8 @@ void HTMLFormElementImpl::attach()
 void HTMLFormElementImpl::insertedIntoDocument()
 {
     if (getDocument()->isHTMLDocument()) {
-	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-	document->addNamedItem(oldNameAttr);
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addNamedItem(oldNameAttr);
     }
 
     HTMLElementImpl::insertedIntoDocument();
@@ -102,8 +102,8 @@ void HTMLFormElementImpl::insertedIntoDocument()
 void HTMLFormElementImpl::removedFromDocument()
 {
     if (getDocument()->isHTMLDocument()) {
-	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-	document->removeNamedItem(oldNameAttr);
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeNamedItem(oldNameAttr);
     }
    
     HTMLElementImpl::removedFromDocument();
@@ -113,8 +113,8 @@ int HTMLFormElementImpl::length() const
 {
     int len = 0;
     for (unsigned i = 0; i < formElements.count(); ++i)
-	if (formElements[i]->isEnumeratable())
-	    ++len;
+        if (formElements[i]->isEnumeratable())
+            ++len;
 
     return len;
 }
@@ -349,7 +349,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     m_insubmit = true;
 
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
-    bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
+    bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
     Mac(frame)->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.count(); ++i) {

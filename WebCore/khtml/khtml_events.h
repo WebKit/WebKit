@@ -84,7 +84,7 @@ class MouseDoubleClickEvent : public MouseEvent
 public:
   MouseDoubleClickEvent( QMouseEvent *mouseEvent, int x, int y,
                          const DOM::DOMString &url, const DOM::DOMString& target,
-		         DOM::NodeImpl *innerNode)
+                         DOM::NodeImpl *innerNode)
   : MouseEvent( s_strMouseDoubleClickEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 
@@ -101,7 +101,7 @@ class MouseMoveEvent : public MouseEvent
 public:
   MouseMoveEvent( QMouseEvent *mouseEvent, int x, int y,
                   const DOM::DOMString &url, const DOM::DOMString& target,
-		   DOM::NodeImpl *innerNode)
+                  DOM::NodeImpl *innerNode)
   : MouseEvent( s_strMouseMoveEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 
@@ -116,7 +116,7 @@ class MouseReleaseEvent : public MouseEvent
 public:
   MouseReleaseEvent( QMouseEvent *mouseEvent, int x, int y,
                      const DOM::DOMString &url, const DOM::DOMString& target,
-		     DOM::NodeImpl *innerNode, int = 0 )
+                     DOM::NodeImpl *innerNode, int = 0 )
   : MouseEvent( s_strMouseReleaseEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 

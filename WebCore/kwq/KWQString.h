@@ -392,7 +392,7 @@ struct KWQStringData
     mutable char *_ascii;
     uint _maxUnicode:30;
     uint _isUnicodeValid:1;
-    uint _isHeapAllocated:1;	// Fragile, but the only way we can be sure the instance was created with 'new'.
+    uint _isHeapAllocated:1; // Fragile, but the only way we can be sure the instance was created with 'new'.
     uint _maxAscii:31;
     uint _isAsciiValid:1;
     

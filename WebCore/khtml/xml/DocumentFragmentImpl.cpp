@@ -61,11 +61,8 @@ bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
 DOMString DocumentFragmentImpl::toString() const
 {
     DOMString result;
-
-    for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
-	result += child->toString();
-    }
-
+    for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling())
+        result += child->toString();
     return result;
 }
 
@@ -77,4 +74,4 @@ NodeImpl *DocumentFragmentImpl::cloneNode (bool deep)
     return clone;
 }
 
-};
+}

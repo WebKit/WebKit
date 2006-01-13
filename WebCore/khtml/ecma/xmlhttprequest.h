@@ -143,7 +143,7 @@ namespace KJS {
 
   class XMLHttpRequestQObject : public QObject {
     Q_OBJECT
-	
+
   public:
     XMLHttpRequestQObject(XMLHttpRequest *_jsObject);
 

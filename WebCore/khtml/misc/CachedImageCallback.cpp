@@ -86,7 +86,7 @@ void CachedImageCallback::notifyFinished()
         cachedImage->checkNotify();
         QSize s = cachedImage->pixmap_size();
         cachedImage->setSize(s.width() * s.height() * 2);
-	
+
         Request *r = cachedImage->m_request;
         DocLoader *dl = r->m_docLoader;
 

@@ -676,7 +676,7 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
                             curr->object()->borderBottom() + curr->object()->paddingBottom();
                 newY -= curr->object()->borderTop() + curr->object()->paddingTop();
                 newBaseline += curr->object()->borderTop() + curr->object()->paddingTop();
-            }	
+            }
         }
         else if (!curr->object()->isBR()) {
             newY += curr->object()->marginTop();

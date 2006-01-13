@@ -35,7 +35,7 @@ class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
 public:
     RemoveNodePreservingChildrenCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
     virtual ~RemoveNodePreservingChildrenCommand() { }
-	
+
     virtual void doApply();
 
     DOM::NodeImpl *node() const { return m_node.get(); }

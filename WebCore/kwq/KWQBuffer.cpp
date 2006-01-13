@@ -41,8 +41,8 @@ int QBuffer::writeBlock(const char *data, uint len)
 
     if (pos+len > ba.size()) {
         if (!ba.resize(pos+len)) {
-	    return -1;
-	}
+            return -1;
+        }
     }
     memcpy(ba.data()+pos, data, len);
     pos += len;

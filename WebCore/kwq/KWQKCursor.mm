@@ -53,7 +53,7 @@
     KWQ_BLOCK_EXCEPTIONS;
     cursor = [nameToCursor objectForKey:name];
     if (!cursor) { 
-	NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
+        NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
             [[NSBundle bundleForClass:[KWQKCursorBundleDummy class]]
             pathForResource:name ofType:@"tiff"]];
         if (cursorImage) {

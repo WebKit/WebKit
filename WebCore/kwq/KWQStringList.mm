@@ -49,9 +49,9 @@ QStringList QStringList::split(const QString &separator, const QString &s, bool 
 
     for (CFIndex i = 0; i < cfResultSize; i++) {
         QString entry = QString::fromCFString((CFStringRef)CFArrayGetValueAtIndex(cfresult, i));
-	if (!entry.isEmpty() || allowEmptyEntries) {
-	    result.append(entry);
-	}
+        if (!entry.isEmpty() || allowEmptyEntries) {
+            result.append(entry);
+        }
     }
 
     CFRelease(cfresult);
@@ -70,9 +70,9 @@ QString QStringList::join(const QString &separator) const
     
     for (ConstIterator i = begin(), j = ++begin(); i != end(); ++i, ++j) {
         result += *i;
-	if (j != end()) {
-	    result += separator;
-	}
+        if (j != end()) {
+            result += separator;
+        }
     }
 
     return result;

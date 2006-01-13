@@ -579,7 +579,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                     sy = pixh - ((bgLayer->backgroundYPosition().minWidth(ph-pixh)) % pixh );
                 }
             }
-			
+
             QRect fix(cx,cy,cw,ch);
             QRect ele(_tx,_ty,w,h);
             QRect b = fix.intersect(ele);
@@ -588,9 +588,6 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
             cx=b.x();cy=b.y();cw=b.width();ch=b.height();
         }
 
-
-//        kdDebug() << "cx="<<cx << " cy="<<cy<< " cw="<<cw << " ch="<<ch << " sx="<<sx << " sy="<<sy << endl;
-		
         if (cw>0 && ch>0)
             p->drawTiledPixmap(cx, cy, cw, ch, bg->tiled_pixmap(c), sx, sy);
     }
@@ -678,7 +675,7 @@ int RenderBox::containingBlockWidth() const
 bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
 {
     if (style()->position() == FIXED)
-	f = true;
+        f = true;
     RenderObject *o = container();
     if (o && o->absolutePosition(xPos, yPos, f)) {
         if (o->hasOverflowClip())
@@ -921,13 +918,11 @@ void RenderBox::calcWidth()
             }
             
             if (widthType == Auto) {
-    //          kdDebug( 6040 ) << "variable" << endl;
                 m_marginLeft = ml.minWidth(cw);
                 m_marginRight = mr.minWidth(cw);
             }
             else
             {
-//          	kdDebug( 6040 ) << "non-variable " << w.type << ","<< w.value << endl;
                 calcHorizontalMargins(ml,mr,cw);
             }
         }
@@ -1326,10 +1321,10 @@ int RenderBox::availableHeightUsing(const Length& h) const
 void RenderBox::calcVerticalMargins()
 {
     if( isTableCell() ) {
-	// table margins are basically infinite
-	m_marginTop = TABLECELLMARGIN;
-	m_marginBottom = TABLECELLMARGIN;
-	return;
+        // table margins are basically infinite
+        m_marginTop = TABLECELLMARGIN;
+        m_marginBottom = TABLECELLMARGIN;
+        return;
     }
 
     Length tm = style()->marginTop();

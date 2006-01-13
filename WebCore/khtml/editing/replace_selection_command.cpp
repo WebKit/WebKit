@@ -325,7 +325,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle>
         // If the desiredStyle is non-zero length, that means the current style differs
         // from the desired by the styles remaining in the desiredStyle declaration.
         if (desiredStyle->length() > 0)
-	    applyStyle(desiredStyle, Position(node, 0), Position(node, maxDeepOffset(node)));
+            applyStyle(desiredStyle, Position(node, 0), Position(node, maxDeepOffset(node)));
     }
 }
 
@@ -650,7 +650,7 @@ void ReplaceSelectionCommand::doApply()
     if (mergeStart && !isFirstVisiblePositionInSpecialElementInFragment(Position(m_fragment.mergeStartNode(), 0))) {
         NodeImpl *refNode = m_fragment.mergeStartNode();
         if (refNode) {
-	    NodeImpl *parent = refNode->parentNode();
+            NodeImpl *parent = refNode->parentNode();
             NodeImpl *node = refNode->nextSibling();
             insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
             while (node && !isProbablyBlock(node)) {
@@ -660,12 +660,12 @@ void ReplaceSelectionCommand::doApply()
                 node = next;
             }
 
-	    // remove any ancestors we emptied, except the root itself which cannot be removed
-	    while (parent && parent->parentNode() && parent->childNodeCount() == 0) {
-		NodeImpl *nextParent = parent->parentNode();
-		removeNode(parent);
-		parent = nextParent;
-	    }
+            // remove any ancestors we emptied, except the root itself which cannot be removed
+            while (parent && parent->parentNode() && parent->childNodeCount() == 0) {
+                NodeImpl *nextParent = parent->parentNode();
+                removeNode(parent);
+                parent = nextParent;
+            }
         }
         
         // update insertion point to be at the end of the last block inserted

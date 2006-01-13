@@ -571,7 +571,7 @@ void RenderFileButton::updateFromElement()
 void RenderFileButton::slotReturnPressed()
 {
     if (element()->form())
-	element()->form()->prepareSubmit();
+        element()->form()->prepareSubmit();
 }
 
 void RenderFileButton::slotTextChanged(const DOMString &string)
@@ -750,7 +750,7 @@ void RenderSelect::updateFromElement()
             m_selectionChanged = true;
         }
         if (m_useListBox)
-	    static_cast<QListBox*>(m_widget)->doneAppendingItems();
+            static_cast<QListBox*>(m_widget)->doneAppendingItems();
         setNeedsLayoutAndMinMaxRecalc();
         m_optionsChanged = false;
     }
@@ -834,7 +834,7 @@ void RenderSelect::layout( )
 
     bool foundOption = false;
     for (uint i = 0; i < listItems.size() && !foundOption; i++)
-	foundOption = (listItems[i]->hasTagName(optionTag));
+        foundOption = (listItems[i]->hasTagName(optionTag));
 
     m_widget->setEnabled(foundOption && ! element()->disabled());
 }

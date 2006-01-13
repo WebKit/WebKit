@@ -301,7 +301,7 @@ short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
                 return m_lineHeight;
             }
             return s->fontMetrics().lineSpacing();
-	}
+        }
         if (lh.isPercent())
             return lh.minWidth(s->font().pixelSize());
         return lh.value;
@@ -328,7 +328,7 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
 InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
 {
     if (!isRootLineBox &&
-	(isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks
+        (isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks
         return RenderContainer::createInlineBox(false, isRootLineBox);  // (or positioned element placeholders).
 
     InlineFlowBox* flowBox = 0;

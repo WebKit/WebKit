@@ -126,10 +126,9 @@ void Loader::servePendingRequests()
 
   if (KWQServeRequest(this, req, job)) {
       if (req->object->type() == CachedObject::Image) {
-	CachedImage *ci = static_cast<CachedImage*>(req->object);
-	if (ci->decoderCallback()) {
-	    m_requestsBackgroundDecoding.append(req);
-	}
+        CachedImage *ci = static_cast<CachedImage*>(req->object);
+        if (ci->decoderCallback())
+            m_requestsBackgroundDecoding.append(req);
       }
       m_requestsLoading.insert(job, req);
   }
@@ -146,9 +145,9 @@ void Loader::slotFinished( KIO::Job* job, NSData *allData)
     CachedObject *object = r->object;
     DocLoader *docLoader = r->m_docLoader;
     
-    bool backgroundImageDecoding = (object->type() == CachedObject::Image && 
-	static_cast<CachedImage*>(object)->decoderCallback());
-	
+    bool backgroundImageDecoding = (object->type() == CachedObject::Image &&
+        static_cast<CachedImage*>(object)->decoderCallback());
+
     if (j->error() || j->isErrorPage()) {
         // Use the background image decoder's callback to handle the error.
         if (backgroundImageDecoding) {
@@ -296,9 +295,8 @@ void Loader::cancelRequests( DocLoader* dl )
 void Loader::removeBackgroundDecodingRequest (Request *r)
 {
     bool present = m_requestsBackgroundDecoding.containsRef(r);
-    if (present) {
-	m_requestsBackgroundDecoding.remove (r);
-    }
+    if (present)
+        m_requestsBackgroundDecoding.remove(r);
 }
 
 KIO::Job *Loader::jobForRequest( const DOM::DOMString &url ) const
@@ -321,4 +319,4 @@ bool Loader::isKHTMLLoader() const
     return true;
 }
 
-};
+}

@@ -66,7 +66,7 @@ public:
     QPoint bottomLeft() const;
     
     void moveTopLeft(const QPoint &p) { xp += p.x(); yp += p.y(); } 
-	
+
     QSize size() const;
     void setX(int x) { xp = x; }
     void setY(int y) { yp = y; }
@@ -77,7 +77,7 @@ public:
     bool intersects(const QRect &) const;
     QRect unite(const QRect &) const;
     QRect normalize() const;
-	
+
     bool contains(const QPoint &point) const { return contains(point.x(), point.y()); }
 
     bool contains(int x, int y, bool proper = false) const {
@@ -85,7 +85,7 @@ public:
             return x > xp && (x < (xp + w - 1)) && y > yp && y < (yp + h - 1);
         return x >= xp && x < (xp + w) && y >= yp && y < (yp + h);
     }
-	
+
     bool contains(const QRect &rect) const { return intersect(rect) == rect; }
     
     void inflate(int s);

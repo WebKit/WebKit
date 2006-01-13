@@ -149,7 +149,7 @@ class MediaListImpl : public StyleBaseImpl
 {
 public:
     MediaListImpl()
-	: StyleBaseImpl( 0 ) {}
+        : StyleBaseImpl( 0 ) {}
     MediaListImpl( CSSStyleSheetImpl *parentSheet )
         : StyleBaseImpl(parentSheet) {}
     MediaListImpl( CSSStyleSheetImpl *parentSheet,

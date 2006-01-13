@@ -151,8 +151,8 @@ static CFHashCode encodingNameHash(const void *value)
             break;
         }
         h += tolower(c);
-	h += (h << 10); 
-	h ^= (h >> 6); 
+        h += (h << 10); 
+        h ^= (h >> 6); 
     }
 
     h += (h << 3);

@@ -209,9 +209,9 @@ bool XBLTokenHandler::characters(const QString& text)
         uint l = text.length();
         uint i;
         for (i = 0; i < l; i++) {
-	    if (!isspace(text[i].unicode()))
-	        break;
-	}
+            if (!isspace(text[i].unicode()))
+                break;
+        }
         if (i == l)
             return true;
     }

@@ -57,7 +57,7 @@ void TokenizerString::append(const TokenizerSubstring &s)
     if (s.m_length) {
         if (!m_currentString.m_length) {
             m_currentString = s;
-	} else {
+        } else {
             m_substrings.append(s);
             m_composite = true;
         }

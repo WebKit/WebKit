@@ -35,7 +35,7 @@ class RemoveNodeCommand : public EditCommand
 public:
     RemoveNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
     virtual ~RemoveNodeCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

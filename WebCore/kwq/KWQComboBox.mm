@@ -362,7 +362,7 @@ void QComboBox::populateMenu()
         KWQ_BLOCK_EXCEPTIONS;
 
         KWQPopUpButton *button = static_cast<KWQPopUpButton *>(getView());
-	[button setPopulatingMenu:YES];
+        [button setPopulatingMenu:YES];
         [button removeAllItems];
         QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
         QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
@@ -379,7 +379,7 @@ void QComboBox::populateMenu()
             }
         }
         [button selectItemAtIndex:_currentItem];
-	[button setPopulatingMenu:NO];
+        [button setPopulatingMenu:NO];
 
         KWQ_UNBLOCK_EXCEPTIONS;
 
@@ -574,7 +574,7 @@ void QComboBox::populate()
 - (void)setNeedsDisplayInRect:(NSRect)rect
 {
     if (!populatingMenu) {
-	[super setNeedsDisplayInRect:rect];
+        [super setNeedsDisplayInRect:rect];
     }
 }
 

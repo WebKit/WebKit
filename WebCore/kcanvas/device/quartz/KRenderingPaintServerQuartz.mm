@@ -61,7 +61,7 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 
     if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
         CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());		
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());
         CGContextSetStrokeColorWithColor(context, withAlpha);
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
@@ -75,9 +75,9 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 
 void patternCallback(void *info, CGContextRef context)
 {
-	KCanvasImageQuartz *image = (KCanvasImageQuartz *)info;
-	CGLayerRef layer = image->cgLayer();
-	CGContextDrawLayerAtPoint(context, CGPointZero, layer);
+    KCanvasImageQuartz *image = (KCanvasImageQuartz *)info;
+    CGLayerRef layer = image->cgLayer();
+    CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
 void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
@@ -92,7 +92,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     KCanvasImage *cell = tile();
     if (!cell)
         return;
-	
+
     CGContextSaveGState(context);
 
     CGSize cellSize = CGSize(cell->size());
@@ -106,7 +106,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
     CGSize phase = CGSizeMake(bbox().x(), bbox().y());
     CGContextSetPatternPhase(context, phase);
-		
+
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
     CGPatternRef pattern = CGPatternCreate (
         tile(),
@@ -133,7 +133,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
     if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
         CGContextSetStrokeColorSpace(context, patternSpace);
-        CGContextSetStrokePattern(context, pattern, &alpha);		
+        CGContextSetStrokePattern(context, pattern, &alpha);
         applyStrokeStyleToContext(context, canvasStyle);
         CGContextStrokePath(context);
     }

@@ -44,17 +44,17 @@
 typedef unsigned long uword;
 
 struct Arena {
-    Arena* next; 	// next arena
-    uword base;		// aligned base address
-    uword limit;	// end of arena (1+last byte)
-    uword avail;	// points to next available byte in arena
+    Arena* next;        // next arena
+    uword base;         // aligned base address
+    uword limit;        // end of arena (1+last byte)
+    uword avail;        // points to next available byte in arena
 };
 
 struct ArenaPool {
-    Arena first;	// first arena in pool list.
-    Arena* current; // current arena.
+    Arena first;        // first arena in pool list.
+    Arena* current;     // current arena.
     unsigned int arenasize;
-    uword mask; 	// Mask (power-of-2 - 1)
+    uword mask;         // Mask (power-of-2 - 1)
 };
 
 void InitArenaPool(ArenaPool *pool, const char *name, 

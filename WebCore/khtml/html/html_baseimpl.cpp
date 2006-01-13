@@ -291,7 +291,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     KHTMLView *w = d ? d->view() : 0;
 
     if (!w) {
-	return false;
+        return false;
     }
 
     KURL newURL(getDocument()->completeURL(URLString.qstring()));
@@ -306,7 +306,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     // algorithms that happen while loading which appear to be N^2 or
     // worse in the number of frames
     if (w->frame()->topLevelFrameCount() >= 200) {
-	return false;
+        return false;
     }
 
     // Prohibit non-file URLs if we are asked to.
@@ -455,7 +455,7 @@ void HTMLFrameElementImpl::attach()
     Frame *frame = getDocument()->frame();
 
     if (!frame)
-	return;
+        return;
 
     frame->incrementFrameCount();
     
@@ -477,7 +477,7 @@ void HTMLFrameElementImpl::close()
     Frame *frame = getDocument()->frame();
 
     if (m_render && frame) {
-	frame->decrementFrameCount();
+        frame->decrementFrameCount();
         Frame *framePart = frame->findFrame(m_name.qstring());
         if (framePart)
             framePart->frameDetached();
@@ -522,11 +522,11 @@ void HTMLFrameElementImpl::setFocus(bool received)
     HTMLElementImpl::setFocus(received);
     khtml::RenderFrame *renderFrame = static_cast<khtml::RenderFrame *>(m_render);
     if (!renderFrame || !renderFrame->widget())
-	return;
+        return;
     if (received)
-	renderFrame->widget()->setFocus();
+        renderFrame->widget()->setFocus();
     else
-	renderFrame->widget()->clearFocus();
+        renderFrame->widget()->clearFocus();
 }
 
 Frame* HTMLFrameElementImpl::contentPart() const

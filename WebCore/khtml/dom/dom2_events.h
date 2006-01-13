@@ -116,9 +116,9 @@ public:
      *
      */
     enum PhaseType {
-	CAPTURING_PHASE = 1,
-	AT_TARGET = 2,
-	BUBBLING_PHASE = 3
+        CAPTURING_PHASE = 1,
+        AT_TARGET = 2,
+        BUBBLING_PHASE = 3
     };
 };
 
@@ -171,9 +171,9 @@ public:
      *
      */
     enum attrChangeType {
-	MODIFICATION = 1,
-	ADDITION = 2,
-	REMOVAL = 3
+        MODIFICATION = 1,
+        ADDITION = 2,
+        REMOVAL = 3
     };
 };
 

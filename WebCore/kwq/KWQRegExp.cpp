@@ -91,9 +91,9 @@ void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     QString p;
 
     if (glob) {
-	p = RegExpFromGlob(pattern);
+        p = RegExpFromGlob(pattern);
     } else {
-	p = pattern;
+        p = pattern;
     }
     // Note we don't honor the Qt syntax for various character classes.  If we convert
     // to a different underlying engine, we may need to change client code that relies

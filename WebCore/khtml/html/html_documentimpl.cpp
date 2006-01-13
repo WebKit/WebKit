@@ -135,8 +135,8 @@ void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)
 {
     HTMLElementImpl *b = body();
     if ( !_body ) { 
-	exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-	return;
+        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        return;
     }
     if ( !b )
         documentElement()->appendChild( _body, exceptioncode );
@@ -181,7 +181,7 @@ void HTMLDocumentImpl::slotHistoryChanged()
 static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& name)
 {
     if (name.length() == 0)
-	return;
+        return;
  
     HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.impl()); 
     if (it == map.end())
@@ -193,7 +193,7 @@ static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& n
 static void removeItemFromMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& name)
 {
     if (name.length() == 0)
-	return;
+        return;
  
     HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.impl()); 
     if (it == map.end())
@@ -238,10 +238,10 @@ bool HTMLDocumentImpl::hasDocExtraNamedItem(const DOMString& name)
     return docExtraNamedItemCounts.get(name.impl()) != 0;
 }
 
-const int PARSEMODE_HAVE_DOCTYPE	=	(1<<0);
-const int PARSEMODE_HAVE_PUBLIC_ID	=	(1<<1);
-const int PARSEMODE_HAVE_SYSTEM_ID	=	(1<<2);
-const int PARSEMODE_HAVE_INTERNAL	=	(1<<3);
+const int PARSEMODE_HAVE_DOCTYPE        =       (1<<0);
+const int PARSEMODE_HAVE_PUBLIC_ID      =       (1<<1);
+const int PARSEMODE_HAVE_SYSTEM_ID      =       (1<<2);
+const int PARSEMODE_HAVE_INTERNAL       =       (1<<3);
 
 static int parseDocTypePart(const QString& buffer, int index)
 {

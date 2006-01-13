@@ -34,10 +34,10 @@ class QWidget;
 class QStyle : public QObject {
 public:
     enum PixelMetric { 
-	PM_IndicatorWidth,
-	PM_IndicatorHeight,
-	PM_ExclusiveIndicatorWidth,
-	PM_ExclusiveIndicatorHeight,
+        PM_IndicatorWidth,
+        PM_IndicatorHeight,
+        PM_ExclusiveIndicatorWidth,
+        PM_ExclusiveIndicatorHeight,
         PM_DefaultFrameWidth,
         PM_ButtonMargin
     };
@@ -48,10 +48,10 @@ public:
 
     int pixelMetric(PixelMetric metric, QWidget * = 0) const {
         switch (metric) {
-	case PM_IndicatorWidth:
-	case PM_IndicatorHeight:
-	case PM_ExclusiveIndicatorWidth:
-	case PM_ExclusiveIndicatorHeight:
+        case PM_IndicatorWidth:
+        case PM_IndicatorHeight:
+        case PM_ExclusiveIndicatorWidth:
+        case PM_ExclusiveIndicatorHeight:
             return 22; // FIXME! Shouldn't be hardcoded. Perhaps shouldn't all be same.
         case PM_DefaultFrameWidth:
         case PM_ButtonMargin:

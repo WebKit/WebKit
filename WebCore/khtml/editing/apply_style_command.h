@@ -43,7 +43,7 @@ public:
     ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
     ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, const DOM::Position start, const DOM::Position end, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
     virtual ~ApplyStyleCommand();
-	
+
     virtual void doApply();
     virtual EditAction editingAction() const;
 

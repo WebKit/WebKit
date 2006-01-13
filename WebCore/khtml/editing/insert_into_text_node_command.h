@@ -42,7 +42,7 @@ class InsertIntoTextNodeCommand : public EditCommand
 public:
     InsertIntoTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *, int, const DOM::DOMString &);
     virtual ~InsertIntoTextNodeCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

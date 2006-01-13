@@ -80,7 +80,7 @@ void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == alignAttr) {
         DOMString v = attr->value();
-	if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
         else if (equalIgnoringCase(attr->value(), "left"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
@@ -131,14 +131,14 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "left")) {
             addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, "0");
-	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
-	} else if (equalIgnoringCase(attr->value(), "right")) {
-	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
-	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, "0");
-	} else {
-      	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
             addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
-	}
+        } else if (equalIgnoringCase(attr->value(), "right")) {
+            addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+            addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, "0");
+        } else {
+            addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+            addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+        }
     } else if (attr->name() == widthAttr) {
         bool ok;
         int v = attr->value().impl()->toInt(&ok);

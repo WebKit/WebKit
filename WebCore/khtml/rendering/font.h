@@ -63,13 +63,13 @@ public:
                          // rounding, minimum font sizes, and zooming.
     float computedSize;  // Computed size adjusted for the minimum font size and the zoom factor.  
 
-    bool italic 		: 1;
-    bool smallCaps 		: 1;
+    bool italic                 : 1;
+    bool smallCaps              : 1;
     bool isAbsoluteSize         : 1;  // Whether or not CSS specified an explicit size
                                       // (logical sizes like "medium" don't count).
-    unsigned int weight 	: 8;
-    unsigned int genericFamily	: 3;
-    bool usePrinterFont		: 1;
+    unsigned int weight         : 8;
+    unsigned int genericFamily  : 3;
+    bool usePrinterFont         : 1;
 };
 
 inline bool operator==(const FontDef& a, const FontDef& b)

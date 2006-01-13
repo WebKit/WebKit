@@ -48,7 +48,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
     virtual bool checkDTD(const NodeImpl* newChild);
-	
+
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *token);
     

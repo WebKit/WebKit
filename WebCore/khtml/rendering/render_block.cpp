@@ -426,7 +426,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     KHTMLAssert(minMaxKnown());
 
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
-        return;	    		                     // cause us to come in here.  Just bail.
+        return;                                      // cause us to come in here.  Just bail.
 
     if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.
@@ -2126,7 +2126,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         for ( ; (r = it.current()); ++it ) {
             if (!r->noPaint || r->node->layer()) {
                 int rp = r->left + r->node->marginLeft() + r->node->rightmostPosition(false);
-           	right = kMax(right, rp);
+                right = kMax(right, rp);
             }
         }
     }
@@ -3043,9 +3043,6 @@ void RenderBlock::calcInlineMinMaxWidth()
     
     m_minWidth = kMax(inlineMin, m_minWidth);
     m_maxWidth = kMax(inlineMax, m_maxWidth);
-
-    //         kdDebug( 6040 ) << "m_minWidth=" << m_minWidth
-    // 			<< " m_maxWidth=" << m_maxWidth << endl;
 }
 
 // Use a very large value (in effect infinite).

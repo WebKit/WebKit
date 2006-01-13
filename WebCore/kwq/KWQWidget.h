@@ -48,9 +48,9 @@ class QWidget : public QObject, public QPaintDevice {
 public:
 
     enum WidgetFlags {
-	WResizeNoErase = 1,
-	WRepaintNoErase = 1 << 1,
-	WPaintUnclipped = 1 << 2
+        WResizeNoErase = 1,
+        WRepaintNoErase = 1 << 1,
+        WPaintUnclipped = 1 << 2
     };
 
     enum FocusPolicy {

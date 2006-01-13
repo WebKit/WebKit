@@ -1493,7 +1493,7 @@ using namespace DOM::HTMLNames;
 
 - (void)setRows:(int)rows
 {
-	DOMString value(QString::number(rows));
+    DOMString value(QString::number(rows));
     [self _textAreaElementImpl]->setAttribute(rowsAttr, value);
 }
 
@@ -1751,7 +1751,7 @@ using namespace DOM::HTMLNames;
 
 - (void)setStart:(int)start
 {
-	DOMString value(QString::number(start));
+    DOMString value(QString::number(start));
     [self _oListElementImpl]->setAttribute(startAttr, value);
 }
 

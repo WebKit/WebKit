@@ -35,12 +35,12 @@ class QTextEdit : public QScrollView
 {
  public:
     typedef enum { 
-	NoWrap,
-	WidgetWidth
+        NoWrap,
+        WidgetWidth
     } WrapStyle;
 
     typedef enum {
-	PlainText,
+        PlainText,
     } TextFormat;
 
     QTextEdit(QWidget *parent);

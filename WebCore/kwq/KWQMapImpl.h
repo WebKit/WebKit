@@ -103,8 +103,8 @@ class KWQMapImpl {
 
     void copyOnWrite();
     KWQMapNodeImpl *copyTree(const KWQMapNodeImpl *node, 
-			     KWQMapNodeImpl *subtreePredecessor, 
-			     KWQMapNodeImpl *subtreeSuccessor) const;
+                             KWQMapNodeImpl *subtreePredecessor, 
+                             KWQMapNodeImpl *subtreeSuccessor) const;
     void rebalanceAfterInsert(KWQMapNodeImpl **nodes, bool *wentLeft, int height);
     void rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeImpl **nodes, bool *wentLeft, int height);
     void rotateRight(KWQMapNodeImpl *node, KWQMapNodeImpl *parent, bool leftParent);

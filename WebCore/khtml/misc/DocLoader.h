@@ -59,11 +59,11 @@ namespace khtml
     class DocLoader
     {
     public:
- 	DocLoader(Frame*, DOM::DocumentImpl*);
- 	~DocLoader();
+        DocLoader(Frame*, DOM::DocumentImpl*);
+        ~DocLoader();
 
-	CachedImage *requestImage( const DOM::DOMString &url);
-	CachedCSSStyleSheet *requestStyleSheet( const DOM::DOMString &url, const QString& charset);
+        CachedImage *requestImage( const DOM::DOMString &url);
+        CachedCSSStyleSheet *requestStyleSheet( const DOM::DOMString &url, const QString& charset);
         CachedScript *requestScript( const DOM::DOMString &url, const QString& charset);
 
 #ifdef KHTML_XSLT
@@ -73,7 +73,7 @@ namespace khtml
         CachedXBLDocument* requestXBLDocument(const DOM::DOMString &url);
 #endif
 
-	bool autoloadImages() const { return m_bautoloadImages; }
+        bool autoloadImages() const { return m_bautoloadImages; }
         KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
         KHTMLSettings::KAnimationAdvice showAnimations() const { return m_showAnimations; }
         time_t expireDate() const { return m_expireDate; }
@@ -85,7 +85,7 @@ namespace khtml
         void setCachePolicy( KIO::CacheControl cachePolicy );
         void setShowAnimations( KHTMLSettings::KAnimationAdvice );
         void removeCachedObject( CachedObject*) const;
-		
+
         void setLoadInProgress(bool);
         bool loadInProgress() const { return m_loadInProgress; }
 
@@ -97,8 +97,8 @@ namespace khtml
 
         QStringList m_reloadedURLs;
         mutable QPtrList<CachedObject> m_docObjects;
-	time_t m_expireDate;
-	KIO::CacheControl m_cachePolicy;
+        time_t m_expireDate;
+        KIO::CacheControl m_cachePolicy;
         bool m_bautoloadImages : 1;
         KHTMLSettings::KAnimationAdvice m_showAnimations : 2;
         Frame* m_frame;

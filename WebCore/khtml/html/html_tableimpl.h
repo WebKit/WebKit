@@ -139,8 +139,8 @@ protected:
 
     bool m_noBorder     : 1;
     bool m_solid        : 1;
-    uint unused		: 14;
-    ushort padding	: 16;
+    uint unused         : 14;
+    ushort padding      : 16;
     friend class HTMLTableCellElementImpl;
 };
 
@@ -202,7 +202,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 7; }
     virtual bool checkDTD(const NodeImpl* newChild);
-	
+
     virtual NodeImpl *addChild(NodeImpl *child);
     
     int rowIndex() const;

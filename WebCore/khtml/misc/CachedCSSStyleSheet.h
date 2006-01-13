@@ -42,25 +42,25 @@ namespace khtml
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
-	CachedCSSStyleSheet(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
-	CachedCSSStyleSheet(const DOM::DOMString &url, const QString &stylesheet_data);
-	virtual ~CachedCSSStyleSheet();
+        CachedCSSStyleSheet(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
+        CachedCSSStyleSheet(const DOM::DOMString &url, const QString &stylesheet_data);
+        virtual ~CachedCSSStyleSheet();
 
-	const DOM::DOMString &sheet() const { return m_sheet; }
+        const DOM::DOMString &sheet() const { return m_sheet; }
 
-	virtual void ref(CachedObjectClient *consumer);
-	virtual void deref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient *consumer);
+        virtual void deref(CachedObjectClient *consumer);
 
         virtual void setCharset( const QString &chs );
         virtual void data( QBuffer &buffer, bool eof );
-	virtual void error( int err, const char *text );
+        virtual void error( int err, const char *text );
 
         virtual bool schedule() const { return true; }
 
-	void checkNotify();
+        void checkNotify();
 
     protected:
-	DOM::DOMString m_sheet;
+        DOM::DOMString m_sheet;
         QTextCodec* m_codec;
     };
 

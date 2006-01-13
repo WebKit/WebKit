@@ -39,7 +39,7 @@ class JoinTextNodesCommand : public EditCommand
 public:
     JoinTextNodesCommand(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
     virtual ~JoinTextNodesCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

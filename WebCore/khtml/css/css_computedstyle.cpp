@@ -699,7 +699,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         return new CSSPrimitiveValueImpl(style->lineClamp(), CSSPrimitiveValue::CSS_PERCENTAGE);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
-	if (length.value < 0)
+        if (length.value < 0)
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
         if (length.isPercent()) {
             // This is imperfect, because it doesn't include the zoom factor and the real computation

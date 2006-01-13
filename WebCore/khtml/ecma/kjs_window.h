@@ -186,8 +186,8 @@ namespace KJS {
            Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,
            XMLHttpRequest, XMLSerializer, DOMParser, XSLTProcessor,
-	   Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
-	   Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
+           Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
+           Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload, Onbeforeunload,
            Statusbar, Toolbar, FrameElement, ShowModalDialog };

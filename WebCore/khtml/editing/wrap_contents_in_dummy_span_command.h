@@ -35,7 +35,7 @@ class WrapContentsInDummySpanCommand : public EditCommand
 public:
     WrapContentsInDummySpanCommand(DOM::DocumentImpl *, DOM::ElementImpl *);
     virtual ~WrapContentsInDummySpanCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

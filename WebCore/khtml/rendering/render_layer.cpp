@@ -163,7 +163,7 @@ void RenderLayer::computeRepaintRects()
     // FIXME: Child object could override visibility.
     if (m_object->style()->visibility() == VISIBLE)
         m_object->getAbsoluteRepaintRectIncludingFloats(m_repaintRect, m_fullRepaintRect);
-    for	(RenderLayer* child = firstChild(); child; child = child->nextSibling())
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->computeRepaintRects();
 }
 
@@ -191,7 +191,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     if (checkForRepaint && (m_object->style()->visibility() == VISIBLE))
         m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
     
-    for	(RenderLayer* child = firstChild(); child; child = child->nextSibling())
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(doFullRepaint, checkForRepaint);
         
     // With all our children positioned, now update our marquee if we need to.
@@ -744,7 +744,7 @@ RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
     else if (!hasScrollbar && m_vBar) {
         QScrollView* scrollView = m_object->element()->getDocument()->view();
         scrollView->removeChild (m_vBar);
-	
+
         m_scrollMediator->disconnect(m_vBar, SIGNAL(valueChanged(int)),
                                      m_scrollMediator, SLOT(slotValueChanged(int)));
         delete m_vBar;
@@ -875,9 +875,9 @@ RenderLayer::updateScrollInfoAfterLayout()
         setHasHorizontalScrollbar(needHorizontalBar);
         setHasVerticalScrollbar(needVerticalBar);
        
-	// Force an update since we know the scrollbars have changed things.
-	if (m_object->document()->hasDashboardRegions())
-	    m_object->document()->setDashboardRegionsDirty(true);
+        // Force an update since we know the scrollbars have changed things.
+        if (m_object->document()->hasDashboardRegions())
+            m_object->document()->setDashboardRegionsDirty(true);
 
         m_object->repaint();
 
@@ -913,7 +913,7 @@ RenderLayer::updateScrollInfoAfterLayout()
     
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
-	m_object->document()->setDashboardRegionsDirty(true);
+        m_object->document()->setDashboardRegionsDirty(true);
 
     m_object->repaint();
 }
@@ -1725,7 +1725,7 @@ void Marquee::start()
     }
     else {
         m_suspended = false;
-	m_stopped = false;
+        m_stopped = false;
     }
 
     m_timerId = startTimer(speed());

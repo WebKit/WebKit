@@ -147,8 +147,8 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
             ts << " [color=" << o.style()->color().name() << "]";
         if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()) &&
             o.style()->backgroundColor().isValid() && 
-	    o.style()->backgroundColor().rgb() != khtml::transparentColor)
-	    // Do not dump invalid or transparent backgrounds, since that is the default.
+            o.style()->backgroundColor().rgb() != khtml::transparentColor)
+            // Do not dump invalid or transparent backgrounds, since that is the default.
             ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
     
         if (o.borderTop() || o.borderRight() || o.borderBottom() || o.borderLeft()) {
@@ -255,8 +255,8 @@ static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextB
             ts << " override";
     }
     ts << ": "
-    	<< quoteAndEscapeNonPrintables(o.data().qstring().mid(run.m_start, run.m_len))
-    	<< "\n"; 
+        << quoteAndEscapeNonPrintables(o.data().qstring().mid(run.m_start, run.m_len))
+        << "\n"; 
 }
 
 void write(QTextStream &ts, const RenderObject &o, int indent)

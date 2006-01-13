@@ -196,9 +196,9 @@ void QColor::setHsv(int h, int s, int v)
         return;
     }
     
-    h /= 60;			// sector 0 to 5
+    h /= 60;                    // sector 0 to 5
     i = (int)floor(h);
-    f = h - i;			// factorial part of h
+    f = h - i;                  // factorial part of h
     p = v * (1 - s);
     q = v * (1 - s * f);
     t = v * (1 - s * (1 - f));
@@ -219,7 +219,7 @@ void QColor::setHsv(int h, int s, int v)
         case 4:
             setRgb(t, p, v);
             break;
-        default:		// case 5:
+        default:                // case 5:
             setRgb(v, p, q);
             break;
     }

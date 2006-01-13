@@ -41,9 +41,9 @@ class QEvent : public Qt {
 public:
 
     enum Type {
-	None,
-	Enter,
-	Leave,
+        None,
+        Enter,
+        Leave,
         Timer,
         MouseButtonPress,
         MouseButtonRelease,
@@ -52,11 +52,11 @@ public:
         FocusIn,
         FocusOut,
         KeyPress,
-	KeyRelease,
+        KeyRelease,
         Paint,
         Resize,
         Wheel,
-	KParts
+        KParts
     };
 
     QEvent(Type type) : _type(type) { }

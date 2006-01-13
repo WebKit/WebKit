@@ -41,7 +41,7 @@ class DeleteFromTextNodeCommand : public EditCommand
 public:
     DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, int offset, int count);
     virtual ~DeleteFromTextNodeCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

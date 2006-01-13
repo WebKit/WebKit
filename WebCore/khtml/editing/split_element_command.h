@@ -35,7 +35,7 @@ class SplitElementCommand : public EditCommand
 public:
     SplitElementCommand(DOM::DocumentImpl *, DOM::ElementImpl *element, DOM::NodeImpl *atChild);
     virtual ~SplitElementCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

@@ -62,8 +62,8 @@ static Arena *arena_freelist;
 static int freelist_count = 0;
 
 #define ARENA_DEFAULT_ALIGN  sizeof(double)
-#define BIT(n)				 ((unsigned int)1 << (n))
-#define BITMASK(n) 		  	 (BIT(n) - 1)
+#define BIT(n)                          ((unsigned int)1 << (n))
+#define BITMASK(n)                      (BIT(n) - 1)
 #define CEILING_LOG2(_log2,_n)   \
       unsigned int j_ = (unsigned int)(_n);   \
       (_log2) = 0;                    \

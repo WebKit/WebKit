@@ -32,15 +32,15 @@ template<class T> class QSortedList : public QPtrList<T> {
 public:
     virtual int compareItems(void *a, void *b) 
     { 
-	T *ta = (T *)a; 
-	T *tb = (T *)b; 
-	if (*ta == *tb) { 
-	    return 0; 
-	} else if (*ta < *tb) { 
-	    return -1; 
-	} else { 
-	    return 1; 
-	}
+        T *ta = (T *)a; 
+        T *tb = (T *)b; 
+        if (*ta == *tb) { 
+            return 0; 
+        } else if (*ta < *tb) { 
+            return -1; 
+        } else { 
+            return 1; 
+        }
     }
 };
 

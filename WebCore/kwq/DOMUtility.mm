@@ -45,10 +45,10 @@ namespace KJS {
 void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     if (value->inherits(&DOMNode::info)) {
-	DOMNode *imp = static_cast<DOMNode *>(value);
-	id newObjcNode = createObjCDOMNode(imp->impl());
-	[newObjcNode _initializeWithObjectImp:imp originExecutionContext:origin executionContext:current];	
-	return newObjcNode;
+        DOMNode *imp = static_cast<DOMNode *>(value);
+        id newObjcNode = createObjCDOMNode(imp->impl());
+        [newObjcNode _initializeWithObjectImp:imp originExecutionContext:origin executionContext:current];
+        return newObjcNode;
     }
     return 0;
 }

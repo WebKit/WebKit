@@ -43,10 +43,10 @@ namespace KJS {
 const ClassInfo DOMAbstractView::info = { "AbstractView", 0, &DOMAbstractViewTable, 0 };
 /*
 @begin DOMAbstractViewTable 2
-  document		DOMAbstractView::Document		DontDelete|ReadOnly
+  document              DOMAbstractView::Document               DontDelete|ReadOnly
 @end
 @begin DOMAbstractViewProtoTable 1
-  getComputedStyle	DOMAbstractView::GetComputedStyle	DontDelete|Function 2
+  getComputedStyle      DOMAbstractView::GetComputedStyle       DontDelete|Function 2
   getMatchedCSSRules    DOMAbstractView::GetMatchedCSSRules     DontDelete|Function 2
 @end
 */

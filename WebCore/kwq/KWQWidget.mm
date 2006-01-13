@@ -286,7 +286,7 @@ QWidget::FocusPolicy QWidget::focusPolicy() const
     // 3. accept first responder
 
     RenderWidget *widget = const_cast<RenderWidget *>
-	(static_cast<const RenderWidget *>(eventFilterObject()));
+        (static_cast<const RenderWidget *>(eventFilterObject()));
     if (widget->style()->visibility() != khtml::VISIBLE)
         return NoFocus;
 
@@ -506,7 +506,7 @@ void QWidget::paint(QPainter *p, const QRect &r)
 void QWidget::sendConsumedMouseUp()
 {
     khtml::RenderWidget *widget = const_cast<khtml::RenderWidget *>
-	(static_cast<const khtml::RenderWidget *>(eventFilterObject()));
+        (static_cast<const khtml::RenderWidget *>(eventFilterObject()));
 
     KWQ_BLOCK_EXCEPTIONS;
     widget->sendConsumedMouseUp();

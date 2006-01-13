@@ -44,9 +44,7 @@ private:
     
     TokenizerSubstring() : m_length(0), m_current(0) {}
     TokenizerSubstring(const QString &str) : m_string(str), m_length(str.length()) {
-	m_current = m_length == 0 ? 0 : m_string.stableUnicode();
-
-
+        m_current = m_length == 0 ? 0 : m_string.stableUnicode();
     }
 
     TokenizerSubstring(const QChar *str, int length) : m_length(length), m_current(length == 0 ? 0 : str) {}
@@ -84,8 +82,8 @@ public:
     void push(QChar c) {
         if (m_pushedChar1.isNull()) {
             m_pushedChar1 = c;
-	    m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
-	} else {
+            m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
+        } else {
             assert(m_pushedChar2.isNull());
             m_pushedChar2 = c;
         }
@@ -103,7 +101,7 @@ public:
             if (--m_currentString.m_length == 0)
                 advanceSubstring();
         }
-	m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current: &m_pushedChar1;
+        m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current: &m_pushedChar1;
     }
     
     bool escaped() const { return !m_pushedChar1.isNull(); }

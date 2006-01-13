@@ -260,8 +260,8 @@ private:
     void addFormCompletionItem(const QString &name, const QString &value);
 
     bool dispatchMouseEvent(const DOM::AtomicString &eventType, DOM::NodeImpl *targetNode, bool cancelable,
-			    int detail,QMouseEvent *_mouse, bool setUnder,
-			    int mouseEventType);
+                            int detail,QMouseEvent *_mouse, bool setUnder,
+                            int mouseEventType);
     bool dispatchDragEvent(const DOM::AtomicString &eventType, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard);
 
     void applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);

@@ -47,14 +47,14 @@ NSMutableDictionary *namespaces = nil;
         return;
 
     if (!namespaces)
-	namespaces = [[NSMutableDictionary alloc] init];
+        namespaces = [[NSMutableDictionary alloc] init];
 
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
     if (!namespace) {
-	namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
-	[namespaces setObject:(id)namespace forKey:name];
-	CFRelease(namespace);
+        namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+        [namespaces setObject:(id)namespace forKey:name];
+        CFRelease(namespace);
     }
     
     CFSetSetValue(namespace, frame);
@@ -68,23 +68,23 @@ NSMutableDictionary *namespaces = nil;
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
     if (!namespace)
-	return;
+        return;
 
     CFSetRemoveValue(namespace, frame);
 
     if (CFSetGetCount(namespace) == 0)
-	[namespaces removeObjectForKey:name];
+        [namespaces removeObjectForKey:name];
 }
 
 +(NSEnumerator *)framesInNamespace:(NSString *)name;
 {
     if (!name)
-	return [[[NSEnumerator alloc] init] autorelease];
+        return [[[NSEnumerator alloc] init] autorelease];
 
     CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
 
     if (!namespace)
-	return [[[NSEnumerator alloc] init] autorelease];
+        return [[[NSEnumerator alloc] init] autorelease];
     
     return [(NSSet *)namespace objectEnumerator];
 }

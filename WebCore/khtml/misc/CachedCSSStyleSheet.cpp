@@ -46,7 +46,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const DOMString &url, KI
     Cache::loader()->load(dl, this, false);
     m_loading = true;
     if (!charset.isEmpty())
-	m_codec = QTextCodec::codecForName(charset.latin1());
+        m_codec = QTextCodec::codecForName(charset.latin1());
     if (!m_codec)
         m_codec = QTextCodec::codecForName("iso8859-1");
 }

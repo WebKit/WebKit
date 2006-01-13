@@ -48,7 +48,7 @@ namespace khtml
     private:
         CachedImage *cachedImage;
         uint refCount;
-	bool headerReceived;
+        bool headerReceived;
     };
 
 };

@@ -109,7 +109,7 @@ void KWQPtrDictImpl::clear(bool deleteItems)
 {
     if (deleteItems) {
         DeleteFunction deleteFunc = d->del;
-	CFDictionaryApplyFunction(d->cfdict, invokeDeleteFuncOnValue, &deleteFunc);
+        CFDictionaryApplyFunction(d->cfdict, invokeDeleteFuncOnValue, &deleteFunc);
     }
 
     CFDictionaryRemoveAllValues(d->cfdict);
@@ -130,13 +130,13 @@ bool KWQPtrDictImpl::remove(void *key, bool deleteItem)
     void *value = find(key);
 
     if (!value) {
-	return false;
+        return false;
     }
 
     CFDictionaryRemoveValue(d->cfdict, key);
     
     if (deleteItem) {
-	d->del(value);
+        d->del(value);
     }
     
     for (KWQPtrDictIteratorPrivate *it = d->iterators; it; it = it->next) {
@@ -165,7 +165,7 @@ KWQPtrDictImpl &KWQPtrDictImpl::assign(const KWQPtrDictImpl &di, bool deleteItem
     KWQPtrDictImpl tmp(di);
 
     if (deleteItems) {
-	clear(true);
+        clear(true);
     }
 
     swap(tmp);
@@ -235,7 +235,7 @@ uint KWQPtrDictIteratorImpl::count() const
 void *KWQPtrDictIteratorImpl::current() const
 {
     if (d->pos >= d->count) {
-	return NULL;
+        return NULL;
     }
     return d->values[d->pos];
 }
@@ -243,7 +243,7 @@ void *KWQPtrDictIteratorImpl::current() const
 void *KWQPtrDictIteratorImpl::currentKey() const
 {
     if (d->pos >= d->count) {
-	return NULL;
+        return NULL;
     }
     return d->keys[d->pos];
 }

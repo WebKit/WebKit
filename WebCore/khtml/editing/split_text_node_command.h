@@ -39,7 +39,7 @@ class SplitTextNodeCommand : public EditCommand
 public:
     SplitTextNodeCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
     virtual ~SplitTextNodeCommand() { }
-	
+
     virtual void doApply();
     virtual void doUnapply();
 

@@ -47,7 +47,7 @@ public:
      *
      */
     enum UnitTypes {
-	CSS_INHERIT = 0,
+        CSS_INHERIT = 0,
         CSS_PRIMITIVE_VALUE = 1,
         CSS_VALUE_LIST = 2,
         CSS_CUSTOM = 3,

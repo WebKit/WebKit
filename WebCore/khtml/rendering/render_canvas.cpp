@@ -139,7 +139,7 @@ void RenderCanvas::layout()
     qt.start();
 #endif
     if ( recalcMinMax() )
-	recalcMinMaxWidths();
+        recalcMinMaxWidths();
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderCanvas::calcMinMax time used=" << qt.elapsed() << endl;
     qt.start();
@@ -184,8 +184,8 @@ void RenderCanvas::layout()
 bool RenderCanvas::absolutePosition(int &xPos, int &yPos, bool f)
 {
     if ( f && m_view) {
-	xPos = m_view->contentsX();
-	yPos = m_view->contentsY();
+        xPos = m_view->contentsX();
+        yPos = m_view->contentsY();
     }
     else {
         xPos = yPos = 0;

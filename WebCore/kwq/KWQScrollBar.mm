@@ -159,7 +159,7 @@ void QScrollBar::setKnobProportion(int visibleArea, int totalArea)
     KWQ_BLOCK_EXCEPTIONS;
     KWQScrollBar *bar = (KWQScrollBar *)getView();
     if (!(val == [bar knobProportion] || val < 0.0))
-	[bar setFloatValue: [bar floatValue] knobProportion: val];
+        [bar setFloatValue: [bar floatValue] knobProportion: val];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

@@ -102,7 +102,7 @@ int QScrollView::contentsWidth() const
     if (docView) {
         return (int)[docView bounds].size.width;
     } else {
-	return (int)[view bounds].size.width;
+        return (int)[view bounds].size.width;
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 
@@ -118,7 +118,7 @@ int QScrollView::contentsHeight() const
     if (docView) {
         return (int)[docView bounds].size.height;
     } else {
-	return (int)[view bounds].size.height;
+        return (int)[view bounds].size.height;
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 
@@ -343,7 +343,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     // we don't need to do the offscreen position initialization that KDE needs
     if (x != -500000)
-	child->move(x, y);
+        child->move(x, y);
 
     NSView *thisView = getView();
     NSView *thisDocView = getDocumentView();
@@ -495,7 +495,7 @@ NSView *QScrollView::getDocumentView() const
 
     KWQ_BLOCK_EXCEPTIONS;
     if ([view respondsToSelector:@selector(documentView)]) 
-	return [view documentView];
+        return [view documentView];
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return nil;

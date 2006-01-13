@@ -36,7 +36,7 @@ class NSColor;
 
 typedef struct CGColor *CGColorRef;
 
-typedef unsigned int QRgb;			// RGBA quadruplet
+typedef unsigned int QRgb;                      // RGBA quadruplet
 
 QRgb qRgb(int r, int g, int b);
 QRgb qRgba(int r, int g, int b, int a);

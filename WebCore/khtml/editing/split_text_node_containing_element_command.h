@@ -35,7 +35,7 @@ class SplitTextNodeContainingElementCommand : public CompositeEditCommand
 public:
     SplitTextNodeContainingElementCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
     virtual ~SplitTextNodeContainingElementCommand() { }
-	
+
     virtual void doApply();
 
 private:

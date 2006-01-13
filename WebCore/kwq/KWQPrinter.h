@@ -31,8 +31,8 @@
 class QPrinter : public QPaintDevice {
  public:
     typedef enum {
-	PrinterResolution,
-	ScreenResolution
+        PrinterResolution,
+        ScreenResolution
     } PrinterMode;
 
     QPrinter() : QPaintDevice(QInternal::Printer) { }
