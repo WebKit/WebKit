@@ -44,10 +44,10 @@ if [ khtml/css/tokenizer.flex -nt "$DerivedSourcesDir/tokenizer.cpp" ]; then
 fi
 
 # Generate the CSS grammar using bison
-if [ khtml/css/parser.y -nt "$DerivedSourcesDir/parser.cpp" ]; then
+if [ khtml/css/css_grammar.y -nt "$DerivedSourcesDir/css_grammar.cpp" ]; then
   echo "Generating the CSS grammar using bison..."
-  bison -d -p cssyy khtml/css/parser.y -o "$DerivedSourcesDir/parser.cpp"
-  mv "$DerivedSourcesDir/parser.hpp" "$DerivedSourcesDir/parser.h"
+  bison -d -p cssyy khtml/css/css_grammar.y -o "$DerivedSourcesDir/css_grammar.cpp"
+  mv "$DerivedSourcesDir/css_grammar.hpp" "$DerivedSourcesDir/css_grammar.h"
 fi
 
 		
