@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #include "config.h"
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
@@ -79,6 +78,16 @@ QRect KRenderingDeviceContextQuartz::mapToVisual(const QRect &rect)
     return QRect();
 }
 
+void KRenderingDeviceContextQuartz::clearPath()
+{
+    CGContextBeginPath(m_cgContext);
+}
+
+void KRenderingDeviceContextQuartz::addPath(const KCanvasPath *path)
+{
+    CGContextAddPath(m_cgContext, static_cast<const KCanvasPathQuartz*>(path)->cgPath());
+}
+
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
 {
     if (!m_nsGraphicsContext && m_cgContext)
@@ -115,7 +124,7 @@ void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled)
 
 KRenderingDeviceContextQuartz *KRenderingDeviceQuartz::quartzContext() const
 {
-	return static_cast<KRenderingDeviceContextQuartz *>(currentContext());
+    return static_cast<KRenderingDeviceContextQuartz *>(currentContext());
 }
 
 CGContextRef KRenderingDeviceQuartz::currentCGContext() const
@@ -182,16 +191,25 @@ QString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
 
 KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType &type) const
 {
-	KRenderingPaintServer *newServer = NULL;
-	switch(type)
-	{
-		case PS_SOLID: newServer = new KRenderingPaintServerSolidQuartz(); break;
-		case PS_PATTERN: newServer = new KRenderingPaintServerPatternQuartz(); break;
-		case PS_IMAGE: newServer = new KRenderingPaintServerImageQuartz(); break;
-		case PS_LINEAR_GRADIENT: newServer = new KRenderingPaintServerLinearGradientQuartz(); break;
-		case PS_RADIAL_GRADIENT: newServer = new KRenderingPaintServerRadialGradientQuartz(); break;
-	}
-	return newServer;
+    KRenderingPaintServer *newServer = NULL;
+    switch(type) {
+    case PS_SOLID:
+        newServer = new KRenderingPaintServerSolidQuartz();
+        break;
+    case PS_PATTERN:
+        newServer = new KRenderingPaintServerPatternQuartz();
+        break;
+    case PS_IMAGE:
+        newServer = new KRenderingPaintServerImageQuartz();
+        break;
+    case PS_LINEAR_GRADIENT:
+        newServer = new KRenderingPaintServerLinearGradientQuartz();
+        break;
+    case PS_RADIAL_GRADIENT:
+        newServer = new KRenderingPaintServerRadialGradientQuartz();
+        break;
+    }
+    return newServer;
 }
  
 KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const
@@ -226,31 +244,30 @@ KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &ty
 
 KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEffectType &type) const
 {
-	switch(type)
-	{
-        /* Light sources are contained by the diffuse/specular light blocks 
-        case FE_DISTANT_LIGHT: 
-        case FE_POINT_LIGHT: 
-        case FE_SPOT_LIGHT: 
-        */
-	case FE_BLEND: return new KCanvasFEBlendQuartz();
-	case FE_COLOR_MATRIX: return new KCanvasFEColorMatrixQuartz();
-//	case FE_COMPONENT_TRANSFER: 
-	case FE_COMPOSITE: return new KCanvasFECompositeQuartz();
-//	case FE_CONVOLVE_MATRIX: 
-	case FE_DIFFUSE_LIGHTING: return new KCanvasFEDiffuseLightingQuartz();
-//	case FE_DISPLACEMENT_MAP: 
-	case FE_FLOOD: return new KCanvasFEFloodQuartz();
-	case FE_GAUSSIAN_BLUR: return new KCanvasFEGaussianBlurQuartz();
-	case FE_IMAGE: return new KCanvasFEImageQuartz();
-	case FE_MERGE: return new KCanvasFEMergeQuartz();
-//	case FE_MORPHOLOGY: 
-	case FE_OFFSET: return new KCanvasFEOffsetQuartz();
-	case FE_SPECULAR_LIGHTING: return new KCanvasFESpecularLightingQuartz();
-	case FE_TILE: return new KCanvasFETileQuartz();
-//	case FE_TURBULENCE: 
-	default:
-            return 0;
-	}
+    switch(type)
+    {
+    /* Light sources are contained by the diffuse/specular light blocks 
+    case FE_DISTANT_LIGHT: 
+    case FE_POINT_LIGHT: 
+    case FE_SPOT_LIGHT: 
+    */
+    case FE_BLEND: return new KCanvasFEBlendQuartz();
+    case FE_COLOR_MATRIX: return new KCanvasFEColorMatrixQuartz();
+//  case FE_COMPONENT_TRANSFER: 
+    case FE_COMPOSITE: return new KCanvasFECompositeQuartz();
+//  case FE_CONVOLVE_MATRIX: 
+    case FE_DIFFUSE_LIGHTING: return new KCanvasFEDiffuseLightingQuartz();
+//  case FE_DISPLACEMENT_MAP: 
+    case FE_FLOOD: return new KCanvasFEFloodQuartz();
+    case FE_GAUSSIAN_BLUR: return new KCanvasFEGaussianBlurQuartz();
+    case FE_IMAGE: return new KCanvasFEImageQuartz();
+    case FE_MERGE: return new KCanvasFEMergeQuartz();
+//  case FE_MORPHOLOGY: 
+    case FE_OFFSET: return new KCanvasFEOffsetQuartz();
+    case FE_SPECULAR_LIGHTING: return new KCanvasFESpecularLightingQuartz();
+    case FE_TILE: return new KCanvasFETileQuartz();
+//  case FE_TURBULENCE: 
+    default:
+        return 0;
+    }
 }
-

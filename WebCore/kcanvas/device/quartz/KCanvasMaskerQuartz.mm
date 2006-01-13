@@ -84,7 +84,7 @@ static CIImage *transformImageIntoGrayscaleMask(CIImage *inputImage)
     return [multipliedGrayscale valueForKey:@"outputImage"];
 }
 
-void KCanvasMaskerQuartz::applyMask(CGContextRef context, CGRect relativeBBox) const
+void KCanvasMaskerQuartz::applyMask(const QRectF& boundingBox) const
 {
     if (!m_mask)
         return;
@@ -102,7 +102,8 @@ void KCanvasMaskerQuartz::applyMask(CGContextRef context, CGRect relativeBBox) c
     [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
 
     CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
-    CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);
+    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice())->currentCGContext();
+    CGContextClipToMask(cgContext, CGRectMake(0, 0, width, height), grayscaleImage);
     
     CGImageRelease(grayscaleImage);
     CGContextRelease(grayscaleContext);

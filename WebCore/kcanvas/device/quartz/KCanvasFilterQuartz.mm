@@ -75,7 +75,7 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
     [m_imagesByName release];
 }
 
-void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRectF &bbox)
+void KCanvasFilterQuartz::prepareFilter(const QRectF &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
@@ -83,8 +83,7 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRectF &
     if (m_effects.isEmpty())
         return;
     
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(device);
-    CGContextRef cgContext = quartzDevice->currentCGContext();
+    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice())->currentCGContext();
     
     // get a CIContext, and CGLayer for drawing in.
     bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
@@ -96,19 +95,19 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDevice *device, const QRectF &
     m_filterCIContext = [[CIContext contextWithCGContext:cgContext options:contextOptions] retain];
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
     
-    CGContext *filterCGContext = CGLayerGetContext(m_filterCGLayer);
-    device->pushContext(new KRenderingDeviceContextQuartz(filterCGContext));
+    KRenderingDeviceContext *filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
+    QPainter::renderingDevice()->pushContext(filterContext);
     
-    CGContextConcatCTM(filterCGContext, CGAffineTransformMakeTranslation(-1.0f * bbox.x(), -1.0f * bbox.y()));
+    filterContext->concatCTM(QMatrix().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
 
-void KCanvasFilterQuartz::applyFilter(KRenderingDevice *device, const QRectF &bbox)
+void KCanvasFilterQuartz::applyFilter(const QRectF &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
 
     // restore the previous context, delete the filter context.
-    delete (device->popContext());
+    delete (QPainter::renderingDevice()->popContext());
 
     // actually apply the filter effects
     CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];

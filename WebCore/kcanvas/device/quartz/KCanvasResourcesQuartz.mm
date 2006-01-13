@@ -89,68 +89,62 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         return; // Spec: groups w/o children still may render filter content.
     
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
-    KRenderingDeviceContext *deviceContext = 0;
-    if (!parent()->isKCanvasContainer()) {
+    KRenderingDeviceContext *deviceContext = quartzDevice->currentContext();
+    bool shouldPopContext = false;
+    if (!deviceContext) {
         // I only need to setup for KCanvas rendering if it hasn't already been done.
         deviceContext = paintInfo.p->createRenderingDeviceContext();
         quartzDevice->pushContext(deviceContext);
-    }
-    paintInfo.p->save();
-    
-    CGContextRef context = paintInfo.p->currentContext();
+        shouldPopContext = true;
+    } else
+        paintInfo.p->save();
     
     if (parentX != 0 || parentY != 0) {
         // Translate from parent offsets (khtml) to a relative transform (ksvg2/kcanvas)
-        CGContextConcatCTM(context, CGAffineTransformMakeTranslation(parentX, parentY));
+        deviceContext->concatCTM(QMatrix().translate(parentX, parentY));
         parentX = parentY = 0;
     }
     
     if (viewport().isValid())
-        CGContextConcatCTM(context, CGAffineTransformMakeTranslation(viewport().x(), viewport().y()));
+        deviceContext->concatCTM(QMatrix().translate(viewport().x(), viewport().y()));
     
     if (!localTransform().isIdentity())
-        CGContextConcatCTM(context, CGAffineTransform(localTransform()));
+        deviceContext->concatCTM(localTransform());
     
-    QRect dirtyRect = paintInfo.r;
-    
-    QString clipname = style()->svgStyle()->clipPath().mid(1);
-    KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
-    if (clipper)
-        clipper->applyClip(context, CGRect(relativeBBox(true)));
+    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().mid(1)))
+        clipper->applyClip(relativeBBox(true));
 
-    QString maskname = style()->svgStyle()->maskElement().mid(1);
-    KCanvasMaskerQuartz *masker = static_cast<KCanvasMaskerQuartz *>(getMaskerById(document(), maskname));
-    if (masker)
-        masker->applyMask(context, CGRect(relativeBBox(true)));
+    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().mid(1)))
+        masker->applyMask(relativeBBox(true));
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)
         paintInfo.p->beginTransparencyLayer(opacity);
 
     if (filter)
-        filter->prepareFilter(quartzDevice, relativeBBox(true));
+        filter->prepareFilter(relativeBBox(true));
     
     if (!viewBox().isNull()) {
         QRectF viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
             viewportRect = QRectF(viewport().x(), viewport().y(), width(), height());
-        CGContextConcatCTM(paintInfo.p->currentContext(), CGAffineTransform(getAspectRatio(viewBox(), viewportRect).qmatrix()));
+        deviceContext->concatCTM(getAspectRatio(viewBox(), viewportRect));
     }
     
     RenderContainer::paint(paintInfo, 0, 0);
     
     if (filter)
-        filter->applyFilter(quartzDevice, relativeBBox(true));
+        filter->applyFilter(relativeBBox(true));
     
     if (opacity < 1.0f)
         paintInfo.p->endTransparencyLayer();
     
     // restore drawing state
-    paintInfo.p->restore();
-    if (!parent()->isKCanvasContainer()) {
+    if (shouldPopContext) {
         quartzDevice->popContext();
         delete deviceContext;
-    }
+    } else
+        paintInfo.p->restore();
 }
 
 void KCanvasContainerQuartz::setViewport(const QRectF& viewport)
@@ -195,17 +189,19 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
     return transform;
 }
 
-void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) const
+void KCanvasClipperQuartz::applyClip(const QRectF& boundingBox) const
 {
+    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
+    CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();
     if (m_clipData.count() < 1)
         return;
 
     BOOL heterogenousClipRules = NO;
     KCWindRule clipRule = m_clipData[0].windRule;
 
-    CGContextBeginPath(context);
+    context->clearPath();
 
-    CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), relativeBBox); // could be done lazily.
+    CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), CGRect(boundingBox));
 
     for (unsigned int x = 0; x < m_clipData.count(); x++) {
         KCClipData data = m_clipData[x];
@@ -218,10 +214,10 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
         if (data.bboxUnits) {
             CGMutablePathRef transformedPath = CGPathCreateMutable();
             CGPathAddPath(transformedPath, &bboxTransform, clipPath);
-            CGContextAddPath(context, transformedPath);
+            CGContextAddPath(cgContext, transformedPath);
             CGPathRelease(transformedPath);
         } else
-            CGContextAddPath(context, clipPath);
+            CGContextAddPath(cgContext, clipPath);
     }
 
     if (m_clipData.count()) {
@@ -229,30 +225,29 @@ void KCanvasClipperQuartz::applyClip(CGContextRef context, CGRect relativeBBox) 
         // We don't currently allow for heterogenous clip rules.
         // we would have to detect such, draw to a mask, and then clip
         // to that mask                
-        if (!CGContextIsPathEmpty(context)) {
+        if (!CGContextIsPathEmpty(cgContext)) {
             if (clipRule == RULE_EVENODD)
-                CGContextEOClip(context);
+                CGContextEOClip(cgContext);
             else
-                CGContextClip(context);
+                CGContextClip(cgContext);
         }
     }
 }
 
 KCanvasImageQuartz::~KCanvasImageQuartz()
 {
-	CGLayerRelease(m_cgLayer);
+    CGLayerRelease(m_cgLayer);
 }
 
 CGLayerRef KCanvasImageQuartz::cgLayer()
 {
-	return m_cgLayer;
+    return m_cgLayer;
 }
 
 void KCanvasImageQuartz::setCGLayer(CGLayerRef layer)
 {
-	if (m_cgLayer != layer) {
-		CGLayerRelease(m_cgLayer);
-		m_cgLayer = CGLayerRetain(layer);
-	}
+    if (m_cgLayer != layer) {
+        CGLayerRelease(m_cgLayer);
+        m_cgLayer = CGLayerRetain(layer);
+    }
 }
-

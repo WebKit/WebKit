@@ -24,7 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #include "config.h"
 #import "KCanvasItemQuartz.h"
 
@@ -49,7 +48,7 @@
 
 KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderPath(style, node)
 {
-	
+        
 }
 
 typedef enum {
@@ -160,7 +159,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
     data.elementIndex++;
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(const QRectF &rect, CGPathRef path) const
+void KCanvasItemQuartz::drawMarkersIfNeeded(const QRectF& rect, const KCanvasPath *path) const
 {
     KDOM::DocumentImpl *doc = document();
     const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
@@ -176,7 +175,8 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const QRectF &rect, CGPathRef path) 
 
     DrawMarkersData data(startMarker, midMarker, strokeWidth);
 
-    CGPathApply(path, &data, DrawStartAndMidMarkers);
+    CGPathRef cgPath = static_cast<const KCanvasPathQuartz*>(path)->cgPath();
+    CGPathApply(cgPath, &data, DrawStartAndMidMarkers);
 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
@@ -192,70 +192,61 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;
     
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
-    KRenderingDeviceContext *deviceContext = 0;
-    if (!parent()->isKCanvasContainer()) {
+    KRenderingDevice *renderingDevice = QPainter::renderingDevice();
+    KRenderingDeviceContext *deviceContext = renderingDevice->currentContext();
+    bool shouldPopContext = false;
+    if (!deviceContext) {
         // I only need to setup for KCanvas rendering if it hasn't already been done.
         deviceContext = paintInfo.p->createRenderingDeviceContext();
-        quartzDevice->pushContext(deviceContext);
-    }
-    paintInfo.p->save();
-    CGContextRef context = quartzDevice->currentCGContext();
+        renderingDevice->pushContext(deviceContext);
+        shouldPopContext = true;
+    } else
+        paintInfo.p->save();
 
-    CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
-    ASSERT(cgPath != 0);
-
-    CGAffineTransform transform = CGAffineTransform(localTransform());
-    CGContextConcatCTM(context, transform);
+    deviceContext->concatCTM(localTransform());
 
     // setup to apply filters
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter) {
-        filter->prepareFilter(quartzDevice, relativeBBox(true));
-        context = quartzDevice->currentCGContext();
+        filter->prepareFilter(relativeBBox(true));
+        deviceContext = renderingDevice->currentContext();
     }
 
-    QString clipname = style()->svgStyle()->clipPath().mid(1);
-    KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
-    if (clipper)
-        clipper->applyClip(context, CGRect(relativeBBox(true)));
+    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().mid(1)))
+        clipper->applyClip(relativeBBox(true));
 
-    QString maskname = style()->svgStyle()->maskElement().mid(1);
-    KCanvasMaskerQuartz *masker = static_cast<KCanvasMaskerQuartz *>(getMaskerById(document(), maskname));
-    if (masker)
-        masker->applyMask(context, CGRect(relativeBBox(true)));
+    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().mid(1)))
+        masker->applyMask(relativeBBox(true));
 
-    CGContextBeginPath(context);
-
+    deviceContext->clearPath();
+    
     KCanvasCommonArgs args = commonArgs();
 
     KRenderingPaintServer *fillPaintServer = canvasStyle()->fillPaintServer(canvasStyle()->renderStyle(), this);
     if (fillPaintServer) {
-        CGContextAddPath(context, cgPath);
+        deviceContext->addPath(path());
         fillPaintServer->setActiveClient(this);
-        fillPaintServer->draw(quartzDevice->currentContext(), args, APPLY_TO_FILL);
+        fillPaintServer->draw(deviceContext, args, APPLY_TO_FILL);
     }
     KRenderingPaintServer *strokePaintServer = canvasStyle()->strokePaintServer(canvasStyle()->renderStyle(), this);
     if (strokePaintServer) {
-        CGContextAddPath(context, cgPath); // path is cleared when filled.
+        deviceContext->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
-        strokePaintServer->draw(quartzDevice->currentContext(), args, APPLY_TO_STROKE);
+        strokePaintServer->draw(deviceContext, args, APPLY_TO_STROKE);
     }
 
-    drawMarkersIfNeeded(paintInfo.r, cgPath);
+    drawMarkersIfNeeded(paintInfo.r, path());
 
     // actually apply the filter
-    if (filter) {
-        filter->applyFilter(quartzDevice, relativeBBox(true));
-        context = quartzDevice->currentCGContext();
-    }
+    if (filter)
+        filter->applyFilter(relativeBBox(true));
 
     // restore drawing state
-    paintInfo.p->restore();
-    if (!parent()->isKCanvasContainer()) {
-        quartzDevice->popContext();
+    if (shouldPopContext) {
+        renderingDevice->popContext();
         delete deviceContext;
-    }
+    } else
+        paintInfo.p->restore();
 }
 
 #pragma mark -
@@ -286,12 +277,11 @@ CGContextRef getSharedContext()
         CFRelease(empty);
 
         float black[4] = {0,0,0,1};
-        CGContextSetFillColor(sharedContext,black);
-        CGContextSetStrokeColor(sharedContext,black);
+        CGContextSetFillColor(sharedContext, black);
+        CGContextSetStrokeColor(sharedContext, black);
     }
     return sharedContext;
 }
-
 
 QRectF KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 {

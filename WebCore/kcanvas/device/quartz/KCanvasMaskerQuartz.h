@@ -28,11 +28,9 @@
 #import "KCanvasImage.h"
 #import "KCanvasResources.h"
 
-typedef struct CGContext *CGContextRef;
-
 class KCanvasMaskerQuartz : public KCanvasMasker {
 public:
     KCanvasMaskerQuartz() { }
     
-    void applyMask(CGContextRef context, CGRect relativeBBox) const;
+    virtual void applyMask(const QRectF& boundingBox) const;
 };

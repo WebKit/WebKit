@@ -44,6 +44,9 @@ public:
     
     virtual QRect mapFromVisual(const QRect &rect) = 0;
     virtual QRect mapToVisual(const QRect &rect) = 0;
+    
+    virtual void clearPath() = 0;
+    virtual void addPath(const KCanvasPath*) = 0;
 };
 
 // Must be a QObject to be able to be loaded by KLibLoader...

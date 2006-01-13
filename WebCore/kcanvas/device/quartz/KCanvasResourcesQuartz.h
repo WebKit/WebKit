@@ -62,14 +62,14 @@ private:
 
 class KCanvasClipperQuartz : public KCanvasClipper {
 public:
-    KCanvasClipperQuartz() {};
+    KCanvasClipperQuartz() { }
     
-    void applyClip(CGContextRef context, CGRect relativeBBox) const;
+    virtual void applyClip(const QRectF& boundingBox) const;
 };
 
 class KCanvasImageQuartz : public KCanvasImage {
 public:
-    KCanvasImageQuartz() : m_cgLayer(0) {};
+    KCanvasImageQuartz() : m_cgLayer(0) { }
     ~KCanvasImageQuartz();
     void init(const QPixmap &) { }
     void init(QSize size) { m_size = size; }

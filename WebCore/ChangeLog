@@ -1,3 +1,40 @@
+2006-01-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove CG dependencies from kcanvas/device/quartz
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6521
+
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter): removed parameter
+        (KCanvasFilterQuartz::applyFilter): removed parameter
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::drawMarkersIfNeeded): removed cg call
+        (KCanvasItemQuartz::paint): removed cg calls
+        (getSharedContext): spacing
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (KCanvasMaskerQuartz::applyMask): removed parameter
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasClipperQuartz::KCanvasClipperQuartz):
+        (KCanvasImageQuartz::KCanvasImageQuartz):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): removed CG calls
+        (KCanvasClipperQuartz::applyClip): removed parameter
+        (KCanvasImageQuartz::~KCanvasImageQuartz):
+        (KCanvasImageQuartz::cgLayer): spacing
+        (KCanvasImageQuartz::setCGLayer): spacing
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::clearPath): added.
+        (KRenderingDeviceContextQuartz::addPath): added.
+        (KRenderingDeviceQuartz::quartzContext): spacing
+
 2006-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

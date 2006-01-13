@@ -82,6 +82,8 @@ public:
 
     void resetClipData();
     void addClipData(KCanvasPath *path, KCWindRule rule, bool bboxUnits);
+    
+    virtual void applyClip(const QRectF& boundingBox) const = 0;
 
     KCClipDataList clipData() const;
 
@@ -101,6 +103,8 @@ public:
     virtual bool isMasker() const { return true; }
     void setMask(KCanvasImage *mask);
     KCanvasImage *mask() const { return m_mask; }
+    
+    virtual void applyMask(const QRectF& boundingBox) const = 0;
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
