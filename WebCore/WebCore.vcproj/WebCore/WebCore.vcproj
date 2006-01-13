@@ -1166,6 +1166,74 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="css"
+				>
+				<File
+					RelativePath="..\..\khtml\css\css_base.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_base.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_computedstyle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_computedstyle.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_ruleimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_ruleimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_stylesheetimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_stylesheetimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_valueimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\css_valueimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\csshelper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\csshelper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\cssparser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\cssparser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\cssstyleselector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\cssstyleselector.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="kwq"
