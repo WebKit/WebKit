@@ -85,9 +85,7 @@
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/NP_jsobject.h>
 
-#if APPLE_CHANGES
 #import "KWQAccObjectCache.h"
-#endif
 
 #undef _KWQ_TIMING
 
@@ -178,7 +176,7 @@ void MacFrame::freeClipboard()
 {
     if (_dragClipboard) {
         _dragClipboard->setAccessPolicy(KWQClipboard::Numb);
-	_dragClipboard->deref();
+        _dragClipboard->deref();
         _dragClipboard = 0;
     }
 }
@@ -544,17 +542,17 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
 
     if (!args.doPost()) {
         [_bridge loadURL:url.getNSURL()
-	        referrer:[_bridge referrer] 
+                referrer:[_bridge referrer] 
                   reload:args.reload
              userGesture:true
-  	          target:args.frameName.getNSString()
+                  target:args.frameName.getNSString()
          triggeringEvent:_currentEvent
                     form:_formAboutToBeSubmitted
               formValues:_formValuesAboutToBeSubmitted];
     } else {
         ASSERT(args.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:url.getNSURL()
-	            referrer:[_bridge referrer] 
+                    referrer:[_bridge referrer] 
                       target:args.frameName.getNSString()
                         data:arrayFromFormData(args.postData)
                  contentType:args.contentType().mid(14).getNSString()
@@ -662,8 +660,8 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
                                                        marginHeight:marginHeight];
-	// This call needs to return an object with a ref, since the caller will expect to own it.
-	// childBridge owns the only ref so far.
+        // This call needs to return an object with a ref, since the caller will expect to own it.
+        // childBridge owns the only ref so far.
         part = [childBridge part];
         if (part)
             part->ref();
@@ -682,12 +680,12 @@ void MacFrame::setView(KHTMLView *view)
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
     if (d->m_doc && view == 0)
-	d->m_doc->detach();
+        d->m_doc->detach();
     
     if (view)
-	view->ref();
+        view->ref();
     if (d->m_view)
-	d->m_view->deref();
+        d->m_view->deref();
     d->m_view = view;
     setWidget(view);
     
@@ -1290,9 +1288,9 @@ void MacFrame::saveDocumentState()
     // Do not save doc state if the page has a password field and a form that would be submitted
     // via https
     if (!(d->m_doc && d->m_doc->hasPasswordField() && d->m_doc->hasSecureForm())) {
-	KWQ_BLOCK_EXCEPTIONS;
+        KWQ_BLOCK_EXCEPTIONS;
         [_bridge saveDocumentState];
-	KWQ_UNBLOCK_EXCEPTIONS;
+        KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
 
@@ -1354,7 +1352,7 @@ bool MacFrame::runJavaScriptPrompt(const DOMString& prompt, const DOMString& def
     NSString *returnedText = nil;
 
     ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt
-	       defaultText:defaultValue returningText:&returnedText];
+        defaultText:defaultValue returningText:&returnedText];
 
     if (ok) {
         result = DOMString(returnedText);
@@ -1409,14 +1407,14 @@ void MacFrame::createEmptyDocument()
     // it does nothing if we already have a document, and just creates an
     // empty one if we have no document at all.
     if (!d->m_doc) {
-	KWQ_BLOCK_EXCEPTIONS;
+        KWQ_BLOCK_EXCEPTIONS;
         [_bridge loadEmptyDocumentSynchronously];
-	KWQ_UNBLOCK_EXCEPTIONS;
+        KWQ_UNBLOCK_EXCEPTIONS;
 
-	if (parentFrame() && (parentFrame()->childFrame(this)->m_type == ChildFrame::IFrame ||
-			     parentFrame()->childFrame(this)->m_type == ChildFrame::Object)) {
-	    d->m_doc->setBaseURL(parentFrame()->d->m_doc->baseURL());
-	}
+        if (parentFrame() && (parentFrame()->childFrame(this)->m_type == ChildFrame::IFrame ||
+                parentFrame()->childFrame(this)->m_type == ChildFrame::Object)) {
+            d->m_doc->setBaseURL(parentFrame()->d->m_doc->baseURL());
+        }
     }
 }
 
@@ -1435,7 +1433,7 @@ bool MacFrame::keyEvent(NSEvent *event)
     }
     NodeImpl *node = doc->focusNode();
     if (!node) {
-	node = doc->body();
+        node = doc->body();
         if (!node) {
             return false;
         }
@@ -1456,10 +1454,10 @@ bool MacFrame::keyEvent(NSEvent *event)
     // which causes it to send a press to the DOM.
     // That's not a great hack; it would be good to do this in a better way.
     if ([event type] == NSKeyDown && ![event isARepeat]) {
-	QKeyEvent repeatEvent(event, true);
+        QKeyEvent repeatEvent(event, true);
         if (!node->dispatchKeyEvent(&repeatEvent)) {
-	    result = true;
-	}
+            result = true;
+        }
     }
 
     ASSERT(_currentEvent == event);
@@ -1611,7 +1609,7 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
     while ((subview = [e nextObject])) {
         if (subview == target || findViewInSubviews(subview, target)) {
             return true;
-	}
+        }
     }
     KWQ_UNBLOCK_EXCEPTIONS;
     
@@ -1693,7 +1691,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     if ([_currentEvent type] == NSLeftMouseDragged) {
-    	NSView *view = mouseDownViewIfStillGood();
+        NSView *view = mouseDownViewIfStillGood();
 
         if (view) {
             _sendingEventToSubview = true;
@@ -1704,7 +1702,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
-	if (_mouseDownMayStartDrag && !_dragSrc) {
+        if (_mouseDownMayStartDrag && !_dragSrc) {
             BOOL tempFlag1, tempFlag2;
             [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
             _dragSrcMayBeDHTML = tempFlag1;
@@ -1818,7 +1816,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
             // No more default handling (like selection), whether we're past the hysteresis bounds or not
             return;
-	}
+        }
         if (!_mouseDownMayStartSelect) {
             return;
         }
@@ -1830,11 +1828,11 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
         // We use khtml's selection but our own autoscrolling.
         [_bridge handleAutoscrollForMouseDragged:_currentEvent];
     } else {
-	// If we allowed the other side of the bridge to handle a drag
-	// last time, then m_bMousePressed might still be set. So we
-	// clear it now to make sure the next move after a drag
-	// doesn't look like a drag.
-	d->m_bMousePressed = false;
+        // If we allowed the other side of the bridge to handle a drag
+        // last time, then m_bMousePressed might still be set. So we
+        // clear it now to make sure the next move after a drag
+        // doesn't look like a drag.
+        d->m_bMousePressed = false;
     }
 
     Frame::khtmlMouseMoveEvent(event);
@@ -1958,7 +1956,7 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             return true;
         }
         
-    	case NSLeftMouseDown: {
+        case NSLeftMouseDown: {
             NodeImpl *node = event.innerNode.get();
             if (!node) {
                 return false;
@@ -1986,8 +1984,8 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-	    [view mouseUp:_currentEvent];
-	    _sendingEventToSubview = false;
+            [view mouseUp:_currentEvent];
+            _sendingEventToSubview = false;
             return true;
         }
         case NSLeftMouseDragged: {
@@ -2000,8 +1998,8 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-	    [view mouseDragged:_currentEvent];
-	    _sendingEventToSubview = false;
+            [view mouseDragged:_currentEvent];
+            _sendingEventToSubview = false;
             return true;
         }
         default:
@@ -2152,46 +2150,46 @@ void MacFrame::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
     _sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
     if (eventType == NSLeftMouseDown || eventType == NSKeyDown) {
-	NSEvent *fakeEvent = nil;
-	if (eventType == NSLeftMouseDown) {
-	    fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-				    location:[initiatingEvent locationInWindow]
-				modifierFlags:[initiatingEvent modifierFlags]
-				    timestamp:[initiatingEvent timestamp]
-				windowNumber:[initiatingEvent windowNumber]
-					context:[initiatingEvent context]
-				    eventNumber:[initiatingEvent eventNumber]
-				    clickCount:[initiatingEvent clickCount]
-				    pressure:[initiatingEvent pressure]];
-	
-	    mouseUp(fakeEvent);
-	}
-	else { // eventType == NSKeyDown
-	    fakeEvent = [NSEvent keyEventWithType:NSKeyUp
-				    location:[initiatingEvent locationInWindow]
-			       modifierFlags:[initiatingEvent modifierFlags]
-				   timestamp:[initiatingEvent timestamp]
-				windowNumber:[initiatingEvent windowNumber]
-				     context:[initiatingEvent context]
-				  characters:[initiatingEvent characters] 
-		 charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
-				   isARepeat:[initiatingEvent isARepeat] 
-				     keyCode:[initiatingEvent keyCode]];
-	    keyEvent(fakeEvent);
-	}
-	// FIXME:  We should really get the current modifierFlags here, but there's no way to poll
-	// them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
-	// no up-to-date cache of them anywhere.
-	fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-				       location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
-				  modifierFlags:[initiatingEvent modifierFlags]
-				      timestamp:[initiatingEvent timestamp]
-				   windowNumber:[initiatingEvent windowNumber]
-					context:[initiatingEvent context]
-				    eventNumber:0
-				     clickCount:0
-				       pressure:0];
-	mouseMoved(fakeEvent);
+        NSEvent *fakeEvent = nil;
+        if (eventType == NSLeftMouseDown) {
+            fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+                                    location:[initiatingEvent locationInWindow]
+                                modifierFlags:[initiatingEvent modifierFlags]
+                                    timestamp:[initiatingEvent timestamp]
+                                windowNumber:[initiatingEvent windowNumber]
+                                        context:[initiatingEvent context]
+                                    eventNumber:[initiatingEvent eventNumber]
+                                    clickCount:[initiatingEvent clickCount]
+                                    pressure:[initiatingEvent pressure]];
+        
+            mouseUp(fakeEvent);
+        }
+        else { // eventType == NSKeyDown
+            fakeEvent = [NSEvent keyEventWithType:NSKeyUp
+                                    location:[initiatingEvent locationInWindow]
+                               modifierFlags:[initiatingEvent modifierFlags]
+                                   timestamp:[initiatingEvent timestamp]
+                                windowNumber:[initiatingEvent windowNumber]
+                                     context:[initiatingEvent context]
+                                  characters:[initiatingEvent characters] 
+                 charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
+                                   isARepeat:[initiatingEvent isARepeat] 
+                                     keyCode:[initiatingEvent keyCode]];
+            keyEvent(fakeEvent);
+        }
+        // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
+        // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
+        // no up-to-date cache of them anywhere.
+        fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+                                       location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
+                                  modifierFlags:[initiatingEvent modifierFlags]
+                                      timestamp:[initiatingEvent timestamp]
+                                   windowNumber:[initiatingEvent windowNumber]
+                                        context:[initiatingEvent context]
+                                    eventNumber:0
+                                     clickCount:0
+                                       pressure:0];
+        mouseMoved(fakeEvent);
     }
     
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -2999,9 +2997,8 @@ void MacFrame::tokenizerProcessedData()
 
 void MacFrame::setBridge(WebCoreBridge *p)
 { 
-    if (_bridge != p) {
-	delete _windowWidget;
-    }
+    if (_bridge != p)
+        delete _windowWidget;
     _bridge = p;
     _windowWidget = new KWQWindowWidget(_bridge);
 }
@@ -3135,16 +3132,16 @@ static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
     if ([aView respondsToSelector:@selector(objectForWebScript)]){
         id object = [aView objectForWebScript];
         if (object) {
-	    KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
             return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object, executionContext);
-	}
+        }
     }
     else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
         void *object = [aView pluginScriptableObject];
         if (object) {
-	    KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
             return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object, executionContext);
-	}
+        }
     }
     return 0;
 }
@@ -3201,8 +3198,8 @@ void MacFrame::registerCommandForRedo(const EditCommandPtr &cmd)
 void MacFrame::clearUndoRedoOperations()
 {
     if (_haveUndoRedoOperations) {
-	[[_bridge undoManager] removeAllActionsWithTarget:_bridge];
-	_haveUndoRedoOperations = NO;
+        [[_bridge undoManager] removeAllActionsWithTarget:_bridge];
+        _haveUndoRedoOperations = NO;
     }
 }
 
@@ -3375,11 +3372,8 @@ bool MacFrame::shouldChangeSelection(const SelectionController &oldSelection, co
 
 void MacFrame::respondToChangedContents()
 {
-#if APPLE_CHANGES
-    if (KWQAccObjectCache::accessibilityEnabled()) {
+    if (KWQAccObjectCache::accessibilityEnabled())
         renderer()->document()->getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXValueChanged");
-    }
-#endif
     [_bridge respondToChangedContents];
 }
 
@@ -3449,9 +3443,8 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
         m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
     }
 
-    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {
-	m_markedTextRange->startContainer(exception)->renderer()->repaint();
-    }
+    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer())
+        m_markedTextRange->startContainer(exception)->renderer()->repaint();
 
     if ( range && range->collapsed(exception) ) {
         m_markedTextRange = 0;
@@ -3460,7 +3453,7 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
     }
 
     if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {
-	m_markedTextRange->startContainer(exception)->renderer()->repaint();
+        m_markedTextRange->startContainer(exception)->renderer()->repaint();
     }
 }
 
@@ -3556,7 +3549,7 @@ bool MacFrame::shouldClose()
     int exception = 0;
     body->dispatchGenericEvent(event.get(), exception);
     if (!event->defaultPrevented() && document)
- 	document->defaultEventHandler(event.get());
+        document->defaultEventHandler(event.get());
     if (event->result().isNull())
         return true;
 
@@ -3595,4 +3588,3 @@ bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const QPoint 
     bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
     return !noDefaultProc;
 }
-

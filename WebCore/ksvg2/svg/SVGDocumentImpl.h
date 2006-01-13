@@ -31,12 +31,10 @@
 
 #include <ksvg2/misc/KSVGTimeScheduler.h>
 
-#ifdef APPLE_CHANGES
-class KHTMLView;
+typedef KHTMLView KSVGView;
 namespace KDOM {
-    using ::KHTMLView;
+    typedef KHTMLView KDOMView;
 }
-#endif
 
 namespace KSVG
 {

@@ -691,8 +691,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     }
 
     // We confine the line clamp ugliness to vertical flexible boxes (thus keeping it out of
-    // mainstream block layout) and put it all inside APPLE_CHANGES to denote that this is not
-    // really part of the XUL box model.
+    // mainstream block layout); this is not really part of the XUL box model.
     bool haveLineClamp = style()->lineClamp() >= 0 && style()->lineClamp() <= 100;
     if (haveLineClamp) {
         int maxLineCount = 0;

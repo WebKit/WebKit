@@ -35,9 +35,6 @@
 #include "SVGAnimatedStringImpl.h"
 #include "KCanvasRenderingStyle.h"
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
-#ifndef APPLE_CHANGES
-#include "KSVGDocumentBuilder.h"
-#endif
 #include "SVGDocumentImpl.h"
 #include <ksvg2/KSVGView.h>
 
@@ -48,9 +45,6 @@
 #include <kcanvas/KCanvasPath.h>
 
 #include <kdom/parser/KDOMParser.h>
-#ifndef APPLE_CHANGES
-#include <kdom/parser/KDOMParserFactory.h>
-#endif
 #include <kdom/core/DOMConfigurationImpl.h>
 
 #include <kxmlcore/Assertions.h>

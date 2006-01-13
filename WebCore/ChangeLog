@@ -1,3 +1,41 @@
+2006-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6508
+          retire APPLE_CHANGES
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Don't set APPLE_CHANGES or
+        HAVE_CONFIG_H any more.
+
+        * WebCore.xcodeproj/project.pbxproj: Don't set APPLE_CHANGES or
+        KHTML_NO_CPLUSPLUS_DOM any more.
+
+        * kcanvas/KCanvasFilters.h:
+        Use __APPLE__ instead of APPLE_CHANGES.
+
+        * bridge/mac/MacFrame.mm: (MacFrame::respondToChangedContents):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * ksvg2/svg/SVGAElementImpl.cpp: (SVGAElementImpl::defaultEventHandler):
+        * ksvg2/svg/SVGElementImpl.h: (KSVG::svg_dynamic_cast):
+        * ksvg2/svg/SVGScriptElementImpl.cpp: (SVGScriptElementImpl::executeScript):
+        * page/Frame.cpp: (Frame::paint):
+        Make some APPLE_CHANGES code unconditional.
+
+        * WebCore+SVG/kdom.h:
+        * ksvg2/ecma/Ecma.cpp: (Ecma::setupDocument):
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        Remove some !APPLE_CHANGES code.
+
+        * ksvg2/svg/SVGDocumentImpl.h:
+        Remove some unneeded APPLE_CHANGES code.
+
+        * khtml/rendering/render_flexbox.cpp: (khtml::RenderFlexibleBox::layoutVerticalBox):
+        Remove a misleading mention of APPLE_CHANGES in a comment.
+
+        Also changed tabs to spaces in files I am committing.
+
 2006-01-12  David Hyatt <hyatt@apple.com>
 
 	Get the misc directory compiling on Win32.

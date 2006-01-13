@@ -94,11 +94,7 @@ void SVGAElementImpl::defaultEventHandler(KDOM::EventImpl *evt)
             KDOM::EventTargetImpl::defaultEventHandler(evt);
             return;
         }
-#if APPLE_CHANGES
         url = khtml::parseURL(href()->baseVal()).qstring();
-#else
-        url = KDOM::DOMString(KDOM::Helper::parseURL(href()->baseVal())).qstring();
-#endif
         kdDebug() << "url : " << url << endl;
         utarget = KDOM::DOMString(getAttribute(SVGNames::targetAttr)).qstring();
         kdDebug() << "utarget : " << utarget << endl;

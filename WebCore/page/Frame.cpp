@@ -108,7 +108,7 @@ namespace khtml {
             m_frame = frame;
             m_cachedSheet = Cache::requestStyleSheet(dl, url );
             if (m_cachedSheet)
-		m_cachedSheet->ref( this );
+                m_cachedSheet->ref( this );
         }
         virtual ~PartStyleSheetLoader()
         {
@@ -2361,8 +2361,8 @@ void Frame::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     NodeImpl *innerNode = event->innerNode();
 
     if (mouse->state() != LeftButton || !innerNode || !innerNode->renderer() ||
-        !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
-    	return;
+            !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
+        return;
 
     // handle making selection
     VisiblePosition pos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
@@ -2391,7 +2391,7 @@ void Frame::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
 
 void Frame::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 {
-    handleMouseMoveEventSelection(event);		
+    handleMouseMoveEventSelection(event);
 }
 
 void Frame::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
@@ -3309,11 +3309,9 @@ void Frame::paint(QPainter *p, const QRect& rect)
         RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
         renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
         
-#if APPLE_CHANGES
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (renderer()->document()->dashboardRegionsDirty())
             renderer()->canvas()->view()->updateDashboardRegions();
-#endif
     } else
         ERROR("called Frame::paint with nil renderer");
 }
@@ -3367,9 +3365,9 @@ bool Frame::canCachePage()
     if (d->m_frames.count() ||
         parentFrame() ||
         m_url.protocol().startsWith("https") || 
-	(d->m_doc && (d->m_doc->applets()->length() != 0 ||
+        (d->m_doc && (d->m_doc->applets()->length() != 0 ||
                       d->m_doc->hasWindowEventListener(unloadEvent) ||
-		      d->m_doc->hasPasswordField()))) {
+                      d->m_doc->hasPasswordField()))) {
         return false;
     }
     return true;
@@ -3412,13 +3410,13 @@ void Frame::restoreLocationProperties(SavedProperties *locationProperties)
 void Frame::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
 {
     if (jScript() && jScript()->interpreter())
-	jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+        jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
 }
 
 void Frame::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
 {
     if (jScript() && jScript()->interpreter())
-	jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+        jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
 }
 
 Frame *Frame::frameForWidget(const QWidget *widget)
@@ -3426,9 +3424,8 @@ Frame *Frame::frameForWidget(const QWidget *widget)
     ASSERT_ARG(widget, widget);
     
     NodeImpl *node = nodeForWidget(widget);
-    if (node) {
-	return frameForNode(node);
-    }
+    if (node)
+        return frameForNode(node);
     
     // Assume all widgets are either form controls, or KHTMLViews.
     ASSERT(widget->isKHTMLView());
@@ -3531,8 +3528,8 @@ void Frame::sendResizeEvent()
 {
     KHTMLView *v = d->m_view;
     if (v) {
-	QResizeEvent e;
-	v->resizeEvent(&e);
+        QResizeEvent e;
+        v->resizeEvent(&e);
     }
 }
 
@@ -3550,10 +3547,10 @@ void Frame::sendScrollEvent()
 bool Frame::scrollbarsVisible()
 {
     if (!view())
-	return false;
+        return false;
     
     if (view()->hScrollBarMode() == QScrollView::AlwaysOff || view()->vScrollBarMode() == QScrollView::AlwaysOff)
-	return false;
+        return false;
     
     return true;
 }
@@ -3791,7 +3788,7 @@ void Frame::setName(const QString &name)
     
     // FIXME: is the blank rule needed or useful?
     if (parent && (name.isEmpty() || parent->frameExists(name) || name == "_blank"))
-	n = parent->requestFrameName();
+        n = parent->requestFrameName();
     
     ObjectContents::setName(n);
 }

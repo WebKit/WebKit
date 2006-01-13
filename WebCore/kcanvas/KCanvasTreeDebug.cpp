@@ -44,9 +44,7 @@
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 
-#ifdef APPLE_CHANGES
 #include "KWQRenderTreeDebug.h"
-#endif
 
 #include <kxmlcore/Assertions.h>
 
@@ -403,4 +401,3 @@ QTextStream &operator<<(QTextStream &ts, const QStringList &l)
     
     return ts;
 }
-

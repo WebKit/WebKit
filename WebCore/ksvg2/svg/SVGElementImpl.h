@@ -94,16 +94,8 @@ namespace KSVG
 namespace KSVG {
     static inline SVGElementImpl *svg_dynamic_cast(KDOM::NodeImpl *node) {
         SVGElementImpl *svgElement = NULL;
-#if APPLE_CHANGES
         if (node && node->isSVGElement())
             svgElement = static_cast<SVGElementImpl *>(node);
-#else
-        if (node && (node->nodeType() == KDOM::ELEMENT_NODE)) {
-            KDOM::ElementImpl *element = static_cast<KDOM::ElementImpl *>(node);
-            if (element && (KDOM::DOMString(element->namespaceURI()) == KDOM::NS_SVG))
-                svgElement = static_cast<SVGElementImpl *>(element);
-        }
-#endif
         return svgElement;
     }
 };

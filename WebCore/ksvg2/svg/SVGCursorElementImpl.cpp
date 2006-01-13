@@ -32,14 +32,7 @@
 #include "SVGAnimatedLengthImpl.h"
 #include "SVGAnimatedStringImpl.h"
 
-#ifndef APPLE_CHANGES
-#include "imload/imagepainter.h"
-#endif
-
 using namespace KSVG;
-#ifndef APPLE_CHANGES
-using namespace khtmlImLoad;
-#endif
 
 SVGCursorElementImpl::SVGCursorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGElementImpl(tagName, doc), SVGTestsImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()

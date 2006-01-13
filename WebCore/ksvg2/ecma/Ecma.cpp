@@ -116,9 +116,6 @@ void Ecma::setupDocument(KDOM::DocumentImpl *document)
     SVGDocument docObj(svgDocument);
 
     KJS::JSObject *kjsObj = docObj.bridge(interpreter()->globalExec());
-#ifndef APPLE_CHANGES
-    kjsObj->ref();
-#endif
 
     interpreter()->putDOMObject(svgDocument, kjsObj);
     svgDocument->deref();

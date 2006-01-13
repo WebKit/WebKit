@@ -72,9 +72,7 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
     if(!ecmaEngine)
         return;
                 
-#ifdef APPLE_CHANGES
     KJS::Interpreter::lock();
-#endif
 
     // Run script
     KJS::Completion comp = ecmaEngine->evaluate(jsCode.qstring(), ecmaEngine->globalObject());
@@ -107,9 +105,7 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
     else if(comp.complType() == KJS::Normal)
         kdDebug() << "[SVGScriptElement] Evaluated ecma script!" << endl;
     
-#ifdef APPLE_CHANGES
     KJS::Interpreter::unlock();
-#endif
 #else
     if (jsCode)
         // Hack to close memory leak due to #if 0
