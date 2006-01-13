@@ -148,14 +148,18 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
     // must have arrived in one chunk.  This avoids the attempt
     // to perform incremental decoding.
     if (eof && !p) {
+#if __APPLE__
         p = new QPixmap(_buffer.buffer(), KWQResponseMIMEType(m_response));
+#endif
         if (m_decoderCallback)
             m_decoderCallback->notifyFinished();
         canDraw = true;
     } else {
         // Always attempt to load the image incrementally.
+#if __APPLE__
         if (!p)
             p = new QPixmap(KWQResponseMIMEType(m_response));
+#endif
         canDraw = p->receivedData(_buffer.buffer(), eof, m_decoderCallback);
     }
     

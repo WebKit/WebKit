@@ -1,5 +1,17 @@
 2006-01-12  David Hyatt <hyatt@apple.com>
 
+	Get the misc directory compiling on Win32.
+
+        * ForwardingHeaders/kio/jobclasses.h:
+        * ForwardingHeaders/qasyncio.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * khtml/misc/CachedImage.cpp:
+        (khtml::CachedImage::data):
+        * khtml/misc/decoder.cpp:
+        (KanjiCode::):
+
+2006-01-12  David Hyatt <hyatt@apple.com>
+
 	Make the ecma directory compile on Win32.
 
         * ForwardingHeaders/kconfig.h:

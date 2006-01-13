@@ -46,7 +46,7 @@ using DOM::nullAtom;
 class KanjiCode
 {
 public:
-    enum Type {ASCII, JIS, EUC, SJIS, UNICODE, UTF8 };
+    enum Type { ASCII, JIS, EUC, SJIS, UTF16, UTF8 };
     static enum Type judge(const char *str, int length);
     static const int ESC;
     static const int _SS2_;
