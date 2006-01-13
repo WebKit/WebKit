@@ -94,7 +94,7 @@
 		65DC16C50831DD6F0022744E /* composite_edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DC16C30831DD6F0022744E /* composite_edit_command.h */; };
 		7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
-		937C34ED0868E4B4006F4B22 /* parser.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* parser.y */; };
+		937C34ED0868E4B4006F4B22 /* css_grammar.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* css_grammar.y */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		93F198A708245E59001E9ABC /* css_base.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F618B040594BA00A80004 /* css_base.h */; };
@@ -1015,7 +1015,7 @@
 		A88AD2680952480A001DD196 /* waitCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2D052B966D000440A1 /* waitCursor.tiff */; };
 		A88AD2690952480A001DD196 /* westResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */; };
 		A88AD26A0952480A001DD196 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
-		A88AD26C0952480A001DD196 /* parser.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* parser.y */; };
+		A88AD26C0952480A001DD196 /* css_grammar.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* css_grammar.y */; };
 		A88AD26D0952480A001DD196 /* KWQApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C402DE375801EA4122 /* KWQApplication.mm */; };
 		A88AD26E0952480A001DD196 /* KWQArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784C602DE375801EA4122 /* KWQArrayImpl.cpp */; };
 		A88AD2700952480A001DD196 /* KWQBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.cpp */; };
@@ -1837,7 +1837,7 @@
 		93386B90037045B3008635CE /* KWQResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B91037045B3008635CE /* KWQResourceLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQResourceLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9348900506C00363007E7ACE /* DOMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		934E43780414294A008635CE /* parser.y */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.yacc; path = parser.y; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		934E43780414294A008635CE /* css_grammar.y */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.yacc; path = css_grammar.y; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9378D9F907640A46004B97BF /* markup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = markup.cpp; path = editing/markup.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9378D9FA07640A46004B97BF /* markup.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = markup.h; path = editing/markup.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93859E32065FCAD300CF54EE /* DOMHTMLInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3783,7 +3783,7 @@
 			isa = PBXGroup;
 			children = (
 				BC8F61850405949900A80004 /* css_base.cpp */,
-				934E43780414294A008635CE /* parser.y */,
+				934E43780414294A008635CE /* css_grammar.y */,
 				BC8F618B040594BA00A80004 /* css_base.h */,
 				BE9970C105F7DD1C00611115 /* css_computedstyle.h */,
 				BE9970C205F7DD1C00611115 /* css_computedstyle.cpp */,
@@ -6330,7 +6330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A82B8CB009712C2C0027E3DE /* InlineTextBox.cpp in Sources */,
-				937C34ED0868E4B4006F4B22 /* parser.y in Sources */,
+				937C34ED0868E4B4006F4B22 /* css_grammar.y in Sources */,
 				93F19A0D08245E59001E9ABC /* KWQApplication.mm in Sources */,
 				93F19A0E08245E59001E9ABC /* KWQArrayImpl.cpp in Sources */,
 				93F19A1008245E59001E9ABC /* KWQBuffer.cpp in Sources */,
@@ -6787,7 +6787,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A88AD26C0952480A001DD196 /* parser.y in Sources */,
+				A88AD26C0952480A001DD196 /* css_grammar.y in Sources */,
 				A88AD26D0952480A001DD196 /* KWQApplication.mm in Sources */,
 				A88AD26E0952480A001DD196 /* KWQArrayImpl.cpp in Sources */,
 				A88AD2700952480A001DD196 /* KWQBuffer.cpp in Sources */,

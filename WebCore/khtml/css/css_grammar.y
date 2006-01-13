@@ -26,7 +26,7 @@
 #include <stdlib.h>
 
 #include <dom/dom_string.h>
-#include "DocumentImpl.h"
+#include <xml/dom_docimpl.h>
 #include <css/css_ruleimpl.h>
 #include <css/css_stylesheetimpl.h>
 #include <css/css_valueimpl.h>

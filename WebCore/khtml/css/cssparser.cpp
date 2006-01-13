@@ -2609,7 +2609,7 @@ static inline int yyerror( const char *str ) {
 
 #define END_TOKEN 0
 
-#include "parser.h"
+#include "css_grammar.h"
 
 int CSSParser::lex( void *_yylval ) {
     YYSTYPE *yylval = (YYSTYPE *)_yylval;
