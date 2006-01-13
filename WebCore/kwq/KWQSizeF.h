@@ -40,13 +40,16 @@ typedef struct CGSize NSSize;
 typedef struct _NSSize NSSize;
 #endif
 typedef struct CGSize CGSize;
-class IntSize;
+
+namespace WebCore {
+    class IntSize;
+}
 
 class QSizeF {
 public:
     QSizeF();
     QSizeF(float, float);
-    QSizeF(const IntSize&);
+    QSizeF(const WebCore::IntSize&);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QSizeF(const NSSize&);
 #endif

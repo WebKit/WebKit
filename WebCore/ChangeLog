@@ -1,5 +1,14 @@
 2006-01-13  David Hyatt  <hyatt@apple.com>
 
+        Fix build bustage from QSize -> IntSize change.
+        
+        Reviewed by darin
+
+        * kwq/KWQObject.h:
+        * kwq/KWQSizeF.h:
+
+2006-01-13  David Hyatt  <hyatt@apple.com>
+
         Eliminate QSize and add the new class IntSize in the
         platform subdirectory.  Factor out the Objective-C portion
         of IntSize into a platform-specific IntSize.mm that resides

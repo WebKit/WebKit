@@ -52,7 +52,6 @@ class QPainter;
 class QPalette;
 class QRect;
 class QRegion;
-class IntSize;
 class QSizePolicy;
 class QTimer;
 class QVariant;
