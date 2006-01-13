@@ -55,12 +55,12 @@ KWQVectorImpl::~KWQVectorImpl()
 void KWQVectorImpl::clear(bool delItems)
 {
     if (delItems) {
-	for (uint i = 0; i < m_size; ++i) {
+        for (uint i = 0; i < m_size; ++i) {
             void *item = m_data[i];
-	    if (item) {
-		m_deleteItemFunction(item);
-	    }
-	}
+            if (item) {
+                m_deleteItemFunction(item);
+            }
+        }
     }
 
     fastFree(m_data);
@@ -113,9 +113,8 @@ bool KWQVectorImpl::resize(uint size, bool delItems)
 
 bool KWQVectorImpl::insert(uint n, void *item, bool delItems)
 {
-    if (n >= m_size) {
-	return false;
-    }
+    if (n >= m_size)
+        return false;
 
     void *oldItem = m_data[n];
     if (oldItem) {
