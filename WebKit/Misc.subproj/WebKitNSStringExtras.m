@@ -235,7 +235,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     NSMutableString *filename = [[self mutableCopy] autorelease];
 
     // Strip null characters.
-	unichar nullChar = 0;
+    unichar nullChar = 0;
     [filename replaceOccurrencesOfString:[NSString stringWithCharacters:&nullChar length:0] withString:@"" options:0 range:NSMakeRange(0, [filename length])];
 
     // Replace "/" with "-".

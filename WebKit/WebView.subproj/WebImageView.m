@@ -239,10 +239,10 @@
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [rep image],                            WebCoreElementImageRendererKey,
         [[rep image] image],                    WebElementImageKey,
-        [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
+        [NSValue valueWithRect:[self bounds]],  WebElementImageRectKey,
         [rep URL],                              WebElementImageURLKey,
-        [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
-        frame, 					WebElementFrameKey, nil];
+        [NSNumber numberWithBool:NO],           WebElementIsSelectedKey,
+        frame,                                  WebElementFrameKey, nil];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent

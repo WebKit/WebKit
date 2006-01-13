@@ -63,7 +63,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (challenge == nil || challenge != currentWebChallenge) {
-	return;
+        return;
     }
 
     [[currentConnectionChallenge sender] useCredential:credential forAuthenticationChallenge:currentConnectionChallenge];
@@ -78,7 +78,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (challenge == nil || challenge != currentWebChallenge) {
-	return;
+        return;
     }
 
     [[currentConnectionChallenge sender] continueWithoutCredentialForAuthenticationChallenge:currentConnectionChallenge];
@@ -93,7 +93,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (challenge == nil || challenge != currentWebChallenge) {
-	return;
+        return;
     }
 
     [self cancel];
@@ -205,7 +205,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     } else if ([theRequest valueForHTTPHeaderField:@"If-Modified-Since"] != nil) {
         return NO;
     } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
-	return NO;
+        return NO;
     } else if ([[theRequest HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         return NO;
     } else {
@@ -268,7 +268,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     isInitializingConnection = NO;
 #endif
     if (defersCallbacks) {
-		WKSetNSURLConnectionDefersCallbacks(connection, YES);
+        WKSetNSURLConnectionDefersCallbacks(connection, YES);
     }
 
     return YES;
@@ -277,7 +277,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-	WKSetNSURLConnectionDefersCallbacks(connection, defers);
+    WKSetNSURLConnectionDefersCallbacks(connection, defers);
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
     [self deliverResourceAfterDelay];
 }

@@ -167,7 +167,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
         ASSERT(keepCount < keepCountForSmallestKnownToNotFit);
         ASSERT(keepCount > keepCountForLargestKnownToFit);
         
-	truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
+        truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
 
         width = stringWidth(currentRenderer, stringBuffer, truncatedLength);
         if (width <= maxWidth) {
@@ -185,7 +185,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     
     if (keepCount != keepCountForLargestKnownToFit) {
         keepCount = keepCountForLargestKnownToFit;
-	truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
+        truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
     }
     
     return [NSString stringWithCharacters:stringBuffer length:truncatedLength];

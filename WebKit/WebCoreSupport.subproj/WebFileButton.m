@@ -69,7 +69,7 @@
 {
     self = [super init];
     if (self) {
-	_bridge = bridge; // Don't retain to avoid cycle
+        _bridge = bridge; // Don't retain to avoid cycle
         _delegate = [delegate retain];
     }
     return self;

@@ -121,7 +121,7 @@ static void decoderNotifications(void *info)
     static WebImageDecoder *sharedDecoder = 0;
     
     if (!sharedDecoder)
-	sharedDecoder = [[WebImageDecoder alloc] init];
+        sharedDecoder = [[WebImageDecoder alloc] init];
     
     return sharedDecoder;
 }

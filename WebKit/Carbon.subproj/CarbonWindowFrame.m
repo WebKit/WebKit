@@ -59,8 +59,8 @@
 
 - (NSRect)titlebarRect
 {
-    NSRect	titlebarRect;
-    NSRect	boundsRect;
+    NSRect      titlebarRect;
+    NSRect      boundsRect;
 
     boundsRect = [self bounds];
 

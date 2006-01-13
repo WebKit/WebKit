@@ -871,7 +871,7 @@ typedef struct {
 {
     int length = [self length];
     if (length < 5) {  // 5 is length of "ftp:/"
-	return NO;
+        return NO;
     }
     unichar lastChar = [self characterAtIndex:length - 1];
     return lastChar == '/' && [self _webkit_hasCaseInsensitivePrefix:@"ftp:"];
@@ -923,8 +923,8 @@ static void readIDNScriptWhiteList(void)
     NSArray *dirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
     int i, numDirs = [dirs count];
     for (i = 0; i < numDirs; i++) {
-	NSString *dir = [dirs objectAtIndex:i];
-	if (readIDNScriptWhiteListFile([dir stringByAppendingPathComponent:@"IDNScriptWhiteList.txt"])) {
+        NSString *dir = [dirs objectAtIndex:i];
+        if (readIDNScriptWhiteListFile([dir stringByAppendingPathComponent:@"IDNScriptWhiteList.txt"])) {
             return;
         }
     }

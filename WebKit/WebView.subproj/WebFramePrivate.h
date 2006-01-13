@@ -65,10 +65,10 @@ typedef enum {
     WebFrameLoadTypeStandard,
     WebFrameLoadTypeBack,
     WebFrameLoadTypeForward,
-    WebFrameLoadTypeIndexedBackForward,		// a multi-item hop in the backforward list
+    WebFrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
     WebFrameLoadTypeReload,
     WebFrameLoadTypeReloadAllowingStaleData,
-    WebFrameLoadTypeSame,		// user loads same URL again (but not reload button)
+    WebFrameLoadTypeSame,               // user loads same URL again (but not reload button)
     WebFrameLoadTypeInternal,
     WebFrameLoadTypeReplace
 } WebFrameLoadType;

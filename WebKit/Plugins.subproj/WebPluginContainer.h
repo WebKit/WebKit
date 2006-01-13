@@ -54,9 +54,9 @@
 - (void)webPlugInContainerShowStatus:(NSString *)message;
 
 /*!
-	@method webPlugInContainerSelectionColor
-	@result Returns the color that should be used for any special drawing when
-	plug-in is selected.
+    @method webPlugInContainerSelectionColor
+    @result Returns the color that should be used for any special drawing when
+    plug-in is selected.
 */
 - (NSColor *)webPlugInContainerSelectionColor;
 

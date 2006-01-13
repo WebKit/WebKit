@@ -31,9 +31,9 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebNSURLExtras.h>
 
-#define WebContentType	(@"Content-Type")
-#define WebUserAgent	(@"User-Agent")
-#define WebReferrer	(@"Referer")
+#define WebContentType  (@"Content-Type")
+#define WebUserAgent    (@"User-Agent")
+#define WebReferrer     (@"Referer")
 
 @implementation NSURLRequest (WebNSURLRequestExtras)
 

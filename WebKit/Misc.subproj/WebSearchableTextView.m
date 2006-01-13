@@ -189,7 +189,7 @@
         // If not found, search again from the beginning. Make search range large enough that
         // we'll find a match even if it partially overlapped the existing selection (including the
         // case where it exactly matches the existing selection).
-        if ((range.length == 0) && wrap) {	
+        if ((range.length == 0) && wrap) {
             searchRange.location = 0;
             searchRange.length = selectedRange.location + selectedRange.length + [string length];
             if (searchRange.length > length) {

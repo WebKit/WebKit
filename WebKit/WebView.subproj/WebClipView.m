@@ -100,11 +100,11 @@
 {
     NSView *docView = [self documentView];
     if ([docView respondsToSelector:@selector(_webView)]) {
-	WebView *wv = [docView _webView];
-	if ([wv _dashboardBehavior:WebDashboardBehaviorAllowWheelScrolling]) {
-	    [super scrollWheel:event];
-	}
-	return;
+        WebView *wv = [docView _webView];
+        if ([wv _dashboardBehavior:WebDashboardBehaviorAllowWheelScrolling]) {
+            [super scrollWheel:event];
+        }
+        return;
     }
     [super scrollWheel:event];
 }

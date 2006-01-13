@@ -895,7 +895,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         captureHitsOnSubviews = !([event type] == NSMouseMoved
             || [event type] == NSRightMouseDown
             || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0)
-	    || [event type] == NSFlagsChanged);
+            || [event type] == NSFlagsChanged);
     }
 
     if (!captureHitsOnSubviews)

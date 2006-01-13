@@ -39,7 +39,7 @@
     WindowRef _windowRef;
     BOOL _windowRefIsOwned;
     BOOL _carbon;
-	
+
     // The UPP for the event handler that we use to deal with various Carbon events, and the event handler itself.
     EventHandlerUPP _handleEventUPP;
     EventHandlerRef _eventHandler;

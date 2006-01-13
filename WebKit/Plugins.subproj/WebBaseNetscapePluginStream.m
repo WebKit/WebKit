@@ -167,12 +167,12 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     
     plugin = [[(WebBaseNetscapePluginView *)instance->ndata plugin] retain];
 
-    NPP_NewStream = 	[plugin NPP_NewStream];
-    NPP_WriteReady = 	[plugin NPP_WriteReady];
-    NPP_Write = 	[plugin NPP_Write];
-    NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
+    NPP_NewStream =     [plugin NPP_NewStream];
+    NPP_WriteReady =    [plugin NPP_WriteReady];
+    NPP_Write =         [plugin NPP_Write];
+    NPP_StreamAsFile =  [plugin NPP_StreamAsFile];
     NPP_DestroyStream = [plugin NPP_DestroyStream];
-    NPP_URLNotify = 	[plugin NPP_URLNotify];
+    NPP_URLNotify =     [plugin NPP_URLNotify];
 }
 
 - (void)setMIMEType:(NSString *)theMIMEType

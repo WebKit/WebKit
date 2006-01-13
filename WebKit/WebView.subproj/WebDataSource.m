@@ -340,8 +340,8 @@
     
     if (flag) {
         // FIXME: We could actually load it as soon as we've parsed
-	// the HEAD section, or determined there isn't one - but
-	// there's no callback for that.
+        // the HEAD section, or determined there isn't one - but
+        // there's no callback for that.
         [self _loadIcon];
 
         if (_private->mainResourceLoader != nil) {
@@ -381,7 +381,7 @@
         [[self _bridge] stopLoading];
 
     if (!_private->loading)
-	return;
+        return;
 
     [self retain];
 
@@ -725,7 +725,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
             [frame _closeOldDataSources];
 
         LOG(Loading, "committed resource = %@", [[self request] URL]);
-	_private->committed = TRUE;
+        _private->committed = TRUE;
         if (!pageCache)
             [self _makeRepresentation];
             
@@ -762,7 +762,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
         id newRep = repClass != nil ? [[repClass alloc] init] : nil;
-	[self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
+        [self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
         [newRep release];
     }
 
@@ -879,8 +879,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     // Lower priority than typed icon, so ignore this if we already have an iconURL.
     if (_private->iconURL == nil) {
-	[_private->iconURL release];
-	_private->iconURL = [URL retain];
+        [_private->iconURL release];
+        _private->iconURL = [URL retain];
     }
 }
 

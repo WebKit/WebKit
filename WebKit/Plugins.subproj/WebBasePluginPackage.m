@@ -38,9 +38,9 @@
 #import <mach-o/arch.h>
 #import <mach-o/loader.h>
 
-#define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
-#define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
-#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
+#define JavaCocoaPluginIdentifier   @"com.apple.JavaPluginCocoa"
+#define JavaCarbonPluginIdentifier  @"com.apple.JavaAppletPlugin"
+#define JavaCFMPluginFilename       @"Java Applet Plugin Enabler"
 
 #define QuickTimeCarbonPluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
 #define QuickTimeCocoaPluginIdentifier        @"com.apple.quicktime.webplugin"

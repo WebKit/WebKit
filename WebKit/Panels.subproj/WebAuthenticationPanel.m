@@ -76,9 +76,9 @@
 
     [panel close];
     if (usingSheet) {
-	[[NSApplication sharedApplication] endSheet:panel returnCode:1];
+        [[NSApplication sharedApplication] endSheet:panel returnCode:1];
     } else {
-	[[NSApplication sharedApplication] stopModalWithCode:1];
+        [[NSApplication sharedApplication] stopModalWithCode:1];
     }
 }
 
@@ -92,9 +92,9 @@
 
     [panel close];
     if (usingSheet) {
-	[[NSApplication sharedApplication] endSheet:panel returnCode:0];
+        [[NSApplication sharedApplication] endSheet:panel returnCode:0];
     } else {
-	[[NSApplication sharedApplication] stopModalWithCode:0];
+        [[NSApplication sharedApplication] stopModalWithCode:0];
     }
 }
 
@@ -122,9 +122,9 @@
 
     NSString *host;
     if ([space port] == 0) {
-	host = [space host];
+        host = [space host];
     } else {
-	host = [NSString stringWithFormat:@"%@:%u", [space host], [space port]];
+        host = [NSString stringWithFormat:@"%@:%u", [space host], [space port]];
     }
 
     NSString *realm = [space realm];
@@ -144,7 +144,7 @@
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for the %@ proxy server %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
-				[space proxyType], host];
+                [space proxyType], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for area “%@” on %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),

@@ -52,8 +52,8 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 {
     self = [super init];
     if (self != nil) {
-	target = [t retain];
-	action = a;
+        target = [t retain];
+        action = a;
     }
     return self;
 }
@@ -72,7 +72,7 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 {
     self = [super init];
     if (self != nil) {
-	_private = [[WebPolicyDecisionListenerPrivate alloc] initWithTarget:target action:action];
+        _private = [[WebPolicyDecisionListenerPrivate alloc] initWithTarget:target action:action];
     }
     return self;
 }
@@ -87,7 +87,7 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 -(void)_usePolicy:(WebPolicyAction)policy
 {
     if (_private->target != nil) {
-	[_private->target performSelector:_private->action withObject:(id)policy];
+        [_private->target performSelector:_private->action withObject:(id)policy];
     }
 }
 

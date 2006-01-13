@@ -37,8 +37,8 @@ NSString *WebPlugInContainerKey =   @"WebPlugInContainerKey";
 NSString *WebPlugInModeKey =        @"WebPlugInModeKey";
 
 /*!
-	@constant WebPlugInContainingElementKey The DOMElement that was used to specify
-	the plug-in.  May be nil.
+    @constant WebPlugInContainingElementKey The DOMElement that was used to specify
+    the plug-in.  May be nil.
 */
 extern NSString *WebPlugInContainingElementKey;
 

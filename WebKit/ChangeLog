@@ -1,3 +1,8 @@
+2006-01-13  Darin Adler  <darin@apple.com>
+
+        - Replaced tabs with spaces in source files that had less than 10 lines with tabs.
+        - Set allow-tabs Subversion property in source files that have more than 10 lines with tabs.
+
 2006-01-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim O.

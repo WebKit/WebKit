@@ -40,9 +40,9 @@ extern NSString * const WebKitErrorPlugInPageURLStringKey;
     @constant WebKitErrorFrameLoadInterruptedByPolicyChange
 */
 enum {
-    WebKitErrorCannotShowMIMEType = 				100,
-    WebKitErrorCannotShowURL = 					101,
-    WebKitErrorFrameLoadInterruptedByPolicyChange = 		102,
+    WebKitErrorCannotShowMIMEType =                             100,
+    WebKitErrorCannotShowURL =                                  101,
+    WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
 };
 
 /*!
@@ -53,7 +53,7 @@ enum {
     @constant WebKitErrorJavaUnavailable
 */
 enum {
-    WebKitErrorCannotFindPlugIn = 				200,
-    WebKitErrorCannotLoadPlugIn = 				201,
-    WebKitErrorJavaUnavailable = 				202,
+    WebKitErrorCannotFindPlugIn =                               200,
+    WebKitErrorCannotLoadPlugIn =                               201,
+    WebKitErrorJavaUnavailable =                                202,
 };

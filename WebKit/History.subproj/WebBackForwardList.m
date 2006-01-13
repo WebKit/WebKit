@@ -68,7 +68,7 @@
     
     _private->entries = [[NSMutableArray alloc] init];
     _private->current = -1;
-    _private->maximumSize = 100;		// typically set by browser app
+    _private->maximumSize = 100; // typically set by browser app
 
     _private->pageCacheSize = COMPUTE_DEFAULT_PAGE_CACHE_SIZE;
     
@@ -328,9 +328,9 @@ static BOOL loggedPageCacheSize = NO;
         if (memSize >= 1024 * 1024 * 1024)
             _private->pageCacheSize = s;
         else if (memSize >= 512 * 1024 * 1024)
-	    _private->pageCacheSize = s - 1;
-	else
-	    _private->pageCacheSize = s - 2;
+            _private->pageCacheSize = s - 1;
+        else
+            _private->pageCacheSize = s - 2;
 
 #ifndef NDEBUG
         if (!loggedPageCacheSize){

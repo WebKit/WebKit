@@ -79,7 +79,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webViewUnfocus: (WebView *)wv
 {
     if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
-	[NSApp _cycleWindowsReversed:FALSE];
+        [NSApp _cycleWindowsReversed:FALSE];
     }
 }
 
@@ -177,7 +177,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     if ([NSApp runModalForWindow:[panel window]]) {
         result = [panel text];
     } else {
-	result = nil;
+        result = nil;
     }
     [[panel window] close];
     [panel release];

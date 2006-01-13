@@ -364,7 +364,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
-	[request _web_setHTTPReferrer:referrer];
+        [request _web_setHTTPReferrer:referrer];
     }
     
     [webView _openNewWindowWithRequest:request];

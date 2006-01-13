@@ -130,7 +130,7 @@
 }
 
 - (NSString *)markupString
-{		
+{
     return [[self _bridge] markupStringFromRange:self nodes:nil];
 }
 

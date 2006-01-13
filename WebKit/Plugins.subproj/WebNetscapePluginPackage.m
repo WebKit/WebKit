@@ -39,12 +39,12 @@ typedef void (* TransitionVector) (void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
 static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
-#define PluginNameOrDescriptionStringNumber 	126
-#define MIMEDescriptionStringNumber		127
-#define MIMEListStringStringNumber 		128
+#define PluginNameOrDescriptionStringNumber     126
+#define MIMEDescriptionStringNumber             127
+#define MIMEListStringStringNumber              128
 
-#define RealPlayerAppIndentifier		@"com.RealNetworks.RealOne Player"
-#define RealPlayerPluginFilename		@"RealPlayer Plugin"
+#define RealPlayerAppIndentifier                @"com.RealNetworks.RealOne Player"
+#define RealPlayerPluginFilename                @"RealPlayer Plugin"
 
 @implementation WebNetscapePluginPackage
 

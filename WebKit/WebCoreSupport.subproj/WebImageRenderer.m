@@ -120,7 +120,7 @@
         
     if (!imageData)
         return NSZeroSize;
-	
+
     CGSize sz = [imageData size];
     return NSMakeSize(sz.width, sz.height);
 }
@@ -215,7 +215,7 @@
     // like <rdar://problem/3966973>, which describes a third party application that renders thumbnails of
     // the page into a alternate view.
     if (([targetView isKindOfClass:[WebHTMLView class]] || [targetView isKindOfClass:[WebImageView class]]) 
-	    && [imageData shouldAnimate] && [MIMEType isEqual:@"image/gif"]) {
+            && [imageData shouldAnimate] && [MIMEType isEqual:@"image/gif"]) {
         [imageData addAnimatingRenderer:self inView:targetView];
         [imageData animate];
     }
@@ -413,7 +413,7 @@ static void ReleasePDFDocumentData(void *info, const void *data, size_t size)
         }
 
         // get page rotation angle
-        _rotation = CGPDFDocumentGetRotationAngle(_document, page + 1) * M_PI / 180.0;	// to radians
+        _rotation = CGPDFDocumentGetRotationAngle(_document, page + 1) * M_PI / 180.0; // to radians
     }
 }
 

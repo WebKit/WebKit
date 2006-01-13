@@ -176,10 +176,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebView *webView;
     WebFrameState state;
     WebFrameLoadType loadType;
-    WebHistoryItem *currentItem;	// BF item for our current content
-    WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
+    WebHistoryItem *currentItem;        // BF item for our current content
+    WebHistoryItem *provisionalItem;    // BF item for where we're trying to go
                                         // (only known when navigating to a pre-existing BF item)
-    WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
+    WebHistoryItem *previousItem;       // BF item for previous content, see _itemForSavingDocState
 
     WebPolicyDecisionListener *listener;
     // state we'll need to continue after waiting for the policy delegate's decision

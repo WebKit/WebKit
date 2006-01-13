@@ -66,10 +66,10 @@ extern NSString *_WebMainFrameTitleKey;
 extern NSString *_WebMainFrameURLKey;
 
 typedef enum {
-	WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
-	WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
-	WebDashboardBehaviorAlwaysAcceptsFirstMouse,
-	WebDashboardBehaviorAllowWheelScrolling
+    WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
+    WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
+    WebDashboardBehaviorAlwaysAcceptsFirstMouse,
+    WebDashboardBehaviorAllowWheelScrolling
 } WebDashboardBehavior;
 
 
@@ -304,7 +304,7 @@ Could be worth adding to the API.
 
 @interface _WebSafeForwarder : NSObject
 {
-    id target;	// Non-retained.  Don't retain delegates;
+    id target; // Non-retained. Don't retain delegates.
     id defaultTarget;
     Class templateClass;
 }

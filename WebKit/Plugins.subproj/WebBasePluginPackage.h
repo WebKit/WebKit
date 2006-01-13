@@ -29,14 +29,14 @@
 #import <WebCore/WebCoreViewFactory.h>
 #import <WebKit/npfunctions.h>
 
-#define WebPluginExtensionsKey		@"WebPluginExtensions"
-#define WebPluginDescriptionKey 	@"WebPluginDescription"
-#define WebPluginLocalizationNameKey	@"WebPluginLocalizationName"
-#define WebPluginMIMETypesFilenameKey	@"WebPluginMIMETypesFilename"
-#define WebPluginMIMETypesKey 		@"WebPluginMIMETypes"
-#define WebPluginNameKey 		@"WebPluginName"
-#define WebPluginTypeDescriptionKey 	@"WebPluginTypeDescription"
-#define WebPluginTypeEnabledKey 	@"WebPluginTypeEnabled"
+#define WebPluginExtensionsKey          @"WebPluginExtensions"
+#define WebPluginDescriptionKey         @"WebPluginDescription"
+#define WebPluginLocalizationNameKey    @"WebPluginLocalizationName"
+#define WebPluginMIMETypesFilenameKey   @"WebPluginMIMETypesFilename"
+#define WebPluginMIMETypesKey           @"WebPluginMIMETypes"
+#define WebPluginNameKey                @"WebPluginName"
+#define WebPluginTypeDescriptionKey     @"WebPluginTypeDescription"
+#define WebPluginTypeEnabledKey         @"WebPluginTypeEnabled"
 
 @interface WebBasePluginPackage : NSObject <WebCorePluginInfo>
 {
@@ -47,7 +47,7 @@
     NSString *pluginDescription;
 
     NSBundle *bundle;
-	CFBundleRef cfBundle;
+    CFBundleRef cfBundle;
     
     NSDate *lastModifiedDate;
 

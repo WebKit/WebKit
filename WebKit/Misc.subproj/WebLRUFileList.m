@@ -353,13 +353,13 @@ static CFHashCode cStringHash(const void *val)
 
     for (i = 0; i < prefixLength; i++) {
         h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
+        h += (h << 10); 
+        h ^= (h << 6); 
     }
     for (i = suffixPosition; i < length; i++) {
         h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
+        h += (h << 10); 
+        h ^= (h << 6); 
     }
 
     h += (h << 3);

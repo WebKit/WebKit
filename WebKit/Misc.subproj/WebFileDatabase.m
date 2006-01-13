@@ -557,8 +557,8 @@ static void databaseInit()
                 NULL
             ];
             
-	    isOpen = [manager _webkit_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
-	}
+            isOpen = [manager _webkit_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
+        }
 
         // remove any leftover turds
         [manager _webkit_backgroundRemoveLeftoverFiles:path];

@@ -28,7 +28,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define WebURLsWithTitlesPboardType	@"WebURLsWithTitlesPboardType"
+#define WebURLsWithTitlesPboardType     @"WebURLsWithTitlesPboardType"
 
 // Convenience class for getting URLs and associated titles on and off an NSPasteboard
 

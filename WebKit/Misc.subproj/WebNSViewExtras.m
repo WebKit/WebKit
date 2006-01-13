@@ -38,12 +38,12 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 
-#define WebDragStartHysteresisX			5.0
-#define WebDragStartHysteresisY			5.0
-#define WebMaxDragImageSize 			NSMakeSize(400, 400)
-#define WebMaxOriginalImageArea			(1500 * 1500)
-#define WebDragIconRightInset			7.0
-#define WebDragIconBottomInset			3.0
+#define WebDragStartHysteresisX                 5.0
+#define WebDragStartHysteresisY                 5.0
+#define WebMaxDragImageSize                     NSMakeSize(400, 400)
+#define WebMaxOriginalImageArea                 (1500 * 1500)
+#define WebDragIconRightInset                   7.0
+#define WebDragIconBottomInset                  3.0
 
 @implementation NSView (WebExtras)
 

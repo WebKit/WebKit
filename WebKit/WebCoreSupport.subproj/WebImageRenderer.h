@@ -71,7 +71,7 @@
 - (id)               initWithData:(NSData*)data;
 - (CGPDFDocumentRef) documentRef;
 - (CGRect)           mediaBox;
-- (NSRect)           bounds;	// adjust for rotation
+- (NSRect)           bounds; // adjust for rotation
 - (void)             setCurrentPage:(int)page;
 - (int)              currentPage;
 - (int)              pageCount;

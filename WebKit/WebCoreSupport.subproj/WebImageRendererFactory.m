@@ -111,12 +111,12 @@ struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
 
 - (int)CGCompositeOperationInContext:(CGContextRef)context
 {
-	return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
+    return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
 }
 
 - (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context
 {
-	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 }
 
 - (void)setCGCompositeOperationFromString:(NSString *)operatorString inContext:(CGContextRef)context
@@ -134,7 +134,7 @@ struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
         }
     }
     
-	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 }
 
 

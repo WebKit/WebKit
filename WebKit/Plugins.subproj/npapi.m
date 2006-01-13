@@ -103,7 +103,7 @@ NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStrea
     return [pluginViewForInstance(instance) newStream:type target:target stream:stream];
 }
 
-int32	NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+int32 NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
 {
     return [pluginViewForInstance(instance) write:stream len:len buffer:buffer];
 }
