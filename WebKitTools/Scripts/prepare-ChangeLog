@@ -252,8 +252,8 @@ foreach my $prefix (sort keys %files)
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         my $testsDir = "../LayoutTests";
         $testsDir = "$prefix/$testsDir" if length($prefix);
-        my $haveNewTests = ((-x "$testsDir/../LayoutTests") && (system("svn status \"$testsDir/../LayoutTests\" | grep -q \"^A\"") == 0));
-        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED\n\n" unless $haveNewTests;
+        my $haveNewTests = (-x "$testsDir/../LayoutTests" && `svn diff \"$testsDir/../LayoutTests\"`);
+        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $haveNewTests;
     }
 
     foreach my $file (sort @{$files{$prefix}})

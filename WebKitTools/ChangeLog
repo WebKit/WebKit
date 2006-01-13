@@ -1,3 +1,12 @@
+2006-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - make prepare-ChangeLog way faster by using svn diff instead of svn status to
+        detect if there are any new tests
+
+        * Scripts/prepare-ChangeLog:
+
 2006-01-12  Darin Adler  <darin@apple.com>
 
         - removed some of the cvs-specific scripts -- not needed for this project any more
