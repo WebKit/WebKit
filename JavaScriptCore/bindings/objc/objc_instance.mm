@@ -300,8 +300,8 @@ bool ObjcInstance::supportsSetValueOfUndefinedField ()
     id targetObject = getObject();
     
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
-	return true;
-	
+        return true;
+
     return false;
 }
 

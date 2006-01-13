@@ -43,7 +43,7 @@
 #else
 #include <sys/types.h>
 #endif
-#include <stdlib.h>	/* for abort() */
+#include <stdlib.h>     /* for abort() */
 
 #if (defined __i386__ || defined __ppc__) && defined __GNUC__
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);

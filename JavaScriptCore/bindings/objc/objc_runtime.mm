@@ -282,7 +282,7 @@ Type ObjcFallbackObjectImp::type() const
     id targetObject = _instance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-	return ObjectType;
+        return ObjectType;
     
     return UndefinedType;
 }
@@ -292,7 +292,7 @@ bool ObjcFallbackObjectImp::implementsCall() const
     id targetObject = _instance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-	return true;
+        return true;
     
     return false;
 }
@@ -342,7 +342,7 @@ bool ObjcFallbackObjectImp::toBoolean(ExecState *exec) const
     id targetObject = _instance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-	return true;
+        return true;
     
     return false;
 }

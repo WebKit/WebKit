@@ -73,12 +73,12 @@ namespace KJS {
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { ToString, ValueOf, CharAt, CharCodeAt, Concat, IndexOf, LastIndexOf,
-	   Match, Replace, Search, Slice, Split,
-	   Substr, Substring, FromCharCode, ToLowerCase, ToUpperCase,
+           Match, Replace, Search, Slice, Split,
+           Substr, Substring, FromCharCode, ToLowerCase, ToUpperCase,
            ToLocaleLowerCase, ToLocaleUpperCase
 #ifndef KJS_PURE_ECMA
-	   , Big, Small, Blink, Bold, Fixed, Italics, Strike, Sub, Sup,
-	   Fontcolor, Fontsize, Anchor, Link
+           , Big, Small, Blink, Bold, Fixed, Italics, Strike, Sub, Sup,
+           Fontcolor, Fontsize, Anchor, Link
 #endif
     };
   private:

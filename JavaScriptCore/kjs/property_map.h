@@ -83,7 +83,7 @@ namespace KJS {
 
         void mark() const;
         void addEnumerablesToReferenceList(ReferenceList &, JSObject *) const;
-	void addSparseArrayPropertiesToReferenceList(ReferenceList &, JSObject *) const;
+        void addSparseArrayPropertiesToReferenceList(ReferenceList &, JSObject *) const;
 
         void save(SavedProperties &) const;
         void restore(const SavedProperties &p);

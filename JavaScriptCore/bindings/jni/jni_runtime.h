@@ -255,7 +255,7 @@ public:
     jmethodID methodID (jobject obj) const;
     
     bool isStatic() const { return _isStatic; }
-	
+
 private:
     JavaParameter *_parameters;
     int _numParameters;

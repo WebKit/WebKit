@@ -436,14 +436,14 @@ List JavaJSObject::listFromJArray(jobjectArray jArray) const
     
     for (i = 0; i < numObjects; i++) {
         jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);
-	if (anObject) {
-	    aList.append (convertJObjectToValue(anObject));
-	    env->DeleteLocalRef (anObject);
-	}
-	else {
+        if (anObject) {
+            aList.append (convertJObjectToValue(anObject));
+            env->DeleteLocalRef (anObject);
+        }
+        else {
             env->ExceptionDescribe();
             env->ExceptionClear();
-	}
+        }
     }
     return aList;
 }

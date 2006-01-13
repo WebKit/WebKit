@@ -25,7 +25,7 @@
 
 extern "C" double kjs_strtod(const char *s00, char **se);
 extern "C" char *kjs_dtoa(double d, int mode, int ndigits,
-			  int *decpt, int *sign, char **rve);
+                          int *decpt, int *sign, char **rve);
 extern "C" void kjs_freedtoa(char *s);
 
 #endif /* _KJS_DTOA_H */

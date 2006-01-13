@@ -76,7 +76,7 @@ const HashEntry* Lookup::findEntry(const struct HashTable *table,
 }
 
 int Lookup::find(const struct HashTable *table,
-		 const UChar *c, unsigned int len)
+                 const UChar *c, unsigned int len)
 {
   const HashEntry *entry = ::findEntry(table, UString::Rep::computeHash(c, len), c, len);
   if (entry)

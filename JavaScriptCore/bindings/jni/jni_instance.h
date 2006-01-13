@@ -53,7 +53,7 @@ protected:
     }
     
     ~JObjectWrapper();
-	
+
     jobject _instance;
 
 private:

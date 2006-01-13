@@ -1808,7 +1808,7 @@ for (;;)
       GETUTF8CHARLEN(fc, ecode, length);
 #if PCRE_UTF16
       {
-	int dc;
+        int dc;
         ecode += length;
         switch (md->end_subject - eptr)
         {
@@ -1948,9 +1948,9 @@ for (;;)
 #ifdef SUPPORT_UTF8
 #if PCRE_UTF16
 
-	  length = 1;
+      length = 1;
       GETUTF8CHARLEN(fc, ecode, length);
-	  {
+      {
       int utf16Length; // don't initialize on this line as workaround for Win32 compile problem
       utf16Length = fc > 0xFFFF ? 2 : 1;
       if (min * utf16Length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
@@ -2054,7 +2054,7 @@ for (;;)
           /* Control never gets here */
         }
         /* Control never gets here */
-	  }
+        }
 #else
     if (utf8)
       {

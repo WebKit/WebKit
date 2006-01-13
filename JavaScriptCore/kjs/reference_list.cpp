@@ -112,9 +112,9 @@ ReferenceList::~ReferenceList()
     for (ReferenceListNode *p = head; p != NULL; p = next) {
       next = p->next;
       if (p == head) {
-	delete (ReferenceListHeadNode *)p;
+        delete (ReferenceListHeadNode *)p;
       } else {
-	delete p;
+        delete p;
       }
     }
   }

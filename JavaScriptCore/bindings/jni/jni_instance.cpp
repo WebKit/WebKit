@@ -135,7 +135,7 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     for (i = 0; i < count; i++) {
         JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
         jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter->getJNIType(), aParameter->type());
-	JS_LOG("arg[%d] = %s\n", i, args.at(i)->toString(exec).ascii());
+        JS_LOG("arg[%d] = %s\n", i, args.at(i)->toString(exec).ascii());
     }
         
 
@@ -343,14 +343,14 @@ JObjectWrapper::JObjectWrapper(jobject instance)
         
     _instance = _env->NewGlobalRef (instance);
     
-	JS_LOG ("new global ref %p for %p\n", _instance, instance);
-	
+    JS_LOG ("new global ref %p for %p\n", _instance, instance);
+
     if  (_instance == NULL) {
         fprintf (stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
     }
 }
 
 JObjectWrapper::~JObjectWrapper() {
-	JS_LOG ("deleting global ref %p\n", _instance);
-	_env->DeleteGlobalRef (_instance);
+    JS_LOG ("deleting global ref %p\n", _instance);
+    _env->DeleteGlobalRef (_instance);
 }

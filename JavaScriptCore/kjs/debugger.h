@@ -109,7 +109,7 @@ namespace KJS {
      * be aborted
      */
     virtual bool sourceParsed(ExecState *exec, int sourceId, const UString &sourceURL,
-			      const UString &source, int errorLine);
+                              const UString &source, int errorLine);
 
     /**
      * Called when all functions/programs associated with a particular
@@ -181,7 +181,7 @@ namespace KJS {
      * be aborted
      */
     virtual bool callEvent(ExecState *exec, int sourceId, int lineno,
-			   JSObject *function, const List &args);
+                           JSObject *function, const List &args);
 
     /**
      * Called on each function exit. The function being returned from is that

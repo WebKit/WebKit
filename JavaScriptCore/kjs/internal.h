@@ -178,9 +178,9 @@ namespace KJS {
   // ---------------------------------------------------------------------------
 
   enum CodeType { GlobalCode,
-		  EvalCode,
-		  FunctionCode,
-		  AnonymousCode };
+                  EvalCode,
+                  FunctionCode,
+                  AnonymousCode };
 
   /**
    * @internal

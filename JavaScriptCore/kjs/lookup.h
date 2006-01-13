@@ -101,7 +101,7 @@ namespace KJS {
      */
     static int find(const struct HashTable *table, const Identifier &s);
     static int find(const struct HashTable *table,
-		    const UChar *c, unsigned int len);
+                    const UChar *c, unsigned int len);
 
 
     /**

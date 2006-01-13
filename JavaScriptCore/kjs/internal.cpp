@@ -309,10 +309,10 @@ ContextImp::ContextImp(JSObject *glob, InterpreterImp *interpreter, JSObject *th
   switch(type) {
     case EvalCode:
       if (_callingContext) {
-	scope = _callingContext->scopeChain();
-	variable = _callingContext->variableObject();
-	thisVal = _callingContext->thisValue();
-	break;
+        scope = _callingContext->scopeChain();
+        variable = _callingContext->variableObject();
+        thisVal = _callingContext->thisValue();
+        break;
       } // else same as GlobalCode
     case GlobalCode:
       scope.clear();
@@ -322,12 +322,12 @@ ContextImp::ContextImp(JSObject *glob, InterpreterImp *interpreter, JSObject *th
     case FunctionCode:
     case AnonymousCode:
       if (type == FunctionCode) {
-	scope = func->scope();
-	scope.push(activation);
+        scope = func->scope();
+        scope.push(activation);
       } else {
-	scope.clear();
-	scope.push(glob);
-	scope.push(activation);
+        scope.clear();
+        scope.push(glob);
+        scope.push(activation);
       }
       variable = activation; // TODO: DontDelete ? (ECMA 10.2.3)
       thisVal = thisV;

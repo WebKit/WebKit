@@ -33,22 +33,22 @@ namespace KJS {
 
     inline void gcProtect(JSValue *val) 
     { 
-	Collector::protect(val);
+        Collector::protect(val);
     }
 
     inline void gcUnprotect(JSValue *val)
     { 
-	Collector::unprotect(val);
+        Collector::unprotect(val);
     }
 
     inline void gcProtectNullTolerant(JSValue *val) 
     {
-	if (val) gcProtect(val);
+        if (val) gcProtect(val);
     }
 
     inline void gcUnprotectNullTolerant(JSValue *val) 
     {
-	if (val) gcUnprotect(val);
+        if (val) gcUnprotect(val);
     }
     
     // FIXME: Share more code with RefPtr template? The only differences are the ref/deref operation

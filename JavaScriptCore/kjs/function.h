@@ -74,7 +74,7 @@ namespace KJS {
   class DeclaredFunctionImp : public FunctionImp {
   public:
     DeclaredFunctionImp(ExecState *exec, const Identifier &n,
-			FunctionBodyNode *b, const ScopeChain &sc);
+                        FunctionBodyNode *b, const ScopeChain &sc);
 
     bool implementsConstruct() const;
     JSObject *construct(ExecState *exec, const List &args);
@@ -154,7 +154,7 @@ namespace KJS {
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,
            DecodeURI, DecodeURIComponent, EncodeURI, EncodeURIComponent
 #ifndef NDEBUG
-	   , KJSPrint
+           , KJSPrint
 #endif
 };
   private:

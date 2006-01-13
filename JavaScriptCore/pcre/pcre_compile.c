@@ -4893,14 +4893,14 @@ while ((c = *(++ptr)) != 0)
           c = DECODE_SURROGATE_PAIR(c, *ptr);
           ++ptr;
           }
-	
+
         {
-	  int i;
+          int i;
           for (i = 0; i < _pcre_utf8_table1_size; i++)
             if (c <= _pcre_utf8_table1[i]) break;
           length += i;
-	  lastitemlength += i;
-	}
+          lastitemlength += i;
+        }
       }
 #else
 #ifdef SUPPORT_UTF8

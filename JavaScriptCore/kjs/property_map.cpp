@@ -439,8 +439,8 @@ void PropertyMap::rehash(int newTableSize)
         _singleEntry.key = 0;
         // update the count, because single entries don't count towards
         // the table key count
-	++_table->keyCount;
-	assert(_table->keyCount == 1);
+        ++_table->keyCount;
+        assert(_table->keyCount == 1);
     }
 #endif
     
@@ -763,13 +763,13 @@ void PropertyMap::checkConsistency()
         }
         unsigned h = rep->hash();
         int i = h & _table->sizeMask;
-	int k = 0;
+        int k = 0;
         while (UString::Rep *key = _table->entries[i].key) {
             if (rep == key)
                 break;
-	    if (k == 0)
-		k = 1 | (h % _table->sizeMask);
-	    i = (i + k) & _table->sizeMask;
+            if (k == 0)
+                k = 1 | (h % _table->sizeMask);
+            i = (i + k) & _table->sizeMask;
         }
         assert(i == j);
         ++count;

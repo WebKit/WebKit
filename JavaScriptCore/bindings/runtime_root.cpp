@@ -174,8 +174,8 @@ void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, JSObje
 void KJS::Bindings::removeNativeReference (JSObject *imp)
 {
     if (!imp)
-	return;
-	
+        return;
+
     CFMutableDictionaryRef referencesDictionary = findReferenceDictionary (imp);
 
     if (referencesDictionary) {

@@ -45,14 +45,14 @@ namespace KJS {
         }
 
         ProtectedReference& operator=(const Reference &r)
-	{
+        {
             JSLock lock;
             JSValue *old = base;
             Reference::operator=(r); 
             gcProtectNullTolerant(base);
             gcUnprotectNullTolerant(old); 
             return *this;
-	}
+        }
 
     private:
         ProtectedReference();

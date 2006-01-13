@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 
       const char *file = argv[i];
       if (strcmp(file, "-f") == 0)
-	continue;
+        continue;
       FILE *f = fopen(file, "r");
       if (!f) {
         fprintf(stderr, "Error opening %s.\n", file);
@@ -159,12 +159,12 @@ int main(int argc, char **argv)
       }
 
       while (!feof(f) && !ferror(f)) {
-	size_t len = fread(code+code_len,1,code_alloc-code_len,f);
-	code_len += len;
-	if (code_len >= code_alloc) {
-	  code_alloc *= 2;
-	  code = (char*)realloc(code,code_alloc);
-	}
+        size_t len = fread(code+code_len,1,code_alloc-code_len,f);
+        code_len += len;
+        if (code_len >= code_alloc) {
+          code_alloc *= 2;
+          code = (char*)realloc(code,code_alloc);
+        }
       }
       code = (char*)realloc(code,code_len+1);
       code[code_len] = '\0';

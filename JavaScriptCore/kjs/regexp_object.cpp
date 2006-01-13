@@ -426,8 +426,7 @@ bool RegExpObjectImp::implementsCall() const
 }
 
 // ECMA 15.10.3
-JSValue *RegExpObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/,
-			    const List &args)
+JSValue *RegExpObjectImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const List &args)
 {
   // TODO: handle RegExp argument case (15.10.3.1)
 

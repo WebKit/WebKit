@@ -177,7 +177,7 @@ namespace KXMLCore {
 
 #ifndef WIN32
     // Visual C++ has a swap for pairs defined.
-	// swap pairs by component, in case of pair members that specialize swap
+    // swap pairs by component, in case of pair members that specialize swap
     template<typename T, typename U>
     inline void swap(pair<T, U>& a, pair<T, U>& b)
     {

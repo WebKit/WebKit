@@ -30,7 +30,7 @@ namespace KJS {
     struct ListImpBase {
         int size;
         int refCount;
-	int valueRefCount; // FIXME: Get rid of this.
+        int valueRefCount; // FIXME: Get rid of this.
     };
     
     class ListIterator;
@@ -48,13 +48,13 @@ namespace KJS {
     class List {
     public:
         List();
-	List(bool needsMarking);
+        List(bool needsMarking);
         ~List() { deref(); }
 
         List(const List &b) : _impBase(b._impBase), _needsMarking(false) {
-	    ++_impBase->refCount; 
-	    ++_impBase->valueRefCount; 
-	}
+            ++_impBase->refCount; 
+            ++_impBase->valueRefCount; 
+        }
         List &operator=(const List &);
 
         /**
@@ -120,12 +120,12 @@ namespace KJS {
          */
         static const List &empty();
         
-	void mark() { if (_impBase->valueRefCount == 0) markValues(); }
+        void mark() { if (_impBase->valueRefCount == 0) markValues(); }
 
         static void markProtectedLists();
     private:
         ListImpBase *_impBase;
-	bool _needsMarking;
+        bool _needsMarking;
         
         void deref() { if (!_needsMarking) --_impBase->valueRefCount; if (--_impBase->refCount == 0) release(); }
 

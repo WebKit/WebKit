@@ -245,7 +245,7 @@ void ArrayInstance::setLength(unsigned newLength, ExecState *exec)
       bool ok;
       unsigned index = ref.getPropertyName(exec).toArrayIndex(&ok);
       if (ok && index > newLength) {
-	ref.deleteValue(exec);
+        ref.deleteValue(exec);
       }
     }
   }

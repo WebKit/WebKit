@@ -131,7 +131,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
                 return true;
             }
         }
-	
+
         // Try a fallback object.
         if (!aClass->fallbackObject(exec, instance, propertyName)->isUndefined()) {
             slot.setCustom(this, fallbackObjectGetter);
@@ -157,9 +157,9 @@ void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
         getInternalInstance()->setValueOfField(exec, aField, value);
     }
     else {
-	if (getInternalInstance()->supportsSetValueOfUndefinedField()){
-	    getInternalInstance()->setValueOfUndefinedField(exec, propertyName, value);
-	}
+        if (getInternalInstance()->supportsSetValueOfUndefinedField()){
+            getInternalInstance()->setValueOfUndefinedField(exec, propertyName, value);
+        }
     }
 
     instance->end();
@@ -176,7 +176,7 @@ bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) c
     instance->end();
 
     if (aField)
-	return true;
+        return true;
     
     return result;
 }

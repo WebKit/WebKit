@@ -68,7 +68,7 @@ namespace KJS {
         bool isEmpty() const { return !_node; }
         JSObject *top() const { return _node->object; }
 
-	JSObject *bottom() const;
+        JSObject *bottom() const;
 
         ScopeChainIterator begin() const { return ScopeChainIterator(_node); }
         ScopeChainIterator end() const { return ScopeChainIterator(0); }
@@ -111,7 +111,7 @@ inline JSObject *ScopeChain::bottom() const
     for (ScopeChainNode *n = _node; n; n = n->next)
         last = n;
     if (!last)
-	return 0;
+        return 0;
     return last->object;
 }
 
