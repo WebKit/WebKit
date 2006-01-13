@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#import "IntSizeF.h"
+#import "KWQSizeF.h"
 #import "IntSize.h"
 
 QSizeF::QSizeF() : w(-1.0f), h(-1.0f)
