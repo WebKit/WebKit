@@ -1,3 +1,15 @@
+2006-01-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed and landed by Darin.
+
+        - test fpr http://bugzilla.opendarwin.org/show_bug.cgi?id=6509
+          content property with supported value followed by currently unsupported open-quote displays duplicated content
+
+        * fast/css-generated-content/no-openclose-quote.html: Added.
+        * fast/css-generated-content/no-openclose-quote-expected.checksum: Added.
+        * fast/css-generated-content/no-openclose-quote-expected.png: Added.
+        * fast/css-generated-content/no-openclose-quote-expected.txt: Added.
+
 2006-01-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
