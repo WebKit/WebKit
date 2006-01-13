@@ -1851,6 +1851,34 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="page"
+			>
+			<File
+				RelativePath="..\..\page\Frame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\Frame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\FramePrivate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\FrameView.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\FrameView.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\ObjectContents.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

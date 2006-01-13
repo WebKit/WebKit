@@ -76,7 +76,9 @@
 
 #include <sys/types.h>
 #include <assert.h>
+#if !WIN32
 #include <unistd.h>
+#endif
 
 #include <kstandarddirs.h>
 #include <kio/job.h>
