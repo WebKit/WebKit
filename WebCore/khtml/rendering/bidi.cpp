@@ -631,9 +631,9 @@ static void embed(QChar::Direction d, BidiState& bidi)
     bool b = bidi.adjustEmbedding;
     bidi.adjustEmbedding = false;
     if (d == QChar::DirPDF) {
-	BidiContext *c = bidi.context->parent;
-	if (c) {
-	    if (!emptyRun && bidi.eor != bidi.last) {
+        BidiContext *c = bidi.context->parent;
+        if (c) {
+            if (!emptyRun && bidi.eor != bidi.last) {
                 assert(bidi.status.eor != QChar::DirON);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
                 assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
@@ -655,38 +655,38 @@ static void embed(QChar::Direction d, BidiState& bidi)
                     appendRun(bidi);
                 bidi.eor = bidi.last;
             }
-	    appendRun(bidi);
-	    emptyRun = true;
+            appendRun(bidi);
+            emptyRun = true;
             // sor for the new run is determined by the higher level (rule X10)
-	    bidi.status.last = bidi.context->dir;
-	    bidi.status.lastStrong = bidi.context->dir;
-	    bidi.context = c;
+            bidi.status.last = bidi.context->dir;
+            bidi.status.lastStrong = bidi.context->dir;
+            bidi.context = c;
             bidi.status.eor = bidi.context->dir;
             bidi.eor.obj = 0;
         }
     } else {
-	QChar::Direction runDir;
-	if (d == QChar::DirRLE || d == QChar::DirRLO)
-	    runDir = QChar::DirR;
-	else
-	    runDir = QChar::DirL;
-	bool override = d == QChar::DirLRO || d == QChar::DirRLO;
+        QChar::Direction runDir;
+        if (d == QChar::DirRLE || d == QChar::DirRLO)
+            runDir = QChar::DirR;
+        else
+            runDir = QChar::DirL;
+        bool override = d == QChar::DirLRO || d == QChar::DirRLO;
 
-	unsigned char level = bidi.context->level;
-	if (runDir == QChar::DirR) {
-	    if (level%2) // we have an odd level
-		level += 2;
-	    else
-		level++;
-	} else {
-	    if (level%2) // we have an odd level
-		level++;
-	    else
-		level += 2;
-	}
+        unsigned char level = bidi.context->level;
+        if (runDir == QChar::DirR) {
+            if (level%2) // we have an odd level
+                level += 2;
+            else
+                level++;
+        } else {
+            if (level%2) // we have an odd level
+                level++;
+            else
+                level += 2;
+        }
 
-	if (level < 61) {
-	    if (!emptyRun && bidi.eor != bidi.last) {
+        if (level < 61) {
+            if (!emptyRun && bidi.eor != bidi.last) {
                 assert(bidi.status.eor != QChar::DirON);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
                 assert(bidi.status.last == QChar::DirES || bidi.status.last == QChar::DirET || bidi.status.last == QChar::DirCS || bidi.status.last == QChar::DirBN || bidi.status.last == QChar::DirB || bidi.status.last == QChar::DirS || bidi.status.last == QChar::DirWS || bidi.status.last == QChar::DirON);
@@ -1334,16 +1334,16 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
 
         bidi.last = bidi.current;
 
-	if (emptyRun && !(dirCurrent == QChar::DirRLE || dirCurrent == QChar::DirLRE || dirCurrent == QChar::DirRLO || dirCurrent == QChar::DirLRO || dirCurrent == QChar::DirPDF)) {
-	    bidi.sor = bidi.current;
-	    emptyRun = false;
-	}
+        if (emptyRun && !(dirCurrent == QChar::DirRLE || dirCurrent == QChar::DirLRE || dirCurrent == QChar::DirRLO || dirCurrent == QChar::DirLRO || dirCurrent == QChar::DirPDF)) {
+            bidi.sor = bidi.current;
+            emptyRun = false;
+        }
 
-	// this causes the operator ++ to open and close embedding levels as needed
-	// for the CSS unicode-bidi property
-	bidi.adjustEmbedding = true;
+        // this causes the operator ++ to open and close embedding levels as needed
+        // for the CSS unicode-bidi property
+        bidi.adjustEmbedding = true;
         bidi.current.increment(bidi);
-	bidi.adjustEmbedding = false;
+        bidi.adjustEmbedding = false;
         if (emptyRun && (dirCurrent == QChar::DirRLE || dirCurrent == QChar::DirLRE || dirCurrent == QChar::DirRLO || dirCurrent == QChar::DirLRO || dirCurrent == QChar::DirPDF)) {
             // exclude the embedding char itself from the new run so that ATSUI will never see it
             bidi.eor.obj = 0;
@@ -2121,9 +2121,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
             bool appliedStartWidth = pos > 0; // If the span originated on a previous line,
                                               // then assume the start width has been applied.
-            bool appliedEndWidth = false;
-
-            int wrapW = tmpW;
+            int wrapW = tmpW + inlineWidth(o, !appliedStartWidth, true);
             int nextBreakable = -1;
 
             while (len) {
@@ -2180,8 +2178,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
                 if (breakWords)
                     wrapW += t->width(pos, 1, f, w+wrapW);
+                bool midWordBreak = breakWords && (w + wrapW > width);
 
-                if (c == '\n' || (o->style()->whiteSpace() != PRE && isBreakable(str, pos, strlen, nextBreakable, breakNBSP)) || (breakWords && (w + wrapW > width))) {
+                if (c == '\n' || (o->style()->whiteSpace() != PRE && isBreakable(str, pos, strlen, nextBreakable, breakNBSP)) || midWordBreak) {
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this
@@ -2199,7 +2198,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                     }
 
-                    tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
+                    int additionalTmpW = t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
+                    tmpW += additionalTmpW;
                     if (!appliedStartWidth) {
                         tmpW += inlineWidth(o, true, false);
                         appliedStartWidth = true;
@@ -2244,9 +2244,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                                 }
                             }
                             goto end; // Didn't fit. Jump to the end.
-                        } else if (pos > 0 && str[pos-1].unicode() == SOFT_HYPHEN)
-                            // Subtract the width of the soft hyphen out since we fit on a line.
-                            tmpW -= t->width(pos-1, 1, f, w+tmpW);
+                        } else {
+                            if (midWordBreak)
+                                tmpW -= additionalTmpW;
+                            if (pos > 0 && str[pos-1].unicode() == SOFT_HYPHEN)
+                                // Subtract the width of the soft hyphen out since we fit on a line.
+                                tmpW -= t->width(pos-1, 1, f, w+tmpW);
+                        }
                     }
 
                     if (*(str+pos) == '\n' && o->style()->preserveNewline()) {
@@ -2262,8 +2266,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         lBreak.pos = pos;
                     }
                     
-                    lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
-                    lastSpace = pos;
+                    if (midWordBreak) {
+                        // Remember this as a breakable position in case
+                        // adding the end width forces a break.
+                        lBreak.obj = o;
+                        lBreak.pos = pos;
+                    } else {
+                        lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
+                        lastSpace = pos;
+                    }
                     
                     if (!ignoringSpaces && o->style()->collapseWhiteSpace()) {
                         // If we encounter a newline, or if we encounter a
@@ -2314,15 +2325,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
             if (!appliedStartWidth)
                 tmpW += inlineWidth(o, true, false);
-            if (!appliedEndWidth)
-                tmpW += inlineWidth(o, false, true);
+            tmpW += inlineWidth(o, false, true);
         } else
             KHTMLAssert( false );
 
         RenderObject* next = bidiNext(start.block, o, bidi);
         bool autoWrap = o->style()->autoWrap();
         bool checkForBreak = autoWrap;
-        if (w && w + tmpW > width+1 && lBreak.obj && o->style()->whiteSpace() == NOWRAP)
+        if (w && w + tmpW > width && lBreak.obj && o->style()->whiteSpace() == NOWRAP)
             checkForBreak = true;
         else if (next && o->isText() && next->isText() && !next->isBR()) {
             if (autoWrap || (next->style()->autoWrap())) {
@@ -2340,7 +2350,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             checkForBreak = true;
                         }
                     }
-                    bool canPlaceOnLine = (w + tmpW <= width+1) || !autoWrap;
+                    bool canPlaceOnLine = (w + tmpW <= width) || !autoWrap;
                     if (canPlaceOnLine && checkForBreak) {
                         w += tmpW;
                         tmpW = 0;
@@ -2351,7 +2361,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             }
         }
 
-        if (checkForBreak && (w + tmpW > width+1)) {
+        if (checkForBreak && (w + tmpW > width)) {
             // if we have floats, try to get below them.
             if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace())
                 trailingSpaceObject = 0;
@@ -2374,7 +2384,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             // |width| may have been adjusted because we got shoved down past a float (thus
             // giving us more room), so we need to retest, and only jump to
             // the end label if we still don't fit on the line. -dwh
-            if (w + tmpW > width+1)
+            if (w + tmpW > width)
                 goto end;
         }
 
@@ -2464,8 +2474,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     // of the next object instead to avoid confusing the rest of the
     // code.
     if (lBreak.pos > 0) {
-	lBreak.pos--;
-	lBreak.increment(bidi);
+        lBreak.pos--;
+        lBreak.increment(bidi);
     }
 
     if (lBreak.obj && lBreak.pos >= 2 && lBreak.obj->isText()) {

@@ -1,3 +1,21 @@
+2006-01-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6418
+          Incorrect scrollbar when using overflow:auto and word-wrap:break-word; in some cases
+        
+        Test: fast/text/basic/015.html
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+        Avoid inconsistent width measurement when breaking in the middle of a
+        word is allowed. Eliminate the relaxation by 1 of the width overflow
+        check that was supposed to compensate for the inconsistency but didn't
+        always work, and on the other hand sometimes resulted in allowing text
+        to overflow its container by one pixel.
+        Also applied start and end width correctly in the break-words case.
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
@@ -181,7 +199,7 @@
 
 2006-01-12  David Hyatt <hyatt@apple.com>
 
-	Get the misc directory compiling on Win32.
+        Get the misc directory compiling on Win32.
 
         * ForwardingHeaders/kio/jobclasses.h:
         * ForwardingHeaders/qasyncio.h:
@@ -193,7 +211,7 @@
 
 2006-01-12  David Hyatt <hyatt@apple.com>
 
-	Make the ecma directory compile on Win32.
+        Make the ecma directory compile on Win32.
 
         * ForwardingHeaders/kconfig.h:
         * ForwardingHeaders/kwinmodule.h:
@@ -322,15 +340,15 @@
 
 2006-01-12  David Hyatt <hyatt@apple.com>
 
-	Make the editing directory compile on Win32.
-	
+        Make the editing directory compile on Win32.
+
         * WebCore.vcproj/WebCore/WebCore.vcproj:
         * khtml/editing/jsediting.cpp:
 
 2006-01-12  David Hyatt <hyatt@apple.com>
 
-	Get the HTML, XML, and Rendering directories compiling on
-	Win32.  Add the bash script for generated files as well.
+        Get the HTML, XML, and Rendering directories compiling on
+        Win32.  Add the bash script for generated files as well.
 
         * ForwardingHeaders/kio/job.h:
         * ForwardingHeaders/ksslkeygen.h:
@@ -829,9 +847,9 @@
 
 2006-01-11  David Hyatt  <hyatt@apple.com>
 
-	Changes to get the XML directory nearly compiling on Win32.
-	Down to just the gperf of cssvalues.in and a need to replace
-	usleep.
+        Changes to get the XML directory nearly compiling on Win32.
+        Down to just the gperf of cssvalues.in and a need to replace
+        usleep.
 
         Reviewed by darin
 
@@ -1161,22 +1179,22 @@
 
 2006-01-10  David Hyatt  <hyatt@apple.com>
 
-	#if Win32 the KWQMemArray overloads, since they're working around
-	a Windows compiler bug.
-	
+        #if Win32 the KWQMemArray overloads, since they're working around
+        a Windows compiler bug.
+        
         * kwq/KWQMemArray.h:
 
 2006-01-10  David Hyatt  <hyatt@apple.com>
 
-	Fix the broken ifdef in KWQString.h
+        Fix the broken ifdef in KWQString.h
 
         * kwq/KWQString.h:
 
 2006-01-10  hyatt@apple.com
 
-	Fix for bugzilla bug 6458, get rendering dir of WebCore
-	compiling on Windows.
-	
+        Fix for bugzilla bug 6458, get rendering dir of WebCore
+        compiling on Windows.
+        
         Reviewed by darin
 
         * ForwardingHeaders/QRectF:
@@ -3167,12 +3185,12 @@
         * kcanvas/RenderSVGText.cpp: Added. Simple subclass of RenderBlock for SVG text.
         (RenderSVGText::RenderSVGText): just call superclass constructor.
         (RenderSVGText::translateTopToBaseline): helper to account for the fact that
-	y coordinates for <text> give the baseline position, but the render tree expects
-	current y to be the top.
+        y coordinates for <text> give the baseline position, but the render tree expects
+        current y to be the top.
         (RenderSVGText::translateForAttributes): translate to account for x and y
-	attributes.
+        attributes.
         (RenderSVGText::paint): Apply appropriate CTM transform and then just let
-	RenderBlock paint.
+        RenderBlock paint.
         * kcanvas/RenderSVGText.h: Added.
         (RenderSVGText::renderName):
         * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
@@ -3181,7 +3199,7 @@
         * ksvg2/svg/SVGTextElementImpl.cpp:
         (SVGTextElementImpl::createRenderer): Create a RenderSVGText renderer.
         (SVGTextElementImpl::childShouldCreateRenderer): Let child text nodes make
-	renderers, but nothing else (for now).
+        renderers, but nothing else (for now).
         * ksvg2/svg/SVGTextElementImpl.h:
         (KSVG::SVGTextElementImpl::rendererIsNeeded): It sure is! :-)
         * WebCore.xcodeproj/project.pbxproj: Add new files.
@@ -3383,8 +3401,8 @@
 
         Reviewed by Darin.
 
-	- move frame management and finding code from WebKit to WebCore
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6368
+        - move frame management and finding code from WebKit to WebCore
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6368
 
         * WebCore.exp: export WebCoreFrameNamespace
         * WebCore.xcodeproj/project.pbxproj: add new files
@@ -3405,7 +3423,7 @@
         (-[WebCoreBridge _frameInAnyWindowNamed:sourceFrame:]): ditto
         (-[WebCoreBridge findFrameNamed:]): ditto
         (-[WebCoreBridge setName:]): don't call KHTMLPart setName directly,
-	the kwq version is fine
+        the kwq version is fine
         (-[WebCoreBridge _addFramePathToString:]): moved from WebFrame
         (-[WebCoreBridge generateFrameName]): ditto
 
@@ -3486,13 +3504,13 @@
 
         Reviewed by eseidel.
 
-	Changed use of QRect to QRectF in the points where SVG can have
-	fractional numbers
+        Changed use of QRect to QRectF in the points where SVG can have
+        fractional numbers
         http://bugzilla.opendarwin.org/show_bug.cgi?id=4462
 
         Added test cases:
-	* svg/custom/fractional-rects.svg: copy of rounded-rects.svg with
-	fractional coordinates.
+        * svg/custom/fractional-rects.svg: copy of rounded-rects.svg with
+        fractional coordinates.
 
         * WebCore.xcodeproj/project.pbxproj:
         * kwq/KWQWMatrix.h:
@@ -3515,7 +3533,7 @@
         (KCanvasFilterEffect::setSubRegion): QRect -> QRectF
         * kcanvas/KCanvasFilters.h:
         (KCanvasFilter::filterRect):
-        (KCanvasFilter::setFilterRect):	QRect -> QRectF
+        (KCanvasFilter::setFilterRect): QRect -> QRectF
         (KCanvasFEConvolveMatrix::kernelSize):
         (KCanvasFEConvolveMatrix::setKernelSize):
         (KCanvasFEConvolveMatrix::targetOffset):
@@ -3590,12 +3608,12 @@
         Reviewed by Vicki.
 
         - moved frame traversal code across from bridge, also dropped the children
-	array
+        array
 
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
         (-[WebCoreBridge firstChild]): Moved from WebBridge. Use new _firstChild
-	pointer.
+        pointer.
         (-[WebCoreBridge lastChild]): Moved from WebBridge. Use new _lastChild pointer.
         (-[WebCoreBridge childCount]): Moved from WebBridge. Use _childCount variable.
         (-[WebCoreBridge previousSibling]): Moved from WebBridge.
@@ -3603,9 +3621,9 @@
         (-[WebCoreBridge isDescendantOfFrame:]): ditto
         (-[WebCoreBridge traverseNextFrameStayWithin:]): ditto
         (-[WebCoreBridge appendChild:]): Moved from WebBridge, maintain count and first/last
-	pointers.
+        pointers.
         (-[WebCoreBridge removeChild:]): Moved from WebBridge, maintain count and first/last
-	pointers.
+        pointers.
 
 2006-01-03  Justin Garcia  <justin.garcia@apple.com>
 
@@ -3971,7 +3989,7 @@
 
 2006-01-02  Maciej Stachowiak  <mjs@apple.com>
 
-	Rubber stamped by Eric.
+        Rubber stamped by Eric.
 
         - remove the no longer used QIntDict
 
@@ -3994,14 +4012,14 @@
 
         Reviewed by Maciej.
  
-	- fix for <rdar://problem/4389622> *Pan EU2* iframe swallows events for overlapping elements (part 2)
+        - fix for <rdar://problem/4389622> *Pan EU2* iframe swallows events for overlapping elements (part 2)
 
-	We originally added a call to passSubframeEventToSubframe here to fix the hand cursor updating problem
-	reported in <rdar://problem/4316201> REGRESSION: cursor and text in status bar is not updated when 
-	mousing over links in a frame (5509). However, when we return early after passSubframeEventToSubframe,
-	we fail to fire onmouseout events.  Since the call to passSubframeEventToSubframe was originally added
-	to fix the hand cursor updating problem, remove the early return and make cursor updating conditional
-	on passSubframeEventToSubframe.
+        We originally added a call to passSubframeEventToSubframe here to fix the hand cursor updating problem
+        reported in <rdar://problem/4316201> REGRESSION: cursor and text in status bar is not updated when 
+        mousing over links in a frame (5509). However, when we return early after passSubframeEventToSubframe,
+        we fail to fire onmouseout events.  Since the call to passSubframeEventToSubframe was originally added
+        to fix the hand cursor updating problem, remove the early return and make cursor updating conditional
+        on passSubframeEventToSubframe.
 
         * khtml/khtmlview.cpp:
         (KHTMLView::viewportMouseMoveEvent):

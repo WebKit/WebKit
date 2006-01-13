@@ -1,3 +1,24 @@
+2006-01-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+        
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6418
+          Incorrect scrollbar when using overflow:auto and word-wrap:break-word; in some cases
+        
+        * fast/replaced/inline-box-wrapper-handover.html: Updated test to not depend on the
+        edge case behavior.
+        * fast/replaced/inline-box-wrapper-handover-expected.checksum: Updated results.
+        * fast/replaced/inline-box-wrapper-handover-expected.png: Ditto.
+        * fast/replaced/inline-box-wrapper-handover-expected.txt: Ditto.
+
+        * fast/text/basic/015.html: Added.
+        * fast/text/basic/015-expected.checksum: Added.
+        * fast/text/basic/015-expected.png: Added.
+        * fast/text/basic/015-expected.txt: Added.
+
+        * fast/dom/css-rule-functions-expected.checksum: Added.
+        * fast/dom/css-rule-functions-expected.png: Added.
+
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
@@ -1574,10 +1595,10 @@
 
         Reviewed by Geoff.
 
-	This test was failing because the results that were checked
-	in said that the RenderText should be 16 pixels wide, when it
-	should be 17. I went back in time to make sure that this
-	is not a regression. (It isn't.)
+        This test was failing because the results that were checked
+        in said that the RenderText should be 16 pixels wide, when it
+        should be 17. I went back in time to make sure that this
+        is not a regression. (It isn't.)
 
         * css2.1/t0905-c414-flt-00-d-expected.checksum:
         * css2.1/t0905-c414-flt-00-d-expected.png:
@@ -1644,8 +1665,8 @@
 
         Reviewed by Eric.
 
-	- test case for 6396: Activation objects should not have __proto__ property
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
+        - test case for 6396: Activation objects should not have __proto__ property
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
 
         * fast/js/activation-proto-expected.txt: Added.
         * fast/js/activation-proto.html: Added.
@@ -2479,11 +2500,11 @@
 
         - Update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6297
         XMLSerializer should use createMarkup
-		
+                
         * fast/dom/XMLSerializer.html:
         * fast/dom/XMLSerializer-expected.txt:
         Create a document fragment and serialize it.
-		
+                
         * fast/dom/dom-parse-serialize.html:
         * fast/dom/dom-parse-serialize-expected.txt:
         Add some entities to attributes and text nodes.
@@ -2507,8 +2528,8 @@
 
         Reviewed by Darin, landed by Maciej.
 
-	- land test case documenting wontfix status for certain overflow/table behavior
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=3505
+        - land test case documenting wontfix status for certain overflow/table behavior
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3505
 
         * fast/overflow/overflow-auto-table-expected.checksum: Added.
         * fast/overflow/overflow-auto-table-expected.png: Added.
@@ -2561,8 +2582,8 @@
 
         No review.
 
-	- updated test results for Number.toString() fixes:
-	<http://bugzilla.opendarwin.org/show_bug.cgi?id=6259>
+        - updated test results for Number.toString() fixes:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6259>
 
         * fast/js/kde/Number-expected.txt:
 
@@ -2754,9 +2775,9 @@
 
         Rubber stamped by Eric.
 
-	- proper length for Array concat function is 1, not 0; also add test
-	for String concat.
-	
+        - proper length for Array concat function is 1, not 0; also add test
+        for String concat.
+        
         * fast/js/kde/function_length-expected.txt:
         * fast/js/kde/resources/function_length.js:
 
@@ -2820,11 +2841,11 @@
 
         No review, just a test harness change.
 
-	- avoid bombing out if a shouldBe test case unexpectedly throws an exception
+        - avoid bombing out if a shouldBe test case unexpectedly throws an exception
 
         * fast/js/kde/resources/base.js:
 
-	- this lets some of the tests get a bit further, so new results:
+        - this lets some of the tests get a bit further, so new results:
 
         * fast/js/kde/Number-expected.txt:
         * fast/js/kde/RegExp-expected.txt:
@@ -2835,8 +2856,8 @@
 
         Reviewed, tweaked and landed by Maciej.
 
-	- test case for 4405: <button> not listed in form collections.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
+        - test case for 4405: <button> not listed in form collections.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4405
 
         * fast/forms/button-in-forms-collection-expected.txt: Added.
         * fast/forms/button-in-forms-collection.html: Added.
@@ -2845,8 +2866,8 @@
 
         Reviewed, tweaked and landed by Maciej.
 
-	- test case for 6234: Can delete array index property incorrectly.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
+        - test case for 6234: Can delete array index property incorrectly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
 
         * fast/js/array-float-delete.html: Added.
 
@@ -2854,7 +2875,7 @@
 
         Rubber stamped by Geoff.
 
-	- land JavaScript tests from the kde version of kjs
+        - land JavaScript tests from the kde version of kjs
 
         * fast/js/kde/Array-expected.txt: Added.
         * fast/js/kde/Array.html: Added.
@@ -3054,7 +3075,7 @@
 
         Reviewed by Eric.
 
-	- updated for WebCore changes to make XSLT params partially work
+        - updated for WebCore changes to make XSLT params partially work
 
         * fast/xsl/xslt-processer-expected.txt:
 
@@ -3402,13 +3423,13 @@
 
         Reviewed by Eric.
 
-	This layout test is sort of for <rdar://problem/4374783> 10.4.4 
-	REGRESSION: caret disappears when typing at the bottom of a 
-	scrollable textarea.
+        This layout test is sort of for <rdar://problem/4374783> 10.4.4 
+        REGRESSION: caret disappears when typing at the bottom of a 
+        scrollable textarea.
 
-	It does not address the fundamental problem with that bug,
-	but it does make sure we ignore negative line-height in
-	textareas.
+        It does not address the fundamental problem with that bug,
+        but it does make sure we ignore negative line-height in
+        textareas.
 
         * fast/forms/negativeLineHeight-expected.checksum: Added.
         * fast/forms/negativeLineHeight-expected.png: Added.
@@ -3491,11 +3512,11 @@
 
 2005-12-12  David Harrison  <harrison@apple.com>
 
-	<rdar://problem/4026906> Paste of HTML table content can break table structure
-	<rdar://problem/4027704> Paste of HTML list content can break list structure by dropping empty list items
-	
+        <rdar://problem/4026906> Paste of HTML table content can break table structure
+        <rdar://problem/4027704> Paste of HTML list content can break list structure by dropping empty list items
+        
         * editing/pasteboard/block-wrappers-necessary.html:
-	    Removed empty p tag.
+            Removed empty p tag.
         * editing/pasteboard/paste-list-001-expected.checksum: Added.
         * editing/pasteboard/paste-list-001-expected.png: Added.
         * editing/pasteboard/paste-list-001-expected.txt: Added.
@@ -3909,7 +3930,7 @@
 2005-12-02  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4358898> TOT/GLENDALE REGRESSION: 
-	Table layout issue occurs at http://www.pixar.com/shorts/index.html
+        Table layout issue occurs at http://www.pixar.com/shorts/index.html
 
         * fast/table/colspanMinWidth-expected.checksum: Added.
         * fast/table/colspanMinWidth-expected.png: Added.
@@ -4182,8 +4203,8 @@
 
         Reviewed by Darin. Commited by Maciej.
 
-	- test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=5715
-	(document.charset, document.defaultCharset, and document.characterSet are not supported)
+        - test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=5715
+        (document.charset, document.defaultCharset, and document.characterSet are not supported)
 
         * fast/dom/Document/document-charset-expected.txt: Added.
         * fast/dom/Document/document-charset.html: Added.
@@ -4217,8 +4238,8 @@
 
         Reviewed by Darin. Committed by Maciej.
 
-	- test case for Bidi algorithm: AN after L has incorrect resolved level
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5573)
+        - test case for Bidi algorithm: AN after L has incorrect resolved level
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=5573)
 
         * fast/text/international/bidi-AN-after-L-expected.txt: Added.
         * fast/text/international/bidi-AN-after-L.html: Added.
@@ -4583,10 +4604,10 @@
 2005-11-17  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/3871165> text box in nested 
-	table disappears when you click on it (3452) (Safari PSOFT: 
-	US EDU PS8: Lead List searches)
+        table disappears when you click on it (3452) (Safari PSOFT: 
+        US EDU PS8: Lead List searches)
 
-	This is a manual test. 
+        This is a manual test. 
 
         * fast/table/spanOverlapRepaint-expected.checksum: Added.
         * fast/table/spanOverlapRepaint-expected.png: Added.
@@ -4748,14 +4769,14 @@
         Reviewed by Eric.
 
         Add test to make sure that importNode preserves element prefixes.
-		
+                
         * fast/dom/importNode-prefix-expected.txt: Added.
         * fast/dom/importNode-prefix.html: Added.
 
 2005-11-13  Beth Dakin  <bdakin@apple.com>
 
         Forgot to add this image for fast/replaced/width100percent.html
-	oops!
+        oops!
 
         * fast/replaced/resources/apple_m.jpg: Added.
 
@@ -4790,15 +4811,15 @@
 
         - Add layout test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5725>
         setAttributeNS with null namespace sets namespace to string containing 'null'
-		
+                
         * fast/dom/setAttributeNS.html: Added.
 
 2005-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
 
-	Layout test for <rdar://problem/3952698> Function buttons do not display 
-	properly with Telia Webmail (3488).
+        Layout test for <rdar://problem/3952698> Function buttons do not display 
+        properly with Telia Webmail (3488).
 
         * fast/replaced/width100percent-expected.checksum: Added.
         * fast/replaced/width100percent-expected.png: Added.
@@ -4882,11 +4903,11 @@
 
         Reviewed by Eric, Geoff and Darin.
 
-	- added test cases for <rdar://problem/4118258> XML DOM trees freed prematurely unless reference held to document node (causes crash)
+        - added test cases for <rdar://problem/4118258> XML DOM trees freed prematurely unless reference held to document node (causes crash)
 
-	Also updated the GC tests to try a little harder to trigger GC,
-	the old way might not work as well with the reworking of SimpleNumber.
-	
+        Also updated the GC tests to try a little harder to trigger GC,
+        the old way might not work as well with the reworking of SimpleNumber.
+        
         * fast/dom/gc-1.html:
         * fast/dom/gc-2.html:
         * fast/dom/gc-3.html:
@@ -5110,9 +5131,9 @@
 
 2005-10-27  Geoffrey Garen  <ggaren@apple.com>
 
-		Layout test included with http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
-		TextInputController should support attributed strings
-		
+                Layout test included with http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
+                TextInputController should support attributed strings
+                
         * fast/forms/attributed-strings-expected.txt: Added.
         * fast/forms/attributed-strings.html: Added.
 
@@ -5187,7 +5208,7 @@
 2005-10-25  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4148730> SureSec si#182 safari heap overflow
-	The fix is in WebCore.
+        The fix is in WebCore.
 
         * fast/table/giantRowspan-expected.checksum: Added.
         * fast/table/giantRowspan-expected.png: Added.
@@ -5196,8 +5217,8 @@
 
 2005-10-25  Vicki Murley  <vicki@apple.com>
 
-	- updated results for <rdar://problem/4288276> DOM tests expect hierarchy exception 
-	adding wrong types of nodes to parents (4568)
+        - updated results for <rdar://problem/4288276> DOM tests expect hierarchy exception 
+        adding wrong types of nodes to parents (4568)
 
         * dom/html/level1/core/hc_attrappendchild2-expected.txt:
         * dom/html/level1/core/hc_nodeappendchildinvalidnodetype-expected.txt:
@@ -6418,9 +6439,9 @@
 
         Reviewed by Darin. Committed by beth.
 
-	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5384
-	Soft hyphen displayed as hyphen when it is the first character 
-	in a line/run.
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5384
+        Soft hyphen displayed as hyphen when it is the first character 
+        in a line/run.
 
         * fast/text/softHyphen-expected.checksum: Added.
         * fast/text/softHyphen-expected.png: Added.
@@ -6440,7 +6461,7 @@
 2005-10-24  Beth Dakin  <bdakin@apple.com>
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5318
-	forced line break should not be allowed after a list marker
+        forced line break should not be allowed after a list marker
 
         * fast/lists/li-br-expected.checksum: Added.
         * fast/lists/li-br-expected.png: Added.
@@ -6555,11 +6576,11 @@
 
         Reviewed by Hyatt
 
-	Layout test for fix to <rdar://problem/3947202> certain sequence of DOM 
-	method calls involving CSS outline and display crashes Safari 
-	(in repaint code).
+        Layout test for fix to <rdar://problem/3947202> certain sequence of DOM 
+        method calls involving CSS outline and display crashes Safari 
+        (in repaint code).
 
-	The fix is in WebCore.
+        The fix is in WebCore.
 
         * fast/css/continuationCrash-expected.checksum: Added.
         * fast/css/continuationCrash-expected.png: Added.
@@ -6570,7 +6591,7 @@
 
         Reviewed by Eric, landed by Maciej.
 
-	- fixed xmlhttprequest test to not depend on property enumeration order
+        - fixed xmlhttprequest test to not depend on property enumeration order
 
         * fast/js/xmlhttprequest-get-expected.txt:
         * fast/js/xmlhttprequest-get.xhtml:
@@ -6592,10 +6613,10 @@
 2005-10-21  Beth Dakin  <bdakin@apple.com>
 
         Layout test to go with fix for <rdar://problem/3847926> crash 
-	due to infinite layout regression in RenderLayer::updateScrollInfoAfterLayout 
-	(was at ourmedia.org)
+        due to infinite layout regression in RenderLayer::updateScrollInfoAfterLayout 
+        (was at ourmedia.org)
 
-	Fix is in WebCore.
+        Fix is in WebCore.
 
         * fast/overflow/infiniteRecursion-expected.checksum: Added.
         * fast/overflow/infiniteRecursion-expected.png: Added.
@@ -6661,8 +6682,8 @@
 
 2005-10-12  Vicki Murley  <vicki@apple.com>
 
-	- update expected results for <rdar://problem/4288266> createElement does not validate 
-	names when called in an HTML document (4566)
+        - update expected results for <rdar://problem/4288266> createElement does not validate 
+        names when called in an HTML document (4566)
 
         * dom/html/level1/core/hc_documentinvalidcharacterexceptioncreateelement-expected.txt:
         * dom/html/level1/core/hc_documentinvalidcharacterexceptioncreateelement1-expected.txt:
@@ -6670,7 +6691,7 @@
 2005-10-12  Beth Dakin  <bdakin@apple.com>
 
         Added a layout test for <rdar://problem/4112378> CSS :hover:after crash 
-	- khtml::inlineWidth. The fix is in WebCore.
+        - khtml::inlineWidth. The fix is in WebCore.
 
         * fast/dynamic/genContentDestroyChildren-expected.checksum: Added.
         * fast/dynamic/genContentDestroyChildren-expected.png: Added.
@@ -6860,18 +6881,18 @@
 
 2005-10-06  Vicki Murley  <vicki@apple.com>
 
-	- updated layout tests for <rdar://problem/4288307> <form> element is 
-	created for <isindex> outside <form>; that's not correct (4828)
+        - updated layout tests for <rdar://problem/4288307> <form> element is 
+        created for <isindex> outside <form>; that's not correct (4828)
 
         * dom/html/level2/html/HTMLIsIndexElement02-expected.txt: update this result, 
-	since we now pass this test
+        since we now pass this test
 
         * fast/dom/isindex-002-expected.checksum: Added.
         * fast/dom/isindex-002-expected.png: Added.
         * fast/dom/isindex-002-expected.txt: Added.
         * fast/dom/isindex-002.html: Added.
 
-	- renamed this test
+        - renamed this test
         * fast/dom/isindex-alone-expected.checksum: Removed.
         * fast/dom/isindex-alone-expected.png: Removed.
         * fast/dom/isindex-alone-expected.txt: Removed.
@@ -6884,7 +6905,7 @@
 2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Test cases for <rdar://problem/4145535> Crash in khtml::RenderBlock::addOverhangingFloats 
-	with simple HTML test file. The fix is in WebCore.
+        with simple HTML test file. The fix is in WebCore.
 
         * fast/block/float/4145535Crash-expected.checksum: Added.
         * fast/block/float/4145535Crash-expected.png: Added.
@@ -6905,10 +6926,10 @@
 
 2005-10-05  Vicki Murley  <vicki@apple.com>
 
-	Test cases for <rdar://problem/4288829> repro crash on isIndex tag with no attributes
+        Test cases for <rdar://problem/4288829> repro crash on isIndex tag with no attributes
 
-	This test case will have to be updated once <rdar://problem/4288839> (isindex tag alone in 
-	document doesn't end up in the DOM) is fixed
+        This test case will have to be updated once <rdar://problem/4288839> (isindex tag alone in 
+        document doesn't end up in the DOM) is fixed
 
         * fast/dom/isindex-alone-expected.checksum: Added.
         * fast/dom/isindex-alone-expected.png: Added.
@@ -6917,7 +6938,7 @@
 
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
 
-       	Test cases for <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
+        Test cases for <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
 
         * ChangeLog:
         * fast/dom/early-frame-url-expected.txt: Added.
@@ -6951,8 +6972,8 @@
 
         Reviewed by NOBODY (OOPS!).
 
-	Test case for:
-	<rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
+        Test case for:
+        <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
 
         * fast/dom/early-frame-url.html
         * fast/dom/early-frame-url-expected.txt: Added.
@@ -6964,8 +6985,8 @@
         Reviewed by Eric.
 
         - test case for some fixes I made to for..in enumeration. object
-	properties now come before prototype properties and duplicates
-	between object and prototype are listed only once.
+        properties now come before prototype properties and duplicates
+        between object and prototype are listed only once.
 
         * fast/js/for-in-expected.txt: Added.
         * fast/js/for-in.html: Added.
@@ -6984,7 +7005,7 @@
         * dom/xhtml/level3/core/nodeissamenode05-expected.txt:
         * dom/xhtml/level3/core/nodeissamenode06-expected.txt:
         * dom/xhtml/level3/core/nodeissamenode10-expected.txt:
-	These tests pass now.
+        These tests pass now.
 
 2005-10-04  Eric Seidel  <eseidel@apple.com>
 
@@ -7000,10 +7021,10 @@
 
         Reviewed by Darin.
 
-	Test case for setting opacity on tiled images. Specifically for fix to:
-	<rdar://problem/4285538> TOT fix for Denver Regression: Drawing glitch in 
-	the transparent dialog's cancel/ok button in the widget manager. The fix 
-	is in WebKit and WebKitSystemInterface.
+        Test case for setting opacity on tiled images. Specifically for fix to:
+        <rdar://problem/4285538> TOT fix for Denver Regression: Drawing glitch in 
+        the transparent dialog's cancel/ok button in the widget manager. The fix 
+        is in WebKit and WebKitSystemInterface.
 
         * fast/css/button_center.png: Added.
         * fast/css/imageTileOpacity-expected.txt: Added.
@@ -7023,10 +7044,10 @@
 
         Reviewed by Darin.
 
-	Test cases for:
-	
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
-	event.stopPropagation() prevents the default action - it shouldn't
+        Test cases for:
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
+        event.stopPropagation() prevents the default action - it shouldn't
 
         * fast/events/stopPropagation-checkbox-expected.txt: Added.
         * fast/events/stopPropagation-checkbox.html: Added.
@@ -7037,8 +7058,8 @@
 
         Reviewed by Darin.
 
-	The new layout test for <rdar://problem/4235722> line-height 
-	style settings not reflected in textarea.
+        The new layout test for <rdar://problem/4235722> line-height 
+        style settings not reflected in textarea.
 
         * fast/forms/textAreaLineHeight-expected.txt: Added.
         * fast/forms/textAreaLineHeight.html: Added.
