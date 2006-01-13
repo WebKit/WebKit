@@ -206,10 +206,11 @@ sub output() {
   my $i = 0;
   #print STDERR "writing out table with ".($#table+1)." entries\n";
   
-  if ($size eq 0) {
+  if ($hashsize eq 0) {
     # To make the hash table lookup code fast, we don't allow tables of size 0.
     #  hat way it can do a modulo by the size without a special case to avoid division by 0.
     print "   \{ 0, 0, 0, 0, 0 \}\n";
+    $hashsize = 1;
     $size = 1;
   } else {
     foreach $entry (@table) {

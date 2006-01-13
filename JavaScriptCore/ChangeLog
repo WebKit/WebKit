@@ -1,5 +1,12 @@
 2006-01-13  Anders Carlsson  <andersca@mac.com>
 
+        Reviewed by Eric.
+
+        * kjs/create_hash_table:
+        Use correct size variables.
+
+2006-01-13  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Darin.
 
         * kjs/create_hash_table:
