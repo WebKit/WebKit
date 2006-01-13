@@ -28,7 +28,6 @@
 #include <q3valuelist.h>
 
 class QMatrix;
-class FloatSize;
 class QRect;
 class QPoint;
 class QColor;
@@ -40,6 +39,10 @@ class KCPathData;
 
 class RenderPath;
 class KCanvasContainer;
+
+namespace WebCore {
+    class FloatSize;
+}
 
 namespace KDOM {
     class NodeImpl;

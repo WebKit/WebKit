@@ -27,6 +27,8 @@
 #include "config.h"
 #include "FloatSize.h"
 
+namespace WebCore {
+
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 FloatSize::FloatSize(const NSSize& s) : w(s.width), h(s.height)
 {
@@ -47,4 +49,6 @@ FloatSize::operator NSSize() const
 FloatSize::operator CGSize() const
 {
     return CGSizeMake(w, h);
+}
+
 }
