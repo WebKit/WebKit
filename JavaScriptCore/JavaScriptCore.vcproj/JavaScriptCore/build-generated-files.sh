@@ -55,6 +55,7 @@ fi
 
 # Generate the grammar using bison
 if [ ../../kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" ]; then
+  echo "Generating the JS grammar using bison..."
   bison -d -p kjsyy ../../kjs/grammar.y -o "$DerivedSourcesDir/grammar.cpp"
   mv "$DerivedSourcesDir/grammar.hpp" "$DerivedSourcesDir/grammar.h"
 fi
