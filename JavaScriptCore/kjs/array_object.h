@@ -50,6 +50,8 @@ namespace KJS {
     int id;
   };
 
+  const unsigned MAX_ARRAY_INDEX = 0xFFFFFFFEu;
+
   class ArrayObjectImp : public InternalFunctionImp {
   public:
     ArrayObjectImp(ExecState *exec,

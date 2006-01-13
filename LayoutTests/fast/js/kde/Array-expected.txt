@@ -15,8 +15,8 @@ PASS var a = []; a[0] = 33; a[0] is 33
 PASS var a = []; a[0] = 33; a.length is 1
 PASS var a = [11, 22]; a.length = 1; String(a); is '11'
 PASS var a = [11, 22]; a.length = 1; a.length; is 1
-FAIL caught; should be true. Was false
-FAIL ename should be RangeError. Was 
+PASS caught; is true
+PASS ename is 'RangeError'
 PASS caught; is true
 PASS ename is 'RangeError'
 PASS var a = [11, 22]; a.length = 1; a[1]; is undefined.
@@ -59,9 +59,9 @@ PASS ['c'].unshift('a', 'b') is 3
 PASS var a = []; a.unshift('a'); String(a) is 'a'
 PASS var a = ['c']; a.unshift('a', 'b'); String(a) is 'a,b,c'
 PASS String(['a', 'b', 'c'].splice(1, 2, 'x', 'y')) is 'b,c'
-FAIL arr.length should be 40. Was 0
-FAIL arr[maxint] should be test. Was undefined
-FAIL arr.length should be 40. Was 0
+PASS arr.length is 40
+PASS arr[maxint] is "test"
+PASS arr.length is 40
 PASS arr[maxint] is undefined
 PASS arr.length is maxint
 PASS arr[maxint-1] is "test2"

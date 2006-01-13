@@ -1,3 +1,15 @@
+2006-01-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Based on test case provided by Maks Orlovich. Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6261
+          Misc. array object fixes from KJS
+
+        * fast/js/kde/Array-expected.txt: Updated for newly-passing tests.
+        * fast/js/array-tostring-ignore-separator.html: Added.
+        * fast/js/array-tostring-ignore-separator-expected.txt: Added.
+        * fast/js/resources/array-tostring-ignore-separator.js: Added.
+
 2006-01-13  Darin Adler  <darin@apple.com>
 
         Based on test cases provided by Maks Orlovich.

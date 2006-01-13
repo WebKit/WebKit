@@ -1,3 +1,19 @@
+2006-01-13  Maks Orlovich   <maksim@kde.org>
+
+        Mostly merging work by Peter Kelly. Reviewed by Maciej, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6261
+        Misc. array object fixes from KJS
+
+        * kjs/array_object.cpp: Don't treat 2^32-1 as a real array index property.
+        (ArrayInstance::getOwnPropertySlot): Ditto.
+        (ArrayInstance::deleteProperty): Ditto.
+        (ArrayInstance::put): Ditto.
+        (ArrayInstance::propList): Added a FIXME comment.
+        (ArrayInstance::put): Throw exception on trying to set invalid array length.
+        (ArrayProtoFunc::callAsFunction): Do not use a separator argument when doing toString/toLocalString.
+        * kjs/array_object.h: Added MAX_ARRAY_INDEX.
+
 2006-01-13  Darin Adler  <darin@apple.com>
 
         - Replaced tabs with spaces in source files that had less than 10 lines with tabs.
