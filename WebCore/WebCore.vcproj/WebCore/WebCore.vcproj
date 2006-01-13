@@ -171,6 +171,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQBuffer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQBuffer.h"
 				>
 			</File>
@@ -192,6 +196,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQComboBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQCString.cpp"
 				>
 			</File>
 			<File
@@ -263,6 +271,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQGlobal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQGuardedPtr.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQGuardedPtr.h"
 				>
 			</File>
@@ -288,6 +304,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKGlobalSettings.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQKHTMLFactory.cpp"
 				>
 			</File>
 			<File
@@ -336,6 +356,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKPartsBrowserInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQKPartsEvent.cpp"
 				>
 			</File>
 			<File
@@ -391,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQMapImpl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQMapImpl.h"
 				>
 			</File>
@@ -431,11 +459,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQPen.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQPen.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQPixmap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQPointArray.cpp"
 				>
 			</File>
 			<File
@@ -483,11 +519,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQRegExp.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQRegExp.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQRegion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQRenderTreeDebug.cpp"
 				>
 			</File>
 			<File
@@ -539,6 +583,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQStyle.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQStyle.h"
 				>
 			</File>
@@ -563,6 +611,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQTextStream.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQTextStream.h"
 				>
 			</File>
@@ -579,6 +631,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQValueListImpl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQValueListImpl.h"
 				>
 			</File>
@@ -587,7 +643,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQVariant.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQVariant.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQVectorImpl.cpp"
 				>
 			</File>
 			<File

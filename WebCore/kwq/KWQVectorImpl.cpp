@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <string.h>
 #include "KWQVectorImpl.h"
 
 KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
