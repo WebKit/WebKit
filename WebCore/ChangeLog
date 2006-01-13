@@ -1,4 +1,37 @@
 2006-01-13  David Hyatt  <hyatt@apple.com>
+        
+        Convert QSizeF to FloatSize and move it to the platform
+        directory.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEConvolveMatrix::kernelSize):
+        (KCanvasFEConvolveMatrix::setKernelSize):
+        (KCanvasFEConvolveMatrix::targetOffset):
+        (KCanvasFEConvolveMatrix::setTargetOffset):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kwq/KWQRectF.h:
+        * kwq/KWQRectF.mm:
+        (QRectF::QRectF):
+        (QRectF::size):
+        * kwq/KWQSizeF.h: Removed.
+        * kwq/KWQSizeF.mm: Removed.
+        * platform/FloatSize.cpp: Added.
+        (FloatSize::FloatSize):
+        (FloatSize::isValid):
+        (FloatSize::expandedTo):
+        (operator+):
+        (operator==):
+        (operator!=):
+        * platform/FloatSize.h: Added.
+        * platform/mac/FloatSize.mm: Added.
+        (FloatSize::FloatSize):
+        (FloatSize::operator NSSize):
+        (FloatSize::operator CGSize):
+
+2006-01-13  David Hyatt  <hyatt@apple.com>
 
         Fix build bustage from QSize -> IntSize change.
         

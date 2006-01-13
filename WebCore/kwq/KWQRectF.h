@@ -28,7 +28,7 @@
 #define QRECTF_H_
 
 #include <math.h>
-#include "KWQSizeF.h"
+#include "FloatSize.h"
 #include "KWQPointF.h"
 #include "KWQRect.h"
 
@@ -43,7 +43,7 @@ class QRect;
 class QRectF {
 public:
     QRectF();
-    QRectF(QPointF p, QSizeF s);
+    QRectF(QPointF p, FloatSize s);
     QRectF(float, float, float, float);
     QRectF(const QPointF&, const QPointF&);
     QRectF(const QRect&);
@@ -70,7 +70,7 @@ public:
     QPointF bottomRight() const;
     QPointF bottomLeft() const;
 
-    QSizeF size() const;
+    FloatSize size() const;
     void setX(float x) { xp = x; }
     void setY(float y) { yp = y; }
     void setWidth(float width) { w = width; }

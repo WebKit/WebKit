@@ -21,59 +21,30 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#include "config.h"
+#include "FloatSize.h"
 
-#ifndef QSIZEF_H_
-#define QSIZEF_H_
-
-#include "KWQDef.h"
-
-// workaround for <rdar://problem/4294625>
-#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
-#undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+FloatSize::FloatSize(const NSSize& s) : w(s.width), h(s.height)
+{
+}
 #endif
 
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-typedef struct CGSize NSSize;
-#else
-typedef struct _NSSize NSSize;
-#endif
-typedef struct CGSize CGSize;
-
-namespace WebCore {
-    class IntSize;
+FloatSize::FloatSize(const CGSize& s) : w(s.width), h(s.height)
+{
 }
 
-class QSizeF {
-public:
-    QSizeF();
-    QSizeF(float, float);
-    QSizeF(const WebCore::IntSize&);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QSizeF(const NSSize&);
+FloatSize::operator NSSize() const
+{
+    return NSMakeSize(w, h);
+}
 #endif
-    explicit QSizeF(const CGSize&);
 
-    bool isValid() const;
-    float width() const { return w; }
-    float height() const { return h; }
-    void setWidth(float width) { w = width; }
-    void setHeight(float height) { h = height; }
-    QSizeF expandedTo(const QSizeF&) const;
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    operator NSSize() const;
-#endif
-    operator CGSize() const;
-
-    friend QSizeF operator+(const QSizeF&, const QSizeF&);
-    friend bool operator==(const QSizeF&, const QSizeF&);
-    friend bool operator!=(const QSizeF&, const QSizeF&);
-
-private:
-    float w;
-    float h;
-};
-
-#endif
+FloatSize::operator CGSize() const
+{
+    return CGSizeMake(w, h);
+}

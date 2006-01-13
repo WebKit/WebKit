@@ -28,7 +28,7 @@
 #include <q3valuelist.h>
 
 class QMatrix;
-class QSizeF;
+class FloatSize;
 class QRect;
 class QPoint;
 class QColor;
@@ -55,7 +55,7 @@ QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const QRect &);
 QTextStream &operator<<(QTextStream &ts, const QColor &);
 QTextStream &operator<<(QTextStream &ts, const QPoint &);
-QTextStream &operator<<(QTextStream &ts, const QSizeF &);
+QTextStream &operator<<(QTextStream &ts, const FloatSize &);
 QTextStream &operator<<(QTextStream &ts, const QRectF &);
 QTextStream &operator<<(QTextStream &ts, const QPointF &);
 

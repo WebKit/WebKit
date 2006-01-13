@@ -14,8 +14,6 @@
 		4756536609652C5D00BD9F29 /* KWQPointF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536009652C5D00BD9F29 /* KWQPointF.mm */; };
 		4756536709652C5D00BD9F29 /* KWQRectF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756536109652C5D00BD9F29 /* KWQRectF.h */; };
 		4756536809652C5D00BD9F29 /* KWQRectF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536209652C5D00BD9F29 /* KWQRectF.mm */; };
-		4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4756536309652C5D00BD9F29 /* KWQSizeF.h */; };
-		4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4756536409652C5D00BD9F29 /* KWQSizeF.mm */; };
 		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
 		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
@@ -1609,6 +1607,12 @@
 		BC42035D08FC334100B782E0 /* render_button.h in Headers */ = {isa = PBXBuildFile; fileRef = BC42035B08FC334100B782E0 /* render_button.h */; };
 		BC73E2130978546300EDFF8A /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2120978546300EDFF8A /* IntSize.mm */; };
 		BC73E2140978546300EDFF8A /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2120978546300EDFF8A /* IntSize.mm */; };
+		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
+		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
+		BC73E25F0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
+		BC73E2600978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
+		BC73E27409786D3B00EDFF8A /* FloatSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E27309786D3B00EDFF8A /* FloatSize.mm */; };
+		BC73E27509786D3B00EDFF8A /* FloatSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E27309786D3B00EDFF8A /* FloatSize.mm */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
@@ -1705,8 +1709,6 @@
 		4756536009652C5D00BD9F29 /* KWQPointF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPointF.mm; sourceTree = "<group>"; };
 		4756536109652C5D00BD9F29 /* KWQRectF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRectF.h; sourceTree = "<group>"; };
 		4756536209652C5D00BD9F29 /* KWQRectF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRectF.mm; sourceTree = "<group>"; };
-		4756536309652C5D00BD9F29 /* KWQSizeF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQSizeF.h; sourceTree = "<group>"; };
-		4756536409652C5D00BD9F29 /* KWQSizeF.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQSizeF.mm; sourceTree = "<group>"; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51111AC007BD812C00B7162C /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2447,6 +2449,9 @@
 		BC7294F803804B3C00A80166 /* arena.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = arena.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7294FB03804B5600A80166 /* render_arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_arena.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC73E2120978546300EDFF8A /* IntSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = IntSize.mm; path = platform/mac/IntSize.mm; sourceTree = "<group>"; };
+		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
+		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatSize.h; path = platform/FloatSize.h; sourceTree = "<group>"; };
+		BC73E27309786D3B00EDFF8A /* FloatSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = FloatSize.mm; path = platform/mac/FloatSize.mm; sourceTree = "<group>"; };
 		BC74596205954CC80058C893 /* xbl_protobinding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_protobinding.cpp; path = xbl/xbl_protobinding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC74596305954CC80058C893 /* xbl_protobinding.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_protobinding.h; path = xbl/xbl_protobinding.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC745A1A05955F380058C893 /* xbl_protohandler.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_protohandler.cpp; path = xbl/xbl_protohandler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3634,6 +3639,9 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				BC73E27309786D3B00EDFF8A /* FloatSize.mm */,
+				BC73E25B0978682700EDFF8A /* FloatSize.cpp */,
+				BC73E25C0978682700EDFF8A /* FloatSize.h */,
 				BC73E2120978546300EDFF8A /* IntSize.mm */,
 				BCF1A5EE097839600061A123 /* IntSize.cpp */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
@@ -4362,8 +4370,6 @@
 				4756536009652C5D00BD9F29 /* KWQPointF.mm */,
 				4756536109652C5D00BD9F29 /* KWQRectF.h */,
 				4756536209652C5D00BD9F29 /* KWQRectF.mm */,
-				4756536309652C5D00BD9F29 /* KWQSizeF.h */,
-				4756536409652C5D00BD9F29 /* KWQSizeF.mm */,
 				F57B0EE002EBC78B018635CA /* KWQStyle.cpp */,
 				F58786BC02DE3B8601EA4122 /* KWQStyleSheet.h */,
 				F58786BD02DE3B8601EA4122 /* KWQTextCodec.h */,
@@ -4867,7 +4873,6 @@
 				6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */,
 				4756536509652C5D00BD9F29 /* KWQPointF.h in Headers */,
 				4756536709652C5D00BD9F29 /* KWQRectF.h in Headers */,
-				4756536909652C5D00BD9F29 /* KWQSizeF.h in Headers */,
 				A81655D4096BBEAC00601058 /* KCanvasMaskerQuartz.h in Headers */,
 				A81655E5096BC13900601058 /* SVGMaskElementImpl.h in Headers */,
 				65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */,
@@ -4916,6 +4921,7 @@
 				654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */,
 				BCF1A5F1097839600061A123 /* IntSize.h in Headers */,
 				BCF1A62709783CD20061A123 /* KWQRect.h in Headers */,
+				BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5252,6 +5258,7 @@
 				A8185F4809765766005826D9 /* DocumentImpl.h in Headers */,
 				BCF1A5F3097839600061A123 /* IntSize.h in Headers */,
 				BCF1A62909783CD20061A123 /* KWQRect.h in Headers */,
+				BC73E2600978682700EDFF8A /* FloatSize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6739,7 +6746,6 @@
 				6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */,
 				4756536609652C5D00BD9F29 /* KWQPointF.mm in Sources */,
 				4756536809652C5D00BD9F29 /* KWQRectF.mm in Sources */,
-				4756536A09652C5D00BD9F29 /* KWQSizeF.mm in Sources */,
 				A81655D5096BBEAC00601058 /* KCanvasMaskerQuartz.mm in Sources */,
 				A81655E4096BC13900601058 /* SVGMaskElementImpl.cpp in Sources */,
 				65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */,
@@ -6785,6 +6791,8 @@
 				BCF1A61C09783BDD0061A123 /* IntSize.cpp in Sources */,
 				BCF1A62809783CD20061A123 /* KWQRect.mm in Sources */,
 				BC73E2130978546300EDFF8A /* IntSize.mm in Sources */,
+				BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */,
+				BC73E27409786D3B00EDFF8A /* FloatSize.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7066,6 +7074,8 @@
 				BCF1A5F2097839600061A123 /* IntSize.cpp in Sources */,
 				BCF1A62A09783CD20061A123 /* KWQRect.mm in Sources */,
 				BC73E2140978546300EDFF8A /* IntSize.mm in Sources */,
+				BC73E25F0978682700EDFF8A /* FloatSize.cpp in Sources */,
+				BC73E27509786D3B00EDFF8A /* FloatSize.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

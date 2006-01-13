@@ -40,7 +40,7 @@ QRectF::QRectF(float x, float y, float width, float height) : xp(x), yp(y), w(wi
 {
 }
 
-QRectF::QRectF(QPointF p, QSizeF s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+QRectF::QRectF(QPointF p, FloatSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
 {
 }
 
@@ -109,9 +109,9 @@ QPointF QRectF::bottomLeft() const
     return QPointF(left(),bottom());
 }
 
-QSizeF QRectF::size() const
+FloatSize QRectF::size() const
 {
-    return QSizeF(w,h);
+    return FloatSize(w,h);
 }
 
 QRectF QRectF::unite(const QRectF &r) const

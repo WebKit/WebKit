@@ -25,7 +25,7 @@
 #define KCanvasFilters_H
 
 #include "KCanvasResources.h"
-#include <QSizeF>
+#include "FloatSize.h"
 #include <qcolor.h>
 #include <qstringlist.h>
 
@@ -289,8 +289,8 @@ class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
 public:
     KCanvasFEConvolveMatrix() { };
 
-    QSizeF kernelSize() const { return m_kernelSize; }
-    void setKernelSize(QSizeF kernelSize) { m_kernelSize = kernelSize; }
+    FloatSize kernelSize() const { return m_kernelSize; }
+    void setKernelSize(FloatSize kernelSize) { m_kernelSize = kernelSize; }
     
     Q3ValueList<float> kernel() const { return m_kernelMatrix; }
     void setKernel(Q3ValueList<float> kernel) { m_kernelMatrix = kernel; }
@@ -301,8 +301,8 @@ public:
     float bias() const { return m_bias; }
     void setBias(float bias) { m_bias = bias; }
     
-    QSizeF targetOffset() const { return m_targetOffset; }
-    void setTargetOffset(QSizeF targetOffset) { m_targetOffset = targetOffset; }
+    FloatSize targetOffset() const { return m_targetOffset; }
+    void setTargetOffset(FloatSize targetOffset) { m_targetOffset = targetOffset; }
     
     KCEdgeModeType edgeMode() const { return m_edgeMode; }
     void setEdgeMode(KCEdgeModeType edgeMode) { m_edgeMode = edgeMode; }
@@ -316,11 +316,11 @@ public:
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-    QSizeF m_kernelSize;
+    FloatSize m_kernelSize;
     Q3ValueList<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
-    QSizeF m_targetOffset;
+    FloatSize m_targetOffset;
     KCEdgeModeType m_edgeMode;
     QPointF m_kernelUnitLength;
     bool m_preserveAlpha;

@@ -56,7 +56,7 @@
 #include "htmlnames.h"
 
 #include <qtextstream.h>
-#include <QSizeF>
+#include "FloatSize.h"
 
 using namespace KSVG;
 
@@ -144,7 +144,7 @@ QTextStream &operator<<(QTextStream &ts, const QPointF &p)
     return ts << ")";
 }
 
-QTextStream &operator<<(QTextStream &ts, const QSizeF &s)
+QTextStream &operator<<(QTextStream &ts, const FloatSize &s)
 {   
     ts << "width=";
     if (hasFractions(s.width()))

@@ -25,64 +25,42 @@
  */
 
 #include "config.h"
-#import "KWQSizeF.h"
-#import "IntSize.h"
+#include "FloatSize.h"
+#include "IntSize.h"
 
-QSizeF::QSizeF() : w(-1.0f), h(-1.0f)
+FloatSize::FloatSize() : w(-1.0f), h(-1.0f)
 {
 }
 
-QSizeF::QSizeF(float width, float height) : w(width), h(height)
+FloatSize::FloatSize(float width, float height) : w(width), h(height)
 {
 }
 
-QSizeF::QSizeF(const IntSize& o) : w(o.width()), h(o.height())
+FloatSize::FloatSize(const IntSize& o) : w(o.width()), h(o.height())
 {
 }
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QSizeF::QSizeF(const NSSize& s) : w(s.width), h(s.height)
-{
-}
-#endif
-
-QSizeF::QSizeF(const CGSize& s) : w(s.width), h(s.height)
-{
-}
-
-bool QSizeF::isValid() const
+bool FloatSize::isValid() const
 {
     return w >= 0.0f && h >= 0.0f;
 }
 
-QSizeF QSizeF::expandedTo(const QSizeF& o) const
+FloatSize FloatSize::expandedTo(const FloatSize& o) const
 {
-    return QSizeF(w > o.w ? w : o.w, h > o.h ? h : o.h);
+    return FloatSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
 }
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QSizeF::operator NSSize() const
+FloatSize operator+(const FloatSize& a, const FloatSize& b)
 {
-    return NSMakeSize(w, h);
-}
-#endif
-
-QSizeF::operator CGSize() const
-{
-    return CGSizeMake(w, h);
+    return FloatSize(a.w + b.w, a.h + b.h);
 }
 
-QSizeF operator+(const QSizeF& a, const QSizeF& b)
-{
-    return QSizeF(a.w + b.w, a.h + b.h);
-}
-
-bool operator==(const QSizeF& a, const QSizeF& b)
+bool operator==(const FloatSize& a, const FloatSize& b)
 {
     return a.w == b.w && a.h == b.h;
 }
 
-bool operator!=(const QSizeF& a, const QSizeF& b)
+bool operator!=(const FloatSize& a, const FloatSize& b)
 {
     return a.w != b.w || a.h != b.h;
 }
