@@ -1186,6 +1186,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\css\css_grammar.y"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\css\css_ruleimpl.cpp"
 					>
 				</File>
@@ -1692,6 +1696,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQWMatrix.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			>
+			<File
+				RelativePath="..\..\..\output\WebCore.intermediate\Debug\WebCore.intermediate\DerivedSources\css_grammar.cpp"
 				>
 			</File>
 		</Filter>

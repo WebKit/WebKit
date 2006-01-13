@@ -25,11 +25,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <dom/dom_string.h>
-#include <xml/dom_docimpl.h>
-#include <css/css_ruleimpl.h>
-#include <css/css_stylesheetimpl.h>
-#include <css/css_valueimpl.h>
+#include "dom_string.h"
+#include "DocumentImpl.h"
+#include "css_ruleimpl.h"
+#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
 #include "htmlnames.h"
 #include "cssparser.h"
    
