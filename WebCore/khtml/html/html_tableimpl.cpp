@@ -237,8 +237,8 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
     bool found = false;
     for ( ; node && (index>=0 || append) ; node = node->nextSibling() )
     {
-	// there could be 2 tfoot elements in the table. Only the first one is the "foot", that's why we have the more
-	// complicated if statement below.
+        // there could be 2 tfoot elements in the table. Only the first one is the "foot", that's why we have the more
+        // complicated if statement below.
         if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag)))
         {
             section = static_cast<HTMLTableSectionElementImpl *>(node);
@@ -248,7 +248,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
             {
                 int rows = section->numRows();
                 if (rows >= index) {
-		    found = true;
+                    found = true;
                     break;
                 } else
                     index -= rows;
@@ -349,8 +349,8 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
             head = static_cast<HTMLTableSectionElementImpl *>(child);
         else if (!foot && child->hasTagName(tfootTag))
             foot = static_cast<HTMLTableSectionElementImpl *>(child);
-	else if (!firstBody && child->hasTagName(tbodyTag)) {
-	    firstBody = static_cast<HTMLTableSectionElementImpl *>(child);
+        else if (!firstBody && child->hasTagName(tbodyTag)) {
+            firstBody = static_cast<HTMLTableSectionElementImpl *>(child);
             firstBody->ref();
         }
     }
@@ -465,8 +465,8 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             padding = 1;
         if (m_render && m_render->isTable()) {
             static_cast<RenderTable *>(m_render)->setCellPadding(padding);
-	    if (!m_render->needsLayout())
-	        m_render->setNeedsLayout(true);
+            if (!m_render->needsLayout())
+                m_render->setNeedsLayout(true);
         }
     } else if (attr->name() == colsAttr) {
         // ###
@@ -551,7 +551,7 @@ void HTMLTableElementImpl::attach()
     assert(!m_attached);
     HTMLElementImpl::attach();
     if ( m_render && m_render->isTable() )
-	static_cast<RenderTable *>(m_render)->setCellPadding( padding );
+        static_cast<RenderTable *>(m_render)->setCellPadding( padding );
 }
 
 bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
@@ -755,7 +755,6 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, int& excepti
     HTMLTableRowElementImpl *r = 0L;
     RefPtr<NodeListImpl> children = childNodes();
     int numRows = children ? (int)children->length() : 0;
-    //kdDebug(6030) << k_funcinfo << "index=" << index << " numRows=" << numRows << endl;
     if ( index < -1 || index > numRows ) {
         exceptioncode = DOMException::INDEX_SIZE_ERR; // per the DOM
     }
@@ -870,38 +869,48 @@ NodeImpl *HTMLTableRowElementImpl::addChild(NodeImpl *child)
 
 int HTMLTableRowElementImpl::rowIndex() const
 {
-    int rIndex = 0;
-
     NodeImpl *table = parentNode();
     if (!table)
-	return -1;
+        return -1;
     table = table->parentNode();
     if (!table || !table->hasTagName(tableTag))
-	return -1;
+        return -1;
 
-    HTMLTableSectionElementImpl *foot = static_cast<HTMLTableElementImpl *>(table)->tFoot();
-    NodeImpl *node = table->firstChild();
-    while (node) {
-        if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag))) {
-	    HTMLTableSectionElementImpl* section = static_cast<HTMLTableSectionElementImpl *>(node);
-	    const NodeImpl *row = section->firstChild();
-	    while ( row ) {
-		if ( row == this )
-		    return rIndex;
-		rIndex++;
-		row = row->nextSibling();
-	    }
-	}
-	node = node->nextSibling();
+    // To match Firefox, the row indices work like this:
+    //   Rows from the first <thead> are numbered before all <tbody> rows.
+    //   Rows from the first <tfoot> are numbered after all <tbody> rows.
+    //   Rows from other <thead> and <tfoot> elements don't get row indices at all.
+
+    int rIndex = 0;
+
+    if (HTMLTableSectionElementImpl* head = static_cast<HTMLTableElementImpl*>(table)->tHead()) {
+        for (NodeImpl *row = head->firstChild(); row; row = row->nextSibling()) {
+            if (row == this)
+                return rIndex;
+            ++rIndex;
+        }
     }
-    const NodeImpl *row = foot->firstChild();
-    while ( row ) {
-	if ( row == this )
-	    return rIndex;
-	rIndex++;
-	row = row->nextSibling();
+    
+    for (NodeImpl *node = table->firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(tbodyTag)) {
+            HTMLTableSectionElementImpl* section = static_cast<HTMLTableSectionElementImpl*>(node);
+            for (NodeImpl* row = section->firstChild(); row; row = row->nextSibling()) {
+                if (row == this)
+                    return rIndex;
+                ++rIndex;
+            }
+        }
     }
-    // should never happen
+
+    if (HTMLTableSectionElementImpl* foot = static_cast<HTMLTableElementImpl *>(table)->tFoot()) {
+        for (NodeImpl *row = foot->firstChild(); row; row = row->nextSibling()) {
+            if (row == this)
+                return rIndex;
+            ++rIndex;
+        }
+    }
+
+    // We get here for rows that are in <thead> or <tfoot> sections other than the main header and footer.
     return -1;
 }
 

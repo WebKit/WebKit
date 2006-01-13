@@ -1,3 +1,18 @@
+2006-01-13  Maks Orlovich <maksim@kde.org>
+
+        Reviewed, redone a bit, and landed by Darin (help from Eric too).
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4586
+          rowIndex calculation doesn't consider head to come before body.
+
+        Test: fast/table/rowindex.html
+
+        * khtml/html/html_tableimpl.cpp: (DOM::HTMLTableRowElementImpl::rowIndex):
+        Change algorithm so the rows are numbered in this order: (a) all rows in the
+        table header section, (b) all rows in all table body sections, (c) all rows
+        in the table footer section. Rows in extra table header or footer sections
+        don't get row numbers (rowIndex returns -1). This matches Firefox.
+
 2006-01-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed, tweaked, and landed by Darin.

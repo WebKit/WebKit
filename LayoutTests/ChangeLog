@@ -1,8 +1,20 @@
+2006-01-13  Darin Adler  <darin@apple.com>
+
+        Based on test cases provided by Maks Orlovich.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4586
+          rowIndex calculation doesn't consider head to come before body.
+
+        * fast/table/rowindex.html: Added.
+        * fast/table/rowindex-expected.checksum: Added.
+        * fast/table/rowindex-expected.png: Added.
+        * fast/table/rowindex-expected.txt: Added.
+
 2006-01-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed and landed by Darin.
 
-        - test fpr http://bugzilla.opendarwin.org/show_bug.cgi?id=6509
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6509
           content property with supported value followed by currently unsupported open-quote displays duplicated content
 
         * fast/css-generated-content/no-openclose-quote.html: Added.
