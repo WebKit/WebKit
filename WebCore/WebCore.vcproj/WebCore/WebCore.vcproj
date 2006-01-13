@@ -1238,6 +1238,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="xsl"
+				>
+				<File
+					RelativePath="..\..\khtml\xsl\xsl_stylesheetimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xsl\xsl_stylesheetimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xsl\xslt_processorimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xsl\xslt_processorimpl.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="kwq"
