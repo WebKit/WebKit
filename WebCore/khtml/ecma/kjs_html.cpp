@@ -74,12 +74,14 @@
 #include <qpixmap.h>
 #include <qpainter.h>
 
+#if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+using khtml::RenderCanvasImage;
+#endif
 
 using namespace DOM;
 using namespace DOM::HTMLNames;
 using namespace DOM::EventNames;
-using khtml::RenderCanvasImage;
 
 #include "kjs_html.lut.h"
 
@@ -3688,6 +3690,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
     if (!thisObj->inherits(&Context2D::info))
         return throwError(exec, TypeError);
 
+#if __APPLE__
     Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj);
     khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
     if (!renderer)
@@ -4391,6 +4394,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             return new ImagePattern(static_cast<Image*>(o), repetitionType);
         }
     }
+#endif
 
     return jsUndefined();
 }
@@ -4518,6 +4522,7 @@ void Context2D::put(ExecState *exec, const Identifier &propertyName, JSValue *va
     lookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &Context2DTable, this );
 }
 
+#if __APPLE__
 CGContextRef Context2D::drawingContext()
 {
     khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(_element->renderer());
@@ -4554,6 +4559,7 @@ CGColorRef colorRefFromValue(ExecState *exec, JSValue *value)
     
     return colorRef;
 }
+#endif
 
 QColor colorFromValue(ExecState *exec, JSValue *value)
 {
@@ -4563,6 +4569,7 @@ QColor colorFromValue(ExecState *exec, JSValue *value)
 
 void Context2D::setShadow(ExecState *exec)
 {
+#if __APPLE__
     CGContextRef context = drawingContext();
     if (!context)
         return;
@@ -4574,10 +4581,12 @@ void Context2D::setShadow(ExecState *exec)
     CGColorRef colorRef = colorRefFromValue(exec, _shadowColor);
     CGContextSetShadowWithColor (context, offset, blur, colorRef);
     CFRelease (colorRef);
+#endif
 }
 
 void Context2D::updateFillImagePattern()
 {
+#if __APPLE__
     CGContextRef context = drawingContext();
     CGAffineTransform transform = CGContextGetCTM(context);
     
@@ -4593,10 +4602,12 @@ void Context2D::updateFillImagePattern()
         _validFillImagePattern = true;
         _lastFillImagePatternCTM = transform;
     }
+#endif
 }
 
 void Context2D::updateStrokeImagePattern()
 {
+#if __APPLE__
     CGContextRef context = drawingContext();
     CGAffineTransform transform = CGContextGetCTM(context);
     
@@ -4612,10 +4623,12 @@ void Context2D::updateStrokeImagePattern()
         _validStrokeImagePattern = true;
         _lastStrokeImagePatternCTM = transform;
     }
+#endif
 }
 
 void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
+#if __APPLE__
     CGContextRef context = drawingContext();
     if (!context)
         return;
@@ -4739,6 +4752,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
         default: {
         }
     }
+#endif
 }
 
 void Context2D::save()
@@ -4968,9 +4982,11 @@ void gradientCallback (void *info, const float *in, float *out)
 
 static float intervalRangeDomin[] = { 0.f, 1.f };
 static float colorComponentRangeDomains[] = { 0.f, 1.f, 0.f, 1.f, 0.f, 1.f, 0.f, 1.f };
+#if __APPLE__
 CGFunctionCallbacks gradientCallbacks = {
     0, gradientCallback, NULL
 };
+#endif
 
 void Gradient::commonInit()
 {
@@ -4980,8 +4996,11 @@ void Gradient::commonInit()
     stopsNeedAdjusting = false;
     adjustedStopCount = 0;
     adjustedStops = 0;
-    
+
+#if __APPLE__
     _shadingRef = 0;
+#endif
+
     regenerateShading = true;
 }
 
@@ -5030,11 +5049,13 @@ void Gradient::putValueProperty(ExecState *exec, int token, JSValue *value, int 
 
 Gradient::~Gradient()
 {
+#if __APPLE__
     if (_shadingRef) {
         CGShadingRelease(_shadingRef);
         _shadingRef = 0;
     }
-    
+#endif
+
     fastFree(stops);
     stops = 0;
     
@@ -5042,6 +5063,7 @@ Gradient::~Gradient()
     adjustedStops = 0;
 }
 
+#if __APPLE__
 CGShadingRef Gradient::getShading()
 {
     if (!regenerateShading)
@@ -5067,6 +5089,7 @@ CGShadingRef Gradient::getShading()
     
     return _shadingRef;
 }
+#endif
 
 void Gradient::addColorStop (float s, float r, float g, float b, float a)
 {
@@ -5149,6 +5172,7 @@ const ClassInfo ImagePattern::info = { "ImagePattern", 0, &ImagePatternTable, 0 
 @end
 */
 
+#if __APPLE__
 static void drawPattern (void * info, CGContextRef context)
 {
     ImagePattern *pattern = static_cast<ImagePattern*>(info);
@@ -5168,6 +5192,8 @@ static void drawPattern (void * info, CGContextRef context)
 }
 
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
+#endif
+
 ImagePattern::ImagePattern(Image *i, int repetitionType)
     :_rw(0), _rh(0)
 {
@@ -5176,8 +5202,9 @@ ImagePattern::ImagePattern(Image *i, int repetitionType)
         _pixmap = ci->pixmap();
         float w = _pixmap.width();
         float h = _pixmap.height();
+#if __APPLE__
         _bounds = CGRectMake (0, 0, w, h);
-
+#endif
         if (repetitionType == Repeat) {
             _rw = w; _rh = h;
         }
@@ -5193,6 +5220,7 @@ ImagePattern::ImagePattern(Image *i, int repetitionType)
     }
 }
 
+#if __APPLE__
 CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
 {
     if (_pixmap.isNull())
@@ -5204,6 +5232,7 @@ CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
 
     return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
 }
+#endif
 
 bool ImagePattern::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {

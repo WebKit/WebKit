@@ -26,7 +26,6 @@
 #include "kjs_binding.h"
 
 #include <qcolor.h>
-#include "misc/shared.h"
 
 namespace DOM {
     class CounterImpl;

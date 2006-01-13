@@ -34,8 +34,6 @@
 #include "DocumentImpl.h"
 #include "DocumentFragmentImpl.h"
 
-#include <JavaScriptCore/lookup.h>
-
 using namespace DOM;
 
 namespace KJS {

@@ -1,1 +1,1 @@
-#import "KWQKConfigBase.h"
+#include "KWQKConfigBase.h"

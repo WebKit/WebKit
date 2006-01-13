@@ -1,1 +1,1 @@
-#import "KWQGuardedPtr.h"
+#include "KWQGuardedPtr.h"

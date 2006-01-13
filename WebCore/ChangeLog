@@ -1,3 +1,32 @@
+2006-01-12  David Hyatt <hyatt@apple.com>
+
+	Make the ecma directory compile on Win32.
+
+        * ForwardingHeaders/kconfig.h:
+        * ForwardingHeaders/kwinmodule.h:
+        * ForwardingHeaders/qguardedptr.h:
+        * ForwardingHeaders/qstylesheet.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * khtml/ecma/XSLTProcessor.cpp:
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::createLanguageInstanceForValue):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getRuntimeObject):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::Context2D::setShadow):
+        (KJS::Context2D::updateFillImagePattern):
+        (KJS::Context2D::updateStrokeImagePattern):
+        (KJS::Context2D::putValueProperty):
+        (KJS::Gradient::commonInit):
+        (KJS::Gradient::~Gradient):
+        (KJS::_rh):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::intFeature):
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

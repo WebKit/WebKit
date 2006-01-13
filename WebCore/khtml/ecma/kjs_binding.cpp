@@ -238,12 +238,14 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int la
 {
     void *result = 0;
     
+#if __APPLE__
+    // FIXME: Need to implement bindings support.
     if (language == Bindings::Instance::ObjectiveCLanguage)
 	result = createObjcInstanceForValue (exec, value, origin, current);
     
     if (!result)
 	result = Interpreter::createLanguageInstanceForValue (exec, language, value, origin, current);
-	
+#endif
     return result;
 }
 
