@@ -1,3 +1,9 @@
+2006-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * ChangeLog:
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -386,8 +392,8 @@
 
         Reviewed by Darin. Committed by Maciej.
 
-	- fixed "DumpRenderTree should test for Ahem before doing anything else"
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5838)
+        - fixed "DumpRenderTree should test for Ahem before doing anything else"
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=5838)
 
         * DumpRenderTree/DumpRenderTree.m:
         (main):
@@ -402,10 +408,10 @@
 
 2005-11-27  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
-	Reviewed and committed by Maciej.
+        Reviewed and committed by Maciej.
 
-	- fixed cvs-create-patch --include produces incorrect paths
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5846)
+        - fixed cvs-create-patch --include produces incorrect paths
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=5846)
 
         * Scripts/cvs-create-patch: produce proper paths for new files.
 
@@ -445,9 +451,9 @@
         (mysteriously) had NSTreatUnknownArgumentsAsOpen set to NO in com.apple.Safari.plist.
 
 2005-10-27  Geoffrey Garen  <ggaren@apple.com>
-		
+
         Patch by Alexey Proskuryakov.
-		
+
         Reviewed by Maciej.
         
         Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
@@ -686,17 +692,17 @@
 
         Change made by Darin, reviewed by John and myself.
 
-	- Allow semicolons at the end of method declarations (this is for method implementations; the semicolon is required for interface declarations).
+        - Allow semicolons at the end of method declarations (this is for method implementations; the semicolon is required for interface declarations).
 
         * Scripts/prepare-ChangeLog:
 
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
-	Reviewed by Darin.
+        Reviewed by Darin.
 
-	- set color variant and font settings to a consistent value.
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=4769)
-	
+        - set color variant and font settings to a consistent value.
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=4769)
+
         * DumpRenderTree/DumpRenderTree.m:
         (main):
 
@@ -727,9 +733,9 @@
 
         Reviewed by Darin.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4723
-	(some pixel tests fail when AA settings are changed)
-	
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4723
+        (some pixel tests fail when AA settings are changed)
+
         * DumpRenderTree/DumpRenderTree.m:
         (main): set AA settings to the default values
 
@@ -745,9 +751,9 @@
 
         Reviewed by Eric.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4720
-	(webkit pixel tests don't give consistent results with changed scrollbar arrow setting)
-	
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4720
+        (webkit pixel tests don't give consistent results with changed scrollbar arrow setting)
+
         * DumpRenderTree/DumpRenderTree.m:
         (main): set scrollbar arrow setting to a consistent value
 
@@ -1160,8 +1166,8 @@
 
         Reviewed by Darin.
 
-	- new script to review the DOM layout test results and see where we stand
-	on actual success and failure
+        - new script to review the DOM layout test results and see where we stand
+        on actual success and failure
 
         * Scripts/check-dom-results: Added.
 
@@ -1339,7 +1345,7 @@
 2005-06-17  Maciej Stachowiak  <mjs@apple.com>
 
         - added prepare-ChangeLog script which we use internally to make ChangeLogs, for
-	benefit of all WebKit hackerdom
+        benefit of all WebKit hackerdom
 
         * Scripts/prepare-ChangeLog: Added.
 
@@ -1491,12 +1497,12 @@
 
 2005-06-08  Maciej Stachowiak  <mjs@apple.com>
 
-	Code change by Toby Peterson <toby@opendarwin.org>
+        Code change by Toby Peterson <toby@opendarwin.org>
         Reviewed by me.
 
         * Scripts/run-safari: Fix to work with Xcode 2.0 again. The script would
-	get confused because build-webkit now makes even 2.0 build directories look
-	like 2.1.
+        get confused because build-webkit now makes even 2.0 build directories look
+        like 2.1.
 
 2005-06-07  Darin Adler  <darin@apple.com>
 
