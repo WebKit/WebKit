@@ -1,5 +1,12 @@
 2006-01-12  David Hyatt <hyatt@apple.com>
 
+	Make the editing directory compile on Win32.
+	
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * khtml/editing/jsediting.cpp:
+
+2006-01-12  David Hyatt <hyatt@apple.com>
+
 	Get the HTML, XML, and Rendering directories compiling on
 	Win32.  Add the bash script for generated files as well.
 

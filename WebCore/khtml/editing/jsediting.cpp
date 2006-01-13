@@ -358,7 +358,7 @@ bool execUndo(Frame *frame, bool userInterface, const DOMString &value)
 bool execUnselect(Frame *frame, bool userInterface, const DOMString &value)
 {
     // FIXME: 6498 Should just be able to call m_frame->selection().clear()
-    frame->setSelection(SelectionController());
+    frame->setSelection(khtml::SelectionController());
     return true;
 }
 
