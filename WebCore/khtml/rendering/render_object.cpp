@@ -1158,10 +1158,10 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     // values and our width/height values to make sure the curves can all fit. If not, then we won't paint
     // any border radii.
     bool render_radii = false;
-    QSize topLeft = style->borderTopLeftRadius();
-    QSize topRight = style->borderTopRightRadius();
-    QSize bottomLeft = style->borderBottomLeftRadius();
-    QSize bottomRight = style->borderBottomRightRadius();
+    IntSize topLeft = style->borderTopLeftRadius();
+    IntSize topRight = style->borderTopRightRadius();
+    IntSize bottomLeft = style->borderBottomLeftRadius();
+    IntSize bottomRight = style->borderBottomRightRadius();
 
     if (style->hasBorderRadius()) {
         int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());

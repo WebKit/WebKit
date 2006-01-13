@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQSize.h"
+#ifndef INTSIZE_H_
+#define INTSIZE_H_
 
-QSize::QSize() : w(-1), h(-1)
-{
-}
-
-QSize::QSize(int width, int height) : w(width), h(height)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QSize::QSize(const NSSize &s) : w((int)s.width), h((int)s.height)
-{
-}
+#if __APPLE__
+// workaround for <rdar://problem/4294625>
+#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
+#undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 #endif
 
-QSize::QSize(const CGSize &s) : w((int)s.width), h((int)s.height)
-{
-}
-
-bool QSize::isValid() const
-{
-    return w >= 0 && h >= 0;
-}
-
-QSize QSize::expandedTo(const QSize &o) const
-{
-    return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QSize::operator NSSize() const
-{
-    return NSMakeSize(w, h);
-}
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGSize NSSize;
+#else
+typedef struct _NSSize NSSize;
+#endif
+typedef struct CGSize CGSize;
 #endif
 
-QSize::operator CGSize() const
-{
-    return CGSizeMake(w, h);
+namespace WebCore {
+
+class IntSize {
+public:
+    IntSize();
+    IntSize(int,int);
+    
+#if __APPLE__
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit IntSize(const NSSize &);
+#endif
+    explicit IntSize(const CGSize &);
+#endif
+
+    bool isValid() const;
+    int width() const { return w; }
+    int height() const { return h; }
+    void setWidth(int width) { w = width; }
+    void setHeight(int height) { h = height; }
+    IntSize expandedTo(const IntSize &) const;
+
+#if __APPLE__    
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    operator NSSize() const;
+#endif
+    operator CGSize() const;
+#endif
+
+    friend IntSize operator+(const IntSize &, const IntSize &);
+    friend bool operator==(const IntSize &, const IntSize &);
+    friend bool operator!=(const IntSize &, const IntSize &);
+
+private:
+    int w;
+    int h;
+};
+
 }
 
-QSize operator+(const QSize &a, const QSize &b)
-{
-    return QSize(a.w + b.w, a.h + b.h);
-}
+// FIXME: Remove when the engine files have been converted to be in the WebCore namespace.
+using WebCore::IntSize;
 
-bool operator==(const QSize &a, const QSize &b)
-{
-    return a.w == b.w && a.h == b.h;
-}
-
-bool operator!=(const QSize &a, const QSize &b)
-{
-    return a.w != b.w || a.h != b.h;
-}
+#endif

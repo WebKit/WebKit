@@ -40,13 +40,13 @@ typedef struct CGSize NSSize;
 typedef struct _NSSize NSSize;
 #endif
 typedef struct CGSize CGSize;
-class QSize;
+class IntSize;
 
 class QSizeF {
 public:
     QSizeF();
     QSizeF(float, float);
-    QSizeF(const QSize&);
+    QSizeF(const IntSize&);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QSizeF(const NSSize&);
 #endif

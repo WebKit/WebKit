@@ -266,7 +266,7 @@ void RenderLineEdit::calcMinMaxWidth()
     // Let the widget tell us how big it wants to be.
     m_updating = true;
     int size = element()->size();
-    QSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 20));
+    IntSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 20));
     m_updating = false;
 
     setIntrinsicWidth( s.width() );
@@ -547,7 +547,7 @@ void RenderFileButton::calcMinMaxWidth()
 
     // Let the widget tell us how big it wants to be.
     int size = element()->size();
-    QSize s(static_cast<KWQFileButton *>(widget())->sizeForCharacterWidth(size > 0 ? size : 20));
+    IntSize s(static_cast<KWQFileButton *>(widget())->sizeForCharacterWidth(size > 0 ? size : 20));
 
     setIntrinsicWidth( s.width() );
     setIntrinsicHeight( s.height() );
@@ -817,12 +817,12 @@ void RenderSelect::layout( )
             size = kMin(static_cast<QListBox*>(m_widget)->count(), 10U);
 
         // Let the widget tell us how big it wants to be.
-        QSize s(w->sizeForNumberOfLines(size));
+        IntSize s(w->sizeForNumberOfLines(size));
         setIntrinsicWidth( s.width() );
         setIntrinsicHeight( s.height() );
     }
     else {
-        QSize s(m_widget->sizeHint());
+        IntSize s(m_widget->sizeHint());
         setIntrinsicWidth( s.width() );
         setIntrinsicHeight( s.height() );
     }
@@ -1012,7 +1012,7 @@ void RenderTextArea::calcMinMaxWidth()
     KHTMLAssert( !minMaxKnown() );
 
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
-    QSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1), kMax(element()->rows(), 1)));
+    IntSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1), kMax(element()->rows(), 1)));
 
     setIntrinsicWidth( size.width() );
     setIntrinsicHeight( size.height() );
@@ -1160,13 +1160,13 @@ void RenderSlider::calcMinMaxWidth()
     KHTMLAssert(!minMaxKnown());
     
     // Let the widget tell us how big it wants to be.
-    QSize s(widget()->sizeHint());
+    IntSize s(widget()->sizeHint());
     bool widthSet = !style()->width().isAuto();
     bool heightSet = !style()->height().isAuto();
     if (heightSet && !widthSet) {
         // Flip the intrinsic dimensions.
         int barLength = s.width();
-        s = QSize(s.height(), barLength);
+        s = IntSize(s.height(), barLength);
     }
     setIntrinsicWidth(s.width());
     setIntrinsicHeight(s.height());

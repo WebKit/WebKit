@@ -26,7 +26,7 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
-#include "KWQSize.h"
+#include "IntSize.h"
 #include "KWQPointArray.h"
 
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -39,7 +39,7 @@ typedef struct CGRect CGRect;
 class QRect {
 public:
     QRect();
-    QRect(QPoint p, QSize s);
+    QRect(QPoint p, IntSize s);
     QRect(int, int, int, int);
     QRect(const QPoint &, const QPoint &);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -67,7 +67,7 @@ public:
     
     void moveTopLeft(const QPoint &p) { xp += p.x(); yp += p.y(); } 
 
-    QSize size() const;
+    IntSize size() const;
     void setX(int x) { xp = x; }
     void setY(int y) { yp = y; }
     void setWidth(int width) { w = width; }

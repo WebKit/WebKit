@@ -249,7 +249,7 @@ void QLineEdit::setEdited(bool flag)
 
 static const NSSize textFieldMargins = { 8, 6 };
 
-QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
+IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 {
     // Figure out how big a text field needs to be for a given number of characters
     // (using "0" as the nominal character).
@@ -284,9 +284,9 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     size.width += ceilf([renderer floatWidthForRun:&run style:&style] * numCharacters);
 
-    return QSize(size);
+    return IntSize(size);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QSize(0, 0);
+    return IntSize(0, 0);
 }
 
 int QLineEdit::baselinePosition(int height) const

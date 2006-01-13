@@ -28,7 +28,7 @@
 
 class QWidget;
 
-QSize QStyle::sizeFromContents(ContentType, QWidget *, const QSize &s) const
+IntSize QStyle::sizeFromContents(ContentType, QWidget *, const IntSize &s) const
 {
-    return QSize(s.width() + 28, 32);
+    return IntSize(s.width() + 28, 32);
 }

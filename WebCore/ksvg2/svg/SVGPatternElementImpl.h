@@ -100,7 +100,7 @@ namespace KSVG
     private:
         // notifyAttributeChange helpers:
         void fillAttributesFromReferencePattern(const SVGPatternElementImpl *target, KCanvasMatrix &patternTransformMatrix) const;
-        void drawPatternContentIntoTile(const SVGPatternElementImpl *target, const QSize &newSize, KCanvasMatrix patternTransformMatrix) const;
+        void drawPatternContentIntoTile(const SVGPatternElementImpl *target, const IntSize &newSize, KCanvasMatrix patternTransformMatrix) const;
         void notifyClientsToRepaint() const;
     };
 };

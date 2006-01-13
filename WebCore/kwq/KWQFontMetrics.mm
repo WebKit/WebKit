@@ -300,7 +300,7 @@ QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags,
     return QRect(x, y, width, height).intersect(boundingRect(str, tabWidth, xpos));
 }
 
-QSize QFontMetrics::size(int, const QString &qstring, int tabWidth, int xpos) const
+IntSize QFontMetrics::size(int, const QString &qstring, int tabWidth, int xpos) const
 {
-    return QSize(width(qstring, tabWidth, xpos), height());
+    return IntSize(width(qstring, tabWidth, xpos), height());
 }

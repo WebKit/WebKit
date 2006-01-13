@@ -49,7 +49,7 @@ void CachedImageCallback::notifyUpdate()
 { 
     if (cachedImage) {
         cachedImage->do_notify (cachedImage->pixmap(), cachedImage->pixmap().rect()); 
-        QSize s = cachedImage->pixmap_size();
+        IntSize s = cachedImage->pixmap_size();
         cachedImage->setSize(s.width() * s.height() * 2);
 
         // After receiving the image header we are guaranteed to know
@@ -84,7 +84,7 @@ void CachedImageCallback::notifyFinished()
         cachedImage->do_notify (cachedImage->pixmap(), cachedImage->pixmap().rect()); 
         cachedImage->m_loading = false;
         cachedImage->checkNotify();
-        QSize s = cachedImage->pixmap_size();
+        IntSize s = cachedImage->pixmap_size();
         cachedImage->setSize(s.width() * s.height() * 2);
 
         Request *r = cachedImage->m_request;

@@ -251,9 +251,9 @@ QWidget::FocusPolicy QSlider::focusPolicy() const
     return QWidget::focusPolicy();
 }
 
-QSize QSlider::sizeHint() const 
+IntSize QSlider::sizeHint() const 
 {
-    return QSize(dimensions()[dimWidth], dimensions()[dimHeight]);
+    return IntSize(dimensions()[dimWidth], dimensions()[dimHeight]);
 }
 
 void QSlider::setValue(double v)

@@ -51,7 +51,7 @@ KWQWindowWidget::~KWQWindowWidget()
     delete d;
 }
 
-QSize KWQWindowWidget::sizeHint() const
+IntSize KWQWindowWidget::sizeHint() const
 {
     return size();
 }

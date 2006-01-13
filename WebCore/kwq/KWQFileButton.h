@@ -44,7 +44,7 @@ public:
     void setFilename(const QString &);
     void click(bool sendMouseEvents);
     
-    QSize sizeForCharacterWidth(int characters) const;
+    IntSize sizeForCharacterWidth(int characters) const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
     int baselinePosition(int height) const;

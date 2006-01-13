@@ -27,7 +27,7 @@
 #define KWQSTYLE_H_
 
 #include "KWQObject.h"
-#include "KWQSize.h"
+#include "IntSize.h"
 
 class QWidget;
 
@@ -60,7 +60,7 @@ public:
         return 0;
     }
     
-    QSize sizeFromContents(ContentType, QWidget *, const QSize &) const;
+    IntSize sizeFromContents(ContentType, QWidget *, const IntSize &) const;
 };
 
 #endif

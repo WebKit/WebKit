@@ -91,7 +91,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, QRect& r)
     }
 }
 
-QRect RenderThemeMac::inflateRect(const QRect& r, const QSize& size, const int* margins) const
+QRect RenderThemeMac::inflateRect(const QRect& r, const IntSize& size, const int* margins) const
 {
     // Only do the inflation if the available width/height are too small.  Otherwise try to
     // fit the glow/check space into the available box's width/height.
@@ -181,7 +181,7 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-void RenderThemeMac::setControlSize(NSCell* cell, const QSize* sizes, const QSize& minSize)
+void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize)
 {
     NSControlSize size;
     if (minSize.width() >= sizes[NSRegularControlSize].width() &&
@@ -196,15 +196,15 @@ void RenderThemeMac::setControlSize(NSCell* cell, const QSize* sizes, const QSiz
         [cell setControlSize:size];
 }
 
-QSize RenderThemeMac::sizeForFont(RenderStyle* style, const QSize* sizes) const
+IntSize RenderThemeMac::sizeForFont(RenderStyle* style, const IntSize* sizes) const
 {
     return sizes[controlSizeForFont(style)];
 }
 
-void RenderThemeMac::setSizeFromFont(RenderStyle* style, const QSize* sizes) const
+void RenderThemeMac::setSizeFromFont(RenderStyle* style, const IntSize* sizes) const
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-    QSize size = sizeForFont(style, sizes);
+    IntSize size = sizeForFont(style, sizes);
     if (style->width().isIntrinsicOrAuto() && size.width() > 0)
         style->setWidth(Length(size.width(), Fixed));
     if (style->height().isAuto() && size.height() > 0)
@@ -264,9 +264,9 @@ bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
     return false;
 }
 
-const QSize* RenderThemeMac::checkboxSizes() const
+const IntSize* RenderThemeMac::checkboxSizes() const
 {
-    static const QSize sizes[3] = { QSize(14, 14), QSize(12, 12), QSize(10, 10) };
+    static const IntSize sizes[3] = { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10) };
     return sizes;
 }
 
@@ -292,7 +292,7 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
     }
     
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(checkbox, checkboxSizes(), QSize(r.width(), r.height()));
+    setControlSize(checkbox, checkboxSizes(), IntSize(r.width(), r.height()));
     
     // Update the various states we respond to.
     updateCheckedState(checkbox, o);
@@ -325,9 +325,9 @@ bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
     return false;
 }
 
-const QSize* RenderThemeMac::radioSizes() const
+const IntSize* RenderThemeMac::radioSizes() const
 {
-    static const QSize sizes[3] = { QSize(14, 15), QSize(12, 13), QSize(10, 10) };
+    static const IntSize sizes[3] = { IntSize(14, 15), IntSize(12, 13), IntSize(10, 10) };
     return sizes;
 }
 
@@ -351,7 +351,7 @@ void RenderThemeMac::setRadioCellState(const RenderObject* o, const QRect& r)
     }
     
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(radio, radioSizes(), QSize(r.width(), r.height()));
+    setControlSize(radio, radioSizes(), IntSize(r.width(), r.height()));
     
     // Update the various states we respond to.
     updateCheckedState(radio, o);
@@ -432,9 +432,9 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     }
 }
 
-const QSize* RenderThemeMac::buttonSizes() const
+const IntSize* RenderThemeMac::buttonSizes() const
 {
-    static const QSize sizes[3] = { QSize(0, 21), QSize(0, 18), QSize(0, 15) };
+    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
     return sizes;
 }
 
@@ -476,7 +476,7 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
     } else if ([button bezelStyle] != NSRoundedBezelStyle)
         [button setBezelStyle:NSRoundedBezelStyle];
             
-    setControlSize(button, buttonSizes(), QSize(r.width(), r.height()));
+    setControlSize(button, buttonSizes(), IntSize(r.width(), r.height()));
     
     // Update the various states we respond to.
     updateCheckedState(button, o);
@@ -492,7 +492,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     
     // We inflate the rect as needed to account for padding included in the cell to accommodate the button
     // shadow.  We don't consider this part of the bounds of the control in WebKit.
-    QSize size = buttonSizes()[[button controlSize]];
+    IntSize size = buttonSizes()[[button controlSize]];
     size.setWidth(r.width());
     QRect inflatedRect = r;
     if ([button bezelStyle] == NSRoundedBezelStyle) {

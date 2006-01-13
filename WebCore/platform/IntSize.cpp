@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSIZE_H_
-#define QSIZE_H_
+#include "config.h"
+#include "IntSize.h"
 
-#include "KWQDef.h"
+namespace WebCore {
 
-// workaround for <rdar://problem/4294625>
-#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
-#undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-#endif
+IntSize::IntSize() : w(-1), h(-1)
+{
+}
 
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-typedef struct CGSize NSSize;
-#else
-typedef struct _NSSize NSSize;
-#endif
-typedef struct CGSize CGSize;
+IntSize::IntSize(int width, int height) : w(width), h(height)
+{
+}
 
-class QSize {
-public:
-    QSize();
-    QSize(int,int);
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QSize(const NSSize &);
-#endif
-    explicit QSize(const CGSize &);
+bool IntSize::isValid() const
+{
+    return w >= 0 && h >= 0;
+}
 
-    bool isValid() const;
-    int width() const { return w; }
-    int height() const { return h; }
-    void setWidth(int width) { w = width; }
-    void setHeight(int height) { h = height; }
-    QSize expandedTo(const QSize &) const;
-    
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    operator NSSize() const;
-#endif
-    operator CGSize() const;
+IntSize IntSize::expandedTo(const IntSize &o) const
+{
+    return IntSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
+}
 
-    friend QSize operator+(const QSize &, const QSize &);
-    friend bool operator==(const QSize &, const QSize &);
-    friend bool operator!=(const QSize &, const QSize &);
+IntSize operator+(const IntSize &a, const IntSize &b)
+{
+    return IntSize(a.w + b.w, a.h + b.h);
+}
 
-private:
-    int w;
-    int h;
-};
+bool operator==(const IntSize &a, const IntSize &b)
+{
+    return a.w == b.w && a.h == b.h;
+}
 
-#endif
+bool operator!=(const IntSize &a, const IntSize &b)
+{
+    return a.w != b.w || a.h != b.h;
+}
+
+}

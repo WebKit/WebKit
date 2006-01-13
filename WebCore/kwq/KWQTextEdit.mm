@@ -367,7 +367,7 @@ void QTextEdit::setWritingDirection(QPainter::TextDirection direction)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
  
-QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
+IntSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
 {
     KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
     NSSize size = {0,0};
@@ -376,7 +376,7 @@ QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
     size = [textArea sizeWithColumns:numColumns rows:numRows];
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QSize((int)ceil(size.width), (int)ceil(size.height));
+    return IntSize((int)ceil(size.width), (int)ceil(size.height));
 }
 
 QWidget::FocusPolicy QTextEdit::focusPolicy() const

@@ -158,7 +158,7 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
     if (!cgLayer) {
         // FIXME: we might not get back a layer if this is a loaded image
         // maybe this logic should go into KCanvasImage?
-        cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + QSize(1,1)), NULL);  // FIXME + 1 is a hack
+        cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + IntSize(1,1)), NULL);  // FIXME + 1 is a hack
         // FIXME: we should composite the original image onto the layer...
         quartzImage->setCGLayer(cgLayer);
         CGLayerRelease(cgLayer);

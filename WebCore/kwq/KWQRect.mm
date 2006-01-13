@@ -39,7 +39,7 @@ QRect::QRect(int x, int y, int width, int height) : xp(x), yp(y), w(width), h(he
 {
 }
 
-QRect::QRect(QPoint p, QSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+QRect::QRect(QPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
 {
 }
 
@@ -106,9 +106,9 @@ QPoint QRect::bottomLeft() const
     return QPoint(left(),bottom());
 }
 
-QSize QRect::size() const
+IntSize QRect::size() const
 {
-    return QSize(w,h);
+    return IntSize(w,h);
 }
 
 QRect QRect::unite(const QRect &r) const

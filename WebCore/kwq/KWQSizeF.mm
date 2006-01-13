@@ -25,8 +25,8 @@
  */
 
 #include "config.h"
-#import "KWQSizeF.h"
-#import "KWQSize.h"
+#import "IntSizeF.h"
+#import "IntSize.h"
 
 QSizeF::QSizeF() : w(-1.0f), h(-1.0f)
 {
@@ -36,7 +36,7 @@ QSizeF::QSizeF(float width, float height) : w(width), h(height)
 {
 }
 
-QSizeF::QSizeF(const QSize& o) : w(o.width()), h(o.height())
+QSizeF::QSizeF(const IntSize& o) : w(o.width()), h(o.height())
 {
 }
 

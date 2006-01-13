@@ -1,3 +1,146 @@
+2006-01-13  David Hyatt  <hyatt@apple.com>
+
+        Eliminate QSize and add the new class IntSize in the
+        platform subdirectory.  Factor out the Objective-C portion
+        of IntSize into a platform-specific IntSize.mm that resides
+        in the mac subdirectory.
+
+        Win32 can just compile IntSize.cpp and doesn't need any
+        platform-specific extension here.
+        
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasImage.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasImageQuartz::init):
+        (KCanvasImageQuartz::size):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::contextForImage):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Image::getValueProperty):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/misc/CachedImage.cpp:
+        (khtml::CachedImage::pixmap_size):
+        (khtml::CachedImage::data):
+        * khtml/misc/CachedImage.h:
+        * khtml/misc/CachedImageCallback.cpp:
+        (khtml::CachedImageCallback::notifyUpdate):
+        (khtml::CachedImageCallback::notifyFinished):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::calcMinMaxWidth):
+        (RenderFileButton::calcMinMaxWidth):
+        (RenderSelect::layout):
+        (RenderTextArea::calcMinMaxWidth):
+        (RenderSlider::calcMinMaxWidth):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintBorder):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::borderTopLeftRadius):
+        (khtml::RenderStyle::borderTopRightRadius):
+        (khtml::RenderStyle::borderBottomLeftRadius):
+        (khtml::RenderStyle::borderBottomRightRadius):
+        (khtml::RenderStyle::setBorderTopLeftRadius):
+        (khtml::RenderStyle::setBorderTopRightRadius):
+        (khtml::RenderStyle::setBorderBottomLeftRadius):
+        (khtml::RenderStyle::setBorderBottomRightRadius):
+        (khtml::RenderStyle::setBorderRadius):
+        (khtml::RenderStyle::initialBorderRadius):
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::inflateRect):
+        (khtml::RenderThemeMac::setControlSize):
+        (khtml::RenderThemeMac::sizeForFont):
+        (khtml::RenderThemeMac::setSizeFromFont):
+        (khtml::RenderThemeMac::checkboxSizes):
+        (khtml::RenderThemeMac::setCheckboxCellState):
+        (khtml::RenderThemeMac::radioSizes):
+        (khtml::RenderThemeMac::setRadioCellState):
+        (khtml::RenderThemeMac::buttonSizes):
+        (khtml::RenderThemeMac::setButtonCellState):
+        (khtml::RenderThemeMac::paintButton):
+        * ksvg2/svg/SVGMaskElementImpl.cpp:
+        (KSVG::SVGMaskElementImpl::attributeChanged):
+        (KSVG::SVGMaskElementImpl::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::drawPatternContentIntoTile):
+        (SVGPatternElementImpl::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElementImpl.h:
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::sizeForCharacterWidth):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::size):
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget):
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines):
+        * kwq/KWQObject.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::addRoundedRectClip):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        (QPixmap::size):
+        (QPixmap::resize):
+        * kwq/KWQRect.h:
+        * kwq/KWQRect.mm:
+        (QRect::QRect):
+        (QRect::size):
+        * kwq/KWQSize.h: Removed.
+        * kwq/KWQSize.mm: Removed.
+        * kwq/KWQSizeF.h:
+        * kwq/KWQSizeF.mm:
+        (QSizeF::QSizeF):
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (QSlider::sizeHint):
+        * kwq/KWQStyle.cpp:
+        (QStyle::sizeFromContents):
+        * kwq/KWQStyle.h:
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::sizeWithColumnsAndRows):
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::sizeHint):
+        (QWidget::size):
+        (QWidget::resize):
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::sizeHint):
+        * platform: Added.
+        * platform/IntSize.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::isValid):
+        (WebCore::IntSize::expandedTo):
+        (WebCore::operator+):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/IntSize.h: Added.
+        * platform/mac: Added.
+        * platform/mac/IntSize.mm: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator NSSize):
+        (WebCore::IntSize::operator CGSize):
+
 2006-01-13  Maks Orlovich <maksim@kde.org>
 
         Reviewed, redone a bit, and landed by Darin (help from Eric too).

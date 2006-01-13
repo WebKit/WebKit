@@ -267,7 +267,7 @@ bool QListBox::isEnabled()
     return _enabled;
 }
 
-QSize QListBox::sizeForNumberOfLines(int lines) const
+IntSize QListBox::sizeForNumberOfLines(int lines) const
 {
     NSSize size = {0,0};
 
@@ -322,9 +322,9 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     size = [NSScrollView frameSizeForContentSize:contentSize hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
     size.width += [NSScroller scrollerWidthForControlSize:NSSmallControlSize] - [NSScroller scrollerWidth] + leftMargin + rightMargin;
 
-    return QSize(size);
+    return IntSize(size);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QSize(0, 0);
+    return IntSize(0, 0);
 }
 
 QWidget::FocusPolicy QListBox::focusPolicy() const

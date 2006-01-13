@@ -32,7 +32,7 @@
 #import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 
-KJavaAppletWidget::KJavaAppletWidget(const QSize &size, Frame *frame, const QMap<QString, QString> &args)
+KJavaAppletWidget::KJavaAppletWidget(const IntSize &size, Frame *frame, const QMap<QString, QString> &args)
 {
     KWQ_BLOCK_EXCEPTIONS;
     

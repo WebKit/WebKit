@@ -34,9 +34,9 @@ public:
     virtual ~KCanvasImage() { };
 
     virtual void init(const QPixmap &) = 0;
-    virtual void init(QSize) = 0;
+    virtual void init(IntSize) = 0;
 
-    virtual QSize size() = 0;
+    virtual IntSize size() = 0;
 };
 
 #endif

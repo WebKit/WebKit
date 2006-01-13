@@ -27,7 +27,7 @@
 #define QFONTMETRICS_H_
 
 #include "KWQRect.h"
-#include "KWQSize.h"
+#include "IntSize.h"
 #include "KWQString.h"
 
 class QFont;
@@ -64,7 +64,7 @@ public:
     QRect boundingRect(const QString &, int tabWidth, int xpos, int len=-1) const;
     QRect boundingRect(int, int, int, int, int, const QString &, int tabWidth, int xpos) const;
 
-    QSize size(int, const QString &, int tabWidth, int xpos) const;
+    IntSize size(int, const QString &, int tabWidth, int xpos) const;
 
     int baselineOffset() const { return ascent(); }
     

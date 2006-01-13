@@ -29,6 +29,7 @@
 #include "KWQNamespace.h"
 #include "KWQPaintDevice.h"
 #include "KWQString.h"
+#include "IntSize.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -49,7 +50,6 @@ class QWMatrix;
 class QPainter;
 class QPixmap;
 class QRect;
-class QSize;
 
 namespace khtml {
     class CachedImageCallback;
@@ -62,7 +62,7 @@ class QPixmap : public QPaintDevice, public Qt {
 public:
     QPixmap();
     QPixmap(void *MIMEType);
-    QPixmap(const QSize&);
+    QPixmap(const IntSize&);
     QPixmap(const QByteArray&);
 #if __APPLE__
     QPixmap(const QByteArray&, NSString *MIMEType);
@@ -76,11 +76,11 @@ public:
     
     bool isNull() const;
 
-    QSize size() const;
+    IntSize size() const;
     QRect rect() const;
     int width() const;
     int height() const;
-    void resize(const QSize &);
+    void resize(const IntSize &);
     void resize(int, int);
 
     bool mask() const;

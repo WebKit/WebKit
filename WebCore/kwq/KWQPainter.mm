@@ -802,8 +802,8 @@ void QPainter::addClip(const QRect &rect)
     [NSBezierPath clipRect:rect];
 }
 
-void QPainter::addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
-                                  const QSize& bottomLeft, const QSize& bottomRight)
+void QPainter::addRoundedRectClip(const QRect& rect, const IntSize& topLeft, const IntSize& topRight,
+                                  const IntSize& bottomLeft, const IntSize& bottomRight)
 {
     if (data->state.paintingDisabled)
         return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQSLIDER_H_
-#define KWQSLIDER_H_
+#include "config.h"
+#include "IntSize.h"
 
-#include <qwidget.h>
-#include "KWQNamespace.h"
+namespace WebCore {
 
-class QSlider : public QWidget {
-public:
-    QSlider();
-    ~QSlider();
-
-    IntSize sizeHint() const;
-    virtual void setFont(const QFont &f);
-
-    void setValue(double v);
-    void setMinValue(double v);
-    void setMaxValue(double v);
-    
-    double value() const;
-    double minValue() const;
-    double maxValue() const;
-    
-    void sliderValueChanged();
-
-    const int* dimensions() const;
-
-    void clicked();
-    
-    virtual FocusPolicy focusPolicy() const;
-
-
-private:
-    KWQSignal m_sliderValueChanged;
-    KWQSignal m_clicked;
-    double m_minVal;
-    double m_maxVal;
-    double m_val;
-};
-
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+IntSize::IntSize(const NSSize &s) : w((int)s.width), h((int)s.height)
+{
+}
 #endif
+
+IntSize::IntSize(const CGSize &s) : w((int)s.width), h((int)s.height)
+{
+}
+
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+IntSize::operator NSSize() const
+{
+    return NSMakeSize(w, h);
+}
+#endif
+
+IntSize::operator CGSize() const
+{
+    return CGSizeMake(w, h);
+}
+
+}

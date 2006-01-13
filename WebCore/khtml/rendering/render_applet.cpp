@@ -90,7 +90,7 @@ void RenderApplet::createWidgetIfNecessary()
                 child = child->nextSibling();
             }
         
-            setQWidget(new KJavaAppletWidget(QSize(width, height), element()->getDocument()->frame(), m_args));
+            setQWidget(new KJavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
         }
     }
 }

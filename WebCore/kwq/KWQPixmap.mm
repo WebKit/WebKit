@@ -25,7 +25,7 @@
 
 #include "config.h"
 #import "KWQPixmap.h"
-#import "KWQSize.h"
+#import "IntSize.h"
 #import "KWQRect.h"
 
 #import "CachedImageCallback.h"
@@ -67,7 +67,7 @@ QPixmap::QPixmap(void *MIME)
     m_needCopyOnWrite = false;
 }
 
-QPixmap::QPixmap(const QSize& sz)
+QPixmap::QPixmap(const IntSize& sz)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:sz]);
     m_MIMEType = nil;
@@ -213,11 +213,11 @@ bool QPixmap::isNull() const
     return !m_imageRenderer || [m_imageRenderer isNull];
 }
 
-QSize QPixmap::size() const
+IntSize QPixmap::size() const
 {
     if (!m_imageRenderer)
-        return QSize(0, 0);
-    return QSize([m_imageRenderer size]);
+        return IntSize(0, 0);
+    return IntSize([m_imageRenderer size]);
 }
 
 QRect QPixmap::rect() const
@@ -235,7 +235,7 @@ int QPixmap::height() const
     return size().height();
 }
 
-void QPixmap::resize(const QSize& sz)
+void QPixmap::resize(const IntSize& sz)
 {
     resize(sz.width(), sz.height());
 }

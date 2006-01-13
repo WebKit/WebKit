@@ -60,13 +60,13 @@ protected:
     virtual void setButtonSize(RenderStyle* style) const;
 
 private:
-    QRect inflateRect(const QRect& r, const QSize& size, const int* margins) const;
+    QRect inflateRect(const QRect& r, const IntSize& size, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle* style) const;
-    void setControlSize(NSCell* cell, const QSize* sizes, const QSize& minSize);
-    void setSizeFromFont(RenderStyle* style, const QSize* sizes) const;
-    QSize sizeForFont(RenderStyle* style, const QSize* sizes) const;
+    void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize);
+    void setSizeFromFont(RenderStyle* style, const IntSize* sizes) const;
+    IntSize sizeForFont(RenderStyle* style, const IntSize* sizes) const;
     void setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize size) const;
     
     void addIntrinsicMargins(RenderStyle* style, NSControlSize size) const;
@@ -77,16 +77,16 @@ private:
     void updatePressedState(NSCell* cell, const RenderObject* o);
 
     // Helpers for adjusting appearance and for painting
-    const QSize* checkboxSizes() const;
+    const IntSize* checkboxSizes() const;
     const int* checkboxMargins() const;
     void setCheckboxCellState(const RenderObject* o, const QRect& r);
 
-    const QSize* radioSizes() const;
+    const IntSize* radioSizes() const;
     const int* radioMargins() const;
     void setRadioCellState(const RenderObject* o, const QRect& r);
 
     void setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const;
-    const QSize* buttonSizes() const;
+    const IntSize* buttonSizes() const;
     const int* buttonMargins() const;
     void setButtonCellState(const RenderObject* o, const QRect& r);
 

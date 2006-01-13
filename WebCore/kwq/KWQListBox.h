@@ -51,7 +51,7 @@ public:
     QListBox(QWidget *parent);
     ~QListBox();
 
-    QSize sizeForNumberOfLines(int numLines) const;
+    IntSize sizeForNumberOfLines(int numLines) const;
     
     uint count() const { return _items.count(); }
 

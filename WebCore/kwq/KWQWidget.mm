@@ -95,10 +95,10 @@ QWidget::~QWidget()
     delete data;
 }
 
-QSize QWidget::sizeHint() const 
+IntSize QWidget::sizeHint() const 
 {
     // May be overriden by subclasses.
-    return QSize(0,0);
+    return IntSize(0,0);
 }
 
 void QWidget::resize(int w, int h) 
@@ -156,12 +156,12 @@ int QWidget::height() const
     return frameGeometry().size().height();
 }
 
-QSize QWidget::size() const 
+IntSize QWidget::size() const 
 {
     return frameGeometry().size();
 }
 
-void QWidget::resize(const QSize &s) 
+void QWidget::resize(const IntSize &s) 
 {
     resize(s.width(), s.height());
 }

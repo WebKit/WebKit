@@ -199,7 +199,7 @@ void SVGPatternElementImpl::fillAttributesFromReferencePattern(const SVGPatternE
         patternTransformMatrix = refPattern->patternTransform();
 }
 
-void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementImpl *target, const QSize &newSize, KCanvasMatrix patternTransformMatrix) const
+void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementImpl *target, const IntSize &newSize, KCanvasMatrix patternTransformMatrix) const
 {
     KRenderingDevice *device = QPainter::renderingDevice();
     
@@ -315,7 +315,7 @@ void SVGPatternElementImpl::notifyAttributeChange() const
     if(!m_paintServer || !m_paintServer->activeClient() || m_ignoreAttributeChanges)
         return;
 
-    QSize newSize = QSize(lroundf(width()->baseVal()->value()), lroundf(height()->baseVal()->value()));
+    IntSize newSize = IntSize(lroundf(width()->baseVal()->value()), lroundf(height()->baseVal()->value()));
     if(m_tile && (m_tile->size() == newSize) || newSize.width() < 1 || newSize.height() < 1)
         return;
 

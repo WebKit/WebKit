@@ -89,7 +89,7 @@ void KWQFileButton::click(bool sendMouseEvents)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QSize KWQFileButton::sizeForCharacterWidth(int characters) const
+IntSize KWQFileButton::sizeForCharacterWidth(int characters) const
 {
     ASSERT(characters > 0);
     NSView <WebCoreFileButton> *button = getView();
@@ -97,9 +97,9 @@ QSize KWQFileButton::sizeForCharacterWidth(int characters) const
     NSSize size = {0,0};
     KWQ_BLOCK_EXCEPTIONS;
     size = [button bestVisualFrameSizeForCharacterCount:characters];
-    return QSize(size);
+    return IntSize(size);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QSize(0, 0);
+    return IntSize(0, 0);
 }
 
 QRect KWQFileButton::frameGeometry() const

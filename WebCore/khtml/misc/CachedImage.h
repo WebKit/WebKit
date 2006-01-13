@@ -51,7 +51,7 @@ namespace khtml
 	const QPixmap &pixmap() const;
 	const QPixmap &tiled_pixmap(const QColor& bg);
 
-        QSize pixmap_size() const;    // returns the size of the complete (i.e. when finished) loading
+        IntSize pixmap_size() const;    // returns the size of the complete (i.e. when finished) loading
         QRect valid_rect() const;     // returns the rectangle of pixmap that has been loaded already
 
         void ref(CachedObjectClient *consumer);

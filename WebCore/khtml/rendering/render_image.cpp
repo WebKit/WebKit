@@ -284,7 +284,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
              pix.width() > 0 && pix.height() > 0 && image->valid_rect().isValid())
         {
-            QSize tintSize;
+            IntSize tintSize;
             if (resizeCache.isNull() && cWidth && cHeight)
             {
                 QRect scaledrect(image->valid_rect());
@@ -303,9 +303,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 // sometimes scaledrect.width/height are off by one because
                 // of rounding errors. if the image is fully loaded, we
                 // make sure that we don't do unnecessary resizes during painting
-                QSize s(scaledrect.size());
-                if(image->valid_rect().size() == QSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
-                    s = QSize(cWidth, cHeight);
+                IntSize s(scaledrect.size());
+                if(image->valid_rect().size() == IntSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
+                    s = IntSize(cWidth, cHeight);
                 if(QABS(s.width() - cWidth) < 2) // rounding errors
                     s.setWidth(cWidth);
                 if(resizeCache.size() != s)

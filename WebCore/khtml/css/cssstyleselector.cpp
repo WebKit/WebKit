@@ -3521,7 +3521,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         else if (height == 0)
             width = 0; // Null out the other value.
 
-        QSize size(width, height);
+        IntSize size(width, height);
         switch (id) {
             case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
                 style->setBorderTopLeftRadius(size);

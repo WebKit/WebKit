@@ -43,7 +43,7 @@ class KWQWindowWidget : public QWidget
 
     KWQWindowWidget(WebCoreFrameBridge *bridge);
 
-    virtual QSize sizeHint() const;
+    virtual IntSize sizeHint() const;
     virtual QRect frameGeometry() const;
     virtual void setFrameGeometry(const QRect &);
 

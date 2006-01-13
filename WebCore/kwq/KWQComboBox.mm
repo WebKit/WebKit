@@ -158,7 +158,7 @@ void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool en
     _widthGood = false;
 }
 
-QSize QComboBox::sizeHint() const 
+IntSize QComboBox::sizeHint() const 
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -209,12 +209,12 @@ QSize QComboBox::sizeHint() const
         _widthGood = true;
     }
     
-    return QSize(_width + dimensions()[widthNotIncludingText],
+    return IntSize(_width + dimensions()[widthNotIncludingText],
         static_cast<int>([[button cell] cellSize].height) - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QSize(0, 0);
+    return IntSize(0, 0);
 }
 
 QRect QComboBox::frameGeometry() const
