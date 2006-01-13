@@ -155,6 +155,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQArrayImpl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQArrayImpl.h"
 				>
 			</File>
