@@ -4,6 +4,17 @@
 
         Remove CG dependencies from kcanvas/device/quartz
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6521
+        Adding file omitted from last commit.
+
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::paint): removed cg calls
+
+2006-01-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove CG dependencies from kcanvas/device/quartz
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6521
 
         * kcanvas/KCanvasFilters.h:
         * kcanvas/KCanvasResources.h:

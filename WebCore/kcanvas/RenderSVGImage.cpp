@@ -61,28 +61,22 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     context->concatCTM(QMatrix().translate(parentX, parentY));
     translateForAttributes();
     
-    // FIXME: All Quartz dependencies should be removed from this method!
-    CGContextRef cgContext = paintInfo.p->currentContext();
     QRectF boundingBox(0, 0, width(), height());
-    
-    QString clipname = style()->svgStyle()->clipPath().mid(1);
-    KCanvasClipperQuartz *clipper = static_cast<KCanvasClipperQuartz *>(getClipperById(document(), clipname));
-    if (clipper)
-        clipper->applyClip(cgContext, CGRect(boundingBox));
+            
+    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().mid(1)))
+        clipper->applyClip(boundingBox);
 
-    QString maskname = style()->svgStyle()->maskElement().mid(1);
-    KCanvasMaskerQuartz *masker = static_cast<KCanvasMaskerQuartz *>(getMaskerById(document(), maskname));
-    if (masker)
-        masker->applyMask(cgContext, CGRect(boundingBox));
+    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().mid(1)))
+        masker->applyMask(boundingBox);
 
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        filter->prepareFilter(QPainter::renderingDevice(), boundingBox);
+        filter->prepareFilter(boundingBox);
     
     khtml::RenderImage::paint(paintInfo, 0, 0);
     
     if (filter)
-        filter->applyFilter(QPainter::renderingDevice(), boundingBox);
+        filter->applyFilter(boundingBox);
 
     paintInfo.p->restore();
 }
