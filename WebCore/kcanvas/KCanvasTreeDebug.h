@@ -58,7 +58,7 @@ QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const QRect &);
 QTextStream &operator<<(QTextStream &ts, const QColor &);
 QTextStream &operator<<(QTextStream &ts, const QPoint &);
-QTextStream &operator<<(QTextStream &ts, const FloatSize &);
+QTextStream &operator<<(QTextStream &ts, const WebCore::FloatSize &);
 QTextStream &operator<<(QTextStream &ts, const QRectF &);
 QTextStream &operator<<(QTextStream &ts, const QPointF &);
 
