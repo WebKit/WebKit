@@ -1703,7 +1703,7 @@
 			Name="Generated Files"
 			>
 			<File
-				RelativePath="..\..\..\output\WebCore.intermediate\Debug\WebCore.intermediate\DerivedSources\css_grammar.cpp"
+				RelativePath="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources\css_grammar.cpp"
 				>
 			</File>
 		</Filter>
