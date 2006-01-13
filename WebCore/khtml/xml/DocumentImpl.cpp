@@ -1012,8 +1012,10 @@ void DocumentImpl::detach()
     m_render = 0;
     
     if (m_inPageCache) {
-        if ( render )
+#if __APPLE__
+        if (render)
             getAccObjectCache()->detach(render);
+#endif
         return;
     }
 
@@ -1069,6 +1071,7 @@ void DocumentImpl::removeAllDisconnectedNodeEventListeners()
 
 KWQAccObjectCache* DocumentImpl::getAccObjectCache()
 {
+#if __APPLE__
     // The only document that actually has a KWQAccObjectCache is the top-level
     // document.  This is because we need to be able to get from any KWQAccObject
     // to any other KWQAccObject on the same page.  Using a single cache allows
@@ -1101,6 +1104,7 @@ KWQAccObjectCache* DocumentImpl::getAccObjectCache()
     
     // this is the top-level document, so install a new cache
     m_accCache = new KWQAccObjectCache;
+#endif
     return m_accCache;
 }
 
@@ -1131,12 +1135,13 @@ void DocumentImpl::updateSelection()
         }
     }
     
+#if __APPLE__
     // send the AXSelectedTextChanged notification only if the new selection is non-null,
     // because null selections are only transitory (e.g. when starting an EditCommand, currently)
     if (KWQAccObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
         getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
     }
-
+#endif
 }
 
 Tokenizer *DocumentImpl::createTokenizer()
@@ -1286,8 +1291,10 @@ void DocumentImpl::implicitClose()
         if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
             view()->layout();
     }
+#if __APPLE__
     if (renderer() && KWQAccObjectCache::accessibilityEnabled())
         getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
+#endif
 }
 
 void DocumentImpl::setParsing(bool b)
@@ -2150,8 +2157,10 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         }
    }
 
+#if __APPLE__
     if (!focusChangeBlocked && m_focusNode && KWQAccObjectCache::accessibilityEnabled())
         getAccObjectCache()->handleFocusedUIElementChanged();
+#endif
 
 SetFocusNodeDone:
     updateRendering();

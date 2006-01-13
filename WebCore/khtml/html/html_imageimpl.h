@@ -64,7 +64,7 @@ public:
 
 protected:
 
-    void setLoadingImage(CachedImage *loadingImage);
+    void setLoadingImage(khtml::CachedImage *loadingImage);
 
 private:
     ElementImpl* m_element;

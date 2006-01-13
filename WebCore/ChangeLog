@@ -1,3 +1,30 @@
+2006-01-12  David Hyatt <hyatt@apple.com>
+
+	Get the HTML, XML, and Rendering directories compiling on
+	Win32.  Add the bash script for generated files as well.
+
+        * ForwardingHeaders/kio/job.h:
+        * ForwardingHeaders/ksslkeygen.h:
+        * ForwardingHeaders/qpoint.h:
+        * ForwardingHeaders/qpointarray.h:
+        * ForwardingHeaders/qtextstream.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (DOM::HTMLSelectElementImpl::state):
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::createRenderer):
+        * khtml/html/html_imageimpl.h:
+        (DOM::):
+        * khtml/rendering/render_object.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (DocumentImpl::detach):
+        (DocumentImpl::getAccObjectCache):
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::implicitClose):
+        (DocumentImpl::setFocusNode):
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQKJobClasses.h:
+
 2006-01-12  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

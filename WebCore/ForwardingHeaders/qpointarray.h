@@ -1,1 +1,1 @@
-#import "KWQPointArray.h"
+#include "KWQPointArray.h"

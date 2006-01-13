@@ -78,7 +78,7 @@ public:
 
     void emitData(const char *, int);
     void emitRedirection(const KURL &);
-    void emitResult(NSData *allData=nil);
+    void emitResult(NSData *allData=0);
     void emitReceivedResponse(NSURLResponse *);
 
     khtml::FormData postData() const;

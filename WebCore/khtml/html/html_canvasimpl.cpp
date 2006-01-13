@@ -73,7 +73,11 @@ void HTMLCanvasElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 RenderObject *HTMLCanvasElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-     return new (arena) RenderCanvasImage(this);
+#if __APPLE__
+    return new (arena) RenderCanvasImage(this);
+#else
+    return 0;
+#endif
 }
 
 void HTMLCanvasElementImpl::attach()

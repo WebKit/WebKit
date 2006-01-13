@@ -24,6 +24,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\khtml\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\khtml\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\bridge\mac&quot;;&quot;$(SolutionDir)\..\khtml\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\khtml\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; APPLE_CHANGES; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -89,6 +90,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -104,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\khtml\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\khtml\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\bridge\mac&quot;;&quot;$(SolutionDir)\..\khtml\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\khtml\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; APPLE_CHANGES; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -460,6 +462,30 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\xml\DocumentFragmentImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DocumentFragmentImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DocumentImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DocumentImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DocumentTypeImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DocumentTypeImpl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\xml\dom2_eventsimpl.cpp"
 					>
 				</File>
@@ -501,14 +527,6 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\xml\dom_atomicstringlist.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\xml\dom_docimpl.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\xml\dom_docimpl.h"
 					>
 				</File>
 				<File
@@ -568,6 +586,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\xml\DOMImplementationImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\xml\DOMImplementationImpl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\xml\EventNames.cpp"
 					>
 				</File>
@@ -581,6 +607,258 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\xml\xml_tokenizer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="html"
+				>
+				<File
+					RelativePath="..\..\khtml\html\FormDataList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\FormDataList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_baseimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_baseimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_blockimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_blockimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_canvasimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_canvasimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_documentimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_documentimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_elementimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_elementimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_headimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_headimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_imageimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_imageimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_inlineimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_inlineimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_listimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_listimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_miscimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_miscimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_objectimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_objectimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_tableimpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\html_tableimpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLButtonElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLButtonElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlfactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlfactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFieldSetElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFieldSetElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFormElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFormElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLGenericFormElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLGenericFormElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLInputElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLInputElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLIsIndexElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLIsIndexElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLKeygenElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLKeygenElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLLabelElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLLabelElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLLegendElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLLegendElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlnames.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlnames.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLOptGroupElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLOptGroupElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLOptionElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLOptionElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLOptionsCollectionImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlparser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmlparser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLSelectElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLSelectElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLTextAreaElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLTextAreaElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmltokenizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\htmltokenizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\kentities.h"
 					>
 				</File>
 			</Filter>

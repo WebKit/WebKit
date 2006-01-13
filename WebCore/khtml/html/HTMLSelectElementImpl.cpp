@@ -204,15 +204,12 @@ QString HTMLSelectElementImpl::state()
     QMemArray<HTMLElementImpl*> items = listItems();
 
     int l = items.count();
-
-    QChar stateChars[l];
-    
+    QString state;
     for(int i = 0; i < l; i++)
         if(items[i]->hasLocalName(optionTag) && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
-            stateChars[i] = 'X';
+            state += 'X';
         else
-            stateChars[i] = '.';
-    QString state(stateChars, l);
+            state += '.';
 
     return HTMLGenericFormElementImpl::state() + state;
 }
