@@ -31,7 +31,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -172,7 +172,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebFrameView *webFrameView;
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
-    WebBridge *bridge;
+    WebFrameBridge *bridge;
     WebView *webView;
     WebFrameState state;
     WebFrameLoadType loadType;
@@ -324,9 +324,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
-static inline WebFrame *Frame(WebCoreBridge *bridge)
+static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
-    return [(WebBridge *)bridge webFrame];
+    return [(WebFrameBridge *)bridge webFrame];
 }
 
 @implementation WebFrame (FrameTraversal)
@@ -564,7 +564,7 @@ static inline WebFrame *Frame(WebCoreBridge *bridge)
 
 - (void)_detachFromParent
 {
-    WebBridge *bridge = _private->bridge;
+    WebFrameBridge *bridge = _private->bridge;
 
     [bridge closeURL];
     [self stopLoading];
@@ -1225,7 +1225,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [frame _checkLoadCompleteForThisFrame];
 }
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     return _private->bridge;
 }
@@ -2473,7 +2473,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFrame (WebInternal)
 
-- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebBridge *)bridge
+- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
 {
     self = [super init];
     if (!self)

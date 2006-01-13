@@ -28,7 +28,7 @@
 
 #import <WebKit/WebFrameView.h>
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
 #import <WebKit/WebDataSource.h>
@@ -73,7 +73,7 @@ enum {
 - (float)_verticalKeyboardScrollDistance;
 - (void)_tile;
 - (BOOL)_shouldDrawBorder;
-- (WebCoreBridge *) webCoreBridge;
+- (WebCoreFrameBridge *) webCoreBridge;
 @end
 
 @interface WebFrameViewPrivate : NSObject
@@ -149,7 +149,7 @@ enum {
     [_private->frameScrollView setFrame:scrollViewFrame];
 }
 
-- (WebCoreBridge *) webCoreBridge
+- (WebCoreFrameBridge *) webCoreBridge
 {
     return [self _bridge];
 }
@@ -501,7 +501,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [self _tile];
 }
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     return [[self webFrame] _bridge];
 }

@@ -31,7 +31,7 @@
 #define WebDragImageAlpha    0.75
 
 @class WebArchive;
-@class WebBridge;
+@class WebFrameBridge;
 @class WebDataSource;
 @class WebFrame;
 @class WebFrameView;
@@ -85,7 +85,7 @@
 
 - (WebView *)_webView;
 - (WebFrame *)_frame;
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 - (WebDataSource *)_dataSource;
 
 @end

@@ -29,7 +29,7 @@
 #import "DocumentImpl.h"
 #import "FrameView.h"
 #import "KWQExceptions.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 
 KJavaAppletWidget::KJavaAppletWidget(const QSize &size, Frame *frame, const QMap<QString, QString> &args)

@@ -29,7 +29,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <WebKit/WebLoader.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -58,7 +58,7 @@
 {   
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePluginPointer->ndata;
 
-    WebBridge *bridge = [[view webFrame] _bridge];
+    WebFrameBridge *bridge = [[view webFrame] _bridge];
     BOOL hideReferrer;
     if (![bridge canLoadURL:[theRequest URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
         return nil;

@@ -32,7 +32,7 @@
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPluginContainer.h>
 #import <WebKit/WebPluginContainerPrivate.h>
@@ -91,7 +91,7 @@
 - (BOOL)_isForbiddenFileLoad
 {
    BOOL ignore;
-   WebBridge *bridge = [_controller bridge];
+   WebFrameBridge *bridge = [_controller bridge];
    if (![bridge canLoadURL:[_request URL] fromReferrer:[bridge referrer] hideReferrer:&ignore]) {
        [self _continueWithPolicy:WebPolicyIgnore];
        return YES;

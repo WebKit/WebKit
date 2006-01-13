@@ -31,7 +31,7 @@
 #import <WebCore/WebCoreCache.h>
 #import <WebCore/WebCoreJavaScript.h>
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFramePrivate.h>
 
 @implementation WebCoreStatistics

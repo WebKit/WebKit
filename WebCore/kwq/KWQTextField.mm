@@ -30,7 +30,7 @@
 #import "MacFrame.h"
 #import "KWQLineEdit.h"
 #import "KWQView.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "render_form.h"
 
 using khtml::RenderWidget;
@@ -168,7 +168,7 @@ using khtml::RenderLayer;
     
     [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
 
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
 }
 
@@ -177,7 +177,7 @@ using khtml::RenderLayer;
     if (!widget)
 	return;
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
     
     if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
@@ -193,7 +193,7 @@ using khtml::RenderLayer;
         return;
     
     if (![[field _KWQ_currentEditor] hasMarkedText]) {
-        WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+        WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
         [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
     }
     
@@ -235,7 +235,7 @@ using khtml::RenderLayer;
     if (!widget)
 	return NO;
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     return [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] doCommandBySelector:commandSelector];
 }
 
@@ -282,7 +282,7 @@ using khtml::RenderLayer;
     
     NSEventType type = [event type];
     if ((type == NSKeyDown || type == NSKeyUp) && ![[NSInputManager currentInputManager] hasMarkedText]) {
-        WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+        WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
 
         QWidget::setDeferFirstResponderChanges(true);
 

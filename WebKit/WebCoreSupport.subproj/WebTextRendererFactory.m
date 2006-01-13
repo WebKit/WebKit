@@ -27,7 +27,7 @@
  */
 
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebPreferences.h>

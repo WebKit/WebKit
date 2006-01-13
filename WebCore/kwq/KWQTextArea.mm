@@ -33,7 +33,7 @@
 #import "MacFrame.h"
 #import "KWQTextEdit.h"
 #import "render_replaced.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "KWQKHTMLSettings.h"
 
 using namespace DOM;
@@ -216,7 +216,7 @@ const float LargeNumberForText = 1.0e7;
     if (widget)
         widget->textChanged();
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textDidChangeInTextArea:(DOMHTMLTextAreaElement *)[bridge elementForView:self]];
 }
 
@@ -674,7 +674,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
     [[NSCursor arrowCursor] set];
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     DOMHTMLTextAreaElement *element = (DOMHTMLTextAreaElement *)[bridge elementForView:self];
     ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
     
@@ -1120,7 +1120,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         return;
     }
 
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     if ([bridge interceptKeyEvent:event toView:self]) {
         return;
     }
@@ -1139,7 +1139,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled || !widget)
         return;
 
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(widget);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     if (![[NSInputManager currentInputManager] hasMarkedText]) {
         [bridge interceptKeyEvent:event toView:self];
     }

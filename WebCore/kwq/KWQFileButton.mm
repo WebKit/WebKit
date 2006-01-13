@@ -30,7 +30,7 @@
 #import "KWQExceptions.h"
 #import "MacFrame.h"
 #import "KWQFoundationExtras.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "render_form.h"
 
 using khtml::RenderWidget;
@@ -138,7 +138,7 @@ QWidget::FocusPolicy KWQFileButton::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(this);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
     if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
         return NoFocus;
     }

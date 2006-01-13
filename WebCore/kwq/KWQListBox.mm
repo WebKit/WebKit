@@ -30,7 +30,7 @@
 #import "KWQExceptions.h"
 #import "MacFrame.h"
 #import "KWQView.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreScrollView.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -503,7 +503,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (!_box)  {
         return;
     }
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(_box);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
     [super keyDown:event];
     }
@@ -515,7 +515,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         return;
     }
     
-    WebCoreBridge *bridge = MacFrame::bridgeForWidget(_box);
+    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
         [super keyUp:event];
         NSString *string = [event characters];

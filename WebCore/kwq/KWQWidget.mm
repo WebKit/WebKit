@@ -33,7 +33,7 @@
 #import "KWQStyle.h"
 #import "KWQView.h"
 #import "KWQWindowWidget.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import "render_canvas.h"
@@ -246,7 +246,7 @@ void QWidget::setFocus()
     KWQ_BLOCK_EXCEPTIONS;
     NSView *view = [getView() _webcore_effectiveFirstResponder];
     if ([view superview] && [view acceptsFirstResponder]) {
-        WebCoreBridge *bridge = MacFrame::bridgeForWidget(this);
+        WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
         NSResponder *oldFirstResponder = [bridge firstResponder];
 
         [bridge makeFirstResponder:view];

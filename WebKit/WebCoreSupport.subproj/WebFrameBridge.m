@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
@@ -114,7 +114,7 @@ NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
-@implementation WebBridge
+@implementation WebFrameBridge
 
 - (id)initWithFrameName:(NSString *)name view:(WebFrameView *)view 
 {
@@ -167,7 +167,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return _frame;
 }
 
-- (WebCoreBridge *)mainFrame
+- (WebCoreFrameBridge *)mainFrame
 {
     ASSERT(_frame != nil);
     return [[[_frame webView] mainFrame] _bridge];
@@ -185,15 +185,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame frameView] documentView];
 }
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
+- (WebCoreFrameBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
 {
     ASSERT(_frame != nil);
 
     NSMutableURLRequest *request = nil;
 
     if (URL != nil && ![URL _web_isEmpty]) {
-	request = [NSMutableURLRequest requestWithURL:URL];
-	[request _web_setHTTPReferrer:[self referrer]];
+        request = [NSMutableURLRequest requestWithURL:URL];
+        [request _web_setHTTPReferrer:[self referrer]];
     }
 
     WebView *currentWebView = [_frame webView];
@@ -204,7 +204,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         newWebView = [wd webView:currentWebView createWebViewWithRequest:request];
     else
         newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
-    WebBridge *resultBridge = [[newWebView mainFrame] _bridge];
+    WebFrameBridge *resultBridge = [[newWebView mainFrame] _bridge];
     [resultBridge setName:name];
     return resultBridge;
 }
@@ -477,7 +477,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
     if ([[self dataSource] _webView] == nil) {
-	return nil;
+        return nil;
     }
 
     // Since this is a subresource, we can load any URL (we ignore the return value).
@@ -497,7 +497,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
     if ([[self dataSource] _webView] == nil) {
-	return nil;
+        return nil;
     }
 
     // Since this is a subresource, we can load any URL (we ignore the return value).
@@ -507,8 +507,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     return [WebSubresourceLoader startLoadingResource:resourceLoader
                                               withURL:URL
- 				        customHeaders:customHeaders
-				             postData:postData
+                                         customHeaders:customHeaders
+                                             postData:postData
                                              referrer:(hideReferrer ? nil : [self referrer])
                                         forDataSource:[self dataSource]];
 }
@@ -647,7 +647,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)unfocusWindow
 {
     if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
-	[NSApp _cycleWindowsReversed:FALSE];
+        [NSApp _cycleWindowsReversed:FALSE];
     }
 }
 
@@ -675,7 +675,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     // don't mess with navigation purely within the same frame
     if ([[self webFrame] webView] == [targetFrame webView])
-	return YES;
+        return YES;
 
     // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
     // Jaguar as well where the DOM API doesn't exist.
@@ -685,7 +685,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return YES;
     }
     
-    WebBridge *parentBridge = (WebBridge *)[[targetFrame _bridge] parent];
+    WebFrameBridge *parentBridge = (WebFrameBridge *)[[targetFrame _bridge] parent];
     // Allow if target is an entire window.
     if (!parentBridge)
         return YES;
@@ -705,7 +705,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return;
 
     if ([target length] == 0) {
-	target = nil;
+        target = nil;
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
@@ -724,7 +724,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
-	[[targetFrame _bridge] focusWindow];
+        [[targetFrame _bridge] focusWindow];
     }
 }
 
@@ -735,7 +735,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return;
 
     if ([target length] == 0) {
-	target = nil;
+        target = nil;
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
@@ -746,11 +746,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target data:postData contentType:contentType triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
-	[[targetFrame _bridge] focusWindow];
+        [[targetFrame _bridge] focusWindow];
     }
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName 
+- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
                                  withURL:(NSURL *)URL
                                 referrer:(NSString *)referrer
                               renderPart:(KHTMLRenderPart *)childRenderPart
@@ -1254,7 +1254,7 @@ static BOOL loggedObjectCacheSize = NO;
     }
 }
 
-static id <WebFormDelegate> formDelegate(WebBridge *self)
+static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     ASSERT(self->_frame != nil);
     return [[self->_frame webView] _formDelegate];
@@ -1528,11 +1528,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [wv _addScrollerDashboardRegions:regions];
     
     if (![self _compareDashboardRegions:regions]) {
-	if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
-	    [wd webView:wv dashboardRegionsChanged:regions];
-	    [lastDashboardRegions release];
-	    lastDashboardRegions = [regions retain];
-	}
+        if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
+            [wd webView:wv dashboardRegionsChanged:regions];
+            [lastDashboardRegions release];
+            lastDashboardRegions = [regions retain];
+        }
     }
 }
 
@@ -1630,15 +1630,15 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
 }
 
-- (WebCoreBridge *)createModalDialogWithURL:(NSURL *)URL
+- (WebCoreFrameBridge *)createModalDialogWithURL:(NSURL *)URL
 {
     ASSERT(_frame != nil);
 
     NSMutableURLRequest *request = nil;
 
     if (URL != nil && ![URL _web_isEmpty]) {
-	request = [NSMutableURLRequest requestWithURL:URL];
-	[request _web_setHTTPReferrer:[self referrer]];
+        request = [NSMutableURLRequest requestWithURL:URL];
+        [request _web_setHTTPReferrer:[self referrer]];
     }
 
     WebView *currentWebView = [_frame webView];

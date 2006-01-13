@@ -29,7 +29,7 @@
 #import <WebKit/WebViewFactory.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
@@ -78,7 +78,7 @@
     }
 }
 
-- (WebCoreBridge *)bridgeForView:(NSView *)v
+- (WebCoreFrameBridge *)bridgeForView:(NSView *)v
 {
     NSView *aView = [v superview];
     

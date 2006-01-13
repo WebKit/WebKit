@@ -30,7 +30,7 @@
 
 @class WebHTMLView;
 @class WebPluginPackage;
-@class WebBridge;
+@class WebFrameBridge;
 @class WebView;
 
 @interface WebPluginController : NSObject
@@ -53,7 +53,7 @@
 - (void)stopAllPlugins;
 - (void)destroyAllPlugins;
 
-- (WebBridge *)bridge;
+- (WebFrameBridge *)bridge;
 - (WebView *)webView;
 
 @end

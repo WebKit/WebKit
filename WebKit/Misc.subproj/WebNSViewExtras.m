@@ -245,7 +245,7 @@
 }
 
 // Required so view can access the part's selection.
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     return [[self _frame] _bridge];
 }

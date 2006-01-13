@@ -31,7 +31,7 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDocument.h>
@@ -699,7 +699,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     ASSERT(_private->committed);
     return [[self webFrame] _bridge];
@@ -790,7 +790,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
-    WebBridge *bridge = [[self webFrame] _bridge];
+    WebFrameBridge *bridge = [[self webFrame] _bridge];
     
     // Retain the bridge because the stop may release the last reference to it.
     [bridge retain];
@@ -1001,9 +1001,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     NSString *textEncodingName = [self textEncodingName];
 
     if (textEncodingName) {
-        return [WebBridge stringWithData:data textEncodingName:textEncodingName];
+        return [WebFrameBridge stringWithData:data textEncodingName:textEncodingName];
     } else {
-        return [WebBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
+        return [WebFrameBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
     }
 }
 

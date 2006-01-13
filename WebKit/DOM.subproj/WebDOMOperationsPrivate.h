@@ -26,18 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebBridge;
+@class WebFrameBridge;
 
 #import <WebKit/WebDOMOperations.h>
 
 @interface DOMNode (WebDOMNodeOperationsPrivate)
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 - (NSArray *)_URLsFromSelectors:(SEL)firstSel, ...;
 - (NSArray *)_subresourceURLs;
 @end
 
 @interface DOMRange (WebDOMRangeOperationsPrivate)
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 @end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)

@@ -29,7 +29,7 @@
 #import <kxmlcore/Assertions.h>
 #import "MacFrame.h"
 #import "KWQListBox.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 
 void WebCoreInitializeFont(WebCoreFont *font)

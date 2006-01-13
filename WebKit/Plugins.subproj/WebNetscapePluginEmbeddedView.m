@@ -29,7 +29,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>

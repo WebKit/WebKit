@@ -32,7 +32,7 @@
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 #import "loader.h"
 #include "Cache.h"
@@ -110,7 +110,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
-    WebCoreBridge *bridge = frame->bridge();
+    WebCoreFrameBridge *bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(job->url().url());
 
@@ -167,7 +167,7 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
-    WebCoreBridge *bridge = frame->bridge();
+    WebCoreFrameBridge *bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(job->url().url());
 
@@ -244,7 +244,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     MacFrame *frame = static_cast<MacFrame *>(loader->frame());
 
     if (!frame->haveToldBridgeAboutLoad(cachedObject->url().qstring())) {
-        WebCoreBridge *bridge = frame->bridge();
+        WebCoreFrameBridge *bridge = frame->bridge();
         
         KWQ_BLOCK_EXCEPTIONS;
         [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
@@ -328,7 +328,7 @@ time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *res
     KWQ_BLOCK_EXCEPTIONS;
     
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
-    WebCoreBridge *bridge = frame->bridge();
+    WebCoreFrameBridge *bridge = frame->bridge();
     return [bridge expiresTimeForResponse:(NSURLResponse *)response];
     
     KWQ_UNBLOCK_EXCEPTIONS;

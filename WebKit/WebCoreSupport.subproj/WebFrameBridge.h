@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebCoreBridge.h>
+#import <WebCore/WebCoreFrameBridge.h>
 
 @class WebDataSource;
 @class WebFrame;
 @protocol WebOpenPanelResultListener;
 
-@interface WebBridge : WebCoreBridge <WebCoreBridge>
+@interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge>
 {
     WebFrame *_frame;
     WebCoreKeyboardUIMode _keyboardUIMode;

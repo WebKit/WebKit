@@ -30,7 +30,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/DOM.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDOMOperations.h>
@@ -45,7 +45,7 @@
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 
-#import <WebCore/WebCoreBridge.h>
+#import <WebCore/WebCoreFrameBridge.h>
 
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>

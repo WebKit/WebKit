@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -309,9 +309,9 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
     NSString *textEncodingName = [self textEncodingName];
     
     if(textEncodingName){
-        return [WebBridge stringWithData:_private->data textEncodingName:textEncodingName];
+        return [WebFrameBridge stringWithData:_private->data textEncodingName:textEncodingName];
     }else{
-        return [WebBridge stringWithData:_private->data textEncoding:kCFStringEncodingISOLatin1];
+        return [WebFrameBridge stringWithData:_private->data textEncoding:kCFStringEncodingISOLatin1];
     }
 }
 

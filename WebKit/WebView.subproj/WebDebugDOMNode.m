@@ -28,7 +28,7 @@
 
 #import "WebDebugDOMNode.h"
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebNSViewExtras.h>

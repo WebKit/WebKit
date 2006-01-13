@@ -42,7 +42,7 @@
 #import "KWQWindowWidget.h"
 #import "KWQTextCodec.h"
 
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreViewFactory.h"
@@ -524,7 +524,7 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset _submittedFormURL on each mouse or key down event.
-    WebCoreBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
+    WebCoreFrameBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
     Frame *targetPart = [target part];
     bool willReplaceThisFrame = false;
     for (Frame *p = this; p; p = p->parentFrame()) {
@@ -653,7 +653,7 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
             marginWidth = o->getMarginWidth();
             marginHeight = o->getMarginHeight();
         }
-        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
+        WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
                                                             withURL:url.getNSURL()
                                                            referrer:child.m_args.metaData()["referrer"].getNSString()
                                                          renderPart:child.m_renderer
@@ -1268,7 +1268,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     checkCompleted();
 }
 
-WebCoreBridge *MacFrame::bridgeForWidget(const QWidget *widget)
+WebCoreFrameBridge *MacFrame::bridgeForWidget(const QWidget *widget)
 {
     ASSERT_ARG(widget, widget);
     
@@ -1279,7 +1279,7 @@ WebCoreBridge *MacFrame::bridgeForWidget(const QWidget *widget)
 
 NSView *MacFrame::documentViewForNode(NodeImpl *node)
 {
-    WebCoreBridge *bridge = Mac(frameForNode(node))->bridge();
+    WebCoreFrameBridge *bridge = Mac(frameForNode(node))->bridge();
     return [bridge documentView];
 }
 
@@ -2995,7 +2995,7 @@ void MacFrame::tokenizerProcessedData()
     [_bridge tokenizerProcessedData];
 }
 
-void MacFrame::setBridge(WebCoreBridge *p)
+void MacFrame::setBridge(WebCoreFrameBridge *p)
 { 
     if (_bridge != p)
         delete _windowWidget;

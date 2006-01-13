@@ -68,6 +68,8 @@
 		65436082083DB9FC00C20475 /* wrap_contents_in_dummy_span_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6543606E083DB9FB00C20475 /* wrap_contents_in_dummy_span_command.cpp */; };
 		654D87B70831973B0082DCA1 /* edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654D87B50831973B0082DCA1 /* edit_command.cpp */; };
 		654D87B80831973B0082DCA1 /* edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 654D87B60831973B0082DCA1 /* edit_command.h */; };
+		654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */; };
 		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */; };
 		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
@@ -85,8 +87,6 @@
 		65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */; };
 		65BF02440974819000C43196 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* MacFrame.h */; };
 		65BF02450974819000C43196 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* MacFrame.mm */; };
-		65BF02460974819000C43196 /* WebCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023D0974819000C43196 /* WebCoreBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65BF02470974819000C43196 /* WebCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023E0974819000C43196 /* WebCoreBridge.mm */; };
 		65C97AF308EA908800ACD273 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C97AF208EA908800ACD273 /* config.h */; };
 		65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65CBFEF70974F607001DAC25 /* FrameView.cpp */; };
 		65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CBFEF80974F607001DAC25 /* FrameView.h */; };
@@ -1771,6 +1771,8 @@
 		654D87B60831973B0082DCA1 /* edit_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = edit_command.h; path = editing/edit_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654E7EE10569FD4600358BD2 /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameBridge.h; sourceTree = "<group>"; };
+		654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameBridge.mm; sourceTree = "<group>"; };
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
 		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreFrameNamespaces.m; sourceTree = "<group>"; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
@@ -1791,8 +1793,6 @@
 		65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserExtension.h; sourceTree = "<group>"; };
 		65BF023B0974819000C43196 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
-		65BF023D0974819000C43196 /* WebCoreBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreBridge.h; sourceTree = "<group>"; };
-		65BF023E0974819000C43196 /* WebCoreBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreBridge.mm; sourceTree = "<group>"; };
 		65C97AF208EA908800ACD273 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65CBFEF70974F607001DAC25 /* FrameView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameView.cpp; sourceTree = "<group>"; };
 		65CBFEF80974F607001DAC25 /* FrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameView.h; sourceTree = "<group>"; };
@@ -2959,14 +2959,14 @@
 		65BF02350974819000C43196 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
+				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
 				65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */,
 				65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */,
 				65BF02380974819000C43196 /* KWQKHTMLView.cpp */,
 				65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */,
 				65BF023B0974819000C43196 /* MacFrame.h */,
 				65BF023C0974819000C43196 /* MacFrame.mm */,
-				65BF023D0974819000C43196 /* WebCoreBridge.h */,
-				65BF023E0974819000C43196 /* WebCoreBridge.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4895,7 +4895,6 @@
 				65BF023F0974819000C43196 /* KWQKHTMLPartBrowserExtension.h in Headers */,
 				65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */,
 				65BF02440974819000C43196 /* MacFrame.h in Headers */,
-				65BF02460974819000C43196 /* WebCoreBridge.h in Headers */,
 				FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */,
 				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
@@ -4904,6 +4903,7 @@
 				A8185F3B09765766005826D9 /* DOMImplementationImpl.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragmentImpl.h in Headers */,
 				A8185F4009765766005826D9 /* DocumentImpl.h in Headers */,
+				654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6764,7 +6764,6 @@
 				65BF02400974819000C43196 /* KWQKHTMLPartBrowserExtension.mm in Sources */,
 				65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */,
 				65BF02450974819000C43196 /* MacFrame.mm in Sources */,
-				65BF02470974819000C43196 /* WebCoreBridge.mm in Sources */,
 				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,
 				FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */,
 				65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */,
@@ -6772,6 +6771,7 @@
 				A8185F3C09765766005826D9 /* DocumentImpl.cpp in Sources */,
 				A8185F3E09765766005826D9 /* DOMImplementationImpl.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragmentImpl.cpp in Sources */,
+				654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

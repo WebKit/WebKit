@@ -29,7 +29,7 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -44,7 +44,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebCore/WebCoreBridge.h>
+#import <WebCore/WebCoreFrameBridge.h>
 
 #import <Foundation/NSURLRequest.h>
 
@@ -326,7 +326,7 @@ static NSMutableSet *pluginViews = nil;
     return [_documentView _frame];
 }
 
-- (WebBridge *)bridge
+- (WebFrameBridge *)bridge
 {
     return [[self webFrame] _bridge];
 }

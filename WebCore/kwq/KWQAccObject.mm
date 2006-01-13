@@ -35,7 +35,7 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 #import "KWQWidget.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreViewFactory.h"
 
@@ -1851,7 +1851,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     }
     
     // check for WebKit NSView that lets us find its bridge
-    WebCoreBridge *bridge = nil;
+    WebCoreFrameBridge *bridge = nil;
     if ([view conformsToProtocol:@protocol(WebCoreBridgeHolder)]) {
         NSView<WebCoreBridgeHolder>* bridgeHolder = (NSView<WebCoreBridgeHolder>*)view;
         bridge = [bridgeHolder webCoreBridge];

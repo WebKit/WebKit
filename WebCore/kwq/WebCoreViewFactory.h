@@ -27,7 +27,7 @@
 @class NSDictionary;
 @class NSString;
 @class NSView;
-@class WebCoreBridge;
+@class WebCoreFrameBridge;
 @class WebCoreTextMarker;
 @class WebCoreTextMarkerRange;
 
@@ -60,7 +60,7 @@
 - (AXUIElementRef)AXUIElementForElement:(id)element;
 - (void)unregisterUniqueIdForUIElement:(id)element;
 
-- (WebCoreBridge *)bridgeForView:(NSView *)aView;
+- (WebCoreFrameBridge *)bridgeForView:(NSView *)aView;
 
 @end
 

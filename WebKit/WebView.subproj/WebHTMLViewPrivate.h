@@ -31,7 +31,7 @@
 @class DOMDocumentFragment;
 @class DOMRange;
 @class WebArchive;
-@class WebBridge;
+@class WebFrameBridge;
 @class WebView;
 @class WebFrame;
 @class WebPluginController;

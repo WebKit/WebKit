@@ -30,7 +30,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebLocalizableStrings.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebStringTruncator.h>
 
 #define NO_FILE_SELECTED 
@@ -65,7 +65,7 @@
     [_button setFrameOrigin:NSMakePoint(0, 0)];
 }
 
-- (id)initWithBridge:(WebBridge *)bridge delegate:(id <WebCoreFileButtonDelegate>)delegate
+- (id)initWithBridge:(WebFrameBridge *)bridge delegate:(id <WebCoreFileButtonDelegate>)delegate
 {
     self = [super init];
     if (self) {

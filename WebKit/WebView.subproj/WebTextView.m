@@ -29,7 +29,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFramePrivate.h>

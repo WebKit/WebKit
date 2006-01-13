@@ -175,32 +175,32 @@ typedef enum
     ObjectElementPlugin,
 } ObjectElementType;
 
-// WebCoreBridge objects are used by WebCore to abstract away operations that need
+// WebCoreFrameBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
 // used in the opposite direction, for simple access to WebCore functions without dealing
 // directly with the KHTML C++ classes.
 
-// A WebCoreBridge creates and holds a reference to a Frame.
+// A WebCoreFrameBridge creates and holds a reference to a Frame.
 
-// The WebCoreBridge interface contains methods for use by the non-WebCore side of the bridge.
+// The WebCoreFrameBridge interface contains methods for use by the non-WebCore side of the bridge.
 
-@interface WebCoreBridge : NSObject
+@interface WebCoreFrameBridge : NSObject
 {
     MacFrame *m_frame;
     KHTMLRenderPart *_renderPart;
     RenderArena *_renderPartArena;
     BOOL _shouldCreateRenderers;
 
-    WebCoreBridge *_nextSibling;
-    WebCoreBridge *_previousSibling;
-    WebCoreBridge *_firstChild;
-    WebCoreBridge *_lastChild;
+    WebCoreFrameBridge *_nextSibling;
+    WebCoreFrameBridge *_previousSibling;
+    WebCoreFrameBridge *_firstChild;
+    WebCoreFrameBridge *_lastChild;
     int _childCount;
 
     NSString *_frameNamespace;
 }
 
-+ (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document;
++ (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
 + (NSArray *)supportedMIMETypes;
 
@@ -216,26 +216,26 @@ typedef enum
 
 - (MacFrame *)part;
 
-- (void)setParent:(WebCoreBridge *)parent;
-- (WebCoreBridge *)parent;
+- (void)setParent:(WebCoreFrameBridge *)parent;
+- (WebCoreFrameBridge *)parent;
 
-- (WebCoreBridge *)firstChild;
-- (WebCoreBridge *)lastChild;
-- (WebCoreBridge *)previousSibling;
-- (WebCoreBridge *)nextSibling;
+- (WebCoreFrameBridge *)firstChild;
+- (WebCoreFrameBridge *)lastChild;
+- (WebCoreFrameBridge *)previousSibling;
+- (WebCoreFrameBridge *)nextSibling;
 
-- (void)appendChild:(WebCoreBridge *)child;
-- (void)removeChild:(WebCoreBridge *)child;
+- (void)appendChild:(WebCoreFrameBridge *)child;
+- (void)removeChild:(WebCoreFrameBridge *)child;
 
 - (unsigned)childCount;
-- (BOOL)isDescendantOfFrame:(WebCoreBridge *)ancestor;
-- (WebCoreBridge *)traverseNextFrameStayWithin:(WebCoreBridge *)stayWithin;
+- (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor;
+- (WebCoreFrameBridge *)traverseNextFrameStayWithin:(WebCoreFrameBridge *)stayWithin;
 
-- (WebCoreBridge *)nextFrameWithWrap:(BOOL)wrap;
-- (WebCoreBridge *)previousFrameWithWrap:(BOOL)wrap;
+- (WebCoreFrameBridge *)nextFrameWithWrap:(BOOL)wrap;
+- (WebCoreFrameBridge *)previousFrameWithWrap:(BOOL)wrap;
 
-- (WebCoreBridge *)childFrameNamed:(NSString *)name;
-- (WebCoreBridge *)findFrameNamed:(NSString *)name;
+- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name;
+- (WebCoreFrameBridge *)findFrameNamed:(NSString *)name;
 - (void)setFrameNamespace:(NSString *)ns;
 - (NSString *)frameNamespace;
 
@@ -268,8 +268,8 @@ typedef enum
 - (NSURL *)baseURL;
 - (NSString *)referrer;
 - (NSString *)domain;
-- (WebCoreBridge *)opener;
-- (void)setOpener:(WebCoreBridge *)bridge;
+- (WebCoreFrameBridge *)opener;
+- (void)setOpener:(WebCoreFrameBridge *)bridge;
 
 - (void)installInFrame:(NSView *)view;
 - (void)removeFromFrame;
@@ -491,14 +491,14 @@ typedef enum
 
 @end
 
-// The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
+// The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.
 
 // In NSArray objects for post data, NSData objects represent literal data, and NSString objects represent encoded files.
 // The encoding is the standard form encoding for uploading files.
 
-@protocol WebCoreBridge
+@protocol WebCoreFrameBridge
 
-- (WebCoreBridge *)mainFrame;
+- (WebCoreFrameBridge *)mainFrame;
 - (void)frameDetached;
 - (NSView *)documentView;
 - (WebView *)webView;
@@ -506,12 +506,12 @@ typedef enum
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
+- (WebCoreFrameBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;
 
 - (BOOL)canRunModal;
 - (BOOL)canRunModalNow;
-- (WebCoreBridge *)createModalDialogWithURL:(NSURL *)URL;
+- (WebCoreFrameBridge *)createModalDialogWithURL:(NSURL *)URL;
 - (void)runModal;
 
 - (NSString *)userAgentForURL:(NSURL *)URL;
@@ -522,7 +522,7 @@ typedef enum
 - (void)setIconURL:(NSURL *)URL;
 - (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
+- (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     referrer:(NSString *)referrer
     renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
@@ -677,11 +677,11 @@ typedef enum
 
 @end
 
-// This interface definition allows those who hold a WebCoreBridge * to call all the methods
-// in the WebCoreBridge protocol without requiring the base implementation to supply the methods.
-// This idiom is appropriate because WebCoreBridge is an abstract class.
+// This interface definition allows those who hold a WebCoreFrameBridge * to call all the methods
+// in the WebCoreFrameBridge protocol without requiring the base implementation to supply the methods.
+// This idiom is appropriate because WebCoreFrameBridge is an abstract class.
 
-@interface WebCoreBridge (SubclassResponsibility) <WebCoreBridge>
+@interface WebCoreFrameBridge (SubclassResponsibility) <WebCoreFrameBridge>
 @end
 
 @protocol WebCoreDOMTreeCopier <NSObject>

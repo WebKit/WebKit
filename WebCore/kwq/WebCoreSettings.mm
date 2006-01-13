@@ -29,7 +29,7 @@
 #import "KWQFoundationExtras.h"
 #import "MacFrame.h"
 #import "KWQKHTMLSettings.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 
 @implementation WebCoreSettings
 

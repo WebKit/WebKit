@@ -50,7 +50,7 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 

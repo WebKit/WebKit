@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
@@ -163,14 +163,14 @@ NSString *WebCoreElementTitleKey =              @"WebCoreElementTitle"; // not i
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
-@interface WebCoreBridge (WebCoreBridgeInternal)
+@interface WebCoreFrameBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
 @end
 
 static RootObject *rootForView(void *v)
 {
     NSView *aView = (NSView *)v;
-    WebCoreBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
+    WebCoreFrameBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
     RootObject *root = 0;
 
     if (aBridge)
@@ -198,7 +198,7 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
         doc->updateRendering();
 }
 
-static BOOL frameHasSelection(WebCoreBridge *bridge)
+static BOOL frameHasSelection(WebCoreFrameBridge *bridge)
 {
     if (!bridge)
         return NO;
@@ -227,17 +227,17 @@ static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
 
-@implementation WebCoreBridge
+@implementation WebCoreFrameBridge
 
 static bool initializedObjectCacheSize = FALSE;
 static bool initializedKJS = FALSE;
 
-- (WebCoreBridge *)firstChild
+- (WebCoreFrameBridge *)firstChild
 {
     return _firstChild;
 }
 
-- (WebCoreBridge *)lastChild
+- (WebCoreFrameBridge *)lastChild
 {
     return _lastChild;
 }
@@ -247,28 +247,28 @@ static bool initializedKJS = FALSE;
     return _childCount;
 }
 
-- (WebCoreBridge *)previousSibling;
+- (WebCoreFrameBridge *)previousSibling;
 {
     return _previousSibling;
 }
 
-- (WebCoreBridge *)nextSibling;
+- (WebCoreFrameBridge *)nextSibling;
 {
     return _nextSibling;
 }
 
-- (BOOL)isDescendantOfFrame:(WebCoreBridge *)ancestor
+- (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor
 {
-    for (WebCoreBridge *frame = self; frame; frame = (WebCoreBridge *)[frame parent])
+    for (WebCoreFrameBridge *frame = self; frame; frame = (WebCoreFrameBridge *)[frame parent])
         if (frame == ancestor)
             return YES;
 
     return NO;
 }
 
-- (WebCoreBridge *)traverseNextFrameStayWithin:(WebCoreBridge *)stayWithin
+- (WebCoreFrameBridge *)traverseNextFrameStayWithin:(WebCoreFrameBridge *)stayWithin
 {
-    WebCoreBridge *firstChild = [self firstChild];
+    WebCoreFrameBridge *firstChild = [self firstChild];
     if (firstChild) {
         ASSERT(!stayWithin || [firstChild isDescendantOfFrame:stayWithin]);
         return firstChild;
@@ -277,15 +277,15 @@ static bool initializedKJS = FALSE;
     if (self == stayWithin)
         return 0;
 
-    WebCoreBridge *nextSibling = [self nextSibling];
+    WebCoreFrameBridge *nextSibling = [self nextSibling];
     if (nextSibling) {
         assert(!stayWithin || [nextSibling isDescendantOfFrame:stayWithin]);
         return nextSibling;
     }
 
-    WebCoreBridge *frame = self;
+    WebCoreFrameBridge *frame = self;
     while (frame && !nextSibling && (!stayWithin || [frame parent] != stayWithin)) {
-        frame = (WebCoreBridge *)[frame parent];
+        frame = (WebCoreFrameBridge *)[frame parent];
         nextSibling = [frame nextSibling];
     }
 
@@ -297,13 +297,13 @@ static bool initializedKJS = FALSE;
     return nil;
 }
 
-- (void)appendChild:(WebCoreBridge *)child
+- (void)appendChild:(WebCoreFrameBridge *)child
 {
     [child retain];
 
     [child setParent:self];
 
-    WebCoreBridge *last = _lastChild;
+    WebCoreFrameBridge *last = _lastChild;
 
     if (last) {
         last->_nextSibling = child;
@@ -318,7 +318,7 @@ static bool initializedKJS = FALSE;
     ASSERT(child->_nextSibling == nil);
 }
 
-- (void)removeChild:(WebCoreBridge *)child
+- (void)removeChild:(WebCoreFrameBridge *)child
 {
     if (child->_previousSibling)
         child->_previousSibling->_nextSibling = child->_nextSibling;
@@ -338,11 +338,11 @@ static bool initializedKJS = FALSE;
     [child release];
 }
 
-- (WebCoreBridge *)childFrameNamed:(NSString *)name
+- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
 {
     // FIXME: with a better data structure this could be O(1) instead of O(n) in number 
     // of child frames
-    for (WebCoreBridge *child = [self firstChild]; child; child = [child nextSibling])
+    for (WebCoreFrameBridge *child = [self firstChild]; child; child = [child nextSibling])
         if ([[child name] isEqualToString:name])
             return child;
 
@@ -350,19 +350,19 @@ static bool initializedKJS = FALSE;
 }
 
 // Returns the last child of us and any children, or self
-- (WebCoreBridge *)_deepLastChildFrame
+- (WebCoreFrameBridge *)_deepLastChildFrame
 {
-    WebCoreBridge *result = self;
-    for (WebCoreBridge *lastChild = [self lastChild]; lastChild; lastChild = [lastChild lastChild])
+    WebCoreFrameBridge *result = self;
+    for (WebCoreFrameBridge *lastChild = [self lastChild]; lastChild; lastChild = [lastChild lastChild])
         result = lastChild;
 
     return result;
 }
 
 // Return next frame to be traversed, visiting children after parent
-- (WebCoreBridge *)nextFrameWithWrap:(BOOL)wrapFlag
+- (WebCoreFrameBridge *)nextFrameWithWrap:(BOOL)wrapFlag
 {
-    WebCoreBridge *result = [self traverseNextFrameStayWithin:nil];
+    WebCoreFrameBridge *result = [self traverseNextFrameStayWithin:nil];
 
     if (!result && wrapFlag)
         return [self mainFrame];
@@ -371,11 +371,11 @@ static bool initializedKJS = FALSE;
 }
 
 // Return previous frame to be traversed, exact reverse order of _nextFrame
-- (WebCoreBridge *)previousFrameWithWrap:(BOOL)wrapFlag
+- (WebCoreFrameBridge *)previousFrameWithWrap:(BOOL)wrapFlag
 {
     // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
 
-    WebCoreBridge *prevSibling = [self previousSibling];
+    WebCoreFrameBridge *prevSibling = [self previousSibling];
     if (prevSibling)
         return [prevSibling _deepLastChildFrame];
     if ([self parent])
@@ -408,7 +408,7 @@ static bool initializedKJS = FALSE;
     return _frameNamespace;
 }
 
-- (BOOL)_shouldAllowAccessFrom:(WebCoreBridge *)source
+- (BOOL)_shouldAllowAccessFrom:(WebCoreFrameBridge *)source
 {
     // if no source frame, allow access
     if (source == nil)
@@ -425,7 +425,7 @@ static bool initializedKJS = FALSE;
 
     //   - allow access if this frame or one of its ancestors
     //     has the same origin as source
-    for (WebCoreBridge *ancestor = self; ancestor; ancestor = [ancestor parent]) {
+    for (WebCoreFrameBridge *ancestor = self; ancestor; ancestor = [ancestor parent]) {
         NSString *ancestorDomain = [ancestor domain];
         if (ancestorDomain != nil && 
             isCaseSensitiveEqual(sourceDomain, ancestorDomain))
@@ -447,9 +447,9 @@ static bool initializedKJS = FALSE;
     return NO;
 }
 
-- (WebCoreBridge *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebCoreBridge *)source
+- (WebCoreFrameBridge *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebCoreFrameBridge *)source
 {
-    for (WebCoreBridge *frame = self; frame; frame = [frame traverseNextFrameStayWithin:self])
+    for (WebCoreFrameBridge *frame = self; frame; frame = [frame traverseNextFrameStayWithin:self])
         // for security reasons, we do not want to even make frames visible to frames that
         // can't access them 
         if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
@@ -458,12 +458,12 @@ static bool initializedKJS = FALSE;
     return nil;
 }
 
-- (WebCoreBridge *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebCoreBridge *)source
+- (WebCoreFrameBridge *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebCoreFrameBridge *)source
 {
     ASSERT(self == [self mainFrame]);
 
     // Try this WebView first.
-    WebCoreBridge *frame = [self _descendantFrameNamed:name sourceFrame:source];
+    WebCoreFrameBridge *frame = [self _descendantFrameNamed:name sourceFrame:source];
 
     if (frame != nil)
         return frame;
@@ -472,7 +472,7 @@ static bool initializedKJS = FALSE;
 
     if ([self frameNamespace] != nil) {
         NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:[self frameNamespace]];
-        WebCoreBridge *searchFrame;
+        WebCoreFrameBridge *searchFrame;
         while ((searchFrame = [enumerator nextObject]))
             frame = [searchFrame _descendantFrameNamed:name sourceFrame:source];
     }
@@ -480,7 +480,7 @@ static bool initializedKJS = FALSE;
     return frame;
 }
 
-- (WebCoreBridge *)findFrameNamed:(NSString *)name
+- (WebCoreFrameBridge *)findFrameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
     if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
@@ -490,7 +490,7 @@ static bool initializedKJS = FALSE;
         return [self mainFrame];
     
     if ([name isEqualToString:@"_parent"]) {
-        WebCoreBridge *parent = [self parent];
+        WebCoreFrameBridge *parent = [self parent];
         return parent ? parent : self;
     }
     
@@ -498,7 +498,7 @@ static bool initializedKJS = FALSE;
         return nil;
 
     // Search from this frame down.
-    WebCoreBridge *frame = [self _descendantFrameNamed:name sourceFrame:self];
+    WebCoreFrameBridge *frame = [self _descendantFrameNamed:name sourceFrame:self];
 
     // Search in the main frame for this window then in others.
     if (!frame)
@@ -525,7 +525,7 @@ static bool initializedKJS = FALSE;
         nil];
 }
 
-+ (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document
++ (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
 {
     Frame *frame = [document _documentImpl]->frame();
     return frame ? Mac(frame)->bridge() : nil;
@@ -612,12 +612,12 @@ static bool initializedKJS = FALSE;
     return _renderPart;
 }
 
-- (void)setParent:(WebCoreBridge *)parent
+- (void)setParent:(WebCoreFrameBridge *)parent
 {
     m_frame->setParent([parent part]);
 }
 
-- (WebCoreBridge *)parent
+- (WebCoreFrameBridge *)parent
 {
     MacFrame *parentFrame = Mac(m_frame->parentFrame());
     if (!parentFrame)
@@ -976,7 +976,7 @@ static bool initializedKJS = FALSE;
     return m_frame->reparseConfiguration();
 }
 
-static BOOL nowPrinting(WebCoreBridge *self)
+static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     DocumentImpl *doc = self->m_frame->xmlDocImpl();
     return doc && doc->paintDevice() && doc->paintDevice()->devType() == QInternal::Printer;
@@ -1690,7 +1690,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-- (WebCoreBridge *)opener
+- (WebCoreFrameBridge *)opener
 {
     Frame *openerPart = m_frame->opener();
 
@@ -1700,7 +1700,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-- (void)setOpener:(WebCoreBridge *)bridge;
+- (void)setOpener:(WebCoreFrameBridge *)bridge;
 {
     Frame *p = [bridge part];
     
@@ -1719,7 +1719,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
     CFStringEncoding textEncoding = KWQCFStringEncodingFromIANACharsetName([textEncodingName lossyCString]);
-    return [WebCoreBridge stringWithData:data textEncoding:textEncoding];
+    return [WebCoreFrameBridge stringWithData:data textEncoding:textEncoding];
 }
 
 - (BOOL)needsLayout
@@ -2680,7 +2680,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 @end
 
-@implementation WebCoreBridge (WebCoreBridgeInternal)
+@implementation WebCoreFrameBridge (WebCoreBridgeInternal)
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {

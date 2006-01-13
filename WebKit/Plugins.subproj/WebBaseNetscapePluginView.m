@@ -29,7 +29,7 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFrameInternal.h> 

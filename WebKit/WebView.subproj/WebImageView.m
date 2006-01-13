@@ -43,7 +43,7 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-#import <WebCore/WebCoreBridge.h>
+#import <WebCore/WebCoreFrameBridge.h>
 
 @implementation WebImageView
 

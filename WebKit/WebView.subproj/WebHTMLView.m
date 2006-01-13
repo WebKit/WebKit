@@ -33,7 +33,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBaseNetscapePluginViewInternal.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -455,7 +455,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     BOOL chosePlainText;
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText chosePlainText:&chosePlainText];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[self _selectedRange] givenAction:WebViewInsertActionPasted]) {
         [bridge replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
     }
@@ -522,7 +522,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         return;
     }
 
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
 
     BOOL startNewKillRingSequence = _private->startNewKillRingSequence;
@@ -642,7 +642,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     // Also, this is responsible for letting the bridge know if the window has gained or lost focus
     // so we can send focus and blur events.
     
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     BOOL windowIsKey = [[self window] isKeyWindow];
     
     BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
@@ -1853,7 +1853,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
 
     if (action == @selector(alignCenter:)
             || action == @selector(alignLeft:)
@@ -2352,7 +2352,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSAttributedString *)attributedString
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMDocument *document = [bridge DOMDocument];
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (attributedString == nil) {
@@ -2368,7 +2368,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSAttributedString *)selectedAttributedString
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
     if (attributedString == nil) {
         attributedString = [bridge selectedAttributedString];
@@ -2819,7 +2819,7 @@ done:
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
 {
     WebView *webView = [self _webView];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if (_private->webCoreHandlingDrag) {
         ASSERT(actionMask & WebDragDestinationActionDHTML);
         [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
@@ -3262,7 +3262,7 @@ done:
 
     _private->keyDownEvent = event;
 
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([bridge interceptKeyEvent:event toView:self]) {
         // WebCore processed a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
@@ -3353,7 +3353,7 @@ done:
     if (![self _canAlterCurrentSelection])
         return;
         
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
@@ -3366,7 +3366,7 @@ done:
     if (![self _canAlterCurrentSelection])
         return;
         
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration verticalDistance:verticalDistance];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
@@ -3581,7 +3581,7 @@ done:
     if (![self _canAlterCurrentSelection])
         return;
         
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
     if (range && ![range collapsed]) {
         WebView *webView = [self _webView];
@@ -3629,7 +3629,7 @@ done:
 
 - (void)cut:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([bridge tryDHTMLCut]) {
         return;     // DHTML did the whole operation
     }
@@ -3788,7 +3788,7 @@ done:
     if (style == nil || [style length] == 0 || ![self _canEdit])
         return;
     WebView *webView = [self _webView];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
         [bridge applyStyle:style withUndoAction:undoAction];
     }
@@ -3799,7 +3799,7 @@ done:
     if (style == nil || [style length] == 0 || ![self _canEdit])
         return;
     WebView *webView = [self _webView];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
         [bridge applyParagraphStyle:style withUndoAction:undoAction];
     }
@@ -3896,7 +3896,7 @@ done:
         
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     NSString *text = [pasteboard stringForType:NSStringPboardType];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted]) {
         [bridge replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
     }
@@ -4230,7 +4230,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
         
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
         [bridge insertParagraphSeparator];
     }
@@ -4242,7 +4242,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
         
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
         [bridge insertLineBreak];
     }
@@ -4254,7 +4254,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
 
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
         [bridge insertParagraphSeparator];
     }
@@ -4265,7 +4265,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return;
 
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     [self selectWord:nil];
     NSString *word = [[bridge selectedString] performSelector:selector];
     // FIXME: Does this need a different action context other than "typed"?
@@ -4471,7 +4471,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)startSpeaking:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *range = [self _selectedRange];
     if (!range || [range collapsed]) {
         range = [self _documentRange];
@@ -4584,7 +4584,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)selectToMark:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     if (mark == nil) {
         NSBeep();
@@ -4600,7 +4600,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)swapWithMark:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     if (mark == nil) {
         NSBeep();
@@ -4621,7 +4621,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![self _canEdit])
         return;
 
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *r = [bridge rangeOfCharactersAroundCaret];
     if (!r) {
         return;
@@ -4976,7 +4976,7 @@ static NSArray *validAttributes = nil;
 - (unsigned int)characterIndexForPoint:(NSPoint)thePoint
 {
     NSWindow *window = [self window];
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
 
     if (window)
         thePoint = [window convertScreenToBase:thePoint];
@@ -4991,7 +4991,7 @@ static NSArray *validAttributes = nil;
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
     // to reproduce, use a test application from http://bugzilla.opendarwin.org/show_bug.cgi?id=4682
@@ -5018,7 +5018,7 @@ static NSArray *validAttributes = nil;
 
 - (NSRange)selectedRange
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     
     NSRange range = [bridge selectedNSRange];
 
@@ -5038,7 +5038,7 @@ static NSArray *validAttributes = nil;
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
     if (!range)
         return nil;
@@ -5072,7 +5072,7 @@ static NSArray *validAttributes = nil;
 - (void)_selectMarkedText
 {
     if ([self hasMarkedText]) {
-        WebBridge *bridge = [self _bridge];
+        WebFrameBridge *bridge = [self _bridge];
         DOMRange *markedTextRange = [bridge markedTextDOMRange];
         [bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
     }
@@ -5082,7 +5082,7 @@ static NSArray *validAttributes = nil;
 {
     ASSERT([self hasMarkedText]);
 
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *selectedRange = [[bridge DOMDocument] createRange];
     DOMRange *markedTextRange = [bridge markedTextDOMRange];
     
@@ -5116,7 +5116,7 @@ static NSArray *validAttributes = nil;
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
 
     if (![self _isEditable])
         return;
@@ -5223,7 +5223,7 @@ static NSArray *validAttributes = nil;
 
 - (BOOL)_selectionIsInsideMarkedText
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     DOMRange *selection = [self _selectedRange];
     DOMRange *markedTextRange = [bridge markedTextDOMRange];
 
@@ -5297,7 +5297,7 @@ static NSArray *validAttributes = nil;
 {
     // FIXME: 3769654 - We should preserve case of string being inserted, even in prefix (but then also be
     // able to revert that).  Mimic NSText.
-    WebBridge *bridge = [_view _bridge];
+    WebFrameBridge *bridge = [_view _bridge];
     NSString *newText = [match substringFromIndex:prefixLength];
     [bridge replaceSelectionWithText:newText selectReplacement:YES smartReplace:NO];
 }
@@ -5396,7 +5396,7 @@ static NSArray *validAttributes = nil;
         }
 
         // Get preceeding word stem
-        WebBridge *bridge = [_view _bridge];
+        WebFrameBridge *bridge = [_view _bridge];
         DOMRange *selection = [bridge selectedDOMRange];
         DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
         DOMRange *prefix = [wholeWord cloneRange];
@@ -5451,7 +5451,7 @@ static NSArray *validAttributes = nil;
         _popupWindow = nil;
 
         if (revertChange) {
-            WebBridge *bridge = [_view _bridge];
+            WebFrameBridge *bridge = [_view _bridge];
             [bridge replaceSelectionWithText:_originalString selectReplacement:YES smartReplace:NO];
         } else if (goLeft) {
             [_view moveBackward:nil];

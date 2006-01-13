@@ -31,7 +31,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -47,7 +47,7 @@
 {
 @public
     WebDataSource *dataSource;
-    WebBridge *bridge;
+    WebFrameBridge *bridge;
     NSData *parsedArchiveData;
 }
 @end
@@ -66,7 +66,7 @@
 
 + (NSArray *)supportedMIMETypes
 {
-    return [WebCoreBridge supportedMIMETypes];
+    return [WebCoreFrameBridge supportedMIMETypes];
 }
 
 - init
@@ -98,7 +98,7 @@
     [super finalize];
 }
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     return _private->bridge;
 }
@@ -183,7 +183,7 @@
     if ([self _isDisplayingWebArchive]) {
         return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease];
     } else {
-        return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
+        return [WebFrameBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
     }
 }
 

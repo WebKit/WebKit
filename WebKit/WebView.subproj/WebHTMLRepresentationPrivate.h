@@ -28,9 +28,9 @@
 
 #import <WebKit/WebHTMLRepresentation.h>
 
-@class WebBridge;
+@class WebFrameBridge;
 
 @interface WebHTMLRepresentation (WebPrivate)
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 - (void)printDOMTree;
 @end

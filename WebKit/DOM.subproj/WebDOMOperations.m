@@ -31,7 +31,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -39,14 +39,14 @@
 
 @implementation DOMNode (WebDOMNodeOperations)
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
-    return (WebBridge *)[WebBridge bridgeForDOMDocument:[self ownerDocument]];
+    return (WebFrameBridge *)[WebFrameBridge bridgeForDOMDocument:[self ownerDocument]];
 }
 
 - (WebArchive *)webArchive
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     NSArray *nodes;
     NSString *markupString = [bridge markupStringFromNode:self nodes:&nodes];
     return [[[bridge webFrame] dataSource] _archiveWithMarkupString:markupString nodes:nodes];
@@ -116,14 +116,14 @@
 
 @implementation DOMRange (WebDOMRangeOperations)
 
-- (WebBridge *)_bridge
+- (WebFrameBridge *)_bridge
 {
     return [[self startContainer] _bridge];
 }
 
 - (WebArchive *)webArchive
 {
-    WebBridge *bridge = [self _bridge];
+    WebFrameBridge *bridge = [self _bridge];
     NSArray *nodes;
     NSString *markupString = [bridge markupStringFromRange:self nodes:&nodes];
     return [[[bridge webFrame] dataSource] _archiveWithMarkupString:markupString nodes:nodes];

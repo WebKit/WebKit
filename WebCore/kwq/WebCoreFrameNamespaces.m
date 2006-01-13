@@ -41,7 +41,7 @@ CFHash
 
 NSMutableDictionary *namespaces = nil;
 
-+(void)addFrame:(WebCoreBridge *)frame toNamespace:(NSString *)name
++(void)addFrame:(WebCoreFrameBridge *)frame toNamespace:(NSString *)name
 {
     if (!name)
         return;
@@ -60,7 +60,7 @@ NSMutableDictionary *namespaces = nil;
     CFSetSetValue(namespace, frame);
 }
 
-+(void)removeFrame:(WebCoreBridge *)frame fromNamespace:(NSString *)name
++(void)removeFrame:(WebCoreFrameBridge *)frame fromNamespace:(NSString *)name
 {
     if (!name)
         return;

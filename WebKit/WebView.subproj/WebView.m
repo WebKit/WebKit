@@ -33,7 +33,7 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDashboardRegion.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -208,7 +208,7 @@ macro(yankAndSelect) \
 @interface WebViewPrivate : NSObject
 {
 @public
-    WebBridge *mainFrameBridge;
+    WebFrameBridge *mainFrameBridge;
     
     id UIDelegate;
     id UIDelegateForwarder;
@@ -270,7 +270,7 @@ macro(yankAndSelect) \
     
     NSView <WebDocumentDragging> *draggingDocumentView;
     unsigned int dragDestinationActionMask;
-    WebBridge *dragCaretBridge;
+    WebFrameBridge *dragCaretBridge;
     
     BOOL hasSpellCheckerDocumentTag;
     WebNSInt spellCheckerDocumentTag;
@@ -290,10 +290,10 @@ macro(yankAndSelect) \
 
 @interface WebView (WebFileInternal)
 - (WebFrame *)_selectedOrMainFrame;
-- (WebBridge *)_bridgeForSelectedOrMainFrame;
+- (WebFrameBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
-- (WebBridge *)_bridgeAtPoint:(NSPoint)point;
+- (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
@@ -562,7 +562,7 @@ static bool debugWidget = true;
     [childView _setWebView:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebBridge *newBridge = [[WebBridge alloc] initWithFrameName:fname view:childView];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithFrameName:fname view:childView];
 
     [parent _addChild:[newBridge webFrame]];
     
@@ -1554,7 +1554,7 @@ NSMutableDictionary *countInvocations;
     [self addSubview: wv];
     [wv release];
 
-    _private->mainFrameBridge = [[WebBridge alloc] initWithFrameName:frameName view:wv];
+    _private->mainFrameBridge = [[WebFrameBridge alloc] initWithFrameName:frameName view:wv];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
@@ -2286,7 +2286,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    WebBridge *bridge = [self _bridgeForSelectedOrMainFrame];
+    WebFrameBridge *bridge = [self _bridgeForSelectedOrMainFrame];
     if ([bridge selectionState] != WebSelectionStateRange) {
         NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
         if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
@@ -2320,7 +2320,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {
-    WebBridge *bridge = [self _bridgeAtPoint:point];
+    WebFrameBridge *bridge = [self _bridgeAtPoint:point];
     if (bridge != _private->dragCaretBridge) {
         [_private->dragCaretBridge removeDragCaret];
         _private->dragCaretBridge = [bridge retain];
@@ -2578,7 +2578,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)shouldClose
 {
-    WebBridge *bridge = [[self mainFrame] _bridge];
+    WebFrameBridge *bridge = [[self mainFrame] _bridge];
     if (!bridge)
         return YES;
     return [bridge shouldClose];
@@ -2717,7 +2717,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
-    WebBridge *bridge = [self _bridgeAtPoint:point];
+    WebFrameBridge *bridge = [self _bridgeAtPoint:point];
     return [bridge editableDOMRangeForPoint:[self convertPoint:point toView:[[[bridge webFrame] frameView] documentView]]];
 }
 
@@ -2768,7 +2768,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if (_private->editable != flag) {
         _private->editable = flag;
-        WebBridge *bridge = [[self mainFrame] _bridge];
+        WebFrameBridge *bridge = [[self mainFrame] _bridge];
         if (flag) {
             [bridge applyEditingStyleToBodyElement];
             // If the WebView is made editable and the selection is empty, set it to something.
@@ -2913,7 +2913,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)deleteSelection
 {
-    WebBridge *bridge = [self _bridgeForSelectedOrMainFrame];
+    WebFrameBridge *bridge = [self _bridgeForSelectedOrMainFrame];
     [bridge deleteSelectionWithSmartDelete:[(WebHTMLView *)[[[bridge webFrame] frameView] documentView] _canSmartCopyOrDelete]];
 }
     
@@ -3009,7 +3009,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return result;
 }
 
-- (WebBridge *)_bridgeForSelectedOrMainFrame
+- (WebFrameBridge *)_bridgeForSelectedOrMainFrame
 {
     return [[self _selectedOrMainFrame] _bridge];
 }
@@ -3027,7 +3027,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
 }
 
-- (WebBridge *)_bridgeAtPoint:(NSPoint)point
+- (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point
 {
     return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
 }

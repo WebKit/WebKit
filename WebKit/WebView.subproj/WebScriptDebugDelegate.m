@@ -28,7 +28,7 @@
 
 #import "WebScriptDebugDelegatePrivate.h"
 
-#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebCore/WebCoreScriptDebugger.h>
 

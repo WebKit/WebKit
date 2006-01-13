@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQWindowWidget.h"
 
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 
 #import <Cocoa/Cocoa.h>
 
@@ -36,10 +36,10 @@
 class KWQWindowWidgetPrivate
 {
 public:
-    WebCoreBridge *bridge;
+    WebCoreFrameBridge *bridge;
 };
 
-KWQWindowWidget::KWQWindowWidget(WebCoreBridge *bridge) :
+KWQWindowWidget::KWQWindowWidget(WebCoreFrameBridge *bridge) :
     d(new KWQWindowWidgetPrivate())
 {
     // intentionally not retained, since the bridge owns the window widget

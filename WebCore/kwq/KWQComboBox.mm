@@ -32,7 +32,7 @@
 #import "MacFrame.h"
 #import "KWQFoundationExtras.h"
 #import "KWQView.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
@@ -407,7 +407,7 @@ void QComboBox::populate()
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    WebCoreBridge *bridge = box ? [MacFrame::bridgeForWidget(box) retain] : nil;
+    WebCoreFrameBridge *bridge = box ? [MacFrame::bridgeForWidget(box) retain] : nil;
 
     // we need to retain the event because it is the [NSApp currentEvent], which can change
     // and therefore be released during [super trackMouse:...]

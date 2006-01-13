@@ -39,7 +39,7 @@
 @class NSMutableURLRequest;
 @class NSURLRequest;
 @class WebArchive;
-@class WebBridge;
+@class WebFrameBridge;
 @class WebFormState;
 @class WebFrameBridge;
 @class WebFrameView;
@@ -96,7 +96,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_checkLoadCompleteForThisFrame;
 - (void)_handledOnloadEvents;
 - (void)_checkLoadComplete;
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 - (void)_clearProvisionalDataSource;
 - (void)_setLoadType:(WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;

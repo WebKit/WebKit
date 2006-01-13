@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 
 KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(Frame *frame)
@@ -80,7 +80,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
     if (frameName) {
         // FIXME: Can't you just use m_frame->findFrame?
-        if (WebCoreBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
+        if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
                 QString argsReferrer = urlArgs.metaData()["referrer"];
                 NSString *referrer;
@@ -108,7 +108,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
         }
     }
     
-    WebCoreBridge *bridge;
+    WebCoreFrameBridge *bridge;
     if (winArgs.dialog)
         bridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
     else

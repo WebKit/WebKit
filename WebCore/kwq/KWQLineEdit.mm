@@ -30,7 +30,7 @@
 #import "KWQLogging.h"
 #import "KWQPalette.h"
 #import "KWQTextField.h"
-#import "WebCoreBridge.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"

@@ -1,3 +1,127 @@
+2006-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - rename WebBridge to WebFrameBridge
+        
+        - also removed all tabs from WebFrameBridge.m
+
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMNode _bridge]):
+        (-[DOMNode webArchive]):
+        (-[DOMRange _bridge]):
+        (-[DOMRange webArchive]):
+        * DOM.subproj/WebDOMOperationsPrivate.h:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebCoreStatistics.m:
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _bridge]):
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        * Plugins.subproj/WebPluginContainerCheck.m:
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController bridge]):
+        * WebCoreSupport.subproj/WebBridge.h: Removed.
+        * WebCoreSupport.subproj/WebBridge.m: Removed.
+        * WebCoreSupport.subproj/WebFileButton.h:
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileChooserButton initWithBridge:delegate:]):
+        * WebCoreSupport.subproj/WebFrameBridge.h: Added.
+        * WebCoreSupport.subproj/WebFrameBridge.m: Added.
+        (-[WebFrameBridge mainFrame]):
+        (-[WebFrameBridge createWindowWithURL:frameName:]):
+        (-[WebFrameBridge canTargetLoadInFrame:]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (formDelegate):
+        (-[WebFrameBridge createModalDialogWithURL:]):
+        * WebCoreSupport.subproj/WebSubresourceLoader.m:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory bridgeForView:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _bridge]):
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        (-[WebDataSource _stringWithData:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDebugDOMNode.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _traverseNextFrameStayWithin::]):
+        (Frame):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _bridge]):
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]):
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView webCoreBridge]):
+        (-[WebFrameView _bridge]):
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (-[WebHTMLRepresentation _bridge]):
+        (-[WebHTMLRepresentation documentSource]):
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:]):
+        (-[WebHTMLView updateFocusState]):
+        (-[NSArray validateUserInterfaceItem:]):
+        (-[NSArray attributedString]):
+        (-[NSArray selectedAttributedString]):
+        (-[NSArray concludeDragForDraggingInfo:actionMask:]):
+        (-[NSArray keyDown:]):
+        (-[NSArray _alterCurrentSelection:direction:granularity:]):
+        (-[NSArray _alterCurrentSelection:verticalDistance:]):
+        (-[NSArray _expandSelectionToGranularity:]):
+        (-[NSArray cut:]):
+        (-[NSArray _applyStyleToSelection:withUndoAction:]):
+        (-[NSArray _applyParagraphStyleToSelection:withUndoAction:]):
+        (-[NSArray pasteAsPlainText:]):
+        (-[NSArray insertNewline:]):
+        (-[NSArray insertLineBreak:]):
+        (-[NSArray insertParagraphSeparator:]):
+        (-[NSArray _changeWordCaseWithSelector:]):
+        (-[NSArray startSpeaking:]):
+        (-[NSArray selectToMark:]):
+        (-[NSArray swapWithMark:]):
+        (-[NSArray transpose:]):
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView selectedRange]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView _selectMarkedText]):
+        (-[WebHTMLView _selectRangeInMarkedText:]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView _selectionIsInsideMarkedText]):
+        (-[WebTextCompleteController _insertMatch:]):
+        (-[WebTextCompleteController doCompletion]):
+        (-[WebTextCompleteController endRevertingChange:moveLeft:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageView.m:
+        * WebView.subproj/WebMainResourceLoader.m:
+        * WebView.subproj/WebRenderNode.m:
+        * WebView.subproj/WebResource.m:
+        (-[WebResource _stringValue]):
+        * WebView.subproj/WebScriptDebugDelegate.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebView.m:
+        (-[WebView _createFrameNamed:inParent:allowsScrolling:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebView moveDragCaretToPoint:]):
+        (-[WebView shouldClose]):
+        (-[WebView editableDOMRangeForPoint:]):
+        (-[WebView setEditable:]):
+        (-[WebView deleteSelection]):
+        (-[WebView _bridgeForSelectedOrMainFrame]):
+        (-[WebView _bridgeAtPoint:]):
+
 2006-01-13  Darin Adler  <darin@apple.com>
 
         - Replaced tabs with spaces in source files that had less than 10 lines with tabs.

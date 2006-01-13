@@ -36,7 +36,7 @@
 @class NSURLResponse;
 @class WebArchive;
 @class WebLoader;
-@class WebBridge;
+@class WebFrameBridge;
 @class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceLoader;
@@ -188,7 +188,7 @@
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.
-- (WebBridge *)_bridge;
+- (WebFrameBridge *)_bridge;
 
 - (BOOL)_isCommitted;
 - (void)_commitIfReady:(NSDictionary *)pageCache;
