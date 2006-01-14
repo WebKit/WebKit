@@ -59,8 +59,8 @@ public:
     virtual bool isKCanvasContainer() const { return true; }
     virtual const char *renderName() const { return "KCanvasContainer"; }
 
-    virtual bool fillContains(const QPointF &p) const;
-    virtual bool strokeContains(const QPointF &p) const;
+    virtual bool fillContains(const FloatPoint &p) const;
+    virtual bool strokeContains(const FloatPoint &p) const;
     virtual QRectF relativeBBox(bool includeStroke = true) const;
     
     virtual QMatrix localTransform() const;

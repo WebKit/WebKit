@@ -129,7 +129,7 @@ QTextStream &operator<<(QTextStream &ts, const QRectF &r)
     return ts;
 }
 
-QTextStream &operator<<(QTextStream &ts, const QPointF &p)
+QTextStream &operator<<(QTextStream &ts, const FloatPoint &p)
 {
     ts << "(";    
     if (hasFractions(p.x()))

@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include "FloatSize.h"
-#include "KWQPointF.h"
+#include "FloatPoint.h"
 #include "KWQRect.h"
 
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -43,9 +43,9 @@ class QRect;
 class QRectF {
 public:
     QRectF();
-    QRectF(QPointF p, FloatSize s);
+    QRectF(FloatPoint p, FloatSize s);
     QRectF(float, float, float, float);
-    QRectF(const QPointF&, const QPointF&);
+    QRectF(const FloatPoint&, const FloatPoint&);
     QRectF(const QRect&);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QRectF(const NSRect&);
@@ -65,10 +65,10 @@ public:
     float width() const { return w; }
     float height() const { return h; }
 
-    QPointF topLeft() const;
-    QPointF topRight() const;
-    QPointF bottomRight() const;
-    QPointF bottomLeft() const;
+    FloatPoint topLeft() const;
+    FloatPoint topRight() const;
+    FloatPoint bottomRight() const;
+    FloatPoint bottomLeft() const;
 
     FloatSize size() const;
     void setX(float x) { xp = x; }
@@ -81,7 +81,7 @@ public:
     QRectF unite(const QRectF&) const;
     QRectF normalize() const;
 
-    bool contains(const QPointF& point) const { return contains(point.x(), point.y()); }
+    bool contains(const FloatPoint& point) const { return contains(point.x(), point.y()); }
 
     bool contains(float x, float y, bool proper = false) const
     {

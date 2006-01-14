@@ -258,7 +258,7 @@ bool KCanvasItemQuartz::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int
     if (hitTestAction != HitTestForeground)
         return false;
 
-    if (hitsPath(QPointF(_x, _y), true)) {
+    if (hitsPath(FloatPoint(_x, _y), true)) {
         setInnerNode(info);
         return true;
     }
@@ -310,7 +310,7 @@ QRectF KCanvasItemQuartz::bboxForPath(bool includeStroke) const
     return QRectF(bbox);
 }
 
-bool KCanvasItemQuartz::hitsPath(const QPointF &hitPoint, bool fill) const
+bool KCanvasItemQuartz::hitsPath(const FloatPoint &hitPoint, bool fill) const
 {
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);

@@ -1,5 +1,68 @@
 2006-01-13  David Hyatt  <hyatt@apple.com>
 
+        Convert QPointF to FloatPoint and move it to the platform
+        directory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::fillContains):
+        (KCanvasContainer::strokeContains):
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEConvolveMatrix::kernelUnitLength):
+        (KCanvasFEConvolveMatrix::setKernelUnitLength):
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::fillContains):
+        (RenderPath::strokeContains):
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KRenderingPaintServerLinearGradient::gradientStart):
+        (KRenderingPaintServerLinearGradient::setGradientStart):
+        (KRenderingPaintServerLinearGradient::gradientEnd):
+        (KRenderingPaintServerLinearGradient::setGradientEnd):
+        (KRenderingPaintServerRadialGradient::gradientCenter):
+        (KRenderingPaintServerRadialGradient::setGradientCenter):
+        (KRenderingPaintServerRadialGradient::gradientFocal):
+        (KRenderingPaintServerRadialGradient::setGradientFocal):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (ciVector):
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::nodeAtPoint):
+        (KCanvasItemQuartz::hitsPath):
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::buildGradient):
+        * kwq/KWQPointF.h: Removed.
+        * kwq/KWQPointF.mm: Removed.
+        * kwq/KWQRectF.h:
+        (QRectF::contains):
+        * kwq/KWQRectF.mm:
+        (QRectF::QRectF):
+        (QRectF::topLeft):
+        (QRectF::topRight):
+        (QRectF::bottomRight):
+        (QRectF::bottomLeft):
+        * platform/FloatPoint.cpp: Added.
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::yCoord):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+        * platform/FloatPoint.h: Added.
+        (WebCore::FloatPoint::operator -=):
+        * platform/mac/FloatPoint.mm: Added.
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::FloatPoint::operator NSPoint):
+        (WebCore::FloatPoint::operator CGPoint):
+
+2006-01-13  David Hyatt  <hyatt@apple.com>
+
         Convert QPoint and QPointArray to IntPoint and IntPointArray.
         Factor out the Objective-C-specific logic into a .mm file
         for IntPoint.

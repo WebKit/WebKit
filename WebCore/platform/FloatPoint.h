@@ -24,11 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QPOINTF_H_
-#define QPOINTF_H_
+#ifndef FLOATPOINT_H_
+#define FLOATPOINT_H_
 
-#include "KWQDef.h"
-
+#if __APPLE__
 // workaround for <rdar://problem/4294625>
 #if ! __LP64__ && ! NS_BUILD_32_LIKE_64
 #undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -40,20 +39,24 @@ typedef struct CGPoint NSPoint;
 typedef struct _NSPoint NSPoint;
 #endif
 typedef struct CGPoint CGPoint;
+#endif
 
 namespace WebCore {
-class IntPoint;
-}
 
-class QPointF {
+class IntPoint;
+
+class FloatPoint {
 public:
-    QPointF();
-    QPointF(float, float);
-    QPointF(const WebCore::IntPoint&);
+    FloatPoint();
+    FloatPoint(float, float);
+    FloatPoint(const IntPoint&);
+    
+#if __APPLE__
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QPointF(const NSPoint&);
+    explicit FloatPoint(const NSPoint&);
 #endif
-    explicit QPointF(const CGPoint&);
+    explicit FloatPoint(const CGPoint&);
+#endif
 
     float x() const { return xCoord; }
     float y() const { return yCoord; }
@@ -63,19 +66,26 @@ public:
 
     bool isNull() const { return xCoord == 0.0f && yCoord == 0.0f; }
 
-    QPointF& operator -=(const QPointF& two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
-    friend const QPointF operator*(const QPointF& p, double s);
-    friend QPointF operator+(const QPointF&, const QPointF&);
-    friend QPointF operator-(const QPointF&, const QPointF&);
+    FloatPoint& operator -=(const FloatPoint& two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
+    friend const FloatPoint operator*(const FloatPoint& p, double s);
+    friend FloatPoint operator+(const FloatPoint&, const FloatPoint&);
+    friend FloatPoint operator-(const FloatPoint&, const FloatPoint&);
 
+#if __APPLE__
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSPoint() const;
 #endif
     operator CGPoint() const;
+#endif
 
 private:
     float xCoord;
     float yCoord;
 };
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::FloatPoint;
 
 #endif

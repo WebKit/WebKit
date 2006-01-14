@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#include "IntPoint.h"
+#include "FloatPoint.h"
 
-#import "kcanvas/RenderPath.h"
+namespace WebCore {
 
-class KCanvasItemQuartz : public RenderPath {
-public:
-    KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node);
-    virtual ~KCanvasItemQuartz() { }
-    
-    virtual QRectF bboxForPath(bool includeStroke) const;
-    virtual bool hitsPath(const FloatPoint &p, bool fill /* false means stroke */) const;
-    
-    virtual QRect getAbsoluteRepaintRect() { return enclosingQRect(absoluteTransform().mapRect(relativeBBox(true))); }
-    
-    virtual bool requiresLayer() { return false; }
-    virtual void layout() { setNeedsLayout(false); }
-    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
-    virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                            HitTestAction hitTestAction);
-private:
-    void drawMarkersIfNeeded(const QRectF &rect, const KCanvasPath *path) const;
-};
+FloatPoint::FloatPoint() : xCoord(0), yCoord(0)
+{
+}
+
+FloatPoint::FloatPoint(float xIn, float yIn) : xCoord(xIn), yCoord(yIn)
+{
+}
+
+FloatPoint::FloatPoint(const IntPoint& p) :xCoord(p.x()), yCoord(p.y())
+{
+}
+
+FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
+{
+    return FloatPoint(a.xCoord + b.xCoord, a.yCoord + b.yCoord);
+}
+
+FloatPoint operator-(const FloatPoint& a, const FloatPoint& b)
+{
+    return FloatPoint(a.xCoord - b.xCoord, a.yCoord - b.yCoord);
+}
+
+const FloatPoint operator*(const FloatPoint& p, double s)
+{
+    return FloatPoint(p.xCoord * s, p.yCoord * s);
+}
+
+}

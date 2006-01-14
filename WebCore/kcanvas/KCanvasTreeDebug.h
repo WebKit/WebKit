@@ -31,7 +31,6 @@ class QMatrix;
 class QRect;
 class QColor;
 class QRectF;
-class QPointF;
 class QStringList;
 class KCClipData;
 class KCPathData;
@@ -41,6 +40,7 @@ class KCanvasContainer;
 
 namespace WebCore {
     class FloatSize;
+    class FloatPoint;
     class IntPoint;
 }
 
@@ -60,7 +60,7 @@ QTextStream &operator<<(QTextStream &ts, const QColor &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::IntPoint &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::FloatSize &);
 QTextStream &operator<<(QTextStream &ts, const QRectF &);
-QTextStream &operator<<(QTextStream &ts, const QPointF &);
+QTextStream &operator<<(QTextStream &ts, const WebCore::FloatPoint &);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.

@@ -33,7 +33,10 @@
 #include <kcanvas/KCanvasTypes.h>
 #include "khtml/rendering/render_object.h"
 
-class QPointF;
+namespace WebCore {
+    class FloatPoint;
+}
+
 namespace KSVG {
     class SVGStyledElementImpl;
 };
@@ -50,8 +53,8 @@ public:
     virtual ~RenderPath();
 
     // Hit-detection seperated for the fill and the stroke
-    virtual bool fillContains(const QPointF &p) const;
-    virtual bool strokeContains(const QPointF &p) const;
+    virtual bool fillContains(const WebCore::FloatPoint &p) const;
+    virtual bool strokeContains(const WebCore::FloatPoint &p) const;
 
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
     virtual QRectF relativeBBox(bool includeStroke = true) const;
@@ -72,7 +75,7 @@ public:
 protected:
     // restricted set of args for passing to paint servers, etc.
     const KCanvasCommonArgs commonArgs() const;
-    virtual bool hitsPath(const QPointF &hitPoint, bool fill) const = 0;
+    virtual bool hitsPath(const WebCore::FloatPoint &hitPoint, bool fill) const = 0;
     virtual QRectF bboxForPath(bool includeStroke) const = 0;
 
 private:

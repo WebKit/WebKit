@@ -190,8 +190,8 @@ void SVGLinearGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 
     grad->setGradientTransform(mat);
     grad->setBoundingBoxMode(bbox);
-    grad->setGradientStart(QPointF(_x1, _y1));
-    grad->setGradientEnd(QPointF(_x2, _y2));
+    grad->setGradientStart(FloatPoint(_x1, _y1));
+    grad->setGradientEnd(FloatPoint(_x2, _y2));
 }
 
 // vim:ts=4:noet

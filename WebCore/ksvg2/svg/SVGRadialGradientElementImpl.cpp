@@ -215,8 +215,8 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 
     grad->setGradientTransform(mat);
     grad->setBoundingBoxMode(bbox);
-    grad->setGradientCenter(QPointF(_cx, _cy));
-    grad->setGradientFocal(QPointF(_fx, _fy));
+    grad->setGradientCenter(FloatPoint(_cx, _cy));
+    grad->setGradientFocal(FloatPoint(_fx, _fy));
     grad->setGradientRadius(_r);
 }
 

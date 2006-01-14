@@ -60,7 +60,7 @@ static inline CIVector *ciVector(KCanvasPoint3F point)
     return [CIVector vectorWithX:point.x() Y:point.y() Z:point.z()];
 }
 
-static inline CIVector *ciVector(QPointF point)
+static inline CIVector *ciVector(FloatPoint point)
 {
     return [CIVector vectorWithX:point.x() Y:point.y()];
 }

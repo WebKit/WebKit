@@ -40,11 +40,11 @@ QRectF::QRectF(float x, float y, float width, float height) : xp(x), yp(y), w(wi
 {
 }
 
-QRectF::QRectF(QPointF p, FloatSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+QRectF::QRectF(FloatPoint p, FloatSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
 {
 }
 
-QRectF::QRectF(const QPointF &topLeft, const QPointF &bottomRight)
+QRectF::QRectF(const FloatPoint &topLeft, const FloatPoint &bottomRight)
   : xp(topLeft.x()), yp(topLeft.y()),
   w(bottomRight.x() - topLeft.x() + 1.0f), h(bottomRight.y() - topLeft.y() + 1.0f)
 {
@@ -89,24 +89,24 @@ float QRectF::bottom() const
     return yp + h - 1.0f;
 }
 
-QPointF QRectF::topLeft() const
+FloatPoint QRectF::topLeft() const
 {
-    return QPointF(xp,yp);
+    return FloatPoint(xp,yp);
 }
 
-QPointF QRectF::topRight() const
+FloatPoint QRectF::topRight() const
 {
-    return QPointF(right(),top());
+    return FloatPoint(right(),top());
 }
 
-QPointF QRectF::bottomRight() const
+FloatPoint QRectF::bottomRight() const
 {
-    return QPointF(right(),bottom());
+    return FloatPoint(right(),bottom());
 }
 
-QPointF QRectF::bottomLeft() const
+FloatPoint QRectF::bottomLeft() const
 {
-    return QPointF(left(),bottom());
+    return FloatPoint(left(),bottom());
 }
 
 FloatSize QRectF::size() const

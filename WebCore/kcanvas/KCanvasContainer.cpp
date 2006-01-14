@@ -68,7 +68,7 @@ void KCanvasContainer::setLocalTransform(const QMatrix &matrix)
     d->matrix = matrix;
 }
 
-bool KCanvasContainer::fillContains(const QPointF &p) const
+bool KCanvasContainer::fillContains(const FloatPoint &p) const
 {
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling())
@@ -80,7 +80,7 @@ bool KCanvasContainer::fillContains(const QPointF &p) const
     return false;
 }
 
-bool KCanvasContainer::strokeContains(const QPointF &p) const
+bool KCanvasContainer::strokeContains(const FloatPoint &p) const
 {
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling())
