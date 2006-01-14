@@ -869,7 +869,7 @@ void RenderTableSection::addCell(RenderTableCell *cell)
 {
     int rSpan = cell->rowSpan();
     int cSpan = cell->colSpan();
-    QMemArray<RenderTable::ColumnStruct> &columns = table()->columns;
+    Array<RenderTable::ColumnStruct> &columns = table()->columns;
     int nCols = columns.size();
 
     // ### mozilla still seems to do the old HTML way, even for strict DTD
@@ -947,7 +947,7 @@ void RenderTableSection::addCell(RenderTableCell *cell)
 
 void RenderTableSection::setCellWidths()
 {
-    QMemArray<int> &columnPos = table()->columnPos;
+    Array<int> &columnPos = table()->columnPos;
 
     int rows = gridRows;
     for (int i = 0; i < rows; i++) {

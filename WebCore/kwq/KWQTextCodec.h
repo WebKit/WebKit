@@ -53,7 +53,7 @@ public:
     QCString fromUnicode(const QString &str, bool allowEntities = false) const;
 
     QString toUnicode(const char *, int) const;
-    QString toUnicode(const QByteArray &, int) const;
+    QString toUnicode(const ByteArray &, int) const;
     
     friend bool operator==(const QTextCodec &, const QTextCodec &);
     unsigned hash() const;

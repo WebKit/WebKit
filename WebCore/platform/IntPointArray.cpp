@@ -80,7 +80,7 @@ void IntPointArray::point(uint index, int *x, int *y)
 
 void IntPointArray::setPoint( uint index, int x, int y )
 {
-    QMemArray<IntPoint>::at( index ) = IntPoint( x, y );
+    Array<IntPoint>::at( index ) = IntPoint( x, y );
 }
 
 

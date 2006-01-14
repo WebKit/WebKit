@@ -63,9 +63,9 @@ public:
     QPixmap();
     QPixmap(void *MIMEType);
     QPixmap(const IntSize&);
-    QPixmap(const QByteArray&);
+    QPixmap(const ByteArray&);
 #if __APPLE__
-    QPixmap(const QByteArray&, NSString *MIMEType);
+    QPixmap(const ByteArray&, NSString *MIMEType);
 #endif
     QPixmap(int, int);
 #if __APPLE__
@@ -87,7 +87,7 @@ public:
 
     QPixmap &operator=(const QPixmap &);
 
-    bool receivedData(const QByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback);
+    bool receivedData(const ByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback);
     void stopAnimations();
 
 #if __APPLE__

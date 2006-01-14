@@ -26,17 +26,17 @@
 #ifndef INTPOINTARRAY_H_
 #define INTPOINTARRAY_H_
 
-#include "KWQMemArray.h"
+#include "Array.h"
 #include "IntPoint.h"
 
 namespace WebCore {
 
 class IntRect;
 
-class IntPointArray : public QMemArray<IntPoint> {
+class IntPointArray : public Array<IntPoint> {
 public:
     IntPointArray() { }
-    IntPointArray(int size) : QMemArray<IntPoint>(size) { }
+    IntPointArray(int size) : Array<IntPoint>(size) { }
     IntPointArray(const IntRect &rect);
     IntPointArray(int, const int *);
     

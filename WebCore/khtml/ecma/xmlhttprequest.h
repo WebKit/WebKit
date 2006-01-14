@@ -95,7 +95,7 @@ namespace KJS {
     void slotFinished( KIO::Job* );
     void slotRedirection( KIO::Job*, const KURL& );
 
-    void processSyncLoadResults(const QByteArray &data, const KURL &finalURL, const QString &headers);
+    void processSyncLoadResults(const ByteArray &data, const KURL &finalURL, const QString &headers);
 
     void open(const QString& _method, const KURL& _url, bool _async);
     void send(const DOM::DOMString& _body);

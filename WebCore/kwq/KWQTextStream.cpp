@@ -33,7 +33,7 @@ const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f
 const int maxPrecision = 6; // must match to precisionFormats
 const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
 
-QTextStream::QTextStream(const QByteArray &ba)
+QTextStream::QTextStream(const ByteArray &ba)
     : _hasByteArray(true), _byteArray(ba), _string(0), _precision(defaultPrecision)
 {
 }

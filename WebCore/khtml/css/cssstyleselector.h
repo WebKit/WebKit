@@ -204,14 +204,14 @@ public:
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes
         // for any !important rules.
-        QMemArray<DOM::CSSMutableStyleDeclarationImpl*> m_matchedDecls;
+        Array<DOM::CSSMutableStyleDeclarationImpl*> m_matchedDecls;
         unsigned m_matchedDeclCount;
         
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
         // merge sorting.
-        QMemArray<CSSRuleData*> m_matchedRules;
+        Array<CSSRuleData*> m_matchedRules;
         unsigned m_matchedRuleCount;
-        QMemArray<CSSRuleData*> m_tmpRules;
+        Array<CSSRuleData*> m_tmpRules;
         unsigned m_tmpRuleCount;
         DOM::CSSRuleListImpl* m_ruleList;
         bool m_collectRulesOnly;

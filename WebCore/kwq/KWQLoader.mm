@@ -164,7 +164,7 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
+ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
     WebCoreFrameBridge *bridge = frame->bridge();
@@ -196,7 +196,7 @@ QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tran
     finalURL = finalNSURL;
     responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(responseHeaderDict, statusCode));
 
-    QByteArray results([resultData length]);
+    ByteArray results([resultData length]);
 
     memcpy( results.data(), [resultData bytes], [resultData length] );
 
@@ -204,7 +204,7 @@ QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tran
 
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QByteArray();
+    return ByteArray();
 }
 
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)

@@ -192,7 +192,7 @@ QString QTextCodec::toUnicode(const char *chs, int len) const
     return KWQTextDecoder(_encoding, _flags).toUnicode(chs, len, true);
 }
 
-QString QTextCodec::toUnicode(const QByteArray &qba, int len) const
+QString QTextCodec::toUnicode(const ByteArray &qba, int len) const
 {
     return KWQTextDecoder(_encoding, _flags).toUnicode(qba, len, true);
 }

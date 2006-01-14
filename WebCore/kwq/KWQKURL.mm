@@ -30,7 +30,7 @@
 #import "KWQFoundationExtras.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
-#import "KWQMemArray.h"
+#import "Array.h"
 #import "KWQValueList.h"
 
 // FIXME: Should get this from a header.
@@ -1513,13 +1513,13 @@ static QString encodeHostname(const QString &s)
     return QString(reinterpret_cast<QChar *>(buffer), numCharactersConverted);
 }
 
-static QMemArray<KWQIntegerPair> findHostnamesInMailToURL(const QString &s)
+static Array<KWQIntegerPair> findHostnamesInMailToURL(const QString &s)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
 
-    QMemArray<KWQIntegerPair> a;
+    Array<KWQIntegerPair> a;
 
     int p = 0;
     while (1) {
@@ -1634,7 +1634,7 @@ static bool findHostnameInHierarchicalURL(const QString &s, int &startOffset, in
 static QString encodeHostnames(const QString &s)
 {
     if (s.startsWith("mailto:", false)) {
-        const QMemArray<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
+        const Array<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
         uint n = hostnameRanges.size();
         if (n != 0) {
             QString result;

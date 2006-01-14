@@ -1,5 +1,117 @@
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
+        Convert QMemArray to Array.  QByteArray becomes ByteArray.
+        KWQArrayImpl becomes ArrayImpl.
+
+        Reviewed by anders
+
+        * ForwardingHeaders/qmemarray.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/cssstyleselector.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::processSyncLoadResults):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        (DOM::HTMLOptionElementImpl::index):
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (DOM::HTMLSelectElementImpl::selectedIndex):
+        (DOM::HTMLSelectElementImpl::setSelectedIndex):
+        (DOM::HTMLSelectElementImpl::length):
+        (DOM::HTMLSelectElementImpl::remove):
+        (DOM::HTMLSelectElementImpl::value):
+        (DOM::HTMLSelectElementImpl::setValue):
+        (DOM::HTMLSelectElementImpl::state):
+        (DOM::HTMLSelectElementImpl::restoreState):
+        (DOM::HTMLSelectElementImpl::appendFormData):
+        (DOM::HTMLSelectElementImpl::optionToListIndex):
+        (DOM::HTMLSelectElementImpl::listToOptionIndex):
+        (DOM::HTMLSelectElementImpl::reset):
+        (DOM::HTMLSelectElementImpl::notifyOptionSelected):
+        * khtml/html/HTMLSelectElementImpl.h:
+        (DOM::HTMLSelectElementImpl::listItems):
+        * khtml/misc/formdata.cpp:
+        (khtml::FormData::flatten):
+        (khtml::FormData::flattenToString):
+        * khtml/misc/formdata.h:
+        (khtml::FormDataElement::FormDataElement):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_form.cpp:
+        (RenderSelect::updateFromElement):
+        (RenderSelect::layout):
+        (RenderSelect::slotSelected):
+        (RenderSelect::slotSelectionChanged):
+        (RenderSelect::updateSelection):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::addCell):
+        (RenderTableSection::setCellWidths):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::layout):
+        * khtml/rendering/table_layout.h:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::docLoaderFunc):
+        * kwq/KWQArrayImpl.cpp: Removed.
+        * kwq/KWQArrayImpl.h: Removed.
+        * kwq/KWQBuffer.cpp:
+        (QBuffer::setBuffer):
+        * kwq/KWQBuffer.h:
+        (QBuffer::QBuffer):
+        (QBuffer::buffer):
+        * kwq/KWQCString.cpp:
+        (QCString::QCString):
+        (QCString::resize):
+        (QCString::append):
+        * kwq/KWQCString.h:
+        * kwq/KWQKURL.mm:
+        (findHostnamesInMailToURL):
+        (encodeHostnames):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQServeSynchronousRequest):
+        * kwq/KWQMemArray.h: Removed.
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        (QPixmap::receivedData):
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (QString::QString):
+        * kwq/KWQTextCodec.cpp:
+        (QTextCodec::toUnicode):
+        * kwq/KWQTextCodec.h:
+        * kwq/KWQTextStream.cpp:
+        (QTextStream::QTextStream):
+        * kwq/KWQTextStream.h:
+        * page/Frame.h:
+        * platform/Array.h: Added.
+        (WebCore::Array::Array):
+        (WebCore::Array::duplicate):
+        (WebCore::Array::assign):
+        (WebCore::Array::operator==):
+        (WebCore::Array::operator!=):
+        * platform/ArrayImpl.cpp: Added.
+        (WebCore::ArrayImpl::ArrayPrivate::ArrayPrivate):
+        (WebCore::ArrayImpl::ArrayPrivate::~ArrayPrivate):
+        (WebCore::ArrayImpl::ArrayImpl):
+        (WebCore::ArrayImpl::~ArrayImpl):
+        (WebCore::ArrayImpl::operator=):
+        (WebCore::ArrayImpl::data):
+        (WebCore::ArrayImpl::resize):
+        (WebCore::ArrayImpl::duplicate):
+        (WebCore::ArrayImpl::detach):
+        (WebCore::ArrayImpl::fill):
+        (WebCore::ArrayImpl::operator==):
+        * platform/ArrayImpl.h: Added.
+        (WebCore::ArrayImpl::size):
+        * platform/IntPointArray.cpp:
+        (IntPointArray::setPoint):
+        * platform/IntPointArray.h:
+        (WebCore::IntPointArray::IntPointArray):
+
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
         Convert QRect/QRectF -> IntRect/FloatRect.  Same drill as point
         and size.
 

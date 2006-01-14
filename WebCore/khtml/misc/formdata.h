@@ -31,11 +31,11 @@ namespace khtml {
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
-    FormDataElement(const QByteArray &array) : m_type(data), m_data(array) { }
+    FormDataElement(const ByteArray &array) : m_type(data), m_data(array) { }
     FormDataElement(const QString &filename) : m_type(encodedFile), m_filename(filename) { }
 
     enum { data, encodedFile } m_type;
-    QByteArray m_data;
+    ByteArray m_data;
     QString m_filename;
 };
 
@@ -47,7 +47,7 @@ public:
     void appendData(const void *data, size_t size);
     void appendFile(const QString &filename);
 
-    QByteArray flatten() const; // omits files
+    ByteArray flatten() const; // omits files
     QString flattenToString() const; // omits files
 
     size_t count() const { return m_elements.count(); }

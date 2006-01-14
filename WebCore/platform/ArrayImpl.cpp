@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "KWQArrayImpl.h"
+#include "ArrayImpl.h"
+#include <stddef.h>
 
 #include <new>
 #include <string.h>
@@ -33,45 +34,47 @@
 
 using std::nothrow;
 
-KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
+namespace WebCore {
+
+ArrayImpl::ArrayPrivate::ArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
     data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL)
 {
 }
 
-KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate()
+ArrayImpl::ArrayPrivate::~ArrayPrivate()
 {
     fastFree(data);
 }
 
 
-KWQArrayImpl::KWQArrayImpl(size_t itemSize, size_t numItems) : 
-    d(new KWQArrayPrivate(itemSize, numItems))
+ArrayImpl::ArrayImpl(size_t itemSize, size_t numItems) : 
+    d(new ArrayPrivate(itemSize, numItems))
 {
 }
 
-KWQArrayImpl::KWQArrayImpl(const KWQArrayImpl &a) : 
+ArrayImpl::ArrayImpl(const ArrayImpl &a) : 
     d(a.d)
 {
 }
 
-KWQArrayImpl::~KWQArrayImpl()
+ArrayImpl::~ArrayImpl()
 {
 }
 
-KWQArrayImpl &KWQArrayImpl::operator=(const KWQArrayImpl &a)
+ArrayImpl &ArrayImpl::operator=(const ArrayImpl &a)
 {
     d = a.d;
     return *this;
 }
 
-void *KWQArrayImpl::data() const
+void *ArrayImpl::data() const
 {
     return d->data;
 }
 
-bool KWQArrayImpl::resize(size_t newSize)
+bool ArrayImpl::resize(size_t newSize)
 {
     if (newSize != d->numItems) {
         char *newData;
@@ -93,14 +96,14 @@ bool KWQArrayImpl::resize(size_t newSize)
     return true;
 }
 
-void KWQArrayImpl::duplicate(const void *data, size_t newSize)
+void ArrayImpl::duplicate(const void *data, size_t newSize)
 {
     if (data == NULL) {
 	newSize = 0;
     }
 
     if (!d->hasOneRef())
-        d = new KWQArrayPrivate(d->itemSize, newSize);
+        d = new ArrayPrivate(d->itemSize, newSize);
 
     if (d->numItems != newSize) {
 	resize(newSize);
@@ -109,13 +112,13 @@ void KWQArrayImpl::duplicate(const void *data, size_t newSize)
     memcpy(d->data, data, newSize * d->itemSize);
 }
 
-void KWQArrayImpl::detach()
+void ArrayImpl::detach()
 {
     if (!d->hasOneRef())
         duplicate(d->data, d->numItems);
 }
 
-bool KWQArrayImpl::fill(const void *item, int numItems)
+bool ArrayImpl::fill(const void *item, int numItems)
 {
     if (numItems == -1) {
         numItems = d->numItems;
@@ -134,8 +137,10 @@ bool KWQArrayImpl::fill(const void *item, int numItems)
     return true;
 }
 
-bool KWQArrayImpl::operator==(const KWQArrayImpl &a) const
+bool ArrayImpl::operator==(const ArrayImpl &a) const
 {
     return d->numItems == a.d->numItems && d->itemSize == d->itemSize
         && (d->data == a.d->data || memcmp(d->data, a.d->data, d->itemSize*d->numItems) == 0);
+}
+
 }

@@ -26,6 +26,7 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
+#include "KWQDef.h"
 #include <ctype.h>
 #include <unicode/uchar.h>
 #if __APPLE__
@@ -411,7 +412,7 @@ public:
 
     QString();
     QString(QChar);
-    QString(const QByteArray &);
+    QString(const ByteArray &);
     QString(const QChar *, uint);
     QString(const char *);
     QString(const char *, int len);

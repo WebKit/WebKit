@@ -48,10 +48,10 @@ void FormData::appendFile(const QString &filename)
     m_elements.append(filename);
 }
 
-QByteArray FormData::flatten() const
+ByteArray FormData::flatten() const
 {
     // Concatenate all the byte arrays, but omit any files.
-    QByteArray a;
+    ByteArray a;
     for (QValueListConstIterator<FormDataElement> it = m_elements.begin(); it != m_elements.end(); ++it) {
         const FormDataElement &e = *it;
         if (e.m_type == FormDataElement::data) {
@@ -71,7 +71,7 @@ QByteArray FormData::flatten() const
 
 QString FormData::flattenToString() const
 {
-    QByteArray bytes = flatten();
+    ByteArray bytes = flatten();
     return QString::fromLatin1(bytes.data(), bytes.size());
 }
 

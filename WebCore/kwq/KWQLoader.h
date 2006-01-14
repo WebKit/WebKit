@@ -54,7 +54,7 @@ namespace DOM {
 bool KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
 bool KWQServeRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *);
 
-QByteArray KWQServeSynchronousRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *, KURL &finalURL, QString &headers);
+ByteArray KWQServeSynchronousRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *, KURL &finalURL, QString &headers);
 
 void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);

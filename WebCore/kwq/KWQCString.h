@@ -26,12 +26,10 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
-#include "KWQMemArray.h"
+#include "Array.h"
 #include <string.h>
 
-typedef QMemArray<char> QByteArray;
-
-class QCString : public QByteArray {
+class QCString : public ByteArray {
 public:
     QCString();
     QCString(int);

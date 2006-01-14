@@ -23,22 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQ_ARRAY_IMPL_H
-#define KWQ_ARRAY_IMPL_H
+#ifndef ARRAY_IMPL_H
+#define ARRAY_IMPL_H
 
-#include "KWQDef.h"
-#include <stddef.h>
 #include <kxmlcore/RefPtr.h>
-#include "misc/shared.h"
+#include "shared.h"
 
-class KWQArrayImpl
+namespace WebCore {
+
+class ArrayImpl
 {
  public:
-    KWQArrayImpl(size_t itemSize, size_t numItems = 0);
-    ~KWQArrayImpl();
+    ArrayImpl(size_t itemSize, size_t numItems = 0);
+    ~ArrayImpl();
     
-    KWQArrayImpl(const KWQArrayImpl &);
-    KWQArrayImpl &operator=(const KWQArrayImpl &);
+    ArrayImpl(const ArrayImpl &);
+    ArrayImpl &operator=(const ArrayImpl &);
     
     void *at(size_t pos) const { return &d->data[pos * d->itemSize]; }
 
@@ -49,26 +49,28 @@ class KWQArrayImpl
     bool fill(const void *item, int size = -1);
     void detach();
     
-    bool operator==(const KWQArrayImpl &) const;
+    bool operator==(const ArrayImpl &) const;
 
  private:
-    class KWQArrayPrivate : public khtml::Shared<KWQArrayPrivate>
+    class ArrayPrivate : public khtml::Shared<ArrayPrivate>
     {
     public:
-        KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
-        ~KWQArrayPrivate();
+        ArrayPrivate(size_t pNumItems, size_t pItemSize);
+        ~ArrayPrivate();
 
         size_t numItems;
         size_t itemSize;
         char *data;
     };
 
-    RefPtr<KWQArrayPrivate> d;
+    RefPtr<ArrayPrivate> d;
 };
 
-inline unsigned KWQArrayImpl::size() const
+inline unsigned ArrayImpl::size() const
 {
     return d->numItems;
+}
+
 }
 
 #endif

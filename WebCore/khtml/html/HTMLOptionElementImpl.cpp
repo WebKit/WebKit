@@ -98,7 +98,7 @@ int HTMLOptionElementImpl::index() const
     // we won't forget to update a member variable in some cases...
     HTMLSelectElementImpl *select = getSelect();
     if (select) {
-        QMemArray<HTMLElementImpl*> items = select->listItems();
+        Array<HTMLElementImpl*> items = select->listItems();
         int l = items.count();
         int optionIndex = 0;
         for(int i = 0; i < l; i++) {

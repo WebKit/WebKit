@@ -28,17 +28,17 @@
 
 #include "KWQDef.h"
 
-#include "KWQMemArray.h"
+#include "Array.h"
 #include "KWQString.h"
 #include "KWQIODevice.h"
 
 class QBuffer {
 public:
     QBuffer() : opened(false), pos(0) { }
-    QBuffer(QByteArray b) : opened(false), ba(b), pos(0) { }
+    QBuffer(ByteArray b) : opened(false), ba(b), pos(0) { }
 
-    bool setBuffer(QByteArray);
-    QByteArray buffer() const { return ba; }
+    bool setBuffer(ByteArray);
+    ByteArray buffer() const { return ba; }
     uint size() const { return ba.size(); }
     bool isOpen() const { return opened; }
     void open(int);
@@ -47,7 +47,7 @@ public:
 
 private:
     bool opened;
-    QByteArray ba;
+    ByteArray ba;
     uint pos;
 };
 

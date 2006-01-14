@@ -35,7 +35,7 @@ QCString::QCString()
 {
 }
 
-QCString::QCString(int size) : QByteArray(size)
+QCString::QCString(int size) : ByteArray(size)
 {
     if( size>0 && data() )
     {
@@ -88,7 +88,7 @@ uint QCString::length() const
 
 bool QCString::resize(uint len)
 {
-    bool success = QByteArray::resize(len);
+    bool success = ByteArray::resize(len);
     if( success && len>0 )
         data()[len-1] = 0;	// always terminate last byte
 
@@ -237,7 +237,7 @@ QCString& QCString::append(const char *s)
         if (len2) {
             detach();
             uint len1 = length();
-            if (QByteArray::resize(len1 + len2 + 1)) {
+            if (ByteArray::resize(len1 + len2 + 1)) {
                 memcpy(data() + len1, s, len2 + 1);
             }
         }
@@ -251,7 +251,7 @@ QCString &QCString::append(char c)
     detach();
     uint len = length();
 
-    if (QByteArray::resize(len + 2)) {
+    if (ByteArray::resize(len + 2)) {
         *(data() + len) = c;
         *(data() + len + 1) = '\0';
     }

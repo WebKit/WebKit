@@ -376,7 +376,7 @@ void XMLHttpRequest::send(const DOMString& _body)
     job->addMetaData("customHTTPHeader", requestHeaders);
 
   if (!async) {
-    QByteArray data;
+    ByteArray data;
     KURL finalURL;
     QString headers;
 
@@ -545,7 +545,7 @@ JSValue *XMLHttpRequest::getStatusText() const
   return jsString(statusText);
 }
 
-void XMLHttpRequest::processSyncLoadResults(const QByteArray &data, const KURL &finalURL, const QString &headers)
+void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &finalURL, const QString &headers)
 {
   if (!urlMatchesDocumentDomain(finalURL)) {
     abort();

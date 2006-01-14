@@ -23,16 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QARRAY_H_
-#define QARRAY_H_
+#ifndef ARRAY_H_
+#define ARRAY_H_
 
 #include "KWQDef.h"
-#include "KWQArrayImpl.h"
+#include "ArrayImpl.h"
 
-template <class T> class QMemArray {
+namespace WebCore {
+
+template <class T> class Array {
 public:
-    QMemArray() : impl(sizeof(T)) { }
-    QMemArray(int i) : impl(sizeof(T), i) { }
+    Array() : impl(sizeof(T)) { }
+    Array(int i) : impl(sizeof(T), i) { }
     
     bool isEmpty() { return impl.size() == 0; }
     T &at(uint u) { return *(T *)impl.at(u); }
@@ -42,11 +44,11 @@ public:
     uint size() const { return impl.size(); }
     uint count() const { return impl.size(); }
     bool resize(uint size) { return impl.resize(size); }
-    QMemArray<T>& duplicate(const QMemArray<T> &a) { impl.duplicate(a.data(), a.size()); return *this; }
-    QMemArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
+    Array<T>& duplicate(const Array<T> &a) { impl.duplicate(a.data(), a.size()); return *this; }
+    Array<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
     void detach() { impl.detach(); }
     bool fill(const T &item, int size=-1) { return impl.fill(&item, size); }
-    QMemArray<T>& assign(const QMemArray<T> &a) { return *this = a; }
+    Array<T>& assign(const Array<T> &a) { return *this = a; }
 
     T &operator[](int i) { return *(T *)impl.at(i); }
     const T &operator[](int i) const { return *(T *)impl.at(i); }
@@ -55,14 +57,20 @@ public:
     T &operator[](uint i) { return *(T *)impl.at(i); }
     const T &operator[](uint i) const { return *(T *)impl.at(i); }
 #endif
-    bool operator==(const QMemArray<T> &a) const { return impl == a.impl; }
-    bool operator!=(const QMemArray<T> &a) const { return !(*this == a); }    
+    bool operator==(const Array<T> &a) const { return impl == a.impl; }
+    bool operator!=(const Array<T> &a) const { return !(*this == a); }    
     operator const T*() const { return data(); }
 
  private:
-    KWQArrayImpl impl;
+    ArrayImpl impl;
 };
 
-#define Q3MemArray QMemArray
+typedef Array<char> ByteArray;
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::Array;
+using WebCore::ByteArray;
 
 #endif

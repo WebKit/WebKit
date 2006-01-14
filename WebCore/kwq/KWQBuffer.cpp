@@ -50,7 +50,7 @@ int QBuffer::writeBlock(const char *data, uint len)
     return len;
 }
 
-bool QBuffer::setBuffer(QByteArray newBuff)
+bool QBuffer::setBuffer(ByteArray newBuff)
 {
     if (isOpen())
         return false;

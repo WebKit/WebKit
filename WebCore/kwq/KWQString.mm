@@ -902,7 +902,7 @@ QString::QString(QChar qc)
     }
 }
 
-QString::QString(const QByteArray &qba)
+QString::QString(const ByteArray &qba)
 {
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);

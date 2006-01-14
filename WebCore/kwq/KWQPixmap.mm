@@ -74,14 +74,14 @@ QPixmap::QPixmap(const IntSize& sz)
     m_needCopyOnWrite = false;
 }
 
-QPixmap::QPixmap(const QByteArray& bytes)
+QPixmap::QPixmap(const ByteArray& bytes)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()]);
     m_MIMEType = nil;
     m_needCopyOnWrite = false;
 }
 
-QPixmap::QPixmap(const QByteArray& bytes, NSString *MIME)
+QPixmap::QPixmap(const ByteArray& bytes, NSString *MIME)
 {
     m_MIMEType = KWQRetainNSRelease([MIME copy]);
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:m_MIMEType]);
@@ -187,7 +187,7 @@ bool QPixmap::shouldUseThreadedDecoding()
     return [WebCoreImageRendererFactory shouldUseThreadedDecoding] ? true : false;
 }
 
-bool QPixmap::receivedData(const QByteArray& bytes, bool isComplete, CachedImageCallback *decoderCallback)
+bool QPixmap::receivedData(const ByteArray& bytes, bool isComplete, CachedImageCallback *decoderCallback)
 {
     if (!m_imageRenderer)
         m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:m_MIMEType]);
