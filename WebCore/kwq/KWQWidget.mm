@@ -166,7 +166,7 @@ void QWidget::resize(const IntSize &s)
     resize(s.width(), s.height());
 }
 
-QPoint QWidget::pos() const 
+IntPoint QWidget::pos() const 
 {
     return frameGeometry().topLeft();
 }
@@ -176,7 +176,7 @@ void QWidget::move(int x, int y)
     setFrameGeometry(QRect(x, y, width(), height()));
 }
 
-void QWidget::move(const QPoint &p) 
+void QWidget::move(const IntPoint &p) 
 {
     move(p.x(), p.y());
 }
@@ -406,15 +406,15 @@ void QWidget::setFrameGeometry(const QRect &rect)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QPoint QWidget::mapFromGlobal(const QPoint &p) const
+IntPoint QWidget::mapFromGlobal(const IntPoint &p) const
 {
     NSPoint bp = {0,0};
 
     KWQ_BLOCK_EXCEPTIONS;
     bp = [[MacFrame::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
-    return QPoint(bp);
+    return IntPoint(bp);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QPoint();
+    return IntPoint();
 }
 
 NSView *QWidget::getView() const

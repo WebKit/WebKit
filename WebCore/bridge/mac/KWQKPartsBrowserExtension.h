@@ -28,7 +28,7 @@
 
 #include "KWQEvent.h"
 #include "KWQMap.h"
-#include "KWQPointArray.h"
+#include "IntPointArray.h"
 
 #include "KWQKURL.h"
 #include "KWQObject.h"

@@ -25,7 +25,7 @@
 #define KCanvasItem_H
 
 #include <qrect.h>
-#include <qpoint.h>
+#include "IntPoint.h"
 #include <qrect.h>
 #include <q3valuelist.h>
 #include <QRectF>

@@ -283,7 +283,7 @@ public:
 
   int m_focusNodeNumber;
 
-  QPoint m_dragStartPos;
+  IntPoint m_dragStartPos;
 
   ObjectContents * m_activeFrame;
   QGuardedPtr<Frame> m_opener;

@@ -38,10 +38,10 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include <qstring.h>
-#include <qpoint.h>
+#include "IntPoint.h"
 #include <qregion.h>
 #include <qptrstack.h>
-#include <qpointarray.h>
+#include "IntPointArray.h"
 
 using namespace DOM;
 using namespace HTMLNames;

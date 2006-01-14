@@ -28,7 +28,7 @@
 
 #include "KWQNamespace.h"
 #include "KWQRegion.h"
-#include "KWQPointArray.h"
+#include "IntPointArray.h"
 #include "KWQString.h"
 
 #ifdef __OBJC__
@@ -75,7 +75,7 @@ public:
     QMouseEvent(Type, NSEvent *);
     explicit QMouseEvent(Type); // uses AppKit's current event
 
-    const QPoint &pos() const { return _position; }
+    const IntPoint &pos() const { return _position; }
     int x() const { return _position.x(); }
     int y() const { return _position.y(); }
     int globalX() const { return _globalPosition.x(); }
@@ -89,8 +89,8 @@ public:
 private:
     void fixState();
 
-    QPoint _position;
-    QPoint _globalPosition;
+    IntPoint _position;
+    IntPoint _globalPosition;
     int _button;
     int _state;
     int _stateAfter;
@@ -143,14 +143,14 @@ public:
 
 class QWheelEvent : public QEvent {
 public:
-    QWheelEvent(const QPoint &position, const QPoint &globalPosition, int delta, int state, Orientation orientation)
+    QWheelEvent(const IntPoint &position, const IntPoint &globalPosition, int delta, int state, Orientation orientation)
         : QEvent(Wheel), _position(position), _globalPosition(globalPosition), _delta(delta), _state(state)
         , _orientation(orientation), _isAccepted(false)
         { }
     QWheelEvent(NSEvent *);
 
-    const QPoint &pos() const { return _position; }
-    const QPoint &globalPos() const { return _globalPosition; }
+    const IntPoint &pos() const { return _position; }
+    const IntPoint &globalPos() const { return _globalPosition; }
     int delta() const { return _delta; }
     int state() const { return _state; }
     Orientation orientation() const { return _orientation; }
@@ -165,8 +165,8 @@ public:
     void ignore() { _isAccepted = false; }
 
 private:
-    QPoint _position;
-    QPoint _globalPosition;
+    IntPoint _position;
+    IntPoint _globalPosition;
     int _delta;
     int _state;
     Orientation _orientation;

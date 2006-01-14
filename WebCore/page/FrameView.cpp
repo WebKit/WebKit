@@ -749,11 +749,11 @@ void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 
 }
 
-bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const QPoint &loc, ClipboardImpl *clipboard)
+bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const IntPoint &loc, ClipboardImpl *clipboard)
 {
     int clientX, clientY;
     viewportToContents(loc.x(), loc.y(), clientX, clientY);
-    QPoint screenLoc = viewportToGlobal(loc);
+    IntPoint screenLoc = viewportToGlobal(loc);
     int screenX = screenLoc.x();
     int screenY = screenLoc.y();
     bool ctrlKey = 0;   // FIXME - set up modifiers, grab from AK or CG
@@ -774,7 +774,7 @@ bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragT
     return accept;
 }
 
-bool KHTMLView::updateDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
+bool KHTMLView::updateDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     int xm, ym;
@@ -804,7 +804,7 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
     return accept;
 }
 
-void KHTMLView::cancelDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
+void KHTMLView::cancelDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     if (d->dragTarget) {
         dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), loc, clipboard);
@@ -812,7 +812,7 @@ void KHTMLView::cancelDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
     d->dragTarget = 0;
 }
 
-bool KHTMLView::performDragAndDrop(const QPoint &loc, ClipboardImpl *clipboard)
+bool KHTMLView::performDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     if (d->dragTarget) {

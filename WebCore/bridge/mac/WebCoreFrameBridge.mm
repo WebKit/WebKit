@@ -1326,7 +1326,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     NodeImpl *n;
     QWidget *widget = 0;
-    QPoint widgetPoint(point);
+    IntPoint widgetPoint(point);
     
     while (true) {
         n = nodeInfo.innerNode();
@@ -2535,7 +2535,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
 
-            if (v->updateDragAndDrop(QPoint([info draggingLocation]), clipboard)) {
+            if (v->updateDragAndDrop(IntPoint([info draggingLocation]), clipboard)) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(&op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
@@ -2578,7 +2578,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             clipboard->ref();
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
             
-            v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);
+            v->cancelDragAndDrop(IntPoint([info draggingLocation]), clipboard);
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
 
             clipboard->deref();
@@ -2599,7 +2599,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             clipboard->ref();
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
 
-            BOOL result = v->performDragAndDrop(QPoint([info draggingLocation]), clipboard);
+            BOOL result = v->performDragAndDrop(IntPoint([info draggingLocation]), clipboard);
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
 
             clipboard->deref();
@@ -2614,14 +2614,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)dragSourceMovedTo:(NSPoint)windowLoc
 {
     if (m_frame) {
-        m_frame->dragSourceMovedTo(QPoint(windowLoc));
+        m_frame->dragSourceMovedTo(IntPoint(windowLoc));
     }
 }
 
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (m_frame) {
-        m_frame->dragSourceEndedAt(QPoint(windowLoc), operation);
+        m_frame->dragSourceEndedAt(IntPoint(windowLoc), operation);
     }
 }
 

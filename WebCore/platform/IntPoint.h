@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPOINT_H_
-#define QPOINT_H_
+#ifndef INTPOINT_H_
+#define INTPOINT_H_
 
-#include "KWQDef.h"
-
-#include "KWQMemArray.h"
-
+#if __APPLE__
 // workaround for <rdar://problem/4294625>
 #if ! __LP64__ && ! NS_BUILD_32_LIKE_64
 #undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -41,17 +38,21 @@ typedef struct CGPoint NSPoint;
 typedef struct _NSPoint NSPoint;
 #endif
 typedef struct CGPoint CGPoint;
-
-class QRect;
-
-class QPoint {
-public:
-    QPoint();
-    QPoint(int, int);
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QPoint(const NSPoint &); // don't do this implicitly since it's lossy
 #endif
-    explicit QPoint(const CGPoint &); // don't do this implicitly since it's lossy
+
+namespace WebCore {
+
+class IntPoint {
+public:
+    IntPoint();
+    IntPoint(int, int);
+    
+#if __APPLE__
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit IntPoint(const NSPoint &); // don't do this implicitly since it's lossy
+#endif
+    explicit IntPoint(const CGPoint &); // don't do this implicitly since it's lossy
+#endif
 
     int x() const { return xCoord; }
     int y() const { return yCoord; }
@@ -61,36 +62,26 @@ public:
     
     bool isNull() const { return xCoord == 0 && yCoord == 0; }
     
-    QPoint &operator -=(const QPoint &two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
-    friend const QPoint operator*(const QPoint &p, double s);
-    friend QPoint operator+(const QPoint &, const QPoint &);
-    friend QPoint operator-(const QPoint &, const QPoint &);
-    
+    IntPoint &operator -=(const IntPoint &two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
+    friend const IntPoint operator*(const IntPoint &p, double s);
+    friend IntPoint operator+(const IntPoint &, const IntPoint &);
+    friend IntPoint operator-(const IntPoint &, const IntPoint &);
+
+#if __APPLE__    
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSPoint() const;
 #endif
     operator CGPoint() const;
-    
+#endif
+
 private:
     int xCoord;
     int yCoord;
 };
 
-class QPointArray : public QMemArray<QPoint> {
-public:
-    QPointArray() { }
-    QPointArray(int size) : QMemArray<QPoint>(size) { }
-    QPointArray(const QRect &rect);
-    QPointArray(int, const int *);
-    
-    QRect boundingRect() const;
-    
-    QPointArray copy() const;
-    
-    void point(uint, int *, int *);
-    void setPoint(uint, int, int);
-    bool setPoints(int, int, int, int, int, int, int, int, int);
-    bool setPoints(int nPoints, const int *points);    
-};
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::IntPoint;
 
 #endif

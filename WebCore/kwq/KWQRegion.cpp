@@ -43,7 +43,7 @@ QRegion::QRegion(int x, int y, int w, int h, RegionType t)
         CGPathAddEllipseInRect(path, 0, CGRectMake(x, y, w, h));
 }
 
-QRegion::QRegion(const QPointArray &arr)
+QRegion::QRegion(const IntPointArray &arr)
 {
     path = CGPathCreateMutable();
     CGPathMoveToPoint(path, 0, arr[0].x(), arr[0].y());
@@ -72,7 +72,7 @@ QRegion &QRegion::operator=(const QRegion &other)
     return *this;
 }
 
-bool QRegion::contains(const QPoint &point) const
+bool QRegion::contains(const IntPoint &point) const
 {
     return CGPathContainsPoint(path, 0, point, false);
 }

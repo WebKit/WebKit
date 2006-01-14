@@ -40,13 +40,16 @@ typedef struct CGPoint NSPoint;
 typedef struct _NSPoint NSPoint;
 #endif
 typedef struct CGPoint CGPoint;
-class QPoint;
+
+namespace WebCore {
+class IntPoint;
+}
 
 class QPointF {
 public:
     QPointF();
     QPointF(float, float);
-    QPointF(const QPoint&);
+    QPointF(const WebCore::IntPoint&);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QPointF(const NSPoint&);
 #endif

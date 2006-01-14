@@ -222,7 +222,7 @@ IntSize QPixmap::size() const
 
 QRect QPixmap::rect() const
 {
-    return QRect(QPoint(0, 0), size());
+    return QRect(IntPoint(0, 0), size());
 }
 
 int QPixmap::width() const

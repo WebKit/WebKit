@@ -29,7 +29,6 @@
 
 class QMatrix;
 class QRect;
-class QPoint;
 class QColor;
 class QRectF;
 class QPointF;
@@ -42,6 +41,7 @@ class KCanvasContainer;
 
 namespace WebCore {
     class FloatSize;
+    class IntPoint;
 }
 
 namespace KDOM {
@@ -57,7 +57,7 @@ void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent);
 QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const QRect &);
 QTextStream &operator<<(QTextStream &ts, const QColor &);
-QTextStream &operator<<(QTextStream &ts, const QPoint &);
+QTextStream &operator<<(QTextStream &ts, const WebCore::IntPoint &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::FloatSize &);
 QTextStream &operator<<(QTextStream &ts, const QRectF &);
 QTextStream &operator<<(QTextStream &ts, const QPointF &);

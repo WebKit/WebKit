@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGSVGElementImpl_H
 #define KSVG_SVGSVGElementImpl_H
 
-#include <qpoint.h>
+#include "IntPoint.h"
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
@@ -113,7 +113,7 @@ namespace KSVG
         static SVGNumberImpl *createSVGNumber();
         static SVGLengthImpl *createSVGLength();
         static SVGAngleImpl *createSVGAngle();
-        static SVGPointImpl *createSVGPoint(const QPoint &p = QPoint());
+        static SVGPointImpl *createSVGPoint(const IntPoint &p = IntPoint());
         static SVGMatrixImpl *createSVGMatrix();
         static SVGRectImpl *createSVGRect();
         static SVGTransformImpl *createSVGTransform();

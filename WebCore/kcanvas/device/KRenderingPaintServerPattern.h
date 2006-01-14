@@ -26,7 +26,7 @@
 #include <kcanvas/device/KRenderingPaintServer.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
-#include <qpoint.h>
+#include "IntPoint.h"
 
 class KCanvasImage;
 

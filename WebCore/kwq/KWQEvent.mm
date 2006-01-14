@@ -750,7 +750,7 @@ static int nonMouseButtonsForEvent(NSEvent *event)
     return buttons;
 }
 
-static QPoint positionForEvent(NSEvent *event)
+static IntPoint positionForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -767,13 +767,13 @@ static QPoint positionForEvent(NSEvent *event)
             // Note: This has its origin at the bottom left of the window.
             // The Y coordinate gets flipped by QScrollView::viewportToContents.
             // We should probably change both this and that to not use "bottom left origin" coordinates at all.
-            return QPoint([event locationInWindow]);
+            return IntPoint([event locationInWindow]);
         default:
-            return QPoint();
+            return IntPoint();
     }
 }
 
-static QPoint globalPositionForEvent(NSEvent *event)
+static IntPoint globalPositionForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -789,10 +789,10 @@ static QPoint globalPositionForEvent(NSEvent *event)
         case NSScrollWheel: {
             NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
             point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
-            return QPoint(point);
+            return IntPoint(point);
         }
         default:
-            return QPoint();
+            return IntPoint();
     }
 }
 

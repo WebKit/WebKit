@@ -69,11 +69,11 @@ public:
     // extensions beyond IE's API
     virtual QStringList types() const;
 
-    QPoint dragLocation() const;    // same point as client passed us
+    IntPoint dragLocation() const;    // same point as client passed us
     QPixmap dragImage() const;
-    void setDragImage(const QPixmap &, const QPoint &);
+    void setDragImage(const QPixmap &, const IntPoint &);
     DOM::NodeImpl *dragImageElement();
-    void setDragImageElement(DOM::NodeImpl *, const QPoint &);
+    void setDragImageElement(DOM::NodeImpl *, const IntPoint &);
 
     // Methods for getting info in Cocoa's type system
     NSImage *dragNSImage(NSPoint *loc);    // loc converted from dragLoc, based on whole image size
@@ -87,13 +87,13 @@ public:
     void setDragHasStarted() { m_dragStarted = true; }
 
 private:
-    void setDragImage(const QPixmap &pm, DOM::NodeImpl *, const QPoint &loc);
+    void setDragImage(const QPixmap &pm, DOM::NodeImpl *, const IntPoint &loc);
 
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
     DOM::DOMString m_dropEffect;
     DOM::DOMString m_effectAllowed;
-    QPoint m_dragLoc;
+    IntPoint m_dragLoc;
     QPixmap m_dragImage;
     RefPtr<DOM::NodeImpl> m_dragImageElement;
     AccessPolicy m_policy;

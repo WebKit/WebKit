@@ -283,7 +283,7 @@ QStringList KWQClipboard::types() const
 
 // The rest of these getters don't really have any impact on security, so for now make no checks
 
-QPoint KWQClipboard::dragLocation() const
+IntPoint KWQClipboard::dragLocation() const
 {
     return m_dragLoc;
 }
@@ -293,7 +293,7 @@ QPixmap KWQClipboard::dragImage() const
     return m_dragImage;
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm, const QPoint &loc)
+void KWQClipboard::setDragImage(const QPixmap &pm, const IntPoint &loc)
 {
     setDragImage(pm, 0, loc);
 }
@@ -303,12 +303,12 @@ DOM::NodeImpl *KWQClipboard::dragImageElement()
     return m_dragImageElement.get();
 }
 
-void KWQClipboard::setDragImageElement(NodeImpl *node, const QPoint &loc)
+void KWQClipboard::setDragImageElement(NodeImpl *node, const IntPoint &loc)
 {
     setDragImage(QPixmap(), node, loc);
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const QPoint &loc)
+void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const IntPoint &loc)
 {
     if (m_policy == ImageWritable || m_policy == Writable) {
         m_dragImage = pm;

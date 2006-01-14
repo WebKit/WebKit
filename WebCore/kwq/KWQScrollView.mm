@@ -423,11 +423,11 @@ void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
     LOG(Frames, "%p %@ at (%d,%d) w %d h %d\n", getView(), [(id)[getView() class] className], x, y, w, h);
 }
 
-QPoint QScrollView::contentsToViewport(const QPoint &p)
+IntPoint QScrollView::contentsToViewport(const IntPoint &p)
 {
     int vx, vy;
     contentsToViewport(p.x(), p.y(), vx, vy);
-    return QPoint(vx, vy);
+    return IntPoint(vx, vy);
 }
 
 // NB, for us "viewport" means the NSWindow's coord system, which is origin lower left

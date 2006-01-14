@@ -86,7 +86,7 @@ QTextStream& operator<<(QTextStream &ts, QTextStreamSeparator &sep)
     return ts;
 }
 
-QTextStream &operator<<(QTextStream &ts, const QPoint &p)
+QTextStream &operator<<(QTextStream &ts, const IntPoint &p)
 {
     return ts << "(" << p.x() << "," << p.y() << ")";
 }

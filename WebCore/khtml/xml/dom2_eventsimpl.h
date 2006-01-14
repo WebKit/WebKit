@@ -34,8 +34,11 @@
 class Frame;
 class QKeyEvent;
 class QPixmap;
-class QPoint;
 class QStringList;
+
+namespace WebCore {
+class IntPoint;
+}
 
 namespace DOM {
 
@@ -407,11 +410,11 @@ public:
     // extensions beyond IE's API
     virtual QStringList types() const = 0;
     
-    virtual QPoint dragLocation() const = 0;
+    virtual WebCore::IntPoint dragLocation() const = 0;
     virtual QPixmap dragImage() const = 0;
-    virtual void setDragImage(const QPixmap &, const QPoint &) = 0;
+    virtual void setDragImage(const QPixmap &, const WebCore::IntPoint &) = 0;
     virtual NodeImpl *dragImageElement() = 0;
-    virtual void setDragImageElement(NodeImpl *, const QPoint &) = 0;
+    virtual void setDragImageElement(NodeImpl *, const WebCore::IntPoint &) = 0;
 };
 
 class BeforeUnloadEventImpl : public EventImpl

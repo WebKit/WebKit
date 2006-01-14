@@ -1,6 +1,6 @@
-/*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2005 Nokia.  All rights reserved.
+ 
+ /*
+ * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,31 @@
  */
 
 #include "config.h"
-#import "KWQPointF.h"
-#import "IntPointArray.h"
+#import "IntPoint.h"
 
-QPointF::QPointF() : xCoord(0), yCoord(0)
-{
-}
-
-QPointF::QPointF(float xIn, float yIn) : xCoord(xIn), yCoord(yIn)
-{
-}
-
-QPointF::QPointF(const IntPoint& p) :xCoord(p.x()), yCoord(p.y())
-{
-}
+namespace WebCore {
 
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QPointF::QPointF(const NSPoint& p) : xCoord(p.x), yCoord(p.y)
+IntPoint::IntPoint(const NSPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
 {
 }
 #endif
 
-QPointF::QPointF(const CGPoint& p) : xCoord(p.x), yCoord(p.y)
+IntPoint::IntPoint(const CGPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
 {
 }
 
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QPointF::operator NSPoint() const
+IntPoint::operator NSPoint() const
 {
     return NSMakePoint(xCoord, yCoord);
 }
 #endif
 
-QPointF::operator CGPoint() const
+IntPoint::operator CGPoint() const
 {
     return CGPointMake(xCoord, yCoord);
 }
 
-QPointF operator+(const QPointF& a, const QPointF& b)
-{
-    return QPointF(a.xCoord + b.xCoord, a.yCoord + b.yCoord);
-}
 
-QPointF operator-(const QPointF& a, const QPointF& b)
-{
-    return QPointF(a.xCoord - b.xCoord, a.yCoord - b.yCoord);
-}
-
-const QPointF operator*(const QPointF& p, double s)
-{
-    return QPointF(p.xCoord * s, p.yCoord * s);
 }

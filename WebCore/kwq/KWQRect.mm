@@ -39,11 +39,11 @@ QRect::QRect(int x, int y, int width, int height) : xp(x), yp(y), w(width), h(he
 {
 }
 
-QRect::QRect(QPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+QRect::QRect(IntPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
 {
 }
 
-QRect::QRect(const QPoint &topLeft, const QPoint &bottomRight)
+QRect::QRect(const IntPoint &topLeft, const IntPoint &bottomRight)
 {
     xp = topLeft.x();
     yp = topLeft.y();
@@ -86,24 +86,24 @@ int QRect::bottom() const
     return yp + h - 1;
 }
 
-QPoint QRect::topLeft() const
+IntPoint QRect::topLeft() const
 {
-    return QPoint(xp,yp);
+    return IntPoint(xp,yp);
 }
 
-QPoint QRect::topRight() const
+IntPoint QRect::topRight() const
 {
-    return QPoint(right(),top());
+    return IntPoint(right(),top());
 }
 
-QPoint QRect::bottomRight() const
+IntPoint QRect::bottomRight() const
 {
-    return QPoint(right(),bottom());
+    return IntPoint(right(),bottom());
 }
 
-QPoint QRect::bottomLeft() const
+IntPoint QRect::bottomLeft() const
 {
-    return QPoint(left(),bottom());
+    return IntPoint(left(),bottom());
 }
 
 IntSize QRect::size() const

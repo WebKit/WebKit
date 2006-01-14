@@ -440,7 +440,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     
     if (m_listImage && !m_listImage->isErrorImage()) {
         m_listPixmap = m_listImage->pixmap();
-        p->drawPixmap(QPoint(_tx + xoff, _ty), m_listPixmap);
+        p->drawPixmap(IntPoint(_tx + xoff, _ty), m_listPixmap);
         return;
     }
 

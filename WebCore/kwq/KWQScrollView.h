@@ -80,7 +80,7 @@ public:
     void updateContents(int x, int y, int w, int h, bool now=false);
     void updateContents(const QRect &r, bool now=false);
     void repaintContents(int x, int y, int w, int h, bool erase = true);
-    QPoint contentsToViewport(const QPoint &);
+    IntPoint contentsToViewport(const IntPoint &);
     void contentsToViewport(int x, int y, int& vx, int& vy);
     void viewportToContents(int vx, int vy, int& x, int& y);
 

@@ -1,4 +1,141 @@
 2006-01-13  David Hyatt  <hyatt@apple.com>
+
+        Convert QPoint and QPointArray to IntPoint and IntPointArray.
+        Factor out the Objective-C-specific logic into a .mm file
+        for IntPoint.
+        
+        * ForwardingHeaders/qpoint.h: Removed.
+        * ForwardingHeaders/qpointarray.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/KWQKHTMLView.cpp:
+        (KHTMLView::viewportToGlobal):
+        * bridge/mac/KWQKPartsBrowserExtension.h:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::khtmlMouseMoveEvent):
+        (MacFrame::dragSourceMovedTo):
+        (MacFrame::dragSourceEndedAt):
+        (MacFrame::dispatchDragSrcEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge elementAtPoint:]):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreFrameBridge concludeDragForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragSourceMovedTo:]):
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]):
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/editing/SelectionController.cpp:
+        (khtml::SelectionController::layout):
+        (khtml::SelectionController::caretRect):
+        * khtml/editing/SelectionController.h:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLAreaElementImpl::mapMouseEvent):
+        (DOM::HTMLAreaElementImpl::getRegion):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::drawBorder):
+        * khtml/xml/dom2_eventsimpl.h:
+        * ksvg2/svg/SVGPointImpl.cpp:
+        (SVGPointImpl::SVGPointImpl):
+        * ksvg2/svg/SVGPointImpl.h:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::createSVGPoint):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::dragLocation):
+        (KWQClipboard::setDragImage):
+        (KWQClipboard::setDragImageElement):
+        * kwq/KWQCursor.h:
+        * kwq/KWQEvent.h:
+        (QMouseEvent::pos):
+        (QWheelEvent::QWheelEvent):
+        (QWheelEvent::pos):
+        (QWheelEvent::globalPos):
+        * kwq/KWQEvent.mm:
+        (positionForEvent):
+        (globalPositionForEvent):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawConvexPolygon):
+        (QPainter::drawPixmap):
+        * kwq/KWQPixmap.mm:
+        (QPixmap::rect):
+        * kwq/KWQPoint.mm: Removed.
+        * kwq/KWQPointArray.cpp: Removed.
+        * kwq/KWQPointArray.h: Removed.
+        * kwq/KWQPointF.h:
+        * kwq/KWQPointF.mm:
+        (yCoord):
+        * kwq/KWQRect.h:
+        (QRect::moveTopLeft):
+        (QRect::contains):
+        * kwq/KWQRect.mm:
+        (QRect::QRect):
+        (QRect::topLeft):
+        (QRect::topRight):
+        (QRect::bottomRight):
+        (QRect::bottomLeft):
+        * kwq/KWQRegion.cpp:
+        (QRegion::QRegion):
+        (QRegion::contains):
+        * kwq/KWQRegion.h:
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::contentsToViewport):
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::pos):
+        (QWidget::move):
+        (QWidget::mapFromGlobal):
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::mapFromGlobal):
+        (KWQWindowWidget::viewportToGlobal):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (KHTMLView::dispatchDragEvent):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::cancelDragAndDrop):
+        (KHTMLView::performDragAndDrop):
+        * page/FrameView.h:
+        * platform/IntPoint.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+        * platform/IntPoint.h: Added.
+        (WebCore::IntPoint::x):
+        (WebCore::IntPoint::y):
+        (WebCore::IntPoint::setX):
+        (WebCore::IntPoint::setY):
+        (WebCore::IntPoint::isNull):
+        (WebCore::IntPoint::operator -=):
+        * platform/IntPointArray.cpp: Added.
+        (IntPointArray::IntPointArray):
+        (IntPointArray::copy):
+        (IntPointArray::boundingRect):
+        (IntPointArray::point):
+        (IntPointArray::setPoint):
+        (IntPointArray::setPoints):
+        * platform/IntPointArray.h: Added.
+        (WebCore::IntPointArray::IntPointArray):
+
+2006-01-13  David Hyatt  <hyatt@apple.com>
         
         Convert QSizeF to FloatSize and move it to the platform
         directory.

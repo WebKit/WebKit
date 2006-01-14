@@ -27,7 +27,7 @@
 #define QCURSOR_H
 
 #include "KWQPixmap.h"
-#include "KWQPointArray.h"
+#include "IntPointArray.h"
 
 #ifdef __OBJC__
 @class NSCursor;

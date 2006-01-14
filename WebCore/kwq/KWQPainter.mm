@@ -417,7 +417,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     }
 }
 
-void QPainter::drawConvexPolygon(const QPointArray &points)
+void QPainter::drawConvexPolygon(const IntPointArray &points)
 {
     if (data->state.paintingDisabled)
         return;
@@ -452,12 +452,12 @@ void QPainter::drawConvexPolygon(const QPointArray &points)
     CGContextRestoreGState(context);
 }
 
-void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix)
+void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix)
 {        
     drawPixmap(p.x(), p.y(), pix);
 }
 
-void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
+void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const QRect &r)
 {
     drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
@@ -517,7 +517,7 @@ int QPainter::compositeOperatorFromString(const QString &aString)
     return (int)op;
 }
 
-void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r, const QString &compositeOperator)
+void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const QRect &r, const QString &compositeOperator)
 {
     drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
 }

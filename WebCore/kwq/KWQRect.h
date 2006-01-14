@@ -27,7 +27,7 @@
 #define QRECT_H_
 
 #include "IntSize.h"
-#include "KWQPointArray.h"
+#include "IntPointArray.h"
 
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
@@ -39,9 +39,9 @@ typedef struct CGRect CGRect;
 class QRect {
 public:
     QRect();
-    QRect(QPoint p, IntSize s);
+    QRect(IntPoint p, IntSize s);
     QRect(int, int, int, int);
-    QRect(const QPoint &, const QPoint &);
+    QRect(const IntPoint &, const IntPoint &);
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     explicit QRect(const NSRect &); // don't do this implicitly since it's lossy
 #endif
@@ -60,12 +60,12 @@ public:
     int width() const { return w; }
     int height() const { return h; }
 
-    QPoint topLeft() const;
-    QPoint topRight() const;
-    QPoint bottomRight() const;
-    QPoint bottomLeft() const;
+    IntPoint topLeft() const;
+    IntPoint topRight() const;
+    IntPoint bottomRight() const;
+    IntPoint bottomLeft() const;
     
-    void moveTopLeft(const QPoint &p) { xp += p.x(); yp += p.y(); } 
+    void moveTopLeft(const IntPoint &p) { xp += p.x(); yp += p.y(); } 
 
     IntSize size() const;
     void setX(int x) { xp = x; }
@@ -78,7 +78,7 @@ public:
     QRect unite(const QRect &) const;
     QRect normalize() const;
 
-    bool contains(const QPoint &point) const { return contains(point.x(), point.y()); }
+    bool contains(const IntPoint &point) const { return contains(point.x(), point.y()); }
 
     bool contains(int x, int y, bool proper = false) const {
         if (proper)

@@ -48,8 +48,8 @@ class KWQWindowWidget : public QWidget
     virtual void setFrameGeometry(const QRect &);
 
     virtual QWidget *topLevelWidget() const;
-    virtual QPoint mapFromGlobal(const QPoint &) const;
-    virtual QPoint viewportToGlobal(const QPoint &) const;
+    virtual IntPoint mapFromGlobal(const IntPoint &) const;
+    virtual IntPoint viewportToGlobal(const IntPoint &) const;
 
  private:
     KWQWindowWidgetPrivate *d;

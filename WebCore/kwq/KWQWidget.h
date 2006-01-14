@@ -79,9 +79,9 @@ public:
     IntSize size() const;
     void resize(int,int);
     void resize(const IntSize &);
-    QPoint pos() const;
+    IntPoint pos() const;
     void move(int, int);
-    void move(const QPoint &);
+    void move(const IntPoint &);
 
     virtual void paint(QPainter *, const QRect &);
     
@@ -90,7 +90,7 @@ public:
 
     virtual int baselinePosition(int height) const; // relative to the top of the widget
 
-    virtual QPoint mapFromGlobal(const QPoint &) const;
+    virtual IntPoint mapFromGlobal(const IntPoint &) const;
 
     bool hasFocus() const;
     void setFocus();

@@ -747,14 +747,14 @@ void SelectionController::layout()
 {
     if (isNone() || !m_start.node()->inDocument() || !m_end.node()->inDocument()) {
         m_caretRect = QRect();
-        m_caretPositionOnLayout = QPoint();
+        m_caretPositionOnLayout = IntPoint();
         return;
     }
 
     m_start.node()->getDocument()->updateRendering();
     
     m_caretRect = QRect();
-    m_caretPositionOnLayout = QPoint();
+    m_caretPositionOnLayout = IntPoint();
         
     if (isCaret()) {
         Position pos = m_start;
@@ -765,7 +765,7 @@ void SelectionController::layout()
             
             int x, y;
             pos.node()->renderer()->absolutePosition(x, y);
-            m_caretPositionOnLayout = QPoint(x, y);
+            m_caretPositionOnLayout = IntPoint(x, y);
         }
     }
 
@@ -783,7 +783,7 @@ QRect SelectionController::caretRect() const
     if (m_start.node() && m_start.node()->renderer()) {
         int x, y;
         m_start.node()->renderer()->absolutePosition(x, y);
-        QPoint diff = QPoint(x, y) - m_caretPositionOnLayout;
+        IntPoint diff = IntPoint(x, y) - m_caretPositionOnLayout;
         caret.moveTopLeft(diff);
     }
 

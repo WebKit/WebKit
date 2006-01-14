@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,15 @@
  */
 
 #include "config.h"
-#include "KWQPointArray.h"
-
-#include <stdarg.h>
+#include "IntPointArray.h"
 #include "KWQRect.h"
 
-QPointArray::QPointArray(int nPoints, const int *points)
+IntPointArray::IntPointArray(int nPoints, const int *points)
 {
     setPoints(nPoints, points);
 }
 
-QPointArray::QPointArray(const QRect &rect)
+IntPointArray::IntPointArray(const QRect &rect)
 {
     setPoints(4, rect.topLeft().x(), rect.topLeft().y(),
               rect.topRight().x(), rect.topRight().y(),
@@ -42,14 +40,14 @@ QPointArray::QPointArray(const QRect &rect)
               rect.bottomLeft().x(), rect.bottomLeft().y());
 }
 
-QPointArray QPointArray::copy() const
+IntPointArray IntPointArray::copy() const
 {
-    QPointArray copy;
+    IntPointArray copy;
     copy.duplicate(*this);
     return copy;
 }
 
-QRect QPointArray::boundingRect() const
+QRect IntPointArray::boundingRect() const
 {
     int nPoints = count();
     
@@ -59,7 +57,7 @@ QRect QPointArray::boundingRect() const
     int minY = INT_MAX, maxY = 0;
     
     while (nPoints > 0) {
-        QPoint p = at(nPoints);
+        IntPoint p = at(nPoints);
         int x = p.x(), y = p.y();
         
         if (x < minX) minX = x;
@@ -73,20 +71,20 @@ QRect QPointArray::boundingRect() const
     return QRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
 }
 
-void QPointArray::point(uint index, int *x, int *y)
+void IntPointArray::point(uint index, int *x, int *y)
 {
-    QPoint p = at(index);
+    IntPoint p = at(index);
     *x = p.x();
     *y = p.y();
 }
 
-void QPointArray::setPoint( uint index, int x, int y )
+void IntPointArray::setPoint( uint index, int x, int y )
 {
-    QMemArray<QPoint>::at( index ) = QPoint( x, y );
+    QMemArray<IntPoint>::at( index ) = IntPoint( x, y );
 }
 
 
-bool QPointArray::setPoints( int nPoints, const int *points )
+bool IntPointArray::setPoints( int nPoints, const int *points )
 {
     if ( !resize(nPoints) )
 	return FALSE;
@@ -99,30 +97,7 @@ bool QPointArray::setPoints( int nPoints, const int *points )
     return TRUE;
 }
 
-// FIXME: Workaround for Radar 2921061
-#if 0
-
-bool QPointArray::setPoints( int nPoints, int firstx, int firsty, ... )
-{
-    va_list ap;
-    if ( !resize(nPoints) )
-	return FALSE;
-    setPoint( 0, firstx, firsty );		// set first point
-    int i = 1, x, y;
-    nPoints--;
-    va_start( ap, firsty );
-    while ( nPoints-- ) {
-	x = va_arg( ap, int );
-	y = va_arg( ap, int );
-	setPoint( i++, x, y );
-    }
-    va_end( ap );
-    return TRUE;
-}
-
-#else
-
-bool QPointArray::setPoints( int nPoints, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
+bool IntPointArray::setPoints( int nPoints, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
     if ( !resize(nPoints) )
 	return FALSE;
@@ -132,5 +107,3 @@ bool QPointArray::setPoints( int nPoints, int x0, int y0, int x1, int y1, int x2
     setPoint( 3, x3, y3 );
     return TRUE;
 }
-
-#endif

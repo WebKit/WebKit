@@ -1772,10 +1772,10 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     if (_dragSrcIsDHTML) {
                         int srcX, srcY;
                         _dragSrc->renderer()->absolutePosition(srcX, srcY);
-                        _dragClipboard->setDragImageElement(_dragSrc.get(), QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
+                        _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, QPoint(_mouseDownWinX, _mouseDownWinY));
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, IntPoint(_mouseDownWinX, _mouseDownWinY));
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(KWQClipboard::ImageWritable);
@@ -1802,7 +1802,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
                     if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        dispatchDragSrcEvent(dragendEvent, QPoint(dragLocation));
+                        dispatchDragSrcEvent(dragendEvent, IntPoint(dragLocation));
                         _mouseDownMayStartDrag = false;
                     }
                 } 
@@ -3563,7 +3563,7 @@ bool MacFrame::shouldClose()
     return true;
 }
 
-void MacFrame::dragSourceMovedTo(const QPoint &loc)
+void MacFrame::dragSourceMovedTo(const IntPoint &loc)
 {
     if (_dragSrc && _dragSrcMayBeDHTML) {
         // for now we don't care if event handler cancels default behavior, since there is none
@@ -3571,7 +3571,7 @@ void MacFrame::dragSourceMovedTo(const QPoint &loc)
     }
 }
 
-void MacFrame::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
+void MacFrame::dragSourceEndedAt(const IntPoint &loc, NSDragOperation operation)
 {
     if (_dragSrc && _dragSrcMayBeDHTML) {
         _dragClipboard->setDestinationOperation(operation);
@@ -3583,7 +3583,7 @@ void MacFrame::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
 }
 
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const QPoint &loc) const
+bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const IntPoint &loc) const
 {
     bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
     return !noDefaultProc;

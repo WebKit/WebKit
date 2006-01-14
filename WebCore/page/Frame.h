@@ -758,7 +758,7 @@ signals:
   /**
    * Emitted when the user clicks the right mouse button on the document.
    */
-  void popupMenu(const QString &url, const QPoint &point);
+  void popupMenu(const QString &url, const IntPoint &point);
 
   /**
    * This signal is emitted when the selection changes.

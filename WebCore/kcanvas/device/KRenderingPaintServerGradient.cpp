@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#include <qpoint.h>
+#include "IntPoint.h"
 
 #include "KRenderingPaintServerGradient.h"
 #include "KCanvasMatrix.h"
