@@ -224,7 +224,7 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
 
     KRenderingDeviceContext *patternContext = device->contextForImage(m_tile);
     device->pushContext(patternContext);
-    QRectF rect(x()->baseVal()->value(), y()->baseVal()->value(), width()->baseVal()->value(), height()->baseVal()->value());
+    FloatRect rect(x()->baseVal()->value(), y()->baseVal()->value(), width()->baseVal()->value(), height()->baseVal()->value());
     m_paintServer->setBbox(rect);
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(m_tile);
@@ -271,7 +271,7 @@ void SVGPatternElementImpl::drawPatternContentIntoTile(const SVGPatternElementIm
 #endif
 
         QPainter p;
-        khtml::RenderObject::PaintInfo info(&p, QRect(), PaintActionForeground, 0);
+        khtml::RenderObject::PaintInfo info(&p, IntRect(), PaintActionForeground, 0);
         item->paint(info, 0, 0);
 #if 0
         if(savedContext)

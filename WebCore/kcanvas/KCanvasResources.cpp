@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#include <qrect.h>
+#include "IntRect.h"
 #include <kdebug.h>
 
 #include "kcanvas/KCanvas.h"
@@ -221,7 +221,7 @@ float KCanvasMarker::scaleY() const
     return m_scaleY;
 }
 
-void KCanvasMarker::draw(const QRectF &rect, double x, double y, double strokeWidth, double angle)
+void KCanvasMarker::draw(const FloatRect &rect, double x, double y, double strokeWidth, double angle)
 {
     if(m_marker)
     {
@@ -241,7 +241,7 @@ void KCanvasMarker::draw(const QRectF &rect, double x, double y, double strokeWi
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
         QPainter p;
-        khtml::RenderObject::PaintInfo info(&p, enclosingQRect(rect), PaintActionForeground, 0);
+        khtml::RenderObject::PaintInfo info(&p, enclosingIntRect(rect), PaintActionForeground, 0);
         m_marker->setLocalTransform(rotation.multiply(translation).qmatrix());
         static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(true);
         m_marker->paint(info, 0, 0);

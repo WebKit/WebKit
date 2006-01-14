@@ -45,22 +45,22 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject* o, QRect& r);
+    virtual void adjustRepaintRect(const RenderObject* o, IntRect& r);
 
 protected:
     // Methods for each appearance value.
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setCheckboxSize(RenderStyle* style) const;
     
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setRadioSize(RenderStyle* style) const;
     
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setButtonSize(RenderStyle* style) const;
 
 private:
-    QRect inflateRect(const QRect& r, const IntSize& size, const int* margins) const;
+    IntRect inflateRect(const IntRect& r, const IntSize& size, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle* style) const;
@@ -79,16 +79,16 @@ private:
     // Helpers for adjusting appearance and for painting
     const IntSize* checkboxSizes() const;
     const int* checkboxMargins() const;
-    void setCheckboxCellState(const RenderObject* o, const QRect& r);
+    void setCheckboxCellState(const RenderObject* o, const IntRect& r);
 
     const IntSize* radioSizes() const;
     const int* radioMargins() const;
-    void setRadioCellState(const RenderObject* o, const QRect& r);
+    void setRadioCellState(const RenderObject* o, const IntRect& r);
 
     void setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const;
     const IntSize* buttonSizes() const;
     const int* buttonMargins() const;
-    void setButtonCellState(const RenderObject* o, const QRect& r);
+    void setButtonCellState(const RenderObject* o, const IntRect& r);
 
 private:
     NSButtonCell* checkbox;

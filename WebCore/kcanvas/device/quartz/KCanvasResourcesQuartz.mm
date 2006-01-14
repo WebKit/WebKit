@@ -52,7 +52,7 @@ void KCanvasContainerQuartz::layout()
     KHTMLAssert(needsLayout());
     KHTMLAssert(minMaxKnown());
 
-    QRect oldBounds;
+    IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();
@@ -125,9 +125,9 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         filter->prepareFilter(relativeBBox(true));
     
     if (!viewBox().isNull()) {
-        QRectF viewportRect = viewport();
+        FloatRect viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
-            viewportRect = QRectF(viewport().x(), viewport().y(), width(), height());
+            viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
         deviceContext->concatCTM(getAspectRatio(viewBox(), viewportRect));
     }
     
@@ -147,22 +147,22 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         paintInfo.p->restore();
 }
 
-void KCanvasContainerQuartz::setViewport(const QRectF& viewport)
+void KCanvasContainerQuartz::setViewport(const FloatRect& viewport)
 {
     m_viewport = viewport;
 }
 
-QRectF KCanvasContainerQuartz::viewport() const
+FloatRect KCanvasContainerQuartz::viewport() const
 {
    return m_viewport;
 }
 
-void KCanvasContainerQuartz::setViewBox(const QRectF& viewBox)
+void KCanvasContainerQuartz::setViewBox(const FloatRect& viewBox)
 {
     m_viewBox = viewBox;
 }
 
-QRectF KCanvasContainerQuartz::viewBox() const
+FloatRect KCanvasContainerQuartz::viewBox() const
 {
     return m_viewBox;
 }
@@ -181,15 +181,15 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
 {
     QMatrix transform = KCanvasContainer::absoluteTransform();
     if (!viewBox().isNull()) {
-        QRectF viewportRect = viewport();
+        FloatRect viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
-            viewportRect = QRectF(viewport().x(), viewport().y(), width(), height());
+            viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
         transform *= getAspectRatio(viewBox(), viewportRect).qmatrix();
     }
     return transform;
 }
 
-void KCanvasClipperQuartz::applyClip(const QRectF& boundingBox) const
+void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
 {
     KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
     CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();

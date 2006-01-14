@@ -189,7 +189,7 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
 
     if (drawSelectionTint) {
         QBrush brush(selectionColor(p));
-        QRect selRect(selectionRect());
+        IntRect selRect(selectionRect());
         p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
     }
 }
@@ -199,7 +199,7 @@ void RenderCanvasImage::layout()
     KHTMLAssert(needsLayout());
     KHTMLAssert(minMaxKnown());
 
-    QRect oldBounds;
+    IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();

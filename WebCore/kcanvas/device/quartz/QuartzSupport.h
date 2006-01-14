@@ -25,7 +25,10 @@
 
 
 #import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
-class QRect;
+
+namespace WebCore {
+    class IntRect;
+}
 
 namespace KSVG {
     class SVGRenderStyle;

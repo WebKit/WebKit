@@ -42,21 +42,21 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
     
-    virtual QRect getAbsoluteRepaintRect() { return enclosingQRect(absoluteTransform().mapRect(relativeBBox(true))); }
+    virtual IntRect getAbsoluteRepaintRect() { return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true))); }
     virtual QMatrix absoluteTransform() const;
 
-    virtual void setViewport(const QRectF&);
-    virtual QRectF viewport() const;
+    virtual void setViewport(const FloatRect&);
+    virtual FloatRect viewport() const;
 
-    virtual void setViewBox(const QRectF&);
-    virtual QRectF viewBox() const;
+    virtual void setViewBox(const FloatRect&);
+    virtual FloatRect viewBox() const;
 
     virtual void setAlign(KCAlign align);
     virtual KCAlign align() const;
     
 private:
-    QRectF m_viewport;
-    QRectF m_viewBox;
+    FloatRect m_viewport;
+    FloatRect m_viewBox;
     KCAlign m_align;
 };
 
@@ -64,7 +64,7 @@ class KCanvasClipperQuartz : public KCanvasClipper {
 public:
     KCanvasClipperQuartz() { }
     
-    virtual void applyClip(const QRectF& boundingBox) const;
+    virtual void applyClip(const FloatRect& boundingBox) const;
 };
 
 class KCanvasImageQuartz : public KCanvasImage {

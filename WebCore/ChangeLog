@@ -1,3 +1,439 @@
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
+        Convert QRect/QRectF -> IntRect/FloatRect.  Same drill as point
+        and size.
+
+        Reviewed by mjs
+
+        * ForwardingHeaders/qrect.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::snapshotDragImage):
+        (MacFrame::setDisplaysWithFocusAttributes):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge drawRect:withPainter:]):
+        (-[WebCoreFrameBridge firstRectForDOMRange:]):
+        (-[WebCoreFrameBridge ensureSelectionVisible]):
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::relativeBBox):
+        (KCanvasContainer::getAspectRatio):
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFilterEffect::subRegion):
+        (KCanvasFilterEffect::setSubRegion):
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFilter::filterRect):
+        (KCanvasFilter::setFilterRect):
+        * kcanvas/KCanvasItem.cpp:
+        (RenderPath::relativeBBox):
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasMarker::draw):
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::paint):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (KRenderingPaintServerPattern::setBbox):
+        (KRenderingPaintServerPattern::bbox):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter):
+        (KCanvasFilterQuartz::applyFilter):
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        (KCanvasItemQuartz::getAbsoluteRepaintRect):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (drawMarkerWithData):
+        (KCanvasItemQuartz::drawMarkersIfNeeded):
+        (KCanvasItemQuartz::bboxForPath):
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (KCanvasMaskerQuartz::applyMask):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasContainerQuartz::getAbsoluteRepaintRect):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::layout):
+        (KCanvasContainerQuartz::paint):
+        (KCanvasContainerQuartz::setViewport):
+        (KCanvasContainerQuartz::viewport):
+        (KCanvasContainerQuartz::setViewBox):
+        (KCanvasContainerQuartz::viewBox):
+        (KCanvasContainerQuartz::absoluteTransform):
+        (KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceContextQuartz::mapFromVisual):
+        (KRenderingDeviceContextQuartz::mapToVisual):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerImageQuartz::draw):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getValueProperty):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::constrainToVisible):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/editing/SelectionController.cpp:
+        (khtml::caretY):
+        (khtml::SelectionController::layout):
+        (khtml::SelectionController::caretRect):
+        (khtml::SelectionController::caretRepaintRect):
+        (khtml::SelectionController::paintCaret):
+        * khtml/editing/SelectionController.h:
+        * khtml/html/html_imageimpl.cpp:
+        (DOM::HTMLAreaElementImpl::getRect):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::isFocusable):
+        * khtml/misc/CachedImage.cpp:
+        (khtml::CachedImage::valid_rect):
+        (khtml::CachedImage::do_notify):
+        (khtml::CachedImage::error):
+        * khtml/misc/CachedImage.h:
+        * khtml/misc/khtmllayout.h:
+        (khtml::GapRects::left):
+        (khtml::GapRects::center):
+        (khtml::GapRects::right):
+        (khtml::GapRects::uniteLeft):
+        (khtml::GapRects::uniteCenter):
+        (khtml::GapRects::uniteRight):
+        (khtml::GapRects::operator IntRect):
+        * khtml/misc/loader_client.h:
+        (khtml::CachedObjectClient::setPixmap):
+        * khtml/rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::selectionRect):
+        (khtml::InlineTextBox::nodeAtPoint):
+        * khtml/rendering/InlineTextBox.h:
+        * khtml/rendering/RenderText.cpp:
+        (khtml::RenderText::absoluteRects):
+        (khtml::RenderText::caretRect):
+        (khtml::RenderText::getAbsoluteRepaintRect):
+        (khtml::RenderText::selectionRect):
+        * khtml/rendering/RenderText.h:
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/font.cpp:
+        (khtml::Font::selectionRectForText):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::overflowRect):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::getAbsoluteRepaintRectIncludingFloats):
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::fillHorizontalSelectionGap):
+        (khtml::RenderBlock::fillVerticalSelectionGap):
+        (khtml::RenderBlock::fillLeftSelectionGap):
+        (khtml::RenderBlock::fillRightSelectionGap):
+        (khtml::RenderBlock::floatRect):
+        (khtml::RenderBlock::isPointInScrollbar):
+        (khtml::RenderBlock::nodeAtPoint):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::selectionRect):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::nodeAtPoint):
+        (RenderBox::paintBoxDecorations):
+        (RenderBox::paintBackgroundExtended):
+        (RenderBox::getOverflowClipRect):
+        (RenderBox::getClipRect):
+        (RenderBox::getAbsoluteRepaintRect):
+        (RenderBox::computeAbsoluteRepaintRect):
+        (RenderBox::caretRect):
+        * khtml/rendering/render_box.h:
+        (khtml::RenderBox::borderBox):
+        * khtml/rendering/render_br.cpp:
+        (khtml::RenderBR::caretRect):
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::selectionRect):
+        * khtml/rendering/render_button.cpp:
+        (khtml::RenderButton::paintObject):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::repaintViewRectangle):
+        (RenderCanvas::getAbsoluteRepaintRect):
+        (RenderCanvas::computeAbsoluteRepaintRect):
+        (RenderCanvas::absoluteRects):
+        (RenderCanvas::selectionRect):
+        (RenderCanvas::viewRect):
+        * khtml/rendering/render_canvas.h:
+        (khtml::RenderCanvas::printRect):
+        (khtml::RenderCanvas::setPrintRect):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+        (RenderCanvasImage::layout):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect):
+        (RenderFlow::caretRect):
+        (RenderFlow::paintOutlines):
+        (RenderFlow::paintOutlineForLine):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        (RenderPart::updateWidgetPosition):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setImage):
+        (RenderImage::setPixmap):
+        (RenderImage::paint):
+        (RenderImage::layout):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::absoluteRects):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::updateLayerPositions):
+        (khtml::RenderLayer::scrollRectToVisible):
+        (khtml::RenderLayer::getRectToExpose):
+        (khtml::RenderLayer::positionScrollbars):
+        (khtml::RenderLayer::updateScrollInfoAfterLayout):
+        (khtml::RenderLayer::paintScrollbars):
+        (khtml::RenderLayer::paint):
+        (khtml::setClip):
+        (khtml::restoreClip):
+        (khtml::RenderLayer::paintLayer):
+        (khtml::RenderLayer::hitTest):
+        (khtml::RenderLayer::hitTestLayer):
+        (khtml::RenderLayer::calculateClipRects):
+        (khtml::RenderLayer::calculateRects):
+        (khtml::mustExamineRenderer):
+        (khtml::RenderLayer::intersectsDamageRect):
+        (khtml::RenderLayer::containsPoint):
+        * khtml/rendering/render_layer.h:
+        (khtml::ClipRects::m_refCnt):
+        (khtml::ClipRects::overflowClipRect):
+        (khtml::ClipRects::fixedClipRect):
+        (khtml::ClipRects::posClipRect):
+        (khtml::RenderLayer::repaintRect):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::canAccommodateEllipsis):
+        (khtml::InlineFlowBox::nodeAtPoint):
+        (khtml::InlineFlowBox::paintBackground):
+        (khtml::InlineFlowBox::paintBackgroundAndBorder):
+        (khtml::EllipsisBox::nodeAtPoint):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::setPixmap):
+        * khtml/rendering/render_list.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintBorderImage):
+        (RenderObject::paintBorder):
+        (RenderObject::absoluteRects):
+        (RenderObject::absoluteBoundingBoxRect):
+        (RenderObject::addAbsoluteRectForLayer):
+        (RenderObject::paintingRootRect):
+        (RenderObject::repaintRectangle):
+        (RenderObject::repaintAfterLayoutIfNeeded):
+        (RenderObject::getAbsoluteRepaintRectWithOutline):
+        (RenderObject::getAbsoluteRepaintRect):
+        (RenderObject::getAbsoluteRepaintRectIncludingFloats):
+        (RenderObject::computeAbsoluteRepaintRect):
+        (RenderObject::viewRect):
+        (RenderObject::caretRect):
+        (RenderObject::addDashboardRegions):
+        (RenderObject::setPixmap):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::getOverflowClipRect):
+        (khtml::RenderObject::getClipRect):
+        (khtml::RenderObject::relativeBBox):
+        (khtml::RenderObject::PaintInfo::PaintInfo):
+        (khtml::RenderObject::RepaintInfo::m_repaintRect):
+        (khtml::RenderObject::borderBox):
+        (khtml::RenderObject::overflowRect):
+        (khtml::RenderObject::floatRect):
+        (khtml::RenderObject::selectionRect):
+        (khtml::RenderObject::SelectionInfo::rect):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::selectionRect):
+        (RenderWidget::paint):
+        (RenderWidget::updateWidgetPosition):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        (RenderTableRow::getAbsoluteRepaintRect):
+        (RenderTableCell::computeAbsoluteRepaintRect):
+        (RenderTableCell::getAbsoluteRepaintRect):
+        (RenderTableCell::paintBoxDecorations):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::paint):
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::adjustRepaintRect):
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::adjustRepaintRect):
+        (khtml::RenderThemeMac::inflateRect):
+        (khtml::RenderThemeMac::paintCheckbox):
+        (khtml::RenderThemeMac::setCheckboxCellState):
+        (khtml::RenderThemeMac::paintRadio):
+        (khtml::RenderThemeMac::setRadioCellState):
+        (khtml::RenderThemeMac::setButtonCellState):
+        (khtml::RenderThemeMac::paintButton):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::scrollIntoView):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::getRect):
+        (DOM::ContainerNodeImpl::getRect):
+        * khtml/xml/dom_nodeimpl.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::canvasResource):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::setStandardAttributes):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::value):
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::getBBox):
+        * ksvg2/svg/SVGMaskElementImpl.cpp:
+        (KSVG::SVGMaskElementImpl::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::drawPatternContentIntoTile):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::checkIntersection):
+        (SVGSVGElementImpl::checkEnclosure):
+        (SVGSVGElementImpl::createRenderer):
+        * kwq/KWQAccObject.mm:
+        (boundingBoxRect):
+        (-[KWQAccObject position]):
+        (-[KWQAccObject size]):
+        (-[KWQAccObject doAXBoundsForTextMarkerRange:]):
+        * kwq/KWQApplication.h:
+        * kwq/KWQApplication.mm:
+        (QDesktopWidget::screenGeometry):
+        (QDesktopWidget::availableGeometry):
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::frameGeometry):
+        (QComboBox::setFrameGeometry):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::setFrameGeometry):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::selectionRectForText):
+        (QFontMetrics::boundingRect):
+        * kwq/KWQKWinModule.h:
+        * kwq/KWQKWinModule.mm:
+        (KWinModule::workArea):
+        * kwq/KWQObject.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::xForm):
+        (QPainter::drawPixmap):
+        (QPainter::fillRect):
+        (QPainter::addClip):
+        (QPainter::addRoundedRectClip):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::setAnimationRect):
+        (QPixmap::rect):
+        * kwq/KWQRect.h: Removed.
+        * kwq/KWQRect.mm: Removed.
+        * kwq/KWQRectF.h: Removed.
+        * kwq/KWQRectF.mm: Removed.
+        * kwq/KWQRegion.cpp:
+        (QRegion::QRegion):
+        (QRegion::boundingRect):
+        * kwq/KWQRegion.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+        (write):
+        (writeLayers):
+        (externalRepresentation):
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::updateContents):
+        * kwq/KWQWMatrix.cpp:
+        (QWMatrix::mapRect):
+        * kwq/KWQWMatrix.h:
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::resize):
+        (QWidget::move):
+        (QWidget::frameGeometry):
+        (QWidget::setFrameGeometry):
+        (QWidget::paint):
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::frameGeometry):
+        (KWQWindowWidget::setFrameGeometry):
+        * page/Frame.cpp:
+        (Frame::gotoAnchor):
+        (Frame::paintCaret):
+        (Frame::paintDragCaret):
+        (Frame::selectionRect):
+        (Frame::revealSelection):
+        (Frame::paint):
+        (Frame::adjustPageHeight):
+        (Frame::centerSelectionInVisibleArea):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (KHTMLView::addRepaintInfo):
+        (KHTMLView::scrollTo):
+        (KHTMLView::focusNextPrevNode):
+        (KHTMLView::repaintRectangle):
+        * page/FrameView.h:
+        * platform/FloatRect.cpp: Added.
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::isNull):
+        (WebCore::FloatRect::isValid):
+        (WebCore::FloatRect::isEmpty):
+        (WebCore::FloatRect::right):
+        (WebCore::FloatRect::bottom):
+        (WebCore::FloatRect::topLeft):
+        (WebCore::FloatRect::topRight):
+        (WebCore::FloatRect::bottomRight):
+        (WebCore::FloatRect::bottomLeft):
+        (WebCore::FloatRect::size):
+        (WebCore::FloatRect::unite):
+        (WebCore::FloatRect::normalize):
+        (WebCore::FloatRect::intersects):
+        (WebCore::FloatRect::intersect):
+        (WebCore::FloatRect::inflate):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/FloatRect.h: Added.
+        (WebCore::FloatRect::contains):
+        (WebCore::FloatRect::operator&):
+        (WebCore::enclosingIntRect):
+        * platform/IntPointArray.cpp:
+        (IntPointArray::IntPointArray):
+        (IntPointArray::boundingRect):
+        * platform/IntPointArray.h:
+        * platform/IntRect.cpp: Added.
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::isNull):
+        (WebCore::IntRect::isValid):
+        (WebCore::IntRect::isEmpty):
+        (WebCore::IntRect::right):
+        (WebCore::IntRect::bottom):
+        (WebCore::IntRect::topLeft):
+        (WebCore::IntRect::topRight):
+        (WebCore::IntRect::bottomRight):
+        (WebCore::IntRect::bottomLeft):
+        (WebCore::IntRect::size):
+        (WebCore::IntRect::unite):
+        (WebCore::IntRect::normalize):
+        (WebCore::IntRect::intersects):
+        (WebCore::IntRect::intersect):
+        (WebCore::IntRect::inflate):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/IntRect.h: Added.
+        (WebCore::IntRect::contains):
+        (WebCore::IntRect::operator&):
+        * platform/mac/FloatRect.mm: Added.
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::operator NSRect):
+        (WebCore::FloatRect::operator CGRect):
+        * platform/mac/IntRect.mm: Added.
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator NSRect):
+        (WebCore::IntRect::operator CGRect):
+
 2006-01-13  David Hyatt  <hyatt@apple.com>
 
         Convert QPointF to FloatPoint and move it to the platform

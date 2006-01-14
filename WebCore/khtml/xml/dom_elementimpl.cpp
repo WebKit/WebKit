@@ -351,7 +351,7 @@ const AtomicString& ElementImpl::getAttribute(const QualifiedName& name) const
 
 void ElementImpl::scrollIntoView(bool alignToTop) 
 {
-    QRect bounds = this->getRect();    
+    IntRect bounds = this->getRect();    
     if (m_render) {
         // Align to the top / bottom and to the closest edge.
         if (alignToTop)

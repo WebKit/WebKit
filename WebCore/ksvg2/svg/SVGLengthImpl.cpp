@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#include <qrect.h>
+#include "IntRect.h"
 
 #include <kdebug.h>
 
@@ -97,7 +97,7 @@ float SVGLengthImpl::value() const
     khtml::RenderObject *item = (m_context ? m_context->renderer() : 0);
     if(item)
     {
-        QRectF bbox = item->relativeBBox();
+        FloatRect bbox = item->relativeBBox();
 
         float result = 0;
         if(m_mode == LM_WIDTH)

@@ -49,7 +49,7 @@ public:
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
-    bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // render_theme_mac.cpp for Mac OS X.
@@ -75,7 +75,7 @@ public:
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
-    virtual void adjustRepaintRect(const RenderObject* o, QRect& r) { }
+    virtual void adjustRepaintRect(const RenderObject* o, IntRect& r) { }
     
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
@@ -95,15 +95,15 @@ protected:
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
     virtual void setCheckboxSize(RenderStyle* style) const {};
     
     virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
     virtual void setRadioSize(RenderStyle* style) const {};
     
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, DOM::ElementImpl* e) const;
-    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
     virtual void setButtonSize(RenderStyle* style) const {};
 };
 

@@ -1019,7 +1019,7 @@ bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h,
     // If we have a border radius, the border image gets clipped to the rounded rect.
     bool clipped = false;
     if (style->hasBorderRadius()) {
-        QRect clipRect(_tx, _ty, w, h);
+        IntRect clipRect(_tx, _ty, w, h);
         clipRect = p->xForm(clipRect);
         p->save();
         p->addRoundedRectClip(clipRect, style->borderTopLeftRadius(), style->borderTopRightRadius(),
@@ -1114,7 +1114,7 @@ bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h,
     // Because of the bizarre way we do animations in WebKit, WebCore does not get any sort of notification when the image changes
     // animation frames.  We have to tell WebKit about the rect so that it can do the animation itself and invalidate the right
     // rect.
-    borderImage->pixmap().setAnimationRect(QRect(_tx, _ty, w, h));
+    borderImage->pixmap().setAnimationRect(IntRect(_tx, _ty, w, h));
     
     // Clear the clip for the border radius.
     if (clipped)
@@ -1172,7 +1172,7 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     // Clip to the rounded rectangle.
     if (render_radii) {
         p->save();
-        p->addRoundedRectClip(QRect(_tx, _ty, w, h), topLeft, topRight, bottomLeft, bottomRight);
+        p->addRoundedRectClip(IntRect(_tx, _ty, w, h), topLeft, topRight, bottomLeft, bottomRight);
     }
 
     if (render_t) {
@@ -1271,38 +1271,38 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
         p->restore(); // Undo the clip.
 }
 
-void RenderObject::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
+void RenderObject::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
     if (continuation()) {
-        rects.append(QRect(_tx, _ty - collapsedMarginTop(), 
+        rects.append(IntRect(_tx, _ty - collapsedMarginTop(), 
                            width(), height()+collapsedMarginTop()+collapsedMarginBottom()));
         continuation()->absoluteRects(rects, 
                                       _tx - xPos() + continuation()->containingBlock()->xPos(),
                                       _ty - yPos() + continuation()->containingBlock()->yPos());
     }
     else
-        rects.append(QRect(_tx, _ty, width(), height()));
+        rects.append(IntRect(_tx, _ty, width(), height()));
 }
 
-QRect RenderObject::absoluteBoundingBoxRect()
+IntRect RenderObject::absoluteBoundingBoxRect()
 {
     int x, y;
     absolutePosition(x, y);
-    QValueList<QRect> rects;
+    QValueList<IntRect> rects;
     absoluteRects(rects, x, y);
     
-    QValueList<QRect>::ConstIterator it = rects.begin();
-    QRect result = *it;
+    QValueList<IntRect>::ConstIterator it = rects.begin();
+    IntRect result = *it;
     while (++it != rects.end()) {
         result = result.unite(*it);
     }
     return result;
 }
 
-void RenderObject::addAbsoluteRectForLayer(QRect& result)
+void RenderObject::addAbsoluteRectForLayer(IntRect& result)
 {
     if (layer()) {
         result = result.unite(absoluteBoundingBoxRect());
@@ -1312,9 +1312,9 @@ void RenderObject::addAbsoluteRectForLayer(QRect& result)
     }
 }
 
-QRect RenderObject::paintingRootRect(QRect& topLevelRect)
+IntRect RenderObject::paintingRootRect(IntRect& topLevelRect)
 {
-    QRect result = absoluteBoundingBoxRect();
+    IntRect result = absoluteBoundingBoxRect();
     topLevelRect = result;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
         current->addAbsoluteRectForLayer(result);
@@ -1405,7 +1405,7 @@ void RenderObject::repaint(bool immediate)
     c->repaintViewRectangle(getAbsoluteRepaintRect(), immediate);    
 }
 
-void RenderObject::repaintRectangle(const QRect& r, bool immediate)
+void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
 {
     // Can't use canvas(), since we might be unrooted.
     RenderObject* o = this;
@@ -1415,18 +1415,18 @@ void RenderObject::repaintRectangle(const QRect& r, bool immediate)
     RenderCanvas* c = static_cast<RenderCanvas*>(o);
     if (c->printingMode())
         return; // Don't repaint if we're printing.
-    QRect absRect(r);
+    IntRect absRect(r);
     computeAbsoluteRepaintRect(absRect);
     c->repaintViewRectangle(absRect, immediate);
 }
 
-bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
+bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldFullBounds)
 {
     RenderCanvas* c = canvas();
     if (c->printingMode())
         return false; // Don't repaint if we're printing.
             
-    QRect newBounds, newFullBounds;
+    IntRect newBounds, newFullBounds;
     getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
     if (newBounds == oldBounds && !selfNeedsLayout())
         return false;
@@ -1443,13 +1443,13 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRec
         // two rectangles (but typically only one).
         int width = abs(newBounds.width() - oldBounds.width());
         if (width)
-            c->repaintViewRectangle(QRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()) - borderRight(),
+            c->repaintViewRectangle(IntRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()) - borderRight(),
                                     newBounds.y(), 
                                     width + borderRight(),
                                     kMax(newBounds.height(), oldBounds.height())));
         int height = abs(newBounds.height() - oldBounds.height());
         if (height)
-            c->repaintViewRectangle(QRect(newBounds.x(),
+            c->repaintViewRectangle(IntRect(newBounds.x(),
                                           kMin(newBounds.y() + newBounds.height(), oldBounds.y() + oldBounds.height()) - borderBottom(),
                                           kMax(newBounds.width(), oldBounds.width()),
                                           height + borderBottom()));
@@ -1489,9 +1489,9 @@ void RenderObject::repaintObjectsBeforeLayout()
     }
 }
 
-QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
+IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
 {
-    QRect r(getAbsoluteRepaintRect());
+    IntRect r(getAbsoluteRepaintRect());
     r.setRect(r.x()-ow, r.y()-ow, r.width()+ow*2, r.height()+ow*2);
 
     if (continuation() && !isInline())
@@ -1500,7 +1500,7 @@ QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     if (isInlineFlow()) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isText()) {
-                QRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
+                IntRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
                 r = r.unite(childRect);
             }
         }
@@ -1509,19 +1509,19 @@ QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     return r;
 }
 
-QRect RenderObject::getAbsoluteRepaintRect()
+IntRect RenderObject::getAbsoluteRepaintRect()
 {
     if (parent())
         return parent()->getAbsoluteRepaintRect();
-    return QRect();
+    return IntRect();
 }
 
-void RenderObject::getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds)
+void RenderObject::getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& fullBounds)
 {
     bounds = fullBounds = getAbsoluteRepaintRect();
 }
 
-void RenderObject::computeAbsoluteRepaintRect(QRect& r, bool f)
+void RenderObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     if (parent())
         return parent()->computeAbsoluteRepaintRect(r, f);
@@ -1892,7 +1892,7 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
     }
 }
 
-QRect RenderObject::viewRect() const
+IntRect RenderObject::viewRect() const
 {
     return canvas()->viewRect();
 }
@@ -1913,12 +1913,12 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-QRect RenderObject::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
+IntRect RenderObject::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
    if (extraWidthToEndOfLine)
        *extraWidthToEndOfLine = 0;
 
-    return QRect();
+    return IntRect();
 }
 
 int RenderObject::paddingTop() const
@@ -2451,7 +2451,7 @@ void RenderObject::addDashboardRegions (QValueList<DashboardRegionValue>& region
             
             DashboardRegionValue region;
             region.label = styleRegion.label;
-            region.bounds = QRect (
+            region.bounds = IntRect (
                 styleRegion.offset.left.value,
                 styleRegion.offset.top.value,
                 w - styleRegion.offset.left.value - styleRegion.offset.right.value,
@@ -2527,7 +2527,7 @@ QChar RenderObject::backslashAsCurrencySymbol() const
     return codec->backslashAsCurrencySymbol();
 }
 
-void RenderObject::setPixmap(const QPixmap&, const QRect&, CachedImage *image)
+void RenderObject::setPixmap(const QPixmap&, const IntRect&, CachedImage *image)
 {
     // Repaint when the background image or border image finishes loading.
     // This is needed for RenderBox objects, and also for table objects that hold

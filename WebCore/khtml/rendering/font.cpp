@@ -33,7 +33,7 @@
 
 namespace khtml {
 
-QRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
+IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
                       QChar *str, int slen, int pos, int len, int toAdd,
                       bool rtl, bool visuallyOrdered, int from, int to) const
 {

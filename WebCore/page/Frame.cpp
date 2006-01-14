@@ -1279,14 +1279,14 @@ bool Frame::gotoAnchor( const QString &name )
   
   // Scroll nested layers and frames to reveal the anchor.
   RenderObject *renderer;
-  QRect rect;
+  IntRect rect;
   if (n) {
       renderer = n->renderer();
       rect = n->getRect();
   } else {
     // If there's no node, we should scroll to the top of the document.
       renderer = d->m_doc->renderer();
-      rect = QRect();
+      rect = IntRect();
   }
 
   if (renderer) {
@@ -1514,13 +1514,13 @@ void Frame::timerEvent(QTimerEvent *e)
     }
 }
 
-void Frame::paintCaret(QPainter *p, const QRect &rect) const
+void Frame::paintCaret(QPainter *p, const IntRect &rect) const
 {
     if (d->m_caretPaint)
         d->m_selection.paintCaret(p, rect);
 }
 
-void Frame::paintDragCaret(QPainter *p, const QRect &rect) const
+void Frame::paintDragCaret(QPainter *p, const IntRect &rect) const
 {
     d->m_dragCaret.paintCaret(p, rect);
 }
@@ -3139,11 +3139,11 @@ RenderObject *Frame::renderer() const
     return doc ? doc->renderer() : 0;
 }
 
-QRect Frame::selectionRect() const
+IntRect Frame::selectionRect() const
 {
     RenderCanvas *root = static_cast<RenderCanvas *>(renderer());
     if (!root)
-        return QRect();
+        return IntRect();
 
     return root->selectionRect();
 }
@@ -3232,7 +3232,7 @@ void Frame::addData(const char *bytes, int length)
 // FIXME: should this go in SelectionController?
 void Frame::revealSelection()
 {
-    QRect rect;
+    IntRect rect;
     
     switch (selection().state()) {
         case SelectionController::NONE:
@@ -3283,7 +3283,7 @@ bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity gr
 }
 
 // FIXME: why is this here instead of on the KHTMLView?
-void Frame::paint(QPainter *p, const QRect& rect)
+void Frame::paint(QPainter *p, const IntRect& rect)
 {
 #ifndef NDEBUG
     bool fillWithRed;
@@ -3325,7 +3325,7 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
         painter.setPaintingDisabled(true);
         
         root->setTruncatedAt((int)floor(oldBottom));
-        QRect dirtyRect(0, (int)floor(oldTop),
+        IntRect dirtyRect(0, (int)floor(oldTop),
                         root->docWidth(), (int)ceil(oldBottom-oldTop));
         root->layer()->paint(&painter, dirtyRect);
         *newBottom = root->bestTruncatedAt();
@@ -3654,7 +3654,7 @@ void Frame::clearTimers()
 // FIXME: selection controller?
 void Frame::centerSelectionInVisibleArea() const
 {
-    QRect rect;
+    IntRect rect;
     
     switch (selection().state()) {
         case SelectionController::NONE:

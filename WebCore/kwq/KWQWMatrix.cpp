@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQWMatrix.h"
 
-#include "KWQRect.h"
+#include "IntRect.h"
 
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
@@ -56,14 +56,14 @@ void QWMatrix::map(double x, double y, double *x2, double *y2) const
     *y2 = result.y;
 }
 
-QRect QWMatrix::mapRect(const QRect &rect) const
+IntRect QWMatrix::mapRect(const IntRect &rect) const
 {
-    return QRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
+    return IntRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
-QRectF QWMatrix::mapRect(const QRectF &rect) const
+FloatRect QWMatrix::mapRect(const FloatRect &rect) const
 {
-    return QRectF(CGRectApplyAffineTransform(CGRect(rect), m_transform));
+    return FloatRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
 bool QWMatrix::isIdentity() const

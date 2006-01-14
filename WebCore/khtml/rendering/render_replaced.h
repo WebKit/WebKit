@@ -62,7 +62,7 @@ public:
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState s);
-    virtual QRect selectionRect();
+    virtual IntRect selectionRect();
     
     virtual QColor selectionColor(QPainter *p) const;
 

@@ -175,7 +175,7 @@ public:
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
                        khtml::RenderObject::NodeInfo& info);
 
-    virtual QRect getRect(khtml::RenderObject* obj) const;
+    virtual IntRect getRect(khtml::RenderObject* obj) const;
 
     DOMString accessKey() const;
     void setAccessKey( const DOMString & );

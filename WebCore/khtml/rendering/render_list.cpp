@@ -285,9 +285,9 @@ void RenderListItem::paint(PaintInfo& i, int _tx, int _ty)
     RenderBlock::paint(i, _tx, _ty);
 }
 
-QRect RenderListItem::getAbsoluteRepaintRect()
+IntRect RenderListItem::getAbsoluteRepaintRect()
 {
-    QRect result = RenderBlock::getAbsoluteRepaintRect();
+    IntRect result = RenderBlock::getAbsoluteRepaintRect();
     if (m_marker && !m_marker->isInside()) {
         // This can be a sloppy and imprecise offset as long as it's always too big.
         int pixHeight = style()->htmlFont().getFontDef().computedPixelSize();
@@ -510,7 +510,7 @@ void RenderListMarker::layout()
     setNeedsLayout(false);
 }
 
-void RenderListMarker::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
+void RenderListMarker::setPixmap( const QPixmap &p, const IntRect& r, CachedImage *o)
 {
     if(o != m_listImage) {
         RenderBox::setPixmap(p, r, o);

@@ -218,7 +218,7 @@ void RenderTable::layout()
         return;
     }
 
-    QRect oldBounds, oldFullBounds;
+    IntRect oldBounds, oldFullBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
@@ -1456,7 +1456,7 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-QRect RenderTableRow::getAbsoluteRepaintRect()
+IntRect RenderTableRow::getAbsoluteRepaintRect()
 {
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this.
@@ -1464,7 +1464,7 @@ QRect RenderTableRow::getAbsoluteRepaintRect()
     if (parentTable)
         return parentTable->getAbsoluteRepaintRect();
     else
-        return QRect();
+        return IntRect();
 }
 
 // -------------------------------------------------------------------------
@@ -1551,7 +1551,7 @@ void RenderTableCell::layout()
     m_widthChanged = false;
 }
 
-void RenderTableCell::computeAbsoluteRepaintRect(QRect& r, bool f)
+void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     r.setY(r.y() + _topExtra);
     RenderBlock::computeAbsoluteRepaintRect(r, f);
@@ -2109,10 +2109,10 @@ void RenderTableCell::paintCollapsedBorder(QPainter* p, int _tx, int _ty, int w,
     }
 }
 
-QRect RenderTableCell::getAbsoluteRepaintRect()
+IntRect RenderTableCell::getAbsoluteRepaintRect()
 {
     int ow = style() ? style()->outlineSize() : 0;
-    QRect r(-ow, -ow - borderTopExtra(), 
+    IntRect r(-ow, -ow - borderTopExtra(), 
             overflowWidth(false) + ow * 2, overflowHeight(false) + borderTopExtra() + borderBottomExtra() + ow * 2);
     computeAbsoluteRepaintRect(r);
     return r;
@@ -2177,7 +2177,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 	// We have to clip here because the backround would paint
         // on top of the borders otherwise.
         if (m_layer && tableElt->collapseBorders()) {
-            QRect clipRect(_tx + borderLeft(), _ty + borderTop(), w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
+            IntRect clipRect(_tx + borderLeft(), _ty + borderTop(), w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
             clipRect = i.p->xForm(clipRect);
             i.p->save();
             i.p->addClip(clipRect);

@@ -24,26 +24,27 @@
  */
 
 #include "config.h"
-#import "KWQRect.h"
-
-#import <algorithm>
+#include "IntRect.h"
+#include <algorithm>
 
 using std::max;
 using std::min;
 
-QRect::QRect() : xp(0), yp(0), w(0), h(0)
+namespace WebCore {
+
+IntRect::IntRect() : xp(0), yp(0), w(0), h(0)
 {
 }
 
-QRect::QRect(int x, int y, int width, int height) : xp(x), yp(y), w(width), h(height)
+IntRect::IntRect(int x, int y, int width, int height) : xp(x), yp(y), w(width), h(height)
 {
 }
 
-QRect::QRect(IntPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+IntRect::IntRect(IntPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
 {
 }
 
-QRect::QRect(const IntPoint &topLeft, const IntPoint &bottomRight)
+IntRect::IntRect(const IntPoint &topLeft, const IntPoint &bottomRight)
 {
     xp = topLeft.x();
     yp = topLeft.y();
@@ -51,67 +52,57 @@ QRect::QRect(const IntPoint &topLeft, const IntPoint &bottomRight)
     h = bottomRight.y() - topLeft.y() + 1;
 }
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QRect::QRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
-{
-}
-#endif
-
-QRect::QRect(const CGRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
-{
-}
-
-bool QRect::isNull() const
+bool IntRect::isNull() const
 {
     return w == 0 && h == 0;
 }
 
-bool QRect::isValid() const
+bool IntRect::isValid() const
 {
     return w > 0 && h > 0;
 }
 
-bool QRect::isEmpty() const
+bool IntRect::isEmpty() const
 {
     return w <= 0 || h <= 0;
 }
 
-int QRect::right() const
+int IntRect::right() const
 {
     return xp + w - 1;
 }
 
-int QRect::bottom() const
+int IntRect::bottom() const
 {
     return yp + h - 1;
 }
 
-IntPoint QRect::topLeft() const
+IntPoint IntRect::topLeft() const
 {
     return IntPoint(xp,yp);
 }
 
-IntPoint QRect::topRight() const
+IntPoint IntRect::topRight() const
 {
     return IntPoint(right(),top());
 }
 
-IntPoint QRect::bottomRight() const
+IntPoint IntRect::bottomRight() const
 {
     return IntPoint(right(),bottom());
 }
 
-IntPoint QRect::bottomLeft() const
+IntPoint IntRect::bottomLeft() const
 {
     return IntPoint(left(),bottom());
 }
 
-IntSize QRect::size() const
+IntSize IntRect::size() const
 {
     return IntSize(w,h);
 }
 
-QRect QRect::unite(const QRect &r) const
+IntRect IntRect::unite(const IntRect &r) const
 {
     if (r.isEmpty())
         return *this;
@@ -136,12 +127,12 @@ QRect QRect::unite(const QRect &r) const
         nh = r.yp + r.h - ny; 
     }
 
-    return QRect(nx, ny, nw, nh);
+    return IntRect(nx, ny, nw, nh);
 }
 
-QRect QRect::normalize() const
+IntRect IntRect::normalize() const
 {
-    QRect newRect;
+    IntRect newRect;
     
     newRect.xp  = (w < 0) ? (xp - w) : xp;
     newRect.w   = (w < 0) ? -w : w;
@@ -152,12 +143,12 @@ QRect QRect::normalize() const
     return newRect;
 }
 
-bool QRect::intersects(const QRect &r) const
+bool IntRect::intersects(const IntRect &r) const
 {
     return intersect(r).isValid();
 }
 
-QRect QRect::intersect(const QRect &r) const
+IntRect IntRect::intersect(const IntRect &r) const
 {
     int nx, ny, nw, nh;
 
@@ -176,10 +167,10 @@ QRect QRect::intersect(const QRect &r) const
         nh = r.yp + r.h - ny; 
     }
 
-    return QRect(nx, ny, nw, nh);
+    return IntRect(nx, ny, nw, nh);
 }
 
-void QRect::inflate(int s)
+void IntRect::inflate(int s)
 {
     xp -= s;
     yp -= s;
@@ -187,24 +178,14 @@ void QRect::inflate(int s)
     h += 2*s;
 }
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-QRect::operator NSRect() const
-{
-    return NSMakeRect(xp, yp, w, h);
-}
-#endif
-
-QRect::operator CGRect() const
-{
-    return CGRectMake(xp, yp, w, h);
-}
-
-bool operator==(const QRect &a, const QRect &b)
+bool operator==(const IntRect &a, const IntRect &b)
 {
     return a.xp == b.xp && a.yp == b.yp && a.w == b.w && a.h == b.h;
 }
 
-bool operator!=(const QRect &a, const QRect &b)
+bool operator!=(const IntRect &a, const IntRect &b)
 {
     return !(a == b);
+}
+
 }

@@ -2760,7 +2760,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
     return nil;
 }
 
-// returns NSRect because going through QRect would truncate any floats
+// returns NSRect because going through IntRect would truncate any floats
 NSRect MacFrame::visibleSelectionRect() const
 {
     if (!d->m_view) {
@@ -2826,7 +2826,7 @@ NSImage *MacFrame::snapshotDragImage(NodeImpl *node, NSRect *imageRect, NSRect *
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
     d->m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
-    QRect topLevelRect;
+    IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
     _elementToDraw = node;              // invoke special sub-tree drawing mode
@@ -3023,7 +3023,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
 
     // 1. The background color used to draw behind selected content (active | inactive color)
     if (d->m_view)
-        d->m_view->updateContents(QRect(visibleSelectionRect()));
+        d->m_view->updateContents(IntRect(visibleSelectionRect()));
 
     // 2. Caret blinking (blinks | does not blink)
     if (flag)
@@ -3047,7 +3047,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
         NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
         if (documentView && renderer()) {
             doc->updateLayout(); // Ensure layout is up to date.
-            QRect visibleRect([documentView visibleRect]);
+            IntRect visibleRect([documentView visibleRect]);
             QPainter p;
             p.setUpdatingControlTints(true);
             paint(&p, visibleRect);

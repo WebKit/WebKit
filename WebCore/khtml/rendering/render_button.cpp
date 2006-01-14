@@ -101,7 +101,7 @@ void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
 {
     // Push a clip.
     if (m_inner && i.phase == PaintActionForeground) {
-        QRect clipRect(_tx + borderLeft(), _ty + borderTop(), width() - borderLeft() - borderRight(),
+        IntRect clipRect(_tx + borderLeft(), _ty + borderTop(), width() - borderLeft() - borderRight(),
                        height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;

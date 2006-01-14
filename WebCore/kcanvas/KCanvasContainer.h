@@ -61,16 +61,16 @@ public:
 
     virtual bool fillContains(const FloatPoint &p) const;
     virtual bool strokeContains(const FloatPoint &p) const;
-    virtual QRectF relativeBBox(bool includeStroke = true) const;
+    virtual FloatRect relativeBBox(bool includeStroke = true) const;
     
     virtual QMatrix localTransform() const;
     virtual void setLocalTransform(const QMatrix &matrix);
     
-    virtual void setViewport(const QRectF& viewport) = 0;
-    virtual QRectF viewport() const = 0;
+    virtual void setViewport(const FloatRect& viewport) = 0;
+    virtual FloatRect viewport() const = 0;
 
-    virtual void setViewBox(const QRectF& viewBox) = 0;
-    virtual QRectF viewBox() const = 0;
+    virtual void setViewBox(const FloatRect& viewBox) = 0;
+    virtual FloatRect viewBox() const = 0;
 
     virtual void setAlign(KCAlign align) = 0;
     virtual KCAlign align() const = 0;
@@ -79,7 +79,7 @@ public:
     bool slice() const;
     
 protected:
-    KCanvasMatrix getAspectRatio(const QRectF logical, const QRectF physical) const;
+    KCanvasMatrix getAspectRatio(const FloatRect logical, const FloatRect physical) const;
 
 private:
     class Private;

@@ -30,9 +30,11 @@
 // FIXME: Just comment out the entire file, since its implementation is completely CG-specific.
 
 #include <ApplicationServices/ApplicationServices.h>
-#include <QRectF>
+#include "FloatRect.h"
 
-class QRect;
+namespace WebCore {
+    class IntRect;
+}
 
 class QWMatrix {
 public:
@@ -42,8 +44,8 @@ public:
 
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
-    QRect QWMatrix::mapRect(const QRect &rect) const;
-    QRectF QWMatrix::mapRect(const QRectF &rect) const;
+    IntRect QWMatrix::mapRect(const IntRect &rect) const;
+    FloatRect QWMatrix::mapRect(const FloatRect &rect) const;
     
     bool isIdentity() const;
     

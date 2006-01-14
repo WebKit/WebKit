@@ -258,7 +258,7 @@ bool RenderBox::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     if (hitTestAction != HitTestForeground)
         return false;
     
-    QRect boundsRect(_tx, _ty, m_width, m_height);
+    IntRect boundsRect(_tx, _ty, m_width, m_height);
     if (boundsRect.contains(_x, _y)) {
         setInnerNode(info);
         return true;
@@ -352,7 +352,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 
     // If we have a native theme appearance, paint that before painting our border/background.  The theme will
     // tell us whether or not we should also paint the CSS border/background.
-    if (style()->hasAppearance() && !theme()->paint(this, i, QRect(_tx, _ty, w, h)))
+    if (style()->hasAppearance() && !theme()->paint(this, i, IntRect(_tx, _ty, w, h)))
         return;
 
     // The <body> only paints its background if the root element has defined a background
@@ -384,7 +384,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
 {
     bool clippedToBorderRadius = false;
     if (style()->hasBorderRadius()) {
-        QRect clipRect(_tx, _ty, w, h);
+        IntRect clipRect(_tx, _ty, w, h);
         clipRect = p->xForm(clipRect);
         p->save();
         p->addRoundedRectClip(clipRect, style()->borderTopLeftRadius(), style()->borderTopRightRadius(),
@@ -399,7 +399,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
         int y = _ty + borderTop() + (includePadding ? paddingTop() : 0);
         int width = w - bleft - bright - (includePadding ? pleft + pright : 0);
         int height = h - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0);
-        QRect clipRect(x, y, width, height);
+        IntRect clipRect(x, y, width, height);
         clipRect = p->xForm(clipRect);
         p->save();
         p->addClip(clipRect);
@@ -551,7 +551,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
         else
         {
             //fixed
-            QRect vr = viewRect();
+            IntRect vr = viewRect();
             int pw = vr.width();
             int ph = vr.height();
 
@@ -580,9 +580,9 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                 }
             }
 
-            QRect fix(cx,cy,cw,ch);
-            QRect ele(_tx,_ty,w,h);
-            QRect b = fix.intersect(ele);
+            IntRect fix(cx,cy,cw,ch);
+            IntRect ele(_tx,_ty,w,h);
+            IntRect b = fix.intersect(ele);
             sx+=b.x()-cx;
             sy+=b.y()-cy;
             cx=b.x();cy=b.y();cw=b.width();ch=b.height();
@@ -606,7 +606,7 @@ void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
     p->drawRect(_tx, _ty, m_width, m_height);
 }
 
-QRect RenderBox::getOverflowClipRect(int tx, int ty)
+IntRect RenderBox::getOverflowClipRect(int tx, int ty)
 {
     // XXX When overflow-clip (CSS3) is implemented, we'll obtain the property
     // here.
@@ -621,10 +621,10 @@ QRect RenderBox::getOverflowClipRect(int tx, int ty)
         clipw -= m_layer->verticalScrollbarWidth();
         cliph -= m_layer->horizontalScrollbarHeight();
     }
-    return QRect(clipx,clipy,clipw,cliph);
+    return IntRect(clipx,clipy,clipw,cliph);
 }
 
-QRect RenderBox::getClipRect(int tx, int ty)
+IntRect RenderBox::getClipRect(int tx, int ty)
 {
     int clipx = tx;
     int clipy = ty;
@@ -657,7 +657,7 @@ QRect RenderBox::getClipRect(int tx, int ty)
     }
     //kdDebug( 6040 ) << "setting clip("<<clipx<<","<<clipy<<","<<clipw<<","<<cliph<<")"<<endl;
 
-    QRect cr(clipx,clipy,clipw,cliph);
+    IntRect cr(clipx,clipy,clipw,cliph);
     return cr;
 }
 
@@ -759,9 +759,9 @@ void RenderBox::setInlineBoxWrapper(InlineBox* b)
     m_inlineBoxWrapper = b;
 }
 
-QRect RenderBox::getAbsoluteRepaintRect()
+IntRect RenderBox::getAbsoluteRepaintRect()
 {
-    QRect r(0, 0, overflowWidth(false), overflowHeight(false));
+    IntRect r(0, 0, overflowWidth(false), overflowHeight(false));
     if (style()) {
         if (style()->hasAppearance())
             // The theme may wish to inflate the rect used when repainting.
@@ -772,7 +772,7 @@ QRect RenderBox::getAbsoluteRepaintRect()
     return r;
 }
 
-void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
+void RenderBox::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     int x = r.x() + m_x;
     int y = r.y() + m_y;
@@ -795,9 +795,9 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
             // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
-            QRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
+            IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
             o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
-            QRect repaintRect(x, y, r.width(), r.height());
+            IntRect repaintRect(x, y, r.width(), r.height());
             r = repaintRect.intersect(boxRect);
             if (r.isEmpty())
                 return;
@@ -1706,7 +1706,7 @@ void RenderBox::calcAbsoluteVerticalValues(HeightType heightType, RenderObject* 
     y = t + mt + cb->borderTop();
 }
 
-QRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
+IntRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     // FIXME: Is it OK to check only first child instead of picking
     // right child based on offset? Is it OK to pass the same offset
@@ -1715,7 +1715,7 @@ QRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndO
     // propagate it downwards to its children, someone will feel responsible
     RenderObject *child = firstChild();
     if (child) {
-        QRect result = child->caretRect(offset, affinity, extraWidthToEndOfLine);
+        IntRect result = child->caretRect(offset, affinity, extraWidthToEndOfLine);
         // FIXME: in-band signalling!
         if (result.isEmpty())
             return result;
@@ -1756,13 +1756,13 @@ QRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndO
     else {
         // we don't know our absolute position, and there is no point returning
         // just a relative one
-        return QRect();
+        return IntRect();
     }
 
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = m_width - _x;
 
-    return QRect(_x, _y, 1, height);
+    return IntRect(_x, _y, 1, height);
 }
 
 int RenderBox::lowestPosition(bool includeOverflowInterior, bool includeSelf) const

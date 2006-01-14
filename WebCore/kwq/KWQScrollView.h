@@ -78,7 +78,7 @@ public:
 
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h, bool now=false);
-    void updateContents(const QRect &r, bool now=false);
+    void updateContents(const IntRect &r, bool now=false);
     void repaintContents(int x, int y, int w, int h, bool erase = true);
     IntPoint contentsToViewport(const IntPoint &);
     void contentsToViewport(int x, int y, int& vx, int& vy);

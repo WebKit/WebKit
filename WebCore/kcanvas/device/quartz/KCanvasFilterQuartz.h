@@ -41,8 +41,8 @@ public:
     KCanvasFilterQuartz();
     virtual ~KCanvasFilterQuartz();
     
-    virtual void prepareFilter(const QRectF& bbox);
-    virtual void applyFilter(const QRectF& bbox);
+    virtual void prepareFilter(const FloatRect& bbox);
+    virtual void applyFilter(const FloatRect& bbox);
     
     CIImage *imageForName(const QString &name) const;
     void setImageForName(CIImage *image, const QString &name);

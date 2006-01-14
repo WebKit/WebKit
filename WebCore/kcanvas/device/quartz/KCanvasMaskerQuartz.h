@@ -32,5 +32,5 @@ class KCanvasMaskerQuartz : public KCanvasMasker {
 public:
     KCanvasMaskerQuartz() { }
     
-    virtual void applyMask(const QRectF& boundingBox) const;
+    virtual void applyMask(const FloatRect& boundingBox) const;
 };

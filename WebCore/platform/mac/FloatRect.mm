@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +21,34 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INTPOINTARRAY_H_
-#define INTPOINTARRAY_H_
-
-#include "KWQMemArray.h"
-#include "IntPoint.h"
+#include "config.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 
-class IntRect;
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+FloatRect::FloatRect(const NSRect &r) : xp(r.origin.x), yp(r.origin.y), w(r.size.width), h(r.size.height)
+{
+}
+#endif
 
-class IntPointArray : public QMemArray<IntPoint> {
-public:
-    IntPointArray() { }
-    IntPointArray(int size) : QMemArray<IntPoint>(size) { }
-    IntPointArray(const IntRect &rect);
-    IntPointArray(int, const int *);
-    
-    IntRect boundingRect() const;
-    
-    IntPointArray copy() const;
-    
-    void point(uint, int *, int *);
-    void setPoint(uint, int, int);
-    bool setPoints(int, int, int, int, int, int, int, int, int);
-    bool setPoints(int nPoints, const int *points);    
-};
-
+FloatRect::FloatRect(const CGRect &r) : xp(r.origin.x), yp(r.origin.y), w(r.size.width), h(r.size.height)
+{
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::IntPointArray;
-
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+FloatRect::operator NSRect() const
+{
+    return NSMakeRect(xp, yp, w, h);
+}
 #endif
+
+FloatRect::operator CGRect() const
+{
+    return CGRectMake(xp, yp, w, h);
+}
+
+}

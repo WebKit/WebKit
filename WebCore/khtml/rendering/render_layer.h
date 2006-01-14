@@ -45,7 +45,7 @@
 #define render_layer_h
 
 #include <qcolor.h>
-#include <qrect.h>
+#include "IntRect.h"
 #include <assert.h>
 
 #include "render_object.h"
@@ -78,13 +78,13 @@ private:
 class ClipRects
 {
 public:
-    ClipRects(const QRect& r) :m_overflowClipRect(r), m_fixedClipRect(r), m_posClipRect(r), m_refCnt(0) {}
-    ClipRects(const QRect& o, const QRect& f, const QRect& p)
+    ClipRects(const IntRect& r) :m_overflowClipRect(r), m_fixedClipRect(r), m_posClipRect(r), m_refCnt(0) {}
+    ClipRects(const IntRect& o, const IntRect& f, const IntRect& p)
       :m_overflowClipRect(o), m_fixedClipRect(f), m_posClipRect(p), m_refCnt(0) {}
 
-    const QRect& overflowClipRect() { return m_overflowClipRect; }
-    const QRect& fixedClipRect() { return m_fixedClipRect; }
-    const QRect& posClipRect() { return m_posClipRect; }
+    const IntRect& overflowClipRect() { return m_overflowClipRect; }
+    const IntRect& fixedClipRect() { return m_fixedClipRect; }
+    const IntRect& posClipRect() { return m_posClipRect; }
 
     void ref() { m_refCnt++; }
     void deref(RenderArena* renderArena) { if (--m_refCnt == 0) destroy(renderArena); }
@@ -102,9 +102,9 @@ private:
     void* operator new(size_t sz) throw();
 
 private:
-    QRect m_overflowClipRect;
-    QRect m_fixedClipRect;
-    QRect m_posClipRect;
+    IntRect m_overflowClipRect;
+    IntRect m_fixedClipRect;
+    IntRect m_posClipRect;
     uint m_refCnt;
 };
 
@@ -245,8 +245,8 @@ public:
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX + m_scrollOriginX, y); }
-    void scrollRectToVisible(const QRect &r, const ScrollAlignment& alignX = gAlignCenterIfNeeded, const ScrollAlignment& alignY = gAlignCenterIfNeeded);
-    QRect getRectToExpose(const QRect &visibleRect,  const QRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);    
+    void scrollRectToVisible(const IntRect &r, const ScrollAlignment& alignX = gAlignCenterIfNeeded, const ScrollAlignment& alignY = gAlignCenterIfNeeded);
+    IntRect getRectToExpose(const IntRect &visibleRect,  const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);    
     void setHasHorizontalScrollbar(bool hasScrollbar);
     void setHasVerticalScrollbar(bool hasScrollbar);
     QScrollBar* horizontalScrollbar() { return m_hBar; }
@@ -254,8 +254,8 @@ public:
     int verticalScrollbarWidth();
     int horizontalScrollbarHeight();
     void moveScrollbarsAside();
-    void positionScrollbars(const QRect& absBounds);
-    void paintScrollbars(QPainter* p, const QRect& damageRect);
+    void positionScrollbars(const IntRect& absBounds);
+    void paintScrollbars(QPainter* p, const IntRect& damageRect);
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
     void updateScrollPositionFromScrollbars();
@@ -294,23 +294,23 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(QPainter *p, const QRect& damageRect, bool selectionOnly=false, RenderObject *paintingRoot=0);
+    void paint(QPainter *p, const IntRect& damageRect, bool selectionOnly=false, RenderObject *paintingRoot=0);
     bool hitTest(RenderObject::NodeInfo& info, int x, int y);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
-    void calculateRects(const RenderLayer* rootLayer, const QRect& paintDirtyRect, QRect& layerBounds,
-                        QRect& backgroundRect, QRect& foregroundRect, QRect& outlineRect);
+    void calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
+                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect);
     void calculateClipRects(const RenderLayer* rootLayer);
     ClipRects* clipRects() const { return m_clipRects; }
 
-    bool intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const;
-    bool containsPoint(int x, int y, const QRect& damageRect) const;
+    bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const;
+    bool containsPoint(int x, int y, const IntRect& damageRect) const;
     
     void updateHoverActiveState(RenderObject::NodeInfo& info);
     
-    QRect repaintRect() const { return m_repaintRect; }
+    IntRect repaintRect() const { return m_repaintRect; }
 
     void destroy(RenderArena* renderArena);
 
@@ -334,10 +334,10 @@ private:
 
     void collectLayers(QPtrVector<RenderLayer>*&, QPtrVector<RenderLayer>*&);
 
-    void paintLayer(RenderLayer* rootLayer, QPainter *p, const QRect& paintDirtyRect, 
+    void paintLayer(RenderLayer* rootLayer, QPainter *p, const IntRect& paintDirtyRect, 
                     bool haveTransparency, bool selectionOnly, RenderObject *paintingRoot);
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                              int x, int y, const QRect& hitTestRect);
+                              int x, int y, const IntRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
 protected:   
@@ -350,8 +350,8 @@ protected:
     RenderLayer* m_first;
     RenderLayer* m_last;
 
-    QRect m_repaintRect; // Cached repaint rects. Used by layout.
-    QRect m_fullRepaintRect;
+    IntRect m_repaintRect; // Cached repaint rects. Used by layout.
+    IntRect m_fullRepaintRect;
 
     // Our current relative position offset.
     int m_relX;

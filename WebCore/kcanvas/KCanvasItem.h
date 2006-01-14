@@ -24,11 +24,11 @@
 #ifndef KCanvasItem_H
 #define KCanvasItem_H
 
-#include <qrect.h>
+#include "IntRect.h"
 #include "IntPoint.h"
-#include <qrect.h>
+#include "IntRect.h"
 #include <q3valuelist.h>
-#include <QRectF>
+#include "FloatRect.h"
 
 #include <kcanvas/KCanvasTypes.h>
 #include "khtml/rendering/render_object.h"
@@ -57,7 +57,7 @@ public:
     virtual bool strokeContains(const WebCore::FloatPoint &p) const;
 
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
-    virtual QRectF relativeBBox(bool includeStroke = true) const;
+    virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
     // Update
     void changePath(KCanvasPath* newPath);
@@ -76,7 +76,7 @@ protected:
     // restricted set of args for passing to paint servers, etc.
     const KCanvasCommonArgs commonArgs() const;
     virtual bool hitsPath(const WebCore::FloatPoint &hitPoint, bool fill) const = 0;
-    virtual QRectF bboxForPath(bool includeStroke) const = 0;
+    virtual FloatRect bboxForPath(bool includeStroke) const = 0;
 
 private:
     class Private;

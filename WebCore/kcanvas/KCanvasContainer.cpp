@@ -92,14 +92,14 @@ bool KCanvasContainer::strokeContains(const FloatPoint &p) const
     return false;
 }
 
-QRectF KCanvasContainer::relativeBBox(bool includeStroke) const
+FloatRect KCanvasContainer::relativeBBox(bool includeStroke) const
 {
-    QRectF rect;
+    FloatRect rect;
     
     khtml::RenderObject *current = firstChild();
     for(; current != 0; current = current->nextSibling()) {
-        QRectF childBBox = current->relativeBBox(includeStroke);
-        QRectF mappedBBox = current->localTransform().mapRect(childBBox);
+        FloatRect childBBox = current->relativeBBox(includeStroke);
+        FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
         rect = rect.unite(mappedBBox);
     }
 
@@ -116,7 +116,7 @@ bool KCanvasContainer::slice() const
     return d->slice;
 }
 
-KCanvasMatrix KCanvasContainer::getAspectRatio(const QRectF logical, const QRectF physical) const
+KCanvasMatrix KCanvasContainer::getAspectRatio(const FloatRect logical, const FloatRect physical) const
 {
     KCanvasMatrix temp;
 

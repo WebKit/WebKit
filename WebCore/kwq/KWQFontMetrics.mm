@@ -224,7 +224,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
     return [data->getRenderer() floatWidthForRun:&run style:&style];
 }
 
-QRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
+IntRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
     const QChar *str, int len, int from, int to, int toAdd,
     bool rtl, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
@@ -254,7 +254,7 @@ QRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, int 
     geometry.selectionY = y;
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
-    return QRect([data->getRenderer() selectionRectForRun:&run style:&style geometry:&geometry]);
+    return IntRect([data->getRenderer() selectionRectForRun:&run style:&style geometry:&geometry]);
 }
 
 int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
@@ -284,20 +284,20 @@ int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int 
     return [data->getRenderer() pointToOffset:&run style:&style position:x includePartialGlyphs:includePartialGlyphs];
 }
 
-QRect QFontMetrics::boundingRect(QChar c) const
+IntRect QFontMetrics::boundingRect(QChar c) const
 {
-    return QRect(0, 0, width(c, 0, 0), height());
+    return IntRect(0, 0, width(c, 0, 0), height());
 }
 
-QRect QFontMetrics::boundingRect(const QString &qstring, int tabWidth, int xpos, int len) const
+IntRect QFontMetrics::boundingRect(const QString &qstring, int tabWidth, int xpos, int len) const
 {
-    return QRect(0, 0, width(qstring, tabWidth, xpos, len), height());
+    return IntRect(0, 0, width(qstring, tabWidth, xpos, len), height());
 }
 
-QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str, int tabWidth, int xpos) const
+IntRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str, int tabWidth, int xpos) const
 {
     // FIXME: need to support word wrapping?
-    return QRect(x, y, width, height).intersect(boundingRect(str, tabWidth, xpos));
+    return IntRect(x, y, width, height).intersect(boundingRect(str, tabWidth, xpos));
 }
 
 IntSize QFontMetrics::size(int, const QString &qstring, int tabWidth, int xpos) const

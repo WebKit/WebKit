@@ -51,23 +51,23 @@ int QDesktopWidget::screenNumber(QWidget *)
     return 0;
 }
 
-QRect QDesktopWidget::screenGeometry(int screenNumber)
+IntRect QDesktopWidget::screenGeometry(int screenNumber)
 {
     // Ignores the screen number, and always returns the geometry of the main screen,
     // which is the screen that the key window is on.
     NSRect rect = [[NSScreen mainScreen] frame];
     rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
-    return QRect(rect);
+    return IntRect(rect);
 }
 
-QRect QDesktopWidget::availableGeometry(QWidget *widget)
+IntRect QDesktopWidget::availableGeometry(QWidget *widget)
 {
     NSScreen *screen = widget ? [[widget->getView() window] screen] : nil;
     if (!screen)
         screen = [NSScreen mainScreen];
     NSRect rect = [screen visibleFrame];
     rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
-    return QRect(rect);
+    return IntRect(rect);
 }
 
 void QApplication::setOverrideCursor(const QCursor &c)

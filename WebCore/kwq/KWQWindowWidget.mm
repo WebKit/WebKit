@@ -56,10 +56,10 @@ IntSize KWQWindowWidget::sizeHint() const
     return size();
 }
 
-QRect KWQWindowWidget::frameGeometry() const
+IntRect KWQWindowWidget::frameGeometry() const
 {
     NSRect frame = [d->bridge windowFrame];
-    return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
+    return IntRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
                  (int)frame.size.width, (int)frame.size.height);
 }
 
@@ -84,7 +84,7 @@ IntPoint KWQWindowWidget::viewportToGlobal(const IntPoint &p) const
     return IntPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
 }
 
-void KWQWindowWidget::setFrameGeometry(const QRect &r)
+void KWQWindowWidget::setFrameGeometry(const IntRect &r)
 {
     // FIXME: Could do something to make it easy for the browser to avoid saving this change.
     [d->bridge setWindowFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),

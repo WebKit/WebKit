@@ -104,7 +104,7 @@ void drawMarkerWithData(MarkerData &data)
     else // (data.type == End)
         angle = inslope;
     
-    data.marker->draw(QRectF(), data.origin.x, data.origin.y, data.strokeWidth, angle);
+    data.marker->draw(FloatRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
 }
 
 static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const CGPathElement *element)
@@ -158,7 +158,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
     data.elementIndex++;
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(const QRectF& rect, const KCanvasPath *path) const
+void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvasPath *path) const
 {
     KDOM::DocumentImpl *doc = document();
     const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
@@ -282,7 +282,7 @@ CGContextRef getSharedContext()
     return sharedContext;
 }
 
-QRectF KCanvasItemQuartz::bboxForPath(bool includeStroke) const
+FloatRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
 {
     CGPathRef cgPath = static_cast<KCanvasPathQuartz*>(path())->cgPath();
     ASSERT(cgPath != 0);
@@ -307,7 +307,7 @@ QRectF KCanvasItemQuartz::bboxForPath(bool includeStroke) const
         // the easy (and efficient) case:
         bbox = CGPathGetBoundingBox(cgPath);
     
-    return QRectF(bbox);
+    return FloatRect(bbox);
 }
 
 bool KCanvasItemQuartz::hitsPath(const FloatPoint &hitPoint, bool fill) const

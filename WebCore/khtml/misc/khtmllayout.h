@@ -24,7 +24,7 @@
 #ifndef HTML_LAYOUT_H
 #define HTML_LAYOUT_H
 
-#include <qrect.h>
+#include "IntRect.h"
 
 /*
  * this namespace contains definitions for various types needed for
@@ -106,21 +106,21 @@ namespace khtml
     };
 
     struct GapRects {
-        QRect m_left;
-        QRect m_center;
-        QRect m_right;
+        IntRect m_left;
+        IntRect m_center;
+        IntRect m_right;
         
-        QRect left() const { return m_left; }
-        QRect center() const { return m_center; }
-        QRect right() const { return m_right; }
+        IntRect left() const { return m_left; }
+        IntRect center() const { return m_center; }
+        IntRect right() const { return m_right; }
         
-        void uniteLeft(const QRect& r) { m_left = m_left.unite(r); }
-        void uniteCenter(const QRect& r) { m_center = m_center.unite(r); }
-        void uniteRight(const QRect& r) { m_right = m_right.unite(r); }
+        void uniteLeft(const IntRect& r) { m_left = m_left.unite(r); }
+        void uniteCenter(const IntRect& r) { m_center = m_center.unite(r); }
+        void uniteRight(const IntRect& r) { m_right = m_right.unite(r); }
         void unite(const GapRects& o) { uniteLeft(o.left()); uniteCenter(o.center()); uniteRight(o.right()); }
 
-        operator QRect() const {
-            QRect result = m_left.unite(m_center);
+        operator IntRect() const {
+            IntRect result = m_left.unite(m_center);
             result = result.unite(m_right);
             return result;
         }

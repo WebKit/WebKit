@@ -157,7 +157,7 @@ JSValue *Screen::getValueProperty(ExecState *exec, int token) const
 {
   KWinModule info;
   QWidget *thisWidget = Window::retrieveActive(exec)->frame()->view();
-  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(thisWidget));
+  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(thisWidget));
 
   switch( token ) {
   case Height:
@@ -170,19 +170,19 @@ JSValue *Screen::getValueProperty(ExecState *exec, int token) const
     return jsNumber(m.depth());
   }
   case AvailLeft: {
-    QRect clipped = info.workArea().intersect(sg);
+    IntRect clipped = info.workArea().intersect(sg);
     return jsNumber(clipped.x()-sg.x());
   }
   case AvailTop: {
-    QRect clipped = info.workArea().intersect(sg);
+    IntRect clipped = info.workArea().intersect(sg);
     return jsNumber(clipped.y()-sg.y());
   }
   case AvailHeight: {
-    QRect clipped = info.workArea().intersect(sg);
+    IntRect clipped = info.workArea().intersect(sg);
     return jsNumber(clipped.height());
   }
   case AvailWidth: {
-    QRect clipped = info.workArea().intersect(sg);
+    IntRect clipped = info.workArea().intersect(sg);
     return jsNumber(clipped.width());
   }
   default:
@@ -618,7 +618,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    QRect screenRect = QApplication::desktop()->availableGeometry(openerWindow->frame()->view());
+    IntRect screenRect = QApplication::desktop()->availableGeometry(openerWindow->frame()->view());
 
     wargs.width = intFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
@@ -738,7 +738,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case OuterWidth:
     {
       if (m_frame->view()) {
-        QRect frame = m_frame->view()->topLevelWidget()->frameGeometry();
+        IntRect frame = m_frame->view()->topLevelWidget()->frameGeometry();
         return jsNumber(token == OuterHeight ? frame.height() : frame.width());
       } else
         return jsNumber(0);
@@ -1540,7 +1540,7 @@ static void parseWindowFeatures(const QString& features, KParts::WindowArgs& win
     }
 }
 
-static void constrainToVisible(const QRect &screen, KParts::WindowArgs& windowArgs)
+static void constrainToVisible(const IntRect &screen, KParts::WindowArgs& windowArgs)
 {
     windowArgs.x += screen.x();
     if (windowArgs.x < screen.x() || windowArgs.x > screen.right())
@@ -1698,7 +1698,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+	  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
       IntPoint dest = tl->pos() + IntPoint( args[0]->toInt32(exec), args[1]->toInt32(exec) );
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if ( dest.x() >= sg.x() && dest.y() >= sg.x() &&
@@ -1711,7 +1711,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+	  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
       IntPoint dest( args[0]->toInt32(exec)+sg.x(), args[1]->toInt32(exec)+sg.y() );
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if ( dest.x() >= sg.x() && dest.y() >= sg.y() &&
@@ -1725,7 +1725,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     {
       QWidget * tl = widget->topLevelWidget();
       IntSize dest = tl->size() + IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+	  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
            tl->y()+dest.height() <= sg.y()+sg.height() &&
@@ -1743,7 +1743,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     {
       QWidget * tl = widget->topLevelWidget();
       IntSize dest = IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+	  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
            tl->y()+dest.height() <= sg.y()+sg.height() &&

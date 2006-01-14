@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQPixmap.h"
 #import "IntSize.h"
-#import "KWQRect.h"
+#import "IntRect.h"
 
 #import "CachedImageCallback.h"
 #import "KWQFoundationExtras.h"
@@ -119,7 +119,7 @@ void QPixmap::resetAnimation()
         [m_imageRenderer resetAnimation];
 }
 
-void QPixmap::setAnimationRect(const QRect& rect) const
+void QPixmap::setAnimationRect(const IntRect& rect) const
 {
     [m_imageRenderer setAnimationRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
 }
@@ -220,9 +220,9 @@ IntSize QPixmap::size() const
     return IntSize([m_imageRenderer size]);
 }
 
-QRect QPixmap::rect() const
+IntRect QPixmap::rect() const
 {
-    return QRect(IntPoint(0, 0), size());
+    return IntRect(IntPoint(0, 0), size());
 }
 
 int QPixmap::width() const

@@ -99,18 +99,18 @@ public:
     bool effectBoundingBoxMode() const { return m_effectBBoxMode; }
     void setEffectBoundingBoxMode(bool bboxMode) { m_effectBBoxMode = bboxMode; }    
 
-    QRectF filterRect() const { return m_filterRect; }
-    void setFilterRect(const QRectF &rect) { m_filterRect = rect; }
+    FloatRect filterRect() const { return m_filterRect; }
+    void setFilterRect(const FloatRect &rect) { m_filterRect = rect; }
 
     void addFilterEffect(KCanvasFilterEffect *effect);
 
-    virtual void prepareFilter(const QRectF &bbox) = 0;
-    virtual void applyFilter(const QRectF &bbox) = 0;
+    virtual void prepareFilter(const FloatRect &bbox) = 0;
+    virtual void applyFilter(const FloatRect &bbox) = 0;
 
     QTextStream &externalRepresentation(QTextStream &) const;
 
 protected:
-    QRectF m_filterRect;
+    FloatRect m_filterRect;
     Q3ValueList<KCanvasFilterEffect *> m_effects;
     bool m_filterBBoxMode;
     bool m_effectBBoxMode;
@@ -127,8 +127,8 @@ public:
 
     virtual KCFilterEffectType effectType() const { return FE_TURBULENCE; }
 
-    QRectF subRegion() const;
-    void setSubRegion(const QRectF &subregion);
+    FloatRect subRegion() const;
+    void setSubRegion(const FloatRect &subregion);
 
     QString in() const;
     void setIn(const QString &in);
@@ -143,7 +143,7 @@ public:
     virtual QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-    QRectF m_subregion;
+    FloatRect m_subregion;
     QString m_in;
     QString m_result;
 };

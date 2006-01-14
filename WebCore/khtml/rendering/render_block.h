@@ -68,7 +68,7 @@ public:
     virtual int overflowWidth(bool includeInterior=true) const;
     virtual int overflowLeft(bool includeInterior=true) const;
     virtual int overflowTop(bool includeInterior=true) const;
-    virtual QRect overflowRect(bool includeInterior=true) const;
+    virtual IntRect overflowRect(bool includeInterior=true) const;
     virtual void setOverflowHeight(int h) { m_overflowHeight = h; }
     virtual void setOverflowWidth(int w) { m_overflowWidth = w; }
     
@@ -111,14 +111,14 @@ public:
 
     virtual void repaintObjectsBeforeLayout();
     virtual void repaintFloatingDescendants();
-    virtual void getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds);
+    virtual void getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& fullBounds);
 
     virtual void setStyle(RenderStyle* _style);
 
     virtual void layout();
     virtual void layoutBlock(bool relayoutChildren);
     void layoutBlockChildren(bool relayoutChildren);
-    QRect layoutInlineChildren(bool relayoutChildren);
+    IntRect layoutInlineChildren(bool relayoutChildren);
 
     void layoutPositionedObjects( bool relayoutChildren );
     void insertPositionedObject(RenderObject *o);
@@ -177,7 +177,7 @@ public:
     int floatBottom() const;
     inline int leftBottom();
     inline int rightBottom();
-    virtual QRect floatRect() const;
+    virtual IntRect floatRect() const;
 
     virtual int lineWidth(int y) const;
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
@@ -242,7 +242,7 @@ public:
         RenderBlock* block() const { return m_block; }
     };
     
-    virtual QRect selectionRect() { return selectionGapRects(); }
+    virtual IntRect selectionRect() { return selectionGapRects(); }
     GapRects selectionGapRects();
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;
@@ -252,11 +252,11 @@ public:
                                      int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* i);
     GapRects fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
                                     int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* i);
-    QRect fillVerticalSelectionGap(int lastTop, int lastLeft, int lastRight,
+    IntRect fillVerticalSelectionGap(int lastTop, int lastLeft, int lastRight,
                                    int bottomY, RenderBlock* rootBlock, int blockX, int blockY, const PaintInfo* i);
-    QRect fillLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
-    QRect fillRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
-    QRect fillHorizontalSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo* i);
+    IntRect fillLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
+    IntRect fillRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
+    IntRect fillHorizontalSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo* i);
 
     void getHorizontalSelectionGapInfo(SelectionState state, bool& leftGap, bool& rightGap);
     int leftSelectionOffset(RenderBlock* rootBlock, int y);

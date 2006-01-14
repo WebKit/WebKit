@@ -74,7 +74,7 @@ public:
 
     void destroy(RenderArena* arena);
     
-    QRect selectionRect(int absx, int absy, int startPos, int endPos);
+    IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
     

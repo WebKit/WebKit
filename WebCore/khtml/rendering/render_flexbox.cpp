@@ -253,7 +253,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
         return;
     }
 
-    QRect oldBounds;
+    IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();

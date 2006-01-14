@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
+ /*
+ * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef INTPOINTARRAY_H_
-#define INTPOINTARRAY_H_
+#include "config.h"
+#import "IntRect.h"
 
-#include "KWQMemArray.h"
-#include "IntPoint.h"
+#import <algorithm>
+
+using std::max;
+using std::min;
 
 namespace WebCore {
 
-class IntRect;
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+IntRect::IntRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
+{
+}
+#endif
 
-class IntPointArray : public QMemArray<IntPoint> {
-public:
-    IntPointArray() { }
-    IntPointArray(int size) : QMemArray<IntPoint>(size) { }
-    IntPointArray(const IntRect &rect);
-    IntPointArray(int, const int *);
-    
-    IntRect boundingRect() const;
-    
-    IntPointArray copy() const;
-    
-    void point(uint, int *, int *);
-    void setPoint(uint, int, int);
-    bool setPoints(int, int, int, int, int, int, int, int, int);
-    bool setPoints(int nPoints, const int *points);    
-};
-
+IntRect::IntRect(const CGRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
+{
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::IntPointArray;
-
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+IntRect::operator NSRect() const
+{
+    return NSMakeRect(xp, yp, w, h);
+}
 #endif
+
+IntRect::operator CGRect() const
+{
+    return CGRectMake(xp, yp, w, h);
+}
+
+}

@@ -257,10 +257,10 @@ void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
     paintLines(i, _tx, _ty);
 }
 
-void RenderInline::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
+void RenderInline::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-        rects.append(QRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height()));
+        rects.append(IntRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height()));
     
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         if (!curr->isText())

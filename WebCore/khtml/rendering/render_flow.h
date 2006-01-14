@@ -75,17 +75,17 @@ public:
     void paintLines(PaintInfo& i, int _tx, int _ty);
     bool hitTestLines(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction);
 
-    virtual QRect getAbsoluteRepaintRect();
+    virtual IntRect getAbsoluteRepaintRect();
     
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     
-    virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
     virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);
     void paintFocusRing(QPainter *p, int tx, int ty);
-    void paintOutlineForLine(QPainter *p, int tx, int ty, const QRect &prevLine, const QRect &thisLine, const QRect &nextLine);
+    void paintOutlineForLine(QPainter *p, int tx, int ty, const IntRect &prevLine, const IntRect &thisLine, const IntRect &nextLine);
     void paintOutlines(QPainter *p, int tx, int ty);
 
 protected:

@@ -1445,12 +1445,12 @@ static void buildCompactRuns(RenderObject* compactObj, BidiState& bidi)
     sBuildingCompactRuns = false;
 }
 
-QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
+IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
 {
     BidiState bidi;
 
     bool useRepaintRect = false;
-    QRect repaintRect(0,0,0,0);
+    IntRect repaintRect(0,0,0,0);
 
     m_overflowHeight = 0;
     

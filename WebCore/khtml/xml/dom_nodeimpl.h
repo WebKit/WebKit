@@ -37,12 +37,15 @@ template <class type> class QPtrList;
 template <class type> class QPtrDict;
 class KHTMLView;
 class RenderArena;
-class QRect;
 class QMouseEvent;
 class QKeyEvent;
 class QTextStream;
 class QStringList;
 class QWheelEvent;
+
+namespace WebCore {
+    class IntRect;
+}
 
 namespace khtml {
     class RenderObject;
@@ -249,7 +252,7 @@ public:
     virtual bool isIndeterminate() const { return false; }
 
     virtual bool isContentEditable() const;
-    virtual QRect getRect() const;
+    virtual IntRect getRect() const;
 
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };
     virtual void recalcStyle( StyleChange = NoChange ) {}
@@ -530,7 +533,7 @@ public:
     virtual void attach();
     virtual void detach();
 
-    virtual QRect getRect() const;
+    virtual IntRect getRect() const;
     bool getUpperLeftCorner(int &xPos, int &yPos) const;
     bool getLowerRightCorner(int &xPos, int &yPos) const;
 

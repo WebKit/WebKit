@@ -41,7 +41,7 @@ public:
 
     KCanvasImage *tile;
     KCanvasMatrix patternTransform;
-    QRectF bbox;
+    FloatRect bbox;
     bool useBoundingBoxMode;
     KCanvasResourceListener *listener;
 };
@@ -55,12 +55,12 @@ KRenderingPaintServerPattern::~KRenderingPaintServerPattern()
     delete d;
 }
 
-void KRenderingPaintServerPattern::setBbox(const QRectF& rect)
+void KRenderingPaintServerPattern::setBbox(const FloatRect& rect)
 {
     d->bbox = rect;
 }
 
-QRectF KRenderingPaintServerPattern::bbox() const
+FloatRect KRenderingPaintServerPattern::bbox() const
 {
     return d->bbox;
 }

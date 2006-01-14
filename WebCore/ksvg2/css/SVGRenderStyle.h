@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGRenderStyle_H
 #define KSVG_SVGRenderStyle_H
 
-#include <qrect.h>
+#include "IntRect.h"
 
 #include "misc/shared.h"
 #include "DataRef.h"

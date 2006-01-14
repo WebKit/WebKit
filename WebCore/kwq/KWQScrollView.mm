@@ -391,10 +391,10 @@ void QScrollView::resizeContents(int w, int h)
 
 void QScrollView::updateContents(int x, int y, int w, int h, bool now)
 {
-    updateContents(QRect(x, y, w, h), now);
+    updateContents(IntRect(x, y, w, h), now);
 }
 
-void QScrollView::updateContents(const QRect &rect, bool now)
+void QScrollView::updateContents(const IntRect &rect, bool now)
 {
     KWQ_BLOCK_EXCEPTIONS;
 

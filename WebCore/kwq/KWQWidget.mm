@@ -103,7 +103,7 @@ IntSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    setFrameGeometry(QRect(pos().x(), pos().y(), w, h));
+    setFrameGeometry(IntRect(pos().x(), pos().y(), w, h));
 }
 
 void QWidget::setActiveWindow() 
@@ -173,7 +173,7 @@ IntPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
-    setFrameGeometry(QRect(x, y, width(), height()));
+    setFrameGeometry(IntRect(x, y, width(), height()));
 }
 
 void QWidget::move(const IntPoint &p) 
@@ -181,14 +181,14 @@ void QWidget::move(const IntPoint &p)
     move(p.x(), p.y());
 }
 
-QRect QWidget::frameGeometry() const
+IntRect QWidget::frameGeometry() const
 {
-    QRect rect;
+    IntRect rect;
     KWQ_BLOCK_EXCEPTIONS;
-    rect = QRect([getOuterView() frame]);
+    rect = IntRect([getOuterView() frame]);
     return rect;
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QRect();
+    return IntRect();
 }
 
 int QWidget::baselinePosition(int height) const
@@ -394,7 +394,7 @@ void QWidget::hide()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QWidget::setFrameGeometry(const QRect &rect)
+void QWidget::setFrameGeometry(const IntRect &rect)
 {
     KWQ_BLOCK_EXCEPTIONS;
     NSView *v = getOuterView();
@@ -490,7 +490,7 @@ void QWidget::setDrawingAlpha(float alpha)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QWidget::paint(QPainter *p, const QRect &r)
+void QWidget::paint(QPainter *p, const IntRect &r)
 {
     if (p->paintingDisabled()) {
         return;

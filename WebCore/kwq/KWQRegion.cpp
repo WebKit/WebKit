@@ -28,7 +28,7 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
-QRegion::QRegion(const QRect &rect)
+QRegion::QRegion(const IntRect &rect)
 {
     path = CGPathCreateMutable();
     CGPathAddRect(path, 0, rect);
@@ -86,7 +86,7 @@ void QRegion::translate(int deltaX, int deltaY)
     path = newPath;
 }
 
-QRect QRegion::boundingRect() const
+IntRect QRegion::boundingRect() const
 {
-    return path ? QRect(CGPathGetBoundingBox(path)) : QRect();
+    return path ? IntRect(CGPathGetBoundingBox(path)) : IntRect();
 }

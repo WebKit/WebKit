@@ -125,7 +125,7 @@ KCanvasImage *SVGMaskElementImpl::drawMaskerContent()
 
     KCanvasContainer *maskContainer = static_cast<KCanvasContainer *>(renderer());
     QPainter p;
-    khtml::RenderObject::PaintInfo info(&p, QRect(), PaintActionForeground, 0);
+    khtml::RenderObject::PaintInfo info(&p, IntRect(), PaintActionForeground, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
     maskContainer->setDrawsContents(false);

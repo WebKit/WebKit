@@ -83,10 +83,10 @@ public:
     void move(int, int);
     void move(const IntPoint &);
 
-    virtual void paint(QPainter *, const QRect &);
+    virtual void paint(QPainter *, const IntRect &);
     
-    virtual QRect frameGeometry() const;
-    virtual void setFrameGeometry(const QRect &);
+    virtual IntRect frameGeometry() const;
+    virtual void setFrameGeometry(const IntRect &);
 
     virtual int baselinePosition(int height) const; // relative to the top of the widget
 

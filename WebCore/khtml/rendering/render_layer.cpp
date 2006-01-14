@@ -183,7 +183,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         int x = 0;
         int y = 0;
         convertToLayerCoords(root(), x, y);
-        QRect layerBounds = QRect(x,y,width(),height());
+        IntRect layerBounds = IntRect(x,y,width(),height());
         positionScrollbars(layerBounds);
     }
 
@@ -559,16 +559,16 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
     }
 }
 
-void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
-    QRect newRect = rect;
+    IntRect newRect = rect;
     int xOffset = 0, yOffset = 0;
     
     if (m_object->hasOverflowClip()) {
-        QRect layerBounds = QRect(m_x + scrollXOffset(), m_y + m_scrollY, m_width, m_height);
-        QRect exposeRect = QRect(rect.x() + scrollXOffset(), rect.y() + m_scrollY, rect.width(), rect.height());
-        QRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
+        IntRect layerBounds = IntRect(m_x + scrollXOffset(), m_y + m_scrollY, m_width, m_height);
+        IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + m_scrollY, rect.width(), rect.height());
+        IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
         xOffset = r.x() - m_x;
         yOffset = r.y() - m_y;
@@ -591,8 +591,8 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
     } else {
         QScrollView* view = m_object->document()->view();
         if (view) {
-            QRect viewRect = QRect(view->scrollXOffset(), view->scrollYOffset(), view->visibleWidth(), view->visibleHeight());
-            QRect r = getRectToExpose(viewRect, rect, alignX, alignY);
+            IntRect viewRect = IntRect(view->scrollXOffset(), view->scrollYOffset(), view->visibleWidth(), view->visibleHeight());
+            IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
             
             xOffset = r.x();
             yOffset = r.y();
@@ -618,7 +618,7 @@ void RenderLayer::scrollRectToVisible(const QRect &rect, const ScrollAlignment& 
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 }
 
-QRect RenderLayer::getRectToExpose(const QRect &visibleRect, const QRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) {
+IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) {
 
     int x, y, w, h;
     x = exposeRect.x();
@@ -683,7 +683,7 @@ QRect RenderLayer::getRectToExpose(const QRect &visibleRect, const QRect &expose
     // or the alignToEdgeY case where the closest edge is the top edge, then y does not need to be changed.
     h = visibleRect.height();
     
-    return QRect(x, y, w, h);
+    return IntRect(x, y, w, h);
 }
 
 void RenderLayer::updateScrollPositionFromScrollbars()
@@ -780,7 +780,7 @@ RenderLayer::moveScrollbarsAside()
 }
 
 void
-RenderLayer::positionScrollbars(const QRect& absBounds)
+RenderLayer::positionScrollbars(const IntRect& absBounds)
 {
     if (m_vBar) {
         m_vBar->move(absBounds.x()+absBounds.width()-m_object->borderRight()-m_vBar->width(),
@@ -906,7 +906,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         if (pageStep < 0) pageStep = clientHeight;
         m_vBar->setSteps(LINE_STEP, pageStep);
         m_vBar->setKnobProportion(clientHeight, m_scrollHeight);
-        m_object->repaintRectangle(QRect(m_object->borderLeft() + m_object->clientWidth(),
+        m_object->repaintRectangle(IntRect(m_object->borderLeft() + m_object->clientWidth(),
                                    m_object->borderTop(), verticalScrollbarWidth(), 
                                    m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
@@ -919,7 +919,7 @@ RenderLayer::updateScrollInfoAfterLayout()
 }
 
 void
-RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
+RenderLayer::paintScrollbars(QPainter* p, const IntRect& damageRect)
 {
     // Move the widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
@@ -928,7 +928,7 @@ RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
         int x = 0;
         int y = 0;
         convertToLayerCoords(root(), x, y);
-        QRect layerBounds = QRect(x, y, width(), height());
+        IntRect layerBounds = IntRect(x, y, width(), height());
         positionScrollbars(layerBounds);
     }
 
@@ -961,12 +961,12 @@ bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity gran
 }
 
 void
-RenderLayer::paint(QPainter *p, const QRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
+RenderLayer::paint(QPainter *p, const IntRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
 {
     paintLayer(this, p, damageRect, false, selectionOnly, paintingRoot);
 }
 
-static void setClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipRect)
+static void setClip(QPainter* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
     if (paintDirtyRect == clipRect)
         return;
@@ -977,7 +977,7 @@ static void setClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipR
     
 }
 
-static void restoreClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipRect)
+static void restoreClip(QPainter* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
     if (paintDirtyRect == clipRect)
         return;
@@ -986,11 +986,11 @@ static void restoreClip(QPainter* p, const QRect& paintDirtyRect, const QRect& c
 
 void
 RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
-                        const QRect& paintDirtyRect, bool haveTransparency, bool selectionOnly,
+                        const IntRect& paintDirtyRect, bool haveTransparency, bool selectionOnly,
                         RenderObject *paintingRoot)
 {
     // Calculate the clip rects we should use.
-    QRect layerBounds, damageRect, clipRectToApply, outlineRect;
+    IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
     int x = layerBounds.x();
     int y = layerBounds.y();
@@ -1094,7 +1094,7 @@ RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
     // Clear our our scrollbar variable
     RenderLayer::gScrollBar = 0;
     
-    QRect damageRect(m_x, m_y, width(), height());
+    IntRect damageRect(m_x, m_y, width(), height());
     RenderLayer* insideLayer = hitTestLayer(this, info, x, y, damageRect);
 
     // Now determine if the result is inside an anchor; make sure an image map wins if
@@ -1116,10 +1116,10 @@ RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
 
 RenderLayer*
 RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                          int xMousePos, int yMousePos, const QRect& hitTestRect)
+                          int xMousePos, int yMousePos, const IntRect& hitTestRect)
 {
     // Calculate the clip rects we should use.
-    QRect layerBounds, bgRect, fgRect, outlineRect;
+    IntRect layerBounds, bgRect, fgRect, outlineRect;
     calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect);
     
     // Ensure our z-order lists are up-to-date.
@@ -1200,7 +1200,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
 
     if (!parent()) {
         // The root layer's clip rect is always just its dimensions.
-        m_clipRects = new (m_object->renderArena()) ClipRects(QRect(0,0,width(),height()));
+        m_clipRects = new (m_object->renderArena()) ClipRects(IntRect(0,0,width(),height()));
         m_clipRects->ref();
         return;
     }
@@ -1209,9 +1209,9 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     parent()->calculateClipRects(rootLayer);
 
     // Set up our three rects to initially match the parent rects.
-    QRect posClipRect(parent()->clipRects()->posClipRect());
-    QRect overflowClipRect(parent()->clipRects()->overflowClipRect());
-    QRect fixedClipRect(parent()->clipRects()->fixedClipRect());
+    IntRect posClipRect(parent()->clipRects()->posClipRect());
+    IntRect overflowClipRect(parent()->clipRects()->overflowClipRect());
+    IntRect fixedClipRect(parent()->clipRects()->fixedClipRect());
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
@@ -1232,13 +1232,13 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
         convertToLayerCoords(rootLayer, x, y);
         
         if (m_object->hasOverflowClip()) {
-            QRect newOverflowClip = m_object->getOverflowClipRect(x,y);
+            IntRect newOverflowClip = m_object->getOverflowClipRect(x,y);
             overflowClipRect  = newOverflowClip.intersect(overflowClipRect);
             if (m_object->isPositioned() || m_object->isRelPositioned())
                 posClipRect = newOverflowClip.intersect(posClipRect);
         }
         if (m_object->hasClip()) {
-            QRect newPosClip = m_object->getClipRect(x,y);
+            IntRect newPosClip = m_object->getClipRect(x,y);
             posClipRect = posClipRect.intersect(newPosClip);
             overflowClipRect = overflowClipRect.intersect(newPosClip);
             fixedClipRect = fixedClipRect.intersect(newPosClip);
@@ -1256,8 +1256,8 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     m_clipRects->ref();
 }
 
-void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& paintDirtyRect, QRect& layerBounds,
-                                 QRect& backgroundRect, QRect& foregroundRect, QRect& outlineRect)
+void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
+                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect)
 {
     if (parent()) {
         parent()->calculateClipRects(rootLayer);
@@ -1273,7 +1273,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);
-    layerBounds = QRect(x,y,width(),height());
+    layerBounds = IntRect(x,y,width(),height());
     
     // Update the clip rects that will be passed to child layers.
     if (m_object->hasOverflowClip() || m_object->hasClip()) {
@@ -1282,7 +1282,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
             foregroundRect = foregroundRect.intersect(m_object->getOverflowClipRect(x,y));
         if (m_object->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            QRect newPosClip = m_object->getClipRect(x,y);
+            IntRect newPosClip = m_object->getClipRect(x,y);
             backgroundRect = backgroundRect.intersect(newPosClip);
             foregroundRect = foregroundRect.intersect(newPosClip);
             outlineRect = outlineRect.intersect(newPosClip);
@@ -1299,23 +1299,23 @@ static bool mustExamineRenderer(RenderObject* renderer)
     if (renderer->isCanvas() || renderer->isRoot() || renderer->isInlineFlow())
         return true;
     
-    QRect bbox = renderer->borderBox();
-    QRect overflowRect = renderer->overflowRect(false);
+    IntRect bbox = renderer->borderBox();
+    IntRect overflowRect = renderer->overflowRect(false);
     if (bbox != overflowRect)
         return true;
-    QRect floatRect = renderer->floatRect();
+    IntRect floatRect = renderer->floatRect();
     if (bbox != floatRect)
         return true;
 
     return false;
 }
 
-bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const
+bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const
 {
     return mustExamineRenderer(renderer()) || layerBounds.intersects(damageRect);
 }
 
-bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
+bool RenderLayer::containsPoint(int x, int y, const IntRect& damageRect) const
 {
     return damageRect.contains(x, y);
 }

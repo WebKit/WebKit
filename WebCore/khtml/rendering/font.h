@@ -109,7 +109,7 @@ public:
     bool isFixedPitch() const;
     int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos,
         int x, QPainter::TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const;
-    QRect selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
+    IntRect selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
         QChar *str, int slen, int pos, int len, int width,
         bool rtl, bool visuallyOrdered = false, int from = -1, int to = -1) const;
     void drawHighlightForText(QPainter *p, int x, int y, int h, int tabWidth, int xpos, 

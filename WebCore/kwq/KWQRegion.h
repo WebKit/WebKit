@@ -27,7 +27,7 @@
 #define QREGION_H_
 
 #include "IntPointArray.h"
-#include "KWQRect.h"
+#include "IntRect.h"
 
 typedef struct CGPath *CGMutablePathRef;
 
@@ -36,7 +36,7 @@ public:
     enum RegionType { Ellipse, Rectangle };
 
     QRegion() : path(0) { }
-    QRegion(const QRect &);
+    QRegion(const IntRect &);
     QRegion(int, int, int, int, RegionType = Rectangle);
     QRegion(const IntPointArray &);
     ~QRegion();
@@ -45,7 +45,7 @@ public:
     QRegion &operator=(const QRegion &);
 
     bool contains(const IntPoint &) const;
-    QRect boundingRect() const;
+    IntRect boundingRect() const;
 
     void translate(int deltaX, int deltaY);
 

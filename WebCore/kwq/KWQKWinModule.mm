@@ -26,11 +26,11 @@
 #include "config.h"
 #import "KWQKWinModule.h"
 
-QRect KWinModule::workArea() const
+IntRect KWinModule::workArea() const
 {
     // Returns the visibleFrame of the main screen, which is the screen that the key window is on.
     // No need to block exceptions because these simple NSScreen calls never throw.
     NSRect rect = [[NSScreen mainScreen] visibleFrame];
     rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
-    return QRect(rect);
+    return IntRect(rect);
 }

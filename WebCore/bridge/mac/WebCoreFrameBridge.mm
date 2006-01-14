@@ -1026,7 +1026,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     [self _setupRootForPrinting:YES];
-    m_frame->paint(p, QRect(rect));
+    m_frame->paint(p, IntRect(rect));
     [self _setupRootForPrinting:NO];
 }
 
@@ -1601,19 +1601,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSRect)firstRectForDOMRange:(DOMRange *)range
 {
     int extraWidthToEndOfLine = 0;
-    QRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], UPSTREAM, &extraWidthToEndOfLine);
-    QRect endCaretRect = [[range endContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
+    IntRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], UPSTREAM, &extraWidthToEndOfLine);
+    IntRect endCaretRect = [[range endContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
 
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
-        return QRect(MIN(startCaretRect.x(), endCaretRect.x()), 
+        return IntRect(MIN(startCaretRect.x(), endCaretRect.x()), 
                      startCaretRect.y(), 
                      abs(endCaretRect.x() - startCaretRect.x()),
                      MAX(startCaretRect.height(), endCaretRect.height()));
     }
 
     // start and end aren't on the same line, so go from start to the end of its line
-    return QRect(startCaretRect.x(), 
+    return IntRect(startCaretRect.x(), 
                  startCaretRect.y(),
                  startCaretRect.width() + extraWidthToEndOfLine,
                  startCaretRect.height());
@@ -2507,7 +2507,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!documentView)
         return;
     
-    QRect extentRect = renderer->caretRect(extent.offset(), m_frame->selection().extentAffinity());
+    IntRect extentRect = renderer->caretRect(extent.offset(), m_frame->selection().extentAffinity());
     RenderLayer *layer = renderer->enclosingLayer();
     if (layer)
         layer->scrollRectToVisible(extentRect);

@@ -68,14 +68,14 @@ KCanvasMatrix KRenderingDeviceContextQuartz::ctm() const
     return KCanvasMatrix(contextCTM.a, contextCTM.b, contextCTM.c, contextCTM.d, contextCTM.tx, contextCTM.ty);
 }
 
-QRect KRenderingDeviceContextQuartz::mapFromVisual(const QRect &rect)
+IntRect KRenderingDeviceContextQuartz::mapFromVisual(const IntRect &rect)
 {
-    return QRect();
+    return IntRect();
 }
 
-QRect KRenderingDeviceContextQuartz::mapToVisual(const QRect &rect)
+IntRect KRenderingDeviceContextQuartz::mapToVisual(const IntRect &rect)
 {
-    return QRect();
+    return IntRect();
 }
 
 void KRenderingDeviceContextQuartz::clearPath()

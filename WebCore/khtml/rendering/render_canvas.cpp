@@ -254,15 +254,15 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
                     view()->palette().active().color(QColorGroup::Base));
 }
 
-void RenderCanvas::repaintViewRectangle(const QRect& ur, bool immediate)
+void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
     if (m_printingMode || ur.width() == 0 || ur.height() == 0) return;
 
-    QRect vr = viewRect();
+    IntRect vr = viewRect();
     if (m_view && ur.intersects(vr)) {
         // We always just invalidate the root view, since we could be an iframe that is clipped out
         // or even invisible.
-        QRect r = ur.intersect(vr);
+        IntRect r = ur.intersect(vr);
         DOM::ElementImpl* elt = element()->getDocument()->ownerElement();
         if (!elt)
             m_view->repaintRectangle(r, immediate);
@@ -282,16 +282,16 @@ void RenderCanvas::repaintViewRectangle(const QRect& ur, bool immediate)
     }
 }
 
-QRect RenderCanvas::getAbsoluteRepaintRect()
+IntRect RenderCanvas::getAbsoluteRepaintRect()
 {
-    QRect result;
+    IntRect result;
     if (m_view && !m_printingMode)
-        result = QRect(m_view->contentsX(), m_view->contentsY(),
+        result = IntRect(m_view->contentsX(), m_view->contentsY(),
                        m_view->visibleWidth(), m_view->visibleHeight());
     return result;
 }
 
-void RenderCanvas::computeAbsoluteRepaintRect(QRect& r, bool f)
+void RenderCanvas::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     if (m_printingMode) return;
 
@@ -301,12 +301,12 @@ void RenderCanvas::computeAbsoluteRepaintRect(QRect& r, bool f)
     }
 }
 
-void RenderCanvas::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
+void RenderCanvas::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
 {
-    rects.append(QRect(_tx, _ty, m_layer->width(), m_layer->height()));
+    rects.append(IntRect(_tx, _ty, m_layer->width(), m_layer->height()));
 }
 
-QRect RenderCanvas::selectionRect() const
+IntRect RenderCanvas::selectionRect() const
 {
     QPtrDict<SelectionInfo> selectedObjects;
     selectedObjects.setAutoDelete(true);
@@ -341,7 +341,7 @@ QRect RenderCanvas::selectionRect() const
     }
 
     // Now create a single bounding box rect that encloses the whole selection.
-    QRect selRect;
+    IntRect selRect;
     QPtrDictIterator<SelectionInfo> objects(selectedObjects);
     for (objects.toFirst(); objects.current(); ++objects)
         selRect = selRect.unite(objects.current()->rect());
@@ -562,16 +562,16 @@ void RenderCanvas::removeWidget(RenderObject *o)
 
 
 
-QRect RenderCanvas::viewRect() const
+IntRect RenderCanvas::viewRect() const
 {
     if (m_printingMode)
-        return QRect(0,0, m_width, m_height);
+        return IntRect(0,0, m_width, m_height);
     else if (m_view)
-        return QRect(m_view->contentsX(),
+        return IntRect(m_view->contentsX(),
             m_view->contentsY(),
             m_view->visibleWidth(),
             m_view->visibleHeight());
-    else return QRect(0,0,m_rootWidth,m_rootHeight);
+    else return IntRect(0,0,m_rootWidth,m_rootHeight);
 }
 
 int RenderCanvas::docHeight() const

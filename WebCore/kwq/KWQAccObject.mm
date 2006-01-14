@@ -594,18 +594,18 @@ using khtml::VisiblePosition;
     return nil;
 }
 
-static QRect boundingBoxRect(RenderObject* obj)
+static IntRect boundingBoxRect(RenderObject* obj)
 {
-    QRect rect(0,0,0,0);
+    IntRect rect(0,0,0,0);
     if (obj) {
         if (obj->isInlineContinuation())
             obj = obj->element()->renderer();
-        QValueList<QRect> rects;
+        QValueList<IntRect> rects;
         int x = 0, y = 0;
         obj->absolutePosition(x, y);
         obj->absoluteRects(rects, x, y);
-        for (QValueList<QRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
-            QRect r = *it;
+        for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
+            IntRect r = *it;
             if (r.isValid()) {
                 if (obj->style()->hasAppearance())
                     theme()->adjustRepaintRect(obj, r);
@@ -621,7 +621,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 -(NSValue*)position
 {
-    QRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect(m_renderer);
+    IntRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect(m_renderer);
     
     // The Cocoa accessibility API wants the lower-left corner, not the upper-left, so we add in our height.
     NSPoint point = NSMakePoint(rect.x(), rect.y() + rect.height());
@@ -634,7 +634,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 -(NSValue*)size
 {
-    QRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect(m_renderer);
+    IntRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect(m_renderer);
     return [NSValue valueWithSize: NSMakeSize(rect.width(), rect.height())];
 }
 
@@ -1161,9 +1161,9 @@ static QRect boundingBoxRect(RenderObject* obj)
         return nil;
     
     // use the SelectionController class to help calculate the corresponding rectangle
-    QRect rect1 = SelectionController(startVisiblePosition, startVisiblePosition).caretRect();
-    QRect rect2 = SelectionController(endVisiblePosition, endVisiblePosition).caretRect();
-    QRect ourrect = rect1.unite(rect2);
+    IntRect rect1 = SelectionController(startVisiblePosition, startVisiblePosition).caretRect();
+    IntRect rect2 = SelectionController(endVisiblePosition, endVisiblePosition).caretRect();
+    IntRect ourrect = rect1.unite(rect2);
 
     // try to use the document view from the selection, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily

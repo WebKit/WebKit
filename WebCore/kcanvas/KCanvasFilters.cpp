@@ -71,12 +71,12 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasFilterEffect &e)
     return e.externalRepresentation(ts);
 }
 
-QRectF KCanvasFilterEffect::subRegion() const
+FloatRect KCanvasFilterEffect::subRegion() const
 {
     return m_subregion;
 }
 
-void KCanvasFilterEffect::setSubRegion(const QRectF &subregion)
+void KCanvasFilterEffect::setSubRegion(const FloatRect &subregion)
 {
     m_subregion = subregion;
 }

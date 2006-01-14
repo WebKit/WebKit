@@ -335,8 +335,8 @@ bool SVGSVGElementImpl::checkIntersection(SVGElementImpl *element, SVGRectImpl *
     // TODO : take into account pointer-events?
     RefPtr<SVGRectImpl> bbox = getBBox();
     
-    QRectF r(rect->x(), rect->y(), rect->width(), rect->height());
-    QRectF r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
+    FloatRect r(rect->x(), rect->y(), rect->width(), rect->height());
+    FloatRect r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
     
     return r.intersects(r2);
 }
@@ -346,8 +346,8 @@ bool SVGSVGElementImpl::checkEnclosure(SVGElementImpl *element, SVGRectImpl *rec
     // TODO : take into account pointer-events?
     RefPtr<SVGRectImpl> bbox = getBBox();
     
-    QRectF r(rect->x(), rect->y(), rect->width(), rect->height());
-    QRectF r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
+    FloatRect r(rect->x(), rect->y(), rect->width(), rect->height());
+    FloatRect r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
     
     return r.contains(r2);
 }
@@ -446,8 +446,8 @@ khtml::RenderObject *SVGSVGElementImpl::createRenderer(RenderArena *arena, khtml
     float _width = width()->baseVal()->value();
     float _height = height()->baseVal()->value();
 
-    rootContainer->setViewport(QRectF(_x, _y, _width, _height));
-    rootContainer->setViewBox(QRectF(viewBox()->baseVal()->x(), viewBox()->baseVal()->y(), viewBox()->baseVal()->width(), viewBox()->baseVal()->height()));
+    rootContainer->setViewport(FloatRect(_x, _y, _width, _height));
+    rootContainer->setViewBox(FloatRect(viewBox()->baseVal()->x(), viewBox()->baseVal()->y(), viewBox()->baseVal()->width(), viewBox()->baseVal()->height()));
     rootContainer->setAlign(KCAlign(preserveAspectRatio()->baseVal()->align() - 1));
     rootContainer->setSlice(preserveAspectRatio()->baseVal()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
     

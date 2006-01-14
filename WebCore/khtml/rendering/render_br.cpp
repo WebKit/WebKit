@@ -109,7 +109,7 @@ VisiblePosition RenderBR::positionForCoordinates(int _x, int _y)
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
-QRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
+IntRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
@@ -122,7 +122,7 @@ QRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOf
  
     // FIXME: an older version of this code wasn't setting width at
     // all, using the default of 1...
-    return QRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));
+    return IntRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));
 }
 
 InlineBox *RenderBR::inlineBox(int offset, EAffinity affinity)

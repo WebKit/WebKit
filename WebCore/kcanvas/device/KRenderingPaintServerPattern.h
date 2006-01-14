@@ -39,8 +39,8 @@ public:
     virtual KCPaintServerType type() const;
 
     // Pattern bbox
-    void setBbox(const QRectF &rect);
-    QRectF bbox() const;
+    void setBbox(const FloatRect &rect);
+    FloatRect bbox() const;
     
     // Pattern x,y phase points are relative when in boundingBoxMode
     // BoundingBox mode is true by default.

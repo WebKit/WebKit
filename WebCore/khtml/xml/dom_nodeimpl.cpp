@@ -347,13 +347,13 @@ bool NodeImpl::isContentEditable() const
     return parent() && parent()->isContentEditable();
 }
 
-QRect NodeImpl::getRect() const
+IntRect NodeImpl::getRect() const
 {
     int _x, _y;
     if(m_render && m_render->absolutePosition(_x, _y))
-        return QRect( _x, _y, m_render->width(), m_render->height() );
+        return IntRect( _x, _y, m_render->width(), m_render->height() );
 
-    return QRect();
+    return IntRect();
 }
 
 void NodeImpl::setChanged(bool b)
@@ -2673,7 +2673,7 @@ bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
     return true;
 }
 
-QRect ContainerNodeImpl::getRect() const
+IntRect ContainerNodeImpl::getRect() const
 {
     int xPos = 0, yPos = 0, xEnd = 0, yEnd = 0;
     bool foundUpperLeft = getUpperLeftCorner(xPos,yPos);
@@ -2697,7 +2697,7 @@ QRect ContainerNodeImpl::getRect() const
     if (yEnd < yPos)
         yEnd = yPos;
         
-    return QRect(xPos, yPos, xEnd - xPos, yEnd - yPos);
+    return IntRect(xPos, yPos, xEnd - xPos, yEnd - yPos);
 }
 
 void ContainerNodeImpl::setFocus(bool received)

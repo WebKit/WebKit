@@ -83,7 +83,7 @@ public:
     void resetClipData();
     void addClipData(KCanvasPath *path, KCWindRule rule, bool bboxUnits);
     
-    virtual void applyClip(const QRectF& boundingBox) const = 0;
+    virtual void applyClip(const FloatRect& boundingBox) const = 0;
 
     KCClipDataList clipData() const;
 
@@ -104,7 +104,7 @@ public:
     void setMask(KCanvasImage *mask);
     KCanvasImage *mask() const { return m_mask; }
     
-    virtual void applyMask(const QRectF& boundingBox) const = 0;
+    virtual void applyMask(const FloatRect& boundingBox) const = 0;
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
@@ -137,7 +137,7 @@ public:
     float scaleY() const;
 
      // Draw onto the canvas
-    void draw(const QRectF &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
+    void draw(const FloatRect &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 private:

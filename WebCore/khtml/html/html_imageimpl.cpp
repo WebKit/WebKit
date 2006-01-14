@@ -568,7 +568,7 @@ bool HTMLAreaElementImpl::mapMouseEvent(int x, int y, int width, int height, Ren
     return true;
 }
 
-QRect HTMLAreaElementImpl::getRect(RenderObject* obj) const
+IntRect HTMLAreaElementImpl::getRect(RenderObject* obj) const
 {
     int dx, dy;
     obj->absolutePosition(dx, dy);

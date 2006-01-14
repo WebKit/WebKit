@@ -25,14 +25,14 @@
 
 #include "config.h"
 #include "IntPointArray.h"
-#include "KWQRect.h"
+#include "IntRect.h"
 
 IntPointArray::IntPointArray(int nPoints, const int *points)
 {
     setPoints(nPoints, points);
 }
 
-IntPointArray::IntPointArray(const QRect &rect)
+IntPointArray::IntPointArray(const IntRect &rect)
 {
     setPoints(4, rect.topLeft().x(), rect.topLeft().y(),
               rect.topRight().x(), rect.topRight().y(),
@@ -47,11 +47,11 @@ IntPointArray IntPointArray::copy() const
     return copy;
 }
 
-QRect IntPointArray::boundingRect() const
+IntRect IntPointArray::boundingRect() const
 {
     int nPoints = count();
     
-    if (nPoints < 1) return QRect(0,0,0,0);
+    if (nPoints < 1) return IntRect(0,0,0,0);
     
     int minX = INT_MAX, maxX = 0;
     int minY = INT_MAX, maxY = 0;
@@ -68,7 +68,7 @@ QRect IntPointArray::boundingRect() const
         nPoints--;
     }
     
-    return QRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    return IntRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
 }
 
 void IntPointArray::point(uint index, int *x, int *y)

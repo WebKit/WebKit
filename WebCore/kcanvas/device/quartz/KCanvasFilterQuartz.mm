@@ -41,7 +41,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import <qrect.h>
+#import "IntRect.h"
 
 #import <kxmlcore/Assertions.h>
 
@@ -75,7 +75,7 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
     [m_imagesByName release];
 }
 
-void KCanvasFilterQuartz::prepareFilter(const QRectF &bbox)
+void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
@@ -101,7 +101,7 @@ void KCanvasFilterQuartz::prepareFilter(const QRectF &bbox)
     filterContext->concatCTM(QMatrix().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
 
-void KCanvasFilterQuartz::applyFilter(const QRectF &bbox)
+void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
 {
     if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;

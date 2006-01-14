@@ -172,7 +172,7 @@ const QBrush& QPainter::brush() const
     return data->state.brush;
 }
 
-QRect QPainter::xForm(const QRect &aRect) const
+IntRect QPainter::xForm(const IntRect &aRect) const
 {
     // No difference between device and model coords, so the identity transform is ok.
     return aRect;
@@ -457,7 +457,7 @@ void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix)
     drawPixmap(p.x(), p.y(), pix);
 }
 
-void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const QRect &r)
+void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const IntRect &r)
 {
     drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
@@ -517,7 +517,7 @@ int QPainter::compositeOperatorFromString(const QString &aString)
     return (int)op;
 }
 
-void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const QRect &r, const QString &compositeOperator)
+void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const IntRect &r, const QString &compositeOperator)
 {
     drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
 }
@@ -789,12 +789,12 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
         _fillRectXX(x, y, w, h, brush.color());
 }
 
-void QPainter::fillRect(const QRect &rect, const QBrush &brush)
+void QPainter::fillRect(const IntRect &rect, const QBrush &brush)
 {
     fillRect(rect.left(), rect.top(), rect.width(), rect.height(), brush);
 }
 
-void QPainter::addClip(const QRect &rect)
+void QPainter::addClip(const IntRect &rect)
 {
     if (data->state.paintingDisabled)
         return;
@@ -802,7 +802,7 @@ void QPainter::addClip(const QRect &rect)
     [NSBezierPath clipRect:rect];
 }
 
-void QPainter::addRoundedRectClip(const QRect& rect, const IntSize& topLeft, const IntSize& topRight,
+void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
                                   const IntSize& bottomLeft, const IntSize& bottomRight)
 {
     if (data->state.paintingDisabled)

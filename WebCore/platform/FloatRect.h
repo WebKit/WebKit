@@ -24,33 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QRECTF_H_
-#define QRECTF_H_
+#ifndef FLOATRECTF_H_
+#define FLOATRECTF_H_
 
 #include <math.h>
 #include "FloatSize.h"
 #include "FloatPoint.h"
-#include "KWQRect.h"
+#include "IntRect.h"
 
+#if __APPLE__
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
 typedef struct CGRect CGRect;
-class QRect;
-
-class QRectF {
-public:
-    QRectF();
-    QRectF(FloatPoint p, FloatSize s);
-    QRectF(float, float, float, float);
-    QRectF(const FloatPoint&, const FloatPoint&);
-    QRectF(const QRect&);
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QRectF(const NSRect&);
 #endif
-    explicit QRectF(const CGRect&);
+
+namespace WebCore {
+
+class IntRect;
+
+class FloatRect {
+public:
+    FloatRect();
+    FloatRect(FloatPoint p, FloatSize s);
+    FloatRect(float, float, float, float);
+    FloatRect(const FloatPoint&, const FloatPoint&);
+    FloatRect(const IntRect&);
+    
+#if __APPLE__
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit FloatRect(const NSRect&);
+#endif
+    explicit FloatRect(const CGRect&);
+#endif
 
     bool isNull() const;
     bool isValid() const;
@@ -76,10 +84,10 @@ public:
     void setWidth(float width) { w = width; }
     void setHeight(float height) { h = height; }
     void setRect(float x, float y, float width, float height) { xp = x; yp = y; w = width; h = height; }
-    QRectF intersect(const QRectF&) const;
-    bool intersects(const QRectF&) const;
-    QRectF unite(const QRectF&) const;
-    QRectF normalize() const;
+    FloatRect intersect(const FloatRect&) const;
+    bool intersects(const FloatRect&) const;
+    FloatRect unite(const FloatRect&) const;
+    FloatRect normalize() const;
 
     bool contains(const FloatPoint& point) const { return contains(point.x(), point.y()); }
 
@@ -90,32 +98,40 @@ public:
         return x >= xp && x < (xp + w) && y >= yp && y < (yp + h);
     }
 
-    bool contains(const QRectF& rect) const { return intersect(rect) == rect; }
+    bool contains(const FloatRect& rect) const { return intersect(rect) == rect; }
 
     void inflate(float s);
 
-    inline QRectF operator&(const QRectF& r) const { return intersect(r); }
+    inline FloatRect operator&(const FloatRect& r) const { return intersect(r); }
 
+#if __APPLE__
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSRect() const;
 #endif
     operator CGRect() const;
-    operator QRect() const;
+#endif
+
+    operator IntRect() const;
 private:
     float xp;
     float yp;
     float w;
     float h;
 
-    friend bool operator==(const QRectF&, const QRectF&);
-    friend bool operator!=(const QRectF&, const QRectF&);
+    friend bool operator==(const FloatRect&, const FloatRect&);
+    friend bool operator!=(const FloatRect&, const FloatRect&);
 };
 
-inline QRect enclosingQRect(const QRectF& fr)
+inline IntRect enclosingIntRect(const FloatRect& fr)
 {
     int x = int(floor(fr.x()));
     int y = int(floor(fr.y()));
-    return QRect(x, y, int(ceil(fr.x() + fr.width())) - x, int(ceil(fr.y() + fr.height())) - y);
+    return IntRect(x, y, int(ceil(fr.x() + fr.width())) - x, int(ceil(fr.y() + fr.height())) - y);
 }
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::FloatRect;
 
 #endif

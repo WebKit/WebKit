@@ -30,7 +30,7 @@
 
 class KWinModule : public QObject {
 public:
-    QRect workArea() const;
+    IntRect workArea() const;
 };
 
 #endif

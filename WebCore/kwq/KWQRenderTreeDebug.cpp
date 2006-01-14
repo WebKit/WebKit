@@ -50,10 +50,10 @@
 using namespace DOM;
 using namespace khtml;
 
-static void writeLayers(QTextStream&, const RenderLayer* rootLayer, RenderLayer*, const QRect& paintDirtyRect, int indent = 0);
+static void writeLayers(QTextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
 #if !SVG_SUPPORT
-static QTextStream &operator<<(QTextStream &ts, const QRect &r)
+static QTextStream &operator<<(QTextStream &ts, const IntRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
@@ -139,7 +139,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
         const RenderBR* br = static_cast<const RenderBR*>(&o);
         usePositions = (br->firstTextBox() && br->firstTextBox()->isText());
     }
-    QRect r(usePositions ? o.xPos() : 0, usePositions ? o.yPos() : 0, o.width(), o.height());
+    IntRect r(usePositions ? o.xPos() : 0, usePositions ? o.yPos() : 0, o.width(), o.height());
     ts << " " << r;
     
     if (!o.isText()) {
@@ -300,14 +300,14 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
                 view->layout();
                 RenderLayer* l = root->layer();
                 if (l)
-                    writeLayers(ts, l, l, QRect(l->xPos(), l->yPos(), l->width(), l->height()), indent+1);
+                    writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()), indent+1);
             }
         }
     }
 }
 
 static void write(QTextStream &ts, RenderLayer &l,
-                  const QRect& layerBounds, const QRect& backgroundClipRect, const QRect& clipRect, const QRect& outlineClipRect,
+                  const IntRect& layerBounds, const IntRect& backgroundClipRect, const IntRect& clipRect, const IntRect& outlineClipRect,
                   int layerType = 0, int indent = 0)
 {
     writeIndent(ts, indent);
@@ -345,10 +345,10 @@ static void write(QTextStream &ts, RenderLayer &l,
 }
     
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
-                        const QRect& paintDirtyRect, int indent)
+                        const IntRect& paintDirtyRect, int indent)
 {
     // Calculate the clip rects we should use.
-    QRect layerBounds, damageRect, clipRectToApply, outlineRect;
+    IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
     
     // Ensure our z-order lists are up-to-date.
@@ -438,7 +438,7 @@ QString externalRepresentation(RenderObject *o)
             o->canvas()->view()->layout();
             RenderLayer* l = o->layer();
             if (l) {
-                writeLayers(ts, l, l, QRect(l->xPos(), l->yPos(), l->width(), l->height()));
+                writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));
                 writeSelection(ts, o);
             }
         }

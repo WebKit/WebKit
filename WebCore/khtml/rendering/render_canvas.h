@@ -53,9 +53,9 @@ public:
 
     virtual bool hasOverhangingFloats() { return false; }
     
-    virtual QRect getAbsoluteRepaintRect();
-    virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
-    virtual void repaintViewRectangle(const QRect& r, bool immediate = false);
+    virtual IntRect getAbsoluteRepaintRect();
+    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f=false);
+    virtual void repaintViewRectangle(const IntRect& r, bool immediate = false);
     
     virtual void paint(PaintInfo& i, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
@@ -85,19 +85,19 @@ public:
     int viewportWidth() const { return m_viewportWidth; }
     int viewportHeight() const { return m_viewportHeight; }
 
-    virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
+    virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
     
-    QRect selectionRect() const;
+    IntRect selectionRect() const;
     
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
-    virtual QRect viewRect() const;
+    virtual IntRect viewRect() const;
 
     virtual void selectionStartEnd(int& spos, int& epos);
 
-    QRect printRect() const { return m_printRect; }
-    void setPrintRect(const QRect& r) { m_printRect = r; }
+    IntRect printRect() const { return m_printRect; }
+    void setPrintRect(const IntRect& r) { m_printRect = r; }
 
     void updateWidgetPositions();
     void addWidget(RenderObject *);
@@ -124,7 +124,7 @@ protected:
     int m_truncatedAt;
     
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
-    QRect m_printRect; // Used when printing.
+    IntRect m_printRect; // Used when printing.
 
     typedef HashSet<RenderObject *, PointerHash<RenderObject *> > RenderObjectSet;
 

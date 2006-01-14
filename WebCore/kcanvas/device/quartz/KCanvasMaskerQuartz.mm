@@ -84,7 +84,7 @@ static CIImage *transformImageIntoGrayscaleMask(CIImage *inputImage)
     return [multipliedGrayscale valueForKey:@"outputImage"];
 }
 
-void KCanvasMaskerQuartz::applyMask(const QRectF& boundingBox) const
+void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
 {
     if (!m_mask)
         return;

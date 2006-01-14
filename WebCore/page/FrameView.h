@@ -30,7 +30,10 @@
 #include <qscrollview.h>
 
 class QPainter;
-class QRect;
+
+namespace WebCore {
+    class IntRect;
+}
 
 namespace DOM {
     class HTMLDocumentImpl;
@@ -157,7 +160,7 @@ public:
 
     bool needsFullRepaint() const;
     
-    void addRepaintInfo(khtml::RenderObject* o, const QRect& r);
+    void addRepaintInfo(khtml::RenderObject* o, const IntRect& r);
 
     void resetScrollBars();
 
@@ -188,7 +191,7 @@ public:
 
     void timerEvent ( QTimerEvent * );
 
-    void repaintRectangle(const QRect& r, bool immediate);
+    void repaintRectangle(const IntRect& r, bool immediate);
 
     bool isTransparent() const;
     void setTransparent(bool isTransparent);
@@ -227,7 +230,7 @@ private:
      * more, if nonzero will be set to true if the documents extends
      * beyond the rc or false if everything below yOff was painted.
      **/
-    void paint(QPainter *p, const QRect &rc, int yOff = 0, bool *more = 0);
+    void paint(QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
 
     /**
      * Get/set the CSS Media Type.
@@ -242,7 +245,7 @@ private:
     void setMediaType( const QString &medium );
     QString mediaType() const;
 
-    bool scrollTo(const QRect &);
+    bool scrollTo(const IntRect &);
 
     void focusNextPrevNode(bool next);
 

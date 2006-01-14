@@ -217,17 +217,17 @@ IntSize QComboBox::sizeHint() const
     return IntSize(0, 0);
 }
 
-QRect QComboBox::frameGeometry() const
+IntRect QComboBox::frameGeometry() const
 {
-    QRect r = QWidget::frameGeometry();
-    return QRect(r.x() + dimensions()[leftMargin], r.y() + dimensions()[topMargin],
+    IntRect r = QWidget::frameGeometry();
+    return IntRect(r.x() + dimensions()[leftMargin], r.y() + dimensions()[topMargin],
         r.width() - (dimensions()[leftMargin] + dimensions()[rightMargin]),
         r.height() - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
-void QComboBox::setFrameGeometry(const QRect &r)
+void QComboBox::setFrameGeometry(const IntRect &r)
 {
-    QWidget::setFrameGeometry(QRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
+    QWidget::setFrameGeometry(IntRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
         dimensions()[leftMargin] + r.width() + dimensions()[rightMargin],
         dimensions()[topMargin] + r.height() + dimensions()[bottomMargin]));
 }

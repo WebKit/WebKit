@@ -30,6 +30,7 @@
 #include "KWQPaintDevice.h"
 #include "KWQString.h"
 #include "IntSize.h"
+#include "IntRect.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -49,7 +50,6 @@ class NSString;
 class QWMatrix;
 class QPainter;
 class QPixmap;
-class QRect;
 
 namespace khtml {
     class CachedImageCallback;
@@ -77,7 +77,7 @@ public:
     bool isNull() const;
 
     IntSize size() const;
-    QRect rect() const;
+    IntRect rect() const;
     int width() const;
     int height() const;
     void resize(const IntSize &);
@@ -103,7 +103,7 @@ public:
     static bool shouldUseThreadedDecoding();
 
     void resetAnimation();
-    void setAnimationRect(const QRect&) const;
+    void setAnimationRect(const IntRect&) const;
 
 private:
 #if __APPLE__

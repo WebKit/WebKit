@@ -91,7 +91,7 @@ QTextStream &operator<<(QTextStream &ts, const IntPoint &p)
     return ts << "(" << p.x() << "," << p.y() << ")";
 }
 
-QTextStream &operator<<(QTextStream &ts, const QRect &r)
+QTextStream &operator<<(QTextStream &ts, const IntRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
@@ -104,7 +104,7 @@ bool hasFractions(double val)
     return (fabs(val-dval) > epsilon);
 }
 
-QTextStream &operator<<(QTextStream &ts, const QRectF &r)
+QTextStream &operator<<(QTextStream &ts, const FloatRect &r)
 {
     ts << "at ("; 
     if (hasFractions(r.x())) 

@@ -81,7 +81,7 @@ public:
     virtual void setWidth( int width ) { m_width = width; }
     virtual void setHeight( int height ) { m_height = height; }
 
-    virtual QRect borderBox() const { return QRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
+    virtual IntRect borderBox() const { return IntRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
 
     int calcBorderBoxWidth(int w) const;
     int calcBorderBoxHeight(int h) const;
@@ -109,8 +109,8 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
 
-    virtual QRect getAbsoluteRepaintRect();
-    virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
+    virtual IntRect getAbsoluteRepaintRect();
+    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f=false);
 
     virtual void repaintDuringLayoutIfMoved(int oldX, int oldY);
     
@@ -142,7 +142,7 @@ public:
 
     virtual RenderLayer* layer() const { return m_layer; }
     
-    virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
     virtual void paintBackgroundExtended(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,
@@ -168,8 +168,8 @@ protected:
     void calcAbsoluteVerticalValues(HeightType heightType, RenderObject* cb, int ch, int pab, 
                                     int t, int b, int& h, int& mt, int& mb, int& y); 
     
-    virtual QRect getOverflowClipRect(int tx, int ty);
-    virtual QRect getClipRect(int tx, int ty);
+    virtual IntRect getOverflowClipRect(int tx, int ty);
+    virtual IntRect getClipRect(int tx, int ty);
 
     // the actual height of the contents + borders + padding
     int m_height;

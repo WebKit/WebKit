@@ -46,8 +46,8 @@ QApplication * const qApp = 0;
 class QDesktopWidget : public QWidget {
 public:
     static int screenNumber(QWidget *);
-    static QRect screenGeometry(int screenNumber);
-    static QRect availableGeometry(QWidget *);
+    static IntRect screenGeometry(int screenNumber);
+    static IntRect availableGeometry(QWidget *);
     static int width();
     static int height();
 };

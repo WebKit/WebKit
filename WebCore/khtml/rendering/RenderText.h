@@ -79,7 +79,7 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction) { assert(false); return false; }
 
-    virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
+    virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
@@ -129,14 +129,14 @@ public:
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState s);
-    virtual QRect selectionRect();
-    virtual QRect caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine = 0);
+    virtual IntRect selectionRect();
+    virtual IntRect caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine = 0);
     void posOfChar(int ch, int &x, int &y);
 
     virtual int marginLeft() const { return style()->marginLeft().minWidth(0); }
     virtual int marginRight() const { return style()->marginRight().minWidth(0); }
 
-    virtual QRect getAbsoluteRepaintRect();
+    virtual IntRect getAbsoluteRepaintRect();
 
     const QFontMetrics &metrics(bool firstLine) const;
     const Font *htmlFont(bool firstLine) const;

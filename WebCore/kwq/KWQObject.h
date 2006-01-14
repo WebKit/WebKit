@@ -50,7 +50,6 @@ class QPaintDevice;
 class QPaintDeviceMetrics;
 class QPainter;
 class QPalette;
-class QRect;
 class QRegion;
 class QSizePolicy;
 class QTimer;
@@ -59,6 +58,10 @@ class QWidget;
 
 class KWQGuardedPtrBase;
 class KWQSignal;
+
+namespace WebCore {
+    class IntRect;
+}
 
 class QObject : public Qt {
 public:

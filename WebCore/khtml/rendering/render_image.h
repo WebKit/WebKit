@@ -53,7 +53,7 @@ public:
 
     virtual void layout();
 
-    virtual void setPixmap( const QPixmap &, const QRect&, CachedImage *);
+    virtual void setPixmap( const QPixmap &, const IntRect&, CachedImage *);
 
     const QPixmap& pixmap() const { return pix; }
     // don't even think about making this method virtual!

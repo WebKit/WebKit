@@ -28,7 +28,7 @@
 
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
-#include "KWQRect.h"
+#include "IntRect.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -74,7 +74,7 @@ public:
     void setBrush(BrushStyle);
     void setBrush(QRgb);
 
-    QRect xForm(const QRect &) const;
+    IntRect xForm(const IntRect &) const;
 
     void save();
     void restore();
@@ -86,11 +86,11 @@ public:
     void drawConvexPolygon(const IntPointArray &);
 
     void fillRect(int, int, int, int, const QBrush &);
-    void fillRect(const QRect &, const QBrush &);
+    void fillRect(const IntRect &, const QBrush &);
 
     void drawPixmap(const IntPoint &, const QPixmap &);
-    void drawPixmap(const IntPoint &, const QPixmap &, const QRect &);
-    void drawPixmap(const IntPoint &, const QPixmap &, const QRect &, const QString &);
+    void drawPixmap(const IntPoint &, const QPixmap &, const IntRect &);
+    void drawPixmap(const IntPoint &, const QPixmap &, const IntRect &, const QString &);
 #if __APPLE__
     void drawPixmap( int x, int y, const QPixmap &,
                      int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
@@ -112,8 +112,8 @@ public:
     void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH);
 #endif
 
-    void addClip(const QRect &);
-    void addRoundedRectClip(const QRect& rect, const IntSize& topLeft, const IntSize& topRight,
+    void addClip(const IntRect &);
+    void addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
                             const IntSize& bottomLeft, const IntSize& bottomRight);
 
     RasterOp rasterOp() const;

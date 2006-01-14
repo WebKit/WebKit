@@ -45,8 +45,8 @@ public:
     void click(bool sendMouseEvents);
     
     IntSize sizeForCharacterWidth(int characters) const;
-    QRect frameGeometry() const;
-    void setFrameGeometry(const QRect &);
+    IntRect frameGeometry() const;
+    void setFrameGeometry(const IntRect &);
     int baselinePosition(int height) const;
 
     virtual FocusPolicy focusPolicy() const;

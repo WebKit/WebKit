@@ -54,7 +54,7 @@ RenderThemeMac::RenderThemeMac()
     checkbox = nil;
 }
 
-void RenderThemeMac::adjustRepaintRect(const RenderObject* o, QRect& r)
+void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
     switch (o->style()->appearance()) {
         case CheckboxAppearance: {
@@ -91,13 +91,13 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, QRect& r)
     }
 }
 
-QRect RenderThemeMac::inflateRect(const QRect& r, const IntSize& size, const int* margins) const
+IntRect RenderThemeMac::inflateRect(const IntRect& r, const IntSize& size, const int* margins) const
 {
     // Only do the inflation if the available width/height are too small.  Otherwise try to
     // fit the glow/check space into the available box's width/height.
     int widthDelta = r.width() - (size.width() + margins[leftMargin] + margins[rightMargin]);
     int heightDelta = r.height() - (size.height() + margins[topMargin] + margins[bottomMargin]);
-    QRect result(r);
+    IntRect result(r);
     if (widthDelta < 0) {
         result.setX(result.x() - margins[leftMargin]);
         result.setWidth(result.width() - widthDelta);
@@ -250,14 +250,14 @@ void RenderThemeMac::addIntrinsicMargins(RenderStyle* style, NSControlSize size)
     }
 }
 
-bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
+bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
     setCheckboxCellState(o, r);
     
     // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
-    QRect inflatedRect = inflateRect(r, checkboxSizes()[[checkbox controlSize]], checkboxMargins());
+    IntRect inflatedRect = inflateRect(r, checkboxSizes()[[checkbox controlSize]], checkboxMargins());
     [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
     [checkbox setControlView: nil];
     
@@ -281,7 +281,7 @@ const int* RenderThemeMac::checkboxMargins() const
     return margins[[checkbox controlSize]];
 }
 
-void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
+void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const IntRect& r)
 {
     if (!checkbox) {
         checkbox = [[NSButtonCell alloc] init];
@@ -311,14 +311,14 @@ void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
     setSizeFromFont(style, checkboxSizes());
 }
 
-bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
+bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
     setRadioCellState(o, r);
     
     // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
-    QRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
+    IntRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
     [radio drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
     [radio setControlView: nil];
     
@@ -342,7 +342,7 @@ const int* RenderThemeMac::radioMargins() const
     return margins[[radio controlSize]];
 }
 
-void RenderThemeMac::setRadioCellState(const RenderObject* o, const QRect& r)
+void RenderThemeMac::setRadioCellState(const RenderObject* o, const IntRect& r)
 {
     if (!radio) {
         radio = [[NSButtonCell alloc] init];
@@ -459,7 +459,7 @@ void RenderThemeMac::setButtonSize(RenderStyle* style) const
     setSizeFromFont(style, buttonSizes());
 }
 
-void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
+void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 {
     if (!button) {
         button = [[NSButtonCell alloc] init];
@@ -485,7 +485,7 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const QRect& r)
     updateFocusedState(button, o);
 }
 
-bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
+bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {    
     // Determine the width and height needed for the control and prepare the cell for painting.
     setButtonCellState(o, r);
@@ -494,7 +494,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     // shadow.  We don't consider this part of the bounds of the control in WebKit.
     IntSize size = buttonSizes()[[button controlSize]];
     size.setWidth(r.width());
-    QRect inflatedRect = r;
+    IntRect inflatedRect = r;
     if ([button bezelStyle] == NSRoundedBezelStyle) {
         // Center the button within the available space.
         if (inflatedRect.height() > size.height()) {

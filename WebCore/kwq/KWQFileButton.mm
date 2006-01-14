@@ -102,19 +102,19 @@ IntSize KWQFileButton::sizeForCharacterWidth(int characters) const
     return IntSize(0, 0);
 }
 
-QRect KWQFileButton::frameGeometry() const
+IntRect KWQFileButton::frameGeometry() const
 {
     NSView <WebCoreFileButton> *button = getView();
 
     NSRect frame = {{0,0},{0,0}};
     KWQ_BLOCK_EXCEPTIONS;
     frame = [button visualFrame];
-    return QRect(frame);
+    return IntRect(frame);
     KWQ_UNBLOCK_EXCEPTIONS;
-    return QRect();
+    return IntRect();
 }
 
-void KWQFileButton::setFrameGeometry(const QRect &rect)
+void KWQFileButton::setFrameGeometry(const IntRect &rect)
 {
     NSView <WebCoreFileButton> *button = getView();
 

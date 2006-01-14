@@ -23,29 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QRECT_H_
-#define QRECT_H_
+#ifndef INTRECT_H_
+#define INTRECT_H_
 
 #include "IntSize.h"
 #include "IntPointArray.h"
 
+#if __APPLE__
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
 typedef struct CGRect CGRect;
-
-class QRect {
-public:
-    QRect();
-    QRect(IntPoint p, IntSize s);
-    QRect(int, int, int, int);
-    QRect(const IntPoint &, const IntPoint &);
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit QRect(const NSRect &); // don't do this implicitly since it's lossy
 #endif
-    explicit QRect(const CGRect &); // don't do this implicitly since it's lossy
+
+namespace WebCore {
+
+class IntRect {
+public:
+    IntRect();
+    IntRect(IntPoint p, IntSize s);
+    IntRect(int, int, int, int);
+    IntRect(const IntPoint &, const IntPoint &);
+    
+#if __APPLE__
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit IntRect(const NSRect &); // don't do this implicitly since it's lossy
+#endif
+    explicit IntRect(const CGRect &); // don't do this implicitly since it's lossy
+#endif
 
     bool isNull() const;
     bool isValid() const;
@@ -73,10 +80,10 @@ public:
     void setWidth(int width) { w = width; }
     void setHeight(int height) { h = height; }
     void setRect(int x, int y, int width, int height) { xp = x; yp = y; w = width; h = height; }
-    QRect intersect(const QRect &) const;
-    bool intersects(const QRect &) const;
-    QRect unite(const QRect &) const;
-    QRect normalize() const;
+    IntRect intersect(const IntRect &) const;
+    bool intersects(const IntRect &) const;
+    IntRect unite(const IntRect &) const;
+    IntRect normalize() const;
 
     bool contains(const IntPoint &point) const { return contains(point.x(), point.y()); }
 
@@ -86,16 +93,18 @@ public:
         return x >= xp && x < (xp + w) && y >= yp && y < (yp + h);
     }
 
-    bool contains(const QRect &rect) const { return intersect(rect) == rect; }
+    bool contains(const IntRect &rect) const { return intersect(rect) == rect; }
     
     void inflate(int s);
 
-    inline QRect operator&(const QRect &r) const { return intersect(r); }
+    inline IntRect operator&(const IntRect &r) const { return intersect(r); }
 
+#if __APPLE__
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSRect() const;
 #endif
     operator CGRect() const;
+#endif
 
 private:
     int xp;
@@ -103,8 +112,13 @@ private:
     int w;
     int h;
 
-    friend bool operator==(const QRect &, const QRect &);
-    friend bool operator!=(const QRect &, const QRect &);
+    friend bool operator==(const IntRect &, const IntRect &);
+    friend bool operator!=(const IntRect &, const IntRect &);
 };
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::IntRect;
 
 #endif

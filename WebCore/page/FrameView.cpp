@@ -334,7 +334,7 @@ bool KHTMLView::needsFullRepaint() const
     return d->doFullRepaint;
 }
 
-void KHTMLView::addRepaintInfo(RenderObject* o, const QRect& r)
+void KHTMLView::addRepaintInfo(RenderObject* o, const IntRect& r)
 {
     if (!d->repaintRects) {
         d->repaintRects = new QPtrList<RenderObject::RepaintInfo>;
@@ -828,7 +828,7 @@ NodeImpl *KHTMLView::nodeUnderMouse() const
     return d->underMouse;
 }
 
-bool KHTMLView::scrollTo(const QRect &bounds)
+bool KHTMLView::scrollTo(const IntRect &bounds)
 {
     d->scrollingSelf = true; // so scroll events get ignored
 
@@ -925,7 +925,7 @@ void KHTMLView::focusNextPrevNode(bool next)
         bool visible = false;
         NodeImpl *toFocus = newFocusNode;
         while (!visible && toFocus) {
-            QRect focusNodeRect = toFocus->getRect();
+            IntRect focusNodeRect = toFocus->getRect();
             if ((focusNodeRect.left() > contentsX()) && (focusNodeRect.right() < contentsX() + visibleWidth()) &&
                 (focusNodeRect.top() > contentsY()) && (focusNodeRect.bottom() < contentsY() + visibleHeight())) {
                 // toFocus is visible in the contents area
@@ -950,9 +950,9 @@ void KHTMLView::focusNextPrevNode(bool next)
       {
         // No new focus node, scroll to bottom or top depending on next
         if (next)
-            scrollTo(QRect(contentsX()+visibleWidth()/2,contentsHeight(),0,0));
+            scrollTo(IntRect(contentsX()+visibleWidth()/2,contentsHeight(),0,0));
         else
-            scrollTo(QRect(contentsX()+visibleWidth()/2,0,0,0));
+            scrollTo(IntRect(contentsX()+visibleWidth()/2,0,0,0));
     }
     else {
         // EDIT FIXME: if it's an editable element, activate the caret
@@ -971,7 +971,7 @@ void KHTMLView::focusNextPrevNode(bool next)
         }
         else {
             if (doc->renderer()) {
-                doc->renderer()->enclosingLayer()->scrollRectToVisible(QRect(contentsX(), next ? 0: contentsHeight(), 0, 0));
+                doc->renderer()->enclosingLayer()->scrollRectToVisible(IntRect(contentsX(), next ? 0: contentsHeight(), 0, 0));
             }
         }
     }
@@ -1153,7 +1153,7 @@ void KHTMLView::slotScrollBarMoved()
         d->scrollBarMoved = true;
 }
 
-void KHTMLView::repaintRectangle(const QRect& r, bool immediate)
+void KHTMLView::repaintRectangle(const IntRect& r, bool immediate)
 {
     updateContents(r, immediate);
 }

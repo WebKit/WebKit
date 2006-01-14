@@ -42,7 +42,7 @@ public:
 
     virtual const char *renderName() const { return "RenderBR"; }
  
-    virtual QRect selectionRect() { return QRect(); }
+    virtual IntRect selectionRect() { return IntRect(); }
 
     virtual unsigned int width(unsigned int from, unsigned int len, const Font *f, int xpos) const { return 0; }
     virtual unsigned int width(unsigned int from, unsigned int len, int xpos, bool firstLine = false) const { return 0; }
@@ -64,7 +64,7 @@ public:
     virtual unsigned caretMaxRenderedOffset() const;
     
     virtual VisiblePosition positionForCoordinates(int x, int y);
-    virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
     virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
     
