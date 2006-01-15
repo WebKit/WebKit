@@ -1,3 +1,9 @@
+2006-01-14  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed and landed by Anders.
+
+        * kjs/create_hash_table: Fixed comment typo.
+
 2006-01-13  Maks Orlovich   <maksim@kde.org>
 
         Mostly merging work by Peter Kelly. Reviewed by Maciej, landed by ap.
