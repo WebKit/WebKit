@@ -236,7 +236,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentEl
     , m_errorCount(0)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
-    , m_scriptsIt(0
+    , m_scriptsIt(0)
     , m_cachedScript(0)
     , m_parsingFragment(true)
 {

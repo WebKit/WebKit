@@ -1,5 +1,12 @@
 2006-01-14  Eric Seidel  <eseidel@apple.com>
 
+        Fix build break. (oops!)
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::XMLTokenizer):
+
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Initialize m_isXHTMLDocument(false) properly.
