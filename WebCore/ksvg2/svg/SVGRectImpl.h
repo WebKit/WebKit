@@ -23,12 +23,12 @@
 #ifndef KSVG_SVGRectImpl_H
 #define KSVG_SVGRectImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
-    class SVGRectImpl : public KDOM::Shared<SVGRectImpl>
+    class SVGRectImpl : public Shared<SVGRectImpl>
     {
     public:
         SVGRectImpl(const SVGStyledElementImpl *context);

@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGAnimatedTransformListImpl_H
 #define KSVG_SVGAnimatedTransformListImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 #include "SVGAnimatedTemplate.h"
 #include "SVGTransformListImpl.h"

@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGPathSegImpl_H
 #define KSVG_SVGPathSegImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 #include <kdom/core/DOMStringImpl.h>
 
 #include "ksvg.h"
@@ -32,7 +32,7 @@ namespace KSVG
 {
     class SVGPathElementImpl;
     class SVGStyledElementImpl;
-    class SVGPathSegImpl : public KDOM::Shared<SVGPathSegImpl>
+    class SVGPathSegImpl : public Shared<SVGPathSegImpl>
     {
     public:
         SVGPathSegImpl(const SVGStyledElementImpl *context = 0);

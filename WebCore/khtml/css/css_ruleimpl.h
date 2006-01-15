@@ -29,7 +29,7 @@
 #include "dom/css_rule.h"
 #include "css/css_base.h"
 #include "CachedObjectClient.h"
-#include "shared.h"
+#include "Shared.h"
 #include "css_valueimpl.h"
 
 namespace khtml {
@@ -129,7 +129,7 @@ protected:
 
 class MediaList;
 
-class CSSRuleListImpl : public khtml::Shared<CSSRuleListImpl>
+class CSSRuleListImpl : public Shared<CSSRuleListImpl>
 {
 public:
     CSSRuleListImpl() { }

@@ -244,7 +244,7 @@ public:
     virtual bool isQuirkValue() { return true; }
 };
 
-class CounterImpl : public khtml::Shared<CounterImpl> {
+class CounterImpl : public Shared<CounterImpl> {
 public:
     DOMString identifier() const { return m_identifier; }
     DOMString listStyle() const { return m_listStyle; }
@@ -255,7 +255,7 @@ public:
     DOMString m_separator;
 };
 
-class RectImpl : public khtml::Shared<RectImpl> {
+class RectImpl : public Shared<RectImpl> {
 public:
     RectImpl();
     virtual ~RectImpl();
@@ -280,7 +280,7 @@ protected:
 // and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
 // border-radius, but (FIXME) border-spacing and background-position could be converted over to use it
 // (eliminating some extra -khtml- internal properties).
-class PairImpl : public khtml::Shared<PairImpl> {
+class PairImpl : public Shared<PairImpl> {
 public:
     PairImpl();
     virtual ~PairImpl();

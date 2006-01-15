@@ -23,7 +23,7 @@
 #ifndef KDOM_RGBColorImpl_H
 #define KDOM_RGBColorImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 #include <qcolor.h>
 

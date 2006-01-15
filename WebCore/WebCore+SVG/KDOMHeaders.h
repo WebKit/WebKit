@@ -14,6 +14,6 @@ namespace KDOM {
     typedef NodeImpl EventTargetImpl;
 }
 
-#include "shared.h"
+#include "Shared.h"
 #include "khtml/xml/dom_atomicstring.h"
 #include "khtml/xml/dom_qname.h"

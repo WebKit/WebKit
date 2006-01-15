@@ -25,7 +25,7 @@
 #ifndef DOM_NodeImpl_h_
 #define DOM_NodeImpl_h_
 
-#include "misc/shared.h"
+#include "Shared.h"
 #include "dom_string.h"
 #include "DocPtr.h"
 #include "NodeListImpl.h"
@@ -60,7 +60,7 @@ class RegisteredEventListener;
 class EventImpl;
 
 // this class implements nodes, which can have a parent but no children:
-class NodeImpl : public khtml::TreeShared<NodeImpl>
+class NodeImpl : public TreeShared<NodeImpl>
 {
     friend class DocumentImpl;
 public:

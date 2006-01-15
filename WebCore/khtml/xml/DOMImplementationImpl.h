@@ -25,7 +25,7 @@
 #ifndef DOM_DOMImplementationImpl_h
 #define DOM_DOMImplementationImpl_h
 
-#include "shared.h"
+#include "Shared.h"
 
 class KHTMLView;
 
@@ -37,7 +37,7 @@ class DocumentImpl;
 class DocumentTypeImpl;
 class HTMLDocumentImpl;
 
-class DOMImplementationImpl : public khtml::Shared<DOMImplementationImpl>
+class DOMImplementationImpl : public Shared<DOMImplementationImpl>
 {
 public:
     DOMImplementationImpl();

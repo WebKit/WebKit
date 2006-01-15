@@ -25,7 +25,7 @@
 #ifndef DOM_NamedNodeMapImpl_h
 #define DOM_NamedNodeMapImpl_h
 
-#include "misc/shared.h"
+#include "Shared.h"
 #include "kxmlcore/RefPtr.h"
 #include "dom_string.h"
 
@@ -37,7 +37,7 @@ class QualifiedName;
 // Generic NamedNodeMap interface
 // Other classes implement this for more specific situations e.g. attributes
 // of an element
-class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>
+class NamedNodeMapImpl : public Shared<NamedNodeMapImpl>
 {
 public:
     NamedNodeMapImpl() { }

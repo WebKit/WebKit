@@ -42,7 +42,7 @@
 #include <qapplication.h>
 
 #include "khtmllayout.h"
-#include "shared.h"
+#include "Shared.h"
 #include "rendering/font.h"
 #include "DataRef.h"
 

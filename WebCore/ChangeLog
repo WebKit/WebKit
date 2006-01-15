@@ -1,3 +1,116 @@
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
+        Move shared.h from khtml/misc into the platform directory and move it into the WebCore namespace.
+
+        Reviewed by eseidel
+
+        * ForwardingHeaders/kdom/Shared.h: Removed.
+        * WebCore+SVG/DOMList.h:
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore+SVG/RGBColorImpl.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * kcanvas/KCanvasPath.h:
+        * khtml/css/css_base.h:
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/css_valueimpl.h:
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_traversal.h:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::callAsFunction):
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/edit_command.h:
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/visible_position.h:
+        * khtml/html/HTMLOptionsCollectionImpl.h:
+        * khtml/html/html_miscimpl.h:
+        * khtml/misc/shared.h: Removed.
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_style.h:
+        * khtml/xml/DOMImplementationImpl.h:
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/NamedNodeMapImpl.h:
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/NodeListImpl.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_traversalimpl.h:
+        * khtml/xml/dom2_viewsimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_qname.h:
+        * khtml/xml/dom_stringimpl.h:
+        * khtml/xsl/xslt_processorimpl.h:
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (SVGRenderStyle::SVGRenderStyle):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleClipData::StyleClipData):
+        (StyleMaskData::StyleMaskData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/svg/SVGAngleImpl.cpp:
+        (SVGAngleImpl::SVGAngleImpl):
+        * ksvg2/svg/SVGAngleImpl.h:
+        * ksvg2/svg/SVGAnimatedBooleanImpl.cpp:
+        (SVGAnimatedBooleanImpl::SVGAnimatedBooleanImpl):
+        * ksvg2/svg/SVGAnimatedBooleanImpl.h:
+        * ksvg2/svg/SVGAnimatedEnumerationImpl.cpp:
+        (SVGAnimatedEnumerationImpl::SVGAnimatedEnumerationImpl):
+        * ksvg2/svg/SVGAnimatedEnumerationImpl.h:
+        * ksvg2/svg/SVGAnimatedIntegerImpl.cpp:
+        (SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl):
+        * ksvg2/svg/SVGAnimatedIntegerImpl.h:
+        * ksvg2/svg/SVGAnimatedLengthListImpl.h:
+        * ksvg2/svg/SVGAnimatedNumberImpl.cpp:
+        (SVGAnimatedNumberImpl::SVGAnimatedNumberImpl):
+        * ksvg2/svg/SVGAnimatedNumberImpl.h:
+        * ksvg2/svg/SVGAnimatedNumberListImpl.h:
+        * ksvg2/svg/SVGAnimatedPreserveAspectRatioImpl.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        (KSVG::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        * ksvg2/svg/SVGAnimatedTransformListImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::SVGLengthImpl):
+        * ksvg2/svg/SVGLengthImpl.h:
+        * ksvg2/svg/SVGMatrixImpl.cpp:
+        (SVGMatrixImpl::SVGMatrixImpl):
+        * ksvg2/svg/SVGMatrixImpl.h:
+        * ksvg2/svg/SVGNumberImpl.cpp:
+        (SVGNumberImpl::SVGNumberImpl):
+        * ksvg2/svg/SVGNumberImpl.h:
+        * ksvg2/svg/SVGPathSegImpl.cpp:
+        (SVGPathSegImpl::SVGPathSegImpl):
+        * ksvg2/svg/SVGPathSegImpl.h:
+        * ksvg2/svg/SVGPointImpl.cpp:
+        (SVGPointImpl::SVGPointImpl):
+        * ksvg2/svg/SVGPointImpl.h:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        (SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl):
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.h:
+        * ksvg2/svg/SVGRectImpl.cpp:
+        (SVGRectImpl::SVGRectImpl):
+        * ksvg2/svg/SVGRectImpl.h:
+        * ksvg2/svg/SVGTransformImpl.cpp:
+        (SVGTransformImpl::SVGTransformImpl):
+        * ksvg2/svg/SVGTransformImpl.h:
+        * kwq/DOM-CSS.mm:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQMapImpl.cpp:
+        * kwq/KWQRegExp.cpp:
+        * kwq/KWQValueListImpl.cpp:
+        (KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate):
+        * kwq/KWQVariant.cpp:
+        * platform/ArrayImpl.h:
+        * platform/Shared.h: Added.
+
 2006-01-14  Eric Seidel  <eseidel@apple.com>
 
         Fix build break. (oops!)

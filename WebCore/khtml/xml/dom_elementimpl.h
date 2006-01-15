@@ -30,7 +30,7 @@
 #include "NamedNodeMapImpl.h"
 #include "ContainerNodeImpl.h"
 #include "xml/dom_stringimpl.h"
-#include "shared.h"
+#include "Shared.h"
 #include "css/css_valueimpl.h"
 #include "dom_qname.h"
 
@@ -58,7 +58,7 @@ class AttrImpl;
 // the actual Attr (AttrImpl) with its value as textchild
 // is only allocated on demand by the DOM bindings.
 // Any use of AttrImpl inside khtml should be avoided.
- class AttributeImpl : public khtml::Shared<AttributeImpl>
+ class AttributeImpl : public Shared<AttributeImpl>
 {
     friend class NamedAttrMapImpl;
     friend class ElementImpl;

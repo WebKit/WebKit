@@ -30,7 +30,7 @@
 #include <kxmlcore/PassRefPtr.h>
 #include "xml/dom_position.h"
 #include "text_granularity.h"
-#include "shared.h"
+#include "Shared.h"
 #include "editing/visible_text.h"
 
 class Frame;

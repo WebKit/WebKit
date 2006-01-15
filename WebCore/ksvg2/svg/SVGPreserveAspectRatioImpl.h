@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGPreserveAspectRatioImpl_H
 #define KSVG_SVGPreserveAspectRatioImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KDOM
 {
@@ -34,7 +34,7 @@ namespace KSVG
 {
     class SVGMatrixImpl;
     class SVGStyledElementImpl;
-    class SVGPreserveAspectRatioImpl : public KDOM::Shared<SVGPreserveAspectRatioImpl>
+    class SVGPreserveAspectRatioImpl : public Shared<SVGPreserveAspectRatioImpl>
     { 
     public:
         SVGPreserveAspectRatioImpl(const SVGStyledElementImpl *context);

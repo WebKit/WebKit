@@ -25,11 +25,11 @@
 
 #include <qmatrix.h>
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
-    class SVGMatrixImpl : public KDOM::Shared<SVGMatrixImpl>
+    class SVGMatrixImpl : public Shared<SVGMatrixImpl>
     { 
     public:
         SVGMatrixImpl();

@@ -27,14 +27,14 @@
 #define _dom2_traversal_h
 
 #include "dom/dom2_traversal.h"
-#include "shared.h"
+#include "Shared.h"
 
 namespace DOM {
 
 class NodeImpl;
 class DocumentImpl;
 
-class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>
+class NodeFilterImpl : public Shared<NodeFilterImpl>
 {
 public:
     NodeFilterImpl(NodeFilterCondition *);
@@ -49,7 +49,7 @@ private:
     NodeFilterCondition *m_condition;
 };
 
-class TraversalImpl : public khtml::Shared<TraversalImpl>
+class TraversalImpl : public Shared<TraversalImpl>
 {
 public:
     TraversalImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);

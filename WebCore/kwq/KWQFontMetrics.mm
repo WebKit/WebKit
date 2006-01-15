@@ -32,7 +32,7 @@
 #import "KWQLogging.h"
 #import "KWQFoundationExtras.h"
 
-#import "shared.h"
+#import "Shared.h"
 
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -41,7 +41,7 @@
 // because they are all calls to WebCoreTextRenderer, which has a
 // contract of not raising.
 
-struct QFontMetricsPrivate : public khtml::Shared<QFontMetricsPrivate>
+struct QFontMetricsPrivate : public Shared<QFontMetricsPrivate>
 {
     QFontMetricsPrivate(const QFont &font)
         : _font(font), _renderer(nil)

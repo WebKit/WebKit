@@ -25,14 +25,14 @@
 #ifndef HTML_HTMLOptionsCollectionImpl_H
 #define HTML_HTMLOptionsCollectionImpl_H
 
-#include "shared.h"
+#include "Shared.h"
 
 namespace DOM {
 
 class NodeImpl;
 class HTMLSelectElementImpl;
 
-class HTMLOptionsCollectionImpl : public khtml::Shared<HTMLOptionsCollectionImpl>
+class HTMLOptionsCollectionImpl : public Shared<HTMLOptionsCollectionImpl>
 {
 public:
     HTMLOptionsCollectionImpl(HTMLSelectElementImpl *impl) : m_select(impl) { }

@@ -28,7 +28,7 @@
 
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_traversalimpl.h"
-#include "shared.h"
+#include "Shared.h"
 
 #include <qstringlist.h>
 #include <qptrlist.h>

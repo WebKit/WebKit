@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGPointImpl_H
 #define KSVG_SVGPointImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace WebCore {
 class IntPoint;
@@ -33,7 +33,7 @@ namespace KSVG
 {
     class SVGMatrixImpl;
     class SVGStyledElementImpl;
-    class SVGPointImpl : public KDOM::Shared<SVGPointImpl>
+    class SVGPointImpl : public Shared<SVGPointImpl>
     {
     public:
         SVGPointImpl(const SVGStyledElementImpl *context = 0);

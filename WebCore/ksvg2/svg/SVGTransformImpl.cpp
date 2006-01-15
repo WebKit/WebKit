@@ -30,7 +30,7 @@
 
 using namespace KSVG;
 
-SVGTransformImpl::SVGTransformImpl() : KDOM::Shared<SVGTransformImpl>()
+SVGTransformImpl::SVGTransformImpl() : Shared<SVGTransformImpl>()
 {
     m_matrix = SVGSVGElementImpl::createSVGMatrix();
 

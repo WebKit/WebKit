@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGAnimatedPreserveAspectRatioImpl_H
 #define KSVG_SVGAnimatedPreserveAspectRatioImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 #include "SVGAnimatedTemplate.h"
 #include "SVGPreserveAspectRatioImpl.h"

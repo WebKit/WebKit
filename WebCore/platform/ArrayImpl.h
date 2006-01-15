@@ -27,7 +27,7 @@
 #define ARRAY_IMPL_H
 
 #include <kxmlcore/RefPtr.h>
-#include "shared.h"
+#include "Shared.h"
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ class ArrayImpl
     bool operator==(const ArrayImpl &) const;
 
  private:
-    class ArrayPrivate : public khtml::Shared<ArrayPrivate>
+    class ArrayPrivate : public Shared<ArrayPrivate>
     {
     public:
         ArrayPrivate(size_t pNumItems, size_t pItemSize);

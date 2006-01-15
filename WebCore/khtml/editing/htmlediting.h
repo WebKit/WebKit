@@ -38,7 +38,7 @@
 #include "qmap.h"
 #include "qptrlist.h"
 #include "qvaluelist.h"
-#include "shared.h"
+#include "Shared.h"
 
 #define NON_BREAKING_SPACE 0xa0
 

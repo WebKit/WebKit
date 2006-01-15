@@ -110,6 +110,9 @@ using DOM::RangeImpl;
 
 using khtml::ChildrenOnly;
 using khtml::createMarkup;
+using khtml::createFragmentFromMarkup;
+using khtml::createFragmentFromText;
+using khtml::createFragmentFromNodeList;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::DOWNSTREAM;
@@ -120,6 +123,7 @@ using khtml::ETextGranularity;
 using khtml::IncludeNode;
 using khtml::MoveSelectionCommand;
 using khtml::parseURL;
+using khtml::plainText;
 using khtml::RenderCanvas;
 using khtml::RenderImage;
 using khtml::RenderLayer;

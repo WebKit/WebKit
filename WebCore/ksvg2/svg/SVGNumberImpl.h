@@ -23,12 +23,12 @@
 #ifndef KSVG_SVGNumberImpl_H
 #define KSVG_SVGNumberImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
-    class SVGNumberImpl : public KDOM::Shared<SVGNumberImpl>
+    class SVGNumberImpl : public Shared<SVGNumberImpl>
     {
     public:
         SVGNumberImpl(const SVGStyledElementImpl *context);

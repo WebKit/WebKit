@@ -25,14 +25,14 @@
 #ifndef DOM_NodeListImpl_h
 #define DOM_NodeListImpl_h
 
-#include "misc/shared.h"
+#include "Shared.h"
 
 namespace DOM {
 
 class NodeImpl;
 class DOMString;
 
-class NodeListImpl : public khtml::Shared<NodeListImpl>
+class NodeListImpl : public Shared<NodeListImpl>
 {
 public:
     NodeListImpl( NodeImpl *_rootNode );

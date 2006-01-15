@@ -23,14 +23,14 @@
 #ifndef KSVG_SVGAngleImpl_H
 #define KSVG_SVGAngleImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 #include <kdom/DOMString.h>
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
 
-    class SVGAngleImpl : public KDOM::Shared<SVGAngleImpl>
+    class SVGAngleImpl : public Shared<SVGAngleImpl>
     {
     public:
         SVGAngleImpl(const SVGStyledElementImpl *context);

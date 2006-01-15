@@ -28,7 +28,7 @@
 #define _DOM2_RangeImpl_h_
 
 #include "dom/dom2_range.h"
-#include "shared.h"
+#include "Shared.h"
 #include "DocPtr.h"
 
 namespace DOM {
@@ -38,7 +38,7 @@ class DOMString;
 class NodeImpl;
 class Position;
 
-class RangeImpl : public khtml::Shared<RangeImpl>
+class RangeImpl : public Shared<RangeImpl>
 {
     friend class DocumentImpl;
 public:

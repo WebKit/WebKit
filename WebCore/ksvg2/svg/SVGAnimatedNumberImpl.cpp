@@ -26,7 +26,7 @@
 
 using namespace KSVG;
 
-SVGAnimatedNumberImpl::SVGAnimatedNumberImpl(const SVGStyledElementImpl *context) : KDOM::Shared<SVGAnimatedNumberImpl>()
+SVGAnimatedNumberImpl::SVGAnimatedNumberImpl(const SVGStyledElementImpl *context) : Shared<SVGAnimatedNumberImpl>()
 {
     m_baseVal = 0;
     m_animVal = 0;

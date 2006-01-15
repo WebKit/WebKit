@@ -29,7 +29,7 @@
 #include <klocale.h>
 
 #include <kdom/Helper.h>
-#include <kdom/Shared.h>
+#include "Shared.h"
 #include <kdom/Namespace.h>
 #include <kdom/core/domattrs.h>
 #include <kdom/cache/KDOMLoader.h>

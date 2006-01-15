@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGAnimatedNumberListImpl_H
 #define KSVG_SVGAnimatedNumberListImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 #include "SVGAnimatedTemplate.h"
 #include "SVGNumberListImpl.h"

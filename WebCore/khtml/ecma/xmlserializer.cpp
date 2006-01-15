@@ -88,7 +88,7 @@ JSValue *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
       }
 
       NodeImpl *node = static_cast<NodeImpl *>(static_cast<DOMNode *>(args[0]->toObject(exec))->impl());
-      return jsStringOrNull(createMarkup(node));
+      return jsStringOrNull(khtml::createMarkup(node));
     }
   }
 

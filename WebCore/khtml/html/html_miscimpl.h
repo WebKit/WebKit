@@ -24,7 +24,7 @@
 #define HTML_MISCIMPL_H
 
 #include "html_elementimpl.h"
-#include "shared.h"
+#include "Shared.h"
 #include <qptrvector.h>
 #include <kxmlcore/HashMap.h>
 
@@ -54,7 +54,7 @@ public:
 
 // -------------------------------------------------------------------------
 
-class HTMLCollectionImpl : public khtml::Shared<HTMLCollectionImpl>
+class HTMLCollectionImpl : public Shared<HTMLCollectionImpl>
 {
     friend class DOM::HTMLCollection;
 public:

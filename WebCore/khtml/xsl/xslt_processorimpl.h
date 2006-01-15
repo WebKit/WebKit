@@ -31,7 +31,7 @@
 #include <libxslt/transform.h>
 #include <libxslt/documents.h>
 
-#include <shared.h>
+#include <Shared.h>
 #include "dom_stringimpl.h"
 #include "xsl_stylesheetimpl.h"
 #include <qstring.h>
@@ -46,7 +46,7 @@ class NodeImpl;
 class DocumentImpl;
 class DocumentFragmentImpl;
 
-class XSLTProcessorImpl : public khtml::Shared<XSLTProcessorImpl>
+class XSLTProcessorImpl : public Shared<XSLTProcessorImpl>
 {
 public:
     void setXSLStylesheet(XSLStyleSheetImpl *styleSheet) { m_stylesheet = styleSheet; }

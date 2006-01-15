@@ -27,7 +27,7 @@
 #include <q3valuelist.h>
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/Assertions.h>
-#include "shared.h"
+#include "Shared.h"
 
 class QTextStream;
 
@@ -48,7 +48,7 @@ typedef enum
     CMD_CLOSE_SUBPATH = 3
 } KCPathCommand;
 
-class KCanvasPath : public khtml::Shared<KCanvasPath>
+class KCanvasPath : public Shared<KCanvasPath>
 {
 public:
     virtual ~KCanvasPath() { }

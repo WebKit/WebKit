@@ -23,12 +23,12 @@
 #ifndef KSVG_SVGTransformImpl_H
 #define KSVG_SVGTransformImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGMatrixImpl;
-    class SVGTransformImpl : public KDOM::Shared<SVGTransformImpl>
+    class SVGTransformImpl : public Shared<SVGTransformImpl>
     {
     public:
         SVGTransformImpl();

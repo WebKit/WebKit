@@ -24,7 +24,7 @@
 #ifndef DOM_DOMStringImpl_h
 #define DOM_DOMStringImpl_h
 
-#include "shared.h"
+#include "Shared.h"
 #include <kxmlcore/RefPtr.h>
 #include <qstring.h>
 
@@ -34,7 +34,7 @@ namespace khtml {
 
 namespace DOM {
 
-class DOMStringImpl : public khtml::Shared<DOMStringImpl>
+class DOMStringImpl : public Shared<DOMStringImpl>
 {
 private:
     struct WithOneRef { };

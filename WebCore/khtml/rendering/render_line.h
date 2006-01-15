@@ -24,7 +24,7 @@
 
 #include "rendering/render_object.h"
 #include "bidi.h"
-#include "shared.h"
+#include "Shared.h"
 
 namespace DOM {
 class AtomicString;

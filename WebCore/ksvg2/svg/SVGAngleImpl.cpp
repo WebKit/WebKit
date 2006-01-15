@@ -36,7 +36,7 @@ const double deg2rad = 0.017453292519943295769; // pi/180
 const double deg2grad = 400.0 / 360.0;
 const double rad2grad = deg2grad / deg2rad;
 
-SVGAngleImpl::SVGAngleImpl(const SVGStyledElementImpl *context) : KDOM::Shared<SVGAngleImpl>()
+SVGAngleImpl::SVGAngleImpl(const SVGStyledElementImpl *context) : Shared<SVGAngleImpl>()
 {
     m_unitType = SVG_ANGLETYPE_UNKNOWN;
     m_valueInSpecifiedUnits = 0;

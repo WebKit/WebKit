@@ -28,7 +28,7 @@ namespace DOM {
 
 class QualifiedName {
 public:
-    class QualifiedNameImpl : public khtml::Shared<QualifiedNameImpl> {
+    class QualifiedNameImpl : public Shared<QualifiedNameImpl> {
     public:
         QualifiedNameImpl(const AtomicString& p, const AtomicString& l, const AtomicString& n) :m_prefix(p), m_localName(l), m_namespace(n) {}
 

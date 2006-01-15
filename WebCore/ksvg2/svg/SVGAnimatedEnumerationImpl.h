@@ -23,13 +23,13 @@
 #ifndef KSVG_SVGAnimatedEnumerationImpl_H
 #define KSVG_SVGAnimatedEnumerationImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
 
-    class SVGAnimatedEnumerationImpl : public KDOM::Shared<SVGAnimatedEnumerationImpl>
+    class SVGAnimatedEnumerationImpl : public Shared<SVGAnimatedEnumerationImpl>
     {
     public:
         SVGAnimatedEnumerationImpl(const SVGStyledElementImpl *context);

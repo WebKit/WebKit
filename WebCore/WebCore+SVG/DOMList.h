@@ -24,7 +24,7 @@
 #define KDOM_DOMList_H
 
 #include <q3ptrlist.h>
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace DOM
 {

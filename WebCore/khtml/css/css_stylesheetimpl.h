@@ -127,7 +127,7 @@ protected:
 
 // ----------------------------------------------------------------------------
 
-class StyleSheetListImpl : public khtml::Shared<StyleSheetListImpl>
+class StyleSheetListImpl : public Shared<StyleSheetListImpl>
 {
 public:
     StyleSheetListImpl() {}

@@ -26,7 +26,7 @@
 
 #include "dom/dom_string.h"
 #include "dom_qname.h"
-#include "shared.h"
+#include "Shared.h"
 #include <qdatetime.h>
 #include <qptrlist.h>
 
@@ -196,10 +196,10 @@ namespace DOM {
     };
 
     // a style class which has a parent (almost all have)
-    class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
+    class StyleBaseImpl : public TreeShared<StyleBaseImpl>
     {
     public:
-        typedef khtml::TreeShared<StyleBaseImpl> TreeShared;
+        typedef TreeShared<StyleBaseImpl> TreeShared;
         StyleBaseImpl()  { strictParsing = true; multiLength = false; }
         StyleBaseImpl(StyleBaseImpl *p) : TreeShared(p) {
             strictParsing = (p ? p->useStrictParsing() : true);

@@ -24,7 +24,7 @@
 #include "kjs_binding.h"
 
 #include <qvaluelist.h>
-#include "shared.h"
+#include "Shared.h"
 
 namespace DOM {
     class AtomicString;

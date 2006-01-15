@@ -40,7 +40,7 @@
 #import "dom_stringimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_headimpl.h"
-#import "shared.h"
+#import "Shared.h"
 #import <kxmlcore/Assertions.h>
 #import <objc/objc-class.h>
 

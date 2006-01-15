@@ -29,12 +29,12 @@
 
 #include <sys/types.h>
 #include <pcre/pcre.h>
-#include "shared.h"
+#include "Shared.h"
 
 #define MAX_SUBSTRINGS  10
 #define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)
 
-class QRegExp::KWQRegExpPrivate : public khtml::Shared<QRegExp::KWQRegExpPrivate>
+class QRegExp::KWQRegExpPrivate : public Shared<QRegExp::KWQRegExpPrivate>
 {
 public:
     KWQRegExpPrivate();

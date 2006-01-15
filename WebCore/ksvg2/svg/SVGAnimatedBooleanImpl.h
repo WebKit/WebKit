@@ -23,12 +23,12 @@
 #ifndef KSVG_SVGAnimatedBooleanImpl_H
 #define KSVG_SVGAnimatedBooleanImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
-    class SVGAnimatedBooleanImpl : public KDOM::Shared<SVGAnimatedBooleanImpl>
+    class SVGAnimatedBooleanImpl : public Shared<SVGAnimatedBooleanImpl>
     {
     public:
         SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context);

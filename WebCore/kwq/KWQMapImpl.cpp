@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQMapImpl.h"
 
-#include "shared.h"
+#include "Shared.h"
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
     prev(NULL),
@@ -118,7 +118,7 @@ void KWQMapIteratorImpl::incrementInternal()
 
 // KWQMapImplPrivate
 
-class KWQMapImpl::KWQMapPrivate : public khtml::Shared<KWQMapImpl::KWQMapPrivate>
+class KWQMapImpl::KWQMapPrivate : public Shared<KWQMapImpl::KWQMapPrivate>
 {
 public:
     KWQMapPrivate(KWQMapNodeImpl *node,

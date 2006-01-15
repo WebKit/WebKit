@@ -27,13 +27,13 @@
 #ifndef _dom2_traversal_h_
 #define _dom2_traversal_h_
 
-#include "shared.h"
+#include "Shared.h"
 
 namespace DOM {
 
 class NodeImpl;
 
-class NodeFilterCondition : public khtml::Shared<NodeFilterCondition>
+class NodeFilterCondition : public Shared<NodeFilterCondition>
 {
 public:
     virtual ~NodeFilterCondition() { }

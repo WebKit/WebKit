@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGAnimatedLengthListImpl_H
 #define KSVG_SVGAnimatedLengthListImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 #include "SVGAnimatedTemplate.h"
 #include "SVGLengthListImpl.h"

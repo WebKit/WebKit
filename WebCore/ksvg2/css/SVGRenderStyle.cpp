@@ -62,7 +62,7 @@ SVGRenderStyle::SVGRenderStyle(bool)
     markers.init();
 }
 
-SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : khtml::Shared<SVGRenderStyle>()
+SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : Shared<SVGRenderStyle>()
 {
     fill = other.fill;
     stroke = other.stroke;

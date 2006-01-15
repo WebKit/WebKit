@@ -23,13 +23,13 @@
 #ifndef KSVG_SVGAnimatedNumberImpl_H
 #define KSVG_SVGAnimatedNumberImpl_H
 
-#include <kdom/Shared.h>
+#include "Shared.h"
 
 namespace KSVG
 {
     class SVGStyledElementImpl;
 
-    class SVGAnimatedNumberImpl : public KDOM::Shared<SVGAnimatedNumberImpl>
+    class SVGAnimatedNumberImpl : public Shared<SVGAnimatedNumberImpl>
     {
     public:
         SVGAnimatedNumberImpl(const SVGStyledElementImpl *context);

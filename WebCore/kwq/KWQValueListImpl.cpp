@@ -26,10 +26,10 @@
 #include "config.h"
 #include "KWQValueListImpl.h"
 
-#include "shared.h"
+#include "Shared.h"
 #include <stdlib.h>
 
-class KWQValueListImpl::KWQValueListPrivate : public khtml::Shared<KWQValueListImpl::KWQValueListPrivate>
+class KWQValueListImpl::KWQValueListPrivate : public Shared<KWQValueListImpl::KWQValueListPrivate>
 {
 public:
     KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *));
@@ -59,7 +59,7 @@ inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteF
 }
 
 inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
-    khtml::Shared<KWQValueListImpl::KWQValueListPrivate>(),
+    Shared<KWQValueListImpl::KWQValueListPrivate>(),
     deleteNode(other.deleteNode),
     copyNode(other.copyNode),
     count(other.count)
