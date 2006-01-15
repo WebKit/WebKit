@@ -1,4 +1,4 @@
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include "dom/dom_string.h"
 
 namespace khtml

@@ -26,7 +26,7 @@
 #ifndef KHTML_CachedObjectClientWalker_h
 #define KHTML_CachedObjectClientWalker_h
 
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include <qptrdict.h>
 
 namespace khtml

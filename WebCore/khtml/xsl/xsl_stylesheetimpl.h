@@ -27,7 +27,7 @@
 #include "css/css_stylesheetimpl.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 
 #include <libxslt/transform.h>
 

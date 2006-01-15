@@ -28,7 +28,7 @@
 #include "dom/dom_string.h"
 #include "dom/css_rule.h"
 #include "css/css_base.h"
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include "shared.h"
 #include "css_valueimpl.h"
 

@@ -25,7 +25,7 @@
 
 #include "dom/css_value.h"
 #include "css/css_base.h"
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include <qvaluelist.h>
 
 namespace khtml {

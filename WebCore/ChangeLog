@@ -1,3 +1,23 @@
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
+        Move loader_client.h to CachedObjectClient.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/css_valueimpl.h:
+        * khtml/ecma/kjs_html.h:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_headimpl.h:
+        * khtml/html/htmltokenizer.h:
+        * khtml/rendering/render_object.h:
+        * khtml/xbl/xbl_binding.h:
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xsl/xsl_stylesheetimpl.h:
+        * loader/CachedObject.h:
+        * loader/CachedObjectClient.h: Added.
+        * loader/CachedObjectClientWalker.h:
+        * loader/loader_client.h: Removed.
+
 2006-01-14  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric and Hyatt.

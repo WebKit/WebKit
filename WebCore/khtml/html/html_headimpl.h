@@ -25,7 +25,7 @@
 #define HTML_HEADIMPL_H
 
 #include "html/html_elementimpl.h"
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 
 class KHTMLView;

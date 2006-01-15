@@ -35,7 +35,7 @@
 #include "NodeImpl.h"
 #include "editing/text_affinity.h"
 #include "khtmllayout.h"
-#include "loader_client.h"
+#include "CachedObjectClient.h"
 #include "helper.h"
 #include "rendering/render_style.h"
 #include "khtml_events.h"

@@ -1607,7 +1607,6 @@
 		BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */; };
 		BCB16C290979C3BD00467741 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C100979C3BD00467741 /* DocLoader.cpp */; };
 		BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* DocLoader.h */; };
-		BCB16C2B0979C3BD00467741 /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C120979C3BD00467741 /* loader_client.h */; };
 		BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
@@ -1632,7 +1631,6 @@
 		BCB16C410979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */; };
 		BCB16C420979C3BD00467741 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C100979C3BD00467741 /* DocLoader.cpp */; };
 		BCB16C430979C3BD00467741 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* DocLoader.h */; };
-		BCB16C440979C3BD00467741 /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C120979C3BD00467741 /* loader_client.h */; };
 		BCB16C450979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
 		BCB16C460979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
 		BCB16C470979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
@@ -1643,6 +1641,8 @@
 		BCF1A5F2097839600061A123 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF1A5EE097839600061A123 /* IntSize.cpp */; };
 		BCF1A5F3097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
 		BCF1A61C09783BDD0061A123 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF1A5EE097839600061A123 /* IntSize.cpp */; };
+		BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */; };
+		BCFB2E5F0979E46400BA703D /* CachedObjectClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
@@ -2511,7 +2511,6 @@
 		BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedXSLStyleSheet.h; path = loader/CachedXSLStyleSheet.h; sourceTree = "<group>"; };
 		BCB16C100979C3BD00467741 /* DocLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DocLoader.cpp; path = loader/DocLoader.cpp; sourceTree = "<group>"; };
 		BCB16C110979C3BD00467741 /* DocLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DocLoader.h; path = loader/DocLoader.h; sourceTree = "<group>"; };
-		BCB16C120979C3BD00467741 /* loader_client.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = loader_client.h; path = loader/loader_client.h; sourceTree = "<group>"; };
 		BCB16C130979C3BD00467741 /* loader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = loader.cpp; path = loader/loader.cpp; sourceTree = "<group>"; };
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = loader.h; path = loader/loader.h; sourceTree = "<group>"; };
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Request.cpp; path = loader/Request.cpp; sourceTree = "<group>"; };
@@ -2532,6 +2531,7 @@
 		BCF0192503D3802200B2D04D /* table_layout.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = table_layout.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCF1A5EE097839600061A123 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntSize.cpp; path = platform/IntSize.cpp; sourceTree = "<group>"; };
 		BCF1A5EF097839600061A123 /* IntSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = IntSize.h; path = platform/IntSize.h; sourceTree = "<group>"; };
+		BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedObjectClient.h; path = loader/CachedObjectClient.h; sourceTree = "<group>"; };
 		BE02D4E6066F908A0076809F /* jsediting.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = jsediting.h; path = editing/jsediting.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE02D4E7066F908A0076809F /* jsediting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsediting.cpp; path = editing/jsediting.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQTextUtilities.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3668,6 +3668,7 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
@@ -3688,7 +3689,6 @@
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
 				BCB16C100979C3BD00467741 /* DocLoader.cpp */,
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
-				BCB16C120979C3BD00467741 /* loader_client.h */,
 				BCB16C130979C3BD00467741 /* loader.cpp */,
 				BCB16C140979C3BD00467741 /* loader.h */,
 				BCB16C150979C3BD00467741 /* Request.cpp */,
@@ -4963,9 +4963,9 @@
 				BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */,
-				BCB16C2B0979C3BD00467741 /* loader_client.h in Headers */,
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
+				BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5302,9 +5302,9 @@
 				BCB16C3F0979C3BD00467741 /* CachedXBLDocument.h in Headers */,
 				BCB16C410979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				BCB16C430979C3BD00467741 /* DocLoader.h in Headers */,
-				BCB16C440979C3BD00467741 /* loader_client.h in Headers */,
 				BCB16C460979C3BD00467741 /* loader.h in Headers */,
 				BCB16C480979C3BD00467741 /* Request.h in Headers */,
+				BCFB2E5F0979E46400BA703D /* CachedObjectClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
