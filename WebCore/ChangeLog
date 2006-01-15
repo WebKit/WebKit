@@ -1,3 +1,13 @@
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Initialize m_isXHTMLDocument(false) properly.
+        No tests possible, random failure only.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::XMLTokenizer):
+
 2006-01-15  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

@@ -207,18 +207,38 @@ static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 // --------------------------------
 
 XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, KHTMLView *_view)
-    : m_doc(_doc), m_view(_view),
-      m_context(0), m_currentNode(_doc), m_currentNodeIsReferenced(false),
-      m_sawError(false), m_errorCount(0),
-      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(false)
+    : m_doc(_doc)
+    , m_view(_view)
+    , m_context(0)
+    , m_currentNode(_doc)
+    , m_currentNodeIsReferenced(false)
+    , m_sawError(false)
+    , m_sawXSLTransform(false)
+    , m_isXHTMLDocument(false)
+    , m_errorCount(0)
+    , m_lastErrorLine(0)
+    , m_lastErrorColumn(0)
+    , m_scriptsIt(0)
+    , m_cachedScript(0)
+    , m_parsingFragment(false)
 {
 }
 
 XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentElement)
-    : m_doc(fragment->getDocument()), m_view(0),
-      m_context(0), m_currentNode(fragment), m_currentNodeIsReferenced(fragment),
-      m_sawError(false), m_errorCount(0),
-      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0), m_parsingFragment(true)
+    : m_doc(fragment->getDocument())
+    , m_view(0)
+    , m_context(0)
+    , m_currentNode(fragment)
+    , m_currentNodeIsReferenced(fragment)
+    , m_sawError(false)
+    , m_sawXSLTransform(false)
+    , m_isXHTMLDocument(false)
+    , m_errorCount(0)
+    , m_lastErrorLine(0)
+    , m_lastErrorColumn(0)
+    , m_scriptsIt(0
+    , m_cachedScript(0)
+    , m_parsingFragment(true)
 {
     if (fragment)
         fragment->ref();
