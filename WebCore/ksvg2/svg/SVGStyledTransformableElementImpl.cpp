@@ -94,15 +94,13 @@ void SVGStyledTransformableElementImpl::updateLocalTransform(SVGTransformListImp
 
 void SVGStyledTransformableElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    if(attr->name() == SVGNames::transformAttr)
-    {
+    if (attr->name() == SVGNames::transformAttr) {
         SVGTransformListImpl *localTransforms = transform()->baseVal();
         localTransforms->clear();
         
-        SVGTransformableImpl::parseTransformAttribute(localTransforms, attr->value().impl());
+        SVGTransformableImpl::parseTransformAttribute(localTransforms, attr->value());
         updateLocalTransform(localTransforms);
-    }
-    else
+    } else
         SVGStyledLocatableElementImpl::parseMappedAttribute(attr);
 }
 

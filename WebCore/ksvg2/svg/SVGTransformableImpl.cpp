@@ -49,17 +49,13 @@ SVGTransformableImpl::~SVGTransformableImpl()
 {
 }
 
-void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, KDOM::DOMStringImpl *transform)
+void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, const KDOM::AtomicString& transform)
 {
-    if(!transform)
-        return;
-
     // Split string for handling 1 transform statement at a time
-    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).qstring().simplifyWhiteSpace());
+    QStringList subtransforms = QStringList::split(')', transform.qstring().simplifyWhiteSpace());
     QStringList::ConstIterator it = subtransforms.begin();
     QStringList::ConstIterator end = subtransforms.end();
-    for(; it != end; ++it)
-    {
+    for (; it != end; ++it) {
         QStringList subtransform = QStringList::split('(', (*it));
         
         if (subtransform.count() < 2)
@@ -67,16 +63,14 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
 
         subtransform[0] = subtransform[0].stripWhiteSpace().lower();
         subtransform[1] = subtransform[1].simplifyWhiteSpace();
-        QRegExp reg(QString::fromLatin1("([-]?\\d*\\.?\\d+(?:e[-]?\\d+)?)"));
+        QRegExp reg("([-]?\\d*\\.?\\d+(?:e[-]?\\d+)?)");
 
         int pos = 0;
         QStringList params;
         
-        while(pos >= 0)
-        {
+        while (pos >= 0) {
             pos = reg.search(subtransform[1], pos);
-            if(pos != -1)
-            {
+            if (pos != -1) {
                 params += reg.cap(1);
                 pos += reg.matchedLength();
             }
@@ -85,43 +79,33 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, K
         if (params.count() < 1)
             break;
 
-        if(subtransform[0].startsWith(QString::fromLatin1(";")) ||
-           subtransform[0].startsWith(QString::fromLatin1(",")))
-        {
+        if (subtransform[0].startsWith(";") || subtransform[0].startsWith(","))
             subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
-        }
 
         PassRefPtr<SVGTransformImpl> t(new SVGTransformImpl());
 
-        if(subtransform[0] == QString::fromLatin1("rotate"))
-        {
+        if (subtransform[0] == "rotate") {
             if (params.count() == 3)
                 t->setRotate(params[0].toDouble(),
                              params[1].toDouble(),
                               params[2].toDouble());
             else if (params.count() == 1)
                 t->setRotate(params[0].toDouble(), 0, 0);
-        }
-        else if(subtransform[0] == QString::fromLatin1("translate"))
-        {
+        } else if (subtransform[0] == "translate") {
             if (params.count() == 2)
                 t->setTranslate(params[0].toDouble(), params[1].toDouble());
             else if (params.count() == 1) // Spec: if only one param given, assume 2nd param to be 0
                 t->setTranslate(params[0].toDouble(), 0);
-        }
-        else if(subtransform[0] == QString::fromLatin1("scale"))
-        {
+        } else if (subtransform[0] == "scale") {
             if (params.count() == 2)
                 t->setScale(params[0].toDouble(), params[1].toDouble());
             else if (params.count() == 1) // Spec: if only one param given, assume uniform scaling
                 t->setScale(params[0].toDouble(), params[0].toDouble());
-        }
-        else if(subtransform[0] == QString::fromLatin1("skewx") && (params.count() == 1))
+        } else if (subtransform[0] == "skewx" && (params.count() == 1))
             t->setSkewX(params[0].toDouble());
-        else if(subtransform[0] == QString::fromLatin1("skewy") && (params.count() == 1))
+        else if (subtransform[0] == "skewy" && (params.count() == 1))
             t->setSkewY(params[0].toDouble());
-        else if(subtransform[0] == QString::fromLatin1("matrix") && (params.count() == 6))
-        {
+        else if (subtransform[0] == "matrix" && (params.count() == 6)) {
             SVGMatrixImpl *ret = new SVGMatrixImpl(params[0].toDouble(),
                                                    params[1].toDouble(),
                                                    params[2].toDouble(),

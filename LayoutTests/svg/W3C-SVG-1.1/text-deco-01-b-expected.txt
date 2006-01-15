@@ -15,7 +15,31 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x28
             RenderText {TEXT} at (0,0) size 159x28
               text run at (0,0) width 159: "Underlined text"
-          RenderSVGText {text} at (0,0) size 465x0
+          RenderSVGText {text} at (0,0) size 465x28
+            RenderInline {tspan} at (0,0) size 45x27
+              RenderText {TEXT} at (0,0) size 45x28
+                text run at (0,0) width 45: "One"
+            RenderText {TEXT} at (45,0) size 7x28
+              text run at (45,0) width 7: " "
+            RenderInline {tspan} at (0,0) size 51x27
+              RenderText {TEXT} at (52,0) size 51x28
+                text run at (52,0) width 51: "word"
+            RenderText {TEXT} at (103,0) size 7x28
+              text run at (103,0) width 7: " "
+            RenderInline {tspan} at (0,0) size 38x27
+              RenderText {TEXT} at (110,0) size 38x28
+                text run at (110,0) width 38: "has"
+            RenderText {TEXT} at (148,0) size 7x28
+              text run at (148,0) width 7: " "
+            RenderInline {tspan} at (0,0) size 86x27
+              RenderText {TEXT} at (155,0) size 86x28
+                text run at (155,0) width 86: "different"
+            RenderText {TEXT} at (241,0) size 7x28
+              text run at (241,0) width 7: " "
+            RenderInline {tspan} at (0,0) size 114x27
+              RenderText {TEXT} at (248,0) size 114x28
+                text run at (248,0) width 114: "underlining"
+            RenderText {TEXT} at (0,0) size 0x0
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"

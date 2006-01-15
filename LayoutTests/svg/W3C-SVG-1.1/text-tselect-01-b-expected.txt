@@ -18,7 +18,28 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 322x18
               text run at (0,0) width 322: "text selection should not go across lines here."
-          RenderSVGText {text} at (0,0) size 465x0
+          RenderSVGText {text} at (0,0) size 465x54
+            RenderInline {tspan} at (0,0) size 355x17
+              RenderText {TEXT} at (0,0) size 355x18
+                text run at (0,0) width 355: "However, these lines of text are achieved by using"
+            RenderText {TEXT} at (355,0) size 4x18
+              text run at (355,0) width 4: " "
+            RenderInline {tspan} at (0,0) size 462x35
+              RenderText {TEXT} at (359,0) size 462x36
+                text run at (359,0) width 103: "one 'tspan' per"
+                text run at (0,18) width 240: "line, all contained within the same"
+            RenderText {TEXT} at (240,18) size 4x18
+              text run at (240,18) width 4: " "
+            RenderInline {tspan} at (0,0) size 465x35
+              RenderText {TEXT} at (244,18) size 465x36
+                text run at (244,18) width 221: "'text' element, so you should be"
+                text run at (0,36) width 115: "able to select all"
+            RenderText {TEXT} at (115,36) size 4x18
+              text run at (115,36) width 4: " "
+            RenderInline {tspan} at (0,0) size 189x17
+              RenderText {TEXT} at (119,36) size 189x18
+                text run at (119,36) width 189: "four lines at the same time."
+            RenderText {TEXT} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x46
           RenderText {TEXT} at (0,0) size 264x46
             text run at (0,0) width 264: "$Revision: 1.1 $"

@@ -11,11 +11,17 @@ layer at (0,0) size 480x360
         KCanvasItem {line} at (219.50,120) size 1x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00L220.00,260.00"]
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x34
-            RenderText {TEXT} at (0,0) size 114x34
-              text run at (0,0) width 114: "start text"
+            RenderText {TEXT} at (0,0) size 122x34
+              text run at (0,0) width 122: "start text "
+            RenderInline {tspan} at (0,0) size 126x33
+              RenderText {TEXT} at (122,0) size 126x34
+                text run at (122,0) width 126: "red tspan"
           RenderSVGText {text} at (0,0) size 465x34
-            RenderText {TEXT} at (0,0) size 146x34
-              text run at (0,0) width 146: "middle text"
+            RenderText {TEXT} at (0,0) size 154x34
+              text run at (0,0) width 154: "middle text "
+            RenderInline {tspan} at (0,0) size 150x33
+              RenderText {TEXT} at (154,0) size 150x34
+                text run at (154,0) width 150: "bold tspan"
           RenderSVGText {text} at (0,0) size 465x0
           RenderSVGText {text} at (0,0) size 465x0
       RenderSVGText {text} at (0,0) size 465x46

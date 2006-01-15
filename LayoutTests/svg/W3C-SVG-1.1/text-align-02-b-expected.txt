@@ -10,18 +10,33 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x34
             RenderText {TEXT} at (0,0) size 98x34
               text run at (0,0) width 98: "Normal"
-            RenderText {TEXT} at (98,0) size 48x34
-              text run at (98,0) width 48: "text"
+            RenderInline {tspan} at (0,0) size 204x33
+              RenderText {TEXT} at (98,0) size 204x34
+                text run at (98,0) width 204: "baseline-shift:7"
+            RenderText {TEXT} at (302,0) size 48x34
+              text run at (302,0) width 48: "text"
           RenderSVGText {text} at (0,0) size 465x34
             RenderText {TEXT} at (0,0) size 98x34
               text run at (0,0) width 98: "Normal"
-            RenderText {TEXT} at (98,0) size 48x34
-              text run at (98,0) width 48: "text"
+            RenderInline {tspan} at (0,0) size 258x33
+              RenderText {TEXT} at (98,0) size 258x34
+                text run at (98,0) width 258: "baseline-shift:-70%"
+            RenderText {TEXT} at (356,0) size 48x34
+              text run at (356,0) width 48: "text"
           RenderSVGText {text} at (0,0) size 465x34
             RenderText {TEXT} at (0,0) size 98x34
               text run at (0,0) width 98: "Normal"
-            RenderText {TEXT} at (98,0) size 23x34
-              text run at (98,0) width 23: "xt"
+            RenderInline {tspan} at (0,0) size 49x33
+              RenderText {TEXT} at (98,0) size 49x34
+                text run at (98,0) width 49: "sub"
+            RenderInline {tspan} at (0,0) size 76x33
+              RenderText {TEXT} at (147,0) size 76x34
+                text run at (147,0) width 76: "super"
+            RenderInline {tspan} at (0,0) size 25x33
+              RenderText {TEXT} at (223,0) size 25x34
+                text run at (223,0) width 25: "te"
+            RenderText {TEXT} at (248,0) size 23x34
+              text run at (248,0) width 23: "xt"
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"

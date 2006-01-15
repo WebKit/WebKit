@@ -108,27 +108,21 @@ SVGAnimatedTransformListImpl *SVGPatternElementImpl::patternTransform() const
 
 void SVGPatternElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
-    if (attr->name() == SVGNames::patternUnitsAttr)
-    {
-        if(value == "userSpaceOnUse")
+    const KDOM::AtomicString &value = attr->value();
+    if (attr->name() == SVGNames::patternUnitsAttr) {
+        if (value == "userSpaceOnUse")
             patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if(value == "objectBoundingBox")
+        else if (value == "objectBoundingBox")
             patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    else if (attr->name() == SVGNames::patternContentUnitsAttr)
-    {
-        if(value == "userSpaceOnUse")
+    } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
+        if (value == "userSpaceOnUse")
             patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if(value == "objectBoundingBox")
+        else if (value == "objectBoundingBox")
             patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    else if (attr->name() == SVGNames::patternTransformAttr)
-    {
+    } else if (attr->name() == SVGNames::patternTransformAttr) {
         SVGTransformListImpl *patternTransforms = patternTransform()->baseVal();
-        SVGTransformableImpl::parseTransformAttribute(patternTransforms, value.impl());
-    }
-    else if (attr->name() == SVGNames::xAttr)
+        SVGTransformableImpl::parseTransformAttribute(patternTransforms, value);
+    } else if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
         y()->baseVal()->setValueAsString(value.impl());
@@ -136,13 +130,17 @@ void SVGPatternElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
         width()->baseVal()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
         height()->baseVal()->setValueAsString(value.impl());
-    else
-    {
-        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
-        if(SVGTestsImpl::parseMappedAttribute(attr)) return;
-        if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
-        if(SVGFitToViewBoxImpl::parseMappedAttribute(attr)) return;
+    else {
+        if (SVGURIReferenceImpl::parseMappedAttribute(attr))
+            return;
+        if (SVGTestsImpl::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpaceImpl::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr))
+            return;
+        if (SVGFitToViewBoxImpl::parseMappedAttribute(attr))
+            return;
 
         SVGStyledElementImpl::parseMappedAttribute(attr);
     }

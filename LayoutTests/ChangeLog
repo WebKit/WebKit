@@ -1,3 +1,41 @@
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add basic <tspan> support using RenderInline.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6428
+        Also fix <text transform=""> while we're at it.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6552
+
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+
 2006-01-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

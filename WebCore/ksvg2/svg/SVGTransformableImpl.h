@@ -27,10 +27,9 @@
 
 class QMatrix;
 
-namespace KDOM
-{
+namespace KDOM {
     class NodeImpl;
-    class DOMStringImpl;
+    class AtomicString;
     class AttributeImpl;
 };
 
@@ -51,7 +50,7 @@ namespace KSVG
         
         virtual void updateLocalTransform(SVGTransformListImpl *localTransforms) = 0;
         
-        static void parseTransformAttribute(SVGTransformListImpl *list, KDOM::DOMStringImpl *transform);
+        static void parseTransformAttribute(SVGTransformListImpl *list, const KDOM::AtomicString& transform);
     };
 };
 

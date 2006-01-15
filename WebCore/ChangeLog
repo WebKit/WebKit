@@ -1,3 +1,35 @@
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add basic <tspan> support using RenderInline.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6428
+        Also fix <text transform=""> while we're at it.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6552
+
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::parseMappedAttribute): code cleanup
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::parseMappedAttribute): code cleanup
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        (SVGStyledTransformableElementImpl::parseMappedAttribute): cleanup
+        * ksvg2/svg/SVGTSpanElementImpl.cpp:
+        (SVGTSpanElementImpl::childShouldCreateRenderer): added.
+        (SVGTSpanElementImpl::createRenderer): added.
+        * ksvg2/svg/SVGTSpanElementImpl.h:
+        (KSVG::SVGTSpanElementImpl::rendererIsNeeded): added.
+        * ksvg2/svg/SVGTextElementImpl.cpp:
+        (SVGTextElementImpl::transform): added.
+        (SVGTextElementImpl::localMatrix): added.
+        (SVGTextElementImpl::parseMappedAttribute): support transform.
+        (SVGTextElementImpl::updateLocalTransform): added.
+        (SVGTextElementImpl::attach): added.
+        (SVGTextElementImpl::childShouldCreateRenderer): allow tspan.
+        * ksvg2/svg/SVGTextElementImpl.h:
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::parseTransformAttribute): code cleanup.
+        * ksvg2/svg/SVGTransformableImpl.h:
+
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
         Move arena.cpp/.h out of khtml/misc and into platform/Arena.cpp/h.  Also removed another unused

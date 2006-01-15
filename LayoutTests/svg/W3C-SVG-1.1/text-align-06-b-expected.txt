@@ -11,23 +11,41 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,0) size 465x34
               RenderText {TEXT} at (0,0) size 25x34
                 text run at (0,0) width 25: "te"
-              RenderText {TEXT} at (25,0) size 23x34
-                text run at (25,0) width 23: "xt"
+              RenderInline {tspan} at (0,0) size 17x33
+                RenderText {TEXT} at (25,0) size 17x34
+                  text run at (25,0) width 17: "7"
+              RenderText {TEXT} at (42,0) size 23x34
+                text run at (42,0) width 23: "xt"
             RenderSVGText {text} at (0,0) size 465x34
               RenderText {TEXT} at (0,0) size 25x34
                 text run at (0,0) width 25: "te"
-              RenderText {TEXT} at (25,0) size 23x34
-                text run at (25,0) width 23: "xt"
+              RenderInline {tspan} at (0,0) size 71x33
+                RenderText {TEXT} at (25,0) size 71x34
+                  text run at (25,0) width 71: "-70%"
+              RenderText {TEXT} at (96,0) size 23x34
+                text run at (96,0) width 23: "xt"
             RenderSVGText {text} at (0,0) size 465x34
               RenderText {TEXT} at (0,0) size 25x34
                 text run at (0,0) width 25: "te"
-              RenderText {TEXT} at (25,0) size 8x34
-                text run at (25,0) width 8: "t"
+              RenderInline {tspan} at (0,0) size 49x33
+                RenderText {TEXT} at (25,0) size 49x34
+                  text run at (25,0) width 49: "sub"
+              RenderInline {tspan} at (0,0) size 15x33
+                RenderText {TEXT} at (74,0) size 15x34
+                  text run at (74,0) width 15: "x"
+              RenderText {TEXT} at (89,0) size 8x34
+                text run at (89,0) width 8: "t"
             RenderSVGText {text} at (0,0) size 465x34
               RenderText {TEXT} at (0,0) size 25x34
                 text run at (0,0) width 25: "te"
-              RenderText {TEXT} at (25,0) size 8x34
-                text run at (25,0) width 8: "t"
+              RenderInline {tspan} at (0,0) size 76x33
+                RenderText {TEXT} at (25,0) size 76x34
+                  text run at (25,0) width 76: "super"
+              RenderInline {tspan} at (0,0) size 15x33
+                RenderText {TEXT} at (101,0) size 15x34
+                  text run at (101,0) width 15: "x"
+              RenderText {TEXT} at (116,0) size 8x34
+                text run at (116,0) width 8: "t"
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"

@@ -77,31 +77,26 @@ SVGAnimatedEnumerationImpl *SVGGradientElementImpl::spreadMethod() const
 void SVGGradientElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
     KDOM::DOMString value(attr->value());
-    if (attr->name() == SVGNames::gradientUnitsAttr)
-    {
+    if (attr->name() == SVGNames::gradientUnitsAttr) {
         if(value == "userSpaceOnUse")
             gradientUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if(value == "objectBoundingBox")
             gradientUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    else if (attr->name() == SVGNames::gradientTransformAttr)
-    {
+    } else if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformListImpl *gradientTransforms = gradientTransform()->baseVal();
-        SVGTransformableImpl::parseTransformAttribute(gradientTransforms, attr->value().impl());
-    }
-    else if (attr->name() == SVGNames::spreadMethodAttr)
-    {
+        SVGTransformableImpl::parseTransformAttribute(gradientTransforms, attr->value());
+    } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if(value == "reflect")
             spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REFLECT);
         else if(value == "repeat")
             spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REPEAT);
         else if(value == "pad")
             spreadMethod()->setBaseVal(SVG_SPREADMETHOD_PAD);
-    }
-    else
-    {
-        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
+    } else {
+        if (SVGURIReferenceImpl::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr))
+            return;
         
         SVGStyledElementImpl::parseMappedAttribute(attr);
     }

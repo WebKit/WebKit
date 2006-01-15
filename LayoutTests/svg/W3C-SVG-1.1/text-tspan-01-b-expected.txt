@@ -9,8 +9,11 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 56x18
               text run at (0,0) width 56: "You are"
-            RenderText {TEXT} at (56,0) size 71x18
-              text run at (56,0) width 71: "a banana."
+            RenderInline {tspan} at (0,0) size 33x17
+              RenderText {TEXT} at (56,0) size 33x18
+                text run at (56,0) width 33: " not "
+            RenderText {TEXT} at (89,0) size 71x18
+              text run at (89,0) width 71: "a banana."
           KCanvasItem {rect} at (47,73.75) size 311.50x54.50 [stroke={[type=SOLID] [color=#000000]}] [data="M47.50,74.25L358.00,74.25L358.00,127.75L47.50,127.75"]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 208x18
@@ -25,6 +28,12 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 54x18
               text run at (0,0) width 54: "But you"
+            RenderInline {tspan} at (0,0) size 24x17
+              RenderText {TEXT} at (54,0) size 24x18
+                text run at (54,0) width 24: "are"
+            RenderInline {tspan} at (0,0) size 65x17
+              RenderText {TEXT} at (78,0) size 65x18
+                text run at (78,0) width 65: " a peach!"
           KCanvasItem {rect} at (224.50,178.50) size 246.50x54.50 [stroke={[type=SOLID] [color=#000000]}] [data="M225.00,179.00L470.50,179.00L470.50,232.50L225.00,232.50"]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 197x18
@@ -36,7 +45,15 @@ layer at (0,0) size 480x360
             RenderText {TEXT} at (0,0) size 173x18
               text run at (0,0) width 173: "'tspan' lowers \"a peach!\""
         KCanvasContainer {g} at (17,244.25) size 336.50x54.50
-          RenderSVGText {text} at (0,0) size 465x0
+          RenderSVGText {text} at (0,0) size 465x18
+            RenderInline {tspan} at (0,0) size 69x17
+              RenderText {TEXT} at (0,0) size 69x18
+                text run at (0,0) width 69: "Cute and "
+            RenderText {TEXT} at (0,0) size 0x0
+            RenderInline {tspan} at (0,0) size 41x17
+              RenderText {TEXT} at (69,0) size 41x18
+                text run at (69,0) width 41: "fuzzy."
+            RenderText {TEXT} at (0,0) size 0x0
           KCanvasItem {rect} at (17,244.25) size 336.50x54.50 [stroke={[type=SOLID] [color=#000000]}] [data="M17.50,244.75L353.00,244.75L353.00,298.25L17.50,298.25"]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 161x18
