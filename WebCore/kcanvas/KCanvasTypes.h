@@ -25,12 +25,12 @@
 
 #include <kxmlcore/RefPtr.h>
 
-// aka "what to draw"
-namespace KSVG {
-    class KCanvasRenderingStyle;
+namespace khtml {
+    class RenderStyle;
 }
 
 class KCanvasPath;
+class RenderPath;
 class KCanvasCommonArgs
 {
 public:
@@ -40,12 +40,16 @@ public:
     KCanvasPath* path() const;
     void setPath(KCanvasPath* path);
 
-    KSVG::KCanvasRenderingStyle *canvasStyle() const;
-    void setStyle(KSVG::KCanvasRenderingStyle *style);
+    khtml::RenderStyle *renderStyle() const;
+    void setRenderStyle(khtml::RenderStyle *style);
     
+    const RenderPath* renderPath() const;
+    void setRenderPath(const RenderPath* path);
+
 private:
     RefPtr<KCanvasPath> m_path;
-    KSVG::KCanvasRenderingStyle *m_style;
+    khtml::RenderStyle *m_renderStyle;
+    const RenderPath *m_renderPath;
 };
 
 #endif

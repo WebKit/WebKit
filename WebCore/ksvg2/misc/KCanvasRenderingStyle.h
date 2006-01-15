@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+                  2006       Alexander Kellett <lypanov@kde.org>
 
     This file is part of the KDE project
 
@@ -53,8 +54,6 @@ namespace khtml {
     class RenderStyle;
 }
 
-class KCanvasFilter;
-class KCanvasMarker;
 class KRenderingFillPainter;
 class KRenderingStrokePainter;
 class KRenderingPaintServer;
@@ -62,43 +61,19 @@ class RenderPath;
 
 namespace KSVG
 {
-    class KCanvasRenderingStyle
+    class KSVGPainterFactory
     {
     public:
-        KCanvasRenderingStyle(const khtml::RenderStyle *style);
-        ~KCanvasRenderingStyle();
+        static KRenderingFillPainter fillPainter(const khtml::RenderStyle *style, const RenderPath *item);
+        static KRenderingStrokePainter strokePainter(const khtml::RenderStyle *style, const RenderPath *item);
 
-        void updateStyle(const khtml::RenderStyle *style, RenderPath *item);
+        static bool isStroked(const khtml::RenderStyle *style);
+        static KRenderingPaintServer *strokePaintServer(const khtml::RenderStyle *style, const RenderPath*);
 
-        // Stroke (aka Pen) properties
-        bool isStroked() const;
-
-        KRenderingStrokePainter *strokePainter();
-        KRenderingPaintServer *strokePaintServer(const khtml::RenderStyle *style, const RenderPath*);
-        void overrideStrokePaintServer(KRenderingPaintServer *pserver);
+        static bool isFilled(const khtml::RenderStyle *style);
+        static KRenderingPaintServer *fillPaintServer(const khtml::RenderStyle *style, const RenderPath*);
 
         static double cssPrimitiveToLength(const RenderPath *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0);
-
-        // Fill (aka Brush) properties
-        bool isFilled() const;
-
-        KRenderingFillPainter *fillPainter();
-        KRenderingPaintServer *fillPaintServer(const khtml::RenderStyle *style, const RenderPath*);
-        void overrideFillPaintServer(KRenderingPaintServer *pserver);
-
-        const khtml::RenderStyle *renderStyle() const { return m_style; }
-        
-    private:
-        KCanvasRenderingStyle(const KCanvasRenderingStyle &other);
-
-        const khtml::RenderStyle *m_style;
-
-        // KCanvas stuff
-        KRenderingFillPainter *m_fillPainter;
-        KRenderingStrokePainter *m_strokePainter;
-
-        KRenderingPaintServer *m_fillPainterPaintServerOverride;
-        KRenderingPaintServer *m_strokePainterPaintServerOverride;
     };
 };
 

@@ -31,6 +31,7 @@
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
+#import "KCanvasRenderingStyle.h"
 #import "kxmlcore/Assertions.h"
 
 #import <QuartzCore/CoreImage.h>
@@ -88,26 +89,28 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-void applyStrokeStyleToContext(CGContextRef context, KSVG::KCanvasRenderingStyle *style)
+void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle *renderStyle, const RenderPath *renderPath)
 {
-    /* Shouldn't all these be in the stroke painter? */
-    CGContextSetLineWidth(context, style->strokePainter()->strokeWidth());
+    KRenderingStrokePainter strokePainter = KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderPath);
 
-    KCCapStyle capStyle = style->strokePainter()->strokeCapStyle();
+    /* Shouldn't all these be in the stroke painter? */
+    CGContextSetLineWidth(context, strokePainter.strokeWidth());
+
+    KCCapStyle capStyle = strokePainter.strokeCapStyle();
     CGContextSetLineCap(context, CGLineCapFromKC(capStyle));
 
-    KCJoinStyle joinStyle = style->strokePainter()->strokeJoinStyle();
+    KCJoinStyle joinStyle = strokePainter.strokeJoinStyle();
     CGContextSetLineJoin(context, CGLineJoinFromKC(joinStyle));
 
-    CGContextSetMiterLimit(context, style->strokePainter()->strokeMiterLimit());
+    CGContextSetMiterLimit(context, strokePainter.strokeMiterLimit());
 
-    KCDashArray dashes = style->strokePainter()->dashArray();
+    KCDashArray dashes = strokePainter.dashArray();
     if (dashes.count()) {
         size_t dashCount = dashes.count();
         float *lengths = (float *)malloc(dashCount * sizeof(float));
         for (unsigned int x = 0; x < dashCount; x++)
             lengths[x] = dashes[x];
-        CGContextSetLineDash(context, style->strokePainter()->dashOffset(), lengths, dashes.count());
+        CGContextSetLineDash(context, strokePainter.dashOffset(), lengths, dashes.count());
         free(lengths);
     }
 }

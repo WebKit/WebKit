@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ *               2006 Alexander Kellett <lypanov@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,30 +44,31 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 {
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
+    khtml::RenderStyle *renderStyle = args.renderStyle();
+    const RenderPath *renderPath = args.renderPath();
 
-    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
+    CGContextSetAlpha(context, renderStyle->opacity());
         
-    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
         CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->fillPainter()->opacity());
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).opacity());
         CGContextSetFillColorWithColor(context, withAlpha);
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
-        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD)
+        if (KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).fillRule() == RULE_EVENODD)
             CGContextEOFillPath(context);
         else
             CGContextFillPath(context);
     }
 
-    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
         CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, canvasStyle->strokePainter()->opacity());
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderPath).opacity());         
         CGContextSetStrokeColorWithColor(context, withAlpha);
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
         
-        applyStrokeStyleToContext(context, canvasStyle);
+        applyStrokeStyleToContext(context, renderStyle, renderPath);
         
         CGContextStrokePath(context);
     }
@@ -87,7 +89,8 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    KSVG::KCanvasRenderingStyle *canvasStyle = args.canvasStyle();
+    const RenderPath *renderPath = args.renderPath();
+    khtml::RenderStyle *renderStyle = args.renderStyle();
 
     KCanvasImage *cell = tile();
     if (!cell)
@@ -118,23 +121,23 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
         true, // has color
         &callbacks );
 
-    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity()); // or do I set the alpha above?
+    CGContextSetAlpha(context, renderStyle->opacity()); // or do I set the alpha above?
 
     CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
 
-    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
         CGContextSetFillColorSpace(context, patternSpace);
         CGContextSetFillPattern(context, pattern, &alpha);
-        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD)
+        if (KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).fillRule() == RULE_EVENODD)
             CGContextEOFillPath(context);
         else
             CGContextFillPath(context);
     }
-
-    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
+    
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
         CGContextSetStrokeColorSpace(context, patternSpace);
         CGContextSetStrokePattern(context, pattern, &alpha);
-        applyStrokeStyleToContext(context, canvasStyle);
+        applyStrokeStyleToContext(context, renderStyle, renderPath);
         CGContextStrokePath(context);
     }
 

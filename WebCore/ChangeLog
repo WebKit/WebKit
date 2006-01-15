@@ -1,3 +1,52 @@
+2006-01-14  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Refactor out cases of KCanvasRenderingStyle used as an instance to
+        store the current style. Temporarily unify the data passing via 
+        KCanvasCommonArgs.
+
+        * kcanvas/KCanvasItem.cpp: Removing override of setStyle used to hook
+        into KCanvasRenderingStyle::updateStyle.
+        (RenderPath::commonArgs): 
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (writeStyle):
+        * kcanvas/KCanvasTypes.h:
+        * kcanvas/device/KRenderingDevice.cpp:
+        (KCanvasCommonArgs::KCanvasCommonArgs):
+        (KCanvasCommonArgs::renderStyle):
+        (KCanvasCommonArgs::setRenderStyle):
+        (KCanvasCommonArgs::renderPath):
+        (KCanvasCommonArgs::setRenderPath):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint):
+        (KCanvasItemQuartz::bboxForPath):
+        (KCanvasItemQuartz::hitsPath):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (drawShadingWithStyle):
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw):
+        (KRenderingPaintServerPatternQuartz::draw):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (applyStrokeStyleToContext):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp: Remove overrideFillPaintServer
+        and overrideStrokePaintServer hacks and make most other methods
+        static, remove most instance variables.
+        (KCanvasRenderingStyle::KCanvasRenderingStyle):
+        (KCanvasRenderingStyle::isFilled):
+        (KCanvasRenderingStyle::fillPaintServer):
+        (KCanvasRenderingStyle::isStroked):
+        (KCanvasRenderingStyle::strokePaintServer):
+        (KCanvasRenderingStyle::strokePainter): Merged stroke logic in from
+        updateStyle.
+        (KCanvasRenderingStyle::fillPainter): Merged fill logic in from
+        updateStyle.
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
         Move loader_client.h to CachedObjectClient.h.

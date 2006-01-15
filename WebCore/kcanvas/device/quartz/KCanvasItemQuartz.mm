@@ -29,6 +29,7 @@
 
 #import <kxmlcore/Assertions.h>
 
+#import "kcanvas/RenderPath.h"
 #import "kcanvas/KCanvas.h"
 #import "KCanvasRenderingStyle.h"
 #import "KRenderingFillPainter.h"
@@ -170,7 +171,7 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
     if (!startMarker && !midMarker && !endMarker)
         return;
 
-    double strokeWidth = KSVG::KCanvasRenderingStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
+    double strokeWidth = KSVG::KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
 
     DrawMarkersData data(startMarker, midMarker, strokeWidth);
 
@@ -221,13 +222,13 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     
     KCanvasCommonArgs args = commonArgs();
 
-    KRenderingPaintServer *fillPaintServer = canvasStyle()->fillPaintServer(canvasStyle()->renderStyle(), this);
+    KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         deviceContext->addPath(path());
         fillPaintServer->setActiveClient(this);
         fillPaintServer->draw(deviceContext, args, APPLY_TO_FILL);
     }
-    KRenderingPaintServer *strokePaintServer = canvasStyle()->strokePaintServer(canvasStyle()->renderStyle(), this);
+    KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         deviceContext->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
@@ -291,13 +292,13 @@ FloatRect KCanvasItemQuartz::bboxForPath(bool includeStroke) const
     // the bbox might grow if the path is stroked.
     // and CGPathGetBoundingBox doesn't support that, so we'll have
     // to make an alternative call...
-    if(includeStroke && canvasStyle()->isStroked()) {
+    if (includeStroke && KSVG::KSVGPainterFactory::isStroked(style())) {
         CGContextRef sharedContext = getSharedContext();
         
         CGContextSaveGState(sharedContext);
         CGContextBeginPath(sharedContext);
         CGContextAddPath(sharedContext, cgPath);
-        applyStrokeStyleToContext(sharedContext, canvasStyle());
+        applyStrokeStyleToContext(sharedContext, style(), this);
         CGContextReplacePathWithStrokedPath(sharedContext);
         
         bbox = CGContextGetPathBoundingBox(sharedContext);
@@ -326,10 +327,10 @@ bool KCanvasItemQuartz::hitsPath(const FloatPoint &hitPoint, bool fill) const
     /* we transform the hit point locally, instead of translating the shape to the hit point. */
     CGPoint localHitPoint = CGPointApplyAffineTransform(CGPoint(hitPoint), CGAffineTransformInvert(transform));
 
-    if (fill && canvasStyle()->fillPaintServer(style(), this)) {
-        CGPathDrawingMode drawMode = (canvasStyle()->fillPainter()->fillRule() == RULE_EVENODD) ? kCGPathEOFill : kCGPathFill;
+    if (fill && KSVG::KSVGPainterFactory::fillPaintServer(style(), this)) {
+        CGPathDrawingMode drawMode = (KSVG::KSVGPainterFactory::fillPainter(style(), this).fillRule() == RULE_EVENODD) ? kCGPathEOFill : kCGPathFill;
         hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, drawMode);
-    } else if (!fill && canvasStyle()->strokePaintServer(style(), this))
+    } else if (!fill && KSVG::KSVGPainterFactory::strokePaintServer(style(), this))
         hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, kCGPathStroke);
 
     CGContextRestoreGState(sharedContext);

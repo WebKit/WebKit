@@ -40,8 +40,10 @@
 
 
 // Maybe this should be in a base class instead...
-static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, KSVG::KCanvasRenderingStyle *canvasStyle, KCPaintTargetType type)
+static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const KCanvasCommonArgs &args, KCPaintTargetType type)
 {
+    khtml::RenderStyle *renderStyle = args.renderStyle();
+    const RenderPath *renderPath = args.renderPath();
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     ASSERT(context != NULL);
@@ -64,11 +66,11 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
     CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
     CGContextConcatCTM(context, gradientTransform);
     
-    CGContextSetAlpha(context, canvasStyle->renderStyle()->opacity());
+    CGContextSetAlpha(context, renderStyle->opacity());
     
-    if ( (type & APPLY_TO_FILL) && canvasStyle->isFilled() ) {
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
         CGContextSaveGState(context);
-        if (canvasStyle->fillPainter()->fillRule() == RULE_EVENODD) {
+        if (KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).fillRule() == RULE_EVENODD) {
             CGContextEOClip(context);
         } else {
             CGContextClip(context);
@@ -77,9 +79,9 @@ static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CG
         CGContextRestoreGState(context);
     }
     
-    if ( (type & APPLY_TO_STROKE) && canvasStyle->isStroked() ) {
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
         CGContextSaveGState(context);
-        applyStrokeStyleToContext(context, canvasStyle); // FIXME: this seems like the wrong place for this.
+        applyStrokeStyleToContext(context, renderStyle, renderPath); // FIXME: this seems like the wrong place for this.
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
         CGContextDrawShading(context, shading);
@@ -298,7 +300,7 @@ void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerLinearGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args.canvasStyle(), type);
+    drawShadingWithStyle(this, m_shadingCache, args, type);
 }
 
 void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
@@ -311,5 +313,5 @@ void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerRadialGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args.canvasStyle(), type);
+    drawShadingWithStyle(this, m_shadingCache, args, type);
 }

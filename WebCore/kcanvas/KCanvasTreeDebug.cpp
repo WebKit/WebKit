@@ -243,49 +243,48 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
         const RenderPath &path = static_cast<const RenderPath &>(object);
-        KCanvasRenderingStyle *canvasStyle = path.canvasStyle();
-        if (canvasStyle->isStroked()) {
+        KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style, &path);
+        if (strokePaintServer) {
             QTextStreamSeparator s(" ");
             ts << " [stroke={";
-            KRenderingPaintServer *strokePaintServer = canvasStyle->strokePaintServer(style, &path);
             if (strokePaintServer) {
                 if (!strokePaintServer->idInRegistry().isEmpty())
                     ts << s << "[id=\""<< strokePaintServer->idInRegistry() << "\"]"; 
                 else
                     ts << s << *strokePaintServer;
             } 
-            KRenderingStrokePainter *p = canvasStyle->strokePainter();
-            if (p->opacity() != 1.0f)
-                ts << s << "[opacity=" << p->opacity() << "]";
-            if (p->strokeWidth() != 1.0f)
-                ts << s << "[stroke width=" << p->strokeWidth() << "]";
-            if (p->strokeMiterLimit() != 4)
-                ts << s << "[miter limit=" << p->strokeMiterLimit() << "]";
-            if (p->strokeCapStyle() != 1)
-                ts << s << "[line cap=" << p->strokeCapStyle() << "]";
-            if (p->strokeJoinStyle() != 1)
-                ts << s << "[line join=" << p->strokeJoinStyle() << "]";
-            if (p->dashOffset() != 0.0f)
-                ts << s << "[dash offset=" << p->dashOffset() << "]";
-            if (!p->dashArray().isEmpty())
-                ts << s << "[dash array=" << p->dashArray() << "]";        
+            KRenderingStrokePainter p = KSVG::KSVGPainterFactory::strokePainter(style, &path);
+            if (p.opacity() != 1.0f)
+                ts << s << "[opacity=" << p.opacity() << "]";
+            if (p.strokeWidth() != 1.0f)
+                ts << s << "[stroke width=" << p.strokeWidth() << "]";
+            if (p.strokeMiterLimit() != 4)
+                ts << s << "[miter limit=" << p.strokeMiterLimit() << "]";
+            if (p.strokeCapStyle() != 1)
+                ts << s << "[line cap=" << p.strokeCapStyle() << "]";
+            if (p.strokeJoinStyle() != 1)
+                ts << s << "[line join=" << p.strokeJoinStyle() << "]";
+            if (p.dashOffset() != 0.0f)
+                ts << s << "[dash offset=" << p.dashOffset() << "]";
+            if (!p.dashArray().isEmpty())
+                ts << s << "[dash array=" << p.dashArray() << "]";        
             ts << "}]";
         }
-        if (canvasStyle->isFilled()) {
+        KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style, &path);
+        if (fillPaintServer) {
             QTextStreamSeparator s(" ");
             ts << " [fill={";
-            KRenderingPaintServer *fillPaintServer = canvasStyle->fillPaintServer(style, &path);
             if (fillPaintServer) {
                 if (!fillPaintServer->idInRegistry().isEmpty())
                     ts << s << "[id=\"" << fillPaintServer->idInRegistry() << "\"]";
                 else
                     ts << s << *fillPaintServer;
             }
-            KRenderingFillPainter *p = canvasStyle->fillPainter();
-            if (p->opacity() != 1.0f)
-                ts << s << "[opacity=" << p->opacity() << "]";
-            if (p->fillRule() != RULE_NONZERO)
-                ts << s << "[fill rule=" << p->fillRule() << "]";
+            KRenderingFillPainter p = KSVG::KSVGPainterFactory::fillPainter(style, &path);
+            if (p.opacity() != 1.0f)
+                ts << s << "[opacity=" << p.opacity() << "]";
+            if (p.fillRule() != RULE_NONZERO)
+                ts << s << "[fill rule=" << p.fillRule() << "]";
             ts << "}]";
         }
     }

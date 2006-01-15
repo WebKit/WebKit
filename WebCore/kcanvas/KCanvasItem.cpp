@@ -40,17 +40,6 @@
 class RenderPath::Private
 {
 public:
-    Private()
-    {
-        style = 0;
-    }
-
-    ~Private()
-    {
-        delete style;
-    }
-
-    KSVG::KCanvasRenderingStyle *style;
     RefPtr<KCanvasPath> path;
 
     FloatRect fillBBox, strokeBbox;
@@ -61,18 +50,11 @@ public:
 RenderPath::RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderObject((DOM::NodeImpl *)node), d(new Private())
 {
     Q_ASSERT(style != 0);
-    d->style = new KSVG::KCanvasRenderingStyle(style);
 }
 
 RenderPath::~RenderPath()
 {
     delete d;
-}
-
-void RenderPath::setStyle(khtml::RenderStyle *style)
-{
-    d->style->updateStyle(style, this);
-    khtml::RenderObject::setStyle(style);
 }
 
 QMatrix RenderPath::localTransform() const
@@ -87,7 +69,7 @@ void RenderPath::setLocalTransform(const QMatrix &matrix)
 
 bool RenderPath::fillContains(const FloatPoint &p) const
 {
-    if(d->path && d->style)
+    if(d->path)
         return hitsPath(p, true);
 
     return false;
@@ -95,7 +77,7 @@ bool RenderPath::fillContains(const FloatPoint &p) const
 
 bool RenderPath::strokeContains(const FloatPoint &p) const
 {
-    if(d->path && d->style)
+    if(d->path)
         return hitsPath(p, false);
 
     return false;
@@ -131,16 +113,12 @@ KCanvasPath* RenderPath::path() const
     return d->path.get();
 }
 
-KSVG::KCanvasRenderingStyle *RenderPath::canvasStyle() const
-{
-    return d->style;
-}
-
 const KCanvasCommonArgs RenderPath::commonArgs() const
 {
     KCanvasCommonArgs args;
     args.setPath(path());
-    args.setStyle(canvasStyle());
+    args.setRenderStyle(style());
+    args.setRenderPath(this);
     return args;
 }
 

@@ -25,13 +25,14 @@
 
 
 #import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
+class RenderPath;
 
 namespace WebCore {
     class IntRect;
 }
 
-namespace KSVG {
-    class SVGRenderStyle;
+namespace khtml {
+    class RenderStyle;
 }
 
 #ifndef NDEBUG
@@ -44,7 +45,7 @@ CFStringRef CFStringFromCGPath(CGPathRef path);
 CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
 
-void applyStrokeStyleToContext(CGContextRef context, KSVG::KCanvasRenderingStyle *style);
+void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle *style, const RenderPath *renderPath);
 
 static inline CGLineCap CGLineCapFromKC( KCCapStyle cap) {
     if (cap == CAP_BUTT)
