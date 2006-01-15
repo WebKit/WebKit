@@ -28,7 +28,6 @@
 #define KRenderingDeviceQuartz_H
 
 #import <kcanvas/device/KRenderingDevice.h>
-#import "KCanvasTypes.h"
 
 typedef struct CGRect CGRect;
 typedef struct CGContext *CGContextRef;

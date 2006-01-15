@@ -30,7 +30,6 @@
 #include "SVGStyledLocatableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-#include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/KCanvasResourceListener.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 #include <kcanvas/device/KRenderingPaintServerPattern.h>

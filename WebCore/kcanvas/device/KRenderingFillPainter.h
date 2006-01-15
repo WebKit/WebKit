@@ -24,7 +24,6 @@
 #define KRenderingFillPainter_H
 
 #include <kcanvas/KCanvasPath.h>
-#include <kcanvas/KCanvasTypes.h>
 
 class KRenderingPaintServer;
 class KRenderingDeviceContext;

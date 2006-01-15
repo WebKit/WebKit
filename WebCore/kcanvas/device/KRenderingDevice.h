@@ -27,7 +27,6 @@
 #include <qobject.h>
 #include <q3ptrstack.h>
 
-#include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 

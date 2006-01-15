@@ -30,7 +30,6 @@
 #include <q3valuelist.h>
 #include "FloatRect.h"
 
-#include <kcanvas/KCanvasTypes.h>
 #include "khtml/rendering/render_object.h"
 
 namespace WebCore {
@@ -41,6 +40,7 @@ namespace KSVG {
     class SVGStyledElementImpl;
 };
 
+class KCanvasPath;
 class KCanvasContainer;
 class KCanvasMatrix;
 class RenderPath : public khtml::RenderObject
@@ -67,7 +67,6 @@ public:
     
 protected:
     // restricted set of args for passing to paint servers, etc.
-    const KCanvasCommonArgs commonArgs() const;
     virtual bool hitsPath(const WebCore::FloatPoint &hitPoint, bool fill) const = 0;
     virtual FloatRect bboxForPath(bool includeStroke) const = 0;
 

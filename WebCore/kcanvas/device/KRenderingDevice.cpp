@@ -24,47 +24,6 @@
 #include "config.h"
 #include "KRenderingDevice.h"
 
-KCanvasCommonArgs::KCanvasCommonArgs()
-{
-    m_path = 0;
-    m_renderStyle = 0;
-    m_renderPath = 0;
-}
-
-KCanvasCommonArgs::~KCanvasCommonArgs()
-{
-}
-
-KCanvasPath* KCanvasCommonArgs::path() const
-{
-    return m_path.get();
-}
-
-void KCanvasCommonArgs::setPath(KCanvasPath* path)
-{
-    m_path = path;
-}
-
-khtml::RenderStyle *KCanvasCommonArgs::renderStyle() const
-{
-    return m_renderStyle;
-}
-
-void KCanvasCommonArgs::setRenderStyle(khtml::RenderStyle *renderStyle)
-{
-    m_renderStyle = renderStyle;
-}
-
-const RenderPath* KCanvasCommonArgs::renderPath() const
-{
-    return m_renderPath;
-}
-
-void KCanvasCommonArgs::setRenderPath(const RenderPath *renderPath)
-{
-    m_renderPath = renderPath;
-}
-
 KRenderingDevice::KRenderingDevice()
 {
 }

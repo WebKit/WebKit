@@ -1,3 +1,35 @@
+2006-01-15  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed and landed by Anders.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6553
+        Remove KCanvasCommonArgs and pass around RenderPath objects instead.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasCreator.h:
+        * kcanvas/KCanvasItem.cpp:
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasTypes.h: Removed.
+        * kcanvas/device/KRenderingDevice.cpp:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingFillPainter.h:
+        * kcanvas/device/KRenderingPaintServer.h:
+        * kcanvas/device/KRenderingStrokePainter.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (drawShadingWithStyle):
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw):
+        (KRenderingPaintServerPatternQuartz::draw):
+        (KRenderingPaintServerImageQuartz::draw):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/svg/SVGPatternElementImpl.h:
+
 2006-01-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

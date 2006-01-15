@@ -113,13 +113,4 @@ KCanvasPath* RenderPath::path() const
     return d->path.get();
 }
 
-const KCanvasCommonArgs RenderPath::commonArgs() const
-{
-    KCanvasCommonArgs args;
-    args.setPath(path());
-    args.setRenderStyle(style());
-    args.setRenderPath(this);
-    return args;
-}
-
 // vim:ts=4:noet

@@ -27,7 +27,6 @@
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasPath.h>
-#include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingStrokePainter.h>

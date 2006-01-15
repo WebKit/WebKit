@@ -23,7 +23,6 @@
 #ifndef KRenderingPaintServer_H
 #define KRenderingPaintServer_H
 
-#include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/KCanvasResources.h>
 
 // Enumerations
@@ -43,6 +42,10 @@ typedef enum
     APPLY_TO_FILL = 1,
     APPLY_TO_STROKE = 2
 } KCPaintTargetType;
+
+namespace khtml {
+    class RenderStyle;
+}
 
 class QTextStream;
 class RenderPath;
@@ -64,7 +67,7 @@ public:
     virtual KCPaintServerType type() const = 0;
 
     // Actual rendering function
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const = 0;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const = 0;
 
     virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
 private:

@@ -33,19 +33,19 @@
 class KRenderingPaintServerSolidQuartz : public KRenderingPaintServerSolid {
 public:
     KRenderingPaintServerSolidQuartz() {};
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerPatternQuartz : public KRenderingPaintServerPattern {
 public:
     KRenderingPaintServerPatternQuartz() {};
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerImageQuartz : public KRenderingPaintServerImage {
 public:
     KRenderingPaintServerImageQuartz() {};
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };
 
 typedef struct {
@@ -79,7 +79,7 @@ class KRenderingPaintServerLinearGradientQuartz : public KRenderingPaintServerLi
 public:
     KRenderingPaintServerLinearGradientQuartz() {};
     virtual void invalidate();
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerRadialGradientQuartz : public KRenderingPaintServerRadialGradient,
@@ -87,5 +87,5 @@ class KRenderingPaintServerRadialGradientQuartz : public KRenderingPaintServerRa
 public:
     KRenderingPaintServerRadialGradientQuartz() {};
     virtual void invalidate();
-    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };

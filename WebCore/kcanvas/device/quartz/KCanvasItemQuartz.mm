@@ -220,19 +220,17 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     deviceContext->clearPath();
     
-    KCanvasCommonArgs args = commonArgs();
-
     KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         deviceContext->addPath(path());
         fillPaintServer->setActiveClient(this);
-        fillPaintServer->draw(deviceContext, args, APPLY_TO_FILL);
+        fillPaintServer->draw(deviceContext, this, APPLY_TO_FILL);
     }
     KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         deviceContext->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
-        strokePaintServer->draw(deviceContext, args, APPLY_TO_STROKE);
+        strokePaintServer->draw(deviceContext, this, APPLY_TO_STROKE);
     }
 
     drawMarkersIfNeeded(paintInfo.r, path());

@@ -40,12 +40,11 @@
 
 #import "KWQLogging.h"
 
-void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
+void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
 {
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    khtml::RenderStyle *renderStyle = args.renderStyle();
-    const RenderPath *renderPath = args.renderPath();
+    khtml::RenderStyle *renderStyle = renderPath->style();
 
     CGContextSetAlpha(context, renderStyle->opacity());
         
@@ -82,15 +81,15 @@ void patternCallback(void *info, CGContextRef context)
     CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
-void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
+void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
 
+    khtml::RenderStyle *renderStyle = renderPath->style();
+
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    const RenderPath *renderPath = args.renderPath();
-    khtml::RenderStyle *renderStyle = args.renderStyle();
 
     KCanvasImage *cell = tile();
     if (!cell)
@@ -147,7 +146,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     CGContextRestoreGState(context);
 }
 
-void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
+void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
 {
     // FIXME: total hack
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);

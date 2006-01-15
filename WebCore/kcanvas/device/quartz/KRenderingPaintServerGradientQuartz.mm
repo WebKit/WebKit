@@ -40,12 +40,11 @@
 
 
 // Maybe this should be in a base class instead...
-static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const KCanvasCommonArgs &args, KCPaintTargetType type)
+static void drawShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const RenderPath *renderPath, KCPaintTargetType type)
 {
-    khtml::RenderStyle *renderStyle = args.renderStyle();
-    const RenderPath *renderPath = args.renderPath();
     KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
+    khtml::RenderStyle *renderStyle = renderPath->style();
     ASSERT(context != NULL);
     
     CGContextSaveGState(context);
@@ -290,7 +289,7 @@ void KRenderingPaintServerRadialGradientQuartz::invalidate()
     KRenderingPaintServerRadialGradient::invalidate();
 }
 
-void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
+void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
@@ -300,10 +299,10 @@ void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerLinearGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args, type);
+    drawShadingWithStyle(this, m_shadingCache, renderPath, type);
 }
 
-void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
+void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
@@ -313,5 +312,5 @@ void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *re
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerRadialGradientQuartz *>(this)->updateQuartzGradientCache(this);
     
-    drawShadingWithStyle(this, m_shadingCache, args, type);
+    drawShadingWithStyle(this, m_shadingCache, renderPath, type);
 }

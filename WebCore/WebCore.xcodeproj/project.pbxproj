@@ -1244,7 +1244,6 @@
 		A88AD3C70952486E001DD196 /* KCanvasResourceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB89089701F800BA5114 /* KCanvasResourceListener.h */; };
 		A88AD3C80952486E001DD196 /* KCanvasResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */; };
 		A88AD3C90952486E001DD196 /* KCanvasResources.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB8B089701F800BA5114 /* KCanvasResources.h */; };
-		A88AD3CA0952486E001DD196 /* KCanvasTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */; };
 		A88AD3CB0952486E001DD196 /* KCanvasTreeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */; };
 		A88AD3CC0952486E001DD196 /* KCanvasTreeDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */; };
 		A88AD3FF095248F0001DD196 /* svg.css in Resources */ = {isa = PBXBuildFile; fileRef = A8C0F6F8089701F100BA5114 /* svg.css */; };
@@ -2398,7 +2397,6 @@
 		A8C0FB89089701F800BA5114 /* KCanvasResourceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasResourceListener.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasResources.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB8B089701F800BA5114 /* KCanvasResources.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasResources.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTypes.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = WKArithmeticFilter.cikernel; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WKArithmeticFilter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WKArithmeticFilter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3558,7 +3556,6 @@
 				A8C0FB89089701F800BA5114 /* KCanvasResourceListener.h */,
 				A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */,
 				A8C0FB8B089701F800BA5114 /* KCanvasResources.h */,
-				A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */,
 				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
 				A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */,
 			);
@@ -4760,7 +4757,6 @@
 				A88AD3C50952486E001DD196 /* KCanvasPath.h in Headers */,
 				A88AD3C70952486E001DD196 /* KCanvasResourceListener.h in Headers */,
 				A88AD3C90952486E001DD196 /* KCanvasResources.h in Headers */,
-				A88AD3CA0952486E001DD196 /* KCanvasTypes.h in Headers */,
 				A88AD3CB0952486E001DD196 /* KCanvasTreeDebug.h in Headers */,
 				A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */,
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,

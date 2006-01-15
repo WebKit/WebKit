@@ -23,7 +23,6 @@
 #ifndef KRenderingStrokePainter_H
 #define KRenderingStrokePainter_H
 
-#include <kcanvas/KCanvasTypes.h>
 #include "KCanvasRenderingStyle.h"
 
 namespace KSVG {

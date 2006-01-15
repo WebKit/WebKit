@@ -24,7 +24,6 @@
 #define KCanvasCreator_H
 
 #include <kcanvas/KCanvasPath.h>
-#include <kcanvas/KCanvasTypes.h>
 
 class KCanvasCreator
 {
