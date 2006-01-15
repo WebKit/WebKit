@@ -86,7 +86,7 @@ public:
     enum ErrorType { warning, nonFatal, fatal };
 
     // from Tokenizer
-    virtual bool write(const TokenizerString &str, bool);
+    virtual bool write(const SegmentedString &str, bool);
     virtual void finish();
     virtual void setOnHold(bool onHold);
     virtual bool isWaitingForScripts() const;
@@ -289,7 +289,7 @@ void XMLTokenizer::setCurrentNode(NodeImpl* n)
     m_currentNodeIsReferenced = nodeNeedsReference;
 }
 
-bool XMLTokenizer::write(const TokenizerString &s, bool /*appendData*/ )
+bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
 {
     m_xmlCode += s.toString();
     return false;

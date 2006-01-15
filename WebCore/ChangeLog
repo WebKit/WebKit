@@ -1,3 +1,40 @@
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
+        Rename TokenizerString to SegmentedString and place it in the platform directory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::processListing):
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::scriptExecution):
+        (khtml::HTMLTokenizer::parseComment):
+        (khtml::HTMLTokenizer::parseServer):
+        (khtml::HTMLTokenizer::parseProcessingInstruction):
+        (khtml::HTMLTokenizer::parseText):
+        (khtml::HTMLTokenizer::parseEntity):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::timerEvent):
+        (khtml::HTMLTokenizer::notifyFinished):
+        (khtml::HTMLTokenizer::setSrc):
+        * khtml/html/htmltokenizer.h:
+        * khtml/misc/stringit.cpp: Removed.
+        * khtml/misc/stringit.h: Removed.
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::write):
+        * khtml/xml/xml_tokenizer.h:
+        * platform/SegmentedString.cpp: Added.
+        (WebCore::SegmentedString::length):
+        (WebCore::SegmentedString::clear):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::advanceSubstring):
+        (WebCore::SegmentedString::toString):
+        * platform/SegmentedString.h: Added.
+        (WebCore::SegmentedSubstring::SegmentedSubstring):
+        (WebCore::SegmentedString::SegmentedString):
+
 2006-01-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

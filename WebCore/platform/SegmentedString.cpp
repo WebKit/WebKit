@@ -1,7 +1,7 @@
 /*
     This file is part of the KDE libraries
 
-    Copyright (C) 2004 Apple Computer
+    Copyright (C) 2004-6 Apple Computer
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,11 +20,11 @@
 */
 
 #include "config.h"
-#include "stringit.h"
+#include "SegmentedString.h"
 
-namespace khtml {
+namespace WebCore {
 
-uint TokenizerString::length() const
+uint SegmentedString::length() const
 {
     uint length = m_currentString.m_length;
     if (!m_pushedChar1.isNull()) {
@@ -33,15 +33,15 @@ uint TokenizerString::length() const
             ++length;
     }
     if (m_composite) {
-        QValueListConstIterator<TokenizerSubstring> i = m_substrings.begin();
-        QValueListConstIterator<TokenizerSubstring> e = m_substrings.end();
+        QValueListConstIterator<SegmentedSubstring> i = m_substrings.begin();
+        QValueListConstIterator<SegmentedSubstring> e = m_substrings.end();
         for (; i != e; ++i)
             length += (*i).m_length;
     }
     return length;
 }
 
-void TokenizerString::clear()
+void SegmentedString::clear()
 {
     m_pushedChar1 = 0;
     m_pushedChar2 = 0;
@@ -52,7 +52,7 @@ void TokenizerString::clear()
     m_composite = false;
 }
 
-void TokenizerString::append(const TokenizerSubstring &s)
+void SegmentedString::append(const SegmentedSubstring &s)
 {
     if (s.m_length) {
         if (!m_currentString.m_length) {
@@ -64,7 +64,7 @@ void TokenizerString::append(const TokenizerSubstring &s)
     }
 }
 
-void TokenizerString::prepend(const TokenizerSubstring &s)
+void SegmentedString::prepend(const SegmentedSubstring &s)
 {
     assert(!escaped());
     if (s.m_length) {
@@ -79,26 +79,26 @@ void TokenizerString::prepend(const TokenizerSubstring &s)
     }
 }
 
-void TokenizerString::append(const TokenizerString &s)
+void SegmentedString::append(const SegmentedString &s)
 {
     assert(!s.escaped());
     append(s.m_currentString);
     if (s.m_composite) {
-        QValueListConstIterator<TokenizerSubstring> i = s.m_substrings.begin();
-        QValueListConstIterator<TokenizerSubstring> e = s.m_substrings.end();
+        QValueListConstIterator<SegmentedSubstring> i = s.m_substrings.begin();
+        QValueListConstIterator<SegmentedSubstring> e = s.m_substrings.end();
         for (; i != e; ++i)
             append(*i);
     }
     m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
 }
 
-void TokenizerString::prepend(const TokenizerString &s)
+void SegmentedString::prepend(const SegmentedString &s)
 {
     assert(!escaped());
     assert(!s.escaped());
     if (s.m_composite) {
-        QValueListConstIterator<TokenizerSubstring> i = s.m_substrings.fromLast();
-        QValueListConstIterator<TokenizerSubstring> e = s.m_substrings.end();
+        QValueListConstIterator<SegmentedSubstring> i = s.m_substrings.fromLast();
+        QValueListConstIterator<SegmentedSubstring> e = s.m_substrings.end();
         for (; i != e; --i)
             prepend(*i);
     }
@@ -106,7 +106,7 @@ void TokenizerString::prepend(const TokenizerString &s)
     m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
 }
 
-void TokenizerString::advanceSubstring()
+void SegmentedString::advanceSubstring()
 {
     if (m_composite) {
         m_currentString = m_substrings.first();
@@ -118,7 +118,7 @@ void TokenizerString::advanceSubstring()
     }
 }
 
-QString TokenizerString::toString() const
+QString SegmentedString::toString() const
 {
     QString result;
     if (!m_pushedChar1.isNull()) {
@@ -128,8 +128,8 @@ QString TokenizerString::toString() const
     }
     m_currentString.appendTo(result);
     if (m_composite) {
-        QValueListConstIterator<TokenizerSubstring> i = m_substrings.begin();
-        QValueListConstIterator<TokenizerSubstring> e = m_substrings.end();
+        QValueListConstIterator<SegmentedSubstring> i = m_substrings.begin();
+        QValueListConstIterator<SegmentedSubstring> e = m_substrings.end();
         for (; i != e; ++i)
             (*i).appendTo(result);
     }
