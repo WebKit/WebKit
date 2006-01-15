@@ -1,3 +1,92 @@
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        break classes in dom_nodeimpl.* into separate files (one per class)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6543
+
+        * ForwardingHeaders/kdom/core/NodeImpl.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * khtml/css/css_base.h:
+        * khtml/css/css_stylesheetimpl.cpp:
+        * khtml/css/css_valueimpl.cpp:
+        * khtml/css/css_valueimpl.h:
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/append_node_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_node_before_command.cpp:
+        * khtml/editing/remove_node_attribute_command.h:
+        * khtml/editing/remove_node_command.cpp:
+        * khtml/editing/remove_node_preserving_children_command.cpp:
+        * khtml/editing/set_node_attribute_command.h:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/visible_text.cpp:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/khtml_events.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        * khtml/rendering/render_flow.cpp:
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_object.h:
+        * khtml/xml/ChildNodeListImpl.cpp: Added.
+        * khtml/xml/ChildNodeListImpl.h: Added.
+        * khtml/xml/ContainerNodeImpl.cpp: Added.
+        (DOM::ContainerNodeImpl::removeAllChildren):
+        (DOM::ContainerNodeImpl::checkSameDocument):
+        (DOM::ContainerNodeImpl::getRect):
+        (DOM::ContainerNodeImpl::dispatchChildRemovalEvents):
+        * khtml/xml/ContainerNodeImpl.h: Added.
+        * khtml/xml/DocumentFragmentImpl.cpp:
+        * khtml/xml/DocumentFragmentImpl.h:
+        * khtml/xml/DocumentImpl.cpp:
+        * khtml/xml/DocumentImpl.h:
+        (DOM::DocumentImpl::setTextColor):
+        * khtml/xml/DocumentTypeImpl.cpp:
+        * khtml/xml/DocumentTypeImpl.h:
+        * khtml/xml/NameNodeListImpl.cpp: Added.
+        * khtml/xml/NameNodeListImpl.h: Added.
+        * khtml/xml/NamedNodeMapImpl.h: Added.
+        (DOM::NamedNodeMapImpl::NamedNodeMapImpl):
+        (DOM::NamedNodeMapImpl::~NamedNodeMapImpl):
+        * khtml/xml/NodeImpl.cpp: Added.
+        (DOM::TagNodeListImpl::TagNodeListImpl):
+        (DOM::TagNodeListImpl::length):
+        (DOM::TagNodeListImpl::item):
+        (DOM::TagNodeListImpl::nodeMatches):
+        (DOM::NodeImpl::getRect):
+        * khtml/xml/NodeImpl.h: Added.
+        * khtml/xml/NodeListImpl.cpp: Added.
+        * khtml/xml/NodeListImpl.h: Added.
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp: Removed.
+        * khtml/xml/dom_nodeimpl.h: Removed.
+        * khtml/xml/dom_position.cpp:
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xml/xml_tokenizer.cpp:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        * khtml/xsl/xslt_processorimpl.h:
+        * ksvg2/svg/SVGURIReferenceImpl.cpp:
+        * kwq/DOM.mm:
+        * kwq/DOMHTML.mm:
+        * kwq/DOMUtility.mm:
+        * kwq/KWQClipboard.h:
+        * page/FrameView.cpp:
+
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
         Convert QMemArray to Array.  QByteArray becomes ByteArray.
