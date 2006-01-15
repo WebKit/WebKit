@@ -53,7 +53,9 @@
 using khtml::EAffinity;
 using khtml::InlineBox;
 using khtml::InlineTextBox;
+using khtml::isAtomicNode;
 using khtml::isCollapsibleWhitespace;
+using khtml::maxDeepOffset;
 using khtml::RenderBlock;
 using khtml::RenderFlow;
 using khtml::RenderObject;

@@ -1,5 +1,15 @@
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
+        Win32 finds more khtml namespace issues with the movement
+        of Shared that gcc missed.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::text):
+        * khtml/xml/dom_position.cpp:
+
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
         Move shared.h from khtml/misc into the platform directory and move it into the WebCore namespace.
 
         Reviewed by eseidel

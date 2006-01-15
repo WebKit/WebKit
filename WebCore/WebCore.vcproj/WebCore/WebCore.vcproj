@@ -1962,10 +1962,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\misc\shared.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\misc\stringit.cpp"
 					>
 				</File>
@@ -2208,6 +2204,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\IntSize.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Shared.h"
 				>
 			</File>
 		</Filter>
