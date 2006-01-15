@@ -23,6 +23,7 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_CachedObject_h
 #define KHTML_CachedObject_h
 
@@ -34,7 +35,6 @@
 #include <qptrlist.h>
 #include <qobject.h>
 #include <qptrdict.h>
-#include <qdict.h>
 #include <qpixmap.h>
 #include <qbuffer.h>
 #include <qstringlist.h>
@@ -225,6 +225,6 @@ namespace khtml
         friend class Cache;
     };
 
-};
+}
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3075,15 +3075,14 @@ WebCoreKeyboardUIMode MacFrame::keyboardUIMode() const
     return WebCoreKeyboardAccessDefault;
 }
 
-void MacFrame::didTellBridgeAboutLoad(const QString &urlString)
+void MacFrame::didTellBridgeAboutLoad(const DOM::DOMString& URL)
 {
-    static char dummy;
-    urlsBridgeKnowsAbout.insert(urlString, &dummy);
+    urlsBridgeKnowsAbout.insert(URL.impl());
 }
 
-bool MacFrame::haveToldBridgeAboutLoad(const QString &urlString)
+bool MacFrame::haveToldBridgeAboutLoad(const DOM::DOMString& URL)
 {
-    return urlsBridgeKnowsAbout.find(urlString) != 0;
+    return urlsBridgeKnowsAbout.contains(URL.impl());
 }
 
 void MacFrame::clear()

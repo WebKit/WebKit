@@ -74,10 +74,10 @@ bool DocLoader::needReload(const KURL &fullURL)
     {
        if (!m_reloadedURLs.contains(fullURL.url()))
        {
-          CachedObject *existing = Cache::cache->find(fullURL.url());
+          CachedObject* existing = Cache::get(fullURL.url());
           if (existing && existing->isExpired())
           {
-             Cache::removeCacheEntry(existing);
+             Cache::remove(existing);
              m_reloadedURLs.append(fullURL.url());
              reload = true;
           }
@@ -87,11 +87,9 @@ bool DocLoader::needReload(const KURL &fullURL)
     {
        if (!m_reloadedURLs.contains(fullURL.url()))
        {
-          CachedObject *existing = Cache::cache->find(fullURL.url());
+          CachedObject* existing = Cache::get(fullURL.url());
           if (existing)
-          {
-             Cache::removeCacheEntry(existing);
-          }
+             Cache::remove(existing);
           m_reloadedURLs.append(fullURL.url());
           reload = true;
        }
@@ -99,7 +97,7 @@ bool DocLoader::needReload(const KURL &fullURL)
     return reload;
 }
 
-CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
+CachedImage *DocLoader::requestImage(const DOM::DOMString &url)
 {
     KURL fullURL = m_doc->completeURL(url.qstring());
     if ( m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;

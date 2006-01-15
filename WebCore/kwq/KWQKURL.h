@@ -51,7 +51,6 @@ public:
     bool isValid() const { return m_isValid; }
     bool hasPath() const;
 
-    QString canonicalURL() const;
     QString url() const { return urlString; }
 
     QString protocol() const;
@@ -93,13 +92,6 @@ private:
     bool isHierarchical() const;
     void parse(const char *url, const QString *originalString);
 
-#ifdef CONSTRUCT_CANONICAL_STRING
-    QString _path() const;
-    QString _user() const;
-    QString _pass() const;
-    QString _host() const;
-#endif
-    
     QString urlString;
     bool m_isValid;
     int schemeEndPos;

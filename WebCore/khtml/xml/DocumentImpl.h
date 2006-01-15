@@ -26,39 +26,34 @@
 #ifndef DOM_DocumentImpl_h
 #define DOM_DocumentImpl_h
 
-#include "xml/dom_elementimpl.h"
-#include "xml/dom2_traversalimpl.h"
-#include "Shared.h"
-
-#include <qstringlist.h>
-#include <qptrlist.h>
-#include <qobject.h>
-#include <qdict.h>
-#include <qptrdict.h>
-#include <qmap.h>
-#include <qdatetime.h>
-#include <qcolor.h>
-
-#include <kurl.h>
-
 #include "KWQSignal.h"
+#include "Shared.h"
 #include "decoder.h"
-
+#include "xml/dom2_traversalimpl.h"
+#include "xml/dom_elementimpl.h"
+#include <kurl.h>
+#include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
+#include <qcolor.h>
+#include <qdatetime.h>
+#include <qmap.h>
+#include <qobject.h>
+#include <qptrdict.h>
+#include <qptrlist.h>
+#include <qstringlist.h>
 
+class Frame;
+class KHTMLView;
+class KWQAccObjectCache;
 class QPaintDevice;
 class QPaintDeviceMetrics;
-class KHTMLView;
-class Frame;
 class RenderArena;
-
-class KWQAccObjectCache;
 
 namespace khtml {
     class CSSStyleSelector;
-    struct DashboardRegionValue;
     class DocLoader;
     class Tokenizer;
+    struct DashboardRegionValue;
 }
 
 #ifndef KHTML_NO_XBL
@@ -741,11 +736,11 @@ private:
     
     RefPtr<khtml::Decoder> m_decoder;
 
-    mutable QDict<ElementImpl> m_elementsById;
-    mutable QDict<char> m_idCount;
+    mutable HashMap<DOMStringImpl*, ElementImpl*> m_elementsById;
+    mutable HashCountedSet<DOMStringImpl*> m_idCount;
     
-    QDict<ElementImpl> m_elementsByAccessKey;
-    bool m_accessKeyDictValid;
+    HashMap<DOMStringImpl*, ElementImpl*, CaseInsensitiveHash> m_elementsByAccessKey;
+    bool m_accessKeyMapValid;
  
     bool m_createRenderers;
     

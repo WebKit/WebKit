@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,33 +22,34 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-//#define DEBUG_LAYOUT
 
 #include "config.h"
 #include "render_frames.h"
-#include "render_canvas.h"
+
+#include "DocumentImpl.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
 #include "html/htmltokenizer.h"
-#include "xml/dom2_eventsimpl.h"
-#include "DocumentImpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/EventNames.h"
-#include "FrameView.h"
-#include "Frame.h"
 #include "render_arena.h"
-
+#include "render_canvas.h"
+#include "xml/EventNames.h"
+#include "xml/dom2_eventsimpl.h"
+#include "xml/dom_textimpl.h"
 #include <kcursor.h>
-#include <klocale.h>
 #include <kdebug.h>
-#include <qtimer.h>
+#include <klocale.h>
 #include <qpainter.h>
-#include "qdict.h"
+#include <qtimer.h>
 
-using namespace khtml;
 using namespace DOM;
 using namespace EventNames;
 using namespace HTMLNames;
+
+//#define DEBUG_LAYOUT
+
+namespace khtml {
 
 RenderFrameSet::RenderFrameSet( HTMLFrameSetElementImpl *frameSet)
     : RenderContainer(frameSet)
@@ -330,7 +331,7 @@ void RenderFrameSet::layout( )
 
     RenderObject *child = firstChild();
     if ( !child )
-	goto end2;
+        goto end2;
 
     if(!m_hSplitVar && !m_vSplitVar)
     {
@@ -420,7 +421,7 @@ void RenderFrameSet::positionFrames()
           child->setWidth( m_gridLayout[1][c] );
           child->setHeight( m_gridLayout[0][r] );
           child->setNeedsLayout(true);
-	  child->layout();
+          child->layout();
       }
 
       xPos += m_gridLayout[1][c] + element()->border();
@@ -651,7 +652,7 @@ RenderPart::RenderPart(DOM::HTMLElementImpl* node)
 RenderPart::~RenderPart()
 {
     if (m_widget && m_widget->inherits("KHTMLView")) {
-	static_cast<KHTMLView *>(m_widget)->deref();
+        static_cast<KHTMLView *>(m_widget)->deref();
     }
 }
 
@@ -662,19 +663,19 @@ void RenderPart::setWidget( QWidget *widget )
 #endif
     
     if (widget == m_widget) {
-	return;
+        return;
     }
 
     if (m_widget && m_widget->inherits("KHTMLView")) {
-	static_cast<KHTMLView *>(m_widget)->deref();
+        static_cast<KHTMLView *>(m_widget)->deref();
     }
     
-    if (widget && widget->inherits("KHTMLView")) {	
-	static_cast<KHTMLView *>(widget)->ref();
-	setQWidget( widget, false );
-	connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
+    if (widget && widget->inherits("KHTMLView")) {
+        static_cast<KHTMLView *>(widget)->ref();
+        setQWidget( widget, false );
+        connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
     } else {
-	setQWidget( widget );
+        setQWidget( widget );
     }
     setNeedsLayoutAndMinMaxRecalc();
     
@@ -736,7 +737,7 @@ static bool isURLAllowed(DOM::DocumentImpl *doc, const QString &url)
     newURL.setRef(QString::null);
     
     if (doc->frame()->topLevelFrameCount() >= 200)
-	return false;
+        return false;
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
@@ -832,7 +833,7 @@ void RenderPartObject::updateWidget()
           serviceType = o->serviceType;
       }
       
-      QDict<bool> uniqueParamNames(5, false);
+      HashSet<DOMStringImpl*, CaseInsensitiveHash> uniqueParamNames;
       
       // Scan the PARAM children.
       // Get the URL and type from the params if we don't already have them.
@@ -840,7 +841,7 @@ void RenderPartObject::updateWidget()
       NodeImpl *child = o->firstChild();
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->hasTagName(paramTag)) {
-              HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
+              HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
               DOMString name = p->name().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url"))
                   url = p->value().qstring();
@@ -852,8 +853,7 @@ void RenderPartObject::updateWidget()
                   }
               }
               if (!embed) {
-                  bool dummyValue = true;
-                  uniqueParamNames.insert(p->name().qstring(), &dummyValue);
+                  uniqueParamNames.insert(p->name().impl());
                   paramNames.append(p->name().qstring());
                   paramValues.append(p->value().qstring());
               }
@@ -866,9 +866,10 @@ void RenderPartObject::updateWidget()
       // in a PARAM tag. See <http://java.sun.com/products/plugin/1.2/docs/tags.html>. This means
       // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
       // else our Java plugin will misinterpret it. [4004531]
+      DOMString codebase;
       if (!embed && serviceType.lower() == "application/x-java-applet") {
-          bool dummyValue = true;
-          uniqueParamNames.insert("codebase", &dummyValue); // pretend we found it in a PARAM already
+          codebase = "codebase";
+          uniqueParamNames.insert(codebase.impl()); // pretend we found it in a PARAM already
       }
       
       // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.
@@ -876,9 +877,9 @@ void RenderPartObject::updateWidget()
       if (attributes) {
           for (unsigned i = 0; i < attributes->length(); ++i) {
               AttributeImpl* it = attributes->attributeItem(i);
-              QString name = it->name().localName().qstring();
-              if (embed || uniqueParamNames.find(name) == 0) {
-                  paramNames.append(name);
+              const AtomicString& name = it->name().localName();
+              if (embed || uniqueParamNames.contains(name.impl())) {
+                  paramNames.append(name.qstring());
                   paramValues.append(it->value().qstring());
               }
           }
@@ -932,14 +933,14 @@ void RenderPartObject::updateWidget()
       if (!isURLAllowed(document(), url))
           return;
       if (url.isEmpty())
-	  url = "about:blank";
+          url = "about:blank";
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
       bool requestSucceeded = v->frame()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
-	  Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
-	  if (newPart && newPart->xmlDocImpl()) {
-	      newPart->xmlDocImpl()->setBaseURL( v->frame()->baseURL().url() );
-	  }
+          Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
+          if (newPart && newPart->xmlDocImpl()) {
+              newPart->xmlDocImpl()->setBaseURL( v->frame()->baseURL().url() );
+          }
       }
   }
 }
@@ -970,12 +971,12 @@ void RenderPartObject::slotViewCleared()
       int marginw = -1;
       int marginh = -1;
       if (element()->hasTagName(iframeTag)) {
-	  HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
-	  if(frame->m_frameBorder)
-	      frameStyle = QFrame::Box;
+          HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
+          if(frame->m_frameBorder)
+              frameStyle = QFrame::Box;
           scroll = frame->m_scrolling;
-	  marginw = frame->m_marginWidth;
-	  marginh = frame->m_marginHeight;
+          marginw = frame->m_marginWidth;
+          marginh = frame->m_marginHeight;
       }
       view->setFrameStyle(frameStyle);
 
@@ -1018,4 +1019,6 @@ void RenderPart::updateWidgetPosition()
         if (view && view->inherits("KHTMLView"))
             static_cast<KHTMLView*>(view)->layout();
     }
+}
+
 }

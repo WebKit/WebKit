@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,16 @@
 #define MacFrame_H
 
 #include "Frame.h"
-
-#include "text_affinity.h"
+#include "KWQClipboard.h"
+#include "KWQScrollBar.h"
 #include "NodeImpl.h"
-
 #include "WebCoreKeyboardAccess.h"
+#include "text_affinity.h"
+#include <kxmlcore/HashSet.h>
 
 #if __APPLE__
 #import <CoreFoundation/CoreFoundation.h>
 #endif
-
-#include "KWQDict.h"
-#include "KWQClipboard.h"
-#include "KWQScrollBar.h"
 
 class FramePrivate;
 class KWQWindowWidget;
@@ -262,8 +259,8 @@ public:
     
     WebCoreKeyboardUIMode keyboardUIMode() const;
 
-    void didTellBridgeAboutLoad(const QString &urlString);
-    bool haveToldBridgeAboutLoad(const QString &urlString);
+    void didTellBridgeAboutLoad(const DOM::DOMString& URL);
+    bool haveToldBridgeAboutLoad(const DOM::DOMString& URL);
 
     KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*);
     KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*);
@@ -365,7 +362,7 @@ private:
 
     bool _haveUndoRedoOperations;
     
-    QDict<char> urlsBridgeKnowsAbout;
+    HashSet<RefPtr<DOM::DOMStringImpl> > urlsBridgeKnowsAbout;
 
     friend class Frame;
 

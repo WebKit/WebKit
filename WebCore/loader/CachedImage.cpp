@@ -27,9 +27,10 @@
 
 #include "config.h"
 #include "CachedImage.h"
+
+#include "Cache.h"
 #include "CachedImageCallback.h"
 #include "CachedObjectClientWalker.h"
-#include "Cache.h"
 #include "DocLoader.h"
 #include "KWQLoader.h"
 
@@ -77,7 +78,7 @@ void CachedImage::deref( CachedObjectClient *c )
 {
     Cache::flush();
     CachedObject::deref(c);
-    if ( canDelete() && m_free )
+    if (canDelete() && m_free)
         delete this;
 }
 
@@ -134,7 +135,7 @@ void CachedImage::clear()
     }
 }
 
-void CachedImage::data ( QBuffer &_buffer, bool eof )
+void CachedImage::data(QBuffer& _buffer, bool eof)
 {
 #ifdef CACHE_DEBUG
     kdDebug( 6060 ) << this << "in CachedImage::data(buffersize " << _buffer.buffer().size() <<", eof=" << eof << endl;
@@ -169,8 +170,8 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
             if (p->isNull()) {
                 errorOccured = true;
                 QPixmap ep = pixmap();
-                do_notify (ep, ep.rect());
-                Cache::removeCacheEntry (this);
+                do_notify(ep, ep.rect());
+                Cache::remove(this);
             }
             else
                 do_notify(*p, p->rect());
@@ -204,4 +205,4 @@ void CachedImage::checkNotify()
     }
 }
 
-};
+}

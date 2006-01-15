@@ -267,7 +267,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_ignorePendingStylesheets = false;
 
     m_cssTarget = 0;
-    m_accessKeyDictValid = false;
+    m_accessKeyMapValid = false;
 
     resetLinkColor();
     resetVisitedLinkColor();
@@ -316,7 +316,7 @@ DocumentImpl::~DocumentImpl()
     
     KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
 
-    if (changedDocuments && m_docChanged)
+    if (m_docChanged && changedDocuments)
         changedDocuments->remove(this);
     delete m_tokenizer;
     document.resetSkippingRef(0);
@@ -497,7 +497,7 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
         case Node::ELEMENT_NODE: {
             ElementImpl *oldElement = static_cast<ElementImpl *>(importedNode);
             ElementImpl *newElement = createElementNS(oldElement->namespaceURI(), oldElement->tagName().toString(), exceptioncode);
-			
+                        
             if (exceptioncode != 0)
                 return 0;
 
@@ -617,35 +617,24 @@ ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const
     return e;
 }
 
-ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
+ElementImpl *DocumentImpl::getElementById(const DOMString& elementId) const
 {
-    ElementImpl *element;
-    QString qId = elementId.qstring();
-
-    if (elementId.length() == 0) {
+    if (elementId.length() == 0)
         return 0;
-    }
 
-    element = m_elementsById.find(qId);
-    
+    ElementImpl *element = m_elementsById.get(elementId.impl());
     if (element)
         return element;
         
-    if (int idCount = (int)m_idCount.find(qId)) {
+    if (m_idCount.contains(elementId.impl())) {
         for (NodeImpl *n = traverseNextNode(); n != 0; n = n->traverseNextNode()) {
-            if (!n->isElementNode())
-                continue;
-            
-            element = static_cast<ElementImpl *>(n);
-            
-            if (element->hasID() && element->getAttribute(idAttr) == elementId) {
-                if (idCount == 1) 
-                    m_idCount.remove(qId);
-                else
-                    m_idCount.insert(qId, (char *)idCount - 1);
-                
-                m_elementsById.insert(qId, element);
-                return element;
+            if (n->isElementNode()) {
+                element = static_cast<ElementImpl*>(n);
+                if (element->hasID() && element->getAttribute(idAttr) == elementId) {
+                    m_idCount.remove(elementId.impl());
+                    m_elementsById.set(elementId.impl(), element);
+                    return element;
+                }
             }
         }
     }
@@ -654,72 +643,50 @@ ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
 
 ElementImpl *DocumentImpl::elementFromPoint( const int _x, const int _y ) const
 {
-    if (!m_render) return 0;
+    if (!m_render)
+        return 0;
     
     RenderObject::NodeInfo nodeInfo(true, true);
     m_render->layer()->hitTest(nodeInfo, _x, _y); 
-    NodeImpl* n = nodeInfo.innerNode();
 
-    while ( n && !n->isElementNode() ) {
+    NodeImpl* n = nodeInfo.innerNode();
+    while (n && !n->isElementNode())
         n = n->parentNode();
-    }
-    
     return static_cast<ElementImpl*>(n);
 }
 
-void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *element)
+void DocumentImpl::addElementById(const DOMString& elementId, ElementImpl* element)
 {
-    QString qId = elementId.qstring();
-    
-    if (m_elementsById.find(qId) == NULL) {
-        m_elementsById.insert(qId, element);
-        m_accessKeyDictValid = false;
-    } else {
-        int idCount = (int)m_idCount.find(qId);
-        m_idCount.insert(qId, (char *)(idCount + 1));
-    }
+    if (!m_elementsById.contains(elementId.impl()))
+        m_elementsById.set(elementId.impl(), element);
+    else
+        m_idCount.insert(elementId.impl());
 }
 
-void DocumentImpl::removeElementById(const DOMString &elementId, ElementImpl *element)
+void DocumentImpl::removeElementById(const DOMString& elementId, ElementImpl* element)
 {
-    QString qId = elementId.qstring();
-
-    if (m_elementsById.find(qId) == element) {
-        m_elementsById.remove(qId);
-        m_accessKeyDictValid = false;
-    } else {
-        int idCount = (int)m_idCount.find(qId);        
-        assert(idCount > 0);
-        if (idCount == 1) 
-            m_idCount.remove(qId);
-        else
-            m_idCount.insert(qId, (char *)(idCount - 1));
-    }
+    if (m_elementsById.get(elementId.impl()) == element)
+        m_elementsById.remove(elementId.impl());
+    else
+        m_idCount.remove(elementId.impl());
 }
 
-ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
+ElementImpl* DocumentImpl::getElementByAccessKey(const DOMString& key)
 {
     if (!key.length())
-	return 0;
-
-    if (!m_accessKeyDictValid) {
-        m_elementsByAccessKey.clear();
-    
-        const NodeImpl *n;
-        for (n = this; n != 0; n = n->traverseNextNode()) {
+        return 0;
+    if (!m_accessKeyMapValid) {
+        for (NodeImpl* n = this; n; n = n->traverseNextNode()) {
             if (!n->isElementNode())
                 continue;
-            const ElementImpl *elementImpl = static_cast<const ElementImpl *>(n);
-            DOMString accessKey(elementImpl->getAttribute(accesskeyAttr));;
-            if (!accessKey.isEmpty()) {
-                QString ak = accessKey.qstring().lower();
-                if (m_elementsByAccessKey.find(ak) == NULL)
-                    m_elementsByAccessKey.insert(ak, elementImpl);
-            }
+            ElementImpl* element = static_cast<ElementImpl *>(n);
+            const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
+            if (!accessKey.isEmpty())
+                m_elementsByAccessKey.set(accessKey.impl(), element);
         }
-        m_accessKeyDictValid = true;
+        m_accessKeyMapValid = true;
     }
-    return m_elementsByAccessKey.find(key.qstring());
+    return m_elementsByAccessKey.get(key.impl());
 }
 
 void DocumentImpl::updateTitle()
@@ -827,24 +794,26 @@ TreeWalkerImpl *DocumentImpl::createTreeWalker(NodeImpl *root, unsigned whatToSh
 
 void DocumentImpl::setDocumentChanged(bool b)
 {
-    if (!changedDocuments)
-        changedDocuments = new QPtrList<DocumentImpl>;
+    if (b) {
+        if (!m_docChanged) {
+            if (!changedDocuments)
+                changedDocuments = new QPtrList<DocumentImpl>;
+            changedDocuments->append(this);
+        }
+        if (m_accessKeyMapValid) {
+            m_accessKeyMapValid = false;
+            m_elementsByAccessKey.clear();
+        }
+    } else {
+        if (m_docChanged && changedDocuments)
+            changedDocuments->remove(this);
+    }
 
-    if (b && !m_docChanged)
-        changedDocuments->append(this);
-    else if (!b && m_docChanged)
-        changedDocuments->remove(this);
     m_docChanged = b;
-    
-    if (m_docChanged)
-        m_accessKeyDictValid = false;
 }
 
 void DocumentImpl::recalcStyle( StyleChange change )
 {
-//     qDebug("recalcStyle(%p)", this);
-//     QTime qt;
-//     qt.start();
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
         
@@ -881,7 +850,6 @@ void DocumentImpl::recalcStyle( StyleChange change )
             m_styleSelector->setFontSize(fontDef, m_styleSelector->fontSizeForKeyword(CSS_VAL_MEDIUM, inCompatMode()));
         }
 
-        //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
         _style->setFontDef(fontDef);
         _style->htmlFont().update( paintDeviceMetrics() );
         if ( inCompatMode() )
@@ -902,10 +870,9 @@ void DocumentImpl::recalcStyle( StyleChange change )
     for (n = _first; n; n = n->nextSibling())
         if ( change>= Inherit || n->hasChangedChild() || n->changed() )
             n->recalcStyle( change );
-    //kdDebug( 6020 ) << "TIME: recalcStyle() dt=" << qt.elapsed() << endl;
 
     if (changed() && m_view)
-	m_view->layout();
+        m_view->layout();
 
 bail_out:
     setChanged( false );
@@ -923,16 +890,8 @@ bail_out:
 
 void DocumentImpl::updateRendering()
 {
-    if (!hasChangedChild()) return;
-
-//     QTime time;
-//     time.start();
-//     kdDebug() << "UPDATERENDERING: "<<endl;
-
-    StyleChange change = NoChange;
-    recalcStyle( change );
-
-//    kdDebug() << "UPDATERENDERING time used="<<time.elapsed()<<endl;
+    if (hasChangedChild())
+        recalcStyle(NoChange);
 }
 
 void DocumentImpl::updateDocumentsRendering()
@@ -948,13 +907,12 @@ void DocumentImpl::updateDocumentsRendering()
 
 void DocumentImpl::updateLayout()
 {
-    // FIXME: Dave's pretty sure we can remove this because
-    // layout calls recalcStyle as needed.
+    // FIXME: Dave Hyatt's pretty sure we can remove this because layout calls recalcStyle as needed.
     updateRendering();
 
     // Only do a layout if changes have occurred that make it necessary.      
     if (m_view && renderer() && renderer()->needsLayout())
-	m_view->layout();
+        m_view->layout();
 }
 
 // FIXME: This is a bad idea and needs to be removed eventually.
@@ -969,7 +927,7 @@ void DocumentImpl::updateLayoutIgnorePendingStylesheets()
     
     if (!haveStylesheetsLoaded()) {
         m_ignorePendingStylesheets = true;
-	updateStyleSelector();    
+        updateStyleSelector();    
     }
 
     updateLayout();
@@ -1417,7 +1375,7 @@ void DocumentImpl::setUserStyleSheet( const QString& sheet )
 {
     if ( m_usersheet != sheet ) {
         m_usersheet = sheet;
-	updateStyleSelector();
+        updateStyleSelector();
     }
 }
 
@@ -1444,86 +1402,86 @@ NodeImpl *DocumentImpl::nextFocusNode(NodeImpl *fromNode)
     unsigned short fromTabIndex;
 
     if (!fromNode) {
-	// No starting node supplied; begin with the top of the document
-	NodeImpl *n;
+        // No starting node supplied; begin with the top of the document
+        NodeImpl *n;
 
-	int lowestTabIndex = 65535;
-	for (n = this; n != 0; n = n->traverseNextNode()) {
-	    if (n->isKeyboardFocusable()) {
-		if ((n->tabIndex() > 0) && (n->tabIndex() < lowestTabIndex))
-		    lowestTabIndex = n->tabIndex();
-	    }
-	}
+        int lowestTabIndex = 65535;
+        for (n = this; n != 0; n = n->traverseNextNode()) {
+            if (n->isKeyboardFocusable()) {
+                if ((n->tabIndex() > 0) && (n->tabIndex() < lowestTabIndex))
+                    lowestTabIndex = n->tabIndex();
+            }
+        }
 
-	if (lowestTabIndex == 65535)
-	    lowestTabIndex = 0;
+        if (lowestTabIndex == 65535)
+            lowestTabIndex = 0;
 
-	// Go to the first node in the document that has the desired tab index
-	for (n = this; n != 0; n = n->traverseNextNode()) {
-	    if (n->isKeyboardFocusable() && (n->tabIndex() == lowestTabIndex))
-		return n;
-	}
+        // Go to the first node in the document that has the desired tab index
+        for (n = this; n != 0; n = n->traverseNextNode()) {
+            if (n->isKeyboardFocusable() && (n->tabIndex() == lowestTabIndex))
+                return n;
+        }
 
-	return 0;
+        return 0;
     }
     else {
-	fromTabIndex = fromNode->tabIndex();
+        fromTabIndex = fromNode->tabIndex();
     }
 
     if (fromTabIndex == 0) {
-	// Just need to find the next selectable node after fromNode (in document order) that doesn't have a tab index
-	NodeImpl *n = fromNode->traverseNextNode();
-	while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
-	    n = n->traverseNextNode();
-	return n;
+        // Just need to find the next selectable node after fromNode (in document order) that doesn't have a tab index
+        NodeImpl *n = fromNode->traverseNextNode();
+        while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
+            n = n->traverseNextNode();
+        return n;
     }
     else {
-	// Find the lowest tab index out of all the nodes except fromNode, that is greater than or equal to fromNode's
-	// tab index. For nodes with the same tab index as fromNode, we are only interested in those that come after
-	// fromNode in document order.
-	// If we don't find a suitable tab index, the next focus node will be one with a tab index of 0.
-	unsigned short lowestSuitableTabIndex = 65535;
-	NodeImpl *n;
+        // Find the lowest tab index out of all the nodes except fromNode, that is greater than or equal to fromNode's
+        // tab index. For nodes with the same tab index as fromNode, we are only interested in those that come after
+        // fromNode in document order.
+        // If we don't find a suitable tab index, the next focus node will be one with a tab index of 0.
+        unsigned short lowestSuitableTabIndex = 65535;
+        NodeImpl *n;
 
-	bool reachedFromNode = false;
-	for (n = this; n != 0; n = n->traverseNextNode()) {
-	    if (n->isKeyboardFocusable() &&
-		((reachedFromNode && (n->tabIndex() >= fromTabIndex)) ||
-		 (!reachedFromNode && (n->tabIndex() > fromTabIndex))) &&
-		(n->tabIndex() < lowestSuitableTabIndex) &&
-		(n != fromNode)) {
+        bool reachedFromNode = false;
+        for (n = this; n != 0; n = n->traverseNextNode()) {
+            if (n->isKeyboardFocusable() &&
+                ((reachedFromNode && (n->tabIndex() >= fromTabIndex)) ||
+                 (!reachedFromNode && (n->tabIndex() > fromTabIndex))) &&
+                (n->tabIndex() < lowestSuitableTabIndex) &&
+                (n != fromNode)) {
 
-		// We found a selectable node with a tab index at least as high as fromNode's. Keep searching though,
-		// as there may be another node which has a lower tab index but is still suitable for use.
-		lowestSuitableTabIndex = n->tabIndex();
-	    }
+                // We found a selectable node with a tab index at least as high as fromNode's. Keep searching though,
+                // as there may be another node which has a lower tab index but is still suitable for use.
+                lowestSuitableTabIndex = n->tabIndex();
+            }
 
-	    if (n == fromNode)
-		reachedFromNode = true;
-	}
+            if (n == fromNode)
+                reachedFromNode = true;
+        }
 
-	if (lowestSuitableTabIndex == 65535) {
-	    // No next node with a tab index -> just take first node with tab index of 0
-	    NodeImpl *n = this;
-	    while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
-		n = n->traverseNextNode();
-	    return n;
-	}
+        if (lowestSuitableTabIndex == 65535) {
+            // No next node with a tab index -> just take first node with tab index of 0
+            NodeImpl *n = this;
+            while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
+                n = n->traverseNextNode();
+            return n;
+        }
 
-	// Search forwards from fromNode
-	for (n = fromNode->traverseNextNode(); n != 0; n = n->traverseNextNode()) {
-	    if (n->isKeyboardFocusable() && (n->tabIndex() == lowestSuitableTabIndex))
-		return n;
-	}
+        // Search forwards from fromNode
+        for (n = fromNode->traverseNextNode(); n != 0; n = n->traverseNextNode()) {
+            if (n->isKeyboardFocusable() && (n->tabIndex() == lowestSuitableTabIndex))
+                return n;
+        }
 
-	// The next node isn't after fromNode, start from the beginning of the document
-	for (n = this; n != fromNode; n = n->traverseNextNode()) {
-	    if (n->isKeyboardFocusable() && (n->tabIndex() == lowestSuitableTabIndex))
-		return n;
-	}
+        // The next node isn't after fromNode, start from the beginning of the document
+        for (n = this; n != fromNode; n = n->traverseNextNode()) {
+            if (n->isKeyboardFocusable() && (n->tabIndex() == lowestSuitableTabIndex))
+                return n;
+        }
 
-	assert(false); // should never get here
-	return 0;
+        assert(false); // should never get here
+        return 0;
     }
 }
 
@@ -1531,104 +1489,104 @@ NodeImpl *DocumentImpl::previousFocusNode(NodeImpl *fromNode)
 {
     NodeImpl *lastNode = this;
     while (lastNode->lastChild())
-	lastNode = lastNode->lastChild();
+        lastNode = lastNode->lastChild();
 
     if (!fromNode) {
-	// No starting node supplied; begin with the very last node in the document
-	NodeImpl *n;
+        // No starting node supplied; begin with the very last node in the document
+        NodeImpl *n;
 
-	int highestTabIndex = 0;
-	for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
-	    if (n->isKeyboardFocusable()) {
-		if (n->tabIndex() == 0)
-		    return n;
-		else if (n->tabIndex() > highestTabIndex)
-		    highestTabIndex = n->tabIndex();
-	    }
-	}
+        int highestTabIndex = 0;
+        for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+            if (n->isKeyboardFocusable()) {
+                if (n->tabIndex() == 0)
+                    return n;
+                else if (n->tabIndex() > highestTabIndex)
+                    highestTabIndex = n->tabIndex();
+            }
+        }
 
-	// No node with a tab index of 0; just go to the last node with the highest tab index
-	for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
-	    if (n->isKeyboardFocusable() && (n->tabIndex() == highestTabIndex))
-		return n;
-	}
+        // No node with a tab index of 0; just go to the last node with the highest tab index
+        for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+            if (n->isKeyboardFocusable() && (n->tabIndex() == highestTabIndex))
+                return n;
+        }
 
-	return 0;
+        return 0;
     }
     else {
-	unsigned short fromTabIndex = fromNode->tabIndex();
+        unsigned short fromTabIndex = fromNode->tabIndex();
 
-	if (fromTabIndex == 0) {
-	    // Find the previous selectable node before fromNode (in document order) that doesn't have a tab index
-	    NodeImpl *n = fromNode->traversePreviousNode();
-	    while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
-		n = n->traversePreviousNode();
-	    if (n)
-		return n;
+        if (fromTabIndex == 0) {
+            // Find the previous selectable node before fromNode (in document order) that doesn't have a tab index
+            NodeImpl *n = fromNode->traversePreviousNode();
+            while (n && !(n->isKeyboardFocusable() && n->tabIndex() == 0))
+                n = n->traversePreviousNode();
+            if (n)
+                return n;
 
-	    // No previous nodes with a 0 tab index, go to the last node in the document that has the highest tab index
-	    int highestTabIndex = 0;
-	    for (n = this; n != 0; n = n->traverseNextNode()) {
-		if (n->isKeyboardFocusable() && (n->tabIndex() > highestTabIndex))
-		    highestTabIndex = n->tabIndex();
-	    }
+            // No previous nodes with a 0 tab index, go to the last node in the document that has the highest tab index
+            int highestTabIndex = 0;
+            for (n = this; n != 0; n = n->traverseNextNode()) {
+                if (n->isKeyboardFocusable() && (n->tabIndex() > highestTabIndex))
+                    highestTabIndex = n->tabIndex();
+            }
 
-	    if (highestTabIndex == 0)
-		return 0;
+            if (highestTabIndex == 0)
+                return 0;
 
-	    for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
-		if (n->isKeyboardFocusable() && (n->tabIndex() == highestTabIndex))
-		    return n;
-	    }
+            for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+                if (n->isKeyboardFocusable() && (n->tabIndex() == highestTabIndex))
+                    return n;
+            }
 
-	    assert(false); // should never get here
-	    return 0;
-	}
-	else {
-	    // Find the lowest tab index out of all the nodes except fromNode, that is less than or equal to fromNode's
-	    // tab index. For nodes with the same tab index as fromNode, we are only interested in those before
-	    // fromNode.
-	    // If we don't find a suitable tab index, then there will be no previous focus node.
-	    unsigned short highestSuitableTabIndex = 0;
-	    NodeImpl *n;
+            assert(false); // should never get here
+            return 0;
+        }
+        else {
+            // Find the lowest tab index out of all the nodes except fromNode, that is less than or equal to fromNode's
+            // tab index. For nodes with the same tab index as fromNode, we are only interested in those before
+            // fromNode.
+            // If we don't find a suitable tab index, then there will be no previous focus node.
+            unsigned short highestSuitableTabIndex = 0;
+            NodeImpl *n;
 
-	    bool reachedFromNode = false;
-	    for (n = this; n != 0; n = n->traverseNextNode()) {
-		if (n->isKeyboardFocusable() &&
-		    ((!reachedFromNode && (n->tabIndex() <= fromTabIndex)) ||
-		     (reachedFromNode && (n->tabIndex() < fromTabIndex)))  &&
-		    (n->tabIndex() > highestSuitableTabIndex) &&
-		    (n != fromNode)) {
+            bool reachedFromNode = false;
+            for (n = this; n != 0; n = n->traverseNextNode()) {
+                if (n->isKeyboardFocusable() &&
+                    ((!reachedFromNode && (n->tabIndex() <= fromTabIndex)) ||
+                     (reachedFromNode && (n->tabIndex() < fromTabIndex)))  &&
+                    (n->tabIndex() > highestSuitableTabIndex) &&
+                    (n != fromNode)) {
 
-		    // We found a selectable node with a tab index no higher than fromNode's. Keep searching though, as
-		    // there may be another node which has a higher tab index but is still suitable for use.
-		    highestSuitableTabIndex = n->tabIndex();
-		}
+                    // We found a selectable node with a tab index no higher than fromNode's. Keep searching though, as
+                    // there may be another node which has a higher tab index but is still suitable for use.
+                    highestSuitableTabIndex = n->tabIndex();
+                }
 
-		if (n == fromNode)
-		    reachedFromNode = true;
-	    }
+                if (n == fromNode)
+                    reachedFromNode = true;
+            }
 
-	    if (highestSuitableTabIndex == 0) {
-		// No previous node with a tab index. Since the order specified by HTML is nodes with tab index > 0
-		// first, this means that there is no previous node.
-		return 0;
-	    }
+            if (highestSuitableTabIndex == 0) {
+                // No previous node with a tab index. Since the order specified by HTML is nodes with tab index > 0
+                // first, this means that there is no previous node.
+                return 0;
+            }
 
-	    // Search backwards from fromNode
-	    for (n = fromNode->traversePreviousNode(); n != 0; n = n->traversePreviousNode()) {
-		if (n->isKeyboardFocusable() && (n->tabIndex() == highestSuitableTabIndex))
-		    return n;
-	    }
-	    // The previous node isn't before fromNode, start from the end of the document
-	    for (n = lastNode; n != fromNode; n = n->traversePreviousNode()) {
-		if (n->isKeyboardFocusable() && (n->tabIndex() == highestSuitableTabIndex))
-		    return n;
-	    }
+            // Search backwards from fromNode
+            for (n = fromNode->traversePreviousNode(); n != 0; n = n->traversePreviousNode()) {
+                if (n->isKeyboardFocusable() && (n->tabIndex() == highestSuitableTabIndex))
+                    return n;
+            }
+            // The previous node isn't before fromNode, start from the end of the document
+            for (n = lastNode; n != fromNode; n = n->traversePreviousNode()) {
+                if (n->isKeyboardFocusable() && (n->tabIndex() == highestSuitableTabIndex))
+                    return n;
+            }
 
-	    assert(false); // should never get here
-	    return 0;
-	}
+            assert(false); // should never get here
+            return 0;
+        }
     }
 }
 
@@ -1638,7 +1596,7 @@ int DocumentImpl::nodeAbsIndex(NodeImpl *node)
 
     int absIndex = 0;
     for (NodeImpl *n = node; n && n != this; n = n->traversePreviousNode())
-	absIndex++;
+        absIndex++;
     return absIndex;
 }
 
@@ -1646,7 +1604,7 @@ NodeImpl *DocumentImpl::nodeWithAbsIndex(int absIndex)
 {
     NodeImpl *n = this;
     for (int i = 0; n && (i < absIndex); i++) {
-	n = n->traverseNextNode();
+        n = n->traverseNextNode();
     }
     return n;
 }
@@ -1680,13 +1638,13 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         {
             bool ok = false;
             int delay = 0;
-	    delay = str.toInt(&ok);
-	    // We want a new history item if the refresh timeout > 1 second
-	    if(ok && frame) frame->scheduleRedirection(delay, frame->url().url(), delay <= 1);
+            delay = str.toInt(&ok);
+            // We want a new history item if the refresh timeout > 1 second
+            if(ok && frame) frame->scheduleRedirection(delay, frame->url().url(), delay <= 1);
         } else {
             double delay = 0;
             bool ok = false;
-	    delay = str.left(pos).stripWhiteSpace().toDouble(&ok);
+            delay = str.left(pos).stripWhiteSpace().toDouble(&ok);
 
             pos++;
             while(pos < (int)str.length() && str[pos].isSpace()) pos++;
@@ -1883,7 +1841,7 @@ void DocumentImpl::recalcStyleSelector()
     m_availableSheets.clear();
     NodeImpl *n;
     for (n = this; n; n = n->traverseNextNode()) {
-    	StyleSheetImpl *sheet = 0;
+        StyleSheetImpl *sheet = 0;
 
         if (n->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
         {
@@ -2005,13 +1963,13 @@ void DocumentImpl::recalcStyleSelector()
     // De-reference all the stylesheets in the old list
     QPtrListIterator<StyleSheetImpl> it(oldStyleSheets);
     for (; it.current(); ++it)
-	it.current()->deref();
+        it.current()->deref();
 
     // Create a new style selector
     delete m_styleSelector;
     QString usersheet = m_usersheet;
     if ( m_view && m_view->mediaType() == "print" )
-	usersheet += m_printSheet;
+        usersheet += m_printSheet;
     m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets, !inCompatMode());
     m_styleSelector->setEncodedURL(m_url);
     m_styleSelectorDirty = false;
@@ -2273,11 +2231,11 @@ void DocumentImpl::setHTMLWindowEventListener(const AtomicString &eventType, Eve
 {
     // If we already have it we don't want removeWindowEventListener to delete it
     if (listener)
-	listener->ref();
+        listener->ref();
     removeHTMLWindowEventListener(eventType);
     if (listener) {
-	addWindowEventListener(eventType, listener, false);
-	listener->deref();
+        addWindowEventListener(eventType, listener, false);
+        listener->deref();
     }
 }
 
@@ -2285,8 +2243,8 @@ EventListener *DocumentImpl::getHTMLWindowEventListener(const AtomicString &even
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it)
-	if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener")
-	    return it.current()->listener();
+        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener")
+            return it.current()->listener();
     return 0;
 }
 
@@ -2294,10 +2252,10 @@ void DocumentImpl::removeHTMLWindowEventListener(const AtomicString &eventType)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it)
-	if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener") {
-	    m_windowEventListeners.removeRef(it.current());
-	    return;
-	}
+        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener") {
+            m_windowEventListeners.removeRef(it.current());
+            return;
+        }
 }
 
 void DocumentImpl::addWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
@@ -2327,9 +2285,9 @@ bool DocumentImpl::hasWindowEventListener(const AtomicString &eventType)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
-	if (it.current()->eventType() == eventType) {
-	    return true;
-	}
+        if (it.current()->eventType() == eventType) {
+            return true;
+        }
     }
 
     return false;
@@ -2338,9 +2296,9 @@ bool DocumentImpl::hasWindowEventListener(const AtomicString &eventType)
 EventListener *DocumentImpl::createHTMLEventListener(const DOMString& code, NodeImpl *node)
 {
     if (frame()) {
-	return frame()->createHTMLEventListener(code, node);
+        return frame()->createHTMLEventListener(code, node);
     } else {
-	return NULL;
+        return NULL;
     }
 }
 
@@ -2653,7 +2611,7 @@ DOMString DocumentImpl::toString() const
     DOMString result;
 
     for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
-	result += child->toString();
+        result += child->toString();
     }
 
     return result;

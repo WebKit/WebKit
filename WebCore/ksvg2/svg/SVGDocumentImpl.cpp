@@ -23,8 +23,6 @@
 #include "config.h"
 #include <assert.h>
 
-#include <q3dict.h>
-
 #include <kurl.h>
 #include <klocale.h>
 

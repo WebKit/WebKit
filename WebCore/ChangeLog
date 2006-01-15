@@ -1,3 +1,97 @@
+2006-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6528
+          remove all use of QDict from WebCore
+
+        I ran performance tests and the change results in a slight improvement.
+
+        * bridge/mac/MacFrame.h: Removed include of KWQDict.h. Changed didTellBridgeAboutLoad
+        and haveToldBridgeAboutLoad functions to take DOMString instead of QString. Changed
+        urlsBridgeKnowsAbout from a QDict to a HashMap.
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::didTellBridgeAboutLoad): Updated to use QDict and DOMString.
+        (MacFrame::haveToldBridgeAboutLoad): Ditto.
+
+        * khtml/editing/jsediting.h: Removed include of qdict.h.
+
+        * khtml/rendering/render_frames.cpp: Removed include of qdict.h. Put file inside the
+        khtml namespace instead of just using the namespace. Changed tabs to spaces.
+        (khtml::RenderPartObject::updateWidget): Changed the local variable uniqueParamNames
+        to be a HashSet instead of a QDict.
+
+        * khtml/xml/DocumentImpl.h: Removed include of qdict.h, changed m_elementsById, m_idCount,
+        and m_elementsByAccessKey to use HashMap and HashCountedSet instead of QDict.
+        * khtml/xml/DocumentImpl.cpp: Changed tabs to spaces.
+        (DocumentImpl::getElementById): Updated to use HashMap for m_elementsById and HashCountedSet
+        for m_idCount.
+        (DocumentImpl::addElementById): Ditto. Remove code to clear m_accessKeyDictValid,
+        since setDocumentChanged already takes care of that.
+        (DocumentImpl::removeElementById): Ditto.
+        (DocumentImpl::getElementByAccessKey): Updated to use HashMap for m_elementsByAccessKey.
+        (DocumentImpl::setDocumentChanged): Rearranged to do a couple fewer branches. Clear out
+        the m_elementsByAccessKey map when clearing m_accessKeyMapValid to avoid keeping stale
+        pointers around.
+
+        * ksvg2/svg/SVGDocumentImpl.cpp: Removed include of q3dict.h.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed obsolete QDict sources.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * ForwardingHeaders/q3dict.h: Removed.
+        * ForwardingHeaders/qdict.h: Removed.
+        * kwq/KWQDict.h: Removed.
+        * kwq/KWQDictImpl.cpp: Removed.
+        * kwq/KWQDictImpl.h: Removed.
+
+        * WebCore+SVG/SVGNamesWrapper.cpp: Touched this file just so I could build again.
+
+        * kwq/KWQKURL.h: Removed unused canonicalURL, _path, _user, _pass, and _host functions.
+        * kwq/KWQKURL.mm: Changed tabs to spaces, removed unused functions, replaced NULL with 0.
+
+        * kwq/KWQLoader.mm: Changed tabs to spaces.
+        (KWQServeRequest): Removed QString conversion from call to didTellBridgeAboutLoad.
+        (KWQServeSynchronousRequest): Ditto.
+        (KWQCheckCacheObjectStatus): Ditto. Same for haveToldBridgeAboutLoad.
+
+        * loader/Cache.h: Removed include of qdict.h. Changed declaration of the LRUList struct
+        to just be a forward declaration. Changed tabs to spaces. Removed the static data member
+        called "cache". Added a static member function called get. Renamed removeCacheEntry to remove.
+        * loader/Cache.cpp: Put file inside the khtml namespace instead of just using the
+        namespace. Changed tabs to spaces. Changed the main cache itself to a HashMap and
+        made it a static variable local to this file instead of a static data member of Cache
+        to hide its type from the header. Also made the LRUList type private to this file.
+        (khtml::Cache::init): Create a HashMap instead of a QDict.
+        (khtml::Cache::clear): To replace the use of setAutoDelete, write a loop to delete all the
+        items in the cache map.
+        (khtml::Cache::requestImage): Change code to use HashMap functions instead of QDict.
+        (khtml::Cache::requestStyleSheet): Ditto.
+        (khtml::Cache::preloadStyleSheet): Ditto.
+        (khtml::Cache::requestScript): Ditto.
+        (khtml::Cache::preloadScript): Ditto.
+        (khtml::Cache::requestXSLStyleSheet): Ditto.
+        (khtml::Cache::requestXBLDocument): Ditto.
+        (khtml::Cache::removeCacheEntry): Ditto.
+        (khtml::Cache::FastLog2): Fixed this for 64-bit compiles.
+        (khtml::Cache::getStatistics): Ditto.
+        (khtml::Cache::flushAll): Ditto.
+        (khtml::Cache::get): Added. Function used by the loader.
+
+        * loader/CachedObject.h: Removed include of qdict.h.
+
+        * loader/DocLoader.h: Removed include of qdict.h.
+        * loader/DocLoader.cpp: (khtml::DocLoader::needReload): Changed to use new get function of
+        Cache instead of getting at the map directly. Also changed call to removeCacheEntry
+        to remove because it was renamed.
+
+        * loader/CachedImage.cpp: (khtml::CachedImage::data): Changed call to removeCacheEntry
+        to remove because it was renamed.
+        * loader/CachedImageCallback.cpp: (khtml::CachedImageCallback::handleError): Ditto.
+        * loader/loader.cpp:
+        (khtml::Loader::slotFinished): Ditto.
+        (khtml::Loader::cancelRequests): Ditto.
+
 2006-01-15  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

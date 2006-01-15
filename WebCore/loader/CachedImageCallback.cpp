@@ -27,17 +27,15 @@
 
 #include "config.h"
 #include "CachedImageCallback.h"
+
 #include "Cache.h"
-#include "loader.h"
 #include "CachedImage.h"
 #include "Request.h"
-
-#include <qpainter.h>
-
+#include "loader.h"
+#include <kdebug.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kdebug.h>
-#include "decoder.h"
+#include <qpainter.h>
 
 using namespace DOM;
 
@@ -46,7 +44,7 @@ namespace khtml {
 void CachedImageCallback::notifyUpdate() 
 { 
     if (cachedImage) {
-        cachedImage->do_notify (cachedImage->pixmap(), cachedImage->pixmap().rect()); 
+        cachedImage->do_notify(cachedImage->pixmap(), cachedImage->pixmap().rect()); 
         IntSize s = cachedImage->pixmap_size();
         cachedImage->setSize(s.width() * s.height() * 2);
 
@@ -79,7 +77,7 @@ void CachedImageCallback::notifyUpdate()
 void CachedImageCallback::notifyFinished()
 {
     if (cachedImage) {
-        cachedImage->do_notify (cachedImage->pixmap(), cachedImage->pixmap().rect()); 
+        cachedImage->do_notify(cachedImage->pixmap(), cachedImage->pixmap().rect()); 
         cachedImage->m_loading = false;
         cachedImage->checkNotify();
         IntSize s = cachedImage->pixmap_size();
@@ -109,8 +107,8 @@ void CachedImageCallback::handleError()
     if (cachedImage) {
         cachedImage->errorOccured = true;
         QPixmap ep = cachedImage->pixmap();
-        cachedImage->do_notify (ep, ep.rect());
-        Cache::removeCacheEntry (cachedImage);
+        cachedImage->do_notify(ep, ep.rect());
+        Cache::remove(cachedImage);
 
         clear();
     }
@@ -132,4 +130,4 @@ void CachedImageCallback::clear()
     cachedImage = 0;
 }
 
-};
+}

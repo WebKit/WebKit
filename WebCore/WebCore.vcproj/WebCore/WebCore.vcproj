@@ -207,14 +207,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQDict.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQDictImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQEditCommand.h"
 				>
 			</File>

@@ -67,7 +67,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     NSString *lastHeaderName = nil;
 
     while (NSString *line = (NSString *)[e nextObject]) {
-	if ([line length]) {
+        if ([line length]) {
             unichar firstChar = [line characterAtIndex:0];
             if ((firstChar == ' ' || firstChar == '\t') && lastHeaderName != nil) {
                 // lines that start with space or tab continue the previous header value
@@ -78,24 +78,24 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
                             forKey:lastHeaderName];
                 continue;
             }
-	}
+        }
 
-	NSRange colonRange = [line rangeOfString:@":"];
-	if (colonRange.location != NSNotFound) {
-	    // don't worry about case, assume lower levels will take care of it
+        NSRange colonRange = [line rangeOfString:@":"];
+        if (colonRange.location != NSNotFound) {
+            // don't worry about case, assume lower levels will take care of it
 
-	    NSString *headerName = [[line substringToIndex:colonRange.location] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
-	    NSString *headerValue = [[line substringFromIndex:colonRange.location + 1] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
-	    
-	    NSString *oldVal = [headers objectForKey:headerName];
-	    if (oldVal) {
-		headerValue = [NSString stringWithFormat:@"%@, %@", oldVal, headerValue];
-	    }
+            NSString *headerName = [[line substringToIndex:colonRange.location] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
+            NSString *headerValue = [[line substringFromIndex:colonRange.location + 1] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \t"]];
+            
+            NSString *oldVal = [headers objectForKey:headerName];
+            if (oldVal) {
+                headerValue = [NSString stringWithFormat:@"%@, %@", oldVal, headerValue];
+            }
 
-	    [headers setObject:headerValue forKey:headerName];
-	    
-	    lastHeaderName = headerName;
-	}
+            [headers setObject:headerValue forKey:headerName];
+            
+            lastHeaderName = headerName;
+        }
     }
 
     NSDictionary *dictionary = [NSDictionary dictionaryWithDictionary:headers];
@@ -123,14 +123,14 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
     QString headerString = job->queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty()) {
-	headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
     }
 
     if (job->method() == "POST") {
-	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict
+        handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict
             postData:arrayFromFormData(job->postData())];
     } else {
-	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict];
+        handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict];
     }
     [resourceLoader setHandle:handle];
     [resourceLoader release];
@@ -151,16 +151,16 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     bool first = true;
     
     while ((key = [e nextObject]) != nil) {
-	if (first) {
-	    first = false;
-	} else {
-	    [headerString appendString:@"\n"];
-	}
-	[headerString appendString:key];
-	[headerString appendString:@": "];
-	[headerString appendString:[headers objectForKey:key]];
+        if (first) {
+            first = false;
+        } else {
+            [headerString appendString:@"\n"];
+        }
+        [headerString appendString:key];
+        [headerString appendString:@": "];
+        [headerString appendString:[headers objectForKey:key]];
     }
-	
+        
     return headerString;
 }
 
@@ -177,12 +177,12 @@ ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Trans
     QString headerString = job->queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty()) {
-	headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()] retain];
+        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()] retain];
     }
 
     NSArray *postData = nil;
     if (job->method() == "POST") {
-	postData = arrayFromFormData(job->postData());
+        postData = arrayFromFormData(job->postData());
     }
 
     NSURL *finalNSURL = nil;
@@ -243,7 +243,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     MacFrame *frame = static_cast<MacFrame *>(loader->frame());
 
-    if (!frame->haveToldBridgeAboutLoad(cachedObject->url().qstring())) {
+    if (!frame->haveToldBridgeAboutLoad(cachedObject->url())) {
         WebCoreFrameBridge *bridge = frame->bridge();
         
         KWQ_BLOCK_EXCEPTIONS;
@@ -252,7 +252,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
                                         data:(NSData *)cachedObject->allData()];
         KWQ_UNBLOCK_EXCEPTIONS;
 
-        frame->didTellBridgeAboutLoad(cachedObject->url().qstring());
+        frame->didTellBridgeAboutLoad(cachedObject->url());
     }
 }
 
@@ -281,7 +281,7 @@ bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m
     
     bool ret = false;
     if(!memcmp(urlStringCharacters, m_url.unicode(), m_url.length()*sizeof(QChar)))
-	ret = true;
+        ret = true;
     
     if (urlStringCharacters != _buffer)
         fastFree(urlStringCharacters);

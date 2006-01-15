@@ -23,11 +23,11 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_DocLoader_h
 #define KHTML_DocLoader_h
 
 #include <qptrlist.h>
-#include <qdict.h>
 #include <qbuffer.h>
 #include <qstringlist.h>
 
@@ -106,6 +106,6 @@ namespace khtml
         bool m_loadInProgress;
     };
 
-};
+}
 
 #endif
