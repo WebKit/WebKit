@@ -1,3 +1,19 @@
+2006-01-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - added bridging infrastructure for Page class
+        
+        * WebCoreSupport.subproj/WebPageBridge.h: Added.
+        * WebCoreSupport.subproj/WebPageBridge.m: Added.
+        (-[WebPageBridge initWithMainFrameName:view:]): New class, somewhat obvious.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): Don't use _mainFrameBrige, use _pageBridge
+        (-[WebView _close]): ditto
+        (-[WebView _commonInitializationWithFrameName:groupName:]): ditto
+        (-[WebView mainFrame]): ditto
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

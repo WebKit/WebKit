@@ -535,9 +535,10 @@ static bool initializedKJS = FALSE;
     return frame ? Mac(frame)->bridge() : nil;
 }
 
-- init
+- (id)init
 {
-    [super init];
+    if (!(self = [super init]))
+        return nil;
     
     m_frame = new MacFrame;
     m_frame->setBridge(self);

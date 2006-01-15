@@ -81,6 +81,8 @@
 		65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */; };
 		65BF02440974819000C43196 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* MacFrame.h */; };
 		65BF02450974819000C43196 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* MacFrame.mm */; };
+		65C7F4320979E2620022E453 /* WebCorePageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F4310979E2620022E453 /* WebCorePageBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65C7F44C0979E8C90022E453 /* WebCorePageBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */; };
 		65C97AF308EA908800ACD273 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C97AF208EA908800ACD273 /* config.h */; };
 		65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65CBFEF70974F607001DAC25 /* FrameView.cpp */; };
 		65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CBFEF80974F607001DAC25 /* FrameView.h */; };
@@ -1821,6 +1823,8 @@
 		65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserExtension.h; sourceTree = "<group>"; };
 		65BF023B0974819000C43196 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
+		65C7F4310979E2620022E453 /* WebCorePageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePageBridge.h; sourceTree = "<group>"; };
+		65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCorePageBridge.mm; sourceTree = "<group>"; };
 		65C97AF208EA908800ACD273 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65CBFEF70974F607001DAC25 /* FrameView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameView.cpp; sourceTree = "<group>"; };
 		65CBFEF80974F607001DAC25 /* FrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameView.h; sourceTree = "<group>"; };
@@ -3010,6 +3014,8 @@
 			isa = PBXGroup;
 			children = (
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
+				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
+				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
 				65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */,
 				65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */,
@@ -4966,6 +4972,7 @@
 				BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */,
 				BCB16AFA0979A08500467741 /* FloatRect.h in Headers */,
 				BCB16AFC0979A08500467741 /* IntRect.h in Headers */,
+				65C7F4320979E2620022E453 /* WebCorePageBridge.h in Headers */,
 				BCB16B8B0979B01400467741 /* Array.h in Headers */,
 				BCB16B8D0979B01400467741 /* ArrayImpl.h in Headers */,
 				BCB16C180979C3BD00467741 /* Cache.h in Headers */,
@@ -6854,6 +6861,7 @@
 				BCB16AFB0979A08500467741 /* IntRect.cpp in Sources */,
 				BCB16B030979A09A00467741 /* FloatRect.mm in Sources */,
 				BCB16B040979A09A00467741 /* IntRect.mm in Sources */,
+				65C7F44C0979E8C90022E453 /* WebCorePageBridge.mm in Sources */,
 				BCB16B8C0979B01400467741 /* ArrayImpl.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,

@@ -1,3 +1,21 @@
+2006-01-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - added bridging infrastructure for Page class
+        
+        The Page class itself is coming very soon.
+
+        * WebCore.exp: Export WebCorePageBridge.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * bridge/mac/WebCorePageBridge.h: Added.
+        * bridge/mac/WebCorePageBridge.mm: Added.
+        (-[WebCorePageBridge initWithMainFrame:]): Added new class, obvious
+        (-[WebCorePageBridge dealloc]): ditto
+        (-[WebCorePageBridge mainFrame]): ditto
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge init]): Fixed style a bit.
+
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
         Win32 finds more khtml namespace issues with the movement

@@ -14,6 +14,8 @@
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
 		65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */; };
 		65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A0006808527D1A005620FA /* libWebKitSystemInterface.a */; };
+		65C7F42C0979DE640022E453 /* WebPageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F42A0979DE640022E453 /* WebPageBridge.h */; };
+		65C7F42D0979DE640022E453 /* WebPageBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C7F42B0979DE640022E453 /* WebPageBridge.m */; };
 		65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */; };
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; };
@@ -401,6 +403,8 @@
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65A0006808527D1A005620FA /* libWebKitSystemInterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitSystemInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65C7F42A0979DE640022E453 /* WebPageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPageBridge.h; sourceTree = "<group>"; };
+		65C7F42B0979DE640022E453 /* WebPageBridge.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebPageBridge.m; sourceTree = "<group>"; };
 		65DA2608052CC18700A97B31 /* WebHistory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebHistory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLRequestExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSURLRequestExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -980,6 +984,8 @@
 		F5B36B400281DE87018635CB /* WebCore Support */ = {
 			isa = PBXGroup;
 			children = (
+				65C7F42A0979DE640022E453 /* WebPageBridge.h */,
+				65C7F42B0979DE640022E453 /* WebPageBridge.m */,
 				F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */,
 				F5AFB45F02B94DC8018635CA /* WebFrameBridge.m */,
 				F5488CF402CB04EE01FF6274 /* WebCookieAdapter.h */,
@@ -1250,6 +1256,7 @@
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
 				ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */,
 				224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */,
+				65C7F42C0979DE640022E453 /* WebPageBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1773,6 +1780,7 @@
 				7E6FEF0208985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m in Sources */,
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */,
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
+				65C7F42D0979DE640022E453 /* WebPageBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

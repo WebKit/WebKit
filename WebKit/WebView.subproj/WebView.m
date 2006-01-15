@@ -34,6 +34,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebPageBridge.h>
 #import <WebKit/WebDashboardRegion.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -208,7 +209,7 @@ macro(yankAndSelect) \
 @interface WebViewPrivate : NSObject
 {
 @public
-    WebFrameBridge *mainFrameBridge;
+    WebPageBridge *_pageBridge;
     
     id UIDelegate;
     id UIDelegateForwarder;
@@ -370,7 +371,7 @@ static BOOL shouldUseFontSmoothing = YES;
 
 - (void)dealloc
 {
-    ASSERT(mainFrameBridge == nil);
+    ASSERT(!_pageBridge);
     ASSERT(draggingDocumentView == nil);
     ASSERT(dragCaretBridge == nil);
     
@@ -542,8 +543,8 @@ static bool debugWidget = true;
     [self removeDragCaret];
     
     [[self mainFrame] _detachFromParent];
-    [_private->mainFrameBridge release];
-    _private->mainFrameBridge = nil;
+    [_private->_pageBridge release];
+    _private->_pageBridge = nil;
     
     // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
     // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
@@ -1554,7 +1555,7 @@ NSMutableDictionary *countInvocations;
     [self addSubview: wv];
     [wv release];
 
-    _private->mainFrameBridge = [[WebFrameBridge alloc] initWithFrameName:frameName view:wv];
+    _private->_pageBridge = [[WebPageBridge alloc] initWithMainFrameName:frameName view:wv];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
@@ -1814,8 +1815,10 @@ NS_ENDHANDLER
 - (WebFrame *)mainFrame
 {
     // This can be called in initialization, before _private has been set up (3465613)
-    if (_private != nil)
-        return [_private->mainFrameBridge webFrame];
+    if (!_private)
+        return nil;
+
+    return [(WebFrameBridge *)[_private->_pageBridge mainFrame] webFrame];
 
     return nil;
 }
