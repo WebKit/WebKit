@@ -1,10 +1,10 @@
-/*
+/**
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,31 +20,38 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
  */
-#ifndef DOM_DocumentFragmentImpl_h
-#define DOM_DocumentFragmentImpl_h
 
-#include "ContainerNodeImpl.h"
+#include "config.h"
+#include "NameNodeListImpl.h"
+#include "dom_elementimpl.h"
+
+#include "htmlnames.h"
+
+using namespace khtml;
 
 namespace DOM {
 
-class DocumentFragmentImpl : public ContainerNodeImpl
+using namespace HTMLNames;
+
+NameNodeListImpl::NameNodeListImpl(NodeImpl *n, const DOMString &t )
+  : NodeListImpl(n), nodeName(t)
 {
-public:
-    DocumentFragmentImpl(DocumentImpl *doc);
+}
 
-    // DOM methods overridden from  parent classes
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep );
+unsigned NameNodeListImpl::length() const
+{
+    return recursiveLength();
+}
 
-    // Other methods (not part of DOM)
-    virtual bool childTypeAllowed( unsigned short type );
+NodeImpl *NameNodeListImpl::item ( unsigned index ) const
+{
+    return recursiveItem( index );
+}
 
-    virtual DOMString toString() const;
-};
+bool NameNodeListImpl::nodeMatches(NodeImpl *testNode) const
+{
+    return static_cast<ElementImpl *>(testNode)->getAttribute(nameAttr) == nodeName;
+}
 
-} //namespace
-
-#endif
+}

@@ -33,7 +33,6 @@
 #include "InlineTextBox.h"
 #include "DocumentImpl.h"
 #include "xml/dom2_rangeimpl.h"
-#include "xml/dom_nodeimpl.h"
 #include "xml/dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>

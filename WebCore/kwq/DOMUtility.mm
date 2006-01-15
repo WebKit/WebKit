@@ -25,7 +25,7 @@
 
 #include "config.h"
 #import "kjs_dom.h"
-#import "dom_nodeimpl.h"
+#import "NodeImpl.h"
 
 #import "DOM.h"
 #import "DOMInternal.h"

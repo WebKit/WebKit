@@ -26,7 +26,6 @@
 #include "kjs_window.h"
 #include "kjs_views.h"
 #include "kjs_proxy.h"
-#include "xml/dom_nodeimpl.h"
 #include "DocumentImpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"

@@ -25,10 +25,11 @@
 #ifndef DOM_DocumentTypeImpl_h
 #define DOM_DocumentTypeImpl_h
 
-#include "dom_nodeimpl.h"
+#include "NodeImpl.h"
 
 namespace DOM {
 
+class NamedNodeMapImpl;
 class DOMImplementationImpl;
 
 class DocumentTypeImpl : public NodeImpl

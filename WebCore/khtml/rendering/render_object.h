@@ -32,7 +32,7 @@
 #include "FloatRect.h"
 #include <qptrdict.h>
 
-#include "dom_nodeimpl.h"
+#include "NodeImpl.h"
 #include "editing/text_affinity.h"
 #include "misc/khtmllayout.h"
 #include "misc/loader_client.h"

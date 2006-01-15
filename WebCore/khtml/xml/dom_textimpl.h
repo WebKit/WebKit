@@ -21,17 +21,13 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_CharacterDataImpl_h_
-#define _DOM_CharacterDataImpl_h_
+#ifndef DOM_TextImpl_h
+#define DOM_TextImpl_h
 
-#include "xml/dom_nodeimpl.h"
 #include "dom/dom_string.h"
+#include "NodeImpl.h"
 
 namespace DOM {
-
-    class DocumentImpl;
-    class CharacterData;
-    class Text;
 
 class CharacterDataImpl : public NodeImpl
 {

@@ -27,6 +27,7 @@
 #include "xml/dom_atomicstring.h"
 #include "xml/dom2_eventsimpl.h"
 
+#include "NameNodeListImpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
 #include "html/html_baseimpl.h"

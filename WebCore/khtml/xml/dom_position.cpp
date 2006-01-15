@@ -31,7 +31,6 @@
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
 #include "dom_elementimpl.h"
-#include "dom_nodeimpl.h"
 #include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"

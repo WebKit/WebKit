@@ -37,6 +37,7 @@
 #include <qptrdict.h>
 #include <qmap.h>
 #include <qdatetime.h>
+#include <qcolor.h>
 
 #include <kurl.h>
 
@@ -98,6 +99,7 @@ namespace DOM {
     class StyleSheetListImpl;
     class TextImpl;
     class TreeWalkerImpl;
+    class NameNodeListImpl;
 
     // A range of a node within a document that is "marked", such as being misspelled
     struct DocumentMarker
@@ -342,7 +344,7 @@ public:
     bool shouldScheduleLayout();
     int elapsedTime() const;
     
-    void setTextColor( QColor color ) { m_textColor = color; }
+    void setTextColor(const QColor& color) { m_textColor = color; }
     QColor textColor() const { return m_textColor; }
 
     const QColor& linkColor() const { return m_linkColor; }

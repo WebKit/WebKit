@@ -26,7 +26,6 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"
 #include "rendering/render_canvas.h"
-#include "xml/dom_nodeimpl.h"
 #include "DocumentTypeImpl.h"
 #include "DOMImplementationImpl.h"
 #include "DocumentFragmentImpl.h"

@@ -29,8 +29,7 @@
 #include "Frame.h"
 
 #include "text_affinity.h"
-
-#include "dom_nodeimpl.h"
+#include "NodeImpl.h"
 
 #include "WebCoreKeyboardAccess.h"
 

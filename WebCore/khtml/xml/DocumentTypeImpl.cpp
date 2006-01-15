@@ -27,6 +27,7 @@
 #include "DocumentTypeImpl.h"
 #include "DOMImplementationImpl.h"
 #include "DocumentImpl.h"
+#include "dom_node.h"
 
 namespace DOM {
 

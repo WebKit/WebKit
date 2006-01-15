@@ -28,7 +28,6 @@
 
 #include "edit_command.h"
 
-#include "xml/dom_nodeimpl.h"
 #include "dom_qname.h"
 
 namespace khtml {

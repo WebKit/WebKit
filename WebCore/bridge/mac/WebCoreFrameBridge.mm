@@ -33,7 +33,7 @@
 #import "dom2_viewsimpl.h"
 #import "DocumentTypeImpl.h"
 #import "dom_node.h"
-#import "dom_nodeimpl.h"
+#import "NodeImpl.h"
 #import "dom_position.h"
 #import "html_documentimpl.h"
 #import "HTMLInputElementImpl.h"

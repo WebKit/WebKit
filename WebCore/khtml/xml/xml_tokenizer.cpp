@@ -30,6 +30,7 @@
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
+#include "dom_node.h"
 #include "html/html_headimpl.h"
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"

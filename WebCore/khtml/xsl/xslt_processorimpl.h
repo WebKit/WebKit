@@ -38,6 +38,8 @@
 
 #include <kxmlcore/HashMap.h>
 
+class KHTMLView;
+
 namespace DOM {
 
 class NodeImpl;

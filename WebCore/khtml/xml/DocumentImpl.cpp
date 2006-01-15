@@ -37,6 +37,7 @@
 #include "DOMImplementationImpl.h"
 #include "DocumentTypeImpl.h"
 #include "DocumentFragmentImpl.h"
+#include "NameNodeListImpl.h"
 
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"

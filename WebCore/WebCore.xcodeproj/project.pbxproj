@@ -164,7 +164,6 @@
 		93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30602DE4476018635CA /* dom2_traversalimpl.h */; };
 		93F1991A08245E59001E9ABC /* dom2_viewsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30802DE4476018635CA /* dom2_viewsimpl.h */; };
 		93F1991C08245E59001E9ABC /* dom_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2F802DE4476018635CA /* dom_elementimpl.h */; };
-		93F1991D08245E59001E9ABC /* dom_nodeimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FA02DE4476018635CA /* dom_nodeimpl.h */; };
 		93F1991E08245E59001E9ABC /* dom_stringimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FC02DE4476018635CA /* dom_stringimpl.h */; };
 		93F1991F08245E59001E9ABC /* dom_textimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FE02DE4476018635CA /* dom_textimpl.h */; };
 		93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30002DE4476018635CA /* dom_xmlimpl.h */; };
@@ -465,7 +464,6 @@
 		93F19AAF08245E59001E9ABC /* render_style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2C202DE4438018635CA /* render_style.cpp */; };
 		93F19AB008245E59001E9ABC /* render_table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2C402DE4438018635CA /* render_table.cpp */; };
 		93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F702DE4476018635CA /* dom_elementimpl.cpp */; };
-		93F19AB408245E59001E9ABC /* dom_nodeimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F902DE4476018635CA /* dom_nodeimpl.cpp */; };
 		93F19AB508245E59001E9ABC /* dom_stringimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FB02DE4476018635CA /* dom_stringimpl.cpp */; };
 		93F19AB608245E59001E9ABC /* dom_textimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FD02DE4476018635CA /* dom_textimpl.cpp */; };
 		93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */; };
@@ -675,6 +673,28 @@
 		A8185F4609765766005826D9 /* DOMImplementationImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8185F3609765765005826D9 /* DOMImplementationImpl.cpp */; };
 		A8185F4709765766005826D9 /* DocumentFragmentImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8185F3709765765005826D9 /* DocumentFragmentImpl.cpp */; };
 		A8185F4809765766005826D9 /* DocumentImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3809765765005826D9 /* DocumentImpl.h */; };
+		A818721B0977D3C0005826D9 /* NodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872100977D3C0005826D9 /* NodeListImpl.h */; };
+		A818721C0977D3C0005826D9 /* ContainerNodeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872110977D3C0005826D9 /* ContainerNodeImpl.h */; };
+		A818721D0977D3C0005826D9 /* NodeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872120977D3C0005826D9 /* NodeImpl.cpp */; };
+		A818721E0977D3C0005826D9 /* NameNodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872130977D3C0005826D9 /* NameNodeListImpl.h */; };
+		A818721F0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */; };
+		A81872200977D3C0005826D9 /* ChildNodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872150977D3C0005826D9 /* ChildNodeListImpl.h */; };
+		A81872210977D3C0005826D9 /* NodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872160977D3C0005826D9 /* NodeListImpl.cpp */; };
+		A81872220977D3C0005826D9 /* NodeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872170977D3C0005826D9 /* NodeImpl.h */; };
+		A81872230977D3C0005826D9 /* NamedNodeMapImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872180977D3C0005826D9 /* NamedNodeMapImpl.h */; };
+		A81872240977D3C0005826D9 /* NameNodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872190977D3C0005826D9 /* NameNodeListImpl.cpp */; };
+		A81872250977D3C0005826D9 /* ChildNodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeListImpl.cpp */; };
+		A81872260977D3C0005826D9 /* NodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872100977D3C0005826D9 /* NodeListImpl.h */; };
+		A81872270977D3C0005826D9 /* ContainerNodeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872110977D3C0005826D9 /* ContainerNodeImpl.h */; };
+		A81872280977D3C0005826D9 /* NodeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872120977D3C0005826D9 /* NodeImpl.cpp */; };
+		A81872290977D3C0005826D9 /* NameNodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872130977D3C0005826D9 /* NameNodeListImpl.h */; };
+		A818722A0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */; };
+		A818722B0977D3C0005826D9 /* ChildNodeListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872150977D3C0005826D9 /* ChildNodeListImpl.h */; };
+		A818722C0977D3C0005826D9 /* NodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872160977D3C0005826D9 /* NodeListImpl.cpp */; };
+		A818722D0977D3C0005826D9 /* NodeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872170977D3C0005826D9 /* NodeImpl.h */; };
+		A818722E0977D3C0005826D9 /* NamedNodeMapImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872180977D3C0005826D9 /* NamedNodeMapImpl.h */; };
+		A818722F0977D3C0005826D9 /* NameNodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872190977D3C0005826D9 /* NameNodeListImpl.cpp */; };
+		A81872300977D3C0005826D9 /* ChildNodeListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeListImpl.cpp */; };
 		A82B8CAC09712C2C0027E3DE /* RenderTextFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = A82B8CA609712C2C0027E3DE /* RenderTextFragment.h */; };
 		A82B8CAD09712C2C0027E3DE /* RenderTextFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82B8CA709712C2C0027E3DE /* RenderTextFragment.cpp */; };
 		A82B8CAE09712C2C0027E3DE /* RenderText.h in Headers */ = {isa = PBXBuildFile; fileRef = A82B8CA809712C2C0027E3DE /* RenderText.h */; };
@@ -762,7 +782,6 @@
 		A88AD1640952480A001DD196 /* dom2_traversalimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30602DE4476018635CA /* dom2_traversalimpl.h */; };
 		A88AD1650952480A001DD196 /* dom2_viewsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30802DE4476018635CA /* dom2_viewsimpl.h */; };
 		A88AD1670952480A001DD196 /* dom_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2F802DE4476018635CA /* dom_elementimpl.h */; };
-		A88AD1680952480A001DD196 /* dom_nodeimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FA02DE4476018635CA /* dom_nodeimpl.h */; };
 		A88AD1690952480A001DD196 /* dom_stringimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FC02DE4476018635CA /* dom_stringimpl.h */; };
 		A88AD16A0952480A001DD196 /* dom_textimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2FE02DE4476018635CA /* dom_textimpl.h */; };
 		A88AD16B0952480A001DD196 /* dom_xmlimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30002DE4476018635CA /* dom_xmlimpl.h */; };
@@ -1105,7 +1124,6 @@
 		A88AD2F10952480A001DD196 /* render_style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2C202DE4438018635CA /* render_style.cpp */; };
 		A88AD2F20952480A001DD196 /* render_table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2C402DE4438018635CA /* render_table.cpp */; };
 		A88AD2F50952480A001DD196 /* dom_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F702DE4476018635CA /* dom_elementimpl.cpp */; };
-		A88AD2F60952480A001DD196 /* dom_nodeimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F902DE4476018635CA /* dom_nodeimpl.cpp */; };
 		A88AD2F70952480A001DD196 /* dom_stringimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FB02DE4476018635CA /* dom_stringimpl.cpp */; };
 		A88AD2F80952480A001DD196 /* dom_textimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FD02DE4476018635CA /* dom_textimpl.cpp */; };
 		A88AD2F90952480A001DD196 /* dom_xmlimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */; };
@@ -2066,6 +2084,17 @@
 		A8185F3609765765005826D9 /* DOMImplementationImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationImpl.cpp; sourceTree = "<group>"; };
 		A8185F3709765765005826D9 /* DocumentFragmentImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentFragmentImpl.cpp; sourceTree = "<group>"; };
 		A8185F3809765765005826D9 /* DocumentImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentImpl.h; sourceTree = "<group>"; };
+		A81872100977D3C0005826D9 /* NodeListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeListImpl.h; sourceTree = "<group>"; };
+		A81872110977D3C0005826D9 /* ContainerNodeImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContainerNodeImpl.h; sourceTree = "<group>"; };
+		A81872120977D3C0005826D9 /* NodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeImpl.cpp; sourceTree = "<group>"; };
+		A81872130977D3C0005826D9 /* NameNodeListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NameNodeListImpl.h; sourceTree = "<group>"; };
+		A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNodeImpl.cpp; sourceTree = "<group>"; };
+		A81872150977D3C0005826D9 /* ChildNodeListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ChildNodeListImpl.h; sourceTree = "<group>"; };
+		A81872160977D3C0005826D9 /* NodeListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeListImpl.cpp; sourceTree = "<group>"; };
+		A81872170977D3C0005826D9 /* NodeImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeImpl.h; sourceTree = "<group>"; };
+		A81872180977D3C0005826D9 /* NamedNodeMapImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedNodeMapImpl.h; sourceTree = "<group>"; };
+		A81872190977D3C0005826D9 /* NameNodeListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NameNodeListImpl.cpp; sourceTree = "<group>"; };
+		A818721A0977D3C0005826D9 /* ChildNodeListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ChildNodeListImpl.cpp; sourceTree = "<group>"; };
 		A82336B1094C23BE0085A296 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DataRef.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A82B8CA609712C2C0027E3DE /* RenderTextFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextFragment.h; sourceTree = "<group>"; };
 		A82B8CA709712C2C0027E3DE /* RenderTextFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextFragment.cpp; sourceTree = "<group>"; };
@@ -2660,8 +2689,6 @@
 		F523D2C502DE4438018635CA /* render_table.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_table.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2F702DE4476018635CA /* dom_elementimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_elementimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2F802DE4476018635CA /* dom_elementimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_elementimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D2F902DE4476018635CA /* dom_nodeimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_nodeimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D2FA02DE4476018635CA /* dom_nodeimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_nodeimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2FB02DE4476018635CA /* dom_stringimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_stringimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2FC02DE4476018635CA /* dom_stringimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_stringimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2FD02DE4476018635CA /* dom_textimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_textimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4107,8 +4134,6 @@
 				BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */,
 				F523D2F702DE4476018635CA /* dom_elementimpl.cpp */,
 				F523D2F802DE4476018635CA /* dom_elementimpl.h */,
-				F523D2F902DE4476018635CA /* dom_nodeimpl.cpp */,
-				F523D2FA02DE4476018635CA /* dom_nodeimpl.h */,
 				BE91FC8B06133666005E3790 /* dom_position.h */,
 				BE91FC8C06133666005E3790 /* dom_position.cpp */,
 				F523D2FB02DE4476018635CA /* dom_stringimpl.cpp */,
@@ -4135,6 +4160,17 @@
 				A8185F3809765765005826D9 /* DocumentImpl.h */,
 				A8185F3709765765005826D9 /* DocumentFragmentImpl.cpp */,
 				A8185F3509765765005826D9 /* DocumentFragmentImpl.h */,
+				A81872160977D3C0005826D9 /* NodeListImpl.cpp */,
+				A81872100977D3C0005826D9 /* NodeListImpl.h */,
+				A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */,
+				A81872110977D3C0005826D9 /* ContainerNodeImpl.h */,
+				A81872170977D3C0005826D9 /* NodeImpl.h */,
+				A81872120977D3C0005826D9 /* NodeImpl.cpp */,
+				A81872130977D3C0005826D9 /* NameNodeListImpl.h */,
+				A818721A0977D3C0005826D9 /* ChildNodeListImpl.cpp */,
+				A81872150977D3C0005826D9 /* ChildNodeListImpl.h */,
+				A81872190977D3C0005826D9 /* NameNodeListImpl.cpp */,
+				A81872180977D3C0005826D9 /* NamedNodeMapImpl.h */,
 			);
 			path = xml;
 			sourceTree = "<group>";
@@ -4492,7 +4528,6 @@
 				93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */,
 				93F1991A08245E59001E9ABC /* dom2_viewsimpl.h in Headers */,
 				93F1991C08245E59001E9ABC /* dom_elementimpl.h in Headers */,
-				93F1991D08245E59001E9ABC /* dom_nodeimpl.h in Headers */,
 				93F1991E08245E59001E9ABC /* dom_stringimpl.h in Headers */,
 				93F1991F08245E59001E9ABC /* dom_textimpl.h in Headers */,
 				93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */,
@@ -4927,6 +4962,12 @@
 				A8185F3B09765766005826D9 /* DOMImplementationImpl.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragmentImpl.h in Headers */,
 				A8185F4009765766005826D9 /* DocumentImpl.h in Headers */,
+				A818721B0977D3C0005826D9 /* NodeListImpl.h in Headers */,
+				A818721C0977D3C0005826D9 /* ContainerNodeImpl.h in Headers */,
+				A818721E0977D3C0005826D9 /* NameNodeListImpl.h in Headers */,
+				A81872200977D3C0005826D9 /* ChildNodeListImpl.h in Headers */,
+				A81872220977D3C0005826D9 /* NodeImpl.h in Headers */,
+				A81872230977D3C0005826D9 /* NamedNodeMapImpl.h in Headers */,
 				654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */,
 				BCF1A5F1097839600061A123 /* IntSize.h in Headers */,
 				BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */,
@@ -5017,7 +5058,6 @@
 				A88AD1640952480A001DD196 /* dom2_traversalimpl.h in Headers */,
 				A88AD1650952480A001DD196 /* dom2_viewsimpl.h in Headers */,
 				A88AD1670952480A001DD196 /* dom_elementimpl.h in Headers */,
-				A88AD1680952480A001DD196 /* dom_nodeimpl.h in Headers */,
 				A88AD1690952480A001DD196 /* dom_stringimpl.h in Headers */,
 				A88AD16A0952480A001DD196 /* dom_textimpl.h in Headers */,
 				A88AD16B0952480A001DD196 /* dom_xmlimpl.h in Headers */,
@@ -5266,6 +5306,12 @@
 				A8185F4309765766005826D9 /* DOMImplementationImpl.h in Headers */,
 				A8185F4509765766005826D9 /* DocumentFragmentImpl.h in Headers */,
 				A8185F4809765766005826D9 /* DocumentImpl.h in Headers */,
+				A81872260977D3C0005826D9 /* NodeListImpl.h in Headers */,
+				A81872270977D3C0005826D9 /* ContainerNodeImpl.h in Headers */,
+				A81872290977D3C0005826D9 /* NameNodeListImpl.h in Headers */,
+				A818722B0977D3C0005826D9 /* ChildNodeListImpl.h in Headers */,
+				A818722D0977D3C0005826D9 /* NodeImpl.h in Headers */,
+				A818722E0977D3C0005826D9 /* NamedNodeMapImpl.h in Headers */,
 				BCF1A5F3097839600061A123 /* IntSize.h in Headers */,
 				BC73E2600978682700EDFF8A /* FloatSize.h in Headers */,
 				BC73E3030978AF9C00EDFF8A /* IntPointArray.h in Headers */,
@@ -6472,7 +6518,6 @@
 				93F19AAF08245E59001E9ABC /* render_style.cpp in Sources */,
 				93F19AB008245E59001E9ABC /* render_table.cpp in Sources */,
 				93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */,
-				93F19AB408245E59001E9ABC /* dom_nodeimpl.cpp in Sources */,
 				93F19AB508245E59001E9ABC /* dom_stringimpl.cpp in Sources */,
 				93F19AB608245E59001E9ABC /* dom_textimpl.cpp in Sources */,
 				93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */,
@@ -6798,6 +6843,11 @@
 				A8185F3C09765766005826D9 /* DocumentImpl.cpp in Sources */,
 				A8185F3E09765766005826D9 /* DOMImplementationImpl.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragmentImpl.cpp in Sources */,
+				A818721D0977D3C0005826D9 /* NodeImpl.cpp in Sources */,
+				A818721F0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */,
+				A81872210977D3C0005826D9 /* NodeListImpl.cpp in Sources */,
+				A81872240977D3C0005826D9 /* NameNodeListImpl.cpp in Sources */,
+				A81872250977D3C0005826D9 /* ChildNodeListImpl.cpp in Sources */,
 				654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */,
 				BCF1A61C09783BDD0061A123 /* IntSize.cpp in Sources */,
 				BC73E2130978546300EDFF8A /* IntSize.mm in Sources */,
@@ -6935,7 +6985,6 @@
 				A88AD2F10952480A001DD196 /* render_style.cpp in Sources */,
 				A88AD2F20952480A001DD196 /* render_table.cpp in Sources */,
 				A88AD2F50952480A001DD196 /* dom_elementimpl.cpp in Sources */,
-				A88AD2F60952480A001DD196 /* dom_nodeimpl.cpp in Sources */,
 				A88AD2F70952480A001DD196 /* dom_stringimpl.cpp in Sources */,
 				A88AD2F80952480A001DD196 /* dom_textimpl.cpp in Sources */,
 				A88AD2F90952480A001DD196 /* dom_xmlimpl.cpp in Sources */,
@@ -7088,6 +7137,11 @@
 				A8185F4409765766005826D9 /* DocumentImpl.cpp in Sources */,
 				A8185F4609765766005826D9 /* DOMImplementationImpl.cpp in Sources */,
 				A8185F4709765766005826D9 /* DocumentFragmentImpl.cpp in Sources */,
+				A81872280977D3C0005826D9 /* NodeImpl.cpp in Sources */,
+				A818722A0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */,
+				A818722C0977D3C0005826D9 /* NodeListImpl.cpp in Sources */,
+				A818722F0977D3C0005826D9 /* NameNodeListImpl.cpp in Sources */,
+				A81872300977D3C0005826D9 /* ChildNodeListImpl.cpp in Sources */,
 				BCF1A5F2097839600061A123 /* IntSize.cpp in Sources */,
 				BC73E2140978546300EDFF8A /* IntSize.mm in Sources */,
 				BC73E25F0978682700EDFF8A /* FloatSize.cpp in Sources */,

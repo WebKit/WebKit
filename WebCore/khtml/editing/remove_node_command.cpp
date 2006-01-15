@@ -26,7 +26,6 @@
 #include "config.h"
 #include "remove_node_command.h"
 
-#include "xml/dom_nodeimpl.h"
 
 #include <kxmlcore/Assertions.h>
 

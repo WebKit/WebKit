@@ -51,7 +51,8 @@
 #import "html_objectimpl.h"
 #import "html_tableimpl.h"
 #import "dom_elementimpl.h"
-#import "dom_nodeimpl.h"
+#import "ContainerNodeImpl.h"
+#import "NameNodeListImpl.h"
 #import "markup.h"
 
 #import "DOMExtensions.h"

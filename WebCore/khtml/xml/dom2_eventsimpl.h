@@ -26,7 +26,7 @@
 #define DOM_EVENTSIMPL_H
 
 #include "dom/dom_node.h"
-#include "xml/dom_nodeimpl.h"
+#include "NodeImpl.h"
 #include "xml/dom_atomicstring.h"
 #include "xml/dom2_viewsimpl.h"
 #include "misc/shared.h"

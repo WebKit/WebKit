@@ -43,7 +43,7 @@
 #import "dom_elementimpl.h"
 #import "dom_exception.h"
 #import "dom_node.h"
-#import "dom_nodeimpl.h"
+#import "ContainerNodeImpl.h"
 #import "dom_string.h"
 #import "dom_stringimpl.h"
 #import "dom_textimpl.h"

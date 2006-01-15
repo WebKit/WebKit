@@ -25,7 +25,6 @@
 #include "dom/dom_string.h"
 #include "dom/dom_exception.h"
 
-#include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
 #include "misc/loader.h"
 #include "CachedXSLStyleSheet.h"

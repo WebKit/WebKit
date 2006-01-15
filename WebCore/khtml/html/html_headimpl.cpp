@@ -29,6 +29,7 @@
 #include "html/html_documentimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/EventNames.h"
+#include "dom_node.h"
 
 #include "Frame.h"
 #include "kjs_proxy.h"

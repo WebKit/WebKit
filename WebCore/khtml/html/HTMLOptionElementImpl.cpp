@@ -31,6 +31,7 @@
 #include "DocumentImpl.h"
 #include "dom_textimpl.h"
 #include "dom_exception.h"
+#include "dom_node.h"
 
 using namespace khtml;
 

@@ -28,7 +28,6 @@
 #include "RenderTextFragment.h"
 #include "rendering/render_table.h"
 #include "rendering/render_canvas.h"
-#include "xml/dom_nodeimpl.h"
 #include "DocumentImpl.h"
 #include "xml/dom_position.h"
 #include "render_block.h"

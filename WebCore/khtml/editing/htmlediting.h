@@ -34,7 +34,6 @@
 #include "replace_selection_command.h"
 #include "typing_command.h"
 
-#include "dom_nodeimpl.h"
 #include "editing/edit_actions.h"
 #include "qmap.h"
 #include "qptrlist.h"

@@ -38,6 +38,7 @@
 #include "xml/dom_stringimpl.h"
 #include "DocumentImpl.h"
 #include "html/html_elementimpl.h"
+#include "misc/helper.h"
 
 #include "Cache.h"
 #include "CachedImage.h"

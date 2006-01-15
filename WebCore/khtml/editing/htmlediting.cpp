@@ -33,7 +33,6 @@
 #include "cssproperties.h"
 #include "DocumentImpl.h"
 #include "dom_elementimpl.h"
-#include "dom_nodeimpl.h"
 #include "dom_position.h"
 #include "dom_stringimpl.h"
 #include "dom_textimpl.h"

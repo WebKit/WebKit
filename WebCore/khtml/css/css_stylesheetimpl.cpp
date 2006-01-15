@@ -35,7 +35,6 @@
 #include "css/cssparser.h"
 #include "css/css_stylesheetimpl.h"
 
-#include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
 #include "misc/loader.h"
 

@@ -20,7 +20,6 @@
 #include "config.h"
 #include "khtml_events.h"
 #include "rendering/render_object.h"
-#include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
 
 using namespace DOM;

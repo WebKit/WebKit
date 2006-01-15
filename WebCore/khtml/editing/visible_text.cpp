@@ -29,7 +29,6 @@
 
 #include "htmlnames.h"
 #include "InlineTextBox.h"
-#include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
 #include "DocumentImpl.h"

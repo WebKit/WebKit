@@ -22,6 +22,7 @@
 #include "config.h"
 #include "dom/dom_exception.h"
 
+#include "dom_node.h"
 #include "xml/dom_xmlimpl.h"
 #include "DocumentImpl.h"
 #include "xml/dom_stringimpl.h"

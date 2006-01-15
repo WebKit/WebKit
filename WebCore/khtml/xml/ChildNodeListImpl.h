@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,29 +22,24 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef DOM_DocumentFragmentImpl_h
-#define DOM_DocumentFragmentImpl_h
+#ifndef DOM_ChildNodeListImpl_h
+#define DOM_ChildNodeListImpl_h
 
-#include "ContainerNodeImpl.h"
+#include "NodeListImpl.h"
 
 namespace DOM {
 
-class DocumentFragmentImpl : public ContainerNodeImpl
+class ChildNodeListImpl : public NodeListImpl
 {
 public:
-    DocumentFragmentImpl(DocumentImpl *doc);
+    ChildNodeListImpl( NodeImpl *n);
 
-    // DOM methods overridden from  parent classes
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep );
+    virtual unsigned length() const;
+    virtual NodeImpl *item ( unsigned index ) const;
 
-    // Other methods (not part of DOM)
-    virtual bool childTypeAllowed( unsigned short type );
-
-    virtual DOMString toString() const;
+protected:
+    virtual bool nodeMatches( NodeImpl *testNode ) const;
 };
 
-} //namespace
-
+}; //namespace
 #endif

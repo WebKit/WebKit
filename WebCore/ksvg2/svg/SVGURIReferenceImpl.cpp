@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#include <kdom/core/NodeImpl.h>
+#include "NodeImpl.h"
 #include <kdom/core/AttrImpl.h>
 
 #include "SVGNames.h"

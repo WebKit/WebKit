@@ -41,6 +41,7 @@ class CounterImpl;
 class DashboardRegionImpl;
 class RectImpl;
 class PairImpl;
+class NodeImpl;
 
 extern const int inheritableProperties[];
 extern const unsigned numInheritableProperties;

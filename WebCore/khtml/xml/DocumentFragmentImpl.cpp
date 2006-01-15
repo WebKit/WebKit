@@ -25,6 +25,7 @@
 #include "config.h"
 
 #include "DocumentFragmentImpl.h"
+#include "dom_node.h"
 
 namespace DOM {
 

@@ -22,47 +22,42 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_NodeImpl_h_
-#define _DOM_NodeImpl_h_
+#ifndef DOM_NodeImpl_h_
+#define DOM_NodeImpl_h_
 
-#include "dom/dom_string.h"
-#include "dom/dom_node.h"
-#include "misc/helper.h"
 #include "misc/shared.h"
-#include "dom_atomicstring.h"
+#include "dom_string.h"
 #include "DocPtr.h"
+#include "NodeListImpl.h"
 
-class QPainter;
-template <class type> class QPtrList;
-template <class type> class QPtrDict;
-class KHTMLView;
 class RenderArena;
-class QMouseEvent;
-class QKeyEvent;
-class QTextStream;
-class QStringList;
-class QWheelEvent;
+namespace khtml {
+    class RenderObject;
+    class RenderStyle;
+}
 
 namespace WebCore {
     class IntRect;
 }
 
-namespace khtml {
-    class RenderObject;
-    class RenderStyle;
-};
+class QTextStream;
+class QMouseEvent;
+class QKeyEvent;
+class QWheelEvent;
+class QStringList;
+template <class T> class QPtrList;
+template <class T> class QPtrDict;
 
 namespace DOM {
 
-class AtomicString;
 class DocumentImpl;
-class ElementImpl;
-class EventImpl;
-class EventListener;
-class NodeListImpl;
-class NamedAttrMapImpl;
 class QualifiedName;
+class AtomicString;
+class NamedAttrMapImpl;
+class ElementImpl;
+class EventListener;
 class RegisteredEventListener;
+class EventImpl;
 
 // this class implements nodes, which can have a parent but no children:
 class NodeImpl : public khtml::TreeShared<NodeImpl>
@@ -241,7 +236,7 @@ public:
     void setTabIndex(unsigned short _tabIndex) { m_tabIndex = _tabIndex; }
 
     /**
-        * whether this node can receive the keyboard focus.
+     * Whether this node can receive the keyboard focus.
      */
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable() const;
@@ -252,7 +247,7 @@ public:
     virtual bool isIndeterminate() const { return false; }
 
     virtual bool isContentEditable() const;
-    virtual IntRect getRect() const;
+    virtual WebCore::IntRect getRect() const;
 
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };
     virtual void recalcStyle( StyleChange = NoChange ) {}
@@ -350,9 +345,9 @@ public:
     // These two methods are mutually exclusive.  The former is used to do strict error-checking
     // when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
     // to sanity-check against the DTD for error recovery.
-    void checkAddChild(NodeImpl *newChild, int &exceptioncode);     // Error-checking when adding via the DOM API
-    virtual bool childAllowed(NodeImpl *newChild);                  // Error-checking during parsing that checks the DTD
-
+    void checkAddChild(NodeImpl *newChild, int &exceptioncode);    // Error-checking when adding via the DOM API
+    virtual bool childAllowed(NodeImpl *newChild);              // Error-checking during parsing that checks the DTD
+        
     virtual int maxOffset() const;
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -505,166 +500,21 @@ protected:
     bool m_inDetach : 1;
 };
 
-class ContainerNodeImpl : public NodeImpl
-{
-public:
-    ContainerNodeImpl(DocumentImpl *doc);
-    virtual ~ContainerNodeImpl();
+#ifndef NDEBUG
 
-    // DOM methods overridden from  parent classes
-    virtual NodeImpl *firstChild() const;
-    virtual NodeImpl *lastChild() const;
-    virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
-    virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
-    virtual bool hasChildNodes (  ) const;
+extern int gEventDispatchForbidden;
+#define forbidEventDispatch() gEventDispatchForbidden += 1
+#define allowEventDispatch() assert(gEventDispatchForbidden > 0); gEventDispatchForbidden -= 1
+#define eventDispatchForbidden() (gEventDispatchForbidden > 0)
 
-    // Other methods (not part of DOM)
-    void willRemove();
-    int willRemoveChild(NodeImpl *child);
-    void removeAllChildren();
-    void removeChildren();
-    void cloneChildNodes(NodeImpl *clone);
+#else
 
-    virtual void setFirstChild(NodeImpl *child);
-    virtual void setLastChild(NodeImpl *child);
-    virtual NodeImpl *addChild(NodeImpl *newChild);
-    virtual void attach();
-    virtual void detach();
+#define forbidEventDispatch()
+#define allowEventDispatch()
+#define eventDispatchForbidden()
 
-    virtual IntRect getRect() const;
-    bool getUpperLeftCorner(int &xPos, int &yPos) const;
-    bool getLowerRightCorner(int &xPos, int &yPos) const;
+#endif NDEBUG
 
-    virtual void setFocus(bool=true);
-    virtual void setActive(bool active = true, bool pause = false);
-    virtual void setHovered(bool=true);
-    virtual unsigned childNodeCount() const;
-    virtual NodeImpl *childNode(unsigned index);
-
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
-    virtual void insertedIntoTree(bool deep);
-    virtual void removedFromTree(bool deep);
-
-//protected:
-    NodeImpl *_first;
-    NodeImpl *_last;
-
-    // helper functions for inserting children:
-
-    // ### this should vanish. do it in dom/ !
-    // check for same source document:
-    bool checkSameDocument( NodeImpl *newchild, int &exceptioncode );
-    // check for being child:
-    bool checkIsChild( NodeImpl *oldchild, int &exceptioncode );
-    // ###
-
-    // find out if a node is allowed to be our child
-    void dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode );
-    void dispatchChildRemovalEvents( NodeImpl *child, int &exceptioncode );
-};
-
-// --------------------------------------------------------------------------
-class Node;
-class NodeImpl;
-
-class NodeListImpl : public khtml::Shared<NodeListImpl>
-{
-public:
-    NodeListImpl( NodeImpl *_rootNode );
-    virtual ~NodeListImpl();
-
-    // DOM methods & attributes for NodeList
-    virtual unsigned length() const = 0;
-    virtual NodeImpl *item ( unsigned index ) const = 0;
-    virtual NodeImpl *itemById ( const DOMString & elementId ) const;
-
-    // Other methods (not part of DOM)
-
-    virtual void rootNodeChildrenChanged();
-    virtual void rootNodeAttributeChanged() {}
-
-protected:
-    // helper functions for searching all ElementImpls in a tree
-    unsigned recursiveLength(NodeImpl *start = 0) const;
-    NodeImpl *recursiveItem ( unsigned offset, NodeImpl *start = 0 ) const;
-    virtual bool nodeMatches( NodeImpl *testNode ) const = 0;
-
-    NodeImpl *rootNode;
-    mutable int cachedLength;
-    mutable NodeImpl *lastItem;
-    mutable unsigned lastItemOffset;
-    mutable bool isLengthCacheValid : 1;
-    mutable bool isItemCacheValid : 1;
-};
-
-class ChildNodeListImpl : public NodeListImpl
-{
-public:
-    ChildNodeListImpl( NodeImpl *n);
-
-    // DOM methods overridden from  parent classes
-
-    virtual unsigned length() const;
-    virtual NodeImpl *item ( unsigned index ) const;
-
-protected:
-    virtual bool nodeMatches( NodeImpl *testNode ) const;
-};
-
-/**
- * NodeList which lists all Nodes in a Element with a given "name=" tag
- */
-class NameNodeListImpl : public NodeListImpl
-{
-public:
-    NameNodeListImpl( NodeImpl *doc, const DOMString &t );
-
-    // DOM methods overridden from  parent classes
-
-    virtual unsigned length() const;
-    virtual NodeImpl *item ( unsigned index ) const;
-
-    // Other methods (not part of DOM)
-    virtual void rootNodeChildrenChanged() {};
-    virtual void rootNodeAttributeChanged() { NodeListImpl::rootNodeChildrenChanged(); }
-
-protected:
-    virtual bool nodeMatches( NodeImpl *testNode ) const;
-
-    DOMString nodeName;
-};
-
-
-// Generic NamedNodeMap interface
-// Other classes implement this for more specific situations e.g. attributes
-// of an element
-class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>
-{
-public:
-    NamedNodeMapImpl() {}
-    virtual ~NamedNodeMapImpl() {}
-
-    NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
-    RefPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
-
-    virtual NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
-    RefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
-    virtual RefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
-
-    // DOM methods & attributes for NamedNodeMap
-    virtual NodeImpl *getNamedItem(const QualifiedName& attrName) const = 0;
-    virtual RefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
-    virtual RefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
-
-    virtual NodeImpl *item ( unsigned index ) const = 0;
-    virtual unsigned length(  ) const = 0;
-
-    // Other methods (not part of DOM)
-    virtual bool isReadOnly() { return false; }
-};
 
 }; //namespace
 #endif

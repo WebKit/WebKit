@@ -23,8 +23,8 @@
 #ifndef _DOM_XmlImpl_h_
 #define _DOM_XmlImpl_h_
 
+#include "ContainerNodeImpl.h"
 #include "css_stylesheetimpl.h"
-#include "xml/dom_nodeimpl.h"
 #include "misc/loader_client.h"
 
 namespace khtml {
