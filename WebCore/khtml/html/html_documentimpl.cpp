@@ -74,7 +74,6 @@
 #include "dom/dom_exception.h"
 
 #include <kurl.h>
-#include <kglobalsettings.h>
 
 #include "cssproperties.h"
 #include "css/cssstyleselector.h"

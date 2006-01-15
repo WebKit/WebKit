@@ -30,7 +30,6 @@
 #include "CachedObject.h"
 #include "Cache.h"
 
-#include <qasyncio.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kdebug.h>

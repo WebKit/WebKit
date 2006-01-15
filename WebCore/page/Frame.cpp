@@ -85,7 +85,6 @@
 #include <kio/global.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kglobalsettings.h>
 
 #include <qfile.h>
 #include <qptrlist.h>

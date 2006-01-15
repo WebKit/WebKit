@@ -1,3 +1,31 @@
+2006-01-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Dave.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6544
+        Remove unused headers.
+
+        * ForwardingHeaders/kglobalsettings.h: Removed.
+        * ForwardingHeaders/kimageio.h: Removed.
+        * ForwardingHeaders/qasyncio.h: Removed.
+        * ForwardingHeaders/qstylesheet.h: Removed.
+        * kwq/KWQAsyncIO.h: Removed.
+        * kwq/KWQKGlobalSettings.h: Removed.
+        * kwq/KWQKImageIO.h: Removed.
+        * kwq/KWQStyleSheet.h: Removed.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/xml/DocumentImpl.cpp:
+        (DocumentImpl::recalcStyle):        
+        * loader/CachedImageCallback.cpp:
+        * loader/CachedObject.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        (KHTMLView::KHTMLView):
+        Remove header inclusions
+        
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
         Shift the loader-related files out of the khtml/misc directory and into a new loader directory.

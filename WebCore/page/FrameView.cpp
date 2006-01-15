@@ -52,7 +52,6 @@
 #include <qpaintdevicemetrics.h>
 #include <qvariant.h>
 
-#include <kimageio.h>
 #include <assert.h>
 #include <kdebug.h>
 
@@ -173,8 +172,6 @@ KHTMLView::KHTMLView( Frame *frame, QWidget *parent, const char *name)
     d = new KHTMLViewPrivate;
 
     connect(this, SIGNAL(contentsMoving(int, int)), this, SLOT(slotScrollBarMoved()));
-
-    KImageIO::registerFormats();
 
     init();
 

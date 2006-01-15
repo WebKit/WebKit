@@ -32,12 +32,10 @@
 #include "CachedImage.h"
 #include "Request.h"
 
-#include <qasyncio.h>
 #include <qpainter.h>
 
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kimageio.h>
 #include <kdebug.h>
 #include "decoder.h"
 

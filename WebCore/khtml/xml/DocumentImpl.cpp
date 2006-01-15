@@ -61,7 +61,6 @@
 #include "MacFrame.h"
 #include "FramePrivate.h"
 
-#include <kglobalsettings.h>
 #include "khtml_settings.h"
 
 // FIXME: We want to cut the remaining HTML dependencies so that we don't need to include these files.
@@ -862,11 +861,11 @@ void DocumentImpl::recalcStyle( StyleChange change )
         _style->setVisuallyOrdered( visuallyOrdered );
         // ### make the font stuff _really_ work!!!!
 
-	khtml::FontDef fontDef;
-	QFont f = KGlobalSettings::generalFont();
-	fontDef.family = *(f.firstFamily());
-	fontDef.italic = f.italic();
-	fontDef.weight = f.weight();
+        khtml::FontDef fontDef;
+        QFont f;
+        fontDef.family = *(f.firstFamily());
+        fontDef.italic = f.italic();
+        fontDef.weight = f.weight();
         bool printing = m_paintDevice && (m_paintDevice->devType() == QInternal::Printer);
         fontDef.usePrinterFont = printing;
         if (m_view) {
@@ -884,7 +883,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
         _style->setFontDef(fontDef);
-	_style->htmlFont().update( paintDeviceMetrics() );
+        _style->htmlFont().update( paintDeviceMetrics() );
         if ( inCompatMode() )
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 

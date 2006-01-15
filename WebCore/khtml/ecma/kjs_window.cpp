@@ -22,7 +22,6 @@
 #include "config.h"
 #include "kjs_window.h"
 
-#include <qstylesheet.h>
 #include <qtimer.h>
 #include <qpaintdevicemetrics.h>
 #include <qapplication.h>
