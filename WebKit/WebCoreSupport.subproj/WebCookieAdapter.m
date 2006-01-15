@@ -64,6 +64,12 @@
 - (void)setCookies:(NSString *)cookieString forURL:(NSString *)URLString policyBaseURL:(NSString *)policyBaseURL
 {
     NSURL *URL = [NSURL _web_URLWithDataAsString:URLString];
+    
+    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=6531>, <rdar://4409034>
+    // cookiesWithResponseHeaderFields doesn't parse cookies without a value
+    if ([cookieString rangeOfString:@"="].location == NSNotFound)
+        cookieString = [cookieString stringByAppendingString:@"="];
+    
     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:URL];
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:[NSURL _web_URLWithDataAsString:policyBaseURL]];    
 }

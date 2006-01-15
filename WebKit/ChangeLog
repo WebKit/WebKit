@@ -1,3 +1,14 @@
+2006-01-14  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6531
+        document.cookie="killmenothing" doesn't set the cookie
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m: (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
+        Append an '=' to the cookie string if it has none, so that 
+        +[NSHTTPCookie cookiesWithResponseHeaderFields:forURL:] can parse it.
+
 2006-01-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
