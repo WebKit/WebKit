@@ -45,7 +45,7 @@ filter
 #font_face_name
 #font_face_src
 #font_face_uri
-#foreignObject
+foreignObject
 g
 #glyph
 #glyphRef

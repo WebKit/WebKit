@@ -1,0 +1,7 @@
+KCanvasResource {id="myfilter" [type=FILTER]  [bounding box=at (-10,-10) size 120x120] [effect bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR]  [std dev. x=3.00 y=3.00]]]}
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 0x0
+      RenderSVGText {text} at (0,0) size 785x63
+        RenderText {TEXT} at (0,0) size 567x63
+          text run at (0,0) width 567: "This text should be blury."

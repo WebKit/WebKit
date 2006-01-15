@@ -20,30 +20,29 @@
  *
  */
 
-#ifndef RenderSVGText_H
-#define RenderSVGText_H
+#ifndef RenderForeignObject_H
+#define RenderForeignObject_H
 
 #include "khtml/rendering/render_block.h"
 
 namespace KSVG {
-    class SVGTextElementImpl;
+    class SVGForeignObjectElementImpl;
 }
 
-class RenderSVGText : public khtml::RenderBlock
+class RenderForeignObject : public khtml::RenderBlock
 {
 public:
-    RenderSVGText(KSVG::SVGTextElementImpl *node);
-
-    const char *renderName() const { return "RenderSVGText"; }
-    void paint(PaintInfo&, int parentX, int parentY);
+    RenderForeignObject(KSVG::SVGForeignObjectElementImpl *node);
+    
+    const char *renderName() const { return "RenderForeignObject"; }
+    void paint(PaintInfo& paintInfo, int parentX, int parentY);
     
     virtual QMatrix localTransform() const { return m_transform; }
     virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
     
-    bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, HitTestAction);
+    bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
 
  private:
-    QMatrix translationTopToBaseline();
     QMatrix translationForAttributes();
     QMatrix m_transform;
 };

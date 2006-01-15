@@ -40,7 +40,7 @@ svg, symbol, marker, pattern, foreignObject
     overflow: hidden;
 }
 
-text
+text, foreignObject
 {
-    display: block;
+    display: block !important;
 }

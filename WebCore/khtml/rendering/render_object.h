@@ -284,7 +284,7 @@ public:
     virtual FloatRect relativeBBox(bool includeStroke = true) const { return FloatRect(); }
     // We may eventually want to make these non-virtual
     virtual QMatrix localTransform() const { return QMatrix(1, 0, 0, 1, xPos(), yPos()); }
-    virtual void setLocalTransform(const QMatrix&) { }
+    virtual void setLocalTransform(const QMatrix&) { assert(false); }
     virtual QMatrix absoluteTransform() const;
 #endif
     

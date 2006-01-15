@@ -108,7 +108,7 @@ double QWMatrix::det() const
 
 bool QWMatrix::isInvertible() const
 {
-    return det() == 0.0;
+    return det() != 0.0;
 }
 
 QWMatrix QWMatrix::invert() const

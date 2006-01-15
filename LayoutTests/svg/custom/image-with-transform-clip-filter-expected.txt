@@ -1,0 +1,9 @@
+KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00]]]}
+KCanvasResource {id="myfilter" [type=FILTER]  [bounding box=at (-10,-10) size 120x120] [effect bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR]  [std dev. x=10.00 y=10.00]]]}
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 0x0
+      RenderImage {image} at (0,0) size 503x410
+      RenderSVGText {text} at (0,0) size 785x18
+        RenderText {TEXT} at (0,0) size 542x18
+          text run at (0,0) width 542: "You should see a solid green block above (a blurred and clipped green checkerboard)."

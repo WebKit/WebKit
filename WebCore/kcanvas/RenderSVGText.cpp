@@ -33,24 +33,20 @@ RenderSVGText::RenderSVGText(KSVG::SVGTextElementImpl *node)
 {
 }
 
-void RenderSVGText::translateTopToBaseline()
+QMatrix RenderSVGText::translationTopToBaseline()
 {
-    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
-
     int offset = baselinePosition(true, true);
-    context->concatCTM(QMatrix().translate(0, -offset));
+    return QMatrix().translate(0, -offset);
 }
 
-void RenderSVGText::translateForAttributes()
+QMatrix RenderSVGText::translationForAttributes()
 {
-    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
-
     KSVG::SVGTextElementImpl *text = static_cast<KSVG::SVGTextElementImpl *>(element());
 
     float xOffset = text->x()->baseVal()->getFirst() ? text->x()->baseVal()->getFirst()->value() : 0;
     float yOffset = text->y()->baseVal()->getFirst() ? text->y()->baseVal()->getFirst()->value() : 0;
 
-    context->concatCTM(QMatrix().translate(xOffset, yOffset));
+    return QMatrix().translate(xOffset, yOffset);
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
@@ -61,11 +57,39 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.p->save();
 
     KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
+    context->concatCTM(localTransform());
     context->concatCTM(QMatrix().translate(parentX, parentY));
-    translateForAttributes();
-    translateTopToBaseline();
+    context->concatCTM(translationForAttributes());
+    context->concatCTM(translationTopToBaseline());
     
+    FloatRect boundingBox(0, 0, width(), height());
+    const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
+            
+    if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
+        clipper->applyClip(boundingBox);
+
+    if (KCanvasMasker *masker = getMaskerById(document(), svgStyle->maskElement().mid(1)))
+        masker->applyMask(boundingBox);
+
+    KCanvasFilter *filter = getFilterById(document(), svgStyle->filter().mid(1));
+    if (filter)
+        filter->prepareFilter(boundingBox);
+        
     RenderBlock::paint(paintInfo, 0, 0);
+    
+    if (filter)
+        filter->applyFilter(boundingBox);
 
     paintInfo.p->restore();
+}
+
+bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+{
+    QMatrix totalTransform = absoluteTransform();
+    totalTransform *= localTransform();
+    totalTransform *= translationForAttributes();
+    totalTransform *= translationTopToBaseline();
+    double localX, localY;
+    totalTransform.invert().map(_x, _y, &localX, &localY);
+    return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
 }

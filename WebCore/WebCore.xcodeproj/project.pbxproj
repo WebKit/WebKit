@@ -1537,6 +1537,14 @@
 		A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
+		A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB080979F472005839FD /* RenderForeignObject.h */; };
+		A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
+		A8FEFB0C0979F472005839FD /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB080979F472005839FD /* RenderForeignObject.h */; };
+		A8FEFB0D0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
+		A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */; };
+		A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
+		A8FEFB330979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */; };
+		A8FEFB340979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
 		BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC17988F088D975F006068A5 /* render_theme_mac.mm */; };
 		BC179893088D975F006068A5 /* render_theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC179890088D975F006068A5 /* render_theme.cpp */; };
 		BC179894088D975F006068A5 /* render_theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC179891088D975F006068A5 /* render_theme.h */; };
@@ -2432,6 +2440,10 @@
 		A8C32967093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEPointLightElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32D89093D8BFA000B9CAC /* xlinkattrs.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = xlinkattrs.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XLinkNamesWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8FEFB080979F472005839FD /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
+		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
+		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
+		A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElementImpl.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xsl_stylesheetimpl.h; path = xsl/xsl_stylesheetimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* xslt_processorimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xslt_processorimpl.cpp; path = xsl/xslt_processorimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3387,6 +3399,8 @@
 				A8C0F86A089701F300BA5114 /* SVGFilterPrimitiveStandardAttributesImpl.h */,
 				A8C0F86B089701F300BA5114 /* SVGFitToViewBoxImpl.cpp */,
 				A8C0F86C089701F300BA5114 /* SVGFitToViewBoxImpl.h */,
+				A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */,
+				A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */,
 				A8C0F86D089701F300BA5114 /* SVGGElementImpl.cpp */,
 				A8C0F86E089701F300BA5114 /* SVGGElementImpl.h */,
 				A8C0F86F089701F300BA5114 /* SVGGradientElementImpl.cpp */,
@@ -3528,8 +3542,10 @@
 			children = (
 				65743B50097076F8001E7CEF /* RenderSVGText.cpp */,
 				65743B51097076F8001E7CEF /* RenderSVGText.h */,
-				FAE0418909759694000540BE /* RenderSVGImage.h */,
 				FAE0418A09759694000540BE /* RenderSVGImage.cpp */,
+				FAE0418909759694000540BE /* RenderSVGImage.h */,
+				A8FEFB090979F472005839FD /* RenderForeignObject.cpp */,
+				A8FEFB080979F472005839FD /* RenderForeignObject.h */,
 				A8C0FB53089701F700BA5114 /* device */,
 				A8C0FB7A089701F800BA5114 /* KCanvasContainer.cpp */,
 				A8C0FB7B089701F800BA5114 /* KCanvasContainer.h */,
@@ -4965,6 +4981,8 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
 				BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */,
+				A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */,
+				A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5304,6 +5322,8 @@
 				BCB16C460979C3BD00467741 /* loader.h in Headers */,
 				BCB16C480979C3BD00467741 /* Request.h in Headers */,
 				BCFB2E5F0979E46400BA703D /* CachedObjectClient.h in Headers */,
+				A8FEFB0C0979F472005839FD /* RenderForeignObject.h in Headers */,
+				A8FEFB340979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E850979FD4F00BA703D /* Shared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6847,6 +6867,8 @@
 				BCB16C290979C3BD00467741 /* DocLoader.cpp in Sources */,
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */,
+				A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */,
+				A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7140,6 +7162,8 @@
 				BCB16C420979C3BD00467741 /* DocLoader.cpp in Sources */,
 				BCB16C450979C3BD00467741 /* loader.cpp in Sources */,
 				BCB16C470979C3BD00467741 /* Request.cpp in Sources */,
+				A8FEFB0D0979F472005839FD /* RenderForeignObject.cpp in Sources */,
+				A8FEFB330979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

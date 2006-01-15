@@ -1,5 +1,36 @@
 2006-01-14  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        Implement basic <foreignObject> support:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5974
+        Also fixed <image> to support clip, filter and mask
+        Updated <text> to support hit testing and clip, filter, mask
+
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/custom/foreign-object-skew-expected.checksum: Added.
+        * svg/custom/foreign-object-skew-expected.png: Added.
+        * svg/custom/foreign-object-skew-expected.txt: Added.
+        * svg/custom/foreign-object-skew.svg: Added.
+        * svg/custom/image-with-transform-clip-filter-expected.checksum: Added.
+        * svg/custom/image-with-transform-clip-filter-expected.png: Added.
+        * svg/custom/image-with-transform-clip-filter-expected.txt: Added.
+        * svg/custom/image-with-transform-clip-filter.svg: Added.
+        * svg/custom/resources: Added.
+        * svg/custom/resources/green-checker.png: Added.
+        * svg/custom/resources/red-checker.png: Added.
+        * svg/custom/text-clip-expected.checksum: Added.
+        * svg/custom/text-clip-expected.png: Added.
+        * svg/custom/text-clip-expected.txt: Added.
+        * svg/custom/text-clip.svg: Added.
+        * svg/custom/text-filter-expected.checksum: Added.
+        * svg/custom/text-filter-expected.png: Added.
+        * svg/custom/text-filter-expected.txt: Added.
+        * svg/custom/text-filter.svg: Added.
+
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by anders.
 
         Disabling text-intro* tests until font fallback is fixed:

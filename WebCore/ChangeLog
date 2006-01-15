@@ -123,6 +123,63 @@
 
 2006-01-14  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        Implement basic <foreignObject> support:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5974
+        Also fixed <image> to support clip, filter and mask
+        Updated <text> to support hit testing and clip, filter, mask
+
+        * WebCore.xcodeproj/project.pbxproj: added files.
+        * kcanvas/RenderForeignObject.cpp: Added.
+        (RenderForeignObject::RenderForeignObject):
+        (RenderForeignObject::translationForAttributes):
+        (RenderForeignObject::paint):
+        (RenderForeignObject::nodeAtPoint):
+        * kcanvas/RenderForeignObject.h: Added.
+        (RenderForeignObject::renderName): added.
+        (RenderForeignObject::localTransform): added.
+        (RenderForeignObject::setLocalTransform): added.
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::paint): added filter, clip mask support
+        * kcanvas/RenderSVGImage.h:
+        (KSVG::RenderSVGImage::localTransform): added.
+        (KSVG::RenderSVGImage::setLocalTransform): added.
+        * kcanvas/RenderSVGText.cpp:
+        (RenderSVGText::translationTopToBaseline): return qmatrix
+        (RenderSVGText::translationForAttributes): return qmatrix
+        (RenderSVGText::paint): added filter, clip, mask support
+        (RenderSVGText::nodeAtPoint): added.
+        * kcanvas/RenderSVGText.h:
+        (RenderSVGText::localTransform): added.
+        (RenderSVGText::setLocalTransform): added.
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::setLocalTransform): added assert(0)
+        * ksvg2/css/svg.css: added foreignObject display: block
+        * ksvg2/svg/SVGForeignObjectElementImpl.cpp: Added.
+        (KSVG::SVGForeignObjectElementImpl::SVGForeignObjectElementImpl):
+        (KSVG::SVGForeignObjectElementImpl::~SVGForeignObjectElementImpl):
+        (KSVG::SVGForeignObjectElementImpl::x):
+        (KSVG::SVGForeignObjectElementImpl::y):
+        (KSVG::SVGForeignObjectElementImpl::width):
+        (KSVG::SVGForeignObjectElementImpl::height):
+        (KSVG::SVGForeignObjectElementImpl::parseMappedAttribute):
+        (KSVG::SVGForeignObjectElementImpl::createRenderer):
+        (KSVG::SVGForeignObjectElementImpl::childShouldCreateRenderer):
+        * ksvg2/svg/SVGForeignObjectElementImpl.h: Added.
+        (KSVG::SVGForeignObjectElementImpl::isValid): added
+        (KSVG::SVGForeignObjectElementImpl::rendererIsNeeded): added
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::attach): fixed static_cast
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        (SVGLocatableImpl::nearestViewportElement): foreignObject support
+        (SVGLocatableImpl::farthestViewportElement): foreignObject support
+        * ksvg2/svg/svgtags.in: added foreignObject
+        * kwq/KWQWMatrix.cpp:
+        (QWMatrix::isInvertible): fixed
+
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
         Fix build break. (oops!)
 
         * khtml/xml/xml_tokenizer.cpp:
