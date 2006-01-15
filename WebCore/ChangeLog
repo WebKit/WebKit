@@ -1,6 +1,6 @@
 2006-01-14  Anders Carlsson  <andersca@mac.com>
 
-        Reviewed by Dave.
+        Reviewed by Eric and Hyatt.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=6544
         Remove unused headers.
