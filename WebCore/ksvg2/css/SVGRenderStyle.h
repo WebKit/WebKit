@@ -92,6 +92,7 @@ namespace KSVG
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EShapeRendering, ShapeRendering, shapeRendering, SR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextAnchor, TextAnchor, textAnchor, TA_START)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextRendering, TextRendering, textRendering, TR_AUTO)
+        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EWritingMode, WritingMode, writingMode, WM_LRTB)
 
         // SVG CSS Properties (using DataRef's)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
@@ -142,9 +143,10 @@ namespace KSVG
                     EColorInterpolation _colorInterpolation : 2;
                     EColorInterpolation _colorInterpolationFilters : 2;
                     EPointerEvents _pointerEvents : 4;
+                    EWritingMode _writingMode : 3;
 
                     unsigned int unused : 32;
-                    unsigned int unused2 : 8;
+                    unsigned int unused2 : 5;
                 } f;
                 Q_UINT64 _iflags;
             };
@@ -202,6 +204,7 @@ namespace KSVG
             svg_inherited_flags.f._colorInterpolation = initialColorInterpolation();
             svg_inherited_flags.f._colorInterpolationFilters = initialColorInterpolationFilters();
             svg_inherited_flags.f._pointerEvents = initialPointerEvents();
+            svg_inherited_flags.f._writingMode = initialWritingMode();
             svg_inherited_flags.f.unused = 0;
             svg_inherited_flags.f.unused2 = 0;
 
