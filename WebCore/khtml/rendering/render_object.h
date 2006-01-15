@@ -34,9 +34,9 @@
 
 #include "NodeImpl.h"
 #include "editing/text_affinity.h"
-#include "misc/khtmllayout.h"
-#include "misc/loader_client.h"
-#include "misc/helper.h"
+#include "khtmllayout.h"
+#include "loader_client.h"
+#include "helper.h"
 #include "rendering/render_style.h"
 #include "khtml_events.h"
 #include "visible_position.h"

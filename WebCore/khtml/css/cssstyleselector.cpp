@@ -39,10 +39,10 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 
-#include "misc/khtmllayout.h"
+#include "khtmllayout.h"
 #include "khtml_settings.h"
-#include "misc/helper.h"
-#include "misc/loader.h"
+#include "helper.h"
+#include "loader.h"
 #include "CachedImage.h"
 
 #include "rendering/font.h"

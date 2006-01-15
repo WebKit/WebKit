@@ -30,7 +30,7 @@
 #include "NamedNodeMapImpl.h"
 #include "ContainerNodeImpl.h"
 #include "xml/dom_stringimpl.h"
-#include "misc/shared.h"
+#include "shared.h"
 #include "css/css_valueimpl.h"
 #include "dom_qname.h"
 

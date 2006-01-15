@@ -35,7 +35,7 @@
 #include "css_stylesheetimpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "misc/helper.h"
+#include "helper.h"
 #include "DocumentImpl.h"
 #include "csshelper.h"
 

@@ -34,7 +34,7 @@
 #include <qpainter.h>
 #include <qpen.h>
 
-#include "misc/helper.h"
+#include "helper.h"
 
 #include <kdebug.h>
 

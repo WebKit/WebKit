@@ -66,7 +66,7 @@
 #include "html/html_documentimpl.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 using namespace DOM;
 using namespace EventNames;

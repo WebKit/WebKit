@@ -25,7 +25,7 @@
 #include "kjs_dom.h"
 
 #include <qguardedptr.h>
-#include "misc/loader_client.h"
+#include "loader_client.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>

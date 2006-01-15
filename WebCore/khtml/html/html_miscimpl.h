@@ -24,7 +24,7 @@
 #define HTML_MISCIMPL_H
 
 #include "html_elementimpl.h"
-#include "misc/shared.h"
+#include "shared.h"
 #include <qptrvector.h>
 #include <kxmlcore/HashMap.h>
 

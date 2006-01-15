@@ -6,7 +6,7 @@
 #include "xbl_binding.h"
 #include "xbl_docimpl.h"
 #include "xbl_binding_manager.h"
-#include "misc/loader.h"
+#include "loader.h"
 
 using DOM::DOMString;
 using DOM::ElementImpl;

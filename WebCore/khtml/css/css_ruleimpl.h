@@ -28,8 +28,8 @@
 #include "dom/dom_string.h"
 #include "dom/css_rule.h"
 #include "css/css_base.h"
-#include "misc/loader_client.h"
-#include "misc/shared.h"
+#include "loader_client.h"
+#include "shared.h"
 #include "css_valueimpl.h"
 
 namespace khtml {

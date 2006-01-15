@@ -27,7 +27,7 @@
 #define HTML_BASEIMPL_H
 
 #include "html/html_elementimpl.h"
-#include "misc/khtmllayout.h"
+#include "khtmllayout.h"
 
 #include <qscrollview.h>
 

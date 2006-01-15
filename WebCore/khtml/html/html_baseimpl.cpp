@@ -38,7 +38,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "css/csshelper.h"
-#include "misc/loader.h"
+#include "loader.h"
 #include "dom/dom_string.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"

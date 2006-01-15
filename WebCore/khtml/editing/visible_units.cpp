@@ -29,7 +29,7 @@
 #include <qstring.h>
 
 #include "htmlnames.h"
-#include "misc/helper.h"
+#include "helper.h"
 #include "InlineTextBox.h"
 #include "rendering/render_block.h"
 #include "visible_position.h"

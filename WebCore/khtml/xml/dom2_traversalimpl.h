@@ -27,7 +27,7 @@
 #define _dom2_traversal_h
 
 #include "dom/dom2_traversal.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 namespace DOM {
 

@@ -27,7 +27,7 @@
 #include <q3valuelist.h>
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/Assertions.h>
-#include "misc/shared.h"
+#include "shared.h"
 
 class QTextStream;
 

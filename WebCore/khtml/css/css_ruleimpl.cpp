@@ -30,7 +30,7 @@
 #include "css/cssparser.h"
 #include "css/css_ruleimpl.h"
 
-#include "misc/loader.h"
+#include "loader.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"

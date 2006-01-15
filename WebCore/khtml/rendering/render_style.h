@@ -41,8 +41,8 @@
 #include <qpalette.h>
 #include <qapplication.h>
 
-#include "misc/khtmllayout.h"
-#include "misc/shared.h"
+#include "khtmllayout.h"
+#include "shared.h"
 #include "rendering/font.h"
 #include "DataRef.h"
 

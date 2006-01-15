@@ -33,7 +33,7 @@
 #include <qobject.h>
 #include <qptrqueue.h>
 
-#include "misc/loader_client.h"
+#include "loader_client.h"
 #include "xml/xml_tokenizer.h"
 #include "html/html_elementimpl.h"
 

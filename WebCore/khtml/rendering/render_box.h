@@ -25,7 +25,7 @@
 #define RENDER_BOX_H
 
 #include "render_object.h"
-#include "misc/loader.h"
+#include "loader.h"
 #include "render_layer.h"
 
 namespace khtml {

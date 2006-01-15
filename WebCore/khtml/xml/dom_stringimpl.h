@@ -24,7 +24,7 @@
 #ifndef DOM_DOMStringImpl_h
 #define DOM_DOMStringImpl_h
 
-#include "misc/shared.h"
+#include "shared.h"
 #include <kxmlcore/RefPtr.h>
 #include <qstring.h>
 

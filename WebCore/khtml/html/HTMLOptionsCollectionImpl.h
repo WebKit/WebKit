@@ -25,7 +25,7 @@
 #ifndef HTML_HTMLOptionsCollectionImpl_H
 #define HTML_HTMLOptionsCollectionImpl_H
 
-#include "misc/shared.h"
+#include "shared.h"
 
 namespace DOM {
 

@@ -30,7 +30,7 @@
 
 #include "render_block.h"
 #include "render_style.h"
-#include "misc/khtmllayout.h"
+#include "khtmllayout.h"
 
 namespace DOM {
     class DOMString;

@@ -32,7 +32,7 @@
 #import "KWQLogging.h"
 #import "KWQFoundationExtras.h"
 
-#import "misc/shared.h"
+#import "shared.h"
 
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"

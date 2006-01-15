@@ -26,7 +26,7 @@
 #ifndef __edit_command_h__
 #define __edit_command_h__
 
-#include "misc/shared.h"
+#include "shared.h"
 #include "edit_actions.h"
 #include "SelectionController.h"
 

@@ -26,7 +26,7 @@
 #include "dom/dom_exception.h"
 
 #include "html/html_documentimpl.h"
-#include "misc/loader.h"
+#include "loader.h"
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
 #include "xsl_stylesheetimpl.h"

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQMapImpl.h"
 
-#include "misc/shared.h"
+#include "shared.h"
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
     prev(NULL),

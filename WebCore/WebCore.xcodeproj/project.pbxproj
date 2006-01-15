@@ -134,8 +134,6 @@
 		93F198F708245E59001E9ABC /* helper.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27B02DE43D7018635CA /* helper.h */; };
 		93F198FB08245E59001E9ABC /* khtmldata.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28202DE43D7018635CA /* khtmldata.h */; };
 		93F198FC08245E59001E9ABC /* khtmllayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28302DE43D7018635CA /* khtmllayout.h */; };
-		93F198FD08245E59001E9ABC /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28602DE43D7018635CA /* loader.h */; };
-		93F198FE08245E59001E9ABC /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28402DE43D7018635CA /* loader_client.h */; };
 		93F198FF08245E59001E9ABC /* shared.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28802DE43D7018635CA /* shared.h */; };
 		93F1990008245E59001E9ABC /* stringit.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28902DE43D7018635CA /* stringit.h */; };
 		93F1990108245E59001E9ABC /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D29E02DE4438018635CA /* bidi.h */; };
@@ -446,7 +444,6 @@
 		93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* htmltokenizer.cpp */; };
 		93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* decoder.cpp */; };
 		93F19A9E08245E59001E9ABC /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27A02DE43D7018635CA /* helper.cpp */; };
-		93F19AA008245E59001E9ABC /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D28502DE43D7018635CA /* loader.cpp */; };
 		93F19AA108245E59001E9ABC /* bidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D29D02DE4438018635CA /* bidi.cpp */; };
 		93F19AA208245E59001E9ABC /* break_lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D29F02DE4438018635CA /* break_lines.cpp */; };
 		93F19AA308245E59001E9ABC /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2A102DE4438018635CA /* font.cpp */; };
@@ -551,50 +548,6 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
-		A8135B8C0972403A00D74463 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B760972403900D74463 /* CachedCSSStyleSheet.h */; };
-		A8135B8D0972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B770972403900D74463 /* CachedCSSStyleSheet.cpp */; };
-		A8135B8E0972403A00D74463 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B780972403900D74463 /* Cache.h */; };
-		A8135B8F0972403A00D74463 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B790972403900D74463 /* Cache.cpp */; };
-		A8135B900972403A00D74463 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7A0972403900D74463 /* DocLoader.h */; };
-		A8135B910972403A00D74463 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7B0972403900D74463 /* Request.h */; };
-		A8135B920972403A00D74463 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B7C0972403900D74463 /* Request.cpp */; };
-		A8135B930972403A00D74463 /* CachedImageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7D0972403900D74463 /* CachedImageCallback.h */; };
-		A8135B940972403A00D74463 /* CachedImageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B7E0972403900D74463 /* CachedImageCallback.cpp */; };
-		A8135B950972403A00D74463 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7F0972403900D74463 /* CachedImage.h */; };
-		A8135B960972403A00D74463 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B800972403900D74463 /* CachedImage.cpp */; };
-		A8135B970972403A00D74463 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B810972403900D74463 /* DocLoader.cpp */; };
-		A8135B980972403A00D74463 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B820972403900D74463 /* CachedXSLStyleSheet.h */; };
-		A8135B990972403A00D74463 /* CachedXSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B830972403900D74463 /* CachedXSLStyleSheet.cpp */; };
-		A8135B9A0972403A00D74463 /* CachedXBLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B840972403900D74463 /* CachedXBLDocument.h */; };
-		A8135B9B0972403A00D74463 /* CachedXBLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B850972403900D74463 /* CachedXBLDocument.cpp */; };
-		A8135B9C0972403A00D74463 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B860972403900D74463 /* CachedScript.h */; };
-		A8135B9D0972403A00D74463 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B870972403900D74463 /* CachedScript.cpp */; };
-		A8135B9E0972403A00D74463 /* CachedObjectClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B880972403900D74463 /* CachedObjectClientWalker.h */; };
-		A8135B9F0972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */; };
-		A8135BA00972403A00D74463 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B8A0972403900D74463 /* CachedObject.h */; };
-		A8135BA10972403A00D74463 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B8B0972403900D74463 /* CachedObject.cpp */; };
-		A8135BA20972403A00D74463 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B760972403900D74463 /* CachedCSSStyleSheet.h */; };
-		A8135BA30972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B770972403900D74463 /* CachedCSSStyleSheet.cpp */; };
-		A8135BA40972403A00D74463 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B780972403900D74463 /* Cache.h */; };
-		A8135BA50972403A00D74463 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B790972403900D74463 /* Cache.cpp */; };
-		A8135BA60972403A00D74463 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7A0972403900D74463 /* DocLoader.h */; };
-		A8135BA70972403A00D74463 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7B0972403900D74463 /* Request.h */; };
-		A8135BA80972403A00D74463 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B7C0972403900D74463 /* Request.cpp */; };
-		A8135BA90972403A00D74463 /* CachedImageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7D0972403900D74463 /* CachedImageCallback.h */; };
-		A8135BAA0972403A00D74463 /* CachedImageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B7E0972403900D74463 /* CachedImageCallback.cpp */; };
-		A8135BAB0972403A00D74463 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B7F0972403900D74463 /* CachedImage.h */; };
-		A8135BAC0972403A00D74463 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B800972403900D74463 /* CachedImage.cpp */; };
-		A8135BAD0972403A00D74463 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B810972403900D74463 /* DocLoader.cpp */; };
-		A8135BAE0972403A00D74463 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B820972403900D74463 /* CachedXSLStyleSheet.h */; };
-		A8135BAF0972403A00D74463 /* CachedXSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B830972403900D74463 /* CachedXSLStyleSheet.cpp */; };
-		A8135BB00972403A00D74463 /* CachedXBLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B840972403900D74463 /* CachedXBLDocument.h */; };
-		A8135BB10972403A00D74463 /* CachedXBLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B850972403900D74463 /* CachedXBLDocument.cpp */; };
-		A8135BB20972403A00D74463 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B860972403900D74463 /* CachedScript.h */; };
-		A8135BB30972403A00D74463 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B870972403900D74463 /* CachedScript.cpp */; };
-		A8135BB40972403A00D74463 /* CachedObjectClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B880972403900D74463 /* CachedObjectClientWalker.h */; };
-		A8135BB50972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */; };
-		A8135BB60972403A00D74463 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8135B8A0972403900D74463 /* CachedObject.h */; };
-		A8135BB70972403A00D74463 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8135B8B0972403900D74463 /* CachedObject.cpp */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElementImpl.h */; };
@@ -752,8 +705,6 @@
 		A88AD1450952480A001DD196 /* helper.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27B02DE43D7018635CA /* helper.h */; };
 		A88AD1460952480A001DD196 /* khtmldata.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28202DE43D7018635CA /* khtmldata.h */; };
 		A88AD1470952480A001DD196 /* khtmllayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28302DE43D7018635CA /* khtmllayout.h */; };
-		A88AD1480952480A001DD196 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28602DE43D7018635CA /* loader.h */; };
-		A88AD1490952480A001DD196 /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28402DE43D7018635CA /* loader_client.h */; };
 		A88AD14A0952480A001DD196 /* shared.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28802DE43D7018635CA /* shared.h */; };
 		A88AD14B0952480A001DD196 /* stringit.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28902DE43D7018635CA /* stringit.h */; };
 		A88AD14C0952480A001DD196 /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D29E02DE4438018635CA /* bidi.h */; };
@@ -1106,7 +1057,6 @@
 		A88AD2DF0952480A001DD196 /* htmltokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* htmltokenizer.cpp */; };
 		A88AD2E00952480A001DD196 /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* decoder.cpp */; };
 		A88AD2E10952480A001DD196 /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27A02DE43D7018635CA /* helper.cpp */; };
-		A88AD2E20952480A001DD196 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D28502DE43D7018635CA /* loader.cpp */; };
 		A88AD2E30952480A001DD196 /* bidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D29D02DE4438018635CA /* bidi.cpp */; };
 		A88AD2E40952480A001DD196 /* break_lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D29F02DE4438018635CA /* break_lines.cpp */; };
 		A88AD2E50952480A001DD196 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2A102DE4438018635CA /* font.cpp */; };
@@ -1645,6 +1595,56 @@
 		BCB16B8E0979B01400467741 /* Array.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* Array.h */; };
 		BCB16B8F0979B01400467741 /* ArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16B890979B01400467741 /* ArrayImpl.cpp */; };
 		BCB16B900979B01400467741 /* ArrayImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B8A0979B01400467741 /* ArrayImpl.h */; };
+		BCB16C170979C3BD00467741 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* Cache.cpp */; };
+		BCB16C180979C3BD00467741 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16BFF0979C3BD00467741 /* Cache.h */; };
+		BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */; };
+		BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */; };
+		BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C020979C3BD00467741 /* CachedImage.cpp */; };
+		BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C030979C3BD00467741 /* CachedImage.h */; };
+		BCB16C1D0979C3BD00467741 /* CachedImageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */; };
+		BCB16C1E0979C3BD00467741 /* CachedImageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C050979C3BD00467741 /* CachedImageCallback.h */; };
+		BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedObject.cpp */; };
+		BCB16C200979C3BD00467741 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedObject.h */; };
+		BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */; };
+		BCB16C220979C3BD00467741 /* CachedObjectClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */; };
+		BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0A0979C3BD00467741 /* CachedScript.cpp */; };
+		BCB16C240979C3BD00467741 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0B0979C3BD00467741 /* CachedScript.h */; };
+		BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */; };
+		BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */; };
+		BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */; };
+		BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */; };
+		BCB16C290979C3BD00467741 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C100979C3BD00467741 /* DocLoader.cpp */; };
+		BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* DocLoader.h */; };
+		BCB16C2B0979C3BD00467741 /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C120979C3BD00467741 /* loader_client.h */; };
+		BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
+		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
+		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
+		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
+		BCB16C300979C3BD00467741 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* Cache.cpp */; };
+		BCB16C310979C3BD00467741 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16BFF0979C3BD00467741 /* Cache.h */; };
+		BCB16C320979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */; };
+		BCB16C330979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */; };
+		BCB16C340979C3BD00467741 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C020979C3BD00467741 /* CachedImage.cpp */; };
+		BCB16C350979C3BD00467741 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C030979C3BD00467741 /* CachedImage.h */; };
+		BCB16C360979C3BD00467741 /* CachedImageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */; };
+		BCB16C370979C3BD00467741 /* CachedImageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C050979C3BD00467741 /* CachedImageCallback.h */; };
+		BCB16C380979C3BD00467741 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedObject.cpp */; };
+		BCB16C390979C3BD00467741 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedObject.h */; };
+		BCB16C3A0979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */; };
+		BCB16C3B0979C3BD00467741 /* CachedObjectClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */; };
+		BCB16C3C0979C3BD00467741 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0A0979C3BD00467741 /* CachedScript.cpp */; };
+		BCB16C3D0979C3BD00467741 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0B0979C3BD00467741 /* CachedScript.h */; };
+		BCB16C3E0979C3BD00467741 /* CachedXBLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */; };
+		BCB16C3F0979C3BD00467741 /* CachedXBLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */; };
+		BCB16C400979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */; };
+		BCB16C410979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */; };
+		BCB16C420979C3BD00467741 /* DocLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C100979C3BD00467741 /* DocLoader.cpp */; };
+		BCB16C430979C3BD00467741 /* DocLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C110979C3BD00467741 /* DocLoader.h */; };
+		BCB16C440979C3BD00467741 /* loader_client.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C120979C3BD00467741 /* loader_client.h */; };
+		BCB16C450979C3BD00467741 /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C130979C3BD00467741 /* loader.cpp */; };
+		BCB16C460979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
+		BCB16C470979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
+		BCB16C480979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
@@ -2021,28 +2021,6 @@
 		A8122CF208D564B100844FA3 /* SVGViewElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGViewElement.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8122CF308D564B100844FA3 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8122CF408D564B100844FA3 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8135B760972403900D74463 /* CachedCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedCSSStyleSheet.h; sourceTree = "<group>"; };
-		A8135B770972403900D74463 /* CachedCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedCSSStyleSheet.cpp; sourceTree = "<group>"; };
-		A8135B780972403900D74463 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Cache.h; sourceTree = "<group>"; };
-		A8135B790972403900D74463 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Cache.cpp; sourceTree = "<group>"; };
-		A8135B7A0972403900D74463 /* DocLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocLoader.h; sourceTree = "<group>"; };
-		A8135B7B0972403900D74463 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
-		A8135B7C0972403900D74463 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
-		A8135B7D0972403900D74463 /* CachedImageCallback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedImageCallback.h; sourceTree = "<group>"; };
-		A8135B7E0972403900D74463 /* CachedImageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedImageCallback.cpp; sourceTree = "<group>"; };
-		A8135B7F0972403900D74463 /* CachedImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedImage.h; sourceTree = "<group>"; };
-		A8135B800972403900D74463 /* CachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedImage.cpp; sourceTree = "<group>"; };
-		A8135B810972403900D74463 /* DocLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocLoader.cpp; sourceTree = "<group>"; };
-		A8135B820972403900D74463 /* CachedXSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedXSLStyleSheet.h; sourceTree = "<group>"; };
-		A8135B830972403900D74463 /* CachedXSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedXSLStyleSheet.cpp; sourceTree = "<group>"; };
-		A8135B840972403900D74463 /* CachedXBLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedXBLDocument.h; sourceTree = "<group>"; };
-		A8135B850972403900D74463 /* CachedXBLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedXBLDocument.cpp; sourceTree = "<group>"; };
-		A8135B860972403900D74463 /* CachedScript.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedScript.h; sourceTree = "<group>"; };
-		A8135B870972403900D74463 /* CachedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedScript.cpp; sourceTree = "<group>"; };
-		A8135B880972403900D74463 /* CachedObjectClientWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObjectClientWalker.h; sourceTree = "<group>"; };
-		A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObjectClientWalker.cpp; sourceTree = "<group>"; };
-		A8135B8A0972403900D74463 /* CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObject.h; sourceTree = "<group>"; };
-		A8135B8B0972403900D74463 /* CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObject.cpp; sourceTree = "<group>"; };
 		A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLIsIndexElementImpl.h; sourceTree = "<group>"; };
 		A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLIsIndexElementImpl.cpp; sourceTree = "<group>"; };
 		A81369B0097374F500D74463 /* HTMLInputElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLInputElementImpl.h; sourceTree = "<group>"; };
@@ -2521,6 +2499,31 @@
 		BCB16B880979B01400467741 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Array.h; path = platform/Array.h; sourceTree = "<group>"; };
 		BCB16B890979B01400467741 /* ArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayImpl.cpp; path = platform/ArrayImpl.cpp; sourceTree = "<group>"; };
 		BCB16B8A0979B01400467741 /* ArrayImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ArrayImpl.h; path = platform/ArrayImpl.h; sourceTree = "<group>"; };
+		BCB16BFE0979C3BD00467741 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Cache.cpp; path = loader/Cache.cpp; sourceTree = "<group>"; };
+		BCB16BFF0979C3BD00467741 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = loader/Cache.h; sourceTree = "<group>"; };
+		BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedCSSStyleSheet.cpp; path = loader/CachedCSSStyleSheet.cpp; sourceTree = "<group>"; };
+		BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedCSSStyleSheet.h; path = loader/CachedCSSStyleSheet.h; sourceTree = "<group>"; };
+		BCB16C020979C3BD00467741 /* CachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedImage.cpp; path = loader/CachedImage.cpp; sourceTree = "<group>"; };
+		BCB16C030979C3BD00467741 /* CachedImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedImage.h; path = loader/CachedImage.h; sourceTree = "<group>"; };
+		BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedImageCallback.cpp; path = loader/CachedImageCallback.cpp; sourceTree = "<group>"; };
+		BCB16C050979C3BD00467741 /* CachedImageCallback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedImageCallback.h; path = loader/CachedImageCallback.h; sourceTree = "<group>"; };
+		BCB16C060979C3BD00467741 /* CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedObject.cpp; path = loader/CachedObject.cpp; sourceTree = "<group>"; };
+		BCB16C070979C3BD00467741 /* CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedObject.h; path = loader/CachedObject.h; sourceTree = "<group>"; };
+		BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedObjectClientWalker.cpp; path = loader/CachedObjectClientWalker.cpp; sourceTree = "<group>"; };
+		BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedObjectClientWalker.h; path = loader/CachedObjectClientWalker.h; sourceTree = "<group>"; };
+		BCB16C0A0979C3BD00467741 /* CachedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedScript.cpp; path = loader/CachedScript.cpp; sourceTree = "<group>"; };
+		BCB16C0B0979C3BD00467741 /* CachedScript.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedScript.h; path = loader/CachedScript.h; sourceTree = "<group>"; };
+		BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedXBLDocument.cpp; path = loader/CachedXBLDocument.cpp; sourceTree = "<group>"; };
+		BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedXBLDocument.h; path = loader/CachedXBLDocument.h; sourceTree = "<group>"; };
+		BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedXSLStyleSheet.cpp; path = loader/CachedXSLStyleSheet.cpp; sourceTree = "<group>"; };
+		BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedXSLStyleSheet.h; path = loader/CachedXSLStyleSheet.h; sourceTree = "<group>"; };
+		BCB16C100979C3BD00467741 /* DocLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DocLoader.cpp; path = loader/DocLoader.cpp; sourceTree = "<group>"; };
+		BCB16C110979C3BD00467741 /* DocLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DocLoader.h; path = loader/DocLoader.h; sourceTree = "<group>"; };
+		BCB16C120979C3BD00467741 /* loader_client.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = loader_client.h; path = loader/loader_client.h; sourceTree = "<group>"; };
+		BCB16C130979C3BD00467741 /* loader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = loader.cpp; path = loader/loader.cpp; sourceTree = "<group>"; };
+		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = loader.h; path = loader/loader.h; sourceTree = "<group>"; };
+		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Request.cpp; path = loader/Request.cpp; sourceTree = "<group>"; };
+		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Request.h; path = loader/Request.h; sourceTree = "<group>"; };
 		BCBDB0370597B36E00B83B92 /* xbl_protoimplementation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_protoimplementation.cpp; path = xbl/xbl_protoimplementation.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_protoimplementation.h; path = xbl/xbl_protoimplementation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCBDB093059A28B100B83B92 /* xbl_binding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding.cpp; path = xbl/xbl_binding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2650,9 +2653,6 @@
 		F523D27B02DE43D7018635CA /* helper.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = helper.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D28202DE43D7018635CA /* khtmldata.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = khtmldata.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D28302DE43D7018635CA /* khtmllayout.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = khtmllayout.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D28402DE43D7018635CA /* loader_client.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = loader_client.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D28502DE43D7018635CA /* loader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loader.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D28602DE43D7018635CA /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D28802DE43D7018635CA /* shared.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = shared.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D28902DE43D7018635CA /* stringit.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = stringit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D29D02DE4438018635CA /* bidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bidi.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2932,6 +2932,7 @@
 			isa = PBXGroup;
 			children = (
 				65BF021F097480EF00C43196 /* bridge */,
+				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D16302DE42AE018635CA /* khtml */,
@@ -3676,6 +3677,38 @@
 			path = khtml;
 			sourceTree = SOURCE_ROOT;
 		};
+		BCB16BFB0979C38700467741 /* loader */ = {
+			isa = PBXGroup;
+			children = (
+				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
+				BCB16BFF0979C3BD00467741 /* Cache.h */,
+				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
+				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
+				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
+				BCB16C030979C3BD00467741 /* CachedImage.h */,
+				BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */,
+				BCB16C050979C3BD00467741 /* CachedImageCallback.h */,
+				BCB16C060979C3BD00467741 /* CachedObject.cpp */,
+				BCB16C070979C3BD00467741 /* CachedObject.h */,
+				BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */,
+				BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */,
+				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
+				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
+				BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */,
+				BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */,
+				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
+				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
+				BCB16C100979C3BD00467741 /* DocLoader.cpp */,
+				BCB16C110979C3BD00467741 /* DocLoader.h */,
+				BCB16C120979C3BD00467741 /* loader_client.h */,
+				BCB16C130979C3BD00467741 /* loader.cpp */,
+				BCB16C140979C3BD00467741 /* loader.h */,
+				BCB16C150979C3BD00467741 /* Request.cpp */,
+				BCB16C160979C3BD00467741 /* Request.h */,
+			);
+			name = loader;
+			sourceTree = "<group>";
+		};
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
@@ -4019,34 +4052,9 @@
 				F523D27B02DE43D7018635CA /* helper.h */,
 				F523D28202DE43D7018635CA /* khtmldata.h */,
 				F523D28302DE43D7018635CA /* khtmllayout.h */,
-				F523D28402DE43D7018635CA /* loader_client.h */,
-				F523D28502DE43D7018635CA /* loader.cpp */,
-				F523D28602DE43D7018635CA /* loader.h */,
 				F523D28802DE43D7018635CA /* shared.h */,
 				BC433ACF05D3046F003A5A14 /* stringit.cpp */,
 				F523D28902DE43D7018635CA /* stringit.h */,
-				A8135B780972403900D74463 /* Cache.h */,
-				A8135B790972403900D74463 /* Cache.cpp */,
-				A8135B7A0972403900D74463 /* DocLoader.h */,
-				A8135B810972403900D74463 /* DocLoader.cpp */,
-				A8135B7B0972403900D74463 /* Request.h */,
-				A8135B7C0972403900D74463 /* Request.cpp */,
-				A8135B7D0972403900D74463 /* CachedImageCallback.h */,
-				A8135B7E0972403900D74463 /* CachedImageCallback.cpp */,
-				A8135B7F0972403900D74463 /* CachedImage.h */,
-				A8135B800972403900D74463 /* CachedImage.cpp */,
-				A8135B760972403900D74463 /* CachedCSSStyleSheet.h */,
-				A8135B770972403900D74463 /* CachedCSSStyleSheet.cpp */,
-				A8135B820972403900D74463 /* CachedXSLStyleSheet.h */,
-				A8135B830972403900D74463 /* CachedXSLStyleSheet.cpp */,
-				A8135B840972403900D74463 /* CachedXBLDocument.h */,
-				A8135B850972403900D74463 /* CachedXBLDocument.cpp */,
-				A8135B860972403900D74463 /* CachedScript.h */,
-				A8135B870972403900D74463 /* CachedScript.cpp */,
-				A8135B880972403900D74463 /* CachedObjectClientWalker.h */,
-				A8135B890972403900D74463 /* CachedObjectClientWalker.cpp */,
-				A8135B8A0972403900D74463 /* CachedObject.h */,
-				A8135B8B0972403900D74463 /* CachedObject.cpp */,
 			);
 			path = misc;
 			sourceTree = "<group>";
@@ -4498,8 +4506,6 @@
 				93F198F708245E59001E9ABC /* helper.h in Headers */,
 				93F198FB08245E59001E9ABC /* khtmldata.h in Headers */,
 				93F198FC08245E59001E9ABC /* khtmllayout.h in Headers */,
-				93F198FD08245E59001E9ABC /* loader.h in Headers */,
-				93F198FE08245E59001E9ABC /* loader_client.h in Headers */,
 				93F198FF08245E59001E9ABC /* shared.h in Headers */,
 				93F1990008245E59001E9ABC /* stringit.h in Headers */,
 				93F1990108245E59001E9ABC /* bidi.h in Headers */,
@@ -4923,17 +4929,6 @@
 				A82B8CAC09712C2C0027E3DE /* RenderTextFragment.h in Headers */,
 				A82B8CAE09712C2C0027E3DE /* RenderText.h in Headers */,
 				A82B8CAF09712C2C0027E3DE /* InlineTextBox.h in Headers */,
-				A8135B8C0972403A00D74463 /* CachedCSSStyleSheet.h in Headers */,
-				A8135B8E0972403A00D74463 /* Cache.h in Headers */,
-				A8135B900972403A00D74463 /* DocLoader.h in Headers */,
-				A8135B910972403A00D74463 /* Request.h in Headers */,
-				A8135B930972403A00D74463 /* CachedImageCallback.h in Headers */,
-				A8135B950972403A00D74463 /* CachedImage.h in Headers */,
-				A8135B980972403A00D74463 /* CachedXSLStyleSheet.h in Headers */,
-				A8135B9A0972403A00D74463 /* CachedXBLDocument.h in Headers */,
-				A8135B9C0972403A00D74463 /* CachedScript.h in Headers */,
-				A8135B9E0972403A00D74463 /* CachedObjectClientWalker.h in Headers */,
-				A8135BA00972403A00D74463 /* CachedObject.h in Headers */,
 				A81369CA097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */,
 				A81369CC097374F600D74463 /* HTMLInputElementImpl.h in Headers */,
 				A81369CE097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */,
@@ -4978,6 +4973,19 @@
 				BCB16AFC0979A08500467741 /* IntRect.h in Headers */,
 				BCB16B8B0979B01400467741 /* Array.h in Headers */,
 				BCB16B8D0979B01400467741 /* ArrayImpl.h in Headers */,
+				BCB16C180979C3BD00467741 /* Cache.h in Headers */,
+				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
+				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
+				BCB16C1E0979C3BD00467741 /* CachedImageCallback.h in Headers */,
+				BCB16C200979C3BD00467741 /* CachedObject.h in Headers */,
+				BCB16C220979C3BD00467741 /* CachedObjectClientWalker.h in Headers */,
+				BCB16C240979C3BD00467741 /* CachedScript.h in Headers */,
+				BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */,
+				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
+				BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */,
+				BCB16C2B0979C3BD00467741 /* loader_client.h in Headers */,
+				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
+				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5028,8 +5036,6 @@
 				A88AD1450952480A001DD196 /* helper.h in Headers */,
 				A88AD1460952480A001DD196 /* khtmldata.h in Headers */,
 				A88AD1470952480A001DD196 /* khtmllayout.h in Headers */,
-				A88AD1480952480A001DD196 /* loader.h in Headers */,
-				A88AD1490952480A001DD196 /* loader_client.h in Headers */,
 				A88AD14A0952480A001DD196 /* shared.h in Headers */,
 				A88AD14B0952480A001DD196 /* stringit.h in Headers */,
 				A88AD14C0952480A001DD196 /* bidi.h in Headers */,
@@ -5276,17 +5282,6 @@
 				A82B8CB609712C3E0027E3DE /* InlineTextBox.h in Headers */,
 				A82B8CB809712C3E0027E3DE /* RenderText.h in Headers */,
 				A82B8CBA09712C3E0027E3DE /* RenderTextFragment.h in Headers */,
-				A8135BA20972403A00D74463 /* CachedCSSStyleSheet.h in Headers */,
-				A8135BA40972403A00D74463 /* Cache.h in Headers */,
-				A8135BA60972403A00D74463 /* DocLoader.h in Headers */,
-				A8135BA70972403A00D74463 /* Request.h in Headers */,
-				A8135BA90972403A00D74463 /* CachedImageCallback.h in Headers */,
-				A8135BAB0972403A00D74463 /* CachedImage.h in Headers */,
-				A8135BAE0972403A00D74463 /* CachedXSLStyleSheet.h in Headers */,
-				A8135BB00972403A00D74463 /* CachedXBLDocument.h in Headers */,
-				A8135BB20972403A00D74463 /* CachedScript.h in Headers */,
-				A8135BB40972403A00D74463 /* CachedObjectClientWalker.h in Headers */,
-				A8135BB60972403A00D74463 /* CachedObject.h in Headers */,
 				A81369E6097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */,
 				A81369E8097374F600D74463 /* HTMLInputElementImpl.h in Headers */,
 				A81369EA097374F600D74463 /* HTMLGenericFormElementImpl.h in Headers */,
@@ -5321,6 +5316,19 @@
 				BCB16B000979A08500467741 /* IntRect.h in Headers */,
 				BCB16B8E0979B01400467741 /* Array.h in Headers */,
 				BCB16B900979B01400467741 /* ArrayImpl.h in Headers */,
+				BCB16C310979C3BD00467741 /* Cache.h in Headers */,
+				BCB16C330979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
+				BCB16C350979C3BD00467741 /* CachedImage.h in Headers */,
+				BCB16C370979C3BD00467741 /* CachedImageCallback.h in Headers */,
+				BCB16C390979C3BD00467741 /* CachedObject.h in Headers */,
+				BCB16C3B0979C3BD00467741 /* CachedObjectClientWalker.h in Headers */,
+				BCB16C3D0979C3BD00467741 /* CachedScript.h in Headers */,
+				BCB16C3F0979C3BD00467741 /* CachedXBLDocument.h in Headers */,
+				BCB16C410979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
+				BCB16C430979C3BD00467741 /* DocLoader.h in Headers */,
+				BCB16C440979C3BD00467741 /* loader_client.h in Headers */,
+				BCB16C460979C3BD00467741 /* loader.h in Headers */,
+				BCB16C480979C3BD00467741 /* Request.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6500,7 +6508,6 @@
 				93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */,
 				93F19A9E08245E59001E9ABC /* helper.cpp in Sources */,
-				93F19AA008245E59001E9ABC /* loader.cpp in Sources */,
 				93F19AA108245E59001E9ABC /* bidi.cpp in Sources */,
 				93F19AA208245E59001E9ABC /* break_lines.cpp in Sources */,
 				93F19AA308245E59001E9ABC /* font.cpp in Sources */,
@@ -6807,17 +6814,6 @@
 				65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */,
 				A82B8CAD09712C2C0027E3DE /* RenderTextFragment.cpp in Sources */,
 				A82B8CB109712C2C0027E3DE /* RenderText.cpp in Sources */,
-				A8135B8D0972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */,
-				A8135B8F0972403A00D74463 /* Cache.cpp in Sources */,
-				A8135B920972403A00D74463 /* Request.cpp in Sources */,
-				A8135B940972403A00D74463 /* CachedImageCallback.cpp in Sources */,
-				A8135B960972403A00D74463 /* CachedImage.cpp in Sources */,
-				A8135B970972403A00D74463 /* DocLoader.cpp in Sources */,
-				A8135B990972403A00D74463 /* CachedXSLStyleSheet.cpp in Sources */,
-				A8135B9B0972403A00D74463 /* CachedXBLDocument.cpp in Sources */,
-				A8135B9D0972403A00D74463 /* CachedScript.cpp in Sources */,
-				A8135B9F0972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */,
-				A8135BA10972403A00D74463 /* CachedObject.cpp in Sources */,
 				A81369CB097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */,
 				A81369CD097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */,
 				A81369CF097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */,
@@ -6863,6 +6859,18 @@
 				BCB16B030979A09A00467741 /* FloatRect.mm in Sources */,
 				BCB16B040979A09A00467741 /* IntRect.mm in Sources */,
 				BCB16B8C0979B01400467741 /* ArrayImpl.cpp in Sources */,
+				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
+				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
+				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
+				BCB16C1D0979C3BD00467741 /* CachedImageCallback.cpp in Sources */,
+				BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */,
+				BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */,
+				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
+				BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
+				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				BCB16C290979C3BD00467741 /* DocLoader.cpp in Sources */,
+				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
+				BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6967,7 +6975,6 @@
 				A88AD2DF0952480A001DD196 /* htmltokenizer.cpp in Sources */,
 				A88AD2E00952480A001DD196 /* decoder.cpp in Sources */,
 				A88AD2E10952480A001DD196 /* helper.cpp in Sources */,
-				A88AD2E20952480A001DD196 /* loader.cpp in Sources */,
 				A88AD2E30952480A001DD196 /* bidi.cpp in Sources */,
 				A88AD2E40952480A001DD196 /* break_lines.cpp in Sources */,
 				A88AD2E50952480A001DD196 /* font.cpp in Sources */,
@@ -7108,17 +7115,6 @@
 				A82B8CB509712C3E0027E3DE /* InlineTextBox.cpp in Sources */,
 				A82B8CB709712C3E0027E3DE /* RenderText.cpp in Sources */,
 				A82B8CB909712C3E0027E3DE /* RenderTextFragment.cpp in Sources */,
-				A8135BA30972403A00D74463 /* CachedCSSStyleSheet.cpp in Sources */,
-				A8135BA50972403A00D74463 /* Cache.cpp in Sources */,
-				A8135BA80972403A00D74463 /* Request.cpp in Sources */,
-				A8135BAA0972403A00D74463 /* CachedImageCallback.cpp in Sources */,
-				A8135BAC0972403A00D74463 /* CachedImage.cpp in Sources */,
-				A8135BAD0972403A00D74463 /* DocLoader.cpp in Sources */,
-				A8135BAF0972403A00D74463 /* CachedXSLStyleSheet.cpp in Sources */,
-				A8135BB10972403A00D74463 /* CachedXBLDocument.cpp in Sources */,
-				A8135BB30972403A00D74463 /* CachedScript.cpp in Sources */,
-				A8135BB50972403A00D74463 /* CachedObjectClientWalker.cpp in Sources */,
-				A8135BB70972403A00D74463 /* CachedObject.cpp in Sources */,
 				A81369E7097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */,
 				A81369E9097374F600D74463 /* HTMLInputElementImpl.cpp in Sources */,
 				A81369EB097374F600D74463 /* HTMLGenericFormElementImpl.cpp in Sources */,
@@ -7156,6 +7152,18 @@
 				BCB16B050979A09A00467741 /* FloatRect.mm in Sources */,
 				BCB16B060979A09A00467741 /* IntRect.mm in Sources */,
 				BCB16B8F0979B01400467741 /* ArrayImpl.cpp in Sources */,
+				BCB16C300979C3BD00467741 /* Cache.cpp in Sources */,
+				BCB16C320979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
+				BCB16C340979C3BD00467741 /* CachedImage.cpp in Sources */,
+				BCB16C360979C3BD00467741 /* CachedImageCallback.cpp in Sources */,
+				BCB16C380979C3BD00467741 /* CachedObject.cpp in Sources */,
+				BCB16C3A0979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */,
+				BCB16C3C0979C3BD00467741 /* CachedScript.cpp in Sources */,
+				BCB16C3E0979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
+				BCB16C400979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				BCB16C420979C3BD00467741 /* DocLoader.cpp in Sources */,
+				BCB16C450979C3BD00467741 /* loader.cpp in Sources */,
+				BCB16C470979C3BD00467741 /* Request.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

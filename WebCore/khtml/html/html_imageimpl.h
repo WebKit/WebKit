@@ -25,7 +25,7 @@
 #define HTML_IMAGEIMPL_H
 
 #include "html/html_inlineimpl.h"
-#include "misc/khtmllayout.h"
+#include "khtmllayout.h"
 #include "rendering/render_object.h"
 
 #include <loader.h>

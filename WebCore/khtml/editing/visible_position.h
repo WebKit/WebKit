@@ -31,7 +31,7 @@
 
 #include "xml/dom_position.h"
 #include "text_affinity.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 namespace DOM {
     class NodeImpl;

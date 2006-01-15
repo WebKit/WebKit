@@ -24,7 +24,7 @@
 #define _DOM_ViewsImpl_h_
 
 #include "css/css_valueimpl.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 namespace DOM {
 

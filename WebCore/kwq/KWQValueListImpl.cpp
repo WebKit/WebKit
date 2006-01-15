@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQValueListImpl.h"
 
-#include "misc/shared.h"
+#include "shared.h"
 #include <stdlib.h>
 
 class KWQValueListImpl::KWQValueListPrivate : public khtml::Shared<KWQValueListImpl::KWQValueListPrivate>

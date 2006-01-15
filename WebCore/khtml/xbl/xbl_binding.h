@@ -1,4 +1,4 @@
-#include "misc/loader_client.h"
+#include "loader_client.h"
 #include "dom/dom_string.h"
 
 namespace khtml

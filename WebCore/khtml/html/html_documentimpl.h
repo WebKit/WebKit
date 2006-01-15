@@ -26,7 +26,7 @@
 #define HTML_DOCUMENTIMPL_H
 
 #include "DocumentImpl.h"
-#include "misc/loader_client.h"
+#include "loader_client.h"
 #include "html/html_miscimpl.h"
 #include <kxmlcore/HashMap.h>
 

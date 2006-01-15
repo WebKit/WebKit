@@ -27,7 +27,7 @@
 #include "KWQVariant.h"
 
 #include "KWQString.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 class QVariant::QVariantPrivate : public khtml::Shared<QVariant::QVariantPrivate>
 {

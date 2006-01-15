@@ -37,7 +37,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedScript.h"
 #include "DocLoader.h"
-#include "misc/helper.h"
+#include "helper.h"
 
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"

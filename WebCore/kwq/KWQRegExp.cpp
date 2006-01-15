@@ -29,7 +29,7 @@
 
 #include <sys/types.h>
 #include <pcre/pcre.h>
-#include "misc/shared.h"
+#include "shared.h"
 
 #define MAX_SUBSTRINGS  10
 #define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)

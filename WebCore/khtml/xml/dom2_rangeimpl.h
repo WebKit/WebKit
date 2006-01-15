@@ -28,7 +28,7 @@
 #define _DOM2_RangeImpl_h_
 
 #include "dom/dom2_range.h"
-#include "misc/shared.h"
+#include "shared.h"
 #include "DocPtr.h"
 
 namespace DOM {

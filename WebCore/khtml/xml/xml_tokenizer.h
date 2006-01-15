@@ -26,7 +26,7 @@
 
 #include <qobject.h>
 #include <qmap.h>
-#include "misc/stringit.h"
+#include "stringit.h"
 
 #include "KWQSignal.h"
 

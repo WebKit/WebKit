@@ -41,7 +41,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "css/cssstyleselector.h"
-#include "misc/helper.h"
+#include "helper.h"
 #include "khtml_settings.h"
 #include "MacFrame.h"
 

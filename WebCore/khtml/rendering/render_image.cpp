@@ -33,7 +33,7 @@
 #include <qwmatrix.h>
 
 #include "css/csshelper.h"
-#include "misc/helper.h"
+#include "helper.h"
 #include "html/html_imageimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_documentimpl.h"

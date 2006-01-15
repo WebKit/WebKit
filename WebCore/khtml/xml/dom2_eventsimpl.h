@@ -29,7 +29,7 @@
 #include "NodeImpl.h"
 #include "xml/dom_atomicstring.h"
 #include "xml/dom2_viewsimpl.h"
-#include "misc/shared.h"
+#include "shared.h"
 
 class Frame;
 class QKeyEvent;

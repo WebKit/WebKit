@@ -25,7 +25,7 @@
 
 #include "ContainerNodeImpl.h"
 #include "css_stylesheetimpl.h"
-#include "misc/loader_client.h"
+#include "loader_client.h"
 
 namespace khtml {
 class CachedCSSStyleSheet;

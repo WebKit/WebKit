@@ -25,7 +25,7 @@
 #ifndef DOM_DOMImplementationImpl_h
 #define DOM_DOMImplementationImpl_h
 
-#include "misc/shared.h"
+#include "shared.h"
 
 class KHTMLView;
 

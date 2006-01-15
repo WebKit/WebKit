@@ -30,7 +30,7 @@
 
 #include <qstyle.h>
 
-#include "misc/helper.h"
+#include "helper.h"
 #include "HTMLInputElementImpl.h"
 #include "HTMLTextAreaElementImpl.h"
 #include "HTMLOptionElementImpl.h"

@@ -29,7 +29,7 @@
 #include "rendering/render_style.h"
 #include "css_valueimpl.h"
 #include "dom/css_value.h"
-#include "misc/helper.h"
+#include "helper.h"
 #include "xml/dom_stringimpl.h"
 #include "khtml_settings.h"
 

@@ -36,7 +36,7 @@
 #include "css/css_stylesheetimpl.h"
 
 #include "html/html_documentimpl.h"
-#include "misc/loader.h"
+#include "loader.h"
 
 #include <kdebug.h>
 

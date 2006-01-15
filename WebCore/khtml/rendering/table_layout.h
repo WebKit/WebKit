@@ -25,7 +25,7 @@
 #define TABLE_LAYOUT_H
 
 #include "Array.h"
-#include <misc/khtmllayout.h>
+#include <khtmllayout.h>
 
 namespace khtml {
 

@@ -27,7 +27,7 @@
 
 #include "html/html_imageimpl.h"
 #include "html/html_inlineimpl.h"
-#include "misc/khtmllayout.h"
+#include "khtmllayout.h"
 #include "rendering/render_object.h"
 
 #include <qregion.h>
