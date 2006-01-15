@@ -23,8 +23,8 @@
  */
 
 #include "config.h"
-
 #include "DocumentTypeImpl.h"
+
 #include "DOMImplementationImpl.h"
 #include "DocumentImpl.h"
 #include "dom_node.h"
@@ -55,20 +55,20 @@ DOMString DocumentTypeImpl::toString() const
     DOMString result = "<!DOCTYPE ";
     result += m_name;
     if (!m_publicId.isEmpty()) {
-	result += " PUBLIC \"";
-	result += m_publicId;
-	result += "\" \"";
-	result += m_systemId;
-	result += "\"";
+        result += " PUBLIC \"";
+        result += m_publicId;
+        result += "\" \"";
+        result += m_systemId;
+        result += "\"";
     } else if (!m_systemId.isEmpty()) {
-	result += " SYSTEM \"";
-	result += m_systemId;
-	result += "\"";
+        result += " SYSTEM \"";
+        result += m_systemId;
+        result += "\"";
     }
     if (!m_subset.isEmpty()) {
-	result += " [";
-	result += m_subset;
-	result += "]";
+        result += " [";
+        result += m_subset;
+        result += "]";
     }
     result += ">";
     return result;
@@ -84,10 +84,10 @@ unsigned short DocumentTypeImpl::nodeType() const
     return Node::DOCUMENT_TYPE_NODE;
 }
 
-NodeImpl *DocumentTypeImpl::cloneNode(bool /*deep*/)
+NodeImpl* DocumentTypeImpl::cloneNode(bool /*deep*/)
 {
     // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
     return 0;
 }
 
-};
+}

@@ -3,7 +3,7 @@
  *
  * (C) 2001 Peter Kelly (pmk@post.com)
  * (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
- * Copyright (C) 2003, 2005 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -152,10 +152,10 @@ UIEventImpl::UIEventImpl(const AtomicString &eventType, bool canBubbleArg, bool 
 }
 
 void UIEventImpl::initUIEvent(const AtomicString &typeArg,
-			      bool canBubbleArg,
-			      bool cancelableArg,
-			      AbstractViewImpl *viewArg,
-			      int detailArg)
+                              bool canBubbleArg,
+                              bool cancelableArg,
+                              AbstractViewImpl *viewArg,
+                              int detailArg)
 {
     if (dispatched())
         return;
@@ -215,18 +215,18 @@ MouseRelatedEventImpl::MouseRelatedEventImpl()
 }
 
 MouseRelatedEventImpl::MouseRelatedEventImpl(const AtomicString &eventType,
-			       bool canBubbleArg,
-			       bool cancelableArg,
-			       AbstractViewImpl *viewArg,
-			       int detailArg,
-			       int screenXArg,
-			       int screenYArg,
-			       int clientXArg,
-			       int clientYArg,
-			       bool ctrlKeyArg,
-			       bool altKeyArg,
-			       bool shiftKeyArg,
-			       bool metaKeyArg)
+                               bool canBubbleArg,
+                               bool cancelableArg,
+                               AbstractViewImpl *viewArg,
+                               int detailArg,
+                               int screenXArg,
+                               int screenYArg,
+                               int clientXArg,
+                               int clientYArg,
+                               bool ctrlKeyArg,
+                               bool altKeyArg,
+                               bool shiftKeyArg,
+                               bool metaKeyArg)
     : UIEventWithKeyStateImpl(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
     , m_screenX(screenXArg), m_screenY(screenYArg)
@@ -328,20 +328,20 @@ MouseEventImpl::MouseEventImpl()
 }
 
 MouseEventImpl::MouseEventImpl(const AtomicString &eventType,
-			       bool canBubbleArg,
-			       bool cancelableArg,
-			       AbstractViewImpl *viewArg,
-			       int detailArg,
-			       int screenXArg,
-			       int screenYArg,
-			       int clientXArg,
-			       int clientYArg,
-			       bool ctrlKeyArg,
-			       bool altKeyArg,
-			       bool shiftKeyArg,
-			       bool metaKeyArg,
-			       unsigned short buttonArg,
-			       NodeImpl *relatedTargetArg,
+                               bool canBubbleArg,
+                               bool cancelableArg,
+                               AbstractViewImpl *viewArg,
+                               int detailArg,
+                               int screenXArg,
+                               int screenYArg,
+                               int clientXArg,
+                               int clientYArg,
+                               bool ctrlKeyArg,
+                               bool altKeyArg,
+                               bool shiftKeyArg,
+                               bool metaKeyArg,
+                               unsigned short buttonArg,
+                               NodeImpl *relatedTargetArg,
                                ClipboardImpl *clipboardArg)
     : MouseRelatedEventImpl(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         screenXArg, screenYArg, clientXArg, clientYArg,
@@ -538,13 +538,13 @@ MutationEventImpl::MutationEventImpl()
 }
 
 MutationEventImpl::MutationEventImpl(const AtomicString &eventType,
-				     bool canBubbleArg,
-				     bool cancelableArg,
-				     NodeImpl *relatedNodeArg,
-				     const DOMString &prevValueArg,
-				     const DOMString &newValueArg,
-				     const DOMString &attrNameArg,
-				     unsigned short attrChangeArg)
+                                     bool canBubbleArg,
+                                     bool cancelableArg,
+                                     NodeImpl *relatedNodeArg,
+                                     const DOMString &prevValueArg,
+                                     const DOMString &newValueArg,
+                                     const DOMString &attrNameArg,
+                                     unsigned short attrChangeArg)
     : EventImpl(eventType, canBubbleArg, cancelableArg)
     , m_relatedNode(relatedNodeArg)
     , m_prevValue(prevValueArg.impl())
@@ -555,13 +555,13 @@ MutationEventImpl::MutationEventImpl(const AtomicString &eventType,
 }
 
 void MutationEventImpl::initMutationEvent(const AtomicString &typeArg,
-					  bool canBubbleArg,
-					  bool cancelableArg,
-					  NodeImpl *relatedNodeArg,
-					  const DOMString &prevValueArg,
-					  const DOMString &newValueArg,
-					  const DOMString &attrNameArg,
-					  unsigned short attrChangeArg)
+                                          bool canBubbleArg,
+                                          bool cancelableArg,
+                                          NodeImpl *relatedNodeArg,
+                                          const DOMString &prevValueArg,
+                                          const DOMString &newValueArg,
+                                          const DOMString &attrNameArg,
+                                          unsigned short attrChangeArg)
 {
     if (dispatched())
         return;

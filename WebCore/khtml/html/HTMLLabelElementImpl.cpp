@@ -65,7 +65,7 @@ void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 ElementImpl *HTMLLabelElementImpl::formElement()
 {
-    DOMString formElementId = getAttribute(forAttr);
+    const AtomicString& formElementId = getAttribute(forAttr);
     if (formElementId.isNull()) {
         // Search children of the label element for a form element.
         NodeImpl *node = this;

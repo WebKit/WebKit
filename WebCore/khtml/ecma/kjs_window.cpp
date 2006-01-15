@@ -1027,7 +1027,7 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   // allow shortcuts like 'Image1' instead of document.images.Image1
   DocumentImpl *doc = m_frame->xmlDocImpl();
   if (isSafeScript(exec) && doc && doc->isHTMLDocument()) {
-    DOMString name = propertyName.domString();
+    AtomicString name = propertyName.domString().impl();
     if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) || doc->getElementById(name)) {
       slot.setCustom(this, namedItemGetter);
       return true;

@@ -1,3 +1,56 @@
+2006-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix regression in duplicate ID layout test
+
+        * khtml/xml/DocumentImpl.cpp:
+        (DocumentImpl::getElementById): Change to take AtomicString, so we can use
+        the string pointer as a hash key and not worry about ref'ing the pointer or
+        about object lifetime since the string will be stored for the lifetime of the
+        ID attribute. Also update for the counted set formerly named m_idCount to use
+        its new name, m_duplicateIds.
+        (DocumentImpl::addElementById): Ditto.
+        (DocumentImpl::removeElementById): Ditto.
+        (DocumentImpl::recalcStyleSelector): Pass a DOMStringImpl* (see below).
+        * khtml/xml/DocumentImpl.h: Change functions to take AtomicString.
+
+        * kcanvas/KCanvasFilters.cpp: (getFilterById): Use AtomicString.
+        * kcanvas/KCanvasFilters.h: Ditto.
+        * kcanvas/KCanvasResources.cpp:
+        (getResourceById): Ditto.
+        (getMarkerById): Ditto.
+        (getClipperById): Ditto.
+        (getMaskerById): Ditto.
+        (getPaintServerById): Ditto.
+        * kcanvas/KCanvasResources.h: Ditto.
+        * khtml/ecma/kjs_window.cpp: (KJS::Window::getOwnPropertySlot): Ditto.
+        * khtml/html/HTMLLabelElementImpl.cpp:
+        (DOM::HTMLLabelElementImpl::formElement): Ditto.
+        * khtml/xml/NodeListImpl.cpp: (DOM::NodeListImpl::itemById): Ditto.
+        * khtml/xml/NodeListImpl.h: Ditto. Also removed unnecessary "virtual".
+
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMStyleSheetList::nameGetter): Pass a DOMStringImpl*, which gets
+        converted to an AtomicString implicitly, rather than a DOMString, which
+        does not. (But that's a crazy rule -- we should change this around long term.)
+        (KJS::DOMStyleSheetList::getOwnPropertySlot): Ditto.
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::nameGetter): Ditto.
+        (KJS::DOMNodeList::getOwnPropertySlot): Ditto.
+        (KJS::DOMDocumentProtoFunc::callAsFunction): Ditto.
+
+        - Merge khtml, DOM, and KDOM into one big namespace, WebCore.
+
+        * WebCorePrefix.h: Use defined to map the old namespace names to WebCore.
+        Now that this is done in the prefix, we can start actually calling it by
+        that name, phase out the old names, then remove the defines.
+
+        - other changes
+
+        * khtml/xml/DocumentTypeImpl.cpp: Converted tabs to spaces.
+        * khtml/xml/dom2_eventsimpl.cpp: Ditto.
+
 2006-01-15  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed and landed by Anders.

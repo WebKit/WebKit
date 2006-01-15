@@ -149,11 +149,11 @@ private:
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
 
-KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
-KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
-KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
-KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
-KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
 
 #endif
 

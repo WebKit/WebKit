@@ -724,7 +724,7 @@ JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, con
 JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.domString()));
+  return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.domString().impl()));
 }
 
 bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -747,7 +747,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
   if (ok && idx < list.length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
-  } else if (list.itemById(propertyName.domString())) {
+  } else if (list.itemById(propertyName.domString().impl())) {
     slot.setCustom(this, nameGetter);
     return true;
   }
@@ -1028,7 +1028,7 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
   case DOMDocument::GetElementsByTagNameNS: // DOM2
     return getDOMNodeList(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec).domString()).get());
   case DOMDocument::GetElementById:
-    return getDOMNode(exec,doc.getElementById(args[0]->toString(exec).domString()));
+    return getDOMNode(exec,doc.getElementById(args[0]->toString(exec).domString().impl()));
   case DOMDocument::CreateRange:
     return getDOMRange(exec,doc.createRange());
   case DOMDocument::CreateNodeIterator: {

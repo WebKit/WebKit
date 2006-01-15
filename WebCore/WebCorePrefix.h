@@ -69,8 +69,9 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
-#define KDOM DOM
+#define KDOM WebCore
+#define DOM WebCore
+#define khtml WebCore
 
 #undef try
 #undef catch
-

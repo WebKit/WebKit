@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,11 +24,10 @@
 
 #include "config.h"
 #include "NodeListImpl.h"
+
+#include "DocumentImpl.h"
 #include "NodeImpl.h"
 #include "dom_node.h"
-#include "DocumentImpl.h"
-
-using namespace khtml;
 
 namespace DOM {
 
@@ -110,12 +109,12 @@ NodeImpl *NodeListImpl::recursiveItem ( unsigned offset, NodeImpl *start) const
     return 0; // no matching node in this subtree
 }
 
-NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
+NodeImpl* NodeListImpl::itemById(const AtomicString& elementId) const
 {
     if (rootNode->isDocumentNode() || rootNode->inDocument()) {
         NodeImpl *node = rootNode->getDocument()->getElementById(elementId);
 
-        if (node == NULL || !nodeMatches(node))
+        if (!node || !nodeMatches(node))
             return 0;
 
         for (NodeImpl *p = node->parentNode(); p; p = p->parentNode()) {

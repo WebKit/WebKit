@@ -116,7 +116,7 @@ protected:
     bool m_effectBBoxMode;
 };
 
-KCanvasFilter *getFilterById(KDOM::DocumentImpl *document, const KDOM::DOMString &id);
+KCanvasFilter *getFilterById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
 
 class KCanvasFilterEffect
 {

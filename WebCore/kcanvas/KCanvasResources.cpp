@@ -261,7 +261,7 @@ QTextStream& KCanvasMarker::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
 {
     if (id.isEmpty())
         return 0;
@@ -274,7 +274,7 @@ KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::DOMSt
     return 0;
 }
 
-KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isMarker())
@@ -282,7 +282,7 @@ KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::DOMString
     return 0;
 }
 
-KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isClipper())
@@ -290,7 +290,7 @@ KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::DOMStri
     return 0;
 }
 
-KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isMasker())
@@ -298,7 +298,7 @@ KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::DOMString
     return 0;
 }
 
-KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::DOMString &id)
+KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isPaintServer())
