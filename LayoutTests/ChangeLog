@@ -1,3 +1,31 @@
+2006-01-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by anders.
+
+        Disabling text-intro* tests until font fallback is fixed:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6524
+
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t.svg: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t.svg-disabled: Added.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg-disabled: Added.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.checksum: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.png: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg-disabled: Added.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg-disabled: Added.
+
 2006-01-13  Alexey Proskuryakov  <ap@nypop.com>
 
         Based on test case provided by Maks Orlovich. Reviewed by Maciej.
