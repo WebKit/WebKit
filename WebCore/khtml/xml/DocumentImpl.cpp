@@ -1084,8 +1084,8 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        Position startPos = VisiblePosition(s.start(), s.startAffinity()).deepEquivalent();
-        Position endPos = VisiblePosition(s.end(), s.endAffinity()).deepEquivalent();
+        Position startPos = VisiblePosition(s.start(), s.affinity()).deepEquivalent();
+        Position endPos = VisiblePosition(s.end(), s.affinity()).deepEquivalent();
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();

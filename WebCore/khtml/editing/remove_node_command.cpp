@@ -26,13 +26,10 @@
 #include "config.h"
 #include "remove_node_command.h"
 
-
+#include "NodeImpl.h"
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-
-namespace khtml {
+namespace WebCore {
 
 RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *removeChild)
     : EditCommand(document), m_removeChild(removeChild), m_parent(m_removeChild->parentNode()), m_refChild(m_removeChild->nextSibling())
@@ -60,4 +57,4 @@ void RemoveNodeCommand::doUnapply()
     ASSERT(exceptionCode == 0);
 }
 
-} // namespace khtml
+}

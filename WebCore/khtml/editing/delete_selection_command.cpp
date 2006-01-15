@@ -153,21 +153,21 @@ void DeleteSelectionCommand::initializePositionData()
     //
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
     //
-    m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.startAffinity());
+    m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity());
     m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
 
     if (m_smartDelete) {
     
         // skip smart delete if the selection to delete already starts or ends with whitespace
-        Position pos = VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()).deepEquivalent();
+        Position pos = VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()).deepEquivalent();
         bool skipSmartDelete = pos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull();
         if (!skipSmartDelete)
             skipSmartDelete = m_downstreamEnd.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull();
 
         // extend selection upstream if there is whitespace there
-        bool hasLeadingWhitespaceBeforeAdjustment = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.startAffinity(), true).isNotNull();
+        bool hasLeadingWhitespaceBeforeAdjustment = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity(), true).isNotNull();
         if (!skipSmartDelete && hasLeadingWhitespaceBeforeAdjustment) {
-            VisiblePosition visiblePos = VisiblePosition(start, m_selectionToDelete.startAffinity()).previous();
+            VisiblePosition visiblePos = VisiblePosition(start, m_selectionToDelete.affinity()).previous();
             pos = visiblePos.deepEquivalent();
             // Expand out one character upstream for smart delete and recalculate
             // positions based on this change.
@@ -181,7 +181,7 @@ void DeleteSelectionCommand::initializePositionData()
         if (!skipSmartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull()) {
             // Expand out one character downstream for smart delete and recalculate
             // positions based on this change.
-            pos = VisiblePosition(end, m_selectionToDelete.endAffinity()).next().deepEquivalent();
+            pos = VisiblePosition(end, m_selectionToDelete.affinity()).next().deepEquivalent();
             m_upstreamEnd = pos.upstream();
             m_downstreamEnd = pos.downstream();
             m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
@@ -201,7 +201,7 @@ void DeleteSelectionCommand::initializePositionData()
     // Handle detecting if the line containing the selection end is itself fully selected.
     // This is one of the tests that determines if block merging of content needs to be done.
     //
-    VisiblePosition visibleEnd(end, m_selectionToDelete.endAffinity());
+    VisiblePosition visibleEnd(end, m_selectionToDelete.affinity());
     if (isEndOfParagraph(visibleEnd)) {
         Position previousLineStart = previousLinePosition(visibleEnd, 0).deepEquivalent();
         if (previousLineStart.isNull() || RangeImpl::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
@@ -295,7 +295,7 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
-    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd, m_selectionToDelete.endAffinity());
+    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd, m_selectionToDelete.affinity());
     bool endAtEndOfBlock = isEndOfBlock(visibleEnd);
 
     // Handle some special cases where the selection begins and ends on specific visible units.
@@ -316,7 +316,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         m_startNode = m_startNode->traverseNextNode();
         startOffset = 0;
     }
-    if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()))) {
+    if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()))) {
         if (!m_startBlock->isAncestor(m_endBlock.get()) && !isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
             // Delete all the children of the block, but not the block itself.
             m_startNode = m_startBlock->firstChild();
@@ -654,7 +654,7 @@ void DeleteSelectionCommand::doApply()
         return;
 
     // save this to later make the selection with
-    EAffinity affinity = m_selectionToDelete.startAffinity();
+    EAffinity affinity = m_selectionToDelete.affinity();
     
     // set up our state
     initializePositionData();

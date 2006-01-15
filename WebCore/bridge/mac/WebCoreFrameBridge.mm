@@ -860,11 +860,11 @@ static bool initializedKJS = FALSE;
 - (WebSelectionState)selectionState
 {
     switch (m_frame->selection().state()) {
-        case SelectionController::NONE:
+        case khtml::Selection::NONE:
             return WebSelectionStateNone;
-        case SelectionController::CARET:
+        case khtml::Selection::CARET:
             return WebSelectionStateCaret;
-        case SelectionController::RANGE:
+        case khtml::Selection::RANGE:
             return WebSelectionStateRange;
     }
     
@@ -2027,7 +2027,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    m_frame->setSelection(SelectionController([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+    m_frame->setSelection(SelectionController([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
@@ -2037,12 +2037,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    return static_cast<NSSelectionAffinity>(m_frame->selection().startAffinity());
+    return static_cast<NSSelectionAffinity>(m_frame->selection().affinity());
 }
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    m_frame->setMark(SelectionController([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+    m_frame->setMark(SelectionController([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange
@@ -2512,7 +2512,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!documentView)
         return;
     
-    IntRect extentRect = renderer->caretRect(extent.offset(), m_frame->selection().extentAffinity());
+    IntRect extentRect = renderer->caretRect(extent.offset(), m_frame->selection().affinity());
     RenderLayer *layer = renderer->enclosingLayer();
     if (layer)
         layer->scrollRectToVisible(extentRect);
@@ -2669,7 +2669,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!selection.isCaret())
         return nil;
 
-    VisiblePosition caret(selection.start(), selection.startAffinity());
+    VisiblePosition caret(selection.start(), selection.affinity());
     VisiblePosition next = caret.next();
     VisiblePosition previous = caret.previous();
     if (previous.isNull() || next.isNull() || caret == next || caret == previous)

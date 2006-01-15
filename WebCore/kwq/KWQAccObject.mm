@@ -953,8 +953,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         }
             
         // return a marker range for the selection start to end
-        VisiblePosition startPosition = VisiblePosition(sel.start(), sel.startAffinity());
-        VisiblePosition endPosition = VisiblePosition(sel.end(), sel.endAffinity());
+        VisiblePosition startPosition = VisiblePosition(sel.start(), sel.affinity());
+        VisiblePosition endPosition = VisiblePosition(sel.end(), sel.affinity());
         return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
@@ -1077,8 +1077,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
     (void)sel.modify(SelectionController::EXTEND, SelectionController::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker range for the selection start to end
-    VisiblePosition startPosition = VisiblePosition(sel.start(), sel.startAffinity());
-    VisiblePosition endPosition = VisiblePosition(sel.end(), sel.endAffinity());
+    VisiblePosition startPosition = VisiblePosition(sel.start(), sel.affinity());
+    VisiblePosition endPosition = VisiblePosition(sel.end(), sel.affinity());
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 

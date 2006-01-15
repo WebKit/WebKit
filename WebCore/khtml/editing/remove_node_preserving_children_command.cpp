@@ -26,13 +26,10 @@
 #include "config.h"
 #include "remove_node_preserving_children_command.h"
 
-
+#include "NodeImpl.h"
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-
-namespace khtml {
+namespace WebCore {
 
 RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(DocumentImpl *document, NodeImpl *node)
     : CompositeEditCommand(document), m_node(node)
@@ -49,4 +46,4 @@ void RemoveNodePreservingChildrenCommand::doApply()
     removeNode(node());
 }
 
-} // namespace khtml
+}

@@ -107,14 +107,14 @@ void InsertParagraphSeparatorCommand::doApply()
         return;
     
     Position pos = selection.start();
-    EAffinity affinity = selection.startAffinity();
+    EAffinity affinity = selection.affinity();
         
     // Delete the current selection.
     if (selection.isRange()) {
         calculateStyleBeforeInsertion(pos);
         deleteSelection(false, false);
         pos = endingSelection().start();
-        affinity = endingSelection().startAffinity();
+        affinity = endingSelection().affinity();
     }
 
     pos = positionOutsideContainingSpecialElement(pos);

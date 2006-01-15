@@ -2432,7 +2432,7 @@ void Frame::selectAll()
 
 bool Frame::selectContentsOfNode(NodeImpl* node)
 {
-    SelectionController sel = SelectionController(Position(node, 0), khtml::DOWNSTREAM, Position(node, maxDeepOffset(node)), khtml::DOWNSTREAM);    
+    SelectionController sel = SelectionController(Position(node, 0), Position(node, maxDeepOffset(node)), khtml::DOWNSTREAM);    
     if (shouldChangeSelection(sel)) {
         setSelection(sel);
         return true;
@@ -2442,7 +2442,7 @@ bool Frame::selectContentsOfNode(NodeImpl* node)
 
 bool Frame::shouldChangeSelection(const SelectionController &newselection) const
 {
-    return Mac(this)->shouldChangeSelection(d->m_selection, newselection, newselection.startAffinity(), false);
+    return Mac(this)->shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
 }
 
 bool Frame::shouldBeginEditing(const RangeImpl *range) const
@@ -2692,7 +2692,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction 
         mutableStyle->ref();
     }
 
-    NodeImpl *node = VisiblePosition(selection().start(), selection().startAffinity()).deepEquivalent().node();
+    NodeImpl *node = VisiblePosition(selection().start(), selection().affinity()).deepEquivalent().node();
     CSSComputedStyleDeclarationImpl computedStyle(node);
     computedStyle.diff(mutableStyle);
     
@@ -2714,14 +2714,14 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction 
 void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     switch (selection().state()) {
-        case SelectionController::NONE:
+        case khtml::Selection::NONE:
             // do nothing
             break;
-        case SelectionController::CARET: {
+        case khtml::Selection::CARET: {
             computeAndSetTypingStyle(style, editingAction);
             break;
         }
-        case SelectionController::RANGE:
+        case khtml::Selection::RANGE:
             if (xmlDocImpl() && style) {
                 EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), style, editingAction));
                 cmd.apply();
@@ -2733,11 +2733,11 @@ void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 void Frame::applyParagraphStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     switch (selection().state()) {
-        case SelectionController::NONE:
+        case khtml::Selection::NONE:
             // do nothing
             break;
-        case SelectionController::CARET:
-        case SelectionController::RANGE:
+        case khtml::Selection::CARET:
+        case khtml::Selection::RANGE:
             if (xmlDocImpl() && style) {
                 EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
                 cmd.apply();
@@ -3061,9 +3061,9 @@ void Frame::selectFrameElementInParentIfFullySelected()
     // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
     if (!d->m_selection.isRange())
         return;
-    if (!isStartOfDocument(VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity())))
+    if (!isStartOfDocument(VisiblePosition(d->m_selection.start(), d->m_selection.affinity())))
         return;
-    if (!isEndOfDocument(VisiblePosition(d->m_selection.end(), d->m_selection.endAffinity())))
+    if (!isEndOfDocument(VisiblePosition(d->m_selection.end(), d->m_selection.affinity())))
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
@@ -3234,14 +3234,14 @@ void Frame::revealSelection()
     IntRect rect;
     
     switch (selection().state()) {
-        case SelectionController::NONE:
+        case khtml::Selection::NONE:
             return;
             
-        case SelectionController::CARET:
+        case khtml::Selection::CARET:
             rect = selection().caretRect();
             break;
             
-        case SelectionController::RANGE:
+        case khtml::Selection::RANGE:
             rect = selectionRect();
             break;
     }
@@ -3656,14 +3656,14 @@ void Frame::centerSelectionInVisibleArea() const
     IntRect rect;
     
     switch (selection().state()) {
-        case SelectionController::NONE:
+        case khtml::Selection::NONE:
             return;
             
-        case SelectionController::CARET:
+        case khtml::Selection::CARET:
             rect = selection().caretRect();
             break;
             
-        case SelectionController::RANGE:
+        case khtml::Selection::RANGE:
             rect = selectionRect();
             break;
     }
@@ -3690,7 +3690,7 @@ RenderStyle *Frame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     if (d->m_selection.isNone())
         return 0;
     
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.affinity()).deepEquivalent();
     if (!pos.inRenderedContent())
         return 0;
     NodeImpl *node = pos.node();

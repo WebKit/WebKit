@@ -80,7 +80,7 @@ void MoveSelectionCommand::doApply()
     if (!pos.node()->inDocument())
         pos = endingSelection().start();
 
-    setEndingSelection(pos, endingSelection().startAffinity());
+    setEndingSelection(pos, endingSelection().affinity());
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment.get(), true, m_smartMove));
     applyCommandToComposite(cmd);
 }

@@ -61,11 +61,11 @@ void BreakBlockquoteCommand::doApply()
     
     // Delete the current selection.
     Position pos = selection.start();
-    EAffinity affinity = selection.startAffinity();
+    EAffinity affinity = selection.affinity();
     if (selection.isRange()) {
         deleteSelection(false, false);
         pos = endingSelection().start().upstream();
-        affinity = endingSelection().startAffinity();
+        affinity = endingSelection().affinity();
     }
     
     // Find the top-most blockquote from the start.

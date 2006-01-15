@@ -26,13 +26,10 @@
 #include "config.h"
 #include "append_node_command.h"
 
-
+#include "NodeImpl.h"
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-
-namespace khtml {
+namespace WebCore {
 
 AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *appendChild, NodeImpl *parentNode)
     : EditCommand(document), m_appendChild(appendChild), m_parentNode(parentNode)

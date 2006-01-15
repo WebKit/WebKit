@@ -306,7 +306,7 @@ void ApplyStyleCommand::updateStartEnd(Position newStart, Position newEnd)
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
 
-    setEndingSelection(SelectionController(newStart, VP_DEFAULT_AFFINITY, newEnd, VP_DEFAULT_AFFINITY));
+    setEndingSelection(SelectionController(newStart, newEnd, VP_DEFAULT_AFFINITY));
     m_start = newStart;
     m_end = newEnd;
 }

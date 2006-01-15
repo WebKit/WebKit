@@ -112,7 +112,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     // Delete any insignificant text that could get in the way of whitespace turning
     // out correctly after the insertion.
     selection = endingSelection();
-    deleteInsignificantTextDownstream(selection.end().trailingWhitespacePosition(selection.endAffinity()));
+    deleteInsignificantTextDownstream(selection.end().trailingWhitespacePosition(selection.affinity()));
 
     // Figure out the startPosition
     Position startPosition = selection.start();
@@ -147,7 +147,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         m_charactersAdded += text.length();
     }
 
-    setEndingSelection(SelectionController(startPosition, DOWNSTREAM, endPosition, SEL_DEFAULT_AFFINITY));
+    setEndingSelection(SelectionController(startPosition, endPosition, DOWNSTREAM));
 
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
@@ -157,7 +157,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         applyStyle(typingStyle);
 
     if (!selectInsertedText)
-        setEndingSelection(endingSelection().end(), endingSelection().endAffinity());
+        setEndingSelection(endingSelection().end(), endingSelection().affinity());
 }
 
 DOM::Position InsertTextCommand::insertTab(Position pos)

@@ -1530,6 +1530,10 @@
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
 		A8FEFB330979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */; };
 		A8FEFB340979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
+		AED9800C0976B38E000609F6 /* Selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AED9800A0976B38E000609F6 /* Selection.cpp */; };
+		AED9800D0976B38E000609F6 /* Selection.h in Headers */ = {isa = PBXBuildFile; fileRef = AED9800B0976B38E000609F6 /* Selection.h */; };
+		AED9800E0976B38E000609F6 /* Selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AED9800A0976B38E000609F6 /* Selection.cpp */; };
+		AED9800F0976B38E000609F6 /* Selection.h in Headers */ = {isa = PBXBuildFile; fileRef = AED9800B0976B38E000609F6 /* Selection.h */; };
 		BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC17988F088D975F006068A5 /* render_theme_mac.mm */; };
 		BC179893088D975F006068A5 /* render_theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC179890088D975F006068A5 /* render_theme.cpp */; };
 		BC179894088D975F006068A5 /* render_theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC179891088D975F006068A5 /* render_theme.h */; };
@@ -2438,6 +2442,8 @@
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElementImpl.h; sourceTree = "<group>"; };
+		AED9800A0976B38E000609F6 /* Selection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Selection.cpp; path = editing/Selection.cpp; sourceTree = "<group>"; };
+		AED9800B0976B38E000609F6 /* Selection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Selection.h; path = editing/Selection.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xsl_stylesheetimpl.h; path = xsl/xsl_stylesheetimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* xslt_processorimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xslt_processorimpl.cpp; path = xsl/xslt_processorimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3805,6 +3811,8 @@
 				BE02D4E7066F908A0076809F /* jsediting.cpp */,
 				9378D9FA07640A46004B97BF /* markup.h */,
 				9378D9F907640A46004B97BF /* markup.cpp */,
+				AED9800A0976B38E000609F6 /* Selection.cpp */,
+				AED9800B0976B38E000609F6 /* Selection.h */,
 				93ABE067070285F600BD91F9 /* SelectionController.h */,
 				93ABE066070285F600BD91F9 /* SelectionController.cpp */,
 				BECE67BD07087B250007C14B /* text_affinity.h */,
@@ -4676,6 +4684,7 @@
 				93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
+				AED9800D0976B38E000609F6 /* Selection.h in Headers */,
 				93F199F208245E59001E9ABC /* SelectionController.h in Headers */,
 				93F199F308245E59001E9ABC /* visible_position.h in Headers */,
 				93F199F408245E59001E9ABC /* visible_text.h in Headers */,
@@ -5273,6 +5282,7 @@
 				A8185F4309765766005826D9 /* DOMImplementationImpl.h in Headers */,
 				A8185F4509765766005826D9 /* DocumentFragmentImpl.h in Headers */,
 				A8185F4809765766005826D9 /* DocumentImpl.h in Headers */,
+				AED9800F0976B38E000609F6 /* Selection.h in Headers */,
 				A81872260977D3C0005826D9 /* NodeListImpl.h in Headers */,
 				A81872270977D3C0005826D9 /* ContainerNodeImpl.h in Headers */,
 				A81872290977D3C0005826D9 /* NameNodeListImpl.h in Headers */,
@@ -6813,6 +6823,7 @@
 				A8185F3C09765766005826D9 /* DocumentImpl.cpp in Sources */,
 				A8185F3E09765766005826D9 /* DOMImplementationImpl.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragmentImpl.cpp in Sources */,
+				AED9800C0976B38E000609F6 /* Selection.cpp in Sources */,
 				A818721D0977D3C0005826D9 /* NodeImpl.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */,
 				A81872210977D3C0005826D9 /* NodeListImpl.cpp in Sources */,
@@ -7109,6 +7120,7 @@
 				A8185F4409765766005826D9 /* DocumentImpl.cpp in Sources */,
 				A8185F4609765766005826D9 /* DOMImplementationImpl.cpp in Sources */,
 				A8185F4709765766005826D9 /* DocumentFragmentImpl.cpp in Sources */,
+				AED9800E0976B38E000609F6 /* Selection.cpp in Sources */,
 				A81872280977D3C0005826D9 /* NodeImpl.cpp in Sources */,
 				A818722A0977D3C0005826D9 /* ContainerNodeImpl.cpp in Sources */,
 				A818722C0977D3C0005826D9 /* NodeListImpl.cpp in Sources */,

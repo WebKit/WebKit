@@ -89,14 +89,12 @@
 
 #undef _KWQ_TIMING
 
-using namespace DOM;
+using namespace WebCore;
 using namespace EventNames;
 using namespace HTMLNames;
 
 using namespace KJS;
 using namespace Bindings;
-
-using namespace khtml;
 
 using namespace KIO;
 
@@ -445,9 +443,9 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     if (selection().start().node()) {
         if (forward) {
-            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
         } else {
-            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().startAffinity()));
+            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
         }
     }
     RefPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
@@ -456,9 +454,9 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     if (selection().start().node() && *resultRange == *selection().toRange()) {
         searchRange = rangeOfContents(xmlDocImpl());
         if (forward) {
-            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
         } else {
-            setEnd(searchRange.get(), VisiblePosition(selection().start(), selection().startAffinity()));
+            setEnd(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
         }
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
     }
@@ -479,7 +477,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
         return false;
     }
 
-    setSelection(SelectionController(resultRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
+    setSelection(SelectionController(resultRange.get(), DOWNSTREAM));
     revealSelection();
     return true;
 }
@@ -750,12 +748,12 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
     if (selection().start().node()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
-            VisiblePosition start(selection().start(), selection().startAffinity());
+            VisiblePosition start(selection().start(), selection().affinity());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else {
-            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
         }
     }
 
@@ -819,7 +817,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
                     QString result = chars.string(misspelling.length);
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
-                    setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
+                    setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM));
                     revealSelection();
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
@@ -2962,7 +2960,7 @@ NSWritingDirection MacFrame::baseWritingDirectionForSelectionStart() const
 {
     NSWritingDirection result = NSWritingDirectionLeftToRight;
 
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.affinity()).deepEquivalent();
     NodeImpl *node = pos.node();
     if (!node || !node->renderer() || !node->renderer()->containingBlock())
         return result;
@@ -3328,11 +3326,11 @@ void MacFrame::respondToChangedSelection(const SelectionController &oldSelection
             // If this is a change in selection resulting from a delete operation, oldSelection may no longer
             // be in the document.
             if (oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
-                VisiblePosition oldStart(oldSelection.start(), oldSelection.startAffinity());
+                VisiblePosition oldStart(oldSelection.start(), oldSelection.affinity());
                 oldAdjacentWords = SelectionController(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
             }
 
-            VisiblePosition newStart(selection().start(), selection().startAffinity());
+            VisiblePosition newStart(selection().start(), selection().affinity());
             SelectionController newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 
             if (oldAdjacentWords != newAdjacentWords) {

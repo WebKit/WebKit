@@ -406,7 +406,7 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     SelectionController selection = frame->selection();
     if (selection.isCaret()) {
         ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node());
-        if (selection.startAffinity() == UPSTREAM)
+        if (selection.affinity() == UPSTREAM)
             ts << " (upstream affinity)";
         ts << "\n"; 
     } else if (selection.isRange()) {

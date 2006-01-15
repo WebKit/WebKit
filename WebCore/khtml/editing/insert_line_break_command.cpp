@@ -102,7 +102,7 @@ void InsertLineBreakCommand::doApply()
     if (isTabSpanTextNode(pos.node())) {
         insertNodeAtTabSpanPosition(nodeToInsert, pos);
         setEndingSelection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM);
-    } else if (isEndOfBlock(VisiblePosition(pos, selection.startAffinity()))) {
+    } else if (isEndOfBlock(VisiblePosition(pos, selection.affinity()))) {
         LOG(Editing, "input newline case 1");
         // Check for a trailing BR. If there isn't one, we'll need to insert an "extra" one.
         // This makes the "real" BR we want to insert appear in the rendering without any 
