@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 1998-2000 Netscape Communications Corporation.
+ * Copyright (C) 2003-6 Apple Computer
  *
  * Other contributors:
  *   Nick Blievers <nickb@adacel.com.au>
@@ -43,7 +44,7 @@
  */
 
 #include "config.h"
-#include "arena.h"
+#include "Arena.h"
 
 #include <algorithm>
 #include <stdlib.h>

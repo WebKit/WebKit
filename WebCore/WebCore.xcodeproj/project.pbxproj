@@ -131,10 +131,8 @@
 		93F198EF08245E59001E9ABC /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
 		93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* htmltokenizer.h */; };
 		93F198F108245E59001E9ABC /* khtml_events.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D15202DE42AD018635CA /* khtml_events.h */; };
-		93F198F508245E59001E9ABC /* arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7294F803804B3C00A80166 /* arena.h */; };
 		93F198F608245E59001E9ABC /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* decoder.h */; };
 		93F198F708245E59001E9ABC /* helper.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27B02DE43D7018635CA /* helper.h */; };
-		93F198FB08245E59001E9ABC /* khtmldata.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28202DE43D7018635CA /* khtmldata.h */; };
 		93F198FC08245E59001E9ABC /* khtmllayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28302DE43D7018635CA /* khtmllayout.h */; };
 		93F1990108245E59001E9ABC /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D29E02DE4438018635CA /* bidi.h */; };
 		93F1990208245E59001E9ABC /* break_lines.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2A002DE4438018635CA /* break_lines.h */; };
@@ -477,7 +475,6 @@
 		93F19ACB08245E59001E9ABC /* KWQLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 93861DE0032C2E52008635CE /* KWQLogging.m */; };
 		93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF7D5033BD43C008635CE /* KWQFileButton.mm */; };
 		93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
-		93F19AD008245E59001E9ABC /* arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294F703804B3C00A80166 /* arena.cpp */; };
 		93F19AD108245E59001E9ABC /* render_arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294FB03804B5600A80166 /* render_arena.cpp */; };
 		93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
 		93F19AD308245E59001E9ABC /* KWQFontFamily.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */; };
@@ -695,10 +692,8 @@
 		A88AD13D0952480A001DD196 /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
 		A88AD13E0952480A001DD196 /* htmltokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* htmltokenizer.h */; };
 		A88AD13F0952480A001DD196 /* khtml_events.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D15202DE42AD018635CA /* khtml_events.h */; };
-		A88AD1430952480A001DD196 /* arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7294F803804B3C00A80166 /* arena.h */; };
 		A88AD1440952480A001DD196 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* decoder.h */; };
 		A88AD1450952480A001DD196 /* helper.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27B02DE43D7018635CA /* helper.h */; };
-		A88AD1460952480A001DD196 /* khtmldata.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28202DE43D7018635CA /* khtmldata.h */; };
 		A88AD1470952480A001DD196 /* khtmllayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D28302DE43D7018635CA /* khtmllayout.h */; };
 		A88AD14C0952480A001DD196 /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D29E02DE4438018635CA /* bidi.h */; };
 		A88AD14D0952480A001DD196 /* break_lines.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2A002DE4438018635CA /* break_lines.h */; };
@@ -1083,7 +1078,6 @@
 		A88AD3090952480A001DD196 /* KWQLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 93861DE0032C2E52008635CE /* KWQLogging.m */; };
 		A88AD30A0952480A001DD196 /* KWQFileButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF7D5033BD43C008635CE /* KWQFileButton.mm */; };
 		A88AD30B0952480A001DD196 /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
-		A88AD30D0952480A001DD196 /* arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294F703804B3C00A80166 /* arena.cpp */; };
 		A88AD30E0952480A001DD196 /* render_arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7294FB03804B5600A80166 /* render_arena.cpp */; };
 		A88AD30F0952480A001DD196 /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
 		A88AD3100952480A001DD196 /* KWQFontFamily.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */; };
@@ -1653,6 +1647,10 @@
 		BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F40097A24B500BA703D /* SegmentedString.h */; };
 		BCFB2F43097A24B500BA703D /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */; };
 		BCFB2F44097A24B500BA703D /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F40097A24B500BA703D /* SegmentedString.h */; };
+		BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F74097A2E1A00BA703D /* Arena.cpp */; };
+		BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
+		BCFB2F78097A2E1A00BA703D /* Arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F74097A2E1A00BA703D /* Arena.cpp */; };
+		BCFB2F79097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
@@ -2465,8 +2463,6 @@
 		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding_manager.cpp; path = xbl/xbl_binding_manager.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC42035A08FC334100B782E0 /* render_button.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_button.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC42035B08FC334100B782E0 /* render_button.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_button.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC7294F703804B3C00A80166 /* arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arena.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC7294F803804B3C00A80166 /* arena.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = arena.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7294FB03804B5600A80166 /* render_arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_arena.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC73E2120978546300EDFF8A /* IntSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = IntSize.mm; path = platform/mac/IntSize.mm; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
@@ -2550,6 +2546,8 @@
 		BCFB2E830979FD4F00BA703D /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Shared.h; path = platform/Shared.h; sourceTree = "<group>"; };
 		BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SegmentedString.cpp; path = platform/SegmentedString.cpp; sourceTree = "<group>"; };
 		BCFB2F40097A24B500BA703D /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SegmentedString.h; path = platform/SegmentedString.h; sourceTree = "<group>"; };
+		BCFB2F74097A2E1A00BA703D /* Arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Arena.cpp; path = platform/Arena.cpp; sourceTree = "<group>"; };
+		BCFB2F75097A2E1A00BA703D /* Arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Arena.h; path = platform/Arena.h; sourceTree = "<group>"; };
 		BE02D4E6066F908A0076809F /* jsediting.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = jsediting.h; path = editing/jsediting.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE02D4E7066F908A0076809F /* jsediting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsediting.cpp; path = editing/jsediting.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQTextUtilities.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2661,7 +2659,6 @@
 		F523D27902DE43D7018635CA /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27A02DE43D7018635CA /* helper.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27B02DE43D7018635CA /* helper.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = helper.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D28202DE43D7018635CA /* khtmldata.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = khtmldata.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D28302DE43D7018635CA /* khtmllayout.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = khtmllayout.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D29D02DE4438018635CA /* bidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bidi.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D29E02DE4438018635CA /* bidi.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = bidi.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3722,6 +3719,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
+				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCB16B880979B01400467741 /* Array.h */,
@@ -4055,15 +4054,12 @@
 		F523D29C02DE43D9018635CA /* misc */ = {
 			isa = PBXGroup;
 			children = (
-				BC7294F703804B3C00A80166 /* arena.cpp */,
-				BC7294F803804B3C00A80166 /* arena.h */,
 				F523D27802DE43D7018635CA /* decoder.cpp */,
 				F523D27902DE43D7018635CA /* decoder.h */,
 				93ABCE5D06E1A42E0085925B /* formdata.cpp */,
 				93ABCE5E06E1A42E0085925B /* formdata.h */,
 				F523D27A02DE43D7018635CA /* helper.cpp */,
 				F523D27B02DE43D7018635CA /* helper.h */,
-				F523D28202DE43D7018635CA /* khtmldata.h */,
 				F523D28302DE43D7018635CA /* khtmllayout.h */,
 			);
 			path = misc;
@@ -4507,10 +4503,8 @@
 				93F198EF08245E59001E9ABC /* htmlparser.h in Headers */,
 				93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */,
 				93F198F108245E59001E9ABC /* khtml_events.h in Headers */,
-				93F198F508245E59001E9ABC /* arena.h in Headers */,
 				93F198F608245E59001E9ABC /* decoder.h in Headers */,
 				93F198F708245E59001E9ABC /* helper.h in Headers */,
-				93F198FB08245E59001E9ABC /* khtmldata.h in Headers */,
 				93F198FC08245E59001E9ABC /* khtmllayout.h in Headers */,
 				93F1990108245E59001E9ABC /* bidi.h in Headers */,
 				93F1990208245E59001E9ABC /* break_lines.h in Headers */,
@@ -4991,6 +4985,7 @@
 				A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
 				BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */,
+				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5036,10 +5031,8 @@
 				A88AD13D0952480A001DD196 /* htmlparser.h in Headers */,
 				A88AD13E0952480A001DD196 /* htmltokenizer.h in Headers */,
 				A88AD13F0952480A001DD196 /* khtml_events.h in Headers */,
-				A88AD1430952480A001DD196 /* arena.h in Headers */,
 				A88AD1440952480A001DD196 /* decoder.h in Headers */,
 				A88AD1450952480A001DD196 /* helper.h in Headers */,
-				A88AD1460952480A001DD196 /* khtmldata.h in Headers */,
 				A88AD1470952480A001DD196 /* khtmllayout.h in Headers */,
 				A88AD14C0952480A001DD196 /* bidi.h in Headers */,
 				A88AD14D0952480A001DD196 /* break_lines.h in Headers */,
@@ -5332,6 +5325,7 @@
 				A8FEFB340979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E850979FD4F00BA703D /* Shared.h in Headers */,
 				BCFB2F44097A24B500BA703D /* SegmentedString.h in Headers */,
+				BCFB2F79097A2E1A00BA703D /* Arena.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6548,7 +6542,6 @@
 				93F19ACB08245E59001E9ABC /* KWQLogging.m in Sources */,
 				93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */,
 				93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */,
-				93F19AD008245E59001E9ABC /* arena.cpp in Sources */,
 				93F19AD108245E59001E9ABC /* render_arena.cpp in Sources */,
 				93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */,
 				93F19AD308245E59001E9ABC /* KWQFontFamily.mm in Sources */,
@@ -6877,6 +6870,7 @@
 				BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */,
 				A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
+				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7018,7 +7012,6 @@
 				A88AD3090952480A001DD196 /* KWQLogging.m in Sources */,
 				A88AD30A0952480A001DD196 /* KWQFileButton.mm in Sources */,
 				A88AD30B0952480A001DD196 /* KWQResourceLoader.mm in Sources */,
-				A88AD30D0952480A001DD196 /* arena.cpp in Sources */,
 				A88AD30E0952480A001DD196 /* render_arena.cpp in Sources */,
 				A88AD30F0952480A001DD196 /* KWQPageState.mm in Sources */,
 				A88AD3100952480A001DD196 /* KWQFontFamily.mm in Sources */,
@@ -7172,6 +7165,7 @@
 				BCFB2F43097A24B500BA703D /* SegmentedString.cpp in Sources */,
 				A8FEFB0D0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB330979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
+				BCFB2F78097A2E1A00BA703D /* Arena.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

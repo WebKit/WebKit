@@ -1,5 +1,18 @@
 2006-01-14  David Hyatt  <hyatt@apple.com>
 
+        Move arena.cpp/.h out of khtml/misc and into platform/Arena.cpp/h.  Also removed another unused
+        header, khtmldata.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/misc/arena.cpp: Removed.
+        * khtml/misc/arena.h: Removed.
+        * khtml/misc/khtmldata.h: Removed.
+        * khtml/rendering/render_arena.h:
+        * platform/Arena.cpp: Added.
+        * platform/Arena.h: Added.
+
+2006-01-14  David Hyatt  <hyatt@apple.com>
+
         Rename TokenizerString to SegmentedString and place it in the platform directory.
 
         * WebCore.xcodeproj/project.pbxproj:
