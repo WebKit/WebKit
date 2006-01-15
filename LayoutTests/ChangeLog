@@ -1,3 +1,15 @@
+2006-01-15  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        <mask> inside <defs> crashes Safari.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6548
+
+        * svg/custom/mask-inside-defs-expected.checksum: Added.
+        * svg/custom/mask-inside-defs-expected.png: Added.
+        * svg/custom/mask-inside-defs-expected.txt: Added.
+        * svg/custom/mask-inside-defs.svg: Added.
+
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
