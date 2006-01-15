@@ -1,3 +1,13 @@
+2006-01-15  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6561
+        run-javascriptcore-tests doesn't work
+
+        * JavaScriptCore/tests/mozilla/Getopt/Mixed.pm: 
+        Changed revision number to 1.8 (broken by svn migration).
+
 2006-01-14  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed and landed by Anders.
