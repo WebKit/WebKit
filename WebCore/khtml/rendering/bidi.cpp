@@ -863,7 +863,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 RenderStyle *style = r->obj->style();
                 if (style->autoWrap() && style->breakOnlyAfterWhiteSpace()) {
                     // shrink the box as needed to keep the line from overflowing the available width
-                    textWidth = kMin(effectiveWidth, availableWidth - totWidth + style->borderLeftWidth());
+                    textWidth = kMin(effectiveWidth, availableWidth - totWidth);
                 }
             }
             r->box->setWidth(textWidth);

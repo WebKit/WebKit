@@ -1,3 +1,15 @@
+2006-01-15  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5619
+          CSS2: pre-wrap has overflow/selection problems
+          
+        * fast/text/whitespace/pre-wrap-overflow-selection-expected.checksum: Added.
+        * fast/text/whitespace/pre-wrap-overflow-selection-expected.png: Added.
+        * fast/text/whitespace/pre-wrap-overflow-selection-expected.txt: Added.
+        * fast/text/whitespace/pre-wrap-overflow-selection.html: Added.
+
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
         Disabling broken test until results can be consistent:

@@ -1,3 +1,18 @@
+2006-01-15  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/text/whitespace/pre-wrap-overflow-selection.html
+        
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5619
+          CSS2: pre-wrap has overflow/selection problems
+
+        * khtml/rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::selectionRect): Clip selection rect to the text box
+        (khtml::InlineTextBox::paintSelection): Clip selection painting to the text box.
+        * khtml/rendering/bidi.cpp: (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        Remove code that re-added border width, since it is already included in availableWidth.
+
 2006-01-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
