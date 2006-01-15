@@ -1,5 +1,13 @@
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
+        Disabling broken test until results can be consistent:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6560
+
+        * dom/xhtml/level2/html/HTMLIFrameElement11.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLIFrameElement11.xhtml-disabled: Added.
+
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
         Disabling broken test until timezone bug is fixed:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6547
 
