@@ -1,3 +1,15 @@
+2006-01-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix problem with ++, ==, and != on const iterators in
+          HashMaps that are using the pointer specialization
+
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::PointerHashConstIteratorAdapter::operator++): Change type to const_iterator.
+        (KXMLCore::PointerHashConstIteratorAdapter::operator==): Ditto.
+        (KXMLCore::PointerHashConstIteratorAdapter::operator!=): Ditto.
+
 2006-01-15  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Anders.
