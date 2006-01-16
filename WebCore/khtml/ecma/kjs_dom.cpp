@@ -1110,6 +1110,7 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
   getElementsByTagNameNS DOMElement::GetElementsByTagNameNS	DontDelete|Function 2
   hasAttributeNS	DOMElement::HasAttributeNS	DontDelete|Function 2
   scrollIntoView        DOMElement::ScrollIntoView      DontDelete|Function 1
+  scrollIntoViewIfNeeded	DOMElement::ScrollIntoViewIfNeeded      DontDelete|Function 1
   focus                 DOMElement::ElementFocus        DontDelete|Function 0
   blur                  DOMElement::ElementBlur         DontDelete|Function 0
 
@@ -1242,6 +1243,9 @@ JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
       return jsBoolean(element.hasAttributeNS(args[0]->toString(exec).domString(),args[1]->toString(exec).domString()));
     case DOMElement::ScrollIntoView: 
         element.scrollIntoView(args[0]->isUndefinedOrNull() || args[0]->toBoolean(exec));
+        return jsUndefined();
+    case DOMElement::ScrollIntoViewIfNeeded: 
+        element.scrollIntoViewIfNeeded(args[0]->isUndefinedOrNull() || args[0]->toBoolean(exec));
         return jsUndefined();
     case DOMElement::ScrollByLines:
     case DOMElement::ScrollByPages:

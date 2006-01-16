@@ -404,6 +404,29 @@ static ListenerMap *listenerMap;
     return result;
 }
 
+- (NSRect)boundingBox
+{
+    khtml::RenderObject *renderer = [self _nodeImpl]->renderer();
+    if (renderer)
+        return renderer->absoluteBoundingBoxRect();
+    return NSZeroRect;
+}
+
+- (NSArray *)lineBoxRects
+{
+    khtml::RenderObject *renderer = [self _nodeImpl]->renderer();
+    if (renderer) {
+        NSMutableArray *results = [[NSMutableArray alloc] init];
+        QValueList<IntRect> rects = renderer->lineBoxRects();
+        if (!rects.isEmpty()) {
+            for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
+                [results addObject:[NSValue valueWithRect:*it]];
+        }
+        return [results autorelease];
+    }
+    return nil;
+}
+
 @end
 
 @implementation DOMNode (WebCoreInternal)
@@ -1434,6 +1457,16 @@ static ListenerMap *listenerMap;
 - (void)blur
 {
     [self _elementImpl]->blur();
+}
+
+- (void)scrollIntoView:(BOOL)alignTop
+{
+    [self _elementImpl]->scrollIntoView(alignTop);
+}
+
+- (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded
+{
+    [self _elementImpl]->scrollIntoViewIfNeeded(centerIfNeeded);
 }
 
 @end

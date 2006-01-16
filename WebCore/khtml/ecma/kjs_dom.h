@@ -77,7 +77,8 @@ namespace KJS {
            OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMouseWheel, OnMove, OnReset,
            OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload,
            OffsetLeft, OffsetTop, OffsetWidth, OffsetHeight, OffsetParent,
-           ClientWidth, ClientHeight, ScrollLeft, ScrollTop, ScrollWidth, ScrollHeight, ScrollIntoView };
+           ClientWidth, ClientHeight, ScrollLeft, ScrollTop, ScrollWidth, ScrollHeight,
+           ScrollIntoView, ScrollIntoViewIfNeeded };
 
   protected:
     // Constructor for inherited classes; doesn't set up a prototype.

@@ -1,3 +1,30 @@
+2006-01-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Support for the new DOM Inspector.
+
+        * khtml/ecma/kjs_dom.cpp: exposes scrollIntoViewIfNeeded to JS
+        * khtml/ecma/kjs_dom.h:
+        * khtml/rendering/RenderText.cpp:
+        (RenderText::lineBoxRects): returns text run rects
+        * khtml/rendering/RenderText.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::lineBoxRects): returns all child line box rects
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::lineBoxRects): returns an empty list
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::scrollIntoViewIfNeeded): scrolls only if needed, bool decides to center to align to nearest edge
+        * khtml/xml/dom_elementimpl.h: Ditto
+        * kwq/DOM.mm:
+        (-[DOMNode boundingBox]): returns the bounding box for a node
+        (-[DOMNode lineBoxRects]): returns text runs for a node
+        * kwq/DOMCore.h: added missing @protocol DOMEventListener and @class DOMEvent
+        * kwq/DOMExtensions.h: removes methods that haven't been API reviewed
+        * kwq/DOMPrivate.h: new pending public API added for the Inspector
+
 2006-01-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

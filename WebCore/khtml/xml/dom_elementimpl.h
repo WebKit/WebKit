@@ -194,7 +194,8 @@ public:
     void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception);
 
     void scrollIntoView (bool alignToTop);
-    
+    void scrollIntoViewIfNeeded(bool centerIfNeeded);
+
     void removeAttribute(const DOMString &name, int &exception) { removeAttributeNS(DOMString(), name, exception); }
     void removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
 

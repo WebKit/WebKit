@@ -1,0 +1,114 @@
+<!--
+Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Web Inspector</title>
+    <script type="text/javascript" src="inspector.js"></script> 
+    <script type="text/javascript" src="file:///System/Library/WidgetResources/AppleClasses/AppleScrollbar.js"></script>    
+    <script type="text/javascript" src="file:///System/Library/WidgetResources/AppleClasses/AppleScrollArea.js"></script>
+    <style type="text/css">
+        @import "inspector.css";
+    </style>
+</head>
+<body onload="loaded()">
+<div id="body">
+<div id="title"><button class="close" onclick="window.close()"></button>Web Inspector<button class="menu" onmousedown="Inspector.showOptionsMenu()"></button></div>
+<div id="top">
+    <div id="header">
+        <div id="traverse"><button class="square" id="traverseUp" onclick="Inspector.traverseTreeBackward()"><div class="left"></div><div class="middle"><img src="Images/upTriangle.png" /></div></button><button class="square" id="traverseDown" onclick="Inspector.traverseTreeForward()"><img src="Images/popupFillPressed.png" /><div class="middle"><img src="Images/downTriangle.png" /></div><div class="right"></div></button></div>
+        <div id="treePopup">
+            <select size="1" id="realTreePopup" onchange="Inspector.selectNewRoot(this)"></select>
+            <button id="treePopupButton" class="popup"><div class="left"></div><div id="treePopupTitleArea" class="middle"></div><div class="right"></div></button>
+        </div>
+        <div id="searchCount"></div>
+        <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" />
+    </div>
+    <div id="tree">
+        <div id="treeScrollArea"><object id="treeOutlineView"><param name="type" value="application/x-inspector-tree" /></object></div>
+        <div id="treeScrollbar"></div>
+    </div>
+</div>
+<div id="splitter" onmousedown="Inspector.resizeTopArea(event)"><hr size="2" /></div>
+<div id="bottom">
+    <div id="tabs">
+        <button class="square selected" id="nodeButton" onclick="switchPane('node')"><div class="left"></div><div class="middle">Node</div></button>
+        <button class="square" id="styleButton" onclick="switchPane('style')"><img src="Images/popupFillPressed.png" /><div class="middle">Style</div></button>
+        <button class="square" id="metricsButton" onclick="switchPane('metrics')"><img src="Images/popupFillPressed.png" /><div class="middle">Metrics</div></button>
+        <button class="square" id="javascriptButton" onclick="switchPane('javascript')"><img src="Images/popupFillPressed.png" /><div class="middle">Properties</div><div class="right"></div></button>
+    </div>
+    <div id="nodePane" class="pane">
+        <div class="infoRow">
+            <span class="label">Node Type:</span>
+            <span class="value" id="nodeType"></span>
+        </div>
+        <div class="infoRow">
+            <span class="label">Node Name:</span>
+            <span class="value" id="nodeName"></span>
+        </div>
+        <div class="infoRow" id="nodeNamespaceRow">
+            <span class="label">Namespace URI:</span>
+            <span class="value"><div id="nodeNamespace"></div></span>
+        </div>
+        <div id="elementAttributes">
+            <div class="infoRow header">
+                <span class="label" style="width: initial">Element Attributes</span>
+            </div>
+            <div class="scrollArea">
+                <div id="elementAttributesScrollview" class="view">(not finished)</div>
+                <div id="elementAttributesScrollbar" class="scrollbar"></div>
+            </div>
+        </div>
+        <div id="nodeContents">
+            <div class="infoRow header">
+                <span class="label" style="width: initial">Markup &amp; Content</span>
+            </div>
+            <div class="scrollArea">
+                <div class="view"><div id="nodeContentsScrollview"></div></div>
+                <div id="nodeContentsScrollbar" class="scrollbar"></div>
+            </div>
+        </div>
+    </div>
+    <div id="metricsPane" class="pane" style="display: none; text-align: center"><br /><br /><br />(not finished)</div>
+    <div id="stylePane" class="pane" style="display: none">
+        <div id="styleRules" class="scrollArea">
+            <div class="view"><div id="styleRulesScrollview"></div></div>
+            <div id="styleRulesScrollbar" class="scrollbar"></div>
+        </div>
+        <div id="styleProperties" class="scrollArea">
+            <div class="view"><div id="stylePropertiesScrollview"><ul class="treeList" id="stylePropertiesTree"></ul></div></div>
+            <div id="stylePropertiesScrollbar" class="scrollbar"></div>
+        </div>
+    </div>
+    <div id="javascriptPane" class="pane" style="display: none; text-align: center"><br /><br /><br />(not finished)</div>
+</div>
+<div id="resize"></div>
+</div>
+</body>
+</html>

@@ -361,6 +361,17 @@ void ElementImpl::scrollIntoView(bool alignToTop)
     }
 }
 
+void ElementImpl::scrollIntoViewIfNeeded(bool centerIfNeeded)
+{
+    IntRect bounds = this->getRect();    
+    if (m_render) {
+        if (centerIfNeeded)
+            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignCenterIfNeeded, RenderLayer::gAlignCenterIfNeeded);
+        else
+            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+    }
+}
+
 const AtomicString& ElementImpl::getAttributeNS(const DOMString &namespaceURI,
                                                 const DOMString &localName) const
 {

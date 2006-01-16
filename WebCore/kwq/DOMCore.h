@@ -32,7 +32,9 @@
 @class DOMElement;
 @class DOMNamedNodeMap;
 @class DOMNodeList;
+@class DOMEvent;
 
+@protocol DOMEventListener;
 @protocol DOMEventTarget;
 
 typedef struct DOMObjectInternal DOMObjectInternal;

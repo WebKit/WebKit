@@ -671,6 +671,8 @@ public:
     virtual int borderLeft() const { return style()->borderLeftWidth(); }
     virtual int borderRight() const { return style()->borderRightWidth(); }
 
+    virtual QValueList<IntRect> lineBoxRects();
+
     virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
     IntRect absoluteBoundingBoxRect();
     

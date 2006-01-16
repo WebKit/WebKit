@@ -1271,6 +1271,11 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
         p->restore(); // Undo the clip.
 }
 
+QValueList<IntRect> RenderObject::lineBoxRects()
+{
+    return QValueList<IntRect>();
+}
+
 void RenderObject::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
@@ -1293,7 +1298,10 @@ IntRect RenderObject::absoluteBoundingBoxRect()
     absolutePosition(x, y);
     QValueList<IntRect> rects;
     absoluteRects(rects, x, y);
-    
+
+    if (rects.isEmpty())
+        return IntRect(0, 0, 0, 0);
+
     QValueList<IntRect>::ConstIterator it = rects.begin();
     IntRect result = *it;
     while (++it != rects.end()) {

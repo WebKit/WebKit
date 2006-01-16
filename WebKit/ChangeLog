@@ -1,3 +1,156 @@
+2006-01-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+ 
+        New DOM Inspector that lives in WebKit and is accessible from any WebView.
+        Accessible from a contextual menu when the WebKitEnableInspectElementContextMenuItem default is
+        true or you have a development build. Browsing the tree, serialized HTML and CSS rules work.
+ 
+        To always enable enter the following in the Terminal (change the bundle id to affect other WebKit apps):
+        defaults write com.apple.Safari WebKitEnableInspectElementContextMenuItem -bool true
+ 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6571
+
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt: reorder of the entries
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _webkit_stringByCollapsingWhitespaceCharacters]): collapses consecutive whitespace into a single space
+        * WebCoreSupport.subproj/WebFrameBridge.m:
+        (-[WebFrameBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:]): cleanup
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]): call the new UI delegate method
+        * WebInspector.subproj: Added.
+        * WebInspector.subproj/WebInspector.h: Added.
+        * WebInspector.subproj/WebInspector.m: Added.
+        (+[WebInspector sharedWebInspector]):
+        (-[WebInspector init]):
+        (-[WebInspector initWithWebFrame:]):
+        (-[WebInspector dealloc]):
+        (-[WebInspector window]):
+        (-[WebInspector windowDidLoad]):
+        (-[WebInspector windowWillClose:]):
+        (-[WebInspector showWindow:]):
+        (-[WebInspector setWebFrame:]):
+        (-[WebInspector webFrame]):
+        (-[WebInspector setRootDOMNode:]):
+        (-[WebInspector rootDOMNode]):
+        (-[WebInspector setFocusedDOMNode:]):
+        (-[WebInspector focusedDOMNode]):
+        (-[WebInspector setSearchQuery:]):
+        (-[WebInspector searchQuery]):
+        (-[WebInspector searchResults]):
+        (-[WebInspector showOptionsMenu]):
+        (-[WebInspector selectNewRoot:]):
+        (-[WebInspector resizeTopArea:]):
+        (-[WebInspector treeViewScrollTo:]):
+        (-[WebInspector treeViewOffsetTop]):
+        (-[WebInspector treeViewScrollHeight]):
+        (-[WebInspector traverseTreeBackward]):
+        (-[WebInspector traverseTreeForward]):
+        (-[WebInspector _toggleIgnoreWhitespace:]):
+        (-[WebInspector _highlightNode:]):
+        (-[WebInspector _nodeHighlightExpired:]):
+        (-[WebInspector _focusRootNode:]):
+        (-[WebInspector _revealAndSelectNodeInTree:]):
+        (-[WebInspector _showSearchResults:]):
+        (-[WebInspector _refreshSearch]):
+        (-[WebInspector _update]):
+        (-[WebInspector _updateRoot]):
+        (-[WebInspector _updateTreeScrollbar]):
+        (+[WebInspector isSelectorExcludedFromWebScript:]):
+        (+[WebInspector webScriptNameForSelector:]):
+        (+[WebInspector isKeyExcludedFromWebScript:]):
+        (-[WebInspector handleEvent:]):
+        (-[WebInspector webView:didFinishLoadForFrame:]):
+        (-[WebInspector webView:plugInViewWithArguments:]):
+        (-[WebInspector outlineView:numberOfChildrenOfItem:]):
+        (-[WebInspector outlineView:isItemExpandable:]):
+        (-[WebInspector outlineView:child:ofItem:]):
+        (-[WebInspector outlineView:objectValueForTableColumn:byItem:]):
+        (-[WebInspector outlineView:willDisplayOutlineCell:forTableColumn:item:]):
+        (-[WebInspector outlineViewItemDidCollapse:]):
+        (-[WebInspector outlineViewSelectionDidChange:]):
+        (-[WebInspectorPrivate dealloc]):
+        (-[DOMHTMLElement _addClassName:]): Helper method for the Inspector to append style classes
+        (-[DOMHTMLElement _removeClassName:]): Helper method for the Inspector to remove style classes
+        (-[DOMNode _contentPreview]):
+        (-[DOMNode _isAncestorOfNode:]):
+        (-[DOMNode _isDescendantOfNode:]):
+        (-[DOMNode _isWhitespace]):
+        (-[DOMNode _lengthOfChildNodesIgnoringWhitespace]):
+        (-[DOMNode _childNodeAtIndexIgnoringWhitespace:]):
+        (-[DOMNode _nextSiblingSkippingWhitespace]):
+        (-[DOMNode _previousSiblingSkippingWhitespace]):
+        (-[DOMNode _firstChildSkippingWhitespace]):
+        (-[DOMNode _lastChildSkippingWhitespace]):
+        (-[DOMNode _firstAncestorCommonWithNode:]):
+        (-[DOMNode _traverseNextNodeStayingWithin:]):
+        (-[DOMNode _traverseNextNodeSkippingWhitespaceStayingWithin:]):
+        (-[DOMNode _traversePreviousNode]):
+        (-[DOMNode _traversePreviousNodeSkippingWhitespace]):
+        (-[DOMNode _nodeTypeName]):
+        (-[DOMNode _shortDisplayName]):
+        (-[DOMNode _displayName]):
+        * WebInspector.subproj/WebInspectorInternal.h: Added.
+        * WebInspector.subproj/WebInspectorOutlineView.h: Added.
+        * WebInspector.subproj/WebInspectorOutlineView.m: Added.
+        (-[WebInspectorOutlineView isOpaque]):
+        (-[WebInspectorOutlineView _highlightColorForCell:]):
+        (-[WebInspectorOutlineView _highlightRow:clipRect:]):
+        (-[WebInspectorOutlineView drawBackgroundInClipRect:]):
+        * WebInspector.subproj/WebInspectorPanel.h: Added.
+        * WebInspector.subproj/WebInspectorPanel.m: Added.
+        (-[WebInspectorPanel canBecomeKeyWindow]):
+        (-[WebInspectorPanel canBecomeMainWindow]):
+        (-[WebInspectorPanel moveWindow:]):
+        (-[WebInspectorPanel resizeWindow:]):
+        (-[WebInspectorPanel sendEvent:]):
+        * WebInspector.subproj/WebNodeHighlight.h: Added.
+        * WebInspector.subproj/WebNodeHighlight.m: Added.
+        (-[WebNodeHighlight initWithBounds:andRects:forView:]):
+        (-[WebNodeHighlight dealloc]):
+        (-[WebNodeHighlight fractionComplete]):
+        (-[WebNodeHighlight expire]):
+        (-[WebNodeHighlight redraw:]):
+        * WebInspector.subproj/WebNodeHighlightView.h: Added.
+        * WebInspector.subproj/WebNodeHighlightView.m: Added.
+        (-[WebNodeHighlightView roundedRect:withRadius:]):
+        (-[WebNodeHighlightView initWithHighlight:andRects:forView:]):
+        (-[WebNodeHighlightView dealloc]):
+        (-[WebNodeHighlightView isOpaque]):
+        (-[WebNodeHighlightView drawRect:]):
+        * WebInspector.subproj/webInspector: Added.
+        * WebInspector.subproj/webInspector/Images: Added.
+        * WebInspector.subproj/webInspector/Images/close.png: Added.
+        * WebInspector.subproj/webInspector/Images/closePressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/downTriangle.png: Added.
+        * WebInspector.subproj/webInspector/Images/menu.png: Added.
+        * WebInspector.subproj/webInspector/Images/menuPressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupFill.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupFillPressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupLeft.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupLeftPressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupRight.png: Added.
+        * WebInspector.subproj/webInspector/Images/popupRightPressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/rightTriangle.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollThumbBottom.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollThumbMiddle.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollThumbTop.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollTrackBottom.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollTrackMiddle.png: Added.
+        * WebInspector.subproj/webInspector/Images/scrollTrackTop.png: Added.
+        * WebInspector.subproj/webInspector/Images/squareButtonRight.png: Added.
+        * WebInspector.subproj/webInspector/Images/squareButtonRightPressed.png: Added.
+        * WebInspector.subproj/webInspector/Images/upTriangle.png: Added.
+        * WebInspector.subproj/webInspector/inspector.css: Added.
+        * WebInspector.subproj/webInspector/inspector.html: Added.
+        * WebInspector.subproj/webInspector/inspector.js: Added.
+        * WebKit.xcodeproj/project.pbxproj: Adds Web Inspector files
+        * WebView.subproj/WebUIDelegatePrivate.h: new UI delegate method to supply a replacement view for plugins
+        * WebView.subproj/WebView.m:
+        (-[WebView _menuForElement:defaultItems:]): Add a new context menu item for inspecting
+        (-[WebView _inspectElement:]): Context menu item target for inspecting
+
 2006-01-14  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

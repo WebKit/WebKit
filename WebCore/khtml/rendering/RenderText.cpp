@@ -211,6 +211,15 @@ void RenderText::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
                            box->height()));
 }
 
+QValueList<IntRect> RenderText::lineBoxRects()
+{
+    QValueList<IntRect> rects;
+    int x = 0, y = 0;
+    absolutePosition(x, y);
+    absoluteRects(rects, x, y);
+    return rects;
+}
+
 InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos) const
 {
     // The text runs point to parts of the rendertext's str string

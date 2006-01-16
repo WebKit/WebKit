@@ -303,6 +303,38 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return result;
 }
 
+- (NSString *)_webkit_stringByCollapsingWhitespaceCharacters
+{
+    NSMutableString *result = [[NSMutableString alloc] initWithCapacity:[self length]];
+    NSCharacterSet *spaces = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    static NSCharacterSet *notSpaces = nil;
+
+    if (notSpaces == nil)
+        notSpaces = [[spaces invertedSet] retain];
+
+    unsigned length = [self length];
+    unsigned position = 0;
+    while (position != length) {
+        NSRange nonSpace = [self rangeOfCharacterFromSet:notSpaces options:0 range:NSMakeRange(position, length - position)];
+        if (nonSpace.location == NSNotFound)
+            break;
+
+        NSRange space = [self rangeOfCharacterFromSet:spaces options:0 range:NSMakeRange(nonSpace.location, length - nonSpace.location)];
+        if (space.location == NSNotFound)
+            space.location = length;
+
+        if (space.location > nonSpace.location) {
+            if (position != 0)
+                [result appendString:@" "];
+            [result appendString:[self substringWithRange:NSMakeRange(nonSpace.location, space.location - nonSpace.location)]];
+        }
+
+        position = space.location;
+    }
+
+    return [result autorelease];
+}
+
 -(NSString *)_webkit_fixedCarbonPOSIXPath
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];

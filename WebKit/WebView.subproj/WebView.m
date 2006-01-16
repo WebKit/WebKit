@@ -60,6 +60,7 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSDataExtras.h>
@@ -82,6 +83,7 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
+#import <WebKit/WebInspector.h>
 #import <WebKitSystemInterface.h>
 
 #import <WebCore/WebCoreEncodings.h>
@@ -731,6 +733,27 @@ static bool debugWidget = true;
         for (i=0; i<[menuItems count]; i++) {
             [menu addItem:[menuItems objectAtIndex:i]];
         }
+    }
+
+#ifdef NDEBUG
+    BOOL enableInspectElement = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableInspectElementContextMenuItem"];
+#else
+    BOOL enableInspectElement = YES; // always enable in debug builds
+#endif
+
+    // optionally add the Inspect Element menu item it if preference is set or in debug builds
+    // and only showing the menu item if we are working with a WebHTMLView
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    if (enableInspectElement && [[[webFrame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
+        if (!menu)
+            menu = [[[NSMenu alloc] init] autorelease];
+        else if ([menu numberOfItems])
+            [menu addItem:[NSMenuItem separatorItem]];
+        NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
+        [menuItem setAction:@selector(_inspectElement:)];
+        [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
+        [menuItem setRepresentedObject:element];
+        [menu addItem:menuItem];
     }
 
     return menu;
@@ -2338,6 +2361,28 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     _private->dragCaretBridge = nil;
 }
 
+- (void)_inspectElement:(id)sender
+{
+    NSDictionary *element = [sender representedObject];
+    WebFrame *frame = [element objectForKey:WebElementFrameKey];
+    DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
+    if (!node || !frame)
+        return;
+
+    if ([node nodeType] != DOM_ELEMENT_NODE || [node nodeType] != DOM_DOCUMENT_NODE)
+        node = [node parentNode];
+
+    WebInspector *inspector = [WebInspector sharedWebInspector];
+    [inspector setWebFrame:frame];
+    [inspector setFocusedDOMNode:node];
+
+    node = [node parentNode];
+    node = [node parentNode];
+    if (node) // set the root node to something retivally close to the focused node
+        [inspector setRootDOMNode:node];
+
+    [inspector showWindow:nil];
+}
 @end
 
 @implementation WebView (WebIBActions)

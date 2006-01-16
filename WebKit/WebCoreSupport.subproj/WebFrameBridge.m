@@ -902,12 +902,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebPluginController *pluginController = [docView _pluginController];
     
     // Store attributes in a dictionary so they can be passed to WebPlugins.
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
-    unsigned count = [attributeNames count];
-    unsigned i;
-    for (i = 0; i < count; i++) {
-        [attributes setObject:[attributeValues objectAtIndex:i] forKey:[attributeNames objectAtIndex:i]];
-    }    
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
     
     [pluginPackage load];
     Class viewFactory = [pluginPackage viewFactory];
@@ -931,7 +926,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
     }
-    
+
     view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
     
     [attributes release];
@@ -964,7 +959,23 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebBasePluginPackage *pluginPackage = nil;
     NSView *view = nil;
     int errorCode = 0;
-    
+
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
+
+    if ([wd respondsToSelector:@selector(webView:plugInViewWithArguments:)]) {
+        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+            attributes, WebPlugInAttributesKey,
+            [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
+            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
+            nil];
+        [attributes release];
+        view = [wd webView:wv plugInViewWithArguments:arguments];
+        if (view)
+            return view;
+    }
+
     if ([MIMEType length] != 0) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
     } else {

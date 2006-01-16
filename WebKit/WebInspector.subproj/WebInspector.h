@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <AppKit/NSWindowController.h>
 
-@interface NSString (WebKitExtras)
+@class WebFrame;
+@class WebInspectorPrivate;
+@class DOMNode;
 
-- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
-- (void)_web_drawDoubledAtPoint:(NSPoint)textPoint withTopColor:(NSColor *)topColor bottomColor:(NSColor *)bottomColor font:(NSFont *)font;
+@interface WebInspector : NSWindowController
+{
+@private
+    WebInspectorPrivate *_private;
+}
++ (WebInspector *)sharedWebInspector;
 
-- (float)_web_widthWithFont:(NSFont *)font;
+- (id)initWithWebFrame:(WebFrame *)webFrame;
 
-// Handles home directories that have symlinks in their paths.
-// This works around 2774250.
-- (NSString *)_web_stringByAbbreviatingWithTildeInPath;
+- (void)setWebFrame:(WebFrame *)webFrame;
+- (WebFrame *)webFrame;
 
-- (NSString *)_web_stringByStrippingReturnCharacters;
+- (void)setRootDOMNode:(DOMNode *)node;
+- (DOMNode *)rootDOMNode;
 
-+ (NSStringEncoding)_web_encodingForResource:(Handle)resource;
+- (void)setFocusedDOMNode:(DOMNode *)node;
+- (DOMNode *)focusedDOMNode;
 
-- (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string;
-- (BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)suffix;
-- (BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix;
-- (BOOL)_webkit_hasCaseInsensitiveSubstring:(NSString *)substring;
-- (NSString *)_webkit_filenameByFixingIllegalCharacters;
+- (void)setSearchQuery:(NSString *)query;
+- (NSString *)searchQuery;
 
-- (NSString *)_webkit_stringByTrimmingWhitespace;
-- (NSString *)_webkit_stringByCollapsingNonPrintingCharacters;
-- (NSString *)_webkit_stringByCollapsingWhitespaceCharacters;
-- (NSString *)_webkit_fixedCarbonPOSIXPath;
-
+- (NSArray *)searchResults;
 @end

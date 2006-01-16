@@ -63,6 +63,8 @@ public:
     void updatePseudoChild(RenderStyle::PseudoId type, RenderObject* child);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
+    
+    virtual QValueList<IntRect> lineBoxRects();
 
 protected:
     void setFirstChild(RenderObject *first) { m_first = first; }
