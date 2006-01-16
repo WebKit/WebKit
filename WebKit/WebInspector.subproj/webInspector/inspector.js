@@ -155,18 +155,18 @@ function switchPane(pane) {
 
 function nodeTypeName(node) {
     switch(node.nodeType) {
-        case 1: return "Element";
-        case 2: return "Attribute";
-        case 3: return "Text";
-        case 4: return "Character Data";
-        case 5: return "Entity Reference";
-        case 6: return "Entity";
-        case 7: return "Processing Instruction";
-        case 8: return "Comment";
-        case 9: return "Document";
-        case 10: return "Document Type";
-        case 11: return "Document Fragment";
-        case 12: return "Notation";
+        case Node.ELEMENT_NODE: return "Element";
+        case Node.ATTRIBUTE_NODE: return "Attribute";
+        case Node.TEXT_NODE: return "Text";
+        case Node.CDATA_SECTION_NODE: return "Character Data";
+        case Node.ENTITY_REFERENCE_NODE: return "Entity Reference";
+        case Node.ENTITY_NODE: return "Entity";
+        case Node.PROCESSING_INSTRUCTION_NODE: return "Processing Instruction";
+        case Node.COMMENT_NODE: return "Comment";
+        case Node.DOCUMENT_NODE: return "Document";
+        case Node.DOCUMENT_TYPE_NODE: return "Document Type";
+        case Node.DOCUMENT_FRAGMENT_NODE: return "Document Fragment";
+        case Node.NOTATION_NODE: return "Notation";
     }
     return "(unknown)";
 }
@@ -181,14 +181,14 @@ function updatePanes() {
 function updateNodePane() {
     var focusedNode = Inspector.focusedDOMNode();
 
-    if (focusedNode.nodeType == 3) {
+    if (focusedNode.nodeType == Node.TEXT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.display = null;
 
         document.getElementById("nodeContentsScrollview").textContent = focusedNode.nodeValue;
         nodeContentsScrollArea.refresh();
-    } else if (focusedNode.nodeType == 1) {
+    } else if (focusedNode.nodeType == Node.ELEMENT_NODE) {
         document.getElementById("elementAttributes").style.display = null;
         document.getElementById("nodeContents").style.display = null;
 
@@ -204,7 +204,7 @@ function updateNodePane() {
 
         clearTimeout(nodeUpdateTimeout);
         nodeUpdateTimeout = setTimeout("delayedNodePaneUpdate()", 250);
-    } else if (focusedNode.nodeType == 9) {
+    } else if (focusedNode.nodeType == Node.DOCUMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.display = "none";

@@ -1,3 +1,10 @@
+2006-01-16  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * WebInspector.subproj/webInspector/inspector.js:
+        Use defined NodeType values instead of integers.
+
 2006-01-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
