@@ -1,7 +1,7 @@
 /**
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,9 +19,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
+
 #ifdef KHTML_XSLT
 
-#include "config.h"
 #include "dom/dom_string.h"
 #include "dom/dom_exception.h"
 

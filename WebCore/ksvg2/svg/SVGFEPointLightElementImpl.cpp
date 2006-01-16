@@ -17,13 +17,12 @@
      Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "SVGFEPointLightElementImpl.h"
-#include "SVGAnimatedStringImpl.h"
-#include "SVGAnimatedNumberImpl.h"
-#include "SVGAnimatedEnumerationImpl.h"
-#include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+#include "SVGAnimatedNumberImpl.h"
+
+namespace KSVG {
 
 SVGFEPointLightElementImpl::SVGFEPointLightElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
 SVGFELightElementImpl(tagName, doc)
@@ -38,4 +37,6 @@ KCLightSource *SVGFEPointLightElementImpl::lightSource() const
 {
     KCanvasPoint3F pos(x()->baseVal(), y()->baseVal(), z()->baseVal());
     return new KCPointLightSource(pos);
+}
+
 }

@@ -97,9 +97,9 @@ print out "%%\n";
 close out;
 
 print header "\nnamespace ${nsFull}\n{\n";
-print header "    const char *getValueName(unsigned short id);\n";
-print header "    int getValueID(const char *tagStr, int len);\n";
-print header "};\n";
+print header "    const char* getSVGCSSValueName(unsigned short id);\n";
+print header "    int getSVGCSSValueID(const char *tagStr, int len);\n";
+print header "}\n";
 
 print header "\n#endif\n";
 close header;
@@ -134,6 +134,7 @@ while(<IN>) {
 close(IN);  
 
 open(OUT, ">> $filec");
+print OUT "\nnamespace ${nsFull}\n{\n";
 print OUT "\n\nstatic const unsigned short valList[] = {\n";
 print OUT "    65535,\n";
 
@@ -155,18 +156,15 @@ if ($nsFull ne "KDOM") {
 }
 
 print OUT "    65535\n};\n\n";
-print OUT "const char *${nsFull}::getValueName(unsigned short id)\n{\n";
+print OUT "const char *getSVGCSSValueID(unsigned short id)\n{\n";
 print OUT "    if (!id || id > $lookFor) return \"\";\n";
 print OUT "    return spool_val + wordlist_val[valList[id]].name;\n";
 print OUT "}\n";
-print OUT "\nint ${nsFull}::getValueID(const char *tagStr, int len)\n";
+print OUT "\nint getSVGCSSValueID(const char *tagStr, int len)\n";
 print OUT "{\n";
 print OUT "    const struct css_val *valPtr = find${ns}Val(tagStr, len);\n";
 print OUT "    if(!valPtr)\n";
 print OUT "      return 0;\n";
 print OUT "    return valPtr->id;\n";
+print OUT "}\n\n";
 print OUT "}\n";
-
-
-
-

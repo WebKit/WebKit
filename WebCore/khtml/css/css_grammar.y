@@ -3,7 +3,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  * 
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,26 @@
  *
  */
 
-#include <config.h>
-#include <string.h>
-#include <stdlib.h>
+#include "config.h"
 
-#include "dom_string.h"
 #include "DocumentImpl.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
-#include "htmlnames.h"
 #include "cssparser.h"
-   
+#include "dom_string.h"
+#include "htmlnames.h"
 #include <assert.h>
-#include <kdebug.h>
-// #define CSS_DEBUG
+#include <stdlib.h>
+#include <string.h>
 
 #if SVG_SUPPORT
 #include "ksvgcssproperties.h"
 #include "ksvgcssvalues.h"
 #endif
 
-using namespace DOM;
- using namespace HTMLNames;
+using namespace WebCore;
+using namespace HTMLNames;
 
 //
 // The following file defines the function
@@ -59,7 +56,7 @@ using namespace DOM;
 #include "cssvalues.c"
 #undef __inline
 
-namespace DOM {
+namespace WebCore {
 
 int getPropertyID(const char *tagStr, int len)
 {
@@ -150,19 +147,8 @@ static inline int getValueID(const char *tagStr, int len)
 
 %{
 
-static inline int cssyyerror(const char *x ) {
-#ifdef CSS_DEBUG
-    qDebug( x );
-#else
-    Q_UNUSED( x );
-#endif
-    return 1;
-}
-
-static int cssyylex( YYSTYPE *yylval ) {
-    return CSSParser::current()->lex( yylval );
-}
-
+static inline int cssyyerror(const char *) { return 1; }
+static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval); }
 
 %}
 
@@ -297,32 +283,19 @@ khtml_rule:
 
 khtml_decls:
     KHTML_DECLS_SYM '{' maybe_space declaration_list '}' {
-	/* can be empty */
+        /* can be empty */
     }
 ;
 
 khtml_value:
     KHTML_VALUE_SYM '{' maybe_space expr '}' {
-	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $4 ) {
-	    p->valueList = $4;
-#ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "   got property for " << p->id <<
-		(p->important?" important":"")<< endl;
-	    bool ok =
-#endif
-		p->parseValue( p->id, p->important );
-#ifdef CSS_DEBUG
-	    if ( !ok )
-		kdDebug( 6080 ) << "     couldn't parse value!" << endl;
-#endif
-	}
-#ifdef CSS_DEBUG
-	else
-	    kdDebug( 6080 ) << "     no value found!" << endl;
-#endif
-	delete p->valueList;
-	p->valueList = 0;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ($4) {
+            p->valueList = $4;
+            p->parseValue(p->id, p->important);
+        }
+        delete p->valueList;
+        p->valueList = 0;
     }
 ;
 
@@ -339,11 +312,7 @@ maybe_sgml:
 
 maybe_charset:
    /* empty */
- | CHARSET_SYM maybe_space STRING maybe_space ';' {
-#ifdef CSS_DEBUG
-     kdDebug( 6080 ) << "charset rule: " << qString($3) << endl;
-#endif
- }
+  | CHARSET_SYM maybe_space STRING maybe_space ';'
   | CHARSET_SYM error invalid_block
   | CHARSET_SYM error ';'
  ;
@@ -353,9 +322,9 @@ import_list:
  | import_list import maybe_sgml {
      CSSParser *p = static_cast<CSSParser *>(parser);
      if ( $2 && p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-	 p->styleElement->append( $2 );
+         p->styleElement->append( $2 );
      } else {
-	 delete $2;
+         delete $2;
      }
  }
  ;
@@ -370,9 +339,9 @@ rule_list:
  | rule_list rule maybe_sgml {
      CSSParser *p = static_cast<CSSParser *>(parser);
      if ( $2 && p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-	 p->styleElement->append( $2 );
+         p->styleElement->append( $2 );
      } else {
-	 delete $2;
+         delete $2;
      }
  }
  ;
@@ -389,14 +358,11 @@ rule:
 
 import:
     IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "@import: " << qString($3) << endl;
-#endif
-	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $5 && p->styleElement && p->styleElement->isCSSStyleSheet() )
-	    $$ = new CSSImportRuleImpl( p->styleElement, domString($3), $5 );
-	else {
-	    $$ = 0;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ( $5 && p->styleElement && p->styleElement->isCSSStyleSheet() )
+            $$ = new CSSImportRuleImpl( p->styleElement, domString($3), $5 );
+        else {
+            $$ = 0;
             delete $5;
         }
     }
@@ -410,9 +376,6 @@ import:
 
 namespace:
 NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "@namespace: " << qString($4) << endl;
-#endif
     CSSParser *p = static_cast<CSSParser *>(parser);
     if (p->styleElement && p->styleElement->isCSSStyleSheet())
         static_cast<CSSStyleSheetImpl*>(p->styleElement)->addNamespace(p, atomicString($3), atomicString($4));
@@ -441,16 +404,16 @@ maybe_media_list:
 
 media_list:
     /* empty */ {
-	$$ = 0;
+        $$ = 0;
     }
     | medium {
-	$$ = new MediaListImpl();
-	$$->appendMedium( domString($1).lower() );
+        $$ = new MediaListImpl();
+        $$->appendMedium( domString($1).lower() );
     }
     | media_list ',' maybe_space medium {
-	$$ = $1;
+        $$ = $1;
         if ($$)
-	    $$->appendMedium( domString($4) );
+            $$->appendMedium( domString($4) );
     }
     | media_list error {
         delete $1;
@@ -460,15 +423,15 @@ media_list:
 
 media:
     MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
-	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $3 && $6 &&
-	     p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-	    $$ = new CSSMediaRuleImpl( static_cast<CSSStyleSheetImpl*>(p->styleElement), $3, $6 );
-	} else {
-	    $$ = 0;
-	    delete $3;
-	    delete $6;
-	}
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ( $3 && $6 &&
+             p->styleElement && p->styleElement->isCSSStyleSheet() ) {
+            $$ = new CSSMediaRuleImpl( static_cast<CSSStyleSheetImpl*>(p->styleElement), $3, $6 );
+        } else {
+            $$ = 0;
+            delete $3;
+            delete $6;
+        }
     }
   ;
 
@@ -477,8 +440,8 @@ ruleset_list:
   | ruleset_list ruleset maybe_space {
       $$ = $1;
       if ( $2 ) {
-	  if ( !$$ ) $$ = new CSSRuleListImpl();
-	  $$->append( $2 );
+          if ( !$$ ) $$ = new CSSRuleListImpl();
+          $$->append( $2 );
       }
   }
     ;
@@ -537,44 +500,33 @@ unary_operator:
 
 ruleset:
     selector_list '{' maybe_space declaration_list '}' {
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "got ruleset" << endl << "  selector:" << endl;
-#endif
-	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $1 ) {
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ( $1 ) {
             CSSStyleRuleImpl *rule = new CSSStyleRuleImpl( p->styleElement );
             CSSMutableStyleDeclarationImpl *decl = p->createStyleDeclaration( rule );
             rule->setSelector( $1 );
             rule->setDeclaration(decl);
             $$ = rule;
-	} else {
-	    $$ = 0;
-	    p->clearProperties();
-	}
+        } else {
+            $$ = 0;
+            p->clearProperties();
+        }
     }
   ;
 
 selector_list:
     selector {
-	if ( $1 ) {
-	    $$ = $1;
-#ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "   got simple selector:" << endl;
-	    $1->print();
-#endif
-	} else {
-	    $$ = 0;
-	}
+        if ( $1 ) {
+            $$ = $1;
+        } else {
+            $$ = 0;
+        }
     }
     | selector_list ',' maybe_space selector {
-	if ( $1 && $4 ) {
-	    $$ = $1;
-	    $$->append( $4 );
-#ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "   got simple selector:" << endl;
-	    $4->print();
-#endif
-	} else {
+        if ( $1 && $4 ) {
+            $$ = $1;
+            $$->append( $4 );
+        } else {
             delete $1;
             delete $4;
             $$ = 0;
@@ -588,10 +540,10 @@ selector_list:
 
 selector:
     simple_selector {
-	$$ = $1;
+        $$ = $1;
     }
     | selector combinator simple_selector {
-    	$$ = $3;
+        $$ = $3;
         if (!$1) {
             delete $3;
             $$ = 0;
@@ -635,17 +587,17 @@ namespace_selector:
 simple_selector:
     element_name maybe_space {
         CSSParser *p = static_cast<CSSParser *>(parser);
-	$$ = new CSSSelector(QualifiedName(nullAtom, atomicString($1), p->defaultNamespace));
+        $$ = new CSSSelector(QualifiedName(nullAtom, atomicString($1), p->defaultNamespace));
     }
     | element_name specifier_list maybe_space {
         $$ = $2;
-	if ($$) {
+        if ($$) {
             CSSParser *p = static_cast<CSSParser *>(parser);
             $$->tag = QualifiedName(nullAtom, atomicString($1), p->defaultNamespace);
         }
     }
     | specifier_list maybe_space {
-	$$ = $1;
+        $$ = $1;
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ($$ && p->defaultNamespace != starAtom)
             $$->tag = QualifiedName(nullAtom, starAtom, p->defaultNamespace);
@@ -690,13 +642,13 @@ element_name:
     IDENT {
         ParseString& str = $1;
         CSSParser *p = static_cast<CSSParser *>(parser);
-	DOM::DocumentImpl *doc = p->document();
-	if (doc && doc->isHTMLDocument())
+        DOM::DocumentImpl *doc = p->document();
+        if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
     }
     | '*' {
-	static unsigned short star = '*';
+        static unsigned short star = '*';
         $$.string = &star;
         $$.length = 1;
     }
@@ -704,10 +656,10 @@ element_name:
 
 specifier_list:
     specifier {
-	$$ = $1;
+        $$ = $1;
     }
     | specifier_list specifier {
-	$$ = $1;
+        $$ = $1;
         if ($$) {
             CSSSelector *end = $1;
             while( end->tagHistory )
@@ -724,13 +676,13 @@ specifier_list:
 
 specifier:
     HASH {
-	$$ = new CSSSelector();
-	$$->match = CSSSelector::Id;
-	CSSParser *p = static_cast<CSSParser *>(parser);
+        $$ = new CSSSelector();
+        $$->match = CSSSelector::Id;
+        CSSParser *p = static_cast<CSSParser *>(parser);
         if (!p->strict)
             $1.lower();
         $$->attr = idAttr;
-	$$->value = atomicString($1);
+        $$->value = atomicString($1);
     }
   | class
   | attrib
@@ -740,21 +692,21 @@ specifier:
 class:
     '.' IDENT {
         $$ = new CSSSelector();
-	$$->match = CSSSelector::Class;
-	CSSParser *p = static_cast<CSSParser *>(parser);
+        $$->match = CSSSelector::Class;
+        CSSParser *p = static_cast<CSSParser *>(parser);
         if (!p->strict)
             $2.lower();
         $$->attr = classAttr;
-	$$->value = atomicString($2);
+        $$->value = atomicString($2);
     }
   ;
 
 attr_name:
     IDENT maybe_space {
-	ParseString& str = $1;
+        ParseString& str = $1;
         CSSParser *p = static_cast<CSSParser *>(parser);
-	DOM::DocumentImpl *doc = p->document();
-	if (doc && doc->isHTMLDocument())
+        DOM::DocumentImpl *doc = p->document();
+        if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
     }
@@ -762,15 +714,15 @@ attr_name:
 
 attrib:
     '[' maybe_space attr_name ']' {
-	$$ = new CSSSelector();
-	$$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
-	$$->match = CSSSelector::Set;
+        $$ = new CSSSelector();
+        $$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
+        $$->match = CSSSelector::Set;
     }
     | '[' maybe_space attr_name match maybe_space ident_or_string maybe_space ']' {
-	$$ = new CSSSelector();
-	$$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
-	$$->match = (CSSSelector::Match)$4;
-	$$->value = atomicString($6);
+        $$ = new CSSSelector();
+        $$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
+        $$->match = (CSSSelector::Match)$4;
+        $$->value = atomicString($6);
     }
     | '[' maybe_space namespace_selector '|' attr_name ']' {
         AtomicString namespacePrefix = atomicString($3);
@@ -795,22 +747,22 @@ attrib:
 
 match:
     '=' {
-	$$ = CSSSelector::Exact;
+        $$ = CSSSelector::Exact;
     }
     | INCLUDES {
-	$$ = CSSSelector::List;
+        $$ = CSSSelector::List;
     }
     | DASHMATCH {
-	$$ = CSSSelector::Hyphen;
+        $$ = CSSSelector::Hyphen;
     }
     | BEGINSWITH {
-	$$ = CSSSelector::Begin;
+        $$ = CSSSelector::Begin;
     }
     | ENDSWITH {
-	$$ = CSSSelector::End;
+        $$ = CSSSelector::End;
     }
     | CONTAINS {
-	$$ = CSSSelector::Contain;
+        $$ = CSSSelector::Contain;
     }
     ;
 
@@ -850,90 +802,64 @@ pseudo:
 
 declaration_list:
     declaration {
-	$$ = $1;
+        $$ = $1;
     }
     | decl_list declaration {
-	$$ = $1;
-	if ( $2 )
-	    $$ = $2;
+        $$ = $1;
+        if ( $2 )
+            $$ = $2;
     }
     | decl_list {
-	$$ = $1;
+        $$ = $1;
     }
     | error invalid_block_list error {
-	$$ = false;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping bogus declaration" << endl;
-#endif
+        $$ = false;
     }
     | error {
-	$$ = false;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping all declarations" << endl;
-#endif
+        $$ = false;
     }
     ;
 
 decl_list:
     declaration ';' maybe_space {
-	$$ = $1;
+        $$ = $1;
     }
     | declaration invalid_block_list ';' maybe_space {
         $$ = false;
     }
     | error ';' maybe_space {
-	$$ = false;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping bogus declaration" << endl;
-#endif
+        $$ = false;
     }
     | error invalid_block_list error ';' maybe_space {
-	$$ = false;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping bogus declaration" << endl;
-#endif
+        $$ = false;
     }
     | decl_list declaration ';' maybe_space {
-	$$ = $1;
-	if ( $2 )
-	    $$ = $2;
+        $$ = $1;
+        if ( $2 )
+            $$ = $2;
     }
     | decl_list error ';' maybe_space {
-	$$ = $1;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping bogus declaration" << endl;
-#endif
+        $$ = $1;
     }
     | decl_list error invalid_block_list error ';' maybe_space {
-	$$ = $1;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipping bogus declaration" << endl;
-#endif
+        $$ = $1;
     }
     ;
 
 declaration:
     property ':' maybe_space expr prio {
-	$$ = false;
-	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $1 && $4 ) {
-	    p->valueList = $4;
-#ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "   got property: " << $1 <<
-		($5?" important":"")<< endl;
-#endif
-	    bool ok = p->parseValue( $1, $5 );
-	    if ( ok )
-		$$ = ok;
-#ifdef CSS_DEBUG
-	    else
-		kdDebug( 6080 ) << "     couldn't parse value!" << endl;
-#endif
-	} else {
+        $$ = false;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ( $1 && $4 ) {
+            p->valueList = $4;
+            bool ok = p->parseValue( $1, $5 );
+            if ( ok )
+                $$ = ok;
+        } else {
             delete $4;
         }
-	delete p->valueList;
-	p->valueList = 0;
+        delete p->valueList;
+        p->valueList = 0;
     }
     |
     property error {
@@ -961,11 +887,11 @@ declaration:
 
 property:
     IDENT maybe_space {
-	QString str = qString($1);
-	$$ = getPropertyID( str.lower().latin1(), str.length() );
+        QString str = qString($1);
+        $$ = getPropertyID( str.lower().latin1(), str.length() );
 #if SVG_SUPPORT
       if ($$ == 0)
-          $$ = KSVG::getPropertyID(str.lower().latin1(), str.length());
+          $$ = getSVGCSSPropertyID(str.lower().latin1(), str.length());
 #endif
     }
   ;
@@ -977,12 +903,12 @@ prio:
 
 expr:
     term {
-	$$ = new ValueList;
-	$$->addValue( $1 );
+        $$ = new ValueList;
+        $$->addValue( $1 );
     }
     | expr operator term {
         $$ = $1;
-	if ( $$ ) {
+        if ( $$ ) {
             if ( $2 ) {
                 Value v;
                 v.id = 0;
@@ -1001,10 +927,10 @@ expr:
 
 operator:
     '/' maybe_space {
-	$$ = '/';
+        $$ = '/';
     }
   | ',' maybe_space {
-	$$ = ',';
+        $$ = ',';
     }
   | /* empty */ {
         $$ = 0;
@@ -1020,7 +946,7 @@ term:
       $$.id = getValueID( str.lower().latin1(), str.length() );
 #if SVG_SUPPORT
       if ($$.id == 0)
-          $$.id = KSVG::getValueID(str.lower().latin1(), str.length());
+          $$.id = getSVGCSSValueID(str.lower().latin1(), str.length());
 #endif
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;
@@ -1092,16 +1018,10 @@ hexcolor:
 
 invalid_at:
     '@' error invalid_block {
-	$$ = 0;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipped invalid @-rule" << endl;
-#endif
+        $$ = 0;
     }
   | '@' error ';' {
-	$$ = 0;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipped invalid @-rule" << endl;
-#endif
+        $$ = 0;
     }
     ;
 
@@ -1109,34 +1029,22 @@ invalid_import:
     import {
         delete $1;
         $$ = 0;
-#ifdef CSS_DEBUG
-        kdDebug( 6080 ) << "skipped invalid import" << endl;
-#endif
     }
     ;
 
 invalid_rule:
     error invalid_block {
-	$$ = 0;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipped invalid rule" << endl;
-#endif
+        $$ = 0;
     }
 /*
   Seems like the two rules below are trying too much and violating
   http://www.hixie.ch/tests/evil/mixed/csserrorhandling.html
 
   | error ';' {
-	$$ = 0;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipped invalid rule" << endl;
-#endif
+        $$ = 0;
     }
   | error '}' {
-	$$ = 0;
-#ifdef CSS_DEBUG
-	kdDebug( 6080 ) << "skipped invalid rule" << endl;
-#endif
+        $$ = 0;
     }
 */
     ;
@@ -1152,4 +1060,3 @@ invalid_block_list:
 ;
 
 %%
-

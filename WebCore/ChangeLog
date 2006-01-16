@@ -1,3 +1,49 @@
+2006-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - changed WebCore namespace change to work on Win32 as well as Mac OS X
+
+        * WebCorePrefix.h: Removed things needed cross-platform.
+
+        * config.h: Moved from khtml subdirectory. Added defines from
+        WebCorePrefix.h, and added a define that makes KSVG a synonym for WebCore.
+        * khtml/config.h: Removed.
+
+        * khtml/css/css_grammar.y: Changed SVG functions to use function name rather
+        than namespace to avoid collision with the XML and HTML DOM. Changes tabs to spaces.
+        * khtml/css/css_valueimpl.cpp:
+        (WebCore::propertyID): Add SVG properties ot the ones understood here.
+        This allows us to set SVG properties from JavaScript.
+
+        * ksvg2/scripts/cssmakeprops: Put functions inside the namespace to avoid compiler
+        warning, and renamed functions to include CSS and SVG.
+        * ksvg2/scripts/cssmakevalues: Ditto.
+
+        * ksvg2/svg/SVGStyledElementImpl.cpp: (SVGStyledElementImpl::parseMappedAttribute):
+        Use property ID function by its new name.
+
+        * ksvg2/ksvg.h: Renamed ExceptionCode to SVGExceptionCode.
+
+        * khtml/ecma/XSLTProcessor.cpp: Moved "config.h" header up above the ifdef so that
+        the ifdef works.
+        * khtml/xbl/xbl_binding.cpp: Ditto.
+        * khtml/xbl/xbl_binding_manager.cpp: Ditto.
+        * khtml/xbl/xbl_docimpl.cpp: Ditto.
+        * khtml/xbl/xbl_protobinding.cpp: Ditto.
+        * khtml/xbl/xbl_tokenizer.cpp: Ditto.
+        * khtml/xsl/xsl_stylesheetimpl.cpp: Ditto.
+        * khtml/xsl/xslt_processorimpl.cpp: Ditto.
+        * loader/CachedXBLDocument.cpp: Ditto.
+
+        * ksvg2/svg/SVGFELightElementImpl.h: Removed include of "config.h". That's supposed
+        to only be included by code files, not headers.
+
+        * ksvg2/svg/SVGFEDistantLightElementImpl.cpp: Added missing include of "config.h".
+        Did a few other tweaks to the file.
+        * ksvg2/svg/SVGFEPointLightElementImpl.cpp: Ditto.
+        * ksvg2/svg/SVGFESpotLightElementImpl.cpp: Ditto.
+
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by darin.

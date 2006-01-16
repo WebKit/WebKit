@@ -1,3 +1,31 @@
+/*
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ */
+
+// This prefix file is for use on Mac OS X only. It should contain only:
+//    1) files to precompile on Mac OS X for faster builds
+//    2) in one case at least: OS-X-specific performance bug workarounds
+//    3) the special trick to catch us using new or delete without including "config.h"
+// The project should be able to build without this header, although we rarely test that.
+
+// Things that need to be defined globally should go into "config.h".
+
 #ifdef __cplusplus
 #define NULL __null
 #else
@@ -55,9 +83,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 
-#define KHTML_NO_XBL 1
-#define KHTML_XSLT 1
-
 #ifdef __OBJC__
 
 #import <Cocoa/Cocoa.h>
@@ -69,9 +94,6 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
-#define KDOM WebCore
-#define DOM WebCore
-#define khtml WebCore
-
+// Work around bug with C++ library that screws up Objective-C++ when exception support is disabled.
 #undef try
 #undef catch

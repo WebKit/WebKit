@@ -31,7 +31,7 @@ namespace KSVG
     /**
      * All SVG constants
      */
-    enum ExceptionCode
+    enum SVGExceptionCode
     {
         SVG_WRONG_TYPE_ERR            = 1,
         SVG_INVALID_VALUE_ERR        = 2,

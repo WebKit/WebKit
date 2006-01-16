@@ -97,9 +97,9 @@ print out "%%\n";
 close out;
 
 print header "\nnamespace ${nsFull}\n{\n";
-print header "    const char *getPropertyName(unsigned short id);\n";
-print header "    int getPropertyID(const char *tagStr, int len);\n";
-print header "};\n";
+print header "    const char *getSVGCSSPropertyName(unsigned short id);\n";
+print header "    int getSVGCSSPropertyID(const char *tagStr, int len);\n";
+print header "}\n";
 
 print header "\n#endif\n";
 close header;
@@ -134,6 +134,7 @@ while(<IN>) {
 close(IN);  
 
 open(OUT, ">> $filec");
+print OUT "\nnamespace ${nsFull}\n{\n";
 print OUT "\n\nstatic const unsigned short propList[] = {\n";
 print OUT "    65535,\n";
 
@@ -155,18 +156,15 @@ if ($nsFull ne "KDOM") {
 }
 
 print OUT "    65535\n};\n\n";
-print OUT "const char *${nsFull}::getPropertyName(unsigned short id)\n{\n";
+print OUT "const char *getSVGCSSPropertyName(unsigned short id)\n{\n";
 print OUT "    if (!id || id > $lookFor) return \"\";\n";
 print OUT "    return spool_prop + wordlist_prop[propList[id]].name;\n";
 print OUT "}\n";
-print OUT "\nint ${nsFull}::getPropertyID(const char *tagStr, int len)\n";
+print OUT "\nint getSVGCSSPropertyID(const char *tagStr, int len)\n";
 print OUT "{\n";
 print OUT "    const struct css_prop *propPtr = find${ns}Prop(tagStr, len);\n";
 print OUT "    if(!propPtr)\n";
 print OUT "      return 0;\n";
 print OUT "    return propPtr->id;\n";
+print OUT "}\n\n";
 print OUT "}\n";
-
-
-
-

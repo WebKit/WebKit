@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGFELightElementImpl_H
 #define KSVG_SVGFELightElementImpl_H
-#include "config.h"
+
 #include "SVGElementImpl.h"
 #include "KCanvasFilters.h"
 
@@ -66,6 +66,6 @@ namespace KSVG
         mutable RefPtr<SVGAnimatedNumberImpl> m_limitingConeAngle;
         
     };
-};
+}
 
 #endif
