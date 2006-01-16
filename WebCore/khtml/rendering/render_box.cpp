@@ -117,8 +117,9 @@ void RenderBox::setStyle(RenderStyle *_style)
     }
     else if (m_layer && !isRoot() && !isCanvas()) {
         assert(m_layer->parent());
-        m_layer->removeOnlyThisLayer();
+        RenderLayer *layer = m_layer;
         m_layer = 0;
+        layer->removeOnlyThisLayer();
     }
 
     if (m_layer)

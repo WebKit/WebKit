@@ -1,3 +1,21 @@
+2006-01-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6473
+          REGRESSION: Serious painting problems on new iLife and iWorks pages
+
+        * khtml/css/css_grammar.y:
+        (DOM::getPropertyID): Undo the mapping of -moz-opacity and -moz-border-radius to
+        opacity and border-radius, respectively.
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle): Set the object's layer to 0 before removing the layer,
+        to allow child layers to update their positions correctly.
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::removeOnlyThisLayer): Update the positions of all children
+        of the layer being removed.
+        * manual-tests/bugzilla-6473.html: Added.
+
 2006-01-16  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin, landed by ap.
