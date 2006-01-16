@@ -1,3 +1,19 @@
+2006-01-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+	JavaScriptCore part of <rdar://problem/4211707> NPAPI ref count behavior differs with Mozilla
+
+        * bindings/npruntime.cpp:
+        (_NPN_ReleaseObject):
+	Refactored part of this function out into _NPN_DeallocateObject.
+        (_NPN_DeallocateObject):
+	Forcibly deallocates the passed object, even if its refcount is
+	greater than zero.
+	
+        * bindings/npruntime_impl.h:
+	Declared _NPN_DeallocateObject().
+
 2006-01-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

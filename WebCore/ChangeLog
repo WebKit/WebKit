@@ -1,3 +1,19 @@
+2006-01-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebCore part of <rdar://problem/4211707> NPAPI ref count behavior differs with Mozilla
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::setView):
+        Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release
+        the window script object properly.
+        Our old NPN_GetValue() did not properly retain the returned window script object.  Because of this, many plugins
+        have WebKit-specific workarounds to not release said window script object.  Forcibly deallocating it here
+        should prevent any such issues.  This shouldn't cause any problems for plugins, since they should already be
+        stopped and destroyed at this point.
+        This also fixes a preexisting leak of the window script NPObject -- it was never actually being freed!
+
 2006-01-16  Darin Adler  <darin@apple.com>
 
         - actually removed QPtrDict itself

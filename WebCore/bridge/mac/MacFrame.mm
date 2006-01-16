@@ -84,6 +84,7 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/NP_jsobject.h>
+#import <JavaScriptCore/npruntime_impl.h>
 
 #import "KWQAccObjectCache.h"
 
@@ -692,8 +693,15 @@ void MacFrame::setView(KHTMLView *view)
     _bindingRoot = 0;
     KWQRelease(_windowScriptObject);
     _windowScriptObject = 0;
-    _windowScriptNPObject = 0;
-    
+
+    if (_windowScriptNPObject) {
+        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
+        // script object properly.
+        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
+        _NPN_DeallocateObject(_windowScriptNPObject);
+        _windowScriptNPObject = 0;
+    }
+
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.

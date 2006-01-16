@@ -1,3 +1,14 @@
+2006-01-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+	WebKit part of <rdar://problem/4211707> NPAPI ref count behavior differs with Mozilla
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+	The returned window script object is expected to be retained, as described here:
+	<http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
+
 2006-01-16  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

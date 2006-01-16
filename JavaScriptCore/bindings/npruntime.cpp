@@ -423,12 +423,20 @@ void _NPN_ReleaseObject (NPObject *obj)
 
     if (obj && obj->referenceCount >= 1) {
         obj->referenceCount--;
-                
-        if (obj->referenceCount == 0) {
-            if (obj->_class->deallocate)
-                obj->_class->deallocate (obj);
-            else
-                free (obj);
-        }
+        
+        if (obj->referenceCount == 0)
+            _NPN_DeallocateObject(obj);
+    }
+}
+
+void _NPN_DeallocateObject(NPObject *obj)
+{
+    assert(obj);
+
+    if (obj) {
+        if (obj->_class->deallocate)
+            obj->_class->deallocate(obj);
+        else
+            free(obj);
     }
 }
