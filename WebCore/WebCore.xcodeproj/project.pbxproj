@@ -2927,6 +2927,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				65C97AF208EA908800ACD273 /* config.h */,
 				65BF021F097480EF00C43196 /* bridge */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
@@ -3892,7 +3893,6 @@
 				BC41978B059293BE0016347F /* xbl */,
 				F523D32402DE4478018635CA /* xml */,
 				BC06F24406D18A35004A6FA3 /* xsl */,
-				65C97AF208EA908800ACD273 /* config.h */,
 				F523D15202DE42AD018635CA /* khtml_events.h */,
 				F523D15102DE42AD018635CA /* khtml_events.cpp */,
 			);
