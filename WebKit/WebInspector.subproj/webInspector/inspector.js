@@ -47,6 +47,16 @@ function loaded()
     nodeContentsScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
     nodeContentsScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
 
+    elementAttributesScrollbar = new AppleVerticalScrollbar(document.getElementById("elementAttributesScrollbar"));
+    elementAttributesScrollArea = new AppleScrollArea(document.getElementById("elementAttributesScrollview"), elementAttributesScrollbar);
+    
+    elementAttributesScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
+    elementAttributesScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
+    elementAttributesScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
+    elementAttributesScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
+    elementAttributesScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
+    elementAttributesScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
+    
     styleRulesScrollbar = new AppleVerticalScrollbar(document.getElementById("styleRulesScrollbar"));
     styleRulesScrollArea = new AppleScrollArea(document.getElementById("styleRulesScrollview"), styleRulesScrollbar);
 
@@ -178,6 +188,38 @@ function updatePanes() {
     paneUpdateState[currentPane] = true;
 }
 
+function updateElementAttributes() {
+    var focusedNode = Inspector.focusedDOMNode();
+    var attributesList = document.getElementById("elementAttributesList")
+
+    attributesList.innerHTML = "";
+    
+    var namesArray = new Array();
+    for (i = 0; i < focusedNode.attributes.length; i++)
+        namesArray.push(focusedNode.attributes[i].name);
+    namesArray.sort();
+    
+    for (i = 0; i < namesArray.length; i++) {
+        var attr = focusedNode.getAttributeNode(namesArray[i]);
+        var li = document.createElement("li");
+        
+        var span = document.createElement("span");
+        span.className = "property";
+        span.title = attr.namespaceURI;
+        span.textContent = namesArray[i];
+        li.appendChild(span);
+        
+        span = document.createElement("span");
+        span.className = "value";
+        span.textContent = attr.value;
+        li.appendChild(span);
+        
+        attributesList.appendChild(li);
+    }
+    
+    elementAttributesScrollArea.refresh();
+}
+
 function updateNodePane() {
     var focusedNode = Inspector.focusedDOMNode();
 
@@ -191,14 +233,16 @@ function updateNodePane() {
     } else if (focusedNode.nodeType == Node.ELEMENT_NODE) {
         document.getElementById("elementAttributes").style.display = null;
         document.getElementById("nodeContents").style.display = null;
-
+        
+        updateElementAttributes();
+        
         if (focusedNode.namespaceURI.length > 0) {
             document.getElementById("nodeNamespace").textContent = focusedNode.namespaceURI;
             document.getElementById("nodeNamespaceRow").style.display = null;
         } else {
             document.getElementById("nodeNamespaceRow").style.display = "none";
         }
-
+    
         document.getElementById("nodeContentsScrollview").innerHTML = "<span class=\"disabled\">Loading...</span>";
         nodeContentsScrollArea.refresh();
 

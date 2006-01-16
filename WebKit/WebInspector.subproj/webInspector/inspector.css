@@ -591,6 +591,41 @@ button.toggle.right {
     max-height: 160px;
 }
 
+#elementAttributesList {
+    -apple-dashboard-region: dashboard-region(control rectangle);
+}
+
+.attributeList {
+    padding: 3px 0;
+    margin: 0;
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.attributeList ul {
+    list-style-type: none;
+    -apple-padding-start: 10px;
+}
+
+.attributeList li {
+    line-height: 14px;
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attributeList li span {
+    -apple-user-select: text;
+}
+
+.attributeList li .property::after {
+    content: ": ";
+}
+
+.attributeList li .value {
+    color: rgb(255,255,180);
+}
+    
 #nodeContents {
     display: -apple-box;
     -apple-box-flex: 12;
