@@ -218,8 +218,6 @@
 		93F1997C08245E59001E9ABC /* KWQPen.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A502DE3B8601EA4122 /* KWQPen.h */; };
 		93F1997D08245E59001E9ABC /* KWQPixmap.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A602DE3B8601EA4122 /* KWQPixmap.h */; };
 		93F1997F08245E59001E9ABC /* KWQPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AA02DE3B8601EA4122 /* KWQPrinter.h */; };
-		93F1998008245E59001E9ABC /* KWQPtrDict.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AB02DE3B8601EA4122 /* KWQPtrDict.h */; };
-		93F1998108245E59001E9ABC /* KWQPtrDictImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852502DE375901EA4122 /* KWQPtrDictImpl.h */; };
 		93F1998208245E59001E9ABC /* KWQPtrList.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869902DE3B8601EA4122 /* KWQPtrList.h */; };
 		93F1998308245E59001E9ABC /* KWQPtrQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */; };
 		93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
@@ -378,7 +376,6 @@
 		93F19A4208245E59001E9ABC /* KWQPainter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851F02DE375901EA4122 /* KWQPainter.mm */; };
 		93F19A4308245E59001E9ABC /* KWQPen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852102DE375901EA4122 /* KWQPen.cpp */; };
 		93F19A4408245E59001E9ABC /* KWQPixmap.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852202DE375901EA4122 /* KWQPixmap.mm */; };
-		93F19A4708245E59001E9ABC /* KWQPtrDictImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852602DE375901EA4122 /* KWQPtrDictImpl.cpp */; };
 		93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.cpp */; };
 		93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.cpp */; };
 		93F19A4C08245E59001E9ABC /* KWQScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852E02DE375901EA4122 /* KWQScrollView.mm */; };
@@ -776,8 +773,6 @@
 		A88AD1BC0952480A001DD196 /* KWQPen.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A502DE3B8601EA4122 /* KWQPen.h */; };
 		A88AD1BD0952480A001DD196 /* KWQPixmap.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A602DE3B8601EA4122 /* KWQPixmap.h */; };
 		A88AD1BF0952480A001DD196 /* KWQPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AA02DE3B8601EA4122 /* KWQPrinter.h */; };
-		A88AD1C00952480A001DD196 /* KWQPtrDict.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AB02DE3B8601EA4122 /* KWQPtrDict.h */; };
-		A88AD1C10952480A001DD196 /* KWQPtrDictImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852502DE375901EA4122 /* KWQPtrDictImpl.h */; };
 		A88AD1C20952480A001DD196 /* KWQPtrList.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869902DE3B8601EA4122 /* KWQPtrList.h */; };
 		A88AD1C30952480A001DD196 /* KWQPtrQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */; };
 		A88AD1C40952480A001DD196 /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
@@ -978,7 +973,6 @@
 		A88AD29E0952480A001DD196 /* KWQPainter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851F02DE375901EA4122 /* KWQPainter.mm */; };
 		A88AD29F0952480A001DD196 /* KWQPen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852102DE375901EA4122 /* KWQPen.cpp */; };
 		A88AD2A00952480A001DD196 /* KWQPixmap.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852202DE375901EA4122 /* KWQPixmap.mm */; };
-		A88AD2A30952480A001DD196 /* KWQPtrDictImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852602DE375901EA4122 /* KWQPtrDictImpl.cpp */; };
 		A88AD2A50952480A001DD196 /* KWQRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.cpp */; };
 		A88AD2A60952480A001DD196 /* KWQRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.cpp */; };
 		A88AD2A70952480A001DD196 /* KWQScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852E02DE375901EA4122 /* KWQScrollView.mm */; };
@@ -2764,8 +2758,6 @@
 		F587851F02DE375901EA4122 /* KWQPainter.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPainter.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852102DE375901EA4122 /* KWQPen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQPen.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852202DE375901EA4122 /* KWQPixmap.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPixmap.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587852502DE375901EA4122 /* KWQPtrDictImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrDictImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587852602DE375901EA4122 /* KWQPtrDictImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQPtrDictImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852B02DE375901EA4122 /* KWQRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegExp.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852C02DE375901EA4122 /* KWQRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegion.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852E02DE375901EA4122 /* KWQScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2843,7 +2835,6 @@
 		F58786A502DE3B8601EA4122 /* KWQPen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786A602DE3B8601EA4122 /* KWQPixmap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPixmap.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AA02DE3B8601EA4122 /* KWQPrinter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPrinter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786AB02DE3B8601EA4122 /* KWQPtrDict.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrDict.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AC02DE3B8601EA4122 /* KWQPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrQueue.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AE02DE3B8601EA4122 /* KWQPtrStack.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrStack.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4404,9 +4395,6 @@
 				F58786A602DE3B8601EA4122 /* KWQPixmap.h */,
 				F587852202DE375901EA4122 /* KWQPixmap.mm */,
 				F58786AA02DE3B8601EA4122 /* KWQPrinter.h */,
-				F58786AB02DE3B8601EA4122 /* KWQPtrDict.h */,
-				F587852502DE375901EA4122 /* KWQPtrDictImpl.h */,
-				F587852602DE375901EA4122 /* KWQPtrDictImpl.cpp */,
 				F58786AC02DE3B8601EA4122 /* KWQPtrList.h */,
 				F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */,
 				F58786AE02DE3B8601EA4122 /* KWQPtrStack.h */,
@@ -4583,8 +4571,6 @@
 				93F1997C08245E59001E9ABC /* KWQPen.h in Headers */,
 				93F1997D08245E59001E9ABC /* KWQPixmap.h in Headers */,
 				93F1997F08245E59001E9ABC /* KWQPrinter.h in Headers */,
-				93F1998008245E59001E9ABC /* KWQPtrDict.h in Headers */,
-				93F1998108245E59001E9ABC /* KWQPtrDictImpl.h in Headers */,
 				93F1998208245E59001E9ABC /* KWQPtrList.h in Headers */,
 				93F1998308245E59001E9ABC /* KWQPtrQueue.h in Headers */,
 				93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */,
@@ -5109,8 +5095,6 @@
 				A88AD1BC0952480A001DD196 /* KWQPen.h in Headers */,
 				A88AD1BD0952480A001DD196 /* KWQPixmap.h in Headers */,
 				A88AD1BF0952480A001DD196 /* KWQPrinter.h in Headers */,
-				A88AD1C00952480A001DD196 /* KWQPtrDict.h in Headers */,
-				A88AD1C10952480A001DD196 /* KWQPtrDictImpl.h in Headers */,
 				A88AD1C20952480A001DD196 /* KWQPtrList.h in Headers */,
 				A88AD1C30952480A001DD196 /* KWQPtrQueue.h in Headers */,
 				A88AD1C40952480A001DD196 /* KWQPtrStack.h in Headers */,
@@ -6437,7 +6421,6 @@
 				93F19A4208245E59001E9ABC /* KWQPainter.mm in Sources */,
 				93F19A4308245E59001E9ABC /* KWQPen.cpp in Sources */,
 				93F19A4408245E59001E9ABC /* KWQPixmap.mm in Sources */,
-				93F19A4708245E59001E9ABC /* KWQPtrDictImpl.cpp in Sources */,
 				93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */,
 				93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */,
 				93F19A4C08245E59001E9ABC /* KWQScrollView.mm in Sources */,
@@ -6907,7 +6890,6 @@
 				A88AD29E0952480A001DD196 /* KWQPainter.mm in Sources */,
 				A88AD29F0952480A001DD196 /* KWQPen.cpp in Sources */,
 				A88AD2A00952480A001DD196 /* KWQPixmap.mm in Sources */,
-				A88AD2A30952480A001DD196 /* KWQPtrDictImpl.cpp in Sources */,
 				A88AD2A50952480A001DD196 /* KWQRegExp.cpp in Sources */,
 				A88AD2A60952480A001DD196 /* KWQRegion.cpp in Sources */,
 				A88AD2A70952480A001DD196 /* KWQScrollView.mm in Sources */,

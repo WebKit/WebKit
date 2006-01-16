@@ -1,5 +1,15 @@
 2006-01-16  Darin Adler  <darin@apple.com>
 
+        - actually removed QPtrDict itself
+
+        * ForwardingHeaders/qptrdict.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Removed KWQPtrDict* files.
+        * kwq/KWQPtrDict.h: Removed.
+        * kwq/KWQPtrDictImpl.cpp: Removed.
+        * kwq/KWQPtrDictImpl.h: Removed.
+
+2006-01-16  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - removed all uses of QPtrDict, most uses of QMap
