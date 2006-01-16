@@ -1,3 +1,12 @@
+2006-01-16  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin, landed by ap.
+
+        Fix typo in CSSPrimitiveValueImpl::setStringValue.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSPrimitiveValueImpl::setStringValue): Change >> to > and fix formatting.
+
 2006-01-16  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Justin.

@@ -915,12 +915,11 @@ void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const DOM
     cleanup();
     //if(m_type < CSSPrimitiveValue::CSS_STRING) throw DOMException(DOMException::INVALID_ACCESS_ERR);
     //if(m_type > CSSPrimitiveValue::CSS_ATTR) throw DOMException(DOMException::INVALID_ACCESS_ERR);
-    if (m_type < CSSPrimitiveValue::CSS_STRING || m_type >> CSSPrimitiveValue::CSS_ATTR) {
+    if (m_type < CSSPrimitiveValue::CSS_STRING || m_type > CSSPrimitiveValue::CSS_ATTR) {
         exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
         return;
     }
-    if(stringType != CSSPrimitiveValue::CSS_IDENT)
-    {
+    if (stringType != CSSPrimitiveValue::CSS_IDENT) {
         m_value.string = stringValue.impl();
         m_value.string->ref();
         m_type = stringType;
