@@ -202,6 +202,28 @@ void RenderReplaced::setSelectionState(SelectionState s)
     containingBlock()->setSelectionState(s);
 }
 
+bool RenderReplaced::isSelected()
+{
+    SelectionState s = selectionState();
+    if (s == SelectionNone)
+        return false;
+    if (s == SelectionInside)
+        return true;
+
+    int selectionStart, selectionEnd;
+    RenderObject::selectionStartEnd(selectionStart, selectionEnd);
+    if (s == SelectionStart)
+        return selectionStart == 0;
+        
+    int end = element()->hasChildNodes() ? element()->childNodeCount() : 1;
+    if (s == SelectionEnd)
+        return selectionEnd == end;
+    if (s == SelectionBoth)
+        return selectionStart == 0 && selectionEnd == end;
+        
+    assert(0);
+    return false;
+}
 
 QColor RenderReplaced::selectionColor(QPainter *p) const
 {
@@ -386,7 +408,7 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     
     // Paint a partially transparent wash over selected widgets.
     bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
-    if (m_selectionState != SelectionNone && !isPrinting) {
+    if (isSelected() && !isPrinting) {
         QBrush brush(selectionColor(i.p));
         IntRect selRect(selectionRect());
         i.p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
