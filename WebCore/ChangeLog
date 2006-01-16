@@ -1,5 +1,181 @@
 2006-01-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - removed all uses of QPtrDict, most uses of QMap
+
+        * khtml/ecma/kjs_dom.cpp: Converted tabs to spaces.
+        (KJS::DOMNode::mark): Switched from QPtrDict to HashSet.
+        * khtml/ecma/kjs_events.cpp: Converted tabs to spaces.
+        (KJS::JSUnprotectedEventListener::JSUnprotectedEventListener): Use HashMap.
+        (KJS::JSEventListener::JSEventListener): Use HashMap.
+        (KJS::JSLazyEventListener::parseCode): Use HashMap.
+        * khtml/ecma/kjs_html.cpp: Convert tabs to spaces.
+        (KJS::KJS::HTMLElement::classInfo): Use HashMap.
+        * khtml/ecma/kjs_window.cpp: Convert tabs to spaces.
+        (KJS::Window::~Window): Use HashMap.
+        (KJS::Window::getJSEventListener): Ditto.
+        (KJS::Window::getJSUnprotectedEventListener): Ditto.
+        (KJS::WindowQObject::parentDestroyed): Ditto.
+        (KJS::WindowQObject::installTimeout): Ditto.
+        (KJS::WindowQObject::pauseTimeouts): Ditto.
+        (KJS::WindowQObject::resumeTimeouts): Ditto.
+        (KJS::WindowQObject::clearTimeout): Ditto.
+        (KJS::WindowQObject::timerEvent): Ditto.
+        * khtml/ecma/kjs_window.h: Use HashMap.
+        * khtml/ecma/xmlhttprequest.cpp: Convert tabs to spaces.
+        (KJS::XMLHttpRequest::requestsByDocument): Use HashMap/Set.
+        (KJS::XMLHttpRequest::addToRequestsByDocument): Ditto.
+        (KJS::XMLHttpRequest::removeFromRequestsByDocument): Ditto.
+        (KJS::XMLHttpRequest::cancelRequests): Ditto.
+        * khtml/ecma/xmlhttprequest.h: Ditto.
+        * khtml/editing/apply_style_command.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Use HashMap.
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect): Use HashMap.
+        (RenderCanvas::setSelection): Ditto.
+        * khtml/rendering/render_flow.cpp: (RenderFlow::paintLines): Use HashSet.
+        * khtml/rendering/render_line.cpp: (khtml::InlineFlowBox::paint): Use HashSet.
+        * khtml/rendering/render_object.h: Used HashSet.
+        Converted tabs to spaces and did namespace changes too.
+        * khtml/xml/DocumentImpl.cpp:
+        (DocumentImpl::DocumentImpl): Use HashSet and HashMap.
+        (DocumentImpl::~DocumentImpl): Ditto.
+        (DocumentImpl::registerDisconnectedNodeWithEventListeners): Ditto.
+        (DocumentImpl::unregisterDisconnectedNodeWithEventListeners): Ditto.
+        (DocumentImpl::removeAllDisconnectedNodeEventListeners): Ditto.
+        (DocumentImpl::addImageMap): Ditto.
+        (DocumentImpl::removeImageMap): Ditto.
+        (DocumentImpl::getImageMap): Ditto.
+        (DocumentImpl::addMarker): Ditto.
+        (DocumentImpl::copyMarkers): Ditto.
+        (DocumentImpl::removeMarkers): Ditto.
+        (DocumentImpl::markersForNode): Ditto.
+        (DocumentImpl::shiftMarkers): Ditto.
+        (DocumentImpl::radioButtonChecked): Ditto.
+        (DocumentImpl::checkedRadioButtonForGroup): Ditto.
+        (DocumentImpl::removeRadioButtonGroup): Ditto.
+        * khtml/xml/DocumentImpl.h: Use HashSet and HashMap.
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::registerNodeList): Use HashSet.
+        (WebCore::NodeImpl::unregisterNodeList): Ditto.
+        (WebCore::NodeImpl::notifyLocalNodeListsAttributeChanged): Ditto.
+        (WebCore::NodeImpl::notifyNodeListsAttributeChanged): Ditto.
+        (WebCore::NodeImpl::notifyLocalNodeListsChildrenChanged): Ditto.
+        (WebCore::NodeImpl::notifyNodeListsChildrenChanged): Ditto.
+        (WebCore::NodeImpl::getElementsByTagName): Moved here so we don't have
+        to include NodeListImpl.h in the header.
+        * khtml/xml/NodeImpl.h: Use HashSet. Reduced includes.
+        * khtml/xml/dom_elementimpl.cpp:
+        (WebCore::MappedAttributeKey): Added. Hash table key.
+        (WebCore::MappedAttributeKeyTraits): Added. Hash table key traits.
+        (WebCore::MappedAttributeHash): Added. Hash function.
+        (WebCore::StyledElementImpl::getMappedAttributeDecl): Use HashMap.
+        (WebCore::StyledElementImpl::setMappedAttributeDecl): Ditto.
+        (WebCore::StyledElementImpl::removeMappedAttributeDecl): Ditto.
+        (WebCore::MappedAttributeHash::hash): Added. Hash function.
+        * khtml/xml/dom_elementimpl.h: Use HashMap.
+
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLMapElementImpl::parseMappedAttribute): Update m_name handling
+        to use AtomicString.
+        * khtml/html/html_imageimpl.h:
+        (WebCore::HTMLMapElementImpl::getName): Change to return const AtomicString&.
+
+        * khtml/dom/dom_string.h: Added a default argument to substring, also
+        reduced includes and updated namespace.
+        * khtml/xml/dom_stringimpl.h: Ditto.
+
+        * bridge/mac/WebCoreFrameBridge.mm: Switched to new WebCore namespace.
+        Updated includes for header changes.
+        * kcanvas/RenderForeignObject.cpp: Ditto.
+        * kcanvas/RenderForeignObject.h: Ditto.
+        * kcanvas/RenderSVGImage.h: Ditto.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h: Ditto.
+        * khtml/css/css_ruleimpl.cpp: Ditto.
+        * khtml/css/css_valueimpl.h: Ditto.
+        * khtml/ecma/kjs_dom.h: Ditto.
+        * khtml/ecma/kjs_html.h: Ditto.
+        * khtml/editing/composite_edit_command.cpp: Ditto.
+        * khtml/editing/delete_selection_command.cpp: Ditto.
+        * khtml/html/html_tableimpl.cpp: Ditto.
+        * khtml/khtml_events.cpp: Ditto.
+        * khtml/rendering/RenderText.cpp: Ditto.
+        * khtml/rendering/render_block.cpp: Ditto.
+        * khtml/rendering/render_br.cpp: Ditto.
+        * khtml/rendering/render_inline.cpp: Ditto.
+        * khtml/rendering/render_object.cpp: Ditto.
+        * khtml/rendering/render_replaced.cpp: Ditto.
+        * khtml/xml/dom2_rangeimpl.cpp: Ditto.
+        * kwq/DOM.mm: Ditto.
+        * page/Frame.cpp: Ditto.
+
+        * kcanvas/KCanvasResources.cpp: (KCanvasMarker::draw): Updated because a
+        constant moved into the WebCore namespace.
+        * kcanvas/RenderSVGText.cpp: (RenderSVGText::nodeAtPoint): Ditto.
+        * kcanvas/RenderSVGText.h: Ditto.
+        * kcanvas/device/quartz/KCanvasItemQuartz.h: Ditto.
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::paint): Ditto.
+        (KCanvasItemQuartz::nodeAtPoint): Ditto.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::paint): Ditto.
+
+        * khtml/xbl/xbl_binding_manager.cpp: Removed include of qptrddict.h.
+        * khtml/xbl/xbl_binding_manager.h: Removed include of qptrddict.h.
+        * khtml/xbl/xbl_docimpl.h: Removed include of qptrddict.h.
+
+        * khtml/xml/dom_xmlimpl.cpp: Changed to use RefPtr for strings.
+        * khtml/xml/dom_xmlimpl.h: Ditto.
+
+        * ksvg2/css/SVGRenderStyle.h: Reduced includes a bit and added newly-needed ones.
+        * ksvg2/misc/KSVGTimeScheduler.cpp: Ditto.
+        * ksvg2/svg/SVGPointImpl.cpp: Ditto.
+
+        * kwq/KWQNamespace.h: Removed QColor, QCursor, and redundant declaration of QRgb
+        (now in qcolor.h). Also converted tabs to spaces.
+
+        * kwq/KWQPainter.h: Added newly-needed include.
+
+        * kwq/KWQPtrVector.h: Added append function.
+        * kwq/KWQVectorImpl.cpp: (KWQVectorImpl::append): Added.
+        * kwq/KWQVectorImpl.h: Added append.
+
+        * kwq/KWQRenderTreeDebug.cpp: Updated to no longer use transparentColor constant.
+
+        * kwq/KWQWMatrix.cpp: Changed name to QMatrix to allow forward declarations.
+        * kwq/KWQWMatrix.h: Ditto.
+
+        * loader/Cache.cpp: (khtml::Cache::clear): Use deleteAllValues for clearer code.
+
+        * loader/CachedCSSStyleSheet.cpp: Reduced includes a lot, moving them from .h to .cpp.
+        * loader/CachedCSSStyleSheet.h: Ditto.
+        * loader/CachedImage.cpp: Ditto.
+        * loader/CachedImage.h: Ditto.
+        * loader/CachedImageCallback.cpp: Ditto.
+        * loader/CachedObject.cpp: Ditto.
+        * loader/CachedObject.h: Ditto.
+        * loader/CachedObjectClient.h: Ditto.
+        * loader/CachedObjectClientWalker.cpp: Ditto.
+        * loader/CachedObjectClientWalker.h: Ditto.
+        * loader/CachedScript.cpp: Ditto.
+        * loader/CachedScript.h: Ditto.
+        * loader/CachedXSLStyleSheet.cpp: Ditto.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader): Changed to use HashMap.
+        (WebCore::Loader::~Loader): Ditto.
+        (WebCore::Loader::servePendingRequests): Ditto.
+        (WebCore::Loader::slotFinished): Ditto.
+        (WebCore::Loader::slotReceivedResponse): Ditto.
+        (WebCore::Loader::slotData): Ditto.
+        (WebCore::Loader::numRequests): Ditto.
+        (WebCore::Loader::cancelRequests): Ditto.
+        (WebCore::Loader::jobForRequest): Ditto.
+        * loader/loader.h: Ditto.
+
+2006-01-16  Darin Adler  <darin@apple.com>
+
         * WebCore.xcodeproj/project.pbxproj: Move config.h in project file to match
         where it is in the source tree.
 

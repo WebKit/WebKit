@@ -55,6 +55,8 @@ public:
     T **data() {return (T **)impl.data(); }
     int findRef(T *item) {return impl.findRef(item);}
 
+    bool append(T* item) { return impl.append(item, del_item); }
+
     virtual int compareItems(void *a, void *b) { return a != b; }
 
     T *operator[](uint n) const {return (T *)impl.at(n); }

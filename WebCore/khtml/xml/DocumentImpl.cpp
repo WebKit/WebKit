@@ -210,7 +210,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
     , m_selfOnlyRefCount(0)
-    , m_selectedRadioButtons(0)
 {
     document.resetSkippingRef(this);
 
@@ -279,8 +278,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     
     m_jsEditor = 0;
 
-    m_markers.setAutoDelete(true);
-    
     static int docID = 0;
     m_docID = docID++;
 }
@@ -354,6 +351,8 @@ DocumentImpl::~DocumentImpl()
     delete m_bindingManager;
 #endif
 
+    deleteAllValues(m_markers);
+
     if (m_accCache){
         delete m_accCache;
         m_accCache = 0;
@@ -365,15 +364,7 @@ DocumentImpl::~DocumentImpl()
         m_jsEditor = 0;
     }
     
-    if (m_selectedRadioButtons) {
-        FormToGroupMap::iterator end = m_selectedRadioButtons->end();
-        for (FormToGroupMap::iterator it = m_selectedRadioButtons->begin(); it != end; ++it) {
-            NameToInputMap *n = it->second;
-            if (n)
-                delete n;
-        }
-        delete m_selectedRadioButtons;
-    }
+    deleteAllValues(m_selectedRadioButtons);
 }
 
 void DocumentImpl::resetLinkColor()
@@ -1007,23 +998,21 @@ void DocumentImpl::removeAllEventListenersFromAllNodes()
     }
 }
 
-void DocumentImpl::registerDisconnectedNodeWithEventListeners(NodeImpl *node)
+void DocumentImpl::registerDisconnectedNodeWithEventListeners(NodeImpl* node)
 {
-    m_disconnectedNodesWithEventListeners.insert(node, node);
+    m_disconnectedNodesWithEventListeners.insert(node);
 }
 
-void DocumentImpl::unregisterDisconnectedNodeWithEventListeners(NodeImpl *node)
+void DocumentImpl::unregisterDisconnectedNodeWithEventListeners(NodeImpl* node)
 {
     m_disconnectedNodesWithEventListeners.remove(node);
 }
 
 void DocumentImpl::removeAllDisconnectedNodeEventListeners()
 {
-    for (QPtrDictIterator<NodeImpl> iter(m_disconnectedNodesWithEventListeners);
-         iter.current();
-         ++iter) {
-        iter.current()->removeAllEventListeners();
-    }
+    NodeSet::iterator end = m_disconnectedNodesWithEventListeners.end();
+    for (NodeSet::iterator i = m_disconnectedNodesWithEventListeners.begin(); i != end; ++i)
+        (*i)->removeAllEventListeners();
     m_disconnectedNodesWithEventListeners.clear();
 }
 
@@ -2486,42 +2475,33 @@ bool DocumentImpl::parseQualifiedName(const DOMString &qualifiedName, DOMString 
     return true;
 }
 
-void DocumentImpl::addImageMap(HTMLMapElementImpl *imageMap)
+void DocumentImpl::addImageMap(HTMLMapElementImpl* imageMap)
 {
     // Add the image map, unless there's already another with that name.
     // "First map wins" is the rule other browsers seem to implement.
-    QString name = imageMap->getName().qstring();
-    if (!m_imageMapsByName.contains(name))
-        m_imageMapsByName.insert(name, imageMap);
+    m_imageMapsByName.add(imageMap->getName().impl(), imageMap);
 }
 
-void DocumentImpl::removeImageMap(HTMLMapElementImpl *imageMap)
+void DocumentImpl::removeImageMap(HTMLMapElementImpl* imageMap)
 {
     // Remove the image map by name.
     // But don't remove some other image map that just happens to have the same name.
-    QString name = imageMap->getName().qstring();
-    QMapIterator<QString, HTMLMapElementImpl *> it = m_imageMapsByName.find(name);
-    if (it != m_imageMapsByName.end() && *it == imageMap)
+    // FIXME: Use a HashCountedSet as we do for IDs to find the first remaining map
+    // once a map has been removed.
+    const AtomicString& name = imageMap->getName();
+    ImageMapsByName::iterator it = m_imageMapsByName.find(name.impl());
+    if (it != m_imageMapsByName.end() && it->second == imageMap)
         m_imageMapsByName.remove(it);
 }
 
-HTMLMapElementImpl *DocumentImpl::getImageMap(const DOMString &URL) const
+HTMLMapElementImpl *DocumentImpl::getImageMap(const DOMString& URL) const
 {
-    if (URL.isNull()) {
+    if (URL.isNull())
         return 0;
-    }
-
-    QString s = URL.qstring();
-    int hashPos = s.find('#');
-    if (hashPos >= 0)
-        s = s.mid(hashPos + 1);
-
-    QMapConstIterator<QString, HTMLMapElementImpl *> it = m_imageMapsByName.find(s);
-    if (it == m_imageMapsByName.end())
-        return 0;
-    return *it;
+    int hashPos = URL.find('#');
+    AtomicString name = (hashPos < 0 ? URL : URL.substring(hashPos + 1)).impl();
+    return m_imageMapsByName.get(name.impl());
 }
-
 
 void DocumentImpl::setDecoder(Decoder *decoder)
 {
@@ -2689,11 +2669,11 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
     if (newMarker.endOffset == newMarker.startOffset)
         return;
     
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    QValueList<DocumentMarker>* markers = m_markers.get(node);
     if (!markers) {
-        markers = new QValueList <DocumentMarker>;
+        markers = new QValueList<DocumentMarker>;
         markers->append(newMarker);
-        m_markers.insert(node, markers);
+        m_markers.set(node, markers);
     } else {
         QValueListIterator<DocumentMarker> it;
         for (it = markers->begin(); it != markers->end(); ) {
@@ -2734,7 +2714,7 @@ void DocumentImpl::copyMarkers(NodeImpl *srcNode, unsigned startOffset, int leng
     if (length <= 0)
         return;
     
-    QValueList <DocumentMarker> *markers = m_markers.find(srcNode);
+    QValueList<DocumentMarker>* markers = m_markers.get(srcNode);
     if (!markers)
         return;
 
@@ -2774,7 +2754,7 @@ void DocumentImpl::removeMarkers(NodeImpl *node, unsigned startOffset, int lengt
     if (length <= 0)
         return;
 
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    QValueList<DocumentMarker>* markers = m_markers.get(node);
     if (!markers)
         return;
     
@@ -2816,40 +2796,45 @@ void DocumentImpl::removeMarkers(NodeImpl *node, unsigned startOffset, int lengt
         }
     }
 
-    if (markers->isEmpty())
+    if (markers->isEmpty()) {
         m_markers.remove(node);
+        delete markers;
+    }
 
     // repaint the affected node
     if (docDirty && node->renderer())
         node->renderer()->repaint();
 }
 
-QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)
+QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl* node)
 {
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    QValueList<DocumentMarker>* markers = m_markers.get(node);
     if (markers)
         return *markers;
-    return QValueList <DocumentMarker> ();
+    return QValueList<DocumentMarker>();
 }
 
-void DocumentImpl::removeMarkers(NodeImpl *node)
+void DocumentImpl::removeMarkers(NodeImpl* node)
 {
-    QValueList<DocumentMarker> *markers = m_markers.take(node);
-    if (markers) {
-        RenderObject *renderer = node->renderer();
-        if (renderer)
+    MarkerMap::iterator i = m_markers.find(node);
+    if (i != m_markers.end()) {
+        delete i->second;
+        m_markers.remove(i);
+        if (RenderObject* renderer = node->renderer())
             renderer->repaint();
-        delete markers;
     }
 }
 
 void DocumentImpl::removeMarkers(DocumentMarker::MarkerType markerType)
 {
     // outer loop: process each markered node in the document
-    QPtrDictIterator< QValueList<DocumentMarker> > dictIterator(m_markers);
-    for (; NodeImpl *node = static_cast<NodeImpl *>(dictIterator.currentKey()); ) {
+    MarkerMap markerMapCopy = m_markers;
+    MarkerMap::iterator end = markerMapCopy.end();
+    for (MarkerMap::iterator i = markerMapCopy.begin(); i != end; ++i) {
+        NodeImpl* node = i->first;
+
         // inner loop: process each marker in the current node
-        QValueList <DocumentMarker> *markers = static_cast<QValueList <DocumentMarker> *>(dictIterator.current());
+        QValueList<DocumentMarker> *markers = i->second;
         QValueListIterator<DocumentMarker> markerIterator;
         for (markerIterator = markers->begin(); markerIterator != markers->end(); ) {
             DocumentMarker marker = *markerIterator;
@@ -2864,21 +2849,20 @@ void DocumentImpl::removeMarkers(DocumentMarker::MarkerType markerType)
             markerIterator = markers->remove(markerIterator);
             // markerIterator now points to the next node
         }
-        
+
         // delete the node's list if it is now empty
         if (markers->isEmpty())
             m_markers.remove(node);
-        
+
         // cause the node to be redrawn
-        RenderObject *renderer = node->renderer();
-        if (renderer)
+        if (RenderObject* renderer = node->renderer())
             renderer->repaint();
     }
 }
 
 void DocumentImpl::shiftMarkers(NodeImpl *node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
 {
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    QValueList<DocumentMarker>* markers = m_markers.get(node);
     if (!markers)
         return;
 
@@ -2996,12 +2980,10 @@ void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElem
     if (!form)
         form = defaultForm;
     // Uncheck the currently selected item
-    if (!m_selectedRadioButtons)
-        m_selectedRadioButtons = new FormToGroupMap;
-    NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
+    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
     if (!formRadioButtons) {
         formRadioButtons = new NameToInputMap;
-        m_selectedRadioButtons->set(form, formRadioButtons);
+        m_selectedRadioButtons.set(form, formRadioButtons);
     }
     
     HTMLInputElementImpl* currentCheckedRadio = formRadioButtons->get(caller->name().impl());
@@ -3013,11 +2995,9 @@ void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElem
 
 HTMLInputElementImpl* DocumentImpl::checkedRadioButtonForGroup(DOMStringImpl* name, HTMLFormElementImpl *form)
 {
-    if (!m_selectedRadioButtons)
-        return 0;
     if (!form)
         form = defaultForm;
-    NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
+    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
     if (!formRadioButtons)
         return 0;
     
@@ -3028,14 +3008,12 @@ void DocumentImpl::removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementIm
 {
     if (!form)
         form = defaultForm;
-    if (m_selectedRadioButtons) {
-        NameToInputMap* formRadioButtons = m_selectedRadioButtons->get(form);
-        if (formRadioButtons) {
-            formRadioButtons->remove(name);
-            if (formRadioButtons->isEmpty()) {
-                m_selectedRadioButtons->remove(form);
-                delete formRadioButtons;
-            }
+    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
+    if (formRadioButtons) {
+        formRadioButtons->remove(name);
+        if (formRadioButtons->isEmpty()) {
+            m_selectedRadioButtons.remove(form);
+            delete formRadioButtons;
         }
     }
 }

@@ -22,11 +22,13 @@
 
 #include "config.h"
 #include "RenderForeignObject.h"
-#include "SVGForeignObjectElementImpl.h"
-#include "SVGAnimatedLengthImpl.h"
 
-#import "KRenderingDevice.h"
-#import "KCanvasMatrix.h"
+#include "KCanvasMatrix.h"
+#include "KRenderingDevice.h"
+#include "SVGAnimatedLengthImpl.h"
+#include "SVGForeignObjectElementImpl.h"
+
+using namespace WebCore;
 
 RenderForeignObject::RenderForeignObject(KSVG::SVGForeignObjectElementImpl *node) 
     : RenderBlock(node)
@@ -68,11 +70,11 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.p->restore();
 }
 
-bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     QMatrix totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
-    totalTransform.invert().map(_x, _y, &localX, &localY);
-    return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
+    totalTransform.invert().map(x, y, &localX, &localY);
+    return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, tx, ty, hitTestAction);
 }

@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,32 +22,21 @@
  */
 
 #include "config.h"
-#include "html/html_imageimpl.h"
+#include "html_imageimpl.h"
 
-#include "html/html_documentimpl.h"
+#include "DocLoader.h"
+#include "EventNames.h"
 #include "HTMLFormElementImpl.h"
-
-#include <kdebug.h>
-
-#include "rendering/render_image.h"
-#include "rendering/render_flow.h"
-#include "css/cssstyleselector.h"
+#include "IntPointArray.h"
+#include "csshelper.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "css/csshelper.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
-#include "DocLoader.h"
-
-#include <qstring.h>
-#include <qregion.h>
-#include "IntPointArray.h"
+#include "html_documentimpl.h"
+#include "render_image.h"
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
@@ -86,7 +75,7 @@ void HTMLImageLoader::updateFromElement()
     // Treat a lack of src or empty string for src as no image at all.
     CachedImage *newImage = 0;
     if (!attr.isEmpty())
-        newImage = doc->docLoader()->requestImage(khtml::parseURL(attr));
+        newImage = doc->docLoader()->requestImage(parseURL(attr));
 
     CachedImage *oldImage = m_image;
     if (newImage != oldImage) {
@@ -201,7 +190,7 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
         else
-            usemap = getDocument()->completeURL(khtml::parseURL(attr->value()));
+            usemap = getDocument()->completeURL(parseURL(attr->value()));
         m_isLink = !attr->isNull();
     } else if (attrName == ismapAttr) {
         ismap = true;
@@ -487,12 +476,12 @@ void HTMLMapElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 return;
         }
         doc->removeImageMap(this);
-        DOMString mapName = attr->value();
-        if (mapName[0] == '#') {
-            mapName = mapName.copy();
+        m_name = attr->value();
+        if (m_name[0] == '#') {
+            DOMString mapName = mapName.copy();
             mapName.remove(0, 1);
+            m_name = mapName.impl();
         }
-        m_name = mapName;
         doc->addImageMap(this);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);

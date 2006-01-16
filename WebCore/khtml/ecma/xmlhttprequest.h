@@ -19,15 +19,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _XMLHTTPREQUEST_H_
-#define _XMLHTTPREQUEST_H_
-
-#include <qguardedptr.h>
-#include <qobject.h>
-#include <kurl.h>
-#include <qptrdict.h>
+#ifndef XMLHTTPREQUEST_H_
+#define XMLHTTPREQUEST_H_
 
 #include "kjs_dom.h"
+#include <kurl.h>
+#include <kxmlcore/HashSet.h>
+#include <kxmlcore/HashMap.h>
+#include <qguardedptr.h>
+#include <qobject.h>
 
 namespace khtml {
     class Decoder;
@@ -110,7 +110,9 @@ namespace KJS {
 
     void changeState(XMLHttpRequestState newState);
 
-    static QPtrDict< QPtrDict<XMLHttpRequest> > &requestsByDocument();
+    typedef HashSet<XMLHttpRequest*, PointerHash<XMLHttpRequest*> > RequestsSet;
+    typedef HashMap<DOM::DocumentImpl*, RequestsSet*, PointerHash<DOM::DocumentImpl*> > RequestsMap;
+    static RequestsMap &requestsByDocument();
     void addToRequestsByDocument();
     void removeFromRequestsByDocument();
 

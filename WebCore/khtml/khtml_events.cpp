@@ -19,12 +19,11 @@
 
 #include "config.h"
 #include "khtml_events.h"
-#include "rendering/render_object.h"
-#include "xml/dom_position.h"
 
-using namespace DOM;
+#include "render_object.h"
+#include "visible_position.h"
 
-namespace khtml {
+namespace WebCore {
 
 class MouseEvent::MouseEventPrivate
 {

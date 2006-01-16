@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,18 +20,15 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "render_br.h"
 
 #include "DocumentImpl.h"
-#include "dom_position.h"
-#include "render_block.h"
-#include "render_line.h"
 #include "InlineTextBox.h"
+#include "visible_position.h"
 
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 RenderBR::RenderBR(NodeImpl* node)
     : RenderText(node, new DOMStringImpl("\n")), m_lineHeight(-1)
@@ -96,7 +94,7 @@ int RenderBR::caretMinOffset() const
 
 int RenderBR::caretMaxOffset() const 
 { 
-    return 1; 
+    return 1;
 }
 
 unsigned RenderBR::caretMaxRenderedOffset() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +26,26 @@
 #include "config.h"
 #include "apply_style_command.h"
 
-#include "html_interchange.h"
-
-#include "css/css_valueimpl.h"
-#include "css/css_computedstyle.h"
-#include "css/cssparser.h"
-#include "cssproperties.h"
-#include "dom/dom_string.h"
-#include "htmlediting.h"
-#include "html/html_elementimpl.h"
-#include "htmlnames.h"
-#include "rendering/render_object.h"
 #include "DocumentImpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/dom2_rangeimpl.h"
-
+#include "NodeListImpl.h"
+#include "css_computedstyle.h"
+#include "css_valueimpl.h"
+#include "cssparser.h"
+#include "cssproperties.h"
+#include "dom2_rangeimpl.h"
+#include "dom_string.h"
+#include "dom_textimpl.h"
+#include "html_elementimpl.h"
+#include "html_interchange.h"
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "render_object.h"
+#include "visible_position.h"
 #include <kxmlcore/Assertions.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
-using DOM::CSSParser;
-using DOM::CSSPrimitiveValue;
-using DOM::CSSPrimitiveValueImpl;
-using DOM::CSSProperty;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::CSSValue;
-using DOM::CSSValueImpl;
-using DOM::DOMString;
-using DOM::DoNotUpdateLayout;
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::HTMLElementImpl;
-using DOM::NamedAttrMapImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 class StyleChange {
 public:
@@ -476,9 +456,9 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
 
     // Store away font size before making any changes to the document.
     // This ensures that changes to one node won't effect another.
-    QMap<const NodeImpl *,float> startingFontSizes;
-    for (const NodeImpl *node = startNode; node != beyondEnd; node = node->traverseNextNode())
-        startingFontSizes.insert(node, computedFontSize(node));
+    HashMap<NodeImpl*, float, PointerHash<NodeImpl*> > startingFontSizes;
+    for (NodeImpl *node = startNode; node != beyondEnd; node = node->traverseNextNode())
+        startingFontSizes.set(node, computedFontSize(node));
 
     // These spans were added by us. If empty after font size changes, they can be removed.
     QPtrList<NodeImpl> emptySpans;
@@ -505,7 +485,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
         
         CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->getInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
-        float desiredFontSize = kMax(MinimumFontSize, startingFontSizes[node] + adjustment);
+        float desiredFontSize = kMax(MinimumFontSize, startingFontSizes.get(node) + adjustment);
         RefPtr<CSSValueImpl> value = inlineStyleDecl->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
         if (value) {
             inlineStyleDecl->removeProperty(CSS_PROP_FONT_SIZE, true);
@@ -1310,4 +1290,4 @@ void ApplyStyleCommand::joinChildTextNodes(NodeImpl *node, const Position &start
     updateStartEnd(newStart, newEnd);
 }
 
-} // namespace khtml
+}

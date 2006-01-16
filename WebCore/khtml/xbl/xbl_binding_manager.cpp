@@ -27,7 +27,6 @@
 
 #ifndef KHTML_NO_XBL
 
-#include "qptrdict.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "rendering/render_style.h"

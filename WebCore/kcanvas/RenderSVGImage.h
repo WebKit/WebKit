@@ -22,7 +22,8 @@
 #ifndef KCanvas_RenderSVGImage_H
 #define KCanvas_RenderSVGImage_H
 
-#include "khtml/rendering/render_image.h"
+#include "render_image.h"
+#include <qmatrix.h>
 
 namespace KSVG
 {
@@ -40,7 +41,7 @@ namespace KSVG
         void translateForAttributes();
         QMatrix m_transform;
     };
-};
+}
 
 #endif
 

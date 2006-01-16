@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,16 +23,16 @@
  */
 
 #include "config.h"
-#include "render_arena.h"
 #include "render_inline.h"
-#include "render_block.h"
+
 #include "DocumentImpl.h"
-#include "xml/dom_position.h"
+#include "render_arena.h"
+#include "render_block.h"
+#include "visible_position.h"
 
-using DOM::Position;
-using namespace khtml;
+namespace WebCore {
 
-RenderInline::RenderInline(DOM::NodeImpl* node)
+RenderInline::RenderInline(NodeImpl* node)
 :RenderFlow(node), m_isContinuation(false)
 {}
 
@@ -353,4 +353,6 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
     }
 
     return RenderFlow::positionForCoordinates(x, y);
+}
+
 }

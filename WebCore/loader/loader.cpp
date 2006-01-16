@@ -35,12 +35,13 @@
 #include "DocLoader.h"
 #include "Frame.h"
 #include "KWQLoader.h"
+#include "Request.h"
 #include "html_documentimpl.h"
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kxmlcore/Assertions.h>
 
-using namespace DOM;
+namespace WebCore {
 
 static bool crossDomain(const QString &a, const QString &b)
 {
@@ -66,17 +67,15 @@ static bool crossDomain(const QString &a, const QString &b)
     return true;
 }
 
-namespace khtml {
-
-Loader::Loader() : QObject()
+Loader::Loader()
 {
     m_requestsPending.setAutoDelete( true );
-    m_requestsLoading.setAutoDelete( true );
     kwq = new KWQLoader(this);
 }
 
 Loader::~Loader()
 {
+    deleteAllValues(m_requestsLoading);
     delete kwq;
 }
 
@@ -129,17 +128,19 @@ void Loader::servePendingRequests()
         if (ci->decoderCallback())
             m_requestsBackgroundDecoding.append(req);
       }
-      m_requestsLoading.insert(job, req);
+      m_requestsLoading.add(job, req);
   }
 }
 
-void Loader::slotFinished( KIO::Job* job, NSData *allData)
+void Loader::slotFinished(KIO::Job* job, NSData *allData)
 {
-    Request *r = m_requestsLoading.take( job );
-    KIO::TransferJob* j = static_cast<KIO::TransferJob*>(job);
-
-    if ( !r )
+    RequestMap::iterator i = m_requestsLoading.find(job);
+    if (i == m_requestsLoading.end())
         return;
+    Request* r = i->second;
+    m_requestsLoading.remove(i);
+
+    KIO::TransferJob* j = static_cast<KIO::TransferJob*>(job);
 
     CachedObject *object = r->object;
     DocLoader *docLoader = r->m_docLoader;
@@ -184,9 +185,9 @@ void Loader::slotFinished( KIO::Job* job, NSData *allData)
 }
 
 
-void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
+void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse* response)
 {
-    Request *r = m_requestsLoading[job];
+    Request *r = m_requestsLoading.get(job);
     ASSERT(r);
     ASSERT(response);
     r->object->setResponse(response);
@@ -213,7 +214,7 @@ void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
 
 void Loader::slotData( KIO::Job*job, const char *data, int size )
 {
-    Request *r = m_requestsLoading[job];
+    Request *r = m_requestsLoading.get(job);
     if (!r)
         return;
 
@@ -230,6 +231,8 @@ void Loader::slotData( KIO::Job*job, const char *data, int size )
 
 int Loader::numRequests( DocLoader* dl ) const
 {
+    // FIXME: Maybe we should keep a collection of requests by DocLoader, so we can do this instantly.
+
     int res = 0;
 
     QPtrListIterator<Request> pIt( m_requestsPending );
@@ -237,11 +240,11 @@ int Loader::numRequests( DocLoader* dl ) const
         if ( pIt.current()->m_docLoader == dl )
             res++;
 
-    QPtrDictIterator<Request> lIt( m_requestsLoading );
-    for (; lIt.current(); ++lIt )
-        if ( lIt.current()->m_docLoader == dl )
-            if (!lIt.current()->multipart)
-                res++;
+    RequestMap::const_iterator end = m_requestsLoading.end();
+    for (RequestMap::const_iterator i = m_requestsLoading.begin(); !(i == end); ++i) {
+        Request* r = i->second;
+        res += (r->m_docLoader == dl && !r->multipart);
+    }
 
     QPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
     for (; bdIt.current(); ++bdIt )
@@ -250,7 +253,7 @@ int Loader::numRequests( DocLoader* dl ) const
 
     if (dl->loadInProgress())
         res++;
-        
+
     return res;
 }
 
@@ -267,17 +270,20 @@ void Loader::cancelRequests( DocLoader* dl )
             ++pIt;
     }
 
-    QPtrDictIterator<Request> lIt( m_requestsLoading );
-    while ( lIt.current() )
-    {
-        if (lIt.current()->m_docLoader == dl) {
-            KIO::Job *job = static_cast<KIO::Job *>( lIt.currentKey() );
-            Cache::remove( lIt.current()->object );
-            m_requestsLoading.remove( lIt.currentKey() );
-            job->kill();
-        }
-        else
-            ++lIt;
+    QPtrVector<KIO::Job> jobsToCancel(m_requestsLoading.size());
+    RequestMap::iterator end = m_requestsLoading.end();
+    for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
+        Request* r = i->second;
+        if (r->m_docLoader == dl)
+            jobsToCancel.append(i->first);
+    }
+    unsigned count = jobsToCancel.count();
+    for (unsigned i = 0; i < count; ++i) {
+        KIO::Job* job = jobsToCancel[i];
+        Request* r = m_requestsLoading.get(job);
+        m_requestsLoading.remove(job);
+        Cache::remove(r->object);
+        job->kill();
     }
 
     QPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
@@ -298,18 +304,14 @@ void Loader::removeBackgroundDecodingRequest (Request *r)
         m_requestsBackgroundDecoding.remove(r);
 }
 
-KIO::Job *Loader::jobForRequest( const DOM::DOMString &url ) const
+KIO::Job* Loader::jobForRequest(const DOMString& URL) const
 {
-    QPtrDictIterator<Request> it( m_requestsLoading );
-
-    for (; it.current(); ++it )
-    {
-        CachedObject *obj = it.current()->object;
-
-        if ( obj && obj->url() == url )
-            return static_cast<KIO::Job *>( it.currentKey() );
+    RequestMap::const_iterator end = m_requestsLoading.end();
+    for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {
+        CachedObject* obj = i->second->object;
+        if (obj && obj->url() == URL)
+            return i->first;
     }
-
     return 0;
 }
 

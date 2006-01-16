@@ -23,48 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOM.h"
 
-#include <objc/objc-class.h>
-
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
-
+#import "ContainerNodeImpl.h"
+#import "DOMEventsInternal.h"
+#import "DOMHTML.h"
+#import "DOMImplementationImpl.h"
+#import "DOMInternal.h"
+#import "DOMPrivate.h"
+#import "DocumentFragmentImpl.h"
+#import "DocumentImpl.h"
+#import "DocumentTypeImpl.h"
+#import "KWQFoundationExtras.h"
+#import "MacFrame.h"
+#import "NodeListImpl.h"
 #import "csshelper.h"
 #import "dom2_events.h"
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_traversal.h"
 #import "dom2_viewsimpl.h"
-#import "DocumentImpl.h"
-#import "DOMImplementationImpl.h"
-#import "DocumentTypeImpl.h"
-#import "DocumentFragmentImpl.h"
 #import "dom_elementimpl.h"
 #import "dom_exception.h"
 #import "dom_node.h"
-#import "ContainerNodeImpl.h"
 #import "dom_string.h"
 #import "dom_stringimpl.h"
 #import "dom_textimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_elementimpl.h"
-#import <kxmlcore/HashMap.h>
-
 #import "render_object.h"
-
-#import "DOMEventsInternal.h"
-#import "DOMHTML.h"
-#import "DOMInternal.h"
-#import "DOMPrivate.h"
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
-#import "MacFrame.h"
+#import <kxmlcore/HashMap.h>
+#include <objc/objc-class.h>
 
-using namespace DOM::HTMLNames;
-using namespace DOM;
-
-using khtml::RenderObject;
+using namespace WebCore;
+using namespace HTMLNames;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
@@ -72,7 +67,7 @@ using khtml::RenderObject;
 @end
 
 @interface DOMDocumentType (WebCoreInternal)
-- (DOM::DocumentTypeImpl *)_documentTypeImpl;
+- (DocumentTypeImpl *)_documentTypeImpl;
 @end
 
 @interface DOMImplementation (WebCoreInternal)
@@ -1501,7 +1496,7 @@ static ListenerMap *listenerMap;
     ASSERT(name);
     ElementImpl *e = [self _elementImpl];
     ASSERT(e);
-    return KURL(e->getDocument()->completeURL(khtml::parseURL(e->getAttribute(name)).qstring())).getNSURL();
+    return KURL(e->getDocument()->completeURL(parseURL(e->getAttribute(name)).qstring())).getNSURL();
 }
 
 @end

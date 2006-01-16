@@ -19,13 +19,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_HTML_H_
-#define _KJS_HTML_H_
+#ifndef KJS_HTML_H_
+#define KJS_HTML_H_
 
-#include "kjs_dom.h"
-
-#include <qguardedptr.h>
 #include "CachedObjectClient.h"
+#include "kjs_dom.h"
+#include <qcolor.h>
+#include <qguardedptr.h>
+#include <qpixmap.h>
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>

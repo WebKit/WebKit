@@ -1,7 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -141,7 +141,7 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
 DOMString JSAbstractEventListener::eventListenerType()
 {
     if (html)
-	return "_khtml_HTMLEventListener";
+        return "_khtml_HTMLEventListener";
     return "_khtml_JSEventListener";
 }
 
@@ -153,7 +153,7 @@ JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* _listener, Wind
   , win(_win)
 {
     if (_listener)
-        _win->jsUnprotectedEventListeners.insert(_listener, this);
+        _win->jsUnprotectedEventListeners.set(_listener, this);
 }
 
 JSUnprotectedEventListener::~JSUnprotectedEventListener()
@@ -191,7 +191,7 @@ JSEventListener::JSEventListener(JSObject* _listener, Window* _win, bool _html)
     , win(_win)
 {
     if (_listener)
-        _win->jsEventListeners.insert(_listener, this);
+        _win->jsEventListeners.set(_listener, this);
 }
 
 JSEventListener::~JSEventListener()
@@ -291,7 +291,7 @@ void JSLazyEventListener::parseCode() const
     code = DOMString();
 
     if (listener)
-        windowObj()->jsEventListeners.insert(listener, const_cast<JSLazyEventListener*>(this));
+        windowObj()->jsEventListeners.set(listener, const_cast<JSLazyEventListener*>(this));
 }
 
 JSValue* getNodeEventListener(NodeImpl* n, const AtomicString& eventType)
@@ -307,26 +307,26 @@ JSValue* getNodeEventListener(NodeImpl* n, const AtomicString& eventType)
 const ClassInfo EventConstructor::info = { "EventConstructor", 0, &EventConstructorTable, 0 };
 /*
 @begin EventConstructorTable 3
-  CAPTURING_PHASE	DOM::Event::CAPTURING_PHASE	DontDelete|ReadOnly
-  AT_TARGET		DOM::Event::AT_TARGET		DontDelete|ReadOnly
-  BUBBLING_PHASE	DOM::Event::BUBBLING_PHASE	DontDelete|ReadOnly
+  CAPTURING_PHASE       DOM::Event::CAPTURING_PHASE     DontDelete|ReadOnly
+  AT_TARGET             DOM::Event::AT_TARGET           DontDelete|ReadOnly
+  BUBBLING_PHASE        DOM::Event::BUBBLING_PHASE      DontDelete|ReadOnly
 # Reverse-engineered from Netscape
-  MOUSEDOWN		1				DontDelete|ReadOnly
-  MOUSEUP		2				DontDelete|ReadOnly
-  MOUSEOVER		4				DontDelete|ReadOnly
-  MOUSEOUT		8				DontDelete|ReadOnly
-  MOUSEMOVE		16				DontDelete|ReadOnly
-  MOUSEDRAG		32				DontDelete|ReadOnly
-  CLICK			64				DontDelete|ReadOnly
-  DBLCLICK		128				DontDelete|ReadOnly
-  KEYDOWN		256				DontDelete|ReadOnly
-  KEYUP			512				DontDelete|ReadOnly
-  KEYPRESS		1024				DontDelete|ReadOnly
-  DRAGDROP		2048				DontDelete|ReadOnly
-  FOCUS			4096				DontDelete|ReadOnly
-  BLUR			8192				DontDelete|ReadOnly
-  SELECT		16384				DontDelete|ReadOnly
-  CHANGE		32768				DontDelete|ReadOnly
+  MOUSEDOWN             1                               DontDelete|ReadOnly
+  MOUSEUP               2                               DontDelete|ReadOnly
+  MOUSEOVER             4                               DontDelete|ReadOnly
+  MOUSEOUT              8                               DontDelete|ReadOnly
+  MOUSEMOVE             16                              DontDelete|ReadOnly
+  MOUSEDRAG             32                              DontDelete|ReadOnly
+  CLICK                 64                              DontDelete|ReadOnly
+  DBLCLICK              128                             DontDelete|ReadOnly
+  KEYDOWN               256                             DontDelete|ReadOnly
+  KEYUP                 512                             DontDelete|ReadOnly
+  KEYPRESS              1024                            DontDelete|ReadOnly
+  DRAGDROP              2048                            DontDelete|ReadOnly
+  FOCUS                 4096                            DontDelete|ReadOnly
+  BLUR                  8192                            DontDelete|ReadOnly
+  SELECT                16384                           DontDelete|ReadOnly
+  CHANGE                32768                           DontDelete|ReadOnly
 @end
 */
 
@@ -351,23 +351,23 @@ JSValue *getEventConstructor(ExecState *exec)
 const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
 /*
 @begin DOMEventTable 12
-  type		DOMEvent::Type		DontDelete|ReadOnly
-  target	DOMEvent::Target	DontDelete|ReadOnly
-  currentTarget	DOMEvent::CurrentTarget	DontDelete|ReadOnly
-  srcElement	DOMEvent::SrcElement	DontDelete|ReadOnly
-  eventPhase	DOMEvent::EventPhase	DontDelete|ReadOnly
-  bubbles	DOMEvent::Bubbles	DontDelete|ReadOnly
-  cancelable	DOMEvent::Cancelable	DontDelete|ReadOnly
-  timeStamp	DOMEvent::TimeStamp	DontDelete|ReadOnly
+  type          DOMEvent::Type          DontDelete|ReadOnly
+  target        DOMEvent::Target        DontDelete|ReadOnly
+  currentTarget DOMEvent::CurrentTarget DontDelete|ReadOnly
+  srcElement    DOMEvent::SrcElement    DontDelete|ReadOnly
+  eventPhase    DOMEvent::EventPhase    DontDelete|ReadOnly
+  bubbles       DOMEvent::Bubbles       DontDelete|ReadOnly
+  cancelable    DOMEvent::Cancelable    DontDelete|ReadOnly
+  timeStamp     DOMEvent::TimeStamp     DontDelete|ReadOnly
   returnValue   DOMEvent::ReturnValue   DontDelete
   cancelBubble  DOMEvent::CancelBubble  DontDelete
-  dataTransfer	DOMEvent::DataTransfer  DontDelete|ReadOnly
+  dataTransfer  DOMEvent::DataTransfer  DontDelete|ReadOnly
   clipboardData  DOMEvent::ClipboardData  DontDelete|ReadOnly
 @end
 @begin DOMEventProtoTable 3
-  stopPropagation 	DOMEvent::StopPropagation	DontDelete|Function 0
-  preventDefault 	DOMEvent::PreventDefault	DontDelete|Function 0
-  initEvent		DOMEvent::InitEvent		DontDelete|Function 3
+  stopPropagation       DOMEvent::StopPropagation       DontDelete|Function 0
+  preventDefault        DOMEvent::PreventDefault        DontDelete|Function 0
+  initEvent             DOMEvent::InitEvent             DontDelete|Function 3
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMEventProto)
@@ -558,18 +558,18 @@ JSValue *getEventExceptionConstructor(ExecState *exec)
 const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTable, 0 };
 /*
 @begin DOMUIEventTable 8
-  view		DOMUIEvent::View	DontDelete|ReadOnly
-  detail	DOMUIEvent::Detail	DontDelete|ReadOnly
-  keyCode	DOMUIEvent::KeyCode	DontDelete|ReadOnly
-  charCode	DOMUIEvent::CharCode	DontDelete|ReadOnly
-  layerX	DOMUIEvent::LayerX	DontDelete|ReadOnly
-  layerY	DOMUIEvent::LayerY	DontDelete|ReadOnly
-  pageX		DOMUIEvent::PageX	DontDelete|ReadOnly
-  pageY		DOMUIEvent::PageY	DontDelete|ReadOnly
-  which		DOMUIEvent::Which	DontDelete|ReadOnly
+  view          DOMUIEvent::View        DontDelete|ReadOnly
+  detail        DOMUIEvent::Detail      DontDelete|ReadOnly
+  keyCode       DOMUIEvent::KeyCode     DontDelete|ReadOnly
+  charCode      DOMUIEvent::CharCode    DontDelete|ReadOnly
+  layerX        DOMUIEvent::LayerX      DontDelete|ReadOnly
+  layerY        DOMUIEvent::LayerY      DontDelete|ReadOnly
+  pageX         DOMUIEvent::PageX       DontDelete|ReadOnly
+  pageY         DOMUIEvent::PageY       DontDelete|ReadOnly
+  which         DOMUIEvent::Which       DontDelete|ReadOnly
 @end
 @begin DOMUIEventProtoTable 1
-  initUIEvent	DOMUIEvent::InitUIEvent	DontDelete|Function 5
+  initUIEvent   DOMUIEvent::InitUIEvent DontDelete|Function 5
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMUIEventProto)
@@ -638,25 +638,25 @@ const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMou
 
 /*
 @begin DOMMouseEventTable 16
-  screenX	DOMMouseEvent::ScreenX	DontDelete|ReadOnly
-  screenY	DOMMouseEvent::ScreenY	DontDelete|ReadOnly
-  clientX	DOMMouseEvent::ClientX	DontDelete|ReadOnly
-  x		DOMMouseEvent::X	DontDelete|ReadOnly
-  clientY	DOMMouseEvent::ClientY	DontDelete|ReadOnly
-  y		DOMMouseEvent::Y	DontDelete|ReadOnly
-  offsetX	DOMMouseEvent::OffsetX	DontDelete|ReadOnly
-  offsetY	DOMMouseEvent::OffsetY	DontDelete|ReadOnly
-  ctrlKey	DOMMouseEvent::CtrlKey	DontDelete|ReadOnly
-  shiftKey	DOMMouseEvent::ShiftKey	DontDelete|ReadOnly
-  altKey	DOMMouseEvent::AltKey	DontDelete|ReadOnly
-  metaKey	DOMMouseEvent::MetaKey	DontDelete|ReadOnly
-  button	DOMMouseEvent::Button	DontDelete|ReadOnly
-  relatedTarget	DOMMouseEvent::RelatedTarget DontDelete|ReadOnly
-  fromElement	DOMMouseEvent::FromElement DontDelete|ReadOnly
-  toElement	DOMMouseEvent::ToElement	DontDelete|ReadOnly
+  screenX       DOMMouseEvent::ScreenX  DontDelete|ReadOnly
+  screenY       DOMMouseEvent::ScreenY  DontDelete|ReadOnly
+  clientX       DOMMouseEvent::ClientX  DontDelete|ReadOnly
+  x             DOMMouseEvent::X        DontDelete|ReadOnly
+  clientY       DOMMouseEvent::ClientY  DontDelete|ReadOnly
+  y             DOMMouseEvent::Y        DontDelete|ReadOnly
+  offsetX       DOMMouseEvent::OffsetX  DontDelete|ReadOnly
+  offsetY       DOMMouseEvent::OffsetY  DontDelete|ReadOnly
+  ctrlKey       DOMMouseEvent::CtrlKey  DontDelete|ReadOnly
+  shiftKey      DOMMouseEvent::ShiftKey DontDelete|ReadOnly
+  altKey        DOMMouseEvent::AltKey   DontDelete|ReadOnly
+  metaKey       DOMMouseEvent::MetaKey  DontDelete|ReadOnly
+  button        DOMMouseEvent::Button   DontDelete|ReadOnly
+  relatedTarget DOMMouseEvent::RelatedTarget DontDelete|ReadOnly
+  fromElement   DOMMouseEvent::FromElement DontDelete|ReadOnly
+  toElement     DOMMouseEvent::ToElement        DontDelete|ReadOnly
 @end
 @begin DOMMouseEventProtoTable 1
-  initMouseEvent	DOMMouseEvent::InitMouseEvent	DontDelete|Function 15
+  initMouseEvent        DOMMouseEvent::InitMouseEvent   DontDelete|Function 15
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMMouseEventProto)
@@ -749,16 +749,16 @@ const ClassInfo DOMKeyboardEvent::info = { "KeyboardEvent", &DOMUIEvent::info, &
 
 /*
 @begin DOMKeyboardEventTable 5
-  keyIdentifier	DOMKeyboardEvent::KeyIdentifier	DontDelete|ReadOnly
-  keyLocation	DOMKeyboardEvent::KeyLocation	DontDelete|ReadOnly
-  ctrlKey	DOMKeyboardEvent::CtrlKey	DontDelete|ReadOnly
-  shiftKey	DOMKeyboardEvent::ShiftKey	DontDelete|ReadOnly
-  altKey	DOMKeyboardEvent::AltKey	DontDelete|ReadOnly
-  metaKey	DOMKeyboardEvent::MetaKey	DontDelete|ReadOnly
-  altGraphKey	DOMKeyboardEvent::AltGraphKey	DontDelete|ReadOnly
+  keyIdentifier DOMKeyboardEvent::KeyIdentifier DontDelete|ReadOnly
+  keyLocation   DOMKeyboardEvent::KeyLocation   DontDelete|ReadOnly
+  ctrlKey       DOMKeyboardEvent::CtrlKey       DontDelete|ReadOnly
+  shiftKey      DOMKeyboardEvent::ShiftKey      DontDelete|ReadOnly
+  altKey        DOMKeyboardEvent::AltKey        DontDelete|ReadOnly
+  metaKey       DOMKeyboardEvent::MetaKey       DontDelete|ReadOnly
+  altGraphKey   DOMKeyboardEvent::AltGraphKey   DontDelete|ReadOnly
 @end
 @begin DOMKeyboardEventProtoTable 1
-  initKeyboardEvent	DOMKeyboardEvent::InitKeyboardEvent	DontDelete|Function 11
+  initKeyboardEvent     DOMKeyboardEvent::InitKeyboardEvent     DontDelete|Function 11
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMKeyboardEventProto)
@@ -828,9 +828,9 @@ JSValue *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, JSObject *th
 const ClassInfo MutationEventConstructor::info = { "MutationEventConstructor", 0, &MutationEventConstructorTable, 0 };
 /*
 @begin MutationEventConstructorTable 3
-  MODIFICATION	DOM::MutationEvent::MODIFICATION	DontDelete|ReadOnly
-  ADDITION	DOM::MutationEvent::ADDITION		DontDelete|ReadOnly
-  REMOVAL	DOM::MutationEvent::REMOVAL		DontDelete|ReadOnly
+  MODIFICATION  DOM::MutationEvent::MODIFICATION        DontDelete|ReadOnly
+  ADDITION      DOM::MutationEvent::ADDITION            DontDelete|ReadOnly
+  REMOVAL       DOM::MutationEvent::REMOVAL             DontDelete|ReadOnly
 @end
 */
 bool MutationEventConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -854,14 +854,14 @@ JSValue *getMutationEventConstructor(ExecState *exec)
 const ClassInfo DOMMutationEvent::info = { "MutationEvent", &DOMEvent::info, &DOMMutationEventTable, 0 };
 /*
 @begin DOMMutationEventTable 5
-  relatedNode	DOMMutationEvent::RelatedNode	DontDelete|ReadOnly
-  prevValue	DOMMutationEvent::PrevValue	DontDelete|ReadOnly
-  newValue	DOMMutationEvent::NewValue	DontDelete|ReadOnly
-  attrName	DOMMutationEvent::AttrName	DontDelete|ReadOnly
-  attrChange	DOMMutationEvent::AttrChange	DontDelete|ReadOnly
+  relatedNode   DOMMutationEvent::RelatedNode   DontDelete|ReadOnly
+  prevValue     DOMMutationEvent::PrevValue     DontDelete|ReadOnly
+  newValue      DOMMutationEvent::NewValue      DontDelete|ReadOnly
+  attrName      DOMMutationEvent::AttrName      DontDelete|ReadOnly
+  attrChange    DOMMutationEvent::AttrChange    DontDelete|ReadOnly
 @end
 @begin DOMMutationEventProtoTable 1
-  initMutationEvent	DOMMutationEvent::InitMutationEvent	DontDelete|Function 8
+  initMutationEvent     DOMMutationEvent::InitMutationEvent     DontDelete|Function 8
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMMutationEventProto)
@@ -1002,15 +1002,15 @@ const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
 
 /* Source for ClipboardTable. Use "make hashtables" to regenerate.
 @begin ClipboardTable 3
-  dropEffect	Clipboard::DropEffect	DontDelete
-  effectAllowed	Clipboard::EffectAllowed	DontDelete
-  types         Clipboard::Types	DontDelete|ReadOnly
+  dropEffect    Clipboard::DropEffect   DontDelete
+  effectAllowed Clipboard::EffectAllowed        DontDelete
+  types         Clipboard::Types        DontDelete|ReadOnly
 @end
 @begin ClipboardProtoTable 4
-  clearData	Clipboard::ClearData	DontDelete|Function 0
-  getData	Clipboard::GetData	DontDelete|Function 1
-  setData	Clipboard::SetData	DontDelete|Function 2
-  setDragImage	Clipboard::SetDragImage	DontDelete|Function 3
+  clearData     Clipboard::ClearData    DontDelete|Function 0
+  getData       Clipboard::GetData      DontDelete|Function 1
+  setData       Clipboard::SetData      DontDelete|Function 2
+  setDragImage  Clipboard::SetDragImage DontDelete|Function 3
 @end
 */
 

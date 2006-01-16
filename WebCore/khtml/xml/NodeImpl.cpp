@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,35 +24,29 @@
 
 #include "config.h"
 #include "NodeImpl.h"
-#include "DocumentImpl.h"
+
+#include "ChildNodeListImpl.h"
 #include "DOMImplementationImpl.h"
-#include "dom_exception.h"
-#include "dom_node.h"
+#include "DocumentImpl.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "dom2_events.h"
 #include "dom2_eventsimpl.h"
 #include "dom_atomicstring.h"
-#include "ChildNodeListImpl.h"
+#include "dom_exception.h"
+#include "dom_node.h"
 #include "dom_textimpl.h"
-#include "render_object.h"
-#include "FrameView.h"
-#include "Frame.h"
-
-#include "kjs_proxy.h"
-#include "kjs_binding.h"
-
-#include "EventNames.h"
-#include "htmlnames.h"
-
 #include "htmlediting.h"
-
-#include "qptrlist.h"
-#include "qtextstream.h"
-
+#include "htmlnames.h"
+#include "kjs_binding.h"
+#include "kjs_proxy.h"
+#include "render_object.h"
 #include <kxmlcore/Assertions.h>
+#include <qptrlist.h>
+#include <qtextstream.h>
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
@@ -838,20 +832,17 @@ bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
     return dispatchEvent(evt,exceptioncode,true);
 }
 
-void NodeImpl::registerNodeList(NodeListImpl *list)
+void NodeImpl::registerNodeList(NodeListImpl* list)
 {
-    if (!m_nodeLists) {
-        m_nodeLists = new QPtrDict<NodeListImpl>;
-    }
-
-    m_nodeLists->insert(list, list);
+    if (!m_nodeLists)
+        m_nodeLists = new NodeListSet;
+    m_nodeLists->insert(list);
 }
 
-void NodeImpl::unregisterNodeList(NodeListImpl *list)
+void NodeImpl::unregisterNodeList(NodeListImpl* list)
 {
     if (!m_nodeLists)
         return;
-
     m_nodeLists->remove(list);
 }
 
@@ -860,19 +851,15 @@ void NodeImpl::notifyLocalNodeListsAttributeChanged()
     if (!m_nodeLists)
         return;
 
-    QPtrDictIterator<NodeListImpl> i(*m_nodeLists);
-
-    while (NodeListImpl *list = i.current()) {
-        list->rootNodeAttributeChanged();
-        ++i;
-    }
+    NodeListSet::iterator end = m_nodeLists->end();
+    for (NodeListSet::iterator i = m_nodeLists->begin(); i != end; ++i)
+        (*i)->rootNodeAttributeChanged();
 }
 
 void NodeImpl::notifyNodeListsAttributeChanged()
 {
-    for (NodeImpl *n = this; n; n = n->parentNode()) {
+    for (NodeImpl *n = this; n; n = n->parentNode())
         n->notifyLocalNodeListsAttributeChanged();
-    }
 }
 
 void NodeImpl::notifyLocalNodeListsChildrenChanged()
@@ -880,19 +867,15 @@ void NodeImpl::notifyLocalNodeListsChildrenChanged()
     if (!m_nodeLists)
         return;
 
-    QPtrDictIterator<NodeListImpl> i(*m_nodeLists);
-
-    while (NodeListImpl *list = i.current()) {
-        list->rootNodeChildrenChanged();
-        ++i;
-    }
+    NodeListSet::iterator end = m_nodeLists->end();
+    for (NodeListSet::iterator i = m_nodeLists->begin(); i != end; ++i)
+        (*i)->rootNodeChildrenChanged();
 }
 
 void NodeImpl::notifyNodeListsChildrenChanged()
 {
-    for (NodeImpl *n = this; n; n = n->parentNode()) {
+    for (NodeImpl *n = this; n; n = n->parentNode())
         n->notifyLocalNodeListsChildrenChanged();
-    }
 }
 
 bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
@@ -1612,6 +1595,11 @@ bool NodeImpl::inSameContainingBlockFlowElement(NodeImpl *n)
 
 // FIXME: End of obviously misplaced HTML editing functions.  Try to move these out of NodeImpl.
 
+RefPtr<NodeListImpl> NodeImpl::getElementsByTagName(const DOMString& name)
+{
+    return getElementsByTagNameNS("*", name);
+}
+ 
 RefPtr<NodeListImpl> NodeImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName)
 {
     if (namespaceURI.isNull() || localName.isNull())

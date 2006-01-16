@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +26,14 @@
 
 #include "Shared.h"
 #include <kxmlcore/RefPtr.h>
+#include <limits.h>
 #include <qstring.h>
 
 namespace khtml {
     struct Length;
 }
 
-namespace DOM {
+namespace WebCore {
 
 class DOMStringImpl : public Shared<DOMStringImpl>
 {
@@ -62,7 +63,7 @@ public:
     DOMStringImpl* split(unsigned pos);
     DOMStringImpl* copy() const { return new DOMStringImpl(s, l); }
 
-    DOMStringImpl *substring(unsigned pos, unsigned len);
+    DOMStringImpl *substring(unsigned pos, unsigned len = UINT_MAX);
 
     const QChar& operator[] (int pos) const { return s[pos]; }
 

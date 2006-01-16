@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2005, 2006 Apple Computer, Inc.
 
      This file is part of the KDE project
 
@@ -23,15 +24,8 @@
 #ifndef KSVG_SVGRenderStyle_H
 #define KSVG_SVGRenderStyle_H
 
-#include "IntRect.h"
-
 #include "Shared.h"
 #include "DataRef.h"
-
-// KSVG compatibility: Allow us to use KDOM:: as though it were khtml::
-namespace KDOM {
-    using namespace khtml;
-};
 
 #include <ksvg2/svg/SVGPaintImpl.h>
 #include <ksvg2/css/SVGRenderStyleDefs.h>
@@ -107,7 +101,7 @@ namespace KSVG
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(KDOM::CSSValueImpl *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, stops, color, StopColor, stopColor, QColor(Qt::black))    
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, stops, color, StopColor, stopColor, QColor(0, 0, 0))    
         
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, clip, clipPath, ClipPath, clipPath, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, mask, maskElement, MaskElement, maskElement, QString())
@@ -117,7 +111,7 @@ namespace KSVG
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, misc, filter, Filter, filter, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, misc, floodColor, FloodColor, floodColor, QColor(Qt::black))    
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, misc, floodColor, FloodColor, floodColor, QColor(0, 0, 0))    
 
     protected:
         // inherit

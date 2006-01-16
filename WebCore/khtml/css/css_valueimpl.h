@@ -20,13 +20,15 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef _CSS_css_valueimpl_h_
-#define _CSS_css_valueimpl_h_
+#ifndef CSS_css_valueimpl_h_
+#define CSS_css_valueimpl_h_
 
 #include "dom/css_value.h"
 #include "css/css_base.h"
 #include "CachedObjectClient.h"
 #include <qvaluelist.h>
+
+class QPaintDeviceMetrics;
 
 namespace khtml {
     class RenderStyle;
@@ -144,23 +146,22 @@ protected:
 class CSSPrimitiveValueImpl : public CSSValueImpl
 {
 public:
+    // FIXME: int vs. unsigned overloading is too tricky for color vs. ident
     CSSPrimitiveValueImpl();
     CSSPrimitiveValueImpl(int ident);
-    CSSPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type);
-    CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type);
-    CSSPrimitiveValueImpl(CounterImpl *c);
-    CSSPrimitiveValueImpl(RectImpl *r);
-    CSSPrimitiveValueImpl(DashboardRegionImpl *r); // FIXME: Why is dashboard region a primitive value? This makes no sense.
-    CSSPrimitiveValueImpl(QRgb color);
-    CSSPrimitiveValueImpl(PairImpl* p);
+    CSSPrimitiveValueImpl(double, CSSPrimitiveValue::UnitTypes);
+    CSSPrimitiveValueImpl(const DOMString&, CSSPrimitiveValue::UnitTypes);
+    CSSPrimitiveValueImpl(CounterImpl*);
+    CSSPrimitiveValueImpl(RectImpl*);
+    CSSPrimitiveValueImpl(DashboardRegionImpl*); // FIXME: Why is dashboard region a primitive value? This makes no sense.
+    CSSPrimitiveValueImpl(unsigned color); // RGB value
+    CSSPrimitiveValueImpl(PairImpl*);
 
     virtual ~CSSPrimitiveValueImpl();
 
     void cleanup();
 
-    unsigned short primitiveType() const {
-	    return m_type;
-    }
+    unsigned short primitiveType() const { return m_type; }
 
     /*
      * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get
@@ -181,7 +182,7 @@ public:
     void setPrimitiveType(unsigned short type) { m_type = type; }
     void setFloatValue ( unsigned short unitType, double floatValue, int &exceptioncode );
     double getFloatValue ( unsigned short/* unitType */) const {
-	return m_value.num;
+        return m_value.num;
     }
 
     void setStringValue ( unsigned short stringType, const DOM::DOMString &stringValue, int &exceptioncode );
@@ -192,19 +193,19 @@ public:
     }
 
     RectImpl *getRectValue () const {
-	return ( m_type != CSSPrimitiveValue::CSS_RECT ? 0 : m_value.rect );
+        return ( m_type != CSSPrimitiveValue::CSS_RECT ? 0 : m_value.rect );
     }
 
-    QRgb getRGBColorValue () const {
-	return ( m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor );
+    unsigned getRGBColorValue () const {
+        return ( m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor );
     }
 
     PairImpl* getPairValue() const {
-	return (m_type != CSSPrimitiveValue::CSS_PAIR ? 0 : m_value.pair);
+        return (m_type != CSSPrimitiveValue::CSS_PAIR ? 0 : m_value.pair);
     }
 
     DashboardRegionImpl *getDashboardRegionValue () const {
-	return ( m_type != CSSPrimitiveValue::CSS_DASHBOARD_REGION ? 0 : m_value.region );
+        return ( m_type != CSSPrimitiveValue::CSS_DASHBOARD_REGION ? 0 : m_value.region );
     }
 
     virtual bool isPrimitiveValue() const { return true; }
@@ -220,12 +221,12 @@ public:
 protected:
     int m_type;
     union {
-	int ident;
-	double num;
-	DOMStringImpl *string;
-	CounterImpl *counter;
-	RectImpl *rect;
-        QRgb rgbcolor;
+        int ident;
+        double num;
+        DOMStringImpl *string;
+        CounterImpl *counter;
+        RectImpl *rect;
+        unsigned rgbcolor;
         PairImpl *pair;
         DashboardRegionImpl *region;
     } m_value;

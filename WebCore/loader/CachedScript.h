@@ -23,36 +23,31 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_CachedScript_h
 #define KHTML_CachedScript_h
 
 #include "CachedObject.h"
 
-#include <kio/global.h>
-#include <dom/dom_string.h>
+class QTextCodec;
 
-class QString;
-class QBuffer;
-
-namespace khtml
+namespace WebCore
 {
-    class CachedObjectClient;
-    
     class CachedScript : public CachedObject
     {
     public:
-	CachedScript(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
-	CachedScript(const DOM::DOMString &url, const QString &script_data);
+	CachedScript(DocLoader*, const DOMString& URL, KIO::CacheControl, time_t expireDate, const QString& charset);
+	CachedScript(const DOMString& URL, const QString& scriptData);
 	virtual ~CachedScript();
 
-	const DOM::DOMString &script() const { return m_script; }
+	const DOMString& script() const { return m_script; }
 
-	virtual void ref(CachedObjectClient *consumer);
-	virtual void deref(CachedObjectClient *consumer);
+	virtual void ref(CachedObjectClient*);
+	virtual void deref(CachedObjectClient*);
 
-        virtual void setCharset( const QString &chs );
-	virtual void data( QBuffer &buffer, bool eof );
-	virtual void error( int err, const char *text );
+        virtual void setCharset(const QString&);
+	virtual void data(QBuffer&, bool atEnd);
+	virtual void error(int code, const char* message);
 
         virtual bool schedule() const { return false; }
         
@@ -60,11 +55,11 @@ namespace khtml
 
 	void checkNotify();
 
-    protected:
-	DOM::DOMString m_script;
+    private:
+	DOMString m_script;
         QTextCodec* m_codec;
         bool m_errorOccurred;
     };
-};
+}
 
 #endif

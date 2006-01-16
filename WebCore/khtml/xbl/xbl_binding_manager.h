@@ -1,5 +1,3 @@
-#include "qptrdict.h"
-
 namespace khtml {
     class CachedXBLDocument;
     class BindingURI;

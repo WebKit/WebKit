@@ -24,19 +24,18 @@
 
 #include "config.h"
 #include "RenderText.h"
-#include "InlineTextBox.h"
 
+#include "InlineTextBox.h"
 #include "break_lines.h"
-#include "kxmlcore/AlwaysInline.h"
+#include "dom2_rangeimpl.h"
 #include "render_arena.h"
 #include "render_block.h"
-#include "xml/dom2_rangeimpl.h"
+#include "visible_position.h"
+#include <kxmlcore/AlwaysInline.h>
 #include <qpen.h>
 #include <unicode/ubrk.h>
 
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 static UBreakIterator* getCharacterBreakIterator(const DOMStringImpl* i)
 {

@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#include <string.h>
 #include "KWQVectorImpl.h"
+
+#include <string.h>
 
 KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
     : m_data(0), m_size(0), m_count(0), m_deleteItemFunction(f)
@@ -132,6 +133,16 @@ bool KWQVectorImpl::insert(uint n, void *item, bool delItems)
     return true;
 }
 
+bool KWQVectorImpl::append(void* item, bool delItems)
+{
+    if (m_size == m_count)
+        return false;
+    assert(!m_data[m_size]);
+    m_data[m_size++] = item;
+    m_count += item ? 1 : 0;
+    return true;
+}
+
 int KWQVectorImpl::findRef(void *item)
 {
     for (unsigned i = 0; i < m_count; i++) {
@@ -142,7 +153,6 @@ int KWQVectorImpl::findRef(void *item)
     
     return -1;
 }
-
 
 KWQVectorImpl &KWQVectorImpl::assign(KWQVectorImpl &vi, bool delItems)
 {

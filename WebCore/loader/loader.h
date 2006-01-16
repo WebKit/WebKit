@@ -23,24 +23,19 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_Loader_h
 #define KHTML_Loader_h
 
-#include <qptrlist.h>
+#include <kxmlcore/HashMap.h>
 #include <qobject.h>
-#include <qptrdict.h>
+#include <qptrlist.h>
 
-#include <kurl.h>
-#include <kio/global.h>
-
-#include <dom/dom_string.h>
-#include "Request.h"
+class KWQLoader;
 
 namespace KIO {
     class Job;
 }
-
-class KWQLoader;
 
 #if __OBJC__
 @class NSData;
@@ -50,54 +45,55 @@ class NSData;
 class NSURLResponse;
 #endif
 
-
-namespace khtml
+namespace WebCore
 {
     class CachedObject;
+    class DOMString;
     class DocLoader;
-    class Decoder;
+    class Request;
 
     class Loader : public QObject
     {
-    public:	
-	Loader();
-	~Loader();
+    public:
+        Loader();
+        ~Loader();
 
-	void load(DocLoader* dl, CachedObject *object, bool incremental = true);
+        void load(DocLoader*, CachedObject*, bool incremental = true);
 
-        int numRequests( DocLoader* dl ) const;
-        void cancelRequests( DocLoader* dl );
+        int numRequests(DocLoader*) const;
+        void cancelRequests(DocLoader*);
 
-	void removeBackgroundDecodingRequest (Request *r);
-	
+        void removeBackgroundDecodingRequest(Request*);
+        
         // may return 0L
-        KIO::Job *jobForRequest( const DOM::DOMString &url ) const;
+        KIO::Job* jobForRequest(const DOMString& URL) const;
 
         KWQLoader *kwq;
 
     signals:
-	friend class CachedImageCallback;
+        friend class CachedImageCallback;
 
-        void requestStarted( khtml::DocLoader* dl, khtml::CachedObject* obj );
-	void requestDone( khtml::DocLoader* dl, khtml::CachedObject *obj );
-	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
+        void requestStarted(DocLoader*, CachedObject*);
+        void requestDone(DocLoader*, CachedObject*);
+        void requestFailed(DocLoader*, CachedObject*);
 
     protected slots:
-        void slotFinished( KIO::Job * , NSData *allData);
-	void slotData( KIO::Job *, const char *data, int size );
-        void slotReceivedResponse ( KIO::Job *, NSURLResponse *response );
+        void slotFinished(KIO::Job*, NSData*);
+        void slotData(KIO::Job*, const char* data, int size);
+        void slotReceivedResponse(KIO::Job*, NSURLResponse*);
 
     private:
-	void servePendingRequests();
+        void servePendingRequests();
 
         virtual bool isKHTMLLoader() const;
 
-	QPtrList<Request> m_requestsPending;
-	QPtrDict<Request> m_requestsLoading;
+        QPtrList<Request> m_requestsPending;
+        typedef HashMap<KIO::Job*, Request*, PointerHash<KIO::Job*> > RequestMap;
+        RequestMap m_requestsLoading;
 
-	QPtrList<Request> m_requestsBackgroundDecoding;
+        QPtrList<Request> m_requestsBackgroundDecoding;
     };
 
-};
+}
 
 #endif

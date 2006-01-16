@@ -45,6 +45,7 @@ class KWQVectorImpl
     bool remove(uint n, bool delItems); 
     bool resize(uint size, bool delItems);
     bool insert(uint n, void *item, bool delItems);
+    bool append(void* item, bool delItems);
     void *at(uint n) const { return m_data[n]; }
     void **data() { return m_data; }
     int findRef(void *item);

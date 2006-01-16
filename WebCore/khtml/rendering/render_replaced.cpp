@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,27 +24,26 @@
 #include "config.h"
 #include "render_replaced.h"
 
+#include "DocumentImpl.h" // ### remove dependency
+#include "EventNames.h"
+#include "FrameView.h"
+#include "dom2_eventsimpl.h"
+#include "dom_position.h"
+#include "khtml_ext.h"
 #include "render_arena.h"
 #include "render_canvas.h"
 #include "render_line.h"
-
+#include "visible_position.h"
 #include <assert.h>
-#include <qwidget.h>
-#include <qpainter.h>
-#include <qevent.h>
-#include <qapplication.h>
-
-#include "khtml_ext.h"
-#include "FrameView.h"
-#include "xml/dom2_eventsimpl.h"
-#include "DocumentImpl.h" // ### remove dependency
-#include "xml/dom_position.h"
-#include "xml/EventNames.h"
 #include <kdebug.h>
+#include <qapplication.h>
+#include <qevent.h>
+#include <qpainter.h>
+#include <qwidget.h>
 
-using namespace khtml;
-using namespace DOM;
-using namespace DOM::EventNames;
+namespace WebCore {
+
+using namespace EventNames;
 
 RenderReplaced::RenderReplaced(DOM::NodeImpl* node)
     : RenderBox(node)
@@ -501,4 +500,6 @@ void RenderWidget::setSelectionState(SelectionState s)
         if (m_widget)
             m_widget->setIsSelected(m_selectionState != SelectionNone);
     }
+}
+
 }

@@ -83,7 +83,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.p->restore();
 }
 
-bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)
 {
     QMatrix totalTransform = absoluteTransform();
     totalTransform *= localTransform();

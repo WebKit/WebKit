@@ -26,20 +26,12 @@
 */
 
 #include "config.h"
-
 #include "CachedObject.h"
+
 #include "Cache.h"
+#include <kurl.h>
 
-#include <kio/job.h>
-#include <kio/jobclasses.h>
-#include <kdebug.h>
-#include "decoder.h"
-
-#include <kxmlcore/Assertions.h>
-
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 CachedObject::~CachedObject()
 {
@@ -95,7 +87,7 @@ void CachedObject::setRequest(Request *_request)
 
 void CachedObject::ref(CachedObjectClient *c)
 {
-    m_clients.insert(c, c);
+    m_clients.insert(c);
     Cache::removeFromLRUList(this);
     increaseAccessCount();
 }
@@ -121,4 +113,4 @@ void CachedObject::setSize(int size)
         Cache::insertInLRUList(this);
 }
 
-};
+}

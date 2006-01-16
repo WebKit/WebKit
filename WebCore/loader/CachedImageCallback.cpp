@@ -32,14 +32,9 @@
 #include "CachedImage.h"
 #include "Request.h"
 #include "loader.h"
-#include <kdebug.h>
-#include <kio/job.h>
-#include <kio/jobclasses.h>
-#include <qpainter.h>
+#include <qpixmap.h>
 
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 void CachedImageCallback::notifyUpdate() 
 { 
@@ -59,7 +54,7 @@ void CachedImageCallback::notifyUpdate()
         Request *r = cachedImage->m_request;
         DocLoader *dl = r->m_docLoader;
 
-        khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
+        Cache::loader()->removeBackgroundDecodingRequest(r);
 
         // Poke the frame to get it to do a checkCompleted().  Only do this for
         // the first update to minimize work.  Note that we are guaranteed to have
@@ -68,7 +63,7 @@ void CachedImageCallback::notifyUpdate()
         // really means that the CG decoder is waiting for more data, but has already
         // read the header.
         if (!headerReceived) {
-            emit khtml::Cache::loader()->requestDone( dl, cachedImage );
+            emit Cache::loader()->requestDone( dl, cachedImage );
             headerReceived = true;
         }
     }
@@ -86,10 +81,10 @@ void CachedImageCallback::notifyFinished()
         Request *r = cachedImage->m_request;
         DocLoader *dl = r->m_docLoader;
 
-        khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
+        Cache::loader()->removeBackgroundDecodingRequest(r);
 
         // Poke the frame to get it to do a checkCompleted().
-        emit khtml::Cache::loader()->requestDone( dl, cachedImage );
+        emit Cache::loader()->requestDone( dl, cachedImage );
         
         delete r;
     }
@@ -120,10 +115,10 @@ void CachedImageCallback::clear()
         Request *r = cachedImage->m_request;
         DocLoader *dl = r->m_docLoader;
 
-        khtml::Cache::loader()->removeBackgroundDecodingRequest(r);
+        Cache::loader()->removeBackgroundDecodingRequest(r);
 
         // Poke the frame to get it to do a checkCompleted().
-        emit khtml::Cache::loader()->requestFailed( dl, cachedImage );
+        emit Cache::loader()->requestFailed( dl, cachedImage );
 
         delete r;
     }

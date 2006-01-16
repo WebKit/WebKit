@@ -26,35 +26,25 @@
 #include "config.h"
 #include "delete_selection_command.h"
 
-#include "css/css_computedstyle.h"
-#include "htmlediting.h"
+#include "DocumentImpl.h"
 #include "Frame.h"
+#include "KWQLogging.h"
+#include "css_computedstyle.h"
+#include "dom2_rangeimpl.h"
+#include "dom_position.h"
+#include "dom_textimpl.h"
+#include "htmlediting.h"
 #include "htmlnames.h"
-#include "rendering/render_line.h"
-#include "rendering/render_object.h"
+#include "render_line.h"
+#include "render_object.h"
+#include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_position.h"
-#include "xml/dom_textimpl.h"
-#include "DocumentImpl.h"
-
-
 #include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
-using DOM::DOMString;
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 static bool isListStructureNode(const NodeImpl *node)
 {

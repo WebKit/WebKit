@@ -26,10 +26,14 @@
 #include "config.h"
 #include "composite_edit_command.h"
 
+#include "DocumentImpl.h"
+#include "InlineTextBox.h"
 #include "append_node_command.h"
 #include "delete_from_text_node_command.h"
-#include "DocumentImpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_textimpl.h"
 #include "htmlediting.h"
+#include "htmlnames.h"
 #include "insert_into_text_node_command.h"
 #include "insert_node_before_command.h"
 #include "insert_paragraph_separator_command.h"
@@ -45,30 +49,14 @@
 #include "split_element_command.h"
 #include "split_text_node_command.h"
 #include "split_text_node_containing_element_command.h"
+#include "visible_position.h"
 #include "visible_units.h"
 #include "wrap_contents_in_dummy_span_command.h"
-
-#include "htmlnames.h"
-#include "InlineTextBox.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_textimpl.h"
-
 #include <kxmlcore/Assertions.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CSSStyleDeclarationImpl;
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-using DOM::QualifiedName;
-
-namespace khtml {
+using namespace HTMLNames;
 
 static const DOMString &blockPlaceholderClassString();
 

@@ -1,5 +1,3 @@
-#include "qptrdict.h"
-
 namespace DOM {
     class DOMString;
 }

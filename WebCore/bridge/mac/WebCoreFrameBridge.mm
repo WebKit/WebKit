@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreFrameBridge.h"
 
+#import "Cache.h"
+#import "DOMInternal.h"
+#import "DocumentTypeImpl.h"
+#import "FrameView.h"
+#import "HTMLFormElementImpl.h"
+#import "HTMLInputElementImpl.h"
+#import "KWQAccObjectCache.h"
+#import "KWQCharsets.h"
+#import "KWQClipboard.h"
+#import "KWQEditCommand.h"
+#import "KWQFont.h"
+#import "KWQFoundationExtras.h"
+#import "KWQFrame.h"
+#import "KWQLoader.h"
+#import "KWQPageState.h"
+#import "KWQPrinter.h"
+#import "KWQRenderTreeDebug.h"
+#import "KWQTextCodec.h"
+#import "KWQView.h"
+#import "MacFrame.h"
+#import "MacFrame.h"
+#import "NodeImpl.h"
+#import "SelectionController.h"
+#import "WebCoreFrameNamespaces.h"
+#import "WebCoreImageRenderer.h"
+#import "WebCoreSettings.h"
+#import "WebCoreTextRendererFactory.h"
+#import "WebCoreViewFactory.h"
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
-#import "DocumentTypeImpl.h"
 #import "dom_node.h"
-#import "NodeImpl.h"
 #import "dom_position.h"
 #import "html_documentimpl.h"
-#import "HTMLInputElementImpl.h"
-#import "HTMLFormElementImpl.h"
 #import "html_imageimpl.h"
 #import "htmlediting.h"
-#import "MacFrame.h"
-#import "FrameView.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
-#import "Cache.h"
 #import "markup.h"
 #import "render_canvas.h"
 #import "render_frames.h"
@@ -53,91 +74,22 @@
 #import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
-#import "SelectionController.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
-
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/object.h>
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime_root.h>
-
 #import <kxmlcore/Assertions.h>
-#import "KWQCharsets.h"
-#import "KWQClipboard.h"
-#import "KWQEditCommand.h"
-#import "KWQFont.h"
-#import "KWQFoundationExtras.h"
-#import "KWQFrame.h"
-#import "MacFrame.h"
-#import "KWQLoader.h"
-#import "KWQPageState.h"
-#import "KWQRenderTreeDebug.h"
-#import "KWQView.h"
-#import "KWQPrinter.h"
-#import "KWQAccObjectCache.h"
-
-#import "DOMInternal.h"
-#import "WebCoreImageRenderer.h"
-#import "WebCoreTextRendererFactory.h"
-#import "WebCoreViewFactory.h"
-#import "WebCoreSettings.h"
-#import "WebCoreFrameNamespaces.h"
 
 @class NSView;
 
-using namespace DOM::HTMLNames;
-
-using DOM::AtomicString;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentImpl;
-using DOM::DocumentTypeImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLFormElementImpl;
-using DOM::HTMLGenericFormElementImpl;
-using DOM::HTMLImageElementImpl;
-using DOM::HTMLInputElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-
-using khtml::ChildrenOnly;
-using khtml::createMarkup;
-using khtml::createFragmentFromMarkup;
-using khtml::createFragmentFromText;
-using khtml::createFragmentFromNodeList;
-using khtml::Decoder;
-using khtml::DeleteSelectionCommand;
-using khtml::DOWNSTREAM;
-using khtml::EAffinity;
-using khtml::EditAction;
-using khtml::EditCommandPtr;
-using khtml::ETextGranularity;
-using khtml::IncludeNode;
-using khtml::MoveSelectionCommand;
-using khtml::parseURL;
-using khtml::plainText;
-using khtml::RenderCanvas;
-using khtml::RenderImage;
-using khtml::RenderLayer;
-using khtml::RenderObject;
-using khtml::RenderPart;
-using khtml::RenderStyle;
-using khtml::RenderWidget;
-using khtml::ReplaceSelectionCommand;
-using khtml::SelectionController;
-using khtml::Tokenizer;
-using khtml::TextIterator;
-using khtml::TypingCommand;
-using khtml::UPSTREAM;
-using khtml::VisiblePosition;
+using namespace WebCore;
+using namespace HTMLNames;
 
 using KJS::ExecState;
 using KJS::Interpreter;
@@ -197,7 +149,7 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
     if (!window)
         return;
         
-    DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->frame()->xmlDocImpl());
+    DocumentImpl *doc = static_cast<DocumentImpl*>(window->frame()->xmlDocImpl());
     if (doc)
         doc->updateRendering();
 }
@@ -544,7 +496,7 @@ static bool initializedKJS = FALSE;
     m_frame->setBridge(self);
 
     if (!initializedObjectCacheSize){
-        khtml::Cache::setSize([self getObjectCacheSize]);
+        Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = TRUE;
     }
     
@@ -860,11 +812,11 @@ static bool initializedKJS = FALSE;
 - (WebSelectionState)selectionState
 {
     switch (m_frame->selection().state()) {
-        case khtml::Selection::NONE:
+        case WebCore::Selection::NONE:
             return WebSelectionStateNone;
-        case khtml::Selection::CARET:
+        case WebCore::Selection::CARET:
             return WebSelectionStateCaret;
-        case khtml::Selection::RANGE:
+        case WebCore::Selection::RANGE:
             return WebSelectionStateRange;
     }
     
@@ -875,7 +827,7 @@ static bool initializedKJS = FALSE;
 - (NSString *)_documentTypeString
 {
     NSString *documentTypeString = nil;
-    DOM::DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->xmlDocImpl();
     if (doc) {
         DocumentTypeImpl *doctype = doc->realDocType();
         if (doctype) {
@@ -991,7 +943,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 - (void)_setupRootForPrinting:(BOOL)onOrOff
 {
     if (nowPrinting(self)) {
-        RenderCanvas *root = static_cast<khtml::RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+        RenderCanvas *root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
         if (root) {
             root->setPrintingMode(onOrOff);
         }
@@ -1059,7 +1011,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     }
 
     if (!m_frame || !m_frame->xmlDocImpl() || !m_frame->view()) return pages;
-    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
     if (!root) return pages;
     
     KHTMLView* view = m_frame->view();
@@ -1340,7 +1292,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         widget = static_cast<RenderWidget *>(n->renderer())->widget();
         if (!widget || !widget->inherits("KHTMLView"))
             break;
-        Frame *kpart = static_cast<DOM::HTMLFrameElementImpl *>(n)->contentPart();
+        Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
         if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())
             break;
         int absX, absY;
@@ -1486,7 +1438,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!doc) {
         return;
     }
-    doc->removeMarkers(DOM::DocumentMarker::Spelling);
+    doc->removeMarkers(DocumentMarker::Spelling);
 }
 
 - (void)setTextSizeMultiplier:(float)multiplier
@@ -1807,7 +1759,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSColor *)selectionColor
 {
-    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
     if (root) {
         RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
@@ -1828,7 +1780,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     KWQAccObjectCache::enableAccessibility();
     if (!m_frame || !m_frame->xmlDocImpl()) return nil;
-    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
     if (!root) return nil;
     return m_frame->xmlDocImpl()->getAccObjectCache()->accObject(root);
 }
@@ -1910,7 +1862,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // to preserve smart delete behavior when extending by word.  e.g. double-click,
     // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
     if (!((alteration == WebSelectByExtending) &&
-          (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == khtml::WORD)))
+          (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == WORD)))
         m_frame->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
     
     // restore vertical navigation x position if necessary
@@ -1977,7 +1929,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(startContainer, [range startOffset], affinity);
-    VisiblePosition visibleEnd(endContainer, [range endOffset], khtml::SEL_DEFAULT_AFFINITY);
+    VisiblePosition visibleEnd(endContainer, [range endOffset], SEL_DEFAULT_AFFINITY);
     SelectionController selection(visibleStart, visibleEnd);
     m_frame->setSelection(selection, closeTyping);
 }
@@ -1987,7 +1939,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWithImpl:m_frame->selection().toRange().get()];
 }
 
-- (NSRange)convertToNSRange:(DOM::RangeImpl *)range
+- (NSRange)convertToNSRange:(RangeImpl *)range
 {
     if (!range || range->isDetached()) {
         return NSMakeRange(NSNotFound, 0);
@@ -2027,7 +1979,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    m_frame->setSelection(SelectionController([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY));
+    m_frame->setSelection(SelectionController([self convertToDOMRange:range], SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
@@ -2042,7 +1994,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    m_frame->setMark(SelectionController([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY));
+    m_frame->setMark(SelectionController([range _rangeImpl], SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange
@@ -2118,10 +2070,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     Position start(startContainer, [proposedRange startOffset]);
     Position end(endContainer, [proposedRange endOffset]);
-    Position newStart = start.upstream().leadingWhitespacePosition(khtml::DOWNSTREAM, true);
+    Position newStart = start.upstream().leadingWhitespacePosition(DOWNSTREAM, true);
     if (newStart.isNull())
         newStart = start;
-    Position newEnd = end.downstream().trailingWhitespacePosition(khtml::DOWNSTREAM, true);
+    Position newEnd = end.downstream().trailingWhitespacePosition(DOWNSTREAM, true);
     if (newEnd.isNull())
         newEnd = end;
 
@@ -2151,14 +2103,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     Position startPos(startContainer, [rangeToReplace startOffset]);
     Position endPos(endContainer, [rangeToReplace endOffset]);
 
-    VisiblePosition startVisiblePos = VisiblePosition(startPos, khtml::VP_DEFAULT_AFFINITY);
-    VisiblePosition endVisiblePos = VisiblePosition(endPos, khtml::VP_DEFAULT_AFFINITY);
+    VisiblePosition startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);
     
     // this check also ensures startContainer, startPos, endContainer, and endPos are non-null
     if (startVisiblePos.isNull() || endVisiblePos.isNull())
         return;
 
-    bool addLeadingSpace = startPos.leadingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
+    bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace) {
         QChar previousChar = startVisiblePos.previous().character();
         if (!previousChar.isNull()) {
@@ -2166,7 +2118,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         }
     }
     
-    bool addTrailingSpace = endPos.trailingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
+    bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace) {
         QChar thisChar = endVisiblePos.character();
         if (!thisChar.isNull()) {
@@ -2217,7 +2169,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     DOMNode *node;
-    QPtrList<DOM::NodeImpl> nodeList;
+    QPtrList<NodeImpl> nodeList;
     
     if (!m_frame || !m_frame->xmlDocImpl())
         return 0;

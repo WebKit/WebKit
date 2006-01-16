@@ -6,7 +6,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,26 +25,21 @@
  */
 
 #include "config.h"
-#include "html/html_documentimpl.h"
-#include "html/html_tableimpl.h"
+#include "html_tableimpl.h"
 
-#include "dom/dom_exception.h"
-#include "dom/dom_node.h"
-
-#include "css/cssstyleselector.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "css/csshelper.h"
+#include "NodeListImpl.h"
+#include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
-#include "css/css_stylesheetimpl.h"
+#include "csshelper.h"
+#include "cssproperties.h"
+#include "cssstyleselector.h"
+#include "cssvalues.h"
+#include "dom_exception.h"
+#include "dom_node.h"
+#include "html_documentimpl.h"
+#include "render_table.h"
 
-#include "rendering/render_table.h"
-
-#include <kdebug.h>
-
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
 

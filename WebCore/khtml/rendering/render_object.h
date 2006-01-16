@@ -4,7 +4,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,31 +22,25 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef render_object_h
 #define render_object_h
 
-#include <qcolor.h>
-#include "IntRect.h"
-#include <assert.h>
-#include <qwmatrix.h>
-#include "FloatRect.h"
-#include <qptrdict.h>
-
-#include "NodeImpl.h"
-#include "editing/text_affinity.h"
-#include "khtmllayout.h"
 #include "CachedObjectClient.h"
-#include "helper.h"
-#include "rendering/render_style.h"
-#include "khtml_events.h"
-#include "visible_position.h"
-
+#include "FloatRect.h"
 #include "KWQScrollBar.h"
+#include "NodeImpl.h"
+#include "render_style.h"
+#include "text_affinity.h"
+#include <assert.h>
+#include <kxmlcore/HashSet.h>
 
-class QPainter;
-class QTextStream;
 class CSSStyle;
 class KHTMLView;
+class QColor;
+class QMatrix;
+class QPainter;
+class QTextStream;
 class RenderArena;
 
 #ifndef NDEBUG
@@ -61,15 +55,36 @@ class RenderArena;
 #endif
 
 /*
- *	The painting of a layer occurs in three distinct phases.  Each phase involves
- *	a recursive descent into the layer's render objects. The first phase is the background phase.
- *	The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
- *	Floats must paint above block backgrounds but entirely below inline content that can overlap them.
- *	In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
- *	three phases invoked on them during this phase.
+ *  The painting of a layer occurs in three distinct phases.  Each phase involves
+ *  a recursive descent into the layer's render objects. The first phase is the background phase.
+ *  The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
+ *  Floats must paint above block backgrounds but entirely below inline content that can overlap them.
+ *  In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
+ *  three phases invoked on them during this phase.
  */
 
-typedef enum {
+namespace WebCore {
+
+class CollapsedBorderValue;
+class DOMString;
+class DocumentImpl;
+class ElementImpl;
+class EventImpl;
+class HTMLAreaElementImpl;
+class InlineBox;
+class InlineFlowBox;
+class Position;
+class RenderBlock;
+class RenderCanvas;
+class RenderFlow;
+class RenderFrameSet;
+class RenderLayer;
+class RenderStyle;
+class RenderTable;
+class RenderText;
+class VisiblePosition;
+
+enum PaintAction {
     PaintActionBlockBackground,
     PaintActionChildBlockBackground,
     PaintActionChildBlockBackgrounds,
@@ -78,44 +93,21 @@ typedef enum {
     PaintActionOutline,
     PaintActionSelection,
     PaintActionCollapsedTableBorders
-} PaintAction;
+};
 
-typedef enum {
+enum HitTestFilter {
     HitTestAll,
     HitTestSelf,
     HitTestDescendants
-} HitTestFilter;
+};
 
-typedef enum {
+enum HitTestAction {
     HitTestBlockBackground,
     HitTestChildBlockBackground,
     HitTestChildBlockBackgrounds,
     HitTestFloat,
     HitTestForeground
-} HitTestAction;
-
-namespace DOM {
-    class HTMLAreaElementImpl;
-    class DOMString;
-    class DocumentImpl;
-    class ElementImpl;
-    class EventImpl;
-    class Position;
 };
-
-namespace khtml {
-    class RenderFlow;
-    class RenderBlock;
-    class RenderStyle;
-    class RenderTable;
-    class CachedObject;
-    class RenderCanvas;
-    class RenderText;
-    class RenderFrameSet;
-    class RenderLayer;
-    class InlineBox;
-    class InlineFlowBox;
-    class CollapsedBorderValue;
 
 struct DashboardRegionValue
 {
@@ -130,6 +122,9 @@ struct DashboardRegionValue
     }
 };
 
+// FIXME: This should be a HashSequencedSet, but we don't have that data structure yet.
+// This means the paint order of outlines will be wrong, although this is a minor issue.
+typedef HashSet<RenderFlow*, PointerHash<RenderFlow*> > RenderFlowSequencedSet;
 
 /**
  * Base Class for all rendering tree objects.
@@ -283,7 +278,7 @@ public:
     virtual bool isRenderPath() const { return false; }
     virtual FloatRect relativeBBox(bool includeStroke = true) const { return FloatRect(); }
     // We may eventually want to make these non-virtual
-    virtual QMatrix localTransform() const { return QMatrix(1, 0, 0, 1, xPos(), yPos()); }
+    virtual QMatrix localTransform() const;
     virtual void setLocalTransform(const QMatrix&) { assert(false); }
     virtual QMatrix absoluteTransform() const;
 #endif
@@ -349,16 +344,16 @@ public:
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
     void setMinMaxKnown(bool b=true) {
-	m_minMaxKnown = b;
-	if ( !b ) {
-	    RenderObject *o = this;
-	    RenderObject *root = this;
-	    while( o ) { // ### && !o->m_recalcMinMax ) {
-		o->m_recalcMinMax = true;
-		root = o;
-		o = o->m_parent;
-	    }
-	}
+        m_minMaxKnown = b;
+        if ( !b ) {
+            RenderObject *o = this;
+            RenderObject *root = this;
+            while( o ) { // ### && !o->m_recalcMinMax ) {
+                o->m_recalcMinMax = true;
+                root = o;
+                o = o->m_parent;
+            }
+        }
     }
 
     void setNeedsLayoutAndMinMaxRecalc() {
@@ -406,14 +401,13 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
-        PaintInfo(QPainter* _p, const IntRect& _r, PaintAction _phase, RenderObject *_paintingRoot)
-        : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot), outlineObjects(0) {}
-        ~PaintInfo() { delete outlineObjects; }
+        PaintInfo(QPainter* _p, const IntRect& _r, PaintAction _phase, RenderObject* _paintingRoot)
+            : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot) {}
         QPainter* p;
-        IntRect     r;
+        IntRect r;
         PaintAction phase;
-        RenderObject *paintingRoot;      // used to draw just one element and its visual kids
-        QPtrDict<RenderFlow>* outlineObjects; // used to list which outlines should be painted by a block with inline children
+        RenderObject* paintingRoot; // used to draw just one element and its visual kids
+        RenderFlowSequencedSet outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
     virtual void paint(PaintInfo& i, int tx, int ty);
     void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
@@ -832,11 +826,11 @@ public:
     virtual void destroy();
 
     const QFont &font(bool firstLine) const {
-	return style( firstLine )->font();
+        return style( firstLine )->font();
     }
 
     const QFontMetrics &fontMetrics(bool firstLine) const {
-	return style( firstLine )->fontMetrics();
+        return style( firstLine )->fontMetrics();
     }
 
     // Virtual function helpers for CSS3 Flexible Box Layout
@@ -906,7 +900,7 @@ private:
                                           // background painting phase (background, border, etc)
 
     bool m_isAnonymous               : 1;
-    bool m_recalcMinMax 	     : 1;
+    bool m_recalcMinMax              : 1;
     bool m_isText                    : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
@@ -927,5 +921,6 @@ enum VerticalPositionHint {
     PositionUndefined = 0x3fff
 };
 
-}; //namespace
+} //namespace
+
 #endif

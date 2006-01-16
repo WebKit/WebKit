@@ -28,64 +28,61 @@
 #define KHTML_CachedImage_h
 
 #include "CachedObject.h"
-
 #include <qobject.h>
-#include <qpixmap.h>
-#include <qbuffer.h>
+#include <khtml_settings.h>
 
-#include <kio/global.h>
+class QPixmap;
 
-namespace khtml
+namespace WebCore
 {
     class DocLoader;
     class CachedImageCallback;
     class Cache;
-    class CachedObjectClient;
 
     class CachedImage : public QObject, public CachedObject
     {
     public:
-	CachedImage(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate);
-	virtual ~CachedImage();
+        CachedImage(DocLoader*, const DOMString &url, KIO::CacheControl cachePolicy, time_t expireDate);
+        virtual ~CachedImage();
 
-	const QPixmap &pixmap() const;
-	const QPixmap &tiled_pixmap(const QColor& bg);
+        const QPixmap& pixmap() const;
+        const QPixmap& tiled_pixmap(const QColor& background);
 
         IntSize pixmap_size() const;    // returns the size of the complete (i.e. when finished) loading
         IntRect valid_rect() const;     // returns the rectangle of pixmap that has been loaded already
 
-        void ref(CachedObjectClient *consumer);
-	virtual void deref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient*);
+        virtual void deref(CachedObjectClient*);
 
-	virtual void data( QBuffer &buffer, bool eof );
-	virtual void error( int err, const char *text );
+        virtual void data(QBuffer&, bool atEnd);
+        virtual void error(int code, const char* message);
 
         bool isTransparent() const { return isFullyTransparent; }
         bool isErrorImage() const { return errorOccured; }
 
-        void setShowAnimations( KHTMLSettings::KAnimationAdvice );
+        void setShowAnimations(KHTMLSettings::KAnimationAdvice);
 
         virtual bool schedule() const { return true; }
 
-	void checkNotify();
+        void checkNotify();
         
         virtual bool isImage() const { return true; }
 
-	void clear();
+        void clear();
         
     private:
-        void do_notify(const QPixmap& p, const IntRect& r);
+        void do_notify(const QPixmap&, const IntRect&);
 
         QPixmap* p;
-	QPixmap* bg;
-        QRgb bgColor;
+        QPixmap* bg;
+        unsigned bgColor;
         mutable QPixmap* pixPart;
 
-	int width;
-	int height;
+        int width;
+        int height;
 
-	// Is set if movie format type ( incremental/animation) was checked
-	bool typeChecked : 1;
+        // Is set if movie format type ( incremental/animation) was checked
+        bool typeChecked : 1;
         bool isFullyTransparent : 1;
         bool errorOccured : 1;
         bool monochrome : 1;
@@ -95,13 +92,13 @@ namespace khtml
 
     public:
         int dataSize() const { return m_dataSize; }
-	CachedImageCallback *decoderCallback() const { return m_decoderCallback; }
+        CachedImageCallback* decoderCallback() const { return m_decoderCallback; }
     private:
         friend class CachedImageCallback;
         
         int m_dataSize;
-        CachedImageCallback *m_decoderCallback;
+        CachedImageCallback* m_decoderCallback;
     };
-};
+}
 
 #endif

@@ -403,17 +403,16 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             curr->paint(i, _tx, _ty);
     }
 
-    if (i.phase == PaintActionOutline && i.outlineObjects) {
-        // FIXME: Will the order in which we added objects to the dictionary be preserved? Probably not.
-        // This means the paint order of outlines will be wrong, although this is a minor issue.
-        QPtrDictIterator<RenderFlow> objects(*i.outlineObjects);
-        for (objects.toFirst(); objects.current(); ++objects) {
-            if (objects.current()->style()->outlineStyleIsAuto())
-                objects.current()->paintFocusRing(i.p, _tx, _ty);
+    if (i.phase == PaintActionOutline) {
+        RenderFlowSequencedSet::iterator end = i.outlineObjects.end();
+        for (RenderFlowSequencedSet::iterator it = i.outlineObjects.begin(); it != end; ++it) {
+            RenderFlow* flow = *it;
+            if (flow->style()->outlineStyleIsAuto())
+                flow->paintFocusRing(i.p, _tx, _ty);
             else
-                objects.current()->paintOutlines(i.p, _tx, _ty);
+                flow->paintOutlines(i.p, _tx, _ty);
         }
-        i.outlineObjects->clear();
+        i.outlineObjects.clear();
     }
 }
 

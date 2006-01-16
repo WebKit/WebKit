@@ -18,20 +18,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_WINDOW_H_
-#define _KJS_WINDOW_H_
-
-#include <qobject.h>
-#include <qguardedptr.h>
-#include <qmap.h>
-#include <qptrdict.h>
+#ifndef KJS_WINDOW_H_
+#define KJS_WINDOW_H_
 
 #include "kjs_binding.h"
 #include <kjs/protect.h>
+#include <kxmlcore/HashMap.h>
+#include <qguardedptr.h>
+#include <qobject.h>
 
-class QTimer;
-class KHTMLView;
 class Frame;
+class KHTMLView;
+class QTimer;
 
 namespace DOM {
     class AtomicString;
@@ -89,7 +87,8 @@ namespace KJS {
         virtual void timerEvent(QTimerEvent *);
 
         Window *m_parent;
-        QMap<int, ScheduledAction *> m_timeouts;
+        typedef HashMap<int, ScheduledAction*, PointerHash<int> > TimeoutsMap;
+        TimeoutsMap m_timeouts;
   };
 
   class Screen : public JSObject {
@@ -171,8 +170,10 @@ namespace KJS {
     // Set a place to put a dialog return value when the window is cleared.
     void setReturnValueSlot(JSValue **slot) { m_returnValueSlot = slot; }
 
-    QPtrDict<JSEventListener> jsEventListeners;
-    QPtrDict<JSUnprotectedEventListener> jsUnprotectedEventListeners;
+    typedef HashMap<JSObject*, JSEventListener*, PointerHash<JSObject*> > ListenersMap;
+    typedef HashMap<JSObject*, JSUnprotectedEventListener*, PointerHash<JSObject*> > UnprotectedListenersMap;
+    ListenersMap jsEventListeners;
+    UnprotectedListenersMap jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,

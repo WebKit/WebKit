@@ -27,20 +27,15 @@
 
 #include "config.h"
 #include "CachedScript.h"
+
 #include "Cache.h"
-#include "loader.h"
+#include "CachedObjectClient.h"
 #include "CachedObjectClientWalker.h"
-#include "decoder.h"
+#include "loader.h"
+#include <qbuffer.h>
+#include <qtextcodec.h>
 
-#include <kio/job.h>
-#include <kio/jobclasses.h>
-#include "decoder.h"
-
-#include <kxmlcore/Assertions.h>
-
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate, const QString& charset)
     : CachedObject(url, Script, _cachePolicy, _expireDate), m_codec(0)
@@ -125,4 +120,4 @@ void CachedScript::error( int /*err*/, const char */*text*/ )
     checkNotify();
 }
 
-};
+}

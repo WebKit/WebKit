@@ -27,40 +27,18 @@
 #ifndef KHTML_CachedObject_h
 #define KHTML_CachedObject_h
 
+#include "dom_string.h"
+#include <kio/global.h>
+#include <kxmlcore/HashSet.h>
+#include <qobject.h>
+#include <stdlib.h>
 #include <time.h>
 
-#include "CachedObjectClient.h"
-
-#include <stdlib.h>
-#include <qptrlist.h>
-#include <qobject.h>
-#include <qptrdict.h>
-#include <qpixmap.h>
-#include <qbuffer.h>
-#include <qstringlist.h>
-#include <qtextcodec.h>
-
-#include <kurl.h>
-#include <kio/global.h>
-
-#include <khtml_settings.h>
-#include <dom/dom_string.h>
-#include "DocPtr.h"
-
-class Frame;
+class QBuffer;
 
 namespace KIO {
-  class Job;
-  class TransferJob;
+    class Job;
 }
-
-namespace DOM
-{
-    class CSSStyleSheetImpl;
-    class DocumentImpl;
-};
-
-class KWQLoader;
 
 #if __OBJC__
 @class NSData;
@@ -70,13 +48,10 @@ class NSData;
 class NSURLResponse;
 #endif
 
-
-namespace khtml
+namespace WebCore
 {
-    class CachedObject;
+    class CachedObjectClient;
     class Request;
-    class DocLoader;
-    class Decoder;
     
     /**
      *
@@ -102,26 +77,26 @@ namespace khtml
 
         enum Status {
             NotCached,    // this URL is not cached
-            Unknown,      // let imagecache decide what to do with it
-            New,          // inserting new image
-        Pending,      // only partially loaded
-            Persistent,   // never delete this pixmap
+            Unknown,      // let cache decide what to do with it
+            New,          // inserting new item
+            Pending,      // only partially loaded
+            Persistent,   // never delete this
             Cached,       // regular case
-            Uncacheable   // too big to be cached,
-        };                // will be destroyed as soon as possible
+            Uncacheable   // too big to be cached, will be destroyed as soon as possible
+        };
 
-        CachedObject(const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate, int size = 0)
+        CachedObject(const DOMString& URL, Type type, KIO::CacheControl cachePolicy, time_t expireDate, int size = 0)
         {
-            m_url = url;
+            m_url = URL;
             m_type = type;
             m_status = Pending;
             m_size = size;
             m_free = false;
-            m_cachePolicy = _cachePolicy;
+            m_cachePolicy = cachePolicy;
             m_request = 0;
             m_response = 0;
             m_allData = 0;
-            m_expireDate = _expireDate;
+            m_expireDate = expireDate;
             m_deleted = false;
             m_expireDateChanged = false;
             
@@ -132,24 +107,24 @@ namespace khtml
         }
         virtual ~CachedObject();
 
-        virtual void setCharset( const QString &chs ) {}
-        virtual void data( QBuffer &buffer, bool eof) = 0;
-        virtual void error( int err, const char *text ) = 0;
+        virtual void setCharset(const QString&) {}
+        virtual void data(QBuffer&, bool atEnd) = 0;
+        virtual void error(int code, const char* message) = 0;
 
-        const DOM::DOMString &url() const { return m_url; }
+        const DOMString &url() const { return m_url; }
         Type type() const { return m_type; }
 
-        virtual void ref(CachedObjectClient *consumer);
-        virtual void deref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient*);
+        virtual void deref(CachedObjectClient*);
 
-        int count() const { return m_clients.count(); }
+        int count() const { return m_clients.size(); }
 
         Status status() const { return m_status; }
 
         int size() const { return m_size; }
 
         bool isLoaded() const { return !m_loading; }
-        
+
         virtual bool isImage() const { return false; }
 
         int accessCount() const { return m_accessCount; }
@@ -167,38 +142,36 @@ namespace khtml
          * while still being referenced. This means the object should kill itself
          * if its reference counter drops down to zero.
          */
-        void setFree( bool b ) { m_free = b; }
+        void setFree(bool b) { m_free = b; }
 
         KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
 
-        void setRequest(Request *_request);
+        void setRequest(Request*);
 
-        NSURLResponse *response() const { return m_response; }
-        void setResponse(NSURLResponse *response);
-        NSData *allData() const { return m_allData; }
-        void setAllData (NSData *data);
+        NSURLResponse* response() const { return m_response; }
+        void setResponse(NSURLResponse*);
+        NSData* allData() const { return m_allData; }
+        void setAllData(NSData*);
 
-        bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
+        bool canDelete() const { return m_clients.isEmpty() && !m_request; }
 
-        void setExpireDate(time_t _expireDate, bool changeHttpCache);
-        
+        void setExpireDate(time_t expireDate, bool changeHttpCache);
+
         bool isExpired() const;
 
         virtual bool schedule() const { return false; }
 
-        /**
-         * List of acceptable mimetypes seperated by ",". A mimetype may contain a wildcard.
-         */
-        // e.g. "text/*"
+        // List of acceptable MIME types seperated by ",".
+        // A MIME type may contain a wildcard, e.g. "text/*".
         QString accept() const { return m_accept; }
-        void setAccept(const QString &_accept) { m_accept = _accept; }
+        void setAccept(const QString& accept) { m_accept = accept; }
 
     protected:
         void setSize(int size);
-        
-        QPtrDict<CachedObjectClient> m_clients;
 
-        DOM::DOMString m_url;
+        HashSet<CachedObjectClient*, PointerHash<CachedObjectClient*> > m_clients;
+
+        DOMString m_url;
         QString m_accept;
         Request *m_request;
         NSURLResponse *m_response;
@@ -216,10 +189,10 @@ namespace khtml
         bool m_deleted : 1;
         bool m_loading : 1;
         bool m_expireDateChanged : 1;
-    
+
     private:
-        bool allowInLRUList() { return canDelete() && status() != Persistent; }
-        
+        bool allowInLRUList() const { return canDelete() && status() != Persistent; }
+
         CachedObject *m_nextInLRUList;
         CachedObject *m_prevInLRUList;
         friend class Cache;

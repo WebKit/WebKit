@@ -101,9 +101,7 @@ void Cache::clear()
     if (!cache)
         return;
 
-    CacheMap::iterator e = cache->end();
-    for (CacheMap::iterator i = cache->begin(); i != e; ++i)
-        delete i->second;
+    deleteAllValues(*cache);
 
     delete cache; cache = 0;
     delete nullPixmap; nullPixmap = 0;

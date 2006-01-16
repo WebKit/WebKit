@@ -23,7 +23,8 @@
 #ifndef RenderSVGText_H
 #define RenderSVGText_H
 
-#include "khtml/rendering/render_block.h"
+#include "render_block.h"
+#include <qmatrix.h>
 
 namespace KSVG {
     class SVGTextElementImpl;
@@ -40,7 +41,7 @@ public:
     virtual QMatrix localTransform() const { return m_transform; }
     virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
     
-    bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, HitTestAction);
+    bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction);
 
  private:
     QMatrix translationTopToBaseline();

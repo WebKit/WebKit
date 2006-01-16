@@ -30,22 +30,22 @@
 // FIXME: Just comment out the entire file, since its implementation is completely CG-specific.
 
 #include <ApplicationServices/ApplicationServices.h>
-#include "FloatRect.h"
 
 namespace WebCore {
     class IntRect;
+    class FloatRect;
 }
 
-class QWMatrix {
+class QMatrix {
 public:
-    QWMatrix();
-    QWMatrix(double a, double b, double c, double d, double tx, double ty);
-    QWMatrix(CGAffineTransform transform);
+    QMatrix();
+    QMatrix(double a, double b, double c, double d, double tx, double ty);
+    QMatrix(CGAffineTransform transform);
 
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
-    IntRect QWMatrix::mapRect(const IntRect &rect) const;
-    FloatRect QWMatrix::mapRect(const FloatRect &rect) const;
+    WebCore::IntRect QMatrix::mapRect(const WebCore::IntRect&) const;
+    WebCore::FloatRect QMatrix::mapRect(const WebCore::FloatRect&) const;
     
     bool isIdentity() const;
     
@@ -58,26 +58,26 @@ public:
 
     void reset();
     
-    QWMatrix &scale(double sx, double sy);
-    QWMatrix &rotate(double d);
-    QWMatrix &translate(double tx, double ty);
-    QWMatrix &shear(double sx, double sy);
+    QMatrix &scale(double sx, double sy);
+    QMatrix &rotate(double d);
+    QMatrix &translate(double tx, double ty);
+    QMatrix &shear(double sx, double sy);
     
     double det() const;
     bool isInvertible() const;
-    QWMatrix invert() const;
+    QMatrix invert() const;
 
     operator CGAffineTransform() const;
 
-    bool operator== (const QWMatrix &) const;
-    QWMatrix &operator*= (const QWMatrix &);
-    QWMatrix operator* (const QWMatrix &m2);
+    bool operator== (const QMatrix &) const;
+    QMatrix &operator*= (const QMatrix &);
+    QMatrix operator* (const QMatrix &m2);
     
 private:
     CGAffineTransform m_transform;
 };
 
-#define QMatrix QWMatrix
+#define QWMatrix QMatrix
 
 #endif // __APPLE__
 

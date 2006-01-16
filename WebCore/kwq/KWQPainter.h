@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
+#include "KWQColor.h"
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
 #include "IntRect.h"
@@ -34,15 +35,15 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+class IntPointArray;
 class QBrush;
 class QFont;
 class QPaintDevice;
-class QPixmap;
-class QPen;
-class IntPointArray;
-class QWidget;
 class QPainterPrivate;
+class QPen;
+class QPixmap;
 class QString;
+class QWidget;
 
 #if SVG_SUPPORT
 class KRenderingDevice;
@@ -51,8 +52,8 @@ class KRenderingDeviceContext;
 
 class QPainter : public Qt {
 public:
-    typedef enum { RTL, LTR } TextDirection;
-    typedef enum { STRETCH, ROUND, REPEAT } TileRule;
+    enum TextDirection { RTL, LTR };
+    enum TileRule { STRETCH, ROUND, REPEAT };
 
     QPainter();
     QPainter(bool forPrinting);

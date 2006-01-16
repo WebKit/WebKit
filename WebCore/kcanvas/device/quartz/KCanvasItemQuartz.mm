@@ -189,7 +189,7 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
     ASSERT(parentX == 0);
     ASSERT(parentY == 0);
 
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != WebCore::PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;
     
     KRenderingDevice *renderingDevice = QPainter::renderingDevice();
@@ -250,11 +250,10 @@ void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 #pragma mark -
 #pragma mark Hit Testing, BBoxes
 
-bool KCanvasItemQuartz::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                            HitTestAction hitTestAction)
+bool KCanvasItemQuartz::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
-    if (hitTestAction != HitTestForeground)
+    if (hitTestAction != WebCore::HitTestForeground)
         return false;
 
     if (hitsPath(FloatPoint(_x, _y), true)) {

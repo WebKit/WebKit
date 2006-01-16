@@ -23,47 +23,43 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_CachedCSSStyleSheet_h
 #define KHTML_CachedCSSStyleSheet_h
 
 #include "CachedObject.h"
 
-#include <kio/global.h>
-#include <dom/dom_string.h>
-
-class QBuffer;
+class QTextCodec;
 
 namespace khtml
 {
-    class CachedObject;
     class DocLoader;
-    class Decoder;
 
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
-        CachedCSSStyleSheet(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
-        CachedCSSStyleSheet(const DOM::DOMString &url, const QString &stylesheet_data);
+        CachedCSSStyleSheet(DocLoader*, const DOMString& URL, KIO::CacheControl, time_t expireDate, const QString& charset);
+        CachedCSSStyleSheet(const DOMString& URL, const QString& stylesheetData);
         virtual ~CachedCSSStyleSheet();
 
-        const DOM::DOMString &sheet() const { return m_sheet; }
+        const DOMString& sheet() const { return m_sheet; }
 
-        virtual void ref(CachedObjectClient *consumer);
-        virtual void deref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient*);
+        virtual void deref(CachedObjectClient*);
 
-        virtual void setCharset( const QString &chs );
-        virtual void data( QBuffer &buffer, bool eof );
-        virtual void error( int err, const char *text );
+        virtual void setCharset(const QString&);
+        virtual void data(QBuffer&, bool atEnd);
+        virtual void error(int code, const char* message);
 
         virtual bool schedule() const { return true; }
 
         void checkNotify();
 
     protected:
-        DOM::DOMString m_sheet;
+        DOMString m_sheet;
         QTextCodec* m_codec;
     };
 
-};
+}
 
 #endif

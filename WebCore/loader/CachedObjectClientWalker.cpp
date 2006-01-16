@@ -30,15 +30,15 @@
 
 namespace khtml {
 
-CachedObjectClient *CachedObjectClientWalker::next()
+CachedObjectClient* CachedObjectClientWalker::next()
 {
-    // Only advance if we already returned this item.
-    // This handles cases where the current item is removed, and prevents us from skipping the next item.
-    // The iterator automatically gets advanced to the next item, and we make sure we return it.
-    if (_current == _iterator.current())
-        ++_iterator;
-    _current = _iterator.current();
-    return _current;
+    while (!m_remaining.isEmpty()) {
+        CachedObjectClient* next = *m_remaining.begin();
+        m_remaining.remove(next);
+        if (m_clients.contains(next))
+            return next;
+    }
+    return 0;
 }
 
-};
+}

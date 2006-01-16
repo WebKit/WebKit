@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,39 +28,34 @@
 
 #include "KWQDef.h"
 
-class QColor;
-class QCursor;
-
-typedef unsigned int QRgb;
-
 class Qt {
 public:
 
      enum ButtonState {
-	NoButton	= 0x0000,
-	LeftButton	= 0x0001,
-	RightButton	= 0x0002,
-	MidButton	= 0x0004,
-	MouseButtonMask = 0x0007,
-	ShiftButton	= 0x0008,
-	ControlButton   = 0x0010,
-	AltButton	= 0x0020,
-	MetaButton	= 0x0040,
-	KeyButtonMask	= 0x0078,
-	Keypad		= 0x4000
+        NoButton        = 0x0000,
+        LeftButton      = 0x0001,
+        RightButton     = 0x0002,
+        MidButton       = 0x0004,
+        MouseButtonMask = 0x0007,
+        ShiftButton     = 0x0008,
+        ControlButton   = 0x0010,
+        AltButton       = 0x0020,
+        MetaButton      = 0x0040,
+        KeyButtonMask   = 0x0078,
+        Keypad          = 0x4000
     };
 
     enum AlignmentFlags {
-	AlignAuto       = 0x0000,		// text alignment
-	AlignLeft	= 0x0001,
-	AlignRight	= 0x0002,
-	AlignHCenter	= 0x0004,
-	AlignVCenter	= 0x0020,
-	AlignCenter	= AlignVCenter | AlignHCenter,
+        AlignAuto       = 0x0000,           // text alignment
+        AlignLeft       = 0x0001,
+        AlignRight      = 0x0002,
+        AlignHCenter    = 0x0004,
+        AlignVCenter    = 0x0020,
+        AlignCenter     = AlignVCenter | AlignHCenter,
 
-	DontClip	= 0x0080,		// misc. flags
-	ShowPrefix	= 0x0200,
-	WordBreak	= 0x0400,
+        DontClip        = 0x0080,           // misc. flags
+        ShowPrefix      = 0x0200,
+        WordBreak       = 0x0400,
     };
 
     enum LayoutDirection {

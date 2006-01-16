@@ -113,13 +113,13 @@ JSValue *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj
     if (args.size() > 2) {
       Frame *frame = doc.frame();
       if (frame) {
-	Window *window = Window::retrieveWindow(frame);
-	if (window) {
-	  JSObject *functionObject = window->get(exec, "open")->getObject();
-	  if (!functionObject || !functionObject->implementsCall())
-	    return throwError(exec, TypeError);
-	  return functionObject->call(exec, window, args);
-	}
+        Window *window = Window::retrieveWindow(frame);
+        if (window) {
+          JSObject *functionObject = window->get(exec, "open")->getObject();
+          if (!functionObject || !functionObject->implementsCall())
+            return throwError(exec, TypeError);
+          return functionObject->call(exec, window, args);
+        }
       }
       return jsUndefined();
     }
@@ -158,39 +158,39 @@ const ClassInfo KJS::HTMLDocument::info =
   { "HTMLDocument", &DOMDocument::info, &HTMLDocumentTable, 0 };
 /* Source for HTMLDocumentTable. Use "make hashtables" to regenerate.
 @begin HTMLDocumentTable 30
-  title			HTMLDocument::Title		DontDelete
-  referrer		HTMLDocument::Referrer		DontDelete|ReadOnly
-  domain		HTMLDocument::Domain		DontDelete
-  URL			HTMLDocument::URL		DontDelete|ReadOnly
-  body			HTMLDocument::Body		DontDelete
-  location		HTMLDocument::Location		DontDelete
-  cookie		HTMLDocument::Cookie		DontDelete
-  images		HTMLDocument::Images		DontDelete|ReadOnly
-  embeds		HTMLDocument::Embeds		DontDelete|ReadOnly
-  plugins		HTMLDocument::Embeds		DontDelete|ReadOnly
-  applets		HTMLDocument::Applets		DontDelete|ReadOnly
-  links			HTMLDocument::Links		DontDelete|ReadOnly
-  forms			HTMLDocument::Forms		DontDelete|ReadOnly
-  anchors		HTMLDocument::Anchors		DontDelete|ReadOnly
-  scripts		HTMLDocument::Scripts		DontDelete|ReadOnly
-  all			HTMLDocument::All		
-  clear			HTMLDocument::Clear		DontDelete|Function 0
-  open			HTMLDocument::Open		DontDelete|Function 0
-  close			HTMLDocument::Close		DontDelete|Function 0
-  write			HTMLDocument::Write		DontDelete|Function 1
-  writeln		HTMLDocument::WriteLn		DontDelete|Function 1
-  getElementsByName	HTMLDocument::GetElementsByName	DontDelete|Function 1
-  captureEvents		HTMLDocument::CaptureEvents	DontDelete|Function 0
-  releaseEvents		HTMLDocument::ReleaseEvents	DontDelete|Function 0
-  bgColor		HTMLDocument::BgColor		DontDelete
-  fgColor		HTMLDocument::FgColor		DontDelete
-  alinkColor		HTMLDocument::AlinkColor	DontDelete
-  linkColor		HTMLDocument::LinkColor		DontDelete
-  vlinkColor		HTMLDocument::VlinkColor	DontDelete
-  lastModified		HTMLDocument::LastModified	DontDelete|ReadOnly
-  height		HTMLDocument::Height		DontDelete|ReadOnly
-  width			HTMLDocument::Width		DontDelete|ReadOnly
-  dir			HTMLDocument::Dir		DontDelete
+  title                 HTMLDocument::Title             DontDelete
+  referrer              HTMLDocument::Referrer          DontDelete|ReadOnly
+  domain                HTMLDocument::Domain            DontDelete
+  URL                   HTMLDocument::URL               DontDelete|ReadOnly
+  body                  HTMLDocument::Body              DontDelete
+  location              HTMLDocument::Location          DontDelete
+  cookie                HTMLDocument::Cookie            DontDelete
+  images                HTMLDocument::Images            DontDelete|ReadOnly
+  embeds                HTMLDocument::Embeds            DontDelete|ReadOnly
+  plugins               HTMLDocument::Embeds            DontDelete|ReadOnly
+  applets               HTMLDocument::Applets           DontDelete|ReadOnly
+  links                 HTMLDocument::Links             DontDelete|ReadOnly
+  forms                 HTMLDocument::Forms             DontDelete|ReadOnly
+  anchors               HTMLDocument::Anchors           DontDelete|ReadOnly
+  scripts               HTMLDocument::Scripts           DontDelete|ReadOnly
+  all                   HTMLDocument::All               
+  clear                 HTMLDocument::Clear             DontDelete|Function 0
+  open                  HTMLDocument::Open              DontDelete|Function 0
+  close                 HTMLDocument::Close             DontDelete|Function 0
+  write                 HTMLDocument::Write             DontDelete|Function 1
+  writeln               HTMLDocument::WriteLn           DontDelete|Function 1
+  getElementsByName     HTMLDocument::GetElementsByName DontDelete|Function 1
+  captureEvents         HTMLDocument::CaptureEvents     DontDelete|Function 0
+  releaseEvents         HTMLDocument::ReleaseEvents     DontDelete|Function 0
+  bgColor               HTMLDocument::BgColor           DontDelete
+  fgColor               HTMLDocument::FgColor           DontDelete
+  alinkColor            HTMLDocument::AlinkColor        DontDelete
+  linkColor             HTMLDocument::LinkColor         DontDelete
+  vlinkColor            HTMLDocument::VlinkColor        DontDelete
+  lastModified          HTMLDocument::LastModified      DontDelete|ReadOnly
+  height                HTMLDocument::Height            DontDelete|ReadOnly
+  width                 HTMLDocument::Width             DontDelete|ReadOnly
+  dir                   HTMLDocument::Dir               DontDelete
   designMode            HTMLDocument::DesignMode        DontDelete
 #potentially obsolete array properties
 # layers
@@ -410,7 +410,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
       // don't want to incur a style update each time.
       DOMString newColor = value->toString(exec).domString();
       if (bodyElement->link() != newColor)
-	bodyElement->setLink(newColor);
+        bodyElement->setLink(newColor);
     }
     break;
   case VlinkColor:
@@ -420,7 +420,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
       // don't want to incur a style update each time.
       DOMString newColor = value->toString(exec).domString();
       if (bodyElement->vLink() != newColor)
-	bodyElement->setVLink(newColor);
+        bodyElement->setVLink(newColor);
     }
     break;
   case Dir:
@@ -509,78 +509,77 @@ const ClassInfo KJS::HTMLElement::marquee_info = { "HTMLMarqueeElement", &KJS::H
 
 const ClassInfo* KJS::HTMLElement::classInfo() const
 {
-    // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
-    static QPtrDict<const ClassInfo> classInfoDict;
-    if (classInfoDict.isEmpty()) {
-        classInfoDict.insert(aTag.localName().impl(), &a_info);
-        classInfoDict.insert(appletTag.localName().impl(), &applet_info);
-        classInfoDict.insert(areaTag.localName().impl(), &area_info);
-        classInfoDict.insert(baseTag.localName().impl(), &base_info);
-        classInfoDict.insert(basefontTag.localName().impl(), &baseFont_info);
-        classInfoDict.insert(blockquoteTag.localName().impl(), &blockQuote_info);
-        classInfoDict.insert(bodyTag.localName().impl(), &body_info);
-        classInfoDict.insert(brTag.localName().impl(), &br_info);
-        classInfoDict.insert(buttonTag.localName().impl(), &button_info);
-        classInfoDict.insert(canvasTag.localName().impl(), &canvas_info);
-        classInfoDict.insert(captionTag.localName().impl(), &caption_info);
-        classInfoDict.insert(colTag.localName().impl(), &col_info);
-        classInfoDict.insert(colgroupTag.localName().impl(), &col_info);
-        classInfoDict.insert(delTag.localName().impl(), &mod_info);
-        classInfoDict.insert(dirTag.localName().impl(), &dir_info);
-        classInfoDict.insert(divTag.localName().impl(), &div_info);
-        classInfoDict.insert(dlTag.localName().impl(), &dl_info);
-        classInfoDict.insert(fieldsetTag.localName().impl(), &fieldSet_info);
-        classInfoDict.insert(fontTag.localName().impl(), &font_info);
-        classInfoDict.insert(formTag.localName().impl(), &form_info);
-        classInfoDict.insert(frameTag.localName().impl(), &frame_info);
-        classInfoDict.insert(framesetTag.localName().impl(), &frameSet_info);
-        classInfoDict.insert(h1Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(h2Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(h3Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(h4Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(h5Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(h6Tag.localName().impl(), &heading_info);
-        classInfoDict.insert(headTag.localName().impl(), &head_info);
-        classInfoDict.insert(hrTag.localName().impl(), &hr_info);
-        classInfoDict.insert(htmlTag.localName().impl(), &html_info);
-        classInfoDict.insert(iframeTag.localName().impl(), &iFrame_info);
-        classInfoDict.insert(imgTag.localName().impl(), &img_info);
-        classInfoDict.insert(inputTag.localName().impl(), &input_info);
-        classInfoDict.insert(insTag.localName().impl(), &mod_info);
-        classInfoDict.insert(isindexTag.localName().impl(), &isIndex_info);
-        classInfoDict.insert(labelTag.localName().impl(), &label_info);
-        classInfoDict.insert(legendTag.localName().impl(), &legend_info);
-        classInfoDict.insert(liTag.localName().impl(), &li_info);
-        classInfoDict.insert(linkTag.localName().impl(), &link_info);
-        classInfoDict.insert(mapTag.localName().impl(), &map_info);
-        classInfoDict.insert(marqueeTag.localName().impl(), &marquee_info);
-        classInfoDict.insert(menuTag.localName().impl(), &menu_info);
-        classInfoDict.insert(metaTag.localName().impl(), &meta_info);
-        classInfoDict.insert(objectTag.localName().impl(), &object_info);
-        classInfoDict.insert(olTag.localName().impl(), &ol_info);
-        classInfoDict.insert(optionTag.localName().impl(), &option_info);
-        classInfoDict.insert(optgroupTag.localName().impl(), &optGroup_info);
-        classInfoDict.insert(pTag.localName().impl(), &p_info);
-        classInfoDict.insert(paramTag.localName().impl(), &param_info);
-        classInfoDict.insert(preTag.localName().impl(), &pre_info);
-        classInfoDict.insert(qTag.localName().impl(), &q_info);
-        classInfoDict.insert(scriptTag.localName().impl(), &script_info);
-        classInfoDict.insert(selectTag.localName().impl(), &select_info);
-        classInfoDict.insert(styleTag.localName().impl(), &style_info);
-        classInfoDict.insert(tableTag.localName().impl(), &table_info);
-        classInfoDict.insert(tbodyTag.localName().impl(), &tablesection_info);
-        classInfoDict.insert(tdTag.localName().impl(), &tablecell_info);
-        classInfoDict.insert(textareaTag.localName().impl(), &textArea_info);
-        classInfoDict.insert(thTag.localName().impl(), &tablecell_info);
-        classInfoDict.insert(theadTag.localName().impl(), &tablesection_info);
-        classInfoDict.insert(tfootTag.localName().impl(), &tablesection_info);
-        classInfoDict.insert(titleTag.localName().impl(), &title_info);
-        classInfoDict.insert(trTag.localName().impl(), &tr_info);
-        classInfoDict.insert(ulTag.localName().impl(), &ul_info);
+    static HashMap<DOM::DOMStringImpl*, const ClassInfo*, PointerHash<DOM::DOMStringImpl*> > classInfoMap;
+    if (classInfoMap.isEmpty()) {
+        classInfoMap.set(aTag.localName().impl(), &a_info);
+        classInfoMap.set(appletTag.localName().impl(), &applet_info);
+        classInfoMap.set(areaTag.localName().impl(), &area_info);
+        classInfoMap.set(baseTag.localName().impl(), &base_info);
+        classInfoMap.set(basefontTag.localName().impl(), &baseFont_info);
+        classInfoMap.set(blockquoteTag.localName().impl(), &blockQuote_info);
+        classInfoMap.set(bodyTag.localName().impl(), &body_info);
+        classInfoMap.set(brTag.localName().impl(), &br_info);
+        classInfoMap.set(buttonTag.localName().impl(), &button_info);
+        classInfoMap.set(canvasTag.localName().impl(), &canvas_info);
+        classInfoMap.set(captionTag.localName().impl(), &caption_info);
+        classInfoMap.set(colTag.localName().impl(), &col_info);
+        classInfoMap.set(colgroupTag.localName().impl(), &col_info);
+        classInfoMap.set(delTag.localName().impl(), &mod_info);
+        classInfoMap.set(dirTag.localName().impl(), &dir_info);
+        classInfoMap.set(divTag.localName().impl(), &div_info);
+        classInfoMap.set(dlTag.localName().impl(), &dl_info);
+        classInfoMap.set(fieldsetTag.localName().impl(), &fieldSet_info);
+        classInfoMap.set(fontTag.localName().impl(), &font_info);
+        classInfoMap.set(formTag.localName().impl(), &form_info);
+        classInfoMap.set(frameTag.localName().impl(), &frame_info);
+        classInfoMap.set(framesetTag.localName().impl(), &frameSet_info);
+        classInfoMap.set(h1Tag.localName().impl(), &heading_info);
+        classInfoMap.set(h2Tag.localName().impl(), &heading_info);
+        classInfoMap.set(h3Tag.localName().impl(), &heading_info);
+        classInfoMap.set(h4Tag.localName().impl(), &heading_info);
+        classInfoMap.set(h5Tag.localName().impl(), &heading_info);
+        classInfoMap.set(h6Tag.localName().impl(), &heading_info);
+        classInfoMap.set(headTag.localName().impl(), &head_info);
+        classInfoMap.set(hrTag.localName().impl(), &hr_info);
+        classInfoMap.set(htmlTag.localName().impl(), &html_info);
+        classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
+        classInfoMap.set(imgTag.localName().impl(), &img_info);
+        classInfoMap.set(inputTag.localName().impl(), &input_info);
+        classInfoMap.set(insTag.localName().impl(), &mod_info);
+        classInfoMap.set(isindexTag.localName().impl(), &isIndex_info);
+        classInfoMap.set(labelTag.localName().impl(), &label_info);
+        classInfoMap.set(legendTag.localName().impl(), &legend_info);
+        classInfoMap.set(liTag.localName().impl(), &li_info);
+        classInfoMap.set(linkTag.localName().impl(), &link_info);
+        classInfoMap.set(mapTag.localName().impl(), &map_info);
+        classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
+        classInfoMap.set(menuTag.localName().impl(), &menu_info);
+        classInfoMap.set(metaTag.localName().impl(), &meta_info);
+        classInfoMap.set(objectTag.localName().impl(), &object_info);
+        classInfoMap.set(olTag.localName().impl(), &ol_info);
+        classInfoMap.set(optionTag.localName().impl(), &option_info);
+        classInfoMap.set(optgroupTag.localName().impl(), &optGroup_info);
+        classInfoMap.set(pTag.localName().impl(), &p_info);
+        classInfoMap.set(paramTag.localName().impl(), &param_info);
+        classInfoMap.set(preTag.localName().impl(), &pre_info);
+        classInfoMap.set(qTag.localName().impl(), &q_info);
+        classInfoMap.set(scriptTag.localName().impl(), &script_info);
+        classInfoMap.set(selectTag.localName().impl(), &select_info);
+        classInfoMap.set(styleTag.localName().impl(), &style_info);
+        classInfoMap.set(tableTag.localName().impl(), &table_info);
+        classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
+        classInfoMap.set(tdTag.localName().impl(), &tablecell_info);
+        classInfoMap.set(textareaTag.localName().impl(), &textArea_info);
+        classInfoMap.set(thTag.localName().impl(), &tablecell_info);
+        classInfoMap.set(theadTag.localName().impl(), &tablesection_info);
+        classInfoMap.set(tfootTag.localName().impl(), &tablesection_info);
+        classInfoMap.set(titleTag.localName().impl(), &title_info);
+        classInfoMap.set(trTag.localName().impl(), &tr_info);
+        classInfoMap.set(ulTag.localName().impl(), &ul_info);
     }
     
     HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
-    const ClassInfo* result = classInfoDict.find(element->localName().impl());
+    const ClassInfo* result = classInfoMap.get(element->localName().impl());
     if (result)
         return result;
     return &info;
@@ -644,7 +643,6 @@ const HTMLElement::Accessors HTMLElement::marquee_accessors = { &HTMLElement::ma
 
 const HTMLElement::Accessors* HTMLElement::accessors() const
 {
-    // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
     static HashMap<DOM::DOMStringImpl *, const Accessors *, PointerHash<DOM::DOMStringImpl *> > accessorMap;
     if (accessorMap.isEmpty()) {
         accessorMap.add(aTag.localName().impl(), &a_accessors);
@@ -720,477 +718,477 @@ const HTMLElement::Accessors* HTMLElement::accessors() const
 
 /*
 @begin HTMLElementTable 14
-  id		KJS::HTMLElement::ElementId	DontDelete
-  title		KJS::HTMLElement::ElementTitle	DontDelete
-  lang		KJS::HTMLElement::ElementLang	DontDelete
-  dir		KJS::HTMLElement::ElementDir	DontDelete
+  id            KJS::HTMLElement::ElementId     DontDelete
+  title         KJS::HTMLElement::ElementTitle  DontDelete
+  lang          KJS::HTMLElement::ElementLang   DontDelete
+  dir           KJS::HTMLElement::ElementDir    DontDelete
 ### isn't this "class" in the HTML spec?
-  className	KJS::HTMLElement::ElementClassName DontDelete
-  innerHTML	KJS::HTMLElement::ElementInnerHTML DontDelete
-  innerText	KJS::HTMLElement::ElementInnerText DontDelete
-  outerHTML	KJS::HTMLElement::ElementOuterHTML DontDelete
-  outerText	KJS::HTMLElement::ElementOuterText DontDelete
-  document	KJS::HTMLElement::ElementDocument  DontDelete|ReadOnly
+  className     KJS::HTMLElement::ElementClassName DontDelete
+  innerHTML     KJS::HTMLElement::ElementInnerHTML DontDelete
+  innerText     KJS::HTMLElement::ElementInnerText DontDelete
+  outerHTML     KJS::HTMLElement::ElementOuterHTML DontDelete
+  outerText     KJS::HTMLElement::ElementOuterText DontDelete
+  document      KJS::HTMLElement::ElementDocument  DontDelete|ReadOnly
 # IE extension
-  children	KJS::HTMLElement::ElementChildren  DontDelete|ReadOnly
+  children      KJS::HTMLElement::ElementChildren  DontDelete|ReadOnly
   contentEditable   KJS::HTMLElement::ElementContentEditable  DontDelete
   isContentEditable KJS::HTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
 @end
 @begin HTMLHtmlElementTable 1
-  version	KJS::HTMLElement::HtmlVersion	DontDelete
+  version       KJS::HTMLElement::HtmlVersion   DontDelete
 @end
 @begin HTMLHeadElementTable 1
-  profile	KJS::HTMLElement::HeadProfile	DontDelete
+  profile       KJS::HTMLElement::HeadProfile   DontDelete
 @end
 @begin HTMLLinkElementTable 11
-  disabled	KJS::HTMLElement::LinkDisabled	DontDelete
-  charset	KJS::HTMLElement::LinkCharset	DontDelete
-  href		KJS::HTMLElement::LinkHref	DontDelete
-  hreflang	KJS::HTMLElement::LinkHrefLang	DontDelete
-  media		KJS::HTMLElement::LinkMedia	DontDelete
-  rel		KJS::HTMLElement::LinkRel      	DontDelete
-  rev		KJS::HTMLElement::LinkRev	DontDelete
-  target	KJS::HTMLElement::LinkTarget	DontDelete
-  type		KJS::HTMLElement::LinkType	DontDelete
-  sheet		KJS::HTMLElement::LinkSheet	DontDelete|ReadOnly
+  disabled      KJS::HTMLElement::LinkDisabled  DontDelete
+  charset       KJS::HTMLElement::LinkCharset   DontDelete
+  href          KJS::HTMLElement::LinkHref      DontDelete
+  hreflang      KJS::HTMLElement::LinkHrefLang  DontDelete
+  media         KJS::HTMLElement::LinkMedia     DontDelete
+  rel           KJS::HTMLElement::LinkRel       DontDelete
+  rev           KJS::HTMLElement::LinkRev       DontDelete
+  target        KJS::HTMLElement::LinkTarget    DontDelete
+  type          KJS::HTMLElement::LinkType      DontDelete
+  sheet         KJS::HTMLElement::LinkSheet     DontDelete|ReadOnly
 @end
 @begin HTMLTitleElementTable 1
-  text		KJS::HTMLElement::TitleText	DontDelete
+  text          KJS::HTMLElement::TitleText     DontDelete
 @end
 @begin HTMLMetaElementTable 4
-  content	KJS::HTMLElement::MetaContent	DontDelete
-  httpEquiv	KJS::HTMLElement::MetaHttpEquiv	DontDelete
-  name		KJS::HTMLElement::MetaName	DontDelete
-  scheme	KJS::HTMLElement::MetaScheme	DontDelete
+  content       KJS::HTMLElement::MetaContent   DontDelete
+  httpEquiv     KJS::HTMLElement::MetaHttpEquiv DontDelete
+  name          KJS::HTMLElement::MetaName      DontDelete
+  scheme        KJS::HTMLElement::MetaScheme    DontDelete
 @end
 @begin HTMLBaseElementTable 2
-  href		KJS::HTMLElement::BaseHref	DontDelete
-  target	KJS::HTMLElement::BaseTarget	DontDelete
+  href          KJS::HTMLElement::BaseHref      DontDelete
+  target        KJS::HTMLElement::BaseTarget    DontDelete
 @end
 @begin HTMLIsIndexElementTable 2
-  form		KJS::HTMLElement::IsIndexForm	DontDelete|ReadOnly
-  prompt	KJS::HTMLElement::IsIndexPrompt	DontDelete
+  form          KJS::HTMLElement::IsIndexForm   DontDelete|ReadOnly
+  prompt        KJS::HTMLElement::IsIndexPrompt DontDelete
 @end
 @begin HTMLStyleElementTable 4
-  disabled	KJS::HTMLElement::StyleDisabled	DontDelete
-  media		KJS::HTMLElement::StyleMedia	DontDelete
-  type		KJS::HTMLElement::StyleType	DontDelete
-  sheet		KJS::HTMLElement::StyleSheet	DontDelete|ReadOnly
+  disabled      KJS::HTMLElement::StyleDisabled DontDelete
+  media         KJS::HTMLElement::StyleMedia    DontDelete
+  type          KJS::HTMLElement::StyleType     DontDelete
+  sheet         KJS::HTMLElement::StyleSheet    DontDelete|ReadOnly
 @end
 @begin HTMLBodyElementTable 10
-  aLink		KJS::HTMLElement::BodyALink	DontDelete
-  background	KJS::HTMLElement::BodyBackground	DontDelete
-  bgColor	KJS::HTMLElement::BodyBgColor	DontDelete
-  link		KJS::HTMLElement::BodyLink	DontDelete
-  text		KJS::HTMLElement::BodyText	DontDelete
-  vLink		KJS::HTMLElement::BodyVLink	DontDelete
+  aLink         KJS::HTMLElement::BodyALink     DontDelete
+  background    KJS::HTMLElement::BodyBackground        DontDelete
+  bgColor       KJS::HTMLElement::BodyBgColor   DontDelete
+  link          KJS::HTMLElement::BodyLink      DontDelete
+  text          KJS::HTMLElement::BodyText      DontDelete
+  vLink         KJS::HTMLElement::BodyVLink     DontDelete
   scrollLeft    KJS::HTMLElement::BodyScrollLeft        DontDelete
   scrollTop     KJS::HTMLElement::BodyScrollTop         DontDelete
-  scrollHeight	KJS::HTMLElement::BodyScrollHeight	DontDelete|ReadOnly
-  scrollWidth	KJS::HTMLElement::BodyScrollWidth	DontDelete|ReadOnly
+  scrollHeight  KJS::HTMLElement::BodyScrollHeight      DontDelete|ReadOnly
+  scrollWidth   KJS::HTMLElement::BodyScrollWidth       DontDelete|ReadOnly
 @end
 @begin HTMLFormElementTable 11
 # Also supported, by name/index
-  elements	KJS::HTMLElement::FormElements	DontDelete|ReadOnly
-  length	KJS::HTMLElement::FormLength	DontDelete|ReadOnly
-  name		KJS::HTMLElement::FormName	DontDelete
-  acceptCharset	KJS::HTMLElement::FormAcceptCharset	DontDelete
-  action	KJS::HTMLElement::FormAction	DontDelete
-  enctype	KJS::HTMLElement::FormEncType	DontDelete
-  method	KJS::HTMLElement::FormMethod	DontDelete
-  target	KJS::HTMLElement::FormTarget	DontDelete
-  submit	KJS::HTMLElement::FormSubmit	DontDelete|Function 0
-  reset		KJS::HTMLElement::FormReset	DontDelete|Function 0
+  elements      KJS::HTMLElement::FormElements  DontDelete|ReadOnly
+  length        KJS::HTMLElement::FormLength    DontDelete|ReadOnly
+  name          KJS::HTMLElement::FormName      DontDelete
+  acceptCharset KJS::HTMLElement::FormAcceptCharset     DontDelete
+  action        KJS::HTMLElement::FormAction    DontDelete
+  enctype       KJS::HTMLElement::FormEncType   DontDelete
+  method        KJS::HTMLElement::FormMethod    DontDelete
+  target        KJS::HTMLElement::FormTarget    DontDelete
+  submit        KJS::HTMLElement::FormSubmit    DontDelete|Function 0
+  reset         KJS::HTMLElement::FormReset     DontDelete|Function 0
 @end
 @begin HTMLSelectElementTable 11
 # Also supported, by index
-  type		KJS::HTMLElement::SelectType	DontDelete|ReadOnly
-  selectedIndex	KJS::HTMLElement::SelectSelectedIndex	DontDelete
-  value		KJS::HTMLElement::SelectValue	DontDelete
-  length	KJS::HTMLElement::SelectLength	DontDelete
-  form		KJS::HTMLElement::SelectForm	DontDelete|ReadOnly
-  options	KJS::HTMLElement::SelectOptions	DontDelete|ReadOnly
-  disabled	KJS::HTMLElement::SelectDisabled	DontDelete
-  multiple	KJS::HTMLElement::SelectMultiple	DontDelete
-  name		KJS::HTMLElement::SelectName	DontDelete
-  size		KJS::HTMLElement::SelectSize	DontDelete
-  tabIndex	KJS::HTMLElement::SelectTabIndex	DontDelete
-  add		KJS::HTMLElement::SelectAdd	DontDelete|Function 2
-  remove	KJS::HTMLElement::SelectRemove	DontDelete|Function 1
-  blur		KJS::HTMLElement::SelectBlur	DontDelete|Function 0
-  focus		KJS::HTMLElement::SelectFocus	DontDelete|Function 0
+  type          KJS::HTMLElement::SelectType    DontDelete|ReadOnly
+  selectedIndex KJS::HTMLElement::SelectSelectedIndex   DontDelete
+  value         KJS::HTMLElement::SelectValue   DontDelete
+  length        KJS::HTMLElement::SelectLength  DontDelete
+  form          KJS::HTMLElement::SelectForm    DontDelete|ReadOnly
+  options       KJS::HTMLElement::SelectOptions DontDelete|ReadOnly
+  disabled      KJS::HTMLElement::SelectDisabled        DontDelete
+  multiple      KJS::HTMLElement::SelectMultiple        DontDelete
+  name          KJS::HTMLElement::SelectName    DontDelete
+  size          KJS::HTMLElement::SelectSize    DontDelete
+  tabIndex      KJS::HTMLElement::SelectTabIndex        DontDelete
+  add           KJS::HTMLElement::SelectAdd     DontDelete|Function 2
+  remove        KJS::HTMLElement::SelectRemove  DontDelete|Function 1
+  blur          KJS::HTMLElement::SelectBlur    DontDelete|Function 0
+  focus         KJS::HTMLElement::SelectFocus   DontDelete|Function 0
 @end
 @begin HTMLOptGroupElementTable 2
-  disabled	KJS::HTMLElement::OptGroupDisabled	DontDelete
-  label		KJS::HTMLElement::OptGroupLabel		DontDelete
+  disabled      KJS::HTMLElement::OptGroupDisabled      DontDelete
+  label         KJS::HTMLElement::OptGroupLabel         DontDelete
 @end
 @begin HTMLOptionElementTable 8
-  form		KJS::HTMLElement::OptionForm		DontDelete|ReadOnly
-  defaultSelected KJS::HTMLElement::OptionDefaultSelected	DontDelete
-  text		KJS::HTMLElement::OptionText		DontDelete
-  index		KJS::HTMLElement::OptionIndex		DontDelete|ReadOnly
-  disabled	KJS::HTMLElement::OptionDisabled	DontDelete
-  label		KJS::HTMLElement::OptionLabel		DontDelete
-  selected	KJS::HTMLElement::OptionSelected	DontDelete
-  value		KJS::HTMLElement::OptionValue		DontDelete
+  form          KJS::HTMLElement::OptionForm            DontDelete|ReadOnly
+  defaultSelected KJS::HTMLElement::OptionDefaultSelected       DontDelete
+  text          KJS::HTMLElement::OptionText            DontDelete
+  index         KJS::HTMLElement::OptionIndex           DontDelete|ReadOnly
+  disabled      KJS::HTMLElement::OptionDisabled        DontDelete
+  label         KJS::HTMLElement::OptionLabel           DontDelete
+  selected      KJS::HTMLElement::OptionSelected        DontDelete
+  value         KJS::HTMLElement::OptionValue           DontDelete
 @end
 @begin HTMLInputElementTable 24
-  defaultValue	KJS::HTMLElement::InputDefaultValue	DontDelete
-  defaultChecked KJS::HTMLElement::InputDefaultChecked	DontDelete
-  form		KJS::HTMLElement::InputForm		DontDelete|ReadOnly
-  accept	KJS::HTMLElement::InputAccept		DontDelete
-  accessKey	KJS::HTMLElement::InputAccessKey	DontDelete
-  align		KJS::HTMLElement::InputAlign		DontDelete
-  alt		KJS::HTMLElement::InputAlt		DontDelete
-  checked	KJS::HTMLElement::InputChecked		DontDelete
-  disabled	KJS::HTMLElement::InputDisabled		DontDelete
+  defaultValue  KJS::HTMLElement::InputDefaultValue     DontDelete
+  defaultChecked KJS::HTMLElement::InputDefaultChecked  DontDelete
+  form          KJS::HTMLElement::InputForm             DontDelete|ReadOnly
+  accept        KJS::HTMLElement::InputAccept           DontDelete
+  accessKey     KJS::HTMLElement::InputAccessKey        DontDelete
+  align         KJS::HTMLElement::InputAlign            DontDelete
+  alt           KJS::HTMLElement::InputAlt              DontDelete
+  checked       KJS::HTMLElement::InputChecked          DontDelete
+  disabled      KJS::HTMLElement::InputDisabled         DontDelete
   indeterminate KJS::HTMLElement::InputIndeterminate    DontDelete
-  maxLength	KJS::HTMLElement::InputMaxLength	DontDelete
-  name		KJS::HTMLElement::InputName		DontDelete
-  readOnly	KJS::HTMLElement::InputReadOnly		DontDelete
-  selectionStart	KJS::HTMLElement::InputSelectionStart	DontDelete
-  selectionEnd	KJS::HTMLElement::InputSelectionEnd	DontDelete
-  size		KJS::HTMLElement::InputSize		DontDelete
-  src		KJS::HTMLElement::InputSrc		DontDelete
-  tabIndex	KJS::HTMLElement::InputTabIndex		DontDelete
-  type		KJS::HTMLElement::InputType		DontDelete
-  useMap	KJS::HTMLElement::InputUseMap		DontDelete
-  value		KJS::HTMLElement::InputValue		DontDelete
-  blur		KJS::HTMLElement::InputBlur		DontDelete|Function 0
-  focus		KJS::HTMLElement::InputFocus		DontDelete|Function 0
-  select	KJS::HTMLElement::InputSelect		DontDelete|Function 0
-  click		KJS::HTMLElement::InputClick		DontDelete|Function 0
-  setSelectionRange	KJS::HTMLElement::InputSetSelectionRange	DontDelete|Function 2
+  maxLength     KJS::HTMLElement::InputMaxLength        DontDelete
+  name          KJS::HTMLElement::InputName             DontDelete
+  readOnly      KJS::HTMLElement::InputReadOnly         DontDelete
+  selectionStart        KJS::HTMLElement::InputSelectionStart   DontDelete
+  selectionEnd  KJS::HTMLElement::InputSelectionEnd     DontDelete
+  size          KJS::HTMLElement::InputSize             DontDelete
+  src           KJS::HTMLElement::InputSrc              DontDelete
+  tabIndex      KJS::HTMLElement::InputTabIndex         DontDelete
+  type          KJS::HTMLElement::InputType             DontDelete
+  useMap        KJS::HTMLElement::InputUseMap           DontDelete
+  value         KJS::HTMLElement::InputValue            DontDelete
+  blur          KJS::HTMLElement::InputBlur             DontDelete|Function 0
+  focus         KJS::HTMLElement::InputFocus            DontDelete|Function 0
+  select        KJS::HTMLElement::InputSelect           DontDelete|Function 0
+  click         KJS::HTMLElement::InputClick            DontDelete|Function 0
+  setSelectionRange     KJS::HTMLElement::InputSetSelectionRange        DontDelete|Function 2
 @end
 @begin HTMLTextAreaElementTable 17
-  defaultValue	KJS::HTMLElement::TextAreaDefaultValue	DontDelete
-  form		KJS::HTMLElement::TextAreaForm		DontDelete|ReadOnly
-  accessKey	KJS::HTMLElement::TextAreaAccessKey	DontDelete
-  cols		KJS::HTMLElement::TextAreaCols		DontDelete
-  disabled	KJS::HTMLElement::TextAreaDisabled	DontDelete
-  name		KJS::HTMLElement::TextAreaName		DontDelete
-  readOnly	KJS::HTMLElement::TextAreaReadOnly	DontDelete
-  rows		KJS::HTMLElement::TextAreaRows		DontDelete
-  selectionStart	KJS::HTMLElement::TextAreaSelectionStart	DontDelete
-  selectionEnd	KJS::HTMLElement::TextAreaSelectionEnd	DontDelete
-  tabIndex	KJS::HTMLElement::TextAreaTabIndex	DontDelete
-  type		KJS::HTMLElement::TextAreaType		DontDelete|ReadOnly
-  value		KJS::HTMLElement::TextAreaValue		DontDelete
-  blur		KJS::HTMLElement::TextAreaBlur		DontDelete|Function 0
-  focus		KJS::HTMLElement::TextAreaFocus		DontDelete|Function 0
-  select	KJS::HTMLElement::TextAreaSelect	DontDelete|Function 0
-  setSelectionRange	KJS::HTMLElement::TextAreaSetSelectionRange	DontDelete|Function 2
+  defaultValue  KJS::HTMLElement::TextAreaDefaultValue  DontDelete
+  form          KJS::HTMLElement::TextAreaForm          DontDelete|ReadOnly
+  accessKey     KJS::HTMLElement::TextAreaAccessKey     DontDelete
+  cols          KJS::HTMLElement::TextAreaCols          DontDelete
+  disabled      KJS::HTMLElement::TextAreaDisabled      DontDelete
+  name          KJS::HTMLElement::TextAreaName          DontDelete
+  readOnly      KJS::HTMLElement::TextAreaReadOnly      DontDelete
+  rows          KJS::HTMLElement::TextAreaRows          DontDelete
+  selectionStart        KJS::HTMLElement::TextAreaSelectionStart        DontDelete
+  selectionEnd  KJS::HTMLElement::TextAreaSelectionEnd  DontDelete
+  tabIndex      KJS::HTMLElement::TextAreaTabIndex      DontDelete
+  type          KJS::HTMLElement::TextAreaType          DontDelete|ReadOnly
+  value         KJS::HTMLElement::TextAreaValue         DontDelete
+  blur          KJS::HTMLElement::TextAreaBlur          DontDelete|Function 0
+  focus         KJS::HTMLElement::TextAreaFocus         DontDelete|Function 0
+  select        KJS::HTMLElement::TextAreaSelect        DontDelete|Function 0
+  setSelectionRange     KJS::HTMLElement::TextAreaSetSelectionRange     DontDelete|Function 2
 @end
 @begin HTMLButtonElementTable 7
-  form		KJS::HTMLElement::ButtonForm		DontDelete|ReadOnly
-  accessKey	KJS::HTMLElement::ButtonAccessKey	DontDelete
-  disabled	KJS::HTMLElement::ButtonDisabled	DontDelete
-  name		KJS::HTMLElement::ButtonName		DontDelete
-  tabIndex	KJS::HTMLElement::ButtonTabIndex	DontDelete
-  type		KJS::HTMLElement::ButtonType		DontDelete|ReadOnly
-  value		KJS::HTMLElement::ButtonValue		DontDelete
-  blur		KJS::HTMLElement::ButtonBlur		DontDelete|Function 0
-  focus		KJS::HTMLElement::ButtonFocus		DontDelete|Function 0
+  form          KJS::HTMLElement::ButtonForm            DontDelete|ReadOnly
+  accessKey     KJS::HTMLElement::ButtonAccessKey       DontDelete
+  disabled      KJS::HTMLElement::ButtonDisabled        DontDelete
+  name          KJS::HTMLElement::ButtonName            DontDelete
+  tabIndex      KJS::HTMLElement::ButtonTabIndex        DontDelete
+  type          KJS::HTMLElement::ButtonType            DontDelete|ReadOnly
+  value         KJS::HTMLElement::ButtonValue           DontDelete
+  blur          KJS::HTMLElement::ButtonBlur            DontDelete|Function 0
+  focus         KJS::HTMLElement::ButtonFocus           DontDelete|Function 0
 @end
 @begin HTMLLabelElementTable 4
-  form		KJS::HTMLElement::LabelForm		DontDelete|ReadOnly
-  accessKey	KJS::HTMLElement::LabelAccessKey	DontDelete
-  htmlFor	KJS::HTMLElement::LabelHtmlFor		DontDelete
+  form          KJS::HTMLElement::LabelForm             DontDelete|ReadOnly
+  accessKey     KJS::HTMLElement::LabelAccessKey        DontDelete
+  htmlFor       KJS::HTMLElement::LabelHtmlFor          DontDelete
   focus     KJS::HTMLElement::LabelFocus        DontDelete|Function 0
 @end
 @begin HTMLFieldSetElementTable 1
-  form		KJS::HTMLElement::FieldSetForm		DontDelete|ReadOnly
+  form          KJS::HTMLElement::FieldSetForm          DontDelete|ReadOnly
 @end
 @begin HTMLLegendElementTable 4
-  form		KJS::HTMLElement::LegendForm		DontDelete|ReadOnly
-  accessKey	KJS::HTMLElement::LegendAccessKey	DontDelete
-  align		KJS::HTMLElement::LegendAlign		DontDelete
+  form          KJS::HTMLElement::LegendForm            DontDelete|ReadOnly
+  accessKey     KJS::HTMLElement::LegendAccessKey       DontDelete
+  align         KJS::HTMLElement::LegendAlign           DontDelete
   focus     KJS::HTMLElement::LegendFocus     DontDelete|Function 0
 @end
 @begin HTMLUListElementTable 2
-  compact	KJS::HTMLElement::UListCompact		DontDelete
-  type		KJS::HTMLElement::UListType		DontDelete
+  compact       KJS::HTMLElement::UListCompact          DontDelete
+  type          KJS::HTMLElement::UListType             DontDelete
 @end
 @begin HTMLOListElementTable 3
-  compact	KJS::HTMLElement::OListCompact		DontDelete
-  start		KJS::HTMLElement::OListStart		DontDelete
-  type		KJS::HTMLElement::OListType		DontDelete
+  compact       KJS::HTMLElement::OListCompact          DontDelete
+  start         KJS::HTMLElement::OListStart            DontDelete
+  type          KJS::HTMLElement::OListType             DontDelete
 @end
 @begin HTMLDListElementTable 1
-  compact	KJS::HTMLElement::DListCompact		DontDelete
+  compact       KJS::HTMLElement::DListCompact          DontDelete
 @end
 @begin HTMLDirectoryElementTable 1
-  compact	KJS::HTMLElement::DirectoryCompact	DontDelete
+  compact       KJS::HTMLElement::DirectoryCompact      DontDelete
 @end
 @begin HTMLMenuElementTable 1
-  compact	KJS::HTMLElement::MenuCompact		DontDelete
+  compact       KJS::HTMLElement::MenuCompact           DontDelete
 @end
 @begin HTMLLIElementTable 2
-  type		KJS::HTMLElement::LIType		DontDelete
-  value		KJS::HTMLElement::LIValue		DontDelete
+  type          KJS::HTMLElement::LIType                DontDelete
+  value         KJS::HTMLElement::LIValue               DontDelete
 @end
 @begin HTMLDivElementTable 1
-  align		KJS::HTMLElement::DivAlign		DontDelete
+  align         KJS::HTMLElement::DivAlign              DontDelete
 @end
 @begin HTMLParagraphElementTable 1
-  align		KJS::HTMLElement::ParagraphAlign	DontDelete
+  align         KJS::HTMLElement::ParagraphAlign        DontDelete
 @end
 @begin HTMLHeadingElementTable 1
-  align		KJS::HTMLElement::HeadingAlign		DontDelete
+  align         KJS::HTMLElement::HeadingAlign          DontDelete
 @end
 @begin HTMLBlockQuoteElementTable 1
-  cite		KJS::HTMLElement::BlockQuoteCite	DontDelete
+  cite          KJS::HTMLElement::BlockQuoteCite        DontDelete
 @end
 @begin HTMLQuoteElementTable 1
-  cite		KJS::HTMLElement::QuoteCite		DontDelete
+  cite          KJS::HTMLElement::QuoteCite             DontDelete
 @end
 @begin HTMLPreElementTable 1
-  width		KJS::HTMLElement::PreWidth		DontDelete
+  width         KJS::HTMLElement::PreWidth              DontDelete
 @end
 @begin HTMLBRElementTable 1
-  clear		KJS::HTMLElement::BRClear		DontDelete
+  clear         KJS::HTMLElement::BRClear               DontDelete
 @end
 @begin HTMLBaseFontElementTable 3
-  color		KJS::HTMLElement::BaseFontColor		DontDelete
-  face		KJS::HTMLElement::BaseFontFace		DontDelete
-  size		KJS::HTMLElement::BaseFontSize		DontDelete
+  color         KJS::HTMLElement::BaseFontColor         DontDelete
+  face          KJS::HTMLElement::BaseFontFace          DontDelete
+  size          KJS::HTMLElement::BaseFontSize          DontDelete
 @end
 @begin HTMLFontElementTable 3
-  color		KJS::HTMLElement::FontColor		DontDelete
-  face		KJS::HTMLElement::FontFace		DontDelete
-  size		KJS::HTMLElement::FontSize		DontDelete
+  color         KJS::HTMLElement::FontColor             DontDelete
+  face          KJS::HTMLElement::FontFace              DontDelete
+  size          KJS::HTMLElement::FontSize              DontDelete
 @end
 @begin HTMLHRElementTable 4
-  align		KJS::HTMLElement::HRAlign		DontDelete
-  noShade	KJS::HTMLElement::HRNoShade		DontDelete
-  size		KJS::HTMLElement::HRSize		DontDelete
-  width		KJS::HTMLElement::HRWidth		DontDelete
+  align         KJS::HTMLElement::HRAlign               DontDelete
+  noShade       KJS::HTMLElement::HRNoShade             DontDelete
+  size          KJS::HTMLElement::HRSize                DontDelete
+  width         KJS::HTMLElement::HRWidth               DontDelete
 @end
 @begin HTMLModElementTable 2
-  cite		KJS::HTMLElement::ModCite		DontDelete
-  dateTime	KJS::HTMLElement::ModDateTime		DontDelete
+  cite          KJS::HTMLElement::ModCite               DontDelete
+  dateTime      KJS::HTMLElement::ModDateTime           DontDelete
 @end
 @begin HTMLAnchorElementTable 24
-  accessKey	KJS::HTMLElement::AnchorAccessKey	DontDelete
-  charset	KJS::HTMLElement::AnchorCharset		DontDelete
-  coords	KJS::HTMLElement::AnchorCoords		DontDelete
-  href		KJS::HTMLElement::AnchorHref		DontDelete
-  hreflang	KJS::HTMLElement::AnchorHrefLang	DontDelete
-  hash		KJS::HTMLElement::AnchorHash		DontDelete|ReadOnly
-  host		KJS::HTMLElement::AnchorHost		DontDelete|ReadOnly
-  hostname	KJS::HTMLElement::AnchorHostname	DontDelete|ReadOnly
-  name		KJS::HTMLElement::AnchorName		DontDelete
-  pathname	KJS::HTMLElement::AnchorPathName	DontDelete|ReadOnly
-  port		KJS::HTMLElement::AnchorPort		DontDelete|ReadOnly
-  protocol	KJS::HTMLElement::AnchorProtocol	DontDelete|ReadOnly
-  rel		KJS::HTMLElement::AnchorRel		DontDelete
-  rev		KJS::HTMLElement::AnchorRev		DontDelete
-  search	KJS::HTMLElement::AnchorSearch		DontDelete|ReadOnly
-  shape		KJS::HTMLElement::AnchorShape		DontDelete
-  tabIndex	KJS::HTMLElement::AnchorTabIndex	DontDelete
-  target	KJS::HTMLElement::AnchorTarget		DontDelete
-  text		KJS::HTMLElement::AnchorText		DontDelete|ReadOnly
-  type		KJS::HTMLElement::AnchorType		DontDelete
-  blur		KJS::HTMLElement::AnchorBlur		DontDelete|Function 0
-  focus		KJS::HTMLElement::AnchorFocus		DontDelete|Function 0
+  accessKey     KJS::HTMLElement::AnchorAccessKey       DontDelete
+  charset       KJS::HTMLElement::AnchorCharset         DontDelete
+  coords        KJS::HTMLElement::AnchorCoords          DontDelete
+  href          KJS::HTMLElement::AnchorHref            DontDelete
+  hreflang      KJS::HTMLElement::AnchorHrefLang        DontDelete
+  hash          KJS::HTMLElement::AnchorHash            DontDelete|ReadOnly
+  host          KJS::HTMLElement::AnchorHost            DontDelete|ReadOnly
+  hostname      KJS::HTMLElement::AnchorHostname        DontDelete|ReadOnly
+  name          KJS::HTMLElement::AnchorName            DontDelete
+  pathname      KJS::HTMLElement::AnchorPathName        DontDelete|ReadOnly
+  port          KJS::HTMLElement::AnchorPort            DontDelete|ReadOnly
+  protocol      KJS::HTMLElement::AnchorProtocol        DontDelete|ReadOnly
+  rel           KJS::HTMLElement::AnchorRel             DontDelete
+  rev           KJS::HTMLElement::AnchorRev             DontDelete
+  search        KJS::HTMLElement::AnchorSearch          DontDelete|ReadOnly
+  shape         KJS::HTMLElement::AnchorShape           DontDelete
+  tabIndex      KJS::HTMLElement::AnchorTabIndex        DontDelete
+  target        KJS::HTMLElement::AnchorTarget          DontDelete
+  text          KJS::HTMLElement::AnchorText            DontDelete|ReadOnly
+  type          KJS::HTMLElement::AnchorType            DontDelete
+  blur          KJS::HTMLElement::AnchorBlur            DontDelete|Function 0
+  focus         KJS::HTMLElement::AnchorFocus           DontDelete|Function 0
   toString      KJS::HTMLElement::AnchorToString        DontDelete|Function 0
 @end
 @begin HTMLImageElementTable 14
-  name		KJS::HTMLElement::ImageName		DontDelete
-  align		KJS::HTMLElement::ImageAlign		DontDelete
-  alt		KJS::HTMLElement::ImageAlt		DontDelete
-  border	KJS::HTMLElement::ImageBorder		DontDelete
-  height	KJS::HTMLElement::ImageHeight		DontDelete
-  hspace	KJS::HTMLElement::ImageHspace		DontDelete
-  isMap		KJS::HTMLElement::ImageIsMap		DontDelete
-  longDesc	KJS::HTMLElement::ImageLongDesc		DontDelete
-  src		KJS::HTMLElement::ImageSrc		DontDelete
-  useMap	KJS::HTMLElement::ImageUseMap		DontDelete
-  vspace	KJS::HTMLElement::ImageVspace		DontDelete
-  width		KJS::HTMLElement::ImageWidth		DontDelete
+  name          KJS::HTMLElement::ImageName             DontDelete
+  align         KJS::HTMLElement::ImageAlign            DontDelete
+  alt           KJS::HTMLElement::ImageAlt              DontDelete
+  border        KJS::HTMLElement::ImageBorder           DontDelete
+  height        KJS::HTMLElement::ImageHeight           DontDelete
+  hspace        KJS::HTMLElement::ImageHspace           DontDelete
+  isMap         KJS::HTMLElement::ImageIsMap            DontDelete
+  longDesc      KJS::HTMLElement::ImageLongDesc         DontDelete
+  src           KJS::HTMLElement::ImageSrc              DontDelete
+  useMap        KJS::HTMLElement::ImageUseMap           DontDelete
+  vspace        KJS::HTMLElement::ImageVspace           DontDelete
+  width         KJS::HTMLElement::ImageWidth            DontDelete
   x         KJS::HTMLElement::ImageX            DontDelete|ReadOnly
   y         KJS::HTMLElement::ImageY            DontDelete|ReadOnly
 @end
 @begin HTMLObjectElementTable 20
-  form		  KJS::HTMLElement::ObjectForm		  DontDelete|ReadOnly
-  code		  KJS::HTMLElement::ObjectCode		  DontDelete
-  align		  KJS::HTMLElement::ObjectAlign		  DontDelete
-  archive	  KJS::HTMLElement::ObjectArchive	  DontDelete
-  border	  KJS::HTMLElement::ObjectBorder	  DontDelete
-  codeBase	  KJS::HTMLElement::ObjectCodeBase	  DontDelete
-  codeType	  KJS::HTMLElement::ObjectCodeType	  DontDelete
+  form            KJS::HTMLElement::ObjectForm            DontDelete|ReadOnly
+  code            KJS::HTMLElement::ObjectCode            DontDelete
+  align           KJS::HTMLElement::ObjectAlign           DontDelete
+  archive         KJS::HTMLElement::ObjectArchive         DontDelete
+  border          KJS::HTMLElement::ObjectBorder          DontDelete
+  codeBase        KJS::HTMLElement::ObjectCodeBase        DontDelete
+  codeType        KJS::HTMLElement::ObjectCodeType        DontDelete
   contentDocument KJS::HTMLElement::ObjectContentDocument DontDelete|ReadOnly
-  data		  KJS::HTMLElement::ObjectData		  DontDelete
-  declare	  KJS::HTMLElement::ObjectDeclare	  DontDelete
-  height	  KJS::HTMLElement::ObjectHeight	  DontDelete
-  hspace	  KJS::HTMLElement::ObjectHspace	  DontDelete
-  name		  KJS::HTMLElement::ObjectName		  DontDelete
-  standby	  KJS::HTMLElement::ObjectStandby	  DontDelete
-  tabIndex	  KJS::HTMLElement::ObjectTabIndex	  DontDelete
-  type		  KJS::HTMLElement::ObjectType		  DontDelete
-  useMap	  KJS::HTMLElement::ObjectUseMap	  DontDelete
-  vspace	  KJS::HTMLElement::ObjectVspace	  DontDelete
-  width		  KJS::HTMLElement::ObjectWidth		  DontDelete
+  data            KJS::HTMLElement::ObjectData            DontDelete
+  declare         KJS::HTMLElement::ObjectDeclare         DontDelete
+  height          KJS::HTMLElement::ObjectHeight          DontDelete
+  hspace          KJS::HTMLElement::ObjectHspace          DontDelete
+  name            KJS::HTMLElement::ObjectName            DontDelete
+  standby         KJS::HTMLElement::ObjectStandby         DontDelete
+  tabIndex        KJS::HTMLElement::ObjectTabIndex        DontDelete
+  type            KJS::HTMLElement::ObjectType            DontDelete
+  useMap          KJS::HTMLElement::ObjectUseMap          DontDelete
+  vspace          KJS::HTMLElement::ObjectVspace          DontDelete
+  width           KJS::HTMLElement::ObjectWidth           DontDelete
 @end
 @begin HTMLParamElementTable 4
-  name		KJS::HTMLElement::ParamName		DontDelete
-  type		KJS::HTMLElement::ParamType		DontDelete
-  value		KJS::HTMLElement::ParamValue		DontDelete
-  valueType	KJS::HTMLElement::ParamValueType	DontDelete
+  name          KJS::HTMLElement::ParamName             DontDelete
+  type          KJS::HTMLElement::ParamType             DontDelete
+  value         KJS::HTMLElement::ParamValue            DontDelete
+  valueType     KJS::HTMLElement::ParamValueType        DontDelete
 @end
 @begin HTMLAppletElementTable 11
-  align		KJS::HTMLElement::AppletAlign		DontDelete
-  alt		KJS::HTMLElement::AppletAlt		DontDelete
-  archive	KJS::HTMLElement::AppletArchive		DontDelete
-  code		KJS::HTMLElement::AppletCode		DontDelete
-  codeBase	KJS::HTMLElement::AppletCodeBase	DontDelete
-  height	KJS::HTMLElement::AppletHeight		DontDelete
-  hspace	KJS::HTMLElement::AppletHspace		DontDelete
-  name		KJS::HTMLElement::AppletName		DontDelete
-  object	KJS::HTMLElement::AppletObject		DontDelete
-  vspace	KJS::HTMLElement::AppletVspace		DontDelete
-  width		KJS::HTMLElement::AppletWidth		DontDelete
+  align         KJS::HTMLElement::AppletAlign           DontDelete
+  alt           KJS::HTMLElement::AppletAlt             DontDelete
+  archive       KJS::HTMLElement::AppletArchive         DontDelete
+  code          KJS::HTMLElement::AppletCode            DontDelete
+  codeBase      KJS::HTMLElement::AppletCodeBase        DontDelete
+  height        KJS::HTMLElement::AppletHeight          DontDelete
+  hspace        KJS::HTMLElement::AppletHspace          DontDelete
+  name          KJS::HTMLElement::AppletName            DontDelete
+  object        KJS::HTMLElement::AppletObject          DontDelete
+  vspace        KJS::HTMLElement::AppletVspace          DontDelete
+  width         KJS::HTMLElement::AppletWidth           DontDelete
 @end
 @begin HTMLMapElementTable 2
-  areas		KJS::HTMLElement::MapAreas		DontDelete|ReadOnly
-  name		KJS::HTMLElement::MapName		DontDelete
+  areas         KJS::HTMLElement::MapAreas              DontDelete|ReadOnly
+  name          KJS::HTMLElement::MapName               DontDelete
 @end
 @begin HTMLAreaElementTable 15
-  accessKey	KJS::HTMLElement::AreaAccessKey		DontDelete
-  alt		KJS::HTMLElement::AreaAlt		DontDelete
-  coords	KJS::HTMLElement::AreaCoords		DontDelete
-  href		KJS::HTMLElement::AreaHref		DontDelete
-  hash		KJS::HTMLElement::AreaHash		DontDelete|ReadOnly
-  host		KJS::HTMLElement::AreaHost		DontDelete|ReadOnly
-  hostname	KJS::HTMLElement::AreaHostName		DontDelete|ReadOnly
-  pathname	KJS::HTMLElement::AreaPathName		DontDelete|ReadOnly
-  port		KJS::HTMLElement::AreaPort		DontDelete|ReadOnly
-  protocol	KJS::HTMLElement::AreaProtocol		DontDelete|ReadOnly
-  search	KJS::HTMLElement::AreaSearch		DontDelete|ReadOnly
-  noHref	KJS::HTMLElement::AreaNoHref		DontDelete
-  shape		KJS::HTMLElement::AreaShape		DontDelete
-  tabIndex	KJS::HTMLElement::AreaTabIndex		DontDelete
-  target	KJS::HTMLElement::AreaTarget		DontDelete
+  accessKey     KJS::HTMLElement::AreaAccessKey         DontDelete
+  alt           KJS::HTMLElement::AreaAlt               DontDelete
+  coords        KJS::HTMLElement::AreaCoords            DontDelete
+  href          KJS::HTMLElement::AreaHref              DontDelete
+  hash          KJS::HTMLElement::AreaHash              DontDelete|ReadOnly
+  host          KJS::HTMLElement::AreaHost              DontDelete|ReadOnly
+  hostname      KJS::HTMLElement::AreaHostName          DontDelete|ReadOnly
+  pathname      KJS::HTMLElement::AreaPathName          DontDelete|ReadOnly
+  port          KJS::HTMLElement::AreaPort              DontDelete|ReadOnly
+  protocol      KJS::HTMLElement::AreaProtocol          DontDelete|ReadOnly
+  search        KJS::HTMLElement::AreaSearch            DontDelete|ReadOnly
+  noHref        KJS::HTMLElement::AreaNoHref            DontDelete
+  shape         KJS::HTMLElement::AreaShape             DontDelete
+  tabIndex      KJS::HTMLElement::AreaTabIndex          DontDelete
+  target        KJS::HTMLElement::AreaTarget            DontDelete
 @end
 @begin HTMLScriptElementTable 7
-  text		KJS::HTMLElement::ScriptText		DontDelete
-  htmlFor	KJS::HTMLElement::ScriptHtmlFor		DontDelete
-  event		KJS::HTMLElement::ScriptEvent		DontDelete
-  charset	KJS::HTMLElement::ScriptCharset		DontDelete
-  defer		KJS::HTMLElement::ScriptDefer		DontDelete
-  src		KJS::HTMLElement::ScriptSrc		DontDelete
-  type		KJS::HTMLElement::ScriptType		DontDelete
+  text          KJS::HTMLElement::ScriptText            DontDelete
+  htmlFor       KJS::HTMLElement::ScriptHtmlFor         DontDelete
+  event         KJS::HTMLElement::ScriptEvent           DontDelete
+  charset       KJS::HTMLElement::ScriptCharset         DontDelete
+  defer         KJS::HTMLElement::ScriptDefer           DontDelete
+  src           KJS::HTMLElement::ScriptSrc             DontDelete
+  type          KJS::HTMLElement::ScriptType            DontDelete
 @end
 @begin HTMLTableElementTable 23
-  caption	KJS::HTMLElement::TableCaption		DontDelete
-  tHead		KJS::HTMLElement::TableTHead		DontDelete
-  tFoot		KJS::HTMLElement::TableTFoot		DontDelete
-  rows		KJS::HTMLElement::TableRows		DontDelete|ReadOnly
-  tBodies	KJS::HTMLElement::TableTBodies		DontDelete|ReadOnly
-  align		KJS::HTMLElement::TableAlign		DontDelete
-  bgColor	KJS::HTMLElement::TableBgColor		DontDelete
-  border	KJS::HTMLElement::TableBorder		DontDelete
-  cellPadding	KJS::HTMLElement::TableCellPadding	DontDelete
-  cellSpacing	KJS::HTMLElement::TableCellSpacing	DontDelete
-  frame		KJS::HTMLElement::TableFrame		DontDelete
-  rules		KJS::HTMLElement::TableRules		DontDelete
-  summary	KJS::HTMLElement::TableSummary		DontDelete
-  width		KJS::HTMLElement::TableWidth		DontDelete
-  createTHead	KJS::HTMLElement::TableCreateTHead	DontDelete|Function 0
-  deleteTHead	KJS::HTMLElement::TableDeleteTHead	DontDelete|Function 0
-  createTFoot	KJS::HTMLElement::TableCreateTFoot	DontDelete|Function 0
-  deleteTFoot	KJS::HTMLElement::TableDeleteTFoot	DontDelete|Function 0
-  createCaption	KJS::HTMLElement::TableCreateCaption	DontDelete|Function 0
-  deleteCaption	KJS::HTMLElement::TableDeleteCaption	DontDelete|Function 0
-  insertRow	KJS::HTMLElement::TableInsertRow	DontDelete|Function 1
-  deleteRow	KJS::HTMLElement::TableDeleteRow	DontDelete|Function 1
+  caption       KJS::HTMLElement::TableCaption          DontDelete
+  tHead         KJS::HTMLElement::TableTHead            DontDelete
+  tFoot         KJS::HTMLElement::TableTFoot            DontDelete
+  rows          KJS::HTMLElement::TableRows             DontDelete|ReadOnly
+  tBodies       KJS::HTMLElement::TableTBodies          DontDelete|ReadOnly
+  align         KJS::HTMLElement::TableAlign            DontDelete
+  bgColor       KJS::HTMLElement::TableBgColor          DontDelete
+  border        KJS::HTMLElement::TableBorder           DontDelete
+  cellPadding   KJS::HTMLElement::TableCellPadding      DontDelete
+  cellSpacing   KJS::HTMLElement::TableCellSpacing      DontDelete
+  frame         KJS::HTMLElement::TableFrame            DontDelete
+  rules         KJS::HTMLElement::TableRules            DontDelete
+  summary       KJS::HTMLElement::TableSummary          DontDelete
+  width         KJS::HTMLElement::TableWidth            DontDelete
+  createTHead   KJS::HTMLElement::TableCreateTHead      DontDelete|Function 0
+  deleteTHead   KJS::HTMLElement::TableDeleteTHead      DontDelete|Function 0
+  createTFoot   KJS::HTMLElement::TableCreateTFoot      DontDelete|Function 0
+  deleteTFoot   KJS::HTMLElement::TableDeleteTFoot      DontDelete|Function 0
+  createCaption KJS::HTMLElement::TableCreateCaption    DontDelete|Function 0
+  deleteCaption KJS::HTMLElement::TableDeleteCaption    DontDelete|Function 0
+  insertRow     KJS::HTMLElement::TableInsertRow        DontDelete|Function 1
+  deleteRow     KJS::HTMLElement::TableDeleteRow        DontDelete|Function 1
 @end
 @begin HTMLTableCaptionElementTable 1
-  align		KJS::HTMLElement::TableCaptionAlign	DontDelete
+  align         KJS::HTMLElement::TableCaptionAlign     DontDelete
 @end
 @begin HTMLTableColElementTable 7
-  align		KJS::HTMLElement::TableColAlign		DontDelete
-  ch		KJS::HTMLElement::TableColCh		DontDelete
-  chOff		KJS::HTMLElement::TableColChOff		DontDelete
-  span		KJS::HTMLElement::TableColSpan		DontDelete
-  vAlign	KJS::HTMLElement::TableColVAlign	DontDelete
-  width		KJS::HTMLElement::TableColWidth		DontDelete
+  align         KJS::HTMLElement::TableColAlign         DontDelete
+  ch            KJS::HTMLElement::TableColCh            DontDelete
+  chOff         KJS::HTMLElement::TableColChOff         DontDelete
+  span          KJS::HTMLElement::TableColSpan          DontDelete
+  vAlign        KJS::HTMLElement::TableColVAlign        DontDelete
+  width         KJS::HTMLElement::TableColWidth         DontDelete
 @end
 @begin HTMLTableSectionElementTable 7
-  align		KJS::HTMLElement::TableSectionAlign		DontDelete
-  ch		KJS::HTMLElement::TableSectionCh		DontDelete
-  chOff		KJS::HTMLElement::TableSectionChOff		DontDelete
-  vAlign	KJS::HTMLElement::TableSectionVAlign		DontDelete
-  rows		KJS::HTMLElement::TableSectionRows		DontDelete|ReadOnly
-  insertRow	KJS::HTMLElement::TableSectionInsertRow		DontDelete|Function 1
-  deleteRow	KJS::HTMLElement::TableSectionDeleteRow		DontDelete|Function 1
+  align         KJS::HTMLElement::TableSectionAlign             DontDelete
+  ch            KJS::HTMLElement::TableSectionCh                DontDelete
+  chOff         KJS::HTMLElement::TableSectionChOff             DontDelete
+  vAlign        KJS::HTMLElement::TableSectionVAlign            DontDelete
+  rows          KJS::HTMLElement::TableSectionRows              DontDelete|ReadOnly
+  insertRow     KJS::HTMLElement::TableSectionInsertRow         DontDelete|Function 1
+  deleteRow     KJS::HTMLElement::TableSectionDeleteRow         DontDelete|Function 1
 @end
 @begin HTMLTableRowElementTable 11
-  rowIndex	KJS::HTMLElement::TableRowRowIndex		DontDelete|ReadOnly
-  sectionRowIndex KJS::HTMLElement::TableRowSectionRowIndex	DontDelete|ReadOnly
-  cells		KJS::HTMLElement::TableRowCells			DontDelete|ReadOnly
-  align		KJS::HTMLElement::TableRowAlign			DontDelete
-  bgColor	KJS::HTMLElement::TableRowBgColor		DontDelete
-  ch		KJS::HTMLElement::TableRowCh			DontDelete
-  chOff		KJS::HTMLElement::TableRowChOff			DontDelete
-  vAlign	KJS::HTMLElement::TableRowVAlign		DontDelete
-  insertCell	KJS::HTMLElement::TableRowInsertCell		DontDelete|Function 1
-  deleteCell	KJS::HTMLElement::TableRowDeleteCell		DontDelete|Function 1
+  rowIndex      KJS::HTMLElement::TableRowRowIndex              DontDelete|ReadOnly
+  sectionRowIndex KJS::HTMLElement::TableRowSectionRowIndex     DontDelete|ReadOnly
+  cells         KJS::HTMLElement::TableRowCells                 DontDelete|ReadOnly
+  align         KJS::HTMLElement::TableRowAlign                 DontDelete
+  bgColor       KJS::HTMLElement::TableRowBgColor               DontDelete
+  ch            KJS::HTMLElement::TableRowCh                    DontDelete
+  chOff         KJS::HTMLElement::TableRowChOff                 DontDelete
+  vAlign        KJS::HTMLElement::TableRowVAlign                DontDelete
+  insertCell    KJS::HTMLElement::TableRowInsertCell            DontDelete|Function 1
+  deleteCell    KJS::HTMLElement::TableRowDeleteCell            DontDelete|Function 1
 @end
 @begin HTMLTableCellElementTable 15
-  cellIndex	KJS::HTMLElement::TableCellCellIndex		DontDelete|ReadOnly
-  abbr		KJS::HTMLElement::TableCellAbbr			DontDelete
-  align		KJS::HTMLElement::TableCellAlign		DontDelete
-  axis		KJS::HTMLElement::TableCellAxis			DontDelete
-  bgColor	KJS::HTMLElement::TableCellBgColor		DontDelete
-  ch		KJS::HTMLElement::TableCellCh			DontDelete
-  chOff		KJS::HTMLElement::TableCellChOff		DontDelete
-  colSpan	KJS::HTMLElement::TableCellColSpan		DontDelete
-  headers	KJS::HTMLElement::TableCellHeaders		DontDelete
-  height	KJS::HTMLElement::TableCellHeight		DontDelete
-  noWrap	KJS::HTMLElement::TableCellNoWrap		DontDelete
-  rowSpan	KJS::HTMLElement::TableCellRowSpan		DontDelete
-  scope		KJS::HTMLElement::TableCellScope		DontDelete
-  vAlign	KJS::HTMLElement::TableCellVAlign		DontDelete
-  width		KJS::HTMLElement::TableCellWidth		DontDelete
+  cellIndex     KJS::HTMLElement::TableCellCellIndex            DontDelete|ReadOnly
+  abbr          KJS::HTMLElement::TableCellAbbr                 DontDelete
+  align         KJS::HTMLElement::TableCellAlign                DontDelete
+  axis          KJS::HTMLElement::TableCellAxis                 DontDelete
+  bgColor       KJS::HTMLElement::TableCellBgColor              DontDelete
+  ch            KJS::HTMLElement::TableCellCh                   DontDelete
+  chOff         KJS::HTMLElement::TableCellChOff                DontDelete
+  colSpan       KJS::HTMLElement::TableCellColSpan              DontDelete
+  headers       KJS::HTMLElement::TableCellHeaders              DontDelete
+  height        KJS::HTMLElement::TableCellHeight               DontDelete
+  noWrap        KJS::HTMLElement::TableCellNoWrap               DontDelete
+  rowSpan       KJS::HTMLElement::TableCellRowSpan              DontDelete
+  scope         KJS::HTMLElement::TableCellScope                DontDelete
+  vAlign        KJS::HTMLElement::TableCellVAlign               DontDelete
+  width         KJS::HTMLElement::TableCellWidth                DontDelete
 @end
 @begin HTMLFrameSetElementTable 2
-  cols		KJS::HTMLElement::FrameSetCols			DontDelete
-  rows		KJS::HTMLElement::FrameSetRows			DontDelete
+  cols          KJS::HTMLElement::FrameSetCols                  DontDelete
+  rows          KJS::HTMLElement::FrameSetRows                  DontDelete
 @end
 @begin HTMLFrameElementTable 9
   contentDocument KJS::HTMLElement::FrameContentDocument        DontDelete|ReadOnly
   contentWindow   KJS::HTMLElement::FrameContentWindow          DontDelete|ReadOnly
-  frameBorder     KJS::HTMLElement::FrameFrameBorder		DontDelete
-  longDesc	  KJS::HTMLElement::FrameLongDesc		DontDelete
-  marginHeight	  KJS::HTMLElement::FrameMarginHeight		DontDelete
-  marginWidth	  KJS::HTMLElement::FrameMarginWidth		DontDelete
-  name		  KJS::HTMLElement::FrameName			DontDelete
-  noResize	  KJS::HTMLElement::FrameNoResize		DontDelete
-  width		  KJS::HTMLElement::FrameWidth			DontDelete|ReadOnly
-  height	  KJS::HTMLElement::FrameHeight			DontDelete|ReadOnly
-  scrolling	  KJS::HTMLElement::FrameScrolling		DontDelete
-  src		  KJS::HTMLElement::FrameSrc			DontDelete
-  location	  KJS::HTMLElement::FrameLocation		DontDelete
+  frameBorder     KJS::HTMLElement::FrameFrameBorder            DontDelete
+  longDesc        KJS::HTMLElement::FrameLongDesc               DontDelete
+  marginHeight    KJS::HTMLElement::FrameMarginHeight           DontDelete
+  marginWidth     KJS::HTMLElement::FrameMarginWidth            DontDelete
+  name            KJS::HTMLElement::FrameName                   DontDelete
+  noResize        KJS::HTMLElement::FrameNoResize               DontDelete
+  width           KJS::HTMLElement::FrameWidth                  DontDelete|ReadOnly
+  height          KJS::HTMLElement::FrameHeight                 DontDelete|ReadOnly
+  scrolling       KJS::HTMLElement::FrameScrolling              DontDelete
+  src             KJS::HTMLElement::FrameSrc                    DontDelete
+  location        KJS::HTMLElement::FrameLocation               DontDelete
 @end
 @begin HTMLIFrameElementTable 12
-  align		  KJS::HTMLElement::IFrameAlign			DontDelete
+  align           KJS::HTMLElement::IFrameAlign                 DontDelete
   contentDocument KJS::HTMLElement::IFrameContentDocument       DontDelete|ReadOnly
   contentWindow   KJS::HTMLElement::IFrameContentWindow         DontDelete|ReadOnly
-  document	  KJS::HTMLElement::IFrameDocument		DontDelete|ReadOnly
-  frameBorder	  KJS::HTMLElement::IFrameFrameBorder		DontDelete
-  height	  KJS::HTMLElement::IFrameHeight		DontDelete
-  longDesc	  KJS::HTMLElement::IFrameLongDesc		DontDelete
-  marginHeight	  KJS::HTMLElement::IFrameMarginHeight		DontDelete
-  marginWidth	  KJS::HTMLElement::IFrameMarginWidth		DontDelete
-  name		  KJS::HTMLElement::IFrameName			DontDelete
-  scrolling	  KJS::HTMLElement::IFrameScrolling		DontDelete
-  src		  KJS::HTMLElement::IFrameSrc			DontDelete
-  width		  KJS::HTMLElement::IFrameWidth			DontDelete
+  document        KJS::HTMLElement::IFrameDocument              DontDelete|ReadOnly
+  frameBorder     KJS::HTMLElement::IFrameFrameBorder           DontDelete
+  height          KJS::HTMLElement::IFrameHeight                DontDelete
+  longDesc        KJS::HTMLElement::IFrameLongDesc              DontDelete
+  marginHeight    KJS::HTMLElement::IFrameMarginHeight          DontDelete
+  marginWidth     KJS::HTMLElement::IFrameMarginWidth           DontDelete
+  name            KJS::HTMLElement::IFrameName                  DontDelete
+  scrolling       KJS::HTMLElement::IFrameScrolling             DontDelete
+  src             KJS::HTMLElement::IFrameSrc                   DontDelete
+  width           KJS::HTMLElement::IFrameWidth                 DontDelete
 @end
 
 @begin HTMLMarqueeElementTable 2
-  start           KJS::HTMLElement::MarqueeStart		DontDelete|Function 0
+  start           KJS::HTMLElement::MarqueeStart                DontDelete|Function 0
   stop            KJS::HTMLElement::MarqueeStop                 DontDelete|Function 0
 @end
 
@@ -1319,14 +1317,14 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             slot.setCustom(this, runtimeObjectGetter);
             return true;
         }
-	JSValue *runtimeObject = getRuntimeObject(exec,&element);
-	if (runtimeObject) {
-	    JSObject *imp = static_cast<JSObject *>(runtimeObject);
-	    if (imp->hasProperty(exec, propertyName)) {
+        JSValue *runtimeObject = getRuntimeObject(exec,&element);
+        if (runtimeObject) {
+            JSObject *imp = static_cast<JSObject *>(runtimeObject);
+            if (imp->hasProperty(exec, propertyName)) {
                 slot.setCustom(this, runtimeObjectPropertyGetter);
                 return true;
             }
-	}
+        }
     }
 
     const HashTable* table = classInfo()->propHashTable; // get the right hashtable
@@ -2151,7 +2149,7 @@ JSValue *HTMLElement::iFrameGetter(ExecState* exec, int token) const
         case IFrameDocument: // non-standard, mapped to contentDocument
         case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
                                       getDOMNode(exec, iFrame.contentDocument()) : jsUndefined();
-        case IFrameContentWindow:	return checkNodeSecurity(exec,iFrame.contentDocument()) 
+        case IFrameContentWindow:       return checkNodeSecurity(exec,iFrame.contentDocument()) 
                                         ? Window::retrieve(iFrame.contentPart())
                                         : jsUndefined();
         case IFrameFrameBorder:     return jsString(iFrame.frameBorder());
@@ -2477,11 +2475,11 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSVa
         }
     }
     else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
-	if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
-	    JSObject *imp = static_cast<JSObject *>(runtimeObject);
-	    if (imp->canPut(exec, propertyName))
-		return imp->put(exec, propertyName, value);
-	}
+        if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
+            JSObject *imp = static_cast<JSObject *>(runtimeObject);
+            if (imp->canPut(exec, propertyName))
+                return imp->put(exec, propertyName, value);
+        }
     }
 
     const HashTable* table = classInfo()->propHashTable; // get the right hashtable
@@ -3230,9 +3228,9 @@ HTMLTableSectionElementImpl *toHTMLTableSectionElement(JSValue *val)
 // -------------------------------------------------------------------------
 /* Source for HTMLCollectionProtoTable. Use "make hashtables" to regenerate.
 @begin HTMLCollectionProtoTable 3
-  item		HTMLCollection::Item		DontDelete|Function 1
-  namedItem	HTMLCollection::NamedItem	DontDelete|Function 1
-  tags		HTMLCollection::Tags		DontDelete|Function 1
+  item          HTMLCollection::Item            DontDelete|Function 1
+  namedItem     HTMLCollection::NamedItem       DontDelete|Function 1
+  tags          HTMLCollection::Tags            DontDelete|Function 1
 @end
 */
 KJS_DEFINE_PROTOTYPE(HTMLCollectionProto)
@@ -3554,8 +3552,8 @@ const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
 
 /* Source for ImageTable. Use "make hashtables" to regenerate.
 @begin ImageTable 6
-  src		Image::Src		DontDelete
-  complete	Image::Complete		DontDelete|ReadOnly
+  src           Image::Src              DontDelete
+  complete      Image::Complete         DontDelete|ReadOnly
   onload        Image::OnLoad           DontDelete
   width         Image::Width            DontDelete|ReadOnly
   height        Image::Height           DontDelete|ReadOnly

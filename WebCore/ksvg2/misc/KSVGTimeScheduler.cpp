@@ -24,15 +24,16 @@
 #include <kcanvas/KCanvas.h>
 
 #include "DocumentImpl.h"
-#include "SVGNames.h"
-#include "SVGMatrixImpl.h"
 #include "KSVGTimeScheduler.h"
-#include "SVGStyledTransformableElementImpl.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGDOMImplementationImpl.h"
 #include "SVGAnimateColorElementImpl.h"
-#include "SVGAnimatedTransformListImpl.h"
 #include "SVGAnimateTransformElementImpl.h"
+#include "SVGAnimatedTransformListImpl.h"
+#include "SVGDOMImplementationImpl.h"
+#include "SVGMatrixImpl.h"
+#include "SVGNames.h"
+#include "SVGStyledElementImpl.h"
+#include "SVGStyledTransformableElementImpl.h"
+#include <qmap.h>
 
 namespace KSVG {
 

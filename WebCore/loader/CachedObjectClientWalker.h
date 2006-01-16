@@ -23,25 +23,29 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_CachedObjectClientWalker_h
 #define KHTML_CachedObjectClientWalker_h
 
-#include "CachedObjectClient.h"
-#include <qptrdict.h>
+#include <kxmlcore/HashSet.h>
 
-namespace khtml
-{
+namespace WebCore {
+
+    class CachedObjectClient;
+
+    typedef HashSet<CachedObjectClient*, PointerHash<CachedObjectClient*> > CachedObjectClientSet;
+
     // Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
-    // Just keep calling next() on this. It's safe from deletions of the current item
+    // Just keep calling next() on this. It's safe from deletions of items.
     class CachedObjectClientWalker {
     public:
-        CachedObjectClientWalker(const QPtrDict<CachedObjectClient> &clients) : _current(0), _iterator(clients) { }
-        CachedObjectClient *next();
+        CachedObjectClientWalker(const CachedObjectClientSet& clients) : m_clients(clients), m_remaining(clients) { }
+        CachedObjectClient* next();
     private:
-        CachedObjectClient *_current;
-        QPtrDictIterator<CachedObjectClient> _iterator;
+        const CachedObjectClientSet& m_clients;
+        CachedObjectClientSet m_remaining;
     };
 
-};
+}
 
 #endif

@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #import "KCanvasImage.h"
 #import "KCanvasResources.h"
 #import "KCanvasContainer.h"
+#import <qmatrix.h>
 
 typedef struct CGContext *CGContextRef;
 typedef struct CGLayer *CGLayerRef;

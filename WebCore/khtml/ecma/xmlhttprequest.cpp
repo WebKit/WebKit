@@ -99,13 +99,13 @@ namespace KJS {
 
 /* Source for XMLHttpRequestProtoTable.
 @begin XMLHttpRequestProtoTable 7
-  abort			XMLHttpRequest::Abort			DontDelete|Function 0
-  getAllResponseHeaders	XMLHttpRequest::GetAllResponseHeaders	DontDelete|Function 0
-  getResponseHeader	XMLHttpRequest::GetResponseHeader	DontDelete|Function 1
-  open			XMLHttpRequest::Open			DontDelete|Function 5
+  abort                 XMLHttpRequest::Abort                   DontDelete|Function 0
+  getAllResponseHeaders XMLHttpRequest::GetAllResponseHeaders   DontDelete|Function 0
+  getResponseHeader     XMLHttpRequest::GetResponseHeader       DontDelete|Function 1
+  open                  XMLHttpRequest::Open                    DontDelete|Function 5
   overrideMimeType      XMLHttpRequest::OverrideMIMEType        DontDelete|Function 1
-  send			XMLHttpRequest::Send			DontDelete|Function 1
-  setRequestHeader	XMLHttpRequest::SetRequestHeader	DontDelete|Function 2
+  send                  XMLHttpRequest::Send                    DontDelete|Function 1
+  setRequestHeader      XMLHttpRequest::SetRequestHeader        DontDelete|Function 2
 @end
 */
 KJS_DEFINE_PROTOTYPE(XMLHttpRequestProto)
@@ -156,13 +156,13 @@ const ClassInfo XMLHttpRequest::info = { "XMLHttpRequest", 0, &XMLHttpRequestTab
 
 /* Source for XMLHttpRequestTable.
 @begin XMLHttpRequestTable 7
-  readyState		XMLHttpRequest::ReadyState		DontDelete|ReadOnly
-  responseText		XMLHttpRequest::ResponseText		DontDelete|ReadOnly
-  responseXML		XMLHttpRequest::ResponseXML		DontDelete|ReadOnly
-  status		XMLHttpRequest::Status			DontDelete|ReadOnly
-  statusText		XMLHttpRequest::StatusText		DontDelete|ReadOnly
-  onreadystatechange	XMLHttpRequest::Onreadystatechange	DontDelete
-  onload		XMLHttpRequest::Onload			DontDelete
+  readyState            XMLHttpRequest::ReadyState              DontDelete|ReadOnly
+  responseText          XMLHttpRequest::ResponseText            DontDelete|ReadOnly
+  responseXML           XMLHttpRequest::ResponseXML             DontDelete|ReadOnly
+  status                XMLHttpRequest::Status                  DontDelete|ReadOnly
+  statusText            XMLHttpRequest::StatusText              DontDelete|ReadOnly
+  onreadystatechange    XMLHttpRequest::Onreadystatechange      DontDelete
+  onload                XMLHttpRequest::Onload                  DontDelete
 @end
 */
 
@@ -185,14 +185,14 @@ JSValue *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
 
     if (!createdDocument) {
       if (typeIsXML = responseIsXML()) {
-	responseXML = doc->implementation()->createDocument();
+        responseXML = doc->implementation()->createDocument();
 
-	DocumentImpl *docImpl = responseXML.get();
-	
-	docImpl->open();
-	docImpl->write(response);
-	docImpl->finishParsing();
-	docImpl->close();
+        DocumentImpl *docImpl = responseXML.get();
+        
+        docImpl->open();
+        docImpl->write(response);
+        docImpl->finishParsing();
+        docImpl->close();
       }
       createdDocument = true;
     }
@@ -399,11 +399,11 @@ void XMLHttpRequest::send(const DOMString& _body)
   }
   
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
-		    SLOT( slotFinished( KIO::Job* ) ) );
+                    SLOT( slotFinished( KIO::Job* ) ) );
   qObject->connect( job, SIGNAL( data( KIO::Job*, const char*, int ) ),
-		    SLOT( slotData( KIO::Job*, const char*, int ) ) );
+                    SLOT( slotData( KIO::Job*, const char*, int ) ) );
   qObject->connect( job, SIGNAL(redirection(KIO::Job*, const KURL& ) ),
-		    SLOT( slotRedirection(KIO::Job*, const KURL&) ) );
+                    SLOT( slotRedirection(KIO::Job*, const KURL&) ) );
 
   addToRequestsByDocument();
 
@@ -636,34 +636,34 @@ void XMLHttpRequest::slotData(KIO::Job*, const char *data, int len)
   }
 }
 
-QPtrDict< QPtrDict<XMLHttpRequest> > &XMLHttpRequest::requestsByDocument()
+XMLHttpRequest::RequestsMap& XMLHttpRequest::requestsByDocument()
 {
-    static QPtrDict< QPtrDict<XMLHttpRequest> > dictionary;
-    return dictionary;
+    static RequestsMap map;
+    return map;
 }
 
 void XMLHttpRequest::addToRequestsByDocument()
 {
   assert(doc);
 
-  QPtrDict<XMLHttpRequest> *requests = requestsByDocument().find(doc);
+  RequestsSet* requests = requestsByDocument().get(doc);
   if (!requests) {
-    requests = new QPtrDict<XMLHttpRequest>;
-    requestsByDocument().insert(doc, requests);
+    requests = new RequestsSet;
+    requestsByDocument().set(doc, requests);
   }
 
-  assert(requests->find(this) == 0);
-  requests->insert(this, this);
+  assert(!requests->contains(this));
+  requests->insert(this);
 }
 
 void XMLHttpRequest::removeFromRequestsByDocument()
 {
   assert(doc);
 
-  QPtrDict<XMLHttpRequest> *requests = requestsByDocument().find(doc);
+  RequestsSet* requests = requestsByDocument().get(doc);
 
   // Since synchronous loads are not added to requestsByDocument(), we need to make sure we found the request.
-  if (!requests || !requests->find(this))
+  if (!requests || !requests->contains(this))
     return;
 
   requests->remove(this);
@@ -674,10 +674,10 @@ void XMLHttpRequest::removeFromRequestsByDocument()
   }
 }
 
-void XMLHttpRequest::cancelRequests(DOM::DocumentImpl *d)
+void XMLHttpRequest::cancelRequests(DOM::DocumentImpl* d)
 {
-  while (QPtrDict<XMLHttpRequest> *requests = requestsByDocument().find(d))
-    QPtrDictIterator<XMLHttpRequest>(*requests).current()->abort();
+  while (RequestsSet* requests = requestsByDocument().get(d))
+    (*requests->begin())->abort();
 }
 
 JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -714,7 +714,7 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
   case XMLHttpRequest::Open:
     {
       if (args.size() < 2 || args.size() > 5) {
-	return jsUndefined();
+        return jsUndefined();
       }
     
       QString method = args[0]->toString(exec).qstring();
@@ -722,15 +722,15 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
 
       bool async = true;
       if (args.size() >= 3) {
-	async = args[2]->toBoolean(exec);
+        async = args[2]->toBoolean(exec);
       }
     
       if (args.size() >= 4) {
-	url.setUser(args[3]->toString(exec).qstring());
+        url.setUser(args[3]->toString(exec).qstring());
       }
       
       if (args.size() >= 5) {
-	url.setPass(args[4]->toString(exec).qstring());
+        url.setPass(args[4]->toString(exec).qstring());
       }
 
       request->open(method, url, async);
@@ -740,24 +740,24 @@ JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *this
   case XMLHttpRequest::Send:
     {
       if (args.size() > 1) {
-	return jsUndefined();
+        return jsUndefined();
       }
 
       if (request->state != Loading) {
-	return jsUndefined();
+        return jsUndefined();
       }
 
       DOMString body;
 
       if (args.size() >= 1) {
-	if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
-	  DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
+        if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
+          DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
           body = doc->toString().qstring();
-	} else {
-	  // converting certain values (like null) to object can set an exception
-	  exec->clearException();
-	  body = args[0]->toString(exec).domString();
-	}
+        } else {
+          // converting certain values (like null) to object can set an exception
+          exec->clearException();
+          body = args[0]->toString(exec).domString();
+        }
       }
 
       request->send(body);
