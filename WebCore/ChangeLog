@@ -1,3 +1,28 @@
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by darin.
+
+        Updated files w/ missing copyrights from Oliver.
+
+        * kcanvas/device/quartz/filters/WKArithmeticFilter.cikernel:
+        * kcanvas/device/quartz/filters/WKDistantLightFilter.cikernel:
+        * kcanvas/device/quartz/filters/WKPointLightFilter.cikernel:
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.cikernel:
+        * ksvg2/svg/SVGAnimatedColorImpl.cpp:
+        * ksvg2/svg/SVGAnimatedColorImpl.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.h:
+        * ksvg2/svg/SVGFEDistantLightElementImpl.cpp:
+        * ksvg2/svg/SVGFEDistantLightElementImpl.h:
+        * ksvg2/svg/SVGFELightElementImpl.cpp:
+        * ksvg2/svg/SVGFELightElementImpl.h:
+        * ksvg2/svg/SVGFEPointLightElementImpl.cpp:
+        * ksvg2/svg/SVGFEPointLightElementImpl.h:
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.h:
+        * ksvg2/svg/SVGFESpotLightElementImpl.cpp:
+        * ksvg2/svg/SVGFESpotLightElementImpl.h:
+
 2006-01-15  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and tweaked a bit by Darin.
