@@ -1,3 +1,19 @@
+2006-01-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki Murley.
+        
+        - fixed <rdar://problem/4409288> REGRESSION (TOT): When no selection is present on page, 
+        Jump to Selection doesn't beep
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _hasInsertionPoint]):
+        new helper method
+        (-[NSArray validateUserInterfaceItem:]):
+        Don't validate this menu item (or a couple of others) if the selection is a caret and
+        the page isn't editable. In that state, there is no visible selection so this menu item
+        doesn't make sense. I suspect this was broken by some editing-related change that makes
+        selectionState return WebSelectionStateCaret here where it used to return WebSelectionStateNone.
+
 2006-01-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

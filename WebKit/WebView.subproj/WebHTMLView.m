@@ -1536,6 +1536,11 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] selectionState] != WebSelectionStateNone;
 }
 
+- (BOOL)_hasInsertionPoint
+{
+    return [[self _bridge] selectionState] == WebSelectionStateCaret;
+}
+
 - (BOOL)_isEditable
 {
     return [[self _webView] isEditable] || [[self _bridge] isSelectionEditable];
@@ -1854,7 +1859,7 @@ static WebHTMLView *lastHitView = nil;
 {
     SEL action = [item action];
     WebFrameBridge *bridge = [self _bridge];
-
+    
     if (action == @selector(alignCenter:)
             || action == @selector(alignLeft:)
             || action == @selector(alignJustified:)
@@ -1934,10 +1939,10 @@ static WebHTMLView *lastHitView = nil;
                || action == @selector(uppercaseWord:)) {
         return [self _hasSelection] && [self _isEditable];
     } else if (action == @selector(centerSelectionInVisibleArea:)
-            || action == @selector(jumpToSelection:)
-            || action == @selector(copyFont:)
-            || action == @selector(setMark:)) {
-        return [self _hasSelectionOrInsertionPoint];
+               || action == @selector(jumpToSelection:)
+               || action == @selector(copyFont:)
+               || action == @selector(setMark:)) {
+        return [self _hasSelection] || ([self _isEditable] && [self _hasInsertionPoint]);
     } else if (action == @selector(changeDocumentBackgroundColor:)) {
         return [[self _webView] isEditable];
     } else if (action == @selector(copy:)) {
