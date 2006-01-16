@@ -2,7 +2,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5367
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6594
         Web Inspector: finish node attributes
         
         * WebInspector.subproj/webInspector/inspector.css:
