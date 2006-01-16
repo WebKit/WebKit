@@ -1,3 +1,25 @@
+2006-01-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5127>
+        REGRESSION: problems making selection with left edge at right edge of image
+        <rdar://problem/4364427>
+        triple-click includes first item on next line (www.apple.com, but I think I've seen it elsewhere)
+
+        * editing/selection/replaced-boundaries-1-expected.checksum: Added.
+        * editing/selection/replaced-boundaries-1-expected.png: Added.
+        * editing/selection/replaced-boundaries-1-expected.txt: Added.
+        * editing/selection/replaced-boundaries-1.html: Added.
+        * editing/selection/replaced-boundaries-2-expected.checksum: Added.
+        * editing/selection/replaced-boundaries-2-expected.png: Added.
+        * editing/selection/replaced-boundaries-2-expected.txt: Added.
+        * editing/selection/replaced-boundaries-2.html: Added.
+        * editing/selection/replaced-boundaries-3-expected.checksum: Added.
+        * editing/selection/replaced-boundaries-3-expected.png: Added.
+        * editing/selection/replaced-boundaries-3-expected.txt: Added.
+        * editing/selection/replaced-boundaries-3.html: Added.
+
 2006-01-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

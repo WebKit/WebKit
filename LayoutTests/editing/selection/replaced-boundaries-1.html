@@ -1,0 +1,22 @@
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function editingTest() {
+    selectAllCommand();
+    moveSelectionForwardByCharacterCommand();
+    extendSelectionBackwardByCharacterCommand();
+    extendSelectionBackwardByCharacterCommand();
+    extendSelectionBackwardByCharacterCommand();
+}
+</script>
+</head>
+<body>
+<p>This tests that when a selection that starts at [replaced element, 1] is painted, the replaced element doesn't appear selected.  This test uses an image for the replaced element.</p>
+<div id="test" contenteditable>
+abc<img src="../abe.jpg">def
+</div>
+<script>runEditingTest()</script>
+</body>
+
+</html>
