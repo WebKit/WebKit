@@ -1,0 +1,8 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 20 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+aaaaaaaaaa–aaaaaaaaa
+
+Success.

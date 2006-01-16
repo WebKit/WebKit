@@ -1,3 +1,13 @@
+2006-01-16  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5401
+          [WebCoreBridge firstRectForDOMRange:] works incorrectly for the first character after a line wrap
+
+        * editing/input/wrapped-line-char-rect.html: Added.
+        * editing/input/wrapped-line-char-rect-expected.txt: Added.
+
 2006-01-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

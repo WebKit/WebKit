@@ -1,0 +1,37 @@
+﻿<html>
+<head>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<p contenteditable id='test' STYLE="width: 100px;"></p>
+<script type="text/javascript">
+
+    if (window.layoutTestController) {
+        
+        try {
+        
+            layoutTestController.dumpAsText();
+            window.getSelection().setPosition(document.getElementById("test"), 0);
+            
+            // currently, firstRectForCharacterRange only works with marked or selected text because of bug 4682
+            textInputController.setMarkedText("aaaaaaaaaa–aaaaaaaaa", 0, 0);
+        
+            var rect = textInputController.firstRectForCharacterRange(11, 1);
+            
+            // should be the first character in a line
+            if (rect[0] == 0 && rect[2] > 5)
+            	document.write("Success.");
+            else
+            	document.write("Failure. Rect: " + rect);
+
+		} catch (ex) {
+			document.write("Exception: " + ex.description);
+		}
+	} else {
+		document.write("(cannot run interactively)");
+	}
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1558,7 +1559,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSRect)firstRectForDOMRange:(DOMRange *)range
 {
     int extraWidthToEndOfLine = 0;
-    IntRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], UPSTREAM, &extraWidthToEndOfLine);
+    IntRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], DOWNSTREAM, &extraWidthToEndOfLine);
     IntRect endCaretRect = [[range endContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
 
     if (startCaretRect.y() == endCaretRect.y()) {

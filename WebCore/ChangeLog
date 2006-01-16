@@ -1,3 +1,15 @@
+2006-01-16  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5401
+          [WebCoreBridge firstRectForDOMRange:] works incorrectly for the first character after a line wrap
+
+        Test: editing/input/wrapped-line-char-rect.html
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge firstRectForDOMRange:]):
+         Use DOWNSTREAM affinity for the range start
+
 2006-01-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
