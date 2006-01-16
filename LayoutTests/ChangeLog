@@ -1,5 +1,12 @@
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
+        Update out-of-date pixel results.
+
+        * fast/dom/dom-parse-serialize-expected.checksum:
+        * fast/dom/dom-parse-serialize-expected.png:
+
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by Darin.
 
         * fast/box-sizing/percentage-height-expected.txt:
