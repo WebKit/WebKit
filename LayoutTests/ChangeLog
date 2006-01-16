@@ -1,3 +1,10 @@
+2006-01-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by Darin.
+
+        * fast/box-sizing/percentage-height-expected.txt:
+        * fast/box-sizing/percentage-height.html:
+
 2006-01-15  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

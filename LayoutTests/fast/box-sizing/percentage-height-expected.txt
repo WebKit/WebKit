@@ -20,28 +20,28 @@ layer at (90,990) size 1800x2 clip at (91,991) size 1783x0 scrollHeight 30
       RenderText {TEXT} at (0,1) size 1770x30
         text run at (0,1) width 1770: "Luckily, the bit of the broadcast is now missing from BBCs website and folks in Cornwall swear they saw Bigfoot and Jersey Devil run off with miles and miles of audio tape containing tapes of Steve Jobs talking about the new Video iPod while drunk on soju, the confession of the true JFK assassin, and a tripping Chief Justice Roberts talking about how \x{201C}Green isn\x{2019}t"
         text run at (0,16) width 147: "just a color, man, it\x{2019}s an idea.\x{201D}"
-layer at (1980,990) size 2x2 clip at (1981,991) size -15x-15 scrollWidth 28 scrollHeight 152
+layer at (1980,990) size 2x2 clip at (1981,991) size -15x-15 scrollWidth 26 scrollHeight 152
   RenderBlock (relative positioned) zI: 1 {DIV} at (1890,0) size 2x2 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-layer at (1981,991) size 28x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
+layer at (1981,991) size 26x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x38
-    RenderText {TEXT} at (5,5) size 23x28
-      text run at (5,5) width 23: "Item"
-      text run at (5,19) width 6: "1"
-layer at (1981,1029) size 28x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
+    RenderText {TEXT} at (5,6) size 21x28
+      text run at (5,6) width 21: "Item"
+      text run at (5,20) width 6: "1"
+layer at (1981,1029) size 26x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x38
-    RenderText {TEXT} at (5,5) size 23x28
-      text run at (5,5) width 23: "Item"
-      text run at (5,19) width 6: "2"
-layer at (1981,1067) size 28x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
+    RenderText {TEXT} at (5,6) size 21x28
+      text run at (5,6) width 21: "Item"
+      text run at (5,20) width 6: "2"
+layer at (1981,1067) size 26x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x38
-    RenderText {TEXT} at (5,5) size 23x28
-      text run at (5,5) width 23: "Item"
-      text run at (5,19) width 6: "3"
-layer at (1981,1105) size 28x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
+    RenderText {TEXT} at (5,6) size 21x28
+      text run at (5,6) width 21: "Item"
+      text run at (5,20) width 6: "3"
+layer at (1981,1105) size 26x38 backgroundClip at (1981,991) size -15x-15 clip at (1981,991) size -15x-15 outlineClip at (1981,991) size -15x-15
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x38
-    RenderText {TEXT} at (5,5) size 23x28
-      text run at (5,5) width 23: "Item"
-      text run at (5,19) width 6: "4"
+    RenderText {TEXT} at (5,6) size 21x28
+      text run at (5,6) width 21: "Item"
+      text run at (5,20) width 6: "4"
 layer at (0,150) size 800x450
   RenderBlock (positioned) zI: 1 {DIV} at (0,150) size 800x450 [bgcolor=#99CC66]
     RenderBlock {DIV} at (90,90) size 620x15
