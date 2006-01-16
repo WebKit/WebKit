@@ -1,3 +1,15 @@
+2006-01-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Remove usage of Tahoma font.  (previous commit was incomplete)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6569
+
+        * fast/box-sizing/percentage-height-expected.checksum:
+        * fast/box-sizing/percentage-height-expected.png:
+        * fast/box-sizing/percentage-height-expected.txt:
+        * fast/box-sizing/percentage-height.html:
+
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
         Update out-of-date pixel results.
@@ -8,6 +20,9 @@
 2006-01-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Darin.
+
+        Remove usage of Tahoma font.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6569
 
         * fast/box-sizing/percentage-height-expected.txt:
         * fast/box-sizing/percentage-height.html:
