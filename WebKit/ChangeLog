@@ -1,3 +1,14 @@
+2006-01-16  Timothy Hatcher  <timothy@apple.com>
+
+        Rubber stamped by Maciej.
+
+        Check for a new "WebKitDeveloperExtras" default when
+        including the "Inspect Element" context menu item.
+        We should retire the other one eventually.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _menuForElement:defaultItems:]):
+
 2006-01-17  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Timothy Hatcher.

@@ -736,7 +736,10 @@ static bool debugWidget = true;
     }
 
 #ifdef NDEBUG
-    BOOL enableInspectElement = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableInspectElementContextMenuItem"];
+    BOOL enableInspectElement = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDeveloperExtras"];
+    enableInspectElement |= [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"];
+    // FIXME: remove the following check later, once everyone switches to the new generic default name
+    enableInspectElement |= [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableInspectElementContextMenuItem"];
 #else
     BOOL enableInspectElement = YES; // always enable in debug builds
 #endif
