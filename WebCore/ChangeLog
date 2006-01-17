@@ -1,3 +1,14 @@
+2006-01-17  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel.
+
+        WebCore-SVG fails to build.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6607
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Fix build of WebCore-no-SVG target.  Removes SVG specific files and adds new
+        files omitted from the target.
+
 2006-01-16  David Hyatt  <hyatt@apple.com>
 
         (1) Fix build bustage by properly marking the moved Obj-C
