@@ -791,6 +791,7 @@ const ClassInfo DOMAttr::info = { "Attr", &DOMNode::info, &DOMAttrTable, 0 };
   specified     DOMAttr::Specified      DontDelete|ReadOnly
   value         DOMAttr::ValueProperty  DontDelete
   ownerElement  DOMAttr::OwnerElement   DontDelete|ReadOnly
+  style         DOMAttr::Style          DontDelete|ReadOnly
 @end
 */
 
@@ -816,6 +817,8 @@ JSValue *DOMAttr::getValueProperty(ExecState *exec, int token) const
     return jsStringOrNull(attr->value());
   case OwnerElement: // DOM2
     return getDOMNode(exec, attr->ownerElement());
+  case Style: // Web Inspector Extension
+    return getDOMCSSStyleDeclaration(exec, attr->style());
   }
   return NULL; // not reached
 }

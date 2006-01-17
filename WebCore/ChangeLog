@@ -1,3 +1,16 @@
+2006-01-17  David Hyatt  <hyatt@apple.com>
+
+        Land support for a style method on DOMAttr from JS that will
+        allow the Web Inspector to include presentational attributes
+        in the style list.
+        
+        Reviewed by xenon
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMAttr::getValueProperty):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMAttr::):
+
 2006-01-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt and Darin
