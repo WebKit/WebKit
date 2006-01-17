@@ -28,7 +28,7 @@
 
 #include <qwmatrix.h>
 #include <kcanvas/KCanvasPath.h>
-#include <kdom/css/RenderStyle.h>
+#include "render_style.h"
 
 class RenderPath;
 class KRenderingDevice;

@@ -22,7 +22,7 @@
 
 #include "config.h"
 #include "RGBColorImpl.h"
-#include "kdom/css/CSSPrimitiveValueImpl.h"
+#include "css_valueimpl.h"
 
 using namespace KDOM;
 

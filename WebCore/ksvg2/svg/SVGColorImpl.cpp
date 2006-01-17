@@ -23,11 +23,12 @@
 #include "config.h"
 #include <qstringlist.h>
 
-#include <kdom/css/RGBColorImpl.h>
+#include "css_valueimpl.h"
 
 #include "ksvg.h"
 #include "SVGColorImpl.h"
 #include "SVGDOMImplementationImpl.h"
+#include "RGBColorImpl.h"
 
 using namespace KSVG;
 

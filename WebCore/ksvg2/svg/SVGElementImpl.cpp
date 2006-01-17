@@ -26,7 +26,7 @@
 #include <kdom/DOMString.h>
 #include <kdom/core/domattrs.h>
 #include <kdom/core/AttrImpl.h>
-#include <kdom/css/CSSStyleSheetImpl.h>
+#include "css_stylesheetimpl.h"
 #include <kdom/events/EventListenerImpl.h>
 #include "DocumentImpl.h"
 

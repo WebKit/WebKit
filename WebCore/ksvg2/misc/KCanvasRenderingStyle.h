@@ -26,7 +26,7 @@
 
 #include <qvaluelist.h>
 
-#include <kdom/css/CSSPrimitiveValueImpl.h>
+#include "css_valueimpl.h"
 
 #include <kcanvas/KCanvasMatrix.h>
 

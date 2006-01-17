@@ -26,7 +26,7 @@
 #include <qcolor.h>
 
 #include <kdom/core/DOMStringImpl.h>
-#include <kdom/css/CSSValueImpl.h>
+#include "css_valueimpl.h"
 
 namespace KDOM
 {

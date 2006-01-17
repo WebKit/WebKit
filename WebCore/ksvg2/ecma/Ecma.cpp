@@ -22,7 +22,7 @@
 
 #include "config.h"
 #include <kdom/Namespace.h>
-#include <kdom/css/CSSValue.h>
+#include "css_valueimpl.h"
 #include <kdom/events/Event.h>
 #include <kdom/core/NodeImpl.h>
 #include <kdom/events/EventImpl.h>

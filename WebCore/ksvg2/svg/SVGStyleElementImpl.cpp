@@ -23,9 +23,8 @@
 #include "config.h"
 #include <kdom/kdom.h>
 #include <kdom/DOMString.h>
-#include <kdom/css/MediaListImpl.h>
 #include "DocumentImpl.h"
-#include <kdom/css/CSSStyleSheetImpl.h>
+#include "css_stylesheetimpl.h"
 
 #include "SVGStyleElementImpl.h"
 

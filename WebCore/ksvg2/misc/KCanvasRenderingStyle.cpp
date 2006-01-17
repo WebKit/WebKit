@@ -36,9 +36,8 @@
 
 #include "DocumentImpl.h"
 #include <kdom/DOMString.h>
-#include <kdom/css/RenderStyle.h>
-#include <kdom/css/CSSValueListImpl.h>
-#include <kdom/css/CSSPrimitiveValueImpl.h>
+#include "render_style.h"
+#include "css_valueimpl.h"
 
 #include "ksvg.h"
 #include "SVGLengthImpl.h"

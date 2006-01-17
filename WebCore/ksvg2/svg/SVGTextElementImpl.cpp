@@ -29,7 +29,7 @@
 #include "SVGMatrixImpl.h"
 #include "SVGRenderStyle.h"
 #include "KCanvasRenderingStyle.h"
-#include <kdom/css/RenderStyle.h>
+#include "render_style.h"
 
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGText.h>

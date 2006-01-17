@@ -1,5 +1,96 @@
 2006-01-16  David Hyatt  <hyatt@apple.com>
 
+        (1) Fix build bustage by properly marking the moved Obj-C
+        bindings files as private.
+        (2) Move khtml/css to WebCore/css.
+        (3) Eliminate the kdom/css forwarding headers.
+
+        * ForwardingHeaders/kdom/css: Removed.
+        * ForwardingHeaders/kdom/css/CSSPrimitiveValueImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSStyleDeclarationImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSStyleRuleImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSStyleSelector.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSStyleSheetImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSValueImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/CSSValueListImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/KDOMCSSParser.h: Removed.
+        * ForwardingHeaders/kdom/css/MediaListImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/RGBColorImpl.h: Removed.
+        * ForwardingHeaders/kdom/css/RenderStyle.h: Removed.
+        * ForwardingHeaders/kdom/css/StyleSheetListImpl.h: Removed.
+        * WebCore+SVG/RGBColorImpl.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css: Added.
+        * css/css_base.cpp: Added.
+        * css/css_base.h: Added.
+        * css/css_computedstyle.cpp: Added.
+        * css/css_computedstyle.h: Added.
+        * css/css_grammar.y: Added.
+        * css/css_ruleimpl.cpp: Added.
+        * css/css_ruleimpl.h: Added.
+        * css/css_stylesheetimpl.cpp: Added.
+        * css/css_stylesheetimpl.h: Added.
+        * css/css_valueimpl.cpp: Added.
+        * css/css_valueimpl.h: Added.
+        * css/csshelper.cpp: Added.
+        * css/csshelper.h: Added.
+        * css/cssparser.cpp: Added.
+        * css/cssparser.h: Added.
+        * css/cssproperties.in: Added.
+        * css/cssstyleselector.cpp: Added.
+        * css/cssstyleselector.h: Added.
+        * css/cssvalues.in: Added.
+        * css/html4.css: Added.
+        * css/makeprop: Added.
+        * css/maketokenizer: Added.
+        * css/makevalues: Added.
+        * css/quirks.css: Added.
+        * css/tokenizer.flex: Added.
+        * khtml/css: Removed.
+        * khtml/css/css_base.cpp: Removed.
+        * khtml/css/css_base.h: Removed.
+        * khtml/css/css_computedstyle.cpp: Removed.
+        * khtml/css/css_computedstyle.h: Removed.
+        * khtml/css/css_grammar.y: Removed.
+        * khtml/css/css_ruleimpl.cpp: Removed.
+        * khtml/css/css_ruleimpl.h: Removed.
+        * khtml/css/css_stylesheetimpl.cpp: Removed.
+        * khtml/css/css_stylesheetimpl.h: Removed.
+        * khtml/css/css_valueimpl.cpp: Removed.
+        * khtml/css/css_valueimpl.h: Removed.
+        * khtml/css/csshelper.cpp: Removed.
+        * khtml/css/csshelper.h: Removed.
+        * khtml/css/cssparser.cpp: Removed.
+        * khtml/css/cssparser.h: Removed.
+        * khtml/css/cssproperties.in: Removed.
+        * khtml/css/cssstyleselector.cpp: Removed.
+        * khtml/css/cssstyleselector.h: Removed.
+        * khtml/css/cssvalues.in: Removed.
+        * khtml/css/html4.css: Removed.
+        * khtml/css/makeprop: Removed.
+        * khtml/css/maketokenizer: Removed.
+        * khtml/css/makevalues: Removed.
+        * khtml/css/quirks.css: Removed.
+        * khtml/css/tokenizer.flex: Removed.
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/ecma/Ecma.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        * ksvg2/svg/SVGColorImpl.cpp:
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        * ksvg2/svg/SVGMaskElementImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGTextElementImpl.cpp:
+
+2006-01-16  David Hyatt  <hyatt@apple.com>
+
         Move the Objective-C dom bindings from kwq to bindings/objc.
 
         Reviewed by eseidel

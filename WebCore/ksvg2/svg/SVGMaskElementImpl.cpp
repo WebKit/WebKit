@@ -29,7 +29,7 @@
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include <kdom/css/CSSStyleSelector.h>
+#include "cssstyleselector.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

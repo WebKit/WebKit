@@ -27,7 +27,7 @@
 #include <kdom/core/AttrImpl.h>
 #include "DocumentImpl.h"
 #include "DOMImplementationImpl.h"
-#include <kdom/css/CSSStyleDeclarationImpl.h>
+#include "css_valueimpl.h"
 #include <kdom/DOMString.h>
 
 #include "SVGHelper.h"

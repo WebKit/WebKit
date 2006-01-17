@@ -33,10 +33,9 @@
 #include <kdom/cache/KDOMLoader.h>
 #include "DocLoader.h"
 #include <kdom/cache/KDOMCachedObject.h>
-#include <kdom/css/CSSStyleSelector.h>
-#include <kdom/css/CSSStyleSheetImpl.h>
+#include "cssstyleselector.h"
+#include "css_stylesheetimpl.h"
 #include <kdom/events/MouseEventImpl.h>
-#include <kdom/css/StyleSheetListImpl.h>
 #include <kdom/events/KeyboardEventImpl.h>
 #include <kdom/core/ProcessingInstructionImpl.h>
 

@@ -32,7 +32,7 @@
 #include <q3cstring.h>
 #include <qpaintdevice.h>
 
-#include <kdom/css/CSSStyleRuleImpl.h>
+#include "css_ruleimpl.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"
@@ -44,7 +44,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 #include "SVGStyledElementImpl.h"
-#include "khtml/css/cssstyleselector.h"
+#include "cssstyleselector.h"
 
 #include <stdlib.h>
 
