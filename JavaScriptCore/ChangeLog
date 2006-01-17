@@ -1,3 +1,14 @@
+2006-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6322
+        DateProtoFuncImp::callAsFunction can crash due to lack of type checking
+
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction): Type check calls to all methods. 
+        This matches section 15.9.5 in the spec.
+
 2006-01-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

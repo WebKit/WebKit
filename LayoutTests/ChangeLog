@@ -1,3 +1,13 @@
+2006-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        - Added layout test for 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6322
+        DateProtoFuncImp::callAsFunction can crash due to lack of type checking
+
+        * fast/js/date-proto-generic-invocation-expected.txt: Added.
+        * fast/js/date-proto-generic-invocation.html: Added.
+        * fast/js/resources/date-proto-generic-invocation.js: Added.
+
 2006-01-16  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Justin.

@@ -1,0 +1,37 @@
+This test verifies that the functions of the Date prototype object are not generic, as documented in ECMA-262 rev3 section 15.9.5 Properties of the Date Prototype Object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o.__proto__.toString() threw exception TypeError: Type error.
+PASS o.__proto__.toDateString() threw exception TypeError: Type error.
+PASS o.__proto__.toTimeString() threw exception TypeError: Type error.
+PASS o.__proto__.toGMTString() threw exception TypeError: Type error.
+PASS o.__proto__.toUTCString() threw exception TypeError: Type error.
+PASS o.__proto__.toLocaleString() threw exception TypeError: Type error.
+PASS o.__proto__.toLocaleDateString() threw exception TypeError: Type error.
+PASS o.__proto__.toLocaleTimeString() threw exception TypeError: Type error.
+PASS o.__proto__.getTime() threw exception TypeError: Type error.
+PASS o.__proto__.getYear() threw exception TypeError: Type error.
+PASS o.__proto__.getFullYear() threw exception TypeError: Type error.
+PASS o.__proto__.getMonth() threw exception TypeError: Type error.
+PASS o.__proto__.getDate() threw exception TypeError: Type error.
+PASS o.__proto__.getDay() threw exception TypeError: Type error.
+PASS o.__proto__.getHours() threw exception TypeError: Type error.
+PASS o.__proto__.getMinutes() threw exception TypeError: Type error.
+PASS o.__proto__.getSeconds() threw exception TypeError: Type error.
+PASS o.__proto__.getMilliseconds() threw exception TypeError: Type error.
+PASS o.__proto__.getTimezoneOffset() threw exception TypeError: Type error.
+PASS o.__proto__.setTime() threw exception TypeError: Type error.
+PASS o.__proto__.setMilliseconds() threw exception TypeError: Type error.
+PASS o.__proto__.setSeconds() threw exception TypeError: Type error.
+PASS o.__proto__.setMinutes() threw exception TypeError: Type error.
+PASS o.__proto__.setHours() threw exception TypeError: Type error.
+PASS o.__proto__.setDate() threw exception TypeError: Type error.
+PASS o.__proto__.setMonth() threw exception TypeError: Type error.
+PASS o.__proto__.setFullYear() threw exception TypeError: Type error.
+PASS o.__proto__.setYear() threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
