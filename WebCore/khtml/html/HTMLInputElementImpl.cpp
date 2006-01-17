@@ -970,11 +970,17 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
     if (m_type == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent && m_render) {
         // record the mouse position for when we get the DOMActivate event
         MouseEventImpl *me = static_cast<MouseEventImpl*>(evt);
-        int offsetX, offsetY;
-        m_render->absolutePosition(offsetX,offsetY);
-        xPos = me->clientX()-offsetX;
-        yPos = me->clientY()-offsetY;
-
+        // FIXME: We could just call offsetX() and offsetY() on the event,
+        // but that's currently broken, so for now do the computation here.
+        if (me->isSimulated() || !m_render) {
+            xPos = 0;
+            yPos = 0;
+        } else {
+            int offsetX, offsetY;
+            m_render->absolutePosition(offsetX,offsetY);
+            xPos = me->clientX() - offsetX;
+            yPos = me->clientY() - offsetY;
+        }
         me->setDefaultHandled();
     }
 

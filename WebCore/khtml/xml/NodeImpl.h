@@ -271,7 +271,8 @@ public:
     bool dispatchSimulatedMouseEvent(const AtomicString &eventType);
     bool dispatchMouseEvent(const AtomicString &eventType, int button, int detail,
         int clientX, int clientY, int screenX, int screenY,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        bool isSimulated = false);
     bool dispatchUIEvent(const AtomicString &eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     bool dispatchKeyEvent(QKeyEvent *key);

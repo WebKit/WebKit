@@ -751,12 +751,12 @@ bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
     assert(!eventDispatchForbidden());
     // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
     // Internet Explorer instead gives the current mouse position and state.
-    return dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, false, false, false, false);
+    return dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, false, false, false, false, true);
 }
 
 bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int detail,
     int clientX, int clientY, int screenX, int screenY,
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
 {
     assert(!eventDispatchForbidden());
     if (disabled()) // Don't even send DOM events for disabled controls..
@@ -778,7 +778,7 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
 
     EventImpl *me = new MouseEventImpl(eventType,true,cancelable,getDocument()->defaultView(),
                    detail,screenX,screenY,clientX,clientY,ctrlKey,altKey,shiftKey,metaKey,
-                   button,0);
+                   button, 0, 0, isSimulated);
     me->ref();
     dispatchEvent(me, exceptioncode, true);
     bool defaultHandled = me->defaultHandled();
@@ -795,7 +795,7 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
                                 true,cancelable,getDocument()->defaultView(),
                                 detail,screenX,screenY,clientX,clientY,
                                 ctrlKey,altKey,shiftKey,metaKey,
-                                button,0);
+                                button,0, 0, isSimulated);
         me->ref();
         if (defaultHandled)
             me->setDefaultHandled();

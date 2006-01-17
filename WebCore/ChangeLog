@@ -1,3 +1,45 @@
+2006-01-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt and Darin
+
+        Fix for <rdar://problem/4405836> REGRESSION: crash at webmail.aol.com 
+        when deleting mail in khtml::RenderTableCell::collapsedBottomBorder() const 
+        + 232
+
+        RenderTableCell::collapsedBottomBorder() gets nextCell by calling 
+        table()->cellBelow(this). In the case of the crash, cellBelow() returns 
+        a pointer to a table cell that was already destroyed. cellBelow() thinks 
+        that the pointer is still good because the grid of cells has not been updated 
+        because all of this code is called through the hitTest and the hitTest does 
+        not update the layout. The fix that I have is simply it have the hitTest call 
+        updateLayout(). This is the only change in behavior. The rest of the patch 
+        preserves behavior for simulated clicks. fast/events/stopPropagation-submit 
+        caught this problem that arose from calling updateLayout() in the hitTest; 
+        we should always have an x and y position of 0 for simulated clicks. This 
+        preserves that behavior by keeping track of whether a click is simulated or not.
+
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (DOM::HTMLInputElementImpl::defaultEventHandler): If the click is simulated, 
+        set xPos and yPos to 0.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setContentEditable): Fix spacing.
+        (HTMLElementImpl::click): It isn't necessary to check if there is a renderer.
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::hitTest): Call updateLayout().
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchSimulatedMouseEvent): Set isSimulated to true.
+        (WebCore::NodeImpl::dispatchMouseEvent): Keep track of isSimulated.
+        * khtml/xml/NodeImpl.h: Same.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::MouseRelatedEventImpl::MouseRelatedEventImpl): Add isSimulated to
+        MouseRelatedEventImpl().
+        (DOM::MouseRelatedEventImpl::computePositions): Only change the offsets if 
+        it's not simulated.
+        (DOM::MouseEventImpl::MouseEventImpl): Add isSimulated to MouseEventImpl()
+        * khtml/xml/dom2_eventsimpl.h: 
+        (DOM::MouseRelatedEventImpl::isSimulated): Declarations of isSimulated
+        (DOM::MouseEventImpl::isSimulated): Same.
+
 2006-01-17  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed by Darin, landed by ap.

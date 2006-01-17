@@ -518,7 +518,8 @@ void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr)
     }
 }
 
-void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
+void HTMLElementImpl::setContentEditable(const DOMString &enabled)
+{
     if (enabled == "inherit") {
         int exceptionCode;
         removeAttribute(contenteditableAttr, exceptionCode);
@@ -529,24 +530,13 @@ void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
 
 void HTMLElementImpl::click(bool sendMouseEvents, bool showPressedLook)
 {
-    int x = 0;
-    int y = 0;
-    RenderObject *r = renderer();
-    if (r)
-        r->absolutePosition(x,y);
-
     // send mousedown and mouseup before the click, if requested
-    if (sendMouseEvents) {
+    if (sendMouseEvents)
         dispatchSimulatedMouseEvent(mousedownEvent);
-        if (r)
-            setActive(true, showPressedLook);
+    setActive(true, showPressedLook);
+    if (sendMouseEvents)
         dispatchSimulatedMouseEvent(mouseupEvent);
-        if (r)
-            setActive(false);
-    } else if (r) {
-        setActive(true, showPressedLook);
-        setActive(false);
-    }
+    setActive(false);
 
     // always send click
     dispatchSimulatedMouseEvent(clickEvent);
