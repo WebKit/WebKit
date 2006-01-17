@@ -1,5 +1,11 @@
 2006-01-16  Eric Seidel  <eseidel@apple.com>
 
+        Fixed test case to remove invisible chars (thus fixing test).
+
+        * svg/custom/recursive-clippath.svg:
+
+2006-01-16  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         A proactive test case to prevent crashes in recursive clippath defs
