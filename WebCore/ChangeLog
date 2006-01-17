@@ -1,3 +1,13 @@
+2006-01-17  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by eseidel.
+
+        Fix second part of WebCore-no-SVG fails to build.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6607
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Mark three headers as private rather than project in the WebCore-no-SVG target.
+
 2006-01-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt
@@ -9,7 +19,7 @@
 
         Reviewed by eseidel.
 
-        WebCore-SVG fails to build.
+        WebCore-no-SVG fails to build.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6607
 
         * WebCore.xcodeproj/project.pbxproj:
