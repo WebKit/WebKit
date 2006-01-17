@@ -4194,8 +4194,7 @@
 				BCEA4850097D93020094C9E4 /* table_layout.cpp */,
 				BCEA4851097D93020094C9E4 /* table_layout.h */,
 			);
-			name = rendering;
-			path = khtml/rendering;
+			path = rendering;
 			sourceTree = "<group>";
 		};
 		F523D32402DE4478018635CA /* xml */ = {
