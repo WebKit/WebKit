@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Regression Testing</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Regression Testing
+</div>
+
+<div id="content">
+
+<h2>The WebKit Tests</h2>
+
+<p>Before patches can land in any of the frameworks in the repository, the layout regression tests must be run. To run these tests, do the following:</p>
+
+<ol>
+<li><p>Download the <a href="Ahem.ttf">Ahem font</a>.</p>
+<p>This special simple font is used to construct certain types of predictable tests. <a href="http://www.hixie.ch/resources/fonts/">A page on Ian Hickson's site</a> has a more detailed explanation.</p></li>
+<li><p>Open the downloaded file in the Font Book application and click on the Install Font button to install it.</p></li>
+<li><p>Execute the <tt>run-webkit-tests</tt> script.</p>
+<p class="code">WebKitTools/Scripts/run-webkit-tests</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>build-webkit</tt> without specifying the path to the script.</p>
+</li>
+</ol>
+
+<p>The script will dump the render trees for all of the pages and diff the results against the expected correct results.  If no
+differences are found, then the patch has passed the tests.  If any tests fail, then the patch cannot be committed until the
+discrepancies in the tests are resolved.</p>
+
+<p>Regression tests must be run on Tiger, since the expected results checked in were generated on Tiger.</p>
+
+
+<h2>The JavaScriptCore Tests</h2>
+
+<p>If you are making changes to JavaScriptCore, there is an additional test suite you must run before landing changes.
+This is the Mozilla JavaScript test suite.</p>
+
+<h3>What's covered by the JavaScript tests?</h3>
+
+ <p>The JavaScript tests cover the functionality of the core JavaScript engine.
+ This includes the following JavaScript objects:
+
+      <table>
+        <tr>
+          <td valign="top">
+            <ul>
+              <li>Arrays</li>
+              <li>Booleans</li>
+              <li>Dates</li>
+              <li>Functions</li>
+            </ul>
+          </td>
+          <td valign="top">
+            <ul>
+              <li>Global Object</li>
+              <li>Math</li>
+              <li>Numbers</li>
+              <li>Objects</li>
+            </ul>
+          </td>
+          <td valign="top">
+            <ul>
+              <li>Regular Expressions</li>
+              <li>Strings</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+
+      In addition, the JavaScript tests cover parsing, lexical conventions,
+      expressions, statements, type conversion, and exception handling.  
+    </p>
+
+
+<h3>How to run the tests</h3>
+
+<p>From JavaScriptCore/tests/mozilla, run the following command:</p>
+<p class="code">./run-mozilla-tests</p>
+<p>The script will run all the tests and summarize how the results differ from what is currently expected.</p>
+
+<h3>What just happened</h3>
+<p>
+After all the test runs have finished the results of tests are saved to <tt>actual.html</tt>. 
+The script the compares these results from your local tree against what is expected to pass/fail from the tip of tree.
+If there are any regressions caused by your changes you'll be made aware of them.
+If you fixed a bug that caused an existing failure, you'll also be made aware of what specific test your fix affected.
+</p>
+
+<h3>What to do next</h3>
+
+<p>So you fixed a bug that fixed a test.  This means you've now set a new baseline for the tree as a result.</p>
+<p class="code">cp actual.html expected.html</p>
+<p>When you land your changes, the baseline (expected.html) will be updated in the tree.</p>
+
+<h3>What happens if I caused a regression?</h3>
+
+<p>It's not the end of the world.  Go back and fix your bug and re-run <tt>run-mozilla-tests</tt>  as many times as necessary.</p>
+
+</div>
+
+</body>
+</html>

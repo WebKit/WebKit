@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+	<title>Prioritizing Web Kit Bugs in Bugzilla</title>
+	<link type="text/css" rel="stylesheet" href="../webkitdev.css"/>
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<!--main body-->
+<div id="banner">
+	Prioritizing Web Kit Bugs in Bugzilla
+</div>
+<div id="content">
+
+	<p>This document describes the current guidelines for assigning priorities to Web Kit bugs in <a href="http://bugzilla.opendarwin.org/">Bugzilla</a>.
+The relevant bugs are all of those whose product is "WebKit".</p>
+
+	<a name="standardrules"></a><h2>Standard priority rules</h2>
+	<p>Each bug is assigned the first appropriate priority listed below 
+		from top to bottom.</p>
+
+	<strong>P1</strong>
+	<ul>
+		<li>Any reproducible crash or hang.</li>
+		<li>Any regression from a previous publicly released version of WebKit.</li>
+		<li>Serious problem on important site due to site change or newly-important site.</li>
+		<li>Serious security issue.</li>
+	</ul>
+
+	<strong>P2</strong>
+	<ul>
+		<li>Site that does not function in some non-trivial way.</li>
+		<li>Serious performance complaints.</li>
+		<li>Site that has really bad cosmetic problems (e.g., content overlapping such that it's very hard to read).</li>
+		<li>Unreproducible crash or hang that has been reported many times.</li> 
+	</ul>
+
+	<strong>P3</strong>
+	<ul>
+		<li>Site that works but has some cosmetic problems.</li>
+		<li>Minor performance complaints, such as trivial memory leaks.</li>
+		<li>Architecture issues that could help with correctness or performance but are not a clear win in advance.</li>
+		<li>Unreproducible crash or hang.</li>
+	</ul>
+
+	<strong>P4</strong>
+	<ul>
+		<li>All enhancement requests and feature requests not covered the criteria for p1, p2, or p3.</li>
+	</ul>
+
+	<strong>P5</strong>
+	<ul>
+		<li>Priority not yet determined.</li>
+	</ul>
+
+	<a name="commonadjustments"></a><h2>Common adjustments to priority</h2>
+	<ul>
+		<li>If there is a workaround, the priority may be moved down.</li>
+		<li>If a bug gets a lot of duplicates, the priority may be moved up.</li>
+		<li>If a bug is getting a lot of public attention, the priority may be moved up.</li>
+		<li>If a bug is on a very important site, the priority may be moved up.</li>
+	</ul>
+
+</div>
+<!-- end main body -->
+</body>
+</html>

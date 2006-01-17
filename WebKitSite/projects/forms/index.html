@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>HTML Forms</title>
+  <link rel=stylesheet href="../../webkitdev.css">
+  <style>
+    dt { margin-top: 1em; }
+  </style>
+
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+HTML Forms
+</div>
+
+<div id="content">
+<h3>Overview</h3>
+<p>Welcome to the project page for the HTML form controls.  Form controls are the various widgets that can be used in an HTML form and that can 
+participate in form submission.  The code in the engine that talks to the controls is in the <tt>WebCore</tt> framework.  The DOM elements are
+under the <tt>khtml/html</tt> directory, and the rendering objects are under the <tt>khtml/rendering</tt> directory.  At the moment the controls are
+all grouped together into single files, and one change we plan to make is to split these out into one class per file in order to make it easier to
+locate each control's implementation.
+</p>
+
+<h3>Get Involved!</h3>
+
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Web+Kit&component=HTML+Forms&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+View bugs in the HTML Forms component on OpenDarwin.
+</a>
+
+<p>Below is a sampling of interesting open issues with our HTML form controls.  To get involved <a href="../../contact.html">contact us</a>!
+</p>
+
+<dl>
+
+<dt><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3244">Support the <tt>label</tt> element</a>
+<dd>WebKit does not properly support the <tt>label</tt> element.
+
+<dt>Use WebKit to implement the controls</dt>
+<dd>The HTML form controls are currently implemented without using the WebKit engine.  Right now WebKit talks to Qt interfaces that represent the controls.
+On OS X our implementation of these Qt interfaces uses App Kit.  The major architectural change that we are planning for form controls in the coming year
+is to re-implement the form controls using the WebKit engine itself to render.  This will allow us to support more CSS properties for form controls, make
+our code more portable to other platforms, and - most importantly - will improve our performance significantly on pages with a large number of controls.</p>
+
+<p>For input fields and text areas, we plan to use <a href="../editing/index.html">HTML editing</a> to implement these controls, and for the other controls custom
+renderers will be made.  A new theme abstraction will be used to encapsulate the rendering of a native look on the platform with <tt>NSCells</tt> being used to
+determine the correct appearance of controls like checkboxes and buttons on OS X.</p>
+
+<dt>Implement Web Forms</dt>
+<dd>The <a href="http://whatwg.org">WhatWG</a> has outlined extensions to existing HTML forms.  We are interested in supporting these extensions (along with Opera
+and Mozilla).  The <a href="http://whatwg.org/specs/web-forms/current-work/">specification</a> details all of these enhancements.  We welcome bugs, contributions and
+testers to help us implement these improvements.
+
+
+</div>
+</body>
+</html>

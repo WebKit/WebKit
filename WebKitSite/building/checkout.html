@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <base href="http://webkit.opendarwin.org/building/">
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Getting the Code</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Getting the Code
+</div>
+
+<div id="content">
+
+<p>Below are step by step instructions for how to check out the WebKit source code.
+One of our contributers, Mark Rowe, has also made available <a href="http://nightly.webkit.org/">WebKit nightly builds</a> for those just interested in testing.
+Follow the instructions below to obtain the code via subversion (svn).</p>
+
+<ol>
+<li><p>Install a Subversion Client.</p>
+<p>The Subversion (svn) tool is required to access the WebKit source code.  Download the 
+Mac OS X <a href="http://metissian.com/downloads/macosx/subversion/subversion-client-1.2.3.dmg">Subversion installer</a> and double-click to install.</p>
+<li><p>Open the Terminal application.</p>
+<p>Terminal can be found in the Utilities folder; a quick way to open the folder is the Finder Go menu.</p>
+<li><p>Type this command to check out the entire WebKit source tree:</p>
+<p class="code">svn checkout svn://anoncvs.opensource.apple.com/svn/webkit/trunk WebKit</p>
+</li>
+<p>After the checkout completes you should have all the source code on your system.  The next step is
+<a href="build.html">building</a> the code.</p>
+</ol>
+<p>Once you have checked out the code, you can update it at any time using the following command:</p>
+<p class="code">WebKitTools/Scripts/update-webkit</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>update-webkit</tt> without specifying the path to the script.</p>
+</div>
+</body>
+</html>

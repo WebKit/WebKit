@@ -1,0 +1,566 @@
+* html #poststuff {
+	height: 100%; /* kill peekaboo bug in IE */
+}
+
+a {
+	border-bottom: 1px solid #69c;
+	color: #00019b;
+	text-decoration: none;
+}
+
+a.delete:hover {
+	background: #c00;
+	color: #fff;
+}
+
+#planetnews ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#planetnews li {
+	width: 17%;
+	margin: 1%;
+	float: left;
+}
+
+#planetnews li a {
+	display: block;
+	padding: .5em;
+	background: #ddd;
+	height: 6em;
+	overflow: hidden;
+}
+
+a.edit, a.delete, a.edit:hover, a.delete:hover {
+	border-bottom: none;
+	display: block;
+	padding: 5px 0;
+	text-align: center;
+}
+
+a.edit:hover {
+	background: #ccc;
+	color: #036;
+}
+
+a:visited {
+	color: #006;
+}
+
+a:hover {
+	border-bottom: 1px solid #3a75ae;
+	color: #069;
+}
+
+body	{
+	background: #f2f2f2;
+	color: #000;
+	margin: 0;
+	padding: 0;
+}
+
+body, td {
+	font: 10pt Georgia, "Times New Roman", Times, serif;
+}
+
+fieldset {
+	border: 1px solid #ddd;
+	-moz-border-radius: 5px;
+	padding: 3px;
+}
+
+fieldset label.selectit {
+	background: #f0f0f0;
+	display: block;
+	font-size: 11px;
+	padding: 0 2px;
+}
+
+fieldset label.selectit:hover {
+	background: #dadada;
+}
+
+fieldset legend {
+	padding: .1em .3em;
+}
+
+fieldset span.cat-nest {
+	display: block;
+	margin-left: 10px;
+}
+
+fieldset.options {
+	padding: 1em;
+}
+
+fieldset.options legend {
+	font-size: 16px;
+}
+
+form, label input {
+	margin: 0;
+	padding: 0;
+}
+
+h2 {
+	border-bottom: 2px solid #69c;
+	color: #333;
+	font: normal 22px/18px serif;
+	margin: 5px 10px;
+}
+
+img, #footer a {
+	border: 0;
+}
+
+input:focus, textarea:focus, label:focus {
+	background: #fff;
+	border: 1px solid #686868;
+}
+
+label {
+	cursor: pointer;
+}
+
+li, dd {
+	margin-bottom: 6px;
+}
+
+p, li, dl, dd, dt {
+	line-height: 130%;
+}
+
+textarea, input, select {
+	background: #f4f4f4;
+	border: 1px solid #b2b2b2;
+	color: #000;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin: 1px;
+	padding: 3px;
+}
+
+.alignleft {
+	float: left
+}
+
+.alignright {
+	float: right;
+}
+
+.alternate {
+	background: #eee;
+}
+
+.anchors {
+	margin: 10px 20px 10px 20px;
+}
+
+.checkbox {
+	background: #fff;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.code {
+	font-family: "Courier New", Courier, monospace;
+}
+
+.commentlist li {
+	border-bottom: 1px solid #369;
+	padding: .3em 1em;
+}
+
+.ed_button {
+	padding: 1px;
+}
+
+.hidden {
+	display: none;
+}
+
+.navigation {
+	display: block;
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 30px;
+}
+
+.post-categories {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+.post-categories li, #ed_toolbar {
+	display: inline;
+}
+
+.quicktags, .search {
+	background: #ccc;
+	color: #000;
+	font: 12px Georgia, "Times New Roman", Times, serif;
+}
+
+.submit input, .submit input:focus, .button {
+	background: url(../wp-images/fade-butt.png);
+	border: 3px double #999;
+	border-left-color: #ccc;
+	border-top-color: #ccc;
+	color: #333;
+	padding: 0.25em;
+}
+
+.submit input:active, .button:active {
+	background: #f4f4f4;
+	border: 3px double #ccc;
+	border-left-color: #999;
+	border-top-color: #999;
+}
+
+.submit, #quicktags, .editform th, #postcustomsubmit {
+	text-align: right;
+}
+
+.unapproved {
+	color: #888;
+}
+
+.unapproved a:link {
+	color: #b9bcff;
+}
+
+.unapproved a:visited {
+	color: #696dff;
+}
+
+.unapproved a:hover {
+	color: #009ef0;
+}
+
+.updated {
+	background: #f0f8ff;
+	border: 1px solid #69c;
+	margin: 1em 5% 10px;
+	padding: 0 1em 0 1em;
+}
+
+.wrap {
+	background: #fff;
+	border: 1px solid #ccc;
+	clear: both;
+	margin: 15px 5%;
+	padding: .5em 1em;
+}
+
+.wrap h2 {
+	margin: 6px 0;
+}
+
+#adminmenu {
+	background: #fff;
+	border-bottom: 2px solid #707070;
+	margin: 0;
+	padding: .2em;
+}
+
+#adminmenu .current, #adminmenu2 .current, #ed_strong {
+	font-weight: bold;
+}
+
+#adminmenu a {
+	border: 1px solid #fff;
+	color: #333;
+	font-size: 16px;
+	font-weight: normal;
+	margin: 0;
+	padding: 3px 5px;
+	text-decoration: none;
+}
+
+#adminmenu a:hover, .current {
+	background: #ccc;
+	border: 1px solid #9d9d9d;
+	color: #171717;
+}
+
+#adminmenu li, #adminmenu2 li {
+	display: inline;
+	line-height: 200%;
+	list-style: none;
+	text-align: center;
+}
+
+#adminmenu2 {
+	background: #a3a3a3;
+	border-bottom: none;
+	margin: 0;
+	padding: 3px 2em 0;
+}
+
+#adminmenu2 .current {
+	background: #f2f2f2;
+	border-top: 1px solid #9a9a9a;
+	border-right: 2px solid #4f4f4f;
+	color: #000;
+}
+
+#adminmenu2 a {
+	border: none;
+	color: #fff;
+	font-size: 12px;
+	padding: .3em .4em .33em;
+}
+
+#adminmenu2 a:hover {
+	background: #f0f0f0;
+	color: #393939;
+}
+
+#adminmenu2 li {
+	line-height: 170%;
+}
+
+#categorydiv {
+	line-height: 130%;
+	margin-right: 15px;
+	position: absolute;
+	right: 5%;
+	width: 9em;
+}
+
+#categorydiv div {
+	height: 27em;
+	overflow: auto;
+}
+
+#categorydiv input, #poststatusdiv input, #commentstatusdiv input, #pingstatusdiv input {
+	border: none;
+}
+
+#content, #excerpt {
+	margin-left: 1%;
+	width: 97%;
+}
+
+#deletepost:hover {
+	background: #ce0000;
+	color: #fff;
+}
+
+#ed_del {
+	text-decoration: line-through;
+}
+
+#ed_em {
+	font-style: italic;
+}
+
+#excerpt {
+	height: 1.8em;
+	width: 98%;
+}
+
+#footer {
+	text-align: center;
+}
+
+#login {
+	background: #fff;
+	border: 2px solid #a2a2a2;
+	margin: 5em auto;
+	padding: 1.5em;
+	width: 25em;
+}
+
+#login #login_error {
+	background: #c00;
+	border: 1px solid #a40000;
+	color: #fff;
+	font-size: 16px;
+	font-weight: bold;
+	padding: .5em;
+	text-align: center;
+}
+
+#login h1 {
+	background: url(../wp-images/wp-small.png) no-repeat;
+	margin-top: 0;
+}
+
+#login h1 a {
+	display: block;
+	text-indent: -1000px;
+}
+
+#login input {
+	padding: 3px;
+}
+
+#login ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#login ul li {
+	display: inline;
+	margin-left: 1.4em;
+	text-align: center;
+}
+
+#metainfo, #postdiv, #postexcerpt {
+	clear: both;
+}
+
+#postcustom {
+	border: 1px solid #aaa;
+	padding: .5em;
+	width: 97%;
+}
+
+#postcustom .updatemeta, #postcustom .deletemeta {
+	margin: auto;
+	width: 5em;
+}
+
+#postcustom table {
+	border: 1px solid #ccc;
+	margin: .5em;
+	width: 98%;
+}
+
+#postcustom table input, #postcustom table textarea {
+	width: 95%;
+}
+
+#poststuff {
+	margin-right: 11em;
+}
+
+#profile {
+	margin: 10px;
+}
+
+#profile .left {
+	border-right: 1px dashed #ccc;
+	float: left;
+	margin-right: 5px;
+	padding-right: 5px;
+}
+
+#profile label {
+	float: left;
+	padding-right: 3px;
+	text-align: right;
+	width: 85px;
+}
+
+#profile p {
+	margin: 0 0 4px 0;
+}
+
+#quicktags {
+	margin-right: 1%;
+}
+
+#save {
+	width: 14em;
+}
+
+#simple #titlediv {
+	height: 4em;
+}
+
+#template div {
+	margin-right: 190px;
+}
+
+#template textarea {
+	font: small 'Courier New', Courier, monospace;
+	width: 99%;
+}
+
+#templateside {
+	float: right;
+	width: 170px;
+}
+
+#templateside h3, #postcustom p {
+	margin: 0;
+}
+
+#templateside ol, #templateside ul {
+	list-style: none;
+	margin: .5em;
+	padding: 0;
+}
+
+#titlediv, #commentstatusdiv, #postpassworddiv, #namediv, #uridiv, #emaildiv, #pageparent {
+	float: left;
+	height: 6em;
+	margin-right: 5px;
+}
+
+#wphead {
+	background: url(../wp-images/header-shadow.png) #f2f2f2 repeat-x bottom;
+	padding: 1px 5px 11px;
+}
+
+#wphead h1 {
+	font-size: 2.5em;
+	font-weight: normal;
+	letter-spacing: -.05em;
+	margin: 0;
+}
+
+#wphead h1 span {
+	font-size: .4em;
+	letter-spacing: 0;
+}
+
+#zeitgeist {
+	background: #eee;
+	border: 1px solid #69c;
+	float: right;
+	font-size: 90%;
+	margin-bottom: .5em;
+	margin-left: 1em;
+	margin-top: .5em;
+	padding: 1em;
+	width: 27%;
+}
+
+#zeitgeist h2, fieldset legend a {
+	border-bottom: none;
+}
+
+#zeitgeist h3 {
+	border-bottom: 1px solid #ccc;
+	font-size: 16px;
+	margin: 1em 0 0;
+}
+
+#zeitgeist h3 cite {
+	font-size: 12px;
+	font-style: normal;
+}
+
+#zeitgeist li, #zeitgeist p {
+	margin: .2em 0;
+}
+
+#zeitgeist ul {
+	margin: 0 0 .3em .6em;
+	padding: 0 0 0 .6em;
+}
+
+
+/* emeyer additions */
+
+.active td {background: #BEB;}
+.active .name {background: #9C9;}
+.alternate.active td {background: #ADA;}
+.alternate.active .name {background: #8B8;}

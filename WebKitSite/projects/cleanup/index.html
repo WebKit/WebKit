@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Code Cleanup</title>
+  <link rel=stylesheet href="../../webkitdev.css">
+  <style>
+    dt { font-weight: bold; margin-top: 1em; }
+  </style>
+
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Code Cleanup
+</div>
+
+<div id="content">
+<h3>Overview</h3>
+
+<p>We have a number of code cleanup tasks in mind for WebKit, WebCore and JavaScriptCore.  We have established <A href="../../coding/coding-style.html">coding style
+guidelines</A> for the frameworks and expect to be cleaning up the code so that it matches these guidelines.  In addition there are several cleanup tasks for each
+framework to better refactor code or to make simplifications that will help make the code easier to understand.
+</p>
+
+<h3>Get Involved!</h3>
+
+<dt>Follow the Coding Style Guidelines</dt>
+<dd>We welcome patches that clean up code to follow our coding style guidelines.
+
+<dt>Eliminate Redundant Code in WebKit and WebCore</dt>
+<dd>Now that WebKit and WebCore are both open source, there is less of a need for an artificial barrier between the two frameworks.  Much of the Objective-C code that
+is in WebKit can be moved to WebCore and converted to C++.  This will improve portability, performance, and eliminate redundant constructs (like the fact that both
+WebCore and WebKit know about loading subresources and have their own frame trees).</dd>
+
+<dt>[TODO: ADD MORE TASKS]</dt>
+
+</div>
+</body>
+</html>

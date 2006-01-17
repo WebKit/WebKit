@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>WebKit Bug Life Cycle</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+WebKit Bug Life Cycle
+</div>
+
+<div id="content">
+
+<h3>Introduction</h3>
+
+<p>This document describes the life cycle of a bug in the WebKit open-source project. In most ways
+this is the same as the life cycle of a bug in any Bugzilla project. The Bugzilla site also includes 
+<a href="http://bugzilla.opendarwin.org/page.cgi?id=fields.html#status">more details</a> about
+the life cycle of Bugzilla bugs.<p>
+
+<p>Joost de Valk (AlthA on the <a href="../contact.html">#webkit IRC channel</a>) has volunteered to answer questions
+about the WebKit bug life cycle. You can reach him on IRC or via email at webkit at joostdevalk dot nl.
+
+<h3>Fresh, Unconfirmed Bugs</h3>
+
+<p>A freshly-created bug starts out in state <tt>UNCONFIRMED</tt>. Often it is in component <tt>New Bugs</tt>, but
+some bugs will be given an initial component in the initial <a href="reporting.html">bug-reporting step</a>.</p>
+
+
+<h3><a name="confirming">Confirming Bugs</a></h3>
+
+<p>The next step is for someone with Bugzilla <tt>canConfirm</tt> privileges to review the unconfirmed bug and
+decide whether it has enough useful information to move forward. The possible changes to the bug at this step include the following:</p>
+
+<ul>
+<li>Resolution changed to <tt>DUPLICATE</tt> if the bug is determined to have the same cause as a bug reported earlier.</li>
+<li>Resolution changed to <tt>WORKSFORME</tt> if the bug seems to not be present in the latest sources.</li>
+<li>Resolution changed to <tt>INVALID</tt> if the bug does not describe a problem with WebKit.</li>
+<li>Resolution changed to <tt>WONTFIX</tt> in the rare case that the bug seems valid but there's a specific reason why it 
+should not be fixed in WebKit (usually this would be a cross-browser compatibility issue).</li>
+<li>Comments/questions added if the bug does not have enough information to move forward.</li>
+<li>Status changed to <tt>NEW</tt> if the bug is reproducible or otherwise has enough information to move forward. Along with changing the status,
+the component should also be set to an appropriate one more specific than <tt>New Bugs</tt> if necessary.</li>
+</ul>
+
+<h3>Analyzing Bugs</h3>
+
+<p>Each bug is initially assigned to the person designated as owner of the component. The assignee should move the bug from status
+<tt>NEW</tt> to status <tt>ASSIGNED</tt> after they have read the bug and are satisfied that it represents a real problem in WebKit.
+If they are not satisfied about this, they should perform one of the actions mentioned in the <a href="#confirming">Confirming Bugs</a> section above.
+The same procedure is followed for bugs with status <tt>REOPENED</tt> (see <a href="#verifying">Verifying Fixes</a> below).</p>
+
+<p>The assignee represents the person who is expected to take the next step in investigating or fixing a bug. If someone other than the assignee is
+investigating or fixing a bug, the assignee should be changed to the person doing the work. This helps prevent duplicated work. It's always helpful to add 
+a comment explaining why an assignee has been changed.</p>
+
+<h3>Proposing Fixes</h3>
+
+<p>A proposed patch should be added as a new attachment. The attachment should have the <tt>patch</tt> checkbox checked, and the <tt>review</tt> flag set to <tt>?</tt>. This
+marks the patch as awaiting review. If the patch requires the specialized knowledge of a particular reviewer, the submitter or another reviewer should put
+the requested reviewer's email address in the <tt>Requestee</tt> field. Otherwise this field should be left empty. The state is left at <tt>ASSIGNED</tt> at
+this point; it isn't changed to <tt>FIXED</tt> until a fix has been checked into the source tree.</p>
+
+<p>When the review flag's state is changed, or when a comment is made in the Edit form for an attachment, email is automatically sent to
+the <a href="http://www.opendarwin.org/mailman/listinfo/webkit-reviews">webkit-reviews</a> mailing list. The reviewers all subscribe to
+this list, and anyone else is free to do so as well.</p>
+
+<p>If the submitter of a patch changes their mind about wanting a review, they should clear the <tt>review</tt> flag by choosing the
+blank choice in the review pop-menu.</p>
+
+<p>More details about how to prepare code changes can be found <a href="../coding/contributing.html">elsewhere on this site</a>.</p>
+
+<h3>Reviewing Proposed Fixes</h3>
+
+<p>A reviewer will read through each proposed patch. If the patch is ready to commit, the reviewer will change the <tt>review</tt> flag to <tt>+</tt>. 
+For clarity, it's helpful for the reviewer to add a comment when approving a patch. Often this comment is just "r=me", which is simply shorthand for 
+"I have reviewed this patch and it's ready to commit".</p>
+
+<p>A patch might not be ready to commit for various reasons. The bug fix might be incorrect. The <a href="testwriting.html">test cases</a> included in the patch might be insufficient.
+The bug fix and test cases might be fine but the <a href="../coding/coding-style.html">coding style</a> might be incorrect. The reviewer should always 
+explain in detail why a patch is not ready to commit, so the submitter or someone else can revise the patch.</p>
+
+<p>When a submitter proposes an updated patch, they should check the <tt>obsolete</tt> checkbox on the previous version of the patch. This causes it
+to appear crossed-out in the list of attachments on the bug's main page. At the same time as marking the old patch <tt>obsolete</tt>, the 
+submitter should also clear the <tt>review</tt> flag. This would happen automatically in a perfect world, but doesn't currently in this one.</p>
+
+<h3>Committing Patches</h3>
+
+<p>After a patch has been approved, someone with commit privileges in the WebKit source repository will commit the patch into the source code repository. The committer
+should change the state of the bug to <tt>FIXED</tt>; generally the assignee is left unchanged at this point.</p>
+
+<p>All of the
+people with commit privileges should be subscribed to the <a href="http://www.opendarwin.org/mailman/listinfo/webkit-reviews">webkit-reviews</a>
+mailing list, and so they will receive email when a patch is approved and thus ready to be committed. If an approved patch has not been committed for what seems to be an inordinately
+long time, the patch submitter could send email requesting status to this mailing list. As a last resort, the patch submitter could contact the
+reviewer directly. Due to everyone's busy schedules, some delays in getting patches reviewed, and then in getting them committed, are inevitable.</p>
+
+<p>If the bug report mentions that the same bug is represented in Apple's internal Radar system, and the person who commits the bug has acces to Radar, then the 
+person who commits the bug should also set the state of the Radar bug to Software Changed/Integrate.</p>
+
+<h3><a name="verifying">Verifying Fixes</a></h3>
+
+<p>After the patch for a bug has been committed, the fix still needs to be verified. Typically this step is done by the person who originally submitted the 
+bug report. If the submitter is not available or does not feel that they can verify the fix, the verification step can be done by anyone with bug editing 
+privileges who is familiar enough with the originally reported problem to be confident about
+testing it. Note that once a bug is in the <tt>FIXED</tt> state, the assignee can no longer be changed. This means that a bug that needs
+to be verified will not usually be assigned to the person expected to verify the bug.</p>
+
+<p>To verify a bug fix, build and run the sources that include the fix, and check whether
+the originally reported problem still occurs. If the problem no longer occurs, change the resolution to <tt>VERIFIED</tt>. If the problem does still occur,
+change the resolution to <tt>REOPENED</tt> and assign it to the person who submitted the patch.</p>
+
+
+<h3>Closing Bugs</h3>
+
+<p>Fixed bugs have the <tt>VERIFIED</tt> resolution until a version of WebKit that includes the fix has been publicly released. At this point,
+the resolution is changed to <tt>CLOSED</tt>.
+
+
+</div>
+
+</body>
+</html>

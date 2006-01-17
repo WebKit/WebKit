@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Reporting Bugs</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Reporting Bugs
+</div>
+
+<div id="content">
+<p>In order to report WebKit bugs you need to <a href="http://bugzilla.opendarwin.org/createaccount.cgi">sign up for a Bugzilla account</a>.  
+Once you have an account you can report bugs on any product on <a href="http://www.opendarwin.org">OpenDarwin.org</a>.  WebKit is one of the individual products
+listed in Bugzilla, and all of our bugs can be classified in various components under the WebKit product.
+</p>
+
+<p>If you think you've found a WebKit bug, first <a href="http://bugzilla.opendarwin.org/query.cgi?format=specific&product=WebKit">search through Bugzilla</a> 
+to see if anyone else has already filed it. If not, you are ready to 
+<a href="http://bugzilla.opendarwin.org/enter_bug.cgi?product=WebKit">file a bug on the WebKit product</a>. The <a href="bugwriting.html">Writing a Good Bug Report</a> 
+document (also linked in the sidebar) gives some tips about the most useful information to include
+in bug reports. The better your bug report, the higher the chance that your bug will be addressed quickly.</p>
+
+<p>Once your bug is filed, you will receive email when it is updated at each stage in the bug's <a href="lifecycle.html">life cycle</a>. After the bug is
+considered fixed, you will usually be asked to update your WebKit and try it, to make sure that the fix works for you.</p>
+
+<p>You should be running at least Mac OS X 10.3.9 before filing bugs.  Your WebKit version should be 312 or higher if you are on Panther and 412 or higher
+if you are on Tiger.  Look at the string below to see what version of WebKit you are running.  The number is next to the word <tt>AppleWebKit</tt> followed by a <tt>/</tt>.</p>
+
+<script>
+document.write("<tt>" + navigator.userAgent + "</tt>");
+</script>
+
+<p>If you are running an earlier version then your bug may have been fixed.  Please upgrade if possible before filing bugs that may have already been fixed. </p>
+
+<p>To report bugs in Safari or WebKit bugs to Apple that may contain confidential information, use <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.</p>
+</div>
+
+</body>
+</html>

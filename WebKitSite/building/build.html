@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Building WebKit</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Building WebKit
+</div>
+
+<div id="content">
+
+<p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources.<p>
+
+<ol>
+
+<li><p>To start a build, use the <tt>build-webkit</tt> script.</p>
+<p class="code">WebKitTools/Scripts/build-webkit</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>build-webkit</tt> without specifying the path to the script.</p>
+</li>
+
+<li><p>Once the frameworks are built, you'll probably want to run Safari using the newly-built WebKit. To do that, use the <tt>run-safari</tt> script.</p>
+<p class="code">WebKitTools/Scripts/run-safari</p>
+<p>This script sets up the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable, which will cause the system loader to use the
+frameworks you built from your Xcode build products directory instead of the ones installed in /System/Library/Frameworks,
+so it will start the version of Safari from the Applications directory with the WebKit frameworks you just built.</p>
+</li>
+
+</ol>
+
+<p>If you have specified custom location for the build products directory in Xcode preferences, the frameworks will be built in that directory.
+If you haven't, the build products will be put in a directory named WebKitBuild alongside the source code directories.</p>
+<p>By default, the scripts will do a Deployment build, which is optimized and doesn't have development-only code, like assertions, compiled in.
+If you're prefer to do a Development build, then do execute this command:</p>
+<p class="code">WebKitTools/Scripts/set-webkit-configuration --development</p>
+<p>You can also pass the configuration on the command line to any of the build commands.
+If you're using Xcode 2.0 you'll need to blow away your build products directory each time you switch configurations.</p>
+<p>More information about building WebKit can be found on its <a href="http://www.opendarwin.org/wiki/index.php/WebKit">wiki</a>.</p>
+<p>[TODO: Talk about how to replace your system WebKit.framework, and why you probably don't want to, once we have scripts that help you do that.]</p>
+
+</div>
+</body>
+</html>

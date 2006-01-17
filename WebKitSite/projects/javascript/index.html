@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>JavaScript</title>
+  <link rel=stylesheet href="../../webkitdev.css">
+  <style>
+    dt { font-weight: bold; margin-top: 1em; }
+  </style>
+
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+JavaScript
+</div>
+
+<div id="content">
+
+<h3>Overview</h3>
+
+<p>This is the project page for WebKit's JavaScript implementation.
+JavaScript is the primary programming language used on web pages. Originally named LiveScript and now also known as ECMAScript,
+it's a safe, dynamic language that's arguably one of the most well-known programming languages in the world.
+There's a <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">JavaScript standard</a>, created by ECMA.
+WebKit's JavaScript engine, JavaScriptCore, based on KJS, is a framework separate from WebCore and WebKit, and is used
+on Mac OS X for applications other than web page JavaScript.</p>
+
+<h3>Get Involved!</h3>
+
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Web+Kit&component=CSS&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+View bugs in the JavaScript component on OpenDarwin.
+</a>
+
+<p>Here are some of the tasks that you can get involved with in JavaScript.</p>
+
+<dt>Bytecode Interpreter</dt>
+<dd>JavaScriptCore currently creates a syntax tree and then uses that syntax tree when executing JavaScript.
+We'd like to use a bytecode interpreter instead, and if it's done right it will make JavaScript run faster and use less memory.</dd>
+
+<dt>Generational Garbage Collector</dt>
+<dd>The garbage collector in JavaScriptCore has been improved quite a bit from the earliest versions.
+But much greater efficiency can be achieved with a garbage collector that uses a generational algorithm,
+so we don't have to mark all the objects every time we garbage collect. This should make JavaScript
+run significantly faster.</dd>
+
+<dt>Elminate Smart Pointer Wrappers</dt>
+<dd>The KJS programming interface for JavaScript involves smart pointers that wrap the actual JavaScript objects. For example,
+<tt>KJS::Object</tt> is used to wrap <tt>KJS::ObjectImp</tt>. Since JavaScriptCore now uses conservative garbage collection, the smart pointers
+aren't needed any more. Our plan is to eliminate <tt>KJS::Object</tt> and rename <tt>KJS::ObjectImp</tt> to <tt>KJS::JSObject</tt>,
+and do similar things for the other JavaScript value types. Removing this extra
+struct wrapper should result in better code generation, making the library smaller and JavaScript execution faster.</dd>
+
+<dt>Mozilla JavaScript Test Suite</dt>
+<dd>JavaScriptCore has an implementation of the Mozilla JavaScript Test Suite, and there are currently many failures.
+Fixing any of those failures would help our JavaScript engine be more compliant with the specification, and more
+compatible with real-world web sites as well.</dd>
+
+<dt>ECMAScript for XML</dt>
+<dd>The <a href="http://www.ecma-international.org/publications/standards/Ecma-357.htm">E4X standard</a> adds some XML-related
+features to the JavaScript language. We should consider adding these to the JavaScriptCore engine.</dd>
+
+<dt>Language Extensions</dt>
+<dd>The Mozilla project has begun added some
+<a href="http://www.mozilla.org/projects/deerpark/new-web-dev-features.html">extensions to JavaScript</a>.
+Someone needs to evaluate these and decide which of them we should implement. We should also consider extensions of our own driven by
+demand in contexts like Dashboard widgets.</dd>
+
+<dt>C Language Binding</dt>
+<dd>JavaScriptCore currently has the original C++ method of binding native code to JavaScript, an Objective-C binding that's exported from WebKit
+as WebScriptObject, and a browser plug-in oriented C binding. We'd like to create a generic C language binding suitable for use by
+any project that wants to take advantage of the JavaScript engine, but which is easier to maintain compatibly than a C++ binding.</dd>
+
+</div>
+</body>
+</html>

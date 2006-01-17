@@ -1,0 +1,75 @@
+<html>
+
+<head>
+<link rel=stylesheet href="sidebar.css">
+<base target="_top">
+<script>
+function setCurrentLink()
+{
+    var l = document.links;
+    for (var i = 0; i < l.length; i++) {
+        var a = l[i].href;
+        var b = top.location.href;
+        a = a.replace("file:///", "file:/");
+        b = b.replace("file:///", "file:/");
+        if (a == b) {
+            l[i].className = "current";
+            break;
+        }
+    }
+}
+</script>
+
+</head>
+
+<body onload="setCurrentLink()">
+
+<div class="group first">
+<div class="grouptitle">WebKit</div>
+<div class="grouplinks">
+<a href="/">Home</a><br>
+<a href="blog">Blog</a><br>
+<a href="contact.html">Keeping in Touch</a><br>
+</div>
+</div>
+
+<div class="group">
+<div class="grouptitle">Working with the Code</div>
+<div class="grouplinks">
+<a href="building/checkout.html">Getting the Code</a><br>
+<a href="building/build.html">Building WebKit</a><br>
+<a href="coding/contributing.html">Contributing Code</a><br>
+</div>
+</div>
+
+<div class="group">
+<div class="grouptitle">Documentation</div>
+<div class="grouplinks">
+<a href="projects/index.html">Projects</a><br>
+<a href="blog/?page_id=25">Coding Style Guidelines</a><br>
+</div>
+</div>
+
+<div class="group">
+<div class="grouptitle">Testing</div>
+<div class="grouplinks">
+<a href="quality/testing.html">Regression Testing</a><br>
+<a href="quality/testwriting.html">Writing New Tests</a><br>
+</div>
+</div>
+
+<div class="group">
+<div class="grouptitle">Bugs</div>
+<div class="grouplinks">
+<a href="quality/reporting.html">Reporting Bugs</a><br>
+<a href="quality/bugwriting.html">Writing a Good Bug Report</a><br>
+<a href="quality/bugpriorities.html">Bug Prioritization</a><br>
+<a href="quality/reduction.html">Test Case Reduction</a><br>
+<a href="quality/lifecycle.html">Bug Life Cycle</a><br>
+</div>
+</div>
+</div>
+
+</body>
+
+</html>

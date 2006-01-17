@@ -1,0 +1,62 @@
+a:link,
+a:visited {
+	color: rgb(91,91,91);
+        text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.current:link, .current:visited {
+	font-weight: bold;
+	color: rgb(0,81,210);
+}
+
+body {
+        background-color: #F2F2F2;
+        -apple-text-size-adjust: none;
+        font: 12px Helvetica, sans-serif;
+        background-repeat: no-repeat;
+        background-position: bottom center;
+        overflow: hidden;
+        min-height: 600px;
+}
+
+html > body {
+        background-image: url(images/webkit-background.png); /* Hide from WinIE, since its transparent PNG support is non-existent. */
+}
+
+.group {
+	padding-top: 8px;
+        padding-left: 1px;
+	padding-bottom: 11px;
+	background: url(images/separator.png) no-repeat center top;
+        line-height: 130%;
+}
+
+.first.group {
+        background: none
+}
+
+.grouptitle {
+        color: black;
+	font-weight: bold;
+        line-height: 180%;
+}
+
+.grouplinks {
+        margin-left: 10px;
+}
+
+/*remove these later*/
+/*.needsdoc {
+	color: red !important;
+}
+
+.needsdoc-CRITICAL {
+	color: red !important;
+	font-weight: bold !important;
+}*/
+/*end remove these later*/
+

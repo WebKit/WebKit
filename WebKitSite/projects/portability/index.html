@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Portability</title>
+  <link rel=stylesheet href="../../webkitdev.css">
+  <style>
+    dt { font-weight: bold; margin-top: 1em; }
+  </style>
+
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Portability
+</div>
+
+<div id="content">
+<h3>Overview</h3>
+<p>Welcome to the portability project page.
+
+In addition to making our code more portable, we are also interested in hosting ports of WebKit to other platforms.  
+For example, WebCore has already been <a href="http://gtk-webcore.sourceforge.net/">ported to GTK+</a> and we are interested in hosting this port
+in our repository.
+We are also interested in ports of WebKit to other platforms like Windows.  This project is concerned with how to do the code refactoring necessary to improve
+portability, thus making life easier for those doing ports, as well as with the ports themselves.
+</p>
+
+<h3>Get Involved!</h3>
+
+<dt>Move WebKit code into WebCore</dt>
+<dd>Over time the WebKit framework has grown to contain a lot of code written in Objective-C that has no real business being in this framework.  Now that both
+frameworks are open source, we would like to move as much of this code as possible from WebKit into WebCore.  This means rewriting the code to be C++ instead of
+Objective-C to make the code more portable.  Ultimately we would like WebKit to be nothing more than the embedding APIs for a given platform and infrastructure/glue 
+code that is needed to tie into a specific platform.  All of the remaining logic should move to WebCore.
+
+<dt>Implement form controls using WebKit</dt>
+<dd>Currently there is a dependency on all of the various Qt interfaces for form controls like checkboxes, buttons and text fields.  We would like to re-implement
+these controls using WebKit itself.  This will eliminate many Qt classes from the platform layer (KWQ) and make the porting job easier when moving to other platforms.
+See the <a href="../forms/index.html">forms project page</a> for more details.
+
+<dt>Implement missing components</dt>
+<dd>Not all platforms have code for handling cookies, authentication, SSL, caching, network loading, or image decoding.  We would be interested in implementations
+of these capabilities that could optionally be used on platforms that do not have this support.  On platforms that do, the implementation of the cross-platform
+abstraction could call into the system.  One possibility for obtaining this missing functionality is to port Mozilla's image rendering and networking libraries
+to Qt (eliminating the XPCOM and converting the use of strings, etc. to QString).
+
+<dt>Integrate the GTK+ port</dt>
+<dd>One port of WebCore already exists, the GTK+ port.  We are interested in integrating this into our source tree, and believe that doing so will help us to
+refactor our code to make future ports easier.
+
+<dt>Start Porting!</dt>
+<dd>Want to start porting to Windows or some other platform? <a href="../../contact.html">Contact us</a> and start submitting patches!  
+
+</div>
+</body>
+</html>

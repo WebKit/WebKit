@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>SVG (Scalable Vector Graphics)</title>
+  <link rel=stylesheet href="../../webkitdev.css">
+  <style>
+    dt { font-weight: bold; margin-top: 1em; }
+  </style>
+
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+SVG (Scalable Vector Graphics)
+</div>
+
+<div id="content">
+<h3>Overview</h3>
+
+<p>Welcome to the project page for SVG.  At this time there is an experimental SVG implementation in WebKit.  There is a "WebCore+SVG" target available in the WebCore project which allows building KDE's KSVG2 on top of KDOM all as part of WebCore.  Long term we would like to develop a fully integrated solution allowing SVG can be interleaved with other XML markup (like HTML). Full SVG support will require us to reconcile the current WebCore DOM with KDE's KDOM to form a single unified DOM capable of supporting SVG, HTML and other standards.  Once the KDOM/WebCore DOM integration is complete, we would like to build KSVG2 right into WebCore as a first-class citizen to be used in the future in appropriate contexts like Dashboard.</p>
+
+<h3>Get Involved!</h3>
+
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=WebKit&component=SVG&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+View bugs in the SVG component on OpenDarwin.</a>
+</p>
+
+<a href="http://wiki.opendarwin.org/index.php/WebKit_plus_SVG">The WebCore+SVG Wiki page.</a>
+
+<dt>Get on IRC</dt>
+<dd>There is still much to discuss regarding reconciling the two DOMs (WebCore and KDOM).  Discussions will be taking place
+on Freenode in <tt>#ksvg</tt> and <tt>#webkit</tt>.  Come get involved as we hammer out an approach that will allow us to merge KDOM & KSVG2 and to stay in sync with KDE as these change in the future.</dd>
+<dt>Build WebCore+SVG</dt>
+<dd>SVG support is not yet far enough along to enable it in the main-line WebCore build.  For now there are "WebCore+SVG" and "JavaScriptCore+SVG" targets which you must build by hand (open Xcode, change target, click build).  Building WebCore+SVG requires Bison 2.0 for the time being.</dd>
+<dt>Test WebCore+SVG</dt>
+<dd>Initial SVG porting work was done as part of a renamed fork of WebCore.  None of SVG the testing tools created for this fork have been re-worked to use WebCore+SVG.  Stay tuned, we will post here when these tools become available.</dd>
+</div>
+</body>
+</html>

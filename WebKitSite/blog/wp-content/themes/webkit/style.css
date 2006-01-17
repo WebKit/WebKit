@@ -1,0 +1,636 @@
+/*  
+Theme Name: WebKit
+Theme URI: http://webkit.opendarwin.org/
+Description: Based on the default WordPress theme, which in turn is based on the famous <a href="http://binarybonsai.com/kubrick/">Kubrick</a>.
+Author: Michael Heilemann
+*/
+
+
+
+/* Begin Typography & Colors */
+body {
+	font-family: Helvetica, Arial, san-serif;
+	margin: 0;
+        font-size: 65%;
+        background-color: white;
+	}
+
+#page {
+	background-color: white;
+	text-align: left;
+	}
+
+#content {
+	font-size: 10pt;
+        margin-right: 201px;
+        margin-top: 12px;
+        margin-left: 12px;
+	}
+
+.widecolumn .entry p {
+	font-size: 1.05em;
+	}
+
+.narrowcolumn .postmetadata {
+	text-align: center;
+	}
+
+.alt {
+	background-color: #f8f8f8;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	}
+
+small {
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: 8pt;
+	line-height: 1.5em;
+	}
+
+h1, h2, h3 {
+	font-family: Helvetica, Arial, san-serif;
+	font-weight: bold;
+	}
+
+h1 {
+	font-size: 4em;
+	text-align: center;
+	}
+
+.description {
+	font-size: 1.2em;
+	text-align: center;
+	}
+
+h2 {
+	font-size: 11pt;
+	}
+
+h2.pagetitle {
+	font-size: 1.6em;
+	}
+
+#sidebar h2 {
+	font-family: Helvetica, Arial, san-serif;
+	line-height: 130%;
+	font-size: 9pt;
+	}
+
+h3 {
+	font-size: 11pt;
+	}
+
+
+a:link {
+        color: rgb(34,98,245);
+        text-decoration: none;
+}
+
+a:visited {
+        color: rgb(34,98,245);
+	text-decoration: none;
+}
+
+a:hover {
+        color: rgb(34,98,245); 
+        text-decoration: underline;
+}
+a:active {
+        color: rgb(34,98,245);
+	text-decoration: underline;
+}
+
+
+#sidebar a:link,
+#sidebar a:visited {
+	color: rgb(91,91,91);
+        text-decoration: none;
+}
+
+#sidebar a:hover {
+	text-decoration: underline;
+}
+
+#sidebar .current:link, #sidebar .current:visited {
+	font-weight: bold;
+	color: rgb(0,81,210);
+}
+
+h1, h1 > a:link, h1 > a:hover, h1 > a:visited, .description {
+	text-decoration: none;
+	color: white;
+	}
+
+h2, h2 > a:link, h2 > a:visited, h3, h3 > a:link, h3 > a:visited {
+	color: black;
+	}
+
+h2, h2 > a, h2 > a:hover, h2 > a:visited, h3, h3 > a, h3 > a:hover, h3 > a:visited, #sidebar h2, #wp-calendar caption, cite {
+	text-decoration: none;
+	}
+
+.commentlist li, #commentform input, #commentform textarea {
+	font-size: 0.9em;
+	font-family: Helvetica, Arial, sans-serif;
+        }
+	
+.commentlist li {
+	font-weight: bold;
+	}
+
+.commentlist cite, .commentlist cite a {
+	font-weight: bold;
+	font-style: normal;
+	}
+
+.commentlist p {
+	font-weight: normal;
+	text-transform: none;
+	}
+
+#commentform p {
+	font-family: Helvetica, Arial, san-serif;
+	}
+
+.commentmetadata {
+	font-weight: normal;
+	}
+
+#sidebar {
+	font-size: 9pt;
+	font-family: Helvetica, Arial, san-serif;
+	line-height: 130%;
+	}
+
+#sidebar > #sidebar_inner > ul > li {
+	padding-top: 0;
+        padding-left: 9px;
+	padding-bottom: 13px;
+	background: url(images/separator.png) no-repeat center bottom;
+	}
+
+#sidebar h2 {
+	padding-bottom: 3px;
+	}
+
+#sidebar > #sidebar_inner > ul > li > ul > li {
+        padding-left: 10px;
+	}
+
+#sidebar > #sidebar_inner > ul > li.noseparator {
+	padding-bottom: 0;
+	background: none;
+	}
+
+#sidebar > #sidebar_inner > ul {
+	padding-top: 10px;
+}
+
+small, #sidebar ul ul li, #sidebar ul ol li, .nocomments, .postmetadata, blockquote, strike {
+	color: #777;
+	}
+	
+code {
+	font-family: 'Courier New', Courier, Fixed;
+	}
+
+acronym, abbr, span.caps
+{
+	font-size: 0.9em;
+	letter-spacing: .07em;
+	}
+
+#wp-calendar #prev a {
+	font-size: 9pt;
+	}
+
+#wp-calendar a {
+	text-decoration: none;
+	}
+
+#wp-calendar caption {
+	font-weight: bold 
+	font-size: 1.3em;
+	font-family: Helvetica, Arial, san-serif;
+	text-align: center;
+	}
+
+#wp-calendar th {
+	font-style: normal;
+	text-transform: capitalize;
+	}
+/* End Typography & Colors */
+
+
+
+/* Begin Structure */
+body {
+	margin: 0;
+	}
+
+#page {
+	background-color: white;
+	padding: 0;
+	}
+	
+#header {
+        -apple-text-size-adjust: none;
+        background-color: rgb(81,118,236);
+        background-repeat: repeat-x;
+        background-position: top left;
+        padding: 6px 0 0 8px;
+        margin: 0px;
+	margin-right: 182px;
+        height: 36px;
+	font-family: Helvetica, Arial, san-serif;
+        font-size: 24px;
+        letter-spacing: 0.07em;
+        -apple-text-size-adjust: none;
+        cursor: default;
+        color: white;
+}
+
+#header > a {
+	color: white;
+}
+#header > a:hover {
+	text-decoration: none;
+}
+
+.narrowcolumn {
+	}
+
+.widecolumn {
+	}
+	
+.post {
+	margin: 0 0 20px;
+	clear: both;
+	}
+
+.widecolumn .post {
+	margin: 0;
+	}
+
+.postmetadata {
+	font-size: 8pt;
+	font-family: Helvetica, Arial, san-serif;
+	margin: 0;
+	}
+
+.narrowcolumn .postmetadata {
+	padding-top: 5px;
+	}
+
+.widecolumn .postmetadata {
+	margin: 30px 0;
+	}
+	
+#footer {
+	padding: 0 0 0 1px;
+	margin: 0;
+	margin-right: 182px;
+	clear: both;
+	}
+
+#footer > p {
+	margin: 0;
+	padding: 20px 0;
+	text-align: center;
+	}
+/* End Structure */
+
+
+
+/*	Begin Headers */
+h1 {
+	padding-top: 70px;
+	margin: 0;
+	}
+
+.description {
+	text-align: center;
+	}
+
+h2 {
+	margin-bottom: 0;
+	}
+
+h2.pagetitle {
+	margin-top: 10px;
+	text-align: center;
+}
+
+h3 {
+	padding: 0;
+	margin: 30px 0 0;
+	}
+
+h3.comments {
+	padding: 0;
+	margin: 40px auto 20px ;
+	}
+/* End Headers */
+
+
+
+/* Begin Images */
+p img {
+	padding: 0;
+	max-width: 100%;
+	}
+
+/*	Using 'class="alignright"' on an image will (who would've
+	thought?!) align the image to the right. And using 'class="centered',
+	will of course center the image. This is much better than using
+	align="center", being much more futureproof (and valid) */
+	
+img.centered {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	}
+	
+img.alignright {
+	padding: 4px;
+	margin: 0 0 2px 7px;
+	display: inline;
+	}
+
+img.alignleft {
+	padding: 4px;
+	margin: 0 7px 2px 0;
+	display: inline;
+	}
+
+.alignright {
+	float: right;
+	}
+	
+.alignleft {
+	float: left
+	}
+/* End Images */
+
+
+
+/* Begin Lists
+
+	Special stylized non-IE bullets
+	Do not work in Internet Explorer, which merely default to normal bullets. */
+
+html>body .entry ul {
+	margin-left: 0px;
+	padding: 0 0 0 30px;
+	list-style: none;
+	padding-left: 10px;
+	text-indent: -10px;
+	} 
+
+html>body .entry li {
+	margin: 7px 0 8px 10px;
+	}
+
+.entry ol {
+	padding: 0 0 0 35px;
+	margin: 0;
+	}
+
+.entry ol li {
+	margin: 0;
+	padding: 0;
+	}
+
+.postmetadata ul, .postmetadata li {
+	display: inline;
+	list-style-type: none;
+	list-style-image: none;
+	}
+	
+#sidebar ul, #sidebar ul ol {
+	padding: 0;
+	margin: 0;
+	}
+
+#sidebar ul li {
+	list-style-type: none;
+	list-style-image: none;
+	}
+
+#sidebar ul p, #sidebar ul select {
+	margin: 5px 0 8px;
+	}
+
+ol li, #sidebar ul ol li {
+	list-style: decimal outside;
+	}
+
+/* End Entry Lists */
+
+
+
+/* Begin Form Elements */
+#searchform {
+	margin: 10px auto;
+	padding: 5px 3px; 
+	text-align: center;
+	}
+
+#sidebar #searchform #s {
+	width: 115px;
+	padding: 2px;
+	}
+
+#sidebar #searchsubmit {
+	padding: 1px;
+	}
+
+.entry form { /* This is mainly for password protected posts, makes them look better. */
+	text-align:center;
+	}
+
+select {
+	width: 130px;
+	}
+
+#commentform input {
+	width: 170px;
+	padding: 2px;
+	margin: 5px 5px 1px 0;
+	}
+
+#commentform textarea {
+	width: 100%;
+	padding: 2px;
+	}
+
+#commentform #submit {
+	margin: 0;
+	float: right;
+	}
+/* End Form Elements */
+
+
+
+/* Begin Comments*/
+.alt {
+	margin: 0;
+	padding: 10px;
+	}
+
+.commentlist {
+	padding: 0;
+	}
+
+.commentlist li {
+	margin: 15px 0 3px;
+	padding: 5px 10px 3px;
+	list-style: none;
+	}
+
+.commentlist p {
+	margin: 10px 5px 10px 0;
+	}
+
+#commentform p {
+	margin: 5px 0;
+	}
+
+.nocomments {
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	}
+
+.commentmetadata {
+	margin: 0;
+	display: block;
+	}
+
+.commentmetadata a {
+	color: #777;
+	}
+
+/* End Comments */
+
+
+
+/* Begin Sidebar */
+#sidebar {
+        top: 0;
+        right: 0;
+        height: 100%;
+	padding: 0;
+	margin-left: 10px;
+        border-width: 0;
+        border-style: none;
+	border-left: 1px #C3C3C3 solid;
+	width: 181px;
+        background-color: #F2F2F2;
+	float: right; /* hack for winie to not choke utterly on the site */
+        -apple-text-size-adjust: none;
+        overflow: hidden;
+	}
+
+body > #page > #sidebar {
+        float:none;
+        position: fixed; /* WinIE doesn't understand this so we can make things right in other browsers. */
+}
+
+#sidebar_inner {
+	width: 181px;
+	height: 100%;
+	min-height: 600px;
+	}
+
+html > body > #page > #sidebar > #sidebar_inner {
+	background: url(images/webkit-background.png) no-repeat center bottom;
+	/* Hide from WinIE, since its transparent PNG support is non-existent. */
+	}
+
+#sidebar form {
+	margin: 0;
+	}
+/* End Sidebar */
+
+
+
+/* Begin Calendar */
+#wp-calendar {
+	empty-cells: show;
+	margin: 10px auto 0;
+	width: 155px;
+	}
+
+#wp-calendar #next a {
+	padding-right: 10px;
+	text-align: right;
+	}
+
+#wp-calendar #prev a {
+	padding-left: 10px;
+	text-align: left;
+	}
+
+#wp-calendar a {
+	display: block;
+	}
+
+#wp-calendar caption {
+	text-align: center;
+	width: 100%;
+	}
+
+#wp-calendar td {
+	padding: 3px 0;
+	text-align: center;
+	}
+
+#wp-calendar td.pad:hover { /* Doesn't work in IE */
+	background-color: #fff; }
+/* End Calendar */
+
+
+
+/* Begin Various Tags & Classes */
+acronym, abbr, span.caps {
+	cursor: help;
+	}
+
+acronym, abbr {
+	border-bottom: 1px dashed #999;
+	}
+
+blockquote {
+	margin: 15px 30px 0 10px;
+	padding-left: 20px;
+	border-left: 5px solid #ddd;
+	}
+
+blockquote cite {
+	margin: 5px 0 0;
+	display: block;
+	}
+
+.center {
+	text-align: center;
+	}
+
+hr {
+	display: none;
+	}
+
+a img {
+	border: none;
+	}
+
+.navigation {
+	display: block;
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	}
+/* End Various Tags & Classes*/
+
+
+

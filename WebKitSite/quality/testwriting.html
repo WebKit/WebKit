@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Writing New Tests</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Writing New Tests
+</div>
+
+<div id="content">
+<p>A layout test is simply a web page. The layout test machinery renders the web page, and then dumps the
+internal representation, the render tree, with details of the layout. This lets engineers working on the project know 
+if they do anything that changes the layout. Once we get a test rendering properly, we check it in as part of the layout test suite.
+</p>
+
+<p>The following are some guidelines to follow when writing new layout tests:</p>
+
+<ol>
+<li>The test should be the smallest possible code fragment that tests the feature.
+<li>The test should fit on one page (unless of course it's testing scrolling).
+<li>The test should clearly describe what feature it is testing.
+<li>The test should clearly describe the expected result.  It should be possible through visual inspection alone to determine that the test has
+failed.
+</ol>
+
+<p>An example of a layout test that follows these guidelines is <tt>fast/events/event-creation.html</tt>.</p>
+
+
+<p>A layout test should work both in the browser itself, and in the layout test tool. The layout test tool provides an 
+additional object on the window object called the layout test controller with some methods that control test output. 
+One you should know about is the <tt>layoutTestController.dumpAsText</tt> method. Calling this from JavaScript within a test arranges 
+for the output to be written out as plain text rather than as a render tree dump. 
+This is useful for tests that are testing something other than layout. The event creation test mentioned above is a good example of 
+how to do this and when it makes sense.</p>
+
+<p>The CSS working group has an excellent document on <a href="http://www.w3.org/Style/CSS/Test/guidelines.html">test writing guidelines</a> for CSS tests.
+</p>
+
+</div>
+
+</body>
+</html>

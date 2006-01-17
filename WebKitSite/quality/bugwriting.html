@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Bug Writing</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+Bug Writing
+</div>
+
+<div id="content">
+
+<p>This document describes how to write a good WebKit bug report. Good bug reports help developers and quality assurance (QA) people decide
+an appropriate priority and severity for a bug, and increase the chance that a bug will be fixed quickly. The more specific information
+you can provide, the better.</p>
+
+<ul>
+	<li><b>Version</b>
+	<p>Please select the WebKit version you were using when the bug occurred, or the closest match. <tt>312</tt> is the WebKit version
+	that shipped with Mac OS X 10.3.9. <tt>412</tt> is the WebKit version that shipped with Mac OS X 10.4 (Tiger). Locally-built versions
+	of WebKit have a <tt>+</tt> after the most recent official build number. So, for example, <tt>412+</tt> is a locally-built version of WebKit
+	that's newer than the <tt>412</tt> version shipped with Tiger.</p>
+
+	<li><b>Component</b> 
+		<p>If you know the precise cause of a bug (i.e., you've reduced it to a failing test case and know the reason), then you can 
+		assign a bug to a specific component such as <tt>CSS</tt> or <tt>HTML Editing</tt>.  
+		<p>If, however, there is any doubt in your mind as to the cause of the bug, then file it under <tt>New Bugs</tt>.  This component 
+		is the place for any bugs whose cause has not yet been determined.  Once someone has reduced the bug and knows the cause, then it 
+		will be moved from the <tt>New Bugs</tt> component to the appropriate place.</p>  
+	</li>
+
+	<li>
+		<b>Platform and OS</b>
+		<p>Please select the platform and the OS version that your bug occurred on. Typically this would be platform <tt>Macintosh</tt>
+		and OS <tt>Mac OS X 10.3</tt> (Panther) or <tt>Mac OS X 10.4</tt> (Tiger).</p>
+	</li>	
+
+	<li>
+		<b>Priority</b>
+		<p>Normally a QA person or developer will set this, so the bug submitter can leave this at the default value. A number of
+		<a href="bugpriorities.html">guidelines</a> and some individual judgment are involved in setting the priority.</p>
+	</li>
+
+	<li>
+		<b>Severity</b>
+		<p>In most cases you should leave this at <tt>normal</tt>, but if you are confident that your bug is <tt>trivial</tt> or an
+		<tt>enhancement</tt>, it's helpful to specify that value. A QA person or developer will set this to some other value if
+		appropriate.</p>
+	</li>
+	
+	<li><b>URL</b>
+		<p>Fill in this field with the URL of a page that shows the bug, when possible. If you have created a <a href="reduction.html">test case reduction</a> for the bug,
+		please add it to the bug report as an attachment rather than putting it on a web server and listing its URL here. Doing so
+		makes it easier to work on the bug, and can be a first step towards checking in the test case along with the bug fix.</p>
+	</li>
+
+	<li><b>Summary</b>
+	<p>A good summary explains the problem in clear and specific terms, but is often concise enough to fit within the default summary space in Bugzilla.  
+        One should be able to tell exactly what a bug is about just by reading the summary.</p>
+	
+	Tips for a good suummary:
+	<ul>
+		<li>include the domain of the page that shows the bug (especially if it's an important site)
+		<li>if the bug is a crash, note this and note whether or not the crash is reproducible
+		<li>if you have tested and verified that this is a regression from a previous version of WebKit, prepend "REGRESSION" to the summary
+		<li>if you know between which versions of WebKit the regression occurred, add this to the summary after REGRESSION (i.e., "REGRESSION (125-408)")
+	</ul>
+	</li><br>
+	
+	<li><b>Description</b> 
+	<p>In this field, write a more detailed explanation of the problem.</p>
+	
+	Tips for Descriptions:
+	<ul>	<li> Please do not include more than one bug in one bug report. </li>
+		<li> If you can only reproduce the problem on a version of WebKit that you built yourself, include the date that you checked out the source code. </li>
+		<li> If there is no simple URL to a page that shows the bug (for instance, you have to click through multiple pages for the bug to occur), then describe the exact navigation required to reach the page where the bug occurs. Don't just say "go to the forums"; use detailed steps. </li>
+		<li> Look at Console and include any messages that might be relevant in the bug. </li>
+		<li> Include the backtrace if you get a crash, if possible. File the bug first and then add the backtrace as an attachment.</li>
+		<li> Include a screenshot for visual bugs. If the problem isn't very obvious, include a single screenshot which shows both correct and 
+                incorrect renderings, for example Safari and another browser such as Firefox or Mac IE. Use Grab.app or cmd-shift-4 and grab as small an area as possible that demonstrates the problem. Then attach the screenshot to the bug. </li>
+		<li> Be as specific as possible. For instance, if you're describing a problem that occurs while scrolling, note in the bug whether you're scrolling with arrow keys, arrow buttons, scroll thumb, clicking above or below the thumb, scroll-wheel mouse, etc. </li>
+	</ul><br>
+	
+	<li>
+		<b>Depends on</b>
+		<p>If the fix for this bug depends on another bug fix, put the other bug's number here. Otherwise, leave it empty.</p>
+	</li>
+
+	<li>
+		<b>Blocks</b>
+		<p>If this bug blocks another bug from being fixed, put the other bug's number here. Otherwise, leave it empty.</p>
+	</li>
+</ul>
+
+</body>
+</html>

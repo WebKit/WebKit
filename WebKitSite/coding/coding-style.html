@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>WebKit Coding Style Guidelines</title>
+  <link rel=stylesheet href="../webkitdev.css">
+</head>
+<body>
+<!--begin sidebar -->
+<iframe id="sidebar" src="../sidebar.html"></iframe>
+<!--end sidebar -->
+
+<div id="banner">
+WebKit Coding Style Guidelines
+</div>
+
+<div id="content">
+
+
+<h3>Indenting</h3>
+
+<ol>
+<li> Use spaces to indent. Tabs should not appear in code files (with
+     the exception of files that require them e.g. Makefiles).
+
+<li> The indent size is 4 spaces.
+
+<li> Code editors should be configured to expand tabs that you type to 4
+spaces.
+</ol>
+
+<h3>Braces</h3>
+
+<ol>
+<li> Function definitions - open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:
+
+<pre>
+    RIGHT:
+    
+        void foo()
+        {
+        }
+        
+        
+    WRONG:
+    
+        void foo() {
+        }
+
+</pre>
+
+<li> Loop control structures, including for, while and do statements - the open brace should go on the same line as the as the control structure. 
+
+<pre>
+    RIGHT:
+    
+        for (int i = 0; i < 10; i++) {
+        }
+                
+    WRONG:
+    
+        for (int i = 0; i < 10; i++) 
+        {
+        }
+
+</pre>
+
+<li> If/else statements - as above, but if there is an else clause, the close brace should go on the same line as the else.
+
+<pre>
+    RIGHT:
+
+        if (timeToGetCoffee) {
+	    buyCoffee(&coffee);
+            chugIt(coffee);
+        } else if (timeToGoHome)
+            outtaHere = true;
+
+
+    WRONG:
+
+        if (timeToGetCoffee)
+        {
+	    buyCoffee(&coffee);
+            chugIt(coffee);
+        } else if (timeToGoHome) 
+        {
+            outtaHere = true;
+        }
+        
+        if (timeToGetCoffee) {
+        } 
+	else if (timeToGoHome) 
+            outtaHere = true;
+
+</ol>
+
+<h3>Parentheses</h3>
+
+<ol>
+
+<li>Function declarations and calls - do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments. Do use a single space after commas that separate arguments.
+
+<pre>
+    RIGHT:
+
+        int myFunction(int arg1, float arg2);
+        void noArgFunction();
+
+    WRONG:
+        int myFunction (int arg1, float arg2);
+        int myFunction( int arg1 , float arg2 );
+        void noArgFunction ();
+</pre>
+
+<li>Control structures, such as if, while, do and switch - use a single space before the open paren, but no spaces inside the parentheses.
+
+</ol>
+
+<h3>Names</h3>
+
+<ol><li>General Rule: With very few exceptions, prefer embedded
+capitals instead of underscores for class, function and variable
+names.
+
+<li>C++ and Objective-C classes, interfaces and protocols, and other
+type names - these names should start with a capital letter and use
+InterCaps.
+
+<pre>
+    RIGHT:
+    
+        class MyImportantClass
+        
+    WRONG:
+    
+        class My_important_class
+        class myImportantClass
+</pre>
+        
+<li>Local variables should use interCaps, but the first word should
+start with a lowercase letter, like this:
+
+<pre>
+    RIGHT:
+    
+        int myInt;
+        
+    WRONG:
+    
+        int MyInt;
+        int my_int;
+</pre>
+        
+<li>Free function names in C++ should follow the same naming
+conventions as local variables. Most functions should be named to
+sound like verb phrases, like "openDoor" or
+"walkAroundTheBlock". (getters, setters, predicates?)
+
+<li>C++ data members should be named like local variables, but with a
+prefix of m_.
+
+<li>C++ member functions should follow the same naming convention as
+free functions.
+
+<li>Objective-C methods should follow the usual Cocoa naming style -
+they should read like a phrase or sentence and each piece of the
+selector should start with a lowercase letter and use intercaps.
+
+<li>Objective-C instance variables should be named like local
+variables but starting with an underscore.
+
+<li>Pointer and reference types - pointer types should be written with
+a space between the type name and the * (so the * is adjacent to the
+following identifier if any). For reference types, the &amp; goes next to
+the type name.
+
+
+<li>Enum members should user InterCaps with an initial capital letter.
+
+<li>#defined constants should use all uppercase names with words
+separated by underscores.
+
+<li> Macros that expand to function calls or other non-constant
+     computation: these should be named like functions, and should
+     have parentheses at the end, even if they take no arguments (with
+     the exception of some special macros like ASSERT):
+
+<pre>
+    RIGHT:
+        #define WBStopButtonTitle()  NSLocalizedString(@"Stop", @"Go/Stop button title when busy")
+
+    WRONG:
+        #define WB_STOP_BUTTON_TITLE  NSLocalizedString(@"Stop", @"Go/Stop button title when busy")
+        #define WBStopButtontitle  NSLocalizedString(@"Stop", @"Go/Stop button title when busy")
+</pre>
+
+<li> Acronyms in names: If an identifier includes an acronym, make the
+     acronym all-uppercase or all-lowercase, depending on whether a
+     word in that position would be capitalized or not.
+
+<pre>
+    RIGHT:
+
+        urlVariable
+        myURLAccessor:
+
+    WRONG:
+
+        uRLVariable
+        myUrlAccessor:
+</pre>
+</ol>
+
