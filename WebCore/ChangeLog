@@ -1,3 +1,18 @@
+2006-01-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/dom/generic-form-element-assert.html
+
+        Reviewed and reworked by Darin.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5926
+          Assertion failure in HTMLGenericFormElementImpl::removedFromTree
+
+        * khtml/html/HTMLGenericFormElementImpl.cpp: Tweaked formatting and namespaces
+        a bit. Removed unneeded includes.
+        (WebCore::findRoot): Added helper function.
+        (WebCore::HTMLGenericFormElementImpl::removedFromTree): Rewrote to do the check
+        in a simpler way, since the two separate cases amounted to the same check.
+
 2006-01-17  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by eseidel.

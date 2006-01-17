@@ -1,0 +1,5 @@
+This tests for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5926 Assertion failure in HTMLGenericFormElementImpl::removedFromTree.
+
+Test result: PASS
+
+

@@ -26,29 +26,23 @@
 
 #include "config.h"
 #include "HTMLGenericFormElementImpl.h"
-#include "HTMLFormElementImpl.h"
+
 #include "DocumentImpl.h"
-
-#include "rendering/render_form.h"
-#include "render_theme.h"
-#include "Frame.h"
 #include "EventNames.h"
+#include "Frame.h"
+#include "HTMLFormElementImpl.h"
+#include "render_replaced.h"
+#include "render_theme.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f)
-    : HTMLElementImpl(tagName, doc)
+HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentImpl* doc, HTMLFormElementImpl* f)
+    : HTMLElementImpl(tagName, doc), m_form(f), m_disabled(false), m_readOnly(false)
 {
-    m_disabled = m_readOnly = false;
-
-    if (f)
-        m_form = f;
-    else
+    if (!m_form)
         m_form = getForm();
     if (m_form)
         m_form->registerFormElement(this);
@@ -123,50 +117,30 @@ void HTMLGenericFormElementImpl::insertedIntoTree(bool deep)
     HTMLElementImpl::insertedIntoTree(deep);
 }
 
+static inline NodeImpl* findRoot(NodeImpl* n)
+{
+    NodeImpl* root = n;
+    for (; n; n = n->parentNode())
+        root = n;
+    return root;
+}
+
 void HTMLGenericFormElementImpl::removedFromTree(bool deep)
 {
-    // When being removed we have to possibly null out our form and remove ourselves from
-    // the form's list of elements.
-    if (m_form) {
-        // Attempt to re-acquire the form.  If we can't re-acquire, then
-        // remove ourselves from the form.
-        NodeImpl* form = parentNode();
-        NodeImpl* root = this;
-        while (form) {
-            if (form->hasTagName(formTag))
-                break;
-            root = form;
-            form = form->parentNode();
-        }
-        
-        // If the form has been demoted to a leaf, then we won't find it as an ancestor.
-        // Check to see if the root node of our current form and our root node
-        // match.  If so, preserve the connection to the form.
-        if (!form) {
-            NodeImpl* formRoot = m_form;
-            while (formRoot->parent()) formRoot = formRoot->parent();
-            if (formRoot == root)
-                form = m_form;
-        } 
-        
-        if (!form) {
-            m_form->removeFormElement(this);
-            m_form = 0;
-        } else
-            assert(form == m_form); // The re-acquired form should be the same. If not, something really strange happened.
+    // If the form and element are both in the same tree, preserve the connection to the form.
+    // Otherwise, null out our form and remove ourselves from the form's list of elements.
+    if (m_form && findRoot(this) != findRoot(m_form)) {
+        m_form->removeFormElement(this);
+        m_form = 0;
     }
-   
     HTMLElementImpl::removedFromTree(deep);
 }
 
-HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
+HTMLFormElementImpl* HTMLGenericFormElementImpl::getForm() const
 {
-    NodeImpl *p = parentNode();
-    while(p) {
+    for (NodeImpl* p = parentNode(); p; p = p->parentNode())
         if (p->hasTagName(formTag))
-            return static_cast<HTMLFormElementImpl *>(p);
-        p = p->parentNode();
-    }
+            return static_cast<HTMLFormElementImpl*>(p);
     return 0;
 }
 
