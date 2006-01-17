@@ -500,7 +500,7 @@ bool isFirstVisiblePositionInSpecialElementInFragment(const Position& pos)
 void ReplaceSelectionCommand::doApply()
 {
     // collect information about the current selection, prior to deleting the selection
-    SelectionController selection = endingSelection();
+    Selection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
     
     if (m_matchStyle)
@@ -896,7 +896,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         return;
     
     if (m_selectReplacement)
-        setEndingSelection(SelectionController(start, end, SEL_DEFAULT_AFFINITY));
+        setEndingSelection(Selection(start, end, SEL_DEFAULT_AFFINITY));
     else
         setEndingSelection(end, SEL_DEFAULT_AFFINITY);
     

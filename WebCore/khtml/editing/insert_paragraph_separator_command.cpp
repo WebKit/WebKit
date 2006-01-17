@@ -102,7 +102,7 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
 void InsertParagraphSeparatorCommand::doApply()
 {
     bool splitText = false;
-    SelectionController selection = endingSelection();
+    Selection selection = endingSelection();
     if (selection.isNone())
         return;
     

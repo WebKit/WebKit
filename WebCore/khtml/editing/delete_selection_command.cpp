@@ -111,7 +111,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, bool smar
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const SelectionController &selection, bool smartDelete, bool mergeBlocksAfterDelete)
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete)
     : CompositeEditCommand(document), 
       m_hasSelectionToDelete(true), 
       m_smartDelete(smartDelete), 
@@ -611,7 +611,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
         // then start typing. In this case, the typing style is applied right now, and
         // is not retained until the next typing action.
 
-        setEndingSelection(SelectionController(Position(insertedPlaceholder, 0), DOWNSTREAM));
+        setEndingSelection(Selection(Position(insertedPlaceholder, 0), DOWNSTREAM));
         applyStyle(m_typingStyle.get(), EditActionUnspecified);
         m_typingStyle = 0;
     }
@@ -623,7 +623,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
 
 void DeleteSelectionCommand::clearTransientState()
 {
-    m_selectionToDelete.clear();
+    m_selectionToDelete = Selection();
     m_upstreamStart.clear();
     m_downstreamStart.clear();
     m_upstreamEnd.clear();
@@ -673,7 +673,7 @@ void DeleteSelectionCommand::doApply()
     if (handleSpecialCaseBRDelete()) {
         calculateTypingStyleAfterDelete(false);
         debugPosition("endingPosition   ", m_endingPosition);
-        setEndingSelection(SelectionController(m_endingPosition, affinity));
+        setEndingSelection(Selection(m_endingPosition, affinity));
         clearTransientState();
         rebalanceWhitespace();
         return;
@@ -702,7 +702,7 @@ void DeleteSelectionCommand::doApply()
     calculateTypingStyleAfterDelete(addedPlaceholder);
 
     debugPosition("endingPosition   ", m_endingPosition);
-    setEndingSelection(SelectionController(m_endingPosition, affinity));
+    setEndingSelection(Selection(m_endingPosition, affinity));
     clearTransientState();
     rebalanceWhitespace();
 }

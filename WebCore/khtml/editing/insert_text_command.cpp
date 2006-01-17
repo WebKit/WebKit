@@ -102,7 +102,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 {
     assert(text.find('\n') == -1);
 
-    SelectionController selection = endingSelection();
+    Selection selection = endingSelection();
     bool adjustDownstream = isStartOfLine(VisiblePosition(selection.start().downstream(), DOWNSTREAM));
 
     // Delete the current selection, or collapse whitespace, as needed
@@ -147,7 +147,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         m_charactersAdded += text.length();
     }
 
-    setEndingSelection(SelectionController(startPosition, endPosition, DOWNSTREAM));
+    setEndingSelection(Selection(startPosition, endPosition, DOWNSTREAM));
 
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.

@@ -56,6 +56,13 @@ SelectionController::SelectionController()
 {
 }
 
+SelectionController::SelectionController(const Selection &sel)
+    : m_sel(sel)
+    , m_needsLayout(true)
+    , m_modifyBiasSet(false)
+{
+}
+
 SelectionController::SelectionController(const Position &pos, EAffinity affinity)
     : m_sel(pos, pos, affinity)
     , m_needsLayout(true)
@@ -129,55 +136,37 @@ SelectionController &SelectionController::operator=(const SelectionController &o
 
 void SelectionController::moveTo(const VisiblePosition &pos)
 {
-    m_sel.setAffinity(pos.affinity());
-    m_sel.setBase(pos.deepEquivalent());
-    m_sel.setExtent(pos.deepEquivalent());
-    m_sel.validate();
+    m_sel = Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity());
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent)
 {
-    m_sel.setAffinity(base.affinity());
-    m_sel.setBase(base.deepEquivalent());
-    m_sel.setExtent(extent.deepEquivalent());
-    m_sel.validate();
+    m_sel = Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity());
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const SelectionController &o)
 {
-    m_sel.setAffinity(o.m_sel.affinity());
-    m_sel.setBase(o.m_sel.start());
-    m_sel.setExtent(o.m_sel.end());
-    m_sel.validate();
+    m_sel = o.m_sel;
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &pos, EAffinity affinity)
 {
-    m_sel.setAffinity(affinity);
-    m_sel.setBase(pos);
-    m_sel.setExtent(pos);
-    m_sel.validate();
+    m_sel = Selection(pos, affinity);
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const RangeImpl *r, EAffinity affinity)
 {
-    m_sel.setAffinity(affinity);
-    m_sel.setBase(startPosition(r));
-    m_sel.setExtent(endPosition(r));
-    m_sel.validate();
+    m_sel = Selection(startPosition(r), endPosition(r), affinity);
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity)
 {
-    m_sel.setAffinity(affinity);
-    m_sel.setBase(base);
-    m_sel.setExtent(extent);
-    m_sel.validate();
+    m_sel = Selection(base, extent, affinity);
     m_needsLayout = true;
 }
 
@@ -507,8 +496,8 @@ bool SelectionController::expandUsingGranularity(ETextGranularity granularity)
 {
     if (isNone())
         return false;
-    
-    m_sel.validate(granularity);
+
+    m_sel.expandUsingGranularity(granularity);
     m_needsLayout = true;
     return true;
 }
@@ -553,40 +542,31 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
 
 void SelectionController::clear()
 {
-    m_sel.clear();
-    m_sel.validate();
+    m_sel = Selection();
     m_needsLayout = true;
 }
 
 void SelectionController::setBase(const VisiblePosition &pos)
 {
-    m_sel.setAffinity(pos.affinity());
-    m_sel.setBase(pos.deepEquivalent());
-    m_sel.validate();
+    m_sel = Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity());
     m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const VisiblePosition &pos)
 {
-    m_sel.setAffinity(pos.affinity());
-    m_sel.setExtent(pos.deepEquivalent());
-    m_sel.validate();
+    m_sel = Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity());
     m_needsLayout = true;
 }
 
 void SelectionController::setBase(const Position &pos, EAffinity affinity)
 {
-    m_sel.setAffinity(affinity);
-    m_sel.setBase(pos);
-    m_sel.validate();
+    m_sel = Selection(pos, m_sel.extent(), affinity);
     m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const Position &pos, EAffinity affinity)
 {
-    m_sel.setAffinity(affinity);
-    m_sel.setExtent(pos);
-    m_sel.validate();
+    m_sel = Selection(m_sel.base(), pos, affinity);
     m_needsLayout = true;
 }
 

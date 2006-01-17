@@ -2467,8 +2467,9 @@ EditCommandPtr Frame::lastEditCommand()
 
 void Frame::appliedEditing(EditCommandPtr &cmd)
 {
-    if (shouldChangeSelection(cmd.endingSelection())) {
-        setSelection(cmd.endingSelection(), false);
+    SelectionController sel(cmd.endingSelection());
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel, false);
     }
 
     // Now set the typing style from the command. Clear it when done.
@@ -2497,8 +2498,9 @@ void Frame::appliedEditing(EditCommandPtr &cmd)
 
 void Frame::unappliedEditing(EditCommandPtr &cmd)
 {
-    if (shouldChangeSelection(cmd.startingSelection())) {
-        setSelection(cmd.startingSelection(), true);
+    SelectionController sel(cmd.startingSelection());
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel, true);
     }
     Mac(this)->registerCommandForRedo(cmd);
     Mac(this)->respondToChangedContents();
@@ -2507,8 +2509,9 @@ void Frame::unappliedEditing(EditCommandPtr &cmd)
 
 void Frame::reappliedEditing(EditCommandPtr &cmd)
 {
-    if (shouldChangeSelection(cmd.endingSelection())) {
-        setSelection(cmd.endingSelection(), true);
+    SelectionController sel(cmd.endingSelection());
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel, true);
     }
     Mac(this)->registerCommandForUndo(cmd);
     Mac(this)->respondToChangedContents();

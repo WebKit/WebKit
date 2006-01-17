@@ -90,7 +90,7 @@ void InsertLineBreakCommand::insertNodeBeforePosition(NodeImpl *node, const Posi
 void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
-    SelectionController selection = endingSelection();
+    Selection selection = endingSelection();
 
     ElementImpl *breakNode = createBreakElement(document());
     NodeImpl *nodeToInsert = breakNode;
@@ -116,7 +116,7 @@ void InsertLineBreakCommand::doApply()
             bool hasTrailingBR = next && next->hasTagName(brTag) && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
             insertNodeAfterPosition(nodeToInsert, pos);
             if (hasTrailingBR)
-                setEndingSelection(SelectionController(Position(next, 0), DOWNSTREAM));
+                setEndingSelection(Selection(Position(next, 0), DOWNSTREAM));
             else if (!document()->inStrictMode()) {
                 // Insert an "extra" BR at the end of the block. 
                 ElementImpl *extraBreakNode = createBreakElement(document());
@@ -170,7 +170,7 @@ void InsertLineBreakCommand::doApply()
     CSSMutableStyleDeclarationImpl *typingStyle = document()->frame()->typingStyle();
     
     if (typingStyle && typingStyle->length() > 0) {
-        SelectionController selectionBeforeStyle = endingSelection();
+        Selection selectionBeforeStyle = endingSelection();
         applyStyle(typingStyle, Position(nodeToInsert, 0), Position(nodeToInsert, maxDeepOffset(nodeToInsert)));
         setEndingSelection(selectionBeforeStyle);
     }

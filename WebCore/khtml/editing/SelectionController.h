@@ -46,6 +46,7 @@ public:
 #define SEL_DEFAULT_AFFINITY DOWNSTREAM
 
     SelectionController();
+    SelectionController(const Selection &sel);
     SelectionController(const RangeImpl *, EAffinity affinity);
     SelectionController(const VisiblePosition &);
     SelectionController(const VisiblePosition &, const VisiblePosition &);
@@ -62,6 +63,8 @@ public:
     void moveTo(const Position &, EAffinity);
     void moveTo(const Position &, const Position &, EAffinity);
     void moveTo(const SelectionController &);
+
+    const Selection &selection() const { return m_sel; }
 
     Selection::EState state() const { return m_sel.state(); }
 
@@ -185,6 +188,6 @@ inline bool operator!=(const SelectionController &a, const SelectionController &
     return !(a == b);
 }
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // KHTML_EDITING_SELECTIONCONTROLLER_H

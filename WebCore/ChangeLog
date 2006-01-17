@@ -1,3 +1,79 @@
+2006-01-17  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed by Darin, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6609
+          Use Selection instead of SelectionController where possible
+
+        This patch replaces the use of SelectionController with Selection in the edit commands.
+
+        It also cleans up the relationship between Selection and SelectionController: 
+        SelectionController used to need to be friend to Selection to call validate() 
+        on it, now validation is enforced on every update of Selection.
+
+        * khtml/editing/Selection.cpp:
+        (WebCore::Selection::Selection):
+        (WebCore::Selection::expandUsingGranularity):
+        (WebCore::Selection::validate):
+        * khtml/editing/Selection.h:
+        (WebCore::Selection::setExtent):
+        (WebCore::Selection::granularity):
+        (WebCore::operator==):
+        * khtml/editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::moveTo):
+        (WebCore::SelectionController::expandUsingGranularity):
+        (WebCore::SelectionController::clear):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        * khtml/editing/SelectionController.h:
+        (WebCore::SelectionController::selection):
+        * khtml/editing/apply_style_command.cpp:
+        (WebCore::ApplyStyleCommand::updateStartEnd):
+        (WebCore::ApplyStyleCommand::doApply):
+        * khtml/editing/break_blockquote_command.cpp:
+        (khtml::BreakBlockquoteCommand::doApply):
+        * khtml/editing/composite_edit_command.cpp:
+        (WebCore::CompositeEditCommand::deleteSelection):
+        (WebCore::CompositeEditCommand::rebalanceWhitespace):
+        * khtml/editing/composite_edit_command.h:
+        * khtml/editing/delete_selection_command.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand):
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (WebCore::DeleteSelectionCommand::clearTransientState):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * khtml/editing/delete_selection_command.h:
+        * khtml/editing/edit_command.cpp:
+        (WebCore::EditCommandPtr::startingSelection):
+        (WebCore::EditCommandPtr::endingSelection):
+        (WebCore::EditCommandPtr::setStartingSelection):
+        (WebCore::EditCommandPtr::setEndingSelection):
+        (WebCore::EditCommand::EditCommand):
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        * khtml/editing/edit_command.h:
+        (WebCore::EditCommand::startingSelection):
+        (WebCore::EditCommand::endingSelection):
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::input):
+        * khtml/editing/move_selection_command.cpp:
+        (khtml::MoveSelectionCommand::doApply):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement):
+        * khtml/editing/typing_command.cpp:
+        (khtml::TypingCommand::deleteKeyPressed):
+        (khtml::TypingCommand::forwardDeleteKeyPressed):
+        * page/Frame.cpp:
+        (Frame::appliedEditing):
+        (Frame::unappliedEditing):
+        (Frame::reappliedEditing):
+        * page/Frame.h:
+
 2006-01-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/dom/generic-form-element-assert.html

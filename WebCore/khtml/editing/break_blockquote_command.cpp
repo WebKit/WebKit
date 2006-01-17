@@ -55,7 +55,7 @@ void BreakBlockquoteCommand::doApply()
     DOM::ElementImpl *breakNode;
     QPtrList<DOM::NodeImpl> ancestors;
     
-    SelectionController selection = endingSelection();
+    Selection selection = endingSelection();
     if (selection.isNone())
         return;
     

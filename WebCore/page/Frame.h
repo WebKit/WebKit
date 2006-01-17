@@ -1045,7 +1045,6 @@ protected:
 
   FramePrivate *d;
   friend class FramePrivate;
-  friend class khtml::SelectionController;
 
 public:  
   friend class MacFrame;

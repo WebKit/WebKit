@@ -30,31 +30,37 @@
 #include "htmlediting.h"
 #include "visible_position.h"
 #include "visible_units.h"
+#include "xml/dom2_rangeimpl.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
 Selection::Selection()
     : m_affinity(DOWNSTREAM)
+    , m_granularity(CHARACTER)
     , m_state(NONE)
     , m_baseIsFirst(true)
 {
 }
 
-Selection::Selection(const Position &base, const Position &extent, EAffinity affinity)
-    : m_base(base), m_extent(extent)
+Selection::Selection(const Position &pos, EAffinity affinity)
+    : m_base(pos), m_extent(pos)
     , m_affinity(affinity)
+    , m_granularity(CHARACTER)
     , m_state(NONE)
     , m_baseIsFirst(true)
 {
     validate();
 }
 
-void Selection::clear()
+Selection::Selection(const Position &base, const Position &extent, EAffinity affinity)
+    : m_base(base), m_extent(extent)
+    , m_affinity(affinity)
+    , m_granularity(CHARACTER)
+    , m_state(NONE)
+    , m_baseIsFirst(true)
 {
-    m_affinity = SEL_DEFAULT_AFFINITY;
-    m_base.clear();
-    m_extent.clear();
+    validate();
 }
 
 PassRefPtr<RangeImpl> Selection::toRange() const
@@ -117,7 +123,17 @@ PassRefPtr<RangeImpl> Selection::toRange() const
     return result;
 }
 
-void Selection::validate(ETextGranularity granularity)
+bool Selection::expandUsingGranularity(ETextGranularity granularity)
+{
+    if (isNone())
+        return false;
+
+    m_granularity = granularity;
+    validate();
+    return true;
+}
+
+void Selection::validate()
 {
     // Move the selection to rendered positions, if possible.
     Position originalBase(m_base);
@@ -168,7 +184,7 @@ void Selection::validate(ETextGranularity granularity)
     }
     
     // Expand the selection if requested.
-    switch (granularity) {
+    switch (m_granularity) {
         case CHARACTER:
             // Don't do any expansion.
             break;
