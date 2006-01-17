@@ -1,3 +1,14 @@
+2006-01-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        A proactive test case to prevent crashes in recursive clippath defs
+
+        * svg/custom/recursive-clippath-expected.checksum: Added.
+        * svg/custom/recursive-clippath-expected.png: Added.
+        * svg/custom/recursive-clippath-expected.txt: Added.
+        * svg/custom/recursive-clippath.svg: Added.
+
 2006-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         - Added layout test for 

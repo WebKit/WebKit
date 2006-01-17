@@ -1,0 +1,6 @@
+KCanvasResource {id="clipPath_0" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00]]]}
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 200x200
+      KCanvasItem {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [clip path="#clipPath_0"] [data="M0.00,0.00L200.00,0.00L200.00,200.00L0.00,200.00"]
+      KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
