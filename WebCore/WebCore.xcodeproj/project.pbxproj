@@ -283,31 +283,16 @@
 		93F199CE08245E59001E9ABC /* dom_atomicstring.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364605C9D5E200E42902 /* dom_atomicstring.h */; };
 		93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */; };
 		93F199D108245E59001E9ABC /* htmlediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9185DD05EE59B80081354D /* htmlediting.h */; };
-		93F199D208245E59001E9ABC /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6305EFFE6B0032DCB5 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199D308245E59001E9ABC /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */; };
 		93F199D408245E59001E9ABC /* css_computedstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9970C105F7DD1C00611115 /* css_computedstyle.h */; };
 		93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */; };
-		93F199D608245E59001E9ABC /* DOMHTML.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321274E0606724900B62302 /* DOMHTML.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199D708245E59001E9ABC /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321274F0606724900B62302 /* DOMRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199D808245E59001E9ABC /* DOMEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127500606724900B62302 /* DOMEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199D908245E59001E9ABC /* DOMStylesheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127510606724900B62302 /* DOMStylesheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199DA08245E59001E9ABC /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127520606724900B62302 /* DOMCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199DB08245E59001E9ABC /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127530606724900B62302 /* DOMTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199DC08245E59001E9ABC /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127540606724900B62302 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199DD08245E59001E9ABC /* DOMCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127550606724900B62302 /* DOMCSS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199DE08245E59001E9ABC /* dom_position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* dom_position.h */; };
-		93F199DF08245E59001E9ABC /* DOMExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 832556E4061DF155007B8054 /* DOMExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199E008245E59001E9ABC /* KWQSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* KWQSlider.h */; };
 		93F199E108245E59001E9ABC /* KWQTextUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */; };
-		93F199E208245E59001E9ABC /* DOMEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D712B065FB91800C966E1 /* DOMEventsInternal.h */; };
-		93F199E308245E59001E9ABC /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D7224065FC25900C966E1 /* DOMViewsInternal.h */; };
-		93F199E408245E59001E9ABC /* DOMHTMLInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93859E32065FCAD300CF54EE /* DOMHTMLInternal.h */; };
 		93F199E508245E59001E9ABC /* html_canvasimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* html_canvasimpl.h */; };
 		93F199E608245E59001E9ABC /* render_canvasimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3DE0663C2EC004D2919 /* render_canvasimage.h */; };
 		93F199E708245E59001E9ABC /* KWQClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* KWQClipboard.h */; };
 		93F199E908245E59001E9ABC /* jsediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE02D4E6066F908A0076809F /* jsediting.h */; };
 		93F199EA08245E59001E9ABC /* KWQFoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D1FEF6067EBF89009CE68A /* KWQFoundationExtras.h */; };
-		93F199EB08245E59001E9ABC /* DOMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9348900506C00363007E7ACE /* DOMPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199EC08245E59001E9ABC /* xsl_stylesheetimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */; };
 		93F199ED08245E59001E9ABC /* xslt_processorimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* xslt_processorimpl.h */; };
 		93F199EE08245E59001E9ABC /* formdata.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* formdata.h */; };
@@ -499,16 +484,10 @@
 		93F19AEE08245E59001E9ABC /* xbl_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBDB093059A28B100B83B92 /* xbl_binding.cpp */; };
 		93F19AF008245E59001E9ABC /* dom_atomicstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3B364505C9D5E200E42902 /* dom_atomicstring.cpp */; };
 		93F19AF208245E59001E9ABC /* htmlediting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE9185E005EE59B80081354D /* htmlediting.cpp */; };
-		93F19AF308245E59001E9ABC /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE94EB6505EFFE6B0032DCB5 /* DOM.mm */; };
 		93F19AF408245E59001E9ABC /* css_computedstyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE9970C205F7DD1C00611115 /* css_computedstyle.cpp */; };
-		93F19AF508245E59001E9ABC /* DOMInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE9CB64D05F942CB00514D9C /* DOMInternal.mm */; };
-		93F19AF608245E59001E9ABC /* DOM-CSS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE9CB65805F9546800514D9C /* DOM-CSS.mm */; };
 		93F19AF708245E59001E9ABC /* KWQEditCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */; };
 		93F19AF808245E59001E9ABC /* dom_position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* dom_position.cpp */; };
-		93F19AF908245E59001E9ABC /* DOMHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = 832556E6061DF161007B8054 /* DOMHTML.mm */; };
 		93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* KWQSlider.mm */; };
-		93F19AFB08245E59001E9ABC /* DOMEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 842F72DC06405FDF00CC271B /* DOMEvents.mm */; };
-		93F19AFC08245E59001E9ABC /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931D722A065FC40800C966E1 /* DOMViews.mm */; };
 		93F19AFD08245E59001E9ABC /* html_canvasimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */; };
 		93F19AFE08245E59001E9ABC /* render_canvasimage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3DD0663C2EC004D2919 /* render_canvasimage.cpp */; };
 		93F19AFF08245E59001E9ABC /* KWQClipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* KWQClipboard.mm */; };
@@ -527,7 +506,6 @@
 		93F19B0D08245E59001E9ABC /* visible_range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939FF8EC0702B1B100979E5E /* visible_range.cpp */; };
 		93F19B0E08245E59001E9ABC /* html_interchange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA5DBDA075CEDA00098A432 /* html_interchange.cpp */; };
 		93F19B0F08245E59001E9ABC /* markup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9378D9F907640A46004B97BF /* markup.cpp */; };
-		93F19B1008245E59001E9ABC /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51111AC007BD812C00B7162C /* DOMUtility.mm */; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
 		93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
@@ -838,31 +816,16 @@
 		A88AD2060952480A001DD196 /* dom_atomicstring.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364605C9D5E200E42902 /* dom_atomicstring.h */; };
 		A88AD2070952480A001DD196 /* dom_atomicstringlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */; };
 		A88AD2090952480A001DD196 /* htmlediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9185DD05EE59B80081354D /* htmlediting.h */; };
-		A88AD20A0952480A001DD196 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6305EFFE6B0032DCB5 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD20B0952480A001DD196 /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */; };
 		A88AD20C0952480A001DD196 /* css_computedstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BE9970C105F7DD1C00611115 /* css_computedstyle.h */; };
 		A88AD20D0952480A001DD196 /* KWQEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */; };
-		A88AD20E0952480A001DD196 /* DOMHTML.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321274E0606724900B62302 /* DOMHTML.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD20F0952480A001DD196 /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321274F0606724900B62302 /* DOMRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2100952480A001DD196 /* DOMEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127500606724900B62302 /* DOMEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2110952480A001DD196 /* DOMStylesheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127510606724900B62302 /* DOMStylesheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2120952480A001DD196 /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127520606724900B62302 /* DOMCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2130952480A001DD196 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127530606724900B62302 /* DOMTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2140952480A001DD196 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127540606724900B62302 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD2150952480A001DD196 /* DOMCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = 932127550606724900B62302 /* DOMCSS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD2160952480A001DD196 /* dom_position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* dom_position.h */; };
-		A88AD2170952480A001DD196 /* DOMExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 832556E4061DF155007B8054 /* DOMExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD2180952480A001DD196 /* KWQSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* KWQSlider.h */; };
 		A88AD2190952480A001DD196 /* KWQTextUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */; };
-		A88AD21A0952480A001DD196 /* DOMEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D712B065FB91800C966E1 /* DOMEventsInternal.h */; };
-		A88AD21B0952480A001DD196 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D7224065FC25900C966E1 /* DOMViewsInternal.h */; };
-		A88AD21C0952480A001DD196 /* DOMHTMLInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93859E32065FCAD300CF54EE /* DOMHTMLInternal.h */; };
 		A88AD21D0952480A001DD196 /* html_canvasimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* html_canvasimpl.h */; };
 		A88AD21E0952480A001DD196 /* render_canvasimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3DE0663C2EC004D2919 /* render_canvasimage.h */; };
 		A88AD21F0952480A001DD196 /* KWQClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* KWQClipboard.h */; };
 		A88AD2200952480A001DD196 /* jsediting.h in Headers */ = {isa = PBXBuildFile; fileRef = BE02D4E6066F908A0076809F /* jsediting.h */; };
 		A88AD2210952480A001DD196 /* KWQFoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D1FEF6067EBF89009CE68A /* KWQFoundationExtras.h */; };
-		A88AD2220952480A001DD196 /* DOMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9348900506C00363007E7ACE /* DOMPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD2230952480A001DD196 /* xsl_stylesheetimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */; };
 		A88AD2240952480A001DD196 /* xslt_processorimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* xslt_processorimpl.h */; };
 		A88AD2250952480A001DD196 /* formdata.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* formdata.h */; };
@@ -1096,16 +1059,10 @@
 		A88AD32A0952480A001DD196 /* xbl_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBDB093059A28B100B83B92 /* xbl_binding.cpp */; };
 		A88AD32B0952480A001DD196 /* dom_atomicstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3B364505C9D5E200E42902 /* dom_atomicstring.cpp */; };
 		A88AD32D0952480A001DD196 /* htmlediting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE9185E005EE59B80081354D /* htmlediting.cpp */; };
-		A88AD32E0952480A001DD196 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE94EB6505EFFE6B0032DCB5 /* DOM.mm */; };
 		A88AD32F0952480A001DD196 /* css_computedstyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE9970C205F7DD1C00611115 /* css_computedstyle.cpp */; };
-		A88AD3300952480A001DD196 /* DOMInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE9CB64D05F942CB00514D9C /* DOMInternal.mm */; };
-		A88AD3310952480A001DD196 /* DOM-CSS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE9CB65805F9546800514D9C /* DOM-CSS.mm */; };
 		A88AD3320952480A001DD196 /* KWQEditCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */; };
 		A88AD3330952480A001DD196 /* dom_position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* dom_position.cpp */; };
-		A88AD3340952480A001DD196 /* DOMHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = 832556E6061DF161007B8054 /* DOMHTML.mm */; };
 		A88AD3350952480A001DD196 /* KWQSlider.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* KWQSlider.mm */; };
-		A88AD3360952480A001DD196 /* DOMEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 842F72DC06405FDF00CC271B /* DOMEvents.mm */; };
-		A88AD3370952480A001DD196 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931D722A065FC40800C966E1 /* DOMViews.mm */; };
 		A88AD3380952480A001DD196 /* html_canvasimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */; };
 		A88AD3390952480A001DD196 /* render_canvasimage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3DD0663C2EC004D2919 /* render_canvasimage.cpp */; };
 		A88AD33A0952480A001DD196 /* KWQClipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* KWQClipboard.mm */; };
@@ -1124,7 +1081,6 @@
 		A88AD3470952480A001DD196 /* visible_range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939FF8EC0702B1B100979E5E /* visible_range.cpp */; };
 		A88AD3480952480A001DD196 /* html_interchange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA5DBDA075CEDA00098A432 /* html_interchange.cpp */; };
 		A88AD3490952480A001DD196 /* markup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9378D9F907640A46004B97BF /* markup.cpp */; };
-		A88AD34A0952480A001DD196 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51111AC007BD812C00B7162C /* DOMUtility.mm */; };
 		A88AD34B0952480A001DD196 /* edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654D87B50831973B0082DCA1 /* edit_command.cpp */; };
 		A88AD34C0952480A001DD196 /* composite_edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DC16C20831DD6F0022744E /* composite_edit_command.cpp */; };
 		A88AD34D0952480A001DD196 /* append_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC799F0831ED6D009385CE /* append_node_command.cpp */; };
@@ -1532,6 +1488,50 @@
 		BC179893088D975F006068A5 /* render_theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC179890088D975F006068A5 /* render_theme.cpp */; };
 		BC179894088D975F006068A5 /* render_theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC179891088D975F006068A5 /* render_theme.h */; };
 		BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1798D9088DA4F8006068A5 /* render_theme_mac.h */; };
+		BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3797097C715F0019F3D8 /* DOM.h */; };
+		BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A3798097C715F0019F3D8 /* DOM.mm */; };
+		BC1A37AF097C715F0019F3D8 /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3799097C715F0019F3D8 /* DOMCore.h */; };
+		BC1A37B0097C715F0019F3D8 /* DOMCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379A097C715F0019F3D8 /* DOMCSS.h */; };
+		BC1A37B1097C715F0019F3D8 /* DOMCSS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A379B097C715F0019F3D8 /* DOMCSS.mm */; };
+		BC1A37B2097C715F0019F3D8 /* DOMEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379C097C715F0019F3D8 /* DOMEvents.h */; };
+		BC1A37B3097C715F0019F3D8 /* DOMEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A379D097C715F0019F3D8 /* DOMEvents.mm */; };
+		BC1A37B4097C715F0019F3D8 /* DOMEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379E097C715F0019F3D8 /* DOMEventsInternal.h */; };
+		BC1A37B5097C715F0019F3D8 /* DOMExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379F097C715F0019F3D8 /* DOMExtensions.h */; };
+		BC1A37B6097C715F0019F3D8 /* DOMHTML.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A0097C715F0019F3D8 /* DOMHTML.h */; };
+		BC1A37B7097C715F0019F3D8 /* DOMHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A1097C715F0019F3D8 /* DOMHTML.mm */; };
+		BC1A37B8097C715F0019F3D8 /* DOMHTMLInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A2097C715F0019F3D8 /* DOMHTMLInternal.h */; };
+		BC1A37B9097C715F0019F3D8 /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A3097C715F0019F3D8 /* DOMInternal.h */; };
+		BC1A37BA097C715F0019F3D8 /* DOMInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A4097C715F0019F3D8 /* DOMInternal.mm */; };
+		BC1A37BB097C715F0019F3D8 /* DOMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A5097C715F0019F3D8 /* DOMPrivate.h */; };
+		BC1A37BC097C715F0019F3D8 /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A6097C715F0019F3D8 /* DOMRange.h */; };
+		BC1A37BD097C715F0019F3D8 /* DOMStylesheets.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A7097C715F0019F3D8 /* DOMStylesheets.h */; };
+		BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */; };
+		BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
+		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; };
+		BC1A37C1097C715F0019F3D8 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37AB097C715F0019F3D8 /* DOMViews.mm */; };
+		BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
+		BC1A37C3097C715F0019F3D8 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3797097C715F0019F3D8 /* DOM.h */; };
+		BC1A37C4097C715F0019F3D8 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A3798097C715F0019F3D8 /* DOM.mm */; };
+		BC1A37C5097C715F0019F3D8 /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3799097C715F0019F3D8 /* DOMCore.h */; };
+		BC1A37C6097C715F0019F3D8 /* DOMCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379A097C715F0019F3D8 /* DOMCSS.h */; };
+		BC1A37C7097C715F0019F3D8 /* DOMCSS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A379B097C715F0019F3D8 /* DOMCSS.mm */; };
+		BC1A37C8097C715F0019F3D8 /* DOMEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379C097C715F0019F3D8 /* DOMEvents.h */; };
+		BC1A37C9097C715F0019F3D8 /* DOMEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A379D097C715F0019F3D8 /* DOMEvents.mm */; };
+		BC1A37CA097C715F0019F3D8 /* DOMEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379E097C715F0019F3D8 /* DOMEventsInternal.h */; };
+		BC1A37CB097C715F0019F3D8 /* DOMExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A379F097C715F0019F3D8 /* DOMExtensions.h */; };
+		BC1A37CC097C715F0019F3D8 /* DOMHTML.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A0097C715F0019F3D8 /* DOMHTML.h */; };
+		BC1A37CD097C715F0019F3D8 /* DOMHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A1097C715F0019F3D8 /* DOMHTML.mm */; };
+		BC1A37CE097C715F0019F3D8 /* DOMHTMLInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A2097C715F0019F3D8 /* DOMHTMLInternal.h */; };
+		BC1A37CF097C715F0019F3D8 /* DOMInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A3097C715F0019F3D8 /* DOMInternal.h */; };
+		BC1A37D0097C715F0019F3D8 /* DOMInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A4097C715F0019F3D8 /* DOMInternal.mm */; };
+		BC1A37D1097C715F0019F3D8 /* DOMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A5097C715F0019F3D8 /* DOMPrivate.h */; };
+		BC1A37D2097C715F0019F3D8 /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A6097C715F0019F3D8 /* DOMRange.h */; };
+		BC1A37D3097C715F0019F3D8 /* DOMStylesheets.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A7097C715F0019F3D8 /* DOMStylesheets.h */; };
+		BC1A37D4097C715F0019F3D8 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */; };
+		BC1A37D5097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
+		BC1A37D6097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; };
+		BC1A37D7097C715F0019F3D8 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37AB097C715F0019F3D8 /* DOMViews.mm */; };
+		BC1A37D8097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
 		BC42035C08FC334100B782E0 /* render_button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC42035A08FC334100B782E0 /* render_button.cpp */; };
 		BC42035D08FC334100B782E0 /* render_button.h in Headers */ = {isa = PBXBuildFile; fileRef = BC42035B08FC334100B782E0 /* render_button.h */; };
 		BC73E2130978546300EDFF8A /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2120978546300EDFF8A /* IntSize.mm */; };
@@ -1725,7 +1725,6 @@
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51111AC007BD812C00B7162C /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_canvasimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1822,11 +1821,8 @@
 		65F80697054D9F86008BF776 /* KWQExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScriptDebugger.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreScriptDebugger.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		832556E4061DF155007B8054 /* DOMExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMExtensions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		832556E6061DF161007B8054 /* DOMHTML.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTML.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		832557C3061E3172007B8054 /* render_arena.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_arena.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		840633070731A77200DB1FD1 /* libxslt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxslt.dylib; path = /usr/lib/libxslt.dylib; sourceTree = "<absolute>"; };
-		842F72DC06405FDF00CC271B /* DOMEvents.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMEvents.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreKeyGenerator.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKSSLKeyGen.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1841,27 +1837,14 @@
 		84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = southWestResizeCursor.tiff; path = Resources/southWestResizeCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2D052B966D000440A1 /* waitCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = waitCursor.tiff; path = Resources/waitCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = westResizeCursor.tiff; path = Resources/westResizeCursor.tiff; sourceTree = "<group>"; };
-		931D712B065FB91800C966E1 /* DOMEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMEventsInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		931D7224065FC25900C966E1 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMViewsInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		931D722A065FC40800C966E1 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMViews.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9321274E0606724900B62302 /* DOMHTML.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTML.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9321274F0606724900B62302 /* DOMRange.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMRange.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127500606724900B62302 /* DOMEvents.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMEvents.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127510606724900B62302 /* DOMStylesheets.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMStylesheets.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127520606724900B62302 /* DOMCore.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMCore.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127530606724900B62302 /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMTraversal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127540606724900B62302 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		932127550606724900B62302 /* DOMCSS.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSS.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScrollView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreScrollView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		932B9834070297DC0032804F /* text_granularity.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = text_granularity.h; path = editing/text_granularity.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B90037045B3008635CE /* KWQResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B91037045B3008635CE /* KWQResourceLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQResourceLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9348900506C00363007E7ACE /* DOMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		934E43780414294A008635CE /* css_grammar.y */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.yacc; path = css_grammar.y; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9378D9F907640A46004B97BF /* markup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = markup.cpp; path = editing/markup.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9378D9FA07640A46004B97BF /* markup.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = markup.h; path = editing/markup.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		93859E32065FCAD300CF54EE /* DOMHTMLInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93861DDF032C2E52008635CE /* KWQLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQLogging.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93861DE0032C2E52008635CE /* KWQLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = KWQLogging.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9394E0A403AA5BBE008635CE /* KWQPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPageState.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2446,6 +2429,28 @@
 		BC179890088D975F006068A5 /* render_theme.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_theme.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC179891088D975F006068A5 /* render_theme.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_theme.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC1798D9088DA4F8006068A5 /* render_theme_mac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_theme_mac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC1A3797097C715F0019F3D8 /* DOM.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOM.h; path = bindings/objc/DOM.h; sourceTree = "<group>"; };
+		BC1A3798097C715F0019F3D8 /* DOM.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOM.mm; path = bindings/objc/DOM.mm; sourceTree = "<group>"; };
+		BC1A3799097C715F0019F3D8 /* DOMCore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMCore.h; path = bindings/objc/DOMCore.h; sourceTree = "<group>"; };
+		BC1A379A097C715F0019F3D8 /* DOMCSS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMCSS.h; path = bindings/objc/DOMCSS.h; sourceTree = "<group>"; };
+		BC1A379B097C715F0019F3D8 /* DOMCSS.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMCSS.mm; path = bindings/objc/DOMCSS.mm; sourceTree = "<group>"; };
+		BC1A379C097C715F0019F3D8 /* DOMEvents.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMEvents.h; path = bindings/objc/DOMEvents.h; sourceTree = "<group>"; };
+		BC1A379D097C715F0019F3D8 /* DOMEvents.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMEvents.mm; path = bindings/objc/DOMEvents.mm; sourceTree = "<group>"; };
+		BC1A379E097C715F0019F3D8 /* DOMEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMEventsInternal.h; path = bindings/objc/DOMEventsInternal.h; sourceTree = "<group>"; };
+		BC1A379F097C715F0019F3D8 /* DOMExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMExtensions.h; path = bindings/objc/DOMExtensions.h; sourceTree = "<group>"; };
+		BC1A37A0097C715F0019F3D8 /* DOMHTML.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMHTML.h; path = bindings/objc/DOMHTML.h; sourceTree = "<group>"; };
+		BC1A37A1097C715F0019F3D8 /* DOMHTML.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMHTML.mm; path = bindings/objc/DOMHTML.mm; sourceTree = "<group>"; };
+		BC1A37A2097C715F0019F3D8 /* DOMHTMLInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMHTMLInternal.h; path = bindings/objc/DOMHTMLInternal.h; sourceTree = "<group>"; };
+		BC1A37A3097C715F0019F3D8 /* DOMInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMInternal.h; path = bindings/objc/DOMInternal.h; sourceTree = "<group>"; };
+		BC1A37A4097C715F0019F3D8 /* DOMInternal.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMInternal.mm; path = bindings/objc/DOMInternal.mm; sourceTree = "<group>"; };
+		BC1A37A5097C715F0019F3D8 /* DOMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMPrivate.h; path = bindings/objc/DOMPrivate.h; sourceTree = "<group>"; };
+		BC1A37A6097C715F0019F3D8 /* DOMRange.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMRange.h; path = bindings/objc/DOMRange.h; sourceTree = "<group>"; };
+		BC1A37A7097C715F0019F3D8 /* DOMStylesheets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMStylesheets.h; path = bindings/objc/DOMStylesheets.h; sourceTree = "<group>"; };
+		BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMTraversal.h; path = bindings/objc/DOMTraversal.h; sourceTree = "<group>"; };
+		BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMUtility.mm; path = bindings/objc/DOMUtility.mm; sourceTree = "<group>"; };
+		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMViews.h; path = bindings/objc/DOMViews.h; sourceTree = "<group>"; };
+		BC1A37AB097C715F0019F3D8 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMViews.mm; path = bindings/objc/DOMViews.mm; sourceTree = "<group>"; };
+		BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMViewsInternal.h; path = bindings/objc/DOMViewsInternal.h; sourceTree = "<group>"; };
 		BC32C2EC048BF95C00A8000B /* render_flexbox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render_flexbox.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC32C2ED048BF95C00A8000B /* render_flexbox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = render_flexbox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC3B364505C9D5E200E42902 /* dom_atomicstring.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_atomicstring.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2552,14 +2557,9 @@
 		BE9185E005EE59B80081354D /* htmlediting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = htmlediting.cpp; path = editing/htmlediting.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8B06133666005E3790 /* dom_position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* dom_position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE94EB6305EFFE6B0032DCB5 /* DOM.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOM.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE94EB6505EFFE6B0032DCB5 /* DOM.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOM.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardAccess.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE9970C105F7DD1C00611115 /* css_computedstyle.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = css_computedstyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE9970C205F7DD1C00611115 /* css_computedstyle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = css_computedstyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE9CB64D05F942CB00514D9C /* DOMInternal.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMInternal.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE9CB65805F9546800514D9C /* DOM-CSS.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "DOM-CSS.mm"; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEA5DBDA075CEDA00098A432 /* html_interchange.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = html_interchange.cpp; path = editing/html_interchange.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEA5E01D075CEDAC0098A432 /* html_interchange.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = html_interchange.h; path = editing/html_interchange.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BECE67BD07087B250007C14B /* text_affinity.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = text_affinity.h; path = editing/text_affinity.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2919,6 +2919,7 @@
 			isa = PBXGroup;
 			children = (
 				65C97AF208EA908800ACD273 /* config.h */,
+				BC1A3790097C6F970019F3D8 /* bindings */,
 				65BF021F097480EF00C43196 /* bridge */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
@@ -3648,6 +3649,51 @@
 			path = khtml;
 			sourceTree = SOURCE_ROOT;
 		};
+		BC1A3790097C6F970019F3D8 /* bindings */ = {
+			isa = PBXGroup;
+			children = (
+				BC1A3793097C6FB10019F3D8 /* JavaScript */,
+				BC1A3794097C6FC40019F3D8 /* Objective-C */,
+			);
+			name = bindings;
+			sourceTree = "<group>";
+		};
+		BC1A3793097C6FB10019F3D8 /* JavaScript */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = JavaScript;
+			sourceTree = "<group>";
+		};
+		BC1A3794097C6FC40019F3D8 /* Objective-C */ = {
+			isa = PBXGroup;
+			children = (
+				BC1A3797097C715F0019F3D8 /* DOM.h */,
+				BC1A3798097C715F0019F3D8 /* DOM.mm */,
+				BC1A3799097C715F0019F3D8 /* DOMCore.h */,
+				BC1A379A097C715F0019F3D8 /* DOMCSS.h */,
+				BC1A379B097C715F0019F3D8 /* DOMCSS.mm */,
+				BC1A379C097C715F0019F3D8 /* DOMEvents.h */,
+				BC1A379D097C715F0019F3D8 /* DOMEvents.mm */,
+				BC1A379E097C715F0019F3D8 /* DOMEventsInternal.h */,
+				BC1A379F097C715F0019F3D8 /* DOMExtensions.h */,
+				BC1A37A0097C715F0019F3D8 /* DOMHTML.h */,
+				BC1A37A1097C715F0019F3D8 /* DOMHTML.mm */,
+				BC1A37A2097C715F0019F3D8 /* DOMHTMLInternal.h */,
+				BC1A37A3097C715F0019F3D8 /* DOMInternal.h */,
+				BC1A37A4097C715F0019F3D8 /* DOMInternal.mm */,
+				BC1A37A5097C715F0019F3D8 /* DOMPrivate.h */,
+				BC1A37A6097C715F0019F3D8 /* DOMRange.h */,
+				BC1A37A7097C715F0019F3D8 /* DOMStylesheets.h */,
+				BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */,
+				BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */,
+				BC1A37AA097C715F0019F3D8 /* DOMViews.h */,
+				BC1A37AB097C715F0019F3D8 /* DOMViews.mm */,
+				BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */,
+			);
+			name = "Objective-C";
+			sourceTree = "<group>";
+		};
 		BC41978B059293BE0016347F /* xbl */ = {
 			isa = PBXGroup;
 			children = (
@@ -4176,40 +4222,10 @@
 			path = xml;
 			sourceTree = "<group>";
 		};
-		F565A2700352410501A80180 /* DOM */ = {
-			isa = PBXGroup;
-			children = (
-				BE94EB6305EFFE6B0032DCB5 /* DOM.h */,
-				BE94EB6505EFFE6B0032DCB5 /* DOM.mm */,
-				932127520606724900B62302 /* DOMCore.h */,
-				932127550606724900B62302 /* DOMCSS.h */,
-				BE9CB65805F9546800514D9C /* DOM-CSS.mm */,
-				932127500606724900B62302 /* DOMEvents.h */,
-				931D712B065FB91800C966E1 /* DOMEventsInternal.h */,
-				842F72DC06405FDF00CC271B /* DOMEvents.mm */,
-				832556E4061DF155007B8054 /* DOMExtensions.h */,
-				9321274E0606724900B62302 /* DOMHTML.h */,
-				93859E32065FCAD300CF54EE /* DOMHTMLInternal.h */,
-				832556E6061DF161007B8054 /* DOMHTML.mm */,
-				BE94EB6405EFFE6B0032DCB5 /* DOMInternal.h */,
-				BE9CB64D05F942CB00514D9C /* DOMInternal.mm */,
-				9348900506C00363007E7ACE /* DOMPrivate.h */,
-				9321274F0606724900B62302 /* DOMRange.h */,
-				932127510606724900B62302 /* DOMStylesheets.h */,
-				932127530606724900B62302 /* DOMTraversal.h */,
-				51111AC007BD812C00B7162C /* DOMUtility.mm */,
-				932127540606724900B62302 /* DOMViews.h */,
-				931D7224065FC25900C966E1 /* DOMViewsInternal.h */,
-				931D722A065FC40800C966E1 /* DOMViews.mm */,
-			);
-			name = DOM;
-			sourceTree = "<group>";
-		};
 		F58785E802DE377601EA4122 /* kwq */ = {
 			isa = PBXGroup;
 			children = (
 				55998A57052B598F0017A6C1 /* Accessibility */,
-				F565A2700352410501A80180 /* DOM */,
 				F587871802DE3B8801EA4122 /* qt */,
 				F587861C02DE382201EA4122 /* kdecore */,
 				F587862F02DE398601EA4122 /* kdeui */,
@@ -4639,31 +4655,16 @@
 				93F199CE08245E59001E9ABC /* dom_atomicstring.h in Headers */,
 				93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */,
 				93F199D108245E59001E9ABC /* htmlediting.h in Headers */,
-				93F199D208245E59001E9ABC /* DOM.h in Headers */,
-				93F199D308245E59001E9ABC /* DOMInternal.h in Headers */,
 				93F199D408245E59001E9ABC /* css_computedstyle.h in Headers */,
 				93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */,
-				93F199D608245E59001E9ABC /* DOMHTML.h in Headers */,
-				93F199D708245E59001E9ABC /* DOMRange.h in Headers */,
-				93F199D808245E59001E9ABC /* DOMEvents.h in Headers */,
-				93F199D908245E59001E9ABC /* DOMStylesheets.h in Headers */,
-				93F199DA08245E59001E9ABC /* DOMCore.h in Headers */,
-				93F199DB08245E59001E9ABC /* DOMTraversal.h in Headers */,
-				93F199DC08245E59001E9ABC /* DOMViews.h in Headers */,
-				93F199DD08245E59001E9ABC /* DOMCSS.h in Headers */,
 				93F199DE08245E59001E9ABC /* dom_position.h in Headers */,
-				93F199DF08245E59001E9ABC /* DOMExtensions.h in Headers */,
 				93F199E008245E59001E9ABC /* KWQSlider.h in Headers */,
 				93F199E108245E59001E9ABC /* KWQTextUtilities.h in Headers */,
-				93F199E208245E59001E9ABC /* DOMEventsInternal.h in Headers */,
-				93F199E308245E59001E9ABC /* DOMViewsInternal.h in Headers */,
-				93F199E408245E59001E9ABC /* DOMHTMLInternal.h in Headers */,
 				93F199E508245E59001E9ABC /* html_canvasimpl.h in Headers */,
 				93F199E608245E59001E9ABC /* render_canvasimage.h in Headers */,
 				93F199E708245E59001E9ABC /* KWQClipboard.h in Headers */,
 				93F199E908245E59001E9ABC /* jsediting.h in Headers */,
 				93F199EA08245E59001E9ABC /* KWQFoundationExtras.h in Headers */,
-				93F199EB08245E59001E9ABC /* DOMPrivate.h in Headers */,
 				93F199EC08245E59001E9ABC /* xsl_stylesheetimpl.h in Headers */,
 				93F199ED08245E59001E9ABC /* xslt_processorimpl.h in Headers */,
 				93F199EE08245E59001E9ABC /* formdata.h in Headers */,
@@ -4963,6 +4964,21 @@
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
 				BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */,
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
+				BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */,
+				BC1A37AF097C715F0019F3D8 /* DOMCore.h in Headers */,
+				BC1A37B0097C715F0019F3D8 /* DOMCSS.h in Headers */,
+				BC1A37B2097C715F0019F3D8 /* DOMEvents.h in Headers */,
+				BC1A37B4097C715F0019F3D8 /* DOMEventsInternal.h in Headers */,
+				BC1A37B5097C715F0019F3D8 /* DOMExtensions.h in Headers */,
+				BC1A37B6097C715F0019F3D8 /* DOMHTML.h in Headers */,
+				BC1A37B8097C715F0019F3D8 /* DOMHTMLInternal.h in Headers */,
+				BC1A37B9097C715F0019F3D8 /* DOMInternal.h in Headers */,
+				BC1A37BB097C715F0019F3D8 /* DOMPrivate.h in Headers */,
+				BC1A37BC097C715F0019F3D8 /* DOMRange.h in Headers */,
+				BC1A37BD097C715F0019F3D8 /* DOMStylesheets.h in Headers */,
+				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
+				BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */,
+				BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5163,31 +5179,16 @@
 				A88AD2060952480A001DD196 /* dom_atomicstring.h in Headers */,
 				A88AD2070952480A001DD196 /* dom_atomicstringlist.h in Headers */,
 				A88AD2090952480A001DD196 /* htmlediting.h in Headers */,
-				A88AD20A0952480A001DD196 /* DOM.h in Headers */,
-				A88AD20B0952480A001DD196 /* DOMInternal.h in Headers */,
 				A88AD20C0952480A001DD196 /* css_computedstyle.h in Headers */,
 				A88AD20D0952480A001DD196 /* KWQEditCommand.h in Headers */,
-				A88AD20E0952480A001DD196 /* DOMHTML.h in Headers */,
-				A88AD20F0952480A001DD196 /* DOMRange.h in Headers */,
-				A88AD2100952480A001DD196 /* DOMEvents.h in Headers */,
-				A88AD2110952480A001DD196 /* DOMStylesheets.h in Headers */,
-				A88AD2120952480A001DD196 /* DOMCore.h in Headers */,
-				A88AD2130952480A001DD196 /* DOMTraversal.h in Headers */,
-				A88AD2140952480A001DD196 /* DOMViews.h in Headers */,
-				A88AD2150952480A001DD196 /* DOMCSS.h in Headers */,
 				A88AD2160952480A001DD196 /* dom_position.h in Headers */,
-				A88AD2170952480A001DD196 /* DOMExtensions.h in Headers */,
 				A88AD2180952480A001DD196 /* KWQSlider.h in Headers */,
 				A88AD2190952480A001DD196 /* KWQTextUtilities.h in Headers */,
-				A88AD21A0952480A001DD196 /* DOMEventsInternal.h in Headers */,
-				A88AD21B0952480A001DD196 /* DOMViewsInternal.h in Headers */,
-				A88AD21C0952480A001DD196 /* DOMHTMLInternal.h in Headers */,
 				A88AD21D0952480A001DD196 /* html_canvasimpl.h in Headers */,
 				A88AD21E0952480A001DD196 /* render_canvasimage.h in Headers */,
 				A88AD21F0952480A001DD196 /* KWQClipboard.h in Headers */,
 				A88AD2200952480A001DD196 /* jsediting.h in Headers */,
 				A88AD2210952480A001DD196 /* KWQFoundationExtras.h in Headers */,
-				A88AD2220952480A001DD196 /* DOMPrivate.h in Headers */,
 				A88AD2230952480A001DD196 /* xsl_stylesheetimpl.h in Headers */,
 				A88AD2240952480A001DD196 /* xslt_processorimpl.h in Headers */,
 				A88AD2250952480A001DD196 /* formdata.h in Headers */,
@@ -5300,6 +5301,21 @@
 				BCFB2E850979FD4F00BA703D /* Shared.h in Headers */,
 				BCFB2F44097A24B500BA703D /* SegmentedString.h in Headers */,
 				BCFB2F79097A2E1A00BA703D /* Arena.h in Headers */,
+				BC1A37C3097C715F0019F3D8 /* DOM.h in Headers */,
+				BC1A37C5097C715F0019F3D8 /* DOMCore.h in Headers */,
+				BC1A37C6097C715F0019F3D8 /* DOMCSS.h in Headers */,
+				BC1A37C8097C715F0019F3D8 /* DOMEvents.h in Headers */,
+				BC1A37CA097C715F0019F3D8 /* DOMEventsInternal.h in Headers */,
+				BC1A37CB097C715F0019F3D8 /* DOMExtensions.h in Headers */,
+				BC1A37CC097C715F0019F3D8 /* DOMHTML.h in Headers */,
+				BC1A37CE097C715F0019F3D8 /* DOMHTMLInternal.h in Headers */,
+				BC1A37CF097C715F0019F3D8 /* DOMInternal.h in Headers */,
+				BC1A37D1097C715F0019F3D8 /* DOMPrivate.h in Headers */,
+				BC1A37D2097C715F0019F3D8 /* DOMRange.h in Headers */,
+				BC1A37D3097C715F0019F3D8 /* DOMStylesheets.h in Headers */,
+				BC1A37D4097C715F0019F3D8 /* DOMTraversal.h in Headers */,
+				BC1A37D6097C715F0019F3D8 /* DOMViews.h in Headers */,
+				BC1A37D8097C715F0019F3D8 /* DOMViewsInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6544,16 +6560,10 @@
 				93F19AEE08245E59001E9ABC /* xbl_binding.cpp in Sources */,
 				93F19AF008245E59001E9ABC /* dom_atomicstring.cpp in Sources */,
 				93F19AF208245E59001E9ABC /* htmlediting.cpp in Sources */,
-				93F19AF308245E59001E9ABC /* DOM.mm in Sources */,
 				93F19AF408245E59001E9ABC /* css_computedstyle.cpp in Sources */,
-				93F19AF508245E59001E9ABC /* DOMInternal.mm in Sources */,
-				93F19AF608245E59001E9ABC /* DOM-CSS.mm in Sources */,
 				93F19AF708245E59001E9ABC /* KWQEditCommand.mm in Sources */,
 				93F19AF808245E59001E9ABC /* dom_position.cpp in Sources */,
-				93F19AF908245E59001E9ABC /* DOMHTML.mm in Sources */,
 				93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */,
-				93F19AFB08245E59001E9ABC /* DOMEvents.mm in Sources */,
-				93F19AFC08245E59001E9ABC /* DOMViews.mm in Sources */,
 				93F19AFD08245E59001E9ABC /* html_canvasimpl.cpp in Sources */,
 				93F19AFE08245E59001E9ABC /* render_canvasimage.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* KWQClipboard.mm in Sources */,
@@ -6572,7 +6582,6 @@
 				93F19B0D08245E59001E9ABC /* visible_range.cpp in Sources */,
 				93F19B0E08245E59001E9ABC /* html_interchange.cpp in Sources */,
 				93F19B0F08245E59001E9ABC /* markup.cpp in Sources */,
-				93F19B1008245E59001E9ABC /* DOMUtility.mm in Sources */,
 				654D87B70831973B0082DCA1 /* edit_command.cpp in Sources */,
 				65DC16C40831DD6F0022744E /* composite_edit_command.cpp in Sources */,
 				65AC79A10831ED6D009385CE /* append_node_command.cpp in Sources */,
@@ -6844,6 +6853,13 @@
 				A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
+				BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */,
+				BC1A37B1097C715F0019F3D8 /* DOMCSS.mm in Sources */,
+				BC1A37B3097C715F0019F3D8 /* DOMEvents.mm in Sources */,
+				BC1A37B7097C715F0019F3D8 /* DOMHTML.mm in Sources */,
+				BC1A37BA097C715F0019F3D8 /* DOMInternal.mm in Sources */,
+				BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */,
+				BC1A37C1097C715F0019F3D8 /* DOMViews.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7013,16 +7029,10 @@
 				A88AD32A0952480A001DD196 /* xbl_binding.cpp in Sources */,
 				A88AD32B0952480A001DD196 /* dom_atomicstring.cpp in Sources */,
 				A88AD32D0952480A001DD196 /* htmlediting.cpp in Sources */,
-				A88AD32E0952480A001DD196 /* DOM.mm in Sources */,
 				A88AD32F0952480A001DD196 /* css_computedstyle.cpp in Sources */,
-				A88AD3300952480A001DD196 /* DOMInternal.mm in Sources */,
-				A88AD3310952480A001DD196 /* DOM-CSS.mm in Sources */,
 				A88AD3320952480A001DD196 /* KWQEditCommand.mm in Sources */,
 				A88AD3330952480A001DD196 /* dom_position.cpp in Sources */,
-				A88AD3340952480A001DD196 /* DOMHTML.mm in Sources */,
 				A88AD3350952480A001DD196 /* KWQSlider.mm in Sources */,
-				A88AD3360952480A001DD196 /* DOMEvents.mm in Sources */,
-				A88AD3370952480A001DD196 /* DOMViews.mm in Sources */,
 				A88AD3380952480A001DD196 /* html_canvasimpl.cpp in Sources */,
 				A88AD3390952480A001DD196 /* render_canvasimage.cpp in Sources */,
 				A88AD33A0952480A001DD196 /* KWQClipboard.mm in Sources */,
@@ -7041,7 +7051,6 @@
 				A88AD3470952480A001DD196 /* visible_range.cpp in Sources */,
 				A88AD3480952480A001DD196 /* html_interchange.cpp in Sources */,
 				A88AD3490952480A001DD196 /* markup.cpp in Sources */,
-				A88AD34A0952480A001DD196 /* DOMUtility.mm in Sources */,
 				A88AD34B0952480A001DD196 /* edit_command.cpp in Sources */,
 				A88AD34C0952480A001DD196 /* composite_edit_command.cpp in Sources */,
 				A88AD34D0952480A001DD196 /* append_node_command.cpp in Sources */,
@@ -7138,6 +7147,13 @@
 				A8FEFB0D0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB330979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
 				BCFB2F78097A2E1A00BA703D /* Arena.cpp in Sources */,
+				BC1A37C4097C715F0019F3D8 /* DOM.mm in Sources */,
+				BC1A37C7097C715F0019F3D8 /* DOMCSS.mm in Sources */,
+				BC1A37C9097C715F0019F3D8 /* DOMEvents.mm in Sources */,
+				BC1A37CD097C715F0019F3D8 /* DOMHTML.mm in Sources */,
+				BC1A37D0097C715F0019F3D8 /* DOMInternal.mm in Sources */,
+				BC1A37D5097C715F0019F3D8 /* DOMUtility.mm in Sources */,
+				BC1A37D7097C715F0019F3D8 /* DOMViews.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

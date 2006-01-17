@@ -1,3 +1,58 @@
+2006-01-16  David Hyatt  <hyatt@apple.com>
+
+        Move the Objective-C dom bindings from kwq to bindings/objc.
+
+        Reviewed by eseidel
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings: Added.
+        * bindings/js: Added.
+        * bindings/objc: Added.
+        * bindings/objc/DOM.h: Added.
+        * bindings/objc/DOM.mm: Added.
+        * bindings/objc/DOMCSS.h: Added.
+        * bindings/objc/DOMCSS.mm: Added.
+        * bindings/objc/DOMCore.h: Added.
+        * bindings/objc/DOMEvents.h: Added.
+        * bindings/objc/DOMEvents.mm: Added.
+        * bindings/objc/DOMEventsInternal.h: Added.
+        * bindings/objc/DOMExtensions.h: Added.
+        * bindings/objc/DOMHTML.h: Added.
+        * bindings/objc/DOMHTML.mm: Added.
+        * bindings/objc/DOMHTMLInternal.h: Added.
+        * bindings/objc/DOMInternal.h: Added.
+        * bindings/objc/DOMInternal.mm: Added.
+        * bindings/objc/DOMPrivate.h: Added.
+        * bindings/objc/DOMRange.h: Added.
+        * bindings/objc/DOMStylesheets.h: Added.
+        * bindings/objc/DOMTraversal.h: Added.
+        * bindings/objc/DOMUtility.mm: Added.
+        * bindings/objc/DOMViews.h: Added.
+        * bindings/objc/DOMViews.mm: Added.
+        * bindings/objc/DOMViewsInternal.h: Added.
+        * kwq/DOM-CSS.mm: Removed.
+        * kwq/DOM.h: Removed.
+        * kwq/DOM.mm: Removed.
+        * kwq/DOMCSS.h: Removed.
+        * kwq/DOMCore.h: Removed.
+        * kwq/DOMEvents.h: Removed.
+        * kwq/DOMEvents.mm: Removed.
+        * kwq/DOMEventsInternal.h: Removed.
+        * kwq/DOMExtensions.h: Removed.
+        * kwq/DOMHTML.h: Removed.
+        * kwq/DOMHTML.mm: Removed.
+        * kwq/DOMHTMLInternal.h: Removed.
+        * kwq/DOMInternal.h: Removed.
+        * kwq/DOMInternal.mm: Removed.
+        * kwq/DOMPrivate.h: Removed.
+        * kwq/DOMRange.h: Removed.
+        * kwq/DOMStylesheets.h: Removed.
+        * kwq/DOMTraversal.h: Removed.
+        * kwq/DOMUtility.mm: Removed.
+        * kwq/DOMViews.h: Removed.
+        * kwq/DOMViews.mm: Removed.
+        * kwq/DOMViewsInternal.h: Removed.
+
 2006-01-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt, landed by ap.
