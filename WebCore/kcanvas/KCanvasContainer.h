@@ -24,7 +24,7 @@
 #define KCanvasContainer_H
 
 #include "kcanvas/RenderPath.h"
-#include "khtml/rendering/render_container.h"
+#include "render_container.h"
 
 typedef enum
 {

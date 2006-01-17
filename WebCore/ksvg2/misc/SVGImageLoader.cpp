@@ -33,7 +33,7 @@
 #include "SVGMatrixImpl.h"
 #include "KCanvasRenderingStyle.h"
 
-#include "khtml/rendering/render_image.h"
+#include "render_image.h"
 
 using namespace KSVG;
 

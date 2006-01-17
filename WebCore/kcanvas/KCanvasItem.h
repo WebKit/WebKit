@@ -30,7 +30,7 @@
 #include <q3valuelist.h>
 #include "FloatRect.h"
 
-#include "khtml/rendering/render_object.h"
+#include "render_object.h"
 
 namespace WebCore {
     class FloatPoint;
