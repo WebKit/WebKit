@@ -137,9 +137,9 @@ bool KWQVectorImpl::append(void* item, bool delItems)
 {
     if (m_size == m_count)
         return false;
-    assert(!m_data[m_size]);
-    m_data[m_size++] = item;
-    m_count += item ? 1 : 0;
+    assert(!m_data[m_count]);
+    if (item)
+        m_data[m_count++] = item;
     return true;
 }
 
