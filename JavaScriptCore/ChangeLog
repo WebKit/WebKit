@@ -1,3 +1,13 @@
+2006-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6610
+          change RefPtr so that it works when deref ends up deleting the RefPtr
+
+        * kxmlcore/PassRefPtr.h: Always set m_ptr before calling deref.
+        * kxmlcore/RefPtr.h: Ditto.
+
 2006-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.

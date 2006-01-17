@@ -74,12 +74,13 @@ namespace KXMLCore {
 
     template <typename T> RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)
     {
-        T *optr = o.m_ptr;
+        T* optr = o.m_ptr;
         if (optr)
             optr->ref();
-        if (m_ptr)
-            m_ptr->deref();
+        T* ptr = m_ptr;
         m_ptr = optr;
+        if (ptr)
+            ptr->deref();
         return *this;
     }
     
@@ -88,9 +89,10 @@ namespace KXMLCore {
         T *optr = o.m_ptr;
         if (optr)
             optr->ref();
-        if (m_ptr)
-            m_ptr->deref();
+        T* ptr = m_ptr;
         m_ptr = optr;
+        if (ptr)
+            ptr->deref();
         return *this;
     }
     
@@ -98,25 +100,28 @@ namespace KXMLCore {
     {
         if (optr)
             optr->ref();
-        if (m_ptr)
-            m_ptr->deref();
+        T* ptr = m_ptr;
         m_ptr = optr;
+        if (ptr)
+            ptr->deref();
         return *this;
     }
 
     template <typename T> inline RefPtr<T>& RefPtr<T>::operator=(const PassRefPtr<T>& o)
     {
-        if (m_ptr)
-            m_ptr->deref();
+        T* ptr = m_ptr;
         m_ptr = o.release();
+        if (ptr)
+            ptr->deref();
         return *this;
     }
 
     template <typename T> template <typename U> inline RefPtr<T>& RefPtr<T>::operator=(const PassRefPtr<U>& o)
     {
-        if (m_ptr)
-            m_ptr->deref();
+        T* ptr = m_ptr;
         m_ptr = o.release();
+        if (ptr)
+            ptr->deref();
         return *this;
     }
 
