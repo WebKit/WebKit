@@ -59,7 +59,11 @@ using namespace DOM::EventNames;
 
 using namespace DOM;
 
+// turn off inlining to allow proper linking on newer gcc (xmltokenizer.cpp also uses findEntity())
+#undef __inline
+#define __inline
 #include "kentities.c"
+#undef __inline
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
