@@ -49,7 +49,7 @@ if [ ../../kjs/string_object.cpp -nt "$DerivedSourcesDir/string_object.lut.h" ];
   ../../kjs/create_hash_table ../../kjs/string_object.cpp > "$DerivedSourcesDir/string_object.lut.h" -i
 fi
 
-if [ ../../kjs/string_object.cpp -nt "$DerivedSourcesDir/lexer.lut.h" ]; then
+if [ ../../kjs/keywords.table -nt "$DerivedSourcesDir/lexer.lut.h" ]; then
   ../../kjs/create_hash_table ../../kjs/keywords.table > "$DerivedSourcesDir/lexer.lut.h" -i
 fi
 

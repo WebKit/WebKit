@@ -53,7 +53,7 @@ TestFunctionImp::TestFunctionImp(int i, int length) : JSObject(), id(i)
   putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
 }
 
-JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const List &args)
 {
   switch (id) {
   case Print:
@@ -83,7 +83,7 @@ public:
   virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 };
 
-JSValue *VersionFunctionImp::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
+JSValue *VersionFunctionImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
 {
   // We need this function for compatibility with the Mozilla JS tests but for now
   // we don't actually do any version-specific handling
