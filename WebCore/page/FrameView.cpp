@@ -46,7 +46,6 @@
 #include "MacFrame.h"
 
 #include <kcursor.h>
-#include <kstandarddirs.h>
 
 #include <qpainter.h>
 #include <qpaintdevicemetrics.h>

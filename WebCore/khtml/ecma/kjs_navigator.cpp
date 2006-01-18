@@ -24,7 +24,6 @@
 #include "config.h"
 #include <klocale.h>
 
-#include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
 

@@ -1,3 +1,11 @@
+2006-01-18  Anders Carlsson  <andersca@mac.com>
+
+        Fix build.
+        
+        * khtml/ecma/kjs_navigator.cpp:
+        * page/FrameView.cpp:
+        Remove kstandarddirs.h includes.
+        
 2006-01-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
