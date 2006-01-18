@@ -1,10 +1,24 @@
-/* 
- * The default style sheet used by khtml to render HTML pages
- * (C) Lars Knoll (knoll@kde.org) 2000
+/*
+ * The default style sheet used to render HTML.
  *
- * Konqueror/khtml relies on the existence of this style sheet for
- * rendering. Do not remove or modify this file unless you know
- * what you are doing.
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
  */
 
 @namespace "http://www.w3.org/1999/xhtml";
@@ -13,8 +27,7 @@ html {
     display: block
 } 
 
-/* The children of the <head> element all have display:none */
-
+/* children of the <head> element all have display:none */
 head { 
     display: none
 }
@@ -208,7 +221,7 @@ caption {
     text-align: -khtml-center
 }
 
-/* Lists */
+/* lists */
 
 ul, menu, dir {
     display: block;
@@ -282,7 +295,7 @@ button {
     white-space: normal
 }
 
-/* If we support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
+/* If we add support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
 input, textarea, select, button {
     margin: 0__qem;
     font: 11px 'Lucida Grande';
@@ -324,7 +337,7 @@ input[type="button"], input[type="submit"], input[type="reset"], button {
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled {
-    color: GrayText;
+    color: GrayText
 }
 
 input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, button:active {
@@ -377,11 +390,11 @@ pre, xmp, plaintext {
 }
 
 big {
-    font-size: larger; 
+    font-size: larger
 }
       
 small {
-    font-size: smaller; 
+    font-size: smaller
 }
 
 s, strike, del {
@@ -406,7 +419,7 @@ wbr {
     white-space: normal
 }
 
-/* End Inline Elements */
+/* states */
 
 :focus { 
     outline: auto 3px #1f5ccf

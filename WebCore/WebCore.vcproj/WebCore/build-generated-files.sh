@@ -104,3 +104,7 @@ if [ khtml/ecma/XSLTProcessor.cpp -nt "$DerivedSourcesDir/XSLTProcessor.lut.h" ]
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/XSLTProcessor.cpp > "$DerivedSourcesDir/XSLTProcessor.lut.h"
 fi
 
+if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/html4.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/quirks.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/svg.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" ]; then
+  css/make-css-file-arrays.pl "$DerivedSourcesDir/UserAgentStyleSheets.h" "$DerivedSourcesDir/UserAgentStyleSheetsData.cpp" css/html4.css css/quirks.css css/svg.css
+  touch css/UserAgentStyleSheets.cpp
+fi

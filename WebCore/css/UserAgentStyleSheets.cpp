@@ -1,8 +1,5 @@
-/* 
- * Additonal style sheet used to render HTML pages in quirks mode.
- *
- * Copyright (C) 2000-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,25 +15,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
  */
 
-/* Give floated images margins of 3px */
-img[align="left"] {
-    margin-right: 3px;
-}
-img[align="right"] {
-    margin-left: 3px;
-}
-
-/* Tables reset both line-height and white-space in quirks mode. */
-/* Compatible with WinIE. Note that font-family is *not* reset. */
-table {
-    white-space: normal;
-    line-height: normal;
-    font-weight: normal;
-    font-size: medium;
-    font-variant: normal;
-    font-style: normal;
-    color: -khtml-text;
-}
+#include "UserAgentStyleSheetsData.cpp"

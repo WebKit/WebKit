@@ -219,10 +219,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFile.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQFileButton.h"
 				>
 			</File>
@@ -348,10 +344,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKSSLKeyGen.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKStandardDirs.h"
 				>
 			</File>
 			<File
@@ -1747,6 +1739,10 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\css\cssstyleselector.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\css\UserAgentStyleSheets.cpp"
 					>
 				</File>
 			</Filter>

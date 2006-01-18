@@ -73,8 +73,6 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
-#include <qfile.h>
 #include <qptrlist.h>
 #include <qtextcodec.h>
 #include <sys/types.h>

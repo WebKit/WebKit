@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * The default style sheet used to render SVG.
+ *
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +25,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQKStandardDirs.h"
-#import "KWQStringList.h"
+@namespace "http://www.w3.org/2000/svg";
 
-// The NSBundle calls in this file can't throw, so no need to block
-// Cocoa exceptions.
+/*
+    When an outermost SVG 'svg' element is stand-alone or embedded inline within a parent XML grammar 
+    which does not use CSS layout [CSS2-LAYOUT] or XSL formatting [XSL], the 'overflow' property on the 
+    outermost 'svg' element is ignored for the purposes of visual rendering and the initial clipping path is set 
+    to the bounds of the initial viewport.
+*/
+svg:root {
+    overflow: visible !important
+}
 
-@interface KWQKStandardDirsBundleDummy : NSObject { }
-@end
-@implementation KWQKStandardDirsBundleDummy
-@end
+svg, symbol, marker, pattern, foreignObject {
+    overflow: hidden
+}
 
-QString locate(const char *type, const QString &filename)
-{
-    QStringList list = QStringList::split('.', filename);
-    if (list.count() != 2)
-        return QString();
-    NSBundle *bundle = [NSBundle bundleForClass:[KWQKStandardDirsBundleDummy class]];
-    return QString::fromNSString([bundle pathForResource:list[0].getNSString() ofType:list[1].getNSString()]);
+text, foreignObject {
+    display: block !important
 }
