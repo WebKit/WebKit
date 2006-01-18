@@ -350,6 +350,7 @@ Position Position::upstream() const
     NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position currentPos = start;
+    RootInlineBox *lastRoot = 0;
     for (; !currentPos.atStart(); currentPos = currentPos.previous()) {
         NodeImpl *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
@@ -364,10 +365,22 @@ Position Position::upstream() const
         if (!renderer || renderer->style()->visibility() != VISIBLE)
             continue;
 
+        // Don't move to a position that's on a different line.
+        InlineBox *box = renderer->inlineBox(currentPos.offset(), DOWNSTREAM);
+        RootInlineBox *currentRoot = box ? box->root() : 0;
+        // We consider [br, 1] to be a position that exists visually on the line after the one
+        // on which the <br> appears, so treat it specially.
+        if (currentRoot && currentNode->hasTagName(brTag) && currentOffset == 1)
+            currentRoot = currentRoot->nextRootBox();
+        if (lastRoot == 0)
+            lastRoot = currentRoot;
+        else if (currentRoot && currentRoot != lastRoot)
+            return lastVisible;
+        
         // track last visible streamer position
         if (isStreamer(currentPos))
             lastVisible = currentPos;
-
+            
         // return position after replaced or BR elements
         // NOTE: caretMaxOffset() can be less than childNodeCount()!!
         // e.g. SELECT and APPLET nodes
@@ -424,6 +437,7 @@ Position Position::downstream() const
     NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position currentPos = start;
+    RootInlineBox *lastRoot = 0;
     for (; !currentPos.atEnd(); currentPos = currentPos.next()) {   
         NodeImpl *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
@@ -443,11 +457,23 @@ Position Position::downstream() const
         RenderObject *renderer = currentNode->renderer();
         if (!renderer || renderer->style()->visibility() != VISIBLE)
             continue;
+
+        // Don't move to a position that's on a different line.
+        InlineBox *box = renderer->inlineBox(currentPos.offset(), DOWNSTREAM);
+        RootInlineBox *currentRoot = box ? box->root() : 0;
+        // We consider [br, 1] to be a position that exists visually on the line after the one
+        // on which the <br> appears, so treat it specially.
+        if (currentRoot && currentNode->hasTagName(brTag) && currentOffset == 1)
+            currentRoot = currentRoot->nextRootBox();
+        if (lastRoot == 0)
+            lastRoot = currentRoot;
+        else if (currentRoot && currentRoot != lastRoot)
+            return lastVisible;
         
         // track last visible streamer position
         if (isStreamer(currentPos))
             lastVisible = currentPos;
-
+            
         // if now at a offset 0 of a rendered block flow element...
         //      - return current position if the element has no children (i.e. is a leaf)
         //      - return child node, offset 0, if the first visible child is not a block flow element

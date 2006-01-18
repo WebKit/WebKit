@@ -1,5 +1,24 @@
 2006-01-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6632>
+        REGRESSION: Selection includes spaces that it shouldn't
+        <rdar://problem/4407845> 
+        REGRESSION (TOT): blank space before found text selected at http://www.schepers.cc/comiclinks.html
+        
+        Layout test added:
+        * editing/selection/after-line-wrap.html
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previous): Don't stop at the first candidate,
+        it may be visually equivalent to the original position.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream): Don't move to a position on a different line.
+        (DOM::Position::downstream): Ditto.
+
+2006-01-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by eric
         
         Deployment builds now use -O2

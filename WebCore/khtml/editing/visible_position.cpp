@@ -122,12 +122,7 @@ VisiblePosition VisiblePosition::next() const
 VisiblePosition VisiblePosition::previous() const
 {
     // find first previous DOM position that is visible
-    Position pos = m_deepPosition;
-    while (!pos.atStart()) {
-        pos = pos.previous(UsingComposedCharacters);
-        if (isCandidate(pos))
-            break;
-    }
+    Position pos = previousVisiblePosition(m_deepPosition);
     
     // return null visible position if there is no previous visible position
     if (pos.atStart())
