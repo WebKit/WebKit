@@ -1004,8 +1004,6 @@
 		A88AD38A0952486D001DD196 /* KRenderingPaintServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB5B089701F700BA5114 /* KRenderingPaintServer.h */; };
 		A88AD38B0952486D001DD196 /* KRenderingPaintServerGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB5C089701F700BA5114 /* KRenderingPaintServerGradient.cpp */; };
 		A88AD38C0952486D001DD196 /* KRenderingPaintServerGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB5D089701F700BA5114 /* KRenderingPaintServerGradient.h */; };
-		A88AD38D0952486D001DD196 /* KRenderingPaintServerImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB5E089701F700BA5114 /* KRenderingPaintServerImage.cpp */; };
-		A88AD38E0952486D001DD196 /* KRenderingPaintServerImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB5F089701F700BA5114 /* KRenderingPaintServerImage.h */; };
 		A88AD38F0952486D001DD196 /* KRenderingPaintServerPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB60089701F700BA5114 /* KRenderingPaintServerPattern.cpp */; };
 		A88AD3900952486D001DD196 /* KRenderingPaintServerPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB61089701F700BA5114 /* KRenderingPaintServerPattern.h */; };
 		A88AD3910952486D001DD196 /* KRenderingPaintServerSolid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB62089701F700BA5114 /* KRenderingPaintServerSolid.cpp */; };
@@ -2355,8 +2353,6 @@
 		A8C0FB5B089701F700BA5114 /* KRenderingPaintServer.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB5C089701F700BA5114 /* KRenderingPaintServerGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerGradient.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB5D089701F700BA5114 /* KRenderingPaintServerGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerGradient.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB5E089701F700BA5114 /* KRenderingPaintServerImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerImage.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB5F089701F700BA5114 /* KRenderingPaintServerImage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerImage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB60089701F700BA5114 /* KRenderingPaintServerPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerPattern.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB61089701F700BA5114 /* KRenderingPaintServerPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingPaintServerPattern.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB62089701F700BA5114 /* KRenderingPaintServerSolid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingPaintServerSolid.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3600,8 +3596,6 @@
 				A8C0FB5B089701F700BA5114 /* KRenderingPaintServer.h */,
 				A8C0FB5C089701F700BA5114 /* KRenderingPaintServerGradient.cpp */,
 				A8C0FB5D089701F700BA5114 /* KRenderingPaintServerGradient.h */,
-				A8C0FB5E089701F700BA5114 /* KRenderingPaintServerImage.cpp */,
-				A8C0FB5F089701F700BA5114 /* KRenderingPaintServerImage.h */,
 				A8C0FB60089701F700BA5114 /* KRenderingPaintServerPattern.cpp */,
 				A8C0FB61089701F700BA5114 /* KRenderingPaintServerPattern.h */,
 				A8C0FB62089701F700BA5114 /* KRenderingPaintServerSolid.cpp */,
@@ -4719,7 +4713,6 @@
 				A88AD3890952486D001DD196 /* KRenderingFillPainter.h in Headers */,
 				A88AD38A0952486D001DD196 /* KRenderingPaintServer.h in Headers */,
 				A88AD38C0952486D001DD196 /* KRenderingPaintServerGradient.h in Headers */,
-				A88AD38E0952486D001DD196 /* KRenderingPaintServerImage.h in Headers */,
 				A88AD3900952486D001DD196 /* KRenderingPaintServerPattern.h in Headers */,
 				A88AD3920952486D001DD196 /* KRenderingPaintServerSolid.h in Headers */,
 				A88AD3940952486D001DD196 /* KRenderingStrokePainter.h in Headers */,
@@ -6633,7 +6626,6 @@
 				A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */,
 				A88AD3880952486D001DD196 /* KRenderingFillPainter.cpp in Sources */,
 				A88AD38B0952486D001DD196 /* KRenderingPaintServerGradient.cpp in Sources */,
-				A88AD38D0952486D001DD196 /* KRenderingPaintServerImage.cpp in Sources */,
 				A88AD38F0952486D001DD196 /* KRenderingPaintServerPattern.cpp in Sources */,
 				A88AD3910952486D001DD196 /* KRenderingPaintServerSolid.cpp in Sources */,
 				A88AD3930952486D001DD196 /* KRenderingStrokePainter.cpp in Sources */,

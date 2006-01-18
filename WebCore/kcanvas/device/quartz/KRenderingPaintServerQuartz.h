@@ -27,7 +27,6 @@
 #import <kcanvas/device/KRenderingPaintServer.h>
 #import <kcanvas/device/KRenderingPaintServerSolid.h>
 #import <kcanvas/device/KRenderingPaintServerPattern.h>
-#import <kcanvas/device/KRenderingPaintServerImage.h>
 #import <kcanvas/device/KRenderingPaintServerGradient.h>
 
 class KRenderingPaintServerSolidQuartz : public KRenderingPaintServerSolid {
@@ -39,12 +38,6 @@ public:
 class KRenderingPaintServerPatternQuartz : public KRenderingPaintServerPattern {
 public:
     KRenderingPaintServerPatternQuartz() {};
-    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
-};
-
-class KRenderingPaintServerImageQuartz : public KRenderingPaintServerImage {
-public:
-    KRenderingPaintServerImageQuartz() {};
     virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const;
 };
 

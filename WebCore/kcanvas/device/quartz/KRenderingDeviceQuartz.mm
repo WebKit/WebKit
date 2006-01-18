@@ -199,9 +199,6 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     case PS_PATTERN:
         newServer = new KRenderingPaintServerPatternQuartz();
         break;
-    case PS_IMAGE:
-        newServer = new KRenderingPaintServerImageQuartz();
-        break;
     case PS_LINEAR_GRADIENT:
         newServer = new KRenderingPaintServerLinearGradientQuartz();
         break;

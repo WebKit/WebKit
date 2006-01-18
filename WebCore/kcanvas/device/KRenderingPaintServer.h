@@ -32,8 +32,7 @@ typedef enum
     PS_SOLID = 0,
     PS_PATTERN = 1,
     PS_LINEAR_GRADIENT = 2,
-    PS_RADIAL_GRADIENT = 3,
-    PS_IMAGE = 4
+    PS_RADIAL_GRADIENT = 3
 } KCPaintServerType;
 
 typedef enum

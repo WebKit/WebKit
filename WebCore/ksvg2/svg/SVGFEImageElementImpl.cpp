@@ -42,7 +42,6 @@
 #include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
-#include <kcanvas/device/KRenderingPaintServerImage.h>
 
 using namespace KSVG;
 

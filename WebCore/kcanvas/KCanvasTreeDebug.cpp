@@ -40,7 +40,6 @@
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
 #include <kcanvas/device/KRenderingPaintServerPattern.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
-#include <kcanvas/device/KRenderingPaintServerImage.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 
