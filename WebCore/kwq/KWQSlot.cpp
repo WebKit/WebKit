@@ -24,16 +24,16 @@
  */
 
 #include "config.h"
-#import "KWQSlot.h"
+#include "KWQSlot.h"
 
-#import <kxmlcore/Assertions.h>
+#include <kxmlcore/Assertions.h>
 
 #include "DocumentImpl.h"
-#import "Frame.h"
-#import "kjs_window.h"
-#import "render_form.h"
-#import "render_layer.h"
-#import "xmlhttprequest.h"
+#include "Frame.h"
+#include "kjs_window.h"
+#include "render_form.h"
+#include "render_layer.h"
+#include "xmlhttprequest.h"
 #ifdef SVG_SUPPORT
 #define id ID_HACK
 #import "ksvg2/misc/KSVGTimeScheduler.h"

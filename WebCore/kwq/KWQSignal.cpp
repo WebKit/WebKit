@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#import "KWQSignal.h"
+#include "KWQSignal.h"
 
-#import "KWQObject.h"
-#import <kxmlcore/Assertions.h>
+#include "KWQObject.h"
+#include <kxmlcore/Assertions.h>
 
 using KIO::Job;
 

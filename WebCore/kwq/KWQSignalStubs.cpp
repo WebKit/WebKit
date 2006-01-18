@@ -24,11 +24,11 @@
  */
  
 #include "config.h"
-#import "FrameView.h"
-#import "loader.h"
-#import "xml_tokenizer.h"
+#include "FrameView.h"
+#include "loader.h"
+#include "xml_tokenizer.h"
 
-#import "KWQLoader.h"
+#include "KWQLoader.h"
 
 using khtml::CachedObject;
 using khtml::DocLoader;
