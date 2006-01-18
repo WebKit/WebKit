@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * This file is part of the KDE libraries
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,7 @@
 namespace KXMLCore {
 
     using std::pair;
-    
+
     template <typename T> struct IsInteger           { static const bool value = false; };
     template <> struct IsInteger<bool>               { static const bool value = true; };
     template <> struct IsInteger<char>               { static const bool value = true; };
@@ -43,44 +43,36 @@ namespace KXMLCore {
     template <> struct IsInteger<unsigned long>      { static const bool value = true; };
     template <> struct IsInteger<long long>          { static const bool value = true; };
     template <> struct IsInteger<unsigned long long> { static const bool value = true; };
-        
-    template<typename T>
-    struct GenericHashTraits {
+
+    template<typename T> struct GenericHashTraits {
         typedef T TraitType;
         static const bool emptyValueIsZero = IsInteger<T>::value;
         static const bool needsDestruction = !IsInteger<T>::value;
         static TraitType emptyValue() { return IsInteger<T>::value ? 0 : TraitType(); }
     };
 
-    template<typename T>
-    struct HashTraits : GenericHashTraits<T> {
-    };
+    template<typename T> struct HashTraits : GenericHashTraits<T> { };
 
-    // may not be appropriate for all uses since it would disallow 0 and -1 as keys
-    template<>
-    struct HashTraits<int> : GenericHashTraits<int> {
+    // may not be appropriate for all uses since it disallows 0 and -1 as keys
+    template<> struct HashTraits<int> : GenericHashTraits<int> {
         static TraitType deletedValue() { return -1; }
     };
 
-    template<typename P>
-    struct HashTraits<P *> : GenericHashTraits<P *> {
-        typedef P *TraitType;
+    template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
+        typedef P* TraitType;
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
-        static TraitType emptyValue() { return reinterpret_cast<P *>(0); }
-        static TraitType deletedValue() { return reinterpret_cast<P *>(-1); }
+        static TraitType emptyValue() { return 0; }
+        static TraitType deletedValue() { return reinterpret_cast<P*>(-1); }
     };
 
-    template<typename P>
-    struct HashTraits<RefPtr<P> > : GenericHashTraits<RefPtr<P> > {
+    template<typename P> struct HashTraits<RefPtr<P> > : GenericHashTraits<RefPtr<P> > {
         static const bool emptyValueIsZero = true;
     };
 
-    template<typename T, typename Traits>
-    class DeletedValueAssigner;
+    template<typename T, typename Traits> class DeletedValueAssigner;
 
-    template<typename T, typename Traits>
-    inline void assignDeleted(T& location)
+    template<typename T, typename Traits> inline void assignDeleted(T& location)
     {
         DeletedValueAssigner<T, Traits>::assignDeletedValue(location);
     }
@@ -95,13 +87,13 @@ namespace KXMLCore {
 
         static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
-        
-        static TraitType emptyValue() 
+
+        static TraitType emptyValue()
         {
             return TraitType(FirstTraits::emptyValue(), SecondTraits::emptyValue());
         }
 
-        static TraitType deletedValue() 
+        static TraitType deletedValue()
         {
             return TraitType(FirstTraits::deletedValue(), SecondTraits::emptyValue());
         }
@@ -114,23 +106,17 @@ namespace KXMLCore {
     };
 
     template<typename First, typename Second>
-    struct HashTraits<pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > {
-    };
+    struct HashTraits<pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > { };
 
-    template<typename T, typename Traits>
-    struct DeletedValueAssigner
-    {
-        static void assignDeletedValue(T& location) 
-        { 
-            location = Traits::deletedValue(); 
-        }
+    template<typename T, typename Traits> struct DeletedValueAssigner {
+        static void assignDeletedValue(T& location) { location = Traits::deletedValue(); }
     };
 
     template<typename FirstTraits, typename SecondTraits>
     struct DeletedValueAssigner<pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType>, PairHashTraits<FirstTraits, SecondTraits> >
     {
-        static void assignDeletedValue(pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType>& location) 
-        { 
+        static void assignDeletedValue(pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType>& location)
+        {
             PairHashTraits<FirstTraits, SecondTraits>::assignDeletedValue(location);
         }
     };
@@ -138,8 +124,8 @@ namespace KXMLCore {
     template<typename First, typename Second>
     struct DeletedValueAssigner<pair<First, Second>, HashTraits<pair<First, Second> > >
     {
-        static void assignDeletedValue(pair<First, Second>& location) 
-        { 
+        static void assignDeletedValue(pair<First, Second>& location)
+        {
             HashTraits<pair<First, Second> >::assignDeletedValue(location);
         }
     };

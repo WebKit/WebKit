@@ -1,3 +1,52 @@
+2006-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6611
+          add assertions to check correct use of hash table iterators
+
+        * kxmlcore/HashTable.h:
+        (KXMLCore::addIterator): Added. Helper function that adds an iterator to the list
+        maintained by the specified hash table.
+        (KXMLCore::removeIterator): Added. Helper function that removes an iterator from
+        the list maintained by the hash table it's in.
+        (KXMLCore::HashTableConstIterator::HashTableConstIterator): Added a HashTable
+        parameter, ignored when not debugging. Call addIterator.
+        (KXMLCore::HashTableConstIterator::~HashTableConstIterator):
+        (KXMLCore::HashTableConstIterator::operator=): Call removeIterator.
+        (KXMLCore::HashTableConstIterator::operator*): Call checkValidity.
+        (KXMLCore::HashTableConstIterator::operator->): Ditto.
+        (KXMLCore::HashTableConstIterator::operator++): Ditto.
+        (KXMLCore::HashTableConstIterator::operator==): Ditto.
+        (KXMLCore::HashTableConstIterator::operator!=): Ditto.
+        (KXMLCore::HashTableConstIterator::checkValidity): Checks that the hash table
+        pointer is not 0 and if there are two iterators that both point at the same table.
+        (KXMLCore::HashTableIterator::HashTableIterator): Changed to use the const iterator
+        as an implementation detail, to avoid having two separate iterator implementations.
+        (KXMLCore::HashTableIterator::operator*): Ditto.
+        (KXMLCore::HashTableIterator::operator->): Ditto.
+        (KXMLCore::HashTableIterator::operator++): Ditto.
+        (KXMLCore::HashTableIterator::operator==): Ditto.
+        (KXMLCore::HashTableIterator::operator!=): Ditto.
+        (KXMLCore::HashTable::HashTable): Initialize pointer to head of iterators list.
+        (KXMLCore::HashTable::~HashTable): Added call to invalidateIterators.
+        (KXMLCore::HashTable::makeIterator): Pass this pointer.
+        (KXMLCore::HashTable::makeConstIterator): Ditto.
+        (KXMLCore::HashTable::insert): Call invalidateIterators, since this is a public
+        entry point that modifies the hash table.
+        (KXMLCore::HashTable::remove): Ditto.
+        (KXMLCore::HashTable::clear): Ditto.
+        (KXMLCore::HashTable::swap): Ditto.
+        (KXMLCore::HashTable::invalidateIterators): Added. Walks the iterators list and
+        clears out the table, next, and previous pointers in all of them, and then clears
+        the head so we have an empty list.
+        (KXMLCore::addIterator): Added. Adds the iterator the the linked list in the
+        passed-in table, and points the iterator at the table.
+        (KXMLCore::removeIterator): Added. Removes the iterator from the linked list in
+        the passed-in table.
+
+        * kxmlcore/HashTraits.h: A bit of tweaking and formatting.
+
 2006-01-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eric
