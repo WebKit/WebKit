@@ -1,3 +1,15 @@
+2006-01-18  David Hyatt <hyatt@apple.com>
+        
+        Make Win32 build again.  Update the scripts and deal
+        with all the recent file moves.
+
+        Reviewed by xenon
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * rendering/render_container.cpp:
+        * rendering/render_object.cpp:
+
 2006-01-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/overflow/overflow-rtl-inline-scrollbar.html

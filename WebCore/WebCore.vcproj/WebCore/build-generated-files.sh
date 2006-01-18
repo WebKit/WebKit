@@ -38,16 +38,22 @@ if [ khtml/html/doctypes.gperf -nt "$DerivedSourcesDir/doctypes.cpp" ]; then
 fi
 
 # Generate the CSS tokenizer using flex
-if [ khtml/css/tokenizer.flex -nt "$DerivedSourcesDir/tokenizer.cpp" ]; then
+if [ css/tokenizer.flex -nt "$DerivedSourcesDir/tokenizer.cpp" ]; then
   echo "Generating the CSS tokenizer using flex..."
-  flex -t khtml/css/tokenizer.flex | perl khtml/css/maketokenizer > "$DerivedSourcesDir/tokenizer.cpp"
+  flex -t css/tokenizer.flex | perl css/maketokenizer > "$DerivedSourcesDir/tokenizer.cpp"
 fi
 
 # Generate the CSS grammar using bison
-if [ khtml/css/css_grammar.y -nt "$DerivedSourcesDir/css_grammar.cpp" ]; then
+if [ css/css_grammar.y -nt "$DerivedSourcesDir/css_grammar.cpp" ]; then
   echo "Generating the CSS grammar using bison..."
-  bison -d -p cssyy khtml/css/css_grammar.y -o "$DerivedSourcesDir/css_grammar.cpp"
+  bison -d -p cssyy css/css_grammar.y -o "$DerivedSourcesDir/css_grammar.cpp"
   mv "$DerivedSourcesDir/css_grammar.hpp" "$DerivedSourcesDir/css_grammar.h"
+fi
+
+if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/html4.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/quirks.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/svg.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" ]; then
+  echo "Re-generating the user agent stylesheet files..."
+  css/make-css-file-arrays.pl "$DerivedSourcesDir/UserAgentStyleSheets.h" "$DerivedSourcesDir/UserAgentStyleSheetsData.cpp" css/html4.css css/quirks.css css/svg.css
+  touch css/UserAgentStyleSheets.cpp
 fi
 
 # Generate the lookup tables for the JS bindings
@@ -104,7 +110,3 @@ if [ khtml/ecma/XSLTProcessor.cpp -nt "$DerivedSourcesDir/XSLTProcessor.lut.h" ]
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/XSLTProcessor.cpp > "$DerivedSourcesDir/XSLTProcessor.lut.h"
 fi
 
-if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/html4.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/quirks.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/svg.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" ]; then
-  css/make-css-file-arrays.pl "$DerivedSourcesDir/UserAgentStyleSheets.h" "$DerivedSourcesDir/UserAgentStyleSheetsData.cpp" css/html4.css css/quirks.css css/svg.css
-  touch css/UserAgentStyleSheets.cpp
-fi

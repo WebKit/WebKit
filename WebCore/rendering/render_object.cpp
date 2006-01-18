@@ -37,6 +37,7 @@
 #include "dom2_eventsimpl.h"
 #include "dom_elementimpl.h"
 #include "dom_position.h"
+#include "visible_position.h"
 #include "htmlnames.h"
 #include "render_arena.h"
 #include "render_block.h"

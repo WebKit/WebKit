@@ -31,6 +31,7 @@
 #include "render_canvas.h"
 #include "DocumentImpl.h"
 #include "xml/dom_position.h"
+#include "visible_position.h"
 
 #include <kdebug.h>
 #include <assert.h>
