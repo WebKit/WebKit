@@ -363,6 +363,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQListImpl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQListImpl.h"
 				>
 			</File>
@@ -1684,14 +1688,6 @@
 			</File>
 			<File
 				RelativePath="..\..\loader\CachedScript.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\loader\CachedXBLDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\loader\CachedXBLDocument.h"
 				>
 			</File>
 			<File
