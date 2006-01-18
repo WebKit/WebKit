@@ -1,3 +1,15 @@
+2006-01-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6618
+          Inline in RTL block with overflow:auto and left border makes scroll bar appear
+
+        * fast/overflow/overflow-rtl-inline-scrollbar-expected.checksum: Added.
+        * fast/overflow/overflow-rtl-inline-scrollbar-expected.png: Added.
+        * fast/overflow/overflow-rtl-inline-scrollbar-expected.txt: Added.
+        * fast/overflow/overflow-rtl-inline-scrollbar.html: Added.
+
 2006-01-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
@@ -6,8 +18,7 @@
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=6632>
         REGRESSION: Selection includes spaces that it shouldn't
         <rdar://problem/4407845> 
-        REGRESSION (TOT): blank space before found text selected at http://www.schepers.cc/comiclink
-s.html
+        REGRESSION (TOT): blank space before found text selected at http://www.schepers.cc/comiclinks.html
 
         * editing/selection/after-line-wrap-expected.checksum: Added.
         * editing/selection/after-line-wrap-expected.png: Added.

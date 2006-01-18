@@ -1,3 +1,21 @@
+2006-01-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/overflow/overflow-rtl-inline-scrollbar.html
+
+        Reviewed by Hyatt.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6618
+          Inline in RTL block with overflow:auto and left border makes scroll bar appear
+        
+        Inline flows were always returning 0 for leftmostPosition(). Their real leftmost
+        edges are determined by their inline boxes, which
+        RenderBlock::leftmostPosition already takes into account.
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::lowestPosition): Don't descend into inline flows.
+        (RenderFlow::rightmostPosition): Ditto.
+        (RenderFlow::leftmostPosition): Ditto.
+
 2006-01-18  Anders Carlsson  <andersca@mac.com>
 
         Fix build.
@@ -3095,96 +3113,6 @@
         * khtml/ecma/kjs_html.h:
         * khtml/ecma/kjs_window.cpp:
         (KJS::intFeature):
-
-2006-01-12  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
-        * WebCore.exp:
-        * WebCore.xcodeproj/project.pbxproj:
-        * bridge/mac/KWQKHTMLPartBrowserExtension.mm:
-        (KHTMLPartBrowserExtension::createNewWindow):
-        * bridge/mac/MacFrame.h:
-        (MacFrame::bridge):
-        * bridge/mac/MacFrame.mm:
-        (MacFrame::submitForm):
-        (MacFrame::createPart):
-        (MacFrame::bridgeForWidget):
-        (MacFrame::documentViewForNode):
-        (MacFrame::setBridge):
-        * bridge/mac/WebCoreBridge.h: Removed.
-        * bridge/mac/WebCoreBridge.mm: Removed.
-        * bridge/mac/WebCoreFrameBridge.h: Added.
-        * bridge/mac/WebCoreFrameBridge.mm: Added.
-        (-[WebCoreFrameBridge executionContextForView:]):
-        (frameHasSelection):
-        (-[WebCoreFrameBridge firstChild]):
-        (-[WebCoreFrameBridge lastChild]):
-        (-[WebCoreFrameBridge previousSibling]):
-        (-[WebCoreFrameBridge nextSibling]):
-        (-[WebCoreFrameBridge isDescendantOfFrame:]):
-        (-[WebCoreFrameBridge traverseNextFrameStayWithin:]):
-        (-[WebCoreFrameBridge appendChild:]):
-        (-[WebCoreFrameBridge removeChild:]):
-        (-[WebCoreFrameBridge childFrameNamed:]):
-        (-[WebCoreFrameBridge _deepLastChildFrame]):
-        (-[WebCoreFrameBridge nextFrameWithWrap:]):
-        (-[WebCoreFrameBridge previousFrameWithWrap:]):
-        (-[WebCoreFrameBridge _shouldAllowAccessFrom:]):
-        (-[WebCoreFrameBridge _descendantFrameNamed:sourceFrame:]):
-        (-[WebCoreFrameBridge _frameInAnyWindowNamed:sourceFrame:]):
-        (-[WebCoreFrameBridge findFrameNamed:]):
-        (+[WebCoreFrameBridge bridgeForDOMDocument:]):
-        (-[WebCoreFrameBridge setParent:]):
-        (-[WebCoreFrameBridge parent]):
-        (nowPrinting):
-        (-[WebCoreFrameBridge opener]):
-        (-[WebCoreFrameBridge setOpener:]):
-        (+[WebCoreFrameBridge stringWithData:textEncodingName:]):
-        * kwq/KWQAccObject.mm:
-        (-[KWQAccObject rendererForView:]):
-        * kwq/KWQComboBox.mm:
-        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
-        * kwq/KWQFileButton.mm:
-        (KWQFileButton::focusPolicy):
-        * kwq/KWQFrame.mm:
-        * kwq/KWQKJavaAppletWidget.mm:
-        * kwq/KWQLineEdit.mm:
-        * kwq/KWQListBox.mm:
-        (-[KWQTableView keyDown:]):
-        (-[KWQTableView keyUp:]):
-        * kwq/KWQLoader.mm:
-        (KWQServeRequest):
-        (KWQServeSynchronousRequest):
-        (KWQCheckCacheObjectStatus):
-        (KWQCacheObjectExpiresTime):
-        * kwq/KWQSlider.mm:
-        (QSlider::focusPolicy):
-        * kwq/KWQTextArea.mm:
-        (-[KWQTextAreaTextView textDidChange:]):
-        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
-        (-[KWQTextAreaTextView keyDown:]):
-        (-[KWQTextAreaTextView keyUp:]):
-        * kwq/KWQTextField.mm:
-        (-[KWQTextFieldController controlTextDidBeginEditing:]):
-        (-[KWQTextFieldController controlTextDidEndEditing:]):
-        (-[KWQTextFieldController controlTextDidChange:]):
-        (-[KWQTextFieldController control:textView:doCommandBySelector:]):
-        (-[KWQTextFieldController textView:shouldHandleEvent:]):
-        * kwq/KWQWidget.mm:
-        (QWidget::setFocus):
-        * kwq/KWQWindowWidget.h:
-        * kwq/KWQWindowWidget.mm:
-        (KWQWindowWidget::KWQWindowWidget):
-        * kwq/WebCoreFrameNamespaces.h:
-        * kwq/WebCoreFrameNamespaces.m:
-        (+[WebCoreFrameNamespaces addFrame:toNamespace:]):
-        * kwq/WebCoreFrameView.h:
-        * kwq/WebCoreSettings.mm:
-        * kwq/WebCoreTextRendererFactory.mm:
-        * kwq/WebCoreViewFactory.h:
 
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
@@ -7882,7 +7810,7 @@
 
 2005-12-22  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Geoff.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6198
           use RefPtr a few places in RenderText and related classes

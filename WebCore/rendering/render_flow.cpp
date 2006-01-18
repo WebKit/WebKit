@@ -524,6 +524,7 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
 int
 RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
+    assert(!isInlineFlow());
     int bottom = RenderContainer::lowestPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
@@ -533,7 +534,7 @@ RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
             int lp = c->yPos() + c->lowestPosition(false);
             bottom = kMax(bottom, lp);
         }
@@ -544,6 +545,7 @@ RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 
 int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
+    assert(!isInlineFlow());
     int right = RenderContainer::rightmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
@@ -553,7 +555,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
             int rp = c->xPos() + c->rightmostPosition(false);
             right = kMax(right, rp);
         }
@@ -564,6 +566,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
 
 int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
+    assert(!isInlineFlow());
     int left = RenderContainer::leftmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
@@ -573,7 +576,7 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
     // the abs div.
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText()) {
+        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow()) {
             int lp = c->xPos() + c->leftmostPosition(false);
             left = kMin(left, lp);
         }
