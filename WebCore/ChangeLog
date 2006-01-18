@@ -5,15 +5,16 @@
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6646
           compile CSS sources in instead of reading them from disk
 
-        * WebCore.vcproj/WebCore/WebCore.vcproj:
-        * WebCore.vcproj/WebCore/build-generated-files.sh:
-
         * css/make-css-file-arrays.pl: Added. Used to generate C array forms of the ".css" files.
         * css/UserAgentStyleSheets.cpp: Added. Used to indirectly compile the generated file.
 
         * WebCore.xcodeproj/project.pbxproj: Added new source files. Added a build phase to
         invoke the make-css-file-arrays.pl script. Removed the .css files, which no longer need
         to be installed as part of the final package.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added new files.
+        * WebCore.vcproj/WebCore/build-generated-files.sh: Added make-css-file-arrays.pl script
+        section; not tested.
 
         * css/cssstyleselector.cpp: (WebCore::parseUASheet): Removed code to read user agent
         sheets from disk. Replaced with code that gets them from compiled-in arrays instead.
