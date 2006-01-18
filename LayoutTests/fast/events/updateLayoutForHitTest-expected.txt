@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text to 1 of #text toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text to 1 of #text toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text to 0 of #text toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 0 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (5,5) size 67x28 [bgcolor=#ADD8E6]
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderText {TEXT} at (5,5) size 9x18
+            text run at (5,5) width 9: "\x{25B8}"
+        RenderText {TEXT} at (14,5) size 48x18
+          text run at (14,5) width 48: " Project"
+        RenderText {TEXT} at (0,0) size 0x0
+selection start: position 0 of document
+selection end:   position 0 of child 1 {TEXT} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
