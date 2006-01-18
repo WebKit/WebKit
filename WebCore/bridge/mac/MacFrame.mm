@@ -23,11 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "MacFrame.h"
 
+#import "Cache.h"
 #import "DOMInternal.h"
-
+#import "EventNames.h"
+#import "FramePrivate.h"
+#import "FrameView.h"
+#import "HTMLFormElementImpl.h"
+#import "HTMLGenericFormElementImpl.h"
+#import "InlineTextBox.h"
+#import "KWQAccObjectCache.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
 #import "KWQExceptions.h"
@@ -39,28 +46,22 @@
 #import "KWQPrinter.h"
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
-#import "KWQWindowWidget.h"
 #import "KWQTextCodec.h"
-
+#import "KWQWindowWidget.h"
+#import "SelectionController.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
-
 #import "css_computedstyle.h"
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom_position.h"
 #import "dom_textimpl.h"
-#import "EventNames.h"
 #import "html_documentimpl.h"
-#import "HTMLFormElementImpl.h"
-#import "HTMLGenericFormElementImpl.h"
 #import "html_tableimpl.h"
-#import "FramePrivate.h"
-#import "FrameView.h"
 #import "kjs_binding.h"
 #import "kjs_window.h"
 #import "render_canvas.h"
@@ -69,24 +70,18 @@
 #import "render_list.h"
 #import "render_style.h"
 #import "render_table.h"
-#import "InlineTextBox.h"
 #import "render_theme.h"
-#import "SelectionController.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
-#import "Cache.h"
-
+#import <JavaScriptCore/NP_jsobject.h>
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/identifier.h>
-#import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/interpreter.h>
+#import <JavaScriptCore/npruntime_impl.h>
+#import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
-#import <JavaScriptCore/NP_jsobject.h>
-#import <JavaScriptCore/npruntime_impl.h>
-
-#import "KWQAccObjectCache.h"
 
 #undef _KWQ_TIMING
 
@@ -1144,6 +1139,7 @@ KJS::Bindings::RootObject *MacFrame::executionContextForDOM()
 
 KJS::Bindings::RootObject *MacFrame::bindingRootObject()
 {
+    assert(d->m_bJScriptEnabled);
     if (!_bindingRoot) {
         JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
@@ -1157,6 +1153,9 @@ KJS::Bindings::RootObject *MacFrame::bindingRootObject()
 
 WebScriptObject *MacFrame::windowScriptObject()
 {
+    if (!d->m_bJScriptEnabled)
+        return 0;
+
     if (!_windowScriptObject) {
         KJS::JSLock lock;
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
@@ -1168,6 +1167,9 @@ WebScriptObject *MacFrame::windowScriptObject()
 
 NPObject *MacFrame::windowScriptNPObject()
 {
+    if (!d->m_bJScriptEnabled)
+        return 0;
+
     if (!_windowScriptNPObject) {
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
         
@@ -1188,7 +1190,8 @@ NPObject *MacFrame::windowScriptNPObject()
 
 void MacFrame::partClearedInBegin()
 {
-    [_bridge windowObjectCleared];
+    if (d->m_bJScriptEnabled)
+        [_bridge windowObjectCleared];
 }
 
 void MacFrame::openURLFromPageCache(KWQPageState *state)
