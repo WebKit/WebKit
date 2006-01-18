@@ -1,5 +1,16 @@
 2006-01-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - change KWQList to use qsort instead of CFArraySort
+
+        * kwq/KWQListImpl.cpp:
+        (compareFuncWrapper): Wrapper that uses global variables to overcome the lack
+        of a "data" pointer in qsort. Could have used qsort_r but that would be less portable.
+        (KWQListImpl::sort): Use qsort instead of CFArraySortValues.
+
+2006-01-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         - changed the three signal/slot related files from ObjC++ to C++ files
