@@ -1,3 +1,17 @@
+2006-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - changed the three signal/slot related files from ObjC++ to C++ files
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kwq/KWQSignal.cpp: Added.
+        * kwq/KWQSignal.mm: Removed.
+        * kwq/KWQSignalStubs.cpp: Added.
+        * kwq/KWQSignalStubs.mm: Removed.
+        * kwq/KWQSlot.cpp: Added.
+        * kwq/KWQSlot.mm: Removed.
+
 2006-01-18  David Hyatt <hyatt@apple.com>
         
         Make Win32 build again.  Update the scripts and deal

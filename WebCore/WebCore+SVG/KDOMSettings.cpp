@@ -550,37 +550,6 @@ const QString &KDOMSettings::encoding() const
     return d->encoding;
 }
 
-static QString *avFamilies; // Helper
-const QString &KDOMSettings::availableFamilies()
-{
-    if(!avFamilies)
-    {
-        avFamilies = new QString;
-        
-        QFontDatabase db;
-        QStringList families = db.families();
-        QStringList s;
-        QRegExp foundryExp(QString::fromLatin1(" \\[.+\\]"));
-
-        // remove foundry info
-        QStringList::Iterator f = families.begin();
-        const QStringList::Iterator fEnd = families.end();
-
-        for( ; f != fEnd; ++f)
-        {
-            (*f).replace(foundryExp, QString::fromLatin1(""));
-            if(!s.contains(*f))
-                s << *f;
-        }
-
-        s.sort();
-
-        *avFamilies = ',' + s.join(QString::fromLatin1(",")) + ',';
-    }
-
-    return *avFamilies;
-}
-
 const QColor &KDOMSettings::baseColor() const
 {
     return d->baseColor;
