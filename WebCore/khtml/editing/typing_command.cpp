@@ -32,7 +32,7 @@
 #include "insert_paragraph_separator_command.h"
 #include "break_blockquote_command.h"
 
-#include "MacFrame.h"
+#include "Frame.h"
 #include "DocumentImpl.h"
 #include "visible_position.h"
 #include "visible_units.h"
@@ -232,7 +232,7 @@ void TypingCommand::markMisspellingsAfterTyping()
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
-            Mac(document()->frame())->markMisspellingsInAdjacentWords(p1);
+            document()->frame()->markMisspellingsInAdjacentWords(p1);
     }
 }
 

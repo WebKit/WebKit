@@ -58,7 +58,7 @@
 #include "render_arena.h"
 
 #include "FrameView.h"
-#include "MacFrame.h"
+#include "Frame.h"
 #include "FramePrivate.h"
 
 #include "khtml_settings.h"
@@ -207,8 +207,10 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_secureForms(0)
     , m_createRenderers(true)
     , m_designMode(inherit)
+#if __APPLE__
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
+#endif
     , m_selfOnlyRefCount(0)
 {
     document.resetSkippingRef(this);
@@ -686,7 +688,7 @@ void DocumentImpl::updateTitle()
     if (!p)
         return;
 
-    Mac(p)->setTitle(m_title);
+    p->setTitle(m_title);
 }
 
 void DocumentImpl::setTitle(DOMString title, NodeImpl *titleElement)
@@ -1205,7 +1207,7 @@ void DocumentImpl::implicitClose()
         dispatchImageLoadEventsNow();
         onloadTarget->dispatchWindowEvent(loadEvent, false, false);
         if (Frame *p = frame())
-            Mac(p)->handledOnloadEvents();
+            p->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!ownerElement())
             printf("onload fired at %d\n", elapsedTime());
@@ -2001,6 +2003,7 @@ bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
     return frame()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
+#if __APPLE__
 const QValueList<DashboardRegionValue> & DocumentImpl::dashboardRegions() const
 {
     return m_dashboardRegions;
@@ -2011,7 +2014,7 @@ void DocumentImpl::setDashboardRegions (const QValueList<DashboardRegionValue>& 
     m_dashboardRegions = regions;
     setDashboardRegionsDirty (false);
 }
-
+#endif
 
 static QWidget *widgetForNode(NodeImpl *focusNode)
 {
@@ -2371,8 +2374,8 @@ ElementImpl *DocumentImpl::ownerElement()
 
 DOMString DocumentImpl::referrer() const
 {
-    if ( frame() )
-        return Mac(frame())->incomingReferrer();
+    if (frame())
+        return frame()->incomingReferrer();
     
     return DOMString();
 }

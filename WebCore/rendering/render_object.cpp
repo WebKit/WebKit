@@ -1764,10 +1764,12 @@ void RenderObject::setStyle(RenderStyle *style)
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         if (style) {
+#if __APPLE__
             if (m_style->visibility() != style->visibility() ||
                 m_style->zIndex() != style->zIndex() ||
                 m_style->hasAutoZIndex() != style->hasAutoZIndex())
                 document()->setDashboardRegionsDirty(true);
+#endif
 
             if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
                  m_style->zIndex() != style->zIndex() ||

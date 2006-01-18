@@ -24,14 +24,16 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef __khtml_part_h__
-#define __khtml_part_h__
+#ifndef _FRAME_H
+#define _FRAME_H
 
-#include "editing/text_granularity.h"
-#include "editing/edit_actions.h"
+#include "NodeImpl.h"
+#include "text_affinity.h"
+#include "text_granularity.h"
+#include "edit_actions.h"
 
 #include "ObjectContents.h"
-#include <kparts/browserextension.h>
+#include "BrowserExtension.h"
 #include <qscrollbar.h>
 #include <qcolor.h>
 
@@ -95,6 +97,7 @@ namespace khtml
   class RenderStyle;
   class RenderWidget;
   class SelectionController;
+  class VisiblePosition;
   class XMLTokenizer;
 }
 
@@ -104,6 +107,10 @@ namespace KJS {
     class SelectionFunc;
     class Window;
     class WindowFunc;
+
+    namespace Bindings {
+        class Instance;
+    }
 }
 
 struct MarkedTextUnderline {
@@ -136,10 +143,8 @@ class Frame : public ObjectContents {
   friend class KJS::Window;
   friend class KJS::WindowFunc;
   friend class KJS::DOMDocument;
-  friend class KHTMLPartBrowserExtension;
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
-  friend class KHTMLPartBrowserHostExtension;
   friend class khtml::HTMLTokenizer;
   friend class khtml::XMLTokenizer;
   friend class khtml::RenderWidget;
@@ -168,9 +173,9 @@ public:
   virtual bool closeURL();
 
   /**
-   * Returns a pointer to the @ref KParts::BrowserExtension.
+   * Returns a pointer to the @ref WebCore::BrowserExtension.
    */
-  KParts::BrowserExtension *browserExtension() const;
+  WebCore::BrowserExtension *browserExtension() const;
 
   /**
    * Returns a pointer to the HTML document's view.
@@ -795,8 +800,63 @@ public:
   virtual bool openFile();
 
   virtual void urlSelected( const QString &url, int button, int state,
-                            const QString &_target, KParts::URLArgs args = KParts::URLArgs());
+                            const QString &_target, WebCore::URLArgs args = WebCore::URLArgs());
 
+
+  // Methods with platform-specific overrides (and no base class implementation).
+  virtual WebCore::BrowserExtension* createBrowserExtension() = 0;
+  virtual void setTitle(const DOM::DOMString &) = 0;
+  virtual void handledOnloadEvents() = 0;
+  virtual QString userAgent() const;
+  virtual QString incomingReferrer() const = 0;
+  virtual QString mimeTypeForFileName(const QString &) const = 0;
+  virtual void clearRecordedFormValues() = 0;
+  virtual void recordFormValue(const QString &name, const QString &value, DOM::HTMLFormElementImpl *element) = 0;
+  virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*) = 0;
+  virtual KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*) = 0;
+  virtual KJS::Bindings::Instance *getAppletInstanceForWidget(QWidget*) = 0;
+  virtual void markMisspellingsInAdjacentWords(const khtml::VisiblePosition &) = 0;
+  virtual void markMisspellings(const khtml::SelectionController &) = 0;
+  virtual void addMessageToConsole(const DOM::DOMString& message,  unsigned int lineNumber, const DOM::DOMString& sourceID) = 0;
+  virtual void runJavaScriptAlert(const DOM::DOMString& message) = 0;
+  virtual bool runJavaScriptConfirm(const DOM::DOMString& message) = 0;
+  virtual bool runJavaScriptPrompt(const DOM::DOMString& message, const DOM::DOMString& defaultValue, DOM::DOMString& result);  
+  virtual bool locationbarVisible() = 0;
+  virtual bool menubarVisible() = 0;
+  virtual bool personalbarVisible() = 0;
+  virtual bool statusbarVisible() = 0;
+  virtual bool toolbarVisible() = 0;
+  virtual void scheduleClose() = 0;
+  virtual void unfocusWindow() = 0;
+  virtual void createEmptyDocument() = 0;
+  virtual DOM::RangeImpl *markedTextRange() const = 0;
+  virtual void registerCommandForUndo(const khtml::EditCommandPtr &) = 0;
+  virtual void registerCommandForRedo(const khtml::EditCommandPtr &) = 0;
+  virtual void clearUndoRedoOperations() = 0;
+  virtual void issueUndoCommand() = 0;
+  virtual void issueRedoCommand() = 0;
+  virtual void issueCutCommand() = 0;
+  virtual void issueCopyCommand() = 0;
+  virtual void issuePasteCommand() = 0;
+  virtual void issuePasteAndMatchStyleCommand() = 0;
+  virtual void issueTransposeCommand() = 0;
+  virtual void respondToChangedSelection(const khtml::SelectionController &oldSelection, bool closeTyping) = 0;
+  virtual void respondToChangedContents() = 0;
+  virtual bool shouldChangeSelection(const khtml::SelectionController &oldSelection, const khtml::SelectionController &newSelection, khtml::EAffinity affinity, bool stillSelecting) const = 0;
+  virtual void partClearedInBegin() = 0; 
+  virtual void saveDocumentState() = 0;
+  virtual void restoreDocumentState() = 0;
+  virtual bool canGoBackOrForward(int distance) const = 0;
+  virtual void openURLRequest(const KURL &, const WebCore::URLArgs &) = 0;
+  virtual void submitForm(const KURL &, const WebCore::URLArgs &) = 0;
+  virtual void urlSelected(const KURL &url, int button, int state, const WebCore::URLArgs &args);
+  virtual ObjectContents *createPart(const khtml::ChildFrame &child, const KURL &url, const QString &mimeType) = 0;
+  virtual bool passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &) = 0;
+  virtual bool passWheelEventToChildWidget(DOM::NodeImpl *) = 0;
+  virtual bool lastEventIsMouseUp() const = 0;
+  virtual QString overrideMediaType() const = 0;
+protected:
+  virtual QString generateFrameName() = 0;
 
 public slots:
   /**
@@ -836,7 +896,7 @@ private slots:
   void slotChildCompleted();
   void slotChildCompleted( bool );
   void slotParentCompleted();
-  void slotChildURLRequest( const KURL &url, const KParts::URLArgs &args );
+  void slotChildURLRequest( const KURL &url, const WebCore::URLArgs &args );
   void slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *obj );
   void checkCompleted();
   
@@ -856,7 +916,7 @@ private:
   void setFocusNodeIfNeeded();
   void selectionLayoutChanged();
   void timerEvent(QTimerEvent *);
-  bool openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs );
+  bool openURLInFrame( const KURL &url, const WebCore::URLArgs &urlArgs );
 
   void overURL( const QString &url, const QString &target, bool shiftPressed = false );
 
@@ -891,7 +951,7 @@ private:
   bool requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                       const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList()  );
 
-  bool requestObject( khtml::ChildFrame *child, const KURL &url, const KParts::URLArgs &args = KParts::URLArgs() );
+  bool requestObject( khtml::ChildFrame *child, const KURL &url, const WebCore::URLArgs &args = WebCore::URLArgs() );
 
   DOM::EventListener *createHTMLEventListener(const DOM::DOMString& code, DOM::NodeImpl *node);
 
@@ -910,7 +970,7 @@ public:
 private:
   khtml::ChildFrame *childFrame( const QObject *obj );
 
-  khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );
+  khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const WebCore::URLArgs &args, bool callParent = true );
 
   void connectChild(const khtml::ChildFrame *) const;
   void disconnectChild(const khtml::ChildFrame *) const;
@@ -1006,7 +1066,6 @@ private:
   void prepareForUserAction();
   virtual bool isFrame() const;
   DOM::NodeImpl *mousePressNode();
-  virtual void saveDocumentState() = 0;
 
   bool isComplete();
 

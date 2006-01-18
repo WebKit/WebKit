@@ -43,7 +43,7 @@
 #include <assert.h>
 
 #include "FrameView.h"
-#include "khtml_ext.h"
+#include "BrowserExtension.h"
 #include "xml/EventNames.h"
 
 #include <kdebug.h>

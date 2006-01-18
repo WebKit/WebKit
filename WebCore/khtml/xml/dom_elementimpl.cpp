@@ -26,7 +26,7 @@
 #include "config.h"
 #include "dom_elementimpl.h"
 
-#include "MacFrame.h"
+#include "Frame.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "cssstyleselector.h"
@@ -833,8 +833,8 @@ void ElementImpl::focus()
             doc->setFocusNode(this);
             if (isContentEditable()) {
                 // FIXME: we should restore the previous selection if there is one, instead of always selecting all.
-                if (Mac(doc->frame())->selectContentsOfNode(this))
-                    Mac(doc->frame())->revealSelection();
+                if (doc->frame()->selectContentsOfNode(this))
+                    doc->frame()->revealSelection();
             } else if (renderer() && !renderer()->isWidget())
                 renderer()->enclosingLayer()->scrollRectToVisible(getRect());
         }

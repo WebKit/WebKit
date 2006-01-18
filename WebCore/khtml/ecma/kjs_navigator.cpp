@@ -30,7 +30,8 @@
 #include "kjs_navigator.h"
 #include "kjs/lookup.h"
 #include "kjs_binding.h"
-#include "MacFrame.h"
+#include "NodeImpl.h"
+#include "Frame.h"
 
 #include "KWQKCookieJar.h"
 
@@ -166,7 +167,7 @@ bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 
 JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
 {
-  QString userAgent = Mac(m_frame)->userAgent();
+  QString userAgent = m_frame->userAgent();
   switch (token) {
   case AppCodeName:
     return jsString("Mozilla");

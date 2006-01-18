@@ -34,7 +34,7 @@
 #include "SelectionController.h"
 #include <kxmlcore/HashMap.h>
 
-#include "MacFrame.h"
+#include "Frame.h"
 
 using khtml::TypingCommand;
 

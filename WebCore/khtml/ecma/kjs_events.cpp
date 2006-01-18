@@ -22,7 +22,7 @@
 #include "kjs_events.h"
 #include "kjs_events.lut.h"
 
-#include "MacFrame.h"
+#include "Frame.h"
 #include "kjs_window.h"
 #include "kjs_views.h"
 #include "kjs_proxy.h"
@@ -121,7 +121,7 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
             DOMString sourceURL = exception->get(exec, "sourceURL")->toString(exec).domString();
             if (Interpreter::shouldPrintExceptions())
                 printf("(event handler):%s\n", message.qstring().utf8().data());
-            Mac(frame)->addMessageToConsole(message, lineNumber, sourceURL);
+            frame->addMessageToConsole(message, lineNumber, sourceURL);
             exec->clearException();
         } else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())

@@ -5,7 +5,7 @@
              (C) 1998, 1999 Torben Weis (weis@kde.org)
              (C) 1999 Lars Knoll (knoll@kde.org)
              (C) 1999 Antti Koivisto (koivisto@kde.org)
-   Copyright (C) 2004 Apple Computer, Inc.
+   Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -23,8 +23,8 @@
    Boston, MA 02111-1307, USA.
 */
 
-#ifndef KHTML_H
-#define KHTML_H
+#ifndef FRAMEVIEW_H
+#define FRAMEVIEW_H
 
 // qt includes and classes
 #include <qscrollview.h>
@@ -208,7 +208,9 @@ public:
     void adjustViewSize();
     void initScrollBars();
     
+#if __APPLE__
     void updateDashboardRegions();
+#endif
 
     void ref() { ++_refCount; }
     void deref() { if (!--_refCount) delete this; }

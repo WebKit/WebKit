@@ -33,7 +33,7 @@
 #include "DocumentImpl.h"
 #include <qpen.h>
 
-#include "MacFrame.h"
+#include "Frame.h"
 
 using namespace DOM;
 
@@ -264,10 +264,10 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         return;
 
     // Determine whether or not we have marked text.
-    RangeImpl *markedTextRange = Mac(object()->document()->frame())->markedTextRange();
+    RangeImpl *markedTextRange = object()->document()->frame()->markedTextRange();
     int exception = 0;
     bool haveMarkedText = markedTextRange && markedTextRange->startContainer(exception) == object()->node();
-    bool markedTextUsesUnderlines = Mac(object()->document()->frame())->markedTextUsesUnderlines();
+    bool markedTextUsesUnderlines = object()->document()->frame()->markedTextUsesUnderlines();
 
     // Set our font.
     RenderStyle* styleToUse = object()->style(m_firstLine);
@@ -293,7 +293,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 
     QValueList<MarkedTextUnderline> underlines;
     if (haveMarkedText && markedTextUsesUnderlines) {
-        underlines = Mac(object()->document()->frame())->markedTextUnderlines();
+        underlines = object()->document()->frame()->markedTextUnderlines();
     }
     QValueListIterator<MarkedTextUnderline> underlineIt = underlines.begin();
 

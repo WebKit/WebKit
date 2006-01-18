@@ -34,7 +34,7 @@
 #include "rendering/render_form.h"
 #include "EventNames.h"
 
-#include "MacFrame.h"
+#include "Frame.h"
 
 #include <qtextcodec.h>
 
@@ -261,7 +261,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
 
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())
                         {
-                            QString mimeType = frame ? Mac(frame)->mimeTypeForFileName(path) : QString();
+                            QString mimeType = frame ? frame->mimeTypeForFileName(path) : QString();
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
                                 hstr += mimeType.ascii();
@@ -351,7 +351,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
-    Mac(frame)->clearRecordedFormValues();
+    frame->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.count(); ++i) {
         HTMLGenericFormElementImpl* current = formElements[i];
         // Our app needs to get form values for password fields for doing password autocomplete,
@@ -362,7 +362,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
                 || input->inputType() ==  HTMLInputElementImpl::PASSWORD
                 || input->inputType() == HTMLInputElementImpl::SEARCH)
             {
-                Mac(frame)->recordFormValue(input->name().qstring(), input->value().qstring(), this);
+                frame->recordFormValue(input->name().qstring(), input->value().qstring(), this);
                 if (input->renderer() && input->inputType() == HTMLInputElementImpl::SEARCH)
                     static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
             }

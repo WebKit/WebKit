@@ -138,8 +138,11 @@ namespace DOM {
         bool parseBackgroundShorthand(bool important);
 
         void addBackgroundValue(CSSValueImpl*& lval, CSSValueImpl* rval);
-        
+      
+#if __APPLE__
 	bool parseDashboardRegions( int propId, bool important );
+#endif
+
 	bool parseShape( int propId, bool important );
 	bool parseFont(bool important);
 	CSSValueListImpl *parseFontFamily();

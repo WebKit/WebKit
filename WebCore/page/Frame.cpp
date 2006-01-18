@@ -37,7 +37,7 @@
 #include "FrameView.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
-#include "MacFrame.h"
+#include "Frame.h"
 #include "RenderText.h"
 #include "SelectionController.h"
 #include "css_computedstyle.h"
@@ -155,7 +155,7 @@ void Frame::init(KHTMLView *view)
   d->m_view = view;
   setWidget( d->m_view );
   
-  d->m_extension = new KHTMLPartBrowserExtension( this );
+  d->m_extension = createBrowserExtension();
 
   d->m_bSecurityInQuestion = false;
   d->m_bMousePressed = false;
@@ -242,9 +242,9 @@ bool Frame::didOpenURL(const KURL &url)
   
   // clear last edit command
   d->m_lastEditCommand = EditCommandPtr();
-  Mac(this)->clearUndoRedoOperations();
+  clearUndoRedoOperations();
   
-  KParts::URLArgs args( d->m_extension->urlArgs() );
+  URLArgs args( d->m_extension->urlArgs() );
 
   if (!d->m_restored)
     closeURL();
@@ -389,7 +389,7 @@ void Frame::stopLoading(bool sendUnload)
   cancelRedirection();
 }
 
-KParts::BrowserExtension *Frame::browserExtension() const
+BrowserExtension *Frame::browserExtension() const
 {
   return d->m_extension;
 }
@@ -743,12 +743,12 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   // that we have at least an empty document. createEmptyDocument will
   // do that if we don't have a document already.
   if (d->m_workingURL.isEmpty()) {
-    Mac(this)->createEmptyDocument();
+    createEmptyDocument();
   }
 
   clear();
 
-  Mac(this)->partClearedInBegin();
+  partClearedInBegin();
 
   // Only do this after clearing the part, so that JavaScript can
   // clean up properly if it was on for the last load.
@@ -759,7 +759,7 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   d->m_bLoadEventEmitted = false;
   d->m_bLoadingMainResource = true;
 
-  KParts::URLArgs args( d->m_extension->urlArgs() );
+  URLArgs args( d->m_extension->urlArgs() );
   args.xOffset = xOffset;
   args.yOffset = yOffset;
   d->m_extension->setURLArgs( args );
@@ -792,7 +792,7 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
     d->m_doc->setDecoder(d->m_decoder.get());
   d->m_doc->docLoader()->setShowAnimations( d->m_settings->showAnimations() );
 
-  Mac(this)->updatePolicyBaseURL();
+  updatePolicyBaseURL();
 
   setAutoloadImages( d->m_settings->autoLoadImages() );
   QString userStyleSheet = d->m_settings->userStyleSheet();
@@ -800,7 +800,7 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   if ( !userStyleSheet.isEmpty() )
     setUserStyleSheet( KURL( userStyleSheet ) );
 
-  Mac(this)->restoreDocumentState();
+  restoreDocumentState();
 
   d->m_doc->implicitOpen();
   // clear widget
@@ -1134,7 +1134,7 @@ void Frame::scheduleHistoryNavigation( int steps )
 {
     // navigation will always be allowed in the 0 steps case, which is OK because
     // that's supposed to force a reload.
-    if (!Mac(this)->canGoBackOrForward(steps)) {
+    if (!canGoBackOrForward(steps)) {
         cancelRedirection();
         return;
     }
@@ -1171,7 +1171,7 @@ void Frame::changeLocation(const QString &URL, const QString &referrer, bool loc
         return;
     }
 
-    KParts::URLArgs args;
+    URLArgs args;
 
     args.setLockHistory(lockHistory);
     if (!referrer.isEmpty())
@@ -1386,7 +1386,7 @@ void Frame::setSelection(const SelectionController &s, bool closeTyping, bool ke
     if (!keepTypingStyle)
         clearTypingStyle();
     
-    Mac(this)->respondToChangedSelection(oldSelection, closeTyping);
+    respondToChangedSelection(oldSelection, closeTyping);
 }
 
 void Frame::setDragCaret(const SelectionController &dragCaret)
@@ -1521,7 +1521,7 @@ void Frame::paintDragCaret(QPainter *p, const IntRect &rect) const
 }
 
 void Frame::urlSelected( const QString &url, int button, int state, const QString &_target,
-                             KParts::URLArgs args )
+                             URLArgs args )
 {
   bool hasTarget = false;
 
@@ -1543,9 +1543,6 @@ void Frame::urlSelected( const QString &url, int button, int state, const QStrin
     // ### ERROR HANDLING
     return;
 
-  //kdDebug( 6000 ) << "urlSelected: complete URL:" << cURL.url() << " target = " << target << endl;
-
-
   args.frameName = target;
 
   if ( d->m_bHTTPRefresh )
@@ -1557,7 +1554,7 @@ void Frame::urlSelected( const QString &url, int button, int state, const QStrin
 
   if (!d->m_referrer.isEmpty())
     args.metaData()["referrer"] = d->m_referrer;
-  Mac(this)->urlSelected(cURL, button, state, args);
+  urlSelected(cURL, button, state, args);
 }
 
 
@@ -1592,7 +1589,7 @@ bool Frame::requestFrame( RenderPart *part, const QString &url, const QString &f
 
 QString Frame::requestFrameName()
 {
-    return Mac(this)->generateFrameName();
+    return generateFrameName();
 }
 
 bool Frame::requestObject( RenderPart *frame, const QString &url, const QString &serviceType,
@@ -1610,12 +1607,12 @@ bool Frame::requestObject( RenderPart *frame, const QString &url, const QString 
   if (!url.isEmpty())
     completedURL = completeURL(url);
 
-  KParts::URLArgs args;
+  URLArgs args;
   args.serviceType = serviceType;
   return requestObject( &(*it), completedURL, args );
 }
 
-bool Frame::requestObject( ChildFrame *child, const KURL &url, const KParts::URLArgs &_args )
+bool Frame::requestObject( ChildFrame *child, const KURL &url, const URLArgs &_args )
 {
   if ( child->m_bPreloaded )
   {
@@ -1627,7 +1624,7 @@ bool Frame::requestObject( ChildFrame *child, const KURL &url, const KParts::URL
     return true;
   }
 
-  KParts::URLArgs args( _args );
+  URLArgs args( _args );
 
 
   if ( child->m_frame && !args.reload && urlcmp( child->m_frame->url().url(), url.url(), true, true ) )
@@ -1675,15 +1672,15 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
   {
     Frame *frame = static_cast<Frame *>(&*child->m_frame);
     if (frame && frame->inherits("Frame")) {
-      KParts::URLArgs args;
+      URLArgs args;
       if (!d->m_referrer.isEmpty())
         args.metaData()["referrer"] = d->m_referrer;
-      Mac(frame)->openURLRequest(url, args);
+      frame->openURLRequest(url, args);
     }
   }
   else
   {
-    ObjectContents *part = Mac(this)->createPart(*child, url, mimetype);
+    ObjectContents *part = createPart(*child, url, mimetype);
     Frame *frame = static_cast<Frame *>(part);
     if (frame && frame->inherits("Frame"))
       frame->childBegin();
@@ -1785,7 +1782,7 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
     return;
   }
 
-  KParts::URLArgs args;
+  URLArgs args;
 
   if (!d->m_referrer.isEmpty())
      args.metaData()["referrer"] = d->m_referrer;
@@ -1862,9 +1859,7 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
     connect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
   }
   else
-  {
-    Mac(this)->submitForm( u, args);
-  }
+    submitForm(u, args);
 }
 
 
@@ -1904,7 +1899,7 @@ void Frame::slotChildCompleted( bool complete )
   assert( child );
 
   child->m_bCompleted = true;
-  child->m_args = KParts::URLArgs();
+  child->m_args = URLArgs();
 
   if ( complete && parentFrame() == 0 )
     d->m_bPendingChildRedirection = true;
@@ -2438,7 +2433,7 @@ bool Frame::selectContentsOfNode(NodeImpl* node)
 
 bool Frame::shouldChangeSelection(const SelectionController &newselection) const
 {
-    return Mac(this)->shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
+    return shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
 }
 
 bool Frame::shouldBeginEditing(const RangeImpl *range) const
@@ -2488,10 +2483,10 @@ void Frame::appliedEditing(EditCommandPtr &cmd)
     else {
         // Only register a new undo command if the command passed in is
         // different from the last command
-        Mac(this)->registerCommandForUndo(cmd);
+        registerCommandForUndo(cmd);
         d->m_lastEditCommand = cmd;
     }
-    Mac(this)->respondToChangedContents();
+    respondToChangedContents();
 }
 
 void Frame::unappliedEditing(EditCommandPtr &cmd)
@@ -2500,8 +2495,8 @@ void Frame::unappliedEditing(EditCommandPtr &cmd)
     if (shouldChangeSelection(sel)) {
         setSelection(sel, true);
     }
-    Mac(this)->registerCommandForRedo(cmd);
-    Mac(this)->respondToChangedContents();
+    registerCommandForRedo(cmd);
+    respondToChangedContents();
     d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
@@ -2511,8 +2506,8 @@ void Frame::reappliedEditing(EditCommandPtr &cmd)
     if (shouldChangeSelection(sel)) {
         setSelection(sel, true);
     }
-    Mac(this)->registerCommandForUndo(cmd);
-    Mac(this)->respondToChangedContents();
+    registerCommandForUndo(cmd);
+    respondToChangedContents();
     d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
@@ -2640,37 +2635,37 @@ bool Frame::tabsToAllControls() const
 
 void Frame::copyToPasteboard()
 {
-    Mac(this)->issueCopyCommand();
+    issueCopyCommand();
 }
 
 void Frame::cutToPasteboard()
 {
-    Mac(this)->issueCutCommand();
+    issueCutCommand();
 }
 
 void Frame::pasteFromPasteboard()
 {
-    Mac(this)->issuePasteCommand();
+    issuePasteCommand();
 }
 
 void Frame::pasteAndMatchStyle()
 {
-    Mac(this)->issuePasteAndMatchStyleCommand();
+    issuePasteAndMatchStyleCommand();
 }
 
 void Frame::transpose()
 {
-    Mac(this)->issueTransposeCommand();
+    issueTransposeCommand();
 }
 
 void Frame::redo()
 {
-    Mac(this)->issueRedoCommand();
+    issueRedoCommand();
 }
 
 void Frame::undo()
 {
-    Mac(this)->issueUndoCommand();
+    issueUndoCommand();
 }
 
 
@@ -3306,10 +3301,12 @@ void Frame::paint(QPainter *p, const IntRect& rect)
         // _elementToDraw is used to draw only one element
         RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
         renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
-        
+
+#if __APPLE__
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (renderer()->document()->dashboardRegionsDirty())
             renderer()->canvas()->view()->updateDashboardRegions();
+#endif
     } else
         ERROR("called Frame::paint with nil renderer");
 }

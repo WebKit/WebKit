@@ -29,7 +29,7 @@
 #include "FrameView.h"
 #include "dom2_eventsimpl.h"
 #include "dom_position.h"
-#include "khtml_ext.h"
+#include "BrowserExtension.h"
 #include "render_arena.h"
 #include "render_canvas.h"
 #include "render_line.h"

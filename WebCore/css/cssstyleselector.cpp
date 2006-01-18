@@ -3931,6 +3931,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         fontDirty = true;
         break;
     }
+#if __APPLE__
     case CSS_PROP__KHTML_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
@@ -3963,7 +3964,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         element->getDocument()->setHasDashboardRegions (true);
         
         break;
-    }   
+    }
+#endif
     case CSS_PROP__KHTML_RTL_ORDERING:
         HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
         if (!primitiveValue || !primitiveValue->getIdent())

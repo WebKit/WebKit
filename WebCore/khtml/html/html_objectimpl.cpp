@@ -45,7 +45,7 @@
 
 #include "java/kjavaappletwidget.h"
 
-#include "MacFrame.h"
+#include "Frame.h"
 
 using namespace khtml;
 
@@ -216,7 +216,7 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         if (r->widget())
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the plugin.
-            appletInstance = Mac(frame)->getAppletInstanceForWidget(r->widget());
+            appletInstance = frame->getAppletInstanceForWidget(r->widget());
     }
     return appletInstance;
 }
@@ -381,10 +381,10 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
         if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the Java VM.
-            embedInstance = Mac(frame)->getEmbedInstanceForWidget(widget);
+            embedInstance = frame->getEmbedInstanceForWidget(widget);
             // Applet may specified with <embed> tag.
             if (!embedInstance)
-                embedInstance = Mac(frame)->getAppletInstanceForWidget(widget);
+                embedInstance = frame->getAppletInstanceForWidget(widget);
         }
     }
     return embedInstance;
@@ -555,10 +555,10 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
             if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
                 // Call into the frame (and over the bridge) to pull the Bindings::Instance
                 // from the guts of the plugin.
-                objectInstance = Mac(frame)->getObjectInstanceForWidget(widget);
+                objectInstance = frame->getObjectInstanceForWidget(widget);
                 // Applet may specified with <object> tag.
                 if (!objectInstance)
-                    objectInstance = Mac(frame)->getAppletInstanceForWidget(widget);
+                    objectInstance = frame->getAppletInstanceForWidget(widget);
             }
         }
     }

@@ -43,7 +43,7 @@
 #include "css/cssstyleselector.h"
 #include "helper.h"
 #include "khtml_settings.h"
-#include "MacFrame.h"
+#include "Frame.h"
 
 #include <kcursor.h>
 
@@ -481,9 +481,9 @@ void KHTMLView::layout()
 #if __APPLE__
     if (KWQAccObjectCache::accessibilityEnabled())
         root->document()->getAccObjectCache()->postNotification(root, "AXLayoutComplete");
-#endif
 
     updateDashboardRegions();
+#endif
 
     if (root->needsLayout()) {
         //qDebug("needs layout, delaying repaint");
@@ -497,6 +497,7 @@ void KHTMLView::layout()
     }
 }
 
+#if __APPLE__
 void KHTMLView::updateDashboardRegions()
 {
     DocumentImpl* document = m_frame->xmlDocImpl();
@@ -504,9 +505,10 @@ void KHTMLView::updateDashboardRegions()
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
 	document->setDashboardRegions(newRegions);
-	Mac(m_frame)->dashboardRegionsChanged();
+	m_frame->dashboardRegionsChanged();
     }
 }
+#endif
 
 //
 // Event Handling
@@ -527,7 +529,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MousePress );
     m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (Mac(m_frame)->passSubframeEventToSubframe(mev)) {
+    if (m_frame->passSubframeEventToSubframe(mev)) {
         invalidateClick();
         return;
     }
@@ -550,7 +552,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
         // the khtml state with this mouseUp, which khtml never saw.
         // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
         // is a hole here if the widget consumes the mouseUp and subsequent events.
-        if (Mac(m_frame)->lastEventIsMouseUp()) {
+        if (m_frame->lastEventIsMouseUp()) {
             d->mousePressed = false;
         }
     }
@@ -571,7 +573,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseDblClick );
     m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (Mac(m_frame)->passSubframeEventToSubframe(mev))
+    if (m_frame->passSubframeEventToSubframe(mev))
         return;
 
     d->clickCount = _mouse->clickCount();
@@ -672,7 +674,7 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseMove );
     m_frame->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_frame->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
 
-    if (!Mac(m_frame)->passSubframeEventToSubframe(mev))
+    if (!m_frame->passSubframeEventToSubframe(mev))
         viewport()->setCursor(selectCursor(mev, m_frame, d->mousePressed));
         
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
@@ -713,7 +715,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseRelease );
     m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-    if (Mac(m_frame)->passSubframeEventToSubframe(mev))
+    if (m_frame->passSubframeEventToSubframe(mev))
         return;
 
     bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
@@ -982,7 +984,7 @@ void KHTMLView::setMediaType( const QString &medium )
 QString KHTMLView::mediaType() const
 {
     // See if we have an override type.
-    QString overrideType = Mac(m_frame)->overrideMediaType();
+    QString overrideType = m_frame->overrideMediaType();
     if (!overrideType.isNull())
         return overrideType;
     return m_medium;
@@ -1119,7 +1121,7 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
             doc->renderer()->layer()->hitTest(hitTestResult, x, y); 
             NodeImpl *node = hitTestResult.innerNode();
 
-           if (Mac(m_frame)->passWheelEventToChildWidget(node)) {
+           if (m_frame->passWheelEventToChildWidget(node)) {
                 e->accept();
                 return;
             }
